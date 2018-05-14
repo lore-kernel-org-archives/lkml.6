@@ -1,43 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeENPLP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:11:15 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33366 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932633AbeENPLL (ORCPT
+        id S932667AbeENPLx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:11:53 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59734 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753496AbeENPLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:11:11 -0400
-X-Google-Smtp-Source: AB8JxZqpUfdbpWRAk7HATNdoZtSqWkZaZcakiwor81gcuScvAZcfvTkQjsVYRPPcy0vUKn+XkCWR2Q==
-Date: Mon, 14 May 2018 17:11:09 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 02/14] net: sched: change type of reference and bind
- counters
-Message-ID: <20180514151109.GB1848@nanopsycho>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-3-git-send-email-vladbu@mellanox.com>
+        Mon, 14 May 2018 11:11:51 -0400
+Subject: Re: INFO: task hung in ext4_direct_IO
+To: syzbot <syzbot+45843822635038f93354@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <000000000000a88a2e056c2b67a0@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <5a44c756-2056-97cd-48e2-1f1585eb231e@I-love.SAKURA.ne.jp>
+Date: Tue, 15 May 2018 00:11:38 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526308035-12484-3-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <000000000000a88a2e056c2b67a0@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, May 14, 2018 at 04:27:03PM CEST, vladbu@mellanox.com wrote:
->Change type of action reference counter to refcount_t.
->
->Change type of action bind counter to atomic_t.
->This type is used to allow decrementing bind counter without testing
->for 0 result.
->
->Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+On 2018/05/14 23:36, syzbot wrote:
+> Call Trace:
+>  context_switch kernel/sched/core.c:2859 [inline]
+>  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
+>  schedule+0xef/0x430 kernel/sched/core.c:3545
+>  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+>  rwsem_down_read_failed+0x350/0x5e0 kernel/locking/rwsem-xadd.c:286
+>  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+>  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+>  down_read+0xbd/0x1b0 kernel/locking/rwsem.c:26
+>  inode_lock_shared include/linux/fs.h:723 [inline]
+>  ext4_direct_IO_read fs/ext4/inode.c:3828 [inline]
+>  ext4_direct_IO+0x653/0x2110 fs/ext4/inode.c:3865
+>  generic_file_read_iter+0x510/0x2f00 mm/filemap.c:2341
+>  ext4_file_read_iter+0x18b/0x3c0 fs/ext4/file.c:77
+>  call_read_iter include/linux/fs.h:1778 [inline]
+>  generic_file_splice_read+0x552/0x910 fs/splice.c:307
+>  do_splice_to+0x12e/0x190 fs/splice.c:880
+>  splice_direct_to_actor+0x268/0x8d0 fs/splice.c:952
+>  do_splice_direct+0x2cc/0x400 fs/splice.c:1061
+>  do_sendfile+0x60f/0xe00 fs/read_write.c:1440
+>  __do_sys_sendfile64 fs/read_write.c:1495 [inline]
+>  __se_sys_sendfile64 fs/read_write.c:1487 [inline]
+>  __x64_sys_sendfile64+0x155/0x240 fs/read_write.c:1487
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+This resembles
+
+Call Trace:
+ context_switch kernel/sched/core.c:2848 [inline]
+ __schedule+0x801/0x1e30 kernel/sched/core.c:3490
+ schedule+0xef/0x430 kernel/sched/core.c:3549
+ __rwsem_down_write_failed_common+0x919/0x15d0 kernel/locking/rwsem-xadd.c:566
+ rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
+ call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+ __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+ down_write+0xa2/0x120 kernel/locking/rwsem.c:72
+ inode_lock include/linux/fs.h:713 [inline]
+ ext4_file_write_iter+0x303/0x1420 fs/ext4/file.c:235
+ call_write_iter include/linux/fs.h:1784 [inline]
+ new_sync_write fs/read_write.c:474 [inline]
+ __vfs_write+0x64d/0x960 fs/read_write.c:487
+ vfs_write+0x1f8/0x560 fs/read_write.c:549
+ ksys_pwrite64+0x174/0x1a0 fs/read_write.c:652
+ __do_sys_pwrite64 fs/read_write.c:662 [inline]
+ __se_sys_pwrite64 fs/read_write.c:659 [inline]
+ __x64_sys_pwrite64+0x97/0xf0 fs/read_write.c:659
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+in the report below.
+
+  INFO: task hung in ext4_file_write_iter
+  https://syzkaller.appspot.com/bug?id=c7370ffdecb4c7c7a24a50e17acaf102850d43ab
+
+But I have no idea why usual file write causes problems.
+
+Since there is LOOP_CHANGE_FD request in the console output, maybe it is better to
+try 170785a9cc72e8e1 ("loop: add recursion validation to LOOP_CHANGE_FD") now
+and see whether it helps?
