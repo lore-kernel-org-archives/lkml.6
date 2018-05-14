@@ -1,164 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeENMQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:16:28 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:42681 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeENMQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:16:26 -0400
-X-Google-Smtp-Source: AB8JxZqQ25ygV5gcFV03Dg/NnpPyQmbEoawtgZ3q/Z6CdmH8YFswqVi4HA6osk80EV0rBjBxbddJjLzPgdQ3m4lP+fo=
+        id S1753162AbeENMSh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:18:37 -0400
+Received: from www.zeus03.de ([194.117.254.33]:44974 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752908AbeENMSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 08:18:35 -0400
+X-UD-Smtp-Session: l3s3148p1@GDwAfClsEoggAwDPW8cGAAId4P/+oMhl
+Date: Mon, 14 May 2018 14:18:33 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Message-ID: <20180514121833.2hcpuwfjxmzi3rcx@katana>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180514115933.GH18312@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <20180514115149.GA8905@redhat.com>
-References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
- <20180513160404.GA19620@redhat.com> <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
- <CAOQ4uxiKQDB-5iFztNz8wPECi5fKMPxEi5cxaKM_zRc9yeticQ@mail.gmail.com> <20180514115149.GA8905@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 14 May 2018 15:16:24 +0300
-Message-ID: <CAOQ4uxjZAU=rKK3qFUZOp+=0EJ9j9BbMAUAwkAoN7kOCC4B8_Q@mail.gmail.com>
-Subject: Re: DEBUG_RWSEMS warning from thaw_super()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2ynxx7vuy2woa7ea"
+Content-Disposition: inline
+In-Reply-To: <20180514115933.GH18312@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 2:51 PM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 05/14, Amir Goldstein wrote:
->>
->> On Mon, May 14, 2018 at 12:50 PM, Jan Kara <jack@suse.cz> wrote:
->> > On Sun 13-05-18 18:04:04, Oleg Nesterov wrote:
->> >> On 05/13, Amir Goldstein wrote:
->> >> >
->> >> > Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
->> >> > warning below after filesystem freeze/thaw.
->> >> >
->> >> > This is a case where one process acquires a bunch of rwsem
->> >> > and another process releases them.
->> >> >
->> >> > To convey this use case to lockdep, freeze_super() calls
->> >> > lockdep_sb_freeze_release() on exit and thaw_super()
->> >> > calls lockdep_sb_freeze_acquire() on entry.
->> >>
->> >> This was already discussed, but I forgot the result...
->> >>
->> >> So once again, why we can't simply update percpu_rwsem_acquire() ?
->> >> Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
->> >> but CONFIG_DEBUG_RWSEMS explains the purpose better.
->> >
->> > Yeah, what you suggests seems reasonable to me. So feel free to add:
->> >
->> > Acked-by: Jan Kara <jack@suse.cz>
->> >
->>
->> How about this version? A bit more prudent and also addresses the
->> TODO in commit 55cc156505f2 ("percpu-rwsem: introduce
->> percpu_rwsem_release() and percpu_rwsem_acquire()")
->
-> Well, to me this looks like unnecessary overcomplication...
->
-> In any case the patch looks technically wrong, afaics
-> rwsem_can_spin_on_owner() will crash if it hits owner == RWSEM_USER_OWNED.
->
 
-Fair enough. I can drop RWSEM_USER_OWNED.
-Do you think I should keep percpu_rwsem_{set,clear}_owner()
-helpers?
+--2ynxx7vuy2woa7ea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Amir.
+On Mon, May 14, 2018 at 01:59:33PM +0200, Thierry Reding wrote:
+> On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
+> > Nothing prevents I2C clients to access I2C while Tegra's driver is being
+> > suspended, this results in -EBUSY error returned to the clients and that
+> > may have unfortunate consequences. In particular this causes problems
+> > for the TPS6586x MFD driver which emits hundreds of "failed to read
+> > interrupt status" error messages on resume from suspend. This happens if
+> > TPS6586X is used to wake system from suspend by the expired RTC alarm
+> > timer because TPS6586X is an I2C device driver and its IRQ handler reads
+> > the status register while Tegra's I2C driver is suspended, i.e. just af=
+ter
+> > kernel enabled IRQ's during of resume-from-suspend process.
+> >=20
+> > Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
+> > performs HW reset. That seems was also not entirely correct because mov=
+ing
+> > tegra_i2c_resume to an earlier stage of resume-from-suspend process cau=
+ses
+> > I2C transfer to fail in the case of TPS6586X. It is fine to remove the
+> > HW-reinitialization for now because it should be only needed in a case =
+of
+> > using lowest power-mode during suspend, which upstream kernel doesn't
+> > support.
+> >=20
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > Cc: <stable@vger.kernel.org>
+> > ---
+> >  drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
+> >  1 file changed, 33 deletions(-)
+>=20
+> Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
+> me like a workaround of some sort that may not be needed if clients have
+> proper suspend/resume implementations. Even without suspend/resume
+> support in client drivers, the driver core should resume devices in the
+> right order (I2C adapter before any of the clients), so I don't see any
+> cases where the is_suspended logic would be useful.
 
-> Oleg.
->
->> diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
->> index b1f37a89e368..323d5ba6a60d 100644
->> --- a/include/linux/percpu-rwsem.h
->> +++ b/include/linux/percpu-rwsem.h
->> @@ -127,13 +127,16 @@ extern void percpu_free_rwsem(struct
->> percpu_rw_semaphore *);
->>  #define percpu_rwsem_assert_held(sem)                          \
->>         lockdep_assert_held(&(sem)->rw_sem)
->>
->> +extern void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem);
->> +extern void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem);
->> +
->>  static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
->>                                         bool read, unsigned long ip)
->>  {
->>         lock_release(&sem->rw_sem.dep_map, 1, ip);
->>  #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
->>         if (!read)
->> -               sem->rw_sem.owner = NULL;
->> +               percpu_rwsem_set_user_owned(sem);
->>  #endif
->>  }
->>
->> @@ -141,6 +144,10 @@ static inline void percpu_rwsem_acquire(struct
->> percpu_rw_semaphore *sem,
->>                                         bool read, unsigned long ip)
->>  {
->>         lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
->> +#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
->> +       if (!read)
->> +               percpu_rwsem_set_owner(sem);
->> +#endif
->>  }
->>
->>  #endif
->> diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
->> index 883cf1b92d90..afa65915541f 100644
->> --- a/kernel/locking/percpu-rwsem.c
->> +++ b/kernel/locking/percpu-rwsem.c
->> @@ -7,6 +7,8 @@
->>  #include <linux/sched.h>
->>  #include <linux/errno.h>
->>
->> +#include "rwsem.h"
->> +
->>  int __percpu_init_rwsem(struct percpu_rw_semaphore *sem,
->>                         const char *name, struct lock_class_key *rwsem_key)
->>  {
->> @@ -190,3 +192,17 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
->>         rcu_sync_exit(&sem->rss);
->>  }
->>  EXPORT_SYMBOL_GPL(percpu_up_write);
->> +
->> +void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem)
->> +{
->> +       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != current);
->> +       sem->rw_sem.owner = RWSEM_USER_OWNED;
->> +}
->> +EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
->> +
->> +void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem)
->> +{
->> +       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != RWSEM_USER_OWNED);
->> +       sem->rw_sem.owner = current;
->> +}
->> +EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
->> diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
->> index a17cba8d94bb..f686596ec033 100644
->> --- a/kernel/locking/rwsem.h
->> +++ b/kernel/locking/rwsem.h
->> @@ -11,10 +11,14 @@
->>   *  2) RWSEM_READER_OWNED
->>   *     - lock is currently or previously owned by readers (lock is free
->>   *       or not set by owner yet)
->> - *  3) Other non-zero value
->> + *  3) RWSEM_USER_OWNED
->> + *     - lock is currently owned by userspace (previously owned by writer
->> + *       and should be handed over to a new writer before being freed)
->> + *  4) Other non-zero value
->>   *     - a writer owns the lock
->>   */
->>  #define RWSEM_READER_OWNED     ((struct task_struct *)1UL)
->> +#define RWSEM_USER_OWNED       ((struct task_struct *)2UL)
->>
->>  #ifdef CONFIG_DEBUG_RWSEMS
->>  # define DEBUG_RWSEMS_WARN_ON(c)       DEBUG_LOCKS_WARN_ON(c)
->
+Thanks for this patch!
+
+This is closely related to a discussion we started recently:
+
+"I2C PM overhaul needed?" https://lkml.org/lkml/2018/5/4/329
+
+And part of the outcome is that the I2C core should print a WARN if an
+I2C client tries to use I2C at suspend_noirq state or later. This is to
+remove logic like in this patch from all I2C host drivers and to make it
+more explicit that those I2C client drivers need their PM fixed.
+
+
+--2ynxx7vuy2woa7ea
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr5fpgACgkQFA3kzBSg
+KbYFrBAAn1F3FNYeGHatTstgcxn4+7xs+TjTvIGu785vi2AO1DEz24ZPqZYMcbMY
+XySLG1l9vfFoDXQXsTTKf6N17NAc4eNH6xUK8ic09OC6tIqe+kAm/uAF0czlZTC9
+a2ls7vykyfqzFmod7ilmwfpuDnozu3SL3VD/0hQ9kdS3/LtYW4SE+0p6dhi1UHLC
+ANZyPB/7yG3meGoqoQzFD579Ebzfqbn8C670L+hPsJUN4UQ4srQGOmfrBSzg/qsi
+LkPFTTkkXWYhkXltLY7fnUpc7FEpnLETk/Mdfz8gfXqem5VVq82JTz/nIwPM4wYS
+waGWcMdnhwBfXbM0TE31uGZ2Wq5Mz/spbyBYTSgjrLOkNb24pecpTAbvjRNVoJk4
+aRRX7Wkxw9xKWQy6uGxVq2Kmyq0X8+gTeUZEbDBvIBbrVJnF6r/bVuFEZLTGHLWi
+iniVcpSdTpLnYPybMKTxSqsbcbWGrVmwA2VvB7zCP98pd/8JRwruR4bnev0DaCXn
+fr+o9D7h22Ayus7jwxZfKdcdQ7AwcgNKfFcBmgH92DalVyHXjucWnbeN7diq9vAm
+wZJbhK4+ctSXbFGLpiNhB0MLmxDeU3sPc/v88dGTLuZ1FctDKwb4nYWastuYj3A0
++zcGRJbVvFgOji7m4FA+kVPNrTKYl+VVAJMXoahOsIAH3E+gArQ=
+=n9jK
+-----END PGP SIGNATURE-----
+
+--2ynxx7vuy2woa7ea--
