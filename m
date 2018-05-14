@@ -1,50 +1,71 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AB8JxZoyjUMdj8xcFk1JaYwMMjOi9m62IhuIQltH4a0qG55XO3eL2jouy+n26vg1B7Xgm57h8wap
-ARC-Seal: i=1; a=rsa-sha256; t=1525923581; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AB8JxZotlC2dueJ8EzWp7jlt+cuRhcWKK4Cu3+F+6I2NAdfTGeyvTylmr1gIjEwhQxGEr6FMBuCY
+ARC-Seal: i=1; a=rsa-sha256; t=1526301493; cv=none;
         d=google.com; s=arc-20160816;
-        b=wuXXl3zyxmO7UI3qgOFMo9412EfzisslymCyyc1niFImmHw2F4IFGNpqvAklO9wtnp
-         Jh4+9nmw/UWwEzq7TaUwfg30B+hbilaWbJdOlvN8NwxtMgW3f5eo4Pchpel6m25EMrJz
-         xr0Kd4VqniRV2gnnJDQdBntA+nIUzVKzt3/wRT853qSvwUXCiyAWV8uQrHSk4CjCX2a+
-         AMy0qmk7LH/MbYT4fvI6aZwr1NxjjX9ZyMZk592GNbMvCdZgwzpTLsY6C9Ubf68Lb3CV
-         EJiarOr8yYG65i+/Do/LWz+cYbgaGrhd1iwcUBUCpHL9/iP1OsXINCKpsGhFPzKAvA++
-         0hlA==
+        b=i1YVhz8v5lfUo59uDdJ6R6Wo/ZCNoHW7xoZlRnHNUM5qydCVwGelWLlpGDFEg8U/QU
+         pu4u60sgI/aSd6imyoMqyiqucNHz10Cp3Uf2x/JmfX/4B9uO3PtB3QaRBVfEG0LlIcSL
+         J6q+XCu2tpNS3gg4aiFG5UbK7VRU5kV8Vp1t/qkVMQjx4xAFn7g2iEFaeCNaas7LFTKv
+         DpH6/K+MeSH5i9TA85bq9UzkSahILJqGAQ3Ki20VK0SYi2XE8Oh0qZOedH0fJJ9fW+E1
+         kS0roQbC5l8RxdIjAou2h+pYxiEk3Do1rC9NGQC8SYhGzt/eBZiQNAtGIr4d5lp4ESk6
+         2d4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=wveKsZEOfx8HStfcNqzeGbrrLvp41ngTET1wGW6fnA0=;
-        b=dj8tIKZRBX2C3sIqE+h+iXpEIUy4JY3uRMkOW5JoCK3HFKbPZcxUeaVzk/CSR1lI0C
-         pBXIW0UpDgbpMmOtCdRAUmMntIa97aU3hJNHLwXy434n4d8G3CRojioXKtGJG08+l0wt
-         QsFU2UVQq2tGFi4wW65lyW8ztYFFUhmsqCRUVoUlvBVj4rG659cpS5X7mvnMRZozHuQG
-         BPGLL+5FRveGJp6bpv9yQuF/ccz9kXSmP8rJkJ1LDPQBrEtmh4d1ISU9PMP7B4yky3IF
-         iIad8Z2aPofXyKbwmhYh1px8iR6DhhJkwp28B/a7AIhlv3dvGA7Xj3tLV4cJUaely6M3
-         cGOQ==
+        bh=/Dxxdhyh5hZ9ZHPU8ohj28MKqGk4tfjSkJ9szsLHDTY=;
+        b=VuULTzaBgEXic+fzcTZbtj6LpfDgRjjrRtHTkDNX8lsH/10nm9DvJId5HTMkY48heX
+         frTrQpCi3KSCNAqJWyoU7mvtXleQp8ovgilFinOI6/nIxwJ+Yewj3IdqaUo1KmwhFhLL
+         3oP9LLumvoDqJtgdLPj614KT/rfXSS8B5MBcgqPQBAt4JHfnKvLORmQ2ol2zzM87ZiAm
+         S1viwPwKu98Fo/IIgPdvRrnV584jAbR3wWICb7VjpLngTyel/FhzGhkJZqBRjT7aYlrg
+         BpmUKIMgDJyzFIbK1xk1wyFVEzXc/0Klvi3BmKRuQbinm7msZzJe9NlZelpSrk7Mquc0
+         mEvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Laight <David.Laight@ACULAB.COM>,
-	damian <damian.tometzki@icloud.com>
-Subject: [PATCH 1/3] objtool: Fix "noreturn" detection for recursive sibling calls
-Date: Wed,  9 May 2018 22:39:14 -0500
-Message-Id: <7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1525923412.git.jpoimboe@redhat.com>
-References: <cover.1525923412.git.jpoimboe@redhat.com>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Mon, 14 May 2018 05:37:19 -0700
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-0afd0d9e0e7879d666c1df2fa1bea4d8716909fe@git.kernel.org>
+Cc: tglx@linutronix.de, torvalds@linux-foundation.org, mingo@kernel.org,
+        rdunlap@infradead.org, hpa@zytor.com, damian.tometzki@icloud.com,
+        David.Laight@ACULAB.COM, arnd@arndb.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
+        gregkh@linuxfoundation.org
+Reply-To: rdunlap@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        torvalds@linux-foundation.org, damian.tometzki@icloud.com,
+        David.Laight@ACULAB.COM, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, peterz@infradead.org, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com
+In-Reply-To: <7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com>
+References: <7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] objtool: Fix "noreturn" detection for recursive
+ sibling calls
+Git-Commit-ID: 0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600046845024948230?=
-X-GMAIL-MSGID: =?utf-8?q?1600046845024948230?=
+X-GMAIL-MSGID: =?utf-8?q?1600443115547442431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Commit-ID:  0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
+Gitweb:     https://git.kernel.org/tip/0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Wed, 9 May 2018 22:39:14 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 14 May 2018 10:20:53 +0200
+
+objtool: Fix "noreturn" detection for recursive sibling calls
 
 Objtool has some crude logic for detecting static "noreturn" functions
 (aka "dead ends").  This is necessary for being able to correctly follow
@@ -62,6 +83,16 @@ non-dead-ends.
 
 Reported-and-tested-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: damian <damian.tometzki@icloud.com>
+Link: http://lkml.kernel.org/r/7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
  tools/objtool/check.c | 10 +++++++---
  1 file changed, 7 insertions(+), 3 deletions(-)
@@ -87,5 +118,3 @@ index 5409f6f6c48d..264522d4e4af 100644
  				}
  
  				return __dead_end_function(file, dest_func,
--- 
-2.17.0
