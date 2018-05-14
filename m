@@ -1,37 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqWaspGwuib7jqzN3YHTQ5mBve2bA40HWBKSoR0eX2SuoG8IWrxcUDjm7ihV3EQM/cMMp0z
-ARC-Seal: i=1; a=rsa-sha256; t=1526281181; cv=none;
+X-Google-Smtp-Source: AB8JxZrL1U7JMVTT9iIj3M/lK8Ey3jFZrLvnXR9Wt3jorqFl6qemvb2Hqhw52NkwvGtCtiMc2FnM
+ARC-Seal: i=1; a=rsa-sha256; t=1526281178; cv=none;
         d=google.com; s=arc-20160816;
-        b=oVUkmbvwzwFuUOz2GNXuBx8xXYpUySsA7UmjJ1eMd6lsgYGhi3mXtBuRzng13/KhZ3
-         VoIXWzI0uZlqAPsq4p2JkTgG6WNFO0kIRaaGGAn8ROXB71OIVVDeuYujooCxFPmDyzHV
-         KaCCy7+kjl6iSShN/aCE8+T5Lu5M+DNq7WLGJwRF35dRmO49a1KDclVZ7CXAmjYitmJI
-         d+5TWch2zBAQqDp8pMJpmLRV5xw2kjWegPevV9MJckZphFUFZ+1HkkLXm6ei5uBtBpsZ
-         uJCUYK1EwYevhTsf+oVTK8/3EDP8l9azg+vB/U/M3T41GML0JlaAwAtQrNxLLkAIJGdM
-         b9nA==
+        b=VU+xbroVVqRV4KyqTLbX76ftVjLzeu1MqHNyPWoPVJ5rwubWBSQNVfFQJIOTxZqcoc
+         Ln68XVIe8DSjkkYbT+0WNIx23mZ9/yDrg+Bmt+qiIknvhOLnqzXUNIm7EuzOVSgWmNfO
+         qOYXtBj9uxNaEfrsFUGiIhCH86QJ54mrbzjDX6T14JsWANRfLV5vYYKDkMGeYTiew4V7
+         EawWC5XJX5uMNkQJ96jlTASRvQz9WxdMpvYgqZxp9M1P5Eh0bzhRVa/NdQTw77kWkPEz
+         TbzSKx4T+QQzwTWkNFPi7zBKGsrJzEm0o1VocdA0BGwffaycp3Opyt123ZhO/sQpqRp5
+         KeBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=qpsQSRRae3to0hOdQjIuaPRhx9KoSE6LJC26lgw1zn0=;
-        b=Wdhj7NoHRDRZlWakhkFERyUfEcA4b8Im9W5mhS1n0PL3l+NoqCH8iynQE1WhuDuFbf
-         uaLy6nBwo4n2ktX6iaeHttrmNAu9I4g/352zERdnZUlK/orsF0PWM+G/jihfuN1t2sPy
-         zj0NEUIsosis4ko+oGO55xXsyGM9GVRn3l1Noxylhy0aRllXNK0sPux1KJV/DOIEwrI4
-         LrEz8Qh3h63QutzPaUFknK4Hb+lBsfq4kCxfLgJRnW6/1yh8jqIXU+hSnOr+ASdZnK+E
-         LBCl7ZnUMKbKz9Fxaa2aTMCRIF4O2Vk6FJ98eERtivTESdrrdqrkHx5tV27W0j/NjCqH
-         5Few==
+        bh=/FayC7eT9zsv2eMsmIb9yQS/plCVP4QEQKqx4l6Rfco=;
+        b=CMFqE3JBm0Q6NWa09FyzwKUOaJfCwTKRTIj5Ya7b0fhL56ZG/wQ9sg+a8vqcqHu6sO
+         lYEZ4QtpKw8Q/BqIXeqPHJ4yYPsRtdqQ1vcHdk9QeQ49uMaKBZqKbrLhgK4Y7tg2oJB9
+         r3pXY3eZytLOsI1p/EFSdXG8zos3I+VBY4IkDB198rAkQ6ii+JJscl7ouwzulwryHRx/
+         RRxTTS3VJHcdLC9dR2cjCnnYu7zBLN98EMhm7XEuekQVjXMVpkCjdwpB8FRzD7CqaExw
+         u1fFxV+7GCtr9CCtfw3ub/ZiVqYYJpverRW74BkSx54+kg0jVejNmUSmayyNKA+cdhW2
+         2n8g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NZeBDsBr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=q0a4NdGT;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NZeBDsBr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=q0a4NdGT;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Lyude Paul <lyude@redhat.com>,
+	Karol Herbst <kherbst@redhat.com>,
 	Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.16 47/72] drm/nouveau/ttm: dont dereference nvbo::cli, it can outlive client
-Date: Mon, 14 May 2018 08:49:04 +0200
-Message-Id: <20180514064825.195750929@linuxfoundation.org>
+Subject: [PATCH 4.16 46/72] drm/nouveau: Fix deadlock in nv50_mstm_register_connector()
+Date: Mon, 14 May 2018 08:49:03 +0200
+Message-Id: <20180514064825.155592631@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421816026035020?=
-X-GMAIL-MSGID: =?utf-8?q?1600421816026035020?=
+X-GMAIL-THRID: =?utf-8?q?1600421616584396678?=
+X-GMAIL-MSGID: =?utf-8?q?1600421812717466697?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,69 +52,213 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 0d5a03c3d9254813ca76d7886ff9ed76a0aea545 upstream.
+commit 352672db857290ab5b0e2b6a99c414f92bee024c upstream.
 
-Potentially responsible for some random OOPSes.
+Currently; we're grabbing all of the modesetting locks before adding MST
+connectors to fbdev. This isn't actually necessary, and causes a
+deadlock as well:
 
+======================================================
+WARNING: possible circular locking dependency detected
+4.17.0-rc3Lyude-Test+ #1 Tainted: G           O
+------------------------------------------------------
+kworker/1:0/18 is trying to acquire lock:
+00000000c832f62d (&helper->lock){+.+.}, at: drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+
+but task is already holding lock:
+00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (crtc_ww_class_mutex){+.+.}:
+       ww_mutex_lock+0x43/0x80
+       drm_modeset_lock+0x71/0x130 [drm]
+       drm_helper_probe_single_connector_modes+0x7d/0x6b0 [drm_kms_helper]
+       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
+       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
+       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
+       nouveau_drm_load+0x173/0x7e0 [nouveau]
+       drm_dev_register+0x134/0x1c0 [drm]
+       drm_get_pci_dev+0x8e/0x160 [drm]
+       nouveau_drm_probe+0x1a9/0x230 [nouveau]
+       pci_device_probe+0xcd/0x150
+       driver_probe_device+0x30b/0x480
+       __driver_attach+0xbc/0xe0
+       bus_for_each_dev+0x67/0x90
+       bus_add_driver+0x164/0x260
+       driver_register+0x57/0xc0
+       do_one_initcall+0x4d/0x323
+       do_init_module+0x5b/0x1f8
+       load_module+0x20e5/0x2ac0
+       __do_sys_finit_module+0xb7/0xd0
+       do_syscall_64+0x60/0x1b0
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #2 (crtc_ww_class_acquire){+.+.}:
+       drm_helper_probe_single_connector_modes+0x58/0x6b0 [drm_kms_helper]
+       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
+       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
+       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
+       nouveau_drm_load+0x173/0x7e0 [nouveau]
+       drm_dev_register+0x134/0x1c0 [drm]
+       drm_get_pci_dev+0x8e/0x160 [drm]
+       nouveau_drm_probe+0x1a9/0x230 [nouveau]
+       pci_device_probe+0xcd/0x150
+       driver_probe_device+0x30b/0x480
+       __driver_attach+0xbc/0xe0
+       bus_for_each_dev+0x67/0x90
+       bus_add_driver+0x164/0x260
+       driver_register+0x57/0xc0
+       do_one_initcall+0x4d/0x323
+       do_init_module+0x5b/0x1f8
+       load_module+0x20e5/0x2ac0
+       __do_sys_finit_module+0xb7/0xd0
+       do_syscall_64+0x60/0x1b0
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (&dev->mode_config.mutex){+.+.}:
+       drm_setup_crtcs+0x10c/0xc90 [drm_kms_helper]
+       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
+       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
+       nouveau_drm_load+0x173/0x7e0 [nouveau]
+       drm_dev_register+0x134/0x1c0 [drm]
+       drm_get_pci_dev+0x8e/0x160 [drm]
+       nouveau_drm_probe+0x1a9/0x230 [nouveau]
+       pci_device_probe+0xcd/0x150
+       driver_probe_device+0x30b/0x480
+       __driver_attach+0xbc/0xe0
+       bus_for_each_dev+0x67/0x90
+       bus_add_driver+0x164/0x260
+       driver_register+0x57/0xc0
+       do_one_initcall+0x4d/0x323
+       do_init_module+0x5b/0x1f8
+       load_module+0x20e5/0x2ac0
+       __do_sys_finit_module+0xb7/0xd0
+       do_syscall_64+0x60/0x1b0
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&helper->lock){+.+.}:
+       __mutex_lock+0x70/0x9d0
+       drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+       nv50_mstm_register_connector+0x2c/0x50 [nouveau]
+       drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
+       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
+       drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
+       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
+       drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
+       drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
+       process_one_work+0x20d/0x650
+       worker_thread+0x3a/0x390
+       kthread+0x11e/0x140
+       ret_from_fork+0x3a/0x50
+
+other info that might help us debug this:
+Chain exists of:
+  &helper->lock --> crtc_ww_class_acquire --> crtc_ww_class_mutex
+ Possible unsafe locking scenario:
+       CPU0                    CPU1
+       ----                    ----
+  lock(crtc_ww_class_mutex);
+                               lock(crtc_ww_class_acquire);
+                               lock(crtc_ww_class_mutex);
+  lock(&helper->lock);
+
+ *** DEADLOCK ***
+5 locks held by kworker/1:0/18:
+ #0: 000000004a05cd50 ((wq_completion)"events_long"){+.+.}, at: process_one_work+0x187/0x650
+ #1: 00000000601c11d1 ((work_completion)(&mgr->work)){+.+.}, at: process_one_work+0x187/0x650
+ #2: 00000000586ca0df (&dev->mode_config.mutex){+.+.}, at: drm_modeset_lock_all+0x3a/0x1b0 [drm]
+ #3: 00000000d3ca0ffa (crtc_ww_class_acquire){+.+.}, at: drm_modeset_lock_all+0x44/0x1b0 [drm]
+ #4: 00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
+
+stack backtrace:
+CPU: 1 PID: 18 Comm: kworker/1:0 Tainted: G           O      4.17.0-rc3Lyude-Test+ #1
+Hardware name: Gateway FX6840/FX6840, BIOS P01-A3         05/17/2010
+Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
+Call Trace:
+ dump_stack+0x85/0xcb
+ print_circular_bug.isra.38+0x1ce/0x1db
+ __lock_acquire+0x128f/0x1350
+ ? lock_acquire+0x9f/0x200
+ ? lock_acquire+0x9f/0x200
+ ? __ww_mutex_lock.constprop.13+0x8f/0x1000
+ lock_acquire+0x9f/0x200
+ ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+ ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+ __mutex_lock+0x70/0x9d0
+ ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+ ? ww_mutex_lock+0x43/0x80
+ ? _cond_resched+0x15/0x30
+ ? ww_mutex_lock+0x43/0x80
+ ? drm_modeset_lock+0xb2/0x130 [drm]
+ ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+ drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+ nv50_mstm_register_connector+0x2c/0x50 [nouveau]
+ drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
+ ? mark_held_locks+0x50/0x80
+ ? kfree+0xcf/0x2a0
+ ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
+ ? trace_hardirqs_on_caller+0xed/0x180
+ ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
+ drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
+ drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
+ ? nouveau_connector_aux_xfer+0x7c/0xb0 [nouveau]
+ ? find_held_lock+0x2d/0x90
+ ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
+ ? __mutex_unlock_slowpath+0x3b/0x280
+ ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
+ drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
+ drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
+ drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
+ process_one_work+0x20d/0x650
+ worker_thread+0x3a/0x390
+ ? process_one_work+0x650/0x650
+ kthread+0x11e/0x140
+ ? kthread_create_worker_on_cpu+0x50/0x50
+ ret_from_fork+0x3a/0x50
+
+Taking example from i915, the only time we need to hold any modesetting
+locks is when changing the port on the mstc, and in that case we only
+need to hold the connection mutex.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Karol Herbst <kherbst@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-Cc: stable@vger.kernel.org [v4.15+]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_bo.c  |    1 -
- drivers/gpu/drm/nouveau/nouveau_bo.h  |    2 --
- drivers/gpu/drm/nouveau/nouveau_ttm.c |    6 +++---
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/nouveau/nv50_display.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-@@ -214,7 +214,6 @@ nouveau_bo_new(struct nouveau_cli *cli,
- 	INIT_LIST_HEAD(&nvbo->entry);
- 	INIT_LIST_HEAD(&nvbo->vma_list);
- 	nvbo->bo.bdev = &drm->ttm.bdev;
--	nvbo->cli = cli;
+--- a/drivers/gpu/drm/nouveau/nv50_display.c
++++ b/drivers/gpu/drm/nouveau/nv50_display.c
+@@ -3272,10 +3272,11 @@ nv50_mstm_destroy_connector(struct drm_d
  
- 	/* This is confusing, and doesn't actually mean we want an uncached
- 	 * mapping, but is what NOUVEAU_GEM_DOMAIN_COHERENT gets translated
---- a/drivers/gpu/drm/nouveau/nouveau_bo.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.h
-@@ -26,8 +26,6 @@ struct nouveau_bo {
+ 	drm_connector_unregister(&mstc->connector);
  
- 	struct list_head vma_list;
+-	drm_modeset_lock_all(drm->dev);
+ 	drm_fb_helper_remove_one_connector(&drm->fbcon->helper, &mstc->connector);
++
++	drm_modeset_lock(&drm->dev->mode_config.connection_mutex, NULL);
+ 	mstc->port = NULL;
+-	drm_modeset_unlock_all(drm->dev);
++	drm_modeset_unlock(&drm->dev->mode_config.connection_mutex);
  
--	struct nouveau_cli *cli;
--
- 	unsigned contig:1;
- 	unsigned page:5;
- 	unsigned kind:8;
---- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
-@@ -63,7 +63,7 @@ nouveau_vram_manager_new(struct ttm_mem_
- 			 struct ttm_mem_reg *reg)
+ 	drm_connector_unreference(&mstc->connector);
+ }
+@@ -3285,9 +3286,7 @@ nv50_mstm_register_connector(struct drm_
  {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
--	struct nouveau_drm *drm = nvbo->cli->drm;
-+	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
- 	struct nouveau_mem *mem;
- 	int ret;
+ 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
  
-@@ -103,7 +103,7 @@ nouveau_gart_manager_new(struct ttm_mem_
- 			 struct ttm_mem_reg *reg)
- {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
--	struct nouveau_drm *drm = nvbo->cli->drm;
-+	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
- 	struct nouveau_mem *mem;
- 	int ret;
+-	drm_modeset_lock_all(drm->dev);
+ 	drm_fb_helper_add_one_connector(&drm->fbcon->helper, connector);
+-	drm_modeset_unlock_all(drm->dev);
  
-@@ -131,7 +131,7 @@ nv04_gart_manager_new(struct ttm_mem_typ
- 		      struct ttm_mem_reg *reg)
- {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
--	struct nouveau_drm *drm = nvbo->cli->drm;
-+	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
- 	struct nouveau_mem *mem;
- 	int ret;
- 
+ 	drm_connector_register(connector);
+ }
