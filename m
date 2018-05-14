@@ -1,127 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeENJQf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:16:35 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40669 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeENJQd (ORCPT
+        id S1752204AbeENJST (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:18:19 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43849 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeENJSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:16:33 -0400
-X-Google-Smtp-Source: AB8JxZra0gkEYr3deUJOPGSLdmczTRkLdcL4pDy2eJu64ppor3ts90SR9BNlNFKQvM6eBEnj7K3wbD2RO6IX2YstZUg=
+        Mon, 14 May 2018 05:18:18 -0400
+Subject: Re: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
+To: Anson Huang <anson.huang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+References: <1526285359-17978-1-git-send-email-Anson.Huang@nxp.com>
+ <5a449fc0-4d3e-c7c7-0e9a-43efb4b909cf@pengutronix.de>
+ <AM3PR04MB1315B6320421800346313075F59C0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+From: Bastian Stender <bst@pengutronix.de>
+Message-ID: <1c485c97-f667-7cbd-a6a0-bc74d8aa0918@pengutronix.de>
+Date: Mon, 14 May 2018 11:18:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180511131509.16275-2-patrick.bellasi@arm.com>
-References: <20180511131509.16275-1-patrick.bellasi@arm.com> <20180511131509.16275-2-patrick.bellasi@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 14 May 2018 11:16:12 +0200
-Message-ID: <CAKfTPtD3GJH3LLp6tpYoz7Uf0eXb-ZLMbGdQdRUsAgczZMr47g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] sched/cpufreq: always consider blocked FAIR utilization
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <AM3PR04MB1315B6320421800346313075F59C0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:7c06:bf8a:7e39:c388
+X-SA-Exim-Mail-From: bst@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
-
-On 11 May 2018 at 15:15, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> Since the refactoring introduced by:
->
->    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
->
-> we aggregate FAIR utilization only if this class has runnable tasks.
-> This was mainly due to avoid the risk to stay on an high frequency just
-> because of the blocked utilization of a CPU not being properly decayed
-> while the CPU was idle.
->
-> However, since:
->
->    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
->
-> the FAIR blocked utilization is properly decayed also for IDLE CPUs.
->
-> This allows us to use the FAIR blocked utilization as a safe mechanism
-> to gracefully reduce the frequency only if no FAIR tasks show up on a
-> CPU for a reasonable period of time.
->
-> Moreover, we also reduce the frequency drops of CPUs running periodic
-> tasks which, depending on the task periodicity and the time required
-> for a frequency switch, was increasing the chances to introduce some
-> undesirable performance variations.
->
-> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-
-With this patch, I can't see the spurious OPP changes that I was seeing before
-
-FWIW
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+On 05/14/2018 11:10 AM, Anson Huang wrote:
+>> -----Original Message-----
+>> From: Bastian Stender [mailto:bst@pengutronix.de]
+>> Sent: Monday, May 14, 2018 4:37 PM
+>> To: Anson Huang <anson.huang@nxp.com>; shawnguo@kernel.org;
+>> s.hauer@pengutronix.de; kernel@pengutronix.de; Fabio Estevam
+>> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+>> rjw@rjwysocki.net; viresh.kumar@linaro.org; rui.zhang@intel.com;
+>> edubezval@gmail.com
+>> Cc: devicetree@vger.kernel.org; linux-pm@vger.kernel.org; dl-linux-imx
+>> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
+>> linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
+>>
+>> Hi,
+>>
+>> On 05/14/2018 10:09 AM, Anson Huang wrote:
+>>> This patch removes cpufreq cooling registration in thermal .probe
+>>> function, cpufreq cooling should be done in cpufreq driver when it is
+>>> ready.
+>>>
+>>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>>
+>> It seems you are trying to achieve something similar to a patch I sent a couple
+>> of month ago. Unfortunately I did not have the time to rework it yet:
+>>
+>>
+>> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
+>> work.kernel.org%2Fpatch%2F10059085%2F&data=02%7C01%7Canson.huang
+>> %40nxp.com%7C179da3635cab4a14deef08d5b975ecb6%7C686ea1d3bc2b4c6f
+>> a92cd99c5c301635%7C0%7C0%7C636618838508978629&sdata=BcQ9tc%2BE
+>> CZ%2Fk4AsZFxshgmvSsPg7eRN0ASzP8LO8yBI%3D&reserved=0
+>>
+>> Some of the comments might apply here too.
+> 
+> Ah, I did NOT notice this thread, so how to proceed, will you 
+> continue to finish your patch? If yes, then you can just ignore/skip
+> my patch, thanks.
+Yes, I will revisit the patch in a couple of weeks. It would be nice to
+get your feedback then.
 
 Regards,
-Vincent
+Bastian	
 
->
-> ---
->
-> Changes in v2:
->  - add "Acked-by" Viresh tag
-> ---
->  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index d2c6083304b4..a74d05160e66 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
->  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  {
->         struct rq *rq = cpu_rq(sg_cpu->cpu);
-> -       unsigned long util;
->
-> -       if (rq->rt.rt_nr_running) {
-> -               util = sg_cpu->max;
-> -       } else {
-> -               util = sg_cpu->util_dl;
-> -               if (rq->cfs.h_nr_running)
-> -                       util += sg_cpu->util_cfs;
-> -       }
-> +       if (rq->rt.rt_nr_running)
-> +               return sg_cpu->max;
->
->         /*
-> +        * Utilization required by DEADLINE must always be granted while, for
-> +        * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-> +        * gracefully reduce the frequency when no tasks show up for longer
-> +        * periods of time.
-> +        *
->          * Ideally we would like to set util_dl as min/guaranteed freq and
->          * util_cfs + util_dl as requested freq. However, cpufreq is not yet
->          * ready for such an interface. So, we only do the latter for now.
->          */
-> -       return min(util, sg_cpu->max);
-> +       return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
->  }
->
->  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-> --
-> 2.15.1
->
+-- 
+Pengutronix e.K.
+Industrial Linux Solutions
+http://www.pengutronix.de/
+Peiner Str. 6-8, 31137 Hildesheim, Germany
+Amtsgericht Hildesheim, HRA 2686
