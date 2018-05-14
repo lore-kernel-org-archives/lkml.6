@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281303-2-12624552500896894726
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526281275-2-15608630891594077591
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES sk.us-asciienro, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281302; b=bYJs/OncXsQpM4lM9Ect94iYXn7vR6hfEg/NUTviW/l7MirqMA
-    lTVjFzqSXTH2n5Zpy4LhFBGPMScmFirjb9rzDc0ptX8paKzWReOtPF87jrYURagW
-    CHXoBIKN5sPE3ZEvxsl4TDuhG+VSPu18rVnee19jFOSe6su1EnUYpNcMM+oMCric
-    cHpgqScKRGyZdryCVqHSWEO0r4hYEpWr+ceAM5VeNGMYt+MKBLOjEwvZrw+vMSlK
-    1A1+hFqFeq8w+OqyeDewr78DCbEqMmUCJLkAdti1PsjVfuAuki94Lch/jfY04RSR
-    9qBl9ZPIdVFXDTQyeWBw6WvIzDYNErfugzig==
+    1526281274; b=XUnp+uAy+ZSE8BIoTVy+RsU6O+lys1hTOPEcfMJc9fYA/0+edo
+    ANrCGSjvS6/pw1n0LGHeoaatSXwx66S7YIU4WAi9Nx7J+mCBC20JY8FfzGALfiiI
+    nEdSJQ0BKycabBpKQabH7osQ36dfSI+wCA+4NCXj3HTenq3mSsao9QpgXNmP9Wm5
+    t+Uvikw4YAVqOzI9HZ278A3+SecmDaU9ClOjdrho8aMkpnrpMyziy3Pkc85PKG9l
+    xqUCPM4qJ10mUM+QH0nzU1c8PhEcQLEAp8oYZNKg5fZszCu0XeQqdMpzp7Wdui0y
+    5VYSiRqLb/BN03EmdnpwySSA7e7M5unTS+SA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281302; bh=2ZDcaj6i85fAGSQS5weI1aRZBtFM27
-    aoo4vjnBz8YFE=; b=Sw1GA1osGX5wGEJLCw+V89j18GFy58UEyWoN3LisKC9nto
-    hCny4LsBHn9eRm9P3VG+qbowKMD+UPdeFcisqNbtwXms/e+5xooqz0VlDh6himz2
-    5wY8GYHrN9fvRrVyfIp8/67gRTQHFxxgI/OUyHdqQTvQvwXGU5ubPqx9HtRJ9s0o
-    pu1j4k7DrH/FSraCnmLfwmVU/BX74P4UAdC+Z/hNNu0dFOP4yLTcjCsoxDaA5zyh
-    b6pjteG+iH5QRf09KMdHng1TXzCzetd4E4rhoftDW27uVU38gt5o3R19ajXnrU57
-    MdRZxg8JYp2vb3wHZiMj45hkZb7aMaqYsCMeGUDQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281274; bh=oqAeyXRDxEANN8nucxLUoYAdCJPxtm
+    wtMJ+vSiSOK5o=; b=BwvwltuufWV7qR5J6m8LktLyOrD0Z89jYWUIXEeWQi7rcH
+    md5/3djWH31giiLjdz31aRVK8BnYXRYSn+qkr/iJlbp7mLSkKd48entG3WNQ5MBp
+    B5Av9hS7purx22WXwFA4VeI0+gnG+bUbEC6K4K+QHvFSbwZlL9qVHyRPKmwJtAGo
+    5GrUpTGXanceRjAYDQU7cE0wdXRmYYEC2JZ/9H7qaeel4EnajpeGW9k8hCrhT7/D
+    YrJpyP30NA3Mf91SxpqL3k6jQnhZvFaK01jP1cXRt3SO3+/RVIfslvYtpYeAnrcL
+    Z3hwfTawJ4kuqJ4ZxMAp9AbjVkpkozUQnfeNjTMQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=z3Uinh4H x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=EmZmfCrB x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=z3Uinh4H x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=EmZmfCrB x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +65,35 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK1IIPxP59LolI6Z6OoY8xD4HzkrxIvCUf0q/xe77tmiyM4Wo9l6AJ1LW9Ih3EP7x+wy9966J3eBaxcww/163RuGYB00y+CScowsFdzRWSL9iDiOQDtN
-    URrgluCNojWLEKNBzcH2NWLYh7hPwrHdjZBJGpmnIq0NLcuqmb73bR/ONw1YemGNey9dQOe80i1X/Dk84bV3Oa5NO5nZ7eqO/xrsib8U+misHzZtJMEsI7vZ
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfP9rWiiicxVajhucpJJ3lqXXnQolIrb3d+2f19xrbwl3fBopPeFUu2D+H54DpTKsfmKD2XDyJsaHC4fvzvUeK+tiUgjFDrIeGKTIB5g85QYPayD0XiUR
+    g1SBG8CbmbmNlMq6DkgNsa9YR5nNB40jHA2qzrM81y8xVEZVibt20k9Ouz2Zqo99NsLUCs8nV2I9d6XK8cZvSN7hvc29bo5tbuk2JmByZK7cWybA633uNl2K
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=LT5gBJ_D0TxnlAYQ6SQA:9
-    a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=z6gsHLkEAAAA:8
+    a=_jlGtV7tAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=0K4TOLIue6-ewoCfQ-cA:9
+    a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=d-OLMTCWyvARjPbQ-enb:22 a=nlm17XC03S6CtCLSeiRr:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754257AbeENHBO (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:01:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37712 "EHLO mail.kernel.org"
+        id S1754231AbeENHA7 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932148AbeENHAy (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:54 -0400
+        id S1754173AbeENHA4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.16 40/72] mtd: rawnand: marvell: fix command xtype in BCH write hook
-Date: Mon, 14 May 2018 08:48:57 +0200
-Message-Id: <20180514064824.897731811@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Wool <vitaly.vul@sony.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Oleksiy.Avramchenko@sony.com,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 31/72] z3fold: fix reclaim lock-ups
+Date: Mon, 14 May 2018 08:48:48 +0200
+Message-Id: <20180514064824.416301035@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -106,63 +111,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Vitaly Wool <vitalywool@gmail.com>
 
-commit a2ee41fd953e7c3ff6c55a3038c80354d191a318 upstream.
+commit 6098d7e136692f9c6e23ae362c62ec822343e4d5 upstream.
 
-One layout supported by the Marvell NAND controller supports NAND pages
-of 2048 bytes, all handled in one single chunk when using BCH with a
-strength of 4-bit per 512 bytes. In this case, instead of the generic
-XTYPE_WRITE_DISPATCH/XTYPE_LAST_NAKED_RW couple, the controller expects
-to receive XTYPE_MONOLITHIC_RW.
+Do not try to optimize in-page object layout while the page is under
+reclaim.  This fixes lock-ups on reclaim and improves reclaim
+performance at the same time.
 
-This fixes problems at boot like:
-
-[    1.315475] Scanning device for bad blocks
-[    3.203108] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    3.209564] nand_bbt: error while writing BBT block -110
-[    4.243106] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    5.283106] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    5.289562] nand_bbt: error -110 while marking block 2047 bad
-[    6.323106] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    6.329559] nand_bbt: error while writing BBT block -110
-[    7.363106] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    8.403105] marvell-nfc f10d0000.flash: Timeout waiting for RB signal
-[    8.409559] nand_bbt: error -110 while marking block 2046 bad
-...
-
-Fixes: 02f26ecf8c772 ("mtd: nand: add reworked Marvell NAND controller driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+[akpm@linux-foundation.org: coding-style fixes]
+Link: http://lkml.kernel.org/r/20180430125800.444cae9706489f412ad12621@gmail.com
+Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Cc: <Oleksiy.Avramchenko@sony.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/marvell_nand.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/z3fold.c |   42 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
---- a/drivers/mtd/nand/marvell_nand.c
-+++ b/drivers/mtd/nand/marvell_nand.c
-@@ -1404,6 +1404,7 @@ marvell_nfc_hw_ecc_bch_write_chunk(struc
- 	struct marvell_nand_chip *marvell_nand = to_marvell_nand(chip);
- 	struct marvell_nfc *nfc = to_marvell_nfc(chip->controller);
- 	const struct marvell_hw_ecc_layout *lt = to_marvell_nand(chip)->layout;
-+	u32 xtype;
- 	int ret;
- 	struct marvell_nfc_op nfc_op = {
- 		.ndcb[0] = NDCB0_CMD_TYPE(TYPE_WRITE) | NDCB0_LEN_OVRD,
-@@ -1419,7 +1420,12 @@ marvell_nfc_hw_ecc_bch_write_chunk(struc
- 	 * last naked write.
- 	 */
- 	if (chunk == 0) {
--		nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_WRITE_DISPATCH) |
-+		if (lt->nchunks == 1)
-+			xtype = XTYPE_MONOLITHIC_RW;
-+		else
-+			xtype = XTYPE_WRITE_DISPATCH;
-+
-+		nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(xtype) |
- 				  NDCB0_ADDR_CYC(marvell_nand->addr_cyc) |
- 				  NDCB0_CMD1(NAND_CMD_SEQIN);
- 		nfc_op.ndcb[1] |= NDCB1_ADDRS_PAGE(page);
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -144,7 +144,8 @@ enum z3fold_page_flags {
+ 	PAGE_HEADLESS = 0,
+ 	MIDDLE_CHUNK_MAPPED,
+ 	NEEDS_COMPACTING,
+-	PAGE_STALE
++	PAGE_STALE,
++	UNDER_RECLAIM
+ };
+ 
+ /*****************
+@@ -173,6 +174,7 @@ static struct z3fold_header *init_z3fold
+ 	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
+ 	clear_bit(NEEDS_COMPACTING, &page->private);
+ 	clear_bit(PAGE_STALE, &page->private);
++	clear_bit(UNDER_RECLAIM, &page->private);
+ 
+ 	spin_lock_init(&zhdr->page_lock);
+ 	kref_init(&zhdr->refcount);
+@@ -748,6 +750,10 @@ static void z3fold_free(struct z3fold_po
+ 		atomic64_dec(&pool->pages_nr);
+ 		return;
+ 	}
++	if (test_bit(UNDER_RECLAIM, &page->private)) {
++		z3fold_page_unlock(zhdr);
++		return;
++	}
+ 	if (test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
+ 		z3fold_page_unlock(zhdr);
+ 		return;
+@@ -832,6 +838,8 @@ static int z3fold_reclaim_page(struct z3
+ 			kref_get(&zhdr->refcount);
+ 			list_del_init(&zhdr->buddy);
+ 			zhdr->cpu = -1;
++			set_bit(UNDER_RECLAIM, &page->private);
++			break;
+ 		}
+ 
+ 		list_del_init(&page->lru);
+@@ -879,25 +887,35 @@ static int z3fold_reclaim_page(struct z3
+ 				goto next;
+ 		}
+ next:
+-		spin_lock(&pool->lock);
+ 		if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 			if (ret == 0) {
+-				spin_unlock(&pool->lock);
+ 				free_z3fold_page(page);
+ 				return 0;
+ 			}
+-		} else if (kref_put(&zhdr->refcount, release_z3fold_page)) {
+-			atomic64_dec(&pool->pages_nr);
++			spin_lock(&pool->lock);
++			list_add(&page->lru, &pool->lru);
++			spin_unlock(&pool->lock);
++		} else {
++			z3fold_page_lock(zhdr);
++			clear_bit(UNDER_RECLAIM, &page->private);
++			if (kref_put(&zhdr->refcount,
++					release_z3fold_page_locked)) {
++				atomic64_dec(&pool->pages_nr);
++				return 0;
++			}
++			/*
++			 * if we are here, the page is still not completely
++			 * free. Take the global pool lock then to be able
++			 * to add it back to the lru list
++			 */
++			spin_lock(&pool->lock);
++			list_add(&page->lru, &pool->lru);
+ 			spin_unlock(&pool->lock);
+-			return 0;
++			z3fold_page_unlock(zhdr);
+ 		}
+ 
+-		/*
+-		 * Add to the beginning of LRU.
+-		 * Pool lock has to be kept here to ensure the page has
+-		 * not already been released
+-		 */
+-		list_add(&page->lru, &pool->lru);
++		/* We started off locked to we need to lock the pool back */
++		spin_lock(&pool->lock);
+ 	}
+ 	spin_unlock(&pool->lock);
+ 	return -EAGAIN;
