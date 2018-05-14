@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932678AbeENOcR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:32:17 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35073 "EHLO
+        id S932571AbeENOcP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:32:15 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35046 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753963AbeENO1l (ORCPT
+        with ESMTP id S1753959AbeENO1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 10:27:41 -0400
 From: Vlad Buslov <vladbu@mellanox.com>
@@ -15,9 +15,9 @@ Cc: davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
         edumazet@google.com, vladbu@mellanox.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
         coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: [PATCH 05/14] net: sched: always take reference to action
-Date: Mon, 14 May 2018 17:27:06 +0300
-Message-Id: <1526308035-12484-6-git-send-email-vladbu@mellanox.com>
+Subject: [PATCH 03/14] net: sched: add 'delete' function to action ops
+Date: Mon, 14 May 2018 17:27:04 +0300
+Message-Id: <1526308035-12484-4-git-send-email-vladbu@mellanox.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
 References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
@@ -25,84 +25,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without rtnl lock protection it is no longer safe to use pointer to tc
-action without holding reference to it. (it can be destroyed concurrently)
-
-Remove unsafe action idr lookup function. Instead of it, implement safe tcf
-idr check function that atomically looks up action in idr and increments
-its reference and bind counters.
-
-Implement both action search and check using new safe function.
+Extend action ops with 'delete' function. Each action type to implement its
+own delete function that doesn't depend on rtnl lock.
 
 Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
 ---
- net/sched/act_api.c | 38 ++++++++++++++++----------------------
- 1 file changed, 16 insertions(+), 22 deletions(-)
+ include/net/act_api.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 1331beb..9459cce 100644
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -284,44 +284,38 @@ int tcf_generic_walker(struct tc_action_net *tn, struct sk_buff *skb,
- }
- EXPORT_SYMBOL(tcf_generic_walker);
+diff --git a/include/net/act_api.h b/include/net/act_api.h
+index e634014..73175a3 100644
+--- a/include/net/act_api.h
++++ b/include/net/act_api.h
+@@ -100,6 +100,7 @@ struct tc_action_ops {
+ 	void	(*stats_update)(struct tc_action *, u64, u32, u64);
+ 	size_t  (*get_fill_size)(const struct tc_action *act);
+ 	struct net_device *(*get_dev)(const struct tc_action *a);
++	int     (*delete)(struct net *net, u32 index);
+ };
  
--static struct tc_action *tcf_idr_lookup(u32 index, struct tcf_idrinfo *idrinfo)
-+bool __tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
-+		     int bind)
- {
--	struct tc_action *p = NULL;
-+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
-+	struct tc_action *p;
- 
- 	spin_lock_bh(&idrinfo->lock);
- 	p = idr_find(&idrinfo->action_idr, index);
-+	if (p) {
-+		refcount_inc(&p->tcfa_refcnt);
-+		if (bind)
-+			atomic_inc(&p->tcfa_bindcnt);
-+	}
- 	spin_unlock_bh(&idrinfo->lock);
- 
--	return p;
-+	if (p) {
-+		*a = p;
-+		return true;
-+	}
-+	return false;
- }
- 
- int tcf_idr_search(struct tc_action_net *tn, struct tc_action **a, u32 index)
- {
--	struct tcf_idrinfo *idrinfo = tn->idrinfo;
--	struct tc_action *p = tcf_idr_lookup(index, idrinfo);
--
--	if (p) {
--		*a = p;
--		return 1;
--	}
--	return 0;
-+	return __tcf_idr_check(tn, index, a, 0);
- }
- EXPORT_SYMBOL(tcf_idr_search);
- 
- bool tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
- 		   int bind)
- {
--	struct tcf_idrinfo *idrinfo = tn->idrinfo;
--	struct tc_action *p = tcf_idr_lookup(index, idrinfo);
--
--	if (index && p) {
--		if (bind)
--			atomic_inc(&p->tcfa_bindcnt);
--		refcount_inc(&p->tcfa_refcnt);
--		*a = p;
--		return true;
--	}
--	return false;
-+	return __tcf_idr_check(tn, index, a, bind);
- }
- EXPORT_SYMBOL(tcf_idr_check);
- 
+ struct tc_action_net {
 -- 
 2.7.5
