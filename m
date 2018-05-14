@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333157-2-9603804168794300783
+X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333154-2-20537180685893167
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -7,7 +7,7 @@ X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.00
   HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -15,37 +15,37 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526333156; b=STY9Ap4Mlk/WCUweJpCHNgY5jj1n3EJg/+WQ0TqoQ9ostZh73d
-    Nd1n8fW/foSunrjhXobk3q0S5GIx5TAoDCnWGuDBqxJADtVbm/wwJ3lk04jcZhQZ
-    4VGAzP8LXQJn9nVHvNSmJ0wsJPdyYJekJ2829bWukbSqmvoGv+ohyc3ZmMPpPfcX
-    gbwZTnio7SrbUtKc3Ue4hO4jp6t8wLimh7ABxrJA9yvvzcVnt7g1dR+PHeUUxTKW
-    7SB5yQkycleHNPvOnFnCriQtz883FrP3j2lrvUPIAevma9i2wu14WP6b4lYokBAD
-    lbkMd6aS7dfcWdL/GPNpVMgvLDTiNk1PPglQ==
+    1526333154; b=QPGbNXDKqmRXAYuHnWIzRKPs2MCoX/5zco/WZRVmm1NrcH5ONX
+    G/ITWB6lvQq8/l/roFeJn7aoiU2Frc8lzA4a5mZMivndXqK9ls52DcUMTRiQZdFb
+    sUAZPV/OhBRtaDtC+7nR0lFtJY60hp1qzcL8VcT1AVj6ah8fk03tqVOQFEJnUF1g
+    GV9Ko7egKzaY0FP5Ia01ynQk7PHnpUDKDvbnNjF4cANPjrBxVJ892Uuhye/aJKA4
+    UqGoC+VmY8B8duCCxOn7/oQIYrIiSvmcBYPs0VGefqUKQ9r9oXbVbBxRhxOKIaoQ
+    BNWUbG9ag8p/7Ds2tL2kFjAgifbRCWtdAcpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526333156; bh=f+wsP
-    ZyWSgtLmmXv5poe0WJyAjEfQ8/1NvfYq+r8l0c=; b=TL61viOuRRUnQ2hKufDfC
-    Z//f+jXzwTkkEjyF3pV76GrIEJjZqMoNBhi2JIMHbWlR/bCMralDq/MrHfV/V8Ii
-    WIYOcRatK+kRFJDV5GQJekr7P7kVktUovokl91l8KAgfw+AqGw6WVb+rFVuo6Z2/
-    4nmMMmH/9p+2zuT09hOlUNp9FGbubljnY6H7EL/NPsKsPqBNsPcs1viFfG+XzAuR
-    UaWfuKnSDIbxPdpVGp3Nrwux6iyjazdUXDpni3cLcz+WTVVKUHB3N+SZ+tWNB+Yi
-    Cvl12SNUCpov6Y6Qul1lbQnnurtTCTXY9Zl2hR3f6m8zOCaCuhNX7bl+vj2iOrUi
-    g==
+    :content-transfer-encoding:sender; s=fm2; t=1526333154; bh=cFkRi
+    CLLfyZmDa/osRC6tsrCz2Bw8yBjj5ih65gZSZ4=; b=X3JTkfHoHotn0E1emC+qk
+    tZ5oMg8GzIkQeamUFZwSP70tsVluEGYiAHqOt9jsZRiIERJl5+RtMzQf4R2d6JEx
+    Z4E1+Is8bg8s5drqQdf5YzoHDdnwdpSoS4qk8g2vZ7paIoeay/we/Pna0I0ecrF5
+    kXRWMDrtcDeZm7nphkbH7nx/4dyTSLpPcXxYRwBYtBvcLRfIeNmN13ZE/Jwwzxba
+    jN2594fX5Iqefi1bPjQAtqs6wjPaAxKBbQFpwtw202ctJdqGBn1jQTNeF1ePOXc7
+    mjWOdrllJe2B6JhoAYzu6crC3GIikCJyfnqfR4y9B+50wsPr1CbeBEj4Q7ism+ut
+    w==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=jt3M7spI x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=qS1JJ4SU x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=QAB0EkI0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    header.d=1e100.net header.i=@1e100.net header.b=eb9DJvmu;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
     header_is_org_domain=yes;
@@ -55,17 +55,17 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=jt3M7spI x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=qS1JJ4SU x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=QAB0EkI0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+      header.d=1e100.net header.i=@1e100.net header.b=eb9DJvmu;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
       header_is_org_domain=yes;
@@ -73,24 +73,24 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF4pAHYuHC6Ht0jU70C1WLIO8Ql0IEzQJzREYvLCyv6gJ+qbD1lW8LjHPl2hXDm80G/qTdYYKZU3tcu9KRfBEcD6FOWXvMjrz6QTNVeKcLri3hbF8r0W
-    5Jzr+TgwVBOTayLDXr8RisDYshxHFpCUfBthCAi8VEFpccizJTU5CcsO0TPR8MZ5Qx0AoraOhgS+jzR5XfH0JH1h6lrNeLYfDUgXndYXIca4AANNUoeA3/U+
-    bcFoESpehyrwNH17U0aEFw==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+X-CM-Envelope: MS4wfAn21NQSqL2FuQvvqkThjvLwu9EWCtGPYLssXorgtWFhZZeTErEUxcMdS2iVVicujTqn4j17ASXRciQJjRuW6C/ZtML8G0v+xcQXcSHHIyZLIA/QKahP
+    PLCOa2VfLe0i8T1Ys5wjqMybEye/k4OsUKTjqpSekQJIy5Esq+4/EV0Q8Cy0iZ9JCI8pl0LPLkpD23cu3LtxrLNrcVUhjCwDO7PkfFNlsLqMHiIFyLfKrYz6
+    Tc/gvXqhlkZdvGh80KCWwQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
     a=o_dtBaZDOvUA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=ndpnUl0PqxmXaaDuWOgA:9 a=CjuIK1q_8ugA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=Z2JSmM-jDJyjJ7RdTDcA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZqCDA+LSUX9JPhZKNhmN1hReyiw52RNoSTL7D+x8baF/O0lYh2CScXfJ5VXA2bHhmq7xlOQNg==
+X-Google-Smtp-Source: AB8JxZotSpu2ydmHQWp5+LNUy1ptoq9SLR5ux6cU2IA7lHQS/AkuB95n46MJ+Lj+4AEUa9pNXSUF7w==
 From: John Whitmore <johnfwhitmore@gmail.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 14/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
- corrected block comment style
-Date: Mon, 14 May 2018 22:24:21 +0100
-Message-Id: <20180514212434.17514-15-johnfwhitmore@gmail.com>
+Subject: [PATCH 26/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
+ Spelling correction in a comment
+Date: Mon, 14 May 2018 22:24:33 +0100
+Message-Id: <20180514212434.17514-27-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180514212434.17514-1-johnfwhitmore@gmail.com>
 References: <20180514212434.17514-1-johnfwhitmore@gmail.com>
@@ -116,52 +116,26 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Coding style edit to clear the checkpatch.pl warning:
-WARNING: Block comments use * on subsequent lines
+Spelling correction in comment: singal -> signal
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 34d319ed5cc5..3a636807226e 100644
+index f9d664890622..833b3574d155 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -721,7 +721,7 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
- 	*posRT2RTAgg++ = 0x4c;
- 	*posRT2RTAgg++ = 0x02;
- 	*posRT2RTAgg++ = 0x01;
--	*posRT2RTAgg = 0x10;//*posRT2RTAgg = 0x02;
-+	*posRT2RTAgg = 0x10;    // *posRT2RTAgg = 0x02;
+@@ -858,7 +858,7 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	// TODO: adjust our operational rate set  according to our channel bandwidth, STBC and Antenna number
  
- 	if (ieee->bSupportRemoteWakeUp)
- 		*posRT2RTAgg |= 0x08;//RT_HT_CAP_USE_WOW;
-@@ -731,16 +731,14 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
- #ifdef TODO
- #if (HAL_CODE_BASE == RTL8192 && DEV_BUS_TYPE == USB_INTERFACE)
- 	/*
--	//Emily. If it is required to Ask Realtek AP to send AMPDU during AES mode, enable this
--	   section of code.
--	if(IS_UNDER_11N_AES_MODE(Adapter))
--	{
--		posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
--	}else
--	{
--		posRT2RTAgg->Octet[5] &= 0xfb;
--	}
--	*/
-+	 * Emily. If it is required to Ask Realtek AP to send AMPDU during AES
-+	 * mode, enable this section of code.
-+	 *    if(IS_UNDER_11N_AES_MODE(Adapter)) {
-+	 *            posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
-+	 *    } else {
-+	 *            posRT2RTAgg->Octet[5] &= 0xfb;
-+	 *    }
-+	 */
+ 	// TODO: fill suggested rate adaptive rate index and give firmware info using Tx command packet
+-	// we also shall suggested the first start rate set according to our singal strength
++	// we also shall suggested the first start rate set according to our signal strength
+ 	HT_PickMCSRate(ieee, pOperateMCS);
  
- #else
- 	// Do Nothing
+ 	// For RTL819X, if pairwisekey = wep/tkip, we support only MCS0~7.
 -- 
 2.16.3
 
