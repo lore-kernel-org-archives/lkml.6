@@ -1,68 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753869AbeENOUH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:20:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58852 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752171AbeENOUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:20:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,400,1520924400";
-   d="scan'208";a="58476244"
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>
-Cc: Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
-Date: Mon, 14 May 2018 17:20:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753875AbeENOYD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:24:03 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:58231 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752359AbeENOYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:24:02 -0400
+X-Google-Smtp-Source: AB8JxZrr0x4w2itkWPpmmNg8zSbE2muCo0FB4zpsiNEMNauDbV/5vZNg23T16L2lpY8F47EzrrJtpsjvUgUCRqNUmT1rqJF5mGr3
 MIME-Version: 1.0
-In-Reply-To: <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Mon, 14 May 2018 07:24:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b759cf056c2b3c12@google.com>
+Subject: WARNING in arch_uprobe_analyze_insn
+From: syzbot <syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com>
+To: bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, oleg@redhat.com,
+        ricardo.neri-calderon@linux.intel.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 03:03 PM, Chris Chiu wrote:
-> Report from guys who can access scope. If i2c-sda-falling-time-ns=400ns
-> , HCNT increase to 117, the SCL high duration is 576ns as follows
-> https://pasteboard.co/HkwERvP.png
-> 
-> The original SCL high duration (HCNT = 105, 120MHz) is as follows
-> https://pasteboard.co/HkwFxgY.png
-> 
-> So the HCNT does affect but per this HCNT/LCNT value, just not 400kHz
-> as expected. Any suggestion?
-> 
-Thanks for measurements. I was sidetracked last week so I don't have yet 
-explanation why signals run faster than expected :-(
+Hello,
 
-Using 120 MHz SPT I2C clocks in commit b418bbff36dd ("mfd: intel-lpss: 
-Add Intel Cannonlake PCI IDs") is clearly wrong but before going to 133 
-MHz (which work for you but still runs too fast) I would like to find 
-explanation why it appears to be much higher.
+syzbot found the following crash on:
 
--- 
-Jarkko
+HEAD commit:    66e1c94db3cd Merge branch 'x86-pti-for-linus' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11817107800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
+dashboard link: https://syzkaller.appspot.com/bug?extid=30d675e3ca03c1c351e7
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=143d5417800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11178e97800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 insn_complete  
+arch/x86/include/asm/insn.h:147 [inline]
+WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 uprobe_init_insn  
+arch/x86/kernel/uprobes.c:296 [inline]
+WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296  
+arch_uprobe_analyze_insn+0x13d/0x15f0 arch/x86/kernel/uprobes.c:861
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 4511 Comm: syz-executor347 Not tainted 4.17.0-rc4+ #46
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:insn_complete arch/x86/include/asm/insn.h:147 [inline]
+RIP: 0010:uprobe_init_insn arch/x86/kernel/uprobes.c:296 [inline]
+RIP: 0010:arch_uprobe_analyze_insn+0x13d/0x15f0  
+arch/x86/kernel/uprobes.c:861
+RSP: 0018:ffff8801cf277510 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801cf277560 RCX: ffffffff876ccf2a
+RDX: 0000000000000004 RSI: ffffffff876ce6ab RDI: ffff8801cf27759c
+RBP: ffff8801cf277628 R08: ffff8801d8c0a5c0 R09: ffff8801cf277560
+R10: ffff8801d7ad81d0 R11: ffff8801cf2775af R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8801d7ad8080 R15: ffff8801cf277600
+  prepare_uprobe kernel/events/uprobes.c:610 [inline]
+  install_breakpoint.isra.21+0x710/0x830 kernel/events/uprobes.c:657
+  uprobe_mmap+0x6a0/0xcf0 kernel/events/uprobes.c:1089
+  mmap_region+0x5c8/0x1870 mm/mmap.c:1807
+  do_mmap+0xde2/0x1360 mm/mmap.c:1535
+  do_mmap_pgoff include/linux/mm.h:2237 [inline]
+  vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
+  ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1585
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43ff29
+RSP: 002b:00007ffc922a4898 EFLAGS: 00000212 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ff29
+RDX: 0000000000000000 RSI: 0000000000002000 RDI: 000000002000c000
+RBP: 00000000006ca018 R08: 0000000000000003 R09: 0000000000000000
+R10: 0000000000000012 R11: 0000000000000212 R12: 0000000000401850
+R13: 00000000004018e0 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
