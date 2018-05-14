@@ -1,72 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752122AbeENDWK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:22:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:58435 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751953AbeENDWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:22:09 -0400
-Message-ID: <1526268127.30369.21.camel@neuling.org>
-Subject: Re: [PATCH 2/2] powerpc: Enable ASYM_SMT on interleaved big-core
- systems
-From: Michael Neuling <mikey@neuling.org>
-To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 13:22:07 +1000
-In-Reply-To: <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com>
-References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
-         <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1752146AbeENDWg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:22:36 -0400
+Received: from regular1.263xmail.com ([211.150.99.140]:45038 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeENDWe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 23:22:34 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <d4cdcc293723a931ed76c93711d2038c>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
+        ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 00/13] add power domain support for Rockchip Socs
+Date: Mon, 14 May 2018 11:27:35 +0800
+Message-Id: <1526268455-9133-1-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-11 at 16:47 +0530, Gautham R. Shenoy wrote:
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-> 
-> Each of the SMT4 cores forming a fused-core are more or less
-> independent units. Thus when multiple tasks are scheduled to run on
-> the fused core, we get the best performance when the tasks are spread
-> across the pair of SMT4 cores.
-> 
-> Since the threads in the pair of SMT4 cores of an interleaved big-core
-> are numbered {0,2,4,6} and {1,3,5,7} respectively, enable ASYM_SMT on
-> such interleaved big-cores that will bias the load-balancing of tasks
-> on smaller numbered threads, which will automatically result in
-> spreading the tasks uniformly across the associated pair of SMT4
-> cores.
-> 
-> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-> ---
->  arch/powerpc/kernel/smp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index 9ca7148..0153f01 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1082,7 +1082,7 @@ static int powerpc_smt_flags(void)
->  {
->  	int flags = SD_SHARE_CPUCAPACITY | SD_SHARE_PKG_RESOURCES;
->  
-> -	if (cpu_has_feature(CPU_FTR_ASYM_SMT)) {
-> +	if (cpu_has_feature(CPU_FTR_ASYM_SMT) || has_interleaved_big_core) {
+add power domain support for RK3036/RK3128/RK3228/PX30 Soc.
+fix up the wrong value when set power domain up.
 
-Shouldn't we just set CPU_FTR_ASYM_SMT and leave this code unchanged?
+Change in V2:
+Fix up the commit message description and Assign author.
 
+Caesar Wang (3):
+  dt-bindings: power: add RK3036 SoCs header for power-domain
+  dt-bindings: add binding for rk3036 power domains
+  Soc: rockchip: power-domain: add power domain support for rk3036
 
->  		printk_once(KERN_INFO "Enabling Asymmetric SMT
-> scheduling\n");
->  		flags |= SD_ASYM_PACKING;
->  	}
+Elaine Zhang (6):
+  dt-bindings: power: add RK3128 SoCs header for power-domain
+  dt-bindings: add binding for rk3128 power domains
+  soc: rockchip: power-domain: add power domain support for rk3128
+  dt-bindings: power: add RK3228 SoCs header for power-domain
+  dt-bindings: add binding for rk3228 power domains
+  soc: rockchip: power-domain: add power domain support for rk3228
+
+Finley Xiao (4):
+  soc: rockchip: power-domain: Fix wrong value when power up pd
+  dt-bindings: power: add PX30 SoCs header for power-domain
+  dt-bindings: add binding for px30 power domains
+  soc: rockchip: power-domain: add power domain support for px30
+
+ .../bindings/soc/rockchip/power_domain.txt         |  12 +++
+ drivers/soc/rockchip/pm_domains.c                  | 116 ++++++++++++++++++++-
+ include/dt-bindings/power/px30-power.h             |  32 ++++++
+ include/dt-bindings/power/rk3036-power.h           |  27 +++++
+ include/dt-bindings/power/rk3128-power.h           |  28 +++++
+ include/dt-bindings/power/rk3228-power.h           |  26 +++++
+ 6 files changed, 240 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/power/px30-power.h
+ create mode 100644 include/dt-bindings/power/rk3036-power.h
+ create mode 100644 include/dt-bindings/power/rk3128-power.h
+ create mode 100644 include/dt-bindings/power/rk3228-power.h
+
+-- 
+1.9.1
