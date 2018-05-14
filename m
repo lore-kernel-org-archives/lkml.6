@@ -1,71 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeENJhe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:37:34 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50672 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752039AbeENJhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:37:32 -0400
-Date: Mon, 14 May 2018 11:37:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux Edac Mailing List <linux-edac@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v2] edac: fix skx_edac build error when ACPI_NFIT=m
-Message-ID: <20180514093703.GB23049@pd.tnic>
-References: <3af91354-8e19-d2af-1bba-ced8dce053f1@infradead.org>
+        id S1752338AbeENJjP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:39:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56526 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeENJjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:39:13 -0400
+Date: Mon, 14 May 2018 11:39:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Ingo Molnar <mingo@kernel.org>, Andre Wild <wild@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [bisected] 051f3ca02e46 "Introduce NUMA identity node sched
+ domain" breaks fake NUMA on s390
+Message-ID: <20180514093909.GO12217@hirez.programming.kicks-ass.net>
+References: <20180512100233.GB3738@osiris>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3af91354-8e19-d2af-1bba-ced8dce053f1@infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180512100233.GB3738@osiris>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 10:35:44AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, May 12, 2018 at 12:02:33PM +0200, Heiko Carstens wrote:
+> Hello,
 > 
-> Prevent build error when CONFIG_ACPI_NFIT=m and CONFIG_EDAC_SKX=y
-> by limiting EDAC_SKX based on how ACPI_NFIT is set.
+> Andre Wild reported that fake NUMA doesn't work on s390 anymore. Doesn't
+> work means it crashed for Andre, or it is in an endless loop within
+> init_sched_groups_capacity() for me (sg != sd->groups is always true).
 > 
-> Fixes this build error:
-> drivers/edac/skx_edac.o: In function `get_nvdimm_info':
-> ../drivers/edac/skx_edac.c:399: undefined reference to `nfit_get_smbios_id'
+> I could reproduce this with a very simple setup with only two nodes, where
+> each node has only one CPU. This allowed me to bisect it down to commit
+> 051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain").
 > 
-> Fixes: 58ca9ac1463d ("EDAC, skx_edac: Detect non-volatile DIMMs")
+> With that commit reverted the system comes up again and the scheduling
+> domains look like this:
 > 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/edac/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
+> [    0.148592] smp: Bringing up secondary CPUs ...
+> [    0.148984] smp: Brought up 2 nodes, 2 CPUs
+> [    0.149097] CPU0 attaching sched-domain(s):
+> [    0.149099]  domain-0: span=0-1 level=NUMA
+> [    0.149101]   groups: 0:{ span=0 }, 1:{ span=1 }
+> [    0.149106] CPU1 attaching sched-domain(s):
+> [    0.149107]  domain-0: span=0-1 level=NUMA
+> [    0.149108]   groups: 1:{ span=1 }, 0:{ span=0 }
+> [    0.149111] span: 0-1 (max cpu_capacity = 1024)
 > 
-> v2: add comment in Kconfig file
-> 
-> --- lnx-417-rc4.orig/drivers/edac/Kconfig
-> +++ lnx-417-rc4/drivers/edac/Kconfig
-> @@ -232,6 +232,7 @@ config EDAC_SBRIDGE
->  config EDAC_SKX
->  	tristate "Intel Skylake server Integrated MC"
->  	depends on PCI && X86_64 && X86_MCE_INTEL && PCI_MMCONFIG
-> +	depends on ACPI_NFIT || !ACPI_NFIT # if ACPI_NFIT=m, EDAC_SKX can't be y
->  	select DMI
->  	help
->  	  Support for error detection and correction the Intel
---
+> Any idea what's going wrong?
 
-Applied, thanks.
+Not yet; still trying to decipher your fake nume implementation.
 
--- 
-Regards/Gruss,
-    Boris.
+But meanwhile; could you provide me with:
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+$ cat /sys/devices/system/node/node*/distance
+$ cat /sys/devices/system/node/node*/cpulist
