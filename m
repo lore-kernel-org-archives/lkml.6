@@ -1,122 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753230AbeEOQd6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:33:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35408 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeEOQd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:33:57 -0400
-Date: Tue, 15 May 2018 17:33:52 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/18] arm64: move sve_user_{enable, disable} to
- <asm/fpsimd.h>
-Message-ID: <20180515163352.sl7sfaswv4hsktl7@lakrids.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-7-mark.rutland@arm.com>
- <20180514110649.GC7753@e103592.cambridge.arm.com>
- <20180515103936.v5ytofdq3qqtsomn@lakrids.cambridge.arm.com>
- <20180515121921.GN7753@e103592.cambridge.arm.com>
+        id S1753995AbeEOQfW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:35:22 -0400
+Received: from mga03.intel.com ([134.134.136.65]:47973 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750810AbeEOQfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:35:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="224446122"
+Date: Tue, 15 May 2018 09:35:20 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/15] x86/split_lock: Handle #AC exception for split
+ lock in kernel mode
+Message-ID: <20180515163519.GA24474@agluck-desk>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+ <1526323945-211107-4-git-send-email-fenghua.yu@intel.com>
+ <03909bf6-2dc5-f5e4-d6bc-a4ebaf20709d@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515121921.GN7753@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <03909bf6-2dc5-f5e4-d6bc-a4ebaf20709d@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 01:19:26PM +0100, Dave Martin wrote:
-> On Tue, May 15, 2018 at 11:39:36AM +0100, Mark Rutland wrote:
-> > On Mon, May 14, 2018 at 12:06:50PM +0100, Dave Martin wrote:
-> > > On Mon, May 14, 2018 at 10:46:28AM +0100, Mark Rutland wrote:
-> > > > +static inline void sve_user_disable(void)
-> > > > +{
-> > > > +	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
-> > > > +}
-> > > > +
-> > > > +static inline void sve_user_enable(void)
-> > > > +{
-> > > > +	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
-> > > > +}
-> > > > +
-> > > >  /*
-> > > >   * Probing and setup functions.
-> > > >   * Calls to these functions must be serialised with one another.
-> > > > @@ -107,6 +119,9 @@ static inline int sve_get_current_vl(void)
-> > > >  	return -EINVAL;
-> > > >  }
-> > > >  
-> > > > +static inline void sve_user_disable(void) { }
-> > > > +static inline void sve_user_enable(void) { }
-> > > > +
-> > > 
-> > > Alternatively, just move the full definitions outside the #ifdef
-> > > CONFIG_ARM64_SVE.
-> > 
-> > Can do, though I was trying to keep the exsting pattern with empty
-> > inlines for the !CONFIG_ARM64_SVE case.
+On Tue, May 15, 2018 at 08:51:24AM -0700, Dave Hansen wrote:
+> > +	pr_info_ratelimited("Alignment check for split lock at %lx\n", address);
 > 
-> There isn't really a pattern.  I tried to avoid dummy versions where
-> there's no real reason to have them.  I don't _think_ they're really
-> needed here, unless I missed something.  Did you get build failures
-> without them?
-
-I need *some* definition so that sve_user_reset() in the syscall path
-can compile without ifdeferry. 
-
-In sve_user_reset() I first check system_supports_sve(), which checks
-IS_ENABLED(CONFIG_ARM64_SVE), so the call should be optimised away when
-!CONFIG_ARM64_SVE, but I need a prototype regardless.
-
-> > > All calls to these should be shadowed by an if
-> > > (system_supports_sve()) in any case, and setting/clearing ZEN_EL0EN
-> > > in the CPACR_EL1 ought to be harmless now that the meaning of these
-> > > bits architecturally committed.
-> > > 
-> > > Ideally we would have a BUG_ON(!system_supports_sve()) in those
-> > > functions, but we won't won't to pay the cost in a production kernel.
-> > 
-> > Earlier I'd put BUILD_BUG() in the body for the !CONFIG_ARM64_SVE case,
-> > to catch that kind of thing -- I could restore that.
+> This is a potential KASLR bypass, I believe.  We shouldn't be printing
+> raw kernel addresses.
 > 
-> IIUC:
-> 
-> 	if (0) {
-> 		BUILD_BUG_ON(1);
-> 	}
-> 
-> can still fire, in which case it's futile checking for CONFIG_ARM64_SVE
-> in most of the SVE support code.
+> We have some nice printk's for page faults that give you kernel symbols.
+>  Could you copy one of those?
 
-We already rely on BUILD_BUG() not firing in paths that can be trivially
-optimized away. e.g. in the cmpxchg code.
- 
-> > > >  static inline void sve_init_vq_map(void) { }
-> > > >  static inline void sve_update_vq_map(void) { }
-> > > >  static inline int sve_verify_vq_map(void) { return 0; }
-> > > > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> > > > index 088940387a4d..79a81c7d85c6 100644
-> > > > --- a/arch/arm64/kernel/fpsimd.c
-> > > > +++ b/arch/arm64/kernel/fpsimd.c
-> > > > @@ -159,7 +159,6 @@ static void sve_free(struct task_struct *task)
-> > > >  	__sve_free(task);
-> > > >  }
-> > > >  
-> > > > -
-> > > 
-> > > Hmmm, Ack.  Check for conflicts with the KVM FPSIMD rework [1] (though
-> > > trivial).
-> > 
-> > I'll assume that Ack stands regardless. :)
-> 
-> Actually, I was just commenting on the deleted blank line... 
+It's not really all that useful to print the address of the split lock
+itself. It's probably in something that was kmalloc()'d. Users will
+probably want to see the address of the instruction so they know which
+function to go and debug.  Print that with %pF
 
-Ah. I've restored that now.
-
-Thanks,
-Mark.
+-Tony
