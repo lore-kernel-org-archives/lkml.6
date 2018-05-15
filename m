@@ -1,100 +1,94 @@
-Return-Path: <ulf.hansson@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525264294; cv=none;
+Return-Path: <sfr@canb.auug.org.au>
+X-Google-Smtp-Source: AB8JxZpGjk71Vu/Zx4NP3Fl0mfDw3ccyMVT0YvJ7weDbiFfA6Y5TaW4rhrRls3n4sO72BEfyg867
+ARC-Seal: i=1; a=rsa-sha256; t=1526343438; cv=none;
         d=google.com; s=arc-20160816;
-        b=CqOb89bbZbSwXXspnOzejGuZb2zrwej4NfYYF4ZBg1EdFbWxMssEkLQYTsWVzR8f/0
-         q/KpPP8CKc8LfpGzJquOZ63JEiCGv0weIk1n001dMRaIO7jvJXPi0SzO4O9HVL+PiK57
-         suF1YKrj4y6W0HBYGoXmaOaAsgVW3n8RPbshk1EMPapD7gv7zP+2FKmVTa8Bj7hwvULl
-         08kNIthwQWTZ18iqMjw95kfB9ESzwsD15fQ4jqrSUka7gePfbn24hpagdo0Gg0LFncRQ
-         V1ENH4kitVhUoG70He8LvCtI6RZnYp7FLnKCYba/6bZT2EmQ4ZQhNXjVOV6Qttlx2eOR
-         p/mQ==
+        b=L/8ReyBreo2Z/oqApomLMCtPWK37SHPwB6weEaHrtrNbY+Q42kKeKX4IldTiWfi1Qq
+         m+wSo9Fmov1XGlsm+r+DK2iXM63usn+a0LiwolwdcBeKZPDTsyvrNvg0y+aNaimnTMpL
+         uw7FZpMz6U+ktKqn3wg8137i+8PunGwpfAlmlebgkncoGWpTHIkjIGcbqLFGVXh8p+U7
+         DKmB+ivyQ/1s8UnGcT4yyAZIC2BLwLpegwJZncVLWCoRYqBOQLiXAKfWGYxEFoTckgG5
+         /mExcVxeZqQvdc76EhIkHFLAQVPDPWfr+BCnH5B3z2xVZwtZRPepAwp8A57RXIkUfQ1n
+         R+6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=xjuCVMqjVWcjkStmvKCyAsxTTK6QAWfkK5gmdzjzdz4=;
-        b=adzsdZRfj9T0TMFXUdYFZ12kDvB+GszUx3s2JdlDHbrfIq/milR4a6sKN3bYjDZOuF
-         2Du+gLPnbtkrDI0zaCg/yH5EmfulelxFX+Cm4wuJpocJ4w+dsKktJIEUGptn+d8DbjTi
-         OWHs70xKuSz5V9yrJ3QtFy0fNma47c62r59UlUYXfznbAR9CH2NIihoX5YrBhhFvuBf2
-         kAiDRYxZu852qlZQWJUMWAgRPQ2jmFG46IbKy7r1bOtin0vq3E5knNqcgl+7WV+2KkgI
-         BqCdEg/TdCcTmzDd4rKVL+EMGdIbNTIu2NlpQBhO5z73Hj8KjaVsHpaH/3yJhMBbtx8J
-         IG5w==
+        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
+         :date:dkim-signature:arc-authentication-results;
+        bh=8F2Qve68V0vFI1ejJLU7RywRttkBXqK7rPhl8uZhurM=;
+        b=HvlX90CQtHzg2eWr2mYLMAnPcxBFoLkTmiVxX3jFLNVPh1+FSR9f6EUtqc0Le4ONII
+         uXAFydb3gzb92hWgJf+2PyJfFwBpqmqffU2NSEWaXAJbrayMTb2tAK3rI9thih2eIIMP
+         XeCJPUDPdaVGdx87BTTSF16t8khnasvzscRnqUiqGbfNa+ooHwaOWYJUbVi0Sxhewrdz
+         kMB4wU4XMonx7b5eTbmkeZAs+ul22DFYhB/SPsREwKEzDHkxzTXXhWOzt22JpdXTY6C1
+         cXyRocYADi+ZhbgXfMBXYiHgCW87dHkMElGsWWIRgdWbrYvdsnnu5b3+Auf1+yeC/doo
+         uiHA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=kbnZod7x;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=D5yJjpfS;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 203.11.71.1 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=kbnZod7x;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoW3YJDs3SqYquCm7PVcvJEVfnY1NLrgJy2psaRUYcu5tY1aQvQCl1UNPs6lr6JLHfGHka0Nn7cFOrIxHBQeTg=
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=D5yJjpfS;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 203.11.71.1 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 15 May 2018 10:17:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, syzbot
+ <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ gregkh@linuxfoundation.org, tj@kernel.org
+Subject: Re: general protection fault in kernfs_kill_sb (2)
+Message-ID: <20180515101712.366c0624@canb.auug.org.au>
+In-Reply-To: <20180514040415.GD30522@ZenIV.linux.org.uk>
+References: <14892403-d680-dc5d-1927-bc4a279514fb@I-love.SAKURA.ne.jp>
+	<20180514024726.GB30522@ZenIV.linux.org.uk>
+	<201805140320.w4E3KG2o056158@www262.sakura.ne.jp>
+	<20180514040415.GD30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
-References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 2 May 2018 14:31:33 +0200
-Message-ID: <CAPDyKFrUmNyMQ9Aqgwg-Ncf08fYgAqaY_MckvxqsrUq7mr-LQg@mail.gmail.com>
-Subject: Re: [PATCH 00/11] PM / Domains: Fixup error paths with dev_pm_domain_attach()
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux PM <linux-pm@vger.kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Mark Brown <broonie@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dJnsP3VONjtL+M36zJw8hlU"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598798215227519391?=
-X-GMAIL-MSGID: =?utf-8?q?1599355533613212057?=
+X-GMAIL-THRID: =?utf-8?q?1600278456456605720?=
+X-GMAIL-MSGID: =?utf-8?q?1600487097206622623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 26 April 2018 at 10:52, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> While I was on working adding support for multiple PM domains to genpd, I
-> stumbled over several problems in the error path related to
-> dev_pm_domain_attach(). Hence, I decided to fix these problems first, which is
-> what this series intends to address.
->
-> There first patch is material for stable, as it fixes a real bug in genpd,
-> while the rest may be considered as improvement of the error paths when devices
-> fails to be attached to their PM domains.
->
-> I am seeking acks from subsystem maintainers and suggest with funnel the hole
-> series through Rafael's linux-pm tree, unless there are objections to that of
-> course.
->
-> Ulf Hansson (11):
->   PM / Domains: Fix error path during attach in genpd
->   PM / Domains: Drop comment in genpd about legacy Samsung DT binding
->   PM / Domains: Drop redundant code in genpd while attaching devices
->   PM / Domains: Check for existing PM domain in dev_pm_domain_attach()
->   PM / Domains: Allow a better error handling of dev_pm_domain_attach()
->   amba: Respect all error codes from dev_pm_domain_attach()
->   driver core: Respect all error codes from dev_pm_domain_attach()
->   i2c: Respect all error codes from dev_pm_domain_attach()
->   mmc: sdio: Respect all error codes from dev_pm_domain_attach()
->   soundwire: Respect all error codes from dev_pm_domain_attach()
->   spi: Respect all error codes from dev_pm_domain_attach()
->
->  drivers/acpi/device_pm.c     |  9 +++------
->  drivers/amba/bus.c           |  4 ++--
->  drivers/base/platform.c      | 17 ++++++++---------
->  drivers/base/power/common.c  | 10 +++++++---
->  drivers/base/power/domain.c  | 45 +++++++++++++++-----------------------------
->  drivers/i2c/i2c-core-base.c  |  2 +-
->  drivers/mmc/core/sdio_bus.c  |  2 +-
->  drivers/soundwire/bus_type.c | 15 +++++++--------
->  drivers/spi/spi.c            | 11 ++++++-----
->  include/linux/acpi.h         |  2 +-
->  include/linux/pm_domain.h    |  2 +-
->  11 files changed, 52 insertions(+), 67 deletions(-)
+--Sig_/dJnsP3VONjtL+M36zJw8hlU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Rafael,
+Hi Al,
 
-I understand if you are busy so this is not a ping. :-)
+On Mon, 14 May 2018 05:04:15 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>
+> On Mon, May 14, 2018 at 12:20:16PM +0900, Tetsuo Handa wrote:
+>=20
+> > But there remains a refcount bug because deactivate_locked_super() from
+> > kernfs_mount_ns() triggers kobj_ns_drop() from sysfs_kill_sb() via
+> > sb->kill_sb() when kobj_ns_drop() is always called by sysfs_mount()
+> > if kernfs_mount_ns() returned an error. =20
+>=20
+> Trivial:
+>=20
+> unfuck sysfs_mount()
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-However, perhaps I can simplify by sending you a PR with these!?
+I noticed this turn up in linux-next today.  Can I ask that you please
+add an actual commit message to it before sending it on to Linus.
+--=20
+Cheers,
+Stephen Rothwell
 
-Kind regards
-Uffe
+--Sig_/dJnsP3VONjtL+M36zJw8hlU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6JwgACgkQAVBC80lX
+0GwogQf+KjYWMWOMO/ULDvpyFBf1wFB2wbi3hwXzNaFyY891h+iTd91usMrzg/YL
+7yKB0UbNo7LHAL2sunDoYOAP05X48HacHA2Tl0vJicrd6VuTMOAnztucqkixbL+k
+krAn/4bfOSP470/gozNDY+czzTjW3ofX/6YKIMKxgzRP67K1ylrhfVkm/oN6zza8
+wegMHvBjDxT1s3wnxzbzwBs0XMo2wjwcnoqoYuR+17AuYSgQ2lO89lqNrAGczEpP
+TkEByS+Jdn49taqieLqK2wRIWIBLOZbQusw+5g30hLs8TIkZZzNfqShBM2whKq7N
+WRF7kX+o4/QpVh1r9HFEJD9ZY/R0ww==
+=xvpq
+-----END PGP SIGNATURE-----
+
+--Sig_/dJnsP3VONjtL+M36zJw8hlU--
