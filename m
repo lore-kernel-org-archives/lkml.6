@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeEOIGd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:06:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35054 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeEOH7n (ORCPT
+        id S1752704AbeEOIGb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:06:31 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37204 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752562AbeEOH7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:43 -0400
-X-Google-Smtp-Source: AB8JxZqQAAqw/I7HQmEr4nu9pz/RQIXVt/RhV5Q+EoGYVlUc6kOsjylZSpqXG+EYRStr0Z6qTp7EbQ==
+        Tue, 15 May 2018 03:59:47 -0400
+X-Google-Smtp-Source: AB8JxZpM/4LqMoY5h00aJbdeRML9T5uqLc65IETZKqQBwfWLvfFyReXe8WlQM3Fv5vc6vnwMfMkhcA==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 14/29] venus: core: delete not used flag for buffer mode
-Date: Tue, 15 May 2018 10:58:44 +0300
-Message-Id: <20180515075859.17217-15-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 17/29] venus: add helper function to set actual buffer size
+Date: Tue, 15 May 2018 10:58:47 +0300
+Message-Id: <20180515075859.17217-18-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
@@ -25,32 +25,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Delete not used flag for capture buffer allocation mode.
+Add and use a helper function to set actual buffer size for
+particular buffer type. This is also preparation to use
+the second decoder output.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/qcom/venus/helpers.c | 12 ++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  1 +
+ drivers/media/platform/qcom/venus/vdec.c    | 10 ++--------
+ 3 files changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index fe2d2b9e8af8..c46334454cd9 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -249,7 +249,6 @@ struct venus_buffer {
-  * @priv:	a private for HFI operations callbacks
-  * @session_type:	the type of the session (decoder or encoder)
-  * @hprop:	a union used as a holder by get property
-- * @cap_bufs_mode_static:	buffers allocation mode capability
-  * @cap_bufs_mode_dynamic:	buffers allocation mode capability
-  */
- struct venus_inst {
-@@ -299,7 +298,6 @@ struct venus_inst {
- 	const struct hfi_inst_ops *ops;
- 	u32 session_type;
- 	union hfi_get_property hprop;
--	bool cap_bufs_mode_static;
- 	bool cap_bufs_mode_dynamic;
- };
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index 824ad4d2d064..94664a3ce3e2 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -544,6 +544,18 @@ int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
+ }
+ EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
  
++int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype)
++{
++	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
++	struct hfi_buffer_size_actual bufsz;
++
++	bufsz.type = buftype;
++	bufsz.size = bufsize;
++
++	return hfi_session_set_property(inst, ptype, &bufsz);
++}
++EXPORT_SYMBOL_GPL(venus_helper_set_bufsize);
++
+ static void delayed_process_buf_func(struct work_struct *work)
+ {
+ 	struct venus_buffer *buf, *n;
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index 52b961ed491e..cd306bd8978f 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -41,6 +41,7 @@ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
+ 			      unsigned int output_bufs);
+ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
+ int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
++int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
+ void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
+ void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
+ void venus_helper_init_instance(struct venus_inst *inst);
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index 271192273953..e8e00d0650e9 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -710,7 +710,6 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(q);
+ 	struct venus_core *core = inst->core;
+-	u32 ptype;
+ 	int ret;
+ 
+ 	mutex_lock(&inst->lock);
+@@ -740,13 +739,8 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ 		goto deinit_sess;
+ 
+ 	if (core->res->hfi_version == HFI_VERSION_3XX) {
+-		struct hfi_buffer_size_actual buf_sz;
+-
+-		ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
+-		buf_sz.type = HFI_BUFFER_OUTPUT;
+-		buf_sz.size = inst->output_buf_size;
+-
+-		ret = hfi_session_set_property(inst, ptype, &buf_sz);
++		ret = venus_helper_set_bufsize(inst, inst->output_buf_size,
++					       HFI_BUFFER_OUTPUT);
+ 		if (ret)
+ 			goto deinit_sess;
+ 	}
 -- 
 2.14.1
