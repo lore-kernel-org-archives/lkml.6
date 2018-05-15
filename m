@@ -1,140 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeEOEa7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 00:30:59 -0400
-Received: from mout.gmx.net ([212.227.17.22]:41127 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750952AbeEOEa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 00:30:57 -0400
-Message-ID: <1526358626.19125.0.camel@gmx.de>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Date: Tue, 15 May 2018 06:30:26 +0200
-In-Reply-To: <20180503164508.GG12217@hirez.programming.kicks-ass.net>
-References: <20180424133325.GA3179@codeblueprint.co.uk>
-         <1525349542.9956.2.camel@gmx.de>
-         <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
-         <1525351221.9956.4.camel@gmx.de>
-         <20180503124943.GB12217@hirez.programming.kicks-ass.net>
-         <1525354359.5576.1.camel@gmx.de>
-         <20180503135617.GC12217@hirez.programming.kicks-ass.net>
-         <1525357015.5577.2.camel@gmx.de>
-         <20180503144450.GD12217@hirez.programming.kicks-ass.net>
-         <20180503161231.GI26088@linux.vnet.ibm.com>
-         <20180503164508.GG12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:QJyJooW/CAc9RmKwIlPc7CIKGLVCR1twFxdWtGVVPtszFLm4Ryx
- fxTArCn0waGZAio8SajuiRdcOJ8rRlLkJLqXx0SjC2XjThEb3Ik9H9S23vlAsn9SGUvLGph
- kYR8Z5PV1KHyEU0UU4kauUIt/pgWAUGdZYJD2RY59bCo6nIOMsCMxu9tUYzHkMh3CxrYHjG
- UQmxVr1kKEQTu+CmWB1og==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:L2Em4ah341I=:kCFybmjBVxu4quQUKYrIes
- 1KWnoJ3vSgp8HSDqouqK+bBAJgC2RnQn8jp0aOxqI4un0Tb0aMgA5cURUQw2/4YfgwGOTqgre
- BxpQVdRCHokEkid94svsJ/KQTDR5jxuqKetokaYEeaVdfJ3721hDPusccEMi4C38KEWkh84t9
- vcvRBpb9jgAz0oW9sRFOXeAsfDHdxGr5fTrYDjeXKD9xaX/5eLN/KK9SNbs+DqjkgxUWAQKN6
- 1+x0XYJ1GJAdUN3C9HBjVpf7sJZhFBgOF0szv+sZp5wOBEYwXAPH39zJUV1Yvtn0+eQVyzWmP
- n2pn0hHOGcrFvDCHL+YUFUwWTjgmTXNGazFkd35efWnAaguQokDqJlwXrHSSYjBNNHTubcetb
- 09deFyWI63vxwC2I25/RmFPC6hggfT3ppr7jyAgh7Q4QXWbdvbhTnRqDynRYxwJEEzcvO/xyP
- 5qwNkT7SblqkyUXig7TsINr6D50JdSMDC/qcfMBVLNBon4Gqa4ZH1x+YJSXm6jTwd+relEwu5
- Q8EiZNx5gESEs0kRyq8smFVq+fvnibs5UL8MnQ++gpRo8/CVLwXRSDdwGSUVkxfqeBTxMOQBL
- RKZDX1y0TlEMwEjoZLtkog7SaglR/wy7234s2Agi2xlOqiBSJaWVODoGoXNYcuAufWiBuSTvx
- MekABn0gFTkS6kPlWC+54mNWbphPoI/W7Wd+9sq+aSAu74iKD/a1ZiFAVTU8RJ0dIqosL/Wzm
- TUXKQ6KZ6l+ewbi7mjj7GPjflDx2+5Oz4/FrrPzm6SKEA9QCfOfw6ax+HADwM7VWuW/4Dhu0+
- snD3sw/
+        id S1752148AbeEOEft (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 00:35:49 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33653 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbeEOEfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 00:35:47 -0400
+X-Google-Smtp-Source: AB8JxZoS+h+u/WsqVEs0F1B8WIoyMxxNWTh95kJtwMUPfDGr3+q2MCkn3nzs1Ptb5ztFMGeXsPgktw==
+Date: Tue, 15 May 2018 13:35:40 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
+ through memblock list
+Message-ID: <20180515043538.GB2737@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-5-takahiro.akashi@linaro.org>
+ <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+ <20180507055906.GE11326@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507055906.GE11326@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-03 at 18:45 +0200, Peter Zijlstra wrote:
-> On Thu, May 03, 2018 at 09:12:31AM -0700, Paul E. McKenney wrote:
-> > On Thu, May 03, 2018 at 04:44:50PM +0200, Peter Zijlstra wrote:
-> > > On Thu, May 03, 2018 at 04:16:55PM +0200, Mike Galbraith wrote:
-> > > > On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
-> > > > > On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
-> > > > > 
-> > > > > > Dang.  With $subject fix applied as well..
-> > > > > 
-> > > > > That's a NO then... :-(
-> > > > 
-> > > > Could say who cares about oddball offline wakeup stat. <cringe>
-> > > 
-> > > Yeah, nobody.. but I don't want to have to change the wakeup code to
-> > > deal with this if at all possible. That'd just add conditions that are
-> > > 'always' false, except in this exceedingly rare circumstance.
-> > > 
-> > > So ideally we manage to tell RCU that it needs to pay attention while
-> > > we're doing this here thing, which is what I thought RCU_NONIDLE() was
-> > > about.
-> > 
-> > One straightforward approach would be to provide a arch-specific
-> > Kconfig option that tells notify_cpu_starting() not to bother invoking
-> > rcu_cpu_starting().  Then x86 selects this Kconfig option and invokes
-> > rcu_cpu_starting() itself early enough to avoid splats.
-> > 
-> > See the (untested, probably does not even build) patch below.
-> > 
-> > I have no idea where to insert either the "select" or the call to
-> > rcu_cpu_starting(), so I left those out.  I know that putting the
-> > call too early will cause trouble, but I have no idea what constitutes
-> > "too early".  :-/
+James,
+
+On Mon, May 07, 2018 at 02:59:07PM +0900, AKASHI Takahiro wrote:
+> James,
 > 
-> Something like so perhaps? Mike, can you play around with that? Could
-> burn your granny and eat your cookies.
+> On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
+> > Hi Akashi,
+> > 
+> > On 25/04/18 07:26, AKASHI Takahiro wrote:
+> > > We need to prevent firmware-reserved memory regions, particularly EFI
+> > > memory map as well as ACPI tables, from being corrupted by loading
+> > > kernel/initrd (or other kexec buffers). We also want to support memory
+> > > allocation in top-down manner in addition to default bottom-up.
+> > > So let's have arm64 specific arch_kexec_walk_mem() which will search
+> > > for available memory ranges in usable memblock list,
+> > > i.e. !NOMAP & !reserved, 
+> > 
+> > > instead of system resource tree.
+> > 
+> > Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
+> > be safe in the EFI-memory-map/ACPI-tables case?
+> > 
+> > It would be good to avoid having two ways of doing this, and I would like to
+> > avoid having extra arch code...
+> 
+> I know what you mean.
+> /proc/iomem or system resource is, in my opinion, not the best place to
+> describe memory usage of kernel but rather to describe *physical* hardware
+> layout. As we are still discussing about "reserved" memory, I don't want
+> to depend on it.
+> Along with memblock list, we will have more accurate control over memory
+> usage.
 
-Did this get queued anywhere?
+If you don't have further objection, I will take memblock approach
+(with factoring out powerpc's arch_kexec_walk_mem()).
 
-> diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-> index 7468de429087..07360523c3ce 100644
-> --- a/arch/x86/kernel/cpu/mtrr/main.c
-> +++ b/arch/x86/kernel/cpu/mtrr/main.c
-> @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
->  
->  	if (!use_intel() || mtrr_aps_delayed_init)
->  		return;
-> +
-> +	rcu_cpu_starting(smp_processor_id());
-> +
->  	/*
->  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
->  	 * changed, but this routine will be called in cpu boot time,
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 2a734692a581..4dab46950fdb 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
->  	return 0;
->  }
->  
-> +static DEFINE_PER_CPU(int, rcu_cpu_started);
-> +
->  /*
->   * Mark the specified CPU as being online so that subsequent grace periods
->   * (both expedited and normal) will wait on it.  Note that this means that
-> @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
->  	struct rcu_node *rnp;
->  	struct rcu_state *rsp;
->  
-> +	if (per_cpu(rcu_cpu_started, cpu))
-> +		return;
-> +
-> +	per_cpu(rcu_cpu_started, cpu) = 1;
-> +
->  	for_each_rcu_flavor(rsp) {
->  		rdp = per_cpu_ptr(rsp->rda, cpu);
->  		rnp = rdp->mynode;
-> @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
->  	preempt_enable();
->  	for_each_rcu_flavor(rsp)
->  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
-> +
-> +	per_cpu(rcu_cpu_started, cpu) = 0;
->  }
->  
->  /* Migrate the dead CPU's callbacks to the current CPU. */
+Thanks,
+-Takahiro AKASHI
+
+
+> > 
+> > > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > > new file mode 100644
+> > > index 000000000000..f9ebf54ca247
+> > > --- /dev/null
+> > > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > > @@ -0,0 +1,57 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * kexec_file for arm64
+> > > + *
+> > > + * Copyright (C) 2018 Linaro Limited
+> > > + * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > > + *
+> > 
+> > > + * Most code is derived from arm64 port of kexec-tools
+> > 
+> > How does kexec-tools walk memblock?
+> 
+> Will remove this comment from this patch.
+> Obviously, this comment is for the rest of the code which will be
+> added to succeeding patches (patch #5 and #7).
+> 
+> 
+> > 
+> > > + */
+> > > +
+> > > +#define pr_fmt(fmt) "kexec_file: " fmt
+> > > +
+> > > +#include <linux/ioport.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/kexec.h>
+> > > +#include <linux/memblock.h>
+> > > +
+> > > +int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > +				int (*func)(struct resource *, void *))
+> > > +{
+> > > +	phys_addr_t start, end;
+> > > +	struct resource res;
+> > > +	u64 i;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (kbuf->image->type == KEXEC_TYPE_CRASH)
+> > > +		return func(&crashk_res, kbuf);
+> > > +
+> > > +	if (kbuf->top_down)
+> > > +		for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,
+> > > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > > +				&start, &end, NULL) {
+> > 
+> > for_each_free_mem_range_reverse() is a more readable version of this helper.
+> 
+> OK. I used to use my own limited list of reserved memory instead of
+> memblock.reserved here to exclude verbose ranges.
+> 
+> 
+> > > +			if (!memblock_is_map_memory(start))
+> > > +				continue;
+> > 
+> > Passing MEMBLOCK_NONE means this walk will never find MEMBLOCK_NOMAP memory.
+> 
+> Sure, I confirmed it.
+> 
+> > 
+> > > +			res.start = start;
+> > > +			res.end = end;
+> > > +			ret = func(&res, kbuf);
+> > > +			if (ret)
+> > > +				break;
+> > > +		}
+> > > +	else
+> > > +		for_each_mem_range(i, &memblock.memory, &memblock.reserved,
+> > > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > > +				&start, &end, NULL) {
+> > 
+> > for_each_free_mem_range()?
+> 
+> OK.
+> 
+> > > +			if (!memblock_is_map_memory(start))
+> > > +				continue;
+> > > +
+> > > +			res.start = start;
+> > > +			res.end = end;
+> > > +			ret = func(&res, kbuf);
+> > > +			if (ret)
+> > > +				break;
+> > > +		}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > 
+> > 
+> > With these changes, what we have is almost:
+> > arch/powerpc/kernel/machine_kexec_file_64.c::arch_kexec_walk_mem() !
+> > (the difference being powerpc doesn't yet support crash-kernels here)
+> > 
+> > If the argument is walking memblock gives a better answer than the stringy
+> > walk_system_ram_res() thing, is there any mileage in moving this code into
+> > kexec_file.c, and using it if !IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK)?
+> > 
+> > This would save arm64/powerpc having near-identical implementations.
+> > 32bit arm keeps memblock if it has kexec, so it may be useful there too if
+> > kexec_file_load() support is added.
+> 
+> Thanks. I've forgot ppc.
+> 
+> -Takahiro AKASHI
+> 
+> 
+> > 
+> > Thanks,
+> > 
+> > James
