@@ -1,87 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754274AbeEORRE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:17:04 -0400
-Received: from muru.com ([72.249.23.125]:42176 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753575AbeEORRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:17:03 -0400
-Date: Tue, 15 May 2018 10:16:59 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
-        linux@armlinux.org.uk, Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCH 2/3] ARM: dts: dra762: Add MCAN clock support
-Message-ID: <20180515171659.GQ98604@atomide.com>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-3-git-send-email-faiz_abbas@ti.com>
+        id S1754350AbeEORRn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:17:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36078 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753681AbeEORRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:17:42 -0400
+Subject: Re: [PATCH v9 06/11] arm64: kexec_file: allow for loading
+ Image-format kernel
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-7-takahiro.akashi@linaro.org>
+ <c604b578-6667-3532-eac9-55c428001025@arm.com>
+ <20180507072139.GF11326@linaro.org>
+ <6f0df3a8-a691-80f1-85de-3e0ead852f12@arm.com>
+ <20180515051308.GD2737@linaro.org>
+From: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <4a8409dc-27b3-1ddc-0427-0ca55edcb893@arm.com>
+Date: Tue, 15 May 2018 18:14:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523181542-3770-3-git-send-email-faiz_abbas@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180515051308.GD2737@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
-> From: Lokesh Vutla <lokeshvutla@ti.com>
-> 
-> MCAN is clocked by H14 divider of DPLL_GMAC. Unlike other
-> DPLL dividers this DPLL_GMAC H14 divider is controlled by
-> control module. Adding support for these clocks.
+Hi Akashi,
 
-Adding Tero to Cc on this one.
+On 15/05/18 06:13, AKASHI Takahiro wrote:
+> On Fri, May 11, 2018 at 06:07:06PM +0100, James Morse wrote:
+>> On 07/05/18 08:21, AKASHI Takahiro wrote:
+>>> On Tue, May 01, 2018 at 06:46:11PM +0100, James Morse wrote:
+>>>> On 25/04/18 07:26, AKASHI Takahiro wrote:
+>>>>> This patch provides kexec_file_ops for "Image"-format kernel. In this
+>>>>> implementation, a binary is always loaded with a fixed offset identified
+>>>>> in text_offset field of its header.
+>>
+>>>>> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+>>>>> index e4de1223715f..3cba4161818a 100644
+>>>>> --- a/arch/arm64/include/asm/kexec.h
+>>>>> +++ b/arch/arm64/include/asm/kexec.h
 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  arch/arm/boot/dts/dra76x.dtsi | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
+>>>> Could we check branch_code is non-zero, and text-offset points within image-size?
+>>>
+>>> We could do it, but I don't think this check is very useful.
+>>>
+>>>>
+>>>> We could check that this platform supports the page-size/endian config that this
+>>>> Image was built with... We get a message from the EFI stub if the page-size
+>>>> can't be supported, it would be nice to do the same here (as we can).
+>>>
+>>> There is no restriction on page-size or endianness for kexec.
+>>
+>> No, but it won't boot if the hardware doesn't support it. The kernel will spin
+>> at a magic address that is, difficult, to debug without JTAG. The bug report
+>> will be "it didn't boot".
 > 
-> diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-> index 1c88c58..bfc8263 100644
-> --- a/arch/arm/boot/dts/dra76x.dtsi
-> +++ b/arch/arm/boot/dts/dra76x.dtsi
-> @@ -17,3 +17,36 @@
->  &crossbar_mpu {
->  	ti,irqs-skip = <10 67 68 133 139 140>;
->  };
-> +
-> +&scm_conf_clocks {
-> +	dpll_gmac_h14x2_ctrl_ck: dpll_gmac_h14x2_ctrl_ck@3fc {
-> +		#clock-cells = <0>;
-> +		compatible = "ti,divider-clock";
-> +		clocks = <&dpll_gmac_x2_ck>;
-> +		ti,max-div = <63>;
-> +		reg = <0x03fc>;
-> +		ti,bit-shift=<20>;
-> +		ti,latch-bit=<26>;
-> +		assigned-clocks = <&dpll_gmac_h14x2_ctrl_ck>;
-> +		assigned-clock-rates = <80000000>;
-> +	};
-> +
-> +	dpll_gmac_h14x2_ctrl_mux_ck: dpll_gmac_h14x2_ctrl_mux_ck@3fc {
-> +		#clock-cells = <0>;
-> +		compatible = "ti,mux-clock";
-> +		clocks = <&dpll_gmac_ck>, <&dpll_gmac_h14x2_ctrl_ck>;
-> +		reg = <0x3fc>;
-> +		ti,bit-shift = <29>;
-> +		ti,latch-bit=<26>;
-> +		assigned-clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-> +		assigned-clock-parents = <&dpll_gmac_h14x2_ctrl_ck>;
-> +	};
-> +
-> +	mcan_clk: mcan_clk@3fc {
-> +		#clock-cells = <0>;
-> +		compatible = "ti,gate-clock";
-> +		clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-> +		ti,bit-shift = <27>;
-> +		reg = <0x3fc>;
-> +	};
-> +};
-> -- 
-> 2.7.4
+> OK.
+> Added sanity checks for cpu features, endianness as well as page size.
 > 
+>>
+>>> What will be the purpose of this check?
+>>
+>> These values are in the header so that the bootloader can check them, then print
+>> a meaningful error. Here, kexec_file_load() is playing the part of the bootloader.
+
+>> I'm assuming kexec_file_load() can only be used to kexec linux... unlike regular
+>> kexec. Is this where I'm going wrong?
+
+Trying to work this out for myself: we can't support any UEFI application as we
+can't give it the boot-services environment, so I'm pretty sure
+kexec_file_load() must be linux-specific.
+
+Can we state somewhere that we only expect arm64 linux to be booted with
+kexec_file_load()? Its not clear from the kconfig text, which refers to kexec,
+which explicitly states it can boot other OS. But for kexec_file_load() we're
+following the kernel's booting.txt.
+
+
+>>>>> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+>>>>> new file mode 100644
+>>>>> index 000000000000..4dd524ad6611
+>>>>> --- /dev/null
+>>>>> +++ b/arch/arm64/kernel/kexec_image.c
+>>>>> @@ -0,0 +1,79 @@
+>>>>
+>>>>> +static void *image_load(struct kimage *image,
+>>>>> +				char *kernel, unsigned long kernel_len,
+>>>>> +				char *initrd, unsigned long initrd_len,
+>>>>> +				char *cmdline, unsigned long cmdline_len)
+>>>>> +{
+>>>>> +	struct kexec_buf kbuf;
+>>>>> +	struct arm64_image_header *h = (struct arm64_image_header *)kernel;
+>>>>> +	unsigned long text_offset;
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	/* Load the kernel */
+>>>>> +	kbuf.image = image;
+>>>>> +	kbuf.buf_min = 0;
+>>>>> +	kbuf.buf_max = ULONG_MAX;
+>>>>> +	kbuf.top_down = false;
+>>>>> +
+>>>>> +	kbuf.buffer = kernel;
+>>>>> +	kbuf.bufsz = kernel_len;
+>>>>> +	kbuf.memsz = le64_to_cpu(h->image_size);
+>>>>> +	text_offset = le64_to_cpu(h->text_offset);
+>>>>> +	kbuf.buf_align = SZ_2M;
+>>>>
+>>>>> +	/* Adjust kernel segment with TEXT_OFFSET */
+>>>>> +	kbuf.memsz += text_offset;
+>>>>> +
+>>>>> +	ret = kexec_add_buffer(&kbuf);
+>>>>> +	if (ret)
+>>>>> +		goto out;
+>>>>> +
+>>>>> +	image->arch.kern_segment = image->nr_segments - 1;
+>>>>
+>>>> You only seem to use kern_segment here, and in load_other_segments() called
+>>>> below. Could it not be a local variable passed in? Instead of arch-specific data
+>>>> we keep forever?
+>>>
+>>> No, kern_segment is also used in load_other_segments() in machine_kexec_file.c.
+>>> To optimize memory hole allocation logic in locate_mem_hole_callback(),
+>>> we need to know the exact range of kernel image (start and end).
+>>
+>> That's the second user. My badly-made point is one calls the other, but passes
+>> the data via some until-kexec lifetime struct. (its not important, just an
+>> indicator this worked differently in the past and hasn't been cleaned up).
+>> I meant something like [0].
+> 
+> OK, but instead of adding kern_seg, I want to change the interface to:
+> 
+> | extern int load_other_segments(struct kimage *image,
+> |		unsigned long kernel_load_addr, unsigned long kernel_size,
+> |		char *initrd, unsigned long initrd_len,
+> |		char *cmdline, unsigned long cmdline_len);
+> 
+> This way, we will in future be able to address an issue I mentioned in
+> my previous e-mail. (If we support vmlinux, the kernel occupies two segments
+> for text and data, respectively.)
+
+Aha, its not from old-stuff, its for future-stuff!
+
+
+James
