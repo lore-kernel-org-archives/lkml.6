@@ -1,46 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeEOH5M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:57:12 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:60996 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeEOH5K (ORCPT
+        id S1752241AbeEOH6B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:58:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60120 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeEOH57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:57:10 -0400
-Subject: Re: [PATCH v3 5/8] PCI: Replace pr_*() with dev_*() in
- of_pci_get_host_bridge_resources()
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <cover.1526363896.git.jan.kiszka@siemens.com>
- <95f6ca417e2bc74d15f707e577b098e46b4b3ba4.1526363896.git.jan.kiszka@siemens.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <ae4ea7f6-b9a5-40ca-b0b3-4e55e7741fc4@mentor.com>
-Date: Tue, 15 May 2018 10:57:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Tue, 15 May 2018 03:57:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4D99601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date: Tue, 15 May 2018 13:27:47 +0530
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: Fix deadlock in shutdown ioctl
+Message-ID: <20180515075747.GA6293@codeaurora.org>
+References: <1525958444-5579-1-git-send-email-stummala@codeaurora.org>
+ <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <95f6ca417e2bc74d15f707e577b098e46b4b3ba4.1526363896.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 08:58 AM, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+On Mon, May 14, 2018 at 11:39:42AM +0800, Chao Yu wrote:
+> On 2018/5/10 21:20, Sahitya Tummala wrote:
+> > f2fs_ioc_shutdown() ioctl gets stuck in the below path
+> > when going down with full sync (F2FS_GOING_DOWN_FULLSYNC)
+> > option.
+> > 
+> > __switch_to+0x90/0xc4
+> > percpu_down_write+0x8c/0xc0
+> > freeze_super+0xec/0x1e4
+> > freeze_bdev+0xc4/0xcc
+> > f2fs_ioctl+0xc0c/0x1ce0
+> > f2fs_compat_ioctl+0x98/0x1f0
+> > 
+> > Fix this by not holding write access during this ioctl.
 > 
-> Now that we have a device reference, make use of it for printing.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> I think we can just remove lock coverage for F2FS_GOING_DOWN_FULLSYNC path, for
+> other path, we need to keep as it is.
+>
 
-Tested-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Thanks, I thought about it too but then I checked that XFS shutdown ioctl is
+not taking any lock for this ioctl. Hence, I followed the same in F2FS.
+Do you know why XFS is not taking any lock? Is it really needed in shutdown
+ioctl?
 
 --
-With best wishes,
-Vladimir
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
