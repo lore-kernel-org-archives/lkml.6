@@ -1,163 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeEOWYv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:24:51 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:41500 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeEOWYs (ORCPT
+        id S1752101AbeEOWZk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:25:40 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:34308 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751149AbeEOWZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:24:48 -0400
-X-Google-Smtp-Source: AB8JxZpRl/kKuKJ2A/iArJE4OIYaa/eviU8hIISkw8nYWj3jG/2cEow/6t/wxvBYnuvtmg5K4tBiq/4pxkxyrxuDNiU=
-MIME-Version: 1.0
-In-Reply-To: <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
-References: <20180515154352.20263-1-dmurphy@ti.com> <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com> <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 May 2018 01:24:47 +0300
-Message-ID: <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 May 2018 18:25:38 -0400
+X-Google-Smtp-Source: AB8JxZoOidBld1ZvBruAUOWjRMrmn2rygxPxwwFpseGR45Wp4Vmd5mNggSqu0T1uc20pgsRWdJsHBA==
+From: valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To: ahs3@redhat.com
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next 20180515 - ACPI disabled..
+In-Reply-To: <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
+References: <50539.1526419088@turing-police.cc.vt.edu> <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
+ <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1526423130_2497P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Tue, 15 May 2018 18:25:30 -0400
+Message-ID: <58438.1526423130@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 1:08 AM, Dan Murphy <dmurphy@ti.com> wrote:
-> On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
->> On Tue, May 15, 2018 at 6:43 PM, Dan Murphy <dmurphy@ti.com> wrote:
+--==_Exmh_1526423130_2497P
+Content-Type: text/plain; charset=us-ascii
 
->>> +       depends on LEDS_CLASS && I2C && OF
->>
->> What is OF specific in this driver?
+On Tue, 15 May 2018 15:49:15 -0600, Al Stone said:
+
+> Not off-hand.  Could you please send me a copy of /sys/firmware/acpi/tables/APIC
+
+cat /sys/firmware/acpi/tables/APIC | od -x
+0000000 5041 4349 0072 0000 3903 4544 4c4c 2020
+0000020 4243 3358 2020 0020 2009 0107 4d41 2049
+0000040 0013 0001 0000 fee0 0001 0000 0800 0001
+0000060 0001 0000 0800 0202 0001 0000 0800 0103
+0000100 0001 0000 0800 0304 0001 0000 0c01 0002
+0000120 0000 fec0 0000 0000 0a02 0000 0002 0000
+0000140 0000 0a02 0900 0009 0000 000d 0604 05ff
+0000160 0100
+0000162
+
+> on this machine?  The commit cd8c65a6442b that I wrote looks like it got pulled
+> in on 20180430, which if I'm understanding correctly, seems to have fixed the
+> problem.  Did this work before 20180415?  I assume it did.
+
+0430 is what I'm running right ow, and it works.  Everything before that too.
+It fell over sometime between 0430 and 0515,
+
+> What puzzles me is that this message:
 >
-> as3645a_led_class_setup has a "of" dependency
-
-So what? Is it called from this driver or?
-
-
->>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
->>> +       { 40000, 0x00 },
->>> +       { 80000, 0x01 },
->>> +       { 120000, 0x02 },
->>> +       { 160000, 0x03 },
->>> +       { 200000, 0x04 },
->>> +       { 240000, 0x05 },
->>> +       { 280000, 0x06 },
->>> +       { 320000, 0x07 },
->>> +       { 360000, 0x08 },
->>> +       { 400000, 0x09 },
->>> +       { 600000, 0x0a },
->>> +       { 800000, 0x0b },
->>> +       { 1000000, 0x0c },
->>> +       { 1200000, 0x0d },
->>> +       { 1400000, 0x0e },
->>> +       { 1600000, 0x0f },
->>
->> Huh?!
+>    ACPI: [APIC:0x05] Invalid zero length
 >
-> Please give comments that actually mean something other wise I will opt to ignore them.
-
-I did below.
-
->> strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
->
-> Not sure what equation you are trying to point out here.  But if you are trying to apply
-> a timeout step you cannot do this with this part.  As pointed out in the DT doc the timeout
-> step is not linear.
-
-Yeah, I know people are more than often too lazy to think.
-
-if (x < 9)
- strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
-else
- strobe_timeout = (400 + (x - 9) * 200) * MSECS_IN_SEC;
-
->>> +               brightness_val = (brightness/2);
->>
->> Spaces.
->
-> Not sure what this means checkpatch was clean
-
-Even besides missed whispaces it has redundant parens.
-
-checkpatch is not a silver bullet to get your code clean and nice.
-
->> This is return led_...();
->
-> That is a preference.  It does not have to be that way.
-
-What do you mean? We do not appreciate +LOCs for no (or even nagative!) benefit.
-
->>> +               ret = of_property_read_string(led->led_node, "label", &name);
->>
->> device_property_...();
->
-> It can be if the maintainer is requesting this.
-
-Jacek, if you need rationale behind this comment it's here: the driver
-has nothing DT specific and getting rid of OF centric programming
-allows to reuse the driver on non-DT platforms w/o touching a source
-code.
-
-> Is the trend to move to these functions?
-
-See above.
-
-> Most drivers use the "of" calls.
-
-So what?
+> should only have shown up if the MADT has a broken subtable, and I think that
+> bit of code has been that way for quite some time (git blame says somewhere
+> around 2012 when the test for this condition was put in).
 
 
->>> +               if (!ret)
->>
->> if (ret) sounds more natural. And better just to split
->>
->>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>> +                               "%s:%s", led->led_node->name, name);
->>> +               else
->>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>> +                               "%s:torch", led->led_node->name);
->>
->> const char *tmp;
->>
->> ret = device_property_read_...(&tmp);
->> if (ret)
->>  tmp = ...
->> sprintf(...);
+--==_Exmh_1526423130_2497P
+Content-Type: application/pgp-signature
 
-No comments on this?
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
->>> +       led = devm_kzalloc(&client->dev,
->>> +                           sizeof(struct lm3601x_led), GFP_KERNEL);
->>
->> sizeof(*led) and one line in the result
+iQEVAwUBWvteWo0DS38y7CIcAQJhTggAoiu8+B4mhmiBhryQoqlstVmkbH8CJ2dP
+xpm1cHb+D5uStRY1QnwDPiKn/avJIbdcF8z0aI4AHLkrlAdZMPZ52+hOZORgne/+
+hUoygcXOfU+QzYRSBq4ey/wCBQotOuocc9tJTkmASN3ZfGpFb/kbR+xXmrq8zrVD
+3yJ0TtAbMratiAQ91aEEMNHpzX4QHgoOBECOIIvzba4Ylpbm+Wseq7Xs7dMLEkIN
+KmniuuGJrbVSOd9UelWvfAMqVBHuWH55+TEcgkFSjbrsn9fbe5gI7xfyVnP0Iwap
+NkrFmRue+2HHblSxOTK9mSoDcmsQOT44+DRUiQblZmG83rCllciJOw==
+=5bpC
+-----END PGP SIGNATURE-----
 
-And this?
-
-
->>> +       { },
->>
->> Terminators better w/o comma.
->
-> Looking at other drivers adding comma's on the sentinel is accepted.  See the as3645a driver
-
-So what?
-
-Terminator at compile time even better.
-
->>> +       {},
->>
->> Ditto.
->
-> See above
-
-See above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--==_Exmh_1526423130_2497P--
