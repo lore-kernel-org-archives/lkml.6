@@ -1,104 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeEOMpw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:45:52 -0400
-Received: from mga09.intel.com ([134.134.136.24]:14385 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752710AbeEOMps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:45:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="41391277"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V1 15/19] perf buildid-cache: kcore_copy: Layout sections
-Date: Tue, 15 May 2018 15:43:29 +0300
-Message-Id: <1526388213-30696-16-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
-References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1752940AbeEOMrQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:47:16 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45123 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeEOMrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:47:14 -0400
+X-Google-Smtp-Source: AB8JxZp9CozBHCvgzYcASTcwKpzypmQntaXNf3VWT4tBD1sy/AhTKKQoGx/ZveU4A4hgCtLlWwH2Cg==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] Add ChromeOS EC CEC Support
+Date: Tue, 15 May 2018 14:46:56 +0200
+Message-Id: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to add more program headers, layout the relative offset of
-each section.
+Hi All,
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/symbol-elf.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+throught it's Embedded Controller, to enable the Linux CEC Core to communicate
+with it and get the CEC Physical Address from the correct HDMI Connector, the
+following must be added/changed:
+- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+- Add the CEC related commands and events definitions into the EC MFD driver
+- Add a way to get a CEC notifier with it's (optional) connector name
+- Add the CEC notifier to the i915 HDMI driver
+- Add the proper ChromeOS EC CEC Driver
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 4aec12102e19..3e76a0efd15c 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1386,6 +1386,7 @@ static off_t kcore__write(struct kcore *kcore)
- 
- struct phdr_data {
- 	off_t offset;
-+	off_t rel;
- 	u64 addr;
- 	u64 len;
- 	struct list_head node;
-@@ -1404,6 +1405,9 @@ struct kcore_copy_info {
- 	struct list_head phdrs;
- };
- 
-+#define kcore_copy__for_each_phdr(k, p) \
-+	list_for_each_entry((p), &(k)->phdrs, node)
-+
- static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
- 					u64 start)
- {
-@@ -1518,11 +1522,21 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
- 	if (kci->modules_map.len)
- 		list_add_tail(&kci->modules_map.node, &kci->phdrs);
- 
--	kci->phnum = !!kci->kernel_map.len + !!kci->modules_map.len;
--
- 	return 0;
- }
- 
-+static void kcore_copy__layout(struct kcore_copy_info *kci)
-+{
-+	struct phdr_data *p;
-+	off_t rel = 0;
-+
-+	kcore_copy__for_each_phdr(kci, p) {
-+		p->rel = rel;
-+		rel += p->len;
-+		kci->phnum += 1;
-+	}
-+}
-+
- static int kcore_copy__calc_maps(struct kcore_copy_info *kci, const char *dir,
- 				 Elf *elf)
- {
-@@ -1558,7 +1572,12 @@ static int kcore_copy__calc_maps(struct kcore_copy_info *kci, const char *dir,
- 	if (kci->first_module && !kci->last_module_symbol)
- 		return -1;
- 
--	return kcore_copy__read_maps(kci, elf);
-+	if (kcore_copy__read_maps(kci, elf))
-+		return -1;
-+
-+	kcore_copy__layout(kci);
-+
-+	return 0;
- }
- 
- static int kcore_copy__copy_file(const char *from_dir, const char *to_dir,
+The CEC notifier with the connector name is the tricky point, since even on
+Device-Tree platforms, there is no way to distinguish between multiple HDMI
+connectors from the same DRM driver. The solution I implemented is pretty
+simple and only adds an optional connector name to eventually distinguish
+an HDMI connector notifier from another if they share the same device.
+
+Feel free to comment this patchset !
+
+Changes since RFC:
+ - Moved CEC sub-device registration after CEC commands and events definitions patch
+ - Removed get_notifier_get_byname
+ - Added CEC_CORE select into i915 Kconfig
+ - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+ - Fixed CEC core return type on error
+ - Moved to cros-ec-cec media platform directory
+ - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+ - Fix Logical Address setup
+ - Added comment about HW support
+ - Removed memset of msg structures
+
+Neil Armstrong (5):
+  media: cec-notifier: Get notifier by device and connector name
+  drm/i915: hdmi: add CEC notifier to intel_hdmi
+  mfd: cros-ec: Introduce CEC commands and events definitions.
+  mfd: cros_ec_dev: Add CEC sub-device registration
+  media: platform: Add Chrome OS EC CEC driver
+
+ drivers/gpu/drm/i915/Kconfig                     |   1 +
+ drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+ drivers/gpu/drm/i915/intel_hdmi.c                |  10 +
+ drivers/media/cec/cec-notifier.c                 |  12 +-
+ drivers/media/platform/Kconfig                   |  11 +
+ drivers/media/platform/Makefile                  |   2 +
+ drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+ drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 336 +++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c                        |  16 ++
+ drivers/platform/chrome/cros_ec_proto.c          |  42 ++-
+ include/linux/mfd/cros_ec.h                      |   2 +-
+ include/linux/mfd/cros_ec_commands.h             |  80 ++++++
+ include/media/cec-notifier.h                     |  30 +-
+ 13 files changed, 530 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+ create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+
 -- 
-1.9.1
+2.7.4
