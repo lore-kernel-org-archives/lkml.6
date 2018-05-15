@@ -1,120 +1,77 @@
-Return-Path: <ulf.hansson@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526324239; cv=none;
+Return-Path: <tony@atomide.com>
+X-Google-Smtp-Source: AB8JxZo+9+qcZH3mun857aB0ZgdTmVt9Td8oPDhiYIiM96VP8+Ja9x9LVvzjDi4cFak4JhCCkt98
+ARC-Seal: i=1; a=rsa-sha256; t=1526345686; cv=none;
         d=google.com; s=arc-20160816;
-        b=jqcCZf4KnNR5T8IivE8PSBvTEAXynrHQq61wem2ijskp8D7k56JUXXBD0qqWchJHZG
-         y6r0/dVOWgpcODmubY3RGQOgzq7yke7nbwNAUw5NNS3qZkd+GjbaFv60gohYz4VKgfDT
-         qMS3CEu6renVjl9rc22Zwj57BrEkt0KO8X7ld6NG53XAfWAJ3OuIikmYnJ/L4cLz7xkl
-         9jckdbJ2SH88vcEZJ+ctskhBNPDQi1gJ80i5xdIGOnC7A2Gg3D2N3T3Ij1rQxR2Kqoeg
-         CLwNxs4NgPA4EogV3WbYZeWLjr0hhCYlKNNjGSCzjKdjeFEe6Ueu+ZorJi3BnrQu89bz
-         rVoA==
+        b=NIzz1PCJkuBYEhLeDeBuunoPlUG0BDf8j/ma0s4tUZJj0MIChjGVRMYc3KXkeHTdZH
+         DogCIlARiWCgQs74u6zfFnw80Fe3jve4UbJ94lWIMWaiWP//7Hcb8jDsHkiPx9cKVyTz
+         wzRw3HDO6vLGAST8V9batcXDExRqxcK+Yi67S5pWIsP9yDEr5K3Ysd3WWxGx7djH3XB+
+         AkE+ZP3CpFDeyH9SMbM8eRvvM3HvwBM5GSQoGW4zPh7uZ7XX9cv5C3KQKhFxmboVBi0G
+         +VHuAGg5cKO59YhDNgLF1UTldIP5cfhTm3YwEfAoCGiAO99FFXp0Dz1yXawcq4IMrQKV
+         DZyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=NvTrqQ4tjeDJmdAd5KKo8t93yH0BH49UBX9t7lHcJmk=;
-        b=lkXa4YEifpNIKLcmm+LebV9Fta+iXZ/BUxY59K+OSJEbWXokPcVr0K5spxgeQ6LFiZ
-         +p736acFudW2bZ3jG62k3iDdTU5WB+5+7Tb3JgbI6R+Nuf61pfXF8Zfagt56Le/KR+xB
-         M8b3+o0eGRYMwvS8qzkFQQ2iDwxpyYonInNJfc+aTIx+eU1UTudaW5XpGH3zjs1hnWtL
-         sDvObIQT8XtO7uRpoWHOaRNg38AvxNHI0xOajTmPxjiG8om0XFIs1XBWK5kqyOaYPwVF
-         S/loKX3YXgincFRgvnE6zRHAtD6thkVHeabh0bo7B/ExzlWqjVWYQOFfiZR3wbYxi78N
-         yksA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=HtnpOHGJhCvwk3Uzw9yC5TvhlNzo6tFD7zK6M5T6dS0=;
+        b=Xy5IzMgeQpNajQJTNXG/POvxmgSy5czX6n7BQ1tctrQp1XyTYCVT4M19JA5oKPTRtF
+         uqp4OpmHQom2cR1Uq2F2Ii3XbWJNaiyoIe2kGotG1a1y8w/zWC9TqH5cZFN62aIITigl
+         fKnjdnnNgmmgbMMDTL3LiJAaYr/Z9ZBcvH4uDFaKR+MIzM7VnCSj/hHOH+vaOWiCHlxR
+         EJ/+NbbsSRRBl0OH+vjX/CWCU4DPULUJ92r4YX/utXpGpq3BrSW4AxmZBfrYvVAxeXpR
+         OEr0XhD99xuzP0ZN8MTitPJGNws0cxB5PRBKpG6wC5hjUM8SsYx6rZbbYeL6T73/6YJN
+         F7IA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=K42uTyQS;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=K42uTyQS;
-       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqKsGDFwtZ4VrxQSYPTXvz+KqMsI+Szoa3/NO6FG61z79ydMCqmKCNFeAep/Gi6qXKl5chjh5j/2EoAQ7klDDM=
-MIME-Version: 1.0
-In-Reply-To: <20180514151907.GK98604@atomide.com>
-References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
- <1524732790-2234-8-git-send-email-ulf.hansson@linaro.org> <20180514151907.GK98604@atomide.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 14 May 2018 20:57:17 +0200
-Message-ID: <CAPDyKFqY5u3=db7-Xd9JXWo228PSNbH7-m-QNfSY9z8Z3p8t8A@mail.gmail.com>
-Subject: Re: [PATCH 07/11] driver core: Respect all error codes from dev_pm_domain_attach()
-To: Tony Lindgren <tony@atomide.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux PM <linux-pm@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>,
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+Date: Mon, 14 May 2018 17:54:42 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kevin Hilman <khilman@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Wolfram Sang <wsa@the-dreams.de>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Russell King <linux@armlinux.org.uk>,
-	Mark Brown <broonie@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
 	Sanyog Kale <sanyog.r.kale@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-omap <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH 07/11] driver core: Respect all error codes from
+ dev_pm_domain_attach()
+Message-ID: <20180515005442.GN98604@atomide.com>
+References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
+ <1524732790-2234-8-git-send-email-ulf.hansson@linaro.org>
+ <20180514151907.GK98604@atomide.com>
+ <CAPDyKFqY5u3=db7-Xd9JXWo228PSNbH7-m-QNfSY9z8Z3p8t8A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqY5u3=db7-Xd9JXWo228PSNbH7-m-QNfSY9z8Z3p8t8A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598798225940952926?=
-X-GMAIL-MSGID: =?utf-8?q?1600466965539989137?=
+X-GMAIL-MSGID: =?utf-8?q?1600489455110209392?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 14 May 2018 at 17:19, Tony Lindgren <tony@atomide.com> wrote:
-> Ulf,
->
-> * Ulf Hansson <ulf.hansson@linaro.org> [180426 09:01]:
->> The limitation of being able to check only for -EPROBE_DEFER from
->> dev_pm_domain_attach() has been removed. Hence let's respect all error
->> codes and bail out accordingly.
->>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> ---
->>  drivers/base/platform.c | 17 ++++++++---------
->>  1 file changed, 8 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->> index 8075ddc..9460139 100644
->> --- a/drivers/base/platform.c
->> +++ b/drivers/base/platform.c
->> @@ -572,17 +572,16 @@ static int platform_drv_probe(struct device *_dev)
->>               return ret;
->>
->>       ret = dev_pm_domain_attach(_dev, true);
->> -     if (ret != -EPROBE_DEFER) {
->> -             if (drv->probe) {
->> -                     ret = drv->probe(dev);
->> -                     if (ret)
->> -                             dev_pm_domain_detach(_dev, true);
->> -             } else {
->> -                     /* don't fail if just dev_pm_domain_attach failed */
->> -                     ret = 0;
->> -             }
->> +     if (ret)
->> +             goto out;
->> +
->> +     if (drv->probe) {
->> +             ret = drv->probe(dev);
->> +             if (ret)
->> +                     dev_pm_domain_detach(_dev, true);
->>       }
->>
->> +out:
->>       if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
->>               dev_warn(_dev, "probe deferral not supported\n");
->>               ret = -ENXIO;
->> --
->
-> Looks like this causes Linux next to not boot for me with device
-> probes failing with error -17. So that's at least omaps, looks
-> like kernelci has others failing too.
+* Ulf Hansson <ulf.hansson@linaro.org> [180514 18:59]:
+> On 14 May 2018 at 17:19, Tony Lindgren <tony@atomide.com> wrote:
+> > Reverting for 8c123c14bbba ("driver core: Respect all error codes from
+> > dev_pm_domain_attach()") fixes the issue for me.
+> >
+> > Sounds like something is missing, any ideas?
+> 
+> This should solve the problem:
+> 
+> https://patchwork.kernel.org/patch/10398597/
 
-Yep, problem also reported for some Exynos5 platforms.
+Thanks yeah that fixes it for me too.
 
-Omap suffers from the similar problem, because of its SoC specific way
-of attaching devices to PM domains.
+Regards,
 
->
-> Reverting for 8c123c14bbba ("driver core: Respect all error codes from
-> dev_pm_domain_attach()") fixes the issue for me.
->
-> Sounds like something is missing, any ideas?
-
-This should solve the problem:
-
-https://patchwork.kernel.org/patch/10398597/
-
-Kind regards
-Uffe
+Tony
