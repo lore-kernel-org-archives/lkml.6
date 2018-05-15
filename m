@@ -1,172 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753309AbeEOMxp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:53:45 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7254 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752170AbeEOMwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:52:51 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
-        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
-        <devel@acpica.org>
-CC: <gengdongjiu@huawei.com>, <huangshaoyu@huawei.com>,
-        <zhengxiang9@huawei.com>
-Subject: [PATCH v12 3/4] ACPI / APEI: Add SEI notification type support for ARMv8
-Date: Wed, 16 May 2018 04:58:06 +0800
-Message-ID: <1526417887-25843-4-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526417887-25843-1-git-send-email-gengdongjiu@huawei.com>
-References: <1526417887-25843-1-git-send-email-gengdongjiu@huawei.com>
+        id S1753143AbeEOMyT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:54:19 -0400
+Received: from aer-iport-4.cisco.com ([173.38.203.54]:3782 "EHLO
+        aer-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752563AbeEOMyO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:54:14 -0400
+X-IronPort-AV: E=Sophos;i="5.49,403,1520899200";
+   d="scan'208";a="3795011"
+Subject: Re: [PATCH 1/5] media: cec-notifier: Get notifier by device and
+ connector name
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
+ <1526388421-18808-2-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hansverk@cisco.com>
+Message-ID: <13501ccd-b346-4eb8-49c8-a92d85e3e5df@cisco.com>
+Date: Tue, 15 May 2018 14:54:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1526388421-18808-2-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: hansverk
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI 6.x adds support for NOTIFY_SEI as a GHES notification
-mechanism, so add new GHES notification handling functions.
-Expose API ghes_notify_sei() to arch code, arch code will call
-this API when it gets this NOTIFY_SEI.
+Hi Neil,
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Two small comments below:
 
-Note:
-Firmware will follow the SError mask rule, if the SError is masked,
-the firmware will not deliver NOTIFY_SEI notification.
----
- drivers/acpi/apei/Kconfig | 15 ++++++++++++++
- drivers/acpi/apei/ghes.c  | 53 +++++++++++++++++++++++++++++++++++++++++++++++
- include/acpi/ghes.h       |  1 +
- 3 files changed, 69 insertions(+)
+On 05/15/18 14:46, Neil Armstrong wrote:
+> In non device-tree world, we can need to get the notifier by the driver
+> name directly and eventually defer probe if not yet created.
+> 
+> This patch adds a variant of the get function by using the device name
+> instead and will not create a notifier if not yet created.
+> 
+> But the i915 driver exposes at least 2 HDMI connectors, this patch also
+> adds the possibility to add a connector name tied to the notifier device
+> to form a tuple and associate different CEC controllers for each HDMI
+> connectors.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/media/cec/cec-notifier.c | 12 +++++++++---
+>  include/media/cec-notifier.h     | 30 ++++++++++++++++++++++++++++--
+>  2 files changed, 37 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+> index 16dffa0..7038abae1 100644
+> --- a/drivers/media/cec/cec-notifier.c
+> +++ b/drivers/media/cec/cec-notifier.c
+> @@ -21,6 +21,7 @@ struct cec_notifier {
+>  	struct list_head head;
+>  	struct kref kref;
+>  	struct device *dev;
+> +	const char *conn;
+>  	struct cec_adapter *cec_adap;
+>  	void (*callback)(struct cec_adapter *adap, u16 pa);
+>  
+> @@ -30,13 +31,14 @@ struct cec_notifier {
+>  static LIST_HEAD(cec_notifiers);
+>  static DEFINE_MUTEX(cec_notifiers_lock);
+>  
+> -struct cec_notifier *cec_notifier_get(struct device *dev)
+> +struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
+>  {
+>  	struct cec_notifier *n;
+>  
+>  	mutex_lock(&cec_notifiers_lock);
+>  	list_for_each_entry(n, &cec_notifiers, head) {
+> -		if (n->dev == dev) {
+> +		if (n->dev == dev &&
+> +		    (!conn || !strcmp(n->conn, conn))) {
+>  			kref_get(&n->kref);
+>  			mutex_unlock(&cec_notifiers_lock);
+>  			return n;
+> @@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+>  	if (!n)
+>  		goto unlock;
+>  	n->dev = dev;
+> +	if (conn)
+> +		n->conn = kstrdup(conn, GFP_KERNEL);
+>  	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+>  	mutex_init(&n->lock);
+>  	kref_init(&n->kref);
+> @@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+>  	mutex_unlock(&cec_notifiers_lock);
+>  	return n;
+>  }
+> -EXPORT_SYMBOL_GPL(cec_notifier_get);
+> +EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+>  
+>  static void cec_notifier_release(struct kref *kref)
+>  {
+> @@ -62,6 +66,8 @@ static void cec_notifier_release(struct kref *kref)
+>  		container_of(kref, struct cec_notifier, kref);
+>  
+>  	list_del(&n->head);
+> +	if (n->conn)
 
-diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
-index 52ae543..ff4afc3 100644
---- a/drivers/acpi/apei/Kconfig
-+++ b/drivers/acpi/apei/Kconfig
-@@ -55,6 +55,21 @@ config ACPI_APEI_SEA
- 	  option allows the OS to look for such hardware error record, and
- 	  take appropriate action.
- 
-+config ACPI_APEI_SEI
-+	bool "APEI SError(System Error) Interrupt logging/recovering support"
-+	depends on ARM64 && ACPI_APEI_GHES
-+	default y
-+	help
-+	  This option should be enabled if the system supports
-+	  firmware first handling of SEI (SError interrupt).
-+
-+	  SEI happens with asynchronous external abort for errors on device
-+	  memory reads on ARMv8 systems. If a system supports firmware first
-+	  handling of SEI, the platform analyzes and handles hardware error
-+	  notifications from SEI, and it may then form a hardware error record for
-+	  the OS to parse and handle. This option allows the OS to look for
-+	  such hardware error record, and take appropriate action.
-+
- config ACPI_APEI_MEMORY_FAILURE
- 	bool "APEI memory error recovering support"
- 	depends on ACPI_APEI && MEMORY_FAILURE
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 1efefe9..33f77ae 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -827,6 +827,46 @@ static inline void ghes_sea_add(struct ghes *ghes) { }
- static inline void ghes_sea_remove(struct ghes *ghes) { }
- #endif /* CONFIG_ACPI_APEI_SEA */
- 
-+#ifdef CONFIG_ACPI_APEI_SEI
-+static LIST_HEAD(ghes_sei);
-+
-+/*
-+ * Return 0 only if one of the SEI error sources successfully reported an error
-+ * record sent from the firmware.
-+ */
-+int ghes_notify_sei(void)
-+{
-+	struct ghes *ghes;
-+	int ret = -ENOENT;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(ghes, &ghes_sei, list) {
-+		if (!ghes_proc(ghes))
-+			ret = 0;
-+	}
-+	rcu_read_unlock();
-+	return ret;
-+}
-+
-+static void ghes_sei_add(struct ghes *ghes)
-+{
-+	mutex_lock(&ghes_list_mutex);
-+	list_add_rcu(&ghes->list, &ghes_sei);
-+	mutex_unlock(&ghes_list_mutex);
-+}
-+
-+static void ghes_sei_remove(struct ghes *ghes)
-+{
-+	mutex_lock(&ghes_list_mutex);
-+	list_del_rcu(&ghes->list);
-+	mutex_unlock(&ghes_list_mutex);
-+	synchronize_rcu();
-+}
-+#else /* CONFIG_ACPI_APEI_SEI */
-+static inline void ghes_sei_add(struct ghes *ghes) { }
-+static inline void ghes_sei_remove(struct ghes *ghes) { }
-+#endif /* CONFIG_ACPI_APEI_SEI */
-+
- #ifdef CONFIG_HAVE_ACPI_APEI_NMI
- /*
-  * printk is not safe in NMI context.  So in NMI handler, we allocate
-@@ -1055,6 +1095,13 @@ static int ghes_probe(struct platform_device *ghes_dev)
- 			goto err;
- 		}
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		if (!IS_ENABLED(CONFIG_ACPI_APEI_SEI)) {
-+			pr_warn(GHES_PFX "Generic hardware error source: %d notified via SEI is not supported!\n",
-+				generic->header.source_id);
-+		goto err;
-+	}
-+	break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		if (!IS_ENABLED(CONFIG_HAVE_ACPI_APEI_NMI)) {
- 			pr_warn(GHES_PFX "Generic hardware error source: %d notified via NMI interrupt is not supported!\n",
-@@ -1126,6 +1173,9 @@ static int ghes_probe(struct platform_device *ghes_dev)
- 	case ACPI_HEST_NOTIFY_SEA:
- 		ghes_sea_add(ghes);
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		ghes_sei_add(ghes);
-+		break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		ghes_nmi_add(ghes);
- 		break;
-@@ -1179,6 +1229,9 @@ static int ghes_remove(struct platform_device *ghes_dev)
- 	case ACPI_HEST_NOTIFY_SEA:
- 		ghes_sea_remove(ghes);
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		ghes_sei_remove(ghes);
-+		break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		ghes_nmi_remove(ghes);
- 		break;
-diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-index 8feb0c8..9ba59e2 100644
---- a/include/acpi/ghes.h
-+++ b/include/acpi/ghes.h
-@@ -120,5 +120,6 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
- 	     section = acpi_hest_get_next(section))
- 
- int ghes_notify_sea(void);
-+int ghes_notify_sei(void);
- 
- #endif /* GHES_H */
--- 
-1.9.1
+No need for this if, kfree already tests the pointer.
+
+> +		kfree(n->conn);
+>  	kfree(n);
+>  }
+>  
+> diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+> index cf0add7..73f92c7 100644
+> --- a/include/media/cec-notifier.h
+> +++ b/include/media/cec-notifier.h
+> @@ -20,6 +20,23 @@ struct cec_notifier;
+>  #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
+>  
+>  /**
+> + * cec_notifier_get_conn - find or create a new cec_notifier for the given
+> + * device and connector tuple.
+> + * @dev: device that sends the events.
+> + * @conn: the connector name from which the event occurs
+> + *
+> + * If a notifier for device @dev already exists, then increase the refcount
+> + * and return that notifier.
+> + *
+> + * If it doesn't exist, then allocate a new notifier struct and return a
+> + * pointer to that new struct.
+> + *
+> + * Return NULL if the memory could not be allocated.
+> + */
+> +struct cec_notifier *cec_notifier_get_conn(struct device *dev,
+> +					   const char *conn);
+> +
+> +/**
+>   * cec_notifier_get - find or create a new cec_notifier for the given device.
+>   * @dev: device that sends the events.
+>   *
+> @@ -31,7 +48,10 @@ struct cec_notifier;
+>   *
+>   * Return NULL if the memory could not be allocated.
+>   */
+> -struct cec_notifier *cec_notifier_get(struct device *dev);
+> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +{
+> +	return cec_notifier_get_conn(dev, NULL);
+> +}
+>  
+>  /**
+>   * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+> @@ -85,12 +105,18 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+>  			       struct cec_notifier *notifier);
+>  
+>  #else
+> -static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
+> +							 const char *conn)
+>  {
+>  	/* A non-NULL pointer is expected on success */
+>  	return (struct cec_notifier *)0xdeadfeed;
+>  }
+>  
+> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +{
+> +	return cec_notifier_get_conn(dev, NULL);
+> +}
+
+Just move this function to after the #if ... #else ... #endif
+After all, it is the same static inline for both.
+
+> +
+>  static inline void cec_notifier_put(struct cec_notifier *n)
+>  {
+>  }
+> 
+
+Regards,
+
+	Hans
