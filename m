@@ -1,112 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeEOG5x (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:57:53 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37435 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752135AbeEOG5v (ORCPT
+        id S1752309AbeEOG6C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:58:02 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:43346 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752271AbeEOG57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:57:51 -0400
-X-Google-Smtp-Source: AB8JxZp/1T6mySIuj0Spxrd7SroZ9/QB4cpzM6bes4ze7ezCQoYZQByyyo9I+kM5A5kvOQUORxGJEw==
-Date: Tue, 15 May 2018 08:57:47 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 8/9] perf/breakpoint: Split breakpoint "check" and
- "commit"
-Message-ID: <20180515065747.GA626@gmail.com>
-References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
- <1525634395-23380-9-git-send-email-frederic@kernel.org>
- <20180509091703.GH12217@hirez.programming.kicks-ass.net>
+        Tue, 15 May 2018 02:57:59 -0400
+X-Google-Smtp-Source: AB8JxZo+oVg+USx3Xv1GS1xFS2eGue+caApeDJhdX5nwgrfrUabkh5KIR3gVdfye2Fpne94xa4/iZlJHLxRtad0Mh2g=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509091703.GH12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180507235339.8836-1-bjorn.andersson@linaro.org>
+References: <20180507235339.8836-1-bjorn.andersson@linaro.org>
+From: Amit Kucheria <amit.kucheria@verdurent.com>
+Date: Tue, 15 May 2018 09:57:58 +0300
+Message-ID: <CAHLCerNSNSiER=_aD5ef6+6sq=5HMxrxNpj4h9S5JUJawTp-Pw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: qcom: tsens: Allow number of sensors to come
+ from DT
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Linux PM list <linux-pm@vger.kernel.org>, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 8, 2018 at 2:53 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> For platforms that has multiple copies of the TSENS hardware block it's
+> necessary to be able to specify the number of sensors per block in DeviceTree.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+Just one comment below, otherwise,
 
-> On Sun, May 06, 2018 at 09:19:54PM +0200, Frederic Weisbecker wrote:
-> >  arch/arm/include/asm/hw_breakpoint.h     |  5 ++++-
-> >  arch/arm/kernel/hw_breakpoint.c          | 22 +++-------------------
-> >  arch/arm64/include/asm/hw_breakpoint.h   |  5 ++++-
-> >  arch/arm64/kernel/hw_breakpoint.c        | 22 +++-------------------
-> >  arch/powerpc/include/asm/hw_breakpoint.h |  5 ++++-
-> >  arch/powerpc/kernel/hw_breakpoint.c      | 22 +++-------------------
-> >  arch/sh/include/asm/hw_breakpoint.h      |  5 ++++-
-> >  arch/sh/kernel/hw_breakpoint.c           | 22 +++-------------------
-> >  arch/x86/include/asm/hw_breakpoint.h     |  5 ++++-
-> >  arch/x86/kernel/hw_breakpoint.c          | 23 +++--------------------
-> >  arch/xtensa/include/asm/hw_breakpoint.h  |  5 ++++-
-> >  arch/xtensa/kernel/hw_breakpoint.c       | 22 +++-------------------
-> 
-> Because of those ^,
-> 
-> >  kernel/events/hw_breakpoint.c            | 11 ++++++-----
-> 
-> would it not make sense to have a prelimenary patch doing something
-> like:
-> 
-> __weak int hw_breakpoint_arch_check(struct perf_event *bp)
-> {
-> 	return arch_validate_hwbkpt_settings(bp);
-> }
-> 
-> __weak void hw_breakpoint_arch_commit(struct perf_event *bp)
-> {
-> }
-> 
-> combined with this bit:
-> 
-> > diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-> > index 6e28d28..6896ceeb 100644
-> > --- a/kernel/events/hw_breakpoint.c
-> > +++ b/kernel/events/hw_breakpoint.c
-> > @@ -402,11 +402,12 @@ int dbg_release_bp_slot(struct perf_event *bp)
-> >  
-> >  static int validate_hw_breakpoint(struct perf_event *bp)
-> >  {
-> > -	int ret;
-> > +	int err;
-> >  
-> > -	ret = arch_validate_hwbkpt_settings(bp);
-> > -	if (ret)
-> > -		return ret;
-> > +	err = hw_breakpoint_arch_check(bp, &bp->attr);
-> > +	if (err)
-> > +		return err;
-> > +	hw_breakpoint_arch_commit(bp);
-> >  
-> >  	if (arch_check_bp_in_kernelspace(bp)) {
-> >  		if (bp->attr.exclude_kernel)
-> 
-> And then convert the archs over one by one, and at the end remove the
-> weak thingies entirely?
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-Makes sense.
+> ---
+>  .../devicetree/bindings/thermal/qcom-tsens.txt       |  1 +
+>  drivers/thermal/qcom/tsens.c                         | 12 +++++++++---
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> index 292ed89d900b..06195e8f35e2 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> @@ -8,6 +8,7 @@ Required properties:
+>
+>  - reg: Address range of the thermal registers
+>  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
+> +- #qcom,sensors: Number of sensors in tsens block
+>  - Refer to Documentation/devicetree/bindings/nvmem/nvmem.txt to know how to specify
+>  nvmem cells
+>
+> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> index 3f9fe6aa51cc..20f3b87d7667 100644
+> --- a/drivers/thermal/qcom/tsens.c
+> +++ b/drivers/thermal/qcom/tsens.c
+> @@ -116,6 +116,7 @@ static int tsens_probe(struct platform_device *pdev)
+>         struct tsens_device *tmdev;
+>         const struct tsens_data *data;
+>         const struct of_device_id *id;
+> +       u32 num_sensors;
+>
+>         if (pdev->dev.of_node)
+>                 dev = &pdev->dev;
+> @@ -130,18 +131,23 @@ static int tsens_probe(struct platform_device *pdev)
+>         else
+>                 data = &data_8960;
+>
+> -       if (data->num_sensors <= 0) {
+> +       num_sensors = data->num_sensors;
+> +
 
-The rest looks good to me - Frederic, once you implement Peter's uggestion I 
-suspect this series can be applied.
 
-Thanks,
+Probably worth adding a comment that we're overriding the num_sensors
+from DT if available here.
 
-	Ingo
+> +       if (np)
+> +               of_property_read_u32(np, "#qcom,sensors", &num_sensors);
+> +
+> +       if (num_sensors <= 0) {
+>                 dev_err(dev, "invalid number of sensors\n");
+>                 return -EINVAL;
+>         }
+>
+>         tmdev = devm_kzalloc(dev, sizeof(*tmdev) +
+> -                            data->num_sensors * sizeof(*s), GFP_KERNEL);
+> +                            num_sensors * sizeof(*s), GFP_KERNEL);
+>         if (!tmdev)
+>                 return -ENOMEM;
+>
+>         tmdev->dev = dev;
+> -       tmdev->num_sensors = data->num_sensors;
+> +       tmdev->num_sensors = num_sensors;
+>         tmdev->ops = data->ops;
+>         for (i = 0;  i < tmdev->num_sensors; i++) {
+>                 if (data->hw_ids)
+> --
+> 2.17.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
