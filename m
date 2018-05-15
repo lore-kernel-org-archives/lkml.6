@@ -1,96 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeEOBmI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 21:42:08 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:54136 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeEOBmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 21:42:07 -0400
-Date: Mon, 14 May 2018 21:41:52 -0400
-From: Rich Felker <dalias@libc.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org,
+        id S1752430AbeEOBob (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 21:44:31 -0400
+Received: from vern.gendns.com ([206.190.152.46]:58178 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752170AbeEOBoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 21:44:25 -0400
+From: David Lechner <david@lechnology.com>
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
- device tree
-Message-ID: <20180515014152.GV1392@brightrain.aerifal.cx>
-References: <c1ec211d-cbe2-1139-edb0-8baa0e7364e8@physik.fu-berlin.de>
- <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
- <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
- <20171117191706.GF1627@brightrain.aerifal.cx>
- <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
- <20180105212857.GR1627@brightrain.aerifal.cx>
- <20180503013708.GC1392@brightrain.aerifal.cx>
- <20180503023320.GD1392@brightrain.aerifal.cx>
- <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
- <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Subject: [PATCH 2/3] dt-bindings: new binding for Ilitek ILI9341 display panels
+Date: Mon, 14 May 2018 20:43:48 -0500
+Message-Id: <20180515014349.26226-3-david@lechnology.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180515014349.26226-1-david@lechnology.com>
+References: <20180515014349.26226-1-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 10:40:34AM +0900, Yoshinori Sato wrote:
-> On Thu, 03 May 2018 19:07:38 +0900,
-> John Paul Adrian Glaubitz wrote:
-> > 
-> > [1  <text/plain; utf-8 (7bit)>]
-> > Hi Rich!
-> > 
-> > On 05/03/2018 04:33 AM, Rich Felker wrote:
-> > > I found the U-Boot stuff here:
-> > > 
-> > > https://ja.osdn.net/users/ysato/pf/uboot/wiki/FrontPage
-> > > 
-> > > but I'm not sure how to install it yet. Will try to figure it out.
-> > 
-> > Interesting. It seems the HDL-160U uses u-boot instead of lilo which
-> > is used on my USL-5P. Both are based on the LANDISK platform though.
-> > I wonder whether it is possible to convert the USL-5P to use u-boot
-> > instead of the very limited lilo.
-> > 
-> > As for the kernel configuration, for USL-5P, I had to use the kernel
-> > configuration attached to this mail. One important configuration setting
-> > is CONFIG_SH_PCLK_FREQ which has to be set to "33250000" otherwise
-> > the kernel won't boot properly.
-> > 
-> > I still have my USL-5P ready to be set up for testing a new kernel
-> > image with the device tree patches merged. Although I still don't
-> > know how to enable the internal (pseudo) IDE controller.
-> > 
-> > @Yoshinori:
-> > 
-> > Did the HDL-160U LANDISK device you have use u-boot by default or
-> > did you convert it from lilo?
-> 
-> Yes.
-> Replace sh-lilo's second stage with u-boot.
-> With this method it is unnecessary to rewrite Flash for boot.
+This adds a new binding for Ilitek ILI9341 display panels. It includes
+a compatible string for one display (more can be added in the future).
 
-Can you give me a brief explanation of how to reproduce the bootloader
-installation? For now I'm just using the existing MBR/partitioning you
-sent me, and replacing zImage.itb in /boot makes it attempt to load a
-new kernel, but I haven't gotten any output yet to know if it's
-working.
+The vendor prefix "noname" is used because the vendor is not known.
+The YX240QV29-T panel[1] is found, for example, in an Adafruit breakout
+board[2] and in Mindsensors' PiStorms[3].
 
-Probably the most important thing I'm missing right now is what the
-its file for generating the zImage.itb should look like. I tried
-making one myself but it may be wrong. I'm also unsure whether I
-should use a zImage or vmlinux file as input, and if using a zImage
-file, what load address I should choose.
+[1]: https://cdn-learn.adafruit.com/assets/assets/000/046/879/original/SPEC-YX240QV29-T_Rev.A__1_.pdf
+[2]: https://www.adafruit.com/product/2478
+[3]: http://www.mindsensors.com/stem-with-robotics/13-pistorms-v2-base-kit-raspberry-pi-brain-for-lego-robot
 
-For now I'm using the upstream landisk board support (maybe not
-working, we'll see). Once I can confirm I'm getting some output and
-the kernel seems minimally functional, I'm going to switch to DT, but
-integrating the DT stuff with u-boot isn't important right away since
-I can start with a linked-in DT.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ .../bindings/display/ilitek,ili9341.txt       | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/ilitek,ili9341.txt
 
-At some point I'd also like to know how to reinstall u-boot on the MBR
-or whatever.
-
-Rich
+diff --git a/Documentation/devicetree/bindings/display/ilitek,ili9341.txt b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+new file mode 100644
+index 000000000000..0fc90b2dd732
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+@@ -0,0 +1,27 @@
++Ilitek ILI9341 display panels
++
++This binding is for display panels using an Ilitek ILI9341 controller in SPI
++mode.
++
++Required properties:
++- compatible:	"noname,yx240qv29", "ilitek,ili9341"
++- dc-gpios:	D/C pin
++- reset-gpios:	Reset pin
++
++The node for this driver must be a child node of a SPI controller, hence
++all mandatory properties described in ../spi/spi-bus.txt must be specified.
++
++Optional properties:
++- rotation:	panel rotation in degrees counter clockwise (0,90,180,270)
++- backlight:	phandle of the backlight device attached to the panel
++
++Example:
++	display@0{
++		compatible = "noname,yx240qv29", "ilitek,ili9341";
++		reg = <0>;
++		spi-max-frequency = <32000000>;
++		dc-gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
++		rotation = <270>;
++		backlight = <&backlight>;
++	};
+-- 
+2.17.0
