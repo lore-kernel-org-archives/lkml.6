@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752958AbeEOV2W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:28:22 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:54610 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752226AbeEOV0O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752712AbeEOV0O (ORCPT <rfc822;w@1wt.eu>);
         Tue, 15 May 2018 17:26:14 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752226AbeEOV0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:26:11 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
@@ -14,8 +14,8 @@ CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
         "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>
 Subject: [RFC 3/8] x86: alternative: macrofy locks for better inlining
-Date: Tue, 15 May 2018 07:11:19 -0700
-Message-ID: <20180515141124.84254-13-namit@vmware.com>
+Date: Tue, 15 May 2018 07:11:10 -0700
+Message-ID: <20180515141124.84254-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
 References: <20180515141124.84254-1-namit@vmware.com>
