@@ -1,40 +1,40 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2967706-1526405089-2-17368611890325053534
+X-Cyrus-Session-Id: sloti22d1t05-2956902-1526405808-2-5230559991095104713
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='ru',
+  MailFrom='org'
 X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526405088; b=gQ96ETendDBsS7RRbiQve1Ak9BV15LZ7DSVOiL3pN17gFgtzT0
-    rkr5W8Y/XjS3zl8EpUf4kuHlhp9my7LoN0h+kkSdcQVbfetuIOfZxxVJIwcmkDRH
-    ZmcrypQwvlP+FME0293K47zUc28jelFdK70X45tsGX78Vhi8WjjiMWBg/HVzWQn9
-    mKBt2rPYcdHCLSiyaqtzaaveIesnWvSDJgF4SXRVW3yaW+eeaXC9RqjioqOFOPK3
-    vHz654wgHN+u2vMDXaNQ3OC+2VtjAeN17WSuI07KcS7/nPVpQJWIngpLiJmRNhZI
-    3oszvW2SbGtqvNfhZnEsIc1oy//JIXFFZ70w==
+    1526405807; b=m7FCGg1qszGynzplsWcThoCTayOg7er6QIvf0atkqUblpLe8hL
+    acQ5CMH43E0MdNWD3YJrFCZ+CMSgSpKnK547GooRhonRPIb4yoNiHB6ERd1eQ5Yh
+    NLLs3SGJxWAzpnu0SSaQTuBj7Y4y0GMZnt9rXJaBc8N6M5fmUEFNHAWZbTXsPuRp
+    okrGEi/uxN4rGO7u/nlxAi4VWRbWrIunA7Pnq5hTgtQgw9h+ESMWDyYgThlnClCY
+    wfGpXcjBgeW7IYgq3zyvrd8ViuaKsrvnUkxtIT7WNDwrBBo9f+BmlIeIcH3DAylm
+    0G2wTuVlIR9STQXIRHJEaa6OsTZQ7C7Ps8vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526405088;
-    bh=5htMnUfUsNklt3zAmXhPoYfYCWfsMIcBAXJA69mkQiw=; b=ieSFjtawjHex
-    AdTynm4pYGrfnZRl/lzjobWZ2yYf0oEm1SvHANv4uWwLTZ5oXUDzCqIg68nFVi2n
-    r+Bll3U6Ug4EfqYY+RWBiEpATG6YayACbZeyNQpBc5nwaP2YNlwFZJzU91cvoq27
-    7g0mi8TrFd+eTe3uv5q9Uw6vDfPxUwpY2UQJQXfhAYLz4mk9RRnEUm4yAlAJYpgV
-    ZYZHOBqqk8SaW37Y+s86nz5h3dLwwbICDrCrQxrwb+2JzyWOfNDgSHNH4vVtNyr4
-    ZHmjksweZyfcA0eALki4bSwQggSTswybsAoGBusFuqei/He5d9qwv6r1tgHUXNVp
-    DU8gNJh7xQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=oracle.com header.i=@oracle.com header.b=W2xTBqFG x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526405807;
+    bh=A9DLXIfOlB1TBg6WFBiihJHZZ9aAQJoRO2Aupq4DfCY=; b=Ct1LwYamfXck
+    i/yzC5vpMFyhFExeLYUmD/RsZYgeTDxDUhGScheQG8j0r89uP1JCwbC7iMwY9cNM
+    GCLD+Hyy+AyXaNekqX2vfvw6W9konY0IAKQfreOuaa0dOxncZ62zLi0+X+94Fbdc
+    exSnedNPyaB4UQP27ztBDdkNsBRPMGG9YNXAPm4RSnjXe4I7pjUzZVfn5dPOTIsL
+    h+3TrWQCXn4Y6YWmLmX5gA06uH3vrEWua8Hm5uhsuih5Pvp3oYufTzNElFVqg6Sj
+    KseXxdPslOa+ZNAXPw8AqC/MNWFPzuKkKCLz3Y6BVPNNdU80lAHCkkSKTfOLI1M+
+    yQAaL5bUZQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ItEk5VPf
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -43,14 +43,16 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    header.domain=yandex-team.ru header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=oracle.com header.i=@oracle.com header.b=W2xTBqFG x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ItEk5VPf
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -59,28 +61,30 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+      header.domain=yandex-team.ru header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJb1hLn2O3uZN4OBLXUSnS0oS3OdDLzQ8400pN2R8t7saN0XbIu+qsDvpUVF0FuAorUclcXbM6ZeH01ocN0Wn25+ebe16hbIbF0oO94OjezcElrhP9IX
-    GmF6X2W25vNPlSfybVXYtFE7nKkvy+ocaYgZw4Qn2A/DSR85VXZDOs8HCAzeMGrf2xb9hNhjyKuYBXRRl6/vBUUOjR8y/4MBGVbbtpYZcgxsnsKe1XoDWoEF
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=D19gQVrFAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
-    a=d8RV8bvci-gWPrTDWUkA:9 a=Z71ZVNYPjp4KbPUM:21 a=hjeekhAMHtmOMyMa:21
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=W4TVW4IDbPiebHqcZpNg:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfFr/xoC8ZE+UPTzJ5Q3tH51ikhdhzxVdo0Q4bVkxAKCNYqpD15rQCOu9jafQQvLORKeTeSu+JWd8cX+XLe7DPgc2//bPNCDjBH0UnJI5rCgrPXFDMyQV
+    h60i47rQJmP66h+/OekoLrDfTlgGT7ghVzE2UAc7lYK2p4NGMR3OBvjGzAEuZ5pJNZZNosk7vnOOEIgP+rRhMwBi3cpD5n2gTPa/3j2Zf5rxfL3QWkZjn3Ih
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=yPCof4ZbAAAA:8 a=D19gQVrFAAAA:8 a=NEAV23lmAAAA:8
+    a=VwQbUJbxAAAA:8 a=EpkLvhchA6DKXQ0cmDQA:9 a=QgxO_DhSGEIZk0KD:21
+    a=9_A45gs-DGWw7cpN:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=W4TVW4IDbPiebHqcZpNg:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932143AbeEORYp (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 13:24:45 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46338 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbeEORYo (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 15 May 2018 13:24:44 -0400
+        id S932143AbeEORgq (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 13:36:46 -0400
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:53903 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932226AbeEORgp (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 15 May 2018 13:36:45 -0400
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
 Subject: Re: [PATCH RFC v5] pidns: introduce syscall translate_pid
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+To: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jann Horn <jannh@google.com>,
@@ -95,21 +99,17 @@ References: <152286911105.615669.14053871624892399807.stgit@buzz>
  <112c7cac-1982-3a2e-ffc0-878bc5ae4bb6@yandex-team.ru>
  <e1402871-77a5-6a0f-a75c-ccad77b93f49@oracle.com>
  <778ab3d0-b6bc-fdb5-669a-40222e5020d4@yandex-team.ru>
-From: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Message-ID: <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
-Date: Tue, 15 May 2018 10:19:03 -0700
+ <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <3e2c285a-1bf8-f71d-1b74-4d6465c29a54@yandex-team.ru>
+Date: Tue, 15 May 2018 20:36:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <778ab3d0-b6bc-fdb5-669a-40222e5020d4@yandex-team.ru>
+In-Reply-To: <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=17 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150172
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -118,122 +118,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 
 
-On 04/24/2018 10:36 PM, Konstantin Khlebnikov wrote:
-> On 23.04.2018 20:37, Nagarathnam Muthusamy wrote:
->>
->>
->> On 04/05/2018 12:02 AM, Konstantin Khlebnikov wrote:
->>> On 05.04.2018 01:29, Eric W. Biederman wrote:
->>>> Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
->>>>
->>>>> On 04/04/2018 12:11 PM, Konstantin Khlebnikov wrote:
->>>>>> Each process have different pids, one for each pid namespace it 
->>>>>> belongs.
->>>>>> When interaction happens within single pid-ns translation isn't 
->>>>>> required.
->>>>>> More complicated scenarios needs special handling.
->>>>>>
->>>>>> For example:
->>>>>> - reading pid-files or logs written inside container with pid 
->>>>>> namespace
->>>>>> - attaching with ptrace to tasks from different pid namespace
->>>>>> - passing pids across pid namespaces in any kind of API
->>>>>>
->>>>>> Currently there are several interfaces that could be used here:
->>>>>>
->>>>>> Pid namespaces are identified by inode number of /proc/[pid]/ns/pid.
->>>>
->>>> Using the inode number in interfaces is not an option. Especially not
->>>> withou referencing the device number for the filesystem as well.
+On 15.05.2018 20:19, Nagarathnam Muthusamy wrote:
+> 
+> 
+> On 04/24/2018 10:36 PM, Konstantin Khlebnikov wrote:
+>> On 23.04.2018 20:37, Nagarathnam Muthusamy wrote:
 >>>
->>> This is supposed to be single-instance fs,
->>> not part of proc but referenced but its magic "symlinks".
 >>>
->>> Device numbers are not mentioned in "man namespaces".
->>>
->>>>
->>>>>> Pids for nested Pid namespaces are shown in file /proc/[pid]/status.
->>>>>> In some cases conversion pid -> vpid could be easily done using this
->>>>>> information, but backward translation requires scanning all tasks.
->>>>>>
->>>>>> Unix socket automatically translates pid attached to 
->>>>>> SCM_CREDENTIALS.
->>>>>> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
->>>>>> into pid namespace, this expose process and could be insecure.
->>>>>>
->>>>>> This patch adds new syscall for converting pids between pid 
->>>>>> namespaces:
->>>>>>
->>>>>> pid_t translate_pid(pid_t pid, int source_type, int source,
->>>>>>                                  int target_type, int target);
->>>>>>
->>>>>> @source_type and @target_type defines type of following arguments:
->>>>>>
->>>>>> TRANSLATE_PID_CURRENT_PIDNS  - current pid namespace, argument is 
->>>>>> unused
->>>>>> TRANSLATE_PID_TASK_PIDNS     - task pid-ns, argument is task pid
+>>> On 04/05/2018 12:02 AM, Konstantin Khlebnikov wrote:
+>>>> On 05.04.2018 01:29, Eric W. Biederman wrote:
+>>>>> Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
 >>>>>
->>>>> I believe using pid to represent the namespace has been already
->>>>> discussed in V1 of this patch in https://lkml.org/lkml/2015/9/22/1087
->>>>> after which we moved on to fd based version of this interface.
+>>>>>> On 04/04/2018 12:11 PM, Konstantin Khlebnikov wrote:
+>>>>>>> Each process have different pids, one for each pid namespace it belongs.
+>>>>>>> When interaction happens within single pid-ns translation isn't required.
+>>>>>>> More complicated scenarios needs special handling.
+>>>>>>>
+>>>>>>> For example:
+>>>>>>> - reading pid-files or logs written inside container with pid namespace
+>>>>>>> - attaching with ptrace to tasks from different pid namespace
+>>>>>>> - passing pids across pid namespaces in any kind of API
+>>>>>>>
+>>>>>>> Currently there are several interfaces that could be used here:
+>>>>>>>
+>>>>>>> Pid namespaces are identified by inode number of /proc/[pid]/ns/pid.
+>>>>>
+>>>>> Using the inode number in interfaces is not an option. Especially not
+>>>>> withou referencing the device number for the filesystem as well.
 >>>>
->>>> Or in short why is the case of pids important?
+>>>> This is supposed to be single-instance fs,
+>>>> not part of proc but referenced but its magic "symlinks".
 >>>>
->>>> You Konstantin you almost said why they were important in your message
->>>> saying you were going to send this one.  However you don't explain in
->>>> your description why you want to identify pid namespaces by pid.
+>>>> Device numbers are not mentioned in "man namespaces".
 >>>>
+>>>>>
+>>>>>>> Pids for nested Pid namespaces are shown in file /proc/[pid]/status.
+>>>>>>> In some cases conversion pid -> vpid could be easily done using this
+>>>>>>> information, but backward translation requires scanning all tasks.
+>>>>>>>
+>>>>>>> Unix socket automatically translates pid attached to SCM_CREDENTIALS.
+>>>>>>> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
+>>>>>>> into pid namespace, this expose process and could be insecure.
+>>>>>>>
+>>>>>>> This patch adds new syscall for converting pids between pid namespaces:
+>>>>>>>
+>>>>>>> pid_t translate_pid(pid_t pid, int source_type, int source,
+>>>>>>>                                  int target_type, int target);
+>>>>>>>
+>>>>>>> @source_type and @target_type defines type of following arguments:
+>>>>>>>
+>>>>>>> TRANSLATE_PID_CURRENT_PIDNS  - current pid namespace, argument is unused
+>>>>>>> TRANSLATE_PID_TASK_PIDNS     - task pid-ns, argument is task pid
+>>>>>>
+>>>>>> I believe using pid to represent the namespace has been already
+>>>>>> discussed in V1 of this patch in https://lkml.org/lkml/2015/9/22/1087
+>>>>>> after which we moved on to fd based version of this interface.
+>>>>>
+>>>>> Or in short why is the case of pids important?
+>>>>>
+>>>>> You Konstantin you almost said why they were important in your message
+>>>>> saying you were going to send this one.  However you don't explain in
+>>>>> your description why you want to identify pid namespaces by pid.
+>>>>>
+>>>>
+>>>> Open of /proc/[pid]/ns/pid requires same permissions as ptrace,
+>>>> pid based variant doesn't have such restrictions.
 >>>
->>> Open of /proc/[pid]/ns/pid requires same permissions as ptrace,
->>> pid based variant doesn't have such restrictions.
+>>> Can you provide more information on usecase requiring PID translation but not used for tracing related purposes?
 >>
->> Can you provide more information on usecase requiring PID translation 
->> but not used for tracing related purposes?
->
-> Any introspection for [nested] containers. It's easier to work when 
-> you have all information when you don't have any.
-> For example our CMS https://github.com/yandex/porto allows to start 
-> nested sub-container (or even deeper) by request from any container 
-> and have to tell back which pid task is have. And it could translate 
-> any pid inside into accessible by client and vice versa.
->
-
-I still dont get the exact reason why PID based approach to identify the 
-namespace during pid translation process is absolutely required compared 
-to fd based approach. From your version of TranslatePid in
-
-https://github.com/yandex/porto/blob/0d7e6e7e1830dcd0038a057b2ab9964cec5b8fab/src/util/unix.cpp
-
-I see that you are going through the trouble of forking a process and 
-sending SMC_CREDENTIALS for pid translation. Even your existing API 
-could be extremely simplified if translate_pid based on file descriptors 
-make it to the gate and I believe from the last discussion it was almost 
-there https://patchwork.kernel.org/patch/10305439/
-
-
->> On a side note, can we have the types TRANSLATE_PID_CURRENT_PIDNS and 
->> TRANSLATE_PID_FD_PIDNS integrated first and then possibly extend the 
->> interface to include TRANSLATE_PID_TASK_PIDNS in future?
->
-> I don't see reason for this separation.
-> Pids and pid namespaces are part of the API for a long time.
-
-If you are talking about the translate_pid API proposed, I believe the 
-V4 proposed under https://patchwork.kernel.org/patch/10003935/ had only 
-fd based API before a mix of PID and fd based is proposed in V5. Again, 
-I was just wondering if we can get the FD based approach in first and 
-then extend the API to include PID based approach later as fd based 
-approach could provide a lot of immediate benefits?
-
-Thanks,
-Nagarathnam.
->
+>> Any introspection for [nested] containers. It's easier to work when you have all information when you don't have any.
+>> For example our CMS https://github.com/yandex/porto allows to start nested sub-container (or even deeper) by request from any container 
+>> and have to tell back which pid task is have. And it could translate any pid inside into accessible by client and vice versa.
 >>
->> Thanks,
->> Nagarathnam.
->>> Most pid-based syscalls are racy in some cases but they are
->>> here for decades and everybody knowns how to deal with it.
->>> So, I've decided to merge both worlds in one interface which clearly 
->>> tells what to expect.
->>
+> 
+> I still dont get the exact reason why PID based approach to identify the namespace during pid translation process is absolutely required 
+> compared to fd based approach. 
 
+As I told open(/proc/%d/ns/pid) have security restrictions - same uid/CAP_SYS_PTRACE/whatever
+Pidns-fd holds pid-namespace and without restrictions could be abused.
+Pid based API is racy but always available without any restrictions.
+
+
+> From your version of TranslatePid in
+> 
+> https://github.com/yandex/porto/blob/0d7e6e7e1830dcd0038a057b2ab9964cec5b8fab/src/util/unix.cpp
+> 
+> I see that you are going through the trouble of forking a process and sending SMC_CREDENTIALS for pid translation. Even your existing API 
+> could be extremely simplified if translate_pid based on file descriptors make it to the gate and I believe from the last discussion it was 
+> almost there https://patchwork.kernel.org/patch/10305439/
+> 
+> 
+>>> On a side note, can we have the types TRANSLATE_PID_CURRENT_PIDNS and TRANSLATE_PID_FD_PIDNS integrated first and then possibly extend 
+>>> the interface to include TRANSLATE_PID_TASK_PIDNS in future?
+>>
+>> I don't see reason for this separation.
+>> Pids and pid namespaces are part of the API for a long time.
+> 
+> If you are talking about the translate_pid API proposed, I believe the V4 proposed under https://patchwork.kernel.org/patch/10003935/ had 
+> only fd based API before a mix of PID and fd based is proposed in V5. Again, I was just wondering if we can get the FD based approach in 
+> first and then extend the API to include PID based approach later as fd based approach could provide a lot of immediate benefits?
+> 
+> Thanks,
+> Nagarathnam.
+>>
+>>>
+>>> Thanks,
+>>> Nagarathnam.
+>>>> Most pid-based syscalls are racy in some cases but they are
+>>>> here for decades and everybody knowns how to deal with it.
+>>>> So, I've decided to merge both worlds in one interface which clearly tells what to expect.
+>>>
+> 
