@@ -1,32 +1,32 @@
 Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZqL8fM9yrh9kPFMAZAXUjH68XGQKYAQN3o23XzlgNjz98FWtonXGHSGsn8HdlD7UMOX+7KQ
-ARC-Seal: i=1; a=rsa-sha256; t=1526426289; cv=none;
+X-Google-Smtp-Source: AB8JxZrkoBdD4SfcSU4DnMsTY/9VVHMAWYb21h9GE5KV7IMvVFVq8FvGtDK1go0RHkELfMOB+PSZ
+ARC-Seal: i=1; a=rsa-sha256; t=1526426286; cv=none;
         d=google.com; s=arc-20160816;
-        b=p8nesmp7B/EjdG3r3B1cUaZqmqkCVilHHHAUabg2Pza1PJJ67sS6JUc/GjvG8+pE72
-         KtPhEdKyvDAPcLL9OYWQppDizc786FqjZWisR25EiQLlaJBJ+SAaNkPK9OZdFpHTp7oC
-         nlDRbL97C5ORE0J605Nt6gGmK3dl03MK16nP9QbiUTto1JbA9nWws/xEvm60677r3KGW
-         KLcPSWPjGFdgwrHSuPB1Lz+0ppTzd3uY081eT0kRb/AaE2EjqHeOosYAtG9/UfXTRJKg
-         PiIWIbrV98fHNCfx1mX/cfUM1Rx3y77JRDYdAbGAKllYt/FkiQ8u7JbN0FHLfwKSXdZS
-         5OMg==
+        b=klkmu87eYENGcngjtwjnLGZP+wpvFZr+Q91ruXRaWlHj8vs9QJppb6U4fpJTtNGPjT
+         09rMe/WaTRfgW8TnJCExqs9soWYjcQCJqsZUIJSQ1WrlHM+FWo64y7FvxTWJXwLwFiBh
+         S4EW8GxIKT/rqMSrV5Oz4fhiLKvQlTOLsGE2Brgh+r0eV2LERqr/MkKYvj9G/lgEJOMO
+         r4nRuDfU0ChQ/2MxscFvYPEvZB+9nWn0z889y+xngSofT218/XCCN9JiWxNjWSrTYfNz
+         cG0o+7ZMPY++hz/zChFXw/SQyP7GQzIvHMs/6QggacTkc6k1Fzw5+w0czDsbrF5R4/X4
+         RpsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=SsO3R7KZpu5pPt/dVnVmaq9kOLQt4PRe1a8Z5O0Xc5g=;
-        b=v0pQw0j9BMlae/2r1yrU3VgzGyPx2pkeYZN+KxAZzUPnYqVQHjGWJbhyYTSnTvreYO
-         MjaCPuTF5KDDhLmIg7WP0uLvrjL+3i25yII3w0mfVCQXGB3bd4cDD2erP6qQn1gSEzEJ
-         7JGumiFWp22QarAPeQ/wl9Rs9ahCqOYrA8C9jJqhJStZxX9qzqTmgydTNZED3dIRvbtS
-         +wwqDyUFae0nEwIC0BO/qp36bHA4OfLYc/B4yNqwSFWtl/rDJX2u695yTD5NM2PBP0yz
-         pZxlFeuhxOgUF9tUL2t77rWy5BXmx1qISOOAiweCcjwZva/49RUqBtYdHkRq877vJAVI
-         GiYQ==
+        bh=ggDfkzu+suD8nCQpszt/+6rXoR/bTJTIfstsJWVoaQo=;
+        b=xto7cxadUBamRihCzTJvUQxLonF4EGNTjWUrFEivqzLDvOk3QNpwjUDTt281icDBpy
+         Ub0rn2CHQJIr+uQlS1O7O+tjw8xFiuZ6XbgxtkL7RJtL491aIfXo+4gdxE/HHNtexvgv
+         XdOzyNJ/RRIIED8FsHJFGTkoKz6NpO+CTo05aRbaM0QajXbTherVPMryTi7e2H6Onki4
+         ZQdHjDDH93i+XNoUOkarmzH9r5M1jbPd9XhcXFKn7+H9eh3cPI5dE3tTVKTFsgLGrTEW
+         PXBR4sks9CqU1CcYVydQuoamXdCeA9YiAwP5cA0WVKYN7XPzpXqGzb8xRTbJeECCPPai
+         sUzw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=hWRQkgKW;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ZBT0psKi;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=Pvh+p3g3;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=RbOEgnOH;
        spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=hWRQkgKW;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ZBT0psKi;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=Pvh+p3g3;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=RbOEgnOH;
        spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:sWr7WnEi7Zz6CaB-ElX-DdM87aTe0wU46GWlbclAaZp2NinRtWAfbA>
+X-ME-Sender: <xms:rWr7Wrq08up5N_IMHIy-8vwcAgBsNppIuWqoWxW27pogE-Hx3lk5RQ>
 From: "Tobin C. Harding" <me@tobin.cc>
 To: "Theodore Ts'o" <tytso@mit.edu>
 Cc: "Tobin C. Harding" <me@tobin.cc>,
@@ -39,88 +39,48 @@ Cc: "Tobin C. Harding" <me@tobin.cc>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/3] random: Return nbytes filled from hw RNG
-Date: Wed, 16 May 2018 09:17:38 +1000
-Message-Id: <1526426259-23012-3-git-send-email-me@tobin.cc>
+Subject: [PATCH v5 1/3] random: Fix whitespace pre random-bytes work
+Date: Wed, 16 May 2018 09:17:37 +1000
+Message-Id: <1526426259-23012-2-git-send-email-me@tobin.cc>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526426259-23012-1-git-send-email-me@tobin.cc>
 References: <1526426259-23012-1-git-send-email-me@tobin.cc>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600497767242955587?=
-X-GMAIL-MSGID: =?utf-8?q?1600573973330387411?=
+X-GMAIL-THRID: =?utf-8?q?1600573969366176066?=
+X-GMAIL-MSGID: =?utf-8?q?1600573969366176066?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently the function get_random_bytes_arch() has return value 'void'.
-If the hw RNG fails we currently fall back to using get_random_bytes().
-This defeats the purpose of requesting random material from the hw RNG
-in the first place.
-
-There are currently no intree users of get_random_bytes_arch().
-
-Only get random bytes from the hw RNG, make function return the number
-of bytes retrieved from the hw RNG.
+There are a couple of whitespace issues around the function
+get_random_bytes_arch().  In preparation for patching this function
+let's clean them up.
 
 Signed-off-by: Tobin C. Harding <me@tobin.cc>
 Acked-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/char/random.c  | 16 +++++++++-------
- include/linux/random.h |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/char/random.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 031d18b31e0f..8b9b537ae634 100644
+index cd888d4ee605..031d18b31e0f 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
-@@ -1725,26 +1725,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
-  * key known by the NSA).  So it's useful if we need the speed, but
-  * only if we're willing to trust the hardware manufacturer not to
-  * have put in a back door.
-+ *
-+ * Return number of bytes filled in.
-  */
--void get_random_bytes_arch(void *buf, int nbytes)
-+int __must_check get_random_bytes_arch(void *buf, int nbytes)
- {
-+	int left = nbytes;
- 	char *p = buf;
- 
--	trace_get_random_bytes_arch(nbytes, _RET_IP_);
--	while (nbytes) {
-+	trace_get_random_bytes_arch(left, _RET_IP_);
-+	while (left) {
- 		unsigned long v;
--		int chunk = min(nbytes, (int)sizeof(unsigned long));
-+		int chunk = min_t(int, left, (int)sizeof(unsigned long));
+@@ -1737,7 +1737,7 @@ void get_random_bytes_arch(void *buf, int nbytes)
  
  		if (!arch_get_random_long(&v))
  			break;
- 
+-		
++
  		memcpy(p, &v, chunk);
  		p += chunk;
--		nbytes -= chunk;
-+		left -= chunk;
- 	}
- 
--	if (nbytes)
--		get_random_bytes(p, nbytes);
-+	return nbytes - left;
+ 		nbytes -= chunk;
+@@ -1748,7 +1748,6 @@ void get_random_bytes_arch(void *buf, int nbytes)
  }
  EXPORT_SYMBOL(get_random_bytes_arch);
  
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 2ddf13b4281e..f1c9bc5cd231 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -38,7 +38,7 @@ extern void get_random_bytes(void *buf, int nbytes);
- extern int wait_for_random_bytes(void);
- extern int add_random_ready_callback(struct random_ready_callback *rdy);
- extern void del_random_ready_callback(struct random_ready_callback *rdy);
--extern void get_random_bytes_arch(void *buf, int nbytes);
-+extern int __must_check get_random_bytes_arch(void *buf, int nbytes);
- 
- #ifndef MODULE
- extern const struct file_operations random_fops, urandom_fops;
+-
+ /*
+  * init_std_data - initialize pool with system data
+  *
 -- 
 2.7.4
