@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeEODok (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:44:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46486 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752060AbeEODoj (ORCPT
+        id S1752149AbeEODqJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:46:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752060AbeEODqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:44:39 -0400
-Date: Mon, 14 May 2018 20:46:03 -0700
+        Mon, 14 May 2018 23:46:08 -0400
+Date: Mon, 14 May 2018 20:47:33 -0700
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: Joel Fernandes <joel@joelfernandes.org>
 Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
@@ -15,26 +15,26 @@ Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
         kernel-team@android.com
-Subject: Re: [PATCH RFC 6/8] rcu: Add back the Startedleaf tracepoint
+Subject: Re: [PATCH RFC 7/8] rcu: trace CleanupMore condition only if needed
 Reply-To: paulmck@linux.vnet.ibm.com
 References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-7-joel@joelfernandes.org>
- <20180514183823.GF26088@linux.vnet.ibm.com>
- <20180515005709.GE209519@joelaf.mtv.corp.google.com>
+ <20180514031541.67247-8-joel@joelfernandes.org>
+ <20180514192028.GG26088@linux.vnet.ibm.com>
+ <20180515010131.GF209519@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515005709.GE209519@joelaf.mtv.corp.google.com>
+In-Reply-To: <20180515010131.GF209519@joelaf.mtv.corp.google.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18051503-0024-0000-0000-0000035909DD
+x-cbid: 18051503-2213-0000-0000-000002A57396
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009027; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032467; UDB=6.00527834; IPR=6.00811599;
- MB=3.00021117; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 03:44:35
+ PH=3.00000004; SC=3.00000260; SDB=6.01032468; UDB=6.00527835; IPR=6.00811599;
+ MB=3.00021117; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 03:46:05
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051503-0025-0000-0000-000048041DAC
-Message-Id: <20180515034603.GY26088@linux.vnet.ibm.com>
+x-cbparentid: 18051503-2214-0000-0000-00005A1F51AC
+Message-Id: <20180515034733.GZ26088@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,77 +46,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 05:57:09PM -0700, Joel Fernandes wrote:
-> On Mon, May 14, 2018 at 11:38:23AM -0700, Paul E. McKenney wrote:
-> > On Sun, May 13, 2018 at 08:15:39PM -0700, Joel Fernandes (Google) wrote:
-> > > In recent discussion [1], the check for whether a leaf believes RCU is
-> > > not idle, is being added back to funnel locking code, to avoid more
-> > > locking. In this we are marking the leaf node for a future grace-period
-> > > and bailing out since a GP is currently in progress. However the
-> > > tracepoint is missing. Lets add it back.
-> > > 
-> > > Also add a small comment about why we do this check (basically the point
-> > > is to avoid locking intermediate nodes unnecessarily) and clarify the
-> > > comments in the trace event header now that we are doing traversal of
-> > > one or more intermediate nodes.
-> > > 
-> > > [1] http://lkml.kernel.org/r/20180513190906.GL26088@linux.vnet.ibm.com
+On Mon, May 14, 2018 at 06:01:31PM -0700, Joel Fernandes wrote:
+> On Mon, May 14, 2018 at 12:20:28PM -0700, Paul E. McKenney wrote:
+> > On Sun, May 13, 2018 at 08:15:40PM -0700, Joel Fernandes (Google) wrote:
+> > > Currently the tree RCU clean up code records a CleanupMore trace event
+> > > even if the GP was already in progress. This makes CleanupMore show up
+> > > twice for no reason. Avoid it.
 > > > 
 > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 > > 
-> > Looks like a good idea, but it does not apply -- which is not a surprise,
-> > given the change rate in this code.  I hand-applied as a modification
-> > to c1b3f9fce26f ("rcu: Don't funnel-lock above leaf node if GP in progress")
-> > with attribution, but with the changes below.  Please let me know if I
-> > am missing something.
+> > Good catch, and I applied this patch.  I did rework the commit log
+> > a bit, so please look it over to make sure I didn't mess it up.
 > > 
-> > Ah, I see -- this commit depends on your earlier name-change commit.
-> > I therefore made this patch use the old names.
-> 
-> Ok, I'll check your new tree and rebase.
-
-Sounds good!
-
-> > > ---
-> > >  include/trace/events/rcu.h |  4 ++--
-> > >  kernel/rcu/tree.c          | 11 ++++++++++-
-> > >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-> > > index 539900a9f8c7..dc0bd11739c7 100644
-> > > --- a/include/trace/events/rcu.h
-> > > +++ b/include/trace/events/rcu.h
-> > > @@ -91,8 +91,8 @@ TRACE_EVENT(rcu_grace_period,
-> > >   *
-> > >   * "Startleaf": Request a grace period based on leaf-node data.
-> > >   * "Prestarted": Someone beat us to the request
-> > > - * "Startedleaf": Leaf-node start proved sufficient.
-> > > - * "Startedleafroot": Leaf-node start proved sufficient after checking root.
-> > > + * "Startedleaf": Leaf and one or more non-root nodes marked for future start.
+> > 							Thanx, Paul
 > > 
-> > Actually, we only get to that trace if all we did was mark the leaf
-> > node, right?
+> > ------------------------------------------------------------------------
+> > 
+> > commit 52c4e689efd975f5383895b1bc1b91bc90fdd372
+> > Author: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > Date:   Sun May 13 20:15:40 2018 -0700
+> > 
+> >     rcu: Produce last "CleanupMore" trace only if late-breaking request
+> >     
+> >     Currently the tree RCU clean-up code records a "CleanupMore" trace
+> >     event in response to late-arriving grace-period requests even if the
+> >     grace period was already requested. This makes "CleanupMore" show up an
+> >     extra time (in addition to once for each rcu_node structure that was
+> >     previously marked with the request) for no good reason.  This commit
+> >     therefore avoids emitting this trace message unless the only if the only
+> >     request for this next grace period arrived during or after the cleanup
+> >     scan of the rcu_node structures.
 > 
-> I didn't think so. In the code we are doing the check for rnp every time we
-> walk up the tree. So even when we are on an intermediate node, we do the
-> check of the node we started with. I thought that's what you wanted to do. It
-> makes sense to me to do so too.
+> Yes, this is fine except "unless the only if the only" should be "unless the".
 
-If we are not on the initial (usually leaf) node, then the similar check
-in the previous "if" statement would have sent us to unlock_out, right?
-
-(And yes, I should have said "mark the initial node" above.)
+I did update this after sending, and I still have "the the".  Will fix on
+next rebase.  As my daughter recently reminded me, the Law of Conservation
+of Bugs.  ;-)
 
 							Thanx, Paul
 
-> > > + * "Startedleafroot": all non-root nodes from leaf to root marked for future start.
-> > 
-> > I got rid of the "non-root" part, given that we had to have marked
-> > the root to break out of the loop.
-> 
-> Ah yes, sorry. That's absolutely true.
-> 
 > thanks,
 > 
 > - Joel
+> 
+> >     
+> >     Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 8063a0478870..de6447dd73de 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -2072,7 +2072,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+> >  	rsp->gp_state = RCU_GP_IDLE;
+> >  	/* Check for GP requests since above loop. */
+> >  	rdp = this_cpu_ptr(rsp->rda);
+> > -	if (ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
+> > +	if (!needgp && ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
+> >  		trace_rcu_this_gp(rnp, rdp, rnp->gp_seq_needed,
+> >  				  TPS("CleanupMore"));
+> >  		needgp = true;
+> > 
 > 
