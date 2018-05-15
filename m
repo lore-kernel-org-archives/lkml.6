@@ -1,138 +1,155 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AB8JxZq4s87nUY0auMFXkrdagILPGCCBTvUWu5Up5so3CG4LXK6WdqQjARsbbwySYsLCnE2oC/OY
-ARC-Seal: i=1; a=rsa-sha256; t=1526438636; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VbsX0xKUMHaGlHse1Q1XK2exB3h5zXCNiSUagNjMHmIvbTZgSEAv8tmK2c7AsbhCkD
-         jGUBmvBkMV69KX44aAi0Juc+YzN3K2HXRU26U5q7QOmASOqqSx6M3N+mHeqwwMRuG3PK
-         pMkPBF2gVCBe28eAcrORUi7Q/+TS5kdSLx8/zXWdrJgs7qLNLZlngvQ5P/CxqlVqeF0v
-         aDUvFMwHrBIm+b9v9v65qUSq0NwbWGW0RefKZTJjwaSzCS3o0YAIQzf+anNtO+oqZlqs
-         cCpZ8iuAUoP24Oc0/ZKsqXQ7jX0j4kQdOZ4eugvAaWhCsxrLGt516RiqzzFiht89tUN5
-         sT4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=4hOeQg3zWqUzuMpDP+lr7T+Mni6J3N6xTYz/n3qRN0U=;
-        b=DMjE9tAF3rNBpcwTzxf74g1JVJMK2aRKyA/+Scy43RMK7sWb0okzV/C2IyFv0XsPmk
-         rTB+j/PRSyvlRzsGHAXH78OoH1nfVlXD92lhvNncYG57WNcl++C8IuhgLjcpII8h8IQA
-         IAkY/Gb9LOEj6BqrrlJ0yCFvRtGFwK5v8fzFnlsDw+R3SULknXi5CsmBoZG+OeAt7BS6
-         f3Jm2D+xI/ZCS8fVTWS8eGhaZr4Xpx9bUQWzJS0geg09WZt88jIYOgI5h/XSuVmDVEeG
-         WEQqFDjJaWN1MN/MkIyTrxXGemcpQXoTCpTwvl4o/6/22nR5dGpyA/ZYsJZU0BguFwag
-         2W2g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=BHjkQDNB;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=BHjkQDNB;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w4G2h6cA023234
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-usb@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@ti.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] usb: dwc3: use local copy of resource to fix-up register offset
-Date: Wed, 16 May 2018 11:41:06 +0900
-Message-Id: <1526438467-12470-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526438467-12470-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526438467-12470-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3322034-1526421662-2-9031298113575295849
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526421662; b=IMtxcE54sfF4LJMh/vY6qG39NZFdOknUrPIph7nN1NNHLfM0KR
+    LMpbYtx2BpNCzCX0yFTeA8h1igHo6VxviDR9WAn6tpso4SDIOVCUkA6J+bT3Q3ZK
+    QT5cXMXI22y2kmTsFP364lF/YchZV6E387ssKR3f0ITUlKQf5VZSi7VZOHZ55WSK
+    /BcMbIx9A/VXuL6xt9WUODcmzBYdrbbtSzI9TqTQAyvRK1DG3YQVj8qVRCIQj5ga
+    X1CRZV1ZAe/P47kFvDDsCM1cH9m4bhQ7rFIPWEj/qM4RjLqNPpmAEUvRXdGff/Ns
+    8eyV6pROfjJKrJmdA4p8briSTrBR1acaXsyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526421662; bh=sgPFEnlPiwrREe846aopGCjtn16hfC
+    P38DI9b4M0gag=; b=NK/eLxa1jwEDybLY/6MFt1UvAYz/IWaRDm7iNu8GQNkGQ0
+    Dj/g/Qk+kOCVoOF6dhWqBQmIZzyw8lcfzg8TRvMidE5b5cR17/6HqF/SyB4RF/Q7
+    h+lcCjuhsk3xBhAJmsJEujl5STzuAwHXHCW1wKnwPvSGkS/8rIp7zqVVZ3xaWECf
+    0JMNXbBbn5Vi6Lj10O2QrDCWm9S6EAvHCmYMKfQgP09Phj3yyrJ78W9Zig862SSG
+    o+SiRknqykJfCvn+T/MmrbmtxenxQgkA7kNhHC/Fe+u5BwvQ5zjNdflt00LROjW7
+    U6LA1gnr7UaizaJpFcNbYW2ij9vVGjfyF2j1CCfg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=c+f7HAhb x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=gIxLaIyU;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=c+f7HAhb x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=gIxLaIyU;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDHs7KGBYjbF7Sq4PaaShWNL8mMRwX9hRl4CtChVbBBVGACD9pzg4mVX3y573la5uLADnE277LQKu2f4gp8QI1r0DOe+txPJAU80GANzPid5vrvbBTGO
+    CexWrRPgdclRdaQrxoF2z4Jom+HZnA7Zgog7hlJMfTVGxrVAY5axUz9sSjavMUkttqZpeqCKUTcOFsCQbfp9fctttk8IBnF3HQ8b+sus4OkD6fFnZA1hf/gz
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=P79jb94FTlEA:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=Xdunx2OK0XOFyVAUE3MA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751578AbeEOV7k (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 17:59:40 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37596 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeEOV7i (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 15 May 2018 17:59:38 -0400
+X-Google-Smtp-Source: AB8JxZrrVjVQUokYH2SQPHdEzKAhGgNg1wyalkqSbVeR3crEA+YKTwzMgZj7ZPuz3TauqC+g2OMnFQ==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Maxim Uvarov <muvarov@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-renesas-soc@vger.kernel.org (open list:RENESAS ETHERNET DRIVERS),
+        linux-omap@vger.kernel.org (open list:TI ETHERNET SWITCH DRIVER (CPSW)),
+        linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE)
+Subject: [PATCH net-next 0/2] of: mdio: Fall back to mdiobus_register() with np is NULL
+Date: Tue, 15 May 2018 14:59:28 -0700
+Message-Id: <20180515215930.12115-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600586919229674762?=
-X-GMAIL-MSGID: =?utf-8?q?1600586919229674762?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It is not a good idea to directly modify the resource of a platform
-device.  Modify its local copy, and pass it to devm_ioremap_resource()
-so that we do not need to restore it in the failure path and the remove
-hook.
+Hi all,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
----
+This patch series updates of_mdiobus_register() such that when the device_node
+argument is NULL, it calls mdiobus_register() directly. This is consistent with
+the behavior of of_mdiobus_register() when CONFIG_OF=n.
 
-Changes in v3: None
-Changes in v2: None
+I only converted the most obvious drivers, there are others that have a much
+less obvious behavior and specifically attempt to deal with CONFIG_ACPI.
 
- drivers/usb/dwc3/core.c | 32 ++++++++------------------------
- 1 file changed, 8 insertions(+), 24 deletions(-)
+Florian Fainelli (2):
+  of: mdio: Fall back to mdiobus_register() with np is NULL
+  drivers: net: Remove device_node checks with of_mdiobus_register()
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index a15648d..8e66edd 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1245,7 +1245,7 @@ static void dwc3_check_params(struct dwc3 *dwc)
- static int dwc3_probe(struct platform_device *pdev)
- {
- 	struct device		*dev = &pdev->dev;
--	struct resource		*res;
-+	struct resource		*res, dwc_res;
- 	struct dwc3		*dwc;
- 
- 	int			ret;
-@@ -1270,20 +1270,19 @@ static int dwc3_probe(struct platform_device *pdev)
- 	dwc->xhci_resources[0].flags = res->flags;
- 	dwc->xhci_resources[0].name = res->name;
- 
--	res->start += DWC3_GLOBALS_REGS_START;
--
- 	/*
- 	 * Request memory region but exclude xHCI regs,
- 	 * since it will be requested by the xhci-plat driver.
- 	 */
--	regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(regs)) {
--		ret = PTR_ERR(regs);
--		goto err0;
--	}
-+	dwc_res = *res;
-+	dwc_res.start += DWC3_GLOBALS_REGS_START;
-+
-+	regs = devm_ioremap_resource(dev, &dwc_res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
- 
- 	dwc->regs	= regs;
--	dwc->regs_size	= resource_size(res);
-+	dwc->regs_size	= resource_size(&dwc_res);
- 
- 	dwc3_get_properties(dwc);
- 
-@@ -1350,29 +1349,14 @@ static int dwc3_probe(struct platform_device *pdev)
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
--err0:
--	/*
--	 * restore res->start back to its original value so that, in case the
--	 * probe is deferred, we don't end up getting error in request the
--	 * memory region the next time probe is called.
--	 */
--	res->start -= DWC3_GLOBALS_REGS_START;
--
- 	return ret;
- }
- 
- static int dwc3_remove(struct platform_device *pdev)
- {
- 	struct dwc3	*dwc = platform_get_drvdata(pdev);
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	pm_runtime_get_sync(&pdev->dev);
--	/*
--	 * restore res->start back to its original value so that, in case the
--	 * probe is deferred, we don't end up getting error in request the
--	 * memory region the next time probe is called.
--	 */
--	res->start -= DWC3_GLOBALS_REGS_START;
- 
- 	dwc3_debugfs_exit(dwc);
- 	dwc3_core_exit_mode(dwc);
+ drivers/net/dsa/bcm_sf2.c                         |  8 ++------
+ drivers/net/dsa/mv88e6xxx/chip.c                  |  5 +----
+ drivers/net/ethernet/cadence/macb_main.c          | 12 +++---------
+ drivers/net/ethernet/freescale/fec_main.c         |  8 ++------
+ drivers/net/ethernet/marvell/mvmdio.c             |  5 +----
+ drivers/net/ethernet/renesas/sh_eth.c             | 11 +++--------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |  5 +----
+ drivers/net/ethernet/ti/davinci_mdio.c            |  6 ++----
+ drivers/net/phy/mdio-gpio.c                       |  6 +-----
+ drivers/net/phy/mdio-mscc-miim.c                  |  6 +-----
+ drivers/net/usb/lan78xx.c                         |  7 ++-----
+ drivers/of/of_mdio.c                              |  6 ++++++
+ 12 files changed, 25 insertions(+), 60 deletions(-)
+
 -- 
-2.7.4
+2.14.1
+
