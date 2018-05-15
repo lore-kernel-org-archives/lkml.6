@@ -1,103 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753603AbeEOOGC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:06:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753311AbeEOOGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:06:00 -0400
-Date: Tue, 15 May 2018 10:05:58 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Tobin C. Harding" <me@tobin.cc>
-Subject: [PATCH] vsprintf: Fix memory barriers of ptr_key to
- have_filed_random_ptr_key
-Message-ID: <20180515100558.21df515e@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753672AbeEOOGT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:06:19 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36693 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753635AbeEOOGQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:06:16 -0400
+X-Google-Smtp-Source: AB8JxZrlFRPJubZPhqMtY+p/wDzvAc4B1TY5QphrfBSDK5sESo20mqnYHlE1WCbTI5GVbOz+/uruIzA2qUoJmCyFMEo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAL_JsqJw8UXktcLK8ADUfo1P+1un+omJ31sGcq7GFbNwJMsHKg@mail.gmail.com>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-11-brgl@bgdev.pl>
+ <CAL_JsqJw8UXktcLK8ADUfo1P+1un+omJ31sGcq7GFbNwJMsHKg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 15 May 2018 16:06:15 +0200
+Message-ID: <CAMRc=MdsDWb0Ve29_d=30nc1F0aVhTrG74GX=sv0iB5WycWwLw@mail.gmail.com>
+Subject: Re: [PATCH 10/12] platform/early: implement support for early
+ platform drivers
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES"
+        <linux-arch@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-05-14 15:37 GMT+02:00 Rob Herring <robh+dt@kernel.org>:
+> On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> This introduces the core part of support for early platform drivers
+>> and devices.
+>>
+>
+> It looks like most of your prep patches are to separate the alloc and
+> init of platform devices because you are essentially making early
+> devices/drivers a sub-class. Maybe you could avoid doing that and
+> simplify things a bit. Comments below based on doing that...
+>
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+My aim was to change as little as possible for everybody else while
+fixing our problem. These changes are already controversial enough
+without risky reusing of existing fields in common structures. I was
+just afraid that there are too many intricacies for it to be safe.
 
-Reviewing Tobin's patches for getting pointers out early before
-entropy has been established, I noticed that there's a lone smp_mb() in
-the code. As with most lone memory barriers, this one appears to be
-incorrectly used.
+>> +/**
+>> + * struct early_platform_driver
+>> + *
+>> + * @pdrv: real platform driver associated with this early platform driver
+>> + * @list: list head for the list of early platform drivers
+>> + * @early_probe: early probe callback
+>> + */
+>> +struct early_platform_driver {
+>> +       struct platform_driver pdrv;
+>> +       struct list_head list;
+>
+> Couldn't you use an existing list in driver_private until you move
+> over to the normal bus infra.
+>
 
-We currently basically have this:
+This is something that the previous implementation did. It was quite
+unreadable, so I decided to go with a separate list.
 
-	get_random_bytes(&ptr_key, sizeof(ptr_key));
-	/*
-	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
-	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
-	 * after get_random_bytes() returns.
-	 */
-	smp_mb();
-	WRITE_ONCE(have_filled_random_ptr_key, true);
+>> +       int (*early_probe)(struct platform_device *);
+>
+> Just add this to platform_driver.
+>
 
-And later we have:
+This would extend the structure for everybody else while there'll be
+very few such devices and not all systems would even require it.
 
-	if (unlikely(!have_filled_random_ptr_key))
-		return string(buf, end, "(ptrval)", spec);
+>> +};
+>> +
+>> +/**
+>> + * struct early_platform_device
+>> + *
+>> + * @pdev: real platform device associated with this early platform device
+>> + * @list: list head for the list of early platform devices
+>> + * @deferred: true if this device's early probe was deferred
+>> + * @deferred_drv: early platform driver with which this device was matched
+>> + */
+>> +struct early_platform_device {
+>> +       struct platform_device pdev;
+>> +       struct list_head list;
+>
+> Use a list in device_private?
+>
+>> +       bool deferred;
+>> +       struct early_platform_driver *deferred_drv;
+>
+> Can't you use the existing deferred probe list?
+>
 
-/* Missing memory barrier here. */
+I thought about it, but I was afraid there could be some timing issues
+with that and decided against it. The early deferral also doesn't work
+in a workque, but is synchronous instead.
 
-	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
-
-As the CPU can perform speculative loads, we could have a situation
-with the following:
-
-	CPU0				CPU1
-	----				----
-				   load ptr_key = 0
-   store ptr_key = random
-   smp_mb()
-   store have_filled_random_ptr_key
-
-				   load have_filled_random_ptr_key = true
-
-				    BAD BAD BAD!
-
-Because nothing prevents CPU1 from loading ptr_key before loading
-have_filled_random_ptr_key.
-
-Note, I also do not see the reason to use smp_mb() instead of smp_wmb()
-since we are only worried about the store of ptr_key with respect to
-the store of have_filled_random_ptr_key.
-
-Cc: stable@vger.kernel.org
-Fixes: ad67b74d2469d ("printk: hash addresses printed with %p")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 30c0cb8cc9bc..e8a0b8e54bd3 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1680,7 +1680,7 @@ static void fill_random_ptr_key(struct random_ready_callback *unused)
- 	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
- 	 * after get_random_bytes() returns.
- 	 */
--	smp_mb();
-+	smp_wmb();
- 	WRITE_ONCE(have_filled_random_ptr_key, true);
- }
- 
-@@ -1715,6 +1715,9 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
- 		return string(buf, end, "(ptrval)", spec);
- 	}
- 
-+	/* Read ptr_key after reading have_filled_random_ptr_key */
-+	smp_rmb();
-+
- #ifdef CONFIG_64BIT
- 	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
- 	/*
+Best regards,
+Bartosz Golaszewski
