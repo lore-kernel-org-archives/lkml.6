@@ -1,94 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753837AbeEOSHH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:07:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33870 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbeEOSFk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:05:40 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] swiotlb: do not panic on mapping failures
-Date: Tue, 15 May 2018 20:05:19 +0200
-Message-Id: <20180515180523.3038-3-hch@lst.de>
+        id S1753913AbeEOSH2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:07:28 -0400
+Received: from mga14.intel.com ([192.55.52.115]:52921 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753013AbeEOSFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:05:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="39554518"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] x86/mtrr: Convert to use strncpy_from_user() helper
+Date: Tue, 15 May 2018 21:05:35 +0300
+Message-Id: <20180515180535.89703-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180515180523.3038-1-hch@lst.de>
-References: <20180515180523.3038-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have error handling in map_single/map_page callers (most of them
-anyway). As swiotlb_tbl_map_single already prints a useful warning
-when running out of swiotlb pool swace we can also remove swiotlb_full
-entirely as it serves no purpose now.
+Replace the open coded string fetch from the user.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- lib/swiotlb.c | 33 +--------------------------------
- 1 file changed, 1 insertion(+), 32 deletions(-)
+ arch/x86/kernel/cpu/mtrr/if.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 721f93677eee..4d36340bc4f9 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -763,34 +763,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
- 	return true;
- }
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index e4adad68b5e5..3cbae60663fa 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -105,17 +105,9 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
  
--static void
--swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
--	     int do_panic)
--{
--	if (swiotlb_force == SWIOTLB_NO_FORCE)
--		return;
--
--	/*
--	 * Ran out of IOMMU space for this operation. This is very bad.
--	 * Unfortunately the drivers cannot handle this operation properly.
--	 * unless they check for dma_mapping_error (most don't)
--	 * When the mapping is small enough return a static buffer to limit
--	 * the damage, or panic when the transfer is too big.
--	 */
--	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
--			    size);
--
--	if (size <= io_tlb_overflow || !do_panic)
--		return;
--
--	if (dir == DMA_BIDIRECTIONAL)
--		panic("DMA: Random memory could be DMA accessed\n");
--	if (dir == DMA_FROM_DEVICE)
--		panic("DMA: Random memory could be DMA written\n");
--	if (dir == DMA_TO_DEVICE)
--		panic("DMA: Random memory could be DMA read\n");
--}
--
- /*
-  * Map a single buffer of the indicated size for DMA in streaming mode.  The
-  * physical address to use is returned.
-@@ -819,10 +791,8 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 	memset(line, 0, LINE_SIZE);
  
- 	/* Oh well, have to allocate and map a bounce buffer. */
- 	map = map_single(dev, phys, size, dir, attrs);
--	if (map == SWIOTLB_MAP_ERROR) {
--		swiotlb_full(dev, size, dir, 1);
-+	if (map == SWIOTLB_MAP_ERROR)
- 		return __phys_to_dma(dev, io_tlb_overflow_buffer);
--	}
+-	length = len;
+-	length--;
+-
+-	if (length > LINE_SIZE - 1)
+-		length = LINE_SIZE - 1;
+-
++	length = strncpy_from_user(line, buf, LINE_SIZE - 1);
+ 	if (length < 0)
+-		return -EINVAL;
+-
+-	if (copy_from_user(line, buf, length))
+-		return -EFAULT;
++		return length;
  
- 	dev_addr = __phys_to_dma(dev, map);
+ 	strim(line);
  
-@@ -950,7 +920,6 @@ swiotlb_map_sg_attrs(struct device *hwdev, struct scatterlist *sgl, int nelems,
- 			if (map == SWIOTLB_MAP_ERROR) {
- 				/* Don't panic here, we expect map_sg users
- 				   to do proper error handling. */
--				swiotlb_full(hwdev, sg->length, dir, 0);
- 				attrs |= DMA_ATTR_SKIP_CPU_SYNC;
- 				swiotlb_unmap_sg_attrs(hwdev, sgl, i, dir,
- 						       attrs);
 -- 
 2.17.0
