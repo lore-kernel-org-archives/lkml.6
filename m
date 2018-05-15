@@ -1,175 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeEOHeo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:34:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47403 "EHLO mail.bootlin.com"
+        id S1752326AbeEOHfn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:35:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47442 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeEOHen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:34:43 -0400
-Date: Tue, 15 May 2018 09:34:29 +0200
+        id S1752284AbeEOHfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 03:35:40 -0400
+Date: Tue, 15 May 2018 09:35:25 +0200
 From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Chris Moore <moore@free.fr>
-Cc: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "Bos, Ties \(Nokia - US/Sunnyvale\)" <ties.bos@nokia.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
- contents of ONFI parameter
-Message-ID: <20180515093429.34902670@bbrezillon>
-In-Reply-To: <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
-References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
-        <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jane Wan <Jane.Wan@nokia.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>, ties.bos@nokia.com,
+        prabhakar.kushwaha@nxp.com,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        jagdish.gediya@nxp.com, Richard Weinberger <richard@nod.at>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: use bit-wise majority to recover
+ the contents of ONFI parameter
+Message-ID: <20180515093525.051856dd@bbrezillon>
+In-Reply-To: <CAHp75VcET7PZYfeRkmiP=n_xCnDzEFYS98ZLjszc1fHjdfDF2A@mail.gmail.com>
+References: <1525920400-11392-1-git-send-email-Jane.Wan@nokia.com>
+        <20180510140311.02805561@bbrezillon>
+        <CAHp75VcET7PZYfeRkmiP=n_xCnDzEFYS98ZLjszc1fHjdfDF2A@mail.gmail.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018 06:45:51 +0200
-Chris Moore <moore@free.fr> wrote:
+On Mon, 14 May 2018 20:54:36 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-> Hi,
+> On Thu, May 10, 2018 at 3:03 PM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
 > 
-> Le 13/05/2018 à 06:30, Wan, Jane (Nokia - US/Sunnyvale) a écrit :
-> > Per ONFI specification (Rev. 4.0), if all parameter pages have invalid CRC values, the bit-wise majority may be used to recover the contents of the parameter pages from the parameter page copies present.
+> >> +#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)  
 > >
-> > Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> > ---
-> > v7: change debug print messages
-> > v6: support the cases that srcbufs are not contiguous
-> > v5: make the bit-wise majority functon generic
-> > v4: move the bit-wise majority code in a separate function
-> > v3: fix warning message detected by kbuild test robot
-> > v2: rebase the changes on top of v4.17-rc1
-> >   
-> > drivers/mtd/nand/raw/nand_base.c |   50 ++++++++++++++++++++++++++++++++++----
-> >   1 file changed, 45 insertions(+), 5 deletions(-)
+> > Not sure we need that macro, see below.  
+> 
+> +1. We have too many nice helpers for bit manipulations
+> (for_each_set_bit() as an example).
+> 
+> 
+> >                         for (k = 0; k < nbufs; k++) {
+> >                                 const u8 *srcbuf = srcbufs[j];
 > >
-> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> > index 72f3a89..b43b784 100644
-> > --- a/drivers/mtd/nand/raw/nand_base.c
-> > +++ b/drivers/mtd/nand/raw/nand_base.c
-> > @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
-> >   }
-> >   
-> >   /*
-> > + * Recover data with bit-wise majority
-> > + */
-> > +static void nand_bit_wise_majority(const void **srcbufs,
-> > +				   unsigned int nsrcbufs,
-> > +				   void *dstbuf,
-> > +				   unsigned int bufsize)
-> > +{
-> > +	int i, j, k;
-> > +
-> > +	for (i = 0; i < bufsize; i++) {
-> > +		u8 cnt, val;
-> > +
-> > +		val = 0;
-> > +		for (j = 0; j < 8; j++) {
-> > +			cnt = 0;
-> > +			for (k = 0; k < nsrcbufs; k++) {
-> > +				const u8 *srcbuf = srcbufs[k];
-> > +
-> > +				if (srcbuf[i] & BIT(j))
-> > +					cnt++;
-> > +			}
-> > +			if (cnt > nsrcbufs / 2)
-> > +				val |= BIT(j);
-> > +		}
-> > +		((u8 *)dstbuf)[i] = val;
-> > +	}
-> > +}
-> > +
-> > +/*
-> >    * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
-> >    */
-> >   static int nand_flash_detect_onfi(struct nand_chip *chip)
-> > @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
-> >   		return 0;
-> >   
-> >   	/* ONFI chip: allocate a buffer to hold its parameter page */
-> > -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> > +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> >   	if (!p)
-> >   		return -ENOMEM;
-> >   
-> > @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
-> >   	}
-> >   
-> >   	for (i = 0; i < 3; i++) {
-> > -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> > +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
-> >   		if (ret) {
-> >   			ret = 0;
-> >   			goto free_onfi_param_page;
-> >   		}
-> >   
-> > -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
-> > +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
-> >   				le16_to_cpu(p->crc)) {
-> > +			if (i)
-> > +				memcpy(p, &p[i], sizeof(*p));
-> >   			break;
-> >   		}
-> >   	}
-> >   
-> >   	if (i == 3) {
-> > -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> > -		goto free_onfi_param_page;
-> > +		const void *srcbufs[3] = {p, p + 1, p + 2};
-> > +
-> > +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
-> > +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
-> > +				       sizeof(*p));
-> > +
-> > +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
-> > +				le16_to_cpu(p->crc)) {
-> > +			pr_err("ONFI parameter recovery failed, aborting\n");
-> > +			goto free_onfi_param_page;
-> > +		}
-> >   	}
-> >   
-> >   	/* Check version */  
+> >                                 if (srcbuf[i] & BIT(k))
+> >                                         m++;
+> >                         }  
 > 
-> This version is still hard coded for a three sample bitwise majority vote.
-> So why not use the method which I suggested previously for v2 and which 
-> I repeat below?
+> ...which is effectively hweightXX().
 
-Because I want the nand_bit_wise_majority() function to work with
-nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
-page, but NAND vendor can decide to put more). Also, if the X copies of
-the PARAM are corrupted (which is rather unlikely), that means we
-already spent quite a lot of time reading the different copies and
-calculating the CRC, so I think we don't care about perf optimizations
-when doing bit-wise majority.
-
-> 
-> The three sample bitwise majority can be implemented without bit level 
-> manipulation using the identity:
-> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
-> This can be factorized slightly to (a & (b | c)) | (b & c)
-> This enables the operation to be performed 8, 16, 32 or even 64 bits at 
-> a time depending on the hardware.
-> 
-> This method is not only faster and but also more compact.
-> 
-> Cheers,
-> Chris
-> 
-> 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+No it's not.
