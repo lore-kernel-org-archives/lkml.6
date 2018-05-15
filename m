@@ -1,84 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752862AbeEONGe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 09:06:34 -0400
-Received: from zimbra.alphalink.fr ([217.15.80.77]:51173 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752545AbeEONGb (ORCPT
+        id S1753047AbeEONJZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 09:09:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53983 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752149AbeEONJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 09:06:31 -0400
-Date: Tue, 15 May 2018 15:06:26 +0200
-From: Guillaume Nault <g.nault@alphalink.fr>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: syzbot <syzbot+c8e66da874feb11aaca6@syzkaller.appspotmail.com>,
-        davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org,
-        Paolo Abeni <pabeni@redhat.com>
-Subject: Re: KASAN: out-of-bounds Read in ip6_xmit
-Message-ID: <20180515130626.GA1389@alphalink.fr>
-References: <001a11433bee67ed4c0563db12f9@google.com>
- <20180509044525.GD711@sol.localdomain>
+        Tue, 15 May 2018 09:09:23 -0400
+X-Google-Smtp-Source: AB8JxZrU8Hx29nr2y6vrVXCLPhtljwtsoCCfDgiRmpwzWN271ujyIGgUQJMnmeFXDkd5tYKH6Hcn9HVVCcFKBCyfQOc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509044525.GD711@sol.localdomain>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1523975611-15978-19-git-send-email-ldufour@linux.vnet.ibm.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-19-git-send-email-ldufour@linux.vnet.ibm.com>
+From: vinayak menon <vinayakm.list@gmail.com>
+Date: Tue, 15 May 2018 18:39:20 +0530
+Message-ID: <CAOaiJ-nfC0hBup_XWqp2HNzAcDw8kRsfXM8Vxny3qnE3BG8q6A@mail.gmail.com>
+Subject: Re: [PATCH v10 18/25] mm: provide speculative fault infrastructure
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, kirill@shutemov.name,
+        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, Balbir Singh <bsingharora@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, Vinayak Menon <vinmenon@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 09:45:25PM -0700, Eric Biggers wrote:
-> On Sun, Jan 28, 2018 at 11:24:01AM -0800, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot hit the following crash on net-next commit
-> > 6bb46bc57c8e9ce947cc605e555b7204b44d2b10 (Fri Jan 26 16:00:23 2018 +0000)
-> > Merge branch 'cxgb4-fix-dump-collection-when-firmware-crashed'
-> > 
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> > Raw console output is attached.
-> > compiler: gcc (GCC) 7.1.1 20170620
-> > .config is attached.
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+c8e66da874feb11aaca6@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> > 
-> > ==================================================================
-> > BUG: KASAN: out-of-bounds in ip6_dst_idev include/net/ip6_fib.h:192 [inline]
-> > BUG: KASAN: out-of-bounds in ip6_xmit+0x1f76/0x2260
-> > net/ipv6/ip6_output.c:264
-> > Read of size 8 at addr ffff8801bcc8cc18 by task syz-executor2/11459
-> > 
-> > CPU: 0 PID: 11459 Comm: syz-executor2 Not tainted 4.15.0-rc9+ #212
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:17 [inline]
-> >  dump_stack+0x194/0x257 lib/dump_stack.c:53
-> >  print_address_description+0x73/0x250 mm/kasan/report.c:252
-> >  kasan_report_error mm/kasan/report.c:351 [inline]
-> >  kasan_report+0x25b/0x340 mm/kasan/report.c:409
-> >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
-> >  ip6_dst_idev include/net/ip6_fib.h:192 [inline]
-> >  ip6_xmit+0x1f76/0x2260 net/ipv6/ip6_output.c:264
-> >  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
-> >  l2tp_xmit_core net/l2tp/l2tp_core.c:1096 [inline]
-> >  l2tp_xmit_skb+0x105f/0x1410 net/l2tp/l2tp_core.c:1191
-> >  pppol2tp_sendmsg+0x470/0x670 net/l2tp/l2tp_ppp.c:341
-> >  sock_sendmsg_nosec net/socket.c:630 [inline]
-> >  sock_sendmsg+0xca/0x110 net/socket.c:640
-> >  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2046
-> >  __sys_sendmsg+0xe5/0x210 net/socket.c:2080
-> >  SYSC_sendmsg net/socket.c:2091 [inline]
-> >  SyS_sendmsg+0x2d/0x50 net/socket.c:2087
-> >  entry_SYSCALL_64_fastpath+0x29/0xa0
-> 
-> No reproducer and last occurred 58 days ago (on commit f44b1886a5f876c8).
-> Probably was fixed by commit b954f94023dcc61:
-> 
-Indeed, this commit certainly applies to this report too. Thanks a lot
-for looking into this.
+On Tue, Apr 17, 2018 at 8:03 PM, Laurent Dufour
+<ldufour@linux.vnet.ibm.com> wrote:
+>
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +
+> +#ifndef __HAVE_ARCH_PTE_SPECIAL
+> +/* This is required by vm_normal_page() */
+> +#error "Speculative page fault handler requires __HAVE_ARCH_PTE_SPECIAL"
+> +#endif
+> +
+> +/*
+> + * vm_normal_page() adds some processing which should be done while
+> + * hodling the mmap_sem.
+> + */
+> +int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+> +                              unsigned int flags)
+> +{
+> +       struct vm_fault vmf = {
+> +               .address = address,
+> +       };
+> +       pgd_t *pgd, pgdval;
+> +       p4d_t *p4d, p4dval;
+> +       pud_t pudval;
+> +       int seq, ret = VM_FAULT_RETRY;
+> +       struct vm_area_struct *vma;
+> +
+> +       /* Clear flags that may lead to release the mmap_sem to retry */
+> +       flags &= ~(FAULT_FLAG_ALLOW_RETRY|FAULT_FLAG_KILLABLE);
+> +       flags |= FAULT_FLAG_SPECULATIVE;
+> +
+> +       vma = get_vma(mm, address);
+> +       if (!vma)
+> +               return ret;
+> +
+> +       seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
+> +       if (seq & 1)
+> +               goto out_put;
+> +
+> +       /*
+> +        * Can't call vm_ops service has we don't know what they would do
+> +        * with the VMA.
+> +        * This include huge page from hugetlbfs.
+> +        */
+> +       if (vma->vm_ops)
+> +               goto out_put;
+> +
+> +       /*
+> +        * __anon_vma_prepare() requires the mmap_sem to be held
+> +        * because vm_next and vm_prev must be safe. This can't be guaranteed
+> +        * in the speculative path.
+> +        */
+> +       if (unlikely(!vma->anon_vma))
+> +               goto out_put;
+> +
+> +       vmf.vma_flags = READ_ONCE(vma->vm_flags);
+> +       vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
+> +
+> +       /* Can't call userland page fault handler in the speculative path */
+> +       if (unlikely(vmf.vma_flags & VM_UFFD_MISSING))
+> +               goto out_put;
+> +
+> +       if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP)
+> +               /*
+> +                * This could be detected by the check address against VMA's
+> +                * boundaries but we want to trace it as not supported instead
+> +                * of changed.
+> +                */
+> +               goto out_put;
+> +
+> +       if (address < READ_ONCE(vma->vm_start)
+> +           || READ_ONCE(vma->vm_end) <= address)
+> +               goto out_put;
+> +
+> +       if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+> +                                      flags & FAULT_FLAG_INSTRUCTION,
+> +                                      flags & FAULT_FLAG_REMOTE)) {
+> +               ret = VM_FAULT_SIGSEGV;
+> +               goto out_put;
+> +       }
+> +
+> +       /* This is one is required to check that the VMA has write access set */
+> +       if (flags & FAULT_FLAG_WRITE) {
+> +               if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
+> +                       ret = VM_FAULT_SIGSEGV;
+> +                       goto out_put;
+> +               }
+> +       } else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
+> +               ret = VM_FAULT_SIGSEGV;
+> +               goto out_put;
+> +       }
+> +
+> +       if (IS_ENABLED(CONFIG_NUMA)) {
+> +               struct mempolicy *pol;
+> +
+> +               /*
+> +                * MPOL_INTERLEAVE implies additional checks in
+> +                * mpol_misplaced() which are not compatible with the
+> +                *speculative page fault processing.
+> +                */
+> +               pol = __get_vma_policy(vma, address);
+
+
+This gives a compile time error when CONFIG_NUMA is disabled, as there
+is no definition for
+__get_vma_policy.
+
+
+> +               if (!pol)
+> +                       pol = get_task_policy(current);
+> +               if (pol && pol->mode == MPOL_INTERLEAVE)
+> +                       goto out_put;
+> +       }
+> +
+> +       /*
+> +        * Do a speculative lookup of the PTE entry.
+> +        */
+> +       local_irq_disable();
+> +       pgd = pgd_offset(mm, address);
+> +       pgdval = READ_ONCE(*pgd);
+> +       if (pgd_none(pgdval) || unlikely(pgd_bad(pgdval)))
+> +               goto out_walk;
+> +
+> +       p4d = p4d_offset(pgd, address);
+> +       p4dval = READ_ONCE(*p4d);
+> +       if (p4d_none(p4dval) || unlikely(p4d_bad(p4dval)))
+> +               goto out_walk;
+> +
+> +       vmf.pud = pud_offset(p4d, address);
+> +       pudval = READ_ONCE(*vmf.pud);
+> +       if (pud_none(pudval) || unlikely(pud_bad(pudval)))
+> +               goto out_walk;
+> +
+> +       /* Huge pages at PUD level are not supported. */
+> +       if (unlikely(pud_trans_huge(pudval)))
+> +               goto out_walk;
+> +
+> +       vmf.pmd = pmd_offset(vmf.pud, address);
+> +       vmf.orig_pmd = READ_ONCE(*vmf.pmd);
+> +       /*
+> +        * pmd_none could mean that a hugepage collapse is in progress
+> +        * in our back as collapse_huge_page() mark it before
+> +        * invalidating the pte (which is done once the IPI is catched
+> +        * by all CPU and we have interrupt disabled).
+> +        * For this reason we cannot handle THP in a speculative way since we
+> +        * can't safely indentify an in progress collapse operation done in our
+> +        * back on that PMD.
+> +        * Regarding the order of the following checks, see comment in
+> +        * pmd_devmap_trans_unstable()
+> +        */
+> +       if (unlikely(pmd_devmap(vmf.orig_pmd) ||
+> +                    pmd_none(vmf.orig_pmd) || pmd_trans_huge(vmf.orig_pmd) ||
+> +                    is_swap_pmd(vmf.orig_pmd)))
+> +               goto out_walk;
+> +
+> +       /*
+> +        * The above does not allocate/instantiate page-tables because doing so
+> +        * would lead to the possibility of instantiating page-tables after
+> +        * free_pgtables() -- and consequently leaking them.
+> +        *
+> +        * The result is that we take at least one !speculative fault per PMD
+> +        * in order to instantiate it.
+> +        */
+> +
+> +       vmf.pte = pte_offset_map(vmf.pmd, address);
+> +       vmf.orig_pte = READ_ONCE(*vmf.pte);
+> +       barrier(); /* See comment in handle_pte_fault() */
+> +       if (pte_none(vmf.orig_pte)) {
+> +               pte_unmap(vmf.pte);
+> +               vmf.pte = NULL;
+> +       }
+> +
+> +       vmf.vma = vma;
+> +       vmf.pgoff = linear_page_index(vma, address);
+> +       vmf.gfp_mask = __get_fault_gfp_mask(vma);
+> +       vmf.sequence = seq;
+> +       vmf.flags = flags;
+> +
+> +       local_irq_enable();
+> +
+> +       /*
+> +        * We need to re-validate the VMA after checking the bounds, otherwise
+> +        * we might have a false positive on the bounds.
+> +        */
+> +       if (read_seqcount_retry(&vma->vm_sequence, seq))
+> +               goto out_put;
+> +
+> +       mem_cgroup_oom_enable();
+> +       ret = handle_pte_fault(&vmf);
+> +       mem_cgroup_oom_disable();
+> +
+> +       put_vma(vma);
+> +
+> +       /*
+> +        * The task may have entered a memcg OOM situation but
+> +        * if the allocation error was handled gracefully (no
+> +        * VM_FAULT_OOM), there is no need to kill anything.
+> +        * Just clean up the OOM state peacefully.
+> +        */
+> +       if (task_in_memcg_oom(current) && !(ret & VM_FAULT_OOM))
+> +               mem_cgroup_oom_synchronize(false);
+> +       return ret;
+> +
+> +out_walk:
+> +       local_irq_enable();
+> +out_put:
+> +       put_vma(vma);
+> +       return ret;
+> +}
+> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+> +
+>  /*
+>   * By the time we get here, we already hold the mm semaphore
+>   *
+> --
+> 2.7.4
+>
