@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeEOIN0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:13:26 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:52007 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752381AbeEOH7b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752378AbeEOH7b (ORCPT <rfc822;w@1wt.eu>);
         Tue, 15 May 2018 03:59:31 -0400
-X-Google-Smtp-Source: AB8JxZrnIDYfs0W1uaC7IbkiIQZsnySluqd3itHmnmWE2JNo/XLpXSNAh0c20LpgqoGp2ETti7pzZw==
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41918 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752097AbeEOH72 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 03:59:28 -0400
+X-Google-Smtp-Source: AB8JxZqm+wbt59PpSdmPrtP7xPkvavbWoCNQh8hBnkm1u52DWfwon4yHSx5H1tkAi8dD2o+zQ7NoJg==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,112 +15,84 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 03/29] venus: hfi: update sequence event to handle more properties
-Date: Tue, 15 May 2018 10:58:33 +0300
-Message-Id: <20180515075859.17217-4-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 00/29] Venus updates
+Date: Tue, 15 May 2018 10:58:30 +0300
+Message-Id: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HFI version 4xx can pass more properties in the sequence change
-event, extend the event structure with them.
+Hello,
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/hfi.h      |  9 ++++++
- drivers/media/platform/qcom/venus/hfi_msgs.c | 46 ++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+Here is v2 with following comments addressed:
 
-diff --git a/drivers/media/platform/qcom/venus/hfi.h b/drivers/media/platform/qcom/venus/hfi.h
-index 5466b7d60dd0..21376d93170f 100644
---- a/drivers/media/platform/qcom/venus/hfi.h
-+++ b/drivers/media/platform/qcom/venus/hfi.h
-@@ -74,6 +74,15 @@ struct hfi_event_data {
- 	u32 tag;
- 	u32 profile;
- 	u32 level;
-+	u32 bit_depth;
-+	u32 pic_struct;
-+	u32 colour_space;
-+	u32 entropy_mode;
-+	u32 buf_count;
-+	struct {
-+		u32 left, top;
-+		u32 width, height;
-+	} input_crop;
- };
- 
- /* define core states */
-diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c b/drivers/media/platform/qcom/venus/hfi_msgs.c
-index 589e1a6b36a9..5970e9b1716b 100644
---- a/drivers/media/platform/qcom/venus/hfi_msgs.c
-+++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
-@@ -25,10 +25,17 @@
- static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
- 			      struct hfi_msg_event_notify_pkt *pkt)
- {
-+	enum hfi_version ver = core->res->hfi_version;
- 	struct hfi_event_data event = {0};
- 	int num_properties_changed;
- 	struct hfi_framesize *frame_sz;
- 	struct hfi_profile_level *profile_level;
-+	struct hfi_bit_depth *pixel_depth;
-+	struct hfi_pic_struct *pic_struct;
-+	struct hfi_colour_space *colour_info;
-+	struct hfi_buffer_requirements *bufreq;
-+	struct hfi_extradata_input_crop *crop;
-+	u32 entropy_mode = 0;
- 	u8 *data_ptr;
- 	u32 ptype;
- 
-@@ -69,6 +76,45 @@ static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
- 			event.level = profile_level->level;
- 			data_ptr += sizeof(*profile_level);
- 			break;
-+		case HFI_PROPERTY_PARAM_VDEC_PIXEL_BITDEPTH:
-+			data_ptr += sizeof(u32);
-+			pixel_depth = (struct hfi_bit_depth *)data_ptr;
-+			event.bit_depth = pixel_depth->bit_depth;
-+			data_ptr += sizeof(*pixel_depth);
-+			break;
-+		case HFI_PROPERTY_PARAM_VDEC_PIC_STRUCT:
-+			data_ptr += sizeof(u32);
-+			pic_struct = (struct hfi_pic_struct *)data_ptr;
-+			event.pic_struct = pic_struct->progressive_only;
-+			data_ptr += sizeof(*pic_struct);
-+			break;
-+		case HFI_PROPERTY_PARAM_VDEC_COLOUR_SPACE:
-+			data_ptr += sizeof(u32);
-+			colour_info = (struct hfi_colour_space *)data_ptr;
-+			event.colour_space = colour_info->colour_space;
-+			data_ptr += sizeof(*colour_info);
-+			break;
-+		case HFI_PROPERTY_CONFIG_VDEC_ENTROPY:
-+			data_ptr += sizeof(u32);
-+			entropy_mode = *(u32 *)data_ptr;
-+			event.entropy_mode = entropy_mode;
-+			data_ptr += sizeof(u32);
-+			break;
-+		case HFI_PROPERTY_CONFIG_BUFFER_REQUIREMENTS:
-+			data_ptr += sizeof(u32);
-+			bufreq = (struct hfi_buffer_requirements *)data_ptr;
-+			event.buf_count = HFI_BUFREQ_COUNT_MIN(bufreq, ver);
-+			data_ptr += sizeof(*bufreq);
-+			break;
-+		case HFI_INDEX_EXTRADATA_INPUT_CROP:
-+			data_ptr += sizeof(u32);
-+			crop = (struct hfi_extradata_input_crop *)data_ptr;
-+			event.input_crop.left = crop->left;
-+			event.input_crop.top = crop->top;
-+			event.input_crop.width = crop->width;
-+			event.input_crop.height = crop->height;
-+			data_ptr += sizeof(*crop);
-+			break;
- 		default:
- 			break;
- 		}
+* reworked venus suspend 3xx and reuse it for 4xx.
+* drop 10/28 patch from v1, i.e. call of session_continue when
+  buffer requirements are not sufficient.
+* fixed kbuild test robot warning in 11/28 by allocating instance
+  variable from heap.
+* spelling typo in 15/28.
+* added Reviewed-by for DT changes.
+* extended 28/28 HEVC support for encoder, now the profile and
+  level are selected properly.
+
+Comments are welcome!
+
+regards,
+Stan
+
+Stanimir Varbanov (29):
+  venus: hfi_msgs: correct pointer increment
+  venus: hfi: preparation to support venus 4xx
+  venus: hfi: update sequence event to handle more properties
+  venus: hfi_cmds: add set_properties for 4xx version
+  venus: hfi: support session continue for 4xx version
+  venus: hfi: handle buffer output2 type as well
+  venus: hfi_venus: add halt AXI support for Venus 4xx
+  venus: hfi_venus: fix suspend function for venus 3xx versions
+  venus: hfi_venus: move set of default properties to core init
+  venus: hfi_venus: add suspend functionality for Venus 4xx
+  venus: venc,vdec: adds clocks needed for venus 4xx
+  venus: add common capability parser
+  venus: helpers: make a commmon function for power_enable
+  venus: core: delete not used flag for buffer mode
+  venus: helpers: rename a helper function and use buffer mode from caps
+  venus: add a helper function to set dynamic buffer mode
+  venus: add helper function to set actual buffer size
+  venus: delete no longer used bufmode flag from instance
+  venus: helpers: add buffer type argument to a helper
+  venus: helpers: add a new helper to set raw format
+  venus: helpers,vdec,venc: add helpers to set work mode and core usage
+  venus: helpers: extend set_num_bufs helper with one more argument
+  venus: helpers: add a helper to return opb buffer sizes
+  venus: vdec: get required input buffers as well
+  venus: vdec: new function for output configuration
+  venus: move frame size calculations in common place
+  venus: implementing multi-stream support
+  venus: add sdm845 compatible and resource data
+  venus: add HEVC codec support
+
+ .../devicetree/bindings/media/qcom,venus.txt       |   1 +
+ drivers/media/platform/qcom/venus/Makefile         |   3 +-
+ drivers/media/platform/qcom/venus/core.c           | 107 ++++
+ drivers/media/platform/qcom/venus/core.h           |  93 ++--
+ drivers/media/platform/qcom/venus/helpers.c        | 558 +++++++++++++++++++--
+ drivers/media/platform/qcom/venus/helpers.h        |  23 +-
+ drivers/media/platform/qcom/venus/hfi.c            |  12 +-
+ drivers/media/platform/qcom/venus/hfi.h            |   9 +
+ drivers/media/platform/qcom/venus/hfi_cmds.c       |  64 ++-
+ drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
+ drivers/media/platform/qcom/venus/hfi_msgs.c       | 401 +++------------
+ drivers/media/platform/qcom/venus/hfi_parser.c     | 291 +++++++++++
+ drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
+ drivers/media/platform/qcom/venus/hfi_venus.c      |  95 +++-
+ drivers/media/platform/qcom/venus/hfi_venus_io.h   |  25 +
+ drivers/media/platform/qcom/venus/vdec.c           | 316 +++++++-----
+ drivers/media/platform/qcom/venus/venc.c           | 211 ++++----
+ 17 files changed, 1689 insertions(+), 677 deletions(-)
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
+
 -- 
 2.14.1
