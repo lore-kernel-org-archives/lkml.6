@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753141AbeEOMpN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:45:13 -0400
+        id S1753205AbeEOMpV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:45:21 -0400
 Received: from mga09.intel.com ([134.134.136.24]:14385 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753072AbeEOMpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:45:11 -0400
+        id S1753168AbeEOMpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:45:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="41390952"
+   d="scan'208";a="41390989"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V1 06/19] perf tools: Fix kernel_start for PTI on x86
-Date: Tue, 15 May 2018 15:43:20 +0300
-Message-Id: <1526388213-30696-7-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH V1 08/19] perf tools: Fix map_groups__split_kallsyms() for entry trampoline symbols
+Date: Tue, 15 May 2018 15:43:22 +0300
+Message-Id: <1526388213-30696-9-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
 References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
@@ -32,61 +32,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On x86_64, PTI entry trampolines are less than the start of kernel text,
-but still above 2^63. So leave kernel_start = 1ULL << 63 for x86_64.
+When kernel symbols are derived from /proc/kallsyms only (not using vmlinux
+or /proc/kcore) map_groups__split_kallsyms() is used. However that function
+makes assumptions that are not true with entry trampoline symbols. For now,
+remove the entry trampoline symbols at that point, as they are no longer
+needed at that point.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/machine.c | 16 +++++++++++++++-
- tools/perf/util/machine.h |  2 ++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ tools/perf/util/map.h    |  8 ++++++++
+ tools/perf/util/symbol.c | 13 +++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 72a351613d85..2f39a4d014de 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2296,6 +2296,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
- 	return 0;
- }
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index f1afe1ab6ff7..fafcc375ed37 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -8,6 +8,7 @@
+ #include <linux/rbtree.h>
+ #include <pthread.h>
+ #include <stdio.h>
++#include <string.h>
+ #include <stdbool.h>
+ #include <linux/types.h>
+ #include "rwsem.h"
+@@ -239,4 +240,11 @@ static inline bool __map__is_kmodule(const struct map *map)
  
-+/*
-+ * Compares the raw arch string. N.B. see instead perf_env__arch() if a
-+ * normalized arch is needed.
-+ */
-+bool machine__is(struct machine *machine, const char *arch)
+ bool map__has_symbols(const struct map *map);
+ 
++#define ENTRY_TRAMPOLINE_NAME "__entry_SYSCALL_64_trampoline"
++
++static inline bool is_entry_trampoline(const char *name)
 +{
-+	return machine && machine->env && !strcmp(machine->env->arch, arch);
++	return !strcmp(name, ENTRY_TRAMPOLINE_NAME);
 +}
 +
- int machine__get_kernel_start(struct machine *machine)
- {
- 	struct map *map = machine__kernel_map(machine);
-@@ -2312,7 +2321,12 @@ int machine__get_kernel_start(struct machine *machine)
- 	machine->kernel_start = 1ULL << 63;
- 	if (map) {
- 		err = map__load(map);
--		if (!err)
-+		/*
-+		 * On x86_64, PTI entry trampolines are less than the
-+		 * start of kernel text, but still above 2^63. So leave
-+		 * kernel_start = 1ULL << 63 for x86_64.
-+		 */
-+		if (!err && !machine__is(machine, "x86_64"))
- 			machine->kernel_start = map->start;
- 	}
- 	return err;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index 388fb4741c54..b31d33b5aa2a 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -188,6 +188,8 @@ static inline bool machine__is_host(struct machine *machine)
- 	return machine ? machine->pid == HOST_KERNEL_ID : false;
- }
+ #endif /* __PERF_MAP_H */
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 701144094183..929058da6727 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -737,12 +737,15 @@ static int map_groups__split_kallsyms(struct map_groups *kmaps, struct dso *dso,
+ 	struct rb_root *root = &dso->symbols;
+ 	struct rb_node *next = rb_first(root);
+ 	int kernel_range = 0;
++	bool x86_64;
  
-+bool machine__is(struct machine *machine, const char *arch);
+ 	if (!kmaps)
+ 		return -1;
+ 
+ 	machine = kmaps->machine;
+ 
++	x86_64 = machine__is(machine, "x86_64");
 +
- struct thread *__machine__findnew_thread(struct machine *machine, pid_t pid, pid_t tid);
- struct thread *machine__findnew_thread(struct machine *machine, pid_t pid, pid_t tid);
+ 	while (next) {
+ 		char *module;
  
+@@ -790,6 +793,16 @@ static int map_groups__split_kallsyms(struct map_groups *kmaps, struct dso *dso,
+ 			 */
+ 			pos->start = curr_map->map_ip(curr_map, pos->start);
+ 			pos->end   = curr_map->map_ip(curr_map, pos->end);
++		} else if (x86_64 && is_entry_trampoline(pos->name)) {
++			/*
++			 * These symbols are not needed anymore since the
++			 * trampoline maps refer to the text section and it's
++			 * symbols instead. Avoid having to deal with
++			 * relocations, and the assumption that the first symbol
++			 * is the start of kernel text, by simply removing the
++			 * symbols at this point.
++			 */
++			goto discard_symbol;
+ 		} else if (curr_map != initial_map) {
+ 			char dso_name[PATH_MAX];
+ 			struct dso *ndso;
 -- 
 1.9.1
