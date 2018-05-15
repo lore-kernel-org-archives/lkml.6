@@ -1,90 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeEOD2l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:28:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54936 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752044AbeEOD2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:28:39 -0400
-Date: Mon, 14 May 2018 23:28:08 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get
- audit context
-Message-ID: <20180515032808.ulyaotjyu4ye3ajp@madcap2.tricolour.ca>
-References: <cover.1526173613.git.rgb@redhat.com>
- <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
- <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
- <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
+        id S1752136AbeEODhc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:37:32 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:45518 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752054AbeEODhb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 23:37:31 -0400
+Date: Tue, 15 May 2018 11:37:20 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Miller <davem@davemloft.net>
+Cc: dave@stgolabs.net, akpm@linux-foundation.org, tgraf@suug.ch,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dbueso@suse.de
+Subject: Re: [PATCH] lib/rhashtable: reorder some inititalization sequences
+Message-ID: <20180515033719.t2jphtfjofc5v7ag@gondor.apana.org.au>
+References: <20180514151332.31352-1-dave@stgolabs.net>
+ <20180514.225213.1789810083198383905.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <20180514.225213.1789810083198383905.davem@davemloft.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-14 23:05, Richard Guy Briggs wrote:
-> On 2018-05-14 17:44, Paul Moore wrote:
-> > On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Recognizing that the audit context is an internal audit value, use an
-> > > access function to retrieve the audit context pointer for the task
-> > > rather than reaching directly into the task struct to get it.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h                | 14 ++++++--
-> > >  include/net/xfrm.h                   |  2 +-
-> > >  kernel/audit.c                       |  6 ++--
-> > >  kernel/audit_watch.c                 |  2 +-
-> > >  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
-> > >  net/bridge/netfilter/ebtables.c      |  2 +-
-> > >  net/core/dev.c                       |  2 +-
-> > >  net/netfilter/x_tables.c             |  2 +-
-> > >  net/netlabel/netlabel_user.c         |  2 +-
-> > >  security/integrity/ima/ima_api.c     |  2 +-
-> > >  security/integrity/integrity_audit.c |  2 +-
-> > >  security/lsm_audit.c                 |  2 +-
-> > >  security/selinux/hooks.c             |  4 +--
-> > >  security/selinux/selinuxfs.c         |  6 ++--
-> > >  security/selinux/ss/services.c       | 12 +++----
-> > >  15 files changed, 64 insertions(+), 60 deletions(-)
+On Mon, May 14, 2018 at 10:52:13PM -0400, David Miller wrote:
+> From: Davidlohr Bueso <dave@stgolabs.net>
+> Date: Mon, 14 May 2018 08:13:32 -0700
+> 
+> > rhashtable_init() allocates memory at the very end of the
+> > call, once everything is setup; with the exception of the
+> > nelems parameter. However, unless the user is doing something
+> > bogus with params for which -EINVAL is returned, memory
+> > allocation is the only operation that can trigger the call
+> > to fail.
 > > 
-> > Merged, but there was some fuzz due to the missing 1/5 patch and a
-> > handfull of checkpatch.pl fixes.  Please take a look at the commit in
-> > the audit/next branch and if anything looks awry please send a patch
-> > to fix it.
+> > Thus move bucket_table_alloc() up such that we fail back to
+> > the caller asap, instead of doing useless checks. This is
+> > safe as the the table allocation isn't using the halfly
+> > setup 'ht' structure and bucket_table_alloc() call chain only
+> > ends up using the ht->nulls_base member in INIT_RHT_NULLS_HEAD.
+> > 
+> > Also move the locking initialization down to the end.
+> > 
+> > Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 > 
-> Some of that fuzz was due to the two patches (ghak46/47) that went
-> through the xelinux tree...  There will be a merge conflict.
+> The user potentially "doing something bogus" is why the most
+> expensive part of the initialization (the memory allocation)
+> is done after everything else is validated.
 > 
-> Otherwise, looks ok.
+> I think it's best to keep things as-is.
 
-Spoke too soon, missed one from the new seccomp actions_logged...
+I agree.
 
-Patch pending...
-
-> > paul moore
-> 
-> - RGB
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
