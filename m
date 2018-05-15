@@ -1,55 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeEOQfW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:35:22 -0400
-Received: from mga03.intel.com ([134.134.136.65]:47973 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeEOQfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:35:21 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="224446122"
-Date: Tue, 15 May 2018 09:35:20 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/15] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-Message-ID: <20180515163519.GA24474@agluck-desk>
-References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
- <1526323945-211107-4-git-send-email-fenghua.yu@intel.com>
- <03909bf6-2dc5-f5e4-d6bc-a4ebaf20709d@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03909bf6-2dc5-f5e4-d6bc-a4ebaf20709d@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1754049AbeEOQhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:37:01 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38769 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeEOQg7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:36:59 -0400
+X-Google-Smtp-Source: AB8JxZrroYibPkdl0XqonYFEXx0ycO7FHIbjZWPE1PM+wt1rAz8LCychdQr7LWtdXiPAEl3f5eHbBg==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: meson: mpll: add round closest support
+Date: Tue, 15 May 2018 18:36:50 +0200
+Message-Id: <20180515163652.19980-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 08:51:24AM -0700, Dave Hansen wrote:
-> > +	pr_info_ratelimited("Alignment check for split lock at %lx\n", address);
-> 
-> This is a potential KASLR bypass, I believe.  We shouldn't be printing
-> raw kernel addresses.
-> 
-> We have some nice printk's for page faults that give you kernel symbols.
->  Could you copy one of those?
+ATM, the mpll driver can only round the requested rate down, even if
+rounding up would have provided a better approximation of the requested
+rate.
 
-It's not really all that useful to print the address of the split lock
-itself. It's probably in something that was kmalloc()'d. Users will
-probably want to see the address of the instruction so they know which
-function to go and debug.  Print that with %pF
+This patchset adds a flag to enable rounding to the closest rate possible,
+even if it means rounding up.
 
--Tony
+The flag is then enabled on the axg platform to improve the rates provided
+to the audio subsystem.
+
+Changes since v1: [0]
+ * Fix an error in calculation while rounding the rate down
+   (Thanks Martin for reporting it)
+
+[0]: https://lkml.kernel.org/r/20180420095603.29964-1-jbrunet@baylibre.com
+
+Jerome Brunet (2):
+  clk: meson: mpll: add round closest support
+  clk: meson: axg: let mpll clocks round closest
+
+ drivers/clk/meson/axg.c      |  4 ++++
+ drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
+ drivers/clk/meson/clkc.h     |  3 +++
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+-- 
+2.14.3
