@@ -1,48 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEOJCN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:02:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45751 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752240AbeEOJCL (ORCPT
+        id S1752449AbeEOJEC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:04:02 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33657 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752325AbeEOJD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:02:11 -0400
-From: Colin King <colin.king@canonical.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scripts/dtc: fix spelling mistake: "endpont" -> "endpoint"
-Date: Tue, 15 May 2018 10:02:09 +0100
-Message-Id: <20180515090209.9165-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 15 May 2018 05:03:59 -0400
+X-Google-Smtp-Source: AB8JxZqJUpztSJdlcgGIIRXXsB30dYd6FZ9qwjYw0zvMDwikFwYieRItk8gLd9yvhxrVNJ+7xaTd4g==
+Date: Tue, 15 May 2018 11:03:57 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 06/14] net: sched: implement reference counted action
+ release
+Message-ID: <20180515090357.GK2134@nanopsycho.orion>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
+ <20180514164753.GF2134@nanopsycho.orion>
+ <vbfsh6udpk5.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vbfsh6udpk5.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Mon, May 14, 2018 at 09:07:06PM CEST, vladbu@mellanox.com wrote:
+>
+>On Mon 14 May 2018 at 16:47, Jiri Pirko <jiri@resnulli.us> wrote:
+>> Mon, May 14, 2018 at 04:27:07PM CEST, vladbu@mellanox.com wrote:
+>>
+>> [...]
+>>
+>>
+>>>+static int tcf_action_del_1(struct net *net, char *kind, u32 index,
+>>>+			    struct netlink_ext_ack *extack)
+>>>+{
+>>>+	const struct tc_action_ops *ops;
+>>>+	int err = -EINVAL;
+>>>+
+>>>+	ops = tc_lookup_action_n(kind);
+>>>+	if (!ops) {
+>>
+>> How this can happen? Apparently you hold reference to the module since
+>> you put it couple lines below. In that case, I don't really understand
+>> why you need to lookup and just don't use "ops" pointer you have in
+>> tcf_action_delete().
+>
+>The problem is that I cant really delete action while holding reference
 
-Trivial fix to spelling mistake in FAIL message.
+Wait a sec. I was talking about a "module reference" (module_put())
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- scripts/dtc/checks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/dtc/checks.c b/scripts/dtc/checks.c
-index a2cc1036c915..9d253819e12c 100644
---- a/scripts/dtc/checks.c
-+++ b/scripts/dtc/checks.c
-@@ -1536,7 +1536,7 @@ static void check_graph_endpoint(struct check *c, struct dt_info *dti,
- 		return;
- 
- 	if (!strprefixeq(node->name, node->basenamelen, "endpoint"))
--		FAIL(c, dti, node, "graph endpont node name should be 'endpoint'");
-+		FAIL(c, dti, node, "graph endpoint node name should be 'endpoint'");
- 
- 	check_graph_reg(c, dti, node);
- 
--- 
-2.17.0
+>to it. I can try to decrement reference twice, however that might result
+>race condition if another task tries to delete that action at the same
+>time.
+>
+>Imagine situation:
+>1. Action is in actions idr, refcount==1
+>2. Task tries to delete action, takes reference while working with it,
+>refcount==2
+>3. Another task tries to delete same action, takes reference,
+>refcount==3
+>4. First task decrements refcount twice, refcount==1
+>5. At the same time second task decrements refcount twice, refcount==-1
+>
+>My solution is to save action index, but release the reference. Then try
+>to lookup action again and delete it if it is still in idr. (was not
+>concurrently deleted)
+>
+>Now same potential race condition with this patch:
+>1. Action is in actions idr, refcount==1
+>2. Task tries to delete action, takes reference while working with it,
+>refcount==2
+>3. Another task tries to delete same action, takes reference,
+>refcount==3
+>4. First task releases reference and deletes actions from idr, which
+>results another refcount decrement, refcount==1
+>5. At the same time second task releases reference to action,
+>refcount==0, action is deleted
+>6. When task tries to lookup-delete action from idr by index, action is
+>not found. This case is handled correctly by code and no negative
+>overflow of refcount happens.
+>
+>>
+>>
+>>>+		NL_SET_ERR_MSG(extack, "Specified TC action not found");
+>>>+		goto err_out;
+>>>+	}
+>>>+
+>>>+	if (ops->delete)
+>>>+		err = ops->delete(net, index);
+>>>+
+>>>+	module_put(ops->owner);
+>>>+err_out:
+>>>+	return err;
+>>>+}
+>>>+
+>>> static int tca_action_flush(struct net *net, struct nlattr *nla,
+>>> 			    struct nlmsghdr *n, u32 portid,
+>>> 			    struct netlink_ext_ack *extack)
+>>>@@ -1052,6 +1088,36 @@ static int tca_action_flush(struct net *net, struct nlattr *nla,
+>>> 	return err;
+>>> }
+>>> 
+>>>+static int tcf_action_delete(struct net *net, struct list_head *actions,
+>>>+			     struct netlink_ext_ack *extack)
+>>>+{
+>>>+	int ret;
+>>>+	struct tc_action *a, *tmp;
+>>>+	char kind[IFNAMSIZ];
+>>>+	u32 act_index;
+>>>+
+>>>+	list_for_each_entry_safe(a, tmp, actions, list) {
+>>>+		const struct tc_action_ops *ops = a->ops;
+>>>+
+>>>+		/* Actions can be deleted concurrently
+>>>+		 * so we must save their type and id to search again
+>>>+		 * after reference is released.
+>>>+		 */
+>>>+		strncpy(kind, a->ops->kind, sizeof(kind) - 1);
+>>>+		act_index = a->tcfa_index;
+>>>+
+>>>+		list_del(&a->list);
+>>>+		if (tcf_action_put(a))
+>>>+			module_put(ops->owner);
+>>>+
+>>>+		/* now do the delete */
+>>>+		ret = tcf_action_del_1(net, kind, act_index, extack);
+>>>+		if (ret < 0)
+>>>+			return ret;
+>>>+	}
+>>>+	return 0;
+>>>+}
+>>>+
+>>
+>> [...]
+>
