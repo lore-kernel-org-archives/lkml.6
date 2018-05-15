@@ -1,566 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752251AbeEOHZw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:25:52 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44440 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752148AbeEOHZt (ORCPT
+        id S1752313AbeEOH0b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:26:31 -0400
+Received: from mail-pg0-f51.google.com ([74.125.83.51]:39682 "EHLO
+        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeEOH03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:25:49 -0400
-X-Google-Smtp-Source: AB8JxZo6eatnaLOTGzSCivyEqyGLAKkkG2IZjimQ8TNl45Pq2SaVcbhQcEtv1MCVZtFFeTQB5LuiDw==
-Subject: Re: [RFC PATCH 5/5] media: platform: Add Chrome OS EC CEC driver
-To: Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
- <1526337639-3568-6-git-send-email-narmstrong@baylibre.com>
- <f76d52b1-77bc-49dd-483c-43058d38da04@xs4all.nl>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <ee591542-c481-3009-b3b5-725695ea9bfd@baylibre.com>
-Date: Tue, 15 May 2018 09:25:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 03:26:29 -0400
+X-Google-Smtp-Source: AB8JxZqdY4ktGx82OdM7k5nEb1Qq2vtAabD9rmbY3diir0ZUDCIzp+HtUYzbKzrCJFnRaJ113ZHzsBoUr2RlVE70stw=
 MIME-Version: 1.0
-In-Reply-To: <f76d52b1-77bc-49dd-483c-43058d38da04@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180515061854.GA30523@outlook.office365.com>
+References: <000000000000169606056b793179@google.com> <20180511183358.GA1492@outlook.office365.com>
+ <CACT4Y+bt-HwBNA5REeZwoKAymCc-Da5rEU=yeeHodg7zByStQg@mail.gmail.com>
+ <20180514180035.GA20189@outlook.office365.com> <CACT4Y+a9v+38=DUpTGu0doaf3xWW02PUzoC7idgwOg+rV2eFTQ@mail.gmail.com>
+ <20180515061854.GA30523@outlook.office365.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 15 May 2018 09:26:07 +0200
+Message-ID: <CACT4Y+bGNABve5Ypzk8KEhZSLJ0eD7tmmxn6EJM7AnEGx2n31Q@mail.gmail.com>
+Subject: Re: possible deadlock in sk_diag_fill
+To: Andrei Vagin <avagin@virtuozzo.com>
+Cc: syzbot <syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com>,
+        avagin <avagin@openvz.org>, David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
-
-Thanks for the extensive review.
-
-On 15/05/2018 08:58, Hans Verkuil wrote:
-> On 05/15/2018 12:40 AM, Neil Armstrong wrote:
->> The Chrome OS Embedded Controller can expose a CEC bus, this patch add the
->> driver for such feature of the Embedded Controller.
+On Tue, May 15, 2018 at 8:18 AM, Andrei Vagin <avagin@virtuozzo.com> wrote:
+>> >> >> Hello,
+>> >> >>
+>> >> >> syzbot found the following crash on:
+>> >> >>
+>> >> >> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
+>> >> >> git tree:       upstream
+>> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=12164c97800000
+>> >> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
+>> >> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c1872be62e587eae9669
+>> >> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> >> >> userspace arch: i386
+>> >> >>
+>> >> >> Unfortunately, I don't have any reproducer for this crash yet.
+>> >> >>
+>> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> >> >> Reported-by: syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com
+>> >> >>
+>> >> >>
+>> >> >> ======================================================
+>> >> >> WARNING: possible circular locking dependency detected
+>> >> >> 4.17.0-rc3+ #59 Not tainted
+>> >> >> ------------------------------------------------------
+>> >> >> syz-executor1/25282 is trying to acquire lock:
+>> >> >> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at: sk_diag_dump_icons
+>> >> >> net/unix/diag.c:82 [inline]
+>> >> >> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at:
+>> >> >> sk_diag_fill.isra.5+0xa43/0x10d0 net/unix/diag.c:144
+>> >> >>
+>> >> >> but task is already holding lock:
+>> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: spin_lock
+>> >> >> include/linux/spinlock.h:310 [inline]
+>> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_dump_icons
+>> >> >> net/unix/diag.c:64 [inline]
+>> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_fill.isra.5+0x94e/0x10d0
+>> >> >> net/unix/diag.c:144
+>> >> >>
+>> >> >> which lock already depends on the new lock.
+>> >> >
+>> >> > In the code, we have a comment which explains why it is safe to take this lock
+>> >> >
+>> >> > /*
+>> >> >  * The state lock is outer for the same sk's
+>> >> >  * queue lock. With the other's queue locked it's
+>> >> >  * OK to lock the state.
+>> >> >  */
+>> >> > unix_state_lock_nested(req);
+>> >> >
+>> >> > It is a question how to explain this to lockdep.
+>> >>
+>> >> Do I understand it correctly that (&u->lock)->rlock associated with
+>> >> AF_UNIX is locked under rlock-AF_UNIX, and then rlock-AF_UNIX is
+>> >> locked under (&u->lock)->rlock associated with AF_NETLINK? If so, I
+>> >> think we need to split (&u->lock)->rlock by family too, so that we
+>> >> have u->lock-AF_UNIX and u->lock-AF_NETLINK.
+>> >
+>> > I think here is another problem. lockdep woried about
+>> > sk->sk_receive_queue vs unix_sk(s)->lock.
+>> >
+>> > sk_diag_dump_icons() takes sk->sk_receive_queue and then
+>> > unix_sk(s)->lock.
+>> >
+>> > unix_dgram_sendmsg takes unix_sk(sk)->lock and then sk->sk_receive_queue.
+>> >
+>> > sk_diag_dump_icons() takes locks for two different sockets, but
+>> > unix_dgram_sendmsg() takes locks for one socket.
+>> >
+>> > sk_diag_dump_icons
+>> >         if (sk->sk_state == TCP_LISTEN) {
+>> >                 spin_lock(&sk->sk_receive_queue.lock);
+>> >                 skb_queue_walk(&sk->sk_receive_queue, skb) {
+>> >                         unix_state_lock_nested(req);
+>> >                                 spin_lock_nested(&unix_sk(s)->lock,
+>> >
+>> >
+>> > unix_dgram_sendmsg
+>> >         unix_state_lock(other)
+>> >                 spin_lock(&unix_sk(s)->lock)
+>> >         skb_queue_tail(&other->sk_receive_queue, skb);
+>> >                 spin_lock_irqsave(&list->lock, flags);
 >>
->> This driver is part of the cros-ec MFD and will be add as a sub-device when
->> the feature bit is exposed by the EC.
 >>
->> The controller will only handle a single logical address and handles
->> all the messages retries and will only expose Success or Error.
->>
->> When the logical address is invalid, the controller will act as a CEC sniffer
->> and transfer all messages on the bus.
-> 
-> I did not see any support for this. If this works as you state here, then adding
-> support for CEC_CAP_MONITOR_ALL is highly recommended.
+>> Do you mean the following?
+>> There is socket 1 with state lock (S1) and queue lock (Q2), and socket
+>> 2 with state lock (S2) and queue lock (Q2). unix_dgram_sendmsg lock
+>> S1->Q1. And sk_diag_dump_icons locks Q1->S2.
+>> If yes, then this looks pretty much as deadlock. Consider that 2
+>> unix_dgram_sendmsg in 2 different threads lock S1 and S2 respectively.
+>> Now 2  sk_diag_dump_icons in 2 different threads lock Q1 and Q2
+>> respectively. Now sk_diag_dump_icons want to lock S's, and
+>> unix_dgram_sendmsg want to lock Q's. Nobody can proceed.
+>
+> Q1 and S1 belongs to a listen socket, so they can't be taken from
+> unix_dgram_sendmsg().
 
-Oops, I forgot to remove this phrase, the FW will maybe support it, but it has been
-dropped for the first revision.
-
-> 
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/media/platform/Kconfig               |  11 +
->>  drivers/media/platform/Makefile              |   2 +
->>  drivers/media/platform/cros-ec/Makefile      |   1 +
->>  drivers/media/platform/cros-ec/cros-ec-cec.c | 331 +++++++++++++++++++++++++++
->>  4 files changed, 345 insertions(+)
->>  create mode 100644 drivers/media/platform/cros-ec/Makefile
->>  create mode 100644 drivers/media/platform/cros-ec/cros-ec-cec.c
-> 
-> Shouldn't the directory be called cros-ec-cec?
-> 
->>
->> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
->> index c7a1cf8..e55a8ed2 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
->> @@ -546,6 +546,17 @@ menuconfig CEC_PLATFORM_DRIVERS
->>  
->>  if CEC_PLATFORM_DRIVERS
->>  
->> +config VIDEO_CROS_EC_CEC
->> +	tristate "Chrome OS EC CEC driver"
->> +	depends on MFD_CROS_EC || COMPILE_TEST
->> +	select CEC_CORE
->> +	select CEC_NOTIFIER
->> +	---help---
->> +	  If you say yes here you will get support for the
->> +	  Chrome OS Embedded Controller's CEC.
->> +	  The CEC bus is present in the HDMI connector and enables communication
->> +	  between compatible devices.
->> +
->>  config VIDEO_MESON_AO_CEC
->>  	tristate "Amlogic Meson AO CEC driver"
->>  	depends on ARCH_MESON || COMPILE_TEST
->> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
->> index 932515d..0e0582e 100644
->> --- a/drivers/media/platform/Makefile
->> +++ b/drivers/media/platform/Makefile
->> @@ -92,3 +92,5 @@ obj-$(CONFIG_VIDEO_QCOM_CAMSS)		+= qcom/camss-8x16/
->>  obj-$(CONFIG_VIDEO_QCOM_VENUS)		+= qcom/venus/
->>  
->>  obj-y					+= meson/
->> +
->> +obj-y					+= cros-ec/
->> diff --git a/drivers/media/platform/cros-ec/Makefile b/drivers/media/platform/cros-ec/Makefile
->> new file mode 100644
->> index 0000000..9ce97f9
->> --- /dev/null
->> +++ b/drivers/media/platform/cros-ec/Makefile
->> @@ -0,0 +1 @@
->> +obj-$(CONFIG_VIDEO_CROS_EC_CEC) += cros-ec-cec.o
->> diff --git a/drivers/media/platform/cros-ec/cros-ec-cec.c b/drivers/media/platform/cros-ec/cros-ec-cec.c
->> new file mode 100644
->> index 0000000..fea90da
->> --- /dev/null
->> +++ b/drivers/media/platform/cros-ec/cros-ec-cec.c
->> @@ -0,0 +1,331 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * CEC driver for Chrome OS Embedded Controller
->> + *
->> + * Copyright (c) 2018 BayLibre, SAS
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/dmi.h>
->> +#include <linux/cec.h>
->> +#include <linux/slab.h>
->> +#include <linux/interrupt.h>
->> +#include <media/cec.h>
->> +#include <media/cec-notifier.h>
->> +#include <linux/mfd/cros_ec.h>
->> +#include <linux/mfd/cros_ec_commands.h>
->> +
->> +#define DRV_NAME	"cros-ec-cec"
->> +
->> +/**
->> + * struct cros_ec_cec - Driver data for EC CEC
->> + *
->> + * @cros_ec: Pointer to EC device
->> + * @notifier: Notifier info for responding to EC events
->> + * @adap: CEC adapter
->> + * @notify: CEC notifier pointer
->> + * @rc_msg: storage for a received message
->> + */
->> +struct cros_ec_cec {
->> +	struct cros_ec_device *cros_ec;
->> +	struct notifier_block notifier;
->> +	struct cec_adapter *adap;
->> +	struct cec_notifier *notify;
->> +	struct cec_msg rx_msg;
->> +};
->> +
->> +static void handle_cec_message(struct cros_ec_cec *cros_ec_cec)
->> +{
->> +	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +	uint8_t *cec_message = cros_ec->event_data.data.cec_message;
->> +	unsigned int len = cros_ec->event_size;
->> +
->> +	cros_ec_cec->rx_msg.len = len;
-> 
-> How robust is the underlying code and hardware? What happens if a
-> CEC message with more than 16 bytes is received?
-> 
-> Hard to test unless you have an RPi3 set up as a CEC debugger. See
-> last section in https://hverkuil.home.xs4all.nl/cec-status.txt.
-> 
-> Since you worked with CEC for a while now I recommend you set up such
-> a system. It's cheap and very useful.
-
-I will definitely setup this kind of system, I tried using am Amlogic SoC, but it really can't monitor the bus....
-
-But I also have an ST STM32F0 Development board with double HDMI connector to develop CEC, I'll maybe try to use it for that purpose.
-
-> 
->> +	memcpy(cros_ec_cec->rx_msg.msg, cec_message, len);
->> +
->> +	cec_received_msg(cros_ec_cec->adap, &cros_ec_cec->rx_msg);
->> +}
->> +
->> +static void handle_cec_event(struct cros_ec_cec *cros_ec_cec)
->> +{
->> +	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +	uint32_t events = cros_ec->event_data.data.cec_events;
->> +
->> +	if (events & EC_MKBP_CEC_SEND_OK)
->> +		cec_transmit_attempt_done(cros_ec_cec->adap,
->> +					  CEC_TX_STATUS_OK);
->> +
->> +	if (events & EC_MKBP_CEC_SEND_FAILED)
->> +		cec_transmit_attempt_done(cros_ec_cec->adap,
->> +					  CEC_TX_STATUS_ERROR);
-> 
-> You said above that the HW takes care of all the message retries.
-> If that's the case, then you need to use cec_transmit_done here
-> and pass in status CEC_TX_STATUS_MAX_RETRIES | CEC_TX_STATUS_NACK.
-> The MAX_RETRIES flag tells the cec core that it shouldn't attempt
-> to retry the message because the HW already did that.
-> 
-> NACK is better than ERROR if the hardware supports only an OK/FAIL
-> result.
-
-Ok, we were unsure about this, thanks for the clarification.
-
-> 
->> +}
->> +
->> +static int cros_ec_cec_event(struct notifier_block *nb,
->> +	unsigned long queued_during_suspend, void *_notify)
->> +{
->> +	struct cros_ec_cec *cros_ec_cec;
->> +	struct cros_ec_device *cros_ec;
->> +
->> +	cros_ec_cec = container_of(nb, struct cros_ec_cec, notifier);
->> +	cros_ec = cros_ec_cec->cros_ec;
->> +
->> +	if (cros_ec->event_data.event_type == EC_MKBP_CEC_EVENT) {
->> +		handle_cec_event(cros_ec_cec);
->> +		return NOTIFY_OK;
->> +	}
->> +
->> +	if (cros_ec->event_data.event_type == EC_MKBP_EVENT_CEC_MESSAGE) {
->> +		handle_cec_message(cros_ec_cec);
->> +		return NOTIFY_OK;
->> +	}
->> +
->> +	return NOTIFY_DONE;
->> +}
->> +
->> +static int cros_ec_cec_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
->> +{
->> +	struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +	struct {
->> +		struct cros_ec_command msg;
->> +		struct ec_params_cec_set data;
->> +	} __packed msg;
-> 
-> Just say: ... msg = {};
-> 
->> +	int ret = 0;
->> +
->> +	if (logical_addr == CEC_LOG_ADDR_INVALID)
->> +		return 0;
-> 
-> This looks weird. If I had configured a LA before, then this should unconfigure
-> it. But it just keeps the existing LA, so any poll messages to us will still
-> be Acked. Or am I missing something?
-> 
->> +
->> +	memset(&msg, 0, sizeof(msg));
-> 
-> and you can drop this memset.
-
-I always forget this trick.
-
-> 
->> +	msg.msg.command = EC_CMD_CEC_SET;
->> +	msg.msg.outsize = sizeof(msg.data);
->> +	msg.data.cmd = CEC_CMD_LOGICAL_ADDRESS;
->> +	msg.data.address = logical_addr;
->> +
->> +	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +	if (ret < 0) {
->> +		dev_err(cros_ec->dev,
->> +			"error setting CEC logical address on EC: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int cros_ec_cec_transmit(struct cec_adapter *adap, u8 attempts,
->> +				u32 signal_free_time, struct cec_msg *cec_msg)
->> +{
->> +	struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +	struct {
->> +		struct cros_ec_command msg;
->> +		struct ec_params_cec_write data;
->> +	} __packed msg;
-> 
-> ... msg = {};
-> 
->> +	int ret = 0;
->> +
->> +	if (cec_msg->len > MAX_CEC_MSG_LEN)
->> +		return -EINVAL;
-> 
-> No need, can never happen.
-
-Forgor to remove it, the API changed in the meantime, now it can never happen !
-
-> 
->> +
->> +	memset(&msg, 0, sizeof(msg));
-> 
-> and drop this.
-> 
->> +	msg.msg.command = EC_CMD_CEC_WRITE_MSG;
->> +	msg.msg.outsize = cec_msg->len;
->> +	memcpy(msg.data.msg, cec_msg->msg, cec_msg->len);
->> +
->> +	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +	if (ret < 0) {
->> +		dev_err(cros_ec->dev,
->> +			"error writting CEC msg on EC: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int cros_ec_cec_adap_enable(struct cec_adapter *adap, bool enable)
->> +{
->> +	struct cros_ec_cec *cros_ec_cec = adap->priv;
->> +	struct cros_ec_device *cros_ec = cros_ec_cec->cros_ec;
->> +	struct {
->> +		struct cros_ec_command msg;
->> +		struct ec_params_cec_set data;
->> +	} __packed msg;
->> +	int ret = 0;
->> +
->> +	memset(&msg, 0, sizeof(msg));
->> +	msg.msg.command = EC_CMD_CEC_SET;
->> +	msg.msg.outsize = sizeof(msg.data);
->> +	msg.data.cmd = CEC_CMD_ENABLE;
->> +	msg.data.enable = enable;
->> +
->> +	ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
->> +	if (ret < 0) {
->> +		dev_err(cros_ec->dev,
->> +			"error %sabling CEC on EC: %d\n",
->> +			(enable ? "en" : "dis"), ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct cec_adap_ops cros_ec_cec_ops = {
->> +	.adap_enable = cros_ec_cec_adap_enable,
->> +	.adap_log_addr = cros_ec_cec_set_log_addr,
->> +	.adap_transmit = cros_ec_cec_transmit,
->> +};
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int cros_ec_cec_suspend(struct device *dev)
->> +{
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
->> +
->> +	if (device_may_wakeup(dev))
->> +		enable_irq_wake(cros_ec_cec->cros_ec->irq);
->> +
->> +	return 0;
->> +}
->> +
->> +static int cros_ec_cec_resume(struct device *dev)
->> +{
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct cros_ec_cec *cros_ec_cec = dev_get_drvdata(&pdev->dev);
->> +
->> +	if (device_may_wakeup(dev))
->> +		disable_irq_wake(cros_ec_cec->cros_ec->irq);
->> +
->> +	return 0;
->> +}
->> +#endif
->> +
->> +static SIMPLE_DEV_PM_OPS(cros_ec_cec_pm_ops,
->> +	cros_ec_cec_suspend, cros_ec_cec_resume);
->> +
->> +
->> +struct cec_dmi_match {
->> +	char *sys_vendor;
->> +	char *product_name;
->> +	char *devname;
->> +	char *conn;
->> +};
->> +
->> +static const struct cec_dmi_match cec_dmi_match_table[] = {
->> +	/* Google Fizz */
->> +	{ "Google", "Fizz", "0000:00:02.0", "HDMI-A-1" },
->> +};
->> +
->> +static int cros_ec_cec_get_notifier(struct cec_notifier **notify)
->> +{
->> +	int i;
->> +
->> +	for (i = 0 ; i < ARRAY_SIZE(cec_dmi_match_table) ; ++i) {
->> +		const struct cec_dmi_match *m = &cec_dmi_match_table[i];
->> +
->> +		if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
->> +		    dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
->> +			*notify = cec_notifier_get_byname(m->devname, m->conn);
-> 
-> See my comments for patch 2/5.
-
-I will change with you comment, looks way cleaner.
-
-> 
->> +			return 0;
->> +		}
->> +	}
->> +
->> +	return -EINVAL;
->> +}
->> +
->> +static int cros_ec_cec_probe(struct platform_device *pdev)
->> +{
->> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
->> +	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
->> +	struct cros_ec_cec *cros_ec_cec;
->> +	unsigned int cec_caps = CEC_CAP_DEFAULTS;
-> 
-> Does this need CEC_CAP_NEEDS_HPD? Can it still use CEC if there is no HPD
-> signal?
-
-No, Yes, the EC FW is independent of the HPD status
-
-> 
->> +	int ret;
->> +
->> +	cros_ec_cec = devm_kzalloc(&pdev->dev, sizeof(*cros_ec_cec),
->> +				   GFP_KERNEL);
->> +	if (!cros_ec_cec)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, cros_ec_cec);
->> +	cros_ec_cec->cros_ec = cros_ec;
->> +
->> +	ret = cros_ec_cec_get_notifier(&cros_ec_cec->notify);
->> +	if (ret) {
->> +		dev_warn(&pdev->dev, "no CEC notifier available\n");
->> +		cec_caps |= CEC_CAP_PHYS_ADDR;
-> 
-> Can this happen? What hardware has this? I am strongly opposed to CEC drivers
-> using this capability unless there is no other option. It's a pain for userspace.
-
-It's in case an HW having a CEC capable FW but not in the cec_dmi_match_table, in this case
-it won't fail but still enable the CEC interface without a notifier.
-
-> 
->> +	} else if (!cros_ec_cec->notify) {
->> +		return -EPROBE_DEFER;
->> +	}
->> +
->> +	ret = device_init_wakeup(&pdev->dev, 1);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "failed to initialize wakeup\n");
->> +		return ret;
->> +	}
->> +
->> +	cros_ec_cec->adap = cec_allocate_adapter(&cros_ec_cec_ops, cros_ec_cec,
->> +						 DRV_NAME, cec_caps, 1);
->> +	if (IS_ERR(cros_ec_cec->adap))
->> +		return PTR_ERR(cros_ec_cec->adap);
->> +
->> +	cros_ec_cec->adap->owner = THIS_MODULE;
-> 
-> This can be dropped, cec_register_adapter() sets this already.
-
-Noted.
-
-> 
->> +
->> +	/* Get CEC events from the EC. */
->> +	cros_ec_cec->notifier.notifier_call = cros_ec_cec_event;
->> +	ret = blocking_notifier_chain_register(&cros_ec->event_notifier,
->> +					       &cros_ec_cec->notifier);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "failed to register notifier\n");
->> +		cec_delete_adapter(cros_ec_cec->adap);
->> +		return ret;
->> +	}
->> +
->> +	ret = cec_register_adapter(cros_ec_cec->adap, &pdev->dev);
->> +	if (ret < 0) {
->> +		cec_delete_adapter(cros_ec_cec->adap);
->> +		return ret;
->> +	}
->> +
->> +	cec_register_cec_notifier(cros_ec_cec->adap, cros_ec_cec->notify);
->> +
->> +	return 0;
->> +}
->> +
->> +static int cros_ec_cec_remove(struct platform_device *pdev)
->> +{
->> +	struct cros_ec_cec *cros_ec_cec = platform_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	ret = blocking_notifier_chain_unregister(
->> +			&cros_ec_cec->cros_ec->event_notifier,
->> +			&cros_ec_cec->notifier);
->> +
->> +	if (ret) {
->> +		dev_err(dev, "failed to unregister notifier\n");
->> +		return ret;
->> +	}
->> +
->> +	cec_unregister_adapter(cros_ec_cec->adap);
->> +
->> +	if (cros_ec_cec->notify)
->> +		cec_notifier_put(cros_ec_cec->notify);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct platform_driver cros_ec_cec_driver = {
->> +	.probe = cros_ec_cec_probe,
->> +	.remove  = cros_ec_cec_remove,
->> +	.driver = {
->> +		.name = DRV_NAME,
->> +		.pm = &cros_ec_cec_pm_ops,
->> +	},
->> +};
->> +
->> +module_platform_driver(cros_ec_cec_driver);
->> +
->> +MODULE_DESCRIPTION("CEC driver for Chrome OS ECs");
->> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
->> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("platform:" DRV_NAME);
->>
-> 
-> Regards,
-> 
-> 	Hans
-> 
-
-Thanks,
-Neil
+Should we then split Q1/S1 for listening and data sockets? I don't
+know it lockdep allows changing lock class on the fly, though. Always
+wondered if there was a single reason to mix listening and data
+sockets into a single thing on API level...
