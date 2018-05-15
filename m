@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4103318-1526051424-2-4163876399551070199
+X-Cyrus-Session-Id: sloti22d1t05-1789591-1526350980-2-2486098943081046963
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,26 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526051424; b=mtdhAgt78/nW5e9ikR6kEWJ+Wl798rQzdPEy+UjgQTjzAR0RfJ
-    kW7pQeS/3z5rQbTbXxrgmcj637jE2zvk5mz3T9VOOkzEQctOWNlUaBRNGG3Xfcgr
-    p0+qd0flk6q/5wkGkQXzn8me3cH780bxcTu5JhZOM4jXdzHRdQvVrF1De4jYJ83u
-    tRMMyEHSXIDIatMm+wV+/RCsSN95Znl3FMgCphF9NZZYaOrw+p1HStE9K6TYix+Z
-    4O2PKVC53N1UIDdngWzhXU3URg8Moy099KDt6m//FOqsRzhSgYRyXR3Xa312x8Gl
-    D2irO4ZJ4RV8ZQSliziTSnBJzi1b435GHKlA==
+    1526350980; b=bumh1pWkMpiEZSjOL04O0pj33bm88YjXCTXqLI59COG38DtMW8
+    NDYYTJAEXGbiOCWh5xroNcuWsPCgsEAQyWYm4iujDPCYVA78W+h5CCCicdl5WtFw
+    8CpAUolsGeSjFynEv8s2Duv8Q1CQ3spk0i3Ra2l78cXaUdSsZthHj0YZXW5oEWkn
+    PUlhUGslYB9CVwfAjFhlIc+As/k//AuqTwG0cwfVwJjTeu7t49XuY+nxCb9Rp4w8
+    q6Jy0jIUwr31ANMQvSDqJOvBQ1uGSn9WbzxdyFaiupUOtwCxOcMjDdCrWak2lCOa
+    ubG2dmP032mNjscXXWdVyRFUzP/C8fUY8A8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:to:cc:subject:from
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526051424;
-    bh=yejiybuLo7ji1FgplWVFm2Wg5tLxAkFjufDrTadx9bs=; b=nnIf7fpRfLcA
-    FglupL2AtvL/0VBkpMTyGL9BBuX16n2bJnUIZpZeOaCifpVz+z88Wr9FqayRoPwB
-    C5ybga1QE0YPtsoJWGUPyFNluQk2ALWpjwtONFHPa/pWgmdLsnDo4AB2CTElAvSp
-    NoVP5zeLkHZjzXKcfbN/tUQXK95vbWaPsk6X4fwYQFL3MI+6dG51dCk30scc1T/z
-    0A130TFPEWRJVfJlVPNJ9IekmH4aCiVYoMddcA/9j7onWH8HiCuTwbHQWaKKMdW4
-    9k1bOyKW6WaAOJVV19LajpldYsjfHJifL1+P2Ts9FnY0w4OZKvtZm5TefPUblWoA
-    I6CbzHVxAw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526350980; bh=WUP2K60WNn/p8XJUiAHAiwfM1jXLfU
+    IPXhGtT8oMiDM=; b=mf80Sl+aS8JJSWKhOvnG/cDb6QxIwaMM3q6JsPzAPniVpW
+    GS46mYIyJklfCXcNz5pBdyWNal27o+iKUz2Uny7JdEWUKp2LKrAOcWp5eur28TnL
+    Nag5K10lrDsXJCrSXn3vW3lO9vT75RPoLGiERQ+4db4BvY+F8jwCB0SPfJj5lUSx
+    w6wf24SZCAwLmlGlU8z6hsY4tgZPHye8wySWdNjlKNy3NpbVvbMTkGOjw9AYhL96
+    HHQhnlKX+/68d+dIRCu651+I/NM7S4Edha3clMsSkuRS3Xbse3N84ysHI0uX/QtQ
+    pB7ZYDdZvz+mMBAhcKermnGUt+eWo8L2IodA3CBQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=nifty.com
+    header.i=@nifty.com header.b=odOrta5V x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,13 +35,15 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=davemloft.net header.result=pass
+    header.domain=socionext.com header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
+    dkim=pass (2048-bit rsa key sha256) header.d=nifty.com
+      header.i=@nifty.com header.b=odOrta5V x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -50,55 +52,81 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=davemloft.net header.result=pass
+      header.domain=socionext.com header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEiJ1qVXHXGWPQAs6p3MEtuIIuOdrCZWH5JJPNgfaN99JOlDg/i+j0VDnlIJ0Sv/nqay/J9RggSeGyTJYqGP8kA281BVyLU6rLnqdChWcQHpG8vSX+E9
-    dCYHlTgHYT8ZUksBuQANzpwm5f9stSgG3CoZDh26L2t8xJ+U+0qCduGkvW9FMPMgyPINv3nqgSINlbXcLfIAHisuhQo5ovYQDtS/UXyX1ok4G8BHQYr15LRu
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=7CQSdrXTAAAA:8 a=J1Y8HTJGAAAA:8 a=2Cfmxp7ugPhldnt4tCsA:9 a=CjuIK1q_8ugA:10
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+X-CM-Envelope: MS4wfK5ulhH+dALAe6AqKW1By9HGVnEHuQUVIYJjSUP1TeLnBqhBPAWCFxR9revO0TYzlxz0Vz8E4U484PPbQDrVBSQe+lNHVH/Ib4XzDHgG3BZuyCvLQsdP
+    9/2OY5v6pMqN/ld+sWK7sHXkEBairP3lv6GjBnn/lpbk4T4wgwzU1hWv7bAozKddEUj2XNfscWsNKkUkbvfJzTO8f6WzYCW5pn61Cl/COFPj4Stz6bypehQM
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=c-n4J4-pAAAA:8
+    a=5pKQR4BlgJI2SITdlo0A:9 a=L0NDqeB7ZLmQzAogN4cw:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750722AbeEKPKV (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 11 May 2018 11:10:21 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:46782 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEKPKV (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 11:10:21 -0400
-Date: Fri, 11 May 2018 11:10:18 -0400 (EDT)
-Message-Id: <20180511.111018.1869809966358964133.davem@davemloft.net>
-To: Dave.Martin@arm.com
-Cc: linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-        jhogan@kernel.org, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, oleg@redhat.com, linux-arch@vger.kernel.org
-Subject: Re: [PATCH REPOST 5/5] sparc: Use update_thread_flag()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526051104-15995-6-git-send-email-Dave.Martin@arm.com>
-References: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
-        <1526051104-15995-6-git-send-email-Dave.Martin@arm.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752024AbeEOCW4 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 22:22:56 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:33550 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbeEOCW4 (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Mon, 14 May 2018 22:22:56 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w4F2M8PH020933
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] int-ll64.h: define u{8,16,32,64} and s{8,16,32,64} based on uapi header
+Date: Tue, 15 May 2018 11:22:03 +0900
+Message-Id: <1526350925-14922-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Martin <Dave.Martin@arm.com>
-Date: Fri, 11 May 2018 16:05:04 +0100
+<uapi/asm-generic/int-ll64.h> has the same typedefs except that it
+prefixes them with double-underscore for user space.  Use them for
+the kernel space typedefs.
 
-> This patch uses the new update_thread_flag() helper to simplify an
-> if () set; else clear; construct.
-> 
-> No functional change.
-> 
-> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Acked-by: David S. Miller <davem@davemloft.net>
+ include/asm-generic/int-ll64.h | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/include/asm-generic/int-ll64.h b/include/asm-generic/int-ll64.h
+index ffb68d6..a248545 100644
+--- a/include/asm-generic/int-ll64.h
++++ b/include/asm-generic/int-ll64.h
+@@ -13,17 +13,14 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
+-typedef signed char s8;
+-typedef unsigned char u8;
+-
+-typedef signed short s16;
+-typedef unsigned short u16;
+-
+-typedef signed int s32;
+-typedef unsigned int u32;
+-
+-typedef signed long long s64;
+-typedef unsigned long long u64;
++typedef __s8  s8;
++typedef __u8  u8;
++typedef __s16 s16;
++typedef __u16 u16;
++typedef __s32 s32;
++typedef __u32 u32;
++typedef __s64 s64;
++typedef __u64 u64;
+ 
+ #define S8_C(x)  x
+ #define U8_C(x)  x ## U
+-- 
+2.7.4
