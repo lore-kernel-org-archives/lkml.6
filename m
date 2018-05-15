@@ -1,175 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeEOOsc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753147AbeEOOsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:48:30 -0400
-Date: Tue, 15 May 2018 23:48:25 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: syzbot <syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com>,
-        bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, ricardo.neri-calderon@linux.intel.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org,
-        yhs@fb.com
-Subject: Re: WARNING in arch_uprobe_analyze_insn
-Message-Id: <20180515234825.d9bea077f296354f3724f736@kernel.org>
-In-Reply-To: <20180515133630.GA20619@redhat.com>
-References: <000000000000b759cf056c2b3c12@google.com>
-        <20180515133630.GA20619@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753732AbeEOOuu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:50:50 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:34433 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752483AbeEOOur (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:50:47 -0400
+X-Google-Smtp-Source: AB8JxZquerbx1xuwfqoccs9o7hdc/FHluUV0Iiypbi9zXvIL6LT792I5Wi8FjKtoXCJH3ri+MmQKcE7OPsbiA+kXsb4=
+MIME-Version: 1.0
+In-Reply-To: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 16:50:44 +0200
+X-Google-Sender-Auth: joaWG3T3p_iM9nZRWMYdOhZFTu0
+Message-ID: <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018 15:36:30 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
+Hi Gilad,
 
-> On 05/14, syzbot wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    66e1c94db3cd Merge branch 'x86-pti-for-linus' of git://git..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11817107800000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=30d675e3ca03c1c351e7
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=143d5417800000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11178e97800000
-> 
-> doesn't work for me...
-> 
-> I guess syscall(__NR_perf_event_open) should trigger perf_uprobe_init() but
-> the hard-coded attr.type doesn't match perf_uprobe->type on my machine...
-> 
-> 
-> Nevermind, it seems that the code is indeed wrong, uprobe_init_insn() does
-> 
-> 	insn_init(insn, auprobe->insn, sizeof(auprobe->insn), x86_64);
-> 	/* has the side-effect of processing the entire instruction */
-> 	insn_get_length(insn);
-> 	if (WARN_ON_ONCE(!insn_complete(insn)))
-> 		return -ENOEXEC;
-> 
-> Masami, could your help?
-> 
-> What if insn can't be decoded, say, because it is not valid? Can't
-> insn_complete() return F in this case?
+On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Add bindings for CryptoCell instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Yes, as far as it failes to decode.
+Thanks for your patch!
 
-BTW, insn_complete() may not work some errors, it is hard to find
-all invalid combination of x86 insn. I think the uprobes is
-fundamentary week about fuzzing code because it can not
-identify the instruction boundary in user space.
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -528,6 +528,14 @@
+>                         status = "disabled";
+>                 };
+>
+> +               arm_cc630p: crypto@e6601000 {
+> +                       compatible = "arm,cryptocell-630p-ree";
+> +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> +                       #interrupt-cells = <2>;
 
-> I think it can... Say, insn_get_immediate() doesn't set immediate.got in
-> err_out path.
-> 
-> Unfortunately, insn_get_length() returns void, and I do not see any
-> insn-was-decoded-correctly helper. Perhaps we should simply remove
-> this WARN_ON() ?
+I believe the #interrupt-cells property is not needed.
 
-Yes, it should just return an error, since user can miss the
-probe address on user binary and we can not make sure
-that is on a instruction boundary.
+> +                       reg = <0x0 0xe6601000 0 0x1000>;
+> +                       clocks = <&cpg CPG_MOD 229>;
+> +               };
 
-> Alternatively, If am right we can move this check down after the "good_insns"
-> checks, but this doesn't look very clean to me.
+The rest looks good, but I cannot verify the register block.
 
-I think it is enough if arch_uprobe_analyze_insn() returns an error.
-That makes prepare_uprobe() fail and finally leads uprobe_register()
-fail.
+> +
+>                 i2c3: i2c@e66d0000 {
+>                         #address-cells = <1>;
+>                         #size-cells = <0>;
 
-Thank you,
+Gr{oetje,eeting}s,
 
-> 
-> 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com
-> > 
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 insn_complete
-> > arch/x86/include/asm/insn.h:147 [inline]
-> > WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 uprobe_init_insn
-> > arch/x86/kernel/uprobes.c:296 [inline]
-> > WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296
-> > arch_uprobe_analyze_insn+0x13d/0x15f0 arch/x86/kernel/uprobes.c:861
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > 
-> > CPU: 0 PID: 4511 Comm: syz-executor347 Not tainted 4.17.0-rc4+ #46
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-> >  panic+0x22f/0x4de kernel/panic.c:184
-> >  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-> >  report_bug+0x252/0x2d0 lib/bug.c:186
-> >  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-> >  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-> >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-> > RIP: 0010:insn_complete arch/x86/include/asm/insn.h:147 [inline]
-> > RIP: 0010:uprobe_init_insn arch/x86/kernel/uprobes.c:296 [inline]
-> > RIP: 0010:arch_uprobe_analyze_insn+0x13d/0x15f0
-> > arch/x86/kernel/uprobes.c:861
-> > RSP: 0018:ffff8801cf277510 EFLAGS: 00010246
-> > RAX: 0000000000000000 RBX: ffff8801cf277560 RCX: ffffffff876ccf2a
-> > RDX: 0000000000000004 RSI: ffffffff876ce6ab RDI: ffff8801cf27759c
-> > RBP: ffff8801cf277628 R08: ffff8801d8c0a5c0 R09: ffff8801cf277560
-> > R10: ffff8801d7ad81d0 R11: ffff8801cf2775af R12: 0000000000000000
-> > R13: dffffc0000000000 R14: ffff8801d7ad8080 R15: ffff8801cf277600
-> >  prepare_uprobe kernel/events/uprobes.c:610 [inline]
-> >  install_breakpoint.isra.21+0x710/0x830 kernel/events/uprobes.c:657
-> >  uprobe_mmap+0x6a0/0xcf0 kernel/events/uprobes.c:1089
-> >  mmap_region+0x5c8/0x1870 mm/mmap.c:1807
-> >  do_mmap+0xde2/0x1360 mm/mmap.c:1535
-> >  do_mmap_pgoff include/linux/mm.h:2237 [inline]
-> >  vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
-> >  ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1585
-> >  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-> >  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-> >  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-> >  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x43ff29
-> > RSP: 002b:00007ffc922a4898 EFLAGS: 00000212 ORIG_RAX: 0000000000000009
-> > RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ff29
-> > RDX: 0000000000000000 RSI: 0000000000002000 RDI: 000000002000c000
-> > RBP: 00000000006ca018 R08: 0000000000000003 R09: 0000000000000000
-> > R10: 0000000000000012 R11: 0000000000000212 R12: 0000000000401850
-> > R13: 00000000004018e0 R14: 0000000000000000 R15: 0000000000000000
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> > 
-> > 
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> > syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> 
-
+                        Geert
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
