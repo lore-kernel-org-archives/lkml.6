@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752265AbeEOFkQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:40:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41017 "EHLO
+        id S1752393AbeEOFk7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:40:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48145 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752094AbeEOFkP (ORCPT
+        with ESMTP id S1752090AbeEOFk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:40:15 -0400
-Date: Mon, 14 May 2018 22:39:52 -0700
+        Tue, 15 May 2018 01:40:58 -0400
+Date: Mon, 14 May 2018 22:40:22 -0700
 From: tip-bot for Masahiro Yamada <tipbot@zytor.com>
-Message-ID: <tip-b3656612118f8961182f988168c835f023f0408a@git.kernel.org>
-Cc: hpa@zytor.com, luto@amacapital.net, yamada.masahiro@socionext.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org
-Reply-To: yamada.masahiro@socionext.com, luto@amacapital.net, hpa@zytor.com,
-        mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-In-Reply-To: <1526352744-28229-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1526352744-28229-2-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <tip-61615faf0a8968b604bd279fec5cb834ba59ed58@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, richard@nod.at,
+        torvalds@linux-foundation.org, yamada.masahiro@socionext.com,
+        jdike@addtoit.com, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, luto@amacapital.net
+Reply-To: jdike@addtoit.com, hpa@zytor.com, luto@amacapital.net,
+        tglx@linutronix.de, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, yamada.masahiro@socionext.com,
+        torvalds@linux-foundation.org, richard@nod.at
+In-Reply-To: <1526352744-28229-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1526352744-28229-3-git-send-email-yamada.masahiro@socionext.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/build/vdso: Remove unused $(vobjs-nox32) in
+Subject: [tip:x86/build] x86/build/vdso: Remove unnecessary export in
  Makefile
-Git-Commit-ID: b3656612118f8961182f988168c835f023f0408a
+Git-Commit-ID: 61615faf0a8968b604bd279fec5cb834ba59ed58
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,44 +36,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b3656612118f8961182f988168c835f023f0408a
-Gitweb:     https://git.kernel.org/tip/b3656612118f8961182f988168c835f023f0408a
+Commit-ID:  61615faf0a8968b604bd279fec5cb834ba59ed58
+Gitweb:     https://git.kernel.org/tip/61615faf0a8968b604bd279fec5cb834ba59ed58
 Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
-AuthorDate: Tue, 15 May 2018 11:52:22 +0900
+AuthorDate: Tue, 15 May 2018 11:52:23 +0900
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 15 May 2018 07:32:42 +0200
 
-x86/build/vdso: Remove unused $(vobjs-nox32) in Makefile
+x86/build/vdso: Remove unnecessary export in Makefile
 
-Since commit bfad381c0d1e ("x86/vdso: Improve the fake section
-headers"), $(vobjs-nox32) is empty.  Therefore, $(vobjs64-for-x32)
-is the same as $(vobjs-y).
+CPPFLAGS_vdso.lds is assigned and referenced internally in each
+Makefile.  No need to export it.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Jeff Dike <jdike@addtoit.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Weinberger <richard@nod.at>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1526352744-28229-2-git-send-email-yamada.masahiro@socionext.com
+Cc: user-mode-linux-devel@lists.sourceforge.net
+Cc: user-mode-linux-user@lists.sourceforge.net
+Link: http://lkml.kernel.org/r/1526352744-28229-3-git-send-email-yamada.masahiro@socionext.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/vdso/Makefile | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/x86/entry/vdso/Makefile | 2 +-
+ arch/x86/um/vdso/Makefile    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index d998a487c9b1..298850683ee2 100644
+index 298850683ee2..690df4c6b40a 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
-@@ -100,11 +100,8 @@ VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
- 			   -Wl,-z,max-page-size=4096 \
- 			   -Wl,-z,common-page-size=4096
+@@ -44,7 +44,7 @@ obj-y += $(vdso_img_objs)
+ targets += $(vdso_img_cfiles)
+ targets += $(vdso_img_sodbg) $(vdso_img-y:%=vdso%.so)
  
--# 64-bit objects to re-brand as x32
--vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
--
- # x32-rebranded versions
--vobjx32s-y := $(vobjs64-for-x32:.o=-x32.o)
-+vobjx32s-y := $(vobjs-y:.o=-x32.o)
+-export CPPFLAGS_vdso.lds += -P -C
++CPPFLAGS_vdso.lds += -P -C
  
- # same thing, but in the output directory
- vobjx32s := $(foreach F,$(vobjx32s-y),$(obj)/$F)
+ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+ 			-Wl,--no-undefined \
+diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
+index 10003359e633..e51d95c9098c 100644
+--- a/arch/x86/um/vdso/Makefile
++++ b/arch/x86/um/vdso/Makefile
+@@ -23,7 +23,7 @@ $(obj)/vdso.o: $(obj)/vdso.so
+ 
+ targets += vdso.so vdso.so.dbg vdso.lds $(vobjs-y)
+ 
+-export CPPFLAGS_vdso.lds += -P -C
++CPPFLAGS_vdso.lds += -P -C
+ 
+ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+        -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
