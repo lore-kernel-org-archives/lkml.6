@@ -1,60 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeEOXOt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:14:49 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45851 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbeEOXOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:14:47 -0400
-X-Google-Smtp-Source: AB8JxZpzIGo0oH4vAffpcWIZLu8R584i8o28P1zCSqvxdF7N2SszroPTMwbGWBPtmPsM1kmcc1LC/Q==
-Date: Tue, 15 May 2018 17:14:45 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lidong Chen <jemmy858585@gmail.com>
-Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
-        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
-        Lidong Chen <lidongchen@tencent.com>
-Subject: Re: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid
- from ib_umem structure
-Message-ID: <20180515231445.GA15921@ziepe.ca>
-References: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
+        id S1752539AbeEOXSy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:18:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:58907 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752150AbeEOXSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 19:18:53 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 16 May 2018 09:18:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anthony Koo <Anthony.Koo@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: linux-next: Signed-off-by missing for commits in the drm tree
+Message-ID: <20180516091848.22a6988b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bFh6ueWBuSdOuYq7hDCWKtr"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 04:50:16PM +0800, Lidong Chen wrote:
-> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
-> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
-> exited, get_pid_task will return NULL, ib_umem_release does not decrease
-> mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
-> 
-> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
-> ---
->  [v2]
->  - use ib_ucontext tgid instread of tgid in ib_umem structure
->  
->  drivers/infiniband/core/umem.c | 7 +------
->  include/rdma/ib_umem.h         | 1 -
->  2 files changed, 1 insertion(+), 7 deletions(-)
+--Sig_/bFh6ueWBuSdOuYq7hDCWKtr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied to for-rc, thanks.
+Hi all,
 
-It would be nice to send a cleanup to have all the users of tgid doing
-this pattern
+Commits
 
-	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
-  	if (!task)
-  		goto out;
-  	mm = get_task_mm(task);
+  f412e8307d0a ("drm/amd/display: Couple bug fixes in stats module")
+  e09b6473c605 ("drm/amd/display: Rename encoder_info_packet to dc_info_pac=
+ket")
+  87943159f409 ("drm/amd/display: Only program MSA_TIMING_PARAM if it chang=
+ed")
 
-To call some kind of common function like ib_get_mr_mm(), just to make
-it really clear what is happening. 
+are missing a Signed-off-by from their author.
 
-Jason
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bFh6ueWBuSdOuYq7hDCWKtr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr7atgACgkQAVBC80lX
+0GxIRAf9EMHFJVwyhRlDVfnz3fujrlRXN8AWgTuezuzVN0fKX4IcmmdiA/gKVlaV
+HXNkml+8MjaHKBAHh8VuPxG+7vm3gyET76296EolYtVbnUMmEl3Tt1uax97GsYTH
+xR6ZYtUnOdNY4M5FW2Xt0WB/1jx2hidxrgJNP4VYueUXyzaJpf/2ivHfAvctCcDn
+WQ26CojDr0pOi+77c52AR/74YTvBuO2AwjYVbgHRfGv4jouWHG31P79HM/868uU/
+S8HFJLAX3glVyFf6926DpgcZ3fyBqAstBI+Jqx66pkfemmaBhwE1KZAAGT5GZih4
+ZllD5x6aUjrHHCFvyAkUrEj4IzAslA==
+=iqEL
+-----END PGP SIGNATURE-----
+
+--Sig_/bFh6ueWBuSdOuYq7hDCWKtr--
