@@ -1,124 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeEOEpy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 00:45:54 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36511 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbeEOEpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 00:45:53 -0400
-X-Google-Smtp-Source: AB8JxZra7IfN1sXiWpMiZ/tIiIUD39z29dl2G74ngGhh03vERVy79Gc66enB5xOyuHI7cehqMlyRWg==
-Date: Tue, 15 May 2018 13:45:43 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: James Morse <james.morse@arm.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 03/11] arm64: kexec_file: invoke the kernel without
- purgatory
-Message-ID: <20180515044542.GC2737@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-4-takahiro.akashi@linaro.org>
- <9c830fe8-56d8-b43a-6265-43d31dffe61a@arm.com>
- <20180507052208.GD11326@linaro.org>
- <ece8d3cc-127f-6855-52fb-24e4a1d4e823@arm.com>
+        id S1752222AbeEOEqC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 00:46:02 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:44290 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbeEOEqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 00:46:00 -0400
+Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+To: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
+        "Boris.Brezillon@bootlin.com" <Boris.Brezillon@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
+        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>
+Cc: "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
+From: Chris Moore <moore@free.fr>
+Message-ID: <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
+Date: Tue, 15 May 2018 06:45:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ece8d3cc-127f-6855-52fb-24e4a1d4e823@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
+Hi,
 
-On Fri, May 11, 2018 at 06:03:49PM +0100, James Morse wrote:
-> Hi Akashi,
-> 
-> On 07/05/18 06:22, AKASHI Takahiro wrote:
-> > On Tue, May 01, 2018 at 06:46:06PM +0100, James Morse wrote:
-> >> On 25/04/18 07:26, AKASHI Takahiro wrote:
-> >>> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-> >>> index f76ea92dff91..f7dbba00be10 100644
-> >>> --- a/arch/arm64/kernel/machine_kexec.c
-> >>> +++ b/arch/arm64/kernel/machine_kexec.c
-> >>> @@ -205,10 +205,17 @@ void machine_kexec(struct kimage *kimage)
-> 
-> >>>  	cpu_soft_restart(kimage != kexec_crash_image,
-> >>> -		reboot_code_buffer_phys, kimage->head, kimage->start, 0);
-> >>> +		reboot_code_buffer_phys, kimage->head, kimage->start,
-> >>> +#ifdef CONFIG_KEXEC_FILE
-> >>> +				kimage->purgatory_info.purgatory_buf ?
-> >>> +						0 : kimage->arch.dtb_mem);
-> >>> +#else
-> >>> +				0);
-> >>> +#endif
-> 
-> 
-> >> purgatory_buf seems to only be set in kexec_purgatory_setup_kbuf(), called from
-> >> kexec_load_purgatory(), which we don't use. How does this get a value?
-> >>
-> >> Would it be better to always use kimage->arch.dtb_mem, and ensure that is 0 for
-> >> regular kexec (as we can't know where the dtb is)? (image_arg may then be a
-> >> better name).
-> > 
-> > The problem is arch.dtb_mem is currently defined only if CONFIG_KEXEC_FILE.
-> 
-> I thought it was ARCH_HAS_KIMAGE_ARCH, which we can define all the time if
-> that's what we want.
-> 
-> 
-> > So I would like to
-> > - merge this patch with patch#8
-> > - change the condition
-> >         #ifdef CONFIG_KEXEC_FILE
-> >        				kimage->file_mode ? kimage->arch.dtb_mem : 0);
-> >         #else
-> >         			0);
-> >         #endif
-> 
-> If we can avoid even this #ifdef by always having kimage->arch, I'd prefer that.
-> If we do that 'dtb_mem' would need some thing that indicates its for kexec_file,
-> as kexec has a DTB too, we just don't know where it is...
+Le 13/05/2018 à 06:30, Wan, Jane (Nokia - US/Sunnyvale) a écrit :
+> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid CRC values, the bit-wise majority may be used to recover the contents of the parameter pages from the parameter page copies present.
+>
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> ---
+> v7: change debug print messages
+> v6: support the cases that srcbufs are not contiguous
+> v5: make the bit-wise majority functon generic
+> v4: move the bit-wise majority code in a separate function
+> v3: fix warning message detected by kbuild test robot
+> v2: rebase the changes on top of v4.17-rc1
+>   
+> drivers/mtd/nand/raw/nand_base.c |   50 ++++++++++++++++++++++++++++++++++----
+>   1 file changed, 45 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 72f3a89..b43b784 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
+>   }
+>   
+>   /*
+> + * Recover data with bit-wise majority
+> + */
+> +static void nand_bit_wise_majority(const void **srcbufs,
+> +				   unsigned int nsrcbufs,
+> +				   void *dstbuf,
+> +				   unsigned int bufsize)
+> +{
+> +	int i, j, k;
+> +
+> +	for (i = 0; i < bufsize; i++) {
+> +		u8 cnt, val;
+> +
+> +		val = 0;
+> +		for (j = 0; j < 8; j++) {
+> +			cnt = 0;
+> +			for (k = 0; k < nsrcbufs; k++) {
+> +				const u8 *srcbuf = srcbufs[k];
+> +
+> +				if (srcbuf[i] & BIT(j))
+> +					cnt++;
+> +			}
+> +			if (cnt > nsrcbufs / 2)
+> +				val |= BIT(j);
+> +		}
+> +		((u8 *)dstbuf)[i] = val;
+> +	}
+> +}
+> +
+> +/*
+>    * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
+>    */
+>   static int nand_flash_detect_onfi(struct nand_chip *chip)
+> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>   		return 0;
+>   
+>   	/* ONFI chip: allocate a buffer to hold its parameter page */
+> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+>   	if (!p)
+>   		return -ENOMEM;
+>   
+> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>   	}
+>   
+>   	for (i = 0; i < 3; i++) {
+> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
+> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
+>   		if (ret) {
+>   			ret = 0;
+>   			goto free_onfi_param_page;
+>   		}
+>   
+> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
+> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
+>   				le16_to_cpu(p->crc)) {
+> +			if (i)
+> +				memcpy(p, &p[i], sizeof(*p));
+>   			break;
+>   		}
+>   	}
+>   
+>   	if (i == 3) {
+> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> -		goto free_onfi_param_page;
+> +		const void *srcbufs[3] = {p, p + 1, p + 2};
+> +
+> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
+> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
+> +				       sizeof(*p));
+> +
+> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
+> +				le16_to_cpu(p->crc)) {
+> +			pr_err("ONFI parameter recovery failed, aborting\n");
+> +			goto free_onfi_param_page;
+> +		}
+>   	}
+>   
+>   	/* Check version */
 
-OK, but I want to have a minimum of kexec.arch always exist.
-How about this?
+This version is still hard coded for a three sample bitwise majority vote.
+So why not use the method which I suggested previously for v2 and which 
+I repeat below?
 
-| #define ARCH_HAS_KIMAGE_ARCH
-|
-| struct kimage_arch {
-| 	phys_addr_t dtb_mem;
-| #ifdef CONFIG_KEXEC_FILE
-| 	void *dtb_buf;
-| 	/* Core ELF header buffer */
-| 	void *elf_headers;
-| 	unsigned long elf_headers_sz;
-| 	unsigned long elf_load_addr;
-| #endif
+The three sample bitwise majority can be implemented without bit level 
+manipulation using the identity:
+majority3(a, b, c) = (a & b) | (a & c) | (b & c)
+This can be factorized slightly to (a & (b | c)) | (b & c)
+This enables the operation to be performed 8, 16, 32 or even 64 bits at 
+a time depending on the hardware.
 
-| void machine_kexec(struct kimage *kimage)
-| {
-| 	...
-| 	cpu_soft_restart(kimage != kexec_crash_image,
-| 		reboot_code_buffer_phys, kimage->head, kimage->start,
-| 						kimage->arch.dtb_mem);
+This method is not only faster and but also more compact.
 
-Thanks
--Takahiro AKASHI
-
-> 
-> 
-> Thanks,
-> 
-> James
+Cheers,
+Chris
