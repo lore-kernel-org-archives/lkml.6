@@ -1,69 +1,116 @@
-Return-Path: <rjwysocki@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526371608; cv=none;
+Return-Path: <linux@roeck-us.net>
+X-Google-Smtp-Source: AB8JxZrXVjlAPhGOygoVwdlYzjnqjgHohlGbyFNR7uI3cNQYNDMerNFNqwVVuiL7sAvZ2z5U6XPT
+ARC-Seal: i=1; a=rsa-sha256; t=1526359605; cv=none;
         d=google.com; s=arc-20160816;
-        b=uYkNzbkDKqEHnZBSIT7H+AjRxkjS9gBrdocHjx3GjobMXuvQhG1ttYOAJ8ZUQK0Z0s
-         rLf+O8jLSUo8PnhqriB1o8baXfXG9vRr6W/EFwbd0bOFLrfK7SDNXOV+D7Gcfy/nDs6o
-         6yn6tkM9ZLLvEhAbyZQwHxI4/saVl+qoPzHogvoknXwIjWL89Pf8g9fiihisMkJHTCT4
-         yrEqDygrlCm9ea1UPx0mxkOVpdvRAyabTulaepjea4KcmTzU8k9bkVAmFSqGBlYAybJc
-         /TvMP3xTAtDpCeNMKPGZgK3k+VEUhoXBbv9gRtoOwCDK8YUbakl+Ht+CLy/hkEASzUOY
-         1jkw==
+        b=CxH11TZaoDOl6aazpFxod1swTbC9mM6COrOr1UDw6TdMHzQJBcv7cM3AAPnhgksBVX
+         F+Rl9CPZV1j6e5U+lrTnuMxUYhhj2YdS1Fed/chE3naeIb74UTzTpWjstpktPyA6af/d
+         ptn9VnxpNbU/jyKk4wINdidShqde4Q+On1mq9ot/qXMVSDe0EX7HwJ213dsVQ/OMUFOR
+         MkCmQMKFAycOl5NLaVKSE6+TxEZ4rMKZS2uNbUBzZwJ40youiqyFRxsf6lwcRKNKGn0E
+         rtUc1ZZEiMWv9ri3ADGYzWkfUlLlaEBsRkWTPmv/s+/g/uVsOPhh/QRnd1GtxWe2XGmm
+         sJSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=N7ejNrfaveEunnz7wDy1yT0fpXQKmGe1uCl70+eSFLA=;
-        b=CEONKdwo2E+XIfTAwtRSBMz6iKED8qporhjm5sWU9bVfl0yIJtDWUeHghmO0/iSd3V
-         8Xz+Xso21U6jjhZLAHcFQrOWXPsWPrkKZHXvAshhPYek8T3YF83XzUKW3+cW/xsOngDG
-         jtT3IOY7F8azVgzF30wjUgzxM01v6ftqxMzxGaHzEm7hqIy9jcC1VKMYdXjhofviUlE/
-         /A41dlEIGd9lc5FC1f8ULCUVEH0uLsVcR1wgESVqEbvUQnfH9Den9J9ycszA3D49bav2
-         a5Cqm8GBpT7WH1+bbjimXb3xHZXm32WtPf6BIa0stQCoTvQxAA7001j/ApqVxDYsT3Ru
-         Ha+A==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=mEZfXp5v6uCsOlhK65Nq3ySLOhKaHn+DauZYW/HDjZM=;
+        b=QCZRSn/qDCB3EdG2umRVJO1RlWHjnX0PHvkr85pCVQnsZnIa2WLjPWKWjz1tIZ234u
+         e/LJ9nB9uEiFVPNRu8wOQhE5fWAzGNG/MGSl6OY3DSRrQgKEapPK4/fzVF4SJ9PV13Jl
+         UFaFQn81A0tBh9xCZdWyCy+j0/FVHSXl7jrbswic7ED4dtcLrbYpyLgTmXthtuymG5Nc
+         Rd/HMS3ttNPWLLyBS5dc0NdfbGcWnrA164yH1EXQowT8DiDhsoiPR9kKyn8MzDBO8WbH
+         kHOyvPlpR/54Qw819HAKcuEj33RLcFNpCWhEuPCFWNb2uSILZCHYLMTPX243yML1bzML
+         JkVg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uY1UB9xE;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=QvZ+4oiQ;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uY1UB9xE;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZrIlKAIA43VdYljDUUP9g0wZqzaO+4w+z6tRw03dybPNuAMgG99SL0QVeDfMUyytzrYuL9rm4RDyADjst8w0uA=
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=QvZ+4oiQ;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
+Date: Mon, 14 May 2018 21:46:42 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] driver core: Respect all error codes from
+ dev_pm_domain_attach()
+Message-ID: <20180515044642.GA26133@roeck-us.net>
 MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <20180515005342.GM98604@atomide.com>
-References: <1526309557-7995-1-git-send-email-ulf.hansson@linaro.org> <20180515005342.GM98604@atomide.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 May 2018 10:06:48 +0200
-X-Google-Sender-Auth: gkhUzRo3LfozTRm2-SrjSxd_dhw
-Message-ID: <CAJZ5v0iaF9NfajAUT_m8E_AKySnjV-A6xpiXXz=_8LGe8oD1qg@mail.gmail.com>
-Subject: Re: [PATCH] PM / Domains: Don't return -EEXIST at attach when PM
- domain exists
-To: Tony Lindgren <tony@atomide.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>,
-	"linux-samsung-soc @ vger . kernel . org" <linux-samsung-soc@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600451586145722413?=
-X-GMAIL-MSGID: =?utf-8?q?1600516635921433886?=
+X-GMAIL-THRID: =?utf-8?q?1598798225940952926?=
+X-GMAIL-MSGID: =?utf-8?q?1600504049521805264?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 2:53 AM, Tony Lindgren <tony@atomide.com> wrote:
-> * Ulf Hansson <ulf.hansson@linaro.org> [180514 14:55]:
->> As dev_pm_domain_attach() isn't the only way to assign PM domain pointers
->> to devices, clearly we must allow a device to have the pointer already
->> being assigned. For this reason, return 0 instead of -EEXIST.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Tested-by: Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Fixes the issue for me too:
->
-> Tested-by: Tony Lindgren <tony@atomide.com>
+On Thu, Apr 26, 2018 at 10:53:06AM +0200, Ulf Hansson wrote:
+> The limitation of being able to check only for -EPROBE_DEFER from
+> dev_pm_domain_attach() has been removed. Hence let's respect all error
+> codes and bail out accordingly.
+> 
 
-I've applied the patch with the tag above, thanks!
+AFAICS this patch causes all drivers/devices to fail instantiating
+if dev_pm_domain_set() is called in the device initialization path.
+That seems to be a systemic problem, since dev_pm_domain_set() must
+only be called for unbound devices.
+
+In practice, I see the problem when trying to boot beagle or overo
+with qemu (the Linaro version). Of course, that doesn't mean much
+because that is not real hardware. However, I am not surprised that
+all devices instantiated through, for example, omap_device_build_from_dt()
+fail to instantiate. Instrumentation confirms that dev_pm_domain_set()
+is called prior to platform_drv_probe(). 
+
+Guenter
+
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/base/platform.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 8075ddc70a17..9460139d9b02 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -572,17 +572,16 @@ static int platform_drv_probe(struct device *_dev)
+>  		return ret;
+>  
+>  	ret = dev_pm_domain_attach(_dev, true);
+> -	if (ret != -EPROBE_DEFER) {
+> -		if (drv->probe) {
+> -			ret = drv->probe(dev);
+> -			if (ret)
+> -				dev_pm_domain_detach(_dev, true);
+> -		} else {
+> -			/* don't fail if just dev_pm_domain_attach failed */
+> -			ret = 0;
+> -		}
+> +	if (ret)
+> +		goto out;
+> +
+> +	if (drv->probe) {
+> +		ret = drv->probe(dev);
+> +		if (ret)
+> +			dev_pm_domain_detach(_dev, true);
+>  	}
+>  
+> +out:
+>  	if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
+>  		dev_warn(_dev, "probe deferral not supported\n");
+>  		ret = -ENXIO;
+> -- 
+> 2.7.4
