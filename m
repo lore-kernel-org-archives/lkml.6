@@ -1,131 +1,794 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752302AbeEOVuT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:50:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752061AbeEOVuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:50:05 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 2/2] locking/percpu-rwsem: Annotate rwsem ownership transfer by setting RWSEM_OWNER_UNKNOWN
-Date: Tue, 15 May 2018 17:49:51 -0400
-Message-Id: <1526420991-21213-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1526420991-21213-1-git-send-email-longman@redhat.com>
-References: <1526420991-21213-1-git-send-email-longman@redhat.com>
+        id S1752453AbeEOVvT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:51:19 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:45516 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751333AbeEOVvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:51:17 -0400
+Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <pavel@ucw.cz>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <20180515154352.20263-2-dmurphy@ti.com>
+ <b0f78b38-52af-aa40-f838-217d7721157a@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <ab12334c-99ec-648c-8917-9dd5f316fd97@ti.com>
+Date: Tue, 15 May 2018 16:50:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <b0f78b38-52af-aa40-f838-217d7721157a@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The filesystem freezing code needs to transfer ownership of a rwsem
-embedded in a percpu-rwsem from the task that does the freezing to
-another one that does the thawing by calling percpu_rwsem_release()
-after freezing and percpu_rwsem_acquire() before thawing.
+Jacek
 
-However, the new rwsem debug code runs afoul with this scheme by warning
-that the task that releases the rwsem isn't the one that acquires it.
+On 05/15/2018 04:24 PM, Jacek Anaszewski wrote:
+> Dan,
+> 
+> Thanks for the update. Please refer to my comments below.
+> 
+> On 05/15/2018 05:43 PM, Dan Murphy wrote:
+>> Introduce the family of LED devices that can
+>> drive a torch, strobe or IR LED.
+>>
+>> The LED driver can be configured with a strobe
+>> timer to execute a strobe flash.  The IR LED
+>> brightness is controlled via the torch brightness
+>> register.
+>>
+>> The data sheet for each the LM36010 and LM36011
+>> LED drivers can be found here:
+>> http://www.ti.com/product/LM36010
+>> http://www.ti.com/product/LM36011
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>
+>> v6 - This driver has been heavily modified from v5.  There is no longer reading
+>> of individual child nodes.  There are too many changes to list here see -
+>> https://patchwork.kernel.org/patch/10392123/
+>>
+>> v5 - Fixed magic numbers, change reg cache type, added of_put_node to release
+>> the dt node ref, and I did not change the remove function to leave the LED in its
+>> state on driver removal - https://patchwork.kernel.org/patch/10391741/
+>> v4 - Fixed Cocci issue using ARRAY_SIZE - https://patchwork.kernel.org/patch/10389259/
+>> v3 - removed wildcard dt compatible, fixed copyright, fixed struct doc, removed
+>> RO registers from default, added regmap volatile for FLAGS_REG, updated regmap cache type,
+>> fixed unlock and extra semi colon in strobe_set, removed unnecessary out label
+>> in led register and fixed checking of the ret in brightness_set - https://patchwork.kernel.org/patch/10386243/
+>> v2 - Fixed kbuild issue and removed unused cdev_strobe - https://patchwork.kernel.org/patch/10384585/
+>>
+>>   drivers/leds/Kconfig        |   9 +
+>>   drivers/leds/Makefile       |   1 +
+>>   drivers/leds/leds-lm3601x.c | 595 ++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 605 insertions(+)
+>>   create mode 100644 drivers/leds/leds-lm3601x.c
+>>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index 2c896c0e69e1..50ae536f343f 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -145,6 +145,15 @@ config LEDS_LM3692X
+>>         This option enables support for the TI LM3692x family
+>>         of white LED string drivers used for backlighting.
+>>   +config LEDS_LM3601X
+>> +    tristate "LED support for LM3601x Chips"
+>> +    depends on LEDS_CLASS && I2C && OF
+>> +    depends on LEDS_CLASS_FLASH
+>> +    select REGMAP_I2C
+>> +    help
+>> +      This option enables support for the TI LM3601x family
+>> +      of flash, torch and indicator classes.
+>> +
+>>   config LEDS_LOCOMO
+>>       tristate "LED Support for Locomo device"
+>>       depends on LEDS_CLASS
+>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>> index 91eca81cae82..b79807fe1b67 100644
+>> --- a/drivers/leds/Makefile
+>> +++ b/drivers/leds/Makefile
+>> @@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)        += leds-mlxreg.o
+>>   obj-$(CONFIG_LEDS_NIC78BX)        += leds-nic78bx.o
+>>   obj-$(CONFIG_LEDS_MT6323)        += leds-mt6323.o
+>>   obj-$(CONFIG_LEDS_LM3692X)        += leds-lm3692x.o
+>> +obj-$(CONFIG_LEDS_LM3601X)        += leds-lm3601x.o
+>>     # LED SPI Drivers
+>>   obj-$(CONFIG_LEDS_DAC124S085)        += leds-dac124s085.o
+>> diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
+>> new file mode 100644
+>> index 000000000000..fa87da5d5159
+>> --- /dev/null
+>> +++ b/drivers/leds/leds-lm3601x.c
+>> @@ -0,0 +1,595 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Flash and torch driver for Texas Instruments LM3601X LED
+>> +// Flash driver chip family
+>> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/led-class-flash.h>
+>> +#include <linux/module.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +#include <uapi/linux/uleds.h>
+>> +
+>> +#define LM3601X_LED_TORCH    0x0
+>> +#define LM3601X_LED_IR        0x1
+>> +
+>> +/* Registers */
+>> +#define LM3601X_ENABLE_REG    0x01
+>> +#define LM3601X_CFG_REG        0x02
+>> +#define LM3601X_LED_FLASH_REG    0x03
+>> +#define LM3601X_LED_TORCH_REG    0x04
+>> +#define LM3601X_FLAGS_REG    0x05
+>> +#define LM3601X_DEV_ID_REG    0x06
+>> +
+>> +#define LM3601X_SW_RESET    BIT(7)
+>> +
+>> +/* Enable Mode bits */
+>> +#define LM3601X_MODE_STANDBY    0x00
+>> +#define LM3601X_MODE_IR_DRV    BIT(0)
+>> +#define LM3601X_MODE_TORCH    BIT(1)
+>> +#define LM3601X_MODE_STROBE    (BIT(0) | BIT(1))
+>> +#define LM3601X_STRB_EN        BIT(2)
+>> +#define LM3601X_STRB_LVL_TRIG    ~BIT(3)
+>> +#define LM3601X_STRB_EDGE_TRIG    BIT(3)
+>> +#define LM3601X_IVFM_EN        BIT(4)
+>> +
+>> +#define LM36010_BOOST_LIMIT_19    ~BIT(5)
+>> +#define LM36010_BOOST_LIMIT_28    BIT(5)
+>> +#define LM36010_BOOST_FREQ_2MHZ    ~BIT(6)
+>> +#define LM36010_BOOST_FREQ_4MHZ    BIT(6)
+>> +#define LM36010_BOOST_MODE_NORM    ~BIT(7)
+>> +#define LM36010_BOOST_MODE_PASS    BIT(7)
+>> +
+>> +/* Flag Mask */
+>> +#define LM3601X_FLASH_TIME_OUT    BIT(0)
+>> +#define LM3601X_UVLO_FAULT    BIT(1)
+>> +#define LM3601X_THERM_SHUTDOWN    BIT(2)
+>> +#define LM3601X_THERM_CURR    BIT(3)
+>> +#define LM36010_CURR_LIMIT    BIT(4)
+>> +#define LM3601X_SHORT_FAULT    BIT(5)
+>> +#define LM3601X_IVFM_TRIP    BIT(6)
+>> +#define LM36010_OVP_FAULT    BIT(7)
+>> +
+>> +#define LM3601X_MIN_TORCH_I_UA    2400
+>> +#define LM3601X_MIN_STROBE_I_MA    11
+>> +
+>> +#define LM3601X_TIMEOUT_MASK    0x1e
+>> +#define LM3601X_ENABLE_MASK    0x03
+>> +
+>> +enum lm3601x_type {
+>> +    CHIP_LM36010 = 0,
+>> +    CHIP_LM36011,
+>> +};
+>> +
+>> +/**
+>> + * struct lm3601x_max_timeouts -
+>> + * @timeout: timeout value in ms
+>> + * @regval: the value of the register to write
+>> + */
+>> +struct lm3601x_max_timeouts {
+>> +    int timeout;
+>> +    int reg_val;
+>> +};
+>> +
+>> +/**
+>> + * struct lm3601x_led -
+>> + * @lock: Lock for reading/writing the device
+>> + * @regmap: Devices register map
+>> + * @client: Pointer to the I2C client
+>> + * @led_node: DT device node for the led
+>> + * @cdev_torch: led class device pointer for the torch
+>> + * @cdev_ir: led class device pointer for infrared
+>> + * @fled_cdev: flash led class device pointer
+>> + * @led_name: LED label for the Torch or IR LED
+>> + * @strobe: LED label for the strobe
+>> + * @last_flag: last known flags register value
+>> + * @strobe_timeout: the timeout for the strobe
+>> + * @torch_current_max: maximum current for the torch
+>> + * @strobe_current_max: maximum current for the strobe
+>> + * @max_strobe_timeout: maximum timeout for the strobe
+>> + * @led_mode: The mode to enable either IR or Torch
+>> + */
+>> +struct lm3601x_led {
+>> +    struct mutex lock;
+>> +    struct regmap *regmap;
+>> +    struct i2c_client *client;
+>> +
+>> +    struct device_node *led_node;
+>> +
+>> +    struct led_classdev cdev_torch;
+>> +    struct led_classdev cdev_ir;
+>> +
+>> +    struct led_classdev_flash fled_cdev;
+>> +
+>> +    char led_name[LED_MAX_NAME_SIZE];
+>> +    char strobe[LED_MAX_NAME_SIZE];
+>> +
+>> +    unsigned int last_flag;
+>> +    unsigned int strobe_timeout;
+>> +
+>> +    u32 torch_current_max;
+>> +    u32 strobe_current_max;
+>> +    u32 max_strobe_timeout;
+>> +
+>> +    int led_mode;
+>> +};
+>> +
+>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
+>> +    { 40000, 0x00 },
+>> +    { 80000, 0x01 },
+>> +    { 120000, 0x02 },
+>> +    { 160000, 0x03 },
+>> +    { 200000, 0x04 },
+>> +    { 240000, 0x05 },
+>> +    { 280000, 0x06 },
+>> +    { 320000, 0x07 },
+>> +    { 360000, 0x08 },
+>> +    { 400000, 0x09 },
+>> +    { 600000, 0x0a },
+>> +    { 800000, 0x0b },
+>> +    { 1000000, 0x0c },
+>> +    { 1200000, 0x0d },
+>> +    { 1400000, 0x0e },
+>> +    { 1600000, 0x0f },
+>> +};
+>> +
+>> +static const struct reg_default lm3601x_regmap_defs[] = {
+>> +    { LM3601X_ENABLE_REG, 0x20 },
+>> +    { LM3601X_CFG_REG, 0x15 },
+>> +    { LM3601X_LED_FLASH_REG, 0x00 },
+>> +    { LM3601X_LED_TORCH_REG, 0x00 },
+>> +};
+>> +
+>> +static bool lm3601x_volatile_reg(struct device *dev, unsigned int reg)
+>> +{
+>> +    switch (reg) {
+>> +    case LM3601X_FLAGS_REG:
+>> +        return true;
+>> +    default:
+>> +        return false;
+>> +    }
+>> +}
+>> +
+>> +static const struct regmap_config lm3601x_regmap = {
+>> +    .reg_bits = 8,
+>> +    .val_bits = 8,
+>> +
+>> +    .max_register = LM3601X_DEV_ID_REG,
+>> +    .reg_defaults = lm3601x_regmap_defs,
+>> +    .num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
+>> +    .cache_type = REGCACHE_RBTREE,
+>> +    .volatile_reg = lm3601x_volatile_reg,
+>> +};
+>> +
+>> +static struct lm3601x_led *fled_cdev_to_led(
+>> +                struct led_classdev_flash *fled_cdev)
+>> +{
+>> +    return container_of(fled_cdev, struct lm3601x_led, fled_cdev);
+>> +}
+>> +
+>> +static int lm3601x_read_faults(struct lm3601x_led *led)
+>> +{
+>> +    int flags_val;
+>> +    int ret;
+>> +
+>> +    ret = regmap_read(led->regmap, LM3601X_FLAGS_REG, &flags_val);
+>> +    if (ret < 0)
+>> +        return -EIO;
+>> +
+>> +    led->last_flag = 0;
+>> +
+>> +    if (flags_val & LM36010_OVP_FAULT)
+>> +        led->last_flag |= LED_FAULT_OVER_VOLTAGE;
+>> +
+>> +    if (flags_val & (LM3601X_THERM_SHUTDOWN | LM3601X_THERM_CURR))
+>> +        led->last_flag |= LED_FAULT_OVER_TEMPERATURE;
+>> +
+>> +    if (flags_val & LM3601X_SHORT_FAULT)
+>> +        led->last_flag |= LED_FAULT_SHORT_CIRCUIT;
+>> +
+>> +    if (flags_val & LM36010_CURR_LIMIT)
+>> +        led->last_flag |= LED_FAULT_OVER_CURRENT;
+>> +
+>> +    if (flags_val & LM3601X_UVLO_FAULT)
+>> +        led->last_flag |= LED_FAULT_UNDER_VOLTAGE;
+>> +
+>> +    if (flags_val & LM3601X_IVFM_TRIP)
+>> +        led->last_flag |= LED_FAULT_INPUT_VOLTAGE;
+>> +
+>> +    if (flags_val & LM3601X_THERM_SHUTDOWN)
+>> +        led->last_flag |= LED_FAULT_LED_OVER_TEMPERATURE;
+>> +
+>> +    return led->last_flag;
+>> +}
+>> +
+>> +static int lm3601x_brightness_set(struct led_classdev *cdev,
+>> +                    enum led_brightness brightness)
+>> +{
+>> +    struct lm3601x_led *led =
+>> +        container_of(cdev, struct lm3601x_led, cdev_torch);
+>> +    u8 brightness_val;
+>> +    int ret, led_mode_val;
+>> +
+>> +    mutex_lock(&led->lock);
+>> +
+>> +    ret = lm3601x_read_faults(led);
+>> +    if (ret < 0)
+>> +        goto out;
+>> +
+>> +    if (led->led_mode == LM3601X_LED_TORCH)
+>> +        led_mode_val = LM3601X_MODE_TORCH;
+>> +    else
+>> +        led_mode_val = LM3601X_MODE_IR_DRV;
+>> +
+>> +    if (brightness == LED_OFF) {
+>> +        ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                    led_mode_val, LED_OFF);
+>> +        goto out;
+>> +    }
+>> +
+>> +    if (brightness == LED_ON)
+>> +        brightness_val = LED_ON;
+>> +    else
+>> +        brightness_val = (brightness/2);
+>> +
+>> +    ret = regmap_write(led->regmap, LM3601X_LED_TORCH_REG, brightness_val);
+>> +    if (ret < 0)
+>> +        goto out;
+>> +
+>> +    ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                    led_mode_val,
+>> +                    led_mode_val);
+>> +
+>> +out:
+>> +    mutex_unlock(&led->lock);
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_strobe_set(struct led_classdev_flash *fled_cdev,
+>> +                bool state)
+>> +{
+>> +    struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +    int ret;
+>> +    int current_timeout;
+>> +    int reg_count;
+>> +    int i;
+>> +    int timeout_reg_val = 0;
+>> +
+>> +    mutex_lock(&led->lock);
+>> +
+>> +    ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
+>> +    if (ret < 0)
+>> +        goto out;
+>> +
+>> +    reg_count = ARRAY_SIZE(strobe_timeouts);
+>> +    for (i = 0; i < reg_count; i++) {
+>> +        if (led->strobe_timeout > strobe_timeouts[i].timeout)
+>> +            continue;
+>> +
+>> +        if (led->strobe_timeout <= strobe_timeouts[i].timeout) {
+>> +            timeout_reg_val = (strobe_timeouts[i].reg_val << 1);
+>> +            break;
+>> +        }
+>> +
+>> +        ret = -EINVAL;
+>> +        goto out;
+>> +    }
+>> +
+>> +    if (led->strobe_timeout != current_timeout)
+>> +        ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
+>> +                    LM3601X_TIMEOUT_MASK, timeout_reg_val);
+>> +
+>> +    if (state)
+>> +        ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                    LM3601X_MODE_STROBE,
+>> +                    LM3601X_MODE_STROBE);
+>> +    else
+>> +        ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                    LM3601X_MODE_STROBE, LED_OFF);
+>> +
+>> +    ret = lm3601x_read_faults(led);
+>> +out:
+>> +    mutex_unlock(&led->lock);
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_strobe_brightness_set(struct led_classdev *cdev,
+>> +                     enum led_brightness brightness)
+>> +{
+>> +    struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(cdev);
+>> +    struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +    int ret;
+>> +    u8 brightness_val;
+>> +
+>> +    mutex_lock(&led->lock);
+>> +    ret = lm3601x_read_faults(led);
+>> +    if (ret < 0)
+>> +        goto out;
+>> +
+>> +    if (brightness == LED_OFF) {
+>> +        ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +                    LM3601X_MODE_STROBE, LED_OFF);
+>> +        goto out;
+>> +    }
+>> +
+>> +    if (brightness == LED_ON)
+>> +        brightness_val = LED_ON;
+>> +    else
+>> +        brightness_val = (brightness/2);
+>> +
+>> +    ret = regmap_write(led->regmap, LM3601X_LED_FLASH_REG, brightness_val);
+>> +
+>> +out:
+>> +    mutex_unlock(&led->lock);
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_strobe_timeout_set(struct led_classdev_flash *fled_cdev,
+>> +                u32 timeout)
+>> +{
+>> +    struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +    int ret = 0;
+>> +
+>> +    mutex_lock(&led->lock);
+>> +
+>> +    led->strobe_timeout = timeout;
+>> +
+>> +    mutex_unlock(&led->lock);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_strobe_get(struct led_classdev_flash *fled_cdev,
+>> +                bool *state)
+>> +{
+>> +    struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +    int ret;
+>> +    int strobe_state;
+>> +
+>> +    mutex_lock(&led->lock);
+>> +
+>> +    ret = regmap_read(led->regmap, LM3601X_ENABLE_REG, &strobe_state);
+>> +    if (ret < 0)
+>> +        goto out;
+>> +
+>> +    *state = strobe_state & LM3601X_MODE_STROBE;
+>> +
+>> +out:
+>> +    mutex_unlock(&led->lock);
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_strobe_fault_get(struct led_classdev_flash *fled_cdev,
+>> +                u32 *fault)
+>> +{
+>> +    struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +
+>> +    lm3601x_read_faults(led);
+>> +
+>> +    *fault = led->last_flag;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct led_flash_ops strobe_ops = {
+>> +    .strobe_set        = lm3601x_strobe_set,
+>> +    .strobe_get        = lm3601x_strobe_get,
+>> +    .timeout_set        = lm3601x_strobe_timeout_set,
+>> +    .fault_get        = lm3601x_strobe_fault_get,
+> 
+> You're still missing flash_brightness_set here.
 
-[   20.302978] ------------[ cut here ]------------
-[   20.305016] DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
-[   20.305029] WARNING: CPU: 1 PID: 1401 at
-/home/amir/build/src/linux/kernel/locking/rwsem.c:133 up_write+0x59/0x79
-[   20.311252] CPU: 1 PID: 1401 Comm: fsfreeze Not tainted 4.17.0-rc3-xfstests-00049-g39e47bf59eb3 #3276
-[   20.314808] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[   20.318403] RIP: 0010:up_write+0x59/0x79
-[   20.320928] RSP: 0018:ffffc90000717e48 EFLAGS: 00010286
-[   20.322955] RAX: 0000000000000030 RBX: ffff880078f1c680 RCX: ffff880078e42200
-[   20.325665] RDX: ffffffff810cc9c1 RSI: 0000000000000001 RDI: 0000000000000202
-[   20.328844] RBP: ffffc90000717e80 R08: 0000000000000001 R09: 0000000000000001
-[   20.332340] R10: ffffc90000717c58 R11: ffffffff836807ad R12: ffff880078f1c388
-[   20.335095] R13: ffff880078a8b980 R14: 0000000000000000 R15: 00000000fffffff7
-[   20.338009] FS:  00007fb61ca42700(0000) GS:ffff88007f400000(0000) knlGS:0000000000000000
-[   20.341423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   20.343772] CR2: 00007fb61c559b30 CR3: 0000000078da6000 CR4: 00000000000006e0
-[   20.346463] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   20.349201] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   20.351960] Call Trace:
-[   20.352911]  percpu_up_write+0x1f/0x28
-[   20.354344]  thaw_super_locked+0xdf/0x120
-[   20.355944]  do_vfs_ioctl+0x270/0x5f1
-[   20.357390]  ? __se_sys_newfstat+0x2e/0x39
-[   20.358969]  ? entry_SYSCALL_64_after_hwframe+0x59/0xbe
-[   20.360991]  ksys_ioctl+0x52/0x71
-[   20.362384]  __x64_sys_ioctl+0x16/0x19
-[   20.363702]  do_syscall_64+0x5d/0x167
-[   20.365099]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+OK not sure how this is working then.
 
-To work properly with the rwsem debug code, we need to annotate that the
-rwsem ownership is unknown during the tranfer period until a brave soul
-comes forward to acquire the ownership. During that period, optimistic
-spinning will be disabled.
+> 
+>> +};
+>> +
+>> +static int lm3601x_register_leds(struct lm3601x_led *led)
+>> +{
+>> +    struct led_classdev_flash *fled_cdev;
+>> +    struct led_classdev *led_cdev;
+>> +    int err = -ENODEV;
+>> +
+>> +    led->cdev_torch.name = led->led_name;
+>> +    led->cdev_torch.max_brightness = LED_FULL;
+> 
+> This should be led->torch_current_max converted to brightness levels.
+> Please compare how leds-max77693 and leds-as3645a do that.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/percpu-rwsem.h | 6 +++++-
- include/linux/rwsem.h        | 6 ++++++
- kernel/locking/rwsem-xadd.c  | 2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+I will look into it.
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index b1f37a8..79b99d6 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- 	lock_release(&sem->rw_sem.dep_map, 1, ip);
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
--		sem->rw_sem.owner = NULL;
-+		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
- #endif
- }
- 
-@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+	if (!read)
-+		sem->rw_sem.owner = current;
-+#endif
- }
- 
- #endif
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 56707d5..ab93b6e 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -44,6 +44,12 @@ struct rw_semaphore {
- #endif
- };
- 
-+/*
-+ * Setting bit 0 of the owner field with other non-zero bits will indicate
-+ * that the rwsem is writer-owned with an unknown owner.
-+ */
-+#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
-+
- extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 604d247..a903367 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -352,6 +352,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
- 	struct task_struct *owner;
- 	bool ret = true;
- 
-+	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
-+
- 	if (need_resched())
- 		return false;
- 
+> 
+>> +    led->cdev_torch.brightness_set_blocking = lm3601x_brightness_set;
+>> +    err = devm_led_classdev_register(&led->client->dev,
+>> +            &led->cdev_torch);
+>> +    if (err < 0)
+>> +        return err;
+> 
+> You shouldn't register two LED class devices for a single DT child
+> node, and honestly I don't know why you would have to do it.
+
+See below
+
+> 
+>> +
+>> +    fled_cdev = &led->fled_cdev;
+>> +    fled_cdev->ops = &strobe_ops;
+>> +
+>> +    led_cdev = &fled_cdev->led_cdev;
+>> +    led_cdev->name = led->strobe;
+>> +    led_cdev->max_brightness = LED_FUL
+>> +    led_cdev->brightness_set_blocking = lm3601x_strobe_brightness_set;
+>> +    led_cdev->flags |= LED_DEV_CAP_FLASH;
+>> +
+>> +    err = led_classdev_flash_register(&led->client->dev,
+>> +            fled_cdev);
+> 
+> Please look into the implementation of led_classdev_flash_register()
+> and compare other LED flash class drivers. What prevents you from
+> applying the same approach?
+
+I did actually follow the same approach here as the as3645a driver.
+I used this driver since I have a data sheet and can read the code.
+
+This is a copy, paste, slight modify from that as3645a driver as3645a_led_class_setup function.
+
+I used the devm register function above as a variation.
+
+I will have to dig further into it.
+
+> 
+> To put it concisely: LED flash class wrapper was designed to allow
+> for operating on a single LED in two modes: torch and flash.
+> Torch brightness is governed by brightness file and flash brightness
+> is governed by flash_brightness file. The difference between the two
+> modes is that torch mode is activated by writing value greater than 0
+> to the brightness file and flash mode is activated by writing 1 to
+> the strobe_set file.
+> 
+> In other words flash_brightness overwrites the (torch) brightness
+> for the time equal to the flash_timeout or until 0 is written
+> to the strobe_set file.
+
+I will look at it again
+
+> 
+>> +    return err;
+>> +}
+>> +
+>> +static void lm3601x_init_flash_timeout(struct lm3601x_led *led)
+>> +{
+>> +    struct led_flash_setting *setting;
+>> +
+>> +    setting = &led->fled_cdev.timeout;
+>> +    setting->min = strobe_timeouts[0].timeout;
+>> +    setting->max = led->max_strobe_timeout;
+>> +    setting->step = 40;
+>> +    setting->val = led->max_strobe_timeout;
+>> +}
+>> +
+>> +static int lm3601x_parse_node(struct lm3601x_led *led,
+>> +                  struct device_node *node)
+>> +{
+>> +    struct device_node *child_node;
+>> +    const char *name;
+>> +    char *mode_name;
+>> +    int ret = -ENODEV;
+>> +
+>> +    for_each_available_child_of_node(node, child_node) {
+>> +        led->led_node = of_node_get(child_node);
+>> +        if (!led->led_node) {
+>> +            dev_err(&led->client->dev,
+>> +                "No LED Child node\n");
+>> +
+>> +            goto out_err;
+>> +        }
+>> +
+>> +        ret = of_property_read_u32(led->led_node, "led-sources",
+>> +                       &led->led_mode);
+>> +        if (ret) {
+>> +            dev_err(&led->client->dev,
+>> +                "led-sources DT property missing\n");
+>> +            goto out_err;
+>> +        }
+>> +
+>> +        if (led->led_mode < LM3601X_LED_TORCH ||
+>> +            led->led_mode > LM3601X_LED_IR) {
+>> +            dev_warn(&led->client->dev,
+>> +                "Invalid led mode requested\n");
+>> +
+>> +            goto out_err;
+>> +
+>> +        }
+>> +    }
+>> +
+>> +    if (led->led_mode == LM3601X_LED_TORCH) {
+>> +        ret = of_property_read_string(led->led_node, "label", &name);
+>> +        if (!ret)
+>> +            snprintf(led->led_name, sizeof(led->led_name),
+>> +                "%s:%s", led->led_node->name, name);
+> 
+> First segment of a LED class device name should be "devicename".
+
+Hmm.  I remember this conversation from my other drivers.
+I just picked the wrong dt node name.
+
+I will fix it.
+
+> 
+>> +        else
+>> +            snprintf(led->led_name, sizeof(led->led_name),
+>> +                "%s:torch", led->led_node->name);
+>> +
+>> +        ret = of_property_read_u32(led->led_node, "led-max-microamp",
+>> +                    &led->torch_current_max);
+>> +        if (ret < 0) {
+>> +            dev_warn(&led->client->dev,
+>> +                "led-max-microamp DT property missing\n");
+>> +
+>> +            goto out_err;
+>> +        }
+>> +
+>> +        mode_name = "torch";
+>> +
+>> +    } else if (led->led_mode == LM3601X_LED_IR) {
+>> +        ret = of_property_read_string(led->led_node, "label", &name);
+>> +        if (!ret)
+>> +            snprintf(led->led_name, sizeof(led->led_name),
+>> +                "%s:%s", led->led_node->name, name);
+>> +        else
+>> +            snprintf(led->led_name, sizeof(led->led_name),
+>> +                "%s::infrared", led->led_node->name);
+> 
+> Ditto.
+
+Ack
+
+> 
+>> +
+>> +        mode_name = "ir";
+>> +
+>> +    } else {
+>> +        dev_warn(&led->client->dev,
+>> +            "No LED mode is selected exiting probe\n");
+>> +
+>> +        goto out_err;
+>> +    }
+>> +
+>> +    /* Flash mode is available in IR or Torch mode so read the DT */
+>> +    snprintf(led->strobe, sizeof(led->strobe),
+>> +            "%s:%s:strobe", led->led_node->name, mode_name);
+> 
+> strobe is not a proper LED function name (it is not a noun).
+> Please use "flash" instead.
+
+Strobe can be used as a noun to define an electronic camera flash.  But this is
+really a US English definition.
+
+I can change it to flash
+
+> 
+>> +
+>> +    ret = of_property_read_u32(led->led_node,
+>> +                "flash-max-microamp",
+>> +                &led->strobe_current_max);
+>> +    if (ret < 0) {
+>> +        dev_warn(&led->client->dev,
+>> +             "flash-max-microamp DT property missing\n");
+>> +        goto out_err;
+>> +    }
+>> +
+>> +    ret = of_property_read_u32(led->led_node,
+>> +                "flash-max-timeout-us",
+>> +                &led->max_strobe_timeout);
+>> +    if (ret < 0) {
+>> +        dev_warn(&led->client->dev,
+>> +             "flash-max-timeout-us DT property missing\n");
+>> +
+>> +        goto out_err;
+>> +    }
+>> +
+>> +    lm3601x_init_flash_timeout(led);
+>> +
+>> +out_err:
+>> +    of_node_put(led->led_node);
+>> +    return ret;
+>> +}
+>> +
+>> +static int lm3601x_probe(struct i2c_client *client,
+>> +            const struct i2c_device_id *id)
+>> +{
+>> +    struct lm3601x_led *led;
+>> +    int err;
+>> +
+>> +    led = devm_kzalloc(&client->dev,
+>> +                sizeof(struct lm3601x_led), GFP_KERNEL);
+>> +    if (!led)
+>> +        return -ENOMEM;
+>> +
+>> +    err = lm3601x_parse_node(led, client->dev.of_node);
+>> +    if (err < 0)
+>> +        return -ENODEV;
+>> +
+>> +    led->client = client;
+>> +    led->regmap = devm_regmap_init_i2c(client, &lm3601x_regmap);
+>> +    if (IS_ERR(led->regmap)) {
+>> +        err = PTR_ERR(led->regmap);
+>> +        dev_err(&client->dev,
+>> +            "Failed to allocate register map: %d\n", err);
+>> +        return err;
+>> +    }
+>> +
+>> +    mutex_init(&led->lock);
+>> +    i2c_set_clientdata(client, led);
+>> +    err = lm3601x_register_leds(led);
+>> +
+>> +    return err;
+>> +}
+>> +
+>> +static int lm3601x_remove(struct i2c_client *client)
+>> +{
+>> +    struct lm3601x_led *led = i2c_get_clientdata(client);
+>> +
+>> +    regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+>> +               LM3601X_ENABLE_MASK,
+>> +               LM3601X_MODE_STANDBY);
+> 
+> You need also mutex_destroy(&led->lock) here.
+
+OK. 
+
+> 
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct i2c_device_id lm3601x_id[] = {
+>> +    { "LM36010", CHIP_LM36010 },
+>> +    { "LM36011", CHIP_LM36011 },
+>> +    { },
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, lm3601x_id);
+>> +
+>> +static const struct of_device_id of_lm3601x_leds_match[] = {
+>> +    { .compatible = "ti,lm36010", },
+>> +    { .compatible = "ti,lm36011", },
+>> +    {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
+>> +
+>> +static struct i2c_driver lm3601x_i2c_driver = {
+>> +    .driver = {
+>> +        .name = "lm3601x",
+>> +        .of_match_table = of_lm3601x_leds_match,
+>> +    },
+>> +    .probe = lm3601x_probe,
+>> +    .remove = lm3601x_remove,
+>> +    .id_table = lm3601x_id,
+>> +};
+>> +module_i2c_driver(lm3601x_i2c_driver);
+>> +
+>> +MODULE_DESCRIPTION("Texas Instruments Flash Lighting driver for LM3601X");
+>> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+>> +MODULE_LICENSE("GPL v2");
+>>
+> 
+
+
 -- 
-1.8.3.1
+------------------
+Dan Murphy
