@@ -1,88 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751847AbeEOVsi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:48:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751149AbeEOVsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:48:37 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1752095AbeEOVtU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:49:20 -0400
+Received: from mail-it0-f50.google.com ([209.85.214.50]:39078 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeEOVtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:49:18 -0400
+X-Google-Smtp-Source: AB8JxZpKhMUz+pTJK4OfeuJDxFGxai7+UYiUbQluM/bRNYkDoyquILh6yF4uQ9vQ9wqyFf5AZEqrtA==
+Reply-To: ahs3@redhat.com
+Subject: Re: linux-next 20180515 - ACPI disabled..
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <50539.1526419088@turing-police.cc.vt.edu>
+ <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
+From: Al Stone <ahs3@redhat.com>
+Organization: Red Hat, Inc.
+Message-ID: <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
+Date: Tue, 15 May 2018 15:49:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-To: Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
- <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
- <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
-Message-ID: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
- default
-Date: Tue, 15 May 2018 14:48:36 -0700
+In-Reply-To: <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FLmkhR029012
 
-Quoting Alexandre Torgue (2018-05-14 05:45:57)
+On 05/15/2018 03:23 PM, Andy Shevchenko wrote:
+> +Cc: Rafael
+> 
+> On Wed, May 16, 2018 at 12:18 AM,  <valdis.kletnieks@vt.edu> wrote:
+>> Seeing this at boot with linux-next 20180415.  ACPI gets disabled, hilarity and hijinks
+>> result - everything from a lot of stuff can't find an IRQ to the dual-core w/ HT CPU
+>> coming up as just 1 core no HT. 20180430 works just fine...
+>>
+>> [    0.000000] ACPI: Early table checksum verification disabled
+>> [    0.000000] ACPI: RSDP 0x00000000CB7F1000 000024 (v02 DELL  )
+>> [    0.000000] ACPI: XSDT 0x00000000CB7F1088 000094 (v01 DELL   CBX3     01072009 AMI  00010013)
+>> [    0.000000] ACPI: FACP 0x00000000CB7FB720 00010C (v05 DELL   CBX3     01072009 AMI  00010013)
+>> [    0.000000] ACPI: DSDT 0x00000000CB7F11B0 00A56F (v02 DELL   CBX3     00000021 INTL 20091112)
+>> [    0.000000] ACPI: FACS 0x00000000CCFED080 000040
+>> [    0.000000] ACPI: APIC 0x00000000CB7FB830 000072 (v03 DELL   CBX3     01072009 AMI  00010013)
+>> [    0.000000] ACPI: FPDT 0x00000000CB7FB8A8 000044 (v01 DELL   CBX3     01072009 AMI  00010013)
+>> [    0.000000] ACPI: TCPA 0x00000000CB7FB8F0 000032 (v02 APTIO4 NAPAASF  00000001 MSFT 01000013)
+>> [    0.000000] ACPI: MCFG 0x00000000CB7FB928 00003C (v01 DELL   CBX3     01072009 MSFT 00000097)
+>> [    0.000000] ACPI: HPET 0x00000000CB7FB968 000038 (v01 DELL   CBX3     01072009 AMI. 00000005)
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FB9A0 000415 (v01 SataRe SataTabl 00001000 INTL 20091112)
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FBDB8 0009B9 (v01 PmRef  Cpu0Ist  00003000 INTL 20051117)
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FC778 000B22 (v01 PmRef  CpuPm    00003000 INTL 20051117)
+>> [    0.000000] ACPI: DMAR 0x00000000CB7FD2A0 000080 (v01 INTEL  SNB      00000001 INTL 00000001)
+>> [    0.000000] ACPI: ASF! 0x00000000CB7FD320 0000A5 (v32 INTEL   HCG     00000001 TFSM 000F4240)
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FD3C8 000579 (v01 AMITCG PROC     00000001 INTL 20051117)
+>> [    0.000000] ACPI: BGRT 0x00000000CB7FD948 000038 (v00 ??              01072009 AMI  00010013)
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FD980 00198A (v01 NvdRef NvdTabl  00001000 INTL 20091112)
+>> [    0.000000] ACPI: Local APIC address 0xfee00000
+>> [    0.000000] ACPI: [APIC:0x05] Invalid zero length
+>> [    0.000000] ACPI: Error parsing LAPIC address override entry
+>> [    0.000000] ACPI: Invalid BIOS MADT, disabling ACPI
+>> [    0.000000] tsc: Fast TSC calibration using PIT
+>>
+>> On next-20180430, the boot goes like this, and continues properly:
+>>
+>> [    0.000000] ACPI: SSDT 0x00000000CB7FD980 00198A (v01 NvdRef NvdTabl  00001000 INTL 20091112)
+>> [    0.000000] ACPI: Local APIC address 0xfee00000
+>> [    0.000000] tsc: Fast TSC calibration using PIT
+>>
+>> Not seeing any commits to drivers/acpi/tables.c other than Al Stone's.
+>>
+>> This ringing any bells before I go bisecting?
+>>
 > 
 > 
-> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
-> > Quoting Alexandre Torgue (2018-05-04 00:54:16)
-> >> Stephen
-> >>
-> >> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
-> >>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>>
-> >>> Clock driver is mandatory if the machine is selected.
-> >>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-> >>> with the machine(s).
-> >>>
-> >>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
-> >>>
-> >>
-> >> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
-> > 
-> > Thanks for the bump. I missed this one. Of course, the user can still select
-> > the configs now, just it's annoying for upgrade path.
-> > 
-> >>
-> >>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> >>> ---
-> >>>    drivers/clk/Kconfig | 6 ++----
-> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> >>> index 24a5bc3..721572a 100644
-> >>> --- a/drivers/clk/Kconfig
-> >>> +++ b/drivers/clk/Kconfig
-> >>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
-> >>>          Support for stm32mp157 SoC family clocks
-> >>>    
-> >>>    config COMMON_CLK_STM32F
-> >>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> >>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> >>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
-> > 
-> > But the point of the change this patch is fixing was to expose these to
-> > the user to turn off they wanted. You'll need to do something like that
-> > again here, instead of removing the prompt and replacing it with a
-> > def_bool.
-> > 
 > 
-> Sorry I don't understand. Clock driver is mandatory to boot each 
-> platform and depends on machine type. Do you see a use case where we 
-> could need to disable the clock driver? (it would impose to change 
-> devicetree to use fixed clocks and to have a booloader which configures 
-> all PLL and clocks).
 
-No. My understanding of the patch that introduced the options was to
-allow the user to disable these drivers if they wanted to. I'm just
-reiterating the spirit of that patch. That must be wrong?
+Not off-hand.  Could you please send me a copy of /sys/firmware/acpi/tables/APIC
+on this machine?  The commit cd8c65a6442b that I wrote looks like it got pulled
+in on 20180430, which if I'm understanding correctly, seems to have fixed the
+problem.  Did this work before 20180415?  I assume it did.
+
+What puzzles me is that this message:
+
+   ACPI: [APIC:0x05] Invalid zero length
+
+should only have shown up if the MADT has a broken subtable, and I think that
+bit of code has been that way for quite some time (git blame says somewhere
+around 2012 when the test for this condition was put in).
+
+-- 
+ciao,
+al
+-----------------------------------
+Al Stone
+Software Engineer
+Red Hat, Inc.
+ahs3@redhat.com
+-----------------------------------
