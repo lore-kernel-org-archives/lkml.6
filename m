@@ -1,118 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932078AbeEOQUv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:20:51 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:2548 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753660AbeEOQUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:20:48 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="asc'?scan'208";a="11554817"
-Message-ID: <e2e23aa21b37754b0c84003e6d87c7cb7d5a17fe.camel@microchip.com>
-Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
-From: Radu Pirea <radu.pirea@microchip.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <Zhiqiang.Hou@nxp.com>, <pp@emlix.com>, <richard@nod.at>,
-        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
-        <marek.vasut@gmail.com>
-Date: Tue, 15 May 2018 19:22:06 +0300
-In-Reply-To: <20180504204013.254d90cf@bbrezillon>
-References: <20180504155404.5285-1-radu.pirea@microchip.com>
-         <20180504204013.254d90cf@bbrezillon>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="=-OvGm/Yi9uvs4n9kKBo21"
-X-Mailer: Evolution 3.28.2 
+        id S932092AbeEOQVE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:21:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:35156 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753700AbeEOQUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:20:50 -0400
+Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
+ through memblock list
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-5-takahiro.akashi@linaro.org>
+ <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+ <20180507055906.GE11326@linaro.org> <20180515043538.GB2737@linaro.org>
+From: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <84d5da84-81c4-d311-10e9-ba6afaf72a8e@arm.com>
+Date: Tue, 15 May 2018 17:17:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180515043538.GB2737@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-OvGm/Yi9uvs4n9kKBo21
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Akashi,
 
-On Fri, 2018-05-04 at 20:40 +0200, Boris Brezillon wrote:
-> On Fri, 4 May 2018 18:54:04 +0300
-> Radu Pirea <radu.pirea@microchip.com> wrote:
->=20
-> > Added geometry description for Microchip 25LC256 memory.
->=20
-> Same as for the dataflash stuff you posted a few weeks ago: I don't
-> think this device belongs in the SPI NOR framework.
-Hi Boris,
+On 15/05/18 05:35, AKASHI Takahiro wrote:
+> On Mon, May 07, 2018 at 02:59:07PM +0900, AKASHI Takahiro wrote:
+>> On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
+>>> On 25/04/18 07:26, AKASHI Takahiro wrote:
+>>>> We need to prevent firmware-reserved memory regions, particularly EFI
+>>>> memory map as well as ACPI tables, from being corrupted by loading
+>>>> kernel/initrd (or other kexec buffers). We also want to support memory
+>>>> allocation in top-down manner in addition to default bottom-up.
+>>>> So let's have arm64 specific arch_kexec_walk_mem() which will search
+>>>> for available memory ranges in usable memblock list,
+>>>> i.e. !NOMAP & !reserved, 
+>>>
+>>>> instead of system resource tree.
+>>>
+>>> Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
+>>> be safe in the EFI-memory-map/ACPI-tables case?
+>>>
+>>> It would be good to avoid having two ways of doing this, and I would like to
+>>> avoid having extra arch code...
+>>
+>> I know what you mean.
+>> /proc/iomem or system resource is, in my opinion, not the best place to
+>> describe memory usage of kernel but rather to describe *physical* hardware
+>> layout. As we are still discussing about "reserved" memory, I don't want
+>> to depend on it.
 
-25lc256 memory is similar with mr25h256, the only difference is the
-page size(64 vs 256). Because mr25h256 is already in SPI NOR framework
-I added here 25lc256.
+I agree. We have funny stuff that isn't hardware-layout, but is important for
+the next boot. The kernel doesn't have an ABI to support when it queries the
+list itself.
 
-> >=20
-> > Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-> > ---
-> >  drivers/mtd/devices/m25p80.c  | 3 +++
-> >  drivers/mtd/spi-nor/spi-nor.c | 3 +++
-> >  2 files changed, 6 insertions(+)
-> >=20
-> > diff --git a/drivers/mtd/devices/m25p80.c
-> > b/drivers/mtd/devices/m25p80.c
-> > index a4e18f6aaa33..1e359d811261 100644
-> > --- a/drivers/mtd/devices/m25p80.c
-> > +++ b/drivers/mtd/devices/m25p80.c
-> > @@ -372,6 +372,9 @@ static const struct spi_device_id m25p_ids[] =3D
-> > {
-> >  	{ "mr25h10" },  /*   1 Mib, 40 MHz */
-> >  	{ "mr25h40" },  /*   4 Mib, 40 MHz */
-> > =20
-> > +	/* Microchip */
-> > +	{ "25lc256" },
-> > +
-> >  	{ },
-> >  };
-> >  MODULE_DEVICE_TABLE(spi, m25p_ids);
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-
-> > nor/spi-nor.c
-> > index d445a4d3b770..6341c86be647 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -1076,6 +1076,9 @@ static const struct flash_info spi_nor_ids[]
-> > =3D {
-> >  	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048,
-> > SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-> >  	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048,
-> > SPI_NOR_QUAD_READ) },
-> > =20
-> > +	/* Microchip */
-> > +	{ "25lc256", CAT25_INFO(32 * 1024, 1, 64, 2,
-> > SPI_NOR_NO_ERASE | SPI_NOR_NO_FR) },
-> > +
-> >  	/* Micron */
-> >  	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32,
-> > SECT_4K | SPI_NOR_QUAD_READ) },
-> >  	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64,
-> > SPI_NOR_QUAD_READ) },
->=20
->=20
---=-OvGm/Yi9uvs4n9kKBo21
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+>> Along with memblock list, we will have more accurate control over memory
+>> usage.
 
-iQIzBAABCAAdFiEEdoCq2H4M7urKoB6rrwWfQ+JrPx0FAlr7CS4ACgkQrwWfQ+Jr
-Px2Ymw/6AxvaxE+EqKm1/B1QGobbmvfqqQctVNY2eLOcGtQ6/caB8ElIqrzSCg4v
-5XYkz5tIKpKYqurSdExktYIKGO7B1yZI+XvAiRBL7R0Hrhh7QA0DMVGdNarE+1zv
-KLfcsGtysYx0byvgQg70lgoI0GHAqQOUIhVwx4mMKS6sH9xl5/pURDuysaMlp68C
-Sk1RiOCGmt+XbB5lf5mly8lvIx4kGiYeyDhy/3jezEBGU68eLRp6/U2iQpku6FN+
-HHVuQSNW55D6gCZg30wIRx3D7rRw/9nmHi+psCPTiG+hMZcnJic1Pp9kCvp1gsK6
-PuN4e2umNuBUrgexH1OJlYpVK1Xtc6v2AZLNmd5sGOq/WCP/2noNeZqW1+pZf+IK
-Rp19p+u/rGQbyeGzcPbdI6pfyo6XAZJ68b4SmQKpi3FkNgHVf29YQBMeNSM0Sxw/
-xXVoQ8DfjOtf+HrVCkkDTqNP0LgfYWUn23h8U2WeMgF8/2NZjBteXWHgDrqlGJUX
-2OD37NGO8U0rshkEbzVXKiyNKscD4HbrgYE0fwPd4vnQFZPn1TWsliD/dl8TwZ4p
-DoTsyPGX5s1HYLnRsmk4HBsRrw6+rIUEEFviAnT+pHoo71rMMhZY/ueFzf9PAD5t
-p8Eu7UL4bHHgZQYwHnLdQm27w7KAZ9or7DnWr8jC9lr/T9UuJys=
-=LBhb
------END PGP SIGNATURE-----
+>>> If the argument is walking memblock gives a better answer than the stringy
+>>> walk_system_ram_res() thing, is there any mileage in moving this code into
+>>> kexec_file.c, and using it if !IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK)?
+>>>
+>>> This would save arm64/powerpc having near-identical implementations.
+>>> 32bit arm keeps memblock if it has kexec, so it may be useful there too if
+>>> kexec_file_load() support is added.
 
---=-OvGm/Yi9uvs4n9kKBo21--
+> If you don't have further objection, I will take memblock approach
+> (with factoring out powerpc's arch_kexec_walk_mem()).
+
+If we're agreed that the memblock walking is generic, then it would be quicker
+to make the arm64 version as close as possible and merge them as a later series.
+(saves a cross arch dependency)
+
+With that,
+Reviewed-by: James Morse <james.morse@arm.com>
+
+
+Thanks,
+
+James
