@@ -1,125 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753726AbeEOOoe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:44:34 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:55938 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752145AbeEOOoa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:44:30 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        Peter Zijlstra <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH v4] MIPS: perf: Fix BMIPS5000 system mode counting
-Date: Tue, 15 May 2018 15:44:16 +0100
-Message-ID: <1526395456-23723-1-git-send-email-matt.redfearn@mips.com>
+        id S1754097AbeEOOpL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:45:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754023AbeEOOlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:41:40 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 2/3] ARM: dts: tegra: Fix unit_address_vs_reg and avoid_unnecessary_addr_size DTC warnings
+Date: Tue, 15 May 2018 16:41:24 +0200
+Message-Id: <1526395285-19006-3-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524219789-31241-8-git-send-email-matt.redfearn@mips.com>
-References: <1524219789-31241-8-git-send-email-matt.redfearn@mips.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1526395437-298554-23259-46541-1
-X-BESS-VER: 2018.6-r1805102334
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193012
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When perf is used in system mode, i.e. specifying a set of CPUs to
-count (perf -a -C cpu), event->cpu is set to the CPU number on which
-events should be counted. The current BMIPS500 variation of
-mipsxx_pmu_enable_event only over sets the counter to count the current
-CPU, so system mode does not work.
+Remove unneeded address/size cells properties and unit addresses to fix
+DTC warnings like:
 
-Fix this by removing this BMIPS5000 specific path and integrating it
-with the generic one. Since BMIPS5000 uses specific extensions to the
-perf control register, different fields must be set up to count the
-relevant CPU.
+    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (unit_address_vs_reg):
+        /i2c@7000d000/stmpe811@41/stmpe_touchscreen@0: node has a unit name, but no reg property
+    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (avoid_unnecessary_addr_size):
+        /i2c@7000d000/stmpe811@41: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
-
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+ arch/arm/boot/dts/tegra30-apalis.dtsi  | 4 +---
+ arch/arm/boot/dts/tegra30-beaver.dts   | 3 ---
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 2 --
+ 3 files changed, 1 insertion(+), 8 deletions(-)
 
-Changes in v4:
-Fix compiler error from BRCM_PERFCTRL_VPEID flagged by Florian.
-
-Changes in v2:
-New patch to fix BMIPS5000 system mode perf.
-
- arch/mips/include/asm/mipsregs.h     |  1 +
- arch/mips/kernel/perf_event_mipsxx.c | 17 ++++++-----------
- 2 files changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index a4baaaa02bc..6b0b06d2683 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -735,6 +735,7 @@
- #define MIPS_PERFCTRL_MT_EN_TC	(_ULCAST_(2) << 20)
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 184f60c720fa..5038ca7b68af 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -590,8 +590,6 @@
+ 		/* STMPE811 touch screen controller */
+ 		stmpe811@41 {
+ 			compatible = "st,stmpe811";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 			reg = <0x41>;
+ 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&gpio>;
+@@ -600,7 +598,7 @@
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
  
- /* PerfCnt control register MT extensions used by BMIPS5000 */
-+#define BRCM_PERFCTRL_VPEID(v)	(_ULCAST_(1) << (12 + (v)))
- #define BRCM_PERFCTRL_TC	(_ULCAST_(1) << 30)
+-			stmpe_touchscreen@0 {
++			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+ 				/* 3.25 MHz ADC clock speed */
+ 				st,adc-freq = <1>;
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 72369877d284..961934f70639 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1791,9 +1791,6 @@
+ 			vccio-supply = <&vdd_5v_in_reg>;
  
- /* PerfCnt control register MT extensions used by Netlogic XLR */
-diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
-index 5b8811643e6..77d7167e303 100644
---- a/arch/mips/kernel/perf_event_mipsxx.c
-+++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -364,16 +364,7 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
- 		/* Make sure interrupt enabled. */
- 		MIPS_PERFCTRL_IE;
- 
--#ifdef CONFIG_CPU_BMIPS5000
--	{
--		/* enable the counter for the calling thread */
--		unsigned int vpe_id;
+ 			regulators {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
 -
--		vpe_id = smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK;
--		cpuc->saved_ctrl[idx] |= BIT(12 + vpe_id) | BRCM_PERFCTRL_TC;
--	}
--#else
--#ifdef CONFIG_MIPS_MT_SMP
-+#if defined(CONFIG_MIPS_MT_SMP) && !defined(CONFIG_CPU_BMIPS5000)
- 	if (range > V) {
- 		/* The counter is processor wide. Set it up to count all TCs. */
- 		pr_debug("Enabling perf counter for all TCs\n");
-@@ -390,12 +381,16 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
- 		 */
- 		cpu = (event->cpu >= 0) ? event->cpu : smp_processor_id();
- 
-+#if defined(CONFIG_CPU_BMIPS5000)
-+		ctrl = BRCM_PERFCTRL_VPEID(cpu & MIPS_CPUID_TO_COUNTER_MASK);
-+		ctrl |= BRCM_PERFCTRL_TC;
-+#else
- 		ctrl = M_PERFCTL_VPEID(cpu_vpe_id(&cpu_data[cpu]));
- 		ctrl |= M_TC_EN_VPE;
-+#endif
- 		cpuc->saved_ctrl[idx] |= ctrl;
- 		pr_debug("Enabling perf counter for CPU%d\n", cpu);
- 	}
--#endif /* CONFIG_CPU_BMIPS5000 */
- 	/*
- 	 * We do not actually let the counter run. Leave it until start().
- 	 */
+ 				vdd1_reg: vdd1 {
+ 					regulator-name = "vddio_ddr_1v2";
+ 					regulator-min-microvolt = <1200000>;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index cc46cedf80b9..a593dc8be47f 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -352,8 +352,6 @@
+ 		/* STMPE811 touch screen controller */
+ 		stmpe811@41 {
+ 			compatible = "st,stmpe811";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 			reg = <0x41>;
+ 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&gpio>;
 -- 
 2.7.4
