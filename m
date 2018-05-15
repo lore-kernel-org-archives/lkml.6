@@ -1,163 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeEOEYE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 00:24:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:19023 "EHLO mga18.intel.com"
+        id S1752159AbeEOEa7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 00:30:59 -0400
+Received: from mout.gmx.net ([212.227.17.22]:41127 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750759AbeEOEYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 00:24:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,402,1520924400";
-   d="scan'208";a="54384540"
-Date: Tue, 15 May 2018 12:23:33 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: Re: [PATCH] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
- demodulator driver
-Message-ID: <201805151022.Jp9guzZj%fengguang.wu@intel.com>
-References: <20180515003749.9980-1-suzuki.katsuhiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515003749.9980-1-suzuki.katsuhiro@socionext.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1750952AbeEOEa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 00:30:57 -0400
+Message-ID: <1526358626.19125.0.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Date: Tue, 15 May 2018 06:30:26 +0200
+In-Reply-To: <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+References: <20180424133325.GA3179@codeblueprint.co.uk>
+         <1525349542.9956.2.camel@gmx.de>
+         <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+         <1525351221.9956.4.camel@gmx.de>
+         <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+         <1525354359.5576.1.camel@gmx.de>
+         <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+         <1525357015.5577.2.camel@gmx.de>
+         <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+         <20180503161231.GI26088@linux.vnet.ibm.com>
+         <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:QJyJooW/CAc9RmKwIlPc7CIKGLVCR1twFxdWtGVVPtszFLm4Ryx
+ fxTArCn0waGZAio8SajuiRdcOJ8rRlLkJLqXx0SjC2XjThEb3Ik9H9S23vlAsn9SGUvLGph
+ kYR8Z5PV1KHyEU0UU4kauUIt/pgWAUGdZYJD2RY59bCo6nIOMsCMxu9tUYzHkMh3CxrYHjG
+ UQmxVr1kKEQTu+CmWB1og==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:L2Em4ah341I=:kCFybmjBVxu4quQUKYrIes
+ 1KWnoJ3vSgp8HSDqouqK+bBAJgC2RnQn8jp0aOxqI4un0Tb0aMgA5cURUQw2/4YfgwGOTqgre
+ BxpQVdRCHokEkid94svsJ/KQTDR5jxuqKetokaYEeaVdfJ3721hDPusccEMi4C38KEWkh84t9
+ vcvRBpb9jgAz0oW9sRFOXeAsfDHdxGr5fTrYDjeXKD9xaX/5eLN/KK9SNbs+DqjkgxUWAQKN6
+ 1+x0XYJ1GJAdUN3C9HBjVpf7sJZhFBgOF0szv+sZp5wOBEYwXAPH39zJUV1Yvtn0+eQVyzWmP
+ n2pn0hHOGcrFvDCHL+YUFUwWTjgmTXNGazFkd35efWnAaguQokDqJlwXrHSSYjBNNHTubcetb
+ 09deFyWI63vxwC2I25/RmFPC6hggfT3ppr7jyAgh7Q4QXWbdvbhTnRqDynRYxwJEEzcvO/xyP
+ 5qwNkT7SblqkyUXig7TsINr6D50JdSMDC/qcfMBVLNBon4Gqa4ZH1x+YJSXm6jTwd+relEwu5
+ Q8EiZNx5gESEs0kRyq8smFVq+fvnibs5UL8MnQ++gpRo8/CVLwXRSDdwGSUVkxfqeBTxMOQBL
+ RKZDX1y0TlEMwEjoZLtkog7SaglR/wy7234s2Agi2xlOqiBSJaWVODoGoXNYcuAufWiBuSTvx
+ MekABn0gFTkS6kPlWC+54mNWbphPoI/W7Wd+9sq+aSAu74iKD/a1ZiFAVTU8RJ0dIqosL/Wzm
+ TUXKQ6KZ6l+ewbi7mjj7GPjflDx2+5Oz4/FrrPzm6SKEA9QCfOfw6ax+HADwM7VWuW/4Dhu0+
+ snD3sw/
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Katsuhiro,
+On Thu, 2018-05-03 at 18:45 +0200, Peter Zijlstra wrote:
+> On Thu, May 03, 2018 at 09:12:31AM -0700, Paul E. McKenney wrote:
+> > On Thu, May 03, 2018 at 04:44:50PM +0200, Peter Zijlstra wrote:
+> > > On Thu, May 03, 2018 at 04:16:55PM +0200, Mike Galbraith wrote:
+> > > > On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
+> > > > > On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
+> > > > > 
+> > > > > > Dang.  With $subject fix applied as well..
+> > > > > 
+> > > > > That's a NO then... :-(
+> > > > 
+> > > > Could say who cares about oddball offline wakeup stat. <cringe>
+> > > 
+> > > Yeah, nobody.. but I don't want to have to change the wakeup code to
+> > > deal with this if at all possible. That'd just add conditions that are
+> > > 'always' false, except in this exceedingly rare circumstance.
+> > > 
+> > > So ideally we manage to tell RCU that it needs to pay attention while
+> > > we're doing this here thing, which is what I thought RCU_NONIDLE() was
+> > > about.
+> > 
+> > One straightforward approach would be to provide a arch-specific
+> > Kconfig option that tells notify_cpu_starting() not to bother invoking
+> > rcu_cpu_starting().  Then x86 selects this Kconfig option and invokes
+> > rcu_cpu_starting() itself early enough to avoid splats.
+> > 
+> > See the (untested, probably does not even build) patch below.
+> > 
+> > I have no idea where to insert either the "select" or the call to
+> > rcu_cpu_starting(), so I left those out.  I know that putting the
+> > call too early will cause trouble, but I have no idea what constitutes
+> > "too early".  :-/
+> 
+> Something like so perhaps? Mike, can you play around with that? Could
+> burn your granny and eat your cookies.
 
-I love your patch! Perhaps something to improve:
+Did this get queued anywhere?
 
-[auto build test WARNING on linuxtv-media/master]
-[also build test WARNING on v4.17-rc5 next-20180514]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Katsuhiro-Suzuki/media-dvb-frontends-add-Socionext-SC1501A-ISDB-S-T-demodulator-driver/20180515-091453
-base:   git://linuxtv.org/media_tree.git master
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/media/dvb-frontends/sc1501a.c:313:47: sparse: constant 211243671486 is so big it is long
-
-vim +313 drivers/media/dvb-frontends/sc1501a.c
-
-   258	
-   259	static int sc1501a_s_read_status(struct sc1501a_priv *chip,
-   260					 struct dtv_frontend_properties *c,
-   261					 enum fe_status *status)
-   262	{
-   263		struct regmap *r_s = chip->regmap_s;
-   264		u32 cpmon, tmpu, tmpl, flg;
-   265		u64 tmp;
-   266	
-   267		/* Sync detection */
-   268		regmap_read(r_s, CPMON1_S, &cpmon);
-   269	
-   270		*status = 0;
-   271		if (cpmon & CPMON1_S_FSYNC)
-   272			*status |= FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
-   273		if (cpmon & CPMON1_S_W2LOCK)
-   274			*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
-   275	
-   276		/* Signal strength */
-   277		c->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-   278	
-   279		if (*status & FE_HAS_SIGNAL) {
-   280			u32 agc;
-   281	
-   282			regmap_read(r_s, AGCREAD_S, &tmpu);
-   283			agc = tmpu << 8;
-   284	
-   285			c->strength.len = 1;
-   286			c->strength.stat[0].scale = FE_SCALE_RELATIVE;
-   287			c->strength.stat[0].uvalue = agc;
-   288		}
-   289	
-   290		/* C/N rate */
-   291		c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-   292	
-   293		if (*status & FE_HAS_VITERBI) {
-   294			u32 cnr = 0, x, y, d;
-   295			u64 d_3 = 0;
-   296	
-   297			regmap_read(r_s, CNRDXU_S, &tmpu);
-   298			regmap_read(r_s, CNRDXL_S, &tmpl);
-   299			x = (tmpu << 8) | tmpl;
-   300			regmap_read(r_s, CNRDYU_S, &tmpu);
-   301			regmap_read(r_s, CNRDYL_S, &tmpl);
-   302			y = (tmpu << 8) | tmpl;
-   303	
-   304			/* CNR[dB]: 10 * log10(D) - 30.74 / D^3 - 3 */
-   305			/*   D = x^2 / (2^15 * y - x^2) */
-   306			d = (y << 15) - x * x;
-   307			if (d > 0) {
-   308				/* (2^4 * D)^3 = 2^12 * D^3 */
-   309				/* 3.074 * 2^(12 + 24) = 211243671486 */
-   310				d_3 = div_u64(16 * x * x, d);
-   311				d_3 = d_3 * d_3 * d_3;
-   312				if (d_3)
- > 313					d_3 = div_u64(211243671486, d_3);
-   314			}
-   315	
-   316			if (d_3) {
-   317				/* 0.3 * 2^24 = 5033164 */
-   318				tmp = (s64)2 * intlog10(x) - intlog10(abs(d)) - d_3
-   319					- 5033164;
-   320				cnr = div_u64(tmp * 10000, 1 << 24);
-   321			}
-   322	
-   323			if (cnr) {
-   324				c->cnr.len = 1;
-   325				c->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-   326				c->cnr.stat[0].uvalue = cnr;
-   327			}
-   328		}
-   329	
-   330		/* BER */
-   331		c->post_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-   332		c->post_bit_count.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-   333	
-   334		regmap_read(r_s, BERCNFLG_S, &flg);
-   335	
-   336		if ((*status & FE_HAS_VITERBI) && (flg & BERCNFLG_S_BERVRDY)) {
-   337			u32 bit_err, bit_cnt;
-   338	
-   339			regmap_read(r_s, BERVRDU_S, &tmpu);
-   340			regmap_read(r_s, BERVRDL_S, &tmpl);
-   341			bit_err = (tmpu << 8) | tmpl;
-   342			bit_cnt = (1 << 13) * 204;
-   343	
-   344			if (bit_cnt) {
-   345				c->post_bit_error.len = 1;
-   346				c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-   347				c->post_bit_error.stat[0].uvalue = bit_err;
-   348				c->post_bit_count.len = 1;
-   349				c->post_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-   350				c->post_bit_count.stat[0].uvalue = bit_cnt;
-   351			}
-   352		}
-   353	
-   354		return 0;
-   355	}
-   356	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+> index 7468de429087..07360523c3ce 100644
+> --- a/arch/x86/kernel/cpu/mtrr/main.c
+> +++ b/arch/x86/kernel/cpu/mtrr/main.c
+> @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
+>  
+>  	if (!use_intel() || mtrr_aps_delayed_init)
+>  		return;
+> +
+> +	rcu_cpu_starting(smp_processor_id());
+> +
+>  	/*
+>  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
+>  	 * changed, but this routine will be called in cpu boot time,
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 2a734692a581..4dab46950fdb 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
+>  	return 0;
+>  }
+>  
+> +static DEFINE_PER_CPU(int, rcu_cpu_started);
+> +
+>  /*
+>   * Mark the specified CPU as being online so that subsequent grace periods
+>   * (both expedited and normal) will wait on it.  Note that this means that
+> @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
+>  	struct rcu_node *rnp;
+>  	struct rcu_state *rsp;
+>  
+> +	if (per_cpu(rcu_cpu_started, cpu))
+> +		return;
+> +
+> +	per_cpu(rcu_cpu_started, cpu) = 1;
+> +
+>  	for_each_rcu_flavor(rsp) {
+>  		rdp = per_cpu_ptr(rsp->rda, cpu);
+>  		rnp = rdp->mynode;
+> @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
+>  	preempt_enable();
+>  	for_each_rcu_flavor(rsp)
+>  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
+> +
+> +	per_cpu(rcu_cpu_started, cpu) = 0;
+>  }
+>  
+>  /* Migrate the dead CPU's callbacks to the current CPU. */
