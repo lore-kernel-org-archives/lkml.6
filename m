@@ -1,50 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeEOVhk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:37:40 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35387 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeEOVhh (ORCPT
+        id S1752081AbeEOVkp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:40:45 -0400
+Received: from g2t2353.austin.hpe.com ([15.233.44.26]:37910 "EHLO
+        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751149AbeEOVko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:37:37 -0400
-X-Originating-IP: 134.134.139.76
-Date: Tue, 15 May 2018 14:37:13 -0700
-From: Josh Triplett <josh@joshtriplett.org>
-To: Nadav Amit <namit@vmware.com>
-Cc: linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
-        Christopher Li <sparse@chrisli.org>, linux-sparse@vger.kernel.org
-Subject: Re: [RFC 1/8] x86: objtool: use asm macro for better compiler
- decisions
-Message-ID: <20180515213713.GA7298@localhost>
-References: <20180515141124.84254-1-namit@vmware.com>
- <20180515141124.84254-2-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515141124.84254-2-namit@vmware.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Tue, 15 May 2018 17:40:44 -0400
+From: Toshi Kani <toshi.kani@hpe.com>
+To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Cc: cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] fix free pmd/pte page handlings on x86
+Date: Tue, 15 May 2018 15:39:28 -0600
+Message-Id: <20180515213931.23885-1-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 07:11:08AM -0700, Nadav Amit wrote:
-> GCC considers the number of statements in inlined assembly blocks,
-> according to new-lines and semicolons, as an indication to the cost of
-> the block in time and space. This data is distorted by the kernel code,
-> which puts information in alternative sections. As a result, the
-> compiler may perform incorrect inlining and branch optimizations.
-> 
-> In the case of objtool, this distortion is extreme, since anyhow the
-> annotations of objtool are discarded during linkage.
-> 
-> The solution is to set an assembly macro and call it from the inlinedv
-> assembly block. As a result GCC considers the inline assembly block as
-> a single instruction.
-> 
-> This patch slightly increases the kernel size.
-> 
->    text    data     bss     dec     hex filename
-> 18126699 10066728 2936832 31130259 1db0293 ./vmlinux before
-> 18126824 10067268 2936832 31130924 1db052c ./vmlinux after (+665)
+This series fixes two issues in the x86 ioremap free page handlings
+for pud/pmd mappings.
 
-With what kernel config? What's the text size change for an allnoconfig?
+Patch 01 fixes BUG_ON on x86-PAE reported by Joerg.  It disables
+the free page handling on x86-PAE.
+
+Patch 02-03 fixes a possible issue with speculation which can cause
+stale page-directory cache.
+ - Patch 02 is from Chintan's v9 01/04 patch [1], which adds a new arg
+   'addr'.  This avoids merge conflicts with his series.
+ - Patch 03 adds a TLB purge (INVLPG) to purge page-structure caches
+   that may be cached by speculation.  See the patch descriptions for
+   more detal.
+
+[1] https://patchwork.kernel.org/patch/10371015/
+
+v2:
+ - Reordered patch-set, so that patch 01 can be applied independently.
+ - Added a NULL pointer check for the page alloc in patch 03. 
+
+---
+Toshi Kani (2):
+  1/3 x86/mm: disable ioremap free page handling on x86-PAE
+  3/3 x86/mm: add TLB purge to free pmd/pte page interfaces
+
+Chintan Pandya (1):
+  2/3 ioremap: Update pgtable free interfaces with addr
+
+---
+ arch/arm64/mm/mmu.c           |  4 +--
+ arch/x86/mm/pgtable.c         | 59 +++++++++++++++++++++++++++++++++++++------
+ include/asm-generic/pgtable.h |  8 +++---
+ lib/ioremap.c                 |  4 +--
+ 4 files changed, 59 insertions(+), 16 deletions(-)
