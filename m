@@ -1,133 +1,145 @@
-Return-Path: <jannh@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526401180; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Rr9rEymE/a5B/Wako0OrhG53JL2ve3iITCJtY2AnNXAoMXDEKcC+qqwSAe6a3jqWuz
-         58yKLhGj6xbvKcQkxiGTkRdPqM0xKhZwAFx6+yDWgi08y/KgfbWeZnWSDUr6f9UV1Cgj
-         iDxiXYMli+jFgLFmkFr4p+rU0DWhrLfH2Lo1CRQOw/+apahGQ2yiSoeS8hBLdrqaPkyn
-         RGrMCTug0cZCW0gSqpY3WWXiDrrUmvnz5oOC1rIsYTqDOv3lot2pi5iOxZfiTDXocnLl
-         twJ/hcTr1lDEGkJexWfCw+BGe72yUEbFS99yRXk1UDYRKiTCLK4Z8U7XFNk1AkmQ//Kl
-         0Htg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=xt4jMlpU1MDL6prVLBu06jW7EEDWTZ2fdQG9GZgNFKM=;
-        b=uJYlxj+Q4QcjQST+hyHusmAm6XF9vATYiGXpPSHklwxptF8WaepSdE2bXABzmV8usg
-         pwqz2mdGKiTN5JTDvVh3GKgm4dlr5OW+OjoGzUi1Su/dvDYzYjNTar3s4kWJn28+KHKK
-         gHfuXq1htu0e1r14eVkMu9erdB2yUCyXGupQJGQ0QrX4Cg0d+C9Y4YRvJoHxfnrkaR43
-         q0zfdYFJRtp0E2nRX8ayBL5ZBn/H3/q6cvhuzveTGuoVhgMBowzsOKKXYqeQ4bH6uzhJ
-         xzIMRGoXscD6fX0ftwmNd2cU5Z9xohue5ynQYl5FDA5aC1oJOzxfqkzvUghSCQsuPV/G
-         qvyw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Sq5Hjf8s;
-       spf=pass (google.com: domain of jannh@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jannh@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Sq5Hjf8s;
-       spf=pass (google.com: domain of jannh@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jannh@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZqhiDV4ry0z5+TggSkvcktb0pYBghtRQq8sVXZMzeuu3tJJ+lDqMdp8bO/uYkS969mSIPls0XGfVspCcGVuthg=
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1731937-1526350633-2-7656986917464004445
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526350632; b=WmxbEJHBsEG3THtcGpD7Ie2/NUkLy1woP3vqfbHUN8AJC+E/Fp
+    a6fTs7d5+zhSfq7boZpq4nY2S2FQEtRlnOho/jfOLxTPvSyiufBH5o+LgEG2AGpY
+    BtZAkziDoQrA1Rik9KeeczLee4uu0VE2qw6lLDYD8BgcIhlJIH75bXn85c2Q65DB
+    CzqNi5AwX3asgyyvoZxOYStgiy0fASOBTwdn5TOPSMDDXIfPgEv5ggv5xSn5mSU0
+    CCwggsybpRXsmWCuFB9gkiNVVi83gf0kI/FBy/0LJO7NYt0JXxOtempC/mfsILdz
+    NupDR353twGhNly+xPE3xLzZcQA0GxEPN3yQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526350632; bh=dO/yx
+    xQ2nolGe3h+XHScq/TgTd+YUEmqnyRoDw+UKjg=; b=YPovYKWMq8eXW/7OUYi4o
+    XJb7c82oNYnXNjkzUyxspbvg63ae1ze/RadIX0uaGdXwq+5iKzbpqrGm4gIu/ZlY
+    F9EnjbzwQxmlDvqXX+2POh4tuP6W37Vf/8AGkSwBqa3Y6r9kMFrO4SlOOed7cD+O
+    0GcSO+Fj29t5X3A4+8pyNdILJlNtiEFKP/O8yic9/86D/WCmQ2DMI5IDChdrrEkc
+    n4Emv3DlHKHHRwW6fL0al2DrvITp0hDT/E/3hcKcb2CIGF3LK80komK6loKMhbF2
+    u123KBQBuLFODIAud6cXplsHNrj9TqR1MOJOmssOHco/n8lsgnY2gDJiqRZBtFi9
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGRywi24tUweUDqmZSar4dmbWNiy8Er2fUqYx8NxjpRjiQuPq/U1hbT2zlX7wjr2HUbBvL+yk9YpSsIlLYc5gX41I+rMkZhwLrB2lbZzwWSQPBca1X7x
+    knfER3eB7tWrvAUD5otBC8amouU17jP1N8h3+R/CzULfvMNSJReUr8fWhUYhixs4QmO08URyZtANoT0GLzs1PaNLzPOKh+qZ7CgHtompc7rhs7w93rStHmPe
+    BC9ulOpB4zNG45Sf3IYU0w==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=bMovAFdmXc2sLEf3_1YA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+ Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Subject: [PATCH 0/5] staging: lustre: llite: remaining xattr fixes
+Date: Mon, 14 May 2018 22:16:58 -0400
+Message-Id: <1526350623-4616-1-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
 MIME-Version: 1.0
-In-Reply-To: <20180515072153.GD28179@comp-core-i7-2640m-0182e6>
-References: <20180511093445.GA1008@comp-core-i7-2640m-0182e6>
- <CAG48ez3xYHsKMkPJhjq-yrrTxMHmrHDov-P7bTy8T2xf_7=OAQ@mail.gmail.com> <20180515072153.GD28179@comp-core-i7-2640m-0182e6>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 15 May 2018 18:19:18 +0200
-Message-ID: <CAG48ez1T5v=iryQk0fPkUr2umRpfMrSPJ2pYcB5HDbc3-kYBUw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] proc: add proc_fs_info struct to store proc information
-To: Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
-	kernel list <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	Linux API <linux-api@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Akinobu Mita <akinobu.mita@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>, Jeff Layton <jlayton@poochiereds.net>,
-	Ingo Molnar <mingo@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	aniel Micay <danielmicay@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Bruce Fields <bfields@fieldses.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Solar Designer <solar@openwall.com>, "Dmitry V. Levin" <ldv@altlinux.org>, Djalal Harouni <tixxdz@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600160408637786282?=
-X-GMAIL-MSGID: =?utf-8?q?1600547644038423643?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 9:21 AM, Alexey Gladkov
-<gladkov.alexey@gmail.com> wrote:
-> On Fri, May 11, 2018 at 03:49:13PM +0200, Jann Horn wrote:
->> On Fri, May 11, 2018 at 11:34 AM, Alexey Gladkov
->> <gladkov.alexey@gmail.com> wrote:
->> > From: Djalal Harouni <tixxdz@gmail.com>
->> >
->> > This is a preparation patch that adds proc_fs_info to be able to store
->> > different procfs options and informations. Right now some mount options
->> > are stored inside the pid namespace which makes it hard to change or
->> > modernize procfs without affecting pid namespaces. Plus we do want to
->> > treat proc as more of a real mount point and filesystem. procfs is part
->> > of Linux API where it offers some features using filesystem syscalls and
->> > in order to support some features where we are able to have multiple
->> > instances of procfs, each one with its mount options inside the same pid
->> > namespace, we have to separate these procfs instances.
->> >
->> > This is the same feature that was also added to other Linux interfaces
->> > like devpts in order to support containers, sandboxes, and to have
->> > multiple instances of devpts filesystem [1].
->> >
->> > [1] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
->> >
->> > Cc: Kees Cook <keescook@chromium.org>
->> > Suggested-by: Andy Lutomirski <luto@kernel.org>
->> > Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
->> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
->> > ---
->> [...]
->> >  static struct dentry *proc_mount(struct file_system_type *fs_type,
->> >         int flags, const char *dev_name, void *data)
->> >  {
->> > +       int error;
->> > +       struct super_block *sb;
->> >         struct pid_namespace *ns;
->> > +       struct proc_fs_info *fs_info;
->> > +
->> > +       /*
->> > +        * Don't allow mounting unless the caller has CAP_SYS_ADMIN over
->> > +        * the namespace.
->> > +        */
->> > +       if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
->> > +               return ERR_PTR(-EPERM);
->>
->> Is this correct?
->>
->> The old code invoked a check with the same comment through mount_ns();
->> however, this patch changes the semantics of the check.
->> The old code checked that the caller has privileges over the user
->> namespace that contains the PID namespace; in other words, it checked
->> that the caller has privileges over the PID namespace. The current
->> code just checks that the caller is privileged over its own user
->> namespace.
->>
->> As far as I can tell, this means that by doing something like this:
->>
->>     unshare(CLONE_NEWNS|CLONE_NEWUSER);
->>     mount("none", "/", NULL, MS_REC|MS_PRIVATE, NULL);
->>     mount("proc", "/proc", "proc", 0, "newinstance,pids=all");
->>
->> any process could create a new unrestricted procfs mount for its PID
->> namespace, even if it is only supposed to have access to a more
->> restricted procfs mount.
->
-> Hm... let me investigate this. It looks like mount with "newinstance"
-> option should fail if pid namespace is the same and the current and parent
-> user namespace do not match.
+Fixed the bugs in the set_acl patch pointed out by Dan Carpenter.
+Rebased the next patch 'remove unused parameter..." on the parent
+patch. Added newer xattr fixes that were recently pushed.
 
-I don't understand that last sentence. What does "if pid namespace is
-the same" mean, and what does "current and parent user namespace do
-not match" mean?
+Andrew Perepechko (1):
+  staging: lustre: mdc: excessive memory consumption by the xattr cache
 
-Just changing "ns_capable(current_user_ns(), CAP_SYS_ADMIN)" to
-"ns_capable(task_active_pid_ns(current)->user_ns, CAP_SYS_ADMIN)"
-should be enough to get the old semantics again: It checks whether the
-current task is capable over its PID namespace.
+Dmitry Eremin (1):
+  staging: lustre: llite: add support set_acl method in inode operations
+
+Fan Yong (1):
+  staging: lustre: acl: increase ACL entries limitation
+
+John L. Hammond (2):
+  staging: lustre: llite: remove unused parameters from md_{get,set}xattr()
+  staging: lustre: mdc: use large xattr buffers for old servers
+
+ .../lustre/include/uapi/linux/lustre/lustre_idl.h  |  2 +-
+ drivers/staging/lustre/lustre/include/lustre_acl.h |  7 ++-
+ drivers/staging/lustre/lustre/include/obd.h        |  7 +--
+ drivers/staging/lustre/lustre/include/obd_class.h  | 21 +++----
+ drivers/staging/lustre/lustre/llite/file.c         | 65 +++++++++++++++++++++-
+ .../staging/lustre/lustre/llite/llite_internal.h   |  4 ++
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |  3 +-
+ drivers/staging/lustre/lustre/llite/namei.c        | 10 +++-
+ drivers/staging/lustre/lustre/llite/xattr.c        |  6 +-
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        | 22 ++++----
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c      | 42 +++++++++++---
+ drivers/staging/lustre/lustre/mdc/mdc_reint.c      |  2 +
+ drivers/staging/lustre/lustre/mdc/mdc_request.c    | 38 ++++++++-----
+ drivers/staging/lustre/lustre/ptlrpc/layout.c      |  4 +-
+ drivers/staging/lustre/lustre/ptlrpc/wiretest.c    |  4 +-
+ 15 files changed, 171 insertions(+), 66 deletions(-)
+
+-- 
+1.8.3.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
