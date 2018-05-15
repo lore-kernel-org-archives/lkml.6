@@ -1,61 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeEOJ3X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:29:23 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:53439 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752313AbeEOJ3V (ORCPT
+        id S1752454AbeEOJbh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:31:37 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40148 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752313AbeEOJbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:29:21 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 15 May 2018 11:28:48 +0200
-Message-ID: <2615751.ZtaStQGZr4@aspire.rjw.lan>
-In-Reply-To: <20180515091912.zhc2uo7js7ukjvl7@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <20180515091912.zhc2uo7js7ukjvl7@vireshk-i7>
+        Tue, 15 May 2018 05:31:34 -0400
+X-Google-Smtp-Source: AB8JxZqMsw8ETe6YkM1O7kcZq4K2V0F86phw+o2RDhDQYmNzu0noRMpk2QH/B1OjHGSSza3l6FrqFw==
+Subject: Re: [PATCH V5 1/4] dt-bindings: pwrap: mediatek: add pwrap support
+ for MT6797
+To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
+        henryc.chen@mediatek.com, flora.fu@mediatek.com,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <1525957319-20557-1-git-send-email-argus.lin@mediatek.com>
+ <1525957319-20557-2-git-send-email-argus.lin@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <2cb5230e-f8be-e0b3-3521-3145ab02a0c1@gmail.com>
+Date: Tue, 15 May 2018 11:31:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1525957319-20557-2-git-send-email-argus.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, May 15, 2018 11:19:12 AM CEST Viresh Kumar wrote:
-> On 15-05-18, 12:13, Ilia Lin wrote:
-> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> > the CPU ferequencies subset and voltage value of each OPP varies
-> > based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> > defines the voltage and frequency value based on the msm-id in SMEM
-> > and speedbin blown in the efuse combination.
-> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> > to provide the OPP framework with required information.
-> > This is used to determine the voltage and frequency value for each OPP of
-> > operating-points-v2 table when it is parsed by the OPP framework.
-> > 
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm          |  11 +++
-> >  drivers/cpufreq/Makefile             |   1 +
-> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
-> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 150 +++++++++++++++++++++++++++++++++++
-> >  4 files changed, 165 insertions(+)
-> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+
+
+On 05/10/2018 03:01 PM, argus.lin@mediatek.com wrote:
+> From: Argus Lin <argus.lin@mediatek.com>
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> We add pwrap support for MT6797 SoCs.
+> 
 
-OK, but I'm assuming that this will go in via arm-soc.
+You forgot the Signed-off-by tag.
 
-Thanks,
-Rafael
+> ---
+>  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> index bf80e3f..f9987c3 100644
+> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> @@ -19,6 +19,7 @@ IP Pairing
+>  Required properties in pwrap device node.
+>  - compatible:
+>  	"mediatek,mt2701-pwrap" for MT2701/7623 SoCs
+> +	"mediatek,mt6797-pwrap" for MT6797 SoCs
+>  	"mediatek,mt7622-pwrap" for MT7622 SoCs
+>  	"mediatek,mt8135-pwrap" for MT8135 SoCs
+>  	"mediatek,mt8173-pwrap" for MT8173 SoCs
+> -- 
+> 1.8.1.1.dirty
+> 
+> ************* Email Confidentiality Notice ********************
+> The information contained in this e-mail message (including any 
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be 
+> conveyed only to the designated recipient(s). Any use, dissemination, 
+> distribution, printing, retaining or copying of this e-mail (including its 
+> attachments) by unintended recipient(s) is strictly prohibited and may 
+> be unlawful. If you are not an intended recipient of this e-mail, or believe 
+> that you have received this e-mail in error, please notify the sender 
+> immediately (by replying to this e-mail), delete any and all copies of 
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
+> 
