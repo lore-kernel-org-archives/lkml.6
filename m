@@ -1,139 +1,164 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-886641-1526504172-2-6882977581515887788
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2893015-1526401352-2-8621248608796866890
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526504172; b=eo8qd/gpOrShjdqQem9wgVMuS9vvea70FfNOcnbGteLvv60LTw
-    vSa4v5JGcJ9SG5uko2aOIXZbPckVW/2z4QEq0XjomzfQv745hNvpMt4ha2iA7p/w
-    KUSm6UBidnH1Lfrxi0yayYCNT2w90IVxjOkOdREvO3BJVLZrXBLT+kMny36xpo5Y
-    0STDRb6H3kNx7kR1toGrEMknUiezmZE537zZk0T2+bNlmKfh7VmpDgoQ7tEAMwwH
-    mqJHLS28nsjqzmdZRnAgTu/Wz27VVgDverfAK6F7vIcRTdm/iAOrLDhtvqb0eI3A
-    WThUtfvnPqxqpUxL7qbYN04YyML2a85ZjY0g==
+    1526401352; b=QTBAhVvMBLIhQ6+aAb6iLCPQjQYIgft0iNE2ozm/0+3twgNBfd
+    9XJzPRclm6vlTr6KJGm1yyKT5vrWHYQhscKuOCxlc0PIHXmIrVcmxosUELSjjqEe
+    hEfl2gXkhhNlOd/cjB1inlQyeqauwHOfX/+YFHQ0cv/YzyF0eZOvo6zaFFJ+NuZW
+    xrt5Ad1ylc6pM2H9E7kuLrtbZ67YmZVRv5Jc9MdvH8Uu4jg/qAYVKoNoyFVq34Ov
+    iZVNvVPPuOM+k/7mvUfgQdKDh7fX44x5veD2oYq6YPikkoItgHONb6XA5OKl4XIt
+    8K1L8Yv5YD1+78IsJX2c5fLwbkNWPy2atrkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:from:date:message-id:subject
-    :to:cc:content-type:sender:list-id; s=fm2; t=1526504172; bh=0cDd
-    Fqte1CWz6Fi4VRRI8FF8pV5F7lYRb+HbBCeQWEQ=; b=G1ElEfbXV9f5ijIGoeNe
-    jcQ3GGbSDIki0D3XXNEzlrdllwZ3zqRSP+O6F5X5jefPWb7fqFuT22Ybqj4LWcgU
-    VwN71CX7mESY5eOPUBQ9dzPklYj//onGu9Iu8+T8qmsEXIt0GbI/ksCtSiVhIj+a
-    VXI2kVCbV4w8LQC0p25vQlORRq9k4F+Jum9kPCUU9pc6gBb0i3Ve9hg7symbKVst
-    jYnb6HmQA04Efod9UNnn94UuzECHGlxLozHy+iTYlarYPFHpTAM7JpzSpj41gdwe
-    SYemTRpYBQRWOEsUauUEFZFSSNGsdvlF23WIPggLTwO5NmcYs+78R488Z1kdtJmC
-    Jg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=paul-moore-com.20150623.gappssmtp.com
-    header.i=@paul-moore-com.20150623.gappssmtp.com header.b=oZ2+W3Uw
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526401352; bh=kmr8409u/SN83iMwhd6yn9R2Dod/Qi
+    CS/GDYE56T4fI=; b=EUt3c6ajDlfNbdcK6vYo1PybSLASqy8xBxN45w/VAlStk/
+    N0ryJVHoMwLk+cgVwUWfuYbMu0cHHTWEVp7A4QidcoD6HD8BS0Q94j6P4dbDIAkS
+    PY1GgvGe683kU+Su88FDjDVoEvNcQx5T5NItUTuTwukYRCg5WNEElaXeqkPeVo88
+    7ZWbr3HClEJjnt+pp6EkLp6vgrhTgJTRZbXqY1Aho3+RiW+z6thTVMVEW5E5XL1X
+    G2rDSqsmiBakaDOx5ygp2h7/dpQaltW55HHRlnPYDe+UwqEfCJn882DhLhEthTZl
+    xJP7HO+w0sOroGrLF22JHv7m+XqbPOH4eNlB6yvA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+    header.i=@gmail.com header.b=cvNGmoCA x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=VwvrOZtF;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=ZfMf1Nj5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=paul-moore.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=paul-moore-com.20150623.gappssmtp.com
-      header.i=@paul-moore-com.20150623.gappssmtp.com header.b=oZ2+W3Uw
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+      header.i=@gmail.com header.b=cvNGmoCA x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=VwvrOZtF;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=ZfMf1Nj5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=paul-moore.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFT8FvTDGD8HxzFzuHbbS5+cPtK/93bVgUbvLMQcLLj4qt1GiSFefN1py8F/RfayUa/anIH36r3wWoEYm47wRfStz6E7MX8tW2YOpD3yRyzUPedI7Z8x
-    nTweWOHBX8cUJip/7Rn/kXt9TDYJXDRJFpaaoSqzJa5u+/UZNsS/2FfMHikyMn3m19h1MRV+KmgR06FYGNtxWJcGvboYF66pR7GKni+lmMCICLTIBGLqDvzk
-    hE0UT10VWLhsnCdflK6JMA==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=xVhDTqbCAAAA:8 a=yCOx7083dxSEFXcUPX0A:9
-    a=UoK8bPlv_A4Fo60R:21 a=h_TDiobR3riGgBI9:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=GrmWmAYt4dzCMttCBZOh:22
+X-CM-Envelope: MS4wfNjaj2hIEDIKGOMnoCEia+zTeF+LTMn9h+TcKeQ8he1m9MFRZJ+OQZ4hZFuw7tDObRBXghMPvKTEfXBfBmFS0G/nCX7XwhEj+2WiVcCk41TrqaWnwmFC
+    okijQcV+ooCrVeQgIq+LfJ1K30G23n2PYjjIlzTfc1o6Hk/f7/JDGebzheH01vyFgIgO2lArgXQiKhA19LmZzMAOpL2+6WnRU+sh/lW0+Jq8NW3Aqll9/bB7
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=i6uMeK6BI1QA:10
+    a=VUJBJC2UJ8kA:10 a=GnLzoMPhKksbaqafB68A:9 a=LkSJBRTudnDl6Wi9:21
+    a=Kirf4LupX7PJOtj5:21
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751467AbeEPU4K (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 16 May 2018 16:56:10 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39901 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbeEPU4J (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 May 2018 16:56:09 -0400
-X-Google-Smtp-Source: AB8JxZqGnx2T3wOlxsQ6avWzaADR8qX8tt81Gdx83jfHECw8AFrTSNU7yeQIQAzReVykclN2B14zFCYUQ4cra2+GqZ0=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 16 May 2018 16:56:07 -0400
-Message-ID: <CAHC9VhQfFXGXqx9seQy-EdTHauyqarYnCVChjd3s6BexQ+tE6A@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v4.17 (#1)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: owner-linux-security-module@vger.kernel.org
+        id S1753158AbeEOQWZ (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 15 May 2018 12:22:25 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:36843 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbeEOQWX (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Tue, 15 May 2018 12:22:23 -0400
+X-Google-Smtp-Source: AB8JxZqYiU07ovAKr1dFwhZBF/eFC1Vl02sAzzjeBDGMRhWmBsZtaAYZZhwWxmBUl1lANbWCQLcSpQ==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date: Tue, 15 May 2018 12:22:13 -0400
+Message-Id: <cover.1526400945.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Linus,
+Changes in v4:
+  - Fix bitmap_set arguments (last parameter is nbits not endbit)
 
-A small pull request to fix a few regressions in the SELinux/SCTP code
-with applications that call bind() with AF_UNSPEC/INADDR_ANY.  The
-individual commit descriptions have more information, but the commits
-themselves should be self explanatory.  Please merge.
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-Thanks,
--Paul
+This patchset introduces the for_each_set_clump macro and utilizes it in
+several GPIO drivers. The for_each_set_clump macro facilitates a
+for-loop syntax that iterates over entire groups of set bits at a time.
 
---
-The following changes since commit 6b6bc6205d98796361962ee282a063f18ba8dc57:
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
 
- selinux: wrap AVC state (2018-03-20 16:58:17 -0400)
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
 
-are available in the Git repository at:
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20180516
+The for_each_set_clump macro has six parameters:
 
-for you to fetch changes up to 4152dc91b5932e7fe49a5afed62a068b2f31d196:
+    * clump: set to current clump index for the iteration
+    * index: set to current bitmap word index for the iteration
+    * offset: bits offset of the found clump in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of clumps
+    * clump_size: clump size in number of bits
 
- selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
-   (2018-05-14 15:20:59 -0400)
+The clump_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
 
-----------------------------------------------------------------
-selinux/stable-4.17 PR 20180516
+This patchset was rebased on top of the following three commits:
 
-----------------------------------------------------------------
-Alexey Kodanev (3):
-     selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()
-     selinux: fix address family in bind() and connect() to match address/port
-     selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
+    * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
 
-security/selinux/hooks.c | 50 +++++++++++++++++++++++++++---------------------
-1 file changed, 28 insertions(+), 22 deletions(-)
+When I implemented the test_for_each_set_clump function, I used
+bitmap_set to set the expected bitmap for the test. This method of
+setting bits only segments at a time was rather tedious and error-prone;
+is there a better way to accomplish what I did (set a bitmap after a
+DECLARE_BITMAP)?
+
+William Breathitt Gray
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump macro
+  lib/test_bitmap.c: Add for_each_set_clump test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump macro
+  gpio: 104-idi-48: Utilize for_each_set_clump macro
+  gpio: gpio-mm: Utilize for_each_set_clump macro
+  gpio: ws16c48: Utilize for_each_set_clump macro
+  gpio: pci-idio-16: Utilize for_each_set_clump macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |   9 +++
+ include/linux/bitops.h            |   7 ++
+ lib/find_bit.c                    |  40 ++++++++++++
+ lib/test_bitmap.c                 |  71 +++++++++++++++++++++
+ 10 files changed, 236 insertions(+), 292 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.17.0
