@@ -1,90 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeEOSwb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:52:31 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:33670 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeEOSw3 (ORCPT
+        id S1752646AbeEOSxi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:53:38 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48478 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeEOSxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:52:29 -0400
-X-Google-Smtp-Source: AB8JxZosHfyDQGLGfA7arsT7jqtgHh+6ruO3f0UfVBz0a3vDayEJMNGaGPNo4eaI84smHSAGVQpnWQhPr+sIJhYZWys=
+        Tue, 15 May 2018 14:53:36 -0400
+From: Qing Huang <qing.huang@oracle.com>
+Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
+To: Tariq Toukan <tariqt@mellanox.com>, davem@davemloft.net,
+        haakon.bugge@oracle.com, yanjun.zhu@oracle.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180511192318.22342-1-qing.huang@oracle.com>
+ <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
+ <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com>
+ <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
+Message-ID: <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com>
+Date: Tue, 15 May 2018 11:53:29 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180505083635.622xmcvb42dw5xxh@gmail.com> <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
- <20180509073327.GE12217@hirez.programming.kicks-ass.net> <20180515083556.GA30420@gmail.com>
- <20180515114144.GX12217@hirez.programming.kicks-ass.net> <20180515154333.bszh4nuowhocozuc@lakrids.cambridge.arm.com>
- <20180515171021.GI12217@hirez.programming.kicks-ass.net> <20180515175307.m4xbkbicdrzo4qhb@lakrids.cambridge.arm.com>
- <20180515181136.GR12217@hirez.programming.kicks-ass.net> <20180515181510.GM12235@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180515181510.GM12235@hirez.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 15 May 2018 11:52:17 -0700
-Message-ID: <CA+55aFxjU0op8QLLu0n-RjHBs7gQsLvD8jcyedgw6jeZFN7B+Q@mail.gmail.com>
-Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
- in atomic.h some more
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Peter Anvin <hpa@zytor.com>,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805150186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:15 AM Peter Zijlstra <peterz@infradead.org>
-wrote:
 
-> Alternatively we could use 'p' for the argument pointer thing.
 
-Probably better than having i/I.
+On 5/15/2018 2:19 AM, Tariq Toukan wrote:
+>
+>
+> On 14/05/2018 7:41 PM, Qing Huang wrote:
+>>
+>>
+>> On 5/13/2018 2:00 AM, Tariq Toukan wrote:
+>>>
+>>>
+>>> On 11/05/2018 10:23 PM, Qing Huang wrote:
+>>>> When a system is under memory presure (high usage with fragments),
+>>>> the original 256KB ICM chunk allocations will likely trigger kernel
+>>>> memory management to enter slow path doing memory compact/migration
+>>>> ops in order to complete high order memory allocations.
+>>>>
+>>>> When that happens, user processes calling uverb APIs may get stuck
+>>>> for more than 120s easily even though there are a lot of free pages
+>>>> in smaller chunks available in the system.
+>>>>
+>>>> Syslog:
+>>>> ...
+>>>> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+>>>> oracle_205573_e:205573 blocked for more than 120 seconds.
+>>>> ...
+>>>>
+>>>> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
+>>>>
+>>>> However in order to support smaller ICM chunk size, we need to fix
+>>>> another issue in large size kcalloc allocations.
+>>>>
+>>>> E.g.
+>>>> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
+>>>> size, each ICM chunk can only hold 512 mtt entries (8 bytes for 
+>>>> each mtt
+>>>> entry). So we need a 16MB allocation for a table->icm pointer array to
+>>>> hold 2M pointers which can easily cause kcalloc to fail.
+>>>>
+>>>> The solution is to use vzalloc to replace kcalloc. There is no need
+>>>> for contiguous memory pages for a driver meta data structure (no need
+>>>> of DMA ops).
+>>>>
+>>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+>>>> Acked-by: Daniel Jurgens <danielj@mellanox.com>
+>>>> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+>>>> ---
+>>>> v2 -> v1: adjusted chunk size to reflect different architectures.
+>>>>
+>>>>   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
+>>>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c 
+>>>> b/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>> index a822f7a..ccb62b8 100644
+>>>> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>> @@ -43,12 +43,12 @@
+>>>>   #include "fw.h"
+>>>>     /*
+>>>> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
+>>>> - * per chunk.
+>>>> + * We allocate in page size (default 4KB on many archs) chunks to 
+>>>> avoid high
+>>>> + * order memory allocations in fragmented/high usage memory 
+>>>> situation.
+>>>>    */
+>>>>   enum {
+>>>> -    MLX4_ICM_ALLOC_SIZE    = 1 << 18,
+>>>> -    MLX4_TABLE_CHUNK_SIZE    = 1 << 18
+>>>> +    MLX4_ICM_ALLOC_SIZE    = 1 << PAGE_SHIFT,
+>>>> +    MLX4_TABLE_CHUNK_SIZE    = 1 << PAGE_SHIFT
+>>>
+>>> Which is actually PAGE_SIZE.
+>>
+>> Yes, we wanted to avoid high order memory allocations.
+>>
+>
+> Then please use PAGE_SIZE instead.
 
-But while people are bikeshedding the important stuff, can I please mention
-my personal pet peeve with generated code?
+PAGE_SIZE is usually defined as 1 << PAGE_SHIFT. So I think PAGE_SHIFT 
+is actually more appropriate here.
 
-If we go down this "generate header files" path, and ever expand to
-actually generating some of the definitions too, can we *please* try to
-follow three rules:
 
-  (a) make the generated header file not just say "this is generated", but
-say exactly *what* generates it, so that when you look at it, you don't
-have to search for the generator?
+>
+>>> Also, please add a comma at the end of the last entry.
+>>
+>> Hmm..., followed the existing code style and checkpatch.pl didn't 
+>> complain about the comma.
+>>
+>
+> I am in favor of having a comma also after the last element, so that 
+> when another enum element is added we do not modify this line again, 
+> which would falsely affect git blame.
+>
+> I know it didn't exist before your patch, but once we're here, let's 
+> do it.
 
-  (b) if at all possible, please aim to make "git grep" find the stuff that
-is generated?
+I'm okay either way. If adding an extra comma is preferred by many 
+people, someone should update checkpatch.pl to enforce it. :)
 
-  (c) if b is not possible, then generate '#line' things in the generator so
-that debug information points back to the original source?
+>
+>>>
+>>>>   };
+>>>>     static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct 
+>>>> mlx4_icm_chunk *chunk)
+>>>> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
+>>>> struct mlx4_icm_table *table,
+>>>>       obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
+>>>>       num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
+>>>>   -    table->icm      = kcalloc(num_icm, sizeof(*table->icm), 
+>>>> GFP_KERNEL);
+>>>> +    table->icm      = vzalloc(num_icm * sizeof(*table->icm));
+>>>
+>>> Why not kvzalloc ?
+>>
+>> I think table->icm pointer array doesn't really need physically 
+>> contiguous memory. Sometimes high order
+>> memory allocation by kmalloc variants may trigger slow path and cause 
+>> tasks to be blocked.
+>>
+>
+> This is control path so it is less latency-sensitive.
+> Let's not produce unnecessary degradation here, please call kvzalloc 
+> so we maintain a similar behavior when contiguous memory is available, 
+> and a fallback for resiliency.
 
-That (b) in particular can be a major pain, because "git grep" will
-obviously only look at the _source_ files (including the script that
-generates thing), but not at the generated file at all.
+No sure what exactly degradation is caused by vzalloc here. I think it's 
+better to keep physically contiguous pages
+to other requests which really need them. Besides slow path/mem 
+compacting can be really expensive.
 
-But when you see a stack trace or oops or something that mentions some
-function that you're not intimately familiar with, the first thing I do is
-basically some variation of
-
-     git grep function_name
-
-or similar. Maybe it's just me, but I actually really like how fast "git
-grep" is with threading and everything to just go the extra mile.
-
-And what often happens with generated functions is that you can't actually
-find them with git grep, because the generator will generate the function
-names in two or more parts (ie in this case, for example, "cmpxchg_relaxed"
-would never show up, becuase it's the "relaxed" version of cmpxchg.
-
-So (b) will likely not work out, but at least try very hard to do (a) and
-(c) when (b) fails. So that when people do stack traces, if they have the
-debug information, at least it will point to the actual implementation in
-the generator.
-
-(NOTE! I realize that right now you're just talking about generating the
-header file itself, with only declarations, not definitions. So the above
-is not an issue. Yet. I'm just waiting for people to generate some of the
-code too, and being proactive)_.
-
-Hmm?
-
-                 Linus
+>
+>> Thanks,
+>> Qing
+>>
+>>>
+>>>>       if (!table->icm)
+>>>>           return -ENOMEM;
+>>>>       table->virt     = virt;
+>>>> @@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
+>>>> struct mlx4_icm_table *table,
+>>>>               mlx4_free_icm(dev, table->icm[i], use_coherent);
+>>>>           }
+>>>>   -    kfree(table->icm);
+>>>> +    vfree(table->icm);
+>>>>         return -ENOMEM;
+>>>>   }
+>>>> @@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev 
+>>>> *dev, struct mlx4_icm_table *table)
+>>>>               mlx4_free_icm(dev, table->icm[i], table->coherent);
+>>>>           }
+>>>>   -    kfree(table->icm);
+>>>> +    vfree(table->icm);
+>>>>   }
+>>>>
+>>>
+>>> Thanks for your patch.
+>>>
+>>> I need to verify there is no dramatic performance degradation here.
+>>> You can prepare and send a v3 in the meanwhile.
+>>>
+>>> Thanks,
+>>> Tariq
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe 
+>>> linux-rdma" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at http://vger.kernel.org/majordomo-info.html
