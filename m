@@ -1,87 +1,156 @@
-Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZr/950i1A5ramRDwahtObw/fZQ2Mx7FS80ONROvJiJDHVpCOzcP5aw/JA1QBeDoFIGZ9/Uv
-ARC-Seal: i=1; a=rsa-sha256; t=1526509594; cv=none;
+Return-Path: <SRS0=cHGH=IC=goodmis.org=rostedt@kernel.org>
+X-Google-Smtp-Source: AB8JxZooVSOTa88ZCUI9P2HHSuDX3sqWxawqdwQWSYs1lf/HTHgwbXo5Xbmh/C+5aovSUc64oP5m
+ARC-Seal: i=1; a=rsa-sha256; t=1526394811; cv=none;
         d=google.com; s=arc-20160816;
-        b=wfP8VsyFAmfRx1l8z9xpxMF4YOPDOIVRSboxUd5FwfbMgsOMNwyJBVUl7RaKKV1Cek
-         XwDNzze6juY+ccIUdDF1aoY7GMMP7S9HZZOxh9bjyOP5tcepU35wlHYMAgZoDfbLcP+9
-         Q8cb3KZGs73hoygwy4zHJ6vy20YmOKMVP21A5Wd55sIA1FWlEtJwMcI/Zk7RNsm2Uhlh
-         h49k4kKLNvV1f5T44kiFGpcZdBHL85nYuOVFQ/wB3zGHTEwYac1e/JcLgHlP/vGZ1Rkg
-         36FeF5QWmrg2RD2a4t2on5caqdLAjdhHZlL233uSpsmajhrLmDXJoxP1lvsoYjDRflnP
-         OiWQ==
+        b=kBIeuLoJW0p7nXyHzk4hVjdiPDt8uGPMYU7HRCQHdZiRbhqW5BMSY1sIHILHTp+IJY
+         KBwsuo8L0VGyoHHjgnTBJHnA/a3Uun9f6bOC7FUGaABnCTRs6YOl76RxhrrlS5+iujFJ
+         OhfgQEOstlaC1M7a8z86T1uTQI6Sa4TJFpG4vp7zMDdVJt4Hr1Xuz8/RgYZmJfH1l/Z5
+         cHMQptzQh7bAQhEKaCAkHdzl6NA7KOVdUhmQZheAnt+sE2XRxoyHQXmn0aZXvzyQJAXJ
+         gX6XncX5Bjush6KaWJibJleT2g/+s6QUSlYTGwiJs0EbNtn5XnOfoiPnuQ6dz6JET3Iu
+         MIlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=nJjfDGvIlRDQvKKXY1heHw+ut3AogUeoW3KANsNOxvA=;
-        b=nmTPTGZelkW0Eqod+gylwmLPx7WguHK/Nj6e9K/9Lc0Ol1f1g98mRqVWpclHZPXQ+6
-         +aqNUUQ6Rlpr+i6+BiamuiJwRdZFulCX4+ZQbINGA3nReEd+SHn3wkLjnVE7ny6jQ8vs
-         SGElbKcPsE/Mkp/mUHJdmA9wEzTNBFPgOp4rLryb+VOL81rxPJdxc9OibfUhYlkuSBSs
-         2aY85W8e4KZwdEs3+0F1vMqko4sEPt3/9SAalPubt+YrZeKsm2cgHLzbmZcynBuWd6eb
-         E3sj/6BPzZ/EteErlXK5RE0khPsT0U52NhzhvKNlcnVkZFAsCwtdreMJyJG6TEWKl0+M
-         9iMg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=2wwZbnXCsOrVxwC3iYBmDHMHXbULlGmJNYz+0yweTbc=;
+        b=Px6ySLXJYkL8S9Alq1qJ5xDO5EBcTPC1Lj7d1x1G8meT7940s7KMguuz6q2ICEHzhx
+         q8HxNx1sllhgVjgz9M0DC8mshtkkmmSws1hjb7gtY69zzGvz+TU4++AZ9wsh4aZG0ufe
+         bau5Id9O6W+3iAEQp8HBeMDCaT4in9QLsjupZXDpyn+Kpqsbm82lAJdPnkSvtiZiRKyO
+         0WUIjVSlDTqwUnfwjLBjId5GTgt0equZel4odg8mRZWOR5uiumM2MOCDake6Db4QBO/r
+         eB6zllR0srZA7CQ9q2c7FUrdOP57VDYCnHfm66zIblOKHQtApWk1aFF+/QZXbbG+b8FH
+         BAvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=aBjpKwFI;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Ft9LEf1L;
-       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+       spf=pass (google.com: domain of srs0=chgh=ic=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=cHGH=IC=goodmis.org=rostedt@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=aBjpKwFI;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Ft9LEf1L;
-       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Proxy: <xmx:GLD8WmkzVxkb2G8xkfjuCcgSPXyZkS-NUvqb3OUFvta31V7ARVQZrw>
-X-ME-Proxy: <xmx:GLD8Wv3OIIV_sI81eAeqdydmw8xTpy_r3DLYPMo_0pHKkXNRoxiz_Q>
-X-ME-Proxy: <xmx:GLD8Wo5ajgK9a84Mp37STfN8C8BhSYe4Jh8_0qjsXerPSNk37vh-sQ>
-X-ME-Proxy: <xmx:GLD8WljoYSw1Lz449B9_Vhy9C0yfd67rM1p3D709ZYq18Bx0ieuvhg>
-X-ME-Proxy: <xmx:GLD8WpmUNv00Ao7BrotlsJeAPw1KeNbgCloxI-eOSLY-Ia0csyzOYQ>
-X-ME-Proxy: <xmx:GLD8Wp0b548sYEF4nzvmeUzpJF8gM0oxp_fOnIwHkMPRLldbDin0kQ>
-X-ME-Sender: <xms:GLD8WpMs_YaePOPwiU2iJhlnmNhmU1UdW2vxdSk_Rjov4Cbs37qy4Q>
-Date: Thu, 17 May 2018 08:26:28 +1000
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+       spf=pass (google.com: domain of srs0=chgh=ic=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=cHGH=IC=goodmis.org=rostedt@kernel.org
+Date: Tue, 15 May 2018 10:33:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Andrew Morton
+ <akpm@linux-foundation.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Kees
+ Cook <keescook@chromium.org>, Theodore Ts'o <tytso@mit.edu>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] vsprintf: Add command line option debug_boot_weak_hash
-Message-ID: <20180516222628.GC25268@eros>
+Message-ID: <20180515103328.4dc32cd8@gandalf.local.home>
+In-Reply-To: <1526359115-5489-1-git-send-email-me@tobin.cc>
 References: <1526359115-5489-1-git-send-email-me@tobin.cc>
- <f9bacaa1-7741-d28e-29d1-4b42ae0c986f@infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9bacaa1-7741-d28e-29d1-4b42ae0c986f@infradead.org>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600503563774077130?=
-X-GMAIL-MSGID: =?utf-8?q?1600661323670031251?=
+X-GMAIL-MSGID: =?utf-8?q?1600540965767467064?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 08:29:47AM -0700, Randy Dunlap wrote:
-> On 05/14/2018 09:38 PM, Tobin C. Harding wrote:
+
+Anna-Maria,
+
+Can you test this patch on that kernel you were having issues with (the
+one triggering the RCU stalls, and not having entropy to show the
+pointers of the timer events).
+
+And report back what you find.
+
+Thanks!
+
+-- Steve
+
+
+On Tue, 15 May 2018 14:38:35 +1000
+"Tobin C. Harding" <me@tobin.cc> wrote:
+
+> Currently printing [hashed] pointers requires enough entropy to be
+> available.  Early in the boot sequence this may not be the case
+> resulting in a dummy string '(____ptrval____)' being printed.  This
+> makes debugging the early boot sequence difficult.  We can relax the
+> requirement to use cryptographically secure hashing during debugging.
+> This enables debugging while keeping development/production kernel
+> behaviour the same.
 > 
-> >  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
-> >  lib/vsprintf.c                                  | 18 ++++++++++++++++++
-> >  2 files changed, 26 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 3b8032431585..c95dd6704592 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -748,6 +748,14 @@
-> >  
-> >  	debug		[KNL] Enable kernel debugging (events log level).
-> >  
-> > +	debug_boot_weak_hash
-> > +			[KNL] Enable debugging early in the boot sequence.  If
+> If new command line option debug_boot_weak_hash is enabled use
+> cryptographically insecure hashing and hash pointer value immediately.
 > 
-> That makes it sound like "debug_boot_weak_hash" turns on early debugging.
-
-Thanks Randy, I'll have another go at writing this.
-
-
-	Tobin
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+> 
+> This patch was previously submitted as the last in the set
+> 
+> 	[PATCH v3 0/4] enable early printing of hashed pointers
+> 
+> Helps debugging using ftrace.  Original problem reported by Anna-Maria,
+> solution requested by Steve.
+> 
+> Changes since above mentioned patch set
+>  - change option name from debug_early_boot -> debug_boot_weak_hash
+>    (suggested by Steve).
+> 
+> 
+> I have only tested this by enabling the option and printing some
+> pointers.  This does not _prove_ that it fixes the ftrace issue.
+> 
+> thanks,
+> Tobin.
+> 
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+>  lib/vsprintf.c                                  | 18 ++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 3b8032431585..c95dd6704592 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -748,6 +748,14 @@
+>  
+>  	debug		[KNL] Enable kernel debugging (events log level).
+>  
+> +	debug_boot_weak_hash
+> +			[KNL] Enable debugging early in the boot sequence.  If
+> +			enabled, we use a weak hash instead of siphash to hash
+> +			pointers.  Use this option if you need to see pointer
+> +			values during early boot (i.e you are seeing instances
+> +			of '(___ptrval___)') - cryptographically insecure,
+> +			please do not use on production kernels.
+> +
+>  	debug_locks_verbose=
+>  			[KNL] verbose self-tests
+>  			Format=<0|1>
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index b82f0c6c2aec..5ff18f8fe3bd 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1654,6 +1654,18 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+>  	return widen_string(buf, buf - buf_start, end, spec);
+>  }
+>  
+> +/* Make pointers available for printing early in the boot sequence. */
+> +static int debug_boot_weak_hash __ro_after_init;
+> +EXPORT_SYMBOL(debug_boot_weak_hash);
+> +
+> +static int __init debug_boot_weak_hash_enable(char *str)
+> +{
+> +	debug_boot_weak_hash = 1;
+> +	pr_info("debug_boot_weak_hash enabled\n");
+> +	return 0;
+> +}
+> +early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
+> +
+>  static bool have_filled_random_ptr_key __read_mostly;
+>  static siphash_key_t ptr_key __read_mostly;
+>  
+> @@ -1694,6 +1706,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+>  	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+>  	unsigned long hashval;
+>  
+> +	/* When debugging early boot use non-cryptographically secure hash */
+> +	if (unlikely(debug_boot_weak_hash)) {
+> +		hashval = hash_long((unsigned long)ptr, 32);
+> +		return pointer_string(buf, end, (const void *)hashval, spec);
+> +	}
+> +
+>  	if (unlikely(!have_filled_random_ptr_key)) {
+>  		spec.field_width = 2 * sizeof(ptr);
+>  		/* string length must be less than default_width */
