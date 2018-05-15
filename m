@@ -1,72 +1,60 @@
 Return-Path: <flo@geekplace.eu>
-X-Google-Smtp-Source: AB8JxZpPzyfEgWeSdQqOBDrnsPEN+n1CVUjNWQ9qj45jHGiyceqiDGq0Mi85BrTVGJFyyMrpcDrz
-ARC-Seal: i=1; a=rsa-sha256; t=1525440239; cv=none;
+X-Google-Smtp-Source: AB8JxZqLZ6dsIghz+y07M/u+e2re0bZA9701RXcSsExCUg+bIKJwHM8muTTc7UFqNKEJYfjKgiu3
+ARC-Seal: i=1; a=rsa-sha256; t=1526392275; cv=none;
         d=google.com; s=arc-20160816;
-        b=SnEd9HvTqeBaBKGE4PkKKlTHZ8y6OdDC484riN63fYv7gJ8TE9x5LXoe0eycLajeu6
-         u8ekoT3904f/PF8lwBd+iBiRty6N5hnI+zc+9mICmZ/nbd8+M9rduknFGGumXyomeg/T
-         DUsqluNCfvrlo6zdb914HwaS4/KPxGS0x67EnH19RNLDZLvDfSBbJ5vF9dm80ryEfjjq
-         qPZrpS1+iI/fKWqQrw8xEfy+/03pzfg9FtNxRQsRBnI76LxxYumriEkDiPuuoqKoK1Cy
-         W8vQNs/z9HSq/awRrgkvR5oQmUOc79xI/51ths3sRXFwLwNBfXd29g8qGZ9qE5QcdUCK
-         GT9w==
+        b=H6X0875KJzhqRkJam1OnfhcZnzLdQkwLebM5rmbg1EGnu384UQGHXF1SQAdLlOOfgb
+         sjiQVrkCoM2hCXugbq/hygc9yj7XMptAQExBt3nZ1SgAgISwvqw1gFuFyqKCuNQQK+Uo
+         g2FeErCYN6GgePBYuvMppn5RA5qgOV6LV56AMvxRD5KUA/xPjBLD30fb2pJqWTqtiCQc
+         38R5dMOk4ZV82DPooDt37vtDkZg6eM3Db7nD77v3xXzz25LlSp+3HDy2chCMBnhoRcC2
+         xb5ObyWpnXUfSFdqR1clxizjmKe7sjJx4SmeiEfpVm22vyKxpOSxppoTTpO9I19PPwco
+         UnPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=5KLABqp84uxk5G+0vwm6jkgsOfC/8ixE9KU6vvYXLG0=;
-        b=zjCZrnilLxIrHdyiw/+aDwkozzfhQRreebRUqaPTRcYG0DJZ+MyRXrnUVxFmds7X60
-         5QiexFjMNPMjOz7ykkQg/Zi7rEb7O1SnHBl14o42NDiVoOtvsQ/cWskdK6iA331b7N7b
-         Ty3xwowbBpEBj+CgjlvzztHBq9fnBHgmM1muwXc2kZ1GFxkBaDES6CqK/YS+WmQuVWeV
-         6ZsDpWIgo/EGElrMek31f+K8jY0j7yFgBdw5Ds3u9mxRKwn9LFRy3vVp4tgyPkc5zLHq
-         puuZoBHQnQzYWg3soH3cD2SDS59jgOx3sIMgtjdjhHTjHJ9ZIkB/iQOqef4mlqNowYGj
-         I8zQ==
+        bh=0yQ31fe6oOrjdQX8UugxKzmqtDIv18g8MuOZ9nWYOdQ=;
+        b=YAwwCbSKQKUfWXLUu6u4Q+om572lpkUf+A55MRcQS5l7Mkj28cab0gRuoWOfEzvbsI
+         dQ0khYZwKPfq/EQnEVafGkSQcMUrDrUqhxG8yRp5JKGEo9poYtAieNum+N8sL+5gd9rV
+         KWczxNZW3s86pV01wtGCdWEfNOP72jJHz2QeGKOPWDkfkRpxk6IzUF4H0GMutZ54/2nA
+         sDCLjLjUH8H8nfdKhny+AEQDOXbgPNW0Q+/4TrJdYPkS6s/AxDWVYKa2n6FugsIAz4qv
+         2VFsH/i5kbuEupS0jz11NXiamCImLzvOd597rJ5rF9MGY5nFFUftoGWnjsk6wjJsJowH
+         ning==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of flo@geekplace.eu designates 2a03:4000:6:3a8::1 as permitted sender) smtp.mailfrom=flo@geekplace.eu
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of flo@geekplace.eu designates 2a03:4000:6:3a8::1 as permitted sender) smtp.mailfrom=flo@geekplace.eu
 From: Florian Schmaus <flo@geekplace.eu>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Florian Schmaus <flo@geekplace.eu>
-Subject: [PATCH v2] driver-core: Return EBUSY error instead of BUG_ON()
-Date: Fri,  4 May 2018 15:23:57 +0200
-Message-Id: <20180504132357.31771-1-flo@geekplace.eu>
+Cc: Florian Schmaus <flo@geekplace.eu>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] return EINVAL error instead of BUG_ON()
+Date: Tue, 15 May 2018 15:51:11 +0200
+Message-Id: <20180515135114.31939-1-flo@geekplace.eu>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180307094902.20316-1-flo@geekplace.eu>
-References: <20180307094902.20316-1-flo@geekplace.eu>
+In-Reply-To: <20180504132357.31771-1-flo@geekplace.eu>
+References: <20180504132357.31771-1-flo@geekplace.eu>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599540024221458723?=
-X-GMAIL-MSGID: =?utf-8?q?1599540024221458723?=
+X-GMAIL-THRID: =?utf-8?q?1600538306192171209?=
+X-GMAIL-MSGID: =?utf-8?q?1600538306192171209?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I triggerd the BUG_ON() in driver_register(), which was added in
-f48f3febb2cbfd0f2ecee7690835ba745c1034a4, when booting a domU Xen
-domain. Since there was no contextual information logged, I needed to
-attach kgdb to determine the culprit (the wmi-bmof driver in my case).
+This patch series makes driver_register() emit an error message and
+return a failure code instead of triggering a BUG_ON()
 
-Instead of running into a BUG_ON() we print an error message
-identifying the driver but continue booting.
+I tried to make the error message more descriptive compared to v2 by
+including the error of the failed bus registration in [3/3]. I'd be
+happy to include some more context if you have further suggestions.
 
-Signed-off-by: Florian Schmaus <flo@geekplace.eu>
----
- drivers/base/driver.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-index ba912558a510..63baec586eba 100644
---- a/drivers/base/driver.c
-+++ b/drivers/base/driver.c
-@@ -148,7 +148,11 @@ int driver_register(struct device_driver *drv)
- 	int ret;
- 	struct device_driver *other;
- 
--	BUG_ON(!drv->bus->p);
-+	if (!drv->bus->p) {
-+		printk(KERN_ERR "Driver '%s' was unable to register bus_type\n",
-+			   drv->name);
-+		return -EBUSY;
-+	}
- 
- 	if ((drv->bus->probe && drv->probe) ||
- 	    (drv->bus->remove && drv->remove) ||
+Florian Schmaus (3):
+  driver-core: return EINVAL error instead of BUG_ON()
+  driver-core: record error on bus registration
+  driver-core: print bus registration error value
+
+ drivers/base/bus.c     | 2 ++
+ drivers/base/driver.c  | 7 ++++++-
+ include/linux/device.h | 1 +
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
 -- 
 2.16.1
