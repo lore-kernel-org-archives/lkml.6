@@ -1,215 +1,366 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeEOIAX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:00:23 -0400
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:42853 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752368AbeEOIAS (ORCPT
+        id S1752706AbeEOIBS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:01:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35192 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752633AbeEOH74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:00:18 -0400
-X-Google-Smtp-Source: AB8JxZptUnUTIp0InquUCI90rgP8xl4S7ztZmE3mF7NQHfc/+PyYYvOOyvFMTp71d1pgPetPd1968RQjjpgKpIUKJ8k=
-MIME-Version: 1.0
-In-Reply-To: <bb9eefb1-a22b-9fc1-4a51-d067bdbe3f99@redhat.com>
-References: <20180501003907.4322-1-ahs3@redhat.com> <20180501003907.4322-4-ahs3@redhat.com>
- <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org> <bb9eefb1-a22b-9fc1-4a51-d067bdbe3f99@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 May 2018 10:00:17 +0200
-X-Google-Sender-Auth: srOnNvhR5561TuRdyWhhyQrYRGE
-Message-ID: <CAJZ5v0itXwbatAwaXTumW17nxLVEKWTWhh1wqOiUqFmBSdjzzA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] mailbox: ACPI: erroneous error message when
- parsing the ACPI PCCT
-To: Al Stone <ahs3@redhat.com>
-Cc: "Prakash, Prashanth" <pprakash@codeaurora.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 May 2018 03:59:56 -0400
+X-Google-Smtp-Source: AB8JxZp5U5XCKGgY1ssq+Bf7uSK2X+SoPdkDnDL0j/zsRn5s3zWtXJfmOOIcpMXliY6ty+mZ2ON3uw==
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 26/29] venus: move frame size calculations in common place
+Date: Tue, 15 May 2018 10:58:56 +0300
+Message-Id: <20180515075859.17217-27-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 12:49 AM, Al Stone <ahs3@redhat.com> wrote:
-> On 05/14/2018 03:04 PM, Prakash, Prashanth wrote:
->>
->>
->> On 4/30/2018 6:39 PM, Al Stone wrote:
->>> There have been multiple reports of the following error message:
->>>
->>> [    0.068293] Error parsing PCC subspaces from PCCT
->>>
->>> This error message is not correct.  In multiple cases examined, the PCCT
->>> (Platform Communications Channel Table) concerned is actually properly
->>> constructed; the problem is that acpi_pcc_probe() which reads the PCCT
->>> is making the assumption that the only valid PCCT is one that contains
->>> subtables of one of two types: ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE or
->>> ACPI_PCCT_TYPE_HW_REDUCED_TYPE2.  The number of subtables of these
->>> types are counted and as long as there is at least one of the desired
->>> types, the acpi_pcc_probe() succeeds.  When no subtables of these types
->>> are found, regardless of whether or not any other subtable types are
->>> present, the error mentioned above is reported.
->>>
->>> In the cases reported to me personally, the PCCT contains exactly one
->>> subtable of type ACPI_PCCT_TYPE_GENERIC_SUBSPACE.  The function
->>> acpi_pcc_probe() does not count it as a valid subtable, so believes
->>> there to be no valid subtables, and hence outputs the error message.
->>>
->>> An example of the PCCT being reported as erroneous yet perfectly fine
->>> is the following:
->>>
->>>                     Signature : "PCCT"
->>>                  Table Length : 0000006E
->>>                      Revision : 05
->>>                      Checksum : A9
->>>                        Oem ID : "XXXXXX"
->>>                  Oem Table ID : "XXXXX   "
->>>                  Oem Revision : 00002280
->>>               Asl Compiler ID : "XXXX"
->>>         Asl Compiler Revision : 00000002
->>>
->>>         Flags (decoded below) : 00000001
->>>                      Platform : 1
->>>                      Reserved : 0000000000000000
->>>
->>>                 Subtable Type : 00 [Generic Communications Subspace]
->>>                        Length : 3E
->>>
->>>                      Reserved : 000000000000
->>>                  Base Address : 00000000DCE43018
->>>                Address Length : 0000000000001000
->>>
->>>             Doorbell Register : [Generic Address Structure]
->>>                      Space ID : 01 [SystemIO]
->>>                     Bit Width : 08
->>>                    Bit Offset : 00
->>>          Encoded Access Width : 01 [Byte Access:8]
->>>                       Address : 0000000000001842
->>>
->>>                 Preserve Mask : 00000000000000FD
->>>                    Write Mask : 0000000000000002
->>>               Command Latency : 00001388
->>>           Maximum Access Rate : 00000000
->>>       Minimum Turnaround Time : 0000
->>>
->>> To fix this, we count up all of the possible subtable types for the
->>> PCCT, and only report an error when there are none (which could mean
->>> either no subtables, or no valid subtables), or there are too many.
->>> We also change the logic so that if there is a valid subtable, we
->>> do try to initialize it per the PCCT subtable contents.  This is a
->>> change in functionality; previously, the probe would have returned
->>> right after the error message and would not have tried to use any
->>> other subtable definition.
->>>
->>> Tested on my personal laptop which showed the error previously; the
->>> error message no longer appears and the laptop appears to operate
->>> normally.
->>>
->>> Signed-off-by: Al Stone <ahs3@redhat.com>
->>> Cc: Jassi Brar <jassisinghbrar@gmail.com>
->>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>> Cc: Len Brown <lenb@kernel.org>
->>> ---
->>>  drivers/mailbox/pcc.c | 96 +++++++++++++++++++++++++++++++++------------------
->>>  1 file changed, 63 insertions(+), 33 deletions(-)
->>>
->>> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
->>> index 3ef7f036ceea..72af37d7e95e 100644
->>> --- a/drivers/mailbox/pcc.c
->>> +++ b/drivers/mailbox/pcc.c
->>> @@ -372,13 +372,37 @@ static const struct mbox_chan_ops pcc_chan_ops = {
->>>      .send_data = pcc_send_data,
->>>  };
->>>
->>> +/*
->>> + *
->>> + * count_pcc_subspaces -- Count PCC subspaces not used in reduced HW systems.
->>> + * @header: Pointer to the ACPI subtable header under the PCCT.
->>> + * @end: End of subtable entry.
->>> + *
->>> + * Return: If we find a PCC subspace entry that is one of the types used
->>> + *  in reduced hardware systems, return -EINVAL.  Otherwise, return 0.
->>> + *
->>> + * This gets called for each subtable in the PCC table.
->>> + */
->>> +static int count_pcc_subspaces(struct acpi_subtable_header *header,
->>> +            const unsigned long end)
->>> +{
->>> +    struct acpi_pcct_subspace *pcct_ss = (struct acpi_pcct_subspace *) header;
->>> +
->>> +    if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
->>> +        (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
->>> +        (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
->>> +            return 0;
->>> +
->>> +    return -EINVAL;
->>> +}
->>> +
->>>  /**
->>> - * parse_pcc_subspace - Parse the PCC table and verify PCC subspace
->>> - *          entries. There should be one entry per PCC client.
->>> + * parse_pcc_subspaces -- Count PCC subspaces used only in reduced HW systems.
->>>   * @header: Pointer to the ACPI subtable header under the PCCT.
->>>   * @end: End of subtable entry.
->>>   *
->>> - * Return: 0 for Success, else errno.
->>> + * Return: If we find a PCC subspace entry that is one of the types used
->>> + *  in reduced hardware systems, return 0.  Otherwise, return -EINVAL.
->>>   *
->>>   * This gets called for each entry in the PCC table.
->>>   */
->>> @@ -393,10 +417,8 @@ static int parse_pcc_subspace(struct acpi_subtable_header *header,
->>>              if ((pcct_ss->header.type !=
->>>                              ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE)
->>>                  && (pcct_ss->header.type !=
->>> -                            ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
->>> -                    pr_err("Incorrect PCC Subspace type detected\n");
->>> +                            ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
->>>                      return -EINVAL;
->>> -            }
->>>      }
->>>
->>>      return 0;
->> Can't we combine  parse_pcc_subspace and count_pcc_subspaces into a
->> single function? parse_pcc_subspace can return 0 for supported subspace
->> types and -EINVAL for others.
->
-> I did think about that.  The issue is that we have subspaces that are only
-> valid in reduced hardware systems, and subspaces that are not.  It might make
-> sense to use different names, as in 'count_reduced_hw_subspaces()' and
-> 'count_general_subspaces()' (or something like those) but we do have the two
-> separate classes and hardware belonging to each of those classes.
->
-> That being said, you raise a good point: this would only be useful if the
-> mailbox code needed to know the classes of subspaces were different; I saw
-> no such code but I could have missed it.  If you're aware of any such cases,
-> let me know.  Otherwise, I'll combine the two counting routines and test it.
->
->> The limitation on number of subspaces(max = 256) applies to all types of PCC
->> subspaces (see Table 14-351 in ACPI 6.2).  The MAX_PCC_SUBSPACES check in
->>  parse_pcc_subspace seems invalid as pcc_mbox_ctrl.num_chans will not be
->> initialized yet at that moment.
->
-> Good catch.  Thanks.  That test was there prior to my patches, but I'll pull
-> it out.
->
->> Given above, I think it is probably better to update parse_pcc_subspace to
->> only check for a valid PCC subspace type. The check to make sure overall count
->> of subspace is  less than 256 is already present following the call to
->> acpi_table_parse_entries_array().
->>
->> --
->> Thanks,
->> Prashanth
->>
->
-> Thanks, Prashanth.
->
-> Rafael: do you want me to just re-send this patch or the whole series?  Either
-> way works for me; what's easiest for you since the first two have been applied?
+move calculations of raw and compressed in a common helper
+and make it identical for encoder and decoder.
 
-Just this patch, please.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/helpers.c | 98 +++++++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  2 +
+ drivers/media/platform/qcom/venus/vdec.c    | 54 ++++------------
+ drivers/media/platform/qcom/venus/venc.c    | 56 ++++-------------
+ 4 files changed, 126 insertions(+), 84 deletions(-)
 
-I've applied the other two already.
-
-Thanks,
-Rafael
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index f0a0fca60c76..ed569705ecac 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -455,6 +455,104 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ }
+ EXPORT_SYMBOL_GPL(venus_helper_get_bufreq);
+ 
++static u32 get_framesize_raw_nv12(u32 width, u32 height)
++{
++	u32 y_stride, uv_stride, y_plane;
++	u32 y_sclines, uv_sclines, uv_plane;
++	u32 size;
++
++	y_stride = ALIGN(width, 128);
++	uv_stride = ALIGN(width, 128);
++	y_sclines = ALIGN(height, 32);
++	uv_sclines = ALIGN(((height + 1) >> 1), 16);
++
++	y_plane = y_stride * y_sclines;
++	uv_plane = uv_stride * uv_sclines + SZ_4K;
++	size = y_plane + uv_plane + SZ_8K;
++
++	return ALIGN(size, SZ_4K);
++}
++
++static u32 get_framesize_raw_nv12_ubwc(u32 width, u32 height)
++{
++	u32 y_meta_stride, y_meta_plane;
++	u32 y_stride, y_plane;
++	u32 uv_meta_stride, uv_meta_plane;
++	u32 uv_stride, uv_plane;
++	u32 extradata = SZ_16K;
++
++	y_meta_stride = ALIGN(DIV_ROUND_UP(width, 32), 64);
++	y_meta_plane = y_meta_stride * ALIGN(DIV_ROUND_UP(height, 8), 16);
++	y_meta_plane = ALIGN(y_meta_plane, SZ_4K);
++
++	y_stride = ALIGN(width, 128);
++	y_plane = ALIGN(y_stride * ALIGN(height, 32), SZ_4K);
++
++	uv_meta_stride = ALIGN(DIV_ROUND_UP(width / 2, 16), 64);
++	uv_meta_plane = uv_meta_stride * ALIGN(DIV_ROUND_UP(height / 2, 8), 16);
++	uv_meta_plane = ALIGN(uv_meta_plane, SZ_4K);
++
++	uv_stride = ALIGN(width, 128);
++	uv_plane = ALIGN(uv_stride * ALIGN(height / 2, 32), SZ_4K);
++
++	return ALIGN(y_meta_plane + y_plane + uv_meta_plane + uv_plane +
++		     max(extradata, y_stride * 48), SZ_4K);
++}
++
++u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height)
++{
++	switch (hfi_fmt) {
++	case HFI_COLOR_FORMAT_NV12:
++	case HFI_COLOR_FORMAT_NV21:
++		return get_framesize_raw_nv12(width, height);
++	case HFI_COLOR_FORMAT_NV12_UBWC:
++		return get_framesize_raw_nv12_ubwc(width, height);
++	default:
++		return 0;
++	}
++}
++EXPORT_SYMBOL_GPL(venus_helper_get_framesz_raw);
++
++u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height)
++{
++	u32 hfi_fmt, sz;
++	bool compressed;
++
++	switch (v4l2_fmt) {
++	case V4L2_PIX_FMT_MPEG:
++	case V4L2_PIX_FMT_H264:
++	case V4L2_PIX_FMT_H264_NO_SC:
++	case V4L2_PIX_FMT_H264_MVC:
++	case V4L2_PIX_FMT_H263:
++	case V4L2_PIX_FMT_MPEG1:
++	case V4L2_PIX_FMT_MPEG2:
++	case V4L2_PIX_FMT_MPEG4:
++	case V4L2_PIX_FMT_XVID:
++	case V4L2_PIX_FMT_VC1_ANNEX_G:
++	case V4L2_PIX_FMT_VC1_ANNEX_L:
++	case V4L2_PIX_FMT_VP8:
++	case V4L2_PIX_FMT_VP9:
++	case V4L2_PIX_FMT_HEVC:
++		compressed = true;
++		break;
++	default:
++		compressed = false;
++		break;
++	}
++
++	if (compressed) {
++		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
++		return ALIGN(sz, SZ_4K);
++	}
++
++	hfi_fmt = to_hfi_raw_fmt(v4l2_fmt);
++	if (!hfi_fmt)
++		return 0;
++
++	return venus_helper_get_framesz_raw(hfi_fmt, width, height);
++}
++EXPORT_SYMBOL_GPL(venus_helper_get_framesz);
++
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height)
+ {
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index 92be45894a69..92b167a47166 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -33,6 +33,8 @@ void venus_helper_m2m_device_run(void *priv);
+ void venus_helper_m2m_job_abort(void *priv);
+ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ 			    struct hfi_buffer_requirements *req);
++u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
++u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height);
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height);
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index 3a699af0ab58..28db28fb5f21 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -29,29 +29,6 @@
+ #include "helpers.h"
+ #include "vdec.h"
+ 
+-static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
+-{
+-	u32 y_stride, uv_stride, y_plane;
+-	u32 y_sclines, uv_sclines, uv_plane;
+-	u32 size;
+-
+-	y_stride = ALIGN(width, 128);
+-	uv_stride = ALIGN(width, 128);
+-	y_sclines = ALIGN(height, 32);
+-	uv_sclines = ALIGN(((height + 1) >> 1), 16);
+-
+-	y_plane = y_stride * y_sclines;
+-	uv_plane = uv_stride * uv_sclines + SZ_4K;
+-	size = y_plane + uv_plane + SZ_8K;
+-
+-	return ALIGN(size, SZ_4K);
+-}
+-
+-static u32 get_framesize_compressed(unsigned int width, unsigned int height)
+-{
+-	return ((width * height * 3 / 2) / 2) + 128;
+-}
+-
+ /*
+  * Three resons to keep MPLANE formats (despite that the number of planes
+  * currently is one):
+@@ -160,7 +137,6 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
+-	unsigned int p;
+ 
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -191,18 +167,14 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
+ 
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+-		for (p = 0; p < pixmp->num_planes; p++) {
+-			pfmt[p].sizeimage =
+-				get_framesize_uncompressed(p, pixmp->width,
+-							   pixmp->height);
+-			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
+-		}
+-	} else {
+-		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
+-							     pixmp->height);
++	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
++						     pixmp->width,
++						     pixmp->height);
++
++	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
++	else
+ 		pfmt[0].bytesperline = 0;
+-	}
+ 
+ 	return fmt;
+ }
+@@ -648,7 +620,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 			    unsigned int sizes[], struct device *alloc_devs[])
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(q);
+-	unsigned int p, in_num, out_num;
++	unsigned int in_num, out_num;
+ 	int ret = 0;
+ 
+ 	if (*num_planes) {
+@@ -678,7 +650,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 	switch (q->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+ 		*num_planes = inst->fmt_out->num_planes;
+-		sizes[0] = get_framesize_compressed(inst->out_width,
++		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
++						    inst->out_width,
+ 						    inst->out_height);
+ 		inst->input_buf_size = sizes[0];
+ 		*num_buffers = max(*num_buffers, in_num);
+@@ -687,10 +660,9 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 		*num_planes = inst->fmt_cap->num_planes;
+-
+-		for (p = 0; p < *num_planes; p++)
+-			sizes[p] = get_framesize_uncompressed(p, inst->width,
+-							      inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->output_buf_size = sizes[0];
+ 		*num_buffers = max(*num_buffers, out_num);
+ 		inst->num_output_bufs = *num_buffers;
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index c9c40d1ce7c6..54f253b98b24 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -31,32 +31,6 @@
+ 
+ #define NUM_B_FRAMES_MAX	4
+ 
+-static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
+-{
+-	u32 y_stride, uv_stride, y_plane;
+-	u32 y_sclines, uv_sclines, uv_plane;
+-	u32 size;
+-
+-	y_stride = ALIGN(width, 128);
+-	uv_stride = ALIGN(width, 128);
+-	y_sclines = ALIGN(height, 32);
+-	uv_sclines = ALIGN(((height + 1) >> 1), 16);
+-
+-	y_plane = y_stride * y_sclines;
+-	uv_plane = uv_stride * uv_sclines + SZ_4K;
+-	size = y_plane + uv_plane + SZ_8K;
+-	size = ALIGN(size, SZ_4K);
+-
+-	return size;
+-}
+-
+-static u32 get_framesize_compressed(u32 width, u32 height)
+-{
+-	u32 sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
+-
+-	return ALIGN(sz, SZ_4K);
+-}
+-
+ /*
+  * Three resons to keep MPLANE formats (despite that the number of planes
+  * currently is one):
+@@ -284,7 +258,6 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
+-	unsigned int p;
+ 
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -318,19 +291,14 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
+ 
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+-		for (p = 0; p < pixmp->num_planes; p++) {
+-			pfmt[p].sizeimage =
+-				get_framesize_uncompressed(p, pixmp->width,
+-							   pixmp->height);
++	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
++						     pixmp->width,
++						     pixmp->height);
+ 
+-			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
+-		}
+-	} else {
+-		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
+-							     pixmp->height);
++	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
++		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
++	else
+ 		pfmt[0].bytesperline = 0;
+-	}
+ 
+ 	return fmt;
+ }
+@@ -845,7 +813,7 @@ static int venc_queue_setup(struct vb2_queue *q,
+ 			    unsigned int sizes[], struct device *alloc_devs[])
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(q);
+-	unsigned int p, num, min = 4;
++	unsigned int num, min = 4;
+ 	int ret = 0;
+ 
+ 	if (*num_planes) {
+@@ -880,16 +848,18 @@ static int venc_queue_setup(struct vb2_queue *q,
+ 		*num_buffers = max(*num_buffers, num);
+ 		inst->num_input_bufs = *num_buffers;
+ 
+-		for (p = 0; p < *num_planes; ++p)
+-			sizes[p] = get_framesize_uncompressed(p, inst->width,
+-							      inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->input_buf_size = sizes[0];
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 		*num_planes = inst->fmt_cap->num_planes;
+ 		*num_buffers = max(*num_buffers, min);
+ 		inst->num_output_bufs = *num_buffers;
+-		sizes[0] = get_framesize_compressed(inst->width, inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->output_buf_size = sizes[0];
+ 		break;
+ 	default:
+-- 
+2.14.1
