@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752728AbeEOJ6E (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:58:04 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37684 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752730AbeEOJ6B (ORCPT
+        id S1752740AbeEOKCB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:02:01 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37044 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752453AbeEOKCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:58:01 -0400
-X-Google-Smtp-Source: AB8JxZpelunEUT2M874OgO3jq5mgidN0H50nzQc6Hm9YR4lbjQbG8VaPPKOKxYF960uHb6831LQBJA==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: mmc: meson-gx: add reset
-Date: Tue, 15 May 2018 11:57:47 +0200
-Message-Id: <20180515095748.6794-2-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180515095748.6794-1-jbrunet@baylibre.com>
-References: <20180515095748.6794-1-jbrunet@baylibre.com>
+        Tue, 15 May 2018 06:02:00 -0400
+Date: Tue, 15 May 2018 12:01:58 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, james.morse@arm.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 08/18] arm64: convert raw syscall invocation to C
+Message-ID: <20180515100158.GC14007@isilmar-4.linta.de>
+References: <20180514125351.GK7753@e103592.cambridge.arm.com>
+ <20180514114104.oubxdf526hf2m6t5@lakrids.cambridge.arm.com>
+ <20180514202445.GA26773@light.dominikbrodowski.net>
+ <20180515082222.rcoyf6dsf2s2edgq@salmiak>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515082222.rcoyf6dsf2s2edgq@salmiak>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the reset to the documentation of the meson-gx mmc controller
-bindings.
+On Tue, May 15, 2018 at 09:22:23AM +0100, Mark Rutland wrote:
+> On Mon, May 14, 2018 at 10:24:45PM +0200, Dominik Brodowski wrote:
+> > On Mon, May 14, 2018 at 12:41:10PM +0100, Mark Rutland wrote:
+> > > I agree it would be nicer if it had a wrapper that took a pt_regs, even
+> > > if it does nothing with it.
+> > > 
+> > > We can't use SYSCALL_DEFINE0() due to the fault injection muck, we'd
+> > > need a ksys_ni_syscall() for our traps.c logic, and adding this
+> > > uniformly would involve some arch-specific rework for x86, too, so I
+> > > decided it was not worth the effort.
+> > 
+> > Couldn't you just open-code the "return -ENOSYS;" in traps.c?
+> 
+> I guess so. I was just worried that debug logic might be added to the generic
+> ni_syscall() in future, and wanted to avoid potential divergence.
+> 
+> > Error injection has no reasonable stable ABI/API expectations, so that's not
+> > a show-stopper either.
+> 
+> If people are happy with using SYSCALL_DEFINE0() for ni_syscall, I'm happy to
+> do that -- it's just that we'll need a fixup for x86 as that will change the
+> symbol name.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt | 2 ++
- 1 file changed, 2 insertions(+)
+For me, it's less about using SYSCALL_DEFINE0() for ni_syscall, but more
+about keeping the syscall invokation easy. Therefore, we do pass a pointer
+struct pt_regs to sys_ni_syscall() on x86, even though it does not expect
+it.
 
-diff --git a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-index 50bf611a4d2c..2d54a08487f5 100644
---- a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-+++ b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-@@ -19,6 +19,7 @@ Required properties:
- 	"clkin1" - Other parent clock of internal mux
-   The driver has an internal mux clock which switches between clkin0 and clkin1 depending on the
-   clock rate requested by the MMC core.
-+- resets     : phandle of the internal reset line
- 
- Example:
- 
-@@ -29,4 +30,5 @@ Example:
- 		clocks = <&clkc CLKID_SD_EMMC_A>, <&xtal>, <&clkc CLKID_FCLK_DIV2>;
- 		clock-names = "core", "clkin0", "clkin1";
- 		pinctrl-0 = <&emmc_pins>;
-+		resets = <&reset RESET_SD_EMMC_A>;
- 	};
--- 
-2.14.3
+	/* this is a lie, but it does not hurt as sys_ni_syscall just returns -EINVAL */
+	extern asmlinkage long sys_ni_syscall(const struct pt_regs *);
+
+Thanks,
+	Dominik
