@@ -1,136 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeEOVUv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:20:51 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55918 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbeEOVUt (ORCPT
+        id S1752805AbeEOVVg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:21:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752483AbeEOVVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:20:49 -0400
+        Tue, 15 May 2018 17:21:35 -0400
+Date: Tue, 15 May 2018 14:21:30 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3 2/2] locking/percpu-rwsem: Annotate rwsem ownership
+ transfer by setting RWSEM_OWNER_UNKNOWN
+Message-ID: <20180515212130.GA12204@bombadil.infradead.org>
+References: <1526405884-4860-1-git-send-email-longman@redhat.com>
+ <1526405884-4860-3-git-send-email-longman@redhat.com>
+ <20180515175805.GN12217@hirez.programming.kicks-ass.net>
+ <20180515180219.GA6612@bombadil.infradead.org>
+ <4a3fbd3c-3cfa-f9c2-c73c-fa6d9c55c2d5@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Tue, 15 May 2018 23:20:46 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v4 3/3] ARM: dts: tegra: Work safely with 256 MB
- Colibri-T20 modules
-In-Reply-To: <1526395285-19006-4-git-send-email-krzk@kernel.org>
-References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
- <1526395285-19006-4-git-send-email-krzk@kernel.org>
-Message-ID: <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a3fbd3c-3cfa-f9c2-c73c-fa6d9c55c2d5@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.05.2018 16:41, Krzysztof Kozlowski wrote:
-> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-> expecting the bootloader to do the fixup of /memory node.  However in
-> case it does not happen, let's stay on safe side by limiting the memory
-> to 256 MB for both versions of Colibri-T20.
+On Tue, May 15, 2018 at 02:45:12PM -0400, Waiman Long wrote:
+> On 05/15/2018 02:02 PM, Matthew Wilcox wrote:
+> > On Tue, May 15, 2018 at 07:58:05PM +0200, Peter Zijlstra wrote:
+> >> On Tue, May 15, 2018 at 01:38:04PM -0400, Waiman Long wrote:
+> >>> +/*
+> >>> + * Owner value to indicate the rwsem's owner is not currently known.
+> >>> + */
+> >>> +#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1)
+> >> It might be nice to comment that this works and relies on having that
+> >> ANON_OWNER bit set.
+> > I'd rather change the definition to be ((struct task_struct *)2)
+> > otherwise this is both reader-owned and anonymously-owned which doesn't
+> > make much sense.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> RFT:
-> Not tested on 512 MB module as I have only the 256 MB one.
-> 
-> Changes since v3:
-> 1. Reduce the memory in existing DTSI instead of creating a new one
->    (suggested by Marcel).
-> 
-> Changes since v2:
-> 1. Do not add new compatible but use everywhere existing
->    "toradex,colibri_t20-512" (suggested by Rob).
-> 
-> Changes since v1:
-> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
->    my bootloader uses mem= argument).
-> ---
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 9 +++++++--
->  arch/arm/boot/dts/tegra20-iris-512.dts     | 2 +-
+> Thinking about it a bit more. I can actually just use one special bit
+> (bit 0) to designate an unknown owner. So for a reader-owned lock, it is
+> just owner == 1 as the owners are unknown for a reader owned lock. For a
+> lock owned by an unknown writer, it is (owner & 1) && (owner != 1). That
+> will justify the use of -1L and save bit 1 for future extension.
 
-I don't like this variant too much.
+To quote from your patch:
 
-Can we not just drop the 512? And while at it, I would prefer to see the
-usual $soc-$module-$carrier schema, as we use with all the other modules
-of the Colibri and Apalis family.
+- * In essence, the owner field now has the following 3 states:
++ * In essence, the owner field now has the following 4 states:
+  *  1) 0
+  *     - lock is free or the owner hasn't set the field yet
+  *  2) RWSEM_READER_OWNED
+  *     - lock is currently or previously owned by readers (lock is free
+  *	  or not set by owner yet)
+- *  3) Other non-zero value
+- *     - a writer owns the lock
++ *  3) RWSEM_ANONYMOUSLY_OWNED
++ *     - lock is owned by an anonymous writer, so spinning on the lock
++ *	  owner should be disabled.
++ *  4) Other non-zero value
++ *     - a writer owns the lock and other writers can spin on the lock owner.
 
-e.g.
-tegra20-colibri-512.dtsi -> tegra20-colibri.dtsi
-tegra20-iris-512.dts -> tegra20-colibri-iris.dts
+I'd leave these as 0, 1, 2, other.  It's not really worth messing with
+testing bits.
 
-Yes, it is somewhat churn, but I would prefer it for the sake of clarity
-and consistency...
+Actually, if you change them to all be values -- s/NULL/RWSEM_NO_OWNER/
 
---
-Stefan
+then you could define them as:
 
+RWSEM_READER_OWNED	0
+RWSEM_ANON_OWNED	1
+RWSEM_NO_OWNER		2
 
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> index 305efb275b48..b9387c540450 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> @@ -2,7 +2,7 @@
->  #include "tegra20.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB";
-> +	model = "Toradex Colibri T20 256/512 MB";
->  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
-> @@ -12,7 +12,12 @@
->  
->  	memory@0 {
->  		device_type = "memory";
-> -		reg = <0x00000000 0x20000000>;
-> +		/*
-> +		 * Set memory to 256 MB to be safe as this could be used on
-> +		 * 256 or 512 MB module. It is expected from bootloader
-> +		 * to fix this up for 512 MB version.
-> +		 */
-> +		reg = <0x00000000 0x10000000>;
->  	};
->  
->  	host1x@50000000 {
-> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
-> b/arch/arm/boot/dts/tegra20-iris-512.dts
-> index 40126388946d..efaa96228722 100644
-> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
-> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
-> @@ -4,7 +4,7 @@
->  #include "tegra20-colibri-512.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB on Iris";
-> +	model = "Toradex Colibri T20 256/512 MB on Iris";
->  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
+and rwsem_should_spin() is just sem->owner > 1.
