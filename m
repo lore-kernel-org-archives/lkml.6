@@ -1,108 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeEOWHp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:07:45 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42045 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeEOWHo (ORCPT
+        id S1752211AbeEOWIm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:08:42 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:45981 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbeEOWIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:07:44 -0400
-X-Google-Smtp-Source: AB8JxZpnzT5cbD2PJFyTgHqF4vGo2DJVBAzfNegK7FIdXnx6rosG+flxM99I6PGxdEsUgvSlJdw2gQ==
-From: Douglas Anderson <dianders@chromium.org>
-To: broonie@kernel.org
-Cc: mka@chromium.org, collinsd@codeaurora.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: core: Allow for regulators that can't be read at bootup
-Date: Tue, 15 May 2018 15:07:17 -0700
-Message-Id: <20180515220717.254950-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Tue, 15 May 2018 18:08:40 -0400
+Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <20180515154352.20263-2-dmurphy@ti.com>
+ <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
+Date: Tue, 15 May 2018 17:08:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Regulators attached via RPMh on Qualcomm sdm845 apparently are
-write-only.  Specifically you can send a request for a certain voltage
-but you can't read back to see what voltage you've requested.  What
-this means is that at bootup we have absolutely no idea what voltage
-we could be at.
+Andy
 
-As discussed in the patches to try to support the RPMh regulators [1],
-the fact that regulators are write-only means that its driver's
-get_voltage_sel() should return an error code if it's called before
-any calls to set_voltage_sel().  This causes problems in
-machine_constraints_voltage() when trying to apply the constraints.
+Thanks for the review
 
-A proposed fix was to come up with an error code that could be
-returned by get_voltage_sel() which would cause the regulator
-framework to simply try setting the voltage with the current
-constraints.
+On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
+> On Tue, May 15, 2018 at 6:43 PM, Dan Murphy <dmurphy@ti.com> wrote:
+>> Introduce the family of LED devices that can
+>> drive a torch, strobe or IR LED.
+>>
+>> The LED driver can be configured with a strobe
+>> timer to execute a strobe flash.  The IR LED
+>> brightness is controlled via the torch brightness
+>> register.
+>>
+>> The data sheet for each the LM36010 and LM36011
+>> LED drivers can be found here:
+>> http://www.ti.com/product/LM36010
+>> http://www.ti.com/product/LM36011
+> 
+>> +       depends on LEDS_CLASS && I2C && OF
+> 
+> What is OF specific in this driver?
 
-In this patch I propose the error code -ENOTRECOVERABLE.  In errno.h
-this error is described as "State not recoverable".  Though the error
-code was originally intended "for robust mutexes", the description of
-the error code seems to apply here because we can't read the state of
-the regulator.  Also note that the only existing user of this error
-code in the regulator framework is tps65090-regulator.c which returns
-this error code from the enable() call (not get_voltage() or
-get_voltage_sel()), so there should be no existing regulators that
-might accidentally get the new behavior.  (Side note is that tps65090
-seems to interpret this error code to mean an error that you can't
-recover from rather than some data that can't be recovered).
+as3645a_led_class_setup has a "of" dependency
 
-[1] https://patchwork.kernel.org/patch/10340897/
+> 
+> 
+>> +#define LM3601X_STRB_LVL_TRIG  ~BIT(3)
+> 
+>> +#define LM36010_BOOST_LIMIT_19 ~BIT(5)
+> 
+>> +#define LM36010_BOOST_FREQ_2MHZ        ~BIT(6)
+> 
+>> +#define LM36010_BOOST_MODE_NORM        ~BIT(7)
+> 
+> These looks rather strange. Shouldn't be just 0:s?
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-If this patch is accepted then we'll need to update the latest RPMh
-regulator patch to return it.  The current patch returns -EINVAL which
-means that the regulator always fails.
+I don't actually use these so I can just remove them
 
- drivers/regulator/core.c         | 12 ++++++++++++
- include/linux/regulator/driver.h |  7 +++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+> 
+>> +struct lm3601x_led {
+>> +       struct mutex lock;
+>> +       struct regmap *regmap;
+>> +       struct i2c_client *client;
+> 
+>> +       struct device_node *led_node;
+> 
+> Why do you need this?
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index d4803460a557..fe314ff56772 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -886,6 +886,18 @@ static int machine_constraints_voltage(struct regulator_dev *rdev,
- 	    rdev->constraints->min_uV && rdev->constraints->max_uV) {
- 		int target_min, target_max;
- 		int current_uV = _regulator_get_voltage(rdev);
-+
-+		if (current_uV == -ENOTRECOVERABLE) {
-+			/* This regulator can't be read and must be initted */
-+			rdev_info(rdev, "Setting %d-%duV\n",
-+				  rdev->constraints->min_uV,
-+				  rdev->constraints->max_uV);
-+			_regulator_do_set_voltage(rdev,
-+						  rdev->constraints->min_uV,
-+						  rdev->constraints->max_uV);
-+			current_uV = _regulator_get_voltage(rdev);
-+		}
-+
- 		if (current_uV < 0) {
- 			rdev_err(rdev,
- 				 "failed to get the current voltage(%d)\n",
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4fc96cb8e5d7..14e512ad6d4f 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -81,9 +81,12 @@ struct regulator_linear_range {
-  * @set_voltage_sel: Set the voltage for the regulator using the specified
-  *                   selector.
-  * @map_voltage: Convert a voltage into a selector
-- * @get_voltage: Return the currently configured voltage for the regulator.
-+ * @get_voltage: Return the currently configured voltage for the regulator;
-+ *                   return -ENOTRECOVERABLE if regulator can't be read at
-+ *                   bootup and hasn't been set yet.
-  * @get_voltage_sel: Return the currently configured voltage selector for the
-- *                   regulator.
-+ *                   regulator; return -ENOTRECOVERABLE if regulator can't
-+ *                   be read at bootup and hasn't been set yet.
-  * @list_voltage: Return one of the supported voltages, in microvolts; zero
-  *	if the selector indicates a voltage that is unusable on this system;
-  *	or negative errno.  Selectors range from zero to one less than
+I don't but I can store it locally.  I was using the nodes in the register
+functions in previous versions.
+
+> 
+>> +};
+> 
+>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
+>> +       { 40000, 0x00 },
+>> +       { 80000, 0x01 },
+>> +       { 120000, 0x02 },
+>> +       { 160000, 0x03 },
+>> +       { 200000, 0x04 },
+>> +       { 240000, 0x05 },
+>> +       { 280000, 0x06 },
+>> +       { 320000, 0x07 },
+>> +       { 360000, 0x08 },
+>> +       { 400000, 0x09 },
+>> +       { 600000, 0x0a },
+>> +       { 800000, 0x0b },
+>> +       { 1000000, 0x0c },
+>> +       { 1200000, 0x0d },
+>> +       { 1400000, 0x0e },
+>> +       { 1600000, 0x0f },
+> 
+> Huh?!
+
+Please give comments that actually mean something other wise I will opt to ignore them.
+
+> 
+> strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
+
+Not sure what equation you are trying to point out here.  But if you are trying to apply
+a timeout step you cannot do this with this part.  As pointed out in the DT doc the timeout
+step is not linear.
+
+> 
+>> +};
+> 
+>> +       struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+>> +       int ret;
+>> +       int current_timeout;
+>> +       int reg_count;
+>> +       int i;
+>> +       int timeout_reg_val = 0;
+> 
+> Better to put lines here in reversed xmas tree order (longest first).
+
+I can do that, again this is a preference.
+
+> 
+>> +       reg_count = ARRAY_SIZE(strobe_timeouts);
+>> +       for (i = 0; i < reg_count; i++) {
+>> +               if (led->strobe_timeout > strobe_timeouts[i].timeout)
+>> +                       continue;
+> 
+> binary search?
+> 
+> Check lib/bsearch.c (IIRC).
+> 
+> But! See above the formula.
+> 
+>> +               brightness_val = (brightness/2);
+> 
+> Spaces.
+
+Not sure what this means checkpatch was clean
+
+> 
+>> +static int lm3601x_register_leds(struct lm3601x_led *led)
+>> +{
+> 
+> 
+>> +       int err = -ENODEV;
+> 
+> Useless assignment.
+
+This is an artifact from prior versions I can remove it
+
+> 
+>> +       err = led_classdev_flash_register(&led->client->dev,
+>> +                       fled_cdev);
+>> +
+>> +       return err;
+> 
+> This is return led_...();
+
+That is a preference.  It does not have to be that way.
+
+> 
+>> +}
+> 
+>> +               ret = of_property_read_string(led->led_node, "label", &name);
+> 
+> device_property_...();
+
+It can be if the maintainer is requesting this.
+
+Is the trend to move to these functions?
+Most drivers use the "of" calls.
+
+> 
+>> +               if (!ret)
+> 
+> if (ret) sounds more natural. And better just to split
+> 
+>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>> +                               "%s:%s", led->led_node->name, name);
+>> +               else
+>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>> +                               "%s:torch", led->led_node->name);
+> 
+> const char *tmp;
+> 
+> ret = device_property_read_...(&tmp);
+> if (ret)
+>  tmp = ...
+> sprintf(...);
+> 
+>> +       led = devm_kzalloc(&client->dev,
+>> +                           sizeof(struct lm3601x_led), GFP_KERNEL);
+> 
+> sizeof(*led) and one line in the result
+> 
+>> +static const struct i2c_device_id lm3601x_id[] = {
+>> +       { "LM36010", CHIP_LM36010 },
+>> +       { "LM36011", CHIP_LM36011 },
+>> +       { },
+> 
+> Terminators better w/o comma.
+
+Looking at other drivers adding comma's on the sentinel is accepted.  See the as3645a driver
+
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, lm3601x_id);
+>> +
+>> +static const struct of_device_id of_lm3601x_leds_match[] = {
+>> +       { .compatible = "ti,lm36010", },
+>> +       { .compatible = "ti,lm36011", },
+>> +       {},
+> 
+> Ditto.
+
+See above
+
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
+> 
+> 
+> 
+> 
+
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+------------------
+Dan Murphy
