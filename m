@@ -1,99 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752098AbeEODAl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:00:41 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.102]:12175 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752009AbeEODAk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:00:40 -0400
-X-Authority-Reason: nr=8
-Date: Mon, 14 May 2018 22:00:38 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] kernel: sys: fix potential Spectre v1
-Message-ID: <20180515030038.GA11822@embeddedor.com>
+        id S1752177AbeEODGW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:06:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752009AbeEODGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 23:06:20 -0400
+Date: Mon, 14 May 2018 23:05:45 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get
+ audit context
+Message-ID: <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
+References: <cover.1526173613.git.rgb@redhat.com>
+ <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
+ <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.172.56.86
-X-Source-L: No
-X-Exim-ID: 1fIQCd-003WyV-LX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.172.56.86]:51020
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-resource can be controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+On 2018-05-14 17:44, Paul Moore wrote:
+> On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Recognizing that the audit context is an internal audit value, use an
+> > access function to retrieve the audit context pointer for the task
+> > rather than reaching directly into the task struct to get it.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  include/linux/audit.h                | 14 ++++++--
+> >  include/net/xfrm.h                   |  2 +-
+> >  kernel/audit.c                       |  6 ++--
+> >  kernel/audit_watch.c                 |  2 +-
+> >  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
+> >  net/bridge/netfilter/ebtables.c      |  2 +-
+> >  net/core/dev.c                       |  2 +-
+> >  net/netfilter/x_tables.c             |  2 +-
+> >  net/netlabel/netlabel_user.c         |  2 +-
+> >  security/integrity/ima/ima_api.c     |  2 +-
+> >  security/integrity/integrity_audit.c |  2 +-
+> >  security/lsm_audit.c                 |  2 +-
+> >  security/selinux/hooks.c             |  4 +--
+> >  security/selinux/selinuxfs.c         |  6 ++--
+> >  security/selinux/ss/services.c       | 12 +++----
+> >  15 files changed, 64 insertions(+), 60 deletions(-)
+> 
+> Merged, but there was some fuzz due to the missing 1/5 patch and a
+> handfull of checkpatch.pl fixes.  Please take a look at the commit in
+> the audit/next branch and if anything looks awry please send a patch
+> to fix it.
 
-This issue was detected with the help of Smatch:
+Some of that fuzz was due to the two patches (ghak46/47) that went
+through the xelinux tree...  There will be a merge conflict.
 
-kernel/sys.c:1474 __do_compat_sys_old_getrlimit() warn: potential
-spectre issue 'get_current()->signal->rlim' (local cap)
-kernel/sys.c:1455 __do_sys_old_getrlimit() warn: potential spectre issue
-'get_current()->signal->rlim' (local cap)
+Otherwise, looks ok.
 
-Fix this by sanitizing *resource* before using it to index
-current->signal->rlim
+> paul moore
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+- RGB
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- kernel/sys.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 63ef036..78646e6 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -69,6 +69,9 @@
- #include <asm/io.h>
- #include <asm/unistd.h>
- 
-+/* Hardening for Spectre-v1 */
-+#include <linux/nospec.h>
-+
- #include "uid16.h"
- 
- #ifndef SET_UNALIGN_CTL
-@@ -1451,6 +1454,7 @@ SYSCALL_DEFINE2(old_getrlimit, unsigned int, resource,
- 	if (resource >= RLIM_NLIMITS)
- 		return -EINVAL;
- 
-+	resource = array_index_nospec(resource, RLIM_NLIMITS);
- 	task_lock(current->group_leader);
- 	x = current->signal->rlim[resource];
- 	task_unlock(current->group_leader);
-@@ -1470,6 +1474,7 @@ COMPAT_SYSCALL_DEFINE2(old_getrlimit, unsigned int, resource,
- 	if (resource >= RLIM_NLIMITS)
- 		return -EINVAL;
- 
-+	resource = array_index_nospec(resource, RLIM_NLIMITS);
- 	task_lock(current->group_leader);
- 	r = current->signal->rlim[resource];
- 	task_unlock(current->group_leader);
--- 
-2.7.4
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
