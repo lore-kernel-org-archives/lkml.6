@@ -1,108 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752339AbeEOGl6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:41:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46823 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeEOGl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:41:57 -0400
-Date: Mon, 14 May 2018 23:41:44 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-8ysughiz00h6mjpcot04qyjj@git.kernel.org>
-Cc: adrian.hunter@intel.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com,
-        tglx@linutronix.de, mingo@kernel.org, wangnan0@huawei.com,
-        namhyung@kernel.org, dsahern@gmail.com
-Reply-To: dsahern@gmail.com, mingo@kernel.org, namhyung@kernel.org,
-        wangnan0@huawei.com, tglx@linutronix.de, acme@redhat.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        adrian.hunter@intel.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Add missing newline when parsing
- empty BPF proggie
-Git-Commit-ID: c23080a6e4e853cff2834436e3cf33eae7723900
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752490AbeEOGmQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:42:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45696 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752130AbeEOGmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 02:42:15 -0400
+Date: Tue, 15 May 2018 08:42:04 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: James Kelly <jamespeterkelly@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Skip clk_put for attached clocks when freeing context
+Message-ID: <20180515064203.mf5xcso566ktndcx@flea>
+References: <20180515005017.46851-1-jamespeterkelly@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jivn7zf2pkxmn24g"
 Content-Disposition: inline
+In-Reply-To: <20180515005017.46851-1-jamespeterkelly@gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c23080a6e4e853cff2834436e3cf33eae7723900
-Gitweb:     https://git.kernel.org/tip/c23080a6e4e853cff2834436e3cf33eae7723900
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 3 May 2018 15:59:58 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 11 May 2018 12:10:02 -0300
 
-perf tools: Add missing newline when parsing empty BPF proggie
+--jivn7zf2pkxmn24g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is not specific to BPF but was found when parsing a .c BPF proggie
-that while valid, had no events attached to tracepoints, kprobes, etc:
+On Tue, May 15, 2018 at 10:50:17AM +1000, James Kelly wrote:
+> Capability to attach an existing clk to a MMIO regmap was
+> introduced in 4.17rc1.
+>=20
+> However, when using attached clk, regmap does not do the clk_get.
+> Therefore it should not do the clk_put when freeing the MMIO
+> regmap context.
+>=20
+> There does not appear to be any users of attached clocks yet
+> so this would be a good time to make this change before anything
+> depends on the existing behaviour.
+>=20
+> Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
 
-Very minimal file that perf's BPF code can compile:
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-  # cat empty.c
-  char _license[] __attribute__((section("license"), used)) = "GPL";
-  int _version __attribute__((section("version"), used)) = LINUX_VERSION_CODE;
-  #
+Thanks!
+Maxime
 
-Before this patch:
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-  # perf trace -e empty.c
-  WARNING: event parser found nothinginvalid or unsupported event: 'empty.c'
-  Run 'perf list' for a list of valid events
+--jivn7zf2pkxmn24g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
+-----BEGIN PGP SIGNATURE-----
 
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
-    #
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr6gSkACgkQ0rTAlCFN
+r3T0xRAAk4AO1ReDvqqllDYIWir6wuPv3tvzRn1Bih3WrAeIzIGC6Kn3qf9QscAI
+lA1Aec3Jri+62z8sloEfpKXJY9+R0ZdmYN6P8SkuIQtBznumdrkw3e61jnHBnoAU
+DUJ/n/xdQL0bUBURh1OoFPQw7CFYXoR31gYRujTpdqzOkRdr3x6lUmafGpAV4m6i
+H06ufGG42ueS904CVs4o73lot1+6oiSCMRu+Wz+FHtOF0r0p9dDEU74pv2CjPZ1I
+AGrP+MSbWDPsRuQgREoh7wlQoT6smiDa5IfieynMGs3/CbF7egln2QNc0NeQdlXL
+eJ2iU+eFFnJQKkM39anGSqcUtAPyhpfJSWfpagopEU4Cc/eAEBlokT7Jq9zd3G4i
+wFsxCYdwbTWWgenp5YJ1yzo9nNC3ivDOZ/ohC3mYhaSHg9R7cKEW5XU/+XYvfmq4
+UlAopJXUo1oTqsyGjz7RVQA2w+kqDWeW/ltGfHj3vN4lKj0Wpi9NIMR7AoMh6MY8
+18NXpuA/3NP9Sb9Vm49l7JzluyxLc2fkAc1i9g7Bfgy7vwIYDhyN+Blyq/GrJEEW
+8ygAevvYnNj+tu8Q47WKhxpWmAramzaThdDQPzOgy60yLf2/Lh1lDaEs9Uh6cVf4
+Dv8w8yMTN1RvXFihK02B1d1TFEWxCs71eFgA11ybrFqw06+rTSk=
+=62YC
+-----END PGP SIGNATURE-----
 
-After:
-
-  # perf trace -e empty.c
-  WARNING: event parser found nothing
-  invalid or unsupported event: 'empty.c'
-  Run 'perf list' for a list of valid events
-
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
-
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-8ysughiz00h6mjpcot04qyjj@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 2fb0272146d8..b8b8a9558d32 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1715,7 +1715,7 @@ int parse_events(struct perf_evlist *evlist, const char *str,
- 		struct perf_evsel *last;
- 
- 		if (list_empty(&parse_state.list)) {
--			WARN_ONCE(true, "WARNING: event parser found nothing");
-+			WARN_ONCE(true, "WARNING: event parser found nothing\n");
- 			return -1;
- 		}
- 
+--jivn7zf2pkxmn24g--
