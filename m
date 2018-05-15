@@ -1,84 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeEOL5n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:57:43 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33780 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752906AbeEOL5l (ORCPT
+        id S1753050AbeEOMAD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:00:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58424 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752950AbeEOMAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:57:41 -0400
-X-Google-Smtp-Source: AB8JxZrtvJtDg2zspTyNC+gRp+KFjEgqwx/CUVdl52B42gruIC6EJRH/POJ9hZ4J4hfDMgk7AZvxew==
-Date: Tue, 15 May 2018 13:57:39 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 07/14] net: sched: use reference counting action init
-Message-ID: <20180515115739.GN2134@nanopsycho.orion>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-8-git-send-email-vladbu@mellanox.com>
- <20180515112404.GL2134@nanopsycho.orion>
- <vbflgclm9wc.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180515113954.GM2134@nanopsycho.orion>
- <vbfk1s5m9hi.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+        Tue, 15 May 2018 08:00:01 -0400
+Date: Tue, 15 May 2018 08:59:53 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180515085953.65bfa107@vento.lan>
+In-Reply-To: <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+        <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+        <20180423152455.363d285c@vento.lan>
+        <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+        <20180423161742.66f939ba@vento.lan>
+        <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+        <20180426204241.03a42996@vento.lan>
+        <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vbfk1s5m9hi.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tue, May 15, 2018 at 01:41:45PM CEST, vladbu@mellanox.com wrote:
->
->On Tue 15 May 2018 at 11:39, Jiri Pirko <jiri@resnulli.us> wrote:
->> Tue, May 15, 2018 at 01:32:51PM CEST, vladbu@mellanox.com wrote:
->>>
->>>On Tue 15 May 2018 at 11:24, Jiri Pirko <jiri@resnulli.us> wrote:
->>>> Mon, May 14, 2018 at 04:27:08PM CEST, vladbu@mellanox.com wrote:
->>>>>Change action API to assume that action init function always takes
->>>>>reference to action, even when overwriting existing action. This is
->>>>>necessary because action API continues to use action pointer after init
->>>>>function is done. At this point action becomes accessible for concurrent
->>>>>modifications so user must always hold reference to it.
->>>>>
->>>>>Implement helper put list function to atomically release list of actions
->>>>>after action API init code is done using them.
->>>>>
->>>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>>>>---
->>>>> net/sched/act_api.c | 38 +++++++++++++++++---------------------
->>>>> 1 file changed, 17 insertions(+), 21 deletions(-)
->>>>>
->>>>
->>>> [...]
->>>>
->>>>
->>>>>@@ -1196,8 +1190,7 @@ tca_action_gd(struct net *net, struct nlattr *nla, struct nlmsghdr *n,
->>>>> 		return ret;
->>>>> 	}
->>>>> err:
->>>>>-	if (event != RTM_GETACTION)
->>>>
->>>> Howcome you do this for RTM_GETACTION now too? Where is the related
->>>> "get"?
->>>
->>>In patch 5. There is always a possibility of concurrent delete without
->>>rtnl lock so all usages of action pointers were converted to hold
->>>reference to action.
->>
->> So that means that if you run kernel in between, with patch 5 but
->> without patch 7 and you do RTM_GETACTION, you leak a reference, right?
->
->Right.
+Em Mon, 14 May 2018 22:31:37 -0500
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
 
-That is an issue. You need to make sure that the code is without bugs
-like this after every applied patch. You need to make sure the code is
-bisectable.
+> Hi Mauro,
+> 
+> On 04/26/2018 06:42 PM, Mauro Carvalho Chehab wrote:
+> 
+> >>
+> >> I noticed you changed the status of this series from rejected to new.
+> > 
+> > Yes.
+> > 
+> >> Also, there are other similar issues in media/pci/
+> > 
+> > Well, the issues will be there everywhere on all media drivers.
+> > 
+> > I marked your patches because I need to study it carefully, after
+> > Peter's explanations. My plan is to do it next week. Still not
+> > sure if the approach you took is the best one or not.
+> > 
+> > As I said, one possibility is to change the way v4l2-core handles
+> > VIDIOC_ENUM_foo ioctls, but that would be make harder to -stable
+> > backports.
+> > 
+> > I need a weekend to sleep on it.
+> > 
+> 
+> I'm curious about how you finally resolved to handle these issues.
+> 
+> I noticed Smatch is no longer reporting them.
 
-Thanks.
+There was no direct fix for it, but maybe this patch has something
+to do with the smatch error report cleanup:
+
+commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56
+Author: Sami Tolvanen <samitolvanen@google.com>
+Date:   Tue May 8 13:56:12 2018 -0400
+
+    media: v4l2-ioctl: replace IOCTL_INFO_STD with stub functions
+    
+    This change removes IOCTL_INFO_STD and adds stub functions where
+    needed using the DEFINE_V4L_STUB_FUNC macro. This fixes indirect call
+    mismatches with Control-Flow Integrity, caused by calling standard
+    ioctls using a function pointer that doesn't match the function type.
+    
+    Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+    Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+
+
+> 
+> Thanks
+> --
+> Gustavo
+
+
+
+Thanks,
+Mauro
