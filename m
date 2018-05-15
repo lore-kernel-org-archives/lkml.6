@@ -1,63 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeEOWVe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:21:34 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38605 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeEOWVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:21:32 -0400
-X-Google-Smtp-Source: AB8JxZrtP/990aXd5vTrUO3JXNYQI25NM5mq9W/Em9z65GGcMicCuv1trDAGd3PBY50LVQ2rPJunCA==
-Date: Tue, 15 May 2018 16:21:25 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
-        dledford@redhat.com, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] {net, IB}/mlx5: Use 'kvfree()' for memory allocated
- by 'kvzalloc()'
-Message-ID: <20180515222125.GA20160@ziepe.ca>
-References: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr>
+        id S1752237AbeEOWWQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:22:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751309AbeEOWWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 18:22:15 -0400
+Date: Tue, 15 May 2018 17:22:11 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: "Anvin, H Peter" <h.peter.anvin@intel.com>,
+        "Ye, Xiaolong" <xiaolong.ye@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        "tipbuild@zytor.com" <tipbuild@zytor.com>, "lkp@01.org" <lkp@01.org>
+Subject: Re: [lkp-robot] [x86/asm]  51bad67ffb: int3:#[##]
+Message-ID: <20180515222211.ods5hzne46hozojq@treble>
+References: <20180515080033.GA7714@yexl-desktop>
+ <20180515210757.GA12225@avx2>
+ <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
+ <20180515214337.GA18021@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180515214337.GA18021@avx2>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 09:00:41AM +0200, Christophe JAILLET wrote:
-> When 'kvzalloc()' is used to allocate memory, 'kvfree()' must be used to
-> free it.
+On Wed, May 16, 2018 at 12:43:37AM +0300, Alexey Dobriyan wrote:
+> On Tue, May 15, 2018 at 09:25:53PM +0000, Anvin, H Peter wrote:
+> > Why is that a problem?
+> > Code: 00 00 00 eb e6 cc cc cc cc cc cc cc cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 5d e8 8f ff 8b 44 24 34 83 e0 03 83 f8 03 72 28 cc &lt;cc&gt; cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 3d e8 8f ff 89 e0
+> > 
+> > EIP: ret_from_intr+0xd/0x14 SS:ESP: 0068:8603bfb4
+> > 
+> > INT3 slipped through M586 =&gt; X86_ALIGNMENT_16 :-\
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v1 -> v2: More places to update have been added to the patch
-> ---
->  drivers/infiniband/hw/mlx5/cq.c                            | 2 +-
->  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
->  drivers/net/ethernet/mellanox/mlx5/core/vport.c            | 6 +++---
->  3 files changed, 5 insertions(+), 5 deletions(-)
+> I could make the patch x86_64 only, but!
+> 
+> It crashed into the middle of the padding.
+> 
+> 796ef8fc <ret_from_intr>:
+> 796ef8fc:       8b 44 24 34             mov    eax,DWORD PTR [esp+0x34]
+> 796ef900:       83 e0 03                and    eax,0x3
+> 796ef903:       83 f8 03                cmp    eax,0x3
+> 796ef906:       72 28                   jb     796ef930 <resume_kernel>
+> 796ef908:       cc                      int3
+> 796ef909:       cc       <========>     int3
+> 796ef90a:       cc                      int3
+> 796ef90b:       cc                      int3
+> 796ef90c:       cc                      int3
+> 796ef90d:       cc                      int3
+> 796ef90e:       cc                      int3
+> 796ef90f:       cc                      int3
 
-I agree with Eric on the need for fixes lines in v3..
+The padding isn't needed there, and the resume_userspace symbol is never
+used, so wouldn't this fix it?
 
-> diff --git a/drivers/infiniband/hw/mlx5/cq.c b/drivers/infiniband/hw/mlx5/cq.c
-> index 77d257ec899b..6d52ea03574e 100644
-> --- a/drivers/infiniband/hw/mlx5/cq.c
-> +++ b/drivers/infiniband/hw/mlx5/cq.c
-> @@ -849,7 +849,7 @@ static int create_cq_user(struct mlx5_ib_dev *dev, struct ib_udata *udata,
->  	return 0;
->  
->  err_cqb:
-> -	kfree(*cqb);
-> +	kvfree(*cqb);
 
-For the infiniband part:
-
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-
-Since this is mostly ethernet, can it go through netdev? thanks
-
-Jason
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index bef8e2b202a8..9e56243c984c 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -338,7 +338,6 @@ ret_from_intr:
+ 	cmpl	$USER_RPL, %eax
+ 	jb	resume_kernel			# not returning to v8086 or userspace
+ 
+-ENTRY(resume_userspace)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax
