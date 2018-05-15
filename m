@@ -1,61 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753948AbeEOQSX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:18:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33016 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752102AbeEOQSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:18:22 -0400
-Date: Tue, 15 May 2018 18:18:18 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: syzbot <syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com>,
-        bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, ricardo.neri-calderon@linux.intel.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org,
-        yhs@fb.com
-Subject: Re: WARNING in arch_uprobe_analyze_insn
-Message-ID: <20180515161818.GA22580@redhat.com>
-References: <000000000000b759cf056c2b3c12@google.com>
- <20180515133630.GA20619@redhat.com>
- <20180515234825.d9bea077f296354f3724f736@kernel.org>
+        id S1752355AbeEOQTB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:19:01 -0400
+Received: from foss.arm.com ([217.140.101.70]:35086 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751219AbeEOQTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:19:00 -0400
+Subject: Re: [PATCH v9 03/11] arm64: kexec_file: invoke the kernel without
+ purgatory
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-4-takahiro.akashi@linaro.org>
+ <9c830fe8-56d8-b43a-6265-43d31dffe61a@arm.com>
+ <20180507052208.GD11326@linaro.org>
+ <ece8d3cc-127f-6855-52fb-24e4a1d4e823@arm.com>
+ <20180515044542.GC2737@linaro.org>
+From: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <fbd2c6c6-be20-a9fa-0303-e4448225df18@arm.com>
+Date: Tue, 15 May 2018 17:15:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515234825.d9bea077f296354f3724f736@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180515044542.GC2737@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15, Masami Hiramatsu wrote:
+Hi Akashi,
+
+On 15/05/18 05:45, AKASHI Takahiro wrote:
+> On Fri, May 11, 2018 at 06:03:49PM +0100, James Morse wrote:
+>> On 07/05/18 06:22, AKASHI Takahiro wrote:
+>>> On Tue, May 01, 2018 at 06:46:06PM +0100, James Morse wrote:
+>>>> On 25/04/18 07:26, AKASHI Takahiro wrote:
+>>>>> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+>>>>> index f76ea92dff91..f7dbba00be10 100644
+>>>>> --- a/arch/arm64/kernel/machine_kexec.c
+>>>>> +++ b/arch/arm64/kernel/machine_kexec.c
+>>>>> @@ -205,10 +205,17 @@ void machine_kexec(struct kimage *kimage)
+>>
+>>>>>  	cpu_soft_restart(kimage != kexec_crash_image,
+>>>>> -		reboot_code_buffer_phys, kimage->head, kimage->start, 0);
+>>>>> +		reboot_code_buffer_phys, kimage->head, kimage->start,
+>>>>> +#ifdef CONFIG_KEXEC_FILE
+>>>>> +				kimage->purgatory_info.purgatory_buf ?
+>>>>> +						0 : kimage->arch.dtb_mem);
+>>>>> +#else
+>>>>> +				0);
+>>>>> +#endif
+>>
+>>
+>>>> purgatory_buf seems to only be set in kexec_purgatory_setup_kbuf(), called from
+>>>> kexec_load_purgatory(), which we don't use. How does this get a value?
+>>>>
+>>>> Would it be better to always use kimage->arch.dtb_mem, and ensure that is 0 for
+>>>> regular kexec (as we can't know where the dtb is)? (image_arg may then be a
+>>>> better name).
+>>>
+>>> The problem is arch.dtb_mem is currently defined only if CONFIG_KEXEC_FILE.
+>>
+>> I thought it was ARCH_HAS_KIMAGE_ARCH, which we can define all the time if
+>> that's what we want.
+>>
+>>
+>>> So I would like to
+>>> - merge this patch with patch#8
+>>> - change the condition
+>>>         #ifdef CONFIG_KEXEC_FILE
+>>>        				kimage->file_mode ? kimage->arch.dtb_mem : 0);
+>>>         #else
+>>>         			0);
+>>>         #endif
+>>
+>> If we can avoid even this #ifdef by always having kimage->arch, I'd prefer that.
+>> If we do that 'dtb_mem' would need some thing that indicates its for kexec_file,
+>> as kexec has a DTB too, we just don't know where it is...
+> 
+> OK, but I want to have a minimum of kexec.arch always exist.
+
+I'm curious, why? Its 32bytes that is allocated a maximum of twice.
+
+(my questions on what needs to go in there were because it looked like a third
+user was missing...)
+
+
+> How about this?
 >
-> On Tue, 15 May 2018 15:36:30 +0200
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > Unfortunately, insn_get_length() returns void, and I do not see any
-> > insn-was-decoded-correctly helper. Perhaps we should simply remove
-> > this WARN_ON() ?
->
-> Yes, it should just return an error,
+> | struct kimage_arch {
+> | 	phys_addr_t dtb_mem;
+> | #ifdef CONFIG_KEXEC_FILE
 
-OK, I'll send the fix,
+#ifdef in structs just breeds more #ifdefs, as the code that accesses those
+members has to be behind the same set of conditions.
 
-> since user can miss the
-> probe address on user binary and we can not make sure
-> that is on a instruction boundary.
+Given this, I prefer the #ifdefs around cpu_soft_restart() as it doesn't force
+us to add more #ifdefs later.
 
-Or this insn is actually invalid.
+For either option without purgatory_info:
+Reviewed-by: James Morse <james.morse@arm.com>
 
-> > Alternatively, If am right we can move this check down after the "good_insns"
-> > checks, but this doesn't look very clean to me.
->
-> I think it is enough if arch_uprobe_analyze_insn() returns an error.
-> That makes prepare_uprobe() fail and finally leads uprobe_register()
-> fail.
 
-I meant that this way we could probably keep WARN_ON(). Nevermind.
+Thanks,
 
-Thanks!
-
-Oleg.
+James
