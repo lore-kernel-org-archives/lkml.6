@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeEOHlN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:41:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42972 "EHLO mx2.suse.de"
+        id S1752516AbeEOHl4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:41:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42960 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752148AbeEOHkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:40:51 -0400
+        id S1752054AbeEOHku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 03:40:50 -0400
 From: Johannes Thumshirn <jthumshirn@suse.de>
 To: Keith Busch <keith.busch@intel.com>
 Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
@@ -13,9 +13,9 @@ Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
         Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
         Hannes Reinecke <hare@suse.de>,
         Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 3/5] nvme: call nvmf_create_ctrl before checking for duplicate assignment
-Date: Tue, 15 May 2018 09:40:41 +0200
-Message-Id: <20180515074043.22843-4-jthumshirn@suse.de>
+Subject: [PATCH 2/5] nvme: don't hold nvmf_transports_rwsem for more than transport lookups
+Date: Tue, 15 May 2018 09:40:40 +0200
+Message-Id: <20180515074043.22843-3-jthumshirn@suse.de>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180515074043.22843-1-jthumshirn@suse.de>
 References: <20180515074043.22843-1-jthumshirn@suse.de>
@@ -23,14 +23,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In nvmf_dev_write we did check if the /dev/nvme-fabrics device node's
-private data is already set and then create a controller data
-structure afterwards. The private data is protected by the
-nvmf_dev_mutex, but there is no need to hold it while calling
-nvmf_create_ctrl().
-
-This also reduces the number of lockdep complaints in the 'nvme
-connect' with fcloop scenario.
+Only take nvmf_transports_rwsem when doing a lookup of regitered
+transports, as subsequent actions may take the hctx_lock which is an
+rcu_read_lock and thus lockdep complains about suspicious rcu usage.
 
 [    9.703333] =============================
 [    9.704797] WARNING: suspicious RCU usage
@@ -44,7 +39,8 @@ connect' with fcloop scenario.
 [    9.711959] rcu_scheduler_active = 2, debug_locks = 1
 [    9.713142] 3 locks held by nvme/1420:
 [    9.713800]  #0:         (ptrval) (nvmf_dev_mutex){+.+.}, at: nvmf_dev_write+0x6a/0xb7d [nvme_fabrics]
-[    9.717279]  #1:         (ptrval) (rcu_read_lock){....}, at: hctx_lock+0x56/0xd0
+[    9.715471]  #1:         (ptrval) (nvmf_transports_rwsem){++++}, at: nvmf_dev_write+0x6e5/0xb7d [nvme_fabrics]
+[    9.717279]  #2:         (ptrval) (rcu_read_lock){....}, at: hctx_lock+0x56/0xd0
 [    9.718636]
 [    9.718636] stack backtrace:
 [    9.720266] CPU: 2 PID: 1420 Comm: nvme Not tainted 4.17.0-rc5+ #883
@@ -80,36 +76,52 @@ connect' with fcloop scenario.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 ---
- drivers/nvme/host/fabrics.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/nvme/host/fabrics.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index febf82639b40..757a49b9c5a8 100644
+index 7ae732a77fe8..febf82639b40 100644
 --- a/drivers/nvme/host/fabrics.c
 +++ b/drivers/nvme/host/fabrics.c
-@@ -1022,18 +1022,17 @@ static ssize_t nvmf_dev_write(struct file *file, const char __user *ubuf,
- 	if (IS_ERR(buf))
- 		return PTR_ERR(buf);
+@@ -957,16 +957,17 @@ nvmf_create_ctrl(struct device *dev, const char *buf, size_t count)
  
-+	ctrl = nvmf_create_ctrl(nvmf_device, buf, count);
-+	if (IS_ERR(ctrl))
-+		return PTR_ERR(ctrl);
-+
- 	mutex_lock(&nvmf_dev_mutex);
- 	if (seq_file->private) {
-+		nvme_delete_ctrl_sync(ctrl);
+ 	down_read(&nvmf_transports_rwsem);
+ 	ops = nvmf_lookup_transport(opts);
++	up_read(&nvmf_transports_rwsem);
+ 	if (!ops) {
+ 		pr_info("no handler found for transport %s.\n",
+ 			opts->transport);
  		ret = -EINVAL;
- 		goto out_unlock;
+-		goto out_unlock;
++		goto out_free_opts;
  	}
  
--	ctrl = nvmf_create_ctrl(nvmf_device, buf, count);
--	if (IS_ERR(ctrl)) {
--		ret = PTR_ERR(ctrl);
+ 	if (!try_module_get(ops->module)) {
+ 		ret = -EBUSY;
 -		goto out_unlock;
--	}
--
- 	seq_file->private = ctrl;
++		goto out_free_opts;
+ 	}
  
- out_unlock:
+ 	ret = nvmf_check_required_opts(opts, ops->required_opts);
+@@ -988,19 +989,15 @@ nvmf_create_ctrl(struct device *dev, const char *buf, size_t count)
+ 			"controller returned incorrect NQN: \"%s\".\n",
+ 			ctrl->subsys->subnqn);
+ 		module_put(ops->module);
+-		up_read(&nvmf_transports_rwsem);
+ 		nvme_delete_ctrl_sync(ctrl);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	module_put(ops->module);
+-	up_read(&nvmf_transports_rwsem);
+ 	return ctrl;
+ 
+ out_module_put:
+ 	module_put(ops->module);
+-out_unlock:
+-	up_read(&nvmf_transports_rwsem);
+ out_free_opts:
+ 	nvmf_free_options(opts);
+ 	return ERR_PTR(ret);
 -- 
 2.16.3
