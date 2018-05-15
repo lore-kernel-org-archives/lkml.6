@@ -1,104 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeEOLBW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:01:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7669 "EHLO huawei.com"
+        id S1752644AbeEOLGj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 07:06:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46904 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752379AbeEOLBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:01:21 -0400
-Subject: Re: [PATCH v2 1/3] f2fs: fix to initialize i_current_depth according
- to inode type
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180515105025.66420-1-yuchao0@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <8ca4c55e-26c4-f3a4-6bc9-ad423aeec264@huawei.com>
-Date: Tue, 15 May 2018 19:01:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752379AbeEOLGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 07:06:38 -0400
+Date: Tue, 15 May 2018 13:06:33 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
+ non-spinnable in percpu_rwsem_release()
+Message-ID: <20180515110632.GA14527@redhat.com>
+References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+ <1526326267-22501-3-git-send-email-longman@redhat.com>
+ <20180515085111.GW12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180515105025.66420-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515085111.GW12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, I sent the wrong patch, please ignore this one.
+On 05/15, Peter Zijlstra wrote:
+>
+> So what's wrong with adding:
+>
+> 	if (!read)
+> 		sem->rw_sem.owner = current;
 
-On 2018/5/15 18:50, Chao Yu wrote:
-> i_current_depth is used only for directory inode, but its space is
-> shared with i_gc_failures field used for regular inode, in order to
-> avoid affecting i_gc_failures' value, this patch fixes to initialize
-> the union's fields according to inode type.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - rebase code.
->  fs/f2fs/inode.c | 12 +++++++++---
->  fs/f2fs/namei.c |  3 +++
->  fs/f2fs/super.c |  1 -
->  3 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 7f2fe4574c48..3a74a1cf3264 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -232,8 +232,10 @@ static int do_read_inode(struct inode *inode)
->  	inode->i_ctime.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
->  	inode->i_mtime.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
->  	inode->i_generation = le32_to_cpu(ri->i_generation);
-> -
-> -	fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-> +	if (S_ISDIR(inode->i_mode))
-> +		fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-> +	else if (S_ISREG(inode->i_mode))
-> +		fi->i_gc_failures = le16_to_cpu(ri->i_gc_failures);
->  	fi->i_xattr_nid = le32_to_cpu(ri->i_xattr_nid);
->  	fi->i_flags = le32_to_cpu(ri->i_flags);
->  	fi->flags = 0;
-> @@ -422,7 +424,11 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	ri->i_atime_nsec = cpu_to_le32(inode->i_atime.tv_nsec);
->  	ri->i_ctime_nsec = cpu_to_le32(inode->i_ctime.tv_nsec);
->  	ri->i_mtime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
-> -	ri->i_current_depth = cpu_to_le32(F2FS_I(inode)->i_current_depth);
-> +	if (S_ISDIR(inode->i_mode))
-> +		ri->i_current_depth =
-> +			cpu_to_le32(F2FS_I(inode)->i_current_depth);
-> +	else if (S_ISREG(inode->i_mode))
-> +		ri->i_gc_failures = cpu_to_le16(F2FS_I(inode)->i_gc_failures);
->  	ri->i_xattr_nid = cpu_to_le32(F2FS_I(inode)->i_xattr_nid);
->  	ri->i_flags = cpu_to_le32(F2FS_I(inode)->i_flags);
->  	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index fef6e3ab2135..bcfc4219b29e 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -54,6 +54,9 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
->  			F2FS_I(inode)->i_crtime = current_time(inode);
->  	inode->i_generation = sbi->s_next_generation++;
->  
-> +	if (S_ISDIR(inode->i_mode))
-> +		F2FS_I(inode)->i_current_depth = 1;
-> +
->  	err = insert_inode_locked(inode);
->  	if (err) {
->  		err = -EINVAL;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 294be9e92aee..55ccc2eaaa2e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -826,7 +826,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->  
->  	/* Initialize f2fs-specific inode info */
->  	atomic_set(&fi->dirty_pages, 0);
-> -	fi->i_current_depth = 1;
->  	init_rwsem(&fi->i_sem);
->  	INIT_LIST_HEAD(&fi->dirty_list);
->  	INIT_LIST_HEAD(&fi->gdirty_list);
-> 
+Agreed, I have already suggested this change twice. Except we obviously
+need to check CONFIG_RWSEM_SPIN_ON_OWNER (->owner doesn't exists otherwise)
+or even CONFIG_DEBUG_RWSEMS to make the purpose more clear.
+
+> Afaict the whole .owner=NULL thing in release already stops the spinners
+
+Not really, the new writer will spin in this case, afaics.
+
+But this is another problem and probably we do not care. The new writer is
+almost impossible in this particular case, another freeze_super() should
+notice frozen != SB_UNFROZEN and return EBUSY.
+
+> and the above 'fixes' the debug splat.
+
+Yes.
+
+Waiman, can't we trivially fix the problem first? Then we can add the helpers
+and think about other improvements.
+
+Oleg.
