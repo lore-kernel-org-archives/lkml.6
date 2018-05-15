@@ -1,93 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeEOHJs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:09:48 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:60892 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeEOHJr (ORCPT
+        id S1752298AbeEOHKm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:10:42 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:36042 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbeEOHKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:09:47 -0400
-Date: Tue, 15 May 2018 09:09:27 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] arm64: dts: Draak: Enable HDMI input and VIN4
-Message-ID: <20180515070926.god7lctj6l72be4e@verge.net.au>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdXdDZdbrpLTogyR=djwtQYMf1dgAA_z+8HaFZBG6R+e6g@mail.gmail.com>
+        Tue, 15 May 2018 03:10:40 -0400
+X-Google-Smtp-Source: AB8JxZoiOjV5dy38LL9ZR5LLA4wweTn7mAkXxEwCgPLuPtXHrbcOFLlxlR7d9TO0LEADZCt0CnkgSCoSBqoIraig6o0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXdDZdbrpLTogyR=djwtQYMf1dgAA_z+8HaFZBG6R+e6g@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
+References: <20180413212427.18261-1-labbott@redhat.com> <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+ <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 09:10:39 +0200
+X-Google-Sender-Auth: FGlYaer7MDCnWwCoGD2C6gV6bXA
+Message-ID: <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
+Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:33:44PM +0200, Geert Uytterhoeven wrote:
-> Hi Jacopo,
-> 
-> On Fri, May 11, 2018 at 11:59 AM, Jacopo Mondi
-> <jacopo+renesas@jmondi.org> wrote:
-> >    this series enables HDMI input and VIN4 on R-Car D3 Draak board.
-> >
-> > The Draak board has an HDMI input connected to an HDMI decoder that feeds
-> > the VIN capture interface through its parallel video interface.
-> >
-> > The series requires the just sent:
-> > [PATCH 0/5] rcar-vin: Add support for digital input on Gen3
-> >
-> > and enables image capture operations on D3 Draak board.
-> >
-> > The series has been developed on top of media-master tree but applies cleanly
-> > on top of latest renesas-driver.
-> >
-> > Geert: would you like a topic branch for this series to be included in
-> > renesas-drivers?
-> 
-> It seems patch 2 has been applied by Simon already, but there is some
-> discussion pending on patch 3?
+Hi Laura,
 
-Yes, that is correct.
+On Tue, May 15, 2018 at 12:49 AM, Laura Abbott <labbott@redhat.com> wrote:
+> On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
+>> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+>>> The new challenge is to remove VLAs from the kernel
+>>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>>> turn on -Wvla.
+>>>
+>>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>>> more expensive than stack allocation. Introduce a fast path with a
+>>> fixed size stack array to cover most chip with gpios below some fixed
+>>> amount. The slow path dynamically allocates an array to cover those
+>>> chips with a large number of gpios.
+>>
+>>
+>> Blindly replacing VLAs by allocated arrays is IMHO not such a good
+>> solution.
+>> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
+>> bytes. That's an uppper limit, and assumes they are all on the same
+>> gpiochip,
+>> which they probably aren't.
+>>
+>> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
+>>
+>> So, wouldn't it make more sense to not allocate memory, but just process
+>> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
+>> 16 bytes)? The code already caters for handling chunks due to not all
+>> gpios
+>> belonging to the same gpiochip. That will probably also be faster than
+>> allocating memory, which is the main idea behind this API.
+>>
+>>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>
+>>
+>>> --- a/drivers/gpio/gpiolib.c
+>>> +++ b/drivers/gpio/gpiolib.c
+>>
+>>
+>>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip
+>>> *chip, void *data,
+>>>                  goto err_free_descs;
+>>>          }
+>>>
+>>> +       if (chip->ngpio > FASTPATH_NGPIO)
+>>> +               chip_warn(chip, "line cnt %d is greater than fast path
+>>> cnt %d\n",
+>>> +               chip->ngpio, FASTPATH_NGPIO);
+>>
+>>
+>> FWIW, can this warning be triggered from userspace?
+>>
+>>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool
+>>> can_sleep,
+>>>
+>>>          while (i < array_size) {
+>>>                  struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+>>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+>>
+>>
+>> Hence just use a fixed size here...
+>>
+>>> +               unsigned long fastpath[2 *
+>>> BITS_TO_LONGS(FASTPATH_NGPIO)];
+>>> +               unsigned long *mask, *bits;
+>>>                  int first, j, ret;
+>>>
+>>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+>>> +                       memset(fastpath, 0, sizeof(fastpath));
+>>> +                       mask = fastpath;
+>>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+>>> +               } else {
+>>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>>> +                                          sizeof(*mask),
+>>> +                                          can_sleep ? GFP_KERNEL :
+>>> GFP_ATOMIC);
+>>> +                       if (!mask)
+>>> +                               return -ENOMEM;
+>>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+>>> +               }
+>>> +
+>>>                  if (!can_sleep)
+>>>                          WARN_ON(chip->can_sleep);
+>>>
+>>>                  /* collect all inputs belonging to the same chip */
+>>>                  first = i;
+>>> -               memset(mask, 0, sizeof(mask));
+>>>                  do {
+>>>                          const struct gpio_desc *desc = desc_array[i];
+>>>                          int hwgpio = gpio_chip_hwgpio(desc);
+>>
+>>
+>> Out-of-context, the code does:
+>>
+>> |                       __set_bit(hwgpio, mask);
+>> |                       i++;
+>> |                 } while ((i < array_size) &&
+>>
+>> ... and change this limit to "(i < min(array_size, first +
+>> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
+>>
+>> |                         (desc_array[i]->gdev->chip == chip));
+>>
+>> ... and you're done?
+>>
+> I don't think this approach will work since gpio_chip_{get,set}_multiple
+> expect to be working on arrays for the entire chip. There doesn't seem
+> to be a nice way to work on a subset of GPIOs without defeating the point
+> of the multiple API.
 
-Also, for extra fun, I moved the nodes when applying patch 2.
+You're right, sorry for missing that.
 
-> > Patches for testing are available at:
-> > git://jmondi.org/linux d3/media-master/driver
-> > git://jmondi.org/linux d3/media-master/dts
-> > git://jmondi.org/linux d3/media-master/test
-> > git://jmondi.org/vin-tests d3
-> >
-> > Thanks
-> >     j
-> >
-> > Jacopo Mondi (3):
-> >   dt-bindings: media: rcar-vin: Add R8A77995 support
-> >   arm64: dts: renesas: r8a77995: Add VIN4
-> >   arm64: dts: renesas: draak: Describe HDMI input
-> >
-> >  .../devicetree/bindings/media/rcar_vin.txt         |  1 +
-> >  arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 68 ++++++++++++++++++++++
-> >  arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 11 ++++
-> >  3 files changed, 80 insertions(+)
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+> is 2*256 = 512 bytes really too much stack space? I guess we could
+> switch to a Kconfig to allow for better bounds.
+
+That's a good question.
+
+As long as a VLA is used, it's probably fine, as chip->ngpio is quite small.
+If you would change it to an array that can accommodate NR_GPIOS bits, you
+have to start caring about recursion (e.g. gpio-74x164 driven from spi-gpio,
+where I can extend the chain to increase the level of recursion arbitrarily).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
