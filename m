@@ -1,142 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752551AbeEOIjM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:39:12 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:49025 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752396AbeEOIjK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:39:10 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="14261108"
-Subject: Re: [RFC PATCH 5/5] net: macb: Add WOL support with ARP
-To: Harini Katakam <harinik@xilinx.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
-        David Miller <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <michals@xilinx.com>,
-        <appanad@xilinx.com>
-References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
- <1521726700-22634-6-git-send-email-harinikatakamlinux@gmail.com>
- <51e1b2f3-4dd7-3513-2148-649372775130@microchip.com>
- <CAFcVECKA6J-c4KYPZS05Ooj4x5+AARcxCdJfV2uHOHNOVXZaOQ@mail.gmail.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <a1f253bd-b2f2-943f-2653-45019d344886@microchip.com>
-Date: Tue, 15 May 2018 11:39:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752484AbeEOIkH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:40:07 -0400
+Received: from david.siemens.de ([192.35.17.14]:33505 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752374AbeEOIkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:40:05 -0400
+Subject: Re: [PATCH v3 0/8] PCI: leak fixes, removable generic PCI host,
+ assorted stuff
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <cover.1526363896.git.jan.kiszka@siemens.com>
+ <72f23e5f-4641-9ef3-09e6-70c4724f21a4@mentor.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jan.kiszka@siemens.com; prefer-encrypt=mutual; keydata=
+ xsDhBEq0i8QRBAD2wOxlC9m/8t/vqjm1U9yQCT6OJ2Wbv/qys9DYM0CvcOTDMWQwmV1/VsZj
+ KR5YgB5NPt+To7X6x5cjz15AGnx5Fb8Wnrq8EF9ZfHMwb7YMx1LdPYPDnXr37wE3XupFmkHB
+ Mes4htyX7Dz8LvKDLnli4IsAmWG+kV1JI6LWKXLpSwCg8JRq4SWoB4VCQxbH3GjntgvwNc8D
+ /2q5Dj0urJ7s7sdXhrH0hcFkpSFRmU5Yd6MCwcbFHm2paL5gqVjNNUUwDBKAL9eZaQVIHKwC
+ 44BvNGO2gcQ26R3AuCHUQ+pZHg34tok1JCNZ6IEZccb+33Qq0qbcDMJJiDYp7ppp6ozifvc4
+ YaqJECX48IydxfE9+41oV7T5vNAzA/QL/UMJyTnu5jiOXcyn5iFQw535lXkwKsqeXzCowLho
+ HICZ2jITJPdTT/+9pGWwMQqST/SS35Tx4EnS3z2BWsNMCLuXCPkxF1elaMJqMfMJxFD8rAgS
+ 9GK6zP6fJlsA1wq/UvKSL8v4QPOnTNCVOsyqJVasGV0ZPcDfcj+ClNO4zR5KYW4gS2lzemth
+ IDxqYW4ua2lzemthQHdlYi5kZT7CYwQTEQIAIwIbIwYLCQgHAwIEFQIIAwQWAgMBAh4BAheA
+ BQJOpoNtAhkBAAoJEIrUrG965ecUOPUAoK+Rh12KgCjplHAS0AoiGKwGOuq7AKDEVnBtRAoy
+ VRvp3lOlOx+P2Ay56M7BTQRKtIvEEAgA2/PlX6oyi7dToH0CJCHq0eKmZaa7CmGaVnxyeepK
+ vIfiM8n8Td76AbG64fjREMwgSpb4F/UytF3z/03tj4e49W/zKjbBRB2/wmFRlZBC9crg22Q+
+ bgvMOsxnC6uHXaWN8fL+jVei/5OoHOoFqaMsX8EvploitlI/BPj+VgW26jksf3YZyk1hncls
+ Z/IYhXzgRmVJo4RiTW/YLQAkwndwc+fKPa/IYLEDW1Jc4kNLoK0P90b45zju0hpl0C00pVOR
+ TOtzFK9G5Ha7qOAWJfAVJORHKAkkvwftf3hkpPdLyvZUWRHXvUexmA61fLvDBAFhRxYGD8t5
+ gz88SF5Tzq+0ywADBQf/YSkaYrEslPWiCA2wU6EW0yaqBQAobFsOMvsufJ6o2ntq5Ncq37VI
+ 3KCT67eHPE9x+zPcENoZWsRrC9S9PCf1LOsi7ybZsR13AJqDFlRzJZ4klh9QwgwFZxUBzOdI
+ vttwzG1QkzHx06RKZluFYpPF3DRduSMukdIJ2wmWCU+ohB+mYefe65JGjYQfHVs8mgYVFOPx
+ bRea9VJACCMuspoZWpj43UdR1lLLyIUFYz+jqcPW7Hd/GTIw4N67pYl0dwPDmFd4ohJ5g4Zp
+ q61toNysBGEuEm5GCcn0VmGtQpSYnR5cVm5b2yPz4bIuFOSuZUo/l7vitdY0iy0/wvKbBC+N
+ K8JJBBgRAgAJBQJKtIvEAhsMAAoJEIrUrG965ecULvAAoKGvxs5T3IhyQT8I8sMsyAvCE4wH
+ AJ46S16yab+OxNkvOeoOEX0EnHVHaA==
+Message-ID: <8f40ba94-d730-5f45-c113-2cd53c722467@siemens.com>
+Date: Tue, 15 May 2018 10:39:30 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-In-Reply-To: <CAFcVECKA6J-c4KYPZS05Ooj4x5+AARcxCdJfV2uHOHNOVXZaOQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <72f23e5f-4641-9ef3-09e6-70c4724f21a4@mentor.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Harini,
-
-On 10.05.2018 13:37, Harini Katakam wrote:
-> Hi Claudiu,
+On 2018-05-15 09:58, Vladimir Zapolskiy wrote:
+> Hi Jan,
 > 
-> On Fri, May 4, 2018 at 5:47 PM, Claudiu Beznea
-> <Claudiu.Beznea@microchip.com> wrote:
->>
->>
->> On 22.03.2018 15:51, harinikatakamlinux@gmail.com wrote:
->>> From: Harini Katakam <harinik@xilinx.com>
->>>
->>> This patch enables ARP wake event support in GEM through the following:
->>>
->>> -> WOL capability can be selected based on the SoC/GEM IP version rather
->>> than a devictree property alone. Hence add a new capability property and
->>> set device as "wakeup capable" in probe in this case.
->>> -> Wake source selection can be done via ethtool or by enabling wakeup
->>> in /sys/devices/platform/..../ethx/power/
->>> This patch adds default wake source as ARP and the existing selection of
->>> WOL using magic packet remains unchanged.
->>> -> When GEM is the wake device with ARP as the wake event, the current
->>> IP address to match is written to WOL register along with other
->>> necessary confuguration required for MAC to recognize an ARP event.
->>> -> While RX needs to remain enabled, there is no need to process the
->>> actual wake packet - hence tie off all RX queues to avoid unnecessary
->>> processing by DMA in the background.
->>
->> Why is this different for magic packet vs ARP packet?
+> On 05/15/2018 08:58 AM, Jan Kiszka wrote:
+>> Changes in v3:
+>>  - refactor series to be both bisectable and simpler while reworking
+>>    of_pci_get_host_bridge_resources()
+>>  - include of_pci_get_host_bridge_resources() removal
+>>  - include devm_of_pci_get_host_bridge_resources() error path fixes
+>>  - effectively, no functional changes to v2
 > 
-> This should ideally be the same whether it is a magic packet or ARP on
-> the version of the IP we use (more details in my comment below).
-> I simply did not alter the magic packet code for now to avoid breaking
-> others' flow.
+> while the previous version of the changeset plus the fixup found on Bjorn's
+> pci/resource branch is sufficient, I can't argue with the fact that this
+> series is way better.
 
-I see your point. But in the end the code should be nice and clean.
-
->
-> <snip>
->>> +#define MACB_CAPS_WOL                                0x00000080
->>
->> I think would be better to have this as part of bp->wol and use it properly
->> in suspend/resume hooks.
-> 
-> I think a capability flag as part of config structure is better
-> because this is clearly an SoC related feature and there is no need
-> to have a devicetree property.
-
-Since there is no difference b/w ARP and magic packet in term of SoC,
-I mean, there is no special treatment b/w them, I think we should treat
-them both in the same way. This was my point.
+0day-testing found a build breakage in the middle of the old series.
+Wasn't straightforward to fix, so Bjorn suggested a different series
+structure which I try to implement with v3.
 
 > 
-> <snip>
->> Wouldn't it work if you will change it in something like this:
->>
->>         u32 wolmask, arpipmask = 0;
->>
->>         if (bp->wol & MACB_WOL_ENABLED) {
->>                 macb_writel(bp, IER, MACB_BIT(WOL));
->>
->>                 if (bp->wol & MACB_WOL_HAS_ARP_PACKET) {
->>                         /* Enable broadcast. */
->>                         gem_writel(bp, NCFGR, gem_readl(bp, NCFGR) & ~MACB_BIT(NBC));
->>                         arpipmask = cpu_to_be32p(&bp->dev->ip_ptr->ifa_list->ifa_local) & 0xFFFF;
->>                         wolmask = arpipmask | MACB_BIT(ARP);
->>                 } else {
->>                         wolmask = MACB_BIT(MAG);
->>                 }
->>
->>                 macb_writel(bp, WOL, wolmask);
->>                 enable_irq_wake(bp->queues[0].irq);
-> 
-> The above would work. But I'd still have to add the RX BD changes
-> and then stop the phy, disable interrupt etc., for most optimal power
-> down state - the idea is to keep only is essential to detect a wake event.
-> 
+> In case if this series is accepted I'll review and test the fix of
+> of_pci_get_host_bridge_resources() memleak again, no worries.
 
-Also, with your approach the suspend/resume time will be longer.
+Thanks, will address that issue first.
 
->>                 netif_device_detach(netdev);
->>         }
->>
->> I cannot find anything particular for ARP WOL events in datasheet. Also,
->> I cannot find something related to DMA activity while WOL is active
-> 
-> Can you please let me know which version you are referring to?
-> ZynqMP uses the IP version r1p06 or 07.
+Jan
 
-I have user guide revision 15
-.
-
-> 
-> There is a clear set of rules for ARP wake event to be recognized.
-> 
-> About the DMA activity, it is not explicitly mentioned but we have
-> observed that the DMA will continue to process incoming packets
-> and try to write them to the memory and Cadence has confirmed
-> the same. Later versions of the IP may have some provision to
-> stop DMA activity on RX channel but unfortunately in this version,
-> using a dummy RX buffer descriptor is the only way.>
-> I'm looking into your other suggestions.
-> Thanks, will get back to you.
-> 
-> Regards,
-> Harini
-> 
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
