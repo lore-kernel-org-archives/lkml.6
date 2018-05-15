@@ -1,29 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752471AbeEOGZq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:25:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44607 "EHLO
+        id S1752311AbeEOG0f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:26:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43785 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbeEOGZo (ORCPT
+        with ESMTP id S1752097AbeEOG0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:25:44 -0400
-Date: Mon, 14 May 2018 23:25:21 -0700
-From: tip-bot for SeongJae Park <tipbot@zytor.com>
-Message-ID: <tip-173af2613efdc29547718848a0a2928a26b1398f@git.kernel.org>
-Cc: akpm@linux-foundation.org, hpa@zytor.com, will.deacon@arm.com,
-        sj38.park@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org
-Reply-To: mingo@kernel.org, peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, hpa@zytor.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, sj38.park@gmail.com
-In-Reply-To: <1526338533-6044-8-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526338533-6044-8-git-send-email-paulmck@linux.vnet.ibm.com>
+        Tue, 15 May 2018 02:26:33 -0400
+Date: Mon, 14 May 2018 23:25:49 -0700
+From: tip-bot for Andrea Parri <tipbot@zytor.com>
+Message-ID: <tip-b7e4aadef28f217de8907eec60a964328797a2be@git.kernel.org>
+Cc: torvalds@linux-foundation.org, peterz@infradead.org,
+        j.alglave@ucl.ac.uk, dhowells@redhat.com,
+        andrea.parri@amarulasolutions.com, will.deacon@arm.com,
+        akiyks@gmail.com, npiggin@gmail.com, akpm@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com, stern@rowland.harvard.edu, hpa@zytor.com,
+        boqun.feng@gmail.com, mingo@kernel.org, luc.maranget@inria.fr,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        rdunlap@infradead.org
+Reply-To: will.deacon@arm.com, andrea.parri@amarulasolutions.com,
+        akiyks@gmail.com, npiggin@gmail.com, j.alglave@ucl.ac.uk,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        dhowells@redhat.com, tglx@linutronix.de, luc.maranget@inria.fr,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org, hpa@zytor.com,
+        stern@rowland.harvard.edu, boqun.feng@gmail.com
+In-Reply-To: <1526338889-7003-1-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526338889-7003-1-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/Documentation: Use `warning` RST
- directive
-Git-Commit-ID: 173af2613efdc29547718848a0a2928a26b1398f
+Subject: [tip:locking/core] locking/spinlocks: Document the semantics of
+ spin_is_locked()
+Git-Commit-ID: b7e4aadef28f217de8907eec60a964328797a2be
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,57 +43,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  173af2613efdc29547718848a0a2928a26b1398f
-Gitweb:     https://git.kernel.org/tip/173af2613efdc29547718848a0a2928a26b1398f
-Author:     SeongJae Park <sj38.park@gmail.com>
-AuthorDate: Mon, 14 May 2018 15:55:33 -0700
+Commit-ID:  b7e4aadef28f217de8907eec60a964328797a2be
+Gitweb:     https://git.kernel.org/tip/b7e4aadef28f217de8907eec60a964328797a2be
+Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
+AuthorDate: Mon, 14 May 2018 16:01:27 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 15 May 2018 08:11:15 +0200
 
-locking/Documentation: Use `warning` RST directive
+locking/spinlocks: Document the semantics of spin_is_locked()
 
-Use the proper RST directive, pointed out by a build warning.
+There appeared to be a certain, recurrent uncertainty concerning the
+semantics of spin_is_locked(), likely a consequence of the fact that
+this semantics remains undocumented or that it has been historically
+linked to the (likewise unclear) semantics of spin_unlock_wait().
 
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+A recent auditing [1] of the callers of the primitive confirmed that
+none of them are relying on particular ordering guarantees; document
+this semantics by adding a docbook header to spin_is_locked(). Also,
+describe behaviors specific to certain CONFIG_SMP=n builds.
+
+[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+    https://marc.info/?l=linux-kernel&m=152042843808540&w=2
+    https://marc.info/?l=linux-kernel&m=152043346110262&w=2
+
+Co-Developed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Co-Developed-by: Alan Stern <stern@rowland.harvard.edu>
+Co-Developed-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Akira Yokosawa <akiyks@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
 Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
-Cc: stern@rowland.harvard.edu
-Link: http://lkml.kernel.org/r/1526338533-6044-8-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526338889-7003-1-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/core-api/atomic_ops.rst | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ include/linux/spinlock.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/Documentation/core-api/atomic_ops.rst b/Documentation/core-api/atomic_ops.rst
-index 4ea4af71e68a..2e7165f86f55 100644
---- a/Documentation/core-api/atomic_ops.rst
-+++ b/Documentation/core-api/atomic_ops.rst
-@@ -466,10 +466,12 @@ Like the above, except that these routines return a boolean which
- indicates whether the changed bit was set _BEFORE_ the atomic bit
- operation.
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 4894d322d258..1e8a46435838 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -380,6 +380,24 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+ 	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+ })
  
--WARNING! It is incredibly important that the value be a boolean,
--ie. "0" or "1".  Do not try to be fancy and save a few instructions by
--declaring the above to return "long" and just returning something like
--"old_val & mask" because that will not work.
-+
-+.. warning::
-+        It is incredibly important that the value be a boolean, ie. "0" or "1".
-+        Do not try to be fancy and save a few instructions by declaring the
-+        above to return "long" and just returning something like "old_val &
-+        mask" because that will not work.
- 
- For one thing, this return value gets truncated to int in many code
- paths using these interfaces, so on 64-bit if the bit is set in the
++/**
++ * spin_is_locked() - Check whether a spinlock is locked.
++ * @lock: Pointer to the spinlock.
++ *
++ * This function is NOT required to provide any memory ordering
++ * guarantees; it could be used for debugging purposes or, when
++ * additional synchronization is needed, accompanied with other
++ * constructs (memory barriers) enforcing the synchronization.
++ *
++ * Returns: 1 if @lock is locked, 0 otherwise.
++ *
++ * Note that the function only tells you that the spinlock is
++ * seen to be locked, not that it is locked on your CPU.
++ *
++ * Further, on CONFIG_SMP=n builds with CONFIG_DEBUG_SPINLOCK=n,
++ * the return value is always 0 (see include/linux/spinlock_up.h).
++ * Therefore you should not rely heavily on the return value.
++ */
+ static __always_inline int spin_is_locked(spinlock_t *lock)
+ {
+ 	return raw_spin_is_locked(&lock->rlock);
