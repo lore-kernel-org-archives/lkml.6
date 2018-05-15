@@ -1,63 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752354AbeEOGKV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:10:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38186 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752307AbeEOGKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:10:17 -0400
-X-Google-Smtp-Source: AB8JxZqQpKZjLq8ISCLe+qkD/XiVn5eKablzC2hCJ9Ytd3sb0WJ59HkEoaYVyqF1aiMBVCRG4wyjTT2XO4VX5H7ATe8=
+        id S1752407AbeEOGPw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:15:52 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:47017 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752346AbeEOGPu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 02:15:50 -0400
+X-Google-Smtp-Source: AB8JxZoq+nmRu5L+ZmaBBiHRI65cSFZF17f5+CXtxS1xvGvP1KQbWOKG7fkrz2I3D6+mHhUD30ajEA==
+Date: Tue, 15 May 2018 08:15:45 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH memory-model 0/19] Updates to the formal memory model
+Message-ID: <20180515061545.GA21993@gmail.com>
+References: <20180514233328.GA7601@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515090901.74c9429e@canb.auug.org.au>
-References: <20180510091634.7fb3aaf2@canb.auug.org.au> <20180515090901.74c9429e@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 15 May 2018 08:10:14 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdUi6SxhyYcm5GeS=6+=52kZevkn=ws4i8uKjpaiwXNYA@mail.gmail.com>
-Message-ID: <CAJKOXPdUi6SxhyYcm5GeS=6+=52kZevkn=ws4i8uKjpaiwXNYA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
- dma-mapping tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514233328.GA7601@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 1:09 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> On Thu, 10 May 2018 09:16:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the samsung-krzk tree got a conflict in:
->>
->>   arch/arm/mach-exynos/Kconfig
->>
->> between commit:
->>
->>   4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in lib/Kconfig")
->>
->> from the dma-mapping tree and commit:
->>
->>   c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
->>
->> from the samsung-krzk tree.
->>
->> I fixed it up (the latter removed the whole section modified by
->> the former, so I just removed the section) and can carry the fix as
->> necessary. This is now fixed as far as linux-next is concerned, but any
->> non trivial conflicts should be mentioned to your upstream maintainer
->> when your tree is submitted for merging.  You may also want to consider
->> cooperating with the maintainer of the conflicting tree to minimise any
->> particularly complex conflicts.
->
-> This is now a conflict between the arm-soc tree and the dma-mapping tree.
 
-Yes, this is expected. Thanks for letting us know. I mentioned this
-also in my pull request to arm-soc.
+Hi,
 
-Best regards,
-Krzysztof
+* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+
+> Hello!
+> 
+> This series contains updates to the Linux kernel's formal memory model in
+> tools/memory-model.  These are ready for inclusion into -tip.
+> 
+> 1.	Rename LKMM's "link" and "rcu-path" relations to "rcu-link"
+> 	and "rb", respectively, courtesy of Alan Stern.
+> 
+> 2.	Redefine LKMM's "rb" relation in terms of rcu-fence in order
+> 	to match the structure of LKMM's other strong fences, courtesy
+> 	of Alan Stern.
+> 
+> 3.	Update required version of herdtools7, courtesy of Akira Yokosawa.
+> 
+> 4.	 Fix cheat sheet typo: "RWM" should be "RMW", courtesy of Paolo Bonzini.
+> 
+> 5.	Improve cheatsheet.txt key for SELF and SV.
+> 
+> 6.	Fix cheatsheet.txt to note that smp_mb__after_atomic() orders
+> 	later RMW operations.
+> 
+> 7.	Model smp_store_mb(), courtesy of Andrea Parri.
+> 
+> 8.	Fix coding style in 'linux-kernel.def', courtesy of Andrea Parri.
+> 
+> 9.	Add scripts to test the memory model.
+> 
+> 10.	Add model support for spin_is_locked(), courtesy of Luc Maranget.
+> 
+> 11.	Flag the tests that exercise "cumulativity" and "propagation".
+> 
+> 12.	Remove duplicated code from lock.cat, courtesy of Alan Stern.
+> 
+> 13.	Improve comments in lock.cat, courtesy of Alan Stern.
+> 
+> 14.	Improve mixed-access checking in lock.cat, courtesy of Alan Stern.
+> 
+> 15.	Remove out-of-date comments and code from lock.cat, which have
+> 	been obsoleted by the settled-upon spin_is_locked() semantics,
+> 	courtesy of Alan Stern.
+> 
+> 16.	Fix coding style in 'lock.cat', bringing the indentation to
+> 	Linux-kernel standard, courtesy of Andrea Parri.
+> 
+> 17.	Update Andrea Parri's email address in the MAINTAINERS file,
+> 	oddly enough courtesy of Andrea Parri.  ;-)
+> 
+> 18.	Update ASPLOS information now that ASPLOS has come and gone,
+> 	courtesy of Andrea Parri.
+> 
+> 19.	Add reference for 'Simplifying ARM concurrency', courtesy
+> 	of Andrea Parri.
+> 
+> 								Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>  MAINTAINERS                                                               |    2 
+>  tools/memory-model/Documentation/cheatsheet.txt                           |    7 
+>  tools/memory-model/Documentation/explanation.txt                          |  261 +++++-----
+>  tools/memory-model/Documentation/references.txt                           |   17 
+>  tools/memory-model/README                                                 |    2 
+>  tools/memory-model/linux-kernel.bell                                      |    4 
+>  tools/memory-model/linux-kernel.cat                                       |   53 +-
+>  tools/memory-model/linux-kernel.def                                       |   34 -
+>  tools/memory-model/litmus-tests/.gitignore                                |    1 
+>  tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus          |    2 
+>  tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus    |   35 +
+>  tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus      |   34 +
+>  tools/memory-model/litmus-tests/README                                    |   19 
+>  tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus |    4 
+>  tools/memory-model/lock.cat                                               |  197 ++++---
+>  tools/memory-model/scripts/checkalllitmus.sh                              |   73 ++
+>  tools/memory-model/scripts/checklitmus.sh                                 |   86 +++
+>  17 files changed, 595 insertions(+), 236 deletions(-)
+
+Applied this and the other two series to the locking tree, thanks Paul!
+
+I ended up editing some of the changelogs and titles, to better organize them:
+
+99c12749b172: tools/memory-model: Add reference for 'Simplifying ARM concurrency'
+1a00b4554d47: tools/memory-model: Update ASPLOS information
+5ccdb7536ebe: MAINTAINERS, tools/memory-model: Update e-mail address for Andrea Parri
+05604e7e3adb: tools/memory-model: Fix coding style in 'lock.cat'
+cee0321a404f: tools/memory-model: Remove out-of-date comments and code from lock.cat
+30b795df11a1: tools/memory-model: Improve mixed-access checking in lock.cat
+fd0359dbac3d: tools/memory-model: Improve comments in lock.cat
+8559183ccaec: tools/memory-model: Remove duplicated code from lock.cat
+1bd3742043fa: tools/memory-model: Flag "cumulativity" and "propagation" tests
+15553dcbca06: tools/memory-model: Add model support for spin_is_locked()
+2fb6ae162f25: tools/memory-model: Add scripts to test memory model
+d17013e0bac6: tools/memory-model: Fix coding style in 'linux-kernel.def'
+bf8c6d963d16: tools/memory-model: Model 'smp_store_mb()'
+bfd403bb3617: tools/memory-order: Update the cheat-sheet to show that smp_mb__after_atomic() orders later RMW operations
+35bb6ee67906: tools/memory-order: Improve key for SELF and SV
+a839195186a2: tools/memory-model: Fix cheat sheet typo
+5b62832c1e52: tools/memory-model: Update required version of herdtools7
+9d036883a179: tools/memory-model: Redefine rb in terms of rcu-fence
+1ee2da5f9b5a: tools/memory-model: Rename link and rcu-path to rcu-link and rb
+1362ae43c503: locking/spinlocks: Clean up comment and #ifndef for {,queued_}spin_is_locked()
+c6f5d02b6a0f: locking/spinlocks/arm64: Remove smp_mb() from arch_spin_is_locked()
+b7e4aadef28f: locking/spinlocks: Document the semantics of spin_is_locked()
+173af2613efd: locking/Documentation: Use `warning` RST directive
+fc7bdc90249b: locking/Documentation: Fix incorrect example code
+e89641dd038a: locking/memory-barriers.txt/kokr: Update Korean translation to de-emphasize smp_read_barrier_depends() some more
+e2ba8041f2ed: locking/memory-barriers.txt/kokr: Update Korean translation to fix description of data dependency barriers
+df9e0cc85c01: locking/memory-barriers.txt/kokr: Update Korean translation to cross-reference "tools/memory-model/"
+1ea32723c42a: locking/memory-barriers.txt/kokr: Update Korean translation to de-emphasize smp_read_barrier_depends()
+eabed716672c: locking/memory-barriers.txt/kokr: Update Korean translation to indicate that READ_ONCE() now implies smp_barrier_depends()
+5846581e3563: locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example
+
+In particular the Korean translation commits are IMHO more readable in this 
+fashion. I also simplified the translation commits internally:
+
+    Translate this commit to Korean:
+    
+      f28f0868feb1 ("locking/memory-barriers: De-emphasize smp_read_barrier_depends() some more")
+
+Thanks,
+
+	Ingo
