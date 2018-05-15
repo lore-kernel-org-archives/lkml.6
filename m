@@ -1,281 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeEOKTp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:19:45 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38312 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbeEOKTn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:19:43 -0400
-X-Google-Smtp-Source: AB8JxZoQkX9YC6us2VssInhX3RNXlJsTmOBSXTLnE8VSFqkvenmLYSqI3JE2O+cFh/fuZqaagCfYmgiyK84nXYizDFw=
+        id S1752809AbeEOKUU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:20:20 -0400
+Received: from mail-bl2nam02on0057.outbound.protection.outlook.com ([104.47.38.57]:53984
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752580AbeEOKUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:20:17 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com;
+Date: Tue, 15 May 2018 18:19:24 +0800
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: berlin2q: move PMU node from soc to root
+Message-ID: <20180515181924.5e318077@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180514163206.GF30654@e110439-lin>
-References: <20180510150553.28122-1-patrick.bellasi@arm.com>
- <20180510150553.28122-4-patrick.bellasi@arm.com> <20180513060443.GB64158@joelaf.mtv.corp.google.com>
- <20180513062538.GA116730@joelaf.mtv.corp.google.com> <20180514163206.GF30654@e110439-lin>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 15 May 2018 12:19:21 +0200
-Message-ID: <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when required
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TYAPR01CA0023.jpnprd01.prod.outlook.com (2603:1096:404::35)
+ To MWHPR03MB2638.namprd03.prod.outlook.com (2603:10b6:300:46::8)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR03MB2638;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2638;3:73Zw1XMjfPNbKo/cdfAKBgm5oH2a8uGluijUcPUdg/nA2/+wdJX96q59C38Lj6qyzU9t5BSmjkVC9bxhI1BNRaJp8Ds2ehlY+fpBQl1uyp3ro+4FSYsrF4SzjuNZ1vWVb5NQlYAlZosxshXVgUmU4qcxHjaN34XIzTLDSsP1yNK2AQD14yhnw3K9J/N4vCDQNFjhqipjQdmdBPQgiEdgQh4qvleLqZyy+TRQ9iXYWTByJ+ZHT8Me/CWwfkUouAq0;25:a1+8HWoCbsKgmxMVbGrUyX+pmjFZcEjgJm6vVTKB0wYJPGgEcH4te/JrZ8I+1u2nMO1VynjKAkKlCwMILePXANqacws6iNc/p/WJv6Rop+4XxZSSXmZgt82bzKL68j53/VIZpJx4i+D82ytqALXnc41lt1nndpoJm6Eohh33IjokMVQumSWUF+0UKqyATjdC/eV998bxJLTPMvg9cPOJtl5VNb1LE/uS+2dCIpqooAVZYqbzzmaYZduoX7RAoMj1MFEDGSf3uJ6C3OJRJApDy6LDs5bHwWT/2tW/ZW2sdsp9tZ3KSLp4KUeR7pcuvY3Ly9nQa1yqk0pNxPFkh3Z8nQ==;31:CP/QSA4RRRx1CyjPUgPtiI6mhWP8GJALPVDu48DT5gN28EpB8jTMie21IEmHOqqu5chYz3PzokMyXnyVLVckx+OqPQSkNal78gDzeavmjCRDo5TLM9zGhtcTTWbHz1unAeYhGqKwxjdXXHUSKHEUl6ISvnqJiFOWlLW++TqwvfyT/eFCs+qJPXbYB7WI3mf8zr9xGuL0V7an9xmAz3SK5VCitNph9q56I2kMDc6UCAE=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB2638:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2638;20:Tsa8W9MwwnJit691pD+Zv9mZffKuTNgR7D6UzDC9BZM+4S5EmAJD5u14AmWJ1NiAK7aOQny8EalwU3B9V4KzV8aAydCGjCvU2wS0UOKheSr4D1Rp/p6Oh6hMLWddxg4+LBWldF1diTMQd5ptD4iKqH1LxZH2ikecitpZsFa0tRJV/XT+A7aHDUnmt5Y5OWspK2lwBManRbRichgjUWYZECPGUufTVuODTsfLXvo+bG0RU+VhIVrCvqaFh2tVIGGNjqwGmsMmx9P7e+QaPUyOYgIQvC/GBrEsXjCf6MIPAGqnSXb1EdYtufJpCl5qLEywbv6fXbQxUaG1/DJzSrXQsZItjfpU9P0e8VduaI1E00XnzOUYH45t1lXDobTPvKMcb6GXVsGhV+DsMWWA3wPsqsCFRU0YJSJX+ghsNtK0qDevw7tZ051GOE5rS1bM5J66sCUa+cEyketJXwx9umkOH88zkAxlHWS7edBOioTPq2ETEMYSdpcyktMn+3RUxR9m;4:pDj8tM8RH5ndAM2R83o0STiG/LdnAK28xUQB7FzHHMdH8OHtMgN9RkdMdwrFoijb5JEC3cr0HJvEhUNMuHvulMRwK+oPaw5DOTY6RWbwjf9Y72dO1K/CFyuS/21YMgYj7U4QjKSant/9t9Ar4NLQYI7fSweOJe7Rts0E5dHlBpbbgaOdE9CZEr4JfQiZneRfWLOi105ZVgLvZk9ZwwXBg1rbuvv1MOiGPOlyC8puDxaF8pD0ogglz+m1oxD8mJP70pWfz7d6fPUGW0vyukDIsg==
+X-Microsoft-Antispam-PRVS: <MWHPR03MB263880760291C1FBBE71A3CCED930@MWHPR03MB2638.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR03MB2638;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2638;
+X-Forefront-PRVS: 0673F5BE31
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(396003)(39860400002)(39380400002)(199004)(189003)(86362001)(9686003)(6666003)(25786009)(956004)(33896004)(8676002)(55016002)(39060400002)(81156014)(4326008)(486006)(476003)(81166006)(68736007)(316002)(305945005)(478600001)(7736002)(5660300001)(53936002)(110136005)(105586002)(72206003)(106356001)(50226002)(386003)(50466002)(186003)(2906002)(16526019)(52116002)(66066001)(1076002)(8936002)(7696005)(230700001)(6116002)(47776003)(1857600001)(23726003)(3846002)(6506007)(97736004)(26005)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2638;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2638;23:fzIaAPElDDKCHGONDn3QJ8W/rJi7vuHq86z1HoVMe?=
+ =?us-ascii?Q?oaHIJomet20wB1E1fPqqBS5PjC2hEBXR1Ba2Y73zavzD4OkVg5WhkyKKy5jr?=
+ =?us-ascii?Q?E77V+RQzaVXQNxDZfQYu0mMlgJFmk2iMHVTx7ZZZBRV91UH1Uy4Lwm3ByRF6?=
+ =?us-ascii?Q?UB7QsqjAK9S4esQyWP0/oGEgXp0yS1Q288OPo21Zq+dqlrepB2bwRTwmP4jV?=
+ =?us-ascii?Q?I5Bb0AzHP3e7kMBpisFz+lX7bV4MIFeqf35tVW9Cfl3ructBWtMDwp9uP5zH?=
+ =?us-ascii?Q?IlkBJIz/lxd3kA6owabH+R81qkgw7UqntrCQkIAoR39mu9aqpuvpbgW5aZ8X?=
+ =?us-ascii?Q?thOCyoO94FNSm0U+K8JVczbuh6/JkINklM0NyltVk0qidw97Gbd1RuGWHGr2?=
+ =?us-ascii?Q?2NZhd71KVD5xPDPbWoV5Ijcq5FbcljqCyv5ofI4U4osDBNfAEV6o3TnFzBOd?=
+ =?us-ascii?Q?g1NJ8pz+g3I4F6ol4I8Pi9bJwynWLVjHcX4e1oC+YlnYpVWB8lOX9CzGEyyK?=
+ =?us-ascii?Q?Rgke3+jR5KV6O7g6Qeny1q3BXvs4+FhGkdySr0vMsV5JDV80XV6tr/a2AYu6?=
+ =?us-ascii?Q?b8mrDN/Ko6BWoR/Gn7uXMUmZGDqNNYDyLr5y2R3vV5qRFv9+7Wv5u2/uo2KZ?=
+ =?us-ascii?Q?hfqIluEHDUYTOKzDNSWNFlTihh6LL3oK8njYiqb8TE/eOxWqg9TSLt3RHWJh?=
+ =?us-ascii?Q?J/DZSDyxN0WJbkESeR7u4HLYr+U782KPxo+KnPBnjkuXKbB0Ojm9LsW2TJDB?=
+ =?us-ascii?Q?k1x+w7S1tM3jj+ewbuKPkZNhyq3LyMfNpeREA+9QwLBNjswpyJ01dojmzOiF?=
+ =?us-ascii?Q?9AoYUCkuw7ZgXc7VPzhElqDYYre0Wuf2URm0jU9uOwydrB4NoHdU8sxvd4QJ?=
+ =?us-ascii?Q?rCrs5F6F2La5HLdrtYaCAoj7UC7DzAE2JXUT+4DsB1h0nMTsi6S6JLIEIjC3?=
+ =?us-ascii?Q?B1e7gXliKw2uV3tNG+eNm2SyNq8WEQATICtFa3yS7uTjm1u1YKZRNvLpLHZF?=
+ =?us-ascii?Q?W3eGAGjjNUpFera+qXBMBGAodQlycGP8R5Y8E6pqHFNeuY9SU6IKj96ApeuC?=
+ =?us-ascii?Q?bBnuz8/u1nN38uovdddG0Va9XNT8I76cEUMLZil44PX17q/D/vVuJd3i635N?=
+ =?us-ascii?Q?Qv+YMI9zflqnnnmY+fZ5rG0jxVn4LYu7ikEiB793YAsLUMY5k/vqbr3F+OMk?=
+ =?us-ascii?Q?VyxVlZIhxu/L2K0+jeTpcf8MmFhWvjzlcdgKVbAkMb0UowBHljILMwaTw=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: vU/5+iTFcmcrSjVIF9AS5Cjl3BWHwkN0sOm2T+JiW8a0PFWVLhGrbeSTniKWcf/ydT0XH/08zidM8tR7SNSXUZ83EKSWBLOb6ogvrrQpOtzjE1qaHts99Ni6NX6l0oYUWmzXCV7/s5xNRWJ0sG0C+Z9MrXHzXlLqcrSR61Ii2PvjaBfzDpsrDhCd5j5sV4MX
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2638;6:3axUlE5gZYETbkh2Q/Bht+/S1YuEKBOCbxOHwRFIGjNVsYo3rBeowmcFdlVVpgz9soEYjpLVXdxGX3mpYOD+BSAn7H9EUTgibrjGKsDseybwjde7k2SGzYv5UiQdPyKoBgPRunjHxE1crZHhqk3KZ6FpMZ/QDZ/P64HI5ZRMKlSkzV3TAEagRXjA1pfFo+rsBZiIr126GxkaKMUJMNRUhYyY0oEEByxfrbA4KUEA/JynYJTeAPjwUOn8Jyi1/CyDdI93OsSPptkashGTmb6fG5ZnhXyZTcJ4AsBY5SH4q9xcvc365RSAvWXhlam6WmT5Vxy7kSCIJt09hxtiBUsUl9JpEFbwMPMMrWdBhB0uOPzQxZQbpXAHLu/qTUzG0wWk0xCKrAj0FdNF3LXPfbliwQq7Zpjj7t7kq3gjv9ZY1t8NrieQLJYxIQH+6x6mKklBvKgsrk2l4tg/AbSN2GJlTg==;5:bXxhG6JAzgB2uXXpRhFOGUKVYhWahyiDw3Nj7A3EWQq4gS+okOS8HCqfELFMVEiFA2tFXNKu+rlZrRnEPnn+Yqgs2kqH+LVY5BUVOTwlLxooh7pii7rhQwb+dHzHrO2TottJbYpjzW1tiulb4kfGDaEgR0XdoYwZzvcCnE7fqfI=;24:rBf8l0vAt7OkhoRaV2MXLIXLr+t7SkYjm05Wo8JqNjV9a99pvDwVS0V4sakCsBx0zT4fpR5doV381BE7oSMRBeth8yb5RtADArxvTuzd9mg=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2638;7:DMHOIYtQ4nhG3ZuTbBBNKqbRy4r3smE731HOH6UQ19Zl5e5LpFtjgjyyHVUxDMXqsJ+leV2TP3SZcMJBBHeJ5MfFR4i1sRYRM7d1pT5oaNOG6tfq89agf8eqhYGBshUZIe0jIateG5iip3inaTaiW6/LAWMwdrfmku7oXTjTi8I85M/MznzOG7RBPwc0CQP8eJN2+iV7y7OS2dZsB3X5JnKjqOako3N8QuhPOA9xBp2IcJEkszvYDEg67sv0t7Ch
+X-MS-Office365-Filtering-Correlation-Id: 16c28247-57a7-4477-5dff-08d5ba4d72d3
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 10:20:12.9652 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16c28247-57a7-4477-5dff-08d5ba4d72d3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2638
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> On 12-May 23:25, Joel Fernandes wrote:
->> On Sat, May 12, 2018 at 11:04:43PM -0700, Joel Fernandes wrote:
->> > On Thu, May 10, 2018 at 04:05:53PM +0100, Patrick Bellasi wrote:
->> > > Schedutil updates for FAIR tasks are triggered implicitly each time a
->> > > cfs_rq's utilization is updated via cfs_rq_util_change(), currently
->> > > called by update_cfs_rq_load_avg(), when the utilization of a cfs_rq has
->> > > changed, and {attach,detach}_entity_load_avg().
->> > >
->> > > This design is based on the idea that "we should callback schedutil
->> > > frequently enough" to properly update the CPU frequency at every
->> > > utilization change. However, such an integration strategy has also
->> > > some downsides:
->> >
->> > Hi Patrick,
->
-> Hi Joel,
->
+Fix "make dtbs W=1" warns about missing reg or ranges property.
 
-[...]
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ arch/arm/boot/dts/berlin2q.dtsi | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
->> > > @@ -5456,10 +5443,12 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->> > >           update_cfs_group(se);
->> > >   }
->> > >
->> > > + /* The task is no more visible from the root cfs_rq */
->> > >   if (!se)
->> > >           sub_nr_running(rq, 1);
->> > >
->> > >   util_est_dequeue(&rq->cfs, p, task_sleep);
->> > > + cpufreq_update_util(rq, 0);
->> >
->> > One question about this change. In enqueue, throttle and unthrottle - you are
->> > conditionally calling cpufreq_update_util incase the task was
->> > visible/not-visible in the hierarchy.
->> >
->> > But in dequeue you're unconditionally calling it. Seems a bit inconsistent.
->> > Is this because of util_est or something? Could you add a comment here
->> > explaining why this is so?
->>
->> The big question I have is incase se != NULL, then its still visible at the
->> root RQ level.
->
-> My understanding it that you get !se at dequeue time when we are
-> dequeuing a task from a throttled RQ. Isn't it?
-
-Yes se becomes NULL only when you reach root domain
-
->
-> Thus, this means you are dequeuing a throttled task, I guess for
-> example because of a migration.
-> However, the point is that a task dequeue from a throttled RQ _is
-> already_ not visible from the root RQ, because of the sub_nr_running()
-> done by throttle_cfs_rq().
->
->> In that case should we still call the util_est_dequeue and the
->> cpufreq_update_util?
->
-> I had a better look at the different code paths and I've possibly come
-> up with some interesting observations. Lemme try to resume theme here.
->
-> First of all, we need to distinguish from estimated utilization
-> updates and schedutil updates, since they respond to two very
-> different goals.
->
->
-> .:: Estimated utilization updates
-> =================================
->
-> Goal: account for the amount of utilization we are going to
->       expect on a CPU
->
-> At {en,de}queue time, util_est_{en,de}queue() is always
-> unconditionally called because it tracks the utilization which is
-> estimated to be generated by all the RUNNABLE tasks.
->
-> We do not care about throttled/un-throttled RQ here because the effect
-> of throttling is already folded into the estimated utilization.
->
-> For example, a 100% tasks which is placed into a 50% bandwidth
-> limited TG will generate a 50% (estimated) utilization. Thus, when the
-> task is enqueued we can account immediately for that utilization
-> although the RQ can be currently throttled.
->
->
-> .:: Schedutil updates
-> =====================
->
-> Goal: select a better frequency, if and _when_ required
->
-> At enqueue time, if the task is visible at the root RQ the it's
-> expected to run within a scheduler latency period. Thus, it makes
-> sense to call immediately schedutil to account for its estimated
-> utilization to possibly increase the OPP.
->
-> If instead the task is enqueued into a throttled RQ, then I'm
-> skipping the update since the task will not run until the RQ is
-> actually un-throttled.
->
-> HOWEVER, I would say that in general we could skip this last
-> optimization and always unconditionally update schedutil at enqueue
-> time considering the fact that the effects of a throttled RQ are
-> always reflected into the (estimated) utilization of a task.
-
-I think so too
-
->
-> At dequeue time instead, since we certainly removed some estimated
-> utilization, then I unconditionally updated schedutil.
->
-> HOWEVER, I was not considering these two things:
->
-> 1. for a task going to sleep, we still have its blocked utilization
->    accounted in the cfs_rq utilization.
-
-It might be still interesting to reduce the frequency because the
-blocked utilization can be lower than its estimated utilization.
-
->
-> 2. for a task being migrated, at dequeue time we still have not
->    removed the task's utilization from the cfs_rq's utilization.
->    This usually happens later, for example we can have:
->
->       move_queued_task()
->          dequeue_task()                      --> CFS task dequeued
->          set_task_cpu()                         --> schedutil updated
->             migrate_task_rq_fair()
->                detach_entity_cfs_rq()
->                   detach_entity_load_avg()   --> CFS util removal
->          enqueue_task()
->
-> Moreover, the "CFS util removal" actually affects the cfs_rq only if
-> we hold the RQ lock, otherwise we know that it's just back annotated
-> as "removed" utilization and the actual cfs_rq utilization is fixed up
-> at the next chance we have the RQ lock.
->
-> Thus, I would say that in both cases, at dequeue time it does not make
-> sense to update schedutil since we always see the task's utilization
-> in the cfs_rq and thus we will not reduce the frequency.
-
-Yes only attach/detach make sense from an utilization pov and that's
-where we should check for a frequency update for utilization
-
->
-> NOTE, this is true independently from the refactoring I'm proposing.
-> At dequeue time, although we call update_load_avg() on the root RQ,
-> it does not make sense to update schedutil since we still see either
-> the blocked utilization of a sleeping task or the not yet removed
-> utilization of a migrating task. In both cases the risk is to ask for
-> an higher OPP right when a CPU is going to be IDLE.
-
-We have to take care of not mixing the opportunity to update the
-frequency when we are updating the utilization with the policy that we
-want to apply regarding (what we think that is) the best time to
-update the frequency. Like saying that we should wait a bit more to
-make sure that the current utilization is sustainable because a
-frequency change is expensive on the platform (or not)
-
-It's not because a task is dequeued that we should not update and
-increase the frequency; Or even that we should not decrease it because
-we have just taken into account some removed utilization of a previous
-migration.
-The same happen when a task migrates, we don't know if the utilization
-that is about to be migrated, will be higher or lower than the normal
-update of the utilization (since the last update) and can not generate
-a frequency change
-
-I see your explanation above like a kind of policy where you want to
-balance the cost of a frequency change with the probability that we
-will not have to re-update the frequency soon.
-
-I agree that some scheduling events give higher chances of a
-sustainable utilization level and we should favor these events when
-the frequency change is costly but I'm not sure that we should remove
-all other opportunity to udjust the frequency to the current
-utilization level when the cost is low or negligible.
-
-Can't we classify the utilization events into some kind of major and
-minor changes ?
-
->
-> Moreover, it seems that in general we prefer a "conservative" approach
-> in frequency reduction.
-> For example it could be harmful to trigger a frequency reduction when
-> a task is migrating off a CPU, if right after another task should be
-> instead migrated into the same CPU.
->
->
-> .:: Conclusions
-> ===============
->
-> All that considered, I think I've convinced myself that we really need
-> to notify schedutil only in these cases:
->
->  1. enqueue time
->     because of the changes in estimated utilization and the
->     possibility to just straight to a better OPP
->
->  2. task tick time
->     because of the possible ramp-up of the utilization
->
-> Another case is related to remote CPUs blocked utilization update,
-> after the recent Vincent's patches. Currently indeed:
->
->   update_blocked_averages()
->      update_load_avg()
->         --> update schedutil
->
-> and thus, potentially we wake up an IDLE cluster just to reduce its
-> OPP. If the cluster is in a deep idle state, I'm not entirely sure
-> this is good from an energy saving standpoint.
-> However, with the patch I'm proposing we are missing that support,
-> meaning that an IDLE cluster will get its utilization decayed but we
-> don't wake it up just to drop its frequency.
-
-So more than deciding in the scheduler if we should wake it up or not,
-we should give a chance to cpufreq to decide if it wants to update the
-frequency or not as this decision is somehow platform specific: cost
-of frequency change, clock topology and shared clock, voltage topology
-...
-
-Regards,
-Vincent
->
-> Perhaps we should better pass in this information to schedutil via a
-> flag (e.g. SCHED_FREQ_REMOTE_UPDATE) and implement there a policy to
-> decide if and when it makes sense to drop the OPP. Or otherwise find a
-> way for the special DL tasks to always run on the lower capacity_orig
-> CPUs.
->
->> Sorry if I missed something obvious.
->
-> Thanks for the question it has actually triggered a better analysis of
-> what we have and what we need.
->
-> Looking forward to some feedbacks about the above before posting a new
-> version of this last patch.
->
->> thanks!
->>
->> - Joel
->
-> --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+diff --git a/arch/arm/boot/dts/berlin2q.dtsi b/arch/arm/boot/dts/berlin2q.dtsi
+index 82e176011d36..c1bf23a4412b 100644
+--- a/arch/arm/boot/dts/berlin2q.dtsi
++++ b/arch/arm/boot/dts/berlin2q.dtsi
+@@ -62,6 +62,18 @@
+ 		};
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>,
++				     <&cpu1>,
++				     <&cpu2>,
++				     <&cpu3>;
++	};
++
+ 	refclk: oscillator {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -76,18 +88,6 @@
+ 		ranges = <0 0xf7000000 0x1000000>;
+ 		interrupt-parent = <&gic>;
+ 
+-		pmu {
+-			compatible = "arm,cortex-a9-pmu";
+-			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-affinity = <&cpu0>,
+-					     <&cpu1>,
+-					     <&cpu2>,
+-					     <&cpu3>;
+-		};
+-
+ 		sdhci0: sdhci@ab0000 {
+ 			compatible = "mrvl,pxav3-mmc";
+ 			reg = <0xab0000 0x200>;
+-- 
+2.17.0
