@@ -1,93 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeEOBNP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 21:13:15 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:42045 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752024AbeEOBNN (ORCPT
+        id S1752129AbeEOBWH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 21:22:07 -0400
+Received: from smtprelay0099.hostedemail.com ([216.40.44.99]:46769 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752031AbeEOBWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 21:13:13 -0400
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-X-Original-SENDERIP: 10.177.220.142
-X-Original-MAILFROM: iamjoonsoo.kim@lge.com
-Date: Tue, 15 May 2018 10:13:11 +0900
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
-Message-ID: <20180515011311.GA32447@js1304-desktop>
-References: <20180420210200.GH10788@bombadil.infradead.org>
- <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180421144757.GC14610@bombadil.infradead.org>
- <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180423151545.GU17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424034643.GA26636@bombadil.infradead.org>
- <alpine.LRH.2.02.1804240818530.28016@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424171651.GC30577@bombadil.infradead.org>
- <alpine.LRH.2.02.1804241428120.8296@file01.intranet.prod.int.rdu2.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804241428120.8296@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 14 May 2018 21:22:06 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1536:1559:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3868:4321:5007:8957:10004:10400:10848:11026:11232:11473:11658:11914:12196:12296:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: truck65_2f2030c9d781b
+X-Filterd-Recvd-Size: 1582
+Message-ID: <56600822d01be60bd96c45afe1bbcad823ac948d.camel@perches.com>
+Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging
+ output
+From: Joe Perches <joe@perches.com>
+To: paulmck@linux.vnet.ibm.com
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
+Date: Mon, 14 May 2018 18:22:02 -0700
+In-Reply-To: <20180515003205.GT26088@linux.vnet.ibm.com>
+References: <cover.1525964381.git.joe@perches.com>
+         <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
+         <20180514202910.GI26088@linux.vnet.ibm.com>
+         <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
+         <20180514222456.GO26088@linux.vnet.ibm.com>
+         <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
+         <20180514235832.GR26088@linux.vnet.ibm.com>
+         <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
+         <20180515003205.GT26088@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Mikulas.
+On Mon, 2018-05-14 at 17:32 -0700, Paul E. McKenney wrote:
+> So this change does not affect WARN_ON_ONCE() and friends?
 
-On Tue, Apr 24, 2018 at 02:41:47PM -0400, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 24 Apr 2018, Matthew Wilcox wrote:
-> 
-> > On Tue, Apr 24, 2018 at 08:29:14AM -0400, Mikulas Patocka wrote:
-> > > 
-> > > 
-> > > On Mon, 23 Apr 2018, Matthew Wilcox wrote:
-> > > 
-> > > > On Mon, Apr 23, 2018 at 08:06:16PM -0400, Mikulas Patocka wrote:
-> > > > > Some bugs (such as buffer overflows) are better detected
-> > > > > with kmalloc code, so we must test the kmalloc path too.
-> > > > 
-> > > > Well now, this brings up another item for the collective TODO list --
-> > > > implement redzone checks for vmalloc.  Unless this is something already
-> > > > taken care of by kasan or similar.
-> > > 
-> > > The kmalloc overflow testing is also not ideal - it rounds the size up to 
-> > > the next slab size and detects buffer overflows only at this boundary.
-> > > 
-> > > Some times ago, I made a "kmalloc guard" patch that places a magic number 
-> > > immediatelly after the requested size - so that it can detect overflows at 
-> > > byte boundary 
-> > > ( https://www.redhat.com/archives/dm-devel/2014-September/msg00018.html )
-> > > 
-> > > That patch found a bug in crypto code:
-> > > ( http://lkml.iu.edu/hypermail/linux/kernel/1409.1/02325.html )
-> > 
-> > Is it still worth doing this, now we have kasan?
-> 
-> The kmalloc guard has much lower overhead than kasan.
-
-I skimm at your code and it requires rebuilding the kernel.
-I think that if rebuilding is required as the same with the KASAN,
-using the KASAN is better since it has far better coverage for
-detection the bug.
-
-However, I think that if the redzone can be setup tightly
-without rebuild, it would be worth implementing. I have an idea to
-implement it only for the SLUB. Could I try it? (I'm asking this
-because I'm inspired from the above patch.) :)
-Or do you wanna try it?
-
-Thanks.
+Changing define pr_fmt does not modify WARN_ON output.
