@@ -1,190 +1,312 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeEOCAg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:00:36 -0400
-Received: from mga07.intel.com ([134.134.136.100]:32589 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752138AbeEOCAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:00:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,402,1520924400";
-   d="gz'50?scan'50,208,50";a="40955932"
-Date: Tue, 15 May 2018 09:59:51 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Sean Young <sean@mess.org>
-Cc: kbuild-all@01.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>
-Subject: Re: [PATCH v1 3/4] media: rc bpf: move ir_raw_event to uapi
-Message-ID: <201805150934.eFWtrdSq%fengguang.wu@intel.com>
-References: <6ecdbd01b8c42c8784f2235c1e5109dac3dd86a5.1526331777.git.sean@mess.org>
+        id S1752538AbeEOCDn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:03:43 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42427 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752138AbeEOCDl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 22:03:41 -0400
+X-Google-Smtp-Source: AB8JxZrppvY6bLoN9Kx71+UV+XaMrdBXQBGeR4Q0ZTdQJXH9YtLXf+gwZj1vS3Wjk1cB1Ymj9kr+Nw==
+Subject: Re: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in
+ handle_hva_to_gpa
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
+        li.zhang@hxt-semitech.com, hughd@google.com,
+        Andrea Arcangeli "<aarcange@redhat.com>;" Minchan Kim
+         "<minchan@kernel.org>;" Claudio Imbrenda
+         "<imbrenda@linux.vnet.ibm.com>;" Arvind Yadav
+         "<arvind.yadav.cs@gmail.com>;" Mike Rapoport
+        <rppt@linux.vnet.ibm.com>,
+        akpm@linux-foundation.org
+References: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
+ <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
+ <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
+ <0f134188-12d5-7184-3fbd-0ec8204cf649@arm.com>
+ <aa5b37dc-7ac3-2999-fa67-848cd693977f@gmail.com>
+ <695beacb-ff51-bb2c-72ef-d268f7d4e59d@arm.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <1e065e9b-4dad-611d-fc5b-26fe6c031507@gmail.com>
+Date: Tue, 15 May 2018 10:03:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-In-Reply-To: <6ecdbd01b8c42c8784f2235c1e5109dac3dd86a5.1526331777.git.sean@mess.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <695beacb-ff51-bb2c-72ef-d268f7d4e59d@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Suzuki
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I will merge the other thread into this, and add the necessary CC list
 
-Hi Sean,
+That WARN_ON call trace is very easy to reproduce in my armv8a server after I 
+start 20 guests
 
-I love your patch! Perhaps something to improve:
+and run memhog in the host. Of course, ksm should be enabled
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.17-rc5]
-[cannot apply to next-20180514]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+For you question about my inject fault debug patch:
 
-url:    https://github.com/0day-ci/linux/commits/Sean-Young/media-rc-introduce-BPF_PROG_IR_DECODER/20180515-093234
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+diff --git a/mm/ksm.c b/mm/ksm.c
+index e3cbf9a..876bec8 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -43,6 +43,8 @@
+  #include <asm/tlbflush.h>
+  #include "internal.h"
 
-All warnings (new ones prefixed by >>):
++int trigger_by_ksm = 0;
++
+  #ifdef CONFIG_NUMA
+  #define NUMA(x)                (x)
+  #define DO_NUMA(x)     do { (x); } while (0)
+@@ -2587,11 +2589,14 @@ void rmap_walk_ksm(struct page *page, struct 
+rmap_walk_control *rwc)
+                         if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
+                                 continue;
 
->> ./usr/include/linux/bpf_rcdev.h:13: found __[us]{8,16,32,64} type without #include <linux/types.h>
++trigger_by_ksm = 1;
+                         if (!rwc->rmap_one(page, vma,
+                                         rmap_item->address, rwc->arg)) {
+                                 anon_vma_unlock_read(anon_vma);
++trigger_by_ksm = 0;
+                                 return;
+                         }
++trigger_by_ksm = 0;
+                         if (rwc->done && rwc->done(page)) {
+                                 anon_vma_unlock_read(anon_vma);
+                                 return;
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 7f6a944..ab8545e 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -290,12 +290,17 @@ static void unmap_stage2_puds(struct kvm *kvm, pgd_t *pgd,
+   * destroying the VM), otherwise another faulting VCPU may come in and mess
+   * with things behind our backs.
+   */
++extern int trigger_by_ksm;
+  static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+  {
+         pgd_t *pgd;
+         phys_addr_t addr = start, end = start + size;
+         phys_addr_t next;
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
++       if(trigger_by_ksm) {
++               end -= 0x200;
++       }
++
+         assert_spin_locked(&kvm->mmu_lock);
+         pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+         do {
 
---T4sUOijqQbZv57TR
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+I need to point out that I never reproduced it without this debugging patch.
 
-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
+Please also see my comments below
 
---T4sUOijqQbZv57TR--
+On 5/14/2018 6:06 PM, Suzuki K Poulose Wrote:
+> On 14/05/18 03:30, Jia He wrote:
+>>
+>> On 5/11/2018 9:39 PM, Suzuki K Poulose Wrote:
+>>> Marc
+>>>
+>>> Thanks for looping me in. Comments below.
+>>>
+>>>
+>>> On 03/05/18 03:02, Jia He wrote:
+>>>> Hi Marc
+>>>>
+>>>> Thanks for the review
+>>>>
+>>>>
+>>>> On 5/2/2018 10:26 PM, Marc Zyngier Wrote:
+>>>>> [+ Suzuki]
+>>>>>
+>>>>> On 02/05/18 08:08, Jia He wrote:
+>>>>>> From: Jia He <jia.he@hxt-semitech.com>
+>>>>>>
+>>>>>> In our armv8a server (QDF2400), I noticed a WARN_ON as follows:
+>>>>>>
+>>>>>> [  800.202850] WARNING: CPU: 33 PID: 255 at arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1670 kvm_age_hva_handler+0xcc/0xd4
+>>>>> Which kernel version is that? I don't have a WARN_ON() at this line in
+>>>>> 4.17. Do you have a reproducer?
+>>>> My running kernel version is v4.14-15, but I can reproduced it in 4.17 (start 20 guests and run memhog in the host)
+>>>> In 4.17, the warn_on is at
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/virt/kvm/arm/mmu.c#n1826
+>>>>>> [  800.213535] Modules linked in: vhost_net vhost tap xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm vfat fat iw_cm mlx5_ib ib_core dm_mirror dm_region_hash dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
+>>>>>> [  800.284115]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
+>>>>>> [  800.300382] CPU: 33 PID: 255 Comm: khugepaged Tainted: G        W       4.14.36+ #6
+>>>>>> [  800.308030] Hardware name: <snip for confidential issues>
+>>>>> Well, that's QDF2400, right? ;-)
+>>>> yes, exactly :)
+>>>>>> [  800.318717] task: ffff8017c949c000 task.stack: ffff8017c9498000
+>>>>>> [  800.324629] PC is at kvm_age_hva_handler+0xcc/0xd4
+>>>>>> [  800.329412] LR is at handle_hva_to_gpa+0xec/0x15c
+>>>>>> [  800.334109] pc : [<ffff0000080b4f2c>] lr : [<ffff0000080b4838>] pstate: 20400145
+>>>>>> [  800.341496] sp : ffff8017c949b260
+>>>>>> [  800.344804] x29: ffff8017c949b260 x28: ffff801663e25008
+>>>>>> [  800.350110] x27: 0000000000020000 x26: 00000001fb1a0000
+>>>>>> [  800.355416] x25: 0000ffff605b0200 x24: 0000ffff605a0200
+>>>>>> [  800.360722] x23: 0000000000000000 x22: 000000000000ffff
+>>>>>> [  800.366028] x21: 00000001fb1a0000 x20: ffff8017c085a000
+>>>>>> [  800.371334] x19: ffff801663e20008 x18: 0000000000000000
+>>>>>> [  800.376641] x17: 0000000000000000 x16: 0000000000000000
+>>>>>> [  800.381947] x15: 0000000000000000 x14: 3d646e655f617668
+>>>>>> [  800.387254] x13: 2c30303230623530 x12: 36666666663d646e
+>>>>>> [  800.392560] x11: 652c303032306135 x10: 3036666666663d74
+>>>>>> [  800.397867] x9 : 0000000000003796 x8 : 655f6e66672c3030
+>>>>>> [  800.403173] x7 : ffff00000859434c x6 : ffff8017f9c30cb8
+>>>>>> [  800.408479] x5 : ffff8017f9c30cb8 x4 : ffff0000080b4e60
+>>>>>> [  800.413786] x3 : 0000000000000000 x2 : 0000000000020000
+>>>>>> [  800.419092] x1 : 00000001fb1a0000 x0 : 0000000020000000
+>>>>>> [  800.424398] Call trace:
+>>>>>> [  800.426838] Exception stack(0xffff8017c949b120 to 0xffff8017c949b260)
+>>>>>> [  800.433272] b120: 0000000020000000 00000001fb1a0000 0000000000020000 0000000000000000
+>>>>>> [  800.441095] b140: ffff0000080b4e60 ffff8017f9c30cb8 ffff8017f9c30cb8 ffff00000859434c
+>>>>>> [  800.448918] b160: 655f6e66672c3030 0000000000003796 3036666666663d74 652c303032306135
+>>>>>> [  800.456740] b180: 36666666663d646e 2c30303230623530 3d646e655f617668 0000000000000000
+>>>>>> [  800.464563] b1a0: 0000000000000000 0000000000000000 0000000000000000 ffff801663e20008
+>>>>>> [  800.472385] b1c0: ffff8017c085a000 00000001fb1a0000 000000000000ffff 0000000000000000
+>>>>>> [  800.480208] b1e0: 0000ffff605a0200 0000ffff605b0200 00000001fb1a0000 0000000000020000
+>>>>>> [  800.488030] b200: ffff801663e25008 ffff8017c949b260 ffff0000080b4838 ffff8017c949b260
+>>>>>> [  800.495853] b220: ffff0000080b4f2c 0000000020400145 0000000000000001 ffff8017c949b2a0
+>>>>>> [  800.503676] b240: ffffffffffffffff ffff8017c949b260 ffff8017c949b260 ffff0000080b4f2c
+>>>>>> [  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
+>>>>>> [  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
+>>>>>> [  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
+>>>>>> [  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
+>>>>>> [  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
+>>>>>> [  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
+>>>>>> [  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
+>>>>>> [  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
+>>>>>> [  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
+>>>>>> [  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
+>>>>>> [  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
+>>>>>> [  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
+>>>>>> [  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
+>>>>>> [  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
+>>>>>> [  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
+>>>>>> [  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
+>>>>>> [  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
+>>>>>> [  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
+>>>>>> [  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
+>>>>>> [  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
+>>>>>> [  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
+>>>>>> [  800.633066] ---[ end trace 944c130b5252fb01 ]---
+>>>>>> -------------------------------------------------------------------------
+>>>>>>
+>>>>>> The root cause might be: we can't guarantee that the parameter start and end
+>>>>>> in handle_hva_to_gpa is PAGE_SIZE aligned, let alone hva_start and hva_end.
+>>>>> So why not aligning them the first place?
+>>>> at the first place of handle_hva_to_gpa()?
+>>>> but boundary check is needed in each loop of kvm_for_each_memslot. Am I missing anything here?
+>>>>>> This bug is introduced by commit 056aad67f836 ("kvm: arm/arm64: Rework gpa
+>>>>>> callback handlers")
+>>>>>>
+>>>>>> It fixes the bug by use pfn size converted.
+>>>>>>
+>>>>>> Fixes: 056aad67f836 ("kvm: arm/arm64: Rework gpa callback handlers")
+>>>>>>
+>>>>>> Signed-off-by: jia.he@hxt-semitech.com
+>>>>>> Signed-off-by: li.zhang@hxt-semitech.com
+>>>>>> ---
+>>>>>>     virt/kvm/arm/mmu.c | 10 ++++++----
+>>>>>>     1 file changed, 6 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>>>>>> index 7f6a944..9dd7ae4 100644
+>>>>>> --- a/virt/kvm/arm/mmu.c
+>>>>>> +++ b/virt/kvm/arm/mmu.c
+>>>>>> @@ -1744,7 +1744,7 @@ static int handle_hva_to_gpa(struct kvm *kvm,
+>>>>>>         /* we only care about the pages that the guest sees */
+>>>>>>         kvm_for_each_memslot(memslot, slots) {
+>>>>>>             unsigned long hva_start, hva_end;
+>>>>>> -        gfn_t gpa;
+>>>>>> +        gpa_t gpa, gpa_end;
+>>>>>>             hva_start = max(start, memslot->userspace_addr);
+>>>>>>             hva_end = min(end, memslot->userspace_addr +
+>>>>>> @@ -1753,7 +1753,9 @@ static int handle_hva_to_gpa(struct kvm *kvm,
+>>>>>>                 continue;
+>>>>>>             gpa = hva_to_gfn_memslot(hva_start, memslot) << PAGE_SHIFT;
+>>>>>> -        ret |= handler(kvm, gpa, (u64)(hva_end - hva_start), data);
+>>>>>> +        gpa_end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, memslot)
+>>>>>> +                             << PAGE_SHIFT;
+>>>>>> +        ret |= handler(kvm, gpa, (u64)(gpa_end - gpa), data);
+>>>>> But we're looking for the mapping in the same memslot, so the distance
+>>>>> between hva and hva_end is the same as the one between gpa and gpa_end
+>>>>> if you didn't align it.
+>>>> maybe not, sometimes hva_end-hva != gpa_end-gpa
+>>>> start=fffdc37f0200,hva_start=fffdc37f0200,end=fffdc3800200,hva_end=fffdc3800000,gpa=3ff0000,gfn_end=4000000
+>>>>
+>>>> but sometimes it is:
+>>>> start=ffff60590200,hva_start=ffff60590200,end=ffff605a0200,hva_end=ffff605a0200,gpa=1fb190000,gfn_end=1fb1b0000
+>>>>
+>>>> IMO, the unalignment is caused by the ksm stable page flag STABLE_FLAG. I will
+>>>> propose another ksm patch to fix it。
+>>>> But from handle_hva_to_gpa's point of view, arm kvm needs to void the followup
+>>>> exception, just like what powerpc andx86 have done.
+>>>
+>>> As far as I can see this is triggered by someone (in this page_referenced_one via ksm?)
+>>> triggering a clear_flush_young for a page, with a non-aligned page address.
+>>>
+>>> If you look at the code path, the __mmu_notifier_clear_flush_young is invoked
+>>> via 2 code paths with the "given" address.
+>>>
+>>> ptep_clear_flush_young_notify(), in which case the end is set to + PAGE_SIZE
+>>> pmdp_clear_flush_young_notify(), in which case the end is set to + PMD_SIZE
+>>>
+>>> We were supposed to only clear_flush_young for *the page* containing
+>>> address (start), but we do a clear_flush_young for the next page
+>>> as well, which (I think) is not something intended. So to me, it looks like, either
+>>> page_referenced_one() or its caller must align the address to the PAGE_SIZE
+>>> or PMD_SIZE depending on what it really wants to do, to avoid touching
+>>> the adjacent entries (page or block pages).
+>>>
+>>> Suzuki
+> Jia He,
+>
+>> Suzuki, thanks for the comments.
+>>
+>> I proposed another ksm patch https://lkml.org/lkml/2018/5/3/1042
+>> The root cause is ksm will add some extra flags to indicate that the page
+>> is in/not_in the stable tree. This makes address not be aligned with PAGE_SIZE.
+> Thanks for the pointer. In the future, please Cc the people relevant to the
+> discussion in the patches.
+>
+>>   From arm kvm mmu point of view, do you think handle_hva_to_gpa still need to handle
+>> the unalignment case?
+> I don't think we should do that. Had we done this, we would never have caught this bug
+> in KSM. Eventually if some other new implementation comes up with the a new notifier
+> consumer which doesn't check alignment and doesn't WARN, it could simply do the wrong
+> thing. So I believe what we have is a good measure to make sure that things are
+> in the right order.
+>
+>> IMO, the PAGE_SIZE alignment is still needed because we should not let the bottom function
+>> kvm_age_hva_handler to handle the exception. Please refer to the implementation in X86 and
+>> powerpc kvm_handle_hva_range(). They both aligned the hva with hva_to_gfn_memslot.
+>>
+>   From an API perspective, you are passed on a "start" and "end" address. So, you could potentially
+> do the wrong thing if you align the "start" and "end". May be those handlers should also do the
+> same thing as we do.
+But handle_hva_to_gpa has partially adjusted the alignment possibly:
+    1750         kvm_for_each_memslot(memslot, slots) {
+    1751                 unsigned long hva_start, hva_end;
+    1752                 gfn_t gpa;
+    1753
+    1754                 hva_start = max(start, memslot->userspace_addr);
+    1755                 hva_end = min(end, memslot->userspace_addr +
+    1756                             (memslot->npages << PAGE_SHIFT));
+
+at line 1755, let us assume that end=0x12340200 and
+memslot->userspace_addr + (memslot->npages << PAGE_SHIFT)=0x12340000
+Then, hva_start is not page_size aligned and hva_end is aligned, and the size 
+will be PAGE_SIZE-0x200,
+just as what I had done in the inject fault debugging patch.
+
+-- 
+Cheers,
+Jia
