@@ -1,105 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeEOXA2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:00:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751881AbeEOXAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:00:25 -0400
-Date: Tue, 15 May 2018 19:00:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>, tcharding <me@tobin.cc>
-Subject: Re: [PATCH] vsprintf: Fix memory barriers of ptr_key to
- have_filed_random_ptr_key
-Message-ID: <20180515190022.3b5f96b4@gandalf.local.home>
-In-Reply-To: <20180515184117.5fb0b7fa@gandalf.local.home>
-References: <20180515100558.21df515e@gandalf.local.home>
-        <CA+55aFyBHRmXLo07f_7qt7szaDvppMStfX5Sq9Df6mZSy+qYvA@mail.gmail.com>
-        <20180515145744.3bdcbbe9@gandalf.local.home>
-        <CA+55aFwOoMHJaK5LmgmKKPvPUpTUBKSXS67cwaXwm2p-eG6ycQ@mail.gmail.com>
-        <20180515161027.468e8975@gandalf.local.home>
-        <CA+55aFztxY-w=0tPZ8KAenENA7NCYSWUcCPV4Nzs0ffwrh3G4Q@mail.gmail.com>
-        <20180515184117.5fb0b7fa@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752506AbeEOXB4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:01:56 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:47575 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeEOXBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 19:01:54 -0400
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
+CC: Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next] net: ethernet: ti: cpsw-phy-sel: check bus_find_device() ret value
+Date: Tue, 15 May 2018 18:01:49 -0500
+Message-ID: <20180515230149.6547-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.10.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018 18:41:17 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+This fixes klockworks warnings: Pointer 'dev' returned from call to
+function 'bus_find_device' at line 179 may be NULL and will be dereferenced
+at line 181.
 
-> On Tue, 15 May 2018 15:31:37 -0700
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> 
-> > > we could always do this:    
-> > 
-> > Ugh. I think I prefer the barriers.  
-> 
+    cpsw-phy-sel.c:179: 'dev' is assigned the return value from function 'bus_find_device'.
+    bus.c:342: 'bus_find_device' explicitly returns a NULL value.
+    cpsw-phy-sel.c:181: 'dev' is dereferenced by passing argument 1 to function 'dev_get_drvdata'.
+    device.h:1024: 'dev' is passed to function 'dev_get_drvdata'.
+    device.h:1026: 'dev' is explicitly dereferenced.
 
-If it is that if statement you don't like. We can get rid of it. On
-early boot, the code is called from preemptable context, it's only
-later that it is not. So we know when we can call it directly and when
-we need to have a work queue.
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+[nsekhar@ti.com: add an error message, fix return path]
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+it present for a very long time, so not critical.
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 30c0cb8cc9bc..69d3ed8557ce 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1669,19 +1669,21 @@ char *pointer_string(char *buf, char *end, const void *ptr,
- 	return number(buf, end, (unsigned long int)ptr, spec);
- }
- 
--static bool have_filled_random_ptr_key __read_mostly;
-+static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
- static siphash_key_t ptr_key __read_mostly;
- 
--static void fill_random_ptr_key(struct random_ready_callback *unused)
-+static void enable_ptr_key_workfn(struct work_struct *work)
- {
- 	get_random_bytes(&ptr_key, sizeof(ptr_key));
--	/*
--	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
--	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
--	 * after get_random_bytes() returns.
--	 */
--	smp_mb();
--	WRITE_ONCE(have_filled_random_ptr_key, true);
-+	/* Needs to run from preemptable context */
-+	static_branch_disable(&not_filled_random_ptr_key);
-+}
-+
-+static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
-+
-+static void fill_random_ptr_key(struct random_ready_callback *unused)
-+{
-+	queue_work(system_unbound_wq, &enable_ptr_key_work);
- }
- 
- static struct random_ready_callback random_ready = {
-@@ -1695,7 +1697,7 @@ static int __init initialize_ptr_random(void)
- 	if (!ret) {
- 		return 0;
- 	} else if (ret == -EALREADY) {
--		fill_random_ptr_key(&random_ready);
-+		enable_ptr_key_workfn(&enable_ptr_key_work);
- 		return 0;
+ drivers/net/ethernet/ti/cpsw-phy-sel.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw-phy-sel.c b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+index 1801364..005fd53 100644
+--- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
++++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+@@ -177,12 +177,19 @@ void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave)
  	}
  
-@@ -1709,7 +1711,7 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
- 	unsigned long hashval;
- 	const int default_width = 2 * sizeof(ptr);
+ 	dev = bus_find_device(&platform_bus_type, NULL, node, match);
+-	of_node_put(node);
++	if (!dev) {
++		dev_err(dev, "unable to find platform device for %s\n",
++			of_node_full_name(node));
++		goto out;
++	}
++
+ 	priv = dev_get_drvdata(dev);
  
--	if (unlikely(!have_filled_random_ptr_key)) {
-+	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
- 		spec.field_width = default_width;
- 		/* string length must be less than default_width */
- 		return string(buf, end, "(ptrval)", spec);
-
--- Steve
+ 	priv->cpsw_phy_sel(priv, phy_mode, slave);
+ 
+ 	put_device(dev);
++out:
++	of_node_put(node);
+ }
+ EXPORT_SYMBOL_GPL(cpsw_phy_sel);
+ 
+-- 
+2.10.5
