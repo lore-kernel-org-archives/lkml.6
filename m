@@ -1,22 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeEOWvp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:51:45 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:12445 "EHLO
+        id S1752427AbeEOWvl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:51:41 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:32504 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeEOWvd (ORCPT
+        with ESMTP id S1752257AbeEOWvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 May 2018 18:51:33 -0400
 X-IronPort-AV: E=Sophos;i="5.49,404,1520870400";
-   d="scan'208";a="78256998"
+   d="scan'208";a="78257000"
 From: Bart Van Assche <bart.vanassche@wdc.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Subject: [PATCH v9 0/2] blk-mq: Rework blk-mq timeout handling again
-Date: Tue, 15 May 2018 15:51:22 -0700
-Message-Id: <20180515225124.20428-4-bart.vanassche@wdc.com>
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+Date: Tue, 15 May 2018 15:51:23 -0700
+Message-Id: <20180515225124.20428-5-bart.vanassche@wdc.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180515225124.20428-1-bart.vanassche@wdc.com>
 References: <20180515225124.20428-1-bart.vanassche@wdc.com>
@@ -24,93 +39,245 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jens,
+The next patch in this series introduces a call to cmpxchg64()
+in the block layer core for those architectures on which this
+functionality is available. Make it possible to test whether
+cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
 
-This is the ninth incarnation of the blk-mq timeout handling rework. All
-previously posted comments have been addressed. Please consider this patch
-series for inclusion in the upstream kernel.
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
+Cc: Helge Deller <deller@gmx.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 
-Bart.
-
-Changes compared to v8:
-- Split into two patches.
-- Moved the spin_lock_init() call from blk_mq_rq_ctx_init() into
-  blk_mq_init_request().
-- Fixed the deadline set by blk_add_timer().
-- Surrounded the das_lock member with #ifndef CONFIG_ARCH_HAVE_CMPXCHG64 /
-  #endif.
-
-Changes compared to v7:
-- Fixed the generation number mechanism. Note: with this patch applied the
-  behavior of the block layer does not depend on the generation number.
-- Added more 32-bit architectures to the list of architectures on which
-  cmpxchg64() should not be used.
-
-Changes compared to v6:
-- Used a union instead of bit manipulations to store multiple values into
-  a single 64-bit field.
-- Reduced the size of the timeout field from 64 to 32 bits.
-- Made sure that the block layer still builds with this patch applied
-  for the sh and mips architectures.
-- Fixed two sparse warnings that were introduced by this patch in the
-  WRITE_ONCE() calls.
-
-Changes compared to v5:
-- Restored the synchronize_rcu() call between marking a request for timeout
-  handling and the actual timeout handling to avoid that timeout handling
-  starts while .queue_rq() is still in progress if the timeout is very short.
-- Only use cmpxchg() if another context could attempt to change the request
-  state concurrently. Use WRITE_ONCE() otherwise.
-
-Changes compared to v4:
-- Addressed multiple review comments from Christoph. The most important are
-  that atomic_long_cmpxchg() has been changed into cmpxchg() and also that
-  there is now a nice and clean split between the legacy and blk-mq versions
-  of blk_add_timer().
-- Changed the patch name and modified the patch description because there is
-  disagreement about whether or not the v4.16 blk-mq core can complete a
-  single request twice. Kept the "Cc: stable" tag because of
-  https://bugzilla.kernel.org/show_bug.cgi?id=199077.
-
-Changes compared to v3 (see also https://www.mail-archive.com/linux-block@vger.kernel.org/msg20073.html):
-- Removed the spinlock again that was introduced to protect the request state.
-  v4 uses atomic_long_cmpxchg() instead.
-- Split __deadline into two variables - one for the legacy block layer and one
-  for blk-mq.
-
-Changes compared to v2 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18338.html):
-- Rebased and retested on top of kernel v4.16.
-
-Changes compared to v1 (https://www.mail-archive.com/linux-block@vger.kernel.org/msg18089.html):
-- Removed the gstate and aborted_gstate members of struct request and used
-  the __deadline member to encode both the generation and state information.
-Bart Van Assche (2):
-  arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
-  blk-mq: Rework blk-mq timeout handling again
-
- .../features/locking/cmpxchg64/arch-support.txt    |  31 ++++
- arch/Kconfig                                       |   3 +
- arch/alpha/Kconfig                                 |   1 +
- arch/arm/Kconfig                                   |   1 +
- arch/arm64/Kconfig                                 |   1 +
- arch/ia64/Kconfig                                  |   1 +
- arch/m68k/Kconfig                                  |   1 +
- arch/mips/Kconfig                                  |   1 +
- arch/parisc/Kconfig                                |   1 +
- arch/powerpc/Kconfig                               |   1 +
- arch/s390/Kconfig                                  |   1 +
- arch/sparc/Kconfig                                 |   1 +
- arch/x86/Kconfig                                   |   1 +
- arch/xtensa/Kconfig                                |   1 +
- block/blk-core.c                                   |   6 -
- block/blk-mq-debugfs.c                             |   1 -
- block/blk-mq.c                                     | 183 ++++++---------------
- block/blk-mq.h                                     | 117 ++++++++++---
- block/blk-timeout.c                                |  95 ++++++-----
- block/blk.h                                        |  14 +-
- include/linux/blkdev.h                             |  47 +++---
- 21 files changed, 276 insertions(+), 233 deletions(-)
+f
+---
+ .../features/locking/cmpxchg64/arch-support.txt    | 31 ++++++++++++++++++++++
+ arch/Kconfig                                       |  3 +++
+ arch/alpha/Kconfig                                 |  1 +
+ arch/arm/Kconfig                                   |  1 +
+ arch/arm64/Kconfig                                 |  1 +
+ arch/ia64/Kconfig                                  |  1 +
+ arch/m68k/Kconfig                                  |  1 +
+ arch/mips/Kconfig                                  |  1 +
+ arch/parisc/Kconfig                                |  1 +
+ arch/powerpc/Kconfig                               |  1 +
+ arch/s390/Kconfig                                  |  1 +
+ arch/sparc/Kconfig                                 |  1 +
+ arch/x86/Kconfig                                   |  1 +
+ arch/xtensa/Kconfig                                |  1 +
+ 14 files changed, 46 insertions(+)
  create mode 100644 Documentation/features/locking/cmpxchg64/arch-support.txt
 
+diff --git a/Documentation/features/locking/cmpxchg64/arch-support.txt b/Documentation/features/locking/cmpxchg64/arch-support.txt
+new file mode 100644
+index 000000000000..65b3290ce5d5
+--- /dev/null
++++ b/Documentation/features/locking/cmpxchg64/arch-support.txt
+@@ -0,0 +1,31 @@
++#
++# Feature name:          cmpxchg64
++#         Kconfig:       ARCH_HAVE_CMPXCHG64
++#         description:   arch supports the cmpxchg64() API
++#
++    -----------------------
++    |         arch |status|
++    -----------------------
++    |       alpha: |  ok  |
++    |         arc: | TODO |
++    |         arm: |!thumb|
++    |       arm64: |  ok  |
++    |         c6x: | TODO |
++    |       h8300: | TODO |
++    |     hexagon: | TODO |
++    |        ia64: |  ok  |
++    |        m68k: |  ok  |
++    |  microblaze: | TODO |
++    |        mips: |64-bit|
++    |       nios2: | TODO |
++    |    openrisc: | TODO |
++    |      parisc: |  ok  |
++    |     powerpc: |64-bit|
++    |        s390: |  ok  |
++    |          sh: | TODO |
++    |       sparc: |  ok  |
++    |          um: | TODO |
++    |   unicore32: | TODO |
++    |         x86: |  ok  |
++    |      xtensa: |  ok  |
++    -----------------------
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 8e0d665c8d53..bd54eb125b15 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -358,6 +358,9 @@ config HAVE_ALIGNED_STRUCT_PAGE
+ 	  on a struct page for better performance. However selecting this
+ 	  might increase the size of a struct page by a word.
+ 
++config ARCH_HAVE_CMPXCHG64
++	bool
++
+ config HAVE_CMPXCHG_LOCAL
+ 	bool
+ 
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index b2022885ced8..94fc28e30ed2 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -16,6 +16,7 @@ config ALPHA
+ 	select GENERIC_IRQ_SHOW
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select AUDIT_ARCH
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_CPU_VULNERABILITIES
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7f8e7f4b88f..7be06e46d329 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -21,6 +21,7 @@ config ARM
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
++	select ARCH_HAVE_CMPXCHG64 if !THUMB2_KERNEL
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select BUILDTIME_EXTABLE_SORT if MMU
+ 	select CLONE_BACKWARDS
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index eb2cf4938f6d..998e454a51b5 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -23,6 +23,7 @@ config ARM64
+ 	select ARCH_HAS_STRICT_MODULE_RWX
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select ARCH_INLINE_READ_LOCK if !PREEMPT
+ 	select ARCH_INLINE_READ_LOCK_BH if !PREEMPT
+ 	select ARCH_INLINE_READ_LOCK_IRQ if !PREEMPT
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index bbe12a038d21..b99a7fd9efec 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -42,6 +42,7 @@ config IA64
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_IRQ_LEGACY
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select GENERIC_IOMAP
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select ARCH_TASK_STRUCT_ON_STACK
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 785612b576f7..9249de31414b 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -12,6 +12,7 @@ config M68K
+ 	select HAVE_UID16
+ 	select VIRT_TO_BUS
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG if RMW_INSNS
++	select ARCH_HAVE_CMPXCHG64
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_IOMAP
+ 	select GENERIC_STRNCPY_FROM_USER if MMU
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 225c95da23ce..7f453e7cb9e4 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -10,6 +10,7 @@ config MIPS
+ 	select ARCH_SUPPORTS_UPROBES
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF if 64BIT
++	select ARCH_HAVE_CMPXCHG64 if 64BIT
+ 	select ARCH_USE_QUEUED_RWLOCKS
+ 	select ARCH_USE_QUEUED_SPINLOCKS
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+index fc5a574c3482..deae8720861e 100644
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -31,6 +31,7 @@ config PARISC
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_PCI_IOMAP
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_STRNCPY_FROM_USER
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c32a181a7cbb..315fc1e46baa 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -150,6 +150,7 @@ config PPC
+ 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ 	select ARCH_HAS_ZONE_DEVICE		if PPC_BOOK3S_64
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
+ 	select ARCH_OPTIONAL_KERNEL_RWX		if ARCH_HAS_STRICT_KERNEL_RWX
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 199ac3e4da1d..b06b34ae8b3d 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -74,6 +74,7 @@ config S390
+ 	select ARCH_HAS_STRICT_MODULE_RWX
+ 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select ARCH_INLINE_READ_LOCK
+ 	select ARCH_INLINE_READ_LOCK_BH
+ 	select ARCH_INLINE_READ_LOCK_IRQ
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 8767e45f1b2b..cd41bf0d5afd 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -76,6 +76,7 @@ config SPARC64
+ 	select PERF_USE_VMALLOC
+ 	select IRQ_PREFLOW_FASTEOI
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select HAVE_C_RECORDMCOUNT
+ 	select NO_BOOTMEM
+ 	select HAVE_ARCH_AUDITSYSCALL
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c07f492b871a..a5bcbb179ff2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -68,6 +68,7 @@ config X86
+ 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ 	select ARCH_HAS_ZONE_DEVICE		if X86_64
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
++	select ARCH_HAVE_CMPXCHG64
+ 	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index c921e8bccdc8..8234278a821d 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -23,6 +23,7 @@ config XTENSA
+ 	select HAVE_DMA_CONTIGUOUS
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_FUNCTION_TRACER
++	select ARCH_HAVE_CMPXCHG64
+ 	select HAVE_FUTEX_CMPXCHG if !MMU
+ 	select HAVE_HW_BREAKPOINT if PERF_EVENTS
+ 	select HAVE_IRQ_TIME_ACCOUNTING
 -- 
 2.16.3
