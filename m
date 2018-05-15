@@ -1,126 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752454AbeEOJbh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:31:37 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40148 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752313AbeEOJbe (ORCPT
+        id S1752634AbeEOJc0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:32:26 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:43448 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752475AbeEOJcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:31:34 -0400
-X-Google-Smtp-Source: AB8JxZqMsw8ETe6YkM1O7kcZq4K2V0F86phw+o2RDhDQYmNzu0noRMpk2QH/B1OjHGSSza3l6FrqFw==
-Subject: Re: [PATCH V5 1/4] dt-bindings: pwrap: mediatek: add pwrap support
- for MT6797
-To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
-        henryc.chen@mediatek.com, flora.fu@mediatek.com,
-        Chen Zhong <chen.zhong@mediatek.com>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <1525957319-20557-1-git-send-email-argus.lin@mediatek.com>
- <1525957319-20557-2-git-send-email-argus.lin@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <2cb5230e-f8be-e0b3-3521-3145ab02a0c1@gmail.com>
-Date: Tue, 15 May 2018 11:31:30 +0200
+        Tue, 15 May 2018 05:32:22 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180515093219epoutp017c0b305b045df2b31efda0f9e1b0b90a~ux47MaS2j1866218662epoutp01S
+X-AuditID: b6c32a35-9cbff70000001024-9d-5afaa923f6c2
+Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <93ee0d94-81aa-db81-2bff-87f5f91bc9d3@samsung.com>
+Date: Tue, 15 May 2018 11:32:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1525957319-20557-2-git-send-email-argus.lin@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thunderbird/52.7.0
+MIME-version: 1.0
+In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7bCmga7yyl9RBtc3KFpc//Kc1WLrLWmL
+        /sevmS3On9/AbrHp8TVWi48991gtLu+aw2ax9eU7JosZ5/cxWVw85Wrx79pGFotVu/4wWvSd
+        c3fg9Xh/o5XdY+esu+wem1Z1snlsXlLv0bdlFaPHs4XrWTw+b5ILYI/isklJzcksSy3St0vg
+        ynjR/Y69YB9vRc/uC2wNjKu5uxg5OSQETCQuHJ3B1MXIxSEksINR4szGw4wQzndGiWVXTwI5
+        HGBVD7v4IeIbGCVOdexjgXDuM0os6b/ADjJKWMBJ4vnaK8wgtohAkMTJN8dZQGxmgSnMEjdn
+        JoPYbAKGEr1H+xhBbF4BO4k13z6B1bMIqEo0bdsAFhcViJBoev6THaJGUOLH5HtgczgF3CTW
+        dexigpipKfHiyySo+eISx+7fZISw5SU2r3nLDHKchEA7u8T6r19ZIP50kfg45wwrhC0s8er4
+        FnaIz6QlLh21hQhXS3S2dbFD9LYwSvyZdokNImEtcfj4RVaIBXwS7772sEL08kp0tAlBmB4S
+        j9epQFQ7Sjx9eIsdEj5XGSV6H29mm8AoNwvJO7OQvDALyQuzkLywgJFlFaNYakFxbnpqsWGB
+        oV5xYm5xaV66XnJ+7iZGcGrSMt3BOOWczyFGAQ5GJR7ehGk/o4RYE8uKK3MPMUpwMCuJ8O42
+        AgrxpiRWVqUW5ccXleakFh9ilOZgURLnnaP0NUpIID2xJDU7NbUgtQgmy8TBKdXAqK/ktt3m
+        smhQY/GMx+X6Lb2Tbpi7cOxh4HdwYBGSd4s6nsLwPujXltCH2xsMArbeWlO9aO7vYznJjtPO
+        Pf7586+4SsXhJof/fvNulegF/CzQqGlOnSZycv9Z7uXlc1UfMU+5ucPvRoa0PHeqkp/d8VV7
+        N8+XmXFkauZdt9g5jcEvgrR/C1+ar8RSnJFoqMVcVJwIANJsa6lJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42I5/e+xoK7yyl9RBg8nClhc//Kc1WLrLWmL
+        /sevmS3On9/AbrHp8TVWi48991gtLu+aw2ax9eU7JosZ5/cxWVw85Wrx79pGFotVu/4wWvSd
+        c3fg9Xh/o5XdY+esu+wem1Z1snlsXlLv0bdlFaPHs4XrWTw+b5ILYI/isklJzcksSy3St0vg
+        ynjR/Y69YB9vRc/uC2wNjKu5uxg5OCQETCQedvF3MXJyCAmsY5S4tiW+i5ELyH7IKPFk/TF2
+        kISwgJPE87VXmEFsEYEAib7l59hAipgFpjBLXDkxmRmiu5FRYvfNBBCbTcBQovdoHyOIzStg
+        J7Hm2yewGhYBVYmmbRvA4qICERL3zn9ig6gRlPgx+R4LiM0p4CaxrmMXE8hxzALqElOm5IKE
+        mQXEJY7dv8kIYctLbF7zlnkCo8AsJN2zEDpmIemYhaRjASPLKkbJ1ILi3PTcYqMCw7zUcr3i
+        xNzi0rx0veT83E2MwEjadlirbwfj/SXxhxgFOBiVeHgTpv2MEmJNLCuuzD3EKMHBrCTCu9sI
+        KMSbklhZlVqUH19UmpNafIhRmoNFSZz3dt6xSCGB9MSS1OzU1ILUIpgsEwenVAMjd2GNr+rL
+        kHlTVk5wOPEi5uZPz307rn2Vktsr///5nfmGrm1popVFUcIzGCy2ybNdEddk6sy9Z80Zv+9E
+        H1+4yLX/qj2v9JUfbNQoe7roKPO9C3O1v6/U2XCuMzRhmpytLCNrbprArtV3jmglSrDPZXeY
+        zqbCclcr+vDy6pL1D0RtlmqFHWJRYinOSDTUYi4qTgQA5b6nHKACAAA=
+X-CMS-MailID: 20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804
+X-RootMTR: 20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+        <CGME20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/10/2018 03:01 PM, argus.lin@mediatek.com wrote:
-> From: Argus Lin <argus.lin@mediatek.com>
+On 04/19/2018 04:05 PM, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> We add pwrap support for MT6797 SoCs.
-> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-You forgot the Signed-off-by tag.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+It seems to be the only clk/samsung patch in the v4.18 queue, please
+feel free to apply it directly.
 
 > ---
->  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> index bf80e3f..f9987c3 100644
-> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> @@ -19,6 +19,7 @@ IP Pairing
->  Required properties in pwrap device node.
->  - compatible:
->  	"mediatek,mt2701-pwrap" for MT2701/7623 SoCs
-> +	"mediatek,mt6797-pwrap" for MT6797 SoCs
->  	"mediatek,mt7622-pwrap" for MT7622 SoCs
->  	"mediatek,mt8135-pwrap" for MT8135 SoCs
->  	"mediatek,mt8173-pwrap" for MT8173 SoCs
-> -- 
-> 1.8.1.1.dirty
+> Build tested only. buildbot is happy. Please apply individually.
 > 
-> ************* Email Confidentiality Notice ********************
-> The information contained in this e-mail message (including any 
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be 
-> conveyed only to the designated recipient(s). Any use, dissemination, 
-> distribution, printing, retaining or copying of this e-mail (including its 
-> attachments) by unintended recipient(s) is strictly prohibited and may 
-> be unlawful. If you are not an intended recipient of this e-mail, or believe 
-> that you have received this e-mail in error, please notify the sender 
-> immediately (by replying to this e-mail), delete any and all copies of 
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 077df3e539a7..f41d89cef0f1 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+>  #ifdef CONFIG_PM_SLEEP
+>  static int s3c24xx_dclk_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+>  	return 0;
+> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+>  
+>  static int s3c24xx_dclk_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+>  	return 0;
+
+-- 
+Regards,
+Sylwester
