@@ -1,216 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753864AbeEOQLD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:11:03 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43455 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752851AbeEOQK7 (ORCPT
+        id S1754085AbeEOQLc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:11:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40390 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753470AbeEOQL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:10:59 -0400
-X-Google-Smtp-Source: AB8JxZrzHJSQpyz9reekS3+JoZ5kYIQ/05WBFRbn/3Thidwv/yZ7eNidnRIh+wZQFsqzmu+zGO7tMQ==
-Subject: Re: [PATCH v2 1/5] media: cec-notifier: Get notifier by device and
- connector name
-To: Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
- <1526395342-15481-2-git-send-email-narmstrong@baylibre.com>
- <309fa9b4-0c0b-25af-31a3-84fe5fc00743@xs4all.nl>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <19cebe7d-5217-de5e-c668-ea2926e5ea0f@baylibre.com>
-Date: Tue, 15 May 2018 18:10:53 +0200
+        Tue, 15 May 2018 12:11:29 -0400
+Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
+ <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
+ <1f9117bd-ed14-bde4-fdbd-cb3733c8c633@linux.ibm.com>
+ <afd54b28-e61c-a81e-41a3-6142d7277400@linux.vnet.ibm.com>
+ <1fb8d1ab-02d5-c170-08e8-a77526fbb7c4@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 15 May 2018 12:11:22 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <309fa9b4-0c0b-25af-31a3-84fe5fc00743@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1fb8d1ab-02d5-c170-08e8-a77526fbb7c4@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051516-0008-0000-0000-00000307E56E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009030; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032716; UDB=6.00527984; IPR=6.00811847;
+ MB=3.00021128; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 16:11:27
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051516-0009-0000-0000-000039425963
+Message-Id: <9eabe7c2-4380-c57f-effe-e6d8e194466a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805150163
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/2018 17:22, Hans Verkuil wrote:
-> On 05/15/2018 04:42 PM, Neil Armstrong wrote:
->> In non device-tree world, we can need to get the notifier by the driver
->> name directly and eventually defer probe if not yet created.
+On 05/15/2018 11:48 AM, Halil Pasic wrote:
+>
+>
+> On 05/15/2018 05:16 PM, Tony Krowiak wrote:
+>> On 05/15/2018 10:17 AM, Pierre Morel wrote:
+>>> On 14/05/2018 21:42, Tony Krowiak wrote:
+>>>> On 05/11/2018 01:18 PM, Halil Pasic wrote:
+>>>>>
+>>>>>
+>>>>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
+>>>>>> Registers the matrix device created by the VFIO AP device
+>>>>>> driver with the VFIO mediated device framework.
+>>>>>> Registering the matrix device will create the sysfs
+>>>>>> structures needed to create mediated matrix devices
+>>>>>> each of which will be used to configure the AP matrix
+>>>>>> for a guest and connect it to the VFIO AP device driver.
+>>>>>>
+>>>>> [..]
+>>>>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>>>>>> b/drivers/s390/crypto/vfio_ap_ops.c
+>>>>>> new file mode 100644
+>>>>>> index 0000000..d7d36fb
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>>>>> @@ -0,0 +1,106 @@
+>>>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>>>> +/*
+>>>>>> + * Adjunct processor matrix VFIO device driver callbacks.
+>>>>>> + *
+>>>>>> + * Copyright IBM Corp. 2017
+>>>>>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>>>> + *
+>>>>>> + */
+>>>>>> +#include <linux/string.h>
+>>>>>> +#include <linux/vfio.h>
+>>>>>> +#include <linux/device.h>
+>>>>>> +#include <linux/list.h>
+>>>>>> +#include <linux/ctype.h>
+>>>>>> +
+>>>>>> +#include "vfio_ap_private.h"
+>>>>>> +
+>>>>>> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
+>>>>>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>>>>>> +
+>>>>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
+>>>>>> mdev_device *mdev)
+>>>>>> +{
+>>>>>> +    struct ap_matrix *ap_matrix = 
+>>>>>> to_ap_matrix(mdev_parent_dev(mdev));
+>>>>>> +
+>>>>>> +    ap_matrix->available_instances--;
+>>>>>> +
+>>>>>> +    return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+>>>>>> +{
+>>>>>> +    struct ap_matrix *ap_matrix = 
+>>>>>> to_ap_matrix(mdev_parent_dev(mdev));
+>>>>>> +
+>>>>>> +    ap_matrix->available_instances++;
+>>>>>> +
+>>>>>> +    return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>
+>>>>> The above functions seem to be called with the lock of this 
+>>>>> auto-generated
+>>>>> mdev parent device held. That's why we don't have to care about 
+>>>>> synchronization
+>>>>> ourselves, right?
+>>>>
+>>>> I would assume as much. The comments for the 'struct 
+>>>> mdev_parent_ops' in
+>>>> include/linux/mdev.h do not mention anything about synchronization, 
+>>>> nor did I
+>>>> see any locking or synchronization in the vfio_ccw implementation 
+>>>> after which
+>>>> I modeled my code, so frankly it is something I did not consider.
+>>>>
+>>>>>
+>>>>>
+>>>>> A small comment in the code could be helpful for mdev non-experts. 
+>>>>> Hell, I would
+>>>>> even consider documenting it for all mdev -- took me some time to 
+>>>>> figure out.
+>>>>
+>>>> You may want to bring this up with the VFIO mdev maintainers, but 
+>>>> I'd be happy to
+>>>> include a comment in the functions in question if you think it 
+>>>> important.
+>>>>
+>>>>>
+>>>>>
+>>>>> [..]
+>>>>>
+>>>>>
+>>>>>> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+>>>>>> +{
+>>>>>> +    int ret;
+>>>>>> +
+>>>>>> +    ret = mdev_register_device(&ap_matrix->device, 
+>>>>>> &vfio_ap_matrix_ops);
+>>>>>> +    if (ret)
+>>>>>> +        return ret;
+>>>>>> +
+>>>>>> +    ap_matrix->available_instances = 
+>>>>>> AP_MATRIX_MAX_AVAILABLE_INSTANCES;
+>>>>>> +
+>>>>>> +    return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
+>>>>>> +{
+>>>>>> +    ap_matrix->available_instances--;
+>>>>>
+>>>>> What is this for? I don't understand.
+>>>>
+>>>> To control the number of mediated devices one can create for the 
+>>>> matrix device.
+>>>> Once the max is reached, the mdev framework will not allow creation 
+>>>> of another
+>>>> mediated device until one is removed. This counter keeps track of 
+>>>> the number
+>>>> of instances that can be created. This is documented with the mediated
+>>>> framework. You may want to take a look at:
+>>>>
+>>>> Documentation/vfio-mediated-device.txt
+>>>> Documentation/vfio.txt
+>>>> Documentation/virtual/kvm/devices/vfio.txt
+>>>
+>>> This is what you do in create/remove.
+>>> But here in unregister I agree with Halil, it does not seem to be 
+>>> usefull.
 >>
->> This patch adds a variant of the get function by using the device name
->> instead and will not create a notifier if not yet created.
+>> If that is in fact what Halil was asking, then I misinterpreted his 
+>> question; I
+>> thought he was asking what the available_instances was used for. You are
+>> correct, this does not belong here although it makes little 
+>> difference given
+>> this is called only when the driver, which creates the matrix device, 
+>> is unloaded.
+>> It is necessary in the register function to initialize its value, but 
+>> I'll
+>> remove it from here.
 >>
->> But the i915 driver exposes at least 2 HDMI connectors, this patch also
->> adds the possibility to add a connector name tied to the notifier device
->> to form a tuple and associate different CEC controllers for each HDMI
->> connectors.
-> 
-> The patch looks good, but I'm curious about this paragraph above.
-> 
-> Was this tested with devices with more than one HDMI output? Or only on
-> laptops with a single physical HDMI output? If there are two or more
-> outputs then I guess it is the HW designer that decides with output gets
-> CEC support?
+>
+> I questioned the dubious usage of ap_matrix->available_instances 
+> rather than
+> asking what is the variable for.
 
-The driver exposes 2 HDMI connectors (I suspect one is connected to the USB-C alt mode mux along the DP port),
-and only one connected has the CEC line connected to the Embedded Controller.
+I said I'd remove it.
 
-Neil
+>
+>
+> If I've had this deemed damaging I would have asked if it's damaging 
+> in a way
+> I think it is. For example take my comment on 'KVM: s390: interfaces 
+> to manage
+> guest's AP matrix'.
 
-> 
+I apologize for not being able to read your mind. While this is not 
+necessarily
+necessary, it is not damaging because this is called only when the 
+driver is being
+unloaded. The point is moot, however, because I am removing it.
+
+>
+>
 > Regards,
-> 
-> 	Hans
-> 
+> Halil
+>
+>>>
+>>>
+>>>>
+>>>>>
+>>>>>
+>>>>> Regards,
+>>>>> Halil
+>>>>>
+>>>>>> + mdev_unregister_device(&ap_matrix->device);
+>>>>>> +}
+>>>>
+>>>>
+>>>
 >>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/media/cec/cec-notifier.c | 11 ++++++++---
->>  include/media/cec-notifier.h     | 27 ++++++++++++++++++++++++---
->>  2 files changed, 32 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
->> index 16dffa0..dd2078b 100644
->> --- a/drivers/media/cec/cec-notifier.c
->> +++ b/drivers/media/cec/cec-notifier.c
->> @@ -21,6 +21,7 @@ struct cec_notifier {
->>  	struct list_head head;
->>  	struct kref kref;
->>  	struct device *dev;
->> +	const char *conn;
->>  	struct cec_adapter *cec_adap;
->>  	void (*callback)(struct cec_adapter *adap, u16 pa);
->>  
->> @@ -30,13 +31,14 @@ struct cec_notifier {
->>  static LIST_HEAD(cec_notifiers);
->>  static DEFINE_MUTEX(cec_notifiers_lock);
->>  
->> -struct cec_notifier *cec_notifier_get(struct device *dev)
->> +struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
->>  {
->>  	struct cec_notifier *n;
->>  
->>  	mutex_lock(&cec_notifiers_lock);
->>  	list_for_each_entry(n, &cec_notifiers, head) {
->> -		if (n->dev == dev) {
->> +		if (n->dev == dev &&
->> +		    (!conn || !strcmp(n->conn, conn))) {
->>  			kref_get(&n->kref);
->>  			mutex_unlock(&cec_notifiers_lock);
->>  			return n;
->> @@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->>  	if (!n)
->>  		goto unlock;
->>  	n->dev = dev;
->> +	if (conn)
->> +		n->conn = kstrdup(conn, GFP_KERNEL);
->>  	n->phys_addr = CEC_PHYS_ADDR_INVALID;
->>  	mutex_init(&n->lock);
->>  	kref_init(&n->kref);
->> @@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->>  	mutex_unlock(&cec_notifiers_lock);
->>  	return n;
->>  }
->> -EXPORT_SYMBOL_GPL(cec_notifier_get);
->> +EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
->>  
->>  static void cec_notifier_release(struct kref *kref)
->>  {
->> @@ -62,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)
->>  		container_of(kref, struct cec_notifier, kref);
->>  
->>  	list_del(&n->head);
->> +	kfree(n->conn);
->>  	kfree(n);
->>  }
->>  
->> diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
->> index cf0add7..814eeef 100644
->> --- a/include/media/cec-notifier.h
->> +++ b/include/media/cec-notifier.h
->> @@ -20,8 +20,10 @@ struct cec_notifier;
->>  #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
->>  
->>  /**
->> - * cec_notifier_get - find or create a new cec_notifier for the given device.
->> + * cec_notifier_get_conn - find or create a new cec_notifier for the given
->> + * device and connector tuple.
->>   * @dev: device that sends the events.
->> + * @conn: the connector name from which the event occurs
->>   *
->>   * If a notifier for device @dev already exists, then increase the refcount
->>   * and return that notifier.
->> @@ -31,7 +33,8 @@ struct cec_notifier;
->>   *
->>   * Return NULL if the memory could not be allocated.
->>   */
->> -struct cec_notifier *cec_notifier_get(struct device *dev);
->> +struct cec_notifier *cec_notifier_get_conn(struct device *dev,
->> +					   const char *conn);
->>  
->>  /**
->>   * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
->> @@ -85,7 +88,8 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
->>  			       struct cec_notifier *notifier);
->>  
->>  #else
->> -static inline struct cec_notifier *cec_notifier_get(struct device *dev)
->> +static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
->> +							 const char *conn)
->>  {
->>  	/* A non-NULL pointer is expected on success */
->>  	return (struct cec_notifier *)0xdeadfeed;
->> @@ -121,6 +125,23 @@ static inline void cec_register_cec_notifier(struct cec_adapter *adap,
->>  #endif
->>  
->>  /**
->> + * cec_notifier_get - find or create a new cec_notifier for the given device.
->> + * @dev: device that sends the events.
->> + *
->> + * If a notifier for device @dev already exists, then increase the refcount
->> + * and return that notifier.
->> + *
->> + * If it doesn't exist, then allocate a new notifier struct and return a
->> + * pointer to that new struct.
->> + *
->> + * Return NULL if the memory could not be allocated.
->> + */
->> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
->> +{
->> +	return cec_notifier_get_conn(dev, NULL);
->> +}
->> +
->> +/**
->>   * cec_notifier_phys_addr_invalidate() - set the physical address to INVALID
->>   *
->>   * @n: the CEC notifier
->>
-> 
