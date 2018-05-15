@@ -1,53 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753408AbeEOSFs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:05:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753007AbeEOSFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:05:45 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180418000926.4998-1-bjorn.andersson@linaro.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20180418000926.4998-1-bjorn.andersson@linaro.org>
-Message-ID: <152640754443.34267.2752714761157535255@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: qcom: Add some missing gcc clks for msm8996
-Date: Tue, 15 May 2018 11:05:44 -0700
+        id S1753751AbeEOSGx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:06:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33888 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752971AbeEOSFn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:05:43 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] swiotlb: merge swiotlb_unmap_page and unmap_single
+Date: Tue, 15 May 2018 20:05:20 +0200
+Message-Id: <20180515180523.3038-4-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180515180523.3038-1-hch@lst.de>
+References: <20180515180523.3038-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FI6iSZ013431
 
-Quoting Bjorn Andersson (2018-04-17 17:09:26)
-> @@ -3350,6 +3522,7 @@ static struct clk_regmap *gcc_msm8996_clocks[] = {
->         [GCC_AGGRE0_CNOC_AHB_CLK] = &gcc_aggre0_cnoc_ahb_clk.clkr,
->         [GCC_SMMU_AGGRE0_AXI_CLK] = &gcc_smmu_aggre0_axi_clk.clkr,
->         [GCC_SMMU_AGGRE0_AHB_CLK] = &gcc_smmu_aggre0_ahb_clk.clkr,
-> +       [GCC_AGGRE1_PNOC_AHB_CLK] = &gcc_aggre1_pnoc_ahb_clk.clkr,
->         [GCC_AGGRE2_UFS_AXI_CLK] = &gcc_aggre2_ufs_axi_clk.clkr,
->         [GCC_AGGRE2_USB3_AXI_CLK] = &gcc_aggre2_usb3_axi_clk.clkr,
->         [GCC_QSPI_AHB_CLK] = &gcc_qspi_ahb_clk.clkr,
-> @@ -3360,6 +3533,19 @@ static struct clk_regmap *gcc_msm8996_clocks[] = {
->         [GCC_PCIE_CLKREF_CLK] = &gcc_pcie_clkref_clk.clkr,
->         [GCC_RX2_USB2_CLKREF_CLK] = &gcc_rx2_usb2_clkref_clk.clkr,
->         [GCC_RX1_USB2_CLKREF_CLK] = &gcc_rx1_usb2_clkref_clk.clkr,
-> +       [GCC_HLOS1_VOTE_LPASS_CORE_SMMU_CLK] =
-> +                                       &hlos1_vote_lpass_core_smmu_clk.clkr,
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ lib/swiotlb.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-drivers/clk/qcom/gcc-msm8996.c:3512:10: warning: Initializer entry defined twice
-drivers/clk/qcom/gcc-msm8996.c:3536:10: also defined here
-
-Resend please, or at least let me know what to do here. It looks like
-the one you sent has the parent chain setup properly so that the bus
-rcgs are in the chain of clks, while the one that is already there
-doesn't have the chain setup.
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 4d36340bc4f9..2ebbc7204061 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -814,9 +814,9 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+  * After this call, reads by the cpu to the buffer are guaranteed to see
+  * whatever the device wrote there.
+  */
+-static void unmap_single(struct device *hwdev, dma_addr_t dev_addr,
+-			 size_t size, enum dma_data_direction dir,
+-			 unsigned long attrs)
++void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
++			size_t size, enum dma_data_direction dir,
++			unsigned long attrs)
+ {
+ 	phys_addr_t paddr = dma_to_phys(hwdev, dev_addr);
+ 
+@@ -839,13 +839,6 @@ static void unmap_single(struct device *hwdev, dma_addr_t dev_addr,
+ 	dma_mark_clean(phys_to_virt(paddr), size);
+ }
+ 
+-void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+-			size_t size, enum dma_data_direction dir,
+-			unsigned long attrs)
+-{
+-	unmap_single(hwdev, dev_addr, size, dir, attrs);
+-}
+-
+ /*
+  * Make physical memory consistent for a single streaming mode DMA translation
+  * after a transfer.
+@@ -949,7 +942,7 @@ swiotlb_unmap_sg_attrs(struct device *hwdev, struct scatterlist *sgl,
+ 	BUG_ON(dir == DMA_NONE);
+ 
+ 	for_each_sg(sgl, sg, nelems, i)
+-		unmap_single(hwdev, sg->dma_address, sg_dma_len(sg), dir,
++		swiotlb_unmap_page(hwdev, sg->dma_address, sg_dma_len(sg), dir,
+ 			     attrs);
+ }
+ 
+-- 
+2.17.0
