@@ -1,23 +1,23 @@
 Return-Path: <flo@geekplace.eu>
-X-Google-Smtp-Source: AB8JxZq1D6HP7JcheoBxxUx38Cs4TqnPhU3j0f8Y318P2RAQDrzRYCpUBtsPRljBEZ6Nu5tOjIII
-ARC-Seal: i=1; a=rsa-sha256; t=1526472331; cv=none;
+X-Google-Smtp-Source: AB8JxZq9hV55huJSpu1CvBoe1I06AV7EuCLmoPZjn1/qfptkze7DZQGMee5atuYXJkr4vR1l9oG4
+ARC-Seal: i=1; a=rsa-sha256; t=1526392276; cv=none;
         d=google.com; s=arc-20160816;
-        b=ljXftigtj6tZnDI+R1EbdP2Up6epfUHjGSKp5vxgF+cxzvW8WjmHYCIm2KrVy9mxFl
-         gdMgh7XUme6LxpineI7R6EwvrDV7QEMRjEWibk9/CDMOCmFwHSSmmo1yBKkHqCkEmBYd
-         Zt27IH5I3obJNiUPXk2mWwmzHECjNVAiAignZB9fnLgbw3Uk3/qfBgghEM+DjzXOwPQT
-         IvqMLAPrqKafrSMrxCgadu4NTJ5cF7+qyzRmDCZavfb7U8BKTWpOvCvMoyAo1eo4RuDS
-         c6pi8qmZch7X2J+vC93JMarxFe/LxBGrZ0TTurLuMPP0yBRhY7VPsHBaTUIhcNR6eKEI
-         JVRg==
+        b=Q1zIm9ZhteeNUrn13QLHEh8MojbmMSsA0UQQk6vzNG0BJ3lnUb/FjaRJ6MzR7c8PqN
+         oZu3Vr3bE4TaHVzxYl3+LkhPZ0AtTflUxkmom8yvOqeQ+U01Qy9CvegxuZ/yvCz+OVso
+         Fg+nztQGhhHnAK7zKtWItBuvhCh2mIOc2N+x+2W4FTX7GEqiDWWZN2SjASAdMrpN4vUd
+         x/HAD0wkwVVeWF4U3N/oQQ9w5AuVpsonkPtyI35kGi1zVx+sX8X9iuc+jSKmnEUD7/au
+         LbNF6/WbeecUu55MHghH8wy307A8JzSBlnXF1rGXNhEV6a+g4EovMg//w9spgfEf8Fxc
+         ZAeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l5JbfXSiu2lBDxjaLwPAjHcKQyXXJOBa7Wje581f21k=;
-        b=E+YbjWEngk6DFja0iI4IxJiQH+Fn/5cXZ+C5mv5pm8KEhdhzAXNNSdeEdx1H9zL1NZ
-         PmUkh0zFmc7wjdiAQUxbjw/9m5MbH77+hddslWkIZttZUeghe1/VFMizM+lh2ZkdKxf8
-         qzK3B0S7XcIWKuM33xGdlCCMch8a/wx8UeGxiiD4WN4/1CMWYPU64Ctl0rBArjpR7l38
-         rXNH7Vmw8nkgdD+Kc8YzEJe9Wu8k3s58CmLk7RWKGxF/mGklxpZmFM5CXbU+ncP7rai0
-         bDfoBa5zpXvyR9DOjS/C1b93DYfcNh46kj57BIW3r3G9wWLh+Hoj0maJ9+3r/MvLSKpc
-         bknA==
+        bh=70tiiFE1vjIgBsKKQlGLu6egHmuZy8MBSKvgTPM52o4=;
+        b=mIUv917gQU5/zKToHAPTfgcJvQ/ZzPmXP6Vmzpkbb2pvZiKqiGLu0EhjOBf2IH1BUg
+         R47G1aY3PzskAphYgPWUPoDEG8AwjI9hbgEJIjnDGQ4GLVnu0e+Vi9+1YSh0NSUyvp2F
+         wHIBi1Q3P0S9PTR1OnNrQePrVLDgs4cftrlcUC2QF0vOe1sD5sH8a07YvGXHFOG3IMt7
+         6lgC0oYv4M8jvF1aJc2VGDN8aLDAluLGxXIdpSz4E0z4ps+CWuPK/5/5+kMfqfhXfewl
+         V/DW6dkcLS8zCXOY/8f3VJViAGRYfLp1NLLeDGNfQESCS4vFPURaF3AhbrtgiKOwZmcM
+         KBrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of flo@geekplace.eu designates 2a03:4000:6:3a8::1 as permitted sender) smtp.mailfrom=flo@geekplace.eu
 Authentication-Results: mx.google.com;
@@ -26,64 +26,55 @@ From: Florian Schmaus <flo@geekplace.eu>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Florian Schmaus <flo@geekplace.eu>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/3] driver-core: record error on bus registration
-Date: Wed, 16 May 2018 14:05:26 +0200
-Message-Id: <20180516120527.29403-3-flo@geekplace.eu>
+Subject: [PATCH v3 1/3] driver-core: return EINVAL error instead of BUG_ON()
+Date: Tue, 15 May 2018 15:51:12 +0200
+Message-Id: <20180515135114.31939-2-flo@geekplace.eu>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180516120527.29403-1-flo@geekplace.eu>
-References: <20180516120527.29403-1-flo@geekplace.eu>
 In-Reply-To: <20180515135114.31939-1-flo@geekplace.eu>
 References: <20180515135114.31939-1-flo@geekplace.eu>
+In-Reply-To: <20180504132357.31771-1-flo@geekplace.eu>
+References: <20180504132357.31771-1-flo@geekplace.eu>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600538307840439356?=
-X-GMAIL-MSGID: =?utf-8?q?1600622251043557770?=
+X-GMAIL-THRID: =?utf-8?q?1600538307173968753?=
+X-GMAIL-MSGID: =?utf-8?q?1600538307173968753?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If bus_register() fails on a driver then record the error code so that
-it can be inspected later on.
+I triggerd the BUG_ON() in driver_register() when booting a domU Xen
+domain. Since there was no contextual information logged, I needed to
+attach kgdb to determine the culprit (the wmi-bmof driver in my
+case). The BUG_ON() was added in commit f48f3febb2cb ("driver-core: do
+not register a driver with bus_type not registered").
+
+Instead of running into a BUG_ON() we print an error message
+identifying the, likely faulty, driver but continue booting.
 
 Signed-off-by: Florian Schmaus <flo@geekplace.eu>
 ---
 
 Notes:
-    - Also record ENOMEM error if initial alloc fails
+    - return EINVAL (instead of EBUSY)
+    - follow common pattern when quoting commits in commit messages
 
- drivers/base/bus.c     | 2 ++
- include/linux/device.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/base/driver.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index ef6183306b40..dce677dddba4 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -152,6 +152,7 @@ static void bus_release(struct kobject *kobj)
+diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+index ba912558a510..afd5b08b7677 100644
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -148,7 +148,11 @@ int driver_register(struct device_driver *drv)
+ 	int ret;
+ 	struct device_driver *other;
  
- 	kfree(priv);
- 	bus->p = NULL;
-+	bus->bus_register_error = 0;
- }
+-	BUG_ON(!drv->bus->p);
++	if (!drv->bus->p) {
++		printk(KERN_ERR "Driver '%s' was unable to register bus_type\n",
++			   drv->name);
++		return -EINVAL;
++	}
  
- static struct kobj_type bus_ktype = {
-@@ -915,6 +916,7 @@ int bus_register(struct bus_type *bus)
- out:
- 	kfree(bus->p);
- 	bus->p = NULL;
-+	bus->bus_register_error = retval;
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(bus_register);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 0059b99e1f25..5b1f3c08bebe 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -135,6 +135,7 @@ struct bus_type {
- 	const struct iommu_ops *iommu_ops;
- 
- 	struct subsys_private *p;
-+	int bus_register_error;
- 	struct lock_class_key lock_key;
- 
- 	bool force_dma;
+ 	if ((drv->bus->probe && drv->probe) ||
+ 	    (drv->bus->remove && drv->remove) ||
 -- 
 2.16.1
