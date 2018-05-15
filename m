@@ -1,85 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeEOIy5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:54:57 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:52757 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752555AbeEOIwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:52:38 -0400
-X-UUID: 38731af7cb4a4192989bc315a3718eb5-20180515
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <marcel@holtmann.org>,
-        <johan.hedberg@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        id S1752648AbeEOI6A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:58:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:56194 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752348AbeEOI54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:57:56 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 1/7] dt-bindings: net: bluetooth: Add mediatek-bluetooth
-Date: Tue, 15 May 2018 16:52:16 +0800
-Message-ID: <e63b2e552987d56bc12b65c185a30258c24c0eac.1526374087.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1526374087.git.sean.wang@mediatek.com>
-References: <cover.1526374087.git.sean.wang@mediatek.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 09/11] firmware: xilinx: Add debugfs for clock control
+ APIs
+To: Jolly Shah <JOLLYS@xilinx.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-10-git-send-email-jollys@xilinx.com>
+ <5bcc47f7-3352-f0e6-29c5-78d5be96c1d1@arm.com>
+ <SN1PR02MB3758191654612CFC261A38BEB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <6579fdce-6845-70d5-1dc1-64d52debef19@arm.com>
+Date: Tue, 15 May 2018 09:57:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <SN1PR02MB3758191654612CFC261A38BEB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-Add binding document for a SoC built-in device using MediaTek protocol.
-Which could be found on MT7622 SoC or other similar MediaTek SoCs.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+On 14/05/18 20:18, Jolly Shah wrote:
+> Hi Sudeep,
 
-diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-new file mode 100644
-index 0000000..1335429
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-@@ -0,0 +1,35 @@
-+MediaTek SoC built-in Bluetooth Devices
-+==================================
-+
-+This device is a serial attached device to BTIF device and thus it must be a
-+child node of the serial node with BTIF. The dt-bindings details for BTIF
-+device can be known via Documentation/devicetree/bindings/serial/8250.txt.
-+
-+Required properties:
-+
-+- compatible:	Must be one of
-+		  "mediatek,mt7622-bluetooth"": for MT7622 SoC
-+- clocks:	Should be the clock specifiers corresponding to the entry in
-+		clock-names property.
-+- clock-names:	Should contain "ref" entries.
-+- power-domains: Phandle to the power domain that the device is part of
-+
-+Example:
-+
-+	btif: serial@1100c000 {
-+		compatible = "mediatek,mt7622-btif",
-+			     "mediatek,mtk-btif";
-+		reg = <0 0x1100c000 0 0x1000>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_BTIF_PD>;
-+		clock-names = "main";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+
-+		bluetooth {
-+			compatible = "mediatek,mt7622-bluetooth";
-+			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
-+			clocks = <&clk25m>;
-+			clock-names = "ref";
-+		};
-+	};
+[..]
+
+>> 
+>> As I mentioned in earlier patch, I don't see the need for this
+>> debugfs interface. Clock lay has read-only interface in debugfs
+>> already. Also if you want to debug clocks, you can do so using the
+>> driver which uses these clocks. Do you really want to manage clocks
+>> in user-space ? The whole idea of EEMI kind of interface is to
+>> abstract and hide the fine details even from non-trusted rich OS
+>> like Linux kernel, but by providing this you are doing exactly
+>> opposite.
+> 
+> No we don't want to manage clocks in user-space. This debugfs is
+> meant for developer who wants to debug APIs behavior in case
+> something doesn't work as expected. Debugfs should be off by default
+> in production images.
+> 
+
+Good that it's not used in production image. The clock layer has
+*sufficient* debugfs support that will *help in debugging*. So please
+drop this Xilinx specific clock debugfs.
+
 -- 
-2.7.4
+Regards,
+Sudeep
