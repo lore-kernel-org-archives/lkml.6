@@ -1,67 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2259651-1526369959-2-6877486492568587654
+X-Cyrus-Session-Id: sloti22d1t05-2259651-1526369918-2-5340506925665486962
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526369958; b=ZsiXB7xBaeM0pztPSaV3Iik7A+kphMc/5ciU9pshst0b9JaZB5
-    P63Kmeb0YWknTvMFXfemrx4sIwwoEwztKY+JSbi19mpSvOQEuerAoSg39JQYV1pd
-    bx6D+gt39QqfFP8wOlqZbo+emoHtN6rT9ujuG4hm3MjUaHx+wCR4osOB2SvrtXvv
-    8XCQGb+69NrK6zOuWkwo1N9CGJaCbQX6A+TNI+3enZq+HTZz080fvcRqIFBPBb7f
-    BtP33AkP+wu74brjKZVc9Rrd83hBTVhu1jskE6rTgOzKjXEvcpCriD8BwZXDcQXq
-    GON07SjS7WNKTc3EJ4MhTGJA63FqT0gchEWw==
+    1526369918; b=OPJgcP+AA2/MMs8EXEIqPgJ7BKH0ACyiOILh9vQY/uCB8uLfKj
+    hq3dDGXYhC572qho0zullW7WVQhAWS5WNUYLXydgtgT8eb8YSl/oncTcKZTtooQN
+    8+7MpdZHks5bZq9T1jknQyNnPTRpfGDUKDHltx8R3mfzCi39bQesdKpY+1cJDdZH
+    xWZHXLFfK8ZNzCVcdCoOq9HEx/Tju9VISn95Fh70nx5mqYP3xp2IrPEBO/UioJQb
+    nGesf2Qjb5jQkgiDqBSsyJ0rcuXwpLizF51qrRb0XFsXaUD8V9g3jfPsugTRxD7A
+    Sc5ymgTqvjFopigFDSBPGzUG2RTYsuW1RkZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
     :references:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526369958; bh=mqAyh
-    CIP2+m0A1r//QqJOpu7bF38r1WmCT3Aex8opLk=; b=G7FAsj0/X2hvHFODpfuRt
-    FnwwZDBzcfUISokFoOSHz/VuU4fORBkKbiLfn9PcPhtM7WQPt/gl4TRT7PlGnX78
-    nldyTLoaJsLnvb5rRNF7IzoYNreSkQi3u/4UH6v7aE+S2NrI1ebbPrUd/Gp4DFIP
-    PTi1GrgaJoKuj/wi7FTuw+dpcTrD7bEZ+Z8F76sH7qMtMJqE2Sn0pbFFTvjmjOtn
-    4YGYaK0rjjlCmqkdB1u650z3hODyVFcTS0lRKJzjrHdES3kt82+nePuzQe7Esdhw
-    0McZ9nUcSmE9505L9irBb8gbxqiEy/NbbZa3en+C9W5s9Mpc0N53Yp2E/k1iHGbu
-    w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526369918; bh=fFaf3
+    Yg2ShJvSSLhX0nn5ZoDm2TCe3G/l1LGOdYGzks=; b=UNEF8c48NFeWQlOwzuXg2
+    I/Z6vn4XSAAWPZvrSk4oMrOO4rtp8Bzucp5jFJS9D9SuNpLmkY4bjCZYRUc5c6fn
+    z/gy26vF+HKuh8vLhKRKpmYVdRxo3s4PnqMD8wVl4xWj3hw7yyG1YSo6rq0iQ3eX
+    vcQ2m7YIpXjJv1zjD72xBPQZznUm1Z50CxXhHDmCPjAjhwvoQt1ZN2hnW3yl9Nsu
+    jyfDlnL8T8zZyQQGiS0qTc53Ll+3ff5y8mk25O6UlJ+9CwXaOtt2AfONM3PYAulM
+    gzIcJ6n8Q+mwEU/NK+gtkKrqWafGRPibfsooFYXYfeWwuThEfxeCsuSXvrQRC1f6
+    g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=Vuy98V+M x-bits=1024
+    header.d=kernel.org header.i=@kernel.org header.b=Gpexjrhz x-bits=1024
     x-keytype=rsa x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=linuxfoundation.org
     header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-80 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=Vuy98V+M x-bits=1024
+      header.d=kernel.org header.i=@kernel.org header.b=Gpexjrhz x-bits=1024
       x-keytype=rsa x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=linuxfoundation.org
       header.result=pass header_is_org_domain=yes;
@@ -69,22 +69,22 @@ Authentication-Results: mx1.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-80 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfICVQEB4J+bsqSxzIH7kA8LxvdVaiIkEQrFtKzkA/+QKuYT3uPaTkuAzZtSmFxF83r1opxKHr/S/tDYksabdhhuvCEiZ4i6hhKEXnS1I6lFFe2wAsexA
-    6asGt9PL3aAi8QLNPzd9eWYuyBEBeo7u+uWJZl7n+6Tv6sYerZYsm8F2hUvGUdU0NXRGhHwb4do+ESHvmW+UVg+uYVxVWMyW+VB6c/pNCEmohzWbgfCrU5k8
-    qDiHltujzM7sYG+LPMjAwA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+X-CM-Envelope: MS4wfFTcxrnJshDOkUKhNN2wUcob1j1J5L/XWjPF/KT3m9c7S9DYZs1o9NvIk9Nzv2TkuTROyi/pjNWo5QAv7P669SBL12hbSe3ZbMlImQWLw/dswEa0dzt3
+    2odYeys7AfQ9pTu8DQ3i+Qfq7RnKLYNZR0u53boPASoNCfwFc/sczHEvKwRMGmm4Jq3+pb/WkvvOUOeE7n/t145V9VTXnc2g6EymCrM2qdBYho2feMF6rMds
+    ffM0/j5qxnV4fO6XJLf9Cw==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=DDOyTI_5AAAA:8
-    a=YUMXEJm6yEDlSm408OAA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=lF0WfDy3dMF9Ji0hKbsA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Tue, 15 May 2018 09:38:56 +0200
+Date: Tue, 15 May 2018 09:38:16 +0200
 From: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>
 To: Dexuan Cui <decui@microsoft.com>
 Subject: Re: [PATCH] Drivers: hv: vmbus: Removed an unnecessary cast from
  void *
-Message-ID: <20180515073856.GB29923@kroah.com>
+Message-ID: <20180515073816.GA29923@kroah.com>
 References: <SG2P15301MB00156C41A4CBCFCC94EB8061BF930@SG2P15301MB0015.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Disposition: inline
@@ -117,23 +117,11 @@ On Tue, May 15, 2018 at 12:25:01AM +0000, Dexuan Cui wrote:
 > In C, we don't need such a cast.
 > 
 > Fixes: ae20b254306a ("Drivers: hv: vmbus: enable VMBus protocol version 5.0")
-> Reported-by: Stephen Hemminger <sthemmin@microsoft.com>
 > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> Cc: K. Y. Srinivasan <kys@microsoft.com>
-> ---
-> 
-> Thanks Stephen Hemminger for pointing this out!
-> 
-> So far, ae20b254306a ("Drivers: hv: vmbus: enable VMBus protocol version 5.0") only
-> appears in the char-misc tree's char-misc-testing and char-misc-next branches. If 
-> possible, please merge both patches into one.
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
 
-I can not rebase/merge patches in public branches, sorry, so I'll just
-apply this one.
+Should be "Reported-by:", I'll go edit this by hand :(
 
-thanks,
-
-greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
