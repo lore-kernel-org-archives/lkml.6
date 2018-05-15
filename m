@@ -1,121 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752583AbeEOJjj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:39:39 -0400
-Received: from mail-cys01nam02on0077.outbound.protection.outlook.com ([104.47.37.77]:38451
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752343AbeEOJjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:39:36 -0400
-Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com,
-        mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com,
-        airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
- <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
- <20362702.FCbsg9xPKv@aspire.rjw.lan>
-From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Message-ID: <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
-Date: Tue, 15 May 2018 15:09:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752620AbeEOJkU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:40:20 -0400
+Received: from freki.datenkhaos.de ([81.7.17.101]:46022 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752343AbeEOJkS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 05:40:18 -0400
+Date: Tue, 15 May 2018 11:39:54 +0200
+From: Johannes Hirte <johannes.hirte@datenkhaos.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bp@suse.de" <bp@suse.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
+ block
+Message-ID: <20180515093953.GA1746@probook>
+References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+ <20180201184813.82253-3-Yazen.Ghannam@amd.com>
+ <20180414004230.GA2033@probook>
+ <20180416115624.GA1543@probook>
+ <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20362702.FCbsg9xPKv@aspire.rjw.lan>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR0101CA0015.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:21::25) To SN1PR12MB2367.namprd12.prod.outlook.com
- (2603:10b6:802:25::20)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2367;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2367;3:N3HzHOaD3hXGB4KsYDvSuIkS61kzSB/ibg07odvnfIRDsJOB+Pok4BSoHzeLyyzMCtcI/3Xk0pJFIqX+e7yNjkeXWn/5vYtCRta8VuhSCC1PvX0lwEiPfiAJlUIzEuIWJor09FdZMvoX3Ip0H4bHKaJcr5VIY3/d74u7paYjJPBCrWuNR24+BkhhoHSeeGYBG8DKYpe7cGivPYejKfqEDcmKjsyNc5D6jrdSJwHMnwscs5KUGxmG7pEb7RjHKGBu;25:i95xs8NhHGuQwQZUit3cThvw7MkYyyB49JywlYG3N4y2FrZGbKZ0s5D186SSD7MVDMuReD/N9HfH6VW6rFl/3y0EhkuVtpjnJLGc/I3EMt+b0oxZgqNUfHuYzr3eJGB+E/8H8LaofmT6Z2yys10B2Y0RkK7+wILvurOrvRy9AWY/4yCvbnq6I3p/NQKhYbkfun60U8T0U5CIq7XbmrHZnazPS+F/J90g/eNY9vN1egspBM9Gfi5oFWkvsWQnkmEghgJdVKdYUPPOhn1+q1FoJUEiCaQOJPuR+gZIXbNLeJiRfYxoQ4kJg2fFgJiOBJslcZRsBKxKg+gG3MKPtcAcTg==;31:AtQvnIhQPEDT25S9d19Z1txNXBvcPvXw+DDHGkwRCxFi3Pxrp67GkQMZg566FshguNM++RxWE7RfOQ6bE1DJDlVxkdzKYOn6LDzwjG+wxWdGPTZGo79Zub5+so0WbllKd1JaQD9HewERDZE8stH+cDj5jdJeHRZdgeH14VSASZIHI+qLnGZppYsBrghqXjAqiRoXgDZXQFSQzDduxaRFay51YDd996wmwelK0hIMvVw=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2367:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2367;20:Dx6rraL1lt63kmjjL7YIK8qyilavcv93z2/T+rs8mbR0ma74d1k5EsO1Ne0ycrw4jtmiMSLgWIL9/ojbWZE4kWxcchaTXIMwGdt8qHrvmGHXh9H/0AtR1/U5FVdn4nERImzUUrKBSJOBeZ/Q5JDsWHYt5O5d6c1tCvfPZcHM8gDKgNVAE/+G1ZUQzR/N0SRerzrI7EMYSEd7snuVZMGKjffy4yuUujVSGHRDpeI61mHsEebK3ZS+QBaSl/dsE0vr05dywLGCLnn0va4z/56jU6mzAV4pV/qObbv4ApfQmRx4p5ocFALEXsRljv2qlJaJddfg5cpfTUNF4Mfot3H06p39ClVE+3hfPdchqwdQoHQUVaEZrO9lxJEfhZa+bvMX774EBE0osZDKMDRT4FQhXV3KWDF2CGWYfyduS82jzHR6fnG2cOlUY3LOMvoh17CDjIBceJOxbHrEYPt3JERabL0FW3TeaBbT+ds8hT19u3eJd2zyf6gbbl84gu29Ztkc;4:MYCak8QOaA5uGtjsB/DcwHTxJUgUKuyZz4ojgAZVSU3ykNbUa1krrGrCX1igJfAsBr55csIceGPcyTL/Mqau7Sq7Xry000VklfHDhxewu3EMBk542Tu1Tm7Uo1vwS8Kli/J9IuW/csrmEW7w2IGluJnXXFVkXd92qDjdLTNDzzrKTcMo75zyben5VOe2+qvO40agKArfKbA3c/5KM1rNvZSb+OWwmR5na/3YAmRs2F8LKo5OZhlQPo4F7wX4medxSfx979kOCjiShGAi/LR6DQlsg4llWtOm+s2EtMMk7PEBfey3dXBlTX4P/8llVjOO
-X-Microsoft-Antispam-PRVS: <SN1PR12MB236777AA8FDF8BF0AEADEAB4F8930@SN1PR12MB2367.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:SN1PR12MB2367;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2367;
-X-Forefront-PRVS: 0673F5BE31
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(376002)(39380400002)(346002)(366004)(396003)(199004)(189003)(3260700006)(26005)(25786009)(956004)(2616005)(476003)(386003)(11346002)(77096007)(186003)(5660300001)(16526019)(53936002)(6486002)(446003)(106356001)(4326008)(486006)(53546011)(66066001)(65806001)(47776003)(6246003)(97736004)(65956001)(65826007)(316002)(58126008)(16576012)(68736007)(7736002)(31686004)(64126003)(8936002)(2906002)(105586002)(8676002)(36756003)(81156014)(81166006)(52116002)(6116002)(305945005)(3846002)(52146003)(86362001)(478600001)(76176011)(72206003)(31696002)(23676004)(2486003)(230700001)(6666003)(6916009)(229853002)(50466002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2367;H:[10.136.128.133];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjFQUjEyTUIyMzY3OzIzOnJjK3RhSTlQNE8xMzhVOTE1bkh4YlhkNldD?=
- =?utf-8?B?WDJLeXRrcjZmZmg3VXdKQmx3STJEVFZLdyttRU4yWUFnWElGUE5tYWhWK0RD?=
- =?utf-8?B?K0hta2txQjZPN3NGZVNoNllTTCtVS1BTM1VndmhaZGUwaldhODV6dTQyZjBU?=
- =?utf-8?B?b0NtMHViR2lzcmY1a2NHd1kwaFB0NjFLUkV2U2dVMCs2eXFseDZORDRRVHlO?=
- =?utf-8?B?YnBvSkU4NzlHY3NQUWFmUjJxQk9hV1EzU1B3bVkraGlzUGdHaUlrcmQ5SFM2?=
- =?utf-8?B?WnlKWUJxZmlQVlhKUTVsRmpVNSs3WXllQzhMVW1wU29RRDdhc29ZU29DSVJB?=
- =?utf-8?B?QUg3ZkhPcUFzU3hkT0FDMW9ncXl5eXJNWVZsTTduTkxMc2M1dnBvVDE2SGti?=
- =?utf-8?B?b3pvUnBBSDhsb0RjbTFBb2NzZXRzVi93Mk5hTVMyMjJaMnBGaDdxQXRzY2dz?=
- =?utf-8?B?N3FOKzlHZkJtN3JOaGd4Qy9oNlcvRDRISDJqc2lRQXZxd0NURitDRzNsNFVM?=
- =?utf-8?B?ckt2TDlwMDJwVERMeGpnclNEYUJ5dmxPRGpQUlRsdVVoUHlqdDIvMXMyZkxh?=
- =?utf-8?B?Kzg3Zi93c2hRYjBWd0ZMM3ZRTmZVd0k5M2FJb3RBRW4zSjFpd0o5U1FEZ0FB?=
- =?utf-8?B?WlZDd2Y2bzUxK2FUV2NIYnd1TmpKV3c2Z3NreWVPSEFhUENoV1Y0TnFUOUQ1?=
- =?utf-8?B?R2VGMUNQYUVUcGZkc2ZabEg3QmJlT3hPYlNlZUxxS0FhSTYwYW9najQrRGQz?=
- =?utf-8?B?Yk5jL2pnZUZiVFNwWFhmQWhYYW45U0JubGFUS0R0SmtibzdVOUY2a0tpWWJv?=
- =?utf-8?B?bVZUdXFxSG81UVkxQkYwUEUrUlh1WWNhbjNvYkhtTkUweCtubmNwZzJqYzQ1?=
- =?utf-8?B?dVl4YnAzQWc2cnZRR3dGbG52STN4eWVBaVN1dmNwRG1IaXJ2eFAyZnRvTVpS?=
- =?utf-8?B?S0pVVmlQM3lRcjVWaktxSjM5d2ExemlmRVVhNFB5bGxsUE5xZThZTmFyMUQr?=
- =?utf-8?B?TFRxV2pJbzBHQlI3aFM4SVd3WUZUY3RKZ0ovckdKSlhWbEJLdlRmQ1BpU3BX?=
- =?utf-8?B?NmtkV01NU1ErNy9GN1JnVDRyUFd0aUpubmczaXZ1OTczV0Z4YlJ1bXNpbjcy?=
- =?utf-8?B?T1dVbTM5VnQvNlk2b1JsTjUralgxaGRjN1ppN2V3ZUNkekF3WnVLNURSZGxo?=
- =?utf-8?B?dFdQMkk1NlRPVHVvSDJtWThIUnlXdXJ6UmpmUSs1cUx6Y21DdTBkRitEaDlx?=
- =?utf-8?B?b0JVbW1TaTloZTlRSnR1RXFjV0tCWiswMHZ5c21HNzNxVE9jOFU2N1F0R0ta?=
- =?utf-8?B?MzRKcEVaNXAzUlFrU2RQc0UxbU1MUFpFR1pIWkJQK1hpNmZXbnY1S1p0S0Yr?=
- =?utf-8?B?dVVncG1oVk9NZzFxeHFyT0VralVBbFEvRFM1Mk4zdDZhcXQwMUw0ZzhoN2ls?=
- =?utf-8?B?cUdRUnhsYTlQdGpkNHM2KzVobVhTckxJYXE0TFk0M0taVzMxcFRYN3drTzhW?=
- =?utf-8?B?Mk9SME0xaVBWTzcvM2g3SjMrZW1GeHFSTU5qOC9kMVAydnRraDh5YktmR3hI?=
- =?utf-8?B?OVNQUFJ3OUkwaW5ZN3JxMzZzYldaRDQrb1JGWmlyZjVQZnFScGxjdEtqZW15?=
- =?utf-8?B?dDNqN25yVHNKRUFBZkl0dU1rZWlTLyt5MFFiOFhNMXpwZUwreGNNQldHQ1Zh?=
- =?utf-8?B?RlRGRlFINmJuRnArdmlhejEwRS9VTVcrdWdEdk85T1EwNVFnVkg5ajk3NnNn?=
- =?utf-8?B?Um45NGlscGtHT3NqN0h6KzUyMTErV3VmdVJTNVJ6M21GdW1maElSelltQzRL?=
- =?utf-8?B?ZjZab3Y4b1dONnpUSi9pRVMyYlM0R2l6ZlZCdEQ5b2lFSjE0Y0tuS3l4QWVa?=
- =?utf-8?B?SUZ6RnhmckR0NFA2VHYzbkhUNmRyVkhVbzl1WFJUNlR3RTlwNUxydlFpZ2hH?=
- =?utf-8?B?U2RrZ0tjc3kyWHFiZDEwSmprVEd5cXpzc1cxSG5sS09JYmVZOW5FVjlYYVRq?=
- =?utf-8?Q?FP46Ub?=
-X-Microsoft-Antispam-Message-Info: 8Au+s5MxVIOSVtH3gQnss4dQ4G5ccVVBB1bLXr9DDuutQZOgxqWi95XlP11B2tcXO+i4HoMBd674jhrecLkhsauRB2TsrkvU3gUSW+v+MGxmiJht/UH2RE3AVUpf8AHSs0THGIbF9eqAg1YeVN05bxwqB9othWSD3itNDCGRgbl9ZvMcV1zj+4jy32rOaAFx
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2367;6:GBjOGilnJtgzShgru8H2F0ZFFvM60oG4QhiFqA+ZsGiJ0Fw2VTzLXLNiAT9+RabkuOvTxv9HVL/mtVj6zaxPHMYdx7iHNKsDyCZMw52YwxwoIdwzv2RIZoePy71QSoFZtVvSM53Qktqv0YRnc1JDyIu+dHHE5yiBdht8aeZOzlbdVlEumruSWbefPIefO1C+VIqtNTit/JUjS3bRkgbsXhBb0mHI4Nn5mKtfGTiu4BQJ4P6Luwa5hja/YCTbNUX4PvV5Il7hfODiIFysU8049lGiFkBQOw8TGfT1Iki2eDlcO517vDIYPlQjQroDBweZ/+lZWwA6gSRhAz0jj3U9gVQqf1iUxVipEUlE4wHToYeUPxDeYXmAEM26dFXIeZGhgftYdGADIkIzTAbsE7EXf0iaatEhpKOWQIHTMHGTK6974VRZH2LNCvnrfxh8sXQGc+6JN/4ShDDiD3w4aGNRqw==;5:Vv47DTkfam1zs43FXQWapDVSvqdUaufL00cjmDF5O4U3hXhLYo1LUnLTbcEljuzXLe/RH9ikf9+zPpz9bS3V2fHQqVMYrcY+CctuJMlX+xeprn7TFJx7XEMU6BzL3wEOs8AUbPERQ7sDg253VHjMKUKoiUFuIk2gvGB98fQiPbk=;24:5k6sc0NdLMqTxXUEqU0I1GPJhjr/4b9UWN6KWKcfzIJNPYnqDyj+Ad0bcyQaV7LN3P+Y6Hniwfne4WZ0VMyyh4OuXijUrZDNHXYooKkJrLE=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2367;7:Dnk1r4CAc/qoBgjZECN9y0rwDvl9KcETTcS5Q8fbR1nK97/oTNG1ftZMkgznQEIwsk4uFsvAOgLJw3tGWSr+WvqxgQm7fbhavg9vb6A5UphRPaDsro4wo8IdTQBJ8fjgqHgoIQSBPkONnyD5T5VjNlNWBLxL4kTaOcD+rVNjjLHm4Ykl0OrPgQOl4YCt5Zc1xcZxTN0KxMmgQJR86wWJLfN3twOON2qBYUUSeKUg4bIAwaGaBHrx4rqHsiyOBIEC;20:zCXI2hyh0g4aVethpaCPjAljUKuUpDujreD3qfhxpSNW4Kr2ZS2iJOcNopj+ZbUnIc/ZWPIlxfafvBppWkPHn15PirTKYpSjbsBykU1Kc7eSL2+TyOf7ierdDj6/l8J9KIBmlF28ZpzOeQmOlNVIXQgpNlCVcMlqwhQfqJkM+UNxspZj3fbJmc5sbGNAJvY47Xyx/0pWXXQvEc6dRrSnuxyvqGrUnhwJS3aq1Hh/tDhraCCY8AgXfAeIOASuLC6l
-X-MS-Office365-Filtering-Correlation-Id: fd026f69-8f1d-4a63-d1f1-08d5ba47c3bc
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 09:39:29.7949 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd026f69-8f1d-4a63-d1f1-08d5ba47c3bc
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2367
+Content-Disposition: inline
+In-Reply-To: <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
-> On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
->> Stoney SoC provides oscout clock. This clock can support 25Mhz and
->> 48Mhz of frequency.
->> The clock is available for general system use.
->>
->> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+On 2018 Apr 17, Ghannam, Yazen wrote:
+> > -----Original Message-----
+> > From: linux-edac-owner@vger.kernel.org <linux-edac-
+> > owner@vger.kernel.org> On Behalf Of Johannes Hirte
+> > Sent: Monday, April 16, 2018 7:56 AM
+> > To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> > Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; bp@suse.de;
+> > tony.luck@intel.com; x86@kernel.org
+> > Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
+> > block
+> > 
+> > On 2018 Apr 14, Johannes Hirte wrote:
+> > > On 2018 Feb 01, Yazen Ghannam wrote:
+> > > > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> > > >
+> > > > The block address is saved after the block is initialized when
+> > > > threshold_init_device() is called.
+> > > >
+> > > > Use the saved block address, if available, rather than trying to
+> > > > rediscover it.
+> > > >
+> > > > We can avoid some *on_cpu() calls in the init path that will cause a
+> > > > call trace when resuming from suspend.
+> > > >
+> > > > Cc: <stable@vger.kernel.org> # 4.14.x
+> > > > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> > > > ---
+> > > >  arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++++++++++
+> > > >  1 file changed, 15 insertions(+)
+> > > >
+> > > > diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > > > index bf53b4549a17..8c4f8f30c779 100644
+> > > > --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > > > +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > > > @@ -436,6 +436,21 @@ static u32 get_block_address(unsigned int cpu,
+> > u32 current_addr, u32 low, u32 hi
+> > > >  {
+> > > >  	u32 addr = 0, offset = 0;
+> > > >
+> > > > +	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+> > > > +		return addr;
+> > > > +
+> > > > +	/* Get address from already initialized block. */
+> > > > +	if (per_cpu(threshold_banks, cpu)) {
+> > > > +		struct threshold_bank *bankp = per_cpu(threshold_banks,
+> > cpu)[bank];
+> > > > +
+> > > > +		if (bankp && bankp->blocks) {
+> > > > +			struct threshold_block *blockp = &bankp-
+> > >blocks[block];
+> > > > +
+> > > > +			if (blockp)
+> > > > +				return blockp->address;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > >  	if (mce_flags.smca) {
+> > > >  		if (smca_get_bank_type(bank) == SMCA_RESERVED)
+> > > >  			return addr;
+> > > > --
+> > > > 2.14.1
+> > >
+> > > I have a KASAN: slab-out-of-bounds, and git bisect points me to this
+> > > change:
+> > >
+> > > Apr 13 00:40:32 probook kernel:
+> > ================================================================
+> > ==
+> > > Apr 13 00:40:32 probook kernel: BUG: KASAN: slab-out-of-bounds in
+> > get_block_address.isra.3+0x1e9/0x520
+> > > Apr 13 00:40:32 probook kernel: Read of size 4 at addr ffff8803f165ddf4 by
+> > task swapper/0/1
+> > > Apr 13 00:40:32 probook kernel:
+> > > Apr 13 00:40:32 probook kernel: CPU: 1 PID: 1 Comm: swapper/0 Not
+> > tainted 4.16.0-10757-g4ca8ba4ccff9 #532
+> > > Apr 13 00:40:32 probook kernel: Hardware name: HP HP ProBook 645
+> > G2/80FE, BIOS N77 Ver. 01.12 12/19/2017
+> > > Apr 13 00:40:32 probook kernel: Call Trace:
+> > > Apr 13 00:40:32 probook kernel:  dump_stack+0x5b/0x8b
+> > > Apr 13 00:40:32 probook kernel:  ? get_block_address.isra.3+0x1e9/0x520
+> > > Apr 13 00:40:32 probook kernel:  print_address_description+0x65/0x270
+> > > Apr 13 00:40:32 probook kernel:  ? get_block_address.isra.3+0x1e9/0x520
+> > > Apr 13 00:40:32 probook kernel:  kasan_report+0x232/0x350
+> > > Apr 13 00:40:32 probook kernel:  get_block_address.isra.3+0x1e9/0x520
+> > > Apr 13 00:40:32 probook kernel:  ? kobject_init_and_add+0xde/0x130
+> > > Apr 13 00:40:32 probook kernel:  ? get_name+0x390/0x390
+> > > Apr 13 00:40:32 probook kernel:  ? kasan_unpoison_shadow+0x30/0x40
+> > > Apr 13 00:40:32 probook kernel:  ? kasan_kmalloc+0xa0/0xd0
+> > > Apr 13 00:40:32 probook kernel:  allocate_threshold_blocks+0x12c/0xc60
+> > > Apr 13 00:40:32 probook kernel:  ? kobject_add_internal+0x800/0x800
+> > > Apr 13 00:40:32 probook kernel:  ? get_block_address.isra.3+0x520/0x520
+> > > Apr 13 00:40:32 probook kernel:  ? kasan_kmalloc+0xa0/0xd0
+> > > Apr 13 00:40:32 probook kernel:
+> > mce_threshold_create_device+0x35b/0x990
+> > > Apr 13 00:40:32 probook kernel:  ? init_special_inode+0x1d0/0x230
+> > > Apr 13 00:40:32 probook kernel:  threshold_init_device+0x98/0xa7
+> > > Apr 13 00:40:32 probook kernel:  ?
+> > mcheck_vendor_init_severity+0x43/0x43
+> > > Apr 13 00:40:32 probook kernel:  do_one_initcall+0x76/0x30c
+> > > Apr 13 00:40:32 probook kernel:  ?
+> > trace_event_raw_event_initcall_finish+0x190/0x190
+> > > Apr 13 00:40:32 probook kernel:  ? kasan_unpoison_shadow+0xb/0x40
+> > > Apr 13 00:40:32 probook kernel:  ? kasan_unpoison_shadow+0x30/0x40
+> > > Apr 13 00:40:32 probook kernel:  kernel_init_freeable+0x3d6/0x471
+> > > Apr 13 00:40:32 probook kernel:  ? rest_init+0xf0/0xf0
+> > > Apr 13 00:40:32 probook kernel:  kernel_init+0xa/0x120
+> > > Apr 13 00:40:32 probook kernel:  ? rest_init+0xf0/0xf0
+> > > Apr 13 00:40:32 probook kernel:  ret_from_fork+0x22/0x40
+> > > Apr 13 00:40:32 probook kernel:
+> > > Apr 13 00:40:32 probook kernel: Allocated by task 1:
+> > > Apr 13 00:40:32 probook kernel:  kasan_kmalloc+0xa0/0xd0
+> > > Apr 13 00:40:32 probook kernel:  kmem_cache_alloc_trace+0xf3/0x1f0
+> > > Apr 13 00:40:32 probook kernel:  allocate_threshold_blocks+0x1bc/0xc60
+> > > Apr 13 00:40:32 probook kernel:
+> > mce_threshold_create_device+0x35b/0x990
+> > > Apr 13 00:40:32 probook kernel:  threshold_init_device+0x98/0xa7
+> > > Apr 13 00:40:32 probook kernel:  do_one_initcall+0x76/0x30c
+> > > Apr 13 00:40:32 probook kernel:  kernel_init_freeable+0x3d6/0x471
+> > > Apr 13 00:40:32 probook kernel:  kernel_init+0xa/0x120
+> > > Apr 13 00:40:32 probook kernel:  ret_from_fork+0x22/0x40
+> > > Apr 13 00:40:32 probook kernel:
+> > > Apr 13 00:40:32 probook kernel: Freed by task 0:
+> > > Apr 13 00:40:32 probook kernel: (stack is not available)
+> > > Apr 13 00:40:32 probook kernel:
+> > > Apr 13 00:40:32 probook kernel: The buggy address belongs to the object at
+> > ffff8803f165dd80
+> > >  which belongs to the cache kmalloc-128 of size 128
+> > > Apr 13 00:40:32 probook kernel: The buggy address is located 116 bytes
+> > inside of
+> > >  128-byte region [ffff8803f165dd80, ffff8803f165de00)
+> > >  Apr 13 00:40:32 probook kernel: The buggy address belongs to the page:
+> > > Apr 13 00:40:32 probook kernel: page:ffffea000fc59740 count:1
+> > mapcount:0 mapping:0000000000000000 index:0x0
+> > > Apr 13 00:40:32 probook kernel: flags: 0x2000000000000100(slab)
+> > > Apr 13 00:40:32 probook kernel: raw: 2000000000000100
+> > 0000000000000000 0000000000000000 0000000180150015
+> > > Apr 13 00:40:32 probook kernel: raw: dead000000000100
+> > dead000000000200 ffff8803f3403340 0000000000000000
+> > > Apr 13 00:40:32 probook kernel: page dumped because: kasan: bad access
+> > detected
+> > > Apr 13 00:40:32 probook kernel:
+> > > Apr 13 00:40:32 probook kernel: Memory state around the buggy address:
+> > > Apr 13 00:40:32 probook kernel:  ffff8803f165dc80: fc fc fc fc fc fc fc fc 00 00
+> > 00 00 00 00 00 00
+> > > Apr 13 00:40:32 probook kernel:  ffff8803f165dd00: 00 00 00 00 00 00 00 fc
+> > fc fc fc fc fc fc fc fc
+> > > Apr 13 00:40:32 probook kernel: >ffff8803f165dd80: 00 00 00 00 00 00 00
+> > 00 00 00 00 00 00 fc fc fc
+> > > Apr 13 00:40:32 probook kernel:                                                              ^
+> > > Apr 13 00:40:32 probook kernel:  ffff8803f165de00: fc fc fc fc fc fc fc fc fc fc
+> > fc fc fc fc fc fc
+> > > Apr 13 00:40:32 probook kernel:  ffff8803f165de80: fc fc fc fc fc fc fc fc fc fc
+> > fc fc fc fc fc fc
+> > > Apr 13 00:40:32 probook kernel:
+> > ================================================================
+> > ==
+> > >
+> > 
+> > Putting the whole chaching part under the
+> > 
+> > if (mce_flags.smca) {
+> > 
+> > solved the issue on my Carrizo.
+> > 
 > 
-> I'm not sure if the Stephen Boyd's comments on one of the previous
-> versions of this patch have been addressed.  Have they?
+> Thanks for reporting this. I'm able to reproduce this on my Fam17h system. The
+> caching should still be the same on non-SMCA systems. Putting it all under the
+> SMCA flags effectively removes it on Carrizo.
 > 
-> In any case, if I'm expected to take this, I need an ACK from Stephen on it.
+> Here are when get_block_address() is called:
+> 1) Boot time MCE init. Called on each CPU. No caching.
+> 2) Init of the MCE device. Called on a single CPU. Values are cached here.
+> 3) CPU on/offling which calls MCE init. Should use the cached values.
 > 
-> Thanks,
-> Rafael
-> 
+> It seems to me that the KASAN bug is detected during #2 though it's not yet clear
+> to me what the issue is. I need to read up on KASAN and keep debugging.
 
-All comments of Stephen Boyd and Daniel Kurtz have been addressed.
+The out-of-bound access happens in get_block_address:
 
-Stephen, if you are Ok with this can you please ACK it.
+	if (bankp && bankp->blocks) {
+		struct threshold_block *blockp blockp = &bankp->blocks[block];
 
-Thanks,
-Akshu
+with block=1. This doesn't exists. I don't even find any array here.
+There is a linked list, created in allocate_threshold_blocks. On my
+system I get 17 lists with one element each. 
+
+-- 
+Regards,
+  Johannes
