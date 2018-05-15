@@ -1,107 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752893AbeEOJSe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:18:34 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34785 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbeEOJSa (ORCPT
+        id S1752778AbeEOJTN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:19:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50060 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeEOJOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:18:30 -0400
-X-Google-Smtp-Source: AB8JxZrl4c1A6tdHVhXfTMD4KtbBNm2M97vlvc+D7C73qnHm6RXC8cIvk7v2gBM+AHub370z/wRNJfiD9WdY5EbmatY=
-MIME-Version: 1.0
-In-Reply-To: <tip-1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f@git.kernel.org>
-References: <20180504060003.19618-16-ard.biesheuvel@linaro.org> <tip-1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f@git.kernel.org>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 15 May 2018 11:18:29 +0200
-Message-ID: <CAKv+Gu94+dK1WM__thFup9AmPrEqJ-7Ojynnx4hO9picanwhcQ@mail.gmail.com>
-Subject: Re: [tip:efi/core] efi/x86: Ignore unrealistically large option ROMs
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Cc: linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 May 2018 05:14:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A46B6055C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        rjw@rjwysocki.net, linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v7 04/14] clk: qcom: Add DT bindings for CPU clock driver for msm8996
+Date: Tue, 15 May 2018 12:13:26 +0300
+Message-Id: <1526375616-16904-5-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 09:50, tip-bot for Hans de Goede <tipbot@zytor.com> wrote:
-> Commit-ID:  1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f
-> Gitweb:     https://git.kernel.org/tip/1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f
-> Author:     Hans de Goede <hdegoede@redhat.com>
-> AuthorDate: Fri, 4 May 2018 08:00:01 +0200
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Mon, 14 May 2018 08:57:49 +0200
->
-> efi/x86: Ignore unrealistically large option ROMs
->
-> setup_efi_pci() tries to save a copy of each PCI option ROM as this may
-> be necessary for the device driver for the PCI device to have access too.
->
-> On some systems the efi_pci_io_protocol's romimage and romsize fields
-> contain invalid data, which looks a bit like pointers pointing back into
-> other EFI code or data. Interpreting these pointers as romsize leads to
-> a very large value and if we then try to alloc this amount of memory to
-> save a copy the alloc call fails.
->
-> This leads to a "Failed to alloc mem for rom" error being printed on the
-> EFI console for each PCI device.
->
-> This commit avoids the printing of these errors, by checking romsize before
-> doing the alloc and if it is larger then the EFI spec limit of 16 MiB
-> silently ignore the ROM fields instead of trying to alloc mem and fail.
->
-> Tested-by: Hans de Goede <hdegoede@redhat.com>
-> [ardb: deduplicate 32/64 bit changes, use SZ_16M symbolic constant]
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
-This looks odd now: I sent this out as
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-[ardb: deduplicate 32/64 bit changes, use SZ_16M symbolic constant]
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
 
-which clearly conveys that Hans tested the updated version of the patch.
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-In general, I don't think there is a need to reorder signoffs unless
-there is anything wrong with them, no?
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-efi@vger.kernel.org
-> Link: http://lkml.kernel.org/r/20180504060003.19618-16-ard.biesheuvel@linaro.org
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  arch/x86/boot/compressed/eboot.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-> index dadf32312082..a8a8642d2b0b 100644
-> --- a/arch/x86/boot/compressed/eboot.c
-> +++ b/arch/x86/boot/compressed/eboot.c
-> @@ -123,10 +123,17 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
->         if (status != EFI_SUCCESS)
->                 return status;
->
-> +       /*
-> +        * Some firmware images contain EFI function pointers at the place where the
-> +        * romimage and romsize fields are supposed to be. Typically the EFI
-> +        * code is mapped at high addresses, translating to an unrealistically
-> +        * large romsize. The UEFI spec limits the size of option ROMs to 16
-> +        * MiB so we reject any ROMs over 16 MiB in size to catch this.
-> +        */
->         romimage = (void *)(unsigned long)efi_table_attr(efi_pci_io_protocol,
->                                                          romimage, pci);
->         romsize = efi_table_attr(efi_pci_io_protocol, romsize, pci);
-> -       if (!romimage || !romsize)
-> +       if (!romimage || !romsize || romsize > SZ_16M)
->                 return EFI_INVALID_PARAMETER;
->
->         size = romsize + sizeof(*rom);
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
+-- 
+1.9.1
