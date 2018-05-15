@@ -1,144 +1,137 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474721-1526334249-2-15257790422157419607
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1833056-1526353987-2-2403016061469189050
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526334249; b=Oe+b0K+E1Bt3HsqP/dWBHbYuwSUTioJ1shzhOb94aUJ2T2LMDQ
-    FLe1+4mlzgHZkJVtdfp7lexH4mlFzF652de6ywjb/cy6dovrAfp66bzSPOy/b4BM
-    0y5Mz8Cn7+Z658+gBbgqtn4tiXvCGCVBPi2KSH3efaLyu89v3p/oZOWuUMQFLS9K
-    d7dq0Ad0bV+goYXQomPA++q/0tqA6WyLPtqn+YR6Y70pwtiQO3SohYrtDgdtPWSQ
-    jCdTajO+78oY5FsUrChAR0ORP6kb9Rhp+g7zRtheKl5qrbQi/TzzvLK5AafPMNo5
-    gSHB1VFfMCYBY1ZT5bwarFJDKv4ecSGAKBhg==
+    1526353986; b=bvGzYhYQCg1TIClvwAnjNSmWbNutVsClj4wYxChPfGyC0r/1aJ
+    F4SMXdiLxgrI3rfq+p/sjmfO8matLQnIITNIZ3j7kR8ljaQDUC4syg0JBDM46fsw
+    9qinvOS2lkD3O12g5aMVVeYAAWKREybhfUQaaGqXrkTt+HojQOoeRTn2iAMGPLFB
+    mrKWCzgGZiDPoo0SheDwQMjQgRRS8SVKvT3Sspw2cHupKDEOdZyOONoWZkhu9y8e
+    fHxQin1HAEsmC2vT+YAgHiw5J25iZQr6upE6LjQux05KZg2VFixiHEKriLj0s4Ej
+    Vc+OLQDik3Sl/WKauwpTslOvGLCeOaz6tmDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526334249; bh=l1XDpEVlrT111cHzLhLes6RzWrG3jHLydePwUIFHGG
-    4=; b=K3N+jXHiDfY3hawniexwnqqed56YeKwM5tgcTaeCftNA+mKI3Jd5CLur7B
-    bXw70p8OmR4s7H2o5tu/sIuOcVemiLNUvfoe5mol9+81n95r0K2cqDoqrJRfougN
-    C/kioWBMvZDKmxMQiOkk8OVhQdhrZ1wQXF2NVwYETi3xw2TyDwIYx1K6Ss2tKHEV
-    xOzKenfRDs/Y/i9BKLL/fiQZC3eeZtA0JTCBpAsNJqNL2q/jcuXTfPAPHjrqOsjg
-    8c43LA//SbFNI7pz0xDOOu+rmeFZR5+qmrdDpyLAabX2e3j3i+XpBd2S3vZ2n/WW
-    gLF0IMHGdttQT8WIEx1GCttl7jcQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=paul-moore-com.20150623.gappssmtp.com
-    header.i=@paul-moore-com.20150623.gappssmtp.com header.b=OmhwkSjK
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
+    :date:message-id:mime-version:content-type:sender:list-id; s=
+    fm2; t=1526353986; bh=8lIudwyadTQtfGsVm+NMkBcl3k4ZE1YLIw2IbuEYm1
+    w=; b=BbeHRwIhjcJ3RgcJJgI77UNkEqwK9rIN9oUv3GOKJQp/OBE+F1CuGUGw3S
+    XNZBx8Bs/RYvZC4aXczhV3pYuQm115j6NwdHmBcNabStZExWF0wrwpJGjp9y0Lfw
+    hM6JwPJYPEkVHR8wRnKtD2j7GV5B3k9v9MVZ6DzrjjOO+XDyuGUIlApwBzIKvtOg
+    o8jwlvHYMEKJcRUWn8nzPLgdcCUtqQ+3rWudjZG6ufeIxO+blRN9hlmKjAdkaVDz
+    WT/A6druulwG9graywESsUbXPvYzI51H6ZRAuUhRou5LUcLvzHiaQdFfn6z4TNb9
+    WZXe9XFEdUgC4a6Hf/Lib0z55GKg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ellerman.id.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=JZ0+qx7S;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=paul-moore.com header.result=pass
+    header.domain=ellerman.id.au header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=paul-moore-com.20150623.gappssmtp.com
-      header.i=@paul-moore-com.20150623.gappssmtp.com header.b=OmhwkSjK
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ellerman.id.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=JZ0+qx7S;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=paul-moore.com header.result=pass
+      header.domain=ellerman.id.au header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLbi2SAWaptERZtCUfvgviTHpW03/40X2NlastQR1R67xvVTn/+9nY7b5YggsEXs5vah1n4zzZmTXDpfG+3nBgJ/LgZtaHuicSQ/TkmORZKI9T5BKUdd
-    uOCuaqE66IteNJq0VSlJOk9bXKCQ4o3JU2rp6zhX35wVWdewwy0fvpyckYx7s/aow/eCQHXUFNkKh9ro4D2DWmEJQBP5b6rczJmSJZCASCHP4XYwphzx/lBb
-    5WAiDGQvWpqNrKglqF282w==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8 a=xVhDTqbCAAAA:8 a=VwQbUJbxAAAA:8
-    a=6Jo02TKGwVwa4Mu2SKYA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=GrmWmAYt4dzCMttCBZOh:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPFWmRH7+bt3sBaW03KjmWGKuxFqMC89dYW6vxG1DHaJfLPBtxszvTcCgmMs6wfEBW5aj7aFk1eFQUvHKaet3faImhYEgGALgTxVh6EqqeOkKQQoI2kY
+    2ZVcdPQrXnk/Ust0AHVBNP2SCqnp68SoqbH8zbxTtLk4mQduYcWCIoZn4WISpHeGHnTmO5xNwvvkHFN4ft12wkTCBOGSFEwELDx7Dfj3y0ctdXWwVtezxnFr
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=7CQSdrXTAAAA:8
+    a=wMNdZWldAAAA:8 a=hGzw-44bAAAA:8 a=FRwMG6dQGmbBtAXrKUwA:9
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=FUarYpL4UH3yWsho8X8J:22 a=HvKuF1_PTVFglORKqfwH:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeENVoF (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 17:44:05 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39425 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752189AbeENVoD (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 May 2018 17:44:03 -0400
-X-Google-Smtp-Source: AB8JxZrh250FO8jrT+kvCnGR8/LK58bOLxt1Oc6Xka5X0U9a2TM4LpCcXBOCgkZLuhwKJ1kAXaNU94bHFkLU4FR5aR8=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
-References: <cover.1526173613.git.rgb@redhat.com> <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 May 2018 17:44:01 -0400
-Message-ID: <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get audit context
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
+        id S1752024AbeEODND (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 23:13:03 -0400
+Received: from ozlabs.org ([203.11.71.1]:39399 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752009AbeEODND (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 14 May 2018 23:13:03 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: owner-linux-security-module@vger.kernel.org
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleg Nesterov <oleg@redhat.com>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH REPOST 4/5] powerpc: Use update_thread_flag()
+In-Reply-To: <1526051104-15995-5-git-send-email-Dave.Martin@arm.com>
+References: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com> <1526051104-15995-5-git-send-email-Dave.Martin@arm.com>
+Date: Tue, 15 May 2018 13:13:00 +1000
+Message-ID: <87d0xxpq6b.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the audit context is an internal audit value, use an
-> access function to retrieve the audit context pointer for the task
-> rather than reaching directly into the task struct to get it.
+Dave Martin <Dave.Martin@arm.com> writes:
+
+> This patch uses the new update_thread_flag() helper to simplify a
+> couple of if () set; else clear; constructs.
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> No functional change.
+>
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
 > ---
->  include/linux/audit.h                | 14 ++++++--
->  include/net/xfrm.h                   |  2 +-
->  kernel/audit.c                       |  6 ++--
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +--
->  security/selinux/selinuxfs.c         |  6 ++--
->  security/selinux/ss/services.c       | 12 +++----
->  15 files changed, 64 insertions(+), 60 deletions(-)
+>  arch/powerpc/include/asm/elf.h | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/elf.h b/arch/powerpc/include/asm/elf.h
+> index 548d9a4..136c9b1 100644
+> --- a/arch/powerpc/include/asm/elf.h
+> +++ b/arch/powerpc/include/asm/elf.h
+> @@ -88,14 +88,8 @@ typedef elf_vrregset_t elf_fpxregset_t;
+>  #ifdef __powerpc64__
+>  # define SET_PERSONALITY(ex)					\
+>  do {								\
+> -	if (((ex).e_flags & 0x3) == 2)				\
+> -		set_thread_flag(TIF_ELF2ABI);			\
+> -	else							\
+> -		clear_thread_flag(TIF_ELF2ABI);			\
+> -	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)		\
+> -		set_thread_flag(TIF_32BIT);			\
+> -	else							\
+> -		clear_thread_flag(TIF_32BIT);			\
+> +	update_thread_flag(TIF_ELF2ABI, ((ex).e_flags & 0x3) == 2);	\
+> +	update_thread_flag(TIF_32BIT, (ex).e_ident[EI_CLASS] == ELFCLASS32); \
+>  	if (personality(current->personality) != PER_LINUX32)	\
+>  		set_personality(PER_LINUX |			\
+>  			(current->personality & (~PER_MASK)));	\
 
-Merged, but there was some fuzz due to the missing 1/5 patch and a
-handfull of checkpatch.pl fixes.  Please take a look at the commit in
-the audit/next branch and if anything looks awry please send a patch
-to fix it.
+Thanks for cleaning it up.
 
--- 
-paul moore
-www.paul-moore.com
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+
+cheers
