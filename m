@@ -1,67 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeEOAYE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 20:24:04 -0400
-Received: from smtprelay0073.hostedemail.com ([216.40.44.73]:38774 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752078AbeEOAYD (ORCPT
+        id S1752508AbeEOAZi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 20:25:38 -0400
+Received: from mail-ot0-f181.google.com ([74.125.82.181]:43485 "EHLO
+        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752333AbeEOAZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 20:24:03 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3874:4321:5007:6119:7903:8957:10004:10400:10848:11232:11658:11914:12296:12740:12760:12895:13069:13184:13229:13311:13357:13439:14096:14097:14659:14721:21080:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: fly33_7a693e05d7e3b
-X-Filterd-Recvd-Size: 2079
-Message-ID: <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
-Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging
- output
-From: Joe Perches <joe@perches.com>
-To: paulmck@linux.vnet.ibm.com
-Cc: Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 17:23:59 -0700
-In-Reply-To: <20180514235832.GR26088@linux.vnet.ibm.com>
-References: <cover.1525964381.git.joe@perches.com>
-         <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
-         <20180514202910.GI26088@linux.vnet.ibm.com>
-         <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
-         <20180514222456.GO26088@linux.vnet.ibm.com>
-         <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
-         <20180514235832.GR26088@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 20:25:36 -0400
+X-Google-Smtp-Source: AB8JxZqTbrB0dpMcqeSbNtUSYD5vkwaQBqTUtrNoJjYx2ABt+YKcX4MXtuonRuZgeM8hxM4yZd9Z+FDjp1m5JAxtmwQ=
+MIME-Version: 1.0
+In-Reply-To: <CAD8Lp46edWAR2iVti8gGp+L_yy91ij6AHuJh3iuuTLg8oUq47g@mail.gmail.com>
+References: <20180503030438.51150-1-chiu@endlessm.com> <CAHp75VfM+1HUi6W986r0iEiuS46TJc8XscO_ce4N-i66EtPLWA@mail.gmail.com>
+ <CAD8Lp46edWAR2iVti8gGp+L_yy91ij6AHuJh3iuuTLg8oUq47g@mail.gmail.com>
+From: Daniel Drake <drake@endlessm.com>
+Date: Mon, 14 May 2018 18:25:35 -0600
+Message-ID: <CAD8Lp46-q8=t9RoWxLjZkv=EAJAbRvY37-ibUof+oVfZaOE0Kw@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: asus-wmi: Add keyboard backlight toggle support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Chris Chiu <chiu@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, bberg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-14 at 16:58 -0700, Paul E. McKenney wrote:
-> OK, so if I define pr_fmt as follows, I get the old behavior?
-> 
-> 	#define pr_fmt(fmt) fmt
+Hi Andy,
 
-yes.
+On Mon, May 7, 2018 at 8:46 AM, Daniel Drake <drake@endlessm.com> wrote:
+> > > Some Asus laptops like UX550GE has hotkey (Fn+F7) for keyboard
+> > > backlight toggle. In this UX550GE, the hotkey incremet the level
+> > > of brightness for each keypress from 1 to 3, and then switch it
+> > > off when the brightness has been the max. This commit interprets
+> > > the code 0xc7 generated from hotkey to KEY_KBDILLUMUP to increment
+> > > the brightness, then pass KEY_KBDILLUMTOGGLE to user space after
+> > > the brightness max been reached for switching the led off.
+> > >
+> >
+> > Pushed to my review and testing queue, thanks!
+>
+> We found that GNOME's handling of the toggle key is somewhat imperfect
+> and it will need modifying before we achieve the
+> Up-Up-Up-off-Up-Up-Up-off... cycle that we are looking for.
+>
+> https://gitlab.gnome.org/GNOME/gnome-settings-daemon/issues/41
+>
+> In that discussion an alternative perspective was raised:
+>
+> Is it right for the kernel to modify the key sent to userspace, when
+> it is then relying on the specific userspace action of it changing the
+> brightness to the next expected level? (and this userspace behaviour
+> is not even working right in the GNOME case)
+>
+> Instead, would it make sense for the kernel to always report TOGGLE in
+> this case, and for GNOME to interpret toggle as simply "cycle through
+> all the available brightness levels"?
 
-> I just queued
-> a commit to be squashed into my version of your patch 18/18 that adds
-> this to kernel/rcu/rcu_segcblist.c.  This joins the ones that your
-> patch added to kernel/rcu/srcutree.c and kernel/rcu/tree.c.
-> 
-> Should I also add "#define pr_fmt(fmt) "rcu: " fmt" to these files?
-> 
-> kernel/rcu/srcutiny.c
-> kernel/rcu/sync.c
-> kernel/rcu/tiny.c
+Any comments on this? I am tempted to send a patch to just make this
+key always emit TOGGLE from the kernel given that we have a tentative
+agreement on implementing the brightness cycle within GNOME.
 
-Well, I don't actually remember why the define
-was added to rcu_segcblist.c.
-
-Most of this was done via a script which looked
-for pr_<level> uses without a pr_fmt in the same
-file.
-
-Dunno why rcu_segcblist was modified.
-Maybe it was a braino.
+Daniel
