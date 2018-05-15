@@ -1,163 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeEOIaW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:30:22 -0400
-Received: from mga02.intel.com ([134.134.136.20]:44683 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752097AbeEOIaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:30:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="41036680"
-From: "Reshetova, Elena" <elena.reshetova@intel.com>
-To: "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: James Morris <jmorris@namei.org>, "lwn@lwn.net" <lwn@lwn.net>,
-        "fedora-selinux-list@redhat.com" <fedora-selinux-list@redhat.com>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Linux Security Summit Program Committee"
-        <lss-pc@lists.linuxfoundation.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Audit-ML <linux-audit@redhat.com>,
-        "gentoo-hardened@gentoo.org" <gentoo-hardened@gentoo.org>,
-        "keyrings@linux-nfs.org" <keyrings@linux-nfs.org>,
-        "tpmdd-devel@lists.sourceforge.net"
-        <tpmdd-devel@lists.sourceforge.net>,
-        "kernel-hardening@lists.openwall.com"
-        <kernel-hardening@lists.openwall.com>
-Subject: [ANNOUNCE] Linux Security Summit Europe 2018 - CFP
-Thread-Topic: [ANNOUNCE] Linux Security Summit Europe 2018 - CFP
-Thread-Index: AdPsJqhbCx2OqGzYTFGw+oF1x20Raw==
-Date: Tue, 15 May 2018 08:30:15 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612B8D492DB4@IRSMSX102.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODU1YTZmN2EtM2ZlZC00NjZjLThjYmItYWIwMWVkOWE3MDFhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiIxZXZiWkl3aW05akFYaDlCSXJ1TGVtTGhKT1hKQVN2enh6OFwvcTJJeWJWMm1wVFVQbElTVkQzbG9vdVwvOWdFXC9mIn0=
-x-originating-ip: [163.33.239.181]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752525AbeEOIbF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:31:05 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:55691 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752139AbeEOIbD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:31:03 -0400
+Subject: Re: [RFC PATCH 5/5] media: platform: Add Chrome OS EC CEC driver
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
+ <1526337639-3568-6-git-send-email-narmstrong@baylibre.com>
+ <f76d52b1-77bc-49dd-483c-43058d38da04@xs4all.nl>
+ <ee591542-c481-3009-b3b5-725695ea9bfd@baylibre.com>
+ <331d45a4-e496-d0f0-5a0b-ead2cc66da6f@xs4all.nl>
+ <43b84663-da56-25fd-8e16-ba67f5a7c762@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <809adc05-90a1-03f4-d0d6-23cd47f0da1a@xs4all.nl>
+Date: Tue, 15 May 2018 10:30:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <43b84663-da56-25fd-8e16-ba67f5a7c762@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfKQ7IuwhtIBn7TL45/rIezhmkwaVFRfN1TkCXwblD/A/Igy4fvULP6Mdoo+mpKcEbLP7sFEl33E0G7gJNzF8wytb5YQjx9IUWwwtTOjxoh5LbSHwk5a5
+ XF3/GGJIdAJBSjJ3urxzdI+5omnCY175L6q86SLALE519VgO/g9s7cR0zfLKoT5eC8DBkPbFSjS8hjb6gPRtzTQYOB+CVCjRi32Qhg32Fp/VbBfzAWvrzHGQ
+ UyH6VuVG5k8FmzqnTFK4LVJCdHVUOHgPdZnwBIXxP37QHhfK9ilStXal32s5WbSNoUqCiTitRHrzde2o0yuw2U2kVLcG7pVziLOIzaPUJDglDQEUR1jIirA/
+ xyPfEz4EjvVkORB1ab7uVDrL9KQqpRy2WumyJypiWfowpIgf/IMI/RvsY/RKRcytYGly4XN7sh8lJs139o++Q0aKyFdM0Ff/HVC8OPpBbosDD3+Es9o5k8pG
+ 5W7wjsK8PtSPpBPp6gDoPIZ9hSH4excYqjSCPRfpfL2TEVAP1SVrXVZ5UWBALRDP8UYXL2FhhFGIXHUYnyRDoVZCcbWDxSD9m3kz/4hl9opCa+zltEz6K05G
+ NKA6dPwP4c8a/sj8eOpNV1KxwK9wLB3bDynbgQQ7ZX+X1M11l/ym5+/CHwYfkJMtNhG5Db7L4FAkhUy/DuehyhaUCU4GJFt+b1QutXzc+sgYEhfKeFfDDWNX
+ WX2G8mYv7srONoCTwH1kdC3ZC8vNYdG6wZLh4SyGOMUxo3SS/+tHPZuhkB7MJkkc8SSMX8QXcWhUy6Zl5JqxJGMvbuj2axILpXgANwruEmR2mDgAvaWMEQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-==============================================================================
-		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
+On 05/15/18 10:28, Neil Armstrong wrote:
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	cros_ec_cec = devm_kzalloc(&pdev->dev, sizeof(*cros_ec_cec),
+>>>>> +				   GFP_KERNEL);
+>>>>> +	if (!cros_ec_cec)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	platform_set_drvdata(pdev, cros_ec_cec);
+>>>>> +	cros_ec_cec->cros_ec = cros_ec;
+>>>>> +
+>>>>> +	ret = cros_ec_cec_get_notifier(&cros_ec_cec->notify);
+>>>>> +	if (ret) {
+>>>>> +		dev_warn(&pdev->dev, "no CEC notifier available\n");
+>>>>> +		cec_caps |= CEC_CAP_PHYS_ADDR;
+>>>>
+>>>> Can this happen? What hardware has this? I am strongly opposed to CEC drivers
+>>>> using this capability unless there is no other option. It's a pain for userspace.
+>>>
+>>> It's in case an HW having a CEC capable FW but not in the cec_dmi_match_table, in this case
+>>> it won't fail but still enable the CEC interface without a notifier.
+>>
+>> I don't think that's a good idea. CAP_PHYS_ADDR should *only* be used in situations
+>> where it is truly impossible to tell which output is connected to the CEC adapter.
+>> That's the case with e.g. USB CEC dongles where you have no idea how the user
+>> connected the HDMI cables.
+>>
+>> But I assume that in this case it just means that the cec_dmi_match_table needs
+>> to be updated, i.e. it is a driver bug.
+> 
+> Yep, maybe a dev_warn should be added to notify this bug ?
 
-		   LINUX SECURITY SUMMIT EUROPE 2018
-                             
-			         25-26 October
-			       EDINBURGH, UK
-==============================================================================
+Yes, a dev_warn and then return -ENODEV.
 
+> 
+>>
+>> Another thing: this driver assumes that there is only one CEC adapter for only
+>> one HDMI output. But what if there are more HDMI outputs? Will there be one
+>> CEC adapter for each output? Or does the hardware have no provisions for that?
+> 
+> The current EC interface only exposes a single CEC interface for now, there is no
+> plan yet for multiple HDMI outputs handling.
+> 
+>>
+>> Something should be mentioned about this in a comment.
+> 
+> Ok
 
-DESCRIPTION
+Thanks!
 
- The Linux Security Summit (LSS) is a technical forum for collaboration
- between Linux developers, researchers, and end users. Its primary aim is to
- foster community efforts in analyzing and solving Linux security challenges.
-
- This year, for the first time, the Linux Security Summit is going to
- be also held in Europe (LSS-EU) in order to facilitate broader participation in Linux
- Security development. Similar to LSS-North America, LSS-EU provides a unique
- opportunity for to have discussions and networking opportunities with key people 
- in  the Linux kernel security community , present your work and ideas and 
- affect the future direction of Linux security.  
-
- In addition to the refereed presentations, panels and BoF sessions, this year's
- LSS-EU program will have an introduction into various Linux kernel security
- subsystems in order to get participants acquainted with their main concepts
- and goals, as well as outline the areas of future development, where contribution
- by the community is welcomed. 
-
-
-  The program committee currently seeks proposals for:
-
-    * Refereed Presentations:
-      45 minutes in length.
-
-    * Panel Discussion Topics:
-      45 minutes in length.
-
-    * Short Topics:
-      30 minutes in total, including at least 10 minutes discussion.
-
-    * BoF Sessions.
-
-  Topic areas include, but are not limited to:
-
-    * Kernel self-protection
-    * Access control
-    * Cryptography and key management
-    * Integrity control
-    * Hardware Security
-    * Iot and embedded security
-    * Virtualization and containers
-    * System-specific system hardening
-    * Case studies
-    * Security tools
-    * Security UX
-    * Emerging technologies, threats & techniques 
-
-  Proposals should be submitted via:
-    https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/program/cfp/
-
-
-DATES
-
-  * CFP Close: July 16, 2018
-  * CFP Notifications: July 23, 2018
-  * Schedule Announced: Aug 25, 2018
-  * Event: October 25-26, 2018
-
-
-WHO SHOULD ATTEND
-
-  We're seeking a diverse range of attendees, and welcome participation by
-  people involved in Linux security development, operations, and research.
-
-  The LSS is a unique global event which provides the opportunity to present
-  and discuss your work or research with key Linux security community members
-  and maintainers. It?s also useful for those who wish to keep up with the
-  latest in Linux security development, and to provide input to the
-  development process.
-
-
-WEB SITE
-
-  https://events.linuxfoundation.org/events/linux-security-summit-europe-2018/
-
-
-TWITTER
-
-  For event updates and announcements, follow:
-
-    https://twitter.com/LinuxSecSummit
-  
-
-PROGRAM COMMITTEE
-
-  The program committee for LSS-EU 2018 is:
-
-    * Elena Reshetova, Intel
-    * James Morris, Microsoft
-    * Serge Hallyn, Cisco
-    * Paul Moore, Red Hat
-    * Stephen Smalley, NSA
-    * John Johansen, Canonical
-    * Kees Cook, Google
-    * Casey Schaufler, Intel
-    * Mimi Zohar, IBM
-    * David A. Wheeler, Institute for Defense Analyses
-
-  The program committee may be contacted as a group via email:
-    lss-pc () lists.linuxfoundation.org
+	Hans
