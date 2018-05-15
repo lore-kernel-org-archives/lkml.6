@@ -1,55 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932204AbeEORWG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:22:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:36180 "EHLO foss.arm.com"
+        id S932208AbeEORX3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:23:29 -0400
+Received: from muru.com ([72.249.23.125]:42212 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753575AbeEORWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:22:05 -0400
-Date: Tue, 15 May 2018 18:22:01 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Punit Agrawal <punit.agrawal@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu, suzuki.poulose@arm.com,
-        marc.zyngier@arm.com, Will Deacon <will.deacon@arm.com>,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] KVM: arm64: Add support for PUD hugepages at
- stage 2
-Message-ID: <20180515172200.hw24lgd6qh436xvy@armageddon.cambridge.arm.com>
-References: <20180514144304.10484-1-punit.agrawal@arm.com>
- <20180514144304.10484-5-punit.agrawal@arm.com>
+        id S932124AbeEORX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:23:28 -0400
+Date: Tue, 15 May 2018 10:23:24 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
+        linux@armlinux.org.uk
+Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180515172324.GS98604@atomide.com>
+References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
+ <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
+ <20180501152615.GB98604@atomide.com>
+ <b4d95a08-82fd-9f39-53e7-977351788c88@ti.com>
+ <20180515171459.GP98604@atomide.com>
+ <20180515171808.GR98604@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514144304.10484-5-punit.agrawal@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180515171808.GR98604@atomide.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 03:43:04PM +0100, Punit Agrawal wrote:
-> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
-> handling to add support for PUD hugepages.
+* Tony Lindgren <tony@atomide.com> [180515 17:20]:
+> * Tony Lindgren <tony@atomide.com> [180515 17:17]:
+> > * Faiz Abbas <faiz_abbas@ti.com> [180515 06:05]:
+> > > Hi Tony,
+> > > 
+> > > On Tuesday 01 May 2018 08:56 PM, Tony Lindgren wrote:
+> > > > Hi,
+> > > > 
+> > > > * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
+> > > >> From: Lokesh Vutla <lokeshvutla@ti.com>
+> > > >>
+> > > >> Add MCAN hwmod data and register it for dra762 silicons.
+> > > >>
+> > > >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> > > >> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> > > >> ---
+> > > >>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
+> > > >>  1 file changed, 32 insertions(+)
+> > > >>
+> > > >> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> > > >> index 62352d1..a2cd7f8 100644
+> > > >> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> > > >> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> > > >> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+> > > >>  };
+> > > >>  
+> > > >>  /*
+> > > >> + * 'mcan' class
+> > > >> + *
+> > > >> + */
+> > > >> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
+> > > >> +	.name	= "mcan",
+> > > >> +};
+> > > > 
+> > > > Looks like you're missing the related struct omap_hwmod_class_sysconfig
+> > > > entry for this with the rev and sysconfig registers.
+> > > > 
+> > > 
+> > > Sorry, I missed this email earlier. The MCAN module doesn't have
+> > > sysconfig registers.
+> > 
+> > If there's no sysconfig register you should have no need for adding
+> > anything to omap_hwmod_7xx_data.c. We now have the dts clkctrl
+> > clocks, you can just add that to the dts node for the device.
 > 
-> Addition of pud hugepage support enables additional hugepage
-> sizes (e.g., 1G with 4K granule) which can be useful on cores that
-> support mapping larger block sizes in the TLB entries.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h         | 19 ++++++++++++
->  arch/arm64/include/asm/kvm_mmu.h       | 15 ++++++++++
->  arch/arm64/include/asm/pgtable-hwdef.h |  4 +++
->  arch/arm64/include/asm/pgtable.h       |  2 ++
->  virt/kvm/arm/mmu.c                     | 40 ++++++++++++++++++++++++--
->  5 files changed, 77 insertions(+), 3 deletions(-)
+> However.. My guess is there is somewhere a top level interconnect
+> target module that uses DRA7XX_CM_WKUPAON_ADC_CLKCTRL. And that
+> module may have multiple child devices.
 
-It looks like I acked an earlier version. I'll ack it again here:
+And I'm guessing the top level module with sysconfig related
+registers is named "adc" :)
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Regards,
+
+Tony
