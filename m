@@ -1,71 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752506AbeEOXB4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:01:56 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:47575 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeEOXBy (ORCPT
+        id S1752611AbeEOXCF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:02:05 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41864 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeEOXCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:01:54 -0400
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC: Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next] net: ethernet: ti: cpsw-phy-sel: check bus_find_device() ret value
-Date: Tue, 15 May 2018 18:01:49 -0500
-Message-ID: <20180515230149.6547-1-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.10.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 15 May 2018 19:02:00 -0400
+X-Google-Smtp-Source: AB8JxZqwnTnyI8uayxbaIQDO2hBGphkuONig77lZxvH37EVRDI79PsToyhkq4cTlNK5sav7P57KJMg==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        linux-kernel@vger.kernel.org (open list), opendmb@gmail.com,
+        davem@davemloft.net
+Subject: [PATCH net v2 0/3] net: dsa: bcm_sf2: CFP fixes
+Date: Tue, 15 May 2018 16:01:22 -0700
+Message-Id: <20180515230125.25886-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes klockworks warnings: Pointer 'dev' returned from call to
-function 'bus_find_device' at line 179 may be NULL and will be dereferenced
-at line 181.
+Hi David,
 
-    cpsw-phy-sel.c:179: 'dev' is assigned the return value from function 'bus_find_device'.
-    bus.c:342: 'bus_find_device' explicitly returns a NULL value.
-    cpsw-phy-sel.c:181: 'dev' is dereferenced by passing argument 1 to function 'dev_get_drvdata'.
-    device.h:1024: 'dev' is passed to function 'dev_get_drvdata'.
-    device.h:1026: 'dev' is explicitly dereferenced.
+This patch series fixes a number of usability issues with the SF2 Compact Field
+Processor code:
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-[nsekhar@ti.com: add an error message, fix return path]
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
----
-it present for a very long time, so not critical.
+- we would not be properly bound checking the location when we let the kernel
+  automatically place rules with RX_CLS_LOC_ANY
 
- drivers/net/ethernet/ti/cpsw-phy-sel.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+- when using IPv6 rules and user space specifies a location identifier we
+  would be off by one in what the chain ID (within the Broadcom tag) indicates
 
-diff --git a/drivers/net/ethernet/ti/cpsw-phy-sel.c b/drivers/net/ethernet/ti/cpsw-phy-sel.c
-index 1801364..005fd53 100644
---- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
-+++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
-@@ -177,12 +177,19 @@ void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave)
- 	}
- 
- 	dev = bus_find_device(&platform_bus_type, NULL, node, match);
--	of_node_put(node);
-+	if (!dev) {
-+		dev_err(dev, "unable to find platform device for %s\n",
-+			of_node_full_name(node));
-+		goto out;
-+	}
-+
- 	priv = dev_get_drvdata(dev);
- 
- 	priv->cpsw_phy_sel(priv, phy_mode, slave);
- 
- 	put_device(dev);
-+out:
-+	of_node_put(node);
- }
- EXPORT_SYMBOL_GPL(cpsw_phy_sel);
- 
+- it would be possible to delete one of the two slices of an IPv6 while leaving
+  the other one programming leading to various problems
+
+Florian Fainelli (3):
+  net: dsa: bcm_sf2: Fix RX_CLS_LOC_ANY overwrite for last rule
+  net: dsa: bcm_sf2: Fix IPv6 rules and chain ID
+  net: dsa: bcm_sf2: Fix IPv6 rule half deletion
+
+ drivers/net/dsa/bcm_sf2_cfp.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
+
 -- 
-2.10.5
+2.14.1
