@@ -1,87 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeEOH3W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:29:22 -0400
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:38708 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbeEOH3S (ORCPT
+        id S1752350AbeEOHaZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:30:25 -0400
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:57966 "EHLO
+        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752139AbeEOHaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:29:18 -0400
-X-Google-Smtp-Source: AB8JxZplf4Nf3Nvcp54x2gdCdFVEcUUOj/46aiTpRMuYBLlfI6xQsQsGB+9YC5XHFBgXYFecuXxObA==
-Subject: Re: [RFC PATCH 3/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
-To: Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
- <1526337639-3568-4-git-send-email-narmstrong@baylibre.com>
- <38dcd327-004c-3fb3-8e22-3b3b92542fc9@xs4all.nl>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <fb65a087-2a56-d40a-fa43-2c47d56dcb10@baylibre.com>
-Date: Tue, 15 May 2018 09:29:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 15 May 2018 03:30:23 -0400
+Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com
+References: <20180413212427.18261-1-labbott@redhat.com>
+ <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+ <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
+ <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
+From: Phil Reid <preid@electromag.com.au>
+Message-ID: <0f48484b-9c01-b79b-5b2b-e0da1b312ebc@electromag.com.au>
+Date: Tue, 15 May 2018 15:30:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <38dcd327-004c-3fb3-8e22-3b3b92542fc9@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/2018 08:34, Hans Verkuil wrote:
-> On 05/15/2018 12:40 AM, Neil Armstrong wrote:
->> This patchs adds the cec_notifier feature to the intel_hdmi part
->> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
->> between each HDMI ports.
->> The changes will allow the i915 HDMI code to notify EDID and HPD changes
->> to an eventual CEC adapter.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
->>  drivers/gpu/drm/i915/intel_hdmi.c | 10 ++++++++++
+On 15/05/2018 15:10, Geert Uytterhoeven wrote:
+> Hi Laura,
 > 
-> The Kconfig also needs to be changed. In the DRM_I915 you need to add:
+> On Tue, May 15, 2018 at 12:49 AM, Laura Abbott <labbott@redhat.com> wrote:
+>> On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
+>>> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+>>>> The new challenge is to remove VLAs from the kernel
+>>>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>>>> turn on -Wvla.
+>>>>
+>>>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>>>> more expensive than stack allocation. Introduce a fast path with a
+>>>> fixed size stack array to cover most chip with gpios below some fixed
+>>>> amount. The slow path dynamically allocates an array to cover those
+>>>> chips with a large number of gpios.
+>>>
+>>>
+>>> Blindly replacing VLAs by allocated arrays is IMHO not such a good
+>>> solution.
+>>> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
+>>> bytes. That's an uppper limit, and assumes they are all on the same
+>>> gpiochip,
+>>> which they probably aren't.
+>>>
+>>> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
+>>>
+>>> So, wouldn't it make more sense to not allocate memory, but just process
+>>> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
+>>> 16 bytes)? The code already caters for handling chunks due to not all
+>>> gpios
+>>> belonging to the same gpiochip. That will probably also be faster than
+>>> allocating memory, which is the main idea behind this API.
+>>>
+>>>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>>>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>>
+>>>
+>>>> --- a/drivers/gpio/gpiolib.c
+>>>> +++ b/drivers/gpio/gpiolib.c
+>>>
+>>>
+>>>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip
+>>>> *chip, void *data,
+>>>>                   goto err_free_descs;
+>>>>           }
+>>>>
+>>>> +       if (chip->ngpio > FASTPATH_NGPIO)
+>>>> +               chip_warn(chip, "line cnt %d is greater than fast path
+>>>> cnt %d\n",
+>>>> +               chip->ngpio, FASTPATH_NGPIO);
+>>>
+>>>
+>>> FWIW, can this warning be triggered from userspace?
+>>>
+>>>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool
+>>>> can_sleep,
+>>>>
+>>>>           while (i < array_size) {
+>>>>                   struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>>>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+>>>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+>>>
+>>>
+>>> Hence just use a fixed size here...
+>>>
+>>>> +               unsigned long fastpath[2 *
+>>>> BITS_TO_LONGS(FASTPATH_NGPIO)];
+>>>> +               unsigned long *mask, *bits;
+>>>>                   int first, j, ret;
+>>>>
+>>>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+>>>> +                       memset(fastpath, 0, sizeof(fastpath));
+>>>> +                       mask = fastpath;
+>>>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+>>>> +               } else {
+>>>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>>>> +                                          sizeof(*mask),
+>>>> +                                          can_sleep ? GFP_KERNEL :
+>>>> GFP_ATOMIC);
+>>>> +                       if (!mask)
+>>>> +                               return -ENOMEM;
+>>>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+>>>> +               }
+>>>> +
+>>>>                   if (!can_sleep)
+>>>>                           WARN_ON(chip->can_sleep);
+>>>>
+>>>>                   /* collect all inputs belonging to the same chip */
+>>>>                   first = i;
+>>>> -               memset(mask, 0, sizeof(mask));
+>>>>                   do {
+>>>>                           const struct gpio_desc *desc = desc_array[i];
+>>>>                           int hwgpio = gpio_chip_hwgpio(desc);
+>>>
+>>>
+>>> Out-of-context, the code does:
+>>>
+>>> |                       __set_bit(hwgpio, mask);
+>>> |                       i++;
+>>> |                 } while ((i < array_size) &&
+>>>
+>>> ... and change this limit to "(i < min(array_size, first +
+>>> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
+>>>
+>>> |                         (desc_array[i]->gdev->chip == chip));
+>>>
+>>> ... and you're done?
+>>>
+>> I don't think this approach will work since gpio_chip_{get,set}_multiple
+>> expect to be working on arrays for the entire chip. There doesn't seem
+>> to be a nice way to work on a subset of GPIOs without defeating the point
+>> of the multiple API.
 > 
-> 	select CEC_CORE if CEC_NOTIFIER
+> You're right, sorry for missing that.
+> 
+>> is 2*256 = 512 bytes really too much stack space? I guess we could
+>> switch to a Kconfig to allow for better bounds.
+> 
+> That's a good question.
+> 
+> As long as a VLA is used, it's probably fine, as chip->ngpio is quite small.
+> If you would change it to an array that can accommodate NR_GPIOS bits, you
+> have to start caring about recursion (e.g. gpio-74x164 driven from spi-gpio,
+> where I can extend the chain to increase the level of recursion arbitrarily).
+> 
 
-OK, thanks
+I think a config option for FASTPATH_NGPIO is preferable.
 
-> 
-> Otherwise you'll get problems if the cec driver is a module and i915 is built-in.
-> 
-> Regards,
-> 
-> 	Hans
-> 
+As I've mentioned ARCH_NR_GPIOS is much greater than any chip->ngpio on
+my platform.
+It's at least one order of magnitude, almost 2.
+
+
+-- 
+Regards
+Phil Reid
