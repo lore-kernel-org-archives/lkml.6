@@ -1,164 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752524AbeEOIge (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:36:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:55754 "EHLO foss.arm.com"
+        id S1752406AbeEOIhS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:37:18 -0400
+Received: from david.siemens.de ([192.35.17.14]:60343 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752129AbeEOIgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:36:32 -0400
-Subject: Re: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in
- handle_hva_to_gpa
-To: Jia He <hejianet@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
-        li.zhang@hxt-semitech.com, hughd@google.com,
-        Andrea Arcangeli "<aarcange@redhat.com>;" Minchan Kim
-         "<minchan@kernel.org>;" Claudio Imbrenda
-         "<imbrenda@linux.vnet.ibm.com>;" Arvind Yadav
-         "<arvind.yadav.cs@gmail.com>;" Mike Rapoport
-        <rppt@linux.vnet.ibm.com>,
-        akpm@linux-foundation.org
-References: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
- <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
- <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
- <0f134188-12d5-7184-3fbd-0ec8204cf649@arm.com>
- <aa5b37dc-7ac3-2999-fa67-848cd693977f@gmail.com>
- <695beacb-ff51-bb2c-72ef-d268f7d4e59d@arm.com>
- <1e065e9b-4dad-611d-fc5b-26fe6c031507@gmail.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <14954b3a-6a2a-fe05-47b7-1890375ab8a4@arm.com>
-Date: Tue, 15 May 2018 09:36:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752215AbeEOIhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:37:15 -0400
+Subject: Re: [PATCH v3 6/8] PCI: Rework of_pci_get_host_bridge_resources() to
+ devm_of_pci_get_host_bridge_resources()
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <cover.1526363896.git.jan.kiszka@siemens.com>
+ <4ae78ed8c3d866446f8322c1df4a19c2ca4fef58.1526363896.git.jan.kiszka@siemens.com>
+ <c4272d78-780b-ab9e-8ecb-0de4983bb757@mentor.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jan.kiszka@siemens.com; prefer-encrypt=mutual; keydata=
+ xsDhBEq0i8QRBAD2wOxlC9m/8t/vqjm1U9yQCT6OJ2Wbv/qys9DYM0CvcOTDMWQwmV1/VsZj
+ KR5YgB5NPt+To7X6x5cjz15AGnx5Fb8Wnrq8EF9ZfHMwb7YMx1LdPYPDnXr37wE3XupFmkHB
+ Mes4htyX7Dz8LvKDLnli4IsAmWG+kV1JI6LWKXLpSwCg8JRq4SWoB4VCQxbH3GjntgvwNc8D
+ /2q5Dj0urJ7s7sdXhrH0hcFkpSFRmU5Yd6MCwcbFHm2paL5gqVjNNUUwDBKAL9eZaQVIHKwC
+ 44BvNGO2gcQ26R3AuCHUQ+pZHg34tok1JCNZ6IEZccb+33Qq0qbcDMJJiDYp7ppp6ozifvc4
+ YaqJECX48IydxfE9+41oV7T5vNAzA/QL/UMJyTnu5jiOXcyn5iFQw535lXkwKsqeXzCowLho
+ HICZ2jITJPdTT/+9pGWwMQqST/SS35Tx4EnS3z2BWsNMCLuXCPkxF1elaMJqMfMJxFD8rAgS
+ 9GK6zP6fJlsA1wq/UvKSL8v4QPOnTNCVOsyqJVasGV0ZPcDfcj+ClNO4zR5KYW4gS2lzemth
+ IDxqYW4ua2lzemthQHdlYi5kZT7CYwQTEQIAIwIbIwYLCQgHAwIEFQIIAwQWAgMBAh4BAheA
+ BQJOpoNtAhkBAAoJEIrUrG965ecUOPUAoK+Rh12KgCjplHAS0AoiGKwGOuq7AKDEVnBtRAoy
+ VRvp3lOlOx+P2Ay56M7BTQRKtIvEEAgA2/PlX6oyi7dToH0CJCHq0eKmZaa7CmGaVnxyeepK
+ vIfiM8n8Td76AbG64fjREMwgSpb4F/UytF3z/03tj4e49W/zKjbBRB2/wmFRlZBC9crg22Q+
+ bgvMOsxnC6uHXaWN8fL+jVei/5OoHOoFqaMsX8EvploitlI/BPj+VgW26jksf3YZyk1hncls
+ Z/IYhXzgRmVJo4RiTW/YLQAkwndwc+fKPa/IYLEDW1Jc4kNLoK0P90b45zju0hpl0C00pVOR
+ TOtzFK9G5Ha7qOAWJfAVJORHKAkkvwftf3hkpPdLyvZUWRHXvUexmA61fLvDBAFhRxYGD8t5
+ gz88SF5Tzq+0ywADBQf/YSkaYrEslPWiCA2wU6EW0yaqBQAobFsOMvsufJ6o2ntq5Ncq37VI
+ 3KCT67eHPE9x+zPcENoZWsRrC9S9PCf1LOsi7ybZsR13AJqDFlRzJZ4klh9QwgwFZxUBzOdI
+ vttwzG1QkzHx06RKZluFYpPF3DRduSMukdIJ2wmWCU+ohB+mYefe65JGjYQfHVs8mgYVFOPx
+ bRea9VJACCMuspoZWpj43UdR1lLLyIUFYz+jqcPW7Hd/GTIw4N67pYl0dwPDmFd4ohJ5g4Zp
+ q61toNysBGEuEm5GCcn0VmGtQpSYnR5cVm5b2yPz4bIuFOSuZUo/l7vitdY0iy0/wvKbBC+N
+ K8JJBBgRAgAJBQJKtIvEAhsMAAoJEIrUrG965ecULvAAoKGvxs5T3IhyQT8I8sMsyAvCE4wH
+ AJ46S16yab+OxNkvOeoOEX0EnHVHaA==
+Message-ID: <b82f93d6-5e3b-865f-7fe9-a660fcf355b9@siemens.com>
+Date: Tue, 15 May 2018 10:36:36 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-In-Reply-To: <1e065e9b-4dad-611d-fc5b-26fe6c031507@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <c4272d78-780b-ab9e-8ecb-0de4983bb757@mentor.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Jia
-
-On 05/15/2018 03:03 AM, Jia He wrote:
-> Hi Suzuki
+On 2018-05-15 09:54, Vladimir Zapolskiy wrote:
+> Hi Jan,
 > 
-> I will merge the other thread into this, and add the necessary CC list
-> 
-> That WARN_ON call trace is very easy to reproduce in my armv8a server 
-> after I start 20 guests
-> 
-> and run memhog in the host. Of course, ksm should be enabled
-> 
-> For you question about my inject fault debug patch:
-
-
-Thanks for the patch, comments below.
-
-> 
-
-...
-
-> index 7f6a944..ab8545e 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -290,12 +290,17 @@ static void unmap_stage2_puds(struct kvm *kvm, 
-> pgd_t *pgd,
->    * destroying the VM), otherwise another faulting VCPU may come in and 
-> mess
->    * with things behind our backs.
->    */
-> +extern int trigger_by_ksm;
->   static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 
-> size)
->   {
->          pgd_t *pgd;
->          phys_addr_t addr = start, end = start + size;
->          phys_addr_t next;
-> 
-> +       if(trigger_by_ksm) {
-> +               end -= 0x200;
-> +       }
-> +
->          assert_spin_locked(&kvm->mmu_lock);
->          pgd = kvm->arch.pgd + stage2_pgd_index(addr);
->          do {
-> 
-> I need to point out that I never reproduced it without this debugging 
-> patch.
-
-That could trigger the panic iff your "size" <= 0x200, leading to the
-condition (end < start), which can make the loop go forever, as we
-do while(addr < end) and end up accessing something which may not be PGD 
-entry and thus get a bad page with bad numbers all around. This case 
-could be hit only with your change and the bug in the KSM which gives us 
-an address near the page boundary.
-
-So, I think we can safely ignore the PANIC().
-More below.
-
-
->>> Suzuki, thanks for the comments.
->>>
->>> I proposed another ksm patch https://lkml.org/lkml/2018/5/3/1042
->>> The root cause is ksm will add some extra flags to indicate that the 
->>> page
->>> is in/not_in the stable tree. This makes address not be aligned with 
->>> PAGE_SIZE.
->> Thanks for the pointer. In the future, please Cc the people relevant 
->> to the
->> discussion in the patches.
+> On 05/15/2018 08:58 AM, Jan Kiszka wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
 >>
->>>   From arm kvm mmu point of view, do you think handle_hva_to_gpa 
->>> still need to handle
->>> the unalignment case?
->> I don't think we should do that. Had we done this, we would never have 
->> caught this bug
->> in KSM. Eventually if some other new implementation comes up with the 
->> a new notifier
->> consumer which doesn't check alignment and doesn't WARN, it could 
->> simply do the wrong
->> thing. So I believe what we have is a good measure to make sure that 
->> things are
->> in the right order.
+>> of_pci_get_host_bridge_resources() allocates the resource structures it
+>> fills dynamically, but none of its callers care to release them so far.
+>> Rather than requiring everyone to do this explicitly, convert the
+>> existing function to a managed version.
 >>
->>> IMO, the PAGE_SIZE alignment is still needed because we should not 
->>> let the bottom function
->>> kvm_age_hva_handler to handle the exception. Please refer to the 
->>> implementation in X86 and
->>> powerpc kvm_handle_hva_range(). They both aligned the hva with 
->>> hva_to_gfn_memslot.
->>>
->>   From an API perspective, you are passed on a "start" and "end" 
->> address. So, you could potentially
->> do the wrong thing if you align the "start" and "end". May be those 
->> handlers should also do the
->> same thing as we do.
-
-> But handle_hva_to_gpa has partially adjusted the alignment possibly:
->     1750         kvm_for_each_memslot(memslot, slots) {
->     1751                 unsigned long hva_start, hva_end;
->     1752                 gfn_t gpa;
->     1753
->     1754                 hva_start = max(start, memslot->userspace_addr);
->     1755                 hva_end = min(end, memslot->userspace_addr +
->     1756                             (memslot->npages << PAGE_SHIFT));
+>> CC: Jingoo Han <jingoohan1@gmail.com>
+>> CC: Joao Pinto <Joao.Pinto@synopsys.com>
+>> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> at line 1755, let us assume that end=0x12340200 and
-> memslot->userspace_addr + (memslot->npages << PAGE_SHIFT)=0x12340000
-> Then, hva_start is not page_size aligned and hva_end is aligned, and the 
-> size will be PAGE_SIZE-0x200,
-> just as what I had done in the inject fault debugging patch.
+> [snip]
+> 
+>> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>> index 4f21514cb4e4..00f42389aa56 100644
+>> --- a/drivers/pci/of.c
+>> +++ b/drivers/pci/of.c
+>> @@ -244,7 +244,8 @@ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+>>  
+>>  #if defined(CONFIG_OF_ADDRESS)
+>>  /**
+>> - * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
+>> + * devm_of_pci_get_host_bridge_resources() - Resource-managed parsing of PCI
+>> + *                                           host bridge resources from DT
+>>   * @dev: host bridge device
+>>   * @busno: bus number associated with the bridge root bus
+>>   * @bus_max: maximum number of buses for this bridge
+>> @@ -253,8 +254,6 @@ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+>>   * address for the start of the I/O range. Can be NULL if the caller doesn't
+>>   * expect I/O ranges to be present in the device tree.
+>>   *
+>> - * It is the caller's job to free the @resources list.
+>> - *
+>>   * This function will parse the "ranges" property of a PCI host bridge device
+>>   * node and setup the resource mapping based on its content. It is expected
+>>   * that the property conforms with the Power ePAPR document.
+>> @@ -262,12 +261,11 @@ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+>>   * It returns zero if the range parsing has been successful or a standard error
+>>   * value if it failed.
+>>   */
+>> -int of_pci_get_host_bridge_resources(struct device *dev,
+>> +int devm_of_pci_get_host_bridge_resources(struct device *dev,
+>>  			unsigned char busno, unsigned char bus_max,
+>>  			struct list_head *resources, resource_size_t *io_base)
+>>  {
+>>  	struct device_node *dev_node = dev->of_node;
+>> -	struct resource_entry *window;
+>>  	struct resource *res;
+>>  	struct resource *bus_range;
+>>  	struct of_pci_range range;
+>> @@ -278,7 +276,7 @@ int of_pci_get_host_bridge_resources(struct device *dev,
+>>  	if (io_base)
+>>  		*io_base = (resource_size_t)OF_BAD_ADDR;
+>>  
+>> -	bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
+>> +	bus_range = devm_kzalloc(dev, sizeof(*bus_range), GFP_KERNEL);
+>>  	if (!bus_range)
+>>  		return -ENOMEM;
+>>  
+>> @@ -300,7 +298,7 @@ int of_pci_get_host_bridge_resources(struct device *dev,
+>>  	/* Check for ranges property */
+>>  	err = of_pci_range_parser_init(&parser, dev_node);
+>>  	if (err)
+>> -		goto parse_failed;
+>> +		return err;
+> 
+> In my opinion allocated by pci_add_resource() and pci_add_resource_offset()
+> resource entries are leaked on error paths, and pci_free_resource_list() should
+> be called.
 
-Thats because we want to limit the handling of the hva/gpa range by 
-memslot. So, we make sure we pass on the range within the given memslot
-to hva_to_gfn_memslot(). But we do iterate over the next memslot if the
-original range falls in to the next slot. So, in practice, there is no
-alignment/trimming of the range. Its just that we pass on the 
-appropriate range for each slot.
+Indeed, I overshot with removing also pci_free_resource_list. v4 will
+follow.
 
-Cheers
-Suzuki
+Thanks,
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
