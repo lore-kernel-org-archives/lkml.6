@@ -1,166 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752298AbeEOHKm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:10:42 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:36042 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeEOHKk (ORCPT
+        id S1752320AbeEOHKr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:10:47 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42263 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752226AbeEOHKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:10:40 -0400
-X-Google-Smtp-Source: AB8JxZoiOjV5dy38LL9ZR5LLA4wweTn7mAkXxEwCgPLuPtXHrbcOFLlxlR7d9TO0LEADZCt0CnkgSCoSBqoIraig6o0=
+        Tue, 15 May 2018 03:10:43 -0400
+X-Originating-IP: 2.224.242.101
+Date: Tue, 15 May 2018 09:10:36 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, hans.verkuil@cisco.com,
+        mchehab@kernel.org, robh+dt@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: i2c: mt9t112: Add device tree support
+Message-ID: <20180515071036.GM5956@w540>
+References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654014-17852-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180507093219.hrhaliadccaytenj@valkosipuli.retiisi.org.uk>
+ <20180514143044.GK5956@w540>
+ <20180514215004.5oy6jr7f32jpfhx2@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
-References: <20180413212427.18261-1-labbott@redhat.com> <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
- <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 May 2018 09:10:39 +0200
-X-Google-Sender-Auth: FGlYaer7MDCnWwCoGD2C6gV6bXA
-Message-ID: <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
-Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6o78gXsyQHm68LY/"
+Content-Disposition: inline
+In-Reply-To: <20180514215004.5oy6jr7f32jpfhx2@valkosipuli.retiisi.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
 
-On Tue, May 15, 2018 at 12:49 AM, Laura Abbott <labbott@redhat.com> wrote:
-> On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
->> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
->>> The new challenge is to remove VLAs from the kernel
->>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->>> turn on -Wvla.
->>>
->>> Using a kmalloc array is the easy way to fix this but kmalloc is still
->>> more expensive than stack allocation. Introduce a fast path with a
->>> fixed size stack array to cover most chip with gpios below some fixed
->>> amount. The slow path dynamically allocates an array to cover those
->>> chips with a large number of gpios.
->>
->>
->> Blindly replacing VLAs by allocated arrays is IMHO not such a good
->> solution.
->> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
->> bytes. That's an uppper limit, and assumes they are all on the same
->> gpiochip,
->> which they probably aren't.
->>
->> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
->>
->> So, wouldn't it make more sense to not allocate memory, but just process
->> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
->> 16 bytes)? The code already caters for handling chunks due to not all
->> gpios
->> belonging to the same gpiochip. That will probably also be faster than
->> allocating memory, which is the main idea behind this API.
->>
->>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
->>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>
->>
->>> --- a/drivers/gpio/gpiolib.c
->>> +++ b/drivers/gpio/gpiolib.c
->>
->>
->>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip
->>> *chip, void *data,
->>>                  goto err_free_descs;
->>>          }
->>>
->>> +       if (chip->ngpio > FASTPATH_NGPIO)
->>> +               chip_warn(chip, "line cnt %d is greater than fast path
->>> cnt %d\n",
->>> +               chip->ngpio, FASTPATH_NGPIO);
->>
->>
->> FWIW, can this warning be triggered from userspace?
->>
->>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool
->>> can_sleep,
->>>
->>>          while (i < array_size) {
->>>                  struct gpio_chip *chip = desc_array[i]->gdev->chip;
->>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
->>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
->>
->>
->> Hence just use a fixed size here...
->>
->>> +               unsigned long fastpath[2 *
->>> BITS_TO_LONGS(FASTPATH_NGPIO)];
->>> +               unsigned long *mask, *bits;
->>>                  int first, j, ret;
->>>
->>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
->>> +                       memset(fastpath, 0, sizeof(fastpath));
->>> +                       mask = fastpath;
->>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
->>> +               } else {
->>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
->>> +                                          sizeof(*mask),
->>> +                                          can_sleep ? GFP_KERNEL :
->>> GFP_ATOMIC);
->>> +                       if (!mask)
->>> +                               return -ENOMEM;
->>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
->>> +               }
->>> +
->>>                  if (!can_sleep)
->>>                          WARN_ON(chip->can_sleep);
->>>
->>>                  /* collect all inputs belonging to the same chip */
->>>                  first = i;
->>> -               memset(mask, 0, sizeof(mask));
->>>                  do {
->>>                          const struct gpio_desc *desc = desc_array[i];
->>>                          int hwgpio = gpio_chip_hwgpio(desc);
->>
->>
->> Out-of-context, the code does:
->>
->> |                       __set_bit(hwgpio, mask);
->> |                       i++;
->> |                 } while ((i < array_size) &&
->>
->> ... and change this limit to "(i < min(array_size, first +
->> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
->>
->> |                         (desc_array[i]->gdev->chip == chip));
->>
->> ... and you're done?
->>
-> I don't think this approach will work since gpio_chip_{get,set}_multiple
-> expect to be working on arrays for the entire chip. There doesn't seem
-> to be a nice way to work on a subset of GPIOs without defeating the point
-> of the multiple API.
+--6o78gXsyQHm68LY/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You're right, sorry for missing that.
+Hi Sakari,
 
-> is 2*256 = 512 bytes really too much stack space? I guess we could
-> switch to a Kconfig to allow for better bounds.
+On Tue, May 15, 2018 at 12:50:04AM +0300, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Mon, May 14, 2018 at 04:30:44PM +0200, jacopo mondi wrote:
+> > Hi Sakari,
+> >
+> > On Mon, May 07, 2018 at 12:32:19PM +0300, Sakari Ailus wrote:
+> > > Hi Jacopo,
+> > >
+> > > On Wed, Apr 25, 2018 at 01:00:14PM +0200, Jacopo Mondi wrote:
+> >
+> > [snip]
+> >
+> > > >  static int mt9t112_probe(struct i2c_client *client,
+> > > >  			 const struct i2c_device_id *did)
+> > > >  {
+> > > >  	struct mt9t112_priv *priv;
+> > > >  	int ret;
+> > > >
+> > > > -	if (!client->dev.platform_data) {
+> > > > +	if (!client->dev.of_node && !client->dev.platform_data) {
+> > > >  		dev_err(&client->dev, "mt9t112: missing platform data!\n");
+> > > >  		return -EINVAL;
+> > > >  	}
+> > > > @@ -1081,23 +1118,39 @@ static int mt9t112_probe(struct i2c_client =
+*client,
+> > > >  	if (!priv)
+> > > >  		return -ENOMEM;
+> > > >
+> > > > -	priv->info =3D client->dev.platform_data;
+> > > >  	priv->init_done =3D false;
+> > > > -
+> > > > -	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
+> > > > -
+> > > > -	priv->clk =3D devm_clk_get(&client->dev, "extclk");
+> > > > -	if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
+> > > > +	priv->dev =3D &client->dev;
+> > > > +
+> > > > +	if (client->dev.platform_data) {
+> > > > +		priv->info =3D client->dev.platform_data;
+> > > > +
+> > > > +		priv->clk =3D devm_clk_get(&client->dev, "extclk");
+> > >
+> > > extclk needs to be documented in DT binding documentation.
+> > >
+> > > > +		if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
+> > > > +			priv->clk =3D NULL;
+> > > > +		} else if (IS_ERR(priv->clk)) {
+> > > > +			dev_err(&client->dev,
+> > > > +				"Unable to get clock \"extclk\"\n");
+> > > > +			return PTR_ERR(priv->clk);
+> > > > +		}
+> > > > +	} else {
+> > > > +		/*
+> > > > +		 * External clock frequencies !=3D 24MHz are only supported
+> > > > +		 * for non-OF systems.
+> > > > +		 */
+> > >
+> > > Shouldn't you actually set the frequency? Or perhaps even better to c=
+heck
+> > > it, and use assigned-clocks and assigned-clock-rates properties?
+> > >
+> >
+> > I might be confused, but my intention was to use an external clock
+> > reference, with a configurable frequency only in the platform data use
+> > case. As you can see in this 'else' branch, in OF case, the priv->clk
+> > field is null, and all the PLL and clock computations are performed
+> > assuming a 24MHz input clock.
+> >
+> > In my opinion, as the driver when running on OF systems does not
+> > get any reference to 'extclk' clock, it should not be documented in
+> > bindings. Do you agree?
+>
+> Uh, isn't the clock generally controlled by the driver on OF-based system=
+s?
+> You could assign the frequency in DT though, and not in the driver, but
+> that should be documented in binding documentation.
+>
+> The register configuration the driver does not appear to be dependent on
+> the clock frequency, which suggests that it is only applicable to a
+> particular frequency --- 24 MHz?
 
-That's a good question.
+Correct.
+That's what the comment above here states...
 
-As long as a VLA is used, it's probably fine, as chip->ngpio is quite small.
-If you would change it to an array that can accommodate NR_GPIOS bits, you
-have to start caring about recursion (e.g. gpio-74x164 driven from spi-gpio,
-where I can extend the chain to increase the level of recursion arbitrarily).
+	/*
+	 * External clock frequencies !=3D 24MHz are only supported
+	 * for non-OF systems.
+	 */
 
-Gr{oetje,eeting}s,
+That's how it works: the driver expects to receive the PLL dividers
+=66rom platform data. It's ugly, I agree, but that's how it was. I do
+not have time atm to poke around with PLL configuration, and I'm not
+even sure I have the right documentation, so I made a 'default PLL
+configuration' for 24MHz clock, copied from the platform data supplied
+to the driver by the only user in mainline. In general, I would like
+to have the driver calculate the PLL dividers based on the input clock
+frequency, that should be supplied from DT. As this is not possible,
+at the moment I made the driver only provide a PLL configuration for
+24MHz, and that's the only clock the driver accepts.
 
-                        Geert
+ +		priv->info =3D &mt9t112_default_pdata_24MHz;
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Would you prefer I take a reference to an external clock, check it's
+frequency and refuse it if !=3D 24MHz?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+By the way, I'm trying to run this driver with a camera module
+connected to an ARM platform and so far I have not been able to
+capture any image. The Ecovec I have (thanks Hans) has a camera module but =
+the
+cable is bad, so I can't test it on the platform the driver has
+originally been developed on, but I assume on SH Ecovec it works properly.
+Any confirmation from someone who has that board would be appreciate
+though.
+
+Thanks
+   j
+
+>
+> >
+> > Thanks
+> >    j
+> >
+> > > >  		priv->clk =3D NULL;
+> > > > -	} else if (IS_ERR(priv->clk)) {
+> > > > -		dev_err(&client->dev, "Unable to get clock \"extclk\"\n");
+> > > > -		return PTR_ERR(priv->clk);
+> > > > +		priv->info =3D &mt9t112_default_pdata_24MHz;
+> > > > +
+> > > > +		ret =3D mt9t112_parse_dt(priv);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > >  	}
+> > > >
+> > > > -	priv->standby_gpio =3D devm_gpiod_get_optional(&client->dev, "sta=
+ndby",
+> > > > +	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
+> > > > +
+> > > > +	priv->standby_gpio =3D devm_gpiod_get_optional(&client->dev, "pow=
+erdown",
+> > > >  						     GPIOD_OUT_HIGH);
+> > > >  	if (IS_ERR(priv->standby_gpio)) {
+> > > > -		dev_err(&client->dev, "Unable to get gpio \"standby\"\n");
+> > > > +		dev_err(&client->dev, "Unable to get gpio \"powerdown\"\n");
+> > > >  		return PTR_ERR(priv->standby_gpio);
+> > > >  	}
+> > > >
+> > > > @@ -1124,9 +1177,19 @@ static const struct i2c_device_id mt9t112_id=
+[] =3D {
+> > > >  };
+> > > >  MODULE_DEVICE_TABLE(i2c, mt9t112_id);
+> > > >
+> > > > +#if IS_ENABLED(CONFIG_OF)
+> > > > +static const struct of_device_id mt9t112_of_match[] =3D {
+> > > > +	{ .compatible =3D "micron,mt9t111", },
+> > > > +	{ .compatible =3D "micron,mt9t112", },
+> > > > +	{ /* sentinel */ },
+> > > > +};
+> > > > +MODULE_DEVICE_TABLE(of, mt9t112_of_match);
+> > > > +#endif
+> > > > +
+> > > >  static struct i2c_driver mt9t112_i2c_driver =3D {
+> > > >  	.driver =3D {
+> > > >  		.name =3D "mt9t112",
+> > > > +		.of_match_table =3D of_match_ptr(mt9t112_of_match),
+> > >
+> > > No need to use of_match_ptr().
+> > >
+> > > >  	},
+> > > >  	.probe    =3D mt9t112_probe,
+> > > >  	.remove   =3D mt9t112_remove,
+> > >
+> > > --
+> > > Sakari Ailus
+> > > e-mail: sakari.ailus@iki.fi
+>
+>
+>
+> --
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
+
+--6o78gXsyQHm68LY/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa+ofsAAoJEHI0Bo8WoVY8z/EQALtSWHRbxcc57H4R5uQFgI69
+I4VfNpf8RxUcpAK2ht/78I7bqU7xMNCdSoCVuZnUJj/ZY+36CWD6TZhtfhvwdRcn
+HHImP7snHB2rxiYokUkqhEX8h3IMnXX0dxBYWBnxpf4zeas3qP7QbqYQS9jfmjr5
+zgMcWTAmWWLkQcvzWYFKDTgWsOj99TOeoOtDM25XgnULobHu/evCpXEveB//awnJ
+N4vH45hpyP4ZTh928HROMvDQhjCPRrJIiQEkY9uRsj66mADUnWpht6YvsbnxKgEK
+XHqC4sYYtLJhmcX0sL+fUyQsSMhS1Z1beUhhgxGTdr4qNcs1qo8oNP/eHBHdxnue
+3IwFP/a856EOUhCFKESdRUPx428tBM9n/zHDAXKk4skdp7jM4uBGgSB+WUVXx3H2
+TmSfawmoatPfn4PkTnA39cHybDrZtoSuZrSPvpv6f74Hnp6L+OOr4nrToxIF8WLe
+64egF9uWoqOAmsR5Kjpva7f5SuaR5+lydgu58+sdxS6fezhg20Wu9t9H3uLDiU98
+K5NVWoRafMLErmlNrpNyK0mRdlpvjuI/+WUIG17n0gKGTojaQ+w6Y7j2jIU4D3wU
+A6XwvxBJNYyPFFbhtystruRwqLxIqGpCxUwQW1WENVzqBEyobuL5sWTWsBkrPdyV
+WeFYSUZcwyQsa079fRho
+=wiZW
+-----END PGP SIGNATURE-----
+
+--6o78gXsyQHm68LY/--
