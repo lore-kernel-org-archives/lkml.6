@@ -1,92 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753585AbeEONnv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 09:43:51 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:27891 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752154AbeEONns (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 09:43:48 -0400
-Subject: Re: [PATCH v10 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-4-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <2f1056b3-6d29-0651-1d7d-9c74cd50861c@ti.com>
-Date: Tue, 15 May 2018 19:12:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753604AbeEONnz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 09:43:55 -0400
+Received: from verein.lst.de ([213.95.11.211]:42000 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752154AbeEONnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 09:43:53 -0400
+Date: Tue, 15 May 2018 15:48:11 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: David Howells <dhowells@redhat.com>
+Cc: hch@lst.de, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] proc: Add a way to make network proc files writable
+Message-ID: <20180515134811.GB31066@lst.de>
+References: <152513042072.13808.9692322366778075206.stgit@warthog.procyon.org.uk> <152513043358.13808.4250608064312146536.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180509172606.29387-4-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <152513043358.13808.4250608064312146536.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
-> @@ -261,10 +263,14 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
->  	lpsc->pd = pd;
->  	lpsc->flags = flags;
->  
-> -	ret = devm_clk_hw_register(dev, &lpsc->hw);
-> +	ret = clk_hw_register(dev, &lpsc->hw);
->  	if (ret < 0)
->  		return ERR_PTR(ret);
->  
-> +	/* for now, genpd is only registered when using device-tree */
-> +	if (!dev || !dev->of_node)
-> +		return lpsc;
-> +
->  	/* genpd attach needs a way to look up this clock */
->  	ret = clk_hw_register_clkdev(&lpsc->hw, name, best_dev_name(dev));
->  
-> @@ -378,11 +384,11 @@ __davinci_psc_register_clocks(struct device *dev,
->  	struct regmap *regmap;
->  	int i, ret;
->  
-> -	psc = devm_kzalloc(dev, sizeof(*psc), GFP_KERNEL);
-> +	psc = kzalloc(sizeof(*psc), GFP_KERNEL);
->  	if (!psc)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	clks = devm_kmalloc_array(dev, num_clks, sizeof(*clks), GFP_KERNEL);
-> +	clks = kmalloc_array(num_clks, sizeof(*clks), GFP_KERNEL);
->  	if (!clks)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -396,14 +402,14 @@ __davinci_psc_register_clocks(struct device *dev,
->  	for (i = 0; i < num_clks; i++)
->  		clks[i] = ERR_PTR(-ENOENT);
->  
-> -	pm_domains = devm_kcalloc(dev, num_clks, sizeof(*pm_domains), GFP_KERNEL);
-> +	pm_domains = kcalloc(num_clks, sizeof(*pm_domains), GFP_KERNEL);
->  	if (!pm_domains)
->  		return ERR_PTR(-ENOMEM);
->  
->  	psc->pm_data.domains = pm_domains;
->  	psc->pm_data.num_domains = num_clks;
->  
-> -	regmap = devm_regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
-> +	regmap = regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
->  	if (IS_ERR(regmap))
->  		return ERR_CAST(regmap);
+On Tue, May 01, 2018 at 12:20:33AM +0100, David Howells wrote:
+> Provide two extra functions, proc_create_net_data_write() and
+> proc_create_net_single_write() that act like their non-write versions but
+> also set a write method in the proc_dir_entry struct.
+> 
+> An internal simple write function is provided that will copy its buffer and
+> hand it to the pde->write() method if available (or give an error if not).
+> The buffer may be modified by the write method.
 
-Here and in the PLL driver, you have dropped the devm_* variants (like
-agreed upon), but not added any error path handling. For the clocks
-needed for boot, its probably fine, but the same code path is used for
-non-essential clocks too. Just from a code completeness perspective, it
-will be nice to see the error path correctly handled.
+I thought of doing something like this, aѕ it would remove tons of
+boilerplat code from a lot of procfs instances.  But I'd also like to
+hear what Al and Alexey think of it.  We also should offer this for
+non-net proc users as well.
 
-Apart from that both 1/27 and 3/27 look good to me.
+> +struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode,
+> +						  struct proc_dir_entry *parent,
+> +						  const struct seq_operations *ops,
+> +						  proc_write_t write,
+> +						  unsigned int state_size, void *data)
+> +{
 
-Thanks,
-Sekhar
+The other option I though about would be to hide a write callback
+in struct seq_operations, as that way all the existing helpers would
+just work.
+
+Btw one of the lines above is over 80 chars.  By using normal two
+tab indents for the continuations this would become a lot more readable:
+
+struct proc_dir_entry *proc_create_net_data_write(const char *name,
+		umode_t mode, struct proc_dir_entry *parent,
+		const struct seq_operations *ops, proc_write_t write,
+		unsigned int state_size, void *data)
