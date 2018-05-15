@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeEOKJR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:09:17 -0400
-Received: from mail-sn1nam02on0056.outbound.protection.outlook.com ([104.47.36.56]:62176
+        id S1752661AbeEOKK7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:10:59 -0400
+Received: from mail-sn1nam02on0074.outbound.protection.outlook.com ([104.47.36.74]:1376
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752442AbeEOKJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:09:15 -0400
+        id S1752162AbeEOKK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:10:57 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Jisheng.Zhang@synaptics.com;
-Date: Tue, 15 May 2018 18:08:26 +0800
+Date: Tue, 15 May 2018 18:10:08 +0800
 From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -17,59 +17,62 @@ To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: berlin4ct: use SPDX-License-Identifier
-Message-ID: <20180515180826.2ab39f0c@xhacker.debian>
+Subject: [PATCH 2/2] arm64: dts: berlin4ct-*.dts: use
+ SPDX-License-Identifier
+Message-ID: <20180515181008.0ccf13ab@xhacker.debian>
+In-Reply-To: <20180515180826.2ab39f0c@xhacker.debian>
+References: <20180515180826.2ab39f0c@xhacker.debian>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR03CA0011.apcprd03.prod.outlook.com
- (2603:1096:404:14::23) To MWHPR03MB2639.namprd03.prod.outlook.com
- (2603:10b6:300:46::9)
+X-ClientProxiedBy: TYAPR01CA0021.jpnprd01.prod.outlook.com (2603:1096:404::33)
+ To MWHPR03MB2639.namprd03.prod.outlook.com (2603:10b6:300:46::9)
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR03MB2639;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;3:2OLUKlkOlHaylRKEqJwPecnaH0tmRrxtBXv1PqVFoVLYYIKH+ZDJJrDamnm0UC3TGSQuKxT1ZPgvavR9O6iBAgxNUyYXa/zcqtiGMzyjFz6CEdK2HhDm4PvV0YzsFN9h4VItPgt6u45M+60Kg45Q7ELwaiWQqgDY0qZeY3EgIlvvCFNpxdI4BnG3+EIG/Z3qLQ/1MJHMIkPNSRBG0kiEc+8UWC6Xjx8gWMEP82dH73U/gVavkbgWf3SxUVjdj7nG;25:jwG49TT2VN6LNCVeiYxFcHxNgrZ1Dq8Td0eAYQW3FiCu668/CfXLdO08U9vXcCnLiuoYBqej4eIptRagEzZaZ6qT1/rlFOfHItNf0Op4J/bGq/VpIIzdCWZvul953xf4Zn4OqdONwtHqwhRZ0jof8KIU/LDSwK9jwMFwpHbeTEb6EN3VS/gAi1mKar3ZkfDPeDhTr7JUbRXBygwbm+bkuF9RW1801WVwZvln/xv4kY+6oeRxhPFrEUILlbE6mXycgNyuNGYXtjNp5oSVvH3b1ny9avi48Cc9r5qcALq/Mnf/hJ6OCLnoB7F67uvjWvId0qKxiZIX01uvhkNO4OZmiw==;31:+WMbki+hHtRiGhmHPfmyNYSNoRAtfPqUS2MJAEmNjobaYftwJUBk/kR6dUS4M9Atwyj7ic/4geM1bHto7UWDxn93u3SuWZzjgjbeBJ5JBndgjF20vLoV8KyRJpvZSuV6Nx/SqX9qyu4jKzCKu7N+d0Hfc6kMkSPW16Ug1WitIgiPpIICbChQY46+IiMsrokoxsqt4cp/mFCkSBAkNoA7OX6jOtfvtwAO7U3+GhYmaBM=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;3:bVAi5YTy05up3NcGTycvKpelzAqQh/ADHVRgbhbfqgXo3Vjh4oNTMe32Ca2b4GhPtNbM3Hc+gEvOi/6OFzXmTCu6nOaJvnSY/H2LKC+MUtPDCEx9ombwcfqJvclI4mKiXUo0CqNUso4B8gvu2Hq+fEda0Kri03xGQyVpRWqshIbCjM78qcoPCkJc1zgoG8xeiroBoq8A6X8ytciSZh1WQIssFULcAxNJkEVN5fvA0MpHmi7Rqmcx6yCZlcl0HUsS;25:VoAFIae7HDJ0Wlkhsmat5SgPAAHSZaBHogp5+is78TeBZSOl6pUkPuRFLA31y1Pg0HglByqXll9uElkHwMtezLZ4N4+0rlk5/HnfMAd878ikHI6FCUby03o7EFut4HdVJmWOa3+M8b9Lw7198tlGboJC29wSYFA73cJlZRmNkccAAJhF68xH1V/z9abfm4i3DhmmfSJg5crMT7FKMzFQsokLm1X2vSAd1JajpOMMz9lpbKAVTNc2UP+gVGjIh+cDiyKHFchloCrShOb2KCnS7z1MTGb6ss7jOSSyDkx43PHsYjobPZsUgvo6UWkGm1/htGJhbcwedXsP8YJp3MaDFQ==;31:oUCETWn/yya2w6X7f/TbXiFqDTTfdnG1gzmYASmR4uJVrLGnecnPiUh/lWojDqWe5FYlB+miXTnUkulkoA46TK2jqF9q9mIeqS/SOQe1ClvRNPZjpoAQn1WkE8a0lHm+YGWmFlo47djiB4Df/5W2rljLc1YxyzZcpmNcjxko87oDQJfCPim/DZ8JM1T40oy3hT4JOEZhZfoQ+1sk/VCoAlt9cty6awnip+cC9gcrI24=
 X-MS-TrafficTypeDiagnostic: MWHPR03MB2639:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;20:jLOy30LwYlle2j8rxJU5NgnOdE6ZsLdqNLIWn8Z/Do/QzPXf9eU+A8iMgL9WqrNin26N4ETKz7Jq7xAMYawzUibhyVIbI98TGTh9N9icXEbeF6ZiGXHS1e/2kvnHY+uQ9BskfrND2Nwg5LzbqlXrc+WSW6hEiqsLPniDex4I0DuIeZViAh0mMXA+CZ6hvTbLYkwTtlLiVLeIJCC24OYiMMGOAbVSeABQ5340NRKRuPXL+pZfZvG8nBs6aQWpGHcjYc6qnn+t7Ozm0njT7Se6nqnN6sMSnxnqFq/wnr7M7Syv8KzIi4w4noLpJbjgdaxaGNBPMi7hZEmomYhyx2UEjodEIQ+wFjbD/l9HAEHfDMKnweaFlR7w/wCmpDSlfrs70eCoo7Pa0qDOklXPQ+bCS3JjyDreKwj5z49TK5cV9NRRUKGInCY5HI6D7VQlxOLIXjHKkhyyU768pD/0f3mjj1Shy9PWQG3vIaCXzBqXoVPm5dqVuuaoWc4nVfwleQiD;4:nsv1I48DddMLCmCmcbqvUZ/639y7EI29GBLVCdqpqEDtoT5zxW1I/uesKNAHixEEjhwhHGMD+CBIy5ElreGgqi6pp0FnGFg4t5TAM5E3VC0CYEryw3CHJJrfk514AqA0Ig6snJnYi5nEn5T1b8ft1GY9kXKn78sKGs/HPWvcoesnnpufkhVrH/6jj9mftxBMnGRHU8tRIVyG9vWPgBr4EAcP8LsPJhlacKRtjxluKr4n/SZ/xquaLxUJkOQ3yaoBiySAPLDDvP8wguRgNdkpKw==
-X-Microsoft-Antispam-PRVS: <MWHPR03MB2639F6A2BC3E48EAA5595B9BED930@MWHPR03MB2639.namprd03.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;20:YyAYNdIKYvdNCVkYXiDZuxNLesDLNTxiTJAsm4ynLd++DK2q1/edO6042utoVJfRDTZtsc7E+AMlCO81+UVNpNGXxk0rz5//NT4PMbwR5QAqxK8DqxdgZWXI32oBh8mMIuyKFCIvP9jTHCAKOUyaD9lMOvpGUFX5MVM3xMgiUUmifHoyrV48dTsSpeCnLMjOqpdzrDFbFpkPcL+5F/4TOCdQX6TzcrqjQaLuwyVo5uEQzPPPHUvCq6jTfWMiVnbdpCfAeb7ndFF72fJsH8uka+MtSZGFRBOSZCXlfu6KrxZCWKUwTL7d3s4qRcbTM2eM1j+dDGiWLGssP54pHlkNcTWM/V/A3NxFzIK62pQSPN3p4j8wY7o/95ggmPPsQ5rYFjtYLcBnwlDOs8eVT4Rur6ppWMDMdOS+zzkmqfHV75qN8P1q6u8FKuQ201mVZkS8KmsLNyG/Bv/tuWG4CuF42uzSt5MjzNGVhY5dPHzrzm9WpV4crVRNfU1UAVJlX0dp;4:xLUqe5mSzk1SiuO9O/ZCrBX7hn4bU3cZFdhrdxYtlDfbExX1vsYAofejGBeyavqWTpMsm80dZIefePOqQlHmGyUyPsiuK2bqNyQJK9xDyHQQSNRIn1Ke85GUL7klcI9NsoKyUk2mDA22BPb0v+85IiaI0XlvNf9Xe4CgPoKsES9KG4fU+V0NllrdWz65MXX8gkPHB6P/CfRM3GRuilohs1GB7yTruNoRwsYnFnkUTsexRVSobAaEG5bTBXvivtpWFEk9CJ1AVEJFBjKBwCCEqw==
+X-Microsoft-Antispam-PRVS: <MWHPR03MB2639ECD015B66987F0894EDFED930@MWHPR03MB2639.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR03MB2639;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2639;
 X-Forefront-PRVS: 0673F5BE31
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(376002)(346002)(366004)(396003)(189003)(199004)(7736002)(305945005)(6306002)(53936002)(2906002)(5660300001)(1076002)(55016002)(9686003)(3846002)(23726003)(6116002)(16526019)(230700001)(6666003)(186003)(7696005)(52116002)(50466002)(97736004)(81156014)(81166006)(106356001)(105586002)(8676002)(26005)(50226002)(33896004)(476003)(110136005)(316002)(68736007)(25786009)(4326008)(66066001)(39060400002)(956004)(86362001)(478600001)(486006)(966005)(59450400001)(47776003)(72206003)(8936002)(6506007)(386003)(2004002)(32563001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2639;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2639;23:TlI3F0EFQiZSUkhIMA9L7fMGi37gtvwq7cwlxGTDA?=
- =?us-ascii?Q?iE91Qwe86aQGYeLSMkQAICkz195y+8QuLWAFum6b53hBya/tMM2KnLny6cj3?=
- =?us-ascii?Q?SjDu1MjgLPW1kdNTDw1ZtuwCixldZgmNqZrIxWbyf5Nlrx2AoOm+Rznic5a1?=
- =?us-ascii?Q?1Rprg9ogo9oT+hnFZlp3vl02n4+bmwgK10xgTJLUmRJs2sJvPtHu06BGjrMa?=
- =?us-ascii?Q?4WvKk8pUm+qGBe2TlzAviP3cGvvVAR+f0OC4IfhfHh/zZnGKs6ahRPElCfkd?=
- =?us-ascii?Q?wfb1YsFK97g335eZZ7pD0jwIjp/zf1+Ofczgs/pZyDSRJ42+YlRQ+KOxbgVp?=
- =?us-ascii?Q?7Hm4a+b8b4XQJipXsZAfRAe1e/F9cRGXOWdrtzcC2En6pS1vJFrzSfUoK/WC?=
- =?us-ascii?Q?geQzalcw1Crgfev5LosZswFN9yo1ZB8AaRnr0XWBxSqxV0Xa9OtUzTi4vDvT?=
- =?us-ascii?Q?8HXeRNGH8jJJ1nAZ44xMU4hcqdDGlEkJkmP3gCed5pQh35Yu146A3usidXR9?=
- =?us-ascii?Q?5J2Na8aScQ01dPxE4MiMUP4VB0Kc0Ca0sgkrTncpY5u9RcTfkrA4MFB9e5rU?=
- =?us-ascii?Q?DrzUVACXEXCTXGiQiKCLZwUdU5HsF9fvDlJQigXO6HiJXTyTFMvIiGVWIK/3?=
- =?us-ascii?Q?/BYgmrfl6PULa0RMnB96r6thmzpOMiy8KgcSlIevePv/hOoJXHOpFRxazixO?=
- =?us-ascii?Q?ZjkLcFbZ8Ex8LIPG/M6zY5jARUe2BQQn5qfeNltgbwomU2PxWK6CfOQbPdGW?=
- =?us-ascii?Q?NFravqgwetmXRzMexRoaVM7eVwsh8DCUVfpfpsM7uGY4ZDMt3Te23099v9O3?=
- =?us-ascii?Q?/XWnItfd5lVsG+SQANmk9ghqR4kkHds1uINpXZMA/ydq1egwsynyOg22YPZc?=
- =?us-ascii?Q?3hDkfAW4sLrNnhXijs/Daof6J2/OugbLmutg84N5IdDi1GUShWDJCueG2ux+?=
- =?us-ascii?Q?lBHHQot8x6WhtUYNlQt0QI8kESjS5U4dpc5YEPr7h0DLS/hHFoBhhCgT3Y6u?=
- =?us-ascii?Q?lEbUJpkSXRBncYRLjmPjVJdQG1wQzb5J2LgRKFIu7hDW+T7Cp3vku6Zuf1bi?=
- =?us-ascii?Q?B97K4fEJwmvk6JF1Oq5e8zvaucv2bd714bboaKf+xMAOSOBkjAamvYQlfx/X?=
- =?us-ascii?Q?5AR7ZLIa9b5afNGJEQFeCBeEaeFPAeHqxrn0chWzRyb3l8roGz/653uYv8XK?=
- =?us-ascii?Q?N6jnjUy1ThoCibsCJpWIzfzfQh84Zx5o8fJJuEW+EHxyd/bVl7gENR8U1ge6?=
- =?us-ascii?Q?HYFvxF0K8l6oHNitz/HEM37la3fzch3b0z96XWkSwy83CgwreK3LMYXtEbaN?=
- =?us-ascii?Q?Nje9biVTXXHFUL7gVSlpnM=3D?=
-X-Microsoft-Antispam-Message-Info: fujlomuRgTY0XYO0MSbmk9wZPcy01rpNVIU9cxpZjE5s5nJwYqBYNBH97GHmm34BgcDyFpphnbvn2NEMoK8XMl/aEwkxGEWlHlHBKo3jfXVaxwkuWdeaIhIgE66WWeP2TOP947ugr2jOEhKJRrOnFvJtD9Z6EZ+ebfZoa7w/m0SD8sjjxUio9pjrVyUYqLu2
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;6:CoJ/O+xbaq0sdll+FGLTFn2w3u2E8+3WEJflj83SimUQAKigLNP57jSulUjRv44gmUxV+NW2llitd870flv3VIUlsb0Ch+GiEn4f+SrtKkDLGNOPo9eUUovPDMPPB0xwdwKpdD7lszu/JGR2eNzlfeOMy6OvUTbeQfhnt6okccZRIDzcp7FTYJ7OeXf/qSySONALJVT+rn1MzynKfFnCiPhEMa8hZUaePtKbcVgBM+ArqUn2Jt20OixZ5gSgfzz/bKCZnYtdWuWezh+cc7WLeQrXgKVR3ZcvnukX8pIaJtBz0i55Gd2MXVLVfvrKG4ARYktH3fRH9XaDM5hdCpvJNbgNwHh9976x05hEuMpke3BnrhGsOZP4V1DQ+wVsi3Lp/RO+qwpztGOMJDjV78ZkIbrkHajK6oP0pJnEPSIq2QtvPxOD3jLT5yAu8P/nD0HPiuu17Xd/DI1jo1WG5CrD1w==;5:ioUzh0C1S0Zqk3JABwMw4j94Mis3TB17ATKxY5a4mNvEZnVQ8FIlApXXII89LISNa1X5Gw1hQgw8d/40ZmSWYiMBNzvHj4ef6OThDGPipn7oXSd6gn4Z54uiQEHrSo2F9e1Ikodvasmfk/sFYaTp9G6UbovmCcMSGIeugZqEtpc=;24:K+rw02wrI24V0Z3xheAe1lyB+43SG8ryY//VzCWDgMFalAeWBxQStNGlpJP31mU/n8dbu8YSfvbGvqKNYk6595cChhNthxWmGaJ8MfA9+Qk=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(376002)(346002)(366004)(396003)(189003)(199004)(7736002)(305945005)(6306002)(53936002)(2906002)(5660300001)(1076002)(55016002)(9686003)(3846002)(23726003)(6116002)(16526019)(230700001)(6666003)(186003)(7696005)(52116002)(50466002)(97736004)(81156014)(81166006)(106356001)(105586002)(8676002)(26005)(50226002)(33896004)(476003)(110136005)(316002)(68736007)(25786009)(76176011)(4326008)(66066001)(39060400002)(956004)(86362001)(478600001)(486006)(446003)(11346002)(966005)(59450400001)(47776003)(72206003)(8936002)(6506007)(386003)(2004002)(32563001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2639;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2639;23:97ApEMaUdMU09eBA7nCsE5d4zo2ThK3BHqf5x4cYD?=
+ =?us-ascii?Q?1OkRrOW68KUmDqCK7nZVN9ZNww4XKpQMZ+TOecv8fLN2jMHT8xkyibop1eMI?=
+ =?us-ascii?Q?f4wg9eoN3lY/iPqU//vtyVzp+fWIqOtPFnrrbW/cUJ+WC8NRztCdG9iAxKP4?=
+ =?us-ascii?Q?766EopyPDWgXCEhcMPDy9+yjwXXGC1wUi8FYYSmqeGPXoeJtXUtNP42KKlgj?=
+ =?us-ascii?Q?BS12Stkgbz4A2h08nvLqauJ8nNh4hp2GSxC/VkKq2YOiIP+NH7Dl4J8Qybwo?=
+ =?us-ascii?Q?vH5oQ8F/+cSCt4kbxeHxeMYP40th04oqTpv/EbrXXprapkjIqct4wI3KsaQe?=
+ =?us-ascii?Q?SYsrNG9sdHUNTpmSUUrXfucDWuKyAZWOlR4cYc3ljOd6bNcl9CefaEbPh89o?=
+ =?us-ascii?Q?CQNd+nTOdtF+uh5PJlYMxGTwIhlHaMvx6EuC6jqK2ANfO8gtO86MGhpSBtcW?=
+ =?us-ascii?Q?/xD8i4q2Gex+mPKW9YJ2DlLN0gEAIdDpLef0y/LpxYceVL7dXhC4KYB2hBPY?=
+ =?us-ascii?Q?Lyt9ulPHH11j9Bh70gIujHjaV3ue44WQNnMTVOzpdhti7EWxxIjEYkh1vQAK?=
+ =?us-ascii?Q?HpCmOUEeSe6WMiT5xJch3YgwtefAGC3/f+rmKlN+9/ltZPv6bQp7r0hvldj2?=
+ =?us-ascii?Q?aJ8GMfBGpWoPqJWOmv5B5BMlEZme7U5eUHuDAwg/ulVhv/fhYF65QJQHDzr4?=
+ =?us-ascii?Q?2MnXeSYGKexXiMVsGo5ezKEjQJy+9itFcZfITBx46gD4UZ6thocbC6KiKcmc?=
+ =?us-ascii?Q?32RSy0feweqB+Wk55KYj1p8i0VUBPAsVSaRKa1HVxFooJaZ0tQ6UY+5L6P2K?=
+ =?us-ascii?Q?kMDHSKQsQ8ykkDkf0JAksH74ZZhA4qreolJG+J3dnj/x1A4ZVhxlKLHzZDtW?=
+ =?us-ascii?Q?QRjOJDgMqBtUC+gf0MxyLyRj8ZekT9xwACjaq6RuBK2CQBkN3kwaGsC65O95?=
+ =?us-ascii?Q?bf5NIxIdt1LSakac2gu9UrCP3dwoE8gY/p25OewxogM8vPdTaQPbG4cUbgOY?=
+ =?us-ascii?Q?1R+zHTsstmJonlzIRGBW326xovDkdC+/llylL0Mi0izfyQ1ATSw5tXvv4miL?=
+ =?us-ascii?Q?SgaALCTcGxGRudPt5UdxUDDAPYVH3U9s0fpw6gsOSkOzCxHIKxbucXLecUmf?=
+ =?us-ascii?Q?NyCeTLym083eGB0SEEScESH6xnIgUZNr6aIMtqUVbGyxHoFc3I/N3EkRUTB/?=
+ =?us-ascii?Q?W9OGRhdWyr9FjLf+zso0rhZu36NEbJs3KY+biS094az137vwMno8HqqNSCwj?=
+ =?us-ascii?Q?zfnQ1sbmrayqhCiTNCePg3KoX1L1W9/EDVgmvEvfRsXRH+B0s4rYeR0BPbep?=
+ =?us-ascii?Q?yGYyKDLoo4CoeqUCwDQYAGVEAiVk3xwvUuv195+28URD7BH0iY7UOig90j0X?=
+ =?us-ascii?Q?BDuUw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: JKsnGsbfJlA0t8wYbv7rMxuUWjobZvToWp6+BuFJw+JdJmj0BkQSSJXjsh2J5+1+zSma6j1xHkAU6viGRHEe9ZjvbPkf1y5S8+HNhxXH+57mZbTg31Iz918kWOWzVsXJUe2vUcgU4CXu/EkYc84Fqd15H3vOW1zMrwViIPDFu1BA2OpeQav9dZwrAPsPgPeo
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;6:7oKZkcPrRmfWqWNd4wKlNHh9DGZB07bXzFHBXaceQrixeV+m7nXSt+o6ulL5Nqo7dEzHxRNTFVVw5jSy/jvpfb2BvDS2cJczO1yTt0VhCgkn2U8CmfiraPPF8hIbIPz+l4XPmSIWWZSXHJZ8PTeZ63A4iJBsVA0/O/vuApm+wph94kmSFhlGOO6qGdiaMyiY2TI7LUINaDskZAcdqjL5CRa+GQY5W/I50sDDocHtwGNcjtbyMOaLt0ve3gxmkrMYXhs/cYOkqgOW1lP3VGh9UIbsG2/rZqefCAems1g/9FSxnDITf4JJgY7fROFf0yYu9EVfOv3D4VWFoB4otANck+zpW7MftKKESEwIBklYNYP1oAhkdMgPPdrdmJ4TeLyEuSJ27vyU6NpAnYNoXwTKZg+W63UPXbCq4OuduAoXhcqa7Xc8Db3GvsMnbJHpi3RM6rd5mTiqsza4Q41jj46xwQ==;5:IgGg398xxNCkbz6ii72DmJx4Uk5i3Dve5phudr4qls2aSiBQ9ooiibPkQ9f7SEhNmT37xRWuWdynV63OlgQfhty2XBOluYh92+CZQ+dOYKztOWu3GR+/njruyyuYEg6Rmk7TgbLCAQC1CF2bUDuSuQVl43LVR14ee0zAjt03IxA=;24:NR6KKC0hYNGudUvlwWVv6HfQJfIjoqqp8ucRqAoeDz4+9oBKDcUp1jrq0YtTdLS341jCnaTbq5ajUizBoewFPEplcS2+I4LxYGiSHY8iA6o=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;7:qpDgIXGisP53/TEsR/nUifY1yczfk4hHr8dnqp0kIuYI2/Zo7As/MnmrqMjJKPZlQAQgvTmRsb0AJUHGid9vumcbRQHiEPbG5lbg8dYBhZ4DBh175lTFWq94rswmjgn7JWaL0TJSUSB1s2miZD80lZkbRPMhEBYlck1On4RcXvTwu1zFfRbfFYDQmhN2mLFUXqxYOOK+TWuDZe8xniCttGlILf1CRnStuB69goyy0rwvTDtrhXlZBXgqzsVYHMyF
-X-MS-Office365-Filtering-Correlation-Id: c2511182-dedd-47f6-df88-08d5ba4be85f
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;7:tZAE7qw1ZR0ew2Z8Ho5GVAtFiCBnOy97ArQX8rdV1msMIO6s3smYZr9iJgr8AOjN2sl0jq9PcxBU1yvaIA2Qc2YCmVQi+mSnH2+5fuDLfVa3zJzZv6OqbqoqSnVMCn6ZlJTT2oUMcyktyhaHOiz4VL/RlJ9642GRH/DBXxq14hHuxhrBu26bSn03f2vW6+Q+ZYXhAxzeyIWVlOHeYFgDNKwEmAMfmswfpdVBnO4w0KYl4RnLR9iSc4HJPN4SXb8q
+X-MS-Office365-Filtering-Correlation-Id: 5ae80c01-b199-4d51-5109-08d5ba4c254d
 X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 10:09:10.8266 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2511182-dedd-47f6-df88-08d5ba4be85f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 10:10:53.0304 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ae80c01-b199-4d51-5109-08d5ba4c254d
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2639
@@ -89,13 +92,14 @@ license text [2] is actually what the current DT files claim.
 
 Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 39 +---------------------
- 1 file changed, 1 insertion(+), 38 deletions(-)
+ arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts | 39 +------------------
+ arch/arm64/boot/dts/marvell/berlin4ct-stb.dts | 39 +------------------
+ 2 files changed, 2 insertions(+), 76 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-index d2f88b92d8e2..216767e2edf6 100644
---- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-+++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+diff --git a/arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts b/arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts
+index fae6c6924705..c64a179ebbb7 100644
+--- a/arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts
++++ b/arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts
 @@ -1,45 +1,8 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
  /*
@@ -142,6 +146,57 @@ index d2f88b92d8e2..216767e2edf6 100644
 - *     OTHER DEALINGS IN THE SOFTWARE.
   */
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/marvell/berlin4ct-stb.dts b/arch/arm64/boot/dts/marvell/berlin4ct-stb.dts
+index d47edad13e68..277dccfa05cb 100644
+--- a/arch/arm64/boot/dts/marvell/berlin4ct-stb.dts
++++ b/arch/arm64/boot/dts/marvell/berlin4ct-stb.dts
+@@ -1,45 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+ /*
+  * Copyright (C) 2015 Marvell Technology Group Ltd.
+  *
+  * Author: Jisheng Zhang <jszhang@marvell.com>
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPLv2 or the X11 license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This library is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of the
+- *     License, or (at your option) any later version.
+- *
+- *     This library is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
 -- 
 2.17.0
