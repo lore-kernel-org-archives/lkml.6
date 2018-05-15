@@ -1,285 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752461AbeEOG1w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:27:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53173 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752171AbeEOG1k (ORCPT
+        id S1752490AbeEOG2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:28:01 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:59963 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752408AbeEOG16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:27:40 -0400
-Date: Mon, 14 May 2018 23:27:14 -0700
-From: tip-bot for Alan Stern <tipbot@zytor.com>
-Message-ID: <tip-1ee2da5f9b5a8e814b397b77a08d44fed5f96a4a@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        will.deacon@arm.com, peterz@infradead.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, stern@rowland.harvard.edu,
-        akpm@linux-foundation.org, parri.andrea@gmail.com,
-        paulmck@linux.vnet.ibm.com
-Reply-To: will.deacon@arm.com, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        parri.andrea@gmail.com, paulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, stern@rowland.harvard.edu,
-        akpm@linux-foundation.org
-In-Reply-To: <1526340837-12222-1-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526340837-12222-1-git-send-email-paulmck@linux.vnet.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Rename link and rcu-path to
- rcu-link and rb
-Git-Commit-ID: 1ee2da5f9b5a8e814b397b77a08d44fed5f96a4a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 May 2018 02:27:58 -0400
+Subject: Re: [RFC PATCH 2/5] media: cec-notifier: Get notifier by device and
+ connector name
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
+ <1526337639-3568-3-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <adbbccf9-d8af-c43a-3f10-bdd828e8c842@xs4all.nl>
+Date: Tue, 15 May 2018 08:27:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1526337639-3568-3-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLh993B099RGQcW93I9v6jp8ducIPC5nua+zaf5U9EsNqByFc1NX+d1wi+SY56NiF/FoCB9v2MlnEnZ+e9hYw4j3qW0e+FWoCf/nPHoCr1uzEtnXdd+O
+ CkLAJBO5bOpE2N3gO6H3tTrqH/I3L8wC+wiE+V8cQ2wsN+8ngqBLhvbcWdf74XOnksBnO9XBezxbRgzQCSD3n5ePishgZMTO8UjDZAnO1DDvjnb31XEtZ3HB
+ 3e/tUqPgcF6Ci81emLRaY79f6tpVby1SFimsApRelRooPDKxhmvsZ33BUJFUWx65ZCBjhtpI4sUfDrd6lLl2xC7aSTWqZg2+0kG8Quisjj8PIwHdqBWWUj+b
+ TIK4xVQoE3WpRvBOI6fuopaowxqGUNoRVal2/7ai/oGYP6i64zBFy2Fj59IoKdGk0ga9pM3BCx13KlgyFIw2XevF/AjX2GcOIU425hEF9L5DUoOjB1zBughz
+ gevH89rRvN7nqwDmT1HxFxrpRbQc2txYOG29KLAkEy5z0mZlWe6sH+7o6M2MG1p6+koE2n6K7CWK/n3y1Z8huRlMDLFKybPKXn9rRy6x2sbaAXiJzdCJjIE/
+ 8lMDmwT8jw26Pyqevh4WN2c9wZ3LAMxWR8W8xSzvyeW9WsVqsSSy5TePbfHx/rQ76lob3eXN9ZqOTydyrEHdZ1vdZlPbkZHyVP4Fn2W8NhJX+6kk0+HtRv7z
+ G6bcV7+8fYc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1ee2da5f9b5a8e814b397b77a08d44fed5f96a4a
-Gitweb:     https://git.kernel.org/tip/1ee2da5f9b5a8e814b397b77a08d44fed5f96a4a
-Author:     Alan Stern <stern@rowland.harvard.edu>
-AuthorDate: Mon, 14 May 2018 16:33:39 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 15 May 2018 08:11:15 +0200
+Hi Neil,
 
-tools/memory-model: Rename link and rcu-path to rcu-link and rb
+Thanks for this patch series!
 
-This patch makes a simple non-functional change to the RCU portion of
-the Linux Kernel Memory Consistency Model by renaming the "link" and
-"rcu-path" relations to "rcu-link" and "rb", respectively.
+Some comments below:
 
-The name "link" was an unfortunate choice, because it was too generic
-and subject to confusion with other meanings of the same word, which
-occur quite often in LKMM documentation.  The name "rcu-path" is not
-very appropriate, because the relation is analogous to the
-happens-before (hb) and propagates-before (pb) relations -- although
-that fact won't become apparent until the second patch in this series.
+On 05/15/2018 12:40 AM, Neil Armstrong wrote:
+> In non device-tree world, we can need to get the notifier by the driver
+> name directly and eventually defer probe if not yet created.
+> 
+> This patch adds a variant of the get function by using the device name
+> instead and will not create a notifier if not yet created.
+> 
+> But the i915 driver exposes at least 2 HDMI connectors, this patch also
+> adds the possibility to add a connector name tied to the notifier device
+> to form a tuple and associate different CEC controllers for each HDMI
+> connectors.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/media/cec/cec-notifier.c | 30 ++++++++++++++++++++++++---
+>  include/media/cec-notifier.h     | 44 ++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 69 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+> index 16dffa0..716070a 100644
+> --- a/drivers/media/cec/cec-notifier.c
+> +++ b/drivers/media/cec/cec-notifier.c
+> @@ -21,6 +21,7 @@ struct cec_notifier {
+>  	struct list_head head;
+>  	struct kref kref;
+>  	struct device *dev;
+> +	const char *conn;
+>  	struct cec_adapter *cec_adap;
+>  	void (*callback)(struct cec_adapter *adap, u16 pa);
+>  
+> @@ -30,13 +31,34 @@ struct cec_notifier {
+>  static LIST_HEAD(cec_notifiers);
+>  static DEFINE_MUTEX(cec_notifiers_lock);
+>  
+> -struct cec_notifier *cec_notifier_get(struct device *dev)
+> +struct cec_notifier *cec_notifier_get_byname(const char *name,
+> +					     const char *conn)
+>  {
+>  	struct cec_notifier *n;
+>  
+>  	mutex_lock(&cec_notifiers_lock);
+>  	list_for_each_entry(n, &cec_notifiers, head) {
+> -		if (n->dev == dev) {
+> +		if (!strcmp(dev_name(n->dev), name) &&
+> +		    (!conn || !strcmp(n->conn, conn))) {
+> +			kref_get(&n->kref);
+> +			mutex_unlock(&cec_notifiers_lock);
+> +			return n;
+> +		}
+> +	}
+> +	mutex_unlock(&cec_notifiers_lock);
+> +
+> +	return NULL;
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
-Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
-Link: http://lkml.kernel.org/r/1526340837-12222-1-git-send-email-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/memory-model/Documentation/explanation.txt | 93 ++++++++++++------------
- tools/memory-model/linux-kernel.cat              | 16 ++--
- 2 files changed, 55 insertions(+), 54 deletions(-)
+This doesn't seem right. For one it doesn't act like the other cec_notifier_get*
+functions in that it doesn't make a new notifier if it wasn't found yet in the
+list.
 
-diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-index a727c82bd434..1a387d703212 100644
---- a/tools/memory-model/Documentation/explanation.txt
-+++ b/tools/memory-model/Documentation/explanation.txt
-@@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory Consistency Model
-   19. AND THEN THERE WAS ALPHA
-   20. THE HAPPENS-BEFORE RELATION: hb
-   21. THE PROPAGATES-BEFORE RELATION: pb
--  22. RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
-+  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-   23. ODDS AND ENDS
- 
- 
-@@ -1451,8 +1451,8 @@ they execute means that it cannot have cycles.  This requirement is
- the content of the LKMM's "propagation" axiom.
- 
- 
--RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
-------------------------------------------------------
-+RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-+---------------------------------------------------
- 
- RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
- rests on two concepts: grace periods and read-side critical sections.
-@@ -1509,8 +1509,8 @@ y, which occurs before the end of the critical section, did not
- propagate to P1 before the end of the grace period, violating the
- Guarantee.
- 
--In the kernel's implementations of RCU, the business about stores
--propagating to every CPU is realized by placing strong fences at
-+In the kernel's implementations of RCU, the requirements for stores
-+to propagate to every CPU are fulfilled by placing strong fences at
- suitable places in the RCU-related code.  Thus, if a critical section
- starts before a grace period does then the critical section's CPU will
- execute an smp_mb() fence after the end of the critical section and
-@@ -1523,19 +1523,19 @@ executes.
- What exactly do we mean by saying that a critical section "starts
- before" or "ends after" a grace period?  Some aspects of the meaning
- are pretty obvious, as in the example above, but the details aren't
--entirely clear.  The LKMM formalizes this notion by means of a
--relation with the unfortunately generic name "link".  It is a very
--general relation; among other things, X ->link Z includes cases where
--X happens-before or is equal to some event Y which is equal to or
--comes before Z in the coherence order.  Taking Y = Z, this says that
--X ->rfe Z implies X ->link Z, and taking Y = X, it says that X ->fr Z
--and X ->co Z each imply X ->link Z.
--
--The formal definition of the link relation is more than a little
-+entirely clear.  The LKMM formalizes this notion by means of the
-+rcu-link relation.  rcu-link encompasses a very general notion of
-+"before": Among other things, X ->rcu-link Z includes cases where X
-+happens-before or is equal to some event Y which is equal to or comes
-+before Z in the coherence order.  When Y = Z this says that X ->rfe Z
-+implies X ->rcu-link Z.  In addition, when Y = X it says that X ->fr Z
-+and X ->co Z each imply X ->rcu-link Z.
-+
-+The formal definition of the rcu-link relation is more than a little
- obscure, and we won't give it here.  It is closely related to the pb
- relation, and the details don't matter unless you want to comb through
- a somewhat lengthy formal proof.  Pretty much all you need to know
--about link is the information in the preceding paragraph.
-+about rcu-link is the information in the preceding paragraph.
- 
- The LKMM goes on to define the gp-link and rscs-link relations.  They
- bring grace periods and read-side critical sections into the picture,
-@@ -1543,32 +1543,33 @@ in the following way:
- 
- 	E ->gp-link F means there is a synchronize_rcu() fence event S
- 	and an event X such that E ->po S, either S ->po X or S = X,
--	and X ->link F.  In other words, E and F are connected by a
--	grace period followed by an instance of link.
-+	and X ->rcu-link F.  In other words, E and F are linked by a
-+	grace period followed by an instance of rcu-link.
- 
- 	E ->rscs-link F means there is a critical section delimited by
- 	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
- 	and an event X such that E ->po U, either L ->po X or L = X,
--	and X ->link F.  Roughly speaking, this says that some event
--	in the same critical section as E is connected by link to F.
--
--If we think of the link relation as standing for an extended "before",
--then E ->gp-link F says that E executes before a grace period which
--ends before F executes.  (In fact it says more than this, because it
--includes cases where E executes before a grace period and some store
--propagates to F's CPU before F executes and doesn't propagate to some
--other CPU until after the grace period ends.)  Similarly,
--E ->rscs-link F says that E is part of (or before the start of) a
--critical section which starts before F executes.
-+	and X ->rcu-link F.  Roughly speaking, this says that some
-+	event in the same critical section as E is linked by rcu-link
-+	to F.
-+
-+If we think of the rcu-link relation as standing for an extended
-+"before", then E ->gp-link F says that E executes before a grace
-+period which ends before F executes.  (In fact it covers more than
-+this, because it also includes cases where E executes before a grace
-+period and some store propagates to F's CPU before F executes and
-+doesn't propagate to some other CPU until after the grace period
-+ends.)  Similarly, E ->rscs-link F says that E is part of (or before
-+the start of) a critical section which starts before F executes.
- 
- Putting this all together, the LKMM expresses the Grace Period
- Guarantee by requiring that there are no cycles consisting of gp-link
--and rscs-link connections in which the number of gp-link instances is
-->= the number of rscs-link instances.  It does this by defining the
--rcu-path relation to link events E and F whenever it is possible to
--pass from E to F by a sequence of gp-link and rscs-link connections
--with at least as many of the former as the latter.  The LKMM's "rcu"
--axiom then says that there are no events E such that E ->rcu-path E.
-+and rscs-link links in which the number of gp-link instances is >= the
-+number of rscs-link instances.  It does this by defining the rb
-+relation to link events E and F whenever it is possible to pass from E
-+to F by a sequence of gp-link and rscs-link links with at least as
-+many of the former as the latter.  The LKMM's "rcu" axiom then says
-+that there are no events E with E ->rb E.
- 
- Justifying this axiom takes some intellectual effort, but it is in
- fact a valid formalization of the Grace Period Guarantee.  We won't
-@@ -1585,10 +1586,10 @@ rcu_read_unlock() fence events delimiting the critical section in
- question, and let S be the synchronize_rcu() fence event for the grace
- period.  Saying that the critical section starts before S means there
- are events E and F where E is po-after L (which marks the start of the
--critical section), E is "before" F in the sense of the link relation,
--and F is po-before the grace period S:
-+critical section), E is "before" F in the sense of the rcu-link
-+relation, and F is po-before the grace period S:
- 
--	L ->po E ->link F ->po S.
-+	L ->po E ->rcu-link F ->po S.
- 
- Let W be the store mentioned above, let Z come before the end of the
- critical section and witness that W propagates to the critical
-@@ -1600,12 +1601,12 @@ some event X which is po-after S.  Symbolically, this amounts to:
- 
- The fr link from Y to W indicates that W has not propagated to Y's CPU
- at the time that Y executes.  From this, it can be shown (see the
--discussion of the link relation earlier) that X and Z are connected by
--link, yielding:
-+discussion of the rcu-link relation earlier) that X and Z are related
-+by rcu-link, yielding:
- 
--	S ->po X ->link Z ->po U.
-+	S ->po X ->rcu-link Z ->po U.
- 
--These formulas say that S is po-between F and X, hence F ->gp-link Z
-+The formulas say that S is po-between F and X, hence F ->gp-link Z
- via X.  They also say that Z comes before the end of the critical
- section and E comes after its start, hence Z ->rscs-link F via E.  But
- now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
-@@ -1635,13 +1636,13 @@ time with statement labels added to the memory access instructions:
- 	}
- 
- 
--If r2 = 0 at the end then P0's store at X overwrites the value
--that P1's load at Z reads from, so we have Z ->fre X and thus
--Z ->link X.  In addition, there is a synchronize_rcu() between Y and
--Z, so therefore we have Y ->gp-link X.
-+If r2 = 0 at the end then P0's store at X overwrites the value that
-+P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
-+In addition, there is a synchronize_rcu() between Y and Z, so therefore
-+we have Y ->gp-link X.
- 
- If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
--so we have W ->link Y.  In addition, W and X are in the same critical
-+so we have W ->rcu-link Y.  In addition, W and X are in the same critical
- section, so therefore we have X ->rscs-link Y.
- 
- This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index df97db03b6c2..cdf682859d4e 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -100,22 +100,22 @@ let rscs = po ; crit^-1 ; po?
-  * one but two non-rf relations, but only in conjunction with an RCU
-  * read-side critical section.
-  *)
--let link = hb* ; pb* ; prop
-+let rcu-link = hb* ; pb* ; prop
- 
- (* Chains that affect the RCU grace-period guarantee *)
--let gp-link = gp ; link
--let rscs-link = rscs ; link
-+let gp-link = gp ; rcu-link
-+let rscs-link = rscs ; rcu-link
- 
- (*
-  * A cycle containing at least as many grace periods as RCU read-side
-  * critical sections is forbidden.
-  *)
--let rec rcu-path =
-+let rec rb =
- 	gp-link |
- 	(gp-link ; rscs-link) |
- 	(rscs-link ; gp-link) |
--	(rcu-path ; rcu-path) |
--	(gp-link ; rcu-path ; rscs-link) |
--	(rscs-link ; rcu-path ; gp-link)
-+	(rb ; rb) |
-+	(gp-link ; rb ; rscs-link) |
-+	(rscs-link ; rb ; gp-link)
- 
--irreflexive rcu-path as rcu
-+irreflexive rb as rcu
+For another, I think this function shouldn't be here at all. How about calling
+bus_find_device_by_name(), then use cec_notifier_get_conn()?
+
+> +}
+> +EXPORT_SYMBOL_GPL(cec_notifier_get_byname);
+> +
+> +struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
+> +{
+> +	struct cec_notifier *n;
+> +
+> +	mutex_lock(&cec_notifiers_lock);
+> +	list_for_each_entry(n, &cec_notifiers, head) {
+> +		if (n->dev == dev &&
+> +		    (!conn || !strcmp(n->conn, conn))) {
+>  			kref_get(&n->kref);
+>  			mutex_unlock(&cec_notifiers_lock);
+>  			return n;
+> @@ -46,6 +68,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+>  	if (!n)
+>  		goto unlock;
+>  	n->dev = dev;
+> +	if (conn)
+> +		n->conn = devm_kstrdup(dev, conn, GFP_KERNEL);
+
+The use of devm_kstrdup worries me. The problem is that when the 'dev' device
+is removed, this memory is also automatically freed. But the notifier might
+still have a reference through the CEC driver, so you end up with a n->conn
+pointer that points to freed memory.
+
+I think it is better to just use kstrdup and kfree it when the last notifier
+reference is released.
+
+>  	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+>  	mutex_init(&n->lock);
+>  	kref_init(&n->kref);
+> @@ -54,7 +78,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+>  	mutex_unlock(&cec_notifiers_lock);
+>  	return n;
+>  }
+> -EXPORT_SYMBOL_GPL(cec_notifier_get);
+> +EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+>  
+>  static void cec_notifier_release(struct kref *kref)
+>  {
+> diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+> index cf0add7..70f2974 100644
+> --- a/include/media/cec-notifier.h
+> +++ b/include/media/cec-notifier.h
+> @@ -20,6 +20,37 @@ struct cec_notifier;
+>  #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
+>  
+>  /**
+> + * cec_notifier_get_byname - find a cec_notifier for the given device name
+> + * and connector tuple.
+> + * @name: device name that sends the events.
+> + * @conn: the connector name from which the event occurs
+> + *
+> + * If a notifier for device @name exists, then increase the refcount and
+> + * return that notifier.
+> + *
+> + * If it doesn't exist, return NULL
+> + */
+> +struct cec_notifier *cec_notifier_get_byname(const char *name,
+> +					     const char *conn);
+> +
+> +/**
+> + * cec_notifier_get_conn - find or create a new cec_notifier for the given
+> + * device and connector tuple.
+> + * @dev: device that sends the events.
+> + * @conn: the connector name from which the event occurs
+> + *
+> + * If a notifier for device @dev already exists, then increase the refcount
+> + * and return that notifier.
+> + *
+> + * If it doesn't exist, then allocate a new notifier struct and return a
+> + * pointer to that new struct.
+> + *
+> + * Return NULL if the memory could not be allocated.
+> + */
+> +struct cec_notifier *cec_notifier_get_conn(struct device *dev,
+> +					   const char *conn);
+> +
+> +/**
+>   * cec_notifier_get - find or create a new cec_notifier for the given device.
+>   * @dev: device that sends the events.
+>   *
+> @@ -31,7 +62,10 @@ struct cec_notifier;
+>   *
+>   * Return NULL if the memory could not be allocated.
+>   */
+> -struct cec_notifier *cec_notifier_get(struct device *dev);
+> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +{
+> +	return cec_notifier_get_conn(dev, NULL);
+> +}
+>  
+>  /**
+>   * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+> @@ -85,12 +119,18 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+>  			       struct cec_notifier *notifier);
+>  
+>  #else
+> -static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
+> +							 const char *conn)
+>  {
+>  	/* A non-NULL pointer is expected on success */
+>  	return (struct cec_notifier *)0xdeadfeed;
+>  }
+>  
+> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
+> +{
+> +	return cec_notifier_get_conn(dev, NULL);
+> +}
+> +
+>  static inline void cec_notifier_put(struct cec_notifier *n)
+>  {
+>  }
+> 
+
+Regards,
+
+	Hans
