@@ -1,201 +1,135 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3322034-1526420470-5-10736089002469232162
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3468281-1526428699-2-14358894506004320883
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526420470; b=kjInlOOTX/oaOVVenze0Nnafeb9Kaqo6piyBGxGYiL+Bc5kenQ
-    xd2tjke2+gJypO8T5ON5V3IzApH4M1856j49QSJFDBfMwKPr/T4w8HvsmhiV4gYF
-    i7gnDj3BU70/yb6NIsfnkIUI4+vukwT75ch9Vy4eYuD+OKEQDTnqNMMuW/rmT7Sv
-    h8cVITe4Lcpdr/0PXH/uqVgkxDJJiXuE818fxic3/v8823v2tibRsjFffZdlX9u6
-    9aP9IMBzePXq57ZNMjHYjeJOaBSAd6a+8wyA0EfLR2c5NuLH+xe8kOLbolIv3i//
-    Di5+ainS1nsyI9XcFE+mPv4zvnywsARS8ACA==
+    1526428698; b=Nc0gb/wOHW384wEodRLsuw9VXmXEZzcsvHSEpLUsR5YbH6IzBr
+    nsmn/hznnUGHT/2+4FodmrRliWZXx5I/+qI3e4mzpx4B5+5mG0rISFS9V0IxRneW
+    MnqVH1W74EErcAUJk/NdEXrYqGKkNMONGO0loGT4WIKJ6cO+3wZlHQTtKGQE3y09
+    FE2KK5ndmW9QPspI4AXoiWsKvYXrAhFpbmsSRgbg16XqCFw3soZoKsTgI1d7Yx14
+    2NKhSLge/3xgGw4Tpumhxg9w5P6DJP6HZC4OxaFnNtRpM69l/N91EUnN5lgpH7aN
+    FAkLdfiSM2sYqT8SrZuhtyDRoGppgJJkXRog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526420470; bh=
-    o8sgoZjOxvubH3vqlI10o5Q7nh1e1mqbGOKF/LOEVSM=; b=hMITiwwxxmHGFA55
-    M5+wcZuRAZtHpCT8fUItFcGcuFOdO0cXkkro/E+jouC0LeT4p0BOOEV28NqVt9hv
-    ja9k17zTEOOGkUJSrdE72bYspTwgs/QuXKMDiliV+5pzJNYHNkwjDKJs4cOkNZDp
-    uoc+Lfa9h7+cZRrJzfUBU1R9Aemc/a/L8dFDQrn4UwrUxQx9uzydrhraQ0l2GUDB
-    URKenfunvZZ+OJRr1C1D4zNIwGAcDiYbkCrYyV+ImJhGxd1SskC8E7ulA5+0YkuR
-    bge8KonYNd9+5Gc/LBdmzgGZNC3jqgFP+Zb8UulmMWXAzkKpwiRM8DMigU0W8K6B
-    CtaH/g==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526428698; bh=rjkZIjvXQQaFaUUD451DNSJmnfV/lf
+    QpBkAdFf4Hagc=; b=KoYCtaGPFzlZcMDKzFa/74B0GQJ0qNQ1+m6MsOOnpVKu6S
+    UFwBfOTjZJbK4+UN5pfa4yrjuIJV6mbaJYnCd1inFSZwiEg4P+qyvn0Fl098GaW6
+    tEUHPspTSdE+msTeSk6dSDRm4gpo35bB6MpGupXVNURkuQ5y6y+StZW0QT2la4TJ
+    ZkRcF8qsEmLAY0pknuy5YromMcSYfLOUKEGBeXJ9/jecMcMbrcy5h+jarki+kPQc
+    MYjwbsv4VrRCu+6y6UIekmUG3z213dSGcGqT8IQXK4HN7ijQcEC8aOzI8Wk6CjaL
+    7FmeOxlm3yMj/P16/QujSWhbv5G7wtk3gtjN9uJA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJPl/MCB7PKBSVTFt8P79Fgs7hvZDAYTa9ikUf6Tn5OaERSVR6cdUZvd6Z3olTU4vjKiJm0+ZWGAVRZPdRRK2NVNCxSHgvavpCLk0a7lA1C4E9EnjosZ
-    3T4T7rsxd0zCNZiY1fVaF7N4+C05Eq98nI0Y6SALRDOOldYYnyTKedtXzCJ/vArxQrawSxReYqpZITFTM+EUelHPf5OsUNWbjWI10JwD2FXh+trrGZ9+5Agy
+X-CM-Envelope: MS4wfOKg2y4eQL+vi0WDUrNo/zQpU08VhtqqRd0CBpxhHG4leRnYadxEs7/1n2F91gACbdoPyexc2TxKUNFbD/SHM1trb4iSZJEz0uBQGJU4I/4TlM2QMwnV
+    sWQWN+SLvRU5rUTd4732thNMHUFA903ZeqI1EyD2AXh4ZWwR/IPmWrotM6oOClxu2MELnAL8NNTHFpprmyoqj0VRUOUOsvMu58lvJBG1pTsnzSmDRX1epyVO
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=MvuuwTCpAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8
-    a=tA7aZXjiAAAA:8 a=VwQbUJbxAAAA:8 a=ICxiNaJX4HUcj9YNticA:9
-    a=LVWB1rp2qefrMUUt:21 a=29AgWrWh4-N4p5Ih:21 a=dVHiktpip_riXrfdqayU:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=NdAtdrkLVvyUPsUoGJp4:22
-    a=kIIFJ0VLUOy1gFZzwZHL:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=qTCTqAxlTHOC2uTrnRkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeEOVky (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 17:40:54 -0400
-Received: from g2t2352.austin.hpe.com ([15.233.44.25]:23599 "EHLO
-        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752243AbeEOVkw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 15 May 2018 17:40:52 -0400
-From: Toshi Kani <toshi.kani@hpe.com>
-To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Cc: cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Joerg Roedel <joro@8bytes.org>, stable@vger.kernel.org
-Subject: [PATCH v2 3/3] x86/mm: add TLB purge to free pmd/pte page interfaces
-Date: Tue, 15 May 2018 15:39:31 -0600
-Message-Id: <20180515213931.23885-4-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180515213931.23885-1-toshi.kani@hpe.com>
-References: <20180515213931.23885-1-toshi.kani@hpe.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1752674AbeEOX5y (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 19:57:54 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:55294 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751402AbeEOX5v (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 15 May 2018 19:57:51 -0400
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usbip: usbip_host: fix bad unlock balance during stub_probe()
+Date: Tue, 15 May 2018 17:57:23 -0600
+Message-Id: <20180515235723.30845-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-ioremap() calls pud_free_pmd_page() / pmd_free_pte_page() when it creates
-a pud / pmd map.  The following preconditions are met at their entry.
- - All pte entries for a target pud/pmd address range have been cleared.
- - System-wide TLB purges have been peformed for a target pud/pmd address
-   range.
+stub_probe() calls put_busid_priv() in an error path when device isn't
+found in the busid_table. Fix it by making put_busid_priv() safe to be
+called with null struct bus_id_priv pointer.
 
-The preconditions assure that there is no stale TLB entry for the range.
-Speculation may not cache TLB entries since it requires all levels of page
-entries, including ptes, to have P & A-bits set for an associated address.
-However, speculation may cache pud/pmd entries (paging-structure caches)
-when they have P-bit set.
+This problem happens when "usbip bind" is run without loading usbip_host
+driver and then running modprobe. The first failed bind attempt unbinds
+the device from the original driver and when usbip_host is modprobed,
+stub_probe() runs and doesn't find the device in its busid table and calls
+put_busid_priv(0 with null bus_id_priv pointer.
 
-Add a system-wide TLB purge (INVLPG) to a single page after clearing
-pud/pmd entry's P-bit.
+usbip-host 3-10.2: 3-10.2 is not in match_busid table...  skip!
 
-SDM 4.10.4.1, Operation that Invalidate TLBs and Paging-Structure Caches,
-states that:
-  INVLPG invalidates all paging-structure caches associated with the
-  current PCID regardless of the liner addresses to which they correspond.
+[  367.359679] =====================================
+[  367.359681] WARNING: bad unlock balance detected!
+[  367.359683] 4.17.0-rc4+ #5 Not tainted
+[  367.359685] -------------------------------------
+[  367.359688] modprobe/2768 is trying to release lock (
+[  367.359689]
+==================================================================
+[  367.359696] BUG: KASAN: null-ptr-deref in print_unlock_imbalance_bug+0x99/0x110
+[  367.359699] Read of size 8 at addr 0000000000000058 by task modprobe/2768
 
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: <stable@vger.kernel.org>
+[  367.359705] CPU: 4 PID: 2768 Comm: modprobe Not tainted 4.17.0-rc4+ #5
+
+Fixes: 22076557b07c ("usbip: usbip_host: fix NULL-ptr deref and use-after-free errors") in usb-linus
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Cc: stable <stable@kernel.org>
 ---
- arch/x86/mm/pgtable.c |   34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index f60fdf411103..7e96594c7e97 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -721,24 +721,42 @@ int pmd_clear_huge(pmd_t *pmd)
-  * @pud: Pointer to a PUD.
-  * @addr: Virtual address associated with pud.
-  *
-- * Context: The pud range has been unmaped and TLB purged.
-+ * Context: The pud range has been unmapped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
- int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ drivers/usb/usbip/stub_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/usbip/stub_main.c b/drivers/usb/usbip/stub_main.c
+index 41c7b9de2a92..bf8a5feb0ee9 100644
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -82,7 +82,8 @@ struct bus_id_priv *get_busid_priv(const char *busid)
+ 
+ void put_busid_priv(struct bus_id_priv *bid)
  {
--	pmd_t *pmd;
-+	pmd_t *pmd, *pmd_sv;
-+	pte_t *pte;
- 	int i;
+-	spin_unlock(&bid->busid_lock);
++	if (bid)
++		spin_unlock(&bid->busid_lock);
+ }
  
- 	if (pud_none(*pud))
- 		return 1;
- 
- 	pmd = (pmd_t *)pud_page_vaddr(*pud);
-+	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
-+	if (!pmd_sv)
-+		return 0;
- 
--	for (i = 0; i < PTRS_PER_PMD; i++)
--		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
--			return 0;
-+	for (i = 0; i < PTRS_PER_PMD; i++) {
-+		pmd_sv[i] = pmd[i];
-+		if (!pmd_none(pmd[i]))
-+			pmd_clear(&pmd[i]);
-+	}
- 
- 	pud_clear(pud);
-+
-+	/* INVLPG to clear all paging-structure caches */
-+	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
-+
-+	for (i = 0; i < PTRS_PER_PMD; i++) {
-+		if (!pmd_none(pmd_sv[i])) {
-+			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
-+			free_page((unsigned long)pte);
-+		}
-+	}
-+
-+	free_page((unsigned long)pmd_sv);
- 	free_page((unsigned long)pmd);
- 
- 	return 1;
-@@ -749,7 +767,7 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-  * @pmd: Pointer to a PMD.
-  * @addr: Virtual address associated with pmd.
-  *
-- * Context: The pmd range has been unmaped and TLB purged.
-+ * Context: The pmd range has been unmapped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
- int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
-@@ -761,6 +779,10 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- 
- 	pte = (pte_t *)pmd_page_vaddr(*pmd);
- 	pmd_clear(pmd);
-+
-+	/* INVLPG to clear all paging-structure caches */
-+	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
-+
- 	free_page((unsigned long)pte);
- 
- 	return 1;
+ static int add_match_busid(char *busid)
+-- 
+2.14.1
+
