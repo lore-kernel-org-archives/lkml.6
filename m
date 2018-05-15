@@ -1,162 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752799AbeEOUy5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 16:54:57 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51785 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752518AbeEOUxz (ORCPT
+        id S1752813AbeEOUzP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 16:55:15 -0400
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:46996 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752134AbeEOUzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 16:53:55 -0400
-X-Google-Smtp-Source: AB8JxZog3jlyDHh5Df1yvcW0duzqhfivtiOu/Kdgw8LtXfNshKN24jhKY15hoUJzZBpyryHcX1sVUA==
-From: Alex Elder <elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] remoteproc: Rename subdev functions to start/stop
-Date: Tue, 15 May 2018 15:53:41 -0500
-Message-Id: <20180515205345.8090-2-elder@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180515205345.8090-1-elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
+        Tue, 15 May 2018 16:55:14 -0400
+X-Google-Smtp-Source: AB8JxZoIrTLxnzuJsHVZfJIIRKM1puR+6usAhH7Pl4ABp8uNae8uspMo5dH9A6wv6CagbxfBF3Ou3A==
+Date: Tue, 15 May 2018 13:45:43 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "arm@kernel.org" <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] STi DT update for v4.18 round 1
+Message-ID: <20180515204543.myfzyiffyxezohbt@localhost>
+References: <11f8376c-860d-26cf-92f6-38737e513656@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11f8376c-860d-26cf-92f6-38737e513656@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Mon, May 14, 2018 at 03:56:08PM +0000, Patrice CHOTARD wrote:
+> Hi Arnd, Kevin, Olof
+> 
+> PLease consider this first round of STi dts update for v4.18
+> 
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> 
+>    Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/pchotard/sti.git 
+> tags/sti-dt-for-v4.18-round1
+> 
+> for you to fetch changes up to c5bf208a0dc4aee18e03c6ed97eada70ffa9a4d8:
+> 
+>    ARM: dts: stihxxx-b2120: Fix complain about IRQ_TYPE_NONE usage 
+> (2018-05-14 17:40:26 +0200)
+> 
+> ----------------------------------------------------------------
+> STi DT update for 4.18:
+>   - Fix complain about IRQ_TYPE_NONE_usage
 
-"start" and "stop" are more suitable names for how these two operations
-are used, and they fit better with the upcoming introduction of two
-additional operations in the struct.
+Merged, thanks.
 
-[elder@linaro.org: minor comment edits]
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++--------------
- include/linux/remoteproc.h           | 14 ++++++-------
- 2 files changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9609d971f7f..5dd58e6bea88 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -774,13 +774,13 @@ static int rproc_handle_resources(struct rproc *rproc,
- 	return ret;
- }
- 
--static int rproc_probe_subdevices(struct rproc *rproc)
-+static int rproc_start_subdevices(struct rproc *rproc)
- {
- 	struct rproc_subdev *subdev;
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
--		ret = subdev->probe(subdev);
-+		ret = subdev->start(subdev);
- 		if (ret)
- 			goto unroll_registration;
- 	}
-@@ -789,17 +789,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
- 
- unroll_registration:
- 	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev, true);
-+		subdev->stop(subdev, true);
- 
- 	return ret;
- }
- 
--static void rproc_remove_subdevices(struct rproc *rproc, bool crashed)
-+static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- {
- 	struct rproc_subdev *subdev;
- 
- 	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev, crashed);
-+		subdev->stop(subdev, crashed);
- }
- 
- /**
-@@ -901,8 +901,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 		return ret;
- 	}
- 
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
-+	/* Start any subdevices for the remote processor */
-+	ret = rproc_start_subdevices(rproc);
- 	if (ret) {
- 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
- 			rproc->name, ret);
-@@ -1014,8 +1014,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
--	/* remove any subdevices for the remote processor */
--	rproc_remove_subdevices(rproc, crashed);
-+	/* Stop any subdevices for the remote processor */
-+	rproc_stop_subdevices(rproc, crashed);
- 
- 	/* the installed resource table is no longer accessible */
- 	rproc->table_ptr = rproc->cached_table;
-@@ -1657,16 +1657,16 @@ EXPORT_SYMBOL(rproc_del);
-  * rproc_add_subdev() - add a subdevice to a remoteproc
-  * @rproc: rproc handle to add the subdevice to
-  * @subdev: subdev handle to register
-- * @probe: function to call when the rproc boots
-- * @remove: function to call when the rproc shuts down
-+ * @start: function to call after the rproc is started
-+ * @stop: function to call before the rproc is stopped
-  */
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
--		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool crashed))
-+		      int (*start)(struct rproc_subdev *subdev),
-+		      void (*stop)(struct rproc_subdev *subdev, bool crashed))
- {
--	subdev->probe = probe;
--	subdev->remove = remove;
-+	subdev->start = start;
-+	subdev->stop = stop;
- 
- 	list_add_tail(&subdev->node, &rproc->subdevs);
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index dfdaede9139e..bf55bf2a5ee1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -477,15 +477,15 @@ struct rproc {
- /**
-  * struct rproc_subdev - subdevice tied to a remoteproc
-  * @node: list node related to the rproc subdevs list
-- * @probe: probe function, called as the rproc is started
-- * @remove: remove function, called as the rproc is being stopped, the @crashed
-- *	    parameter indicates if this originates from the a recovery
-+ * @start: start function, called after the rproc has been started
-+ * @stop: stop function, called before the rproc is stopped; the @crashed
-+ *	    parameter indicates if this originates from a recovery
-  */
- struct rproc_subdev {
- 	struct list_head node;
- 
--	int (*probe)(struct rproc_subdev *subdev);
--	void (*remove)(struct rproc_subdev *subdev, bool crashed);
-+	int (*start)(struct rproc_subdev *subdev);
-+	void (*stop)(struct rproc_subdev *subdev, bool crashed);
- };
- 
- /* we currently support only two vrings per rvdev */
-@@ -568,8 +568,8 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- 
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
--		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
-+		      int (*start)(struct rproc_subdev *subdev),
-+		      void (*stop)(struct rproc_subdev *subdev, bool crashed));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
--- 
-2.17.0
+-Olof
