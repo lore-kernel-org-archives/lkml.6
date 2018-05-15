@@ -1,83 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeEOQx1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:53:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56580 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752453AbeEOQxZ (ORCPT
+        id S932137AbeEOQxh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:53:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60841 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752453AbeEOQxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:53:25 -0400
-Date: Tue, 15 May 2018 18:53:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
- required
-Message-ID: <20180515165304.GH12217@hirez.programming.kicks-ass.net>
-References: <20180510150553.28122-1-patrick.bellasi@arm.com>
- <20180510150553.28122-4-patrick.bellasi@arm.com>
- <20180513060443.GB64158@joelaf.mtv.corp.google.com>
- <20180513062538.GA116730@joelaf.mtv.corp.google.com>
- <20180514163206.GF30654@e110439-lin>
- <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
- <20180515145343.GJ30654@e110439-lin>
+        Tue, 15 May 2018 12:53:35 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@elte.hu>, Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] sched/cfs: correct path to documentation
+Date: Tue, 15 May 2018 18:53:28 +0200
+Message-Id: <20180515165328.24899-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515145343.GJ30654@e110439-lin>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 03:53:43PM +0100, Patrick Bellasi wrote:
-> On 15-May 12:19, Vincent Guittot wrote:
-> > On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+The `tip' prefix probably referred to the tip tree and is not required.
+Remove it.
 
-> > Yes se becomes NULL only when you reach root domain
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ init/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-root group; domains are something else again ;-)
-
-> Thus, the scheduler knows that we are going to sleep: does is really
-> makes sense to send a notification in this case?
-
-It might; esp. on these very slow changing machines.
-
-> What about adding a new explicit callback at the end of:
->    update_blocked_averages() ?
-> 
-> Something like:
-> 
-> ---8<---
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index cb77407ba485..6eb0f31c656d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7740,6 +7740,9 @@ static void update_blocked_averages(int cpu)
->         if (done)
->                 rq->has_blocked_load = 0;
->  #endif
-> +
-> +       cpufreq_update_util(rq, SCHED_CPUFREQ_IDLE);
-> +
->         rq_unlock_irqrestore(rq, &rf);
->  }
-> ---8<---
-> 
-> Where we can also pass in a new SCHED_CPUFREQ_IDLE flag just to notify
-> schedutil that the CPU is currently IDLE?
-> 
-> Could that work?
-
-Simlarly you could add ENQUEUE/DEQUEUE flags I suppose. But let's do all
-that later in separate patches and evaluate the impact separately, OK?
+diff --git a/init/Kconfig b/init/Kconfig
+index f013afc74b11..18b151f0ddc1 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -738,7 +738,7 @@ config CFS_BANDWIDTH
+ 	  tasks running within the fair group scheduler.  Groups with no limit
+ 	  set are considered to be unconstrained and will run with no
+ 	  restriction.
+-	  See tip/Documentation/scheduler/sched-bwc.txt for more information.
++	  See Documentation/scheduler/sched-bwc.txt for more information.
+=20
+ config RT_GROUP_SCHED
+ 	bool "Group scheduling for SCHED_RR/FIFO"
+--=20
+2.17.0
