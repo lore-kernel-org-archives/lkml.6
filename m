@@ -1,91 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753558AbeEOQUe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:20:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39078 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEOQUd (ORCPT
+        id S932078AbeEOQUv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:20:51 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:2548 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753660AbeEOQUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:20:33 -0400
-Date: Tue, 15 May 2018 09:20:03 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Huaisheng HS1 Ye <yehs1@lenovo.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        NingTing Cheng <chengnt@lenovo.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        Linux MM <linux-mm@kvack.org>, "colyli@suse.de" <colyli@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sasha Levin <alexander.levin@verizon.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, Ocean HY1 He <hehy1@lenovo.com>
-Subject: Re: [External]  Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM
- (pmem) zone
-Message-ID: <20180515162003.GA26489@bombadil.infradead.org>
-References: <1525704627-30114-1-git-send-email-yehs1@lenovo.com>
- <20180507184622.GB12361@bombadil.infradead.org>
- <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
- <x49a7tbi8r3.fsf@segfault.boston.devel.redhat.com>
- <HK2PR03MB1684659175EB0A11E75E9B61929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180508030959.GB16338@bombadil.infradead.org>
- <HK2PR03MB16841CBB549F40F86BB8D35C92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180510162742.GA30442@bombadil.infradead.org>
- <HK2PR03MB1684B34F9D1DF18A8CDE18F292930@HK2PR03MB1684.apcprd03.prod.outlook.com>
+        Tue, 15 May 2018 12:20:48 -0400
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="asc'?scan'208";a="11554817"
+Message-ID: <e2e23aa21b37754b0c84003e6d87c7cb7d5a17fe.camel@microchip.com>
+Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
+From: Radu Pirea <radu.pirea@microchip.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <Zhiqiang.Hou@nxp.com>, <pp@emlix.com>, <richard@nod.at>,
+        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
+        <marek.vasut@gmail.com>
+Date: Tue, 15 May 2018 19:22:06 +0300
+In-Reply-To: <20180504204013.254d90cf@bbrezillon>
+References: <20180504155404.5285-1-radu.pirea@microchip.com>
+         <20180504204013.254d90cf@bbrezillon>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="=-OvGm/Yi9uvs4n9kKBo21"
+X-Mailer: Evolution 3.28.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HK2PR03MB1684B34F9D1DF18A8CDE18F292930@HK2PR03MB1684.apcprd03.prod.outlook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 04:07:28PM +0000, Huaisheng HS1 Ye wrote:
-> > From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On Behalf Of Matthew
-> > Wilcox
-> > No.  In the current situation, the user knows that either the entire
-> > page was written back from the pagecache or none of it was (at least
-> > with a journalling filesystem).  With your proposal, we may have pages
-> > splintered along cacheline boundaries, with a mix of old and new data.
-> > This is completely unacceptable to most customers.
-> 
-> Dear Matthew,
-> 
-> Thanks for your great help, I really didn't consider this case.
-> I want to make it a little bit clearer to me. So, correct me if anything wrong.
-> 
-> Is that to say this mix of old and new data in one page, which only has chance to happen when CPU failed to flush all dirty data from LLC to NVDIMM?
-> But if an interrupt can be reported to CPU, and CPU successfully flush all dirty data from cache lines to NVDIMM within interrupt response function, this mix of old and new data can be avoided.
+--=-OvGm/Yi9uvs4n9kKBo21
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If you can keep the CPU and the memory (and all the busses between them)
-alive for long enough after the power signal hs been tripped, yes.
-Talk to your hardware designers about what it will take to achieve this
-:-) Be sure to ask about the number of retries which may be necessary
-on the CPU interconnect to flush all data to an NV-DIMM attached to a
-remote CPU.
+On Fri, 2018-05-04 at 20:40 +0200, Boris Brezillon wrote:
+> On Fri, 4 May 2018 18:54:04 +0300
+> Radu Pirea <radu.pirea@microchip.com> wrote:
+>=20
+> > Added geometry description for Microchip 25LC256 memory.
+>=20
+> Same as for the dataflash stuff you posted a few weeks ago: I don't
+> think this device belongs in the SPI NOR framework.
+Hi Boris,
 
-> Current X86_64 uses N-way set associative cache, and every cache line has 64 bytes.
-> For 4096 bytes page, one page shall be splintered to 64 (4096/64) lines. Is it right?
+25lc256 memory is similar with mr25h256, the only difference is the
+page size(64 vs 256). Because mr25h256 is already in SPI NOR framework
+I added here 25lc256.
 
-That's correct.
+> >=20
+> > Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+> > ---
+> >  drivers/mtd/devices/m25p80.c  | 3 +++
+> >  drivers/mtd/spi-nor/spi-nor.c | 3 +++
+> >  2 files changed, 6 insertions(+)
+> >=20
+> > diff --git a/drivers/mtd/devices/m25p80.c
+> > b/drivers/mtd/devices/m25p80.c
+> > index a4e18f6aaa33..1e359d811261 100644
+> > --- a/drivers/mtd/devices/m25p80.c
+> > +++ b/drivers/mtd/devices/m25p80.c
+> > @@ -372,6 +372,9 @@ static const struct spi_device_id m25p_ids[] =3D
+> > {
+> >  	{ "mr25h10" },  /*   1 Mib, 40 MHz */
+> >  	{ "mr25h40" },  /*   4 Mib, 40 MHz */
+> > =20
+> > +	/* Microchip */
+> > +	{ "25lc256" },
+> > +
+> >  	{ },
+> >  };
+> >  MODULE_DEVICE_TABLE(spi, m25p_ids);
+> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-
+> > nor/spi-nor.c
+> > index d445a4d3b770..6341c86be647 100644
+> > --- a/drivers/mtd/spi-nor/spi-nor.c
+> > +++ b/drivers/mtd/spi-nor/spi-nor.c
+> > @@ -1076,6 +1076,9 @@ static const struct flash_info spi_nor_ids[]
+> > =3D {
+> >  	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048,
+> > SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+> >  	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048,
+> > SPI_NOR_QUAD_READ) },
+> > =20
+> > +	/* Microchip */
+> > +	{ "25lc256", CAT25_INFO(32 * 1024, 1, 64, 2,
+> > SPI_NOR_NO_ERASE | SPI_NOR_NO_FR) },
+> > +
+> >  	/* Micron */
+> >  	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32,
+> > SECT_4K | SPI_NOR_QUAD_READ) },
+> >  	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64,
+> > SPI_NOR_QUAD_READ) },
+>=20
+>=20
+--=-OvGm/Yi9uvs4n9kKBo21
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> > > > Then there's the problem of reconnecting the page cache (which is
-> > > > pointed to by ephemeral data structures like inodes and dentries) to
-> > > > the new inodes.
-> > > Yes, it is not easy.
-> > 
-> > Right ... and until we have that ability, there's no point in this patch.
-> We are focusing to realize this ability.
+-----BEGIN PGP SIGNATURE-----
 
-But is it the right approach?  So far we have (I think) two parallel
-activities.  The first is for local storage, using DAX to store files
-directly on the pmem.  The second is a physical block cache for network
-filesystems (both NAS and SAN).  You seem to be wanting to supplant the
-second effort, but I think it's much harder to reconnect the logical cache
-(ie the page cache) than it is the physical cache (ie the block cache).
+iQIzBAABCAAdFiEEdoCq2H4M7urKoB6rrwWfQ+JrPx0FAlr7CS4ACgkQrwWfQ+Jr
+Px2Ymw/6AxvaxE+EqKm1/B1QGobbmvfqqQctVNY2eLOcGtQ6/caB8ElIqrzSCg4v
+5XYkz5tIKpKYqurSdExktYIKGO7B1yZI+XvAiRBL7R0Hrhh7QA0DMVGdNarE+1zv
+KLfcsGtysYx0byvgQg70lgoI0GHAqQOUIhVwx4mMKS6sH9xl5/pURDuysaMlp68C
+Sk1RiOCGmt+XbB5lf5mly8lvIx4kGiYeyDhy/3jezEBGU68eLRp6/U2iQpku6FN+
+HHVuQSNW55D6gCZg30wIRx3D7rRw/9nmHi+psCPTiG+hMZcnJic1Pp9kCvp1gsK6
+PuN4e2umNuBUrgexH1OJlYpVK1Xtc6v2AZLNmd5sGOq/WCP/2noNeZqW1+pZf+IK
+Rp19p+u/rGQbyeGzcPbdI6pfyo6XAZJ68b4SmQKpi3FkNgHVf29YQBMeNSM0Sxw/
+xXVoQ8DfjOtf+HrVCkkDTqNP0LgfYWUn23h8U2WeMgF8/2NZjBteXWHgDrqlGJUX
+2OD37NGO8U0rshkEbzVXKiyNKscD4HbrgYE0fwPd4vnQFZPn1TWsliD/dl8TwZ4p
+DoTsyPGX5s1HYLnRsmk4HBsRrw6+rIUEEFviAnT+pHoo71rMMhZY/ueFzf9PAD5t
+p8Eu7UL4bHHgZQYwHnLdQm27w7KAZ9or7DnWr8jC9lr/T9UuJys=
+=LBhb
+-----END PGP SIGNATURE-----
+
+--=-OvGm/Yi9uvs4n9kKBo21--
