@@ -1,60 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754416AbeEOPwU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:52:20 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55478 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752661AbeEOPus (ORCPT
+        id S1754440AbeEOPwx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:52:53 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:39706 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753274AbeEOPwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:50:48 -0400
-X-Google-Smtp-Source: AB8JxZrNL1Gtn2e38xLobWD4ogBEf8o2WLM2ZvVqUQpSe57Xw2FYCqtiI0obVBr7VmQoWm6wh+TrZak7KmV28OKw4D0=
+        Tue, 15 May 2018 11:52:50 -0400
+X-Google-Smtp-Source: AB8JxZoJkNTT9WzovtD875anKDp6KslnodNg5xo/7RnyWGuuoeQpEDLyIrijDKczp9gcG/4EgxsOE0KsWKriW5EMIFY=
 MIME-Version: 1.0
-In-Reply-To: <20180515062144.GC13271@vkoul-mobl>
-References: <CGME20180508090407eucas1p13713284c2d3f5aa5c66f8d136be683c1@eucas1p1.samsung.com>
- <2484918.HKVQc3yJkt@bear> <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
- <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
- <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com> <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
- <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com> <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Date: Tue, 15 May 2018 11:50:46 -0400
-Message-ID: <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-To: Vinod <vkoul@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20180514195929.GA22950@codeaurora.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org> <20180509170159.29682-10-ilina@codeaurora.org>
+ <CAD=FV=Xvi8V43+J9v-mosU5WUDQtabg8gUbrkn6SCoNEYFtjUQ@mail.gmail.com> <20180514195929.GA22950@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 15 May 2018 08:52:47 -0700
+X-Google-Sender-Auth: sRd4u2CFJCyier1GBGTsCOvgP6g
+Message-ID: <CAD=FV=U+6N9LqvAh-V5ZKd_QKL9yTe+P9gVkvH4tr-SsUaMwng@mail.gmail.com>
+Subject: Re: [PATCH v8 09/10] drivers: qcom: rpmh: add support for batch RPMH request
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 2:21 AM, Vinod <vkoul@kernel.org> wrote:
->
-> For Pause/resume data loss is _not_ expected.
->
->> > and some of the 8250 drivers like 8250_dw.c set a maxburst > 1.  If it
->> > can't count on the pause/residue/terminate working without data loss
->> > then it is just broken.  As is the 8250_omap.c driver.  Is the
->> > description of dmaengine_pause in the documentation of "This pauses
->> > activity on the DMA channel without data loss" to be interpreted as
->> > "as long as you resume afterwards"?
+Hi,
+
+On Mon, May 14, 2018 at 12:59 PM, Lina Iyer <ilina@codeaurora.org> wrote:
+
+>>>  /**
+>>> @@ -77,12 +82,14 @@ struct rpmh_request {
+>>>   * @cache: the list of cached requests
+>>>   * @lock: synchronize access to the controller data
+>>>   * @dirty: was the cache updated since flush
+>>> + * @batch_cache: Cache sleep and wake requests sent as batch
+>>>   */
+>>>  struct rpmh_ctrlr {
+>>>         struct rsc_drv *drv;
+>>>         struct list_head cache;
+>>>         spinlock_t lock;
+>>>         bool dirty;
+>>> +       const struct rpmh_request *batch_cache[RPMH_MAX_BATCH_CACHE];
 >>
->> I assume that this requirement is for both - resuming and terminating.
->
-> Terminate is abort, data loss may happen here.
+>>
+>> I'm pretty confused about why the "batch_cache" is separate from the
+>> normal cache.  As far as I can tell the purpose of the two is the same
+>> but you have two totally separate code paths and data structures.
+>>
+> Due to a hardware limitation, requests made by bus drivers must be set
+> up in the sleep and wake TCS first before setting up the requests from
+> other drivers. Bus drivers use batch mode for any and all RPMH
+> communication. Hence their request are the only ones in the batch_cache.
 
-Wait, are you saying if you do
+This is totally not obvious and not commented.  Why not rename to
+"priority" instead of "batch"?
 
-dma pause
-read residue
-dma terminate
+If the only requirement is that these come first, that's still no
+reason to use totally separate code paths and mechanisms.  These
+requests can still use the same data structures / functions and just
+be ordered to come first, can't they?  ...or given a boolean
+"priority" and you can do two passes through your queue: one to do the
+priority ones and one to do the secondary ones.
 
-then it is acceptable for there to be data loss, because it can be
-blamed on the terminate?  In that case the usage of dmaengine in all
-the 8250 serial drivers is broken.  Every time there is a break in the
-incoming rx data, the 8250 driver does pause/residue/terminate which
-could potentially cause data from the incoming data stream to be
-dropped.
+
+>>> +       spin_unlock_irqrestore(&ctrlr->lock, flags);
+>>> +
+>>> +       return ret;
+>>> +}
+>>
+>>
+>> As part of my overall confusion about why the batch cache is different
+>> than the normal one: for the normal use case you still call
+>> rpmh_rsc_write_ctrl_data() for things you put in your cache, but you
+>> don't for the batch cache.  I still haven't totally figured out what
+>> rpmh_rsc_write_ctrl_data() does, but it seems strange that you don't
+>> do it for the batch cache but you do for the other one.
+>>
+>>
+> flush_batch does write to the controller using
+> rpmh_rsc_write_ctrl_data()
+
+My confusion is that they happen at different times.  As I understand it:
+
+* For the normal case, you immediately calls
+rpmh_rsc_write_ctrl_data() and then later do the rest of the work.
+
+* For the batch case, you call both later.
+
+Is there a good reason for this, or is it just an arbitrary
+difference?  If there's a good reason, it should be documented.
+
+
+-Doug
