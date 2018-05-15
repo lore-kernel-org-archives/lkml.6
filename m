@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752633AbeEOXCU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:02:20 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37710 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752405AbeEOXCE (ORCPT
+        id S1752686AbeEOXCm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:02:42 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36977 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbeEOXCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:02:04 -0400
-X-Google-Smtp-Source: AB8JxZofdasey0/kGe/Gt0hxj4xiVa5OHX0+q+iWkKKbSK0n+XlOJFHIlDw9jw1j/KVxydJXqfO9kA==
+        Tue, 15 May 2018 19:02:01 -0400
+X-Google-Smtp-Source: AB8JxZrGVRvtJTzy6m45SiKIFISZ1jV2gS8Grkx6k2oYXJe4Bfh6KX8ziOlu0OlbaPXFOriAlpnOaw==
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
         linux-kernel@vger.kernel.org (open list), opendmb@gmail.com,
         davem@davemloft.net
-Subject: [PATCH net v2 3/3] net: dsa: bcm_sf2: Fix IPv6 rule half deletion
-Date: Tue, 15 May 2018 16:01:25 -0700
-Message-Id: <20180515230125.25886-4-f.fainelli@gmail.com>
+Subject: [PATCH net v2 1/3] net: dsa: bcm_sf2: Fix RX_CLS_LOC_ANY overwrite for last rule
+Date: Tue, 15 May 2018 16:01:23 -0700
+Message-Id: <20180515230125.25886-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180515230125.25886-1-f.fainelli@gmail.com>
 References: <20180515230125.25886-1-f.fainelli@gmail.com>
@@ -24,48 +24,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was possible to delete only one half of an IPv6, which would leave
-the second half still programmed and possibly in use. Instead of
-checking for the unused bitmap, we need to check the unique bitmap, and
-refuse any deletion that does not match that criteria. We also need to
-move that check from bcm_sf2_cfp_rule_del_one() into its caller:
-bcm_sf2_cfp_rule_del() otherwise we would not be able to delete second
-halves anymore that would not pass the first test.
+When we let the kernel pick up a rule location with RX_CLS_LOC_ANY, we
+would be able to overwrite the last rules because of a number of issues.
 
-Fixes: ba0696c22e7c ("net: dsa: bcm_sf2: Add support for IPv6 CFP rules")
+The IPv4 code path would not be checking that rule_index is within
+bounds, and it would also only be allowed to pick up rules from range
+0..126 instead of the full 0..127 range. This would lead us to allow
+overwriting the last rule when we let the kernel pick-up the location.
+
+Fixes: 3306145866b6 ("net: dsa: bcm_sf2: Move IPv4 CFP processing to specific functions")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/dsa/bcm_sf2_cfp.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/dsa/bcm_sf2_cfp.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
-index 6fd0f8a12cc2..b89acaee12d4 100644
+index 23b45da784cb..9e04786e3139 100644
 --- a/drivers/net/dsa/bcm_sf2_cfp.c
 +++ b/drivers/net/dsa/bcm_sf2_cfp.c
-@@ -790,10 +790,6 @@ static int bcm_sf2_cfp_rule_del_one(struct bcm_sf2_priv *priv, int port,
- 	int ret;
- 	u32 reg;
+@@ -354,10 +354,13 @@ static int bcm_sf2_cfp_ipv4_rule_set(struct bcm_sf2_priv *priv, int port,
+ 	/* Locate the first rule available */
+ 	if (fs->location == RX_CLS_LOC_ANY)
+ 		rule_index = find_first_zero_bit(priv->cfp.used,
+-						 bcm_sf2_cfp_rule_size(priv));
++						 priv->num_cfp_rules);
+ 	else
+ 		rule_index = fs->location;
  
--	/* Refuse deletion of unused rules, and the default reserved rule */
--	if (!test_bit(loc, priv->cfp.used) || loc == 0)
--		return -EINVAL;
--
- 	/* Indicate which rule we want to read */
- 	bcm_sf2_cfp_rule_addr_set(priv, loc);
- 
-@@ -831,6 +827,13 @@ static int bcm_sf2_cfp_rule_del(struct bcm_sf2_priv *priv, int port,
- 	u32 next_loc = 0;
- 	int ret;
- 
-+	/* Refuse deleting unused rules, and those that are not unique since
-+	 * that could leave IPv6 rules with one of the chained rule in the
-+	 * table.
-+	 */
-+	if (!test_bit(loc, priv->cfp.unique) || loc == 0)
-+		return -EINVAL;
++	if (rule_index > bcm_sf2_cfp_rule_size(priv))
++		return -ENOSPC;
 +
- 	ret = bcm_sf2_cfp_rule_del_one(priv, port, loc, &next_loc);
- 	if (ret)
- 		return ret;
+ 	layout = &udf_tcpip4_layout;
+ 	/* We only use one UDF slice for now */
+ 	slice_num = bcm_sf2_get_slice_number(layout, 0);
 -- 
 2.14.1
