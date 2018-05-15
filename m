@@ -1,187 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753406AbeEON1A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 09:27:00 -0400
-Received: from mail-bn3nam01on0059.outbound.protection.outlook.com ([104.47.33.59]:15934
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752453AbeEON05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 09:26:57 -0400
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-To: Michal Simek <michal.simek@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
- <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
- <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
- <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
- <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
- <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-From: Michal Simek <michal.simek@xilinx.com>
-Message-ID: <8b344d48-592d-8be8-bea0-e29b3e8469a1@xilinx.com>
-Date: Tue, 15 May 2018 15:26:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753086AbeEON3r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 09:29:47 -0400
+Received: from mx144.netapp.com ([216.240.21.25]:2239 "EHLO mx144.netapp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752377AbeEON3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 09:29:45 -0400
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="257427058"
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Boaz.Harrosh@netapp.com;
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+To: Matthew Wilcox <willy@infradead.org>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514191551.GA27939@bombadil.infradead.org>
+ <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
+ <20180515004137.GA5168@bombadil.infradead.org>
+ <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+ <20180515111159.GA31599@bombadil.infradead.org>
+ <6999e635-e804-99d0-12fc-c13ff3e9ca58@netapp.com>
+ <20180515120355.GE31599@bombadil.infradead.org>
+CC: Jeff Moyer <jmoyer@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+From: Boaz Harrosh <boazh@netapp.com>
+Message-ID: <afe2c02f-3ecd-5f54-53ab-d45c11a5b4aa@netapp.com>
+Date: Tue, 15 May 2018 16:29:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20180515120355.GE31599@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39840400004)(39380400002)(376002)(346002)(396003)(2980300002)(438002)(189003)(199004)(229853002)(36756003)(305945005)(65956001)(77096007)(26005)(106466001)(53546011)(5660300001)(47776003)(230700001)(65826007)(966005)(76176011)(478600001)(23676004)(2486003)(6246003)(6306002)(336012)(31686004)(110136005)(106002)(86362001)(54906003)(9786002)(44832011)(11346002)(58126008)(446003)(65806001)(63266004)(356003)(316002)(426003)(64126003)(93886005)(186003)(81156014)(2906002)(476003)(8676002)(4326008)(31696002)(2616005)(8936002)(39060400002)(36386004)(81166006)(50466002)(486006)(126002)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2614;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT031;1:W2MCBbRX3BUXCUpkZLaF75IUYyGVLULocASaJ2FJMqnMYXUchrFxJzQGhQSjtyz3+ijkhTNzIEUb0nkL0jTwdLoTOglR8l9kS70LKAzZnm3P8F3TA+HRMY/TRTfGAolB
+X-Originating-IP: [207.232.55.62]
+X-ClientProxiedBy: AM0PR0402CA0021.eurprd04.prod.outlook.com
+ (2603:10a6:208:15::34) To DM5PR06MB3082.namprd06.prod.outlook.com
+ (2603:10b6:4:3f::31)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY4PR02MB2614;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2614;3:wX7OXGwwoeXl/jNLtofjc+Rfn4m0CGRMhUltM3+YLbSJ3iVug3NabOIiT/cPz86DHVmMFut7OUEnn7I7hVQRHf3Qn+FyfHlrs23/2/rPwE+zRIBThQdK59JgVcBRv8r/HzxfG6qSjIPm9sFRTYl7nb/VC33pKAS1ptz9Ce81mQv+B1ya2hfeacoU/jnj7t+5TX/UklMBbDdZEZLbFbOpH1mstsdiWAIFW7C/u+RIXYKW8g3xziFeR1dVFTL+HnBb/T4Lx/LZG1cxtJm7kGCKj8ogglADy+Av2IiYnxaiVPWzfd/gkV2ukKQjXmrTxkPlgKzv2Z3KwlC8W3F+tyltdkdGDrPOxmSvHmk+uU8D0pU=;25:JDYN5MVfnfLL5iPv+fDZsuBsZOlbxLDYXbOjp62s9Dp4DS22BgwfRzRGMQB7W6ML0GM0UR9cO9NnKPcJVj/QfNZeikwfBF/YF9I0wSnK7QCl1NhFVOXq3/LOmEFyS9rcykbB9IQnAjaSY+GB0RdqxCYKydTRY7wqRxJxRG7uMzikvAi4CyB/ao12v91XEHTrYlsPs4w2qDNoyVWw4U/3kbg+wtHeD1V995R6ZDpe4MPQQlqkdU/uFsMOXmfgvbn1I7ynA9m/7DtOqV53f0GeAXh+/kdvFavtw44fCZhfhIwX5m9JrgJBgQr4RPXtOTPKJa8ivTHNhyp+SP1/y08cOQ==
-X-MS-TrafficTypeDiagnostic: CY4PR02MB2614:
-X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2614;31:wfVwpjfYulnPyZ4PKgL2HWCEx9lE7gAQIUjYxZEN3wYb6qH2GaU4IK1qe9hOyKs8dd7z9IpfU1QQdjr76B1gDpCWDhlT7bkwzgtocTYP1DlNy02MDdKvwbQUDM0MOK1urid45TSyuS5ys1bADq4jmzlUi53wGHKYrfRN0RZh/wqAxPzflBUoWP8nLZhUBfOiXaXk1BHLjMjXjnlaSKBbmNrRVOtsXylTvsRgtJ8Ki88=;20:IxYZETsKtxb7A9OLIG1Qf9YN/Z7CE2S++X3S3/b6+9EGgh1lNmGUe7vnv3H5VHVqxRVIlUrOQB0rO1SESXM+Dg0wKvzG1Yc19jTj5XD9JQg0JvnHdU8Xq70Y8YhYUQfxnVDtjKwuW4CNwz9a5ERvbbtJqVtRff96y4WpdEVDOE6EIw50ODHesfkp/RP/qfizzF5TeluEAQ4J2zTUKH6V/RE3i0IV+ih5qGbvEmnuf12H2iS/31ocpOPPshciPZoSns2PNs+d3Ts/WtujLRjVVlW48LdDeUGiYBuvZZlv8vN91VqZZmad9VshvvVKLkkb6TGNLObdLtLcfXpQOHg3aJPec5ESI5W02YXLeiACDuWtSITKk4g+kbxTVYVGER1fF71MFHpAOvLnNrkksoRT23mCShQto8UXUPDEIeWiRCpm9wFhqyPHlGHK6qYoZaB9ENgoBofueTzeHqFSY1utPKyuo9oSnoXt9/c8Z627rX5TXmJ5k/DUUjTRPwZCc+Tk
-X-Microsoft-Antispam-PRVS: <CY4PR02MB2614EFAA4F4775114D1D7E74E2930@CY4PR02MB2614.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(278428928389397)(166708455590820)(192813158149592);
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(2017052603328)(7193020);SRVR:DM5PR06MB3082;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;3:F/sxU3YBqH8f/gnbVKM/lzxNIStMo0d6CDRLVFXtKakjc5zYI3zlwsiznl0mmwIoKnF6l0eljOhbmkuJbGv7O0vDh3c2Zx4e9XeFkWc4BIrrJZkGIWKwSTB9MGCccGOOq8wpmtrdXceo5nKy6utSJgIEBNNXsHLUGUpu7p0WrDWWJ9fcBL06f8fPtU96ojcgr2CUUCuAQ9HV8f3Zr+z8+JZ/QEbjD697i7nQ2b4k2QBu6sin1ZbHl+fMvGWmbKHQ;25:VjMkASblL23BCrrhwHHhg2wwbqHmgp9x47D0hMQ0WnUwBXnUfD/Kbhz8e+wfWi1DbjkAnyS18pL7lvYNJe+zzTU33uKhti9hxCTsXIxZcd6jmfjLqlolMqlAruquSUb0nk+4YFeooTHtb16Ok7l0P63bat8bT4sNLveMnx76C2HAiVOYvJsEQQzGfjb9RrSs0dZWRRrTjGzMuPCBuFx2KsJbmCpbKUBU0idkXNeS2qTFG+zveI/apjpAgc04IsdspiIut2ZTPTSoqh8gY5LMQCUV1l9BUZV6GH5MYZlbY+AY8/GvvgFw3szlPgICZazZFzLiUfQTK9sLaXB4Tt3a1A==;31:DgFbWZsMU/PlQ2vb8lYSINRevULIG6beG5X8VNp8Nf401xgOchsGulJuBOkXL7tB9Vp3nQBmHx0sIyq/cBgnWAlzCVHM1UCjpIn4U3xRB4Zgvk2T23RiUvhSc5tsr5z9UZGtUvV77aQ82lu5/UvYfUlxgL7DCTlItBZagpte7oc61nqOJcErvwku3SO8GSDggmgJTnqZnB+xnz6yYN/N3AU8gY3pBbhW78cJhhYH9ks=
+X-MS-TrafficTypeDiagnostic: DM5PR06MB3082:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;20:MmAHQtrCXwP49p1Oz69PfQvKhOx9jytdQULX+8vv9vf5SVAIKoRSjKRpA4lhdUql6wGCj6eugedaq1NST7RQyfMa0mQjktSOifxUXJmnzIM6J6COnSTnL3PN1ET17f5BwRZ/uOsh/ZL2B2cDKLOAfQJwPekTVSEoBs4su9kGwjEgSi7d8bok0Oh+9eErG5IJ6X9imIsh1dOd9wRwMRj01saqiw8LLsnvKqp2P1sXfPlZDkGfCyqoAr5sTyOPUuOD5tiUx9qw3cMchMsHba6Yhz6QIe/zmcgazXKUWncpeXK5tUwj4yH5O8gVmbqoUQHoZNWNBL0DA651KsC4NN1pf2GiWwBHlY4QLyYgIVvav0+G5U+aalc9nuYoT7+tgx1oIRt3dkuNmkAHJdsIwKuN05Uj/hqWgDOJz5ea55MIzFpogQMZQ9KnJLbhawCwZAZ9gC7L1Dl3Fjf3EDhbf29CDQXfK0INWTf84V8ekYEqrGVpdcNxus8JRpxdo/Uo0nrv;4:+ksGwrXWDg7qy7wGKTK3lwFDTHTap95A5fOuENEGolowfT/LgTZMxqJn48zTVABCwVmU+AF5jDRya67xSIxsBfb9TG6A5NzaIWDoZ9z+C4Tq9YKjAJhVn+2LfyG1sPF3GI9kkaJ+wJWqACRNM+D1wtxckPe7j8cShwrq+9Xd2Z9/hju11V1ThDEaZSLifDhNnXYSQCMscEoGaRmZuPM4AtOuLhLYrexzd7+EawgvioBx0qoEgEQbrdQwaUJWyA/hUT2rB4Ra2LHWXBYYK/ydWLtRDoEMJ+QS42LxeVBOLVF/cST3vgtvojNscEkazrwq
+X-Microsoft-Antispam-PRVS: <DM5PR06MB30825F0C135D75DC3D3C6F37EE930@DM5PR06MB3082.namprd06.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(158342451672863);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93004095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR02MB2614;BCL:0;PCL:0;RULEID:;SRVR:CY4PR02MB2614;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2614;4:QLIrssaE30P7y7rKVyA6KDLK/tdsSoAdV5cDmAQmE0sQBjxdLox3YGhivUOQsTHA5bdxGnkqqmQqdW2O7wEd/mQHYVvH4+PlXK+E0A9aFClIwOcuakLYIs1WeuMsV4/W4/Q2vbCjCTQpNSWgLiGzZYTWKRUKyauwq+NIpNSa6xgOHbOMtH/jAPyGlexs95p3GwnPkjx+fUQGrxGn/hHyJzU5OT1jwOLUxFEriBeIINBAnY25+I2M7BqlrLvJs+2zPTFjyamCseJ8kQ6OF39pz/8GISGYjegE3H+FC0/BxS8ZYHAZUkzZX78UVuk0eWijFH503GOu11m3uenLjVEW0Fp4+FKWFnJ3SW6zmW5pfaLKe19PBHhy3Sckf+hoHmeE
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR06MB3082;BCL:0;PCL:0;RULEID:;SRVR:DM5PR06MB3082;
 X-Forefront-PRVS: 0673F5BE31
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjAyTUIyNjE0OzIzOlh3OXNiUGlwelQyWFJrejYzbzFFbWtZNVNI?=
- =?utf-8?B?ZHN0b3hVNDJXUGpJVzd5OEFZa1RWRDM1ejVmWDNUanpRd3FRUnBZbHNFd0gx?=
- =?utf-8?B?R0Fra1FtZnh1Y28wajdITTkxSVNYNEdtcFc1MnI0TDZ0VzlKWlAycWlLNnRJ?=
- =?utf-8?B?WkcyV1NxZjZTcW1peHE1MnJ2V3dYbENUOThkQnJ3TkRmR2NnbUVqOHVLcHU0?=
- =?utf-8?B?cUswb2NUZDJzWmtYSENsRUFpSERJQ3BFMzJscVZCZ29tUmttd2pkQU82VjV0?=
- =?utf-8?B?NUtEYmFGMEpnZnZsRnloMnpkNHppdHlaTlpCb1RuSFo2YWVjY21NVGNySUtn?=
- =?utf-8?B?S0dEdk5tMnoydFI1ZlBHckxtV293MGNTeDlTY0M4YnJLRHpWREdnV2xDaGI1?=
- =?utf-8?B?NDZoT3JqUDFTeUk0QkhRdUx3MEtnbkRRcFZaTWRad21DZEZLc1lISjl4cGNQ?=
- =?utf-8?B?bzZ3SVN0SDFPcVQ3NGl0Z2pJcGt5cUhzc0oyT3orcEZYcmlPUE1aU0krblpI?=
- =?utf-8?B?SzZ4aHJocGJxNENpTksyNkM1WGRtYmpZRVR3V1pIQkxsZ2hrQm1nb1NqL21S?=
- =?utf-8?B?ckZnUDl5UWpSeHF5Z3VuemhBSDJaeWI1Y2xBem1hU0dlUUp0c1ZHZFdTN2ZU?=
- =?utf-8?B?eDNJRmd4QnNDY05yOGZDWThrVDhOOHRFUmNGN0xpNU96VE55a3g0QTF1R3JI?=
- =?utf-8?B?MkpRdjBTSkluRjlQSHcrRnpONldWRjhocnhZZG5NVGJ3WXUzWGtPWDcrK0lo?=
- =?utf-8?B?NWZnTUMxMkZLd0liTHBnUm40RURuZkZ1K0g5N0taQ3dFbG5va2J1K2E3N2Zw?=
- =?utf-8?B?QUd2UUZmY1haUjlzMUgzMmhqTFRvNDJ3TGJSN1RKUjRpVTY4V2FPYTdjSGpD?=
- =?utf-8?B?WFJSbTdjK0JHeVd2RUwzYndzVThtamZLWHJSN0xhbytkTWM4V2JTbkxpSThS?=
- =?utf-8?B?eitUV0gxcFpxZC83Ymw0VGRlZG9KZ1lKTWRqTzYvTG9ocnhIbm5KOGptc2R4?=
- =?utf-8?B?cG84eGUvNWNWWCtIeXRpeHI4UVgyRXhhVnNDQXZKVk1tcTZuSC8rSngrdUFx?=
- =?utf-8?B?VVd5QzNUTDZzSWw5ZHNxQStIY1AxUnlwQWFpY1ZVcVB5bDl4TzhSTjlESXdK?=
- =?utf-8?B?Uk9OcVd6eHU0V0lVMlNFMkViMDc5SnR6UExBT29wMnhEQ3V5ZzYra0h0VjA5?=
- =?utf-8?B?cGE4V0F4UFhQV1FvbTVuOHRlcjBxMmdSTG9VVmpPcmROeFU4UVhsUVZHWUNs?=
- =?utf-8?B?YzRNVUR3TndkN1FyUE9hL1I0WUoxOEthcjdjbnNRZ3Ixank5YTFTcEdTVTJz?=
- =?utf-8?B?dHU5ejZoeUEyUEJPRFJCelY3WkFSQnZtbFV2MmZXYUM3YUtxK3FkWHNQRnhH?=
- =?utf-8?B?RUN0VHFzeTRDbXFZeEloekEzSkF6V2dDMm1KMW1Qc1JFRXMvRXAyeWVTUGpi?=
- =?utf-8?B?VXRhd29uT1hCcnBGM3JhS3RzS29XTGhLSXU5eUlhYkFZRmg3eFI0UUtYc0hW?=
- =?utf-8?B?dkE4T2pKY3V5cVlEL0xjZzVHR1BJV2ZDTmh6MzBoRWlETFVGbm53VVJjTFFG?=
- =?utf-8?B?YVQweTd3WVUzL21oRnlWWEIwODVHcnNtZkJKcE1vaGlrY3lKeWJ6ZXJZMG41?=
- =?utf-8?B?SU5KVHFqOWlLV09kbFNjbTllajcwWXZqRStKZk02RXRMLzBRSWdhODR0TzZC?=
- =?utf-8?B?d2tKU3VFd3RmZTNvcE5KQU9TcVNGT3dNSE9CYUNmNDZpZEhDbVpFbTQvZWZJ?=
- =?utf-8?B?N21nUE9MdHYyV0VjdTZuQXN2UWVEQ3ZJYWYweHh3R08ySTRzM0NDUFVib0Nx?=
- =?utf-8?B?VEk2Y0ZyTU8rdmhnMVJCZUVhdzQrOW0zTU9ZczM2bmVENWZuRUcyV1VHYnMr?=
- =?utf-8?Q?ODhQizQBMiU=3D?=
-X-Microsoft-Antispam-Message-Info: 60jsiEkbudkdePA3aNRV+HZxeZ2oFfgDX/kY75FFcdMGOooPnwtD5sIlx0Yy+dqjxJW/EDE/GK+p0U6GuZi9Xqgv+T+eOJDn68hnvj5a+2vneywdoTWmC6OF6myNMdHMUabIU54/iipobZ6LtJg6Wx1QqtLwzSs06Cxe0ofIFMZtDwzp/YuTM2USz8V4j5Xs
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2614;6:82fnSFEHV/OIwsRYwa1lC9scB1SBg5M2NBBmB9gg9F4/MLJANWdUR2J1K4HwGkNiYWDLW0IbO+qDMznoxkNoUwwIVfzOSyrkVIJUxT6c3P5J6zw3zR7ghIPNbuawsoAze7n2QfWN3Im9YQFcxRNK9Ck9R4d9iFpMh4n5GbFN/4ySrp9F0R2i9FN655X/nPK+EVKHjzgJ6uD/Pho/ptrRKdXLgwTNqwLMPWD0FZnIJ0obQYodYTi7/5r6dzDWcbRyYmeJcNFpAEDTQmmmSASAKZGs6ia5LmAJ7q/sYetMWYC0ZCwDwwuRE26Zq32ZuDW+Cn6J2AQ5tGT7pqANehfSattZZ0XglAaWoWWpEoQPXLLuXcTPSJBNrbJna1OgKtcAtEOM8uKYqUtVnQww+Hawak6bXhqSlSTm7uU03o6FbfqtS7V4/w1pDPoqHYa75KTBd9v3KagCpC9oqzvlOlox5Q==;5:m4dLmmGuiwwE7pmZTf8MK023apgKTlAESgsevw6gE1+/206TE6JHMiS8rc9G8Rcxzo7enik7tkDcCkX0XTt1rs6gGn2B8LCaW4HQ56RxGG8Tuz1KQ/OZdlNsXp34QD0ZZPFsQiKgPl20b+72T8QS2k3ezJVrxGH3PFSjRV0U//g=;24:eSwAHx0JAm3XpTR8NfcqJVHnCTfixce/o/I2+x3tlf5llnROA9zOrC2Fx41vbFfu+36HffDzpXKic9Dvex2/2spglkxpXEWfAMrKsCDayqo=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39860400002)(376002)(396003)(346002)(39380400002)(189003)(199004)(7736002)(76176011)(305945005)(68736007)(59450400001)(93886005)(52116002)(52146003)(36756003)(23676004)(2486003)(230700001)(6486002)(53546011)(229853002)(316002)(386003)(6116002)(3846002)(47776003)(66066001)(4326008)(8666007)(65806001)(65956001)(7416002)(8676002)(16576012)(97736004)(58126008)(26005)(31686004)(81156014)(81166006)(77096007)(31696002)(72206003)(6666003)(107886003)(486006)(64126003)(6246003)(54906003)(16526019)(50466002)(2616005)(6916009)(476003)(956004)(5660300001)(2906002)(11346002)(65826007)(25786009)(106356001)(53936002)(105586002)(446003)(8936002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR06MB3082;H:[10.0.0.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjA2TUIzMDgyOzIzOnhUQ3V6YkM4QXZuSlNNNzVKZi83OGJaUnR5?=
+ =?utf-8?B?MDZGVTl2elBhRjJMZXpXL2ZyL0J2WEZJNVdGZWpGOTFReEZ4SzdiT01Ua3JK?=
+ =?utf-8?B?MHdVNERXT21Ib2Uza2U5cDFTTjZCQWNpdlg1Z1QxR3dzbXRyN2dva1F3WE8x?=
+ =?utf-8?B?SC9vMHhhNE8rSy8rWEF4U2hBK1o1MmVOR1JHVkU2Vm55TzZ1QVF4MGhITUR5?=
+ =?utf-8?B?UTNuMklZR1h0Qy9hMWQvZlo1VmNPMXZRNTVhL2NuaHhza00rZEVzQVVVNnEr?=
+ =?utf-8?B?MjNWZGxsSUhJMzJWbTNDOHloOXVDZS9Sb3hXUHlRdGNGWnhxQlRhNGhiTVNV?=
+ =?utf-8?B?ZjlXWUZSQ3huM3M1Mmo2R3V6YUdKSGE0VFJvY1M3bnludkxZN29hL1NHNE5P?=
+ =?utf-8?B?a1ZNMlRhejNNbVh0T3M5aG45NGJ3R0RLRisrSjdRQ0hWeE1UcmhndU10ajhH?=
+ =?utf-8?B?NS90c3JvYm9iUVZEWHVua1ZOY3diZExlN0wxdHVNbGdtTmVXbFJybndLVnRD?=
+ =?utf-8?B?anN2OCtHZVFWR01YUG9BVUZpaHNWSFEzK1BjbWRJK0lEdnErcUJUNGliOVdZ?=
+ =?utf-8?B?cDVQRTc4MzdVRGhDR1NoVHNCV2oyckpoLzFCNlhUdDFwM3dFRThyUGZWQ2JE?=
+ =?utf-8?B?VU5WLytvVWpTamhsenhNeUdYY1dLOHA1aG5kdis0YnZSSmNUTzRJa2ppRDMy?=
+ =?utf-8?B?VWpUZExUOEhCUy9mTVFJT0lxRDkrUWpoeHdIVUppZ003K3IxYVNGVk5qMlJq?=
+ =?utf-8?B?NVFQZkRlMGo4WlF1Rnp5cVpBS2Q0M2RyNXREejA0UmxrZ2xBVUJBblNEV3F3?=
+ =?utf-8?B?cWRkVCthRGlRSVdQWEl6OGc1R25yNm5ETnNDaXFvMWR0d1hGODF0ak40bDE1?=
+ =?utf-8?B?WUpDNk9HTnFVUVdQRDBwYytodjlxNnQ5SlRIc1FPQVN6VkFRWUZsekp2TUZP?=
+ =?utf-8?B?T20vVXdjTFluRTN5TjhpMHptRTJoMkRvYUhiVXNrR3IxRnlOOFpjLzNubjFa?=
+ =?utf-8?B?Y0V2VDduWmJBZ3lhRkdIRFJtSzdqNDFOcVBGRXg0eHY0MlBEWXFvdUw5bk9W?=
+ =?utf-8?B?WnFDTDNJZUZUeHcwSStrQTloR1pnb3RVZnRJeWx6VnNhbkkxVUZpUGxXVVJa?=
+ =?utf-8?B?S1kvVFAxSCsyUnNBSURlSHJSb2txNjMvNi9nc3hGdXdUVC9hVUFRcm9uRGhk?=
+ =?utf-8?B?T084RThIZVgwR3RFdDdMeW1wSVl1c2JLbStxQWpKeUtqS0pVbnVoY3ozNWgw?=
+ =?utf-8?B?QnpzWEtjZGJkYUIyb05DMkRTMzlhQjlCM3oyTUp2U1BjVGpobzQzajd1OVpX?=
+ =?utf-8?B?RzkyRFFobjVBZnFjTExibklwUHc4NEdHd0xueUtOWk0zQXZqb3hWUWptK3Bs?=
+ =?utf-8?B?cUxpdW9VS1NMWWJjeExHMEJUT3VvMkU3Sng3QnhONmZvUDRacUVyQVdZaXFs?=
+ =?utf-8?B?cjl1YmtEOGMwelk2ZkZ2cldoVEEzL28ra054V1lpK3ZRdVc0d1lOZEF5b210?=
+ =?utf-8?B?WjR4cFE1dnJYbjJmSTF3SGJoQ0tmaUx1YSs1RnErS0Y5MW5WUTZxU1BVMWU2?=
+ =?utf-8?B?UW50TWxiejgyZGFuWUlPZnFKdC9tUWhoeUIxT0JNVGo0RmtIYWwwQXhKWnRR?=
+ =?utf-8?B?NVhWa2h2Tm1iZFJMOUtsRmNqMW1pbmY1OHlidTNvQnVFVnBRaUVkNGVlejBX?=
+ =?utf-8?B?eEdQTTRuKzBQNkhQTjh4dHROUFI3SFE1clB1VDg2emF1NU5LTy83MGxtMk5V?=
+ =?utf-8?B?QjB3ek9tNDVWcndGVEpVUG1VQXliS2tlU0VEZW1VY2duUklNOE9JR1ZlOFV5?=
+ =?utf-8?B?bDlzUWRNaEtrbVlsbUVIb2FQYTYwOEQ0Z2lxN3ZiSDVsYjFQNXNTUDBmQklQ?=
+ =?utf-8?B?SzJob0Q0T3JmRzJEcWxlQ2N0SkFUY2RGVFpXbG1uVG5uSHh1cG9MQ2M5c3NI?=
+ =?utf-8?B?MzJhZzRDd2FkNDNRZloycUgwbmJ2R21JVlYrSkNoMWlrNC90TGs0cytrUnVK?=
+ =?utf-8?B?RWRIaGRhS0xxWjlGblFmRlJka2RVdm40YWlPVnJLbm51THd1WUxJTlVIQjU1?=
+ =?utf-8?Q?0IMn5LGiTXjkoTneS7sgP/M6M?=
+X-Microsoft-Antispam-Message-Info: M9tuwc4FfJXxNmuyKE68DLzmfWJHgX9Dz6p03wDecckkXFGH/ZFL/czCk7tQ4XSqWlXLZ3sdwgibdO0CTjy4W010tHpIhFHTZ1Tp0xMfUF1TN37DUv2NWxynLYAtqb8OKkLd2FORv+lTfsSLKlkxl0GYirnBetxJUCdkmRaQXG3H9ez7fbvTOVrPODM8OJhR
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;6:Gv4LN0Oszob79hpc6+C/mx34sVC2e1ezoYlWPZ0tpj3xREgX/1vAqTkyGVI+p1h+n8aH4aGECpjE0cOAn4zX0CbnFDEbXW45SyfCbsq7CI1JZ9lAy/SEhsAF9NgVLq5bCSaKp3O+LjqBojCv+/PFA3bYgDs6ZrB9BA5D394iK+NN89Pf8yJ9RMsbGHpVZehy+f3dowShatDuQg3oBT+Z57qwlyJ7OPzbzhFFwSq9fDfNlYZx1NflHjwkhGTLnfGoAHQOies0eiJYxRBlx+Lzaiu/xgDTEaOr9jDV/bTsZA1MXRrrrhhgP2NGFdqYElVgJ32ga9erHEVyd3dOpjJRRi+Pe3JwlJJnobLScNsVyZ12Ooga0J11C8wWyrhZDK20pPj0X0RpqlQ4kDkSNkjW98wq9lrmqETm0Xh0tcudHausdafx0WEcB3rU3s7cwr67+xWmc9RafRz3o1qoVNL6mw==;5:P9trnvc7VMd3CdUVHKdwx63y+GMjkzQu8lo0Do5+GqXms/ZeP+pNiP86BrQ2oQBehNN4V5pPhCgjVFDRd6spcQXgb/5Luv3qMTuO/d4UZfvqm/Mqfju7PxLCzkW7UiY14TSW1gpwwczAYs8B7OiKrHJwhPxLEJJRceV7QMFoQSk=;24:MOKfy5+Xv9U1bHRplINjdtNHw5LetejhDvQaf5MzLWhwX8MpObkYI4eNwY5rFGnZH1GyEfmT5uRzkMI3FSXIoyWyP6dfuYrlX1XNAx4pCXw=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2614;7:/1zX90IbHyA5OiztBBqQhavGXcLl5SYlVDqF5wkL37Wmi3oKREpeHNejNGJz/KysvT1Yh4UHDDPj+FT0qbj+NPHzcmT5lXJE09RBEDlJxyGHBJqZiWOrPY/UawmKynt4rWVvRVa5uSLaDrkUoJUlXftuC1UVbQV6gSNhb75cg75yQ8cZh6RlTcbbmQlieaz0FbJQx4ay2Z4biptfnbVtQWB26UP9q5JUMMZq1ytqh95zPIh6/LxZvJg3Ac5MzjjL
-X-MS-Office365-Filtering-Correlation-Id: ff7b0622-af4c-43c4-9659-08d5ba6786bf
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 13:26:54.4612
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff7b0622-af4c-43c4-9659-08d5ba6786bf
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2614
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;7:EuKeY94DgnMk9TujQBGh4qT4XeAK5yoF2U2J0r17zNd/sqYsOUDItHc64pg9Z6Hm/SaCNGO53leAwAxXsvziU6KXMEc45EwvWEWiVOEyZxMGCcpPlNkR9Rb3kM7XYgME6hSk5Vp1EHCwNwKxXhcluNdHZ5pStYsRwbaYaGjAmISi+a54ChPLHTulYlc4T2+lvK9uwj2Uxywh3AZWT9qKX8WxhTMje/eI/ZrMQXGuH/JAIyYT5E6dxm8qLc850ic+
+X-MS-Office365-Filtering-Correlation-Id: a43346e5-001b-4f79-40ae-08d5ba67ea1f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 13:29:37.6825 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a43346e5-001b-4f79-40ae-08d5ba67ea1f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4b0911a0-929b-4715-944b-c03745165b3a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR06MB3082
+X-OriginatorOrg: netapp.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-On 2.5.2018 16:19, Michal Simek wrote:
-> On 2.5.2018 15:56, Linus Walleij wrote:
->> On Wed, May 2, 2018 at 3:41 PM, Michal Simek <michal.simek@xilinx.com> wrote:
->>
->>> If you don't want this patch I understand that and it will become just
->>> another soc vendor patch out of mainline.
->>
->> I don't really know what to do, so that is why I'm discussing.
+On 15/05/18 15:03, Matthew Wilcox wrote:
+> On Tue, May 15, 2018 at 02:41:41PM +0300, Boaz Harrosh wrote:
+>> That would be very hard. Because that program would:
+>> - need to be root
+>> - need to start and pretend it is zus Server with the all mount
+>>   thread thing, register new filesystem, grab some pmem devices.
+>> - Mount the said filesystem on said pmem. Create core-pinned ZT threads
+>>   for all CPUs, start accepting IO.
+>> - And only then it can start leaking the pointer and do bad things.
 > 
-> me too. It is also interesting that I have met with the case with
-> zynq/zynqmp gpio driver and not gpio-xilinx.c which can have a lot of
-> instances.
+> All of these things you've done for me by writing zus Server.  All I
+> have to do now is compromise zus Server.
 > 
->>
->> It's one of those gray areas.
->>
->> From one point of view there is the purist stance that we should
->> only support what the mainline tree does, and be strict and
->> consistent so we don't accumulate to many nasty hacks.
+>>   The bad things it can do to the application, not to the Kernel.
+>>   And as a full filesystem it can do those bad things to the application
+>>   through the front door directly not needing the mismatch tlb at all.
 > 
-> Also this expect that the first patch does everything right which is not
-> truth all the time.
+> That's not true.  When I have a TLB entry that points to a page of kernel
+> ram, I can do almost anything, depending on what the kernel decides to
+> do with that ram next.  Maybe it's page cache again, in which case I can
+> affect whatever application happens to get it allocated.  Maybe it's a
+> kmalloc page next, in which case I can affect any part of the kernel.
+> Maybe it's a page table, then I can affect any process.
 > 
->>
->> On the other hand, it is completely possible that all users of this
->> particular driver actually must have this patch, and then I just
->> push them to use a deviant vendor tree for no good reason.
->>
->> Would it be possible that I apply the patch, and somehow also
->> establish some understanding with all users of the Xilinx
->> platform that whatever legacy applications are out there
->> must start to migrate towards using the character device so
->> this reliance on the numberspace doesn't stick around forever?
+>> That said. It brings up a very important point that I wanted to talk about.
+>> In this design the zuf(Kernel) and the zus(um Server) are part of the distribution.
+>> I would like to have the zus module be signed by the distro's Kernel's key and
+>> checked on loadtime. I know there is an effort by Redhat guys to try and sign all
+>> /sbin/* servers and have Kernel check these. So this is not the first time people
+>> have thought about that.
 > 
-> When someone contacts me for asking guidance for gpio I am telling them
-> not to use legacy sysfs interface and use libgpiod. Last one was a week
-> ago in connection to Ultra96 and libmraa.
-> 
-> But even chardev is not supported there now.
-> https://github.com/intel-iot-devkit/mraa/issues/713
-> 
->>
->> For example can we make a patch to some systems like
->> arch/arm/boot/dts/zynq-*.dts
->> adding proper GPIO line names to these device trees, such
->> as was made in e.g. commit f6b1674d570aa1
->> "arm64: dts: qcom: sbc: Name GPIO lines"
-> 
-> If you take a look at
-> arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> which is Ultra96 board gpio-line-names are filled there for the whole PS
-> part. Definitely take a look and let know if you find out any issue there.
-> 
-> zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
-> coming to logic.
-> 
-> I can't describe PL gpio pins because it can be whatever even I have
-> done that for one fixed hw design.
-> 
-> Interesting part on that sha1 you shared is how "NC" pin is described.
-> 
-> gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
-> is really just a pad on real board. And the rest of "" gpio names are
-> connected to PL.
-> 
-> I am happy to take a look at existing platforms and use gpio-line-names
-> there. For example arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> I use in tca6416_u97 and u61 comments instead of this property.
+> You're getting dangerously close to admitting that the entire point
+> of this exercise is so that you can link non-GPL NetApp code into the
+> kernel in clear violation of the GPL.
 > 
 
-Have you done any decision about this patch?
+It is not that at all. What I'm trying to do is enable a zero-copy,
+synchronous, low latency, low overhead. highly parallel - a new modern
+interface with application servers.
 
-Thanks,
-Michal
+You yourself had such a project that could easily be served out-of-the-box
+with zufs, of a device that wanted to sit in user-mode.
+
+Sometimes it is very convenient and needed for Servers to sit in
+user-mode. And this interface allows that. And it is not always
+a licensing thing. Though yes licensing is also an issue sometimes.
+It is the reality we are living in.
+
+But please indulge me I am curious how the point of signing /sbin/
+servers, made you think about GPL licensing issues?
+
+That said, is your point that as long as user-mode servers are sloooowwww
+they are OK to be supported but if they are as fast as the kernel,
+(as demonstrated a zufs based FS was faster then xfs-dax on same pmem)
+Then it is a GPL violation?
+
+Thanks
+Boaz
