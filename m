@@ -1,93 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeEOEz7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 00:55:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752130AbeEOEz5 (ORCPT
+        id S1752235AbeEOFMs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:12:48 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43561 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752149AbeEOFMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 00:55:57 -0400
+        Tue, 15 May 2018 01:12:46 -0400
+X-Google-Smtp-Source: AB8JxZoErpeOByaoJNs3EAB7Pk+ByVTbkXt74wt/R/cyktlQPDhnpJe8cpS6goC9S0qY61yavyl2Qg==
+Date: Tue, 15 May 2018 10:42:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@rjwysocki.net, edubezval@gmail.com, kevin.wangtao@linaro.org,
+        leo.yan@linaro.org, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        daniel.thompson@linaro.org
+Subject: Re: [PATCH V2] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180515051241.xdrjj6u4ssqcatvy@vireshk-i7>
+References: <1525948458-23488-1-git-send-email-daniel.lezcano@linaro.org>
+ <1525955163-14556-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180511093221.z5jfv4bo5kcdrzp4@vireshk-i7>
+ <20180511115539.GC29062@mai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 15 May 2018 10:25:55 +0530
-From: kgunda@codeaurora.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
- peripheral
-In-Reply-To: <20180514165755.GB27984@xo-6d-61-c0.localdomain>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
- <20180514165755.GB27984@xo-6d-61-c0.localdomain>
-Message-ID: <e7e26e85a7b95d1d0cb67e0d6197e897@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511115539.GC29062@mai>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-14 22:27, Pavel Machek wrote:
-> Hi!
+On 11-05-18, 13:55, Daniel Lezcano wrote:
+> On Fri, May 11, 2018 at 03:02:21PM +0530, viresh kumar wrote:
+> > On 10-05-18, 14:26, Daniel Lezcano wrote:
+> > > +int idle_injection_start(struct idle_injection_device *ii_dev)
+> > > +{
+> > > +	if (!atomic_read(&ii_dev->idle_duration_ms))
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (!atomic_read(&ii_dev->run_duration_ms))
+> > > +		return -EINVAL;
+> > 
+> > You are required to have them as atomic variables to take care of the
+> > races while they are set ? 
 > 
->> WLED4 peripheral is present on some PMICs like pmi8998
->> and pm660l. It has a different register map and also
->> configurations are different. Add support for it.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  .../bindings/leds/backlight/qcom-wled.txt          | 172 ++++-
->>  drivers/video/backlight/qcom-wled.c                | 749 
->> +++++++++++++++------
->>  2 files changed, 696 insertions(+), 225 deletions(-)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
->> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> index fb39e32..0ceffa1 100644
->> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> @@ -1,30 +1,129 @@
->>  Binding for Qualcomm Technologies, Inc. WLED driver
->> 
->> -Required properties:
->> -- compatible: should be "qcom,pm8941-wled"
->> -- reg: slave address
->> -
->> -Optional properties:
->> -- default-brightness: brightness value on boot, value from: 0-4095
->> -	default: 2048
->> +- compatible
->> +	Usage:        required
->> +	Value type:   <string>
->> +	Definition:   should be "qcom,pm8941-wled" or "qcom,pmi8998-wled".
->> +		      or "qcom,pm660l-wled".
->> +
->> +- reg
->> +	Usage:        required
->> +	Value type:   <prop encoded array>
->> +	Definition:   Base address of the WLED modules.
+> The race is when you change the values, while the idle injection is acting and
+> you read those values in the idle injection thread function.
 > 
-> I'm not sure if this change of format is good idea here...
+> > What about getting the durations as arguments to this routine then ?
 > 
-> 									Pavel
-> --
-This format is clean and easily readable. That's why I have moved to 
-this format.
-To avoid confusion, I will move out the existing properties 
-(pm8941-wled.c) to other
-patch. So that it will be easy to review.
+> May be I missed your point but I don't think that will change the above.
 
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Well, it can. Can you explain the kind of use-cases you have in mind ?
+
+For example, what I assumed to be the usecase was:
+
+idle_injection_start(iidev, idle_duration, run_duration);
+
+and then at some point of time:
+
+idle_injection_stop(iidev);
+
+
+With this, you would be required to stop the idle injection stuff to
+reconfigure the durations. And then you will never have a race which
+you mentioned above.
+
+What you are trying to do is something like this:
+
+idle_injection_set_duration(idle_duration, run_duration);
+idle_injection_start(iidev);
+
+and then at some point of time:
+idle_injection_set_duration(idle_duration2, run_duration2);
+
+and then at some point of time:
+idle_injection_stop(iidev);
+
+I am not sure if we would ever want to do something like this. Or if
+stopping the idle injection to start it again is that bad of an idea.
+
+> > > +struct idle_injection_device *
+> > > +idle_injection_register(struct cpumask *cpumask, const char *name)
+> > > +{
+> > > +	struct idle_injection_device *ii_dev;
+> > > +	struct smp_hotplug_thread *smp_hotplug_thread;
+> > > +	char *idle_injection_comm;
+> > > +	int cpu, ret;
+> > > +
+> > > +	ret = -ENOMEM;
+> > 
+> > Maybe merge it earlier only ?
+> 
+> What do you mean ? int ret = -ENOMEM ?
+
+Yes.
+
+-- 
+viresh
