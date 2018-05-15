@@ -1,156 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753912AbeEONxR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 09:53:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38492 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753893AbeEONxO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 09:53:14 -0400
-Subject: Re: [PATCH] crypto: reorder paes test lexicographically
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        sachinp <sachinp@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
-        linux-next <linux-next@vger.kernel.org>, linux-crypto@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Ofir Drang <ofir.drang@arm.com>
-Date: Tue, 15 May 2018 19:23:04 +0530
-In-Reply-To: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
-References: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18051513-0044-0000-0000-00000414A566
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009029; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032670; UDB=6.00527956; IPR=6.00811801;
- MB=3.00021126; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 13:53:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051513-0045-0000-0000-00000846B9B0
-Message-Id: <1526392384.19317.3.camel@abdul>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150140
+        id S1753971AbeEON5r convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 09:57:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42312 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752704AbeEON5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 09:57:45 -0400
+Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
+ non-spinnable in percpu_rwsem_release()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+ <1526326267-22501-3-git-send-email-longman@redhat.com>
+ <20180515085111.GW12217@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <db033cf3-1931-1821-61ad-5a46f3af5b30@redhat.com>
+Date: Tue, 15 May 2018 09:57:44 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180515085111.GW12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-11 at 09:04 +0100, Gilad Ben-Yossef wrote:
-> Due to a snafu "paes" testmgr tests were not ordered
-> lexicographically, which led to boot time warnings.
-> Reorder the tests as needed.
-> 
-> Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
-> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> ---
->  crypto/testmgr.c | 44 ++++++++++++++++++++++----------------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index c31da0f..b1b8ebb 100644
-> --- a/crypto/testmgr.c
-> +++ b/crypto/testmgr.c
-> @@ -3012,13 +3012,6 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> -		/* Same as ecb(aes) except the key is stored in
-> -		 * hardware secure memory which we reference by index
-> -		 */
-> -		.alg = "ecb(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
->  		.alg = "ecb(khazad)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3028,6 +3021,13 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		/* Same as ecb(aes) except the key is stored in
-> +		 * hardware secure memory which we reference by index
-> +		 */
-> +		.alg = "ecb(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "ecb(seed)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3610,21 +3610,6 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> -		/* Same as xts(aes) except the key is stored in
-> -		 * hardware secure memory which we reference by index
-> -		 */
-> -		.alg = "xts(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
-> -		.alg = "xts4096(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
-> -		.alg = "xts512(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
->  		.alg = "xts(camellia)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3643,6 +3628,13 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		/* Same as xts(aes) except the key is stored in
-> +		 * hardware secure memory which we reference by index
-> +		 */
-> +		.alg = "xts(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "xts(serpent)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3679,6 +3671,14 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		.alg = "xts4096(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
-> +		.alg = "xts512(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "zlib-deflate",
->  		.test = alg_test_comp,
->  		.fips_allowed = 1,
+On 05/15/2018 04:51 AM, Peter Zijlstra wrote:
+> On Mon, May 14, 2018 at 03:31:07PM -0400, Waiman Long wrote:
+>> The percpu_rwsem_release() is called when the ownership of the embedded
+>> rwsem is to be transferred to another task. The new owner, however, may
+>> take a while to get the ownership of the lock via percpu_rwsem_acquire().
+>> During that period, the rwsem is now marked as writer-owned with no
+>> optimistic spinning.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  include/linux/percpu-rwsem.h | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+>> index b1f37a8..dd37102 100644
+>> --- a/include/linux/percpu-rwsem.h
+>> +++ b/include/linux/percpu-rwsem.h
+>> @@ -131,16 +131,16 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
+>>  					bool read, unsigned long ip)
+>>  {
+>>  	lock_release(&sem->rw_sem.dep_map, 1, ip);
+>> -#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+>>  	if (!read)
+>> -		sem->rw_sem.owner = NULL;
+>> -#endif
+>> +		rwsem_set_writer_owned_nospin(&sem->rw_sem);
+>>  }
+>>  
+>>  static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
+>>  					bool read, unsigned long ip)
+>>  {
+>>  	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
+>> +	if (!read)
+>> +		rwsem_set_writer_owned(&sem->rw_sem, current);
+>>  }
+> So what's wrong with adding:
+>
+> 	if (!read)
+> 		sem->rw_sem.owner = current;
+>
+> ?
 
+Yes, we can certainly do that within a "#ifdef" block.
 
-Gilad, 
+>
+> Afaict the whole .owner=NULL thing in release already stops the spinners
+> dead, and the above 'fixes' the debug splat. And this avoids exposing
+> that horrible interface and keeps the mucking private to
+> rwsem/percpu_rwsem.
 
-The given patch fixes the boot warnings.
+Actually setting owner to NULL does not stop spinning. The code just
+assume that the lock is going to be freed and spin in the outer loop. We
+need some special value to indicate that spinning should be stopped. How
+about just exposing a special value for that in linux/rwsem.h? Any
+suggestion for a good name?
 
-Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-
-Thanks for the fix.
-
--- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+Cheers,
+Longman
