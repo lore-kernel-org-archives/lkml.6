@@ -1,112 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeEOLTw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:19:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58137 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752323AbeEOLTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:19:50 -0400
-Date: Tue, 15 May 2018 13:19:38 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        id S1752825AbeEOLXf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 07:23:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58796 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752740AbeEOLXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 07:23:33 -0400
+Subject: Re: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions to
+ a common place.
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
-Message-ID: <20180515111938.ia6jttqijj2erxy4@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-10-jagan@amarulasolutions.com>
- <20180502113413.vv2r3ubfoh7gm3ms@flea>
- <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
- <20180514084050.ix5corfuvx33gsyn@flea>
- <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+        David Airlie <airlied@linux.ie>
+Cc: Lin Huang <hl@rock-chips.com>, linux-pm@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+        Sean Paul <seanpaul@chromium.org>, kernel@collabora.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <20180514211610.26618-2-enric.balletbo@collabora.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <c217cf74-c5fe-4e4b-7b55-7672381b3eaf@arm.com>
+Date: Tue, 15 May 2018 12:23:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v7lac66a75aajndc"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180514211610.26618-2-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Enric,
 
---v7lac66a75aajndc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14/05/18 22:16, Enric Balletbo i Serra wrote:
+> Some rk3399 GRF (Generic Register Files) definitions can be used for
+> different drivers. Move these definitions to a common include so we
+> don't need to duplicate these definitions.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>   drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+>   include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+>   2 files changed, 28 insertions(+), 16 deletions(-)
+>   create mode 100644 include/soc/rockchip/rk3399_grf.h
+> 
+> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+> index 22b113363ffc..2fbbcbeb644f 100644
+> --- a/drivers/devfreq/event/rockchip-dfi.c
+> +++ b/drivers/devfreq/event/rockchip-dfi.c
+> @@ -26,6 +26,8 @@
+>   #include <linux/list.h>
+>   #include <linux/of.h>
+>   
+> +#include <soc/rockchip/rk3399_grf.h>
+> +
+>   #define RK3399_DMC_NUM_CH	2
+>   
+>   /* DDRMON_CTRL */
+> @@ -43,18 +45,6 @@
+>   #define DDRMON_CH1_COUNT_NUM		0x3c
+>   #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+>   
+> -/* pmu grf */
+> -#define PMUGRF_OS_REG2	0x308
+> -#define DDRTYPE_SHIFT	13
+> -#define DDRTYPE_MASK	7
+> -
+> -enum {
+> -	DDR3 = 3,
+> -	LPDDR3 = 6,
+> -	LPDDR4 = 7,
+> -	UNUSED = 0xFF
+> -};
+> -
+>   struct dmc_usage {
+>   	u32 access;
+>   	u32 total;
+> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+>   	u32 ddr_type;
+>   
+>   	/* get ddr type */
+> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
+> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+> +		    RK3399_PMUGRF_DDRTYPE_MASK;
+>   
+>   	/* clear DDRMON_CTRL setting */
+>   	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+>   
+>   	/* set ddr type to dfi */
+> -	if (ddr_type == LPDDR3)
+> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+>   		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+> -	else if (ddr_type == LPDDR4)
+> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+>   		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+>   
+>   	/* enable count, use software mode */
+> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
+> new file mode 100644
+> index 000000000000..0f94034e2e9a
+> --- /dev/null
+> +++ b/include/soc/rockchip/rk3399_grf.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Rockchip Generic Register Files definitions
 
-On Mon, May 14, 2018 at 04:01:15PM +0530, Jagan Teki wrote:
-> On Mon, May 14, 2018 at 2:10 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
-> >> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.c=
-om> wrote:
-> >> > Hi,
-> >> >
-> >> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
-> >> >> +             hdmi_phy: hdmi-phy@1ef0000 {
-> >> >> +                     compatible =3D "allwinner,sun50i-a64-hdmi-phy=
-",
-> >> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
-> >> >> +                     reg =3D <0x01ef0000 0x10000>;
-> >> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDM=
-I_DDC>,
-> >> >> +                              <&ccu CLK_PLL_VIDEO1>;
-> >> >
-> >> > You were discussing that the PLL0 could also be used to clock the PH=
-Y,
-> >> > has that been figured out?
-> >>
-> >> This is what I understand from Fig: 3-3. Module Clock Diagram, both
-> >> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
-> >> configuration we need use proper PLL or some logic to get common PLL
-> >> don't know yet. Since this series adding tcon1 I've attached PLL1.
-> >
-> > You're not describing the TCON node here though, but the HDMI one, and
-> > the HDMI block is listed in both the PLL video 0 and 1.
->=20
-> So how can we attach particular PLL with particular HDMI(PLL0 to HDMI0
-> and so-on) or do we need to attached both the PLL's any suggestion?
+Nit: s/Generic/General/
 
-I'm not sure what your question is here, just add the possibility to
-have an extra PLL if that makes sense to the binding.
+(that's what the TRMs say)
 
-Maxime
+Robin.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---v7lac66a75aajndc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr6wkkACgkQ0rTAlCFN
-r3Tqag//dbQV1Oc4D43SXUZCymqniRo2QM1sWnt+4qbax7rh2BKJcBnV/Ue0qn07
-OqfqRQ1OygMr92fmd8F9VbWqWvp5ehgi28/SWnGjoJvwwzuapeE5BhZKN/BLCMM6
-JCFLNivGVeyo3EgSc7p0rzx8gFRrV9OOXfk1RBnWCDM24ep7o/SamrzVYEvZONHS
-5ryhl5xMNo48qt62codvMpsSW5Yoymsq45rQRHVqfs08TaVKXbcGOgUSdMlZPpou
-ZT0irqRYa2H1Dl6L/p5K0SG2xZhwrd3dHgpeNquI/hRC5CHKKVeYRCiDQ8OfP5c1
-cYAk1dMVixaoKGFac/fqW7Tw9n7p1ARDeW047eyPhM05105ovUwIXiDA8sTpIkzS
-WYuvrKI1x1rvc8krGTcT8BW9RRes9X0YAoymyjpAFdKAqWiLGdr04sBA2Jx4bTOh
-bGH3Tao4Ze7/HyDUdw1VWAgwzw0NJei8wlKrIg68BKlPAGEu1kCNDk7LfVHq1J1V
-aaw7WFtTNxQdEedWQVEotOeS+AasRYWva7e3zjxU3MT7taJPsifSiEMZlvRtspRP
-CYR06sUect1a7gYb3DnvZusXtSkOaoqxwsdTIUQU0IBvW15mrGpH5vN4DgEbohgY
-JPZtUCvBmHLYBk0FgPgtqQhxfVBb+3qnuFQDWNMqC72gMsbakgY=
-=qgzn
------END PGP SIGNATURE-----
-
---v7lac66a75aajndc--
+> + *
+> + * Copyright (c) 2018, Collabora Ltd.
+> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> + */
+> +
+> +#ifndef __SOC_RK3399_GRF_H
+> +#define __SOC_RK3399_GRF_H
+> +
+> +/* PMU GRF Registers */
+> +#define RK3399_PMUGRF_OS_REG2		0x308
+> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
+> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
+> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
+> +
+> +#endif
+> 
