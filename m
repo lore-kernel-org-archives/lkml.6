@@ -1,121 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeEOMiB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:38:01 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39935 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752227AbeEOMh7 (ORCPT
+        id S1752877AbeEOMis (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:38:48 -0400
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:46733 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752227AbeEOMiq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:37:59 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180515123757euoutp02a148d8295d9296af99caecbb328640bb~u0a-7IU562145521455euoutp02V
-X-AuditID: cbfec7f5-b5fff700000028a9-11-5afad4a4a5d9
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: exynos: fix type of thermal trip points for
- Exynos7
-Date: Tue, 15 May 2018 14:37:54 +0200
-Message-id: <1702366.qL959G52Hi@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djPc7pLrvyKMvh0W87iwbxtbBbnz29g
-        t9j0+BqrxeVdc9gsPvceYbSYcX4fkwObx6ZVnWwem5fUe/RtWcXo8XmTXABLFJdNSmpOZllq
-        kb5dAlfGsWvTmQr+CFQsuxrewHiJt4uRk0NCwETiz9fVLF2MXBxCAisYJab2XWaFcD4zSsxe
-        cIAVpurIxaVQiWWMEn+2nwZLCAn8ZpTYOTkNxGYTsJKY2L6KEcQWEdCUuP73O1gDs8A6RomJ
-        /UuYQRLCAkESjaeOM4HYLAKqEsu7DoLFeUEaGg6ygdiiAl4SW/a1M0HEBSV+TL7HAmIzC8hL
-        7Ns/lRXC1pE4e2wdI8gCCYEeNokVd6ZBneoicXhrNxuELSzx6vgWdghbRuLy5G4WiIZmRolv
-        O/YwQyQmMErsWS8EYVtLHD5+EWoDn8SkbdOBajiA4rwSHW1QJR4Slxe/gtrlKDH9+UZmSEjE
-        Sjxv3sY2gVFmFpK7ZyG5exaSuxcwMq9iFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQIjPzT
-        /45/3cG470/SIUYBDkYlHt4dM35GCbEmlhVX5h5ilOBgVhLh3W0EFOJNSaysSi3Kjy8qzUkt
-        PsQozcGiJM4bp1EXJSSQnliSmp2aWpBaBJNl4uCUamBUu5+wszgyd47AmU/PD66QXfRmeYZE
-        Sn1aSqnD9oetpxK2BBl+ZTI73FrZ6/pKvPNglfx3y5fTXrMvZXK46Ct1NKehzUJN9U3Qbeaf
-        U+9d2/4t+sgtnjuPXH5Pvun/kO25gN/S01sMjjmoMb7sLWGo4v5mOvWYRf2N8o27s2bL5bN3
-        6646qHRUiaU4I9FQi7moOBEAwFtc3/gCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFLMWRmVeSWpSXmKPExsVy+t/xy7qLr/yKMuifamDxYN42Novz5zew
-        W2x6fI3V4vKuOWwWn3uPMFrMOL+PyYHNY9OqTjaPzUvqPfq2rGL0+LxJLoAlissmJTUnsyy1
-        SN8ugSvj2LXpTAV/BCqWXQ1vYLzE28XIySEhYCJx5OJS1i5GLg4hgSWMEr+e72QGSQgJ/GWU
-        2NRaDWKzCVhJTGxfxQhiiwhoSlz/+50VxGYWWMcoceuHJYgtLBAgsaLtHguIzSKgKrG86yDY
-        HF6Q+oaDbCC2qICXxJZ97UwQcUGJH5Mh6pkF5CX27Z8KNVNLYv3O40wTGHlnISmbhaRsFpKy
-        BYzMqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQJDcNuxn1t2MHa9Cz7EKMDBqMTDu2PGzygh
-        1sSy4srcQ4wSHMxKIry7jYBCvCmJlVWpRfnxRaU5qcWHGKU5WJTEec8bVEYJCaQnlqRmp6YW
-        pBbBZJk4OKUaGA/4OF8Org9V/Vg38/WPiwv5dqYKXWbNX81865Gfm/2PVOYD19Q+rC+6ULV5
-        q3+o8rbfbTxbPpyadytq1p9lu+777daxSq7VVPL49+NOfbJzQXl956FKjY+fdm86yGjOuS17
-        4s38XxK/nrY03j57+kbnnxyLpTd4rp5IOZbxQZux5yj7bcOPt+8osRRnJBpqMRcVJwIAnQul
-        ij0CAAA=
-X-CMS-MailID: 20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1
-X-RootMTR: 20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1
-References: <CGME20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1@eucas1p2.samsung.com>
+        Tue, 15 May 2018 08:38:46 -0400
+X-Google-Smtp-Source: AB8JxZrSPxIDZrqdOVk5aCMDlQBqoN5DnezyvHjQbCtHoBzArVYiYikU96XwHsKVHVgH2p93+SkMgQ==
+Subject: Re: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in
+ handle_hva_to_gpa
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
+        li.zhang@hxt-semitech.com, hughd@google.com,
+        Andrea Arcangeli "<aarcange@redhat.com>;" Minchan Kim
+         "<minchan@kernel.org>;" Claudio Imbrenda
+         "<imbrenda@linux.vnet.ibm.com>;" Arvind Yadav
+         "<arvind.yadav.cs@gmail.com>;" Mike Rapoport
+        <rppt@linux.vnet.ibm.com>,
+        akpm@linux-foundation.org
+References: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
+ <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
+ <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
+ <0f134188-12d5-7184-3fbd-0ec8204cf649@arm.com>
+ <aa5b37dc-7ac3-2999-fa67-848cd693977f@gmail.com>
+ <695beacb-ff51-bb2c-72ef-d268f7d4e59d@arm.com>
+ <1e065e9b-4dad-611d-fc5b-26fe6c031507@gmail.com>
+ <14954b3a-6a2a-fe05-47b7-1890375ab8a4@arm.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <b9e28c64-78cd-042e-0add-e06b0f57fc36@gmail.com>
+Date: Tue, 15 May 2018 20:38:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <14954b3a-6a2a-fe05-47b7-1890375ab8a4@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently Exynos thermal driver treats as "active" all specified
-trip points before reaching maximum number of hardware supported
-trip points. Moreover polling-delay-passive is specified as "0"
-in exynos7.dtsi (IOW passive polling is disabled). Therefore fix
-type of cpu-alert-0 to cpu-alert6 trip points to be "active"
-instead of "passive" (cpu-alert-7 type is "critical" so it
-doesn't need a fixup).
+Hi Suzuki
 
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On 5/15/2018 4:36 PM, Suzuki K Poulose Wrote:
+> 
+> Hi Jia
+> 
+> On 05/15/2018 03:03 AM, Jia He wrote:
+>> Hi Suzuki
+>>
+>> I will merge the other thread into this, and add the necessary CC list
+>>
+>> That WARN_ON call trace is very easy to reproduce in my armv8a server after I
+>> start 20 guests
+>>
+>> and run memhog in the host. Of course, ksm should be enabled
+>>
+>> For you question about my inject fault debug patch:
+> 
+> 
+> Thanks for the patch, comments below.
+> 
+>>
+> 
+> ...
+> 
+>> index 7f6a944..ab8545e 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -290,12 +290,17 @@ static void unmap_stage2_puds(struct kvm *kvm, pgd_t *pgd,
+>>    * destroying the VM), otherwise another faulting VCPU may come in and mess
+>>    * with things behind our backs.
+>>    */
+>> +extern int trigger_by_ksm;
+>>   static void unmap_stage2_range(struct kvm *kvm, phys_addr_t start, u64 size)
+>>   {
+>>          pgd_t *pgd;
+>>          phys_addr_t addr = start, end = start + size;
+>>          phys_addr_t next;
+>>
+>> +       if(trigger_by_ksm) {
+>> +               end -= 0x200;
+>> +       }
+>> +
+>>          assert_spin_locked(&kvm->mmu_lock);
+>>          pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+>>          do {
+>>
+>> I need to point out that I never reproduced it without this debugging patch.
+> 
+> That could trigger the panic iff your "size" <= 0x200, leading to the
+> condition (end < start), which can make the loop go forever, as we
+> do while(addr < end) and end up accessing something which may not be PGD entry
+> and thus get a bad page with bad numbers all around. This case could be hit only
+> with your change and the bug in the KSM which gives us an address near the page
+> boundary.
+No, I injected the fault on purpose to simulate the case when size is less than
+PAGE_SIZE(eg. PAGE_SIZE-0x200=65024)
+I ever got the panic info [1] *without* the debugging patch only once
 
-Index: b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
-===================================================================
---- a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi	2018-05-15 13:57:55.822172496 +0200
-+++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi	2018-05-15 14:23:12.594016481 +0200
-@@ -10,37 +10,37 @@ trips {
- 	cpu-alert-0 {
- 		temperature = <75000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-1 {
- 		temperature = <80000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-2 {
- 		temperature = <85000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-3 {
- 		temperature = <90000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-4 {
- 		temperature = <95000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-5 {
- 		temperature = <100000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-alert-6 {
- 		temperature = <110000>; /* millicelsius */
- 		hysteresis = <10000>; /* millicelsius */
--		type = "passive";
-+		type = "active";
- 	};
- 	cpu-crit-0 {
- 		temperature = <115000>; /* millicelsius */
+[1] https://lkml.org/lkml/2018/5/9/992
+> 
+> So, I think we can safely ignore the PANIC().
+> More below.
+> 
+> 
+>>>> Suzuki, thanks for the comments.
+>>>>
+>>>> I proposed another ksm patch https://lkml.org/lkml/2018/5/3/1042
+>>>> The root cause is ksm will add some extra flags to indicate that the page
+>>>> is in/not_in the stable tree. This makes address not be aligned with PAGE_SIZE.
+>>> Thanks for the pointer. In the future, please Cc the people relevant to the
+>>> discussion in the patches.
+>>>
+>>>>   From arm kvm mmu point of view, do you think handle_hva_to_gpa still need
+>>>> to handle
+>>>> the unalignment case?
+>>> I don't think we should do that. Had we done this, we would never have caught
+>>> this bug
+>>> in KSM. Eventually if some other new implementation comes up with the a new
+>>> notifier
+>>> consumer which doesn't check alignment and doesn't WARN, it could simply do
+>>> the wrong
+>>> thing. So I believe what we have is a good measure to make sure that things are
+>>> in the right order.
+>>>
+>>>> IMO, the PAGE_SIZE alignment is still needed because we should not let the
+>>>> bottom function
+>>>> kvm_age_hva_handler to handle the exception. Please refer to the
+>>>> implementation in X86 and
+>>>> powerpc kvm_handle_hva_range(). They both aligned the hva with
+>>>> hva_to_gfn_memslot.
+>>>>
+>>>   From an API perspective, you are passed on a "start" and "end" address. So,
+>>> you could potentially
+>>> do the wrong thing if you align the "start" and "end". May be those handlers
+>>> should also do the
+>>> same thing as we do.
+> 
+>> But handle_hva_to_gpa has partially adjusted the alignment possibly:
+>>     1750         kvm_for_each_memslot(memslot, slots) {
+>>     1751                 unsigned long hva_start, hva_end;
+>>     1752                 gfn_t gpa;
+>>     1753
+>>     1754                 hva_start = max(start, memslot->userspace_addr);
+>>     1755                 hva_end = min(end, memslot->userspace_addr +
+>>     1756                             (memslot->npages << PAGE_SHIFT));
+>>
+>> at line 1755, let us assume that end=0x12340200 and
+>> memslot->userspace_addr + (memslot->npages << PAGE_SHIFT)=0x12340000
+>> Then, hva_start is not page_size aligned and hva_end is aligned, and the size
+>> will be PAGE_SIZE-0x200,
+>> just as what I had done in the inject fault debugging patch.
+> 
+> Thats because we want to limit the handling of the hva/gpa range by memslot. So,
+> we make sure we pass on the range within the given memslot
+> to hva_to_gfn_memslot(). But we do iterate over the next memslot if the
+> original range falls in to the next slot. So, in practice, there is no
+> alignment/trimming of the range. Its just that we pass on the appropriate range
+> for each slot.
+> 
+Yes, I understand what the codes did in hva_to_gfn_memslot(). What I mean is
+hva_end may be changed and (hva_end - hva_start) will not be same as the
+parameter _size_ ?
+
+>ret |= handler(kvm, gpa, (u64)(hva_end - hva_start), data);
+
+Anyway, I have to admit that all the exceptions are originally caused by the
+STABLE_FLAG in ksm code. What I want to discuss here is how to make arm kvm
+handle the exception more gracefully.
+-- 
+Cheers,
+Jia
