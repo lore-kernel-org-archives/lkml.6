@@ -1,137 +1,141 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3334576-1526421740-2-12660781131480784997
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526421739; b=lUbHiAIdWfiFT6spVQoa5mIhebxtg5D7ur31DEd5oKbwZOBKVn
-    LAjPfC72MQ42JQIAi05Fml6sIE+2rSC6oTk3do29kEJPVjW6jP47PR+bK+We4YfK
-    EP74WInbUGrK7cBbvmEgHJKvZgLaLSajoNDPZx/cd1W/AmxSNg2CUNMIMV3CMvZa
-    yD4lxfUvdD1VbYjpRuGCuluVokYOXKWvYrMRKxc3MnuOwykyvqL5OwK0Il1jNZSD
-    rsOuERzOzTIgD0RVTNbj/IXZevumVFoRqTaFH6d4dqO0uxriVdhN20cPcFfMp8hX
-    qsI2m+in5lUmbW86vm7f40xJOT4adal3Z4LQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version
-    :content-transfer-encoding:to:from:in-reply-to:cc:references
-    :message-id:subject:date:sender:list-id; s=fm2; t=1526421739;
-    bh=UsoYCmyeh7IejewRRChvjfZOjnFs77LMyG1WniEgyLM=; b=VkntEKfgTf4L
-    mmEpSDtk5Wx7/5w3wxC8kta4wWhTc5WNm4a+/+EaGezatpmqnyKIkOUOgnRt6DiK
-    9YCTql+Niz86f3SzjZKZl5w0jCIFgYPEGf+sH3cskjUkGCOYcItPT1QtPq0R9SPf
-    FfGtcaCKn6t5NNTYFN54W0ljxZT0A55SY7K8QrRTFf2BSQBAnTQnMyp51iDPwirQ
-    3+vr6FstN11Si1Oh+uGJwg7IHbl1DSkt9SpBOpxB9RR7c5cQ+bSVikfPHbCbV/aS
-    vY4SAh+u5az6hoLtku7ZxP5RzKBYzeW/UELIB0Lu7Ot6LtjWdlWnI1fXWip+WMBr
-    +uWVGN5/ug==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=i9sDhtSE x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=i9sDhtSE x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJiP/t5UzgP2mkFehmENzg5buDiid2AfJPYm2ZkHFBmLBuJ/xXOjxFYR6qBvVQn4oPhquq2O4IFlfSZYSGpeFpRkUmfnwkfxg6FTO5hY39cjQw6j0QJp
-    t1jsp2xzah4WUXMF8qY/SbjgGeRSHNEHScik7CzDIyyClJUTsMGGgXAZMEnJtRW0fGBXmfBKU3fTmvlUVVPCMWSnjQmpZsJUqGNbsif1YtQ+NLqdzOVLrlgo
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=EBzs-4642dF1ywjK298A:9 a=QEXdDO2ut3YA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751099AbeEOWCR (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 18:02:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeEOWCP (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 15 May 2018 18:02:15 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <decui@microsoft.com>
+X-Google-Smtp-Source: AB8JxZotxF/m7YnzmKFxsRu3g1ykrPDBMAFTHiWYs/4o0vWhtHrvffxd+waFT9gTqZqkjeBRj9VP
+ARC-Seal: i=1; a=rsa-sha256; t=1526413987; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nJYZsGWL8cwbtqox/BtJJELZ3xXVUVKROpmW8OLAhJwIWPMWB54ZTYX57zVTjSnIb0
+         ZoPhPJInPBqWgxqgYLeEBmoDQOVrx5W4D+gEyd630khsLcfEdZ+BJ/Gkjgz7FoRzAsbE
+         oMPJOibUIywzyq4L1SwJQJhUJdzRIr6Qy9rKKh9RSeq0XsRzli7d2PxbBNPBtOs1Gs7Z
+         1RPlwHHtHf3ed4/Q2DjPN5nQI6B+J/prqfLsT16uLoFOymB6NyVtoFQKxEhn59pzIJ2b
+         yNcmyAx+Iz1XAfQRv4jFACK+ha2y68fztfwVoES2B/SkJhzsKBszJwTFuedBcS5TpVhn
+         JzsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:msip_labels:content-language:accept-language
+         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=MjGpvAq7JWVkjQ4ukroyy/V/JnzPJMRPorU2D6cR6hM=;
+        b=MP0Z4hxItPwXyfOGasUAaudE5oaDR5LkXIo7EbOB0ZfTpX05TQDY4S29fdH4kzguOR
+         cPYoalMZ3o2Cl8rtbP91j2IpBZzsBhwMYzCT4VH3HKmrr+V5fAtCn3toIIsw+6zaKqbs
+         WFBASub0TDrw1ghayfgPnlQSEo9IJBvC68NHefNH9qQsIes72bKaL4EcfkOXIHHxGRvB
+         Z4it468IBFOwDYPjq8A9m6OeslY/jvaJ3CsnYuzLcE7r89FsAUOMv6BQJDqw+PGZ8Lrt
+         yj8jj0QBdPCY+fnVvBJucW6Tetj3JIZvI1cypXA3B9xyrsfgPFw/XXXromHHa5RQnqo/
+         xq+w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=C5nVL2H6;
+       spf=pass (google.com: domain of decui@microsoft.com designates 104.47.126.104 as permitted sender) smtp.mailfrom=decui@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=C5nVL2H6;
+       spf=pass (google.com: domain of decui@microsoft.com designates 104.47.126.104 as permitted sender) smtp.mailfrom=decui@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+From: Dexuan Cui <decui@microsoft.com>
+To: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>, Dmitry
+ Vyukov <dvyukov@google.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Zijlstra
+	<peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, KY
+ Srinivasan <kys@microsoft.com>, Jork Loeser <Jork.Loeser@microsoft.com>,
+	Rakib Mullick <rakib.mullick@gmail.com>, Alexey Dobriyan
+	<adobriyan@gmail.com>, Josh Poulson <jopoulso@microsoft.com>, "Michael Kelley
+ (EOSG)" <Michael.H.Kelley@microsoft.com>
+Subject: [PATCH] tick/broadcast: Use for_each_cpu() specially on UP kernels
+Thread-Topic: [PATCH] tick/broadcast: Use for_each_cpu() specially on UP
+ kernels
+Thread-Index: AdPshQLk7bbHW17pTd+qmP1UgjaPIA==
+Date: Tue, 15 May 2018 19:52:50 +0000
+Message-ID: <KL1P15301MB0006FA63BC22BEB64902EAA0BF930@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-15T19:52:48.4313286Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [131.107.147.147]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;KL1P15301MB0040;7:YuIoks88qZHkKqrtgv7gSCtCx2igIF/CwVhPy81Whm4jQWFsXyqKHOm2wJerIfrGMtGc4/aRN+1A4YkYPV7OZNXQ2I9A43MMLGuXlgJx03p9RzkDUY2KISyRCZzMWol2sPh9qinWSFHN7fse4diGuB7uc9EllZZHijLGEQZq88kSGEsG8AuiB1j3z7uR4oSpOiMuVpLCHloovi1SBTV9K93YFbRjwpIcJ6zanR66wY9nDY48lgiJpSpFAX7yfovx;20:yYca4UoFqqM9lodYMzM/U3hDqyrxLYbi3ZJ1EIkLe4r5rvr7Zve6WKiq3vBOSbFl4ABZYyr4Vh2C8ErJKRxoqasgqLWua4Sbaqvnula2r1waoEoUEBB9mRBEpNO+kCpw5VK5GpFUX1P6W2fMfivY9EKC9WKTltZtsGzAWGSYYbc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:KL1P15301MB0040;
+x-ms-traffictypediagnostic: KL1P15301MB0040:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com;
+x-o365eop-header: O365_EOP: Allow for Unauthenticated Relay
+x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
+ (Engineering ONLY)
+x-microsoft-antispam-prvs: <KL1P15301MB0040D0AEDA98ADC29D69FA54BF930@KL1P15301MB0040.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(20558992708506)(89211679590171)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:KL1P15301MB0040;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0040;
+x-forefront-prvs: 0673F5BE31
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39380400002)(376002)(39860400002)(189003)(199004)(54534003)(486006)(25786009)(476003)(107886003)(478600001)(5660300001)(86612001)(86362001)(33656002)(77096007)(105586002)(106356001)(2906002)(97736004)(26005)(6306002)(10090500001)(55016002)(7416002)(186003)(1857600001)(8990500004)(9686003)(22452003)(110136005)(39060400002)(316002)(59450400001)(6506007)(53936002)(3660700001)(7696005)(3280700002)(54906003)(10290500003)(66066001)(102836004)(14454004)(6436002)(305945005)(966005)(7736002)(3846002)(6116002)(99286004)(4326008)(74316002)(68736007)(81166006)(81156014)(8676002)(2900100001)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0040;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: +8lSsRA83yyZI0O2ark6qdk79v63Qfzzmpj6lizGCoxFB5gNYxzxyrYsjqm24ISNf2MT11MeBaznQfxnJ6cGoZ+5JFSKySLc+FkAvD/Eb/alBohosjSE5pIN3XltmSROwrq7ooo7jR7uX+8Uq+9ZST2u2rMIE7cXQgek/M2QzkykL2hu1ebvyt01uIH4MMka
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <5a449d93-eef0-4243-9889-bd13786edde1@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, stable <stable@vger.kernel.org>
-References: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
- <20180501150236.GA15330@rob-hp-laptop>
- <5a449d93-eef0-4243-9889-bd13786edde1@linux.intel.com>
-Message-ID: <152642173468.237094.11026813184254392663@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
-Date: Tue, 15 May 2018 15:02:14 -0700
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 25c228d1-c8a9-4099-f0f6-08d5ba9d70f7
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25c228d1-c8a9-4099-f0f6-08d5ba9d70f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2018 19:52:50.6298
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0040
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600561072875598164?=
+X-GMAIL-MSGID: =?utf-8?q?1600561072875598164?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Quoting Jae Hyun Yoo (2018-05-01 09:27:32)
-> On 5/1/2018 8:02 AM, Rob Herring wrote:
-> > On Thu, Apr 26, 2018 at 10:22:32AM -0700, Jae Hyun Yoo wrote:
-> >> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bin=
-dings/clock/aspeed-clock.h
-> >> index d3558d897a4d..8d69b9134bef 100644
-> >> --- a/include/dt-bindings/clock/aspeed-clock.h
-> >> +++ b/include/dt-bindings/clock/aspeed-clock.h
-> >> @@ -45,7 +45,7 @@
-> >>   #define ASPEED_RESET_JTAG_MASTER   3
-> >>   #define ASPEED_RESET_MIC           4
-> >>   #define ASPEED_RESET_PWM           5
-> >> -#define ASPEED_RESET_PCIVGA         6
-> >> +#define ASPEED_RESET_PECI           6
-> > =
 
-> > You can't really be changing these as they represent an ABI.
-> > =
+for_each_cpu() unintuitively reports CPU0 as set independent of the actual
+cpumask content on UP kernels. This causes an unexpected PIT interrupt
+storm on a UP kernel running in an SMP virtual machine on Hyper-V, and as
+a result, the virtual machine can suffer from a strange random delay of 1~2=
+0
+minutes during boot-up, and sometimes it can hang forever.
 
-> > Is there no PCIVGA reset?
-> > =
+Link: https://lkml.org/lkml/2018/5/9/63
+Link: https://lkml.org/lkml/2018/5/15/747
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: stable@vger.kernel.org
+---
 
-> =
+Some part of the changelog and comments are copied from=20
+Thomas Gleixner's 115ef3b7e61a ("watchdog/hardlockup/perf: Cure UP damage")=
+ :-)
 
-> This is a bug fixing. Previously, PCI/VGA used PECI reset bit so this
-> patch corrects the reset bit for PCI/VGA from bit '10' to bit '8', and
-> it adds PECI reset bit '10' here as it can't be combined with a clock
-> gate bit.
-> =
+ kernel/time/tick-broadcast.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-
-Presumably nobody is using the #define because it's wrong, so this is OK
-for me. I'll apply to clk-next and yank it if Rob objects.
+diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
+index b398c2e..2fc59ad 100644
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -612,6 +612,14 @@ static void tick_handle_oneshot_broadcast(struct clock=
+_event_device *dev)
+ 	now =3D ktime_get();
+ 	/* Find all expired events */
+ 	for_each_cpu(cpu, tick_broadcast_oneshot_mask) {
++#ifndef CONFIG_SMP
++		/*
++		 * Required because for_each_cpu() reports unconditionally
++		 * CPU0 as set on UP kernels.
++		 */
++		if (cpumask_empty(tick_broadcast_oneshot_mask))
++			break;
++#endif
+ 		td =3D &per_cpu(tick_cpu_device, cpu);
+ 		if (td->evtdev->next_event <=3D now) {
+ 			cpumask_set_cpu(cpu, tmpmask);
+--=20
+2.7.4
