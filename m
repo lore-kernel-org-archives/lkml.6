@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeEOGWn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:22:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42753 "EHLO
+        id S1752403AbeEOGXP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:23:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45209 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752253AbeEOGWm (ORCPT
+        with ESMTP id S1752139AbeEOGXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:22:42 -0400
-Date: Mon, 14 May 2018 23:22:18 -0700
+        Tue, 15 May 2018 02:23:13 -0400
+Date: Mon, 14 May 2018 23:22:49 -0700
 From: tip-bot for SeongJae Park <tipbot@zytor.com>
-Message-ID: <tip-eabed716672c2f2275887ec69e001a9cc30b2294@git.kernel.org>
-Cc: torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, paulmck@linux.vnet.ibm.com, sj38.park@gmail.com,
-        akpm@linux-foundation.org, hpa@zytor.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, akpm@linux-foundation.org, hpa@zytor.com,
-        paulmck@linux.vnet.ibm.com, sj38.park@gmail.com
-In-Reply-To: <1526338533-6044-2-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526338533-6044-2-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <tip-1ea32723c42a5c73a6da6a9731b9bdb6c5f206f0@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        sj38.park@gmail.com, hpa@zytor.com, akpm@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, mingo@kernel.org
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
+        peterz@infradead.org, paulmck@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, sj38.park@gmail.com,
+        will.deacon@arm.com
+In-Reply-To: <1526338533-6044-3-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526338533-6044-3-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:locking/core] locking/memory-barriers.txt/kokr: Update Korean
- translation to indicate that READ_ONCE() now implies smp_barrier_depends()
-Git-Commit-ID: eabed716672c2f2275887ec69e001a9cc30b2294
+ translation to de-emphasize smp_read_barrier_depends()
+Git-Commit-ID: 1ea32723c42a5c73a6da6a9731b9bdb6c5f206f0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,18 +37,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  eabed716672c2f2275887ec69e001a9cc30b2294
-Gitweb:     https://git.kernel.org/tip/eabed716672c2f2275887ec69e001a9cc30b2294
+Commit-ID:  1ea32723c42a5c73a6da6a9731b9bdb6c5f206f0
+Gitweb:     https://git.kernel.org/tip/1ea32723c42a5c73a6da6a9731b9bdb6c5f206f0
 Author:     SeongJae Park <sj38.park@gmail.com>
-AuthorDate: Mon, 14 May 2018 15:55:27 -0700
+AuthorDate: Mon, 14 May 2018 15:55:28 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 15 May 2018 08:11:13 +0200
+CommitDate: Tue, 15 May 2018 08:11:14 +0200
 
-locking/memory-barriers.txt/kokr: Update Korean translation to indicate that READ_ONCE() now implies smp_barrier_depends()
+locking/memory-barriers.txt/kokr: Update Korean translation to de-emphasize smp_read_barrier_depends()
 
 Translate this commit to Korean:
 
-  40555946447a ("doc: READ_ONCE() now implies smp_barrier_depends()")
+  9ad3c143d7d6 ("doc: De-emphasize smp_read_barrier_depends")
 
 Signed-off-by: SeongJae Park <sj38.park@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
@@ -65,40 +66,34 @@ Cc: luc.maranget@inria.fr
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
 Cc: stern@rowland.harvard.edu
-Link: http://lkml.kernel.org/r/1526338533-6044-2-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526338533-6044-3-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/translations/ko_KR/memory-barriers.txt | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ Documentation/translations/ko_KR/memory-barriers.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-index 0a0930ab4156..edef154d77b2 100644
+index edef154d77b2..44e47c2d33cf 100644
 --- a/Documentation/translations/ko_KR/memory-barriers.txt
 +++ b/Documentation/translations/ko_KR/memory-barriers.txt
-@@ -255,17 +255,20 @@ CPU 에게 기대할 수 있는 최소한의 보장사항 몇가지가 있습니
-  (*) 어떤 CPU 든, 의존성이 존재하는 메모리 액세스들은 해당 CPU 자신에게
-      있어서는 순서대로 메모리 시스템에 수행 요청됩니다. 즉, 다음에 대해서:
+@@ -1790,7 +1790,7 @@ CPU 메모리 배리어
+ 	범용		mb()			smp_mb()
+ 	쓰기		wmb()			smp_wmb()
+ 	읽기		rmb()			smp_rmb()
+-	데이터 의존성	read_barrier_depends()	smp_read_barrier_depends()
++	데이터 의존성				READ_ONCE()
  
--	Q = READ_ONCE(P); smp_read_barrier_depends(); D = READ_ONCE(*Q);
-+	Q = READ_ONCE(P); D = READ_ONCE(*Q);
  
-      CPU 는 다음과 같은 메모리 오퍼레이션 시퀀스를 수행 요청합니다:
+ 데이터 의존성 배리어를 제외한 모든 메모리 배리어는 컴파일러 배리어를
+@@ -2829,7 +2829,10 @@ CPU 2 는 C/D 를 갖습니다)가 병렬로 연결되어 있는 시스템을 
+ 다른 CPU 들도 분할된 캐시를 가지고 있을 수 있지만, 그런 CPU 들은 평범한 메모리
+ 액세스를 위해서도 이 분할된 캐시들 사이의 조정을 해야만 합니다.  Alpha 는 가장
+ 약한 메모리 순서 시맨틱 (semantic) 을 선택함으로써 메모리 배리어가 명시적으로
+-사용되지 않았을 때에는 그런 조정이 필요하지 않게 했습니다.
++사용되지 않았을 때에는 그런 조정이 필요하지 않게 했으며, 이는 Alpha 가 당시에
++더 높은 CPU 클락 속도를 가질 수 있게 했습니다.  하지만, Alpha 아키텍쳐 전용
++코드와 READ_ONCE() 매크로 내부에서를 제외하고는 smp_read_barrier_depends() 가
++사용되지 않아야 함을 알아두시기 바랍니다.
  
- 	Q = LOAD P, D = LOAD *Q
  
--     그리고 그 시퀀스 내에서의 순서는 항상 지켜집니다.  대부분의 시스템에서
--     smp_read_barrier_depends() 는 아무일도 안하지만 DEC Alpha 에서는
--     명시적으로 사용되어야 합니다.  보통의 경우에는 smp_read_barrier_depends()
--     를 직접 사용하는 대신 rcu_dereference() 같은 것들을 사용해야 함을
--     알아두세요.
-+     그리고 그 시퀀스 내에서의 순서는 항상 지켜집니다.  하지만, DEC Alpha 에서
-+     READ_ONCE() 는 메모리 배리어 명령도 내게 되어 있어서, DEC Alpha CPU 는
-+     다음과 같은 메모리 오퍼레이션들을 내놓게 됩니다:
-+
-+	Q = LOAD P, MEMORY_BARRIER, D = LOAD *Q, MEMORY_BARRIER
-+
-+     DEC Alpha 에서 수행되든 아니든, READ_ONCE() 는 컴파일러로부터의 악영향
-+     또한 제거합니다.
- 
-  (*) 특정 CPU 내에서 겹치는 영역의 메모리에 행해지는 로드와 스토어 들은 해당
-      CPU 안에서는 순서가 바뀌지 않은 것으로 보여집니다.  즉, 다음에 대해서:
+ 캐시 일관성 VS DMA
