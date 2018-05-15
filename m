@@ -1,115 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754299AbeEOQY1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:24:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36488 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752783AbeEOQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:24:24 -0400
-Date: Tue, 15 May 2018 16:24:23 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Fabien DESSENNE <fabien.dessenne@st.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jean Christophe TROTIN <jean-christophe.trotin@st.com>,
-        Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Subject: Re: Are media drivers abusing of GFP_DMA? - was: Re: [LSF/MM TOPIC
- NOTES] x86 ZONE_DMA love
-Message-ID: <20180515162422.GG27853@wotan.suse.de>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180505130815.53a26955@vento.lan>
- <3561479.qPIcrWnXEC@avalon>
- <20180507121916.4eb7f5b2@vento.lan>
- <547252fc-dc74-93c6-fc77-be1bfb558787@st.com>
- <20180514073503.3da05fc6@vento.lan>
+        id S1754096AbeEOQZG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:25:06 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:55397 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752274AbeEOQZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:25:02 -0400
+X-Google-Smtp-Source: AB8JxZrOjPVXVO2EF02ze7KEWEERT6rGkvLL2Up39BItmCiNP40j/wMRaLZKd5blMZk+AobZ5oEKJZF6WL054WZee/AmAwcLXkE6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514073503.3da05fc6@vento.lan>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Date: Tue, 15 May 2018 09:25:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f4075056c410b96@google.com>
+Subject: KMSAN: uninit-value in __sctp_v6_cmp_addr
+From: syzbot <syzbot+85490c30c260afff22f2@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 07:35:03AM -0300, Mauro Carvalho Chehab wrote:
-> Hi Fabien,
-> 
-> Em Mon, 14 May 2018 08:00:37 +0000
-> Fabien DESSENNE <fabien.dessenne@st.com> escreveu:
-> 
-> > On 07/05/18 17:19, Mauro Carvalho Chehab wrote:
-> > > Em Mon, 07 May 2018 16:26:08 +0300
-> > > Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
-> > >  
-> > >> Hi Mauro,
-> > >>
-> > >> On Saturday, 5 May 2018 19:08:15 EEST Mauro Carvalho Chehab wrote:  
-> > >>> There was a recent discussion about the use/abuse of GFP_DMA flag when
-> > >>> allocating memories at LSF/MM 2018 (see Luis notes enclosed).
-> > >>>
-> > >>> The idea seems to be to remove it, using CMA instead. Before doing that,
-> > >>> better to check if what we have on media is are valid use cases for it, or
-> > >>> if it is there just due to some misunderstanding (or because it was
-> > >>> copied from some other code).
-> > >>>
-> > >>> Hans de Goede sent us today a patch stopping abuse at gspca, and I'm
-> > >>> also posting today two other patches meant to stop abuse of it on USB
-> > >>> drivers. Still, there are 4 platform drivers using it:
-> > >>>
-> > >>> 	$ git grep -l -E "GFP_DMA\\b" drivers/media/
-> > >>> 	drivers/media/platform/omap3isp/ispstat.c
-> > >>> 	drivers/media/platform/sti/bdisp/bdisp-hw.c
-> > >>> 	drivers/media/platform/sti/hva/hva-mem.c  
-> > 
-> > Hi Mauro,
-> > 
-> > The two STI drivers (bdisp-hw.c and hva-mem.c) are only expected to run 
-> > on ARM platforms, not on x86.
-> > Since this thread deals with x86 & DMA trouble, I am not sure that we 
-> > actually have a problem for the sti drivers.
-> > 
-> > There are some other sti drivers that make use of this GFP_DMA flag 
-> > (drivers/gpu/drm/sti/sti_*.c) and it does not seem to be a problem.
-> > 
-> > Nevertheless I can see that the media sti drivers depend on COMPILE_TEST 
-> > (which is not the case for the DRM ones).
-> > Would it be an acceptable solution to remove the COMPILE_TEST dependency?
-> 
-> This has nothing to do with either x86 
+Hello,
 
-Actually it does.
+syzbot found the following crash on:
 
-> or COMPILE_TEST. The thing is
-> that there's a plan for removing GFP_DMA from the Kernel[1], 
+HEAD commit:    74ee2200b89f kmsan: bump .config.example to v4.17-rc3
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=169efb5b800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=85490c30c260afff22f2
+compiler:       clang version 7.0.0 (trunk 329391)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=157e9237800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fe5de7800000
 
-That would not be possible given architectures use GFP_DMA for other
-things and there are plenty of legacy x86 drivers which still need to be
-around. So the focus from mm folks shifted to letting x86 folks map
-GFP_DMA onto the CMA pool. Long term, this is nothing that driver developers
-need to care for, but just knowing internally behind the scenes there is some
-cleaning up being done in terms of architecture.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+85490c30c260afff22f2@syzkaller.appspotmail.com
 
-> as it was
-> originally meant to be used only by old PCs, where the DMA controllers
-> used only  on the bottom 16 MB memory address (24 bits).
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KMSAN: uninit-value in __sctp_v6_cmp_addr+0x49a/0x850  
+net/sctp/ipv6.c:580
+CPU: 0 PID: 4453 Comm: syz-executor325 Not tainted 4.17.0-rc3+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  __sctp_v6_cmp_addr+0x49a/0x850 net/sctp/ipv6.c:580
+  sctp_inet6_cmp_addr+0x3dc/0x400 net/sctp/ipv6.c:898
+  sctp_bind_addr_match+0x18b/0x2f0 net/sctp/bind_addr.c:330
+  sctp_addrs_lookup_transport+0x904/0xa20 net/sctp/input.c:942
+  __sctp_lookup_association net/sctp/input.c:985 [inline]
+  __sctp_rcv_lookup net/sctp/input.c:1249 [inline]
+  sctp_rcv+0x15e6/0x4d30 net/sctp/input.c:170
+  ip_local_deliver_finish+0x874/0xec0 net/ipv4/ip_input.c:215
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:256
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0xa36/0x1d00 net/ipv4/ip_input.c:396
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_rcv+0x118f/0x16d0 net/ipv4/ip_input.c:492
+  __netif_receive_skb_core+0x47df/0x4a90 net/core/dev.c:4592
+  __netif_receive_skb net/core/dev.c:4657 [inline]
+  process_backlog+0x62d/0xe20 net/core/dev.c:5337
+  napi_poll net/core/dev.c:5735 [inline]
+  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5801
+  __do_softirq+0x56d/0x93d kernel/softirq.c:285
+  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
+  </IRQ>
+  do_softirq kernel/softirq.c:329 [inline]
+  __local_bh_enable_ip+0x114/0x140 kernel/softirq.c:182
+  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
+  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
+  ip_finish_output2+0x135a/0x1470 net/ipv4/ip_output.c:231
+  ip_finish_output+0xcb2/0xff0 net/ipv4/ip_output.c:317
+  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+  ip_output+0x505/0x5d0 net/ipv4/ip_output.c:405
+  dst_output include/net/dst.h:444 [inline]
+  ip_local_out net/ipv4/ip_output.c:124 [inline]
+  ip_queue_xmit+0x1a1e/0x1d10 net/ipv4/ip_output.c:504
+  sctp_v4_xmit+0x188/0x210 net/sctp/protocol.c:983
+  sctp_packet_transmit+0x3eaa/0x4350 net/sctp/output.c:650
+  sctp_outq_flush+0x1a7a/0x6320 net/sctp/outqueue.c:1197
+  sctp_outq_uncork+0xd2/0xf0 net/sctp/outqueue.c:776
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x8707/0x8d20 net/sctp/sm_sideeffect.c:1191
+  sctp_primitive_REQUESTHEARTBEAT+0x175/0x1a0 net/sctp/primitive.c:200
+  sctp_apply_peer_addr_params+0x207/0x1670 net/sctp/socket.c:2487
+  sctp_setsockopt_peer_addr_params net/sctp/socket.c:2683 [inline]
+  sctp_setsockopt+0x10e5f/0x11600 net/sctp/socket.c:4258
+  sock_common_setsockopt+0x136/0x170 net/core/sock.c:3039
+  __sys_setsockopt+0x4af/0x560 net/socket.c:1903
+  __do_sys_setsockopt net/socket.c:1914 [inline]
+  __se_sys_setsockopt net/socket.c:1911 [inline]
+  __x64_sys_setsockopt+0x15c/0x1c0 net/socket.c:1911
+  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x43fef9
+RSP: 002b:00007ffc00d9bfd8 EFLAGS: 00000207 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fef9
+RDX: 0000000000000009 RSI: 0000000000000084 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000098 R09: 000000000000001c
+R10: 0000000020000180 R11: 0000000000000207 R12: 0000000000401820
+R13: 00000000004018b0 R14: 0000000000000000 R15: 0000000000000000
 
-This is actually the part that is x86 specific.
+Local variable description: ----dest@sctp_rcv
+Variable was created at:
+  sctp_rcv+0x13d/0x4d30 net/sctp/input.c:97
+  ip_local_deliver_finish+0x874/0xec0 net/ipv4/ip_input.c:215
+==================================================================
 
-Each other architecture may use it for some other definition and it seems
-some architectures use GFP_DMA all over the place. So the topic really should
-be about x86.
 
-> IMHO, it is 
-> very unlikely that any ARM SoC have such limitation.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Right, how the flag is used on other architectures varies, so in fact the
-focus for cleaning up for now should be an x86 effort. Whether or not
-other architectures do something silly with GFP_DMA is beyond the scope
-of what was discussed.
-
-  Luis
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
