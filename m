@@ -1,65 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeEOJ6I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:58:08 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38091 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752744AbeEOJ6E (ORCPT
+        id S1752780AbeEOJ6U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:58:20 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36818 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752576AbeEOJ6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:58:04 -0400
-X-Google-Smtp-Source: AB8JxZol/kxSwZhCf3wzwiXFq/kVbSmFTYjDJvyQlp//y6PiBq+RzCQTNBH7U2zSe9V7oTx4Nqz2zg==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mmc: meson-gx: add device reset
-Date: Tue, 15 May 2018 11:57:48 +0200
-Message-Id: <20180515095748.6794-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180515095748.6794-1-jbrunet@baylibre.com>
-References: <20180515095748.6794-1-jbrunet@baylibre.com>
+        Tue, 15 May 2018 05:58:16 -0400
+Date: Tue, 15 May 2018 11:58:14 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, dave.martin@arm.com, james.morse@arm.com,
+        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
+        viro@zeniv.linux.org.uk, will.deacon@arm.com
+Subject: Re: [PATCH 13/18] kernel: add kcompat_sys_{f,}statfs64()
+Message-ID: <20180515095814.GA14007@isilmar-4.linta.de>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-14-mark.rutland@arm.com>
+ <20180514171427.qyietn3fhilwokb2@lakrids.cambridge.arm.com>
+ <20180514203414.GB26773@light.dominikbrodowski.net>
+ <20180515095351.lw5gxap4ii5iobtb@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515095351.lw5gxap4ii5iobtb@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trigger the reset line of the mmc controller while probing, if available.
-The reset should be optional for now, at least until all related DT nodes
-have the reset property.
+On Tue, May 15, 2018 at 10:53:51AM +0100, Mark Rutland wrote:
+> On Mon, May 14, 2018 at 10:34:14PM +0200, Dominik Brodowski wrote:
+> > On Mon, May 14, 2018 at 06:14:28PM +0100, Mark Rutland wrote:
+> > > On Mon, May 14, 2018 at 10:46:35AM +0100, Mark Rutland wrote:
+> > > > +#ifdef CONFIG_COMPAT
+> > > > +int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz,
+> > > > +		     struct compat_statfs64 __user * buf);
+> > > > +int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz,
+> > > > +			  struct compat_statfs64 __user * buf);
+> > > > +#endif
+> > > 
+> > > I've moved these to <linux/compat.h>, so that they live with the rest of
+> > > the compat syscall stuff. That should avoid build failures the kbuild
+> > > test robot picked up where compat_size_t wasn't dfined.
+> > 
+> > Please add a comment there, similar to what is in syscalls.h:
+> > 
+> > 	/*
+> > 	 * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
+> > 	 * Instead, use one of the functions which work equivalently, such as
+> > 	 * the ksys_xyzyyz() functions prototyped below.
+> > 	 */
+> 
+> To make the kcompat_sys_* naming scheme clearer, I've added compat references to
+> the above, i.e.
+> 
+> /*
+>  * Kernel code should not call compat syscalls (i.e., compat_sys_xyzyyz())
+>  * directly. Instead, use one of the functions which work equivalently, such
+>  * as the kcompat_sys_xyzyyz() functions prototyped below.
+>  */
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/mmc/host/meson-gx-mmc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+That's what I meant ;)
 
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index 4f972b879fe6..9bca359f7936 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -35,6 +35,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
- #include <linux/interrupt.h>
- #include <linux/bitfield.h>
- #include <linux/pinctrl/consumer.h>
-@@ -1184,6 +1185,14 @@ static int meson_mmc_probe(struct platform_device *pdev)
- 		goto free_host;
- 	}
- 
-+	ret = device_reset_optional(&pdev->dev);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "device reset failed: %d\n", ret);
-+
-+		return ret;
-+	}
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(host->regs)) {
--- 
-2.14.3
+> > Once you have done so, feel free to add my
+> > 
+> > 	Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> 
+> I hope that this still stands with the changes above?
+
+It does. Thanks!
+
+	Dominik
