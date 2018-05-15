@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeEOHNn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:13:43 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:41330 "EHLO
+        id S1752441AbeEOHNl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:13:41 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:41329 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeEOHNg (ORCPT
+        with ESMTP id S1752192AbeEOHNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 May 2018 03:13:36 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -14,9 +14,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH 4/4] misc: pci_endpoint_test: Add DesignWare EP entry
-Date: Tue, 15 May 2018 08:13:29 +0100
-Message-Id: <3458479563ea4db2372d13cab4e6645790f69736.1526368369.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH 3/4] bindings: PCI: designware: Add support for EP in DesignWare driver
+Date: Tue, 15 May 2018 08:13:28 +0100
+Message-Id: <93b9bb79148420995272211c0a8190dd90d48fc8.1526368369.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1526368368.git.gustavo.pimentel@synopsys.com>
 References: <cover.1526368368.git.gustavo.pimentel@synopsys.com>
@@ -26,28 +26,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the DesignWare EP device ID entry to pci_endpoint_test driver table.
-
-Allow the device to be recognize and handle by the pci_endpoint_test
-driver.
+Add device tree binding documentation for the EP in PCIe DesignWare driver.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index fe8897e..58a88ba 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -634,6 +634,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index 7f9804d..c124f9b 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -3,6 +3,7 @@
+ Required properties:
+ - compatible:
+ 	"snps,dw-pcie" for RC mode;
++	"snps,dw-pcie-ep" for EP mode;
+ - reg: Should contain the configuration address space.
+ - reg-names: Must be "config" for the PCIe configuration space.
+     (The old way of getting the configuration address space from "ranges"
+@@ -56,3 +57,14 @@ Example configuration:
+ 		#interrupt-cells = <1>;
+ 		num-lanes = <1>;
+ 	};
++or
++	pcie: pcie@dfc00000 {
++		compatible = "snps,dw-pcie-ep";
++		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
++		      <0xdfc01000 0x0001000>, /* IP registers 2 */
++		      <0xd0000000 0x2000000>; /* Configuration space */
++		reg-names = "dbi", "dbi2", "addr_space";
++		num-ib-windows = <6>;
++		num-ob-windows = <2>;
++		num-lanes = <1>;
++	};
 -- 
 2.7.4
