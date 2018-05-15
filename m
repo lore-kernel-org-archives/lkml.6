@@ -1,35 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752372AbeEOGd1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:33:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33897 "EHLO
+        id S1752310AbeEOGeA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:34:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35217 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeEOGdZ (ORCPT
+        with ESMTP id S1752094AbeEOGd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:33:25 -0400
-Date: Mon, 14 May 2018 23:32:46 -0700
+        Tue, 15 May 2018 02:33:59 -0400
+Date: Mon, 14 May 2018 23:33:17 -0700
 From: tip-bot for Alan Stern <tipbot@zytor.com>
-Message-ID: <tip-8559183ccaec97454b2515ac426f113967256cf9@git.kernel.org>
-Cc: mingo@kernel.org, will.deacon@arm.com, paulmck@linux.vnet.ibm.com,
-        dhowells@redhat.com, andrea.parri@amarulasolutions.com,
-        torvalds@linux-foundation.org, boqun.feng@gmail.com,
-        linux-kernel@vger.kernel.org, akiyks@gmail.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, stern@rowland.harvard.edu,
-        akpm@linux-foundation.org, tglx@linutronix.de, peterz@infradead.org,
-        npiggin@gmail.com, hpa@zytor.com
-Reply-To: npiggin@gmail.com, hpa@zytor.com, peterz@infradead.org,
-        akpm@linux-foundation.org, tglx@linutronix.de, akiyks@gmail.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, stern@rowland.harvard.edu,
-        boqun.feng@gmail.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        andrea.parri@amarulasolutions.com, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, will.deacon@arm.com
-In-Reply-To: <1526340837-12222-12-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526340837-12222-12-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <tip-fd0359dbac3df00d1c6c22769e7d647b16b920cc@git.kernel.org>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
+        paulmck@linux.vnet.ibm.com, stern@rowland.harvard.edu,
+        luc.maranget@inria.fr, linux-kernel@vger.kernel.org, npiggin@gmail.com,
+        boqun.feng@gmail.com, peterz@infradead.org, hpa@zytor.com,
+        dhowells@redhat.com, will.deacon@arm.com, j.alglave@ucl.ac.uk,
+        akiyks@gmail.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, stern@rowland.harvard.edu,
+        paulmck@linux.vnet.ibm.com, luc.maranget@inria.fr,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, torvalds@linux-foundation.org,
+        hpa@zytor.com, peterz@infradead.org, dhowells@redhat.com,
+        mingo@kernel.org, j.alglave@ucl.ac.uk, akiyks@gmail.com,
+        will.deacon@arm.com, npiggin@gmail.com, boqun.feng@gmail.com
+In-Reply-To: <1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Remove duplicated code from
- lock.cat
-Git-Commit-ID: 8559183ccaec97454b2515ac426f113967256cf9
+Subject: [tip:locking/core] tools/memory-model: Improve comments in lock.cat
+Git-Commit-ID: fd0359dbac3df00d1c6c22769e7d647b16b920cc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -42,21 +41,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8559183ccaec97454b2515ac426f113967256cf9
-Gitweb:     https://git.kernel.org/tip/8559183ccaec97454b2515ac426f113967256cf9
+Commit-ID:  fd0359dbac3df00d1c6c22769e7d647b16b920cc
+Gitweb:     https://git.kernel.org/tip/fd0359dbac3df00d1c6c22769e7d647b16b920cc
 Author:     Alan Stern <stern@rowland.harvard.edu>
-AuthorDate: Mon, 14 May 2018 16:33:50 -0700
+AuthorDate: Mon, 14 May 2018 16:33:51 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 15 May 2018 08:11:17 +0200
+CommitDate: Tue, 15 May 2018 08:11:18 +0200
 
-tools/memory-model: Remove duplicated code from lock.cat
+tools/memory-model: Improve comments in lock.cat
 
-This patch simplifies the implementation of spin_is_locked in the
-LKMM.  It capitalizes on the fact that a failed spin_trylock() and a
-spin_is_locked() which returns True have exactly the same semantics
-(those of READ_ONCE) and ordering properties (none).  Therefore the
-two kinds of events can be combined and handled by the same code,
-instead of treated separately as they are currently.
+This patch improves the comments in tools/memory-model/lock.cat.  In
+addition to making the text more uniform and removing redundant
+comments, it adds a description of all the possible locking events
+that herd can generate.
 
 Tested-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
@@ -74,68 +71,119 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arch@vger.kernel.org
 Cc: parri.andrea@gmail.com
-Link: http://lkml.kernel.org/r/1526340837-12222-12-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/lock.cat | 28 ++++++----------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+ tools/memory-model/lock.cat | 51 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 15 deletions(-)
 
 diff --git a/tools/memory-model/lock.cat b/tools/memory-model/lock.cat
-index 3b1439edc818..1f6d67e79065 100644
+index 1f6d67e79065..df74de2148f6 100644
 --- a/tools/memory-model/lock.cat
 +++ b/tools/memory-model/lock.cat
-@@ -41,11 +41,15 @@ flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
+@@ -4,15 +4,35 @@
+  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>
   *)
- let RL = try RL with emptyset (* defined herd7 >= 7.49 *)
- let RU = try RU with emptyset (* defined herd7 >= 7.49 *)
-+
-+(* Treat RL as a kind of LF: a read with no ordering properties *)
-+let LF = LF | RL
-+
+ 
+-(* Generate coherence orders and handle lock operations *)
  (*
-  * Put lock operations in their appropriate classes, but leave UL out of W
-  * until after the co relation has been generated.
+- * Warning, crashes with herd7 versions strictly before 7.48.
+- * spin_islocked is functional from version 7.49.
++ * Generate coherence orders and handle lock operations
+  *
++ * Warning: spin_is_locked() crashes herd7 versions strictly before 7.48.
++ * spin_is_locked() is functional from herd7 version 7.49.
   *)
--let R = R | LKR | LF | RL | RU
-+let R = R | LKR | LF | RU
- let W = W | LKW
++
+ include "cross.cat"
  
+-(* From lock reads to their partner lock writes *)
++(*
++ * The lock-related events generated by herd are as follows:
++ *
++ * LKR		Lock-Read: the read part of a spin_lock() or successful
++ *			spin_trylock() read-modify-write event pair
++ * LKW		Lock-Write: the write part of a spin_lock() or successful
++ *			spin_trylock() RMW event pair
++ * UL		Unlock: a spin_unlock() event
++ * LF		Lock-Fail: a failed spin_trylock() event
++ * RL		Read-Locked: a spin_is_locked() event which returns True
++ * RU		Read-Unlocked: a spin_is_locked() event which returns False
++ *
++ * LKR and LKW events always come paired, like all RMW event sequences.
++ *
++ * LKR, LF, RL, and RU are read events; LKR has Acquire ordering.
++ * LKW and UL are write events; UL has Release ordering.
++ * LKW, LF, RL, and RU have no ordering properties.
++ *)
++
++(* Link Lock-Reads to their RMW-partner Lock-Writes *)
+ let lk-rmw = ([LKR] ; po-loc ; [LKW]) \ (po ; po)
+ let rmw = rmw | lk-rmw
+ 
+@@ -29,18 +49,16 @@ flag ~empty LKW \ range(lk-rmw) as unpaired-LKW
+ (* This will be allowed if we implement spin_is_locked() *)
+ flag ~empty LKR \ domain(lk-rmw) as unpaired-LKR
+ 
+-(* There should be no R or W accesses to spinlocks *)
++(* There should be no ordinary R or W accesses to spinlocks *)
+ let ALL-LOCKS = LKR | LKW | UL | LF
+ flag ~empty [M \ IW] ; loc ; [ALL-LOCKS] as mixed-lock-accesses
+ 
+ (* The final value of a spinlock should not be tested *)
+ flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
+ 
+-(*
+- * Backward compatibility
+- *)
+-let RL = try RL with emptyset (* defined herd7 >= 7.49 *)
+-let RU = try RU with emptyset (* defined herd7 >= 7.49 *)
++(* Backward compatibility *)
++let RL = try RL with emptyset
++let RU = try RU with emptyset
+ 
+ (* Treat RL as a kind of LF: a read with no ordering properties *)
+ let LF = LF | RL
+@@ -55,7 +73,6 @@ let W = W | LKW
  let Release = Release | UL
-@@ -80,28 +84,8 @@ let all-possible-rfe-lf =
+ let Acquire = Acquire | LKR
  
- (* Generate all rf relations for LF events *)
- with rfe-lf from cross(all-possible-rfe-lf)
 -
+ (* Match LKW events to their corresponding UL events *)
+ let critical = ([LKW] ; po-loc ; [UL]) \ (po-loc ; [LKW | UL] ; po-loc)
+ 
+@@ -65,7 +82,6 @@ flag ~empty UL \ range(critical) as unmatched-unlock
+ let UNMATCHED-LKW = LKW \ domain(critical)
+ empty ([UNMATCHED-LKW] ; loc ; [UNMATCHED-LKW]) \ id as unmatched-locks
+ 
+-
+ (* rfi for LF events: link each LKW to the LF events in its critical section *)
+ let rfi-lf = ([LKW] ; po-loc ; [LF]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
+ 
+@@ -86,18 +102,23 @@ let all-possible-rfe-lf =
+ with rfe-lf from cross(all-possible-rfe-lf)
  let rf-lf = rfe-lf | rfi-lf
  
--(* rf for RL events, ie islocked returning true, similar to LF above *)
--
--(* islocked returning true inside a critical section
-- * must read from the opening lock
-- *)
--let rfi-rl = ([LKW] ; po-loc ; [RL]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
--
--(* islocked returning true outside critical sections can match any
-- * external lock.
-- *)
--let all-possible-rfe-rl =
--  let possible-rfe-lf r =
--    let pair-to-relation p = p ++ 0
--    in map pair-to-relation ((LKW * {r}) & loc & ext)
--  in map possible-rfe-lf (RL \ range(rfi-rl))
--
--with rfe-rl from cross(all-possible-rfe-rl)
--let rf-rl = rfe-rl | rfi-rl
--
- (* Read from unlock, ie islocked returning false, slightly different *)
+-(* Read from unlock, ie islocked returning false, slightly different *)
++(*
++ * RU, i.e., spin_is_locked() returning False, is slightly different.
++ * We rely on the memory model to rule out cases where spin_is_locked()
++ * within one of the lock's critical sections returns False.
++ *)
  
- (* islocked returning false can read from the last po-previous unlock *)
-@@ -118,7 +102,7 @@ with rfe-ru from cross(all-possible-rfe-ru)
+-(* islocked returning false can read from the last po-previous unlock *)
++(* rfi for RU events: an RU may read from the last po-previous UL *)
+ let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
+ 
+-(* any islocked returning false can read from any external unlock *)
++(* rfe for RU events: an RU may read from an external UL or the initial write *)
+ let all-possible-rfe-ru =
+    let possible-rfe-ru r =
+      let pair-to-relation p = p ++ 0
+      in map pair-to-relation (((UL|IW) * {r}) & loc & ext)
+   in map possible-rfe-ru RU
+ 
++(* Generate all rf relations for RU events *)
+ with rfe-ru from cross(all-possible-rfe-ru)
  let rf-ru = rfe-ru | rfi-ru
  
- (* Final rf relation *)
--let rf = rf | rf-lf | rf-rl | rf-ru
-+let rf = rf | rf-lf | rf-ru
- 
- (* Generate all co relations, including LKW events but not UL *)
- let co0 = co0 | ([IW] ; loc ; [LKW]) |
