@@ -1,133 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753349AbeEOM4L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:56:11 -0400
-Received: from aer-iport-3.cisco.com ([173.38.203.53]:26446 "EHLO
-        aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753117AbeEOM4J (ORCPT
+        id S1752978AbeEOM6l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:58:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48602 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752433AbeEOM6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:56:09 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520899200";
-   d="scan'208";a="3794164"
-Subject: Re: [PATCH 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
-To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
- <1526388421-18808-3-git-send-email-narmstrong@baylibre.com>
-From: Hans Verkuil <hansverk@cisco.com>
-Message-ID: <b27858bd-6a87-220a-cbec-586350377175@cisco.com>
-Date: Tue, 15 May 2018 14:56:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 15 May 2018 08:58:39 -0400
+Date: Tue, 15 May 2018 14:58:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
+ non-spinnable in percpu_rwsem_release()
+Message-ID: <20180515125830.GC12217@hirez.programming.kicks-ass.net>
+References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+ <1526326267-22501-3-git-send-email-longman@redhat.com>
+ <20180515085111.GW12217@hirez.programming.kicks-ass.net>
+ <20180515110632.GA14527@redhat.com>
+ <20180515115112.GZ12217@hirez.programming.kicks-ass.net>
+ <20180515124532.GA19429@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1526388421-18808-3-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-User: hansverk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515124532.GA19429@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/18 14:46, Neil Armstrong wrote:
-> This patchs adds the cec_notifier feature to the intel_hdmi part
-> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-> between each HDMI ports.
-> The changes will allow the i915 HDMI code to notify EDID and HPD changes
-> to an eventual CEC adapter.
-
-You haven't figured yet out where to place the cec_notifier_put() call?
-Or did you forget?
-
-Regards,
-
-	Hans
-
+On Tue, May 15, 2018 at 02:45:32PM +0200, Oleg Nesterov wrote:
+> On 05/15, Peter Zijlstra wrote:
+> >
+> > > > Afaict the whole .owner=NULL thing in release already stops the spinners
+> > >
+> > > Not really, the new writer will spin in this case, afaics.
+> > >
+> > > But this is another problem and probably we do not care. The new writer is
+> > > almost impossible in this particular case, another freeze_super() should
+> > > notice frozen != SB_UNFROZEN and return EBUSY.
+> >
+> > rwsem_spin_on_owner() checks rwsem_owner_is_writer(), which does owner
+> > && owner != RWSEM_READER_OWNED, which will fail for !owner.
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/gpu/drm/i915/Kconfig      |  1 +
->  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
->  drivers/gpu/drm/i915/intel_hdmi.c | 10 ++++++++++
->  3 files changed, 13 insertions(+)
+> Yep. So rwsem_spin_on_owner() goes to "out:" and returns
+> !rwsem_owner_is_reader() == T.
 > 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index dfd9588..2d65d56 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -23,6 +23,7 @@ config DRM_I915
->  	select SYNC_FILE
->  	select IOSF_MBI
->  	select CRC32
-> +	select CEC_CORE if CEC_NOTIFIER
->  	help
->  	  Choose this option if you have a system that has "Intel Graphics
->  	  Media Accelerator" or "HD Graphics" integrated graphics,
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index d436858..b50e51b 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -39,6 +39,7 @@
->  #include <drm/drm_dp_mst_helper.h>
->  #include <drm/drm_rect.h>
->  #include <drm/drm_atomic.h>
-> +#include <media/cec-notifier.h>
->  
->  /**
->   * __wait_for - magic wait macro
-> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
->  	bool has_audio;
->  	bool rgb_quant_range_selectable;
->  	struct intel_connector *attached_connector;
-> +	struct cec_notifier *notifier;
->  };
->  
->  struct intel_dp_mst_encoder;
-> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-> index 1baef4a..9b94d72 100644
-> --- a/drivers/gpu/drm/i915/intel_hdmi.c
-> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
-> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
->  		connected = true;
->  	}
->  
-> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
-> +
->  	return connected;
->  }
->  
-> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  {
->  	enum drm_connector_status status;
->  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
->  
->  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
->  		      connector->base.id, connector->name);
-> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  
->  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
->  
-> +	if (status != connector_status_connected)
-> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
-> +
->  	return status;
->  }
->  
-> @@ -2358,6 +2364,10 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
->  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
->  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
->  	}
-> +
-> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev, connector->name);
-> +	if (!intel_hdmi->notifier)
-> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
->  }
->  
->  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+> IOW, afaics owner == NULL means "spin unconditionally", I guess this is for
+> the case when the new writer is going to do rwsem_set_owner() or up_write()
+> has already called rwsem_clear_owner() but didn't do up_write() yet.
 > 
+> Probably makes sense, but the code is not very clean,
+
+Arrgh, you're right... I hate this rwsem code.
+
+Some day I'll finish the atomic_long_t version, which similar to mutex,
+merges the owner and 'count' fields.
