@@ -1,72 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeEOELb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 00:11:31 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40552 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750982AbeEOEL2 (ORCPT
+        id S1752094AbeEOETV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 00:19:21 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:37805 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750759AbeEOETU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 00:11:28 -0400
-X-Google-Smtp-Source: AB8JxZq3R183+wbjmwfEdy+HwVkFNiQhaiwi7YLPhsOeILE2sZV5ptObqc03UsphEWOC8OwCwrb8qQ==
-Date: Tue, 15 May 2018 09:41:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v6 14/14] dt: qcom: Add qcom-cpufreq-kryo driver
- configuration
-Message-ID: <20180515041124.7e7qkzqd2jkokqhz@vireshk-i7>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
- <1526303520-5843-15-git-send-email-ilialin@codeaurora.org>
+        Tue, 15 May 2018 00:19:20 -0400
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.220.135
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [PATCH] rcu: Report a quiescent state of TASKS_RCU on a tick from
+ user
+To: paulmck@linux.vnet.ibm.com
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, joel@joelfernandes.org
+References: <1526344426-31836-1-git-send-email-byungchul.park@lge.com>
+ <20180515041111.GC26088@linux.vnet.ibm.com>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <28cb032c-1c44-41b2-4703-e6f942d073de@lge.com>
+Date: Tue, 15 May 2018 13:19:17 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526303520-5843-15-git-send-email-ilialin@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180515041111.GC26088@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-05-18, 16:12, Ilia Lin wrote:
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
->  arch/arm64/boot/dts/qcom/msm8996.dtsi       | 310 +++++++++++++++++++++++++++-
->  2 files changed, 309 insertions(+), 3 deletions(-)
+
+
+On 2018-05-15 13:11, Paul E. McKenney wrote:
+> On Tue, May 15, 2018 at 09:33:46AM +0900, Byungchul Park wrote:
+>> Hello Paul,
+>>
+>> You removed the reporing while simplifying the commit 508880df6 :)
+>> Fold this patch onto the commit or add, whatever you want.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> index 230e9c8..da23bda 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> @@ -17,5 +17,5 @@
->  
->  / {
->  	model = "Qualcomm Technologies, Inc. DB820c";
-> -	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
-> +	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index d7adef9..fbf92f6 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -174,218 +174,519 @@
->  	};
->  
->  	cluster0_opp: opp_table0 {
-> -		compatible = "operating-points-v2";
-> +		compatible = "operating-points-v2-kryo-cpu";
+> First, thank you for checking!
+> 
+> But second, the removal was intentional.  Tiny RCU only exists in
+> PREEMPT=n kernels, and in such kernels there can be no RCU-tasks.
+> This is the reason for this line in the new commit log:
 
-I think you need to mention both the above compatible strings here
-with the kyro one mentioned first.
+I see. Thank you.
 
+> [ paulmck: Simplify rcutiny portion given no RCU-tasks for !PREEMPT. ]
+> 
+> 							Thanx, Paul
+> 
+>> Thanks,
+>> Byungchul
+>>
+>> ----->8-----
+>> >From 18a2d8da3baf79d0edd5ccf94abe6f989da5b1c1 Mon Sep 17 00:00:00 2001
+>> From: Byungchul Park <byungchul.park@lge.com>
+>> Date: Tue, 15 May 2018 09:21:43 +0900
+>> Subject: [PATCH] rcu: Report a quiescent state of TASKS_RCU on a tick from
+>>   user
+>>
+>> The reporting was removed while simplifying the commit 508880df6 (rcu:
+>> Improve rcu_note_voluntary_context_switch() reporting). Add it back.
+>>
+>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>> ---
+>>   kernel/rcu/tiny.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+>> index befc932..3345596 100644
+>> --- a/kernel/rcu/tiny.c
+>> +++ b/kernel/rcu/tiny.c
+>> @@ -120,8 +120,10 @@ void rcu_bh_qs(void)
+>>    */
+>>   void rcu_check_callbacks(int user)
+>>   {
+>> -	if (user)
+>> +	if (user) {
+>>   		rcu_sched_qs();
+>> +		rcu_tasks_qs();
+>> +	}
+>>   	if (user || !in_softirq())
+>>   		rcu_bh_qs();
+>>   }
+>> -- 
+>> 1.9.1
+>>
+> 
+> 
 
 -- 
-viresh
+Thanks,
+Byungchul
