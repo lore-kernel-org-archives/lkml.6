@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752940AbeEOMrQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:47:16 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45123 "EHLO
+        id S1753484AbeEOMrX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:47:23 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40429 "EHLO
         mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752170AbeEOMrO (ORCPT
+        with ESMTP id S1752952AbeEOMrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:47:14 -0400
-X-Google-Smtp-Source: AB8JxZp9CozBHCvgzYcASTcwKpzypmQntaXNf3VWT4tBD1sy/AhTKKQoGx/ZveU4A4hgCtLlWwH2Cg==
+        Tue, 15 May 2018 08:47:18 -0400
+X-Google-Smtp-Source: AB8JxZpDdKFSvPAo8bsIbzmZJ1eEvsnF8Ir4YUJIh77nTS4/gNpDO5M+iI/IFQkeN5fQpAk3jsZqrA==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -16,69 +16,148 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         marcheu@chromium.org, fparent@baylibre.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] Add ChromeOS EC CEC Support
-Date: Tue, 15 May 2018 14:46:56 +0200
-Message-Id: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH 1/5] media: cec-notifier: Get notifier by device and connector name
+Date: Tue, 15 May 2018 14:46:57 +0200
+Message-Id: <1526388421-18808-2-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
+References: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+In non device-tree world, we can need to get the notifier by the driver
+name directly and eventually defer probe if not yet created.
 
-The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-throught it's Embedded Controller, to enable the Linux CEC Core to communicate
-with it and get the CEC Physical Address from the correct HDMI Connector, the
-following must be added/changed:
-- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-- Add the CEC related commands and events definitions into the EC MFD driver
-- Add a way to get a CEC notifier with it's (optional) connector name
-- Add the CEC notifier to the i915 HDMI driver
-- Add the proper ChromeOS EC CEC Driver
+This patch adds a variant of the get function by using the device name
+instead and will not create a notifier if not yet created.
 
-The CEC notifier with the connector name is the tricky point, since even on
-Device-Tree platforms, there is no way to distinguish between multiple HDMI
-connectors from the same DRM driver. The solution I implemented is pretty
-simple and only adds an optional connector name to eventually distinguish
-an HDMI connector notifier from another if they share the same device.
+But the i915 driver exposes at least 2 HDMI connectors, this patch also
+adds the possibility to add a connector name tied to the notifier device
+to form a tuple and associate different CEC controllers for each HDMI
+connectors.
 
-Feel free to comment this patchset !
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/media/cec/cec-notifier.c | 12 +++++++++---
+ include/media/cec-notifier.h     | 30 ++++++++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 5 deletions(-)
 
-Changes since RFC:
- - Moved CEC sub-device registration after CEC commands and events definitions patch
- - Removed get_notifier_get_byname
- - Added CEC_CORE select into i915 Kconfig
- - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
- - Fixed CEC core return type on error
- - Moved to cros-ec-cec media platform directory
- - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
- - Fix Logical Address setup
- - Added comment about HW support
- - Removed memset of msg structures
-
-Neil Armstrong (5):
-  media: cec-notifier: Get notifier by device and connector name
-  drm/i915: hdmi: add CEC notifier to intel_hdmi
-  mfd: cros-ec: Introduce CEC commands and events definitions.
-  mfd: cros_ec_dev: Add CEC sub-device registration
-  media: platform: Add Chrome OS EC CEC driver
-
- drivers/gpu/drm/i915/Kconfig                     |   1 +
- drivers/gpu/drm/i915/intel_drv.h                 |   2 +
- drivers/gpu/drm/i915/intel_hdmi.c                |  10 +
- drivers/media/cec/cec-notifier.c                 |  12 +-
- drivers/media/platform/Kconfig                   |  11 +
- drivers/media/platform/Makefile                  |   2 +
- drivers/media/platform/cros-ec-cec/Makefile      |   1 +
- drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 336 +++++++++++++++++++++++
- drivers/mfd/cros_ec_dev.c                        |  16 ++
- drivers/platform/chrome/cros_ec_proto.c          |  42 ++-
- include/linux/mfd/cros_ec.h                      |   2 +-
- include/linux/mfd/cros_ec_commands.h             |  80 ++++++
- include/media/cec-notifier.h                     |  30 +-
- 13 files changed, 530 insertions(+), 15 deletions(-)
- create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
- create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-
+diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+index 16dffa0..7038abae1 100644
+--- a/drivers/media/cec/cec-notifier.c
++++ b/drivers/media/cec/cec-notifier.c
+@@ -21,6 +21,7 @@ struct cec_notifier {
+ 	struct list_head head;
+ 	struct kref kref;
+ 	struct device *dev;
++	const char *conn;
+ 	struct cec_adapter *cec_adap;
+ 	void (*callback)(struct cec_adapter *adap, u16 pa);
+ 
+@@ -30,13 +31,14 @@ struct cec_notifier {
+ static LIST_HEAD(cec_notifiers);
+ static DEFINE_MUTEX(cec_notifiers_lock);
+ 
+-struct cec_notifier *cec_notifier_get(struct device *dev)
++struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
+ {
+ 	struct cec_notifier *n;
+ 
+ 	mutex_lock(&cec_notifiers_lock);
+ 	list_for_each_entry(n, &cec_notifiers, head) {
+-		if (n->dev == dev) {
++		if (n->dev == dev &&
++		    (!conn || !strcmp(n->conn, conn))) {
+ 			kref_get(&n->kref);
+ 			mutex_unlock(&cec_notifiers_lock);
+ 			return n;
+@@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	if (!n)
+ 		goto unlock;
+ 	n->dev = dev;
++	if (conn)
++		n->conn = kstrdup(conn, GFP_KERNEL);
+ 	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+ 	mutex_init(&n->lock);
+ 	kref_init(&n->kref);
+@@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	mutex_unlock(&cec_notifiers_lock);
+ 	return n;
+ }
+-EXPORT_SYMBOL_GPL(cec_notifier_get);
++EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+ 
+ static void cec_notifier_release(struct kref *kref)
+ {
+@@ -62,6 +66,8 @@ static void cec_notifier_release(struct kref *kref)
+ 		container_of(kref, struct cec_notifier, kref);
+ 
+ 	list_del(&n->head);
++	if (n->conn)
++		kfree(n->conn);
+ 	kfree(n);
+ }
+ 
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+index cf0add7..73f92c7 100644
+--- a/include/media/cec-notifier.h
++++ b/include/media/cec-notifier.h
+@@ -20,6 +20,23 @@ struct cec_notifier;
+ #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
+ 
+ /**
++ * cec_notifier_get_conn - find or create a new cec_notifier for the given
++ * device and connector tuple.
++ * @dev: device that sends the events.
++ * @conn: the connector name from which the event occurs
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++					   const char *conn);
++
++/**
+  * cec_notifier_get - find or create a new cec_notifier for the given device.
+  * @dev: device that sends the events.
+  *
+@@ -31,7 +48,10 @@ struct cec_notifier;
+  *
+  * Return NULL if the memory could not be allocated.
+  */
+-struct cec_notifier *cec_notifier_get(struct device *dev);
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
+ 
+ /**
+  * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+@@ -85,12 +105,18 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+ 			       struct cec_notifier *notifier);
+ 
+ #else
+-static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++							 const char *conn)
+ {
+ 	/* A non-NULL pointer is expected on success */
+ 	return (struct cec_notifier *)0xdeadfeed;
+ }
+ 
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
++
+ static inline void cec_notifier_put(struct cec_notifier *n)
+ {
+ }
 -- 
 2.7.4
