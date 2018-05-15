@@ -1,162 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeEOVZi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:25:38 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43470 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeEOVZg (ORCPT
+        id S1752874AbeEOV0R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:26:17 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752030AbeEOV0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:25:36 -0400
-X-Google-Smtp-Source: AB8JxZobzJ5K4tIc541FT02H67KVQJQs2GzX0Phr3/4Uw2l/O7tbfzh3O/BADnPrmVqF1e+7e5DaWQ==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [RFC PATCH] PM / devfreq: Add policy notifier
-Date: Tue, 15 May 2018 14:24:47 -0700
-Message-Id: <20180515212447.180595-1-mka@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Tue, 15 May 2018 17:26:15 -0400
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Jan Beulich <JBeulich@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>, Kees Cook <keescook@chromium.org>,
+        <linux-sparse@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <virtualization@lists.linux-foundation.org>, <x86@kernel.org>
+Subject: [RFC 0/8] Improving compiler inlining decisions
+Date: Tue, 15 May 2018 07:11:16 -0700
+Message-ID: <20180515141124.84254-10-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
+References: <20180515141124.84254-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Policy notifiers are called before a frequency change and may adjust the
-frequency, similar to CPUFREQ_ADJUST. The purpose of policy notifiers is
-to support non-thermal throttling of devfreq devices.
+This patch-set deals with an interesting yet stupid problem: code that
+does not get inlined despite its simplicity.
 
-As of now notifiers may only select a lower frequency, but not increase it.
-The reason for this limitation is that devfreq currently doesn't have an
-actual policy for frequencies and OPPs > freq might be disabled by a
-devfreq cooling device (see drivers/thermal/devfreq_cooling.c).
+I find 5 classes of causes:
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Marked as RFC since I'm aware that this isn't quite a 'policy' notifier,
-but I also didn't want to make it too specific. Maybe devfreq devices should
-have a policy similar to cpufreq?
+1. Inline assembly blocks in which code and data are added to
+alternative sections. The compiler is oblivious to the content of the
+blocks and assumes their cost in space and time is proportional to the
+number of the perceived assembly "instruction", according to the number
+of newlines and semicolons. Alternatives, paravirt and other mechanisms
+are affected.
 
-Should devfreq core be in charge of disabling/enabling OPPs instead of
-the thermal cooling device? Typically we don't want to use higher OPPs
-than those whitelisted by thermal, so in practice the current situation
-shouldn't be much of an issue.
+2. Inline assembly with redundant new-lines and semicolons. Similarly to
+(1) this code is considered "heavier" than it actually is.
 
- drivers/devfreq/devfreq.c | 20 ++++++++++++++++----
- include/linux/devfreq.h   |  6 ++++++
- 2 files changed, 22 insertions(+), 4 deletions(-)
+3. Code with constant value optimizations. Quite a few parts of the
+kernel check whether a variable is constant (using
+__builtin_constant_p()) and perform heavy computations in that case.
+These computations are eventually optimized out so they do not land in
+the binary. However, the cost of these computations is also associated
+with the calling function, which might prevent inlining of the calling
+function. ilog2() is an example for such case.
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fe2af6aa88fc..a7294c056f65 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -273,6 +273,9 @@ int update_devfreq(struct devfreq *devfreq)
- 	if (err)
- 		return err;
- 
-+	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
-+			DEVFREQ_ADJUST, &freq);
-+
- 	/*
- 	 * Adjust the frequency with user freq, QoS and available freq.
- 	 *
-@@ -640,6 +643,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->last_stat_updated = jiffies;
- 
- 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
-+	srcu_init_notifier_head(&devfreq->policy_notifier_list);
- 
- 	mutex_unlock(&devfreq->lock);
- 
-@@ -1414,7 +1418,7 @@ EXPORT_SYMBOL(devm_devfreq_unregister_opp_notifier);
-  * devfreq_register_notifier() - Register a driver with devfreq
-  * @devfreq:	The devfreq object.
-  * @nb:		The notifier block to register.
-- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-+ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
-  */
- int devfreq_register_notifier(struct devfreq *devfreq,
- 				struct notifier_block *nb,
-@@ -1430,6 +1434,10 @@ int devfreq_register_notifier(struct devfreq *devfreq,
- 		ret = srcu_notifier_chain_register(
- 				&devfreq->transition_notifier_list, nb);
- 		break;
-+	case DEVFREQ_POLICY_NOTIFIER:
-+		ret = srcu_notifier_chain_register(
-+				&devfreq->policy_notifier_list, nb);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
-@@ -1442,7 +1450,7 @@ EXPORT_SYMBOL(devfreq_register_notifier);
-  * devfreq_unregister_notifier() - Unregister a driver with devfreq
-  * @devfreq:	The devfreq object.
-  * @nb:		The notifier block to be unregistered.
-- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-+ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
-  */
- int devfreq_unregister_notifier(struct devfreq *devfreq,
- 				struct notifier_block *nb,
-@@ -1458,6 +1466,10 @@ int devfreq_unregister_notifier(struct devfreq *devfreq,
- 		ret = srcu_notifier_chain_unregister(
- 				&devfreq->transition_notifier_list, nb);
- 		break;
-+	case DEVFREQ_POLICY_NOTIFIER:
-+		ret = srcu_notifier_chain_unregister(
-+				&devfreq->policy_notifier_list, nb);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
-@@ -1485,7 +1497,7 @@ static void devm_devfreq_notifier_release(struct device *dev, void *res)
-  * @dev:	The devfreq user device. (parent of devfreq)
-  * @devfreq:	The devfreq object.
-  * @nb:		The notifier block to be unregistered.
-- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-+ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
-  */
- int devm_devfreq_register_notifier(struct device *dev,
- 				struct devfreq *devfreq,
-@@ -1521,7 +1533,7 @@ EXPORT_SYMBOL(devm_devfreq_register_notifier);
-  * @dev:	The devfreq user device. (parent of devfreq)
-  * @devfreq:	The devfreq object.
-  * @nb:		The notifier block to be unregistered.
-- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-+ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
-  */
- void devm_devfreq_unregister_notifier(struct device *dev,
- 				struct devfreq *devfreq,
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 3aae5b3af87c..8edc538d78f7 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -33,6 +33,10 @@
- #define	DEVFREQ_PRECHANGE		(0)
- #define DEVFREQ_POSTCHANGE		(1)
- 
-+#define DEVFREQ_POLICY_NOTIFIER		1
-+
-+#define	DEVFREQ_ADJUST			0
-+
- struct devfreq;
- struct devfreq_governor;
- 
-@@ -136,6 +140,7 @@ struct devfreq_dev_profile {
-  * @time_in_state:	Statistics of devfreq states
-  * @last_stat_updated:	The last time stat updated
-  * @transition_notifier_list: list head of DEVFREQ_TRANSITION_NOTIFIER notifier
-+ * @policy_notifier_list: list head of DEVFREQ_POLICY_NOTIFIER notifier
-  *
-  * This structure stores the devfreq information for a give device.
-  *
-@@ -174,6 +179,7 @@ struct devfreq {
- 	unsigned long last_stat_updated;
- 
- 	struct srcu_notifier_head transition_notifier_list;
-+	struct srcu_notifier_head policy_notifier_list;
- };
- 
- struct devfreq_freqs {
+4. Code that is marked with the "cold" attribute, including all the
+__init functions. Some may consider it the desired behavior.
+
+5. Code that is marked with a different optimization levels. This
+affects for example vmx_vcpu_run(), inducing overheads of up to 10% on
+exit.
+
+
+This patch-set deals with some instances of first 3 classes. 
+
+For (1) we insert an assembly macro, and call it from the inline
+assembly block.  As a result, the compiler sees a single "instruction"
+and assigns the more appropriate cost to the code.
+
+For (2) the solution is trivial: just remove the newlines.
+
+(3) is somewhat tricky. The proposed solution is to use
+__builtin_choose_expr() to check whether a variable is actually constant
+instead of using an if-condition or the C ternary operator.
+__builtin_choose_expr() is evaluated earlier in the compilation, so it
+allows the compiler to associate the right cost for the variable case
+before the inlining decisions take place.  So far so good.
+
+Still, there is a drawback. Since __builtin_choose_expr() is evaluated
+earlier, it can fail to recognize constants, which an if-condition would
+recognize correctly.  As a result, this patch-set only applies it to the
+simplest cases.
+
+Overall this patch-set slightly increases the kernel size (my build was
+done using localmodconfig + localyesconfig for the record):
+
+   text    data     bss     dec     hex filename
+18126699 10066728 2936832 31130259 1db0293 ./vmlinux before
+18149210 10064048 2936832 31150090 1db500a ./vmlinux after (+0.06%)
+
+The patch-set eliminates many of the static text symbols:
+Before: 40033
+After:  39632   (-10%)
+
+There is a measurable effect on performance in some cases. A loop of
+MADV_DONTNEED/page-fault shows a 2% performance improvement with this
+patch-set.
+
+Some inline comments or self-explaining C macros might still be needed.
+
+[1] https://lkml.org/lkml/2018/5/5/159
+
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: linux-sparse@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: virtualization@lists.linux-foundation.org
+Cc: x86@kernel.org
+
+Nadav Amit (8):
+  x86: objtool: use asm macro for better compiler decisions
+  x86: bug: prevent gcc distortions
+  x86: alternative: macrofy locks for better inlining
+  x86: prevent inline distortion by paravirt ops
+  x86: refcount: prevent gcc distortions
+  x86: removing unneeded new-lines
+  ilog2: preventing compiler distortion due to big condition
+  bitops: prevent compiler inline decision distortion
+
+ arch/x86/include/asm/alternative.h    | 28 ++++++++++----
+ arch/x86/include/asm/asm.h            |  4 +-
+ arch/x86/include/asm/bitops.h         |  8 ++--
+ arch/x86/include/asm/bug.h            | 48 ++++++++++++++---------
+ arch/x86/include/asm/cmpxchg.h        | 10 ++---
+ arch/x86/include/asm/paravirt_types.h | 53 +++++++++++++++-----------
+ arch/x86/include/asm/refcount.h       | 55 ++++++++++++++++-----------
+ arch/x86/include/asm/special_insns.h  | 12 +++---
+ include/linux/compiler.h              | 29 ++++++++++----
+ include/linux/log2.h                  | 11 +++---
+ 10 files changed, 156 insertions(+), 102 deletions(-)
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.17.0
