@@ -1,184 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754276AbeEOQYB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:24:01 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:40618 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754250AbeEOQX5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:23:57 -0400
-X-Google-Smtp-Source: AB8JxZoyJH3Cg7ixvgA6JvJPR1qZkwrtgpePVGfE9hvCuhSWKcpq3sjFVgpp9o3J4smcv3ClUxtJsw==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 8/8] gpio: pcie-idio-24: Utilize for_each_set_clump macro
-Date: Tue, 15 May 2018 12:23:51 -0400
-Message-Id: <7266e618f199840e54624edcefb7f2e6b320b0f7.1526400945.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1526400945.git.vilhelm.gray@gmail.com>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com>
+        id S1754299AbeEOQY1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:24:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36488 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752783AbeEOQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:24:24 -0400
+Date: Tue, 15 May 2018 16:24:23 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Fabien DESSENNE <fabien.dessenne@st.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jean Christophe TROTIN <jean-christophe.trotin@st.com>,
+        Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: Are media drivers abusing of GFP_DMA? - was: Re: [LSF/MM TOPIC
+ NOTES] x86 ZONE_DMA love
+Message-ID: <20180515162422.GG27853@wotan.suse.de>
+References: <20180426215406.GB27853@wotan.suse.de>
+ <20180505130815.53a26955@vento.lan>
+ <3561479.qPIcrWnXEC@avalon>
+ <20180507121916.4eb7f5b2@vento.lan>
+ <547252fc-dc74-93c6-fc77-be1bfb558787@st.com>
+ <20180514073503.3da05fc6@vento.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514073503.3da05fc6@vento.lan>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump macro to simplify code and improve clarity.
+On Mon, May 14, 2018 at 07:35:03AM -0300, Mauro Carvalho Chehab wrote:
+> Hi Fabien,
+> 
+> Em Mon, 14 May 2018 08:00:37 +0000
+> Fabien DESSENNE <fabien.dessenne@st.com> escreveu:
+> 
+> > On 07/05/18 17:19, Mauro Carvalho Chehab wrote:
+> > > Em Mon, 07 May 2018 16:26:08 +0300
+> > > Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+> > >  
+> > >> Hi Mauro,
+> > >>
+> > >> On Saturday, 5 May 2018 19:08:15 EEST Mauro Carvalho Chehab wrote:  
+> > >>> There was a recent discussion about the use/abuse of GFP_DMA flag when
+> > >>> allocating memories at LSF/MM 2018 (see Luis notes enclosed).
+> > >>>
+> > >>> The idea seems to be to remove it, using CMA instead. Before doing that,
+> > >>> better to check if what we have on media is are valid use cases for it, or
+> > >>> if it is there just due to some misunderstanding (or because it was
+> > >>> copied from some other code).
+> > >>>
+> > >>> Hans de Goede sent us today a patch stopping abuse at gspca, and I'm
+> > >>> also posting today two other patches meant to stop abuse of it on USB
+> > >>> drivers. Still, there are 4 platform drivers using it:
+> > >>>
+> > >>> 	$ git grep -l -E "GFP_DMA\\b" drivers/media/
+> > >>> 	drivers/media/platform/omap3isp/ispstat.c
+> > >>> 	drivers/media/platform/sti/bdisp/bdisp-hw.c
+> > >>> 	drivers/media/platform/sti/hva/hva-mem.c  
+> > 
+> > Hi Mauro,
+> > 
+> > The two STI drivers (bdisp-hw.c and hva-mem.c) are only expected to run 
+> > on ARM platforms, not on x86.
+> > Since this thread deals with x86 & DMA trouble, I am not sure that we 
+> > actually have a problem for the sti drivers.
+> > 
+> > There are some other sti drivers that make use of this GFP_DMA flag 
+> > (drivers/gpu/drm/sti/sti_*.c) and it does not seem to be a problem.
+> > 
+> > Nevertheless I can see that the media sti drivers depend on COMPILE_TEST 
+> > (which is not the case for the DRM ones).
+> > Would it be an acceptable solution to remove the COMPILE_TEST dependency?
+> 
+> This has nothing to do with either x86 
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pcie-idio-24.c | 102 +++++++++++--------------------
- 1 file changed, 36 insertions(+), 66 deletions(-)
+Actually it does.
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index f953541e7890..b4d300338a05 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -199,41 +199,21 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
--
-+	for_each_set_clump(i, word, offset, mask, num_ports, 8) {
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
- 		if (i < 6)
- 			port_state = ioread8(ports[i]);
-@@ -243,7 +223,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
- 		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= port_state << word_offset;
-+		bits[word] |= port_state << offset;
- 	}
- 
- 	return 0;
-@@ -295,58 +275,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	unsigned long bits_offset;
--	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned int iomask;
-+	unsigned int bitmask;
-+	unsigned long flags;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
-+	unsigned int out_state;
-+
-+	for_each_set_clump(i, word, offset, mask, num_ports, 8) {
-+		iomask = mask[word] >> offset;
-+		bitmask = iomask & (bits[word] >> offset);
-+
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6) {
-+			out_state = ioread8(ports[i]) & ~iomask;
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 			continue;
- 		}
- 
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~iomask;
-+		out_state |= bitmask;
- 
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6)
-+			iowrite8(out_state, ports[i]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
- 		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 	}
--
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
--
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
--
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
--
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
--- 
-2.17.0
+> or COMPILE_TEST. The thing is
+> that there's a plan for removing GFP_DMA from the Kernel[1], 
+
+That would not be possible given architectures use GFP_DMA for other
+things and there are plenty of legacy x86 drivers which still need to be
+around. So the focus from mm folks shifted to letting x86 folks map
+GFP_DMA onto the CMA pool. Long term, this is nothing that driver developers
+need to care for, but just knowing internally behind the scenes there is some
+cleaning up being done in terms of architecture.
+
+> as it was
+> originally meant to be used only by old PCs, where the DMA controllers
+> used only  on the bottom 16 MB memory address (24 bits).
+
+This is actually the part that is x86 specific.
+
+Each other architecture may use it for some other definition and it seems
+some architectures use GFP_DMA all over the place. So the topic really should
+be about x86.
+
+> IMHO, it is 
+> very unlikely that any ARM SoC have such limitation.
+
+Right, how the flag is used on other architectures varies, so in fact the
+focus for cleaning up for now should be an x86 effort. Whether or not
+other architectures do something silly with GFP_DMA is beyond the scope
+of what was discussed.
+
+  Luis
