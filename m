@@ -1,151 +1,158 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2900152-1526401595-2-15688134805408819869
+X-Cyrus-Session-Id: sloti22d1t05-3247740-1526419840-2-3621738983197900901
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: from='utf-8', plain='us-ascii'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526401595; b=SWN2hqPatXmZigvNKsIARPZyiK/VdpyppC6vpZ5iDwFrmpdvBi
-    /gix93VFLkxfIYQ8+2KqEU+JDSFGbhqWmgYUhlckQuZtrKPtdvL78lLXFr7xPFYs
-    PuMrnI5PZf/zTJS21XSGhXvBlW8GT3yIkDRCkl1ikVdeSTgGTFiCfZzsjNwADADL
-    4whv00FadXo5RgO/MZH05SUk3HnJO8v6V7HuhWdPHY5LPvNImRpqkawRTZwkhr7F
-    kuzjK+asBTiMz76AJdE34sUhGEex3E4RWabHoaH6UcIJOuxrjH85OlNwQpV2yy0v
-    +xbf8s9nQQ473PAHrRMmiGZiIa/1pdyfeMeg==
+    1526419839; b=Y/92vrrzwaxy/Mqq/ihZaQKQpGfcH3ngIfZAUSQOVmwJ48zujc
+    GFyKCmZSBIJNza9sqnyHAH3eYY0BezOsCmu1ICHECeHU1CqIyeCmDmIWOpwrHCzI
+    gHOYUKYomAAAVG7XN0mRnITVNPSln+W+d2/uTfi2Yhtd2hdgzf/EBSKSuk9R0El6
+    NcfLJFFWAAGetMJFWSP4ypOtxhIj7oLIVcgK/1mfn4rCD9P+MrTJjNw63rBN3sVi
+    6A7mZne0jRMepKmBEV6DiRd8IqtIdm4Jgcwpbn0YcI1FxUCrBgdJ+mDG1FX/YdO0
+    2+UIKxvnWawV0Is1xQG7ucSrcGMMlFwqh/yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526401595; bh=EFHyL3T9Pb1zMAoaRlqUvDyyPVCHvQ
-    4NXTJ414NM/WA=; b=bl+sV8Mjd45qE3ZohHVCm5tObyBDjOVRa4pXqD9deX9thL
-    mmHZarNiUFp1Ue8PpbGLdxEFmtGr4LEemO/cLjtIgEEl0TUZ34EFKhJq5o3eblJM
-    6Fuki1JC0HcdW0T0qsUL1BGMOIT5YPkkrxGViGtjKFxCWCEj/YIGmuktr+uTk1/Z
-    UKZSXx+W6lJGpghfdVELf4cW2+YW+Qd3GUAfKQi1TmMlw2ODcthNHYVHl8PaRwKU
-    Ow8h9RSQhMTEoS9QKa48zNsorC/DgakT82sjPmRi5PDkOOsGD3kqq0urcephbLRx
-    MVjpCoLrbDQXHLMtYKhIuF3w6TEbuSvqlGu87KQA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=KbLRzTvZ x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526419839;
+    bh=cgeg+pNHMQmSjdmTzgcRir7ZsKLZd553ebJzpSiZxj8=; b=h74ysklUNOaW
+    +Rqg58qNgbn44cYHBpsvDWsh0VBUQL91wN7TZcER0PCAgFT7KDG7mkXNm+MhJidj
+    MW60k9vGW9X0y7qLVii7/s4JS5URlM2dVn8JNYPqVyGY9Qt/I7flZ+J0wIm/hDAR
+    rJaPLJ4ZOqe2Hhfn+WHh4XXpXgEwpMzf/qKqazleefxkQ4Wfi9Mm4xRy8c6aM7JE
+    eZRKVumzjSP1WBizjQ5GD7n4H22uZAGwmeo4cW/9NEeAtSwn8QH8mbXZHPKEkwom
+    bK5NO/m1W7cfiauyL5K/E81tJSpIDTCfqvYTKQSO9cHOBLm9SqgS7yv8nDAjXbrK
+    izA8kw67IQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=QmAMqzCc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx3.messagingengine.com;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=KbLRzTvZ x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=QmAMqzCc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJdPdCsWh+bMKiwadUlpswaeY03fk8GgrCw7f5Rz5SR2gjXSmumhgm9qhBEGzcg/I8mW5vNxkCvjLoPtBBi9NI9jrpp9bqPihxTfxBBJP7fbNAuY4bJW
-    7EvnqHmZ4qKdAKWoa7oW//AJHlK0ach8NZrj4fsZcOeBKBZ6nl2mUONACoNEc8RaMImiXY/sDCQ2vtVVO7yMaJy1chF6ckNSIw8kc91xLgAz86iaTWamHbE4
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=_QUm7bBfPsgA:10 a=VUJBJC2UJ8kA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
-    a=drOt6m5kAAAA:8 a=OLL_FvSJAAAA:8 a=LSdmUDBBZZyydVr8SrAA:9 a=CjuIK1q_8ugA:10
-    a=WGf8gWF5KiwA:10 a=3iWKb_mmEPwA:10 a=DcSpbTIhAlouE1Uv7lRv:22
-    a=cQPPKAXgyycSBL8etih5:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=oIrB72frpwYPwTMnlWqB:22
+X-CM-Envelope: MS4wfNBucn1bMZisqKiOqMc0vj7fNWOrZb71+qNvLTvahViq/sP54C1vS/prR6aXizR64qPkd1TzC7L30TKie0AbGjMFO+oHGSgGUjPXhr0oXDD55e+8hHli
+    o7+VYqiJUk3CiC/ILO7nVB8yxcvZS5CD5j40fEYmK7xXtGAFJEYnFRIbLhkRiFkRRqq7TRaus6FB6aIELzbgr2CyR88nGRM6ff4NGsLwX0hmYLxrIjJJEYms
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=lVgIdfSm5OgsJObx6C8A:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932098AbeEOQ0a (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 15 May 2018 12:26:30 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45915 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753581AbeEOQ01 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 May 2018 12:26:27 -0400
-X-Google-Smtp-Source: AB8JxZqdYkpCErsKbtXIo2jdFOf4TMoUZcDu0mGGg/c0g/Cg2o7mzz3CWYKnGAo2v8boYpfQfpUpVg==
-Date: Tue, 15 May 2018 13:26:21 -0300
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?=
-        <ernesto.mnd.fernandez@gmail.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        akpm@linux-foundation.org, dhowells@redhat.com,
-        ernesto.mnd.fernandez@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, slava@dubeyko.com
-Subject: Re: [PATCH] hfsplus: stop workqueue when fill_super() failed
-Message-ID: <20180515162619.wx7p5vk37nmansww@eaf>
-References: <089e08e567a5b24ae90568bb75d6@google.com>
- <964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp>
+        id S1752289AbeEOVah (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 15 May 2018 17:30:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45866 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752024AbeEOVah (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 May 2018 17:30:37 -0400
+Subject: Re: [PATCH v3 2/2] locking/percpu-rwsem: Annotate rwsem ownership
+ transfer by setting RWSEM_OWNER_UNKNOWN
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+References: <1526405884-4860-1-git-send-email-longman@redhat.com>
+ <1526405884-4860-3-git-send-email-longman@redhat.com>
+ <20180515175805.GN12217@hirez.programming.kicks-ass.net>
+ <20180515180219.GA6612@bombadil.infradead.org>
+ <4a3fbd3c-3cfa-f9c2-c73c-fa6d9c55c2d5@redhat.com>
+ <20180515212130.GA12204@bombadil.infradead.org>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <65b6a078-a063-dc9b-d2de-ec7d37831cba@redhat.com>
+Date: Tue, 15 May 2018 17:30:32 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp>
+In-Reply-To: <20180515212130.GA12204@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 07:11:06PM +0900, Tetsuo Handa wrote:
-> From ffd64dcf946502e7bb1d23c021ee9a4fc92f9312 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Tue, 15 May 2018 12:23:03 +0900
-> Subject: [PATCH] hfsplus: stop workqueue when fill_super() failed
-> 
-> syzbot is reporting ODEBUG messages at hfsplus_fill_super() [1].
-> This is because hfsplus_fill_super() forgot to call
-> cancel_delayed_work_sync().
-> 
-> As far as I can see, it is hfsplus_mark_mdb_dirty() from
-> hfsplus_new_inode() in hfsplus_fill_super() that calls
-> queue_delayed_work(). Therefore, I assume that hfsplus_new_inode() does not
-> fail if queue_delayed_work() was called, and the out_put_hidden_dir label
-> is the appropriate location to call cancel_delayed_work_sync().
-> 
-> [1] https://syzkaller.appspot.com/bug?id=a66f45e96fdbeb76b796bf46eb25ea878c42a6c9
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/hfsplus/super.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-> index 9e690ae..80abba5 100644
-> --- a/fs/hfsplus/super.c
-> +++ b/fs/hfsplus/super.c
-> @@ -590,6 +590,7 @@ static int hfsplus_fill_super(struct super_block *sb, void *data, int silent)
->  	return 0;
->  
->  out_put_hidden_dir:
-> +	cancel_delayed_work_sync(&sbi->sync_work);
->  	iput(sbi->hidden_dir);
->  out_put_root:
->  	dput(sb->s_root);
-> -- 
-> 1.8.3.1
-> 
-> 
+On 05/15/2018 05:21 PM, Matthew Wilcox wrote:
+> On Tue, May 15, 2018 at 02:45:12PM -0400, Waiman Long wrote:
+>> On 05/15/2018 02:02 PM, Matthew Wilcox wrote:
+>>> On Tue, May 15, 2018 at 07:58:05PM +0200, Peter Zijlstra wrote:
+>>>> On Tue, May 15, 2018 at 01:38:04PM -0400, Waiman Long wrote:
+>>>>> +/*
+>>>>> + * Owner value to indicate the rwsem's owner is not currently known.
+>>>>> + */
+>>>>> +#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1)
+>>>> It might be nice to comment that this works and relies on having that
+>>>> ANON_OWNER bit set.
+>>> I'd rather change the definition to be ((struct task_struct *)2)
+>>> otherwise this is both reader-owned and anonymously-owned which doesn't
+>>> make much sense.
+>> Thinking about it a bit more. I can actually just use one special bit
+>> (bit 0) to designate an unknown owner. So for a reader-owned lock, it is
+>> just owner == 1 as the owners are unknown for a reader owned lock. For a
+>> lock owned by an unknown writer, it is (owner & 1) && (owner != 1). That
+>> will justify the use of -1L and save bit 1 for future extension.
+> To quote from your patch:
+>
+> - * In essence, the owner field now has the following 3 states:
+> + * In essence, the owner field now has the following 4 states:
+>   *  1) 0
+>   *     - lock is free or the owner hasn't set the field yet
+>   *  2) RWSEM_READER_OWNED
+>   *     - lock is currently or previously owned by readers (lock is free
+>   *	  or not set by owner yet)
+> - *  3) Other non-zero value
+> - *     - a writer owns the lock
+> + *  3) RWSEM_ANONYMOUSLY_OWNED
+> + *     - lock is owned by an anonymous writer, so spinning on the lock
+> + *	  owner should be disabled.
+> + *  4) Other non-zero value
+> + *     - a writer owns the lock and other writers can spin on the lock owner.
+>
+> I'd leave these as 0, 1, 2, other.  It's not really worth messing with
+> testing bits.
+>
+> Actually, if you change them to all be values -- s/NULL/RWSEM_NO_OWNER/
+>
+> then you could define them as:
+>
+> RWSEM_READER_OWNED	0
+> RWSEM_ANON_OWNED	1
+> RWSEM_NO_OWNER		2
+>
+> and rwsem_should_spin() is just sem->owner > 1.
 
-I sent this same patch a couple of weeks ago:
+I would like to have owner equal to NULL if it is not locked. If it is
+locked, the owner can be used to get information about the owner. So I
+am not sure your scheme will work.
 
-https://www.spinics.net/lists/linux-fsdevel/msg125240.html
-
-I should probably have sent it in reply to syzbot to prevent this kind of
-duplication of work. Sorry about that.
+Cheers,
+Longman
