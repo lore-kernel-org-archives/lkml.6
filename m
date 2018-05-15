@@ -1,108 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752319AbeEOXEd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:04:33 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34566 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeEOXEc (ORCPT
+        id S1752318AbeEOXFq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:05:46 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51550 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751859AbeEOXFp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:04:32 -0400
-X-Google-Smtp-Source: AB8JxZpzJBL7hPsgE/+OJh7j0sWd+jdsqc3GmPiwMoOFrFJZ2HD2D2XFD18myGOsAzk02DwCBvCnRg==
-Date: Tue, 15 May 2018 16:04:30 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 6/8] rcu: Add back the Startedleaf tracepoint
-Message-ID: <20180515230430.GB7510@joelaf.mtv.corp.google.com>
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-7-joel@joelfernandes.org>
- <20180514183823.GF26088@linux.vnet.ibm.com>
- <20180515005709.GE209519@joelaf.mtv.corp.google.com>
- <20180515034603.GY26088@linux.vnet.ibm.com>
+        Tue, 15 May 2018 19:05:45 -0400
+X-Google-Smtp-Source: AB8JxZrStJURmq2H9i5YxmWvx9gCuLYpQ9YY3989XSjbLHzY1s0mEA9J6JnQgoqE8o7vJyeIv3/odXldriJ3jnEGKQ0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515034603.GY26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180515080033.GA7714@yexl-desktop> <20180515210757.GA12225@avx2>
+ <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
+ <20180515214337.GA18021@avx2> <20180515222211.ods5hzne46hozojq@treble>
+ <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com>
+ <20180515224354.zmygmsnlqj5lrdbo@treble> <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com>
+In-Reply-To: <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 15 May 2018 16:05:33 -0700
+Message-ID: <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com>
+Subject: Re: [lkp-robot] [x86/asm] 51bad67ffb: int3:#[##]
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+        Peter Anvin <h.peter.anvin@intel.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 08:46:03PM -0700, Paul E. McKenney wrote:
-> On Mon, May 14, 2018 at 05:57:09PM -0700, Joel Fernandes wrote:
-> > On Mon, May 14, 2018 at 11:38:23AM -0700, Paul E. McKenney wrote:
-> > > On Sun, May 13, 2018 at 08:15:39PM -0700, Joel Fernandes (Google) wrote:
-> > > > In recent discussion [1], the check for whether a leaf believes RCU is
-> > > > not idle, is being added back to funnel locking code, to avoid more
-> > > > locking. In this we are marking the leaf node for a future grace-period
-> > > > and bailing out since a GP is currently in progress. However the
-> > > > tracepoint is missing. Lets add it back.
-> > > > 
-> > > > Also add a small comment about why we do this check (basically the point
-> > > > is to avoid locking intermediate nodes unnecessarily) and clarify the
-> > > > comments in the trace event header now that we are doing traversal of
-> > > > one or more intermediate nodes.
-> > > > 
-> > > > [1] http://lkml.kernel.org/r/20180513190906.GL26088@linux.vnet.ibm.com
-> > > > 
-> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > 
-> > > Looks like a good idea, but it does not apply -- which is not a surprise,
-> > > given the change rate in this code.  I hand-applied as a modification
-> > > to c1b3f9fce26f ("rcu: Don't funnel-lock above leaf node if GP in progress")
-> > > with attribution, but with the changes below.  Please let me know if I
-> > > am missing something.
-> > > 
-> > > Ah, I see -- this commit depends on your earlier name-change commit.
-> > > I therefore made this patch use the old names.
-> > 
-> > Ok, I'll check your new tree and rebase.
-> 
-> Sounds good!
-> 
-> > > > ---
-> > > >  include/trace/events/rcu.h |  4 ++--
-> > > >  kernel/rcu/tree.c          | 11 ++++++++++-
-> > > >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-> > > > index 539900a9f8c7..dc0bd11739c7 100644
-> > > > --- a/include/trace/events/rcu.h
-> > > > +++ b/include/trace/events/rcu.h
-> > > > @@ -91,8 +91,8 @@ TRACE_EVENT(rcu_grace_period,
-> > > >   *
-> > > >   * "Startleaf": Request a grace period based on leaf-node data.
-> > > >   * "Prestarted": Someone beat us to the request
-> > > > - * "Startedleaf": Leaf-node start proved sufficient.
-> > > > - * "Startedleafroot": Leaf-node start proved sufficient after checking root.
-> > > > + * "Startedleaf": Leaf and one or more non-root nodes marked for future start.
-> > > 
-> > > Actually, we only get to that trace if all we did was mark the leaf
-> > > node, right?
-> > 
-> > I didn't think so. In the code we are doing the check for rnp every time we
-> > walk up the tree. So even when we are on an intermediate node, we do the
-> > check of the node we started with. I thought that's what you wanted to do. It
-> > makes sense to me to do so too.
-> 
-> If we are not on the initial (usually leaf) node, then the similar check
-> in the previous "if" statement would have sent us to unlock_out, right?
-> 
-> (And yes, I should have said "mark the initial node" above.)
+Side note: doing some grepping, I find some other sequences that are a bit
+scary, like this:
 
-I may have missed this, sorry. 
+arch/x86/kernel/acpi/wakeup_32.S-.data
+arch/x86/kernel/acpi/wakeup_32.S-ALIGN
+arch/x86/kernel/acpi/wakeup_32.S:ENTRY(saved_magic)     .long   0
+arch/x86/kernel/acpi/wakeup_32.S:ENTRY(saved_eip)       .long   0
 
-Yes, that would be true unless the check could be true not at the firsti
-iteration, but after the first iteration? (i.e. another path started the
-initially idle GP). That's why I changed it to "one or more non-root nodes
-marked".
+so apparently people are using ENTRY() for data too (the same pattern
+exists in wakeup_64.S).
 
-What do you think?
+So we end up having those odd 0x90 bytes (now 0xcc) in the data section as
+"padding" between those two values. Crazy.
 
-thanks,
+Not an actual problem, but it does show that people seem to be mis-using
+ENTRY().
 
-- Joel
+There that padding is actually entirely wrong. We do *not* want to pad
+between those "saved_xyz" fields. I think those should use GLOBAL too.
+
+Or lookie here:
+
+arch/x86/kernel/head_32.S-# boot GDT descriptor (later on used by CPU#0):
+arch/x86/kernel/head_32.S-      .word 0                         # 32 bit
+align gdt_desc.address
+arch/x86/kernel/head_32.S:ENTRY(early_gdt_descr)
+arch/x86/kernel/head_32.S-      .word GDT_ENTRIES*8-1
+arch/x86/kernel/head_32.S-      .long gdt_page                  /*
+Overwritten for secondary CPUs */
+
+where ENTRY() will actually screw up how the code says it wants to align
+the address, but now it doesn't.
+
+I wonder if there's some way to add a test for "ENTRY only works in a code
+section"?
+
+My grep was just me doing a visual scan, I might have missed something.
+
+               Linus
