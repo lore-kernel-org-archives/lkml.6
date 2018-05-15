@@ -1,92 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754097AbeEOOpL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754023AbeEOOlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:41:40 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 2/3] ARM: dts: tegra: Fix unit_address_vs_reg and avoid_unnecessary_addr_size DTC warnings
-Date: Tue, 15 May 2018 16:41:24 +0200
-Message-Id: <1526395285-19006-3-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526395285-19006-1-git-send-email-krzk@kernel.org>
-References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+        id S1753013AbeEOOrS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:47:18 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46650 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeEOOrP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:47:15 -0400
+X-Google-Smtp-Source: AB8JxZqRBtYEM+k6KFFRRn+pSIFJ7bcFnkyAcdPat0uNEJsqGoBp4hoWJWyKYLjAmw39NJWlXl2Xao3WlO+nBkqttf8=
+MIME-Version: 1.0
+In-Reply-To: <1526387370-17142-3-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-3-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 16:47:12 +0200
+X-Google-Sender-Auth: -CngZG0PzvGjZB8MpHgkjMwOB3w
+Message-ID: <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded address/size cells properties and unit addresses to fix
-DTC warnings like:
+Hi Gilad,
 
-    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (unit_address_vs_reg):
-        /i2c@7000d000/stmpe811@41/stmpe_touchscreen@0: node has a unit name, but no reg property
-    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (avoid_unnecessary_addr_size):
-        /i2c@7000d000/stmpe811@41: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 4 +---
- arch/arm/boot/dts/tegra30-beaver.dts   | 3 ---
- arch/arm/boot/dts/tegra30-colibri.dtsi | 2 --
- 3 files changed, 1 insertion(+), 8 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 184f60c720fa..5038ca7b68af 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -590,8 +590,6 @@
- 		/* STMPE811 touch screen controller */
- 		stmpe811@41 {
- 			compatible = "st,stmpe811";
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			reg = <0x41>;
- 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-parent = <&gpio>;
-@@ -600,7 +598,7 @@
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
- 
--			stmpe_touchscreen@0 {
-+			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
- 				/* 3.25 MHz ADC clock speed */
- 				st,adc-freq = <1>;
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 72369877d284..961934f70639 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -1791,9 +1791,6 @@
- 			vccio-supply = <&vdd_5v_in_reg>;
- 
- 			regulators {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
- 				vdd1_reg: vdd1 {
- 					regulator-name = "vddio_ddr_1v2";
- 					regulator-min-microvolt = <1200000>;
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index cc46cedf80b9..a593dc8be47f 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -352,8 +352,6 @@
- 		/* STMPE811 touch screen controller */
- 		stmpe811@41 {
- 			compatible = "st,stmpe811";
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			reg = <0x41>;
- 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-parent = <&gpio>;
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
+
+I don't know if "ccree" is the proper name for this clock, as there
+may be multiple
+instances.
+I also can't verify the parent clock.
+
+>         DEF_MOD("cmt3",                  300,   R8A7795_CLK_R),
+>         DEF_MOD("cmt2",                  301,   R8A7795_CLK_R),
+>         DEF_MOD("cmt1",                  302,   R8A7795_CLK_R),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
