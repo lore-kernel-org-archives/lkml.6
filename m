@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeEOBWH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 21:22:07 -0400
-Received: from smtprelay0099.hostedemail.com ([216.40.44.99]:46769 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752031AbeEOBWG (ORCPT
+        id S1752241AbeEOBdb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 21:33:31 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34585 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752031AbeEOBd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 21:22:06 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1536:1559:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3868:4321:5007:8957:10004:10400:10848:11026:11232:11473:11658:11914:12196:12296:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: truck65_2f2030c9d781b
-X-Filterd-Recvd-Size: 1582
-Message-ID: <56600822d01be60bd96c45afe1bbcad823ac948d.camel@perches.com>
-Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging
- output
-From: Joe Perches <joe@perches.com>
-To: paulmck@linux.vnet.ibm.com
-Cc: Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 18:22:02 -0700
-In-Reply-To: <20180515003205.GT26088@linux.vnet.ibm.com>
-References: <cover.1525964381.git.joe@perches.com>
-         <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
-         <20180514202910.GI26088@linux.vnet.ibm.com>
-         <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
-         <20180514222456.GO26088@linux.vnet.ibm.com>
-         <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
-         <20180514235832.GR26088@linux.vnet.ibm.com>
-         <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
-         <20180515003205.GT26088@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 21:33:29 -0400
+X-Google-Smtp-Source: AB8JxZolVYBvhmiRgA5QkizF1iwKBPzP5PsRpQbfqnKVBHRn3cUV1M5qAH59LbxAmhCMIpZ/Whm9b3gZKTODD5p6tfQ=
+MIME-Version: 1.0
+In-Reply-To: <1525518152-58340-1-git-send-email-wanpengli@tencent.com>
+References: <1525518152-58340-1-git-send-email-wanpengli@tencent.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 15 May 2018 09:33:28 +0800
+Message-ID: <CANRm+CxQ=+HwbcN+o2CPRVMDA2qyPyg-f8rJ3MLYfLFUfeW=ZA@mail.gmail.com>
+Subject: Re: [PATCH v3] KVM: X86: Lower the default timer frequency limit to 200us
+To: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>,
+        Darren Kenny <darren.kenny@oracle.com>, Jan Kiszka <jan.kiszka@web.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4F1XaAL023426
 
-On Mon, 2018-05-14 at 17:32 -0700, Paul E. McKenney wrote:
-> So this change does not affect WARN_ON_ONCE() and friends?
-
-Changing define pr_fmt does not modify WARN_ON output.
+ping,
+2018-05-05 19:02 GMT+08:00 Wanpeng Li <kernellwp@gmail.com>:
+> From: Wanpeng Li <wanpengli@tencent.com>
+>
+> Anthoine reported:
+>  The period used by Windows change over time but it can be 1
+>  milliseconds or less. I saw the limit_periodic_timer_frequency
+>  print so 500 microseconds is sometimes reached.
+>
+> As suggested by Paolo, lower the default timer frequency limit to a
+> smaller interval of 200 us (5000 Hz) to leave some headroom. This
+> is required due to Windows 10 changing the scheduler tick limit
+> from 1024 Hz to 2048 Hz.
+>
+> Reported-by: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+> Cc: Darren Kenny <darren.kenny@oracle.com>
+> Cc: Jan Kiszka <jan.kiszka@web.de>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v2 -> v3:
+>  * update patch subject and description
+> v1 -> v2:
+>  * update patch subject and description
+>
+>  arch/x86/kvm/x86.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 51ecd38..dc47073 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -114,7 +114,7 @@ module_param(ignore_msrs, bool, S_IRUGO | S_IWUSR);
+>  static bool __read_mostly report_ignored_msrs = true;
+>  module_param(report_ignored_msrs, bool, S_IRUGO | S_IWUSR);
+>
+> -unsigned int min_timer_period_us = 500;
+> +unsigned int min_timer_period_us = 200;
+>  module_param(min_timer_period_us, uint, S_IRUGO | S_IWUSR);
+>
+>  static bool __read_mostly kvmclock_periodic_sync = true;
+> --
+> 2.7.4
+>
