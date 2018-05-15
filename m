@@ -1,110 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752557AbeEOA0I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 20:26:08 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39066 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752427AbeEOA0F (ORCPT
+        id S1752385AbeEOAak (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 20:30:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752222AbeEOAai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 20:26:05 -0400
-X-Google-Smtp-Source: AB8JxZp7IJNTNjWyXLR0j4btSuLXnTmjl1T7FudwtcJQs7IvsLFtgUrh2KN2CD9TonXkHe+8sueWvA==
-Date: Mon, 14 May 2018 17:26:00 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Joseph Lo <josephl@nvidia.com>, Doug Berger <opendmb@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers
- and consumers
-Message-ID: <20180515002600.GA60670@dtor-ws>
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
- <CAL_JsqJ6Avm+zPRd40aUq=BWFE45xQpaOWG-8d5d8+dqJZCZaQ@mail.gmail.com>
- <20180425181435.GA200812@dtor-ws>
- <299a564f-f2eb-aa5a-067e-688424b91e58@gmail.com>
+        Mon, 14 May 2018 20:30:38 -0400
+Date: Mon, 14 May 2018 17:32:05 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joe Perches <joe@perches.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging output
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <cover.1525964381.git.joe@perches.com>
+ <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
+ <20180514202910.GI26088@linux.vnet.ibm.com>
+ <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
+ <20180514222456.GO26088@linux.vnet.ibm.com>
+ <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
+ <20180514235832.GR26088@linux.vnet.ibm.com>
+ <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <299a564f-f2eb-aa5a-067e-688424b91e58@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051500-0052-0000-0000-000002EE86FC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009027; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032402; UDB=6.00527796; IPR=6.00811534;
+ MB=3.00021115; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 00:30:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051500-0053-0000-0000-00005CAF728B
+Message-Id: <20180515003205.GT26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805150003
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:46:41PM -0700, Florian Fainelli wrote:
-> On 04/25/2018 11:14 AM, Dmitry Torokhov wrote:
-> > On Wed, Apr 25, 2018 at 10:00:31AM -0500, Rob Herring wrote:
-> >> On Tue, Apr 24, 2018 at 5:58 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >>> Hi Linus, Rafael, all
-> >>>
-> >>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback which
-> >>> gets invoked when the system is brought into poweroff aka S5. So far so
-> >>> good, except that we also wish to use gpio_keys.c as a possible wake-up
-> >>> source, so we may have a number of GPIO pins declared as gpio-keys that
-> >>> allow the system to wake-up from deep slumber.
-> >>>
-> >>> Recently we noticed that we could easily get into a state where
-> >>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
-> >>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too late to
-> >>> have the enable_irq_wake() call do anything sensible since we have
-> >>> suspend its parent interrupt controller before. This is completely
-> >>> expected unfortunately because these two drivers are both platform
-> >>> device instances with no connection to one another except via Device
-> >>> Tree and the use of the GPIOLIB APIs.
-> >>>
-> >>> First solution is to make sure that gpio-keys nodes are declared in
-> >>> Device Tree *before* the GPIO controller. This works because Device Tree
-> >>> nodes are probed in the order in which they are declared in Device Tree
-> >>> and that directly influences the order in which platform devices are
-> >>> created. Problem with that is that this is easy to miss and it may not
-> >>> work with overlays, kexec reconstructing DT etc. etc.
-> >>
-> >> I'm going to make of_platform_populate randomize the order it creates devices...
-> >>
-> >>> Another possible solution would be have the GPIO controller nodes have
-> >>> the GPIO consumers nodes such as gpio-keys, gpio-leds etc., and that
-> >>> would allow the Linux device driver model to create an appropriate
-> >>> child/parent relationship. This would unfortunately require Device Tree
-> >>> changes everywhere to make that consistent, and it would be a special
-> >>> case, because not all GPIO consumers are eligible as child nodes of
-> >>> their parent GPIO controller, there are plenty of other consumers that
-> >>> are not suitable for being moved under a parent GPIO controller node.
-> >>> This would also mean that we need to "probe" GPIO controller nodes to
-> >>> populate their child nodes (e.g: of_platform_bus_populate).
-> >>>
-> >>> I am thinking a more generic solution might involve some more complex
-> >>> tracking of the provider <-> consumer, but there is room for breakage.
-> >>
-> >> That's what device connections are for. It probably just needs the
-> >> GPIO core to create the links. (but I've not looked into it at all).
+On Mon, May 14, 2018 at 05:23:59PM -0700, Joe Perches wrote:
+> On Mon, 2018-05-14 at 16:58 -0700, Paul E. McKenney wrote:
+> > OK, so if I define pr_fmt as follows, I get the old behavior?
 > > 
-> > Not all APIs accept device as parameter to easily create links. But I
-> > wonder, for cases like this, if we could not simply move the device to
-> > the end of the dpm list after successful binding it to a driver. The
-> > assumption that when GOPIs or other resources are not ready they'll
-> > return -EPROBE_DEFER and probing would fail.
+> > 	#define pr_fmt(fmt) fmt
 > 
-> Dmitry, do you see any reason why we are enabling the gpio_keys.c button
-> interrupts for wake-up during suspend/resume only, and not right from
-> the probe() function?
+> yes.
+
+OK, then I will queue patches with this for the near term for
+the various torture files.
+
+> > I just queued
+> > a commit to be squashed into my version of your patch 18/18 that adds
+> > this to kernel/rcu/rcu_segcblist.c.  This joins the ones that your
+> > patch added to kernel/rcu/srcutree.c and kernel/rcu/tree.c.
+> > 
+> > Should I also add "#define pr_fmt(fmt) "rcu: " fmt" to these files?
+> > 
+> > kernel/rcu/srcutiny.c
+> > kernel/rcu/sync.c
+> > kernel/rcu/tiny.c
 > 
-> button->wakeup is effectively read-only past the probe function, if we
-> moved the logic to enable/disable the interrupts that would greatly
-> simplify things. I am assuming whomever added that functionality must
-> have been worried about spurious wake-up events somehow and wanted to do
-> it as late as possible?
+> Well, I don't actually remember why the define
+> was added to rcu_segcblist.c.
+> 
+> Most of this was done via a script which looked
+> for pr_<level> uses without a pr_fmt in the same
+> file.
+> 
+> Dunno why rcu_segcblist was modified.
+> Maybe it was a braino.
 
-Florian, device_may_wakeup() is not constant (it may be changed via
-sysfs), and when the driver was written we did not have
-dev_pm_set_wake_irq() that can be used in probe() and handles wakeup
-flag changing, so we had to arm wake IRQs in suspend. And even now, with
-support of different interrupt triggers for normal operation and wakeup
-action, we need to reprogram interrupts in suspend.
+So this change does not affect WARN_ON_ONCE() and friends?  (That was
+my guess.)  If not, I will revert my squash patch.
 
-Thanks.
+And it could also be that the files changed between your running the
+script and sending the patch.
 
--- 
-Dmitry
+							Thanx, Paul
