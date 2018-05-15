@@ -1,135 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeEOKjm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:39:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:58246 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752038AbeEOKjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:39:41 -0400
-Date: Tue, 15 May 2018 11:39:36 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/18] arm64: move sve_user_{enable, disable} to
- <asm/fpsimd.h>
-Message-ID: <20180515103936.v5ytofdq3qqtsomn@lakrids.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-7-mark.rutland@arm.com>
- <20180514110649.GC7753@e103592.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514110649.GC7753@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752829AbeEOKkQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:40:16 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44987 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752724AbeEOKkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:40:12 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180515104011euoutp016ecb3d6ab3edc344d175e890c77e3fc3~uy0KxJCJo1201412014euoutp01V
+X-AuditID: cbfec7f5-b5fff700000028a9-ab-5afab90a3dfd
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Markus Elfring <elfring@users.sourceforge.net>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video: fbdev: fix spelling mistake: "frambuffer" ->
+ "framebuffer"
+Date: Tue, 15 May 2018 12:40:08 +0200
+Message-id: <2254363.7hXMTGaTqE@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180501083742.22565-1-colin.king@canonical.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7djP87pcO39FGVz4z2Kx9eBcVovfq3vZ
+        LK58fc9mcb5zObPF1lvSFif6PrBaXN41h82B3WNWQy+bx/3u40weTafaWT0+b5Lz+Hx3PWsA
+        axSXTUpqTmZZapG+XQJXxoYz3gWvmSo+nn/E0sC4jKmLkYNDQsBE4sLmii5GLg4hgRWMEv+O
+        HmLuYuQEcj4zSrx9Xw5Tc/BaMUR4GaPE5pkWEPW/GSVmLWpmAUmwCVhJTGxfxQhSLyKgKXH+
+        XBFIDbPAS0aJNxdbwWYKC0RI/P27mgnEZhFQlbixeBELSD0vUP3k92BhUQEviS372sFsTgE7
+        iV/vlrGB2LwCghI/Jt8DW8UsIC+xb/9UVghbR+LssXWMILskBLawSVw+/w3qLxeJVe/MQGok
+        BIQlXh3fwg5hy0hcntzNAlHfzCjxbcceZojEBEaJPeuFIGxricPHL0It4JOYtG06M8RMXomO
+        NqgSD4mNF85AzXSUmLryIxMkTCYySpzdeoV5AqPsLCR3z0Jy9ywkdy9gZF7FKJ5aWpybnlps
+        nJdarlecmFtcmpeul5yfu4kRmBpO/zv+dQfjvj9JhxgFOBiVeHh3zPgZJcSaWFZcmXuIUYKD
+        WUmEd7cRUIg3JbGyKrUoP76oNCe1+BCjNAeLkjhvnEZdlJBAemJJanZqakFqEUyWiYNTqoHR
+        5tafgGevTnlw3Iu/fpXjWsy1Qx8LnZhT30R5dsrFLV+xQZAtwDFpWcy3qQs7331NbXNJe63h
+        +eS6PiNn0s0s7YjfkZ+EbwSt/VR0/MEP9b2NZ4/V3uqsOx1Q/XJz6Prc7TI/LfVXrNgs0fPM
+        eMv0ZW8/HNoQuf9SlEx5o5XwgdL7yxbIZj26o8RSnJFoqMVcVJwIAHRruKUJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsVy+t/xa7qcO39FGbTtkrTYenAuq8Xv1b1s
+        Fle+vmezON+5nNli6y1pixN9H1gtLu+aw+bA7jGroZfN4373cSaPplPtrB6fN8l5fL67njWA
+        NYrLJiU1J7MstUjfLoErY8MZ74LXTBUfzz9iaWBcxtTFyMEhIWAicfBacRcjF4eQwBJGiZcH
+        ZjNDOH8ZJY6sm8jYxcjJwSZgJTGxfRUjSIOIgKbE+XNFIDXMAi8ZJfrm3QarERaIkPj7dzUT
+        iM0ioCpxY/EiFpB6XqD6ye/BwqICXhJb9rWD2ZwCdhK/3i1jg9g1mVFi1dUbbCAJXgFBiR+T
+        77GA2MwC8hL79k9lhbC1JNbvPM40gZF/FpKyWUjKZiEpW8DIvIpRJLW0ODc9t9hIrzgxt7g0
+        L10vOT93EyMwjLcd+7llB2PXu+BDjAIcjEo8vDtm/IwSYk0sK67MPcQowcGsJMK72wgoxJuS
+        WFmVWpQfX1Sak1p8iFGag0VJnPe8QWWUkEB6YklqdmpqQWoRTJaJg1OqgbFn2+HCPd8e/+/J
+        /mBW9a5gSsLfnCefHc5P2Jyjrrl1RY5jKcuycC7PXXUt+dU+G/apMs1ge5prmNyfM21vio9X
+        7N4rD+vPcv9TkTMQiuuU93WJPvP+rxGfy76ZbTOUz+/Rl/rmxevElM+3lsMqPDf9xWSxNqXd
+        xQynhffL/WqbWH5tt13YIiWW4oxEQy3mouJEAEJml3RfAgAA
+X-CMS-MailID: 20180515104009eucas1p15a587579dcd0085c82c9186d135463fb
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180501083748epcas4p15b1437f0c39447e7119c6397f624c0f5
+X-RootMTR: 20180501083748epcas4p15b1437f0c39447e7119c6397f624c0f5
+References: <CGME20180501083748epcas4p15b1437f0c39447e7119c6397f624c0f5@epcas4p1.samsung.com>
+        <20180501083742.22565-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 12:06:50PM +0100, Dave Martin wrote:
-> On Mon, May 14, 2018 at 10:46:28AM +0100, Mark Rutland wrote:
-> > In subsequent patches, we'll want to make use of sve_user_enable() and
-> > sve_user_disable() outside of kernel/fpsimd.c. Let's move these to
-> > <asm/fpsimd.h> where we can make use of them.
-> > 
-> > To avoid ifdeffery in sequences like:
-> > 
-> > if (system_supports_sve() && some_condition
-> > 	sve_user_disable();
-> > 
-> > ... empty stubs are provided when support for SVE is not enabled.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Dave Martin <dave.martin@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > ---
-> >  arch/arm64/include/asm/fpsimd.h | 17 ++++++++++++++++-
-> >  arch/arm64/kernel/fpsimd.c      | 11 -----------
-> >  2 files changed, 16 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
-> > index aa7162ae93e3..7377d7593c06 100644
-> > --- a/arch/arm64/include/asm/fpsimd.h
-> > +++ b/arch/arm64/include/asm/fpsimd.h
-> > @@ -16,11 +16,13 @@
-> >  #ifndef __ASM_FP_H
-> >  #define __ASM_FP_H
-> >  
-> > -#include <asm/ptrace.h>
-> >  #include <asm/errno.h>
-> > +#include <asm/ptrace.h>
-> > +#include <asm/sysreg.h>
-> >  
-> >  #ifndef __ASSEMBLY__
-> >  
-> > +#include <linux/build_bug.h>
-> >  #include <linux/cache.h>
-> >  #include <linux/init.h>
-> >  #include <linux/stddef.h>
-> > @@ -81,6 +83,16 @@ extern int sve_set_vector_length(struct task_struct *task,
-> >  extern int sve_set_current_vl(unsigned long arg);
-> >  extern int sve_get_current_vl(void);
-> >  
-> > +static inline void sve_user_disable(void)
-> > +{
-> > +	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
-> > +}
-> > +
-> > +static inline void sve_user_enable(void)
-> > +{
-> > +	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
-> > +}
-> > +
-> >  /*
-> >   * Probing and setup functions.
-> >   * Calls to these functions must be serialised with one another.
-> > @@ -107,6 +119,9 @@ static inline int sve_get_current_vl(void)
-> >  	return -EINVAL;
-> >  }
-> >  
-> > +static inline void sve_user_disable(void) { }
-> > +static inline void sve_user_enable(void) { }
-> > +
+On Tuesday, May 01, 2018 09:37:42 AM Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Alternatively, just move the full definitions outside the #ifdef
-> CONFIG_ARM64_SVE.
-
-Can do, though I was trying to keep the exsting pattern with empty
-inlines for the !CONFIG_ARM64_SVE case.
-
+> Trivial fix to spelling mistake in error messages
 > 
-> All calls to these should be shadowed by an if
-> (system_supports_sve()) in any case, and setting/clearing ZEN_EL0EN
-> in the CPACR_EL1 ought to be harmless now that the meaning of these
-> bits architecturally committed.
-> 
-> Ideally we would have a BUG_ON(!system_supports_sve()) in those
-> functions, but we won't won't to pay the cost in a production kernel.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Earlier I'd put BUILD_BUG() in the body for the !CONFIG_ARM64_SVE case,
-to catch that kind of thing -- I could restore that.
+Patch queued for 4.18, thanks.
 
-> >  static inline void sve_init_vq_map(void) { }
-> >  static inline void sve_update_vq_map(void) { }
-> >  static inline int sve_verify_vq_map(void) { return 0; }
-> > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> > index 088940387a4d..79a81c7d85c6 100644
-> > --- a/arch/arm64/kernel/fpsimd.c
-> > +++ b/arch/arm64/kernel/fpsimd.c
-> > @@ -159,7 +159,6 @@ static void sve_free(struct task_struct *task)
-> >  	__sve_free(task);
-> >  }
-> >  
-> > -
-> 
-> Hmmm, Ack.  Check for conflicts with the KVM FPSIMD rework [1] (though
-> trivial).
-
-I'll assume that Ack stands regardless. :)
-
-Thanks,
-Mark.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
