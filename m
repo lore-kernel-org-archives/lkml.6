@@ -1,11 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3144061-1526414373-2-14837943068746633846
+X-Cyrus-Session-Id: sloti22d1t05-3119014-1526414354-2-12712258067439338817
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526414372; b=MkDTJckmYnlviOOS41ZtFSSYy0UslTyDg8HkxO7Xulv8FFZJrG
-    Y+fGYg67KopeU36ZLYbBCVXiLB9XUt3huo6wDDNFKbosv+AJB3uZonrI9fMfcANG
-    6G0CMeTk0OFGEQ13JcHLxWQkvsKVPkNSPUj0K/2kBOWTWFOlcT/5UbR57rY8guea
-    mv3QDhH4rhZk1lV0yKD2dPCigP4wUwMIKwnDHBwIzKiFbztkBS0RPSI167JqORx9
-    +kf/Cw7Qb+kaE6XCl/PmJmhBFmxIF4VpzL4sB4zTCo8F3tv1h4E62nRLScPRaygJ
-    rJiuijuwOVYatx/F6DDcbWC7rv6NsIPawGtg==
+    1526414354; b=S6jyXf64MkV1ZoNEriErc9cxRxnZDz/715VFpXbWe97nqiBBv0
+    5kHiSdDWk9VNirYmnKEyaxZ0cL4aITmFAKcJ/4p1B2wF/0pfMhtn7Twdchfu3ObP
+    xxbo1TkU+2OE5qlHHzW3VQmU7bASu7iTIG0tN6lJ2+XfSewg42LQxGgoPsZHS0Oc
+    dOEDAI05qJevrsB6s3JlxLc+sfFbceQWVtSVXSHNzrLfuVhdAVQQKLfvb0ETOqAx
+    p7EKv8U/MzINjM8yGtJqHH9Q93qfn2/p5uZ0V+Pze/aZl/pFD4SvxQShJnZksV7l
+    mLkKlohLgAJbM7e/mmgFUAZ79paWfmofU1sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526414372; bh=
-    42/nOOPk1HzCpxB1PnGRwCB4lm3qxvMCU8SFvKATQcw=; b=NL2tzvNp74fAnG/r
-    jK31/tUKsdihB2y+9W+0pwXUyLBEhOXTFgh0NYjwIDiX6URBlposd2DFjG0nYgLD
-    cwA77lL9Y+CSrcyF56fBWhSlQz/PQavMBH+yk357NZppS3tJLnz7OrUUlUACTpxC
-    R16EUCj+qy2BBSK+cLHfM1Jd6MpQh/MRDN29y+H/c/EWcS+RwMo3WwLEcxtBYXeV
-    fUQ6s1kbufHxNR3MQOlZAclccs98gP7xxzOocgY+7uZ2BALBKOff2sJCGaxQw2Di
-    6zP+P/w4nm+nm6WSGENMK9FY381Hj20J3lZBBjMashnm/8k+XjoIKJcjh1f8Cs8i
-    6R5UiQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526414354; bh=
+    0ob2WQm2AgVNQ5XJyZo3Y2Wpfxx8gVO78HFzg6K7eSI=; b=WE59QXUFiS60yiPo
+    cuPjqKe+1JjS0vDgxEep+iL+B6SlIf0RDj8SMV1Rcz/To1njuvzwUsKZQiTQE1W1
+    ZsCCcg+03O/It0HAAw7p9GVeI6oeUheIwG9vo6ul8mnFLsH0FRh4bcmi94WK0sjV
+    tLkAc/Xo/X5m4q1zOdJe25Ib86HwyxCQ9m9iVyN0efUxT5kCkzchDGjJfrrXNHdz
+    BvpIGm/Ra1N1rm8Fcmm6KV7rJeP79DM2nOLjon609rViAOKz3+u7n+61lNwf0jMe
+    j4PZNaLgYTBRqSBnB2roNSdpRMoe++ovG3nCF7e9V+4d0izEf4+rGRTj9zfWkEpK
+    dstxkA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=C7skuaBM
+    header.d=infradead.org header.i=@infradead.org header.b=CSHQi1Ca
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +44,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=C7skuaBM
+      header.d=infradead.org header.i=@infradead.org header.b=CSHQi1Ca
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +62,28 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJkQO16d24H7JPTWlHDuDMkwrJ0/m2lsjx+jkncs9n8mkIeoHrbG3nFcfqZkXs9ENW//KPjKsbyQCXnn9WkIXeuxsPyWZmHU5wUu4lnvwohhn6Zm+XBx
-    /fner/e3yC1quxN7GQVTnUVcwoBGa4dynKT25GgcsN2XbagOsUfkWJxvmktjIF4tkTEmmAb/eXgPsO40FoWmQCeJ6/eGs2sVKvsD09LbDq+paX6vtkgKqtLm
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLXNg749tz9WwHwxYEbpotpcUmSmJe5ihW8OfGmpEH2Mvvz4zEpNBLW2QcWuAjMLrTugs40Qa6N6EsddZWxjv8D6Ic24hpN3ZSWu+PAcVxawZBfaeyeE
+    +BnZhKFiF7o5FRWomG08X3M2KfWm3WgiTG5SX1S5VgPji7K9NZagw6/Ww9KViNTwgc+SIjVyxAdrK8crnWZnCLpxUftitnyPUnSs60UCvaHtq8U8yhlHnsfr
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=c5ubECay0r_8uFjs2PcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=ngUzud9BF-H0qhY5OAkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeEOTtG (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 15:49:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42174 "EHLO
+        id S1752599AbeEOTtK (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 15:49:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42188 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752544AbeEOTtE (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 15 May 2018 15:49:04 -0400
+        with ESMTP id S1752544AbeEOTtI (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 15 May 2018 15:49:08 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/32] aio: simplify KIOCB_KEY handling
-Date: Tue, 15 May 2018 21:48:07 +0200
-Message-Id: <20180515194833.6906-7-hch@lst.de>
+Subject: [PATCH 07/32] aio: simplify cancellation
+Date: Tue, 15 May 2018 21:48:08 +0200
+Message-Id: <20180515194833.6906-8-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180515194833.6906-1-hch@lst.de>
 References: <20180515194833.6906-1-hch@lst.de>
@@ -95,82 +94,111 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-No need to pass the key field to lookup_iocb to compare it with KIOCB_KEY,
-as we can do that right after retrieving it from userspace.  Also move the
-KIOCB_KEY definition to aio.c as it is an internal value not used by any
-other place in the kernel.
+With the current aio code there is no need for the magic KIOCB_CANCELLED
+value, as a cancelation just kicks the driver to queue the completion
+ASAP, with all actual completion handling done in another thread. Given
+that both the completion path and cancelation take the context lock there
+is no need for magic cmpxchg loops either.  If we remove iocbs from the
+active list before calling ->ki_cancel we can also rely on the invariant
+thay anything found on the list has a ->ki_cancel callback and can be
+cancelled, further simplifing the code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/aio.c            | 14 +++++++-------
- include/linux/aio.h |  2 --
- 2 files changed, 7 insertions(+), 9 deletions(-)
+ fs/aio.c | 49 ++++++-------------------------------------------
+ 1 file changed, 6 insertions(+), 43 deletions(-)
 
 diff --git a/fs/aio.c b/fs/aio.c
-index f3eae5d5771b..2e0bc04f7920 100644
+index 2e0bc04f7920..8991baa38d5d 100644
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -46,6 +46,8 @@
+@@ -164,19 +164,6 @@ struct fsync_iocb {
+ 	bool			datasync;
+ };
  
- #include "internal.h"
- 
-+#define KIOCB_KEY		0
-+
- #define AIO_RING_MAGIC			0xa10a10a1
- #define AIO_RING_COMPAT_FEATURES	1
- #define AIO_RING_INCOMPAT_FEATURES	0
-@@ -1812,15 +1814,12 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat_aio_context_t, ctx_id,
-  *	Finds a given iocb for cancellation.
-  */
- static struct aio_kiocb *
--lookup_kiocb(struct kioctx *ctx, struct iocb __user *iocb, u32 key)
-+lookup_kiocb(struct kioctx *ctx, struct iocb __user *iocb)
- {
- 	struct aio_kiocb *kiocb;
- 
- 	assert_spin_locked(&ctx->ctx_lock);
- 
--	if (key != KIOCB_KEY)
--		return NULL;
+-/*
+- * We use ki_cancel == KIOCB_CANCELLED to indicate that a kiocb has been either
+- * cancelled or completed (this makes a certain amount of sense because
+- * successful cancellation - io_cancel() - does deliver the completion to
+- * userspace).
+- *
+- * And since most things don't implement kiocb cancellation and we'd really like
+- * kiocb completion to be lockless when possible, we use ki_cancel to
+- * synchronize cancellation and completion - we only set it to KIOCB_CANCELLED
+- * with xchg() or cmpxchg(), see batch_complete_aio() and kiocb_cancel().
+- */
+-#define KIOCB_CANCELLED		((void *) (~0ULL))
 -
- 	/* TODO: use a hash or array, this sucks. */
- 	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
- 		if (kiocb->ki_user_iocb == iocb)
-@@ -1847,9 +1846,10 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ struct aio_kiocb {
+ 	union {
+ 		struct kiocb		rw;
+@@ -574,27 +561,6 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+ }
+ EXPORT_SYMBOL(kiocb_set_cancel_fn);
+ 
+-static int kiocb_cancel(struct aio_kiocb *kiocb)
+-{
+-	kiocb_cancel_fn *old, *cancel;
+-
+-	/*
+-	 * Don't want to set kiocb->ki_cancel = KIOCB_CANCELLED unless it
+-	 * actually has a cancel function, hence the cmpxchg()
+-	 */
+-
+-	cancel = READ_ONCE(kiocb->ki_cancel);
+-	do {
+-		if (!cancel || cancel == KIOCB_CANCELLED)
+-			return -EINVAL;
+-
+-		old = cancel;
+-		cancel = cmpxchg(&kiocb->ki_cancel, old, KIOCB_CANCELLED);
+-	} while (cancel != old);
+-
+-	return cancel(&kiocb->rw);
+-}
+-
+ /*
+  * free_ioctx() should be RCU delayed to synchronize against the RCU
+  * protected lookup_ioctx() and also needs process context to call
+@@ -641,9 +607,8 @@ static void free_ioctx_users(struct percpu_ref *ref)
+ 	while (!list_empty(&ctx->active_reqs)) {
+ 		req = list_first_entry(&ctx->active_reqs,
+ 				       struct aio_kiocb, ki_list);
+-
+ 		list_del_init(&req->ki_list);
+-		kiocb_cancel(req);
++		req->ki_cancel(&req->rw);
+ 	}
+ 
+ 	spin_unlock_irq(&ctx->ctx_lock);
+@@ -1843,8 +1808,8 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ {
+ 	struct kioctx *ctx;
+ 	struct aio_kiocb *kiocb;
++	int ret = -EINVAL;
  	u32 key;
- 	int ret;
+-	int ret;
  
--	ret = get_user(key, &iocb->aio_key);
--	if (unlikely(ret))
-+	if (unlikely(get_user(key, &iocb->aio_key)))
+ 	if (unlikely(get_user(key, &iocb->aio_key)))
  		return -EFAULT;
-+	if (unlikely(key != KIOCB_KEY))
-+		return -EINVAL;
- 
- 	ctx = lookup_ioctx(ctx_id);
- 	if (unlikely(!ctx))
-@@ -1857,7 +1857,7 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+@@ -1856,13 +1821,11 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 		return -EINVAL;
  
  	spin_lock_irq(&ctx->ctx_lock);
- 
--	kiocb = lookup_kiocb(ctx, iocb, key);
-+	kiocb = lookup_kiocb(ctx, iocb);
- 	if (kiocb)
- 		ret = kiocb_cancel(kiocb);
- 	else
-diff --git a/include/linux/aio.h b/include/linux/aio.h
-index 9d8aabecfe2d..b83e68dd006f 100644
---- a/include/linux/aio.h
-+++ b/include/linux/aio.h
-@@ -8,8 +8,6 @@ struct kioctx;
- struct kiocb;
- struct mm_struct;
- 
--#define KIOCB_KEY		0
 -
- typedef int (kiocb_cancel_fn)(struct kiocb *);
+ 	kiocb = lookup_kiocb(ctx, iocb);
+-	if (kiocb)
+-		ret = kiocb_cancel(kiocb);
+-	else
+-		ret = -EINVAL;
+-
++	if (kiocb) {
++		list_del_init(&kiocb->ki_list);
++		ret = kiocb->ki_cancel(&kiocb->rw);
++	}
+ 	spin_unlock_irq(&ctx->ctx_lock);
  
- /* prototypes */
+ 	if (!ret) {
 -- 
 2.17.0
 
