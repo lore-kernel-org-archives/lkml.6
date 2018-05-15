@@ -1,328 +1,301 @@
-Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525800103; cv=none;
+Return-Path: <aryabinin@virtuozzo.com>
+X-Google-Smtp-Source: AB8JxZoyuR0YkNIsLWT5cQUmXrtsEjmzm91kLbbuo09vYDMzk/NzUkc6quV+BbbyLQtHL5tUvPYl
+ARC-Seal: i=1; a=rsa-sha256; t=1526393145; cv=none;
         d=google.com; s=arc-20160816;
-        b=pBtMxfEMoIfbtqqa1BYTIwkGyZ1OXcgIPmCsKc2VLXUEBcEaEStU4dv3BneAE4+oSx
-         4Rpbi2CpnQDiKviMv1xYh5qiEI1I8NT7FBTNVLizRVAjV0IlAxIRbUFqcQ6HAhfb6ive
-         XTBupC5x3jcvPB88BxRPfqwiYXWPGhF92V3ThYwH+0xFU+yf/jTlGKKGd2E3R0XfW527
-         8RxqAYYTa3V1WaX676+FrvBwfsb8wUgL0lXI/Pejkp0cvT8gdDmtv5Y1FFsEmgKY8FcA
-         jGKfLJWfonKIposJlvrZsSN355P/nYdc2/yDVp7yYBqv7ES7y6f8GjFOqHL25eph6McY
-         KpiQ==
+        b=FKq6witfgCY1bepFFd6n2xKbGvCfLcAcb0dco6C8Ni1RVe18zdA1fhDQrGJwQGnMnQ
+         6oumfrDkDCRe7CfneCWtoBa0197tebPRJkVL1LZ/KWwwvfZUKgrFsqqHIC4YwPE/wEQi
+         Yw4vuVUkaH5tnDeIYBhsop87DPOwz7067PouaKxIBN5KRmBV0irAlvbxA3E0tbEDRwV/
+         GP/a8SCimisbPhvVVwbWxvx0fq5ft7fnLloxhbiNg4tcxgYhZM6ZoC4/gujLxFdcarpC
+         9NbSs5mWvZv26IeIoKAYn/RmFkDzqTslLj60gBMnwu4Xwr6bKbG6Sc0gi11+2z/OIcq2
+         9lnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=WxTOEBx4FXQOPjleNHHMRe1GUaKfRs7dEFiIBmVN9Qc=;
-        b=GAAi9BcYdbHv6MeZ3hZA5PIC8l4HwMyHfbQa8+Y58CDw7825elZXgWy6UG2KA3pvl0
-         u0gXCKQBe+kUzPGMypv8FkNRKmFLNVeR4e0JOZ6M9zB2iVk0Ydk6otDkRafiSMXTzXLv
-         fIsy7JegOCrainIHU6NSo1BrkM8yKYOoP2zO3FIRxJYqTXXKfNO8pRlJX2jW8CRPX795
-         QfvegARkSCEgFm0Unf1bVxvHl+jiu3OoThtgX60VG6NcuF0/JUgm3+cHmJfhIcPt9RpM
-         GK5MhPArrscPhkOnvTfLfRS3tnjpyzL4SprTQsIoa89XGQ1LUhnOwByLFvnkXIaU/ijX
-         fMdQ==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=XSY0gMLCmb5i9IQ9fIaG4WLl7MVUJ7L382jws/5dtOE=;
+        b=L8plyti2Da8zdGhbFYor5sWaDjU+HUDFWvD/teVQVlmngBP4VHkfU3ZwFmrYrozZSM
+         k2v38YlhJjgGmdC2nw8Yb4VMBqdtmVoPZTryiLQYDC4j6ouTkUMB2RCgo+rpoxZDYFZA
+         s5uwO70QPtRwOBRkc+HoQk0pHFBeJdrmtQwUUSpMdeHVLV7SRjqmY5rZ/amTjsdHtGu5
+         8t9nJ5fRvG1lRxqtQvUjjYJ8KcGy2UvWXJHDhSJgI4Qw1Z6qWpbynI7grkTbCTL10VGr
+         rKJ/tQHMvjpUo3oRcsLaG9OcvbiISBo9OdACPzSwsHGXcBqfznjrJs5GWapaNqTd9u8/
+         ERew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=aXqwr+eu;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=PvJS7VW5;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.3.105 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=aXqwr+eu;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZq+qUZ2UjijWMKDAeikV7fA8skN10L3NYQw/t47oBfE3fOfO5UIHO10/NTJc1Snhn6MalS9WA==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Christopher Li <sparse@chrisli.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Yury Norov <ynorov@caviumnetworks.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	James Morse <james.morse@arm.com>,
-	Michael Weiser <michael.weiser@gmx.de>,
-	Julien Thierry <julien.thierry@arm.com>,
-	Tyler Baicar <tbaicar@codeaurora.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Sandipan Das <sandipan@linux.vnet.ibm.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Paul Lawrence <paullawrence@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Ross Zwisler <ross.zwisler@linux.intel.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Souptick Joarder <jrdr.linux@gmail.com>,
-	Hugh Dickins <hughd@google.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Laura Abbott <labbott@redhat.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Pintu Agarwal <pintu.ping@gmail.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sparse@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kbuild@vger.kernel.org
-Cc: Kostya Serebryany <kcc@google.com>,
-	Evgeniy Stepanov <eugenis@google.com>,
-	Lee Smith <Lee.Smith@arm.com>,
-	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-	Jacob Bramley <Jacob.Bramley@arm.com>,
-	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-	Kees Cook <keescook@google.com>,
-	Jann Horn <jannh@google.com>,
-	Mark Brand <markbrand@google.com>,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v1 15/16] khwasan, mm, arm64: tag non slab memory allocated via pagealloc
-Date: Tue,  8 May 2018 19:21:01 +0200
-Message-Id: <52d2542323262ede3510754bb07cbc1ed8c347b0.1525798754.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=PvJS7VW5;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.3.105 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com;
+Subject: Re: [PATCH v1 15/16] khwasan, mm, arm64: tag non slab memory
+ allocated via pagealloc
+To: Andrey Konovalov <andreyknvl@google.com>,
+ Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Christopher Li <sparse@chrisli.org>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michal Marek <michal.lkml@markovi.net>, Mark Rutland <mark.rutland@arm.com>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Yury Norov <ynorov@caviumnetworks.com>, Marc Zyngier <marc.zyngier@arm.com>,
+ Kristina Martsenko <kristina.martsenko@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Punit Agrawal <punit.agrawal@arm.com>, Dave Martin <dave.martin@arm.com>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>, James Morse
+ <james.morse@arm.com>, Michael Weiser <michael.weiser@gmx.de>,
+ Julien Thierry <julien.thierry@arm.com>,
+ Tyler Baicar <tbaicar@codeaurora.org>,
+ "Eric W . Biederman" <ebiederm@xmission.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Kees Cook <keescook@chromium.org>, Sandipan Das
+ <sandipan@linux.vnet.ibm.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paul Lawrence <paullawrence@google.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Josh Poimboeuf <jpoimboe@redhat.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dan Williams <dan.j.williams@intel.com>, Michal Hocko <mhocko@suse.com>,
+ Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Matthew Wilcox <mawilcox@microsoft.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Souptick Joarder <jrdr.linux@gmail.com>, Hugh Dickins <hughd@google.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Laura Abbott <labbott@redhat.com>,
+ Boris Brezillon <boris.brezillon@bootlin.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Pintu Agarwal <pintu.ping@gmail.com>,
+ Doug Berger <opendmb@gmail.com>,
+ Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+ Mike Rapoport <rppt@linux.vnet.ibm.com>, Mel Gorman <mgorman@suse.de>,
+ Pavel Tatashin <pasha.tatashin@oracle.com>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+ linux-kbuild@vger.kernel.org
+Cc: Kostya Serebryany <kcc@google.com>, Evgeniy Stepanov
+ <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+ Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+ Jacob Bramley <Jacob.Bramley@arm.com>,
+ Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>, Kees Cook
+ <keescook@google.com>, Jann Horn <jannh@google.com>,
+ Mark Brand <markbrand@google.com>, Chintan Pandya <cpandya@codeaurora.org>
 References: <cover.1525798753.git.andreyknvl@google.com>
-In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
-References: <cover.1525798753.git.andreyknvl@google.com>
+ <52d2542323262ede3510754bb07cbc1ed8c347b0.1525798754.git.andreyknvl@google.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <0043ffdf-4a75-d41c-966e-073eac3dc557@virtuozzo.com>
+Date: Tue, 15 May 2018 17:06:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <52d2542323262ede3510754bb07cbc1ed8c347b0.1525798754.git.andreyknvl@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1PR05CA0173.eurprd05.prod.outlook.com
+ (2603:10a6:3:f8::21) To DB7PR08MB3260.eurprd08.prod.outlook.com
+ (2603:10a6:5:1f::22)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3260;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3260;3:p+ZMuBSlDMjMUEMG/NuOsgZioKo3fCtyLGwKIOmCi8nbNpBkv36oH8dW0y0UWhbnO3GyVM8qlnCBFIpdpPAuiymcSy0SBs+SoyPyz4JMd/8kkLRsM1+L9ZeytoeoTiSac2/1Lo+jV0WaZpAwtpluXx9PV8WHUknJvTtDEbxnFSKz4zUWPj/VUEAojJbdYhUNQHd4+rVCRUQpCQpcva5qbW5gpTO+3Jaqi/ko9mktmhpARhA9A5KrApwQYCXdhSRH;25:mp8aQTIM2tumw3ddNYeqhoPwH6Hxws1XIfdQEfR1GuzzDSWTPETAjw5Vx/ou8EhjB/vCMFQw+JRlg3cxfUmJwp03rtmLrIq7aS2NAb70s+ObeTe3RWbaascjuz2GWzWYYyfuOlGaPm+dZGBOdxU+Fyb73f/kMoQxluemxV8IIAXe27wpRHFpLyldngeZohowc0StKu44ySIw4r8Y3NwnDdEBXDC31gDr7BOLtG4e6xZEwT10+nz83eL1uzluRjSVUgHQEeaRT+dETTfs1WkctdeAlAkKiQnUzCNXqblF0qA51Xuyw3jYHtudcx6bKfDmtj6UjjdUd4RE7YUM94Q8Zg==;31:YVsrJcV1jQU7D6g5xwIafKOmgFgLhIRoegYqyb7WGVQu71DcdUb/zzawrcOnNigtDI7xQ1n+kCl3BRwxIeggR7r7cIktgBKfoyfIPAlgAESdJAyrtztW9yWc5qauT7FD0rA927Sc6cMMOAIuMTHJAVznco1ZRGB7F3RbKDVDhVVR4iHPDgVzBtf9j2yka0P4Xy8QNYIByN2nWuvnoKi3QACdi22W717GxRkzHl0O1wU=
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3260:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3260;20:adnQXCc+j+rdJL9JFmv7g627xb7JUlR03W0qpw6kCBrIwrRfYRJGDQdXuU8+ry5XDJ5knvBmmKhJWcUZ6/EweGxTyNVTHmhcfV2z8V3dkrZAq0DPVXIq2BoAvUCNAWzfTJhI+Dnb3AROnp6DfOdm3vJ0MM9sn1wkh/wXEgJPWHuaG+zrcPycCH2uOvivWLoYgSbnyK9PHwFSjlAoU/p7FQvFsC/GVeLeJuRO+RE+2eWDCJs8dm1eWlEEwu48pv2YVrDEcFCicYt8VniIQn8F6xngnOOATDpbSkX70WR9ynGvS6v/38xaqbJRTdLSgHTC6X57HWk17Yp3Uyfz3xljS7FOaZO+0VT3C9RGiPRGrvKjvMIzHrEprr+5Cu/32JlnQdQbuGXEAEo3913ME7OxNpTs6QMbwvYxCyLc3WAbswvUTnC4642ldcvX8zSDLPJpYT+fp6TEaQLovuf+TgEK6UGUyQu/KIBPi9Cc+wn82ax+eKk2/3+j1a4U9jmkj+j7;4:fhlxvJBOMWgC7+amJVJkJbhg3OYxGrzWaal8Lf6wue9746ifGUTpTGzOGuxKZ+KgLaHy6Imkq8wyJGVHC4HhoSBsXdapEb1vavwQTfBmX0PII1bPG1gCmHglJbOn6rKXRRZCkMMhEpETXYt3HgdAgA8uVdIvIdPXVBexgRYgWWKhLGokJc5/jh0xzY8SEhiub+w65CJl4YO9uv7gt14b9mYBItrpvjGCs1kkBpqxjwPdjCyPznR/EKc3kxM3d401B1bcpC2WRTePkeyZHf0/Zg==
+X-Microsoft-Antispam-PRVS: <DB7PR08MB32603291AB73D7A127E6A84FB0930@DB7PR08MB3260.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DB7PR08MB3260;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3260;
+X-Forefront-PRVS: 0673F5BE31
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(366004)(396003)(346002)(39850400004)(39380400002)(189003)(199004)(53936002)(66066001)(478600001)(6246003)(65806001)(65956001)(4326008)(7336002)(6666003)(36756003)(47776003)(5660300001)(65826007)(97736004)(1191002)(64126003)(230700001)(7416002)(39060400002)(229853002)(25786009)(7366002)(305945005)(7406005)(6486002)(1511001)(7736002)(31686004)(26005)(186003)(16526019)(50466002)(6116002)(31696002)(575784001)(86362001)(68736007)(3846002)(105586002)(106356001)(54906003)(2906002)(52146003)(23676004)(76176011)(52116002)(2486003)(386003)(8676002)(55236004)(53546011)(8936002)(59450400001)(81156014)(77096007)(476003)(2616005)(11346002)(8666007)(486006)(110136005)(956004)(316002)(16576012)(81166006)(446003)(58126008)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3260;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjdQUjA4TUIzMjYwOzIzOmkxVjAzWnRaN3pxM2RLZ0lzWEhTcUJqbjlO?=
+ =?utf-8?B?YkoyYXB6RWwzWjdLSVh0U3ZaVHZYOTRxYmNORFo1bm02NjNVb3hUQ09EbjV2?=
+ =?utf-8?B?QjhSOUg1S2hieHFtbjVhMGc1ODZLNlc1S1RONGpxUHI3UWZLQ29WNzk3Q2kv?=
+ =?utf-8?B?aWczZldXZWo0bFo0VjBTekoybE0vM1VmbitWUURNSFpJSnN3NU1EM29OYjVm?=
+ =?utf-8?B?UUVjdGUrblhVMEI3ZGg0MGQzU1hVaDFPRGdJYlhzNVVIU3dnd3V2UkZCbjk5?=
+ =?utf-8?B?ZGMwYzNKWVlVUWRpcWtyaUxSVTBuNGorQkNCdlNHTkRZak1lcEQrRFkwbHRT?=
+ =?utf-8?B?S3doRXo0UUFxN2FEQ3VYWVpzbU52SFRyK3FkQ0dYUnhJYklKQTBKNFJhSjIv?=
+ =?utf-8?B?S1NYOUZMSVptN2xrc25VMWJmdjI2U0s3SnE0WmJhQ0NHOGVPTENMWFFxMmF1?=
+ =?utf-8?B?WFhDTkxTSWthSWFVVkpMMzBIWmg4cVJWU1JaVlRCdzJqWDdVblNXZDZDNWQy?=
+ =?utf-8?B?QWZqYzVqaGw2RFpZdU5majUvcUk3cjdzN0VycmhtTVRWQ0p3Ty9WOEVNQWl4?=
+ =?utf-8?B?M2dEd093enNqOFpUWFA0eStJS3pEMTJ0L1BqaHRObEhvdXdTMVBaeFIxTFRN?=
+ =?utf-8?B?OWY5VnUzYlhCWU9sQ1J6Q01MODdtemZuODdyZnpmR3dqb01JYkVWazBaZjNS?=
+ =?utf-8?B?ZGwyWHp6R2RyUzV1bjN6RDd6K2pNQWNmWGtITXhGaFZtSVNmSnd2NVI3MGw5?=
+ =?utf-8?B?dXUyY0dCL3pOUEpITEVrTTllQmcvVkNPV2tRUEhqbWtmUmcvMGdaNTlCMk02?=
+ =?utf-8?B?RGk3ekZIdWhoaGxOeHMzUWxUL2w4bzhrd0QzbFhXcVJLVkJxOXpleU9BZmRv?=
+ =?utf-8?B?T0xOWTJaRDBocE9PRWpNM21vTkNndno3NS9oQnJOeFRHdVhlZVEzWHJBQ1hB?=
+ =?utf-8?B?dGtpUFNPaEt2bFNTdmtOeUIxMU1UVlBoT200RTZWOEFzV3pIdERmTWJ5czcx?=
+ =?utf-8?B?VnZZeGdLODN3cXN3NDFIL0owdlFjMnNHc2RuUTN6MUI3ZkJrZnZaUmFsaFVX?=
+ =?utf-8?B?MnhDM3YrQnFHR2FnREtDK0IvTVR1VHVFRXBWMU11b2ZqSDluWHYvRkJUaHVU?=
+ =?utf-8?B?dUZ5K3U3bFZjN2QxUGE5L1J1RFMycFRXMnJuUC8rRWhXd0QzT0JZQkkxdXNh?=
+ =?utf-8?B?UnJUM0dJWjk0czRlQU5CemFXenRQbVg5VEZMdnVRS0dRZElieWVDOXl2SUx3?=
+ =?utf-8?B?S1Z3UDJwNk5SSDRXU0VWeDNXZHpNMzhmZlF3bks2SWp0MEY4bDdkNkVZZ3Fq?=
+ =?utf-8?B?ejlFYXYrUzMwL1k3WUJVVVJMd2RlUnZFOVZzR2VsSUltRDFJQWFKT0RuT0x3?=
+ =?utf-8?B?Y0VSa2hOeTZSdmJVbWFnd0ZCZHpDN0ZsWHd3blVyZ1RxSURwYk1jVzlyWk1i?=
+ =?utf-8?B?OGlVMjJEREdDS0hiTzkydnFKQmlzTnMwTmlhTXNOZFRreVVnN0QzdDJEeEJX?=
+ =?utf-8?B?eG9lODBZdndQc0I2SjRpMytZNC9iMkdYV1NIdjZnL1pNZ1hOOHZKakp0SnJ2?=
+ =?utf-8?B?b25jeUVmSDZuVVFSYldIaTkrZ2ZMb1JreGFvd2gwcUQxVlA4MkZKckhxZzM1?=
+ =?utf-8?B?WW9NMFhTelFYejhpb1pCNVlHMG5hTU9VVGpBRVZMUjc2dTRjNW8weitEb0Ux?=
+ =?utf-8?B?MlpLU0NkM1k3ZUpCQVBDLzAxcGg2cFBlRmJCRkhKZnhLeVp2Z0RRNzgyY3Ji?=
+ =?utf-8?B?MXhsMDJmOThiNzdoUytLK3ZiYkZMc3ByMndIRFMxWnhRWHZHRnR4M29RY3lh?=
+ =?utf-8?B?OTUzc1hzcGsyaCtNeHllOExTRllZdG9XdytITHVBUUdWYWlPS2FrQzhPSjJq?=
+ =?utf-8?B?bTQrSmg1YkV3YUtzM3NrNG5sQmRGa2YzSmdwS1VlcTRSM3QzRzlIWEVJYzli?=
+ =?utf-8?B?NWlEaE9ocjRzTVZXeHZETE85a3lJaktkSitBaCsvaHdHRGMwNStwUmZDMjJz?=
+ =?utf-8?B?eDdDZjlaelF1TmJLTmNmQ1VnU2lkMnNRb2VKOGdneG1iY3hOM3N4RXF3MVJR?=
+ =?utf-8?B?Z09HNFRxcGcyWTR3WTdwUFdKRCtUaGlRWTYvOTN0QUd0RzBMV0F6UlZDZlor?=
+ =?utf-8?B?Q2xaZHF0OGVXdnJlY0FESzhPYnpjWTVrSStwOHNXR3hjbE9aTkw3N2VZaXRx?=
+ =?utf-8?B?d1RpVUFvTkpuMzJZMXhjNXZ3Z3p4Tm5renV5eGxjVmduS3oxQloxOEJKWWhz?=
+ =?utf-8?B?VFNZSUgzbEllWGtMcW1xUGM0QXB3VHpIeThOTDVlOHJ6Y1hwYW5Ha29pdXVz?=
+ =?utf-8?Q?bvH/2hR5AErkaBt8=3D?=
+X-Microsoft-Antispam-Message-Info: vUcmHokArXdu1yJZSRnEcDTZLWGGXGFeDr7Pg/2reGTDEUgUP9TQru8/L8qcNfhR0tsRLjXnTGVhQVa12ZNh6D2m2hn+xyQ2KkBYX23BIRa0f/+/yowb++MpAZ2RoRbZ3QxKvNFZUk2dYnZEqR2YZArali476QDZVVYLVzur7NPHj/FJZZDNIRnhOjVPbNvF
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3260;6:w8pZZnjI2xiouKC+jGwUy3BfqOVmyNFURTRy7Mkh5b/43RiuyaIJmxGzpCYwyhX9XO4puV/AkmWa0HoJ5Yg/ZdQ6FJDq9mkdt3Y1i05Tkyp158VRzEvnue+X73Xe+dGQEg1XrfpdRzc0IZuQlrUfjYlXmk980foBjdOatczcJvRSBcpYS39RoqLNCj2PVm4evzIG7/FIbyG2GDW7bfLMPw/N9QsD7hBHopC2xo7bU3cZLhu9lXxaTeDtGY8v/C225Sa7z5H2B+ZMJzOOt2XYd9WvbtolYQJbJo13g7XGf3UyFA8pdBBzIedWYoxZPqKBbw+VuaO7TZLwHohOgtAsg9hcxALbrlxdrxcF2nCGvm1hfk7xsi2las6R7sTt1RXXnJCgDYcOKeqxIKLh7HqdFU2cub2K/y2PSu9/6t4Utyz9Emd8ZB4c+6bul5wzvsMhFJZQutlbE4csVrfateNPdA==;5:UdiM3GrO2oWR/jk+MTzJrldtreqN+f3V5EoGXHDXRSsTPTaxXbvS7kKl5F6HiWw7PDpFfqVWzZtQJ6gGCpvL5Iom5zdzmIo6y+OL2hJFGwWEo6jl6UnNLgERV3yC6toCwBfVzK+Xb6SbYH/vHJHRYTw4IC/TCCqSGuf1c0FVMVY=;24:rYjD1g9ywD15vRNNMpDu5bg8eGu4AlcWni8GoJBtKrokX7UeLVFNmP0oct5IfvhveL4gG2pM7/jl9F/R8he0C2yf8qKIHO6GssR3XsKuISg=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3260;7:Ff0cuN4VJO5RCMVPCTetuI902t30Wx4RfunL9oOuTyk/UoJUOgE06KclfHoziI6G5Z129zmAUmECgODulm/cjsk/ARBqIPgau5JtO6uDOEI7LpZZO6iUq0tq79J0cKIeMVRLEl8Q6fBybBInvybD6c28BCUPdZu6wVPQIrUDbgOD+c+JuYu3Jq8OVqZiWzwtf2Yy/JE+OUgiVAT6eS1ofcNkrAfBjlN0Mq0h1BVpkSGic6xzGVKDBLH+7xne/l5q;20:eaazj2VQ17aDFxFzjDnC/DSiwFnZABl0/gzLyHxXMHV37dkZ+FnIjmjcpqsFscd8pk/+qgwONLTLOw9sb5X/eOlpGarTMlxHg1wAfqGUokj9ZrxfVeRQeEuJLEMwy5muYMRjCxF7ZKhinF0gL4xCawzf+89bBmSyfQyCoAQkjIk=
+X-MS-Office365-Filtering-Correlation-Id: bb0a4fc5-3f0b-4768-226b-08d5ba6cf01a
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 14:05:32.9021 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb0a4fc5-3f0b-4768-226b-08d5ba6cf01a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3260
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599917369470122405?=
-X-GMAIL-MSGID: =?utf-8?q?1599917369470122405?=
+X-GMAIL-MSGID: =?utf-8?q?1600539219083852852?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-KWHASAN doesn't check memory accesses through pointers tagged with 0xff.
-When page_address is used to get pointer to memory that corresponds to
-some page, the tag of the resulting pointer gets set to 0xff, even though
-the allocated memory might have been tagged differently.
 
-For slab pages it's impossible to recover the correct tag to return from
-page_address, since the page might contain multiple slab objects tagged
-with different values, and we can't know in advance which one of them is
-going to get accessed. For non slab pages however, we can recover the tag
-in page_address, since the whole page was marked with the same tag.
 
-This patch adds tagging to non slab memory allocated with pagealloc. To
-set the tag of the pointer returned from page_address, the tag gets stored
-to page->flags when the memory gets allocated.
+On 05/08/2018 08:21 PM, Andrey Konovalov wrote:
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- arch/arm64/include/asm/memory.h   | 11 +++++++++++
- include/linux/mm.h                | 29 +++++++++++++++++++++++++++++
- include/linux/page-flags-layout.h | 10 ++++++++++
- mm/cma.c                          |  1 +
- mm/kasan/common.c                 | 15 +++++++++++++--
- mm/page_alloc.c                   |  1 +
- 6 files changed, 65 insertions(+), 2 deletions(-)
+> +#ifndef CONFIG_KASAN_HW
+>  #define page_to_virt(page)	((void *)((__page_to_voff(page)) | PAGE_OFFSET))
+> +#else
+> +#define page_to_virt(page)	({					\
+> +	unsigned long __addr =						\
+> +		((__page_to_voff(page)) | PAGE_OFFSET);			\
+> +	if (!PageSlab((struct page *)page))				\
+> +		__addr = KASAN_SET_TAG(__addr, page_kasan_tag(page));	\
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index f206273469b5..9ec78a44c5ff 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -304,7 +304,18 @@ static inline void *phys_to_virt(phys_addr_t x)
- #define __virt_to_pgoff(kaddr)	(((u64)(kaddr) & ~PAGE_OFFSET) / PAGE_SIZE * sizeof(struct page))
- #define __page_to_voff(kaddr)	(((u64)(kaddr) & ~VMEMMAP_START) * PAGE_SIZE / sizeof(struct page))
- 
-+#ifndef CONFIG_KASAN_HW
- #define page_to_virt(page)	((void *)((__page_to_voff(page)) | PAGE_OFFSET))
-+#else
-+#define page_to_virt(page)	({					\
-+	unsigned long __addr =						\
-+		((__page_to_voff(page)) | PAGE_OFFSET);			\
-+	if (!PageSlab((struct page *)page))				\
-+		__addr = KASAN_SET_TAG(__addr, page_kasan_tag(page));	\
-+	((void *)__addr);						\
-+})
-+#endif
-+
- #define virt_to_page(vaddr)	((struct page *)((__virt_to_pgoff(vaddr)) | VMEMMAP_START))
- 
- #define _virt_addr_valid(kaddr)	pfn_valid((((u64)(kaddr) & ~PAGE_OFFSET) \
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1ac1f06a4be6..d6d596824803 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -770,6 +770,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_PGOFF		(SECTIONS_PGOFF - NODES_WIDTH)
- #define ZONES_PGOFF		(NODES_PGOFF - ZONES_WIDTH)
- #define LAST_CPUPID_PGOFF	(ZONES_PGOFF - LAST_CPUPID_WIDTH)
-+#define KASAN_TAG_PGOFF		(LAST_CPUPID_PGOFF - KASAN_TAG_WIDTH)
- 
- /*
-  * Define the bit shifts to access each section.  For non-existent
-@@ -780,6 +781,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_PGSHIFT		(NODES_PGOFF * (NODES_WIDTH != 0))
- #define ZONES_PGSHIFT		(ZONES_PGOFF * (ZONES_WIDTH != 0))
- #define LAST_CPUPID_PGSHIFT	(LAST_CPUPID_PGOFF * (LAST_CPUPID_WIDTH != 0))
-+#define KASAN_TAG_PGSHIFT	(KASAN_TAG_PGOFF * (KASAN_TAG_WIDTH != 0))
- 
- /* NODE:ZONE or SECTION:ZONE is used to ID a zone for the buddy allocator */
- #ifdef NODE_NOT_IN_PAGE_FLAGS
-@@ -802,6 +804,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_MASK		((1UL << NODES_WIDTH) - 1)
- #define SECTIONS_MASK		((1UL << SECTIONS_WIDTH) - 1)
- #define LAST_CPUPID_MASK	((1UL << LAST_CPUPID_SHIFT) - 1)
-+#define KASAN_TAG_MASK		((1UL << KASAN_TAG_WIDTH) - 1)
- #define ZONEID_MASK		((1UL << ZONEID_SHIFT) - 1)
- 
- static inline enum zone_type page_zonenum(const struct page *page)
-@@ -1021,6 +1024,32 @@ static inline bool cpupid_match_pid(struct task_struct *task, int cpupid)
- }
- #endif /* CONFIG_NUMA_BALANCING */
- 
-+#ifdef CONFIG_KASAN_HW
-+static inline u8 page_kasan_tag(const struct page *page)
-+{
-+	return (page->flags >> KASAN_TAG_PGSHIFT) & KASAN_TAG_MASK;
-+}
-+
-+static inline void page_kasan_tag_set(struct page *page, u8 tag)
-+{
-+	page->flags &= ~(KASAN_TAG_MASK << KASAN_TAG_PGSHIFT);
-+	page->flags |= (tag & KASAN_TAG_MASK) << KASAN_TAG_PGSHIFT;
-+}
-+
-+static inline void page_kasan_tag_reset(struct page *page)
-+{
-+	page_kasan_tag_set(page, 0xff);
-+}
-+#else
-+static inline u8 page_kasan_tag(const struct page *page)
-+{
-+	return 0xff;
-+}
-+
-+static inline void page_kasan_tag_set(struct page *page, u8 tag) { }
-+static inline void page_kasan_tag_reset(struct page *page) { }
-+#endif
-+
- static inline struct zone *page_zone(const struct page *page)
- {
- 	return &NODE_DATA(page_to_nid(page))->node_zones[page_zonenum(page)];
-diff --git a/include/linux/page-flags-layout.h b/include/linux/page-flags-layout.h
-index 7ec86bf31ce4..8dbad17664c2 100644
---- a/include/linux/page-flags-layout.h
-+++ b/include/linux/page-flags-layout.h
-@@ -82,6 +82,16 @@
- #define LAST_CPUPID_WIDTH 0
- #endif
- 
-+#ifdef CONFIG_KASAN_HW
-+#define KASAN_TAG_WIDTH 8
-+#if SECTIONS_WIDTH+NODES_WIDTH+ZONES_WIDTH+LAST_CPUPID_WIDTH+KASAN_TAG_WIDTH \
-+	> BITS_PER_LONG - NR_PAGEFLAGS
-+#error "KASAN: not enough bits in page flags for tag"
-+#endif
-+#else
-+#define KASAN_TAG_WIDTH 0
-+#endif
-+
- /*
-  * We are going to use the flags for the page to node mapping if its in
-  * there.  This includes the case where there is no node, so it is implicit.
-diff --git a/mm/cma.c b/mm/cma.c
-index aa40e6c7b042..f657db289bba 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -526,6 +526,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
- 	}
- 
- 	trace_cma_alloc(pfn, page, count, align);
-+	page_kasan_tag_reset(page);
- 
- 	if (ret && !(gfp_mask & __GFP_NOWARN)) {
- 		pr_err("%s: alloc failed, req-size: %zu pages, ret: %d\n",
+You could avoid 'if (!PageSlab())' check by adding page_kasan_tag_reset() into kasan_poison_slab().
+
+
+> +	((void *)__addr);						\
+> +})
+> +#endif
+> +
+>  #define virt_to_page(vaddr)	((struct page *)((__virt_to_pgoff(vaddr)) | VMEMMAP_START))
+>  
+>  #define _virt_addr_valid(kaddr)	pfn_valid((((u64)(kaddr) & ~PAGE_OFFSET) \
+
+
+
+> diff --git a/mm/cma.c b/mm/cma.c
+> index aa40e6c7b042..f657db289bba 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -526,6 +526,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+>  	}
+>  
+>  	trace_cma_alloc(pfn, page, count, align);
+> +	page_kasan_tag_reset(page);
+  
+
+Why? Comment needed.
+
+
+>  	if (ret && !(gfp_mask & __GFP_NOWARN)) {
+>  		pr_err("%s: alloc failed, req-size: %zu pages, ret: %d\n",
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 0654bf97257b..7cd4a4e8c3be 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -207,8 +207,18 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
+>  
+>  void kasan_alloc_pages(struct page *page, unsigned int order)
+>  {
+> +#ifdef CONFIG_KASAN_GENERIC
+>  	if (likely(!PageHighMem(page)))
+>  		kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
+> +#else
+> +	if (!PageSlab(page)) {
+> +		u8 tag = random_tag();
+> +
+> +		kasan_poison_shadow(page_address(page), PAGE_SIZE << order,
+> +					tag);
+> +		page_kasan_tag_set(page, tag);
+> +	}
+> +#endif
+>  }
+
+
 diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 0654bf97257b..7cd4a4e8c3be 100644
+index b8e0a8215021..f9f2181164a2 100644
 --- a/mm/kasan/common.c
 +++ b/mm/kasan/common.c
-@@ -207,8 +207,18 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
+@@ -207,18 +207,11 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
  
  void kasan_alloc_pages(struct page *page, unsigned int order)
  {
-+#ifdef CONFIG_KASAN_GENERIC
- 	if (likely(!PageHighMem(page)))
- 		kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
-+#else
-+	if (!PageSlab(page)) {
-+		u8 tag = random_tag();
-+
-+		kasan_poison_shadow(page_address(page), PAGE_SIZE << order,
-+					tag);
-+		page_kasan_tag_set(page, tag);
-+	}
-+#endif
+-#ifdef CONFIG_KASAN_GENERIC
+-	if (likely(!PageHighMem(page)))
+-		kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
+-#else
+-	if (!PageSlab(page)) {
+-		u8 tag = random_tag();
++	if (unlikely(PageHighMem(page)))
++		return;
+ 
+-		kasan_poison_shadow(page_address(page), PAGE_SIZE << order,
+-					tag);
+-		page_kasan_tag_set(page, tag);
+-	}
+-#endif
++	page_kasan_tag_set(page, random_tag());
++	kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
  }
  
  void kasan_free_pages(struct page *page, unsigned int order)
-@@ -433,6 +443,7 @@ void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
- #else
- 	tag = random_tag();
- 	kasan_poison_shadow(ptr, redzone_start - (unsigned long)ptr, tag);
-+	page_kasan_tag_set(page, tag);
- #endif
- 	kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
- 		KASAN_PAGE_REDZONE);
-@@ -462,7 +473,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
- 	page = virt_to_head_page(ptr);
- 
- 	if (unlikely(!PageSlab(page))) {
--		if (reset_tag(ptr) != page_address(page)) {
-+		if (ptr != page_address(page)) {
- 			kasan_report_invalid_free(ptr, ip);
- 			return;
- 		}
-@@ -475,7 +486,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
- 
- void kasan_kfree_large(void *ptr, unsigned long ip)
- {
--	if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
-+	if (ptr != page_address(virt_to_head_page(ptr)))
- 		kasan_report_invalid_free(ptr, ip);
- 	/* The object will be poisoned by page_alloc. */
- }
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 905db9d7962f..54df9c852c6e 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1179,6 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	init_page_count(page);
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
-+	page_kasan_tag_reset(page);
- 
- 	INIT_LIST_HEAD(&page->lru);
- #ifdef WANT_PAGE_VIRTUAL
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.16.1
+
+
+>  
+>  void kasan_free_pages(struct page *page, unsigned int order)
+> @@ -433,6 +443,7 @@ void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+>  #else
+>  	tag = random_tag();
+>  	kasan_poison_shadow(ptr, redzone_start - (unsigned long)ptr, tag);
+> +	page_kasan_tag_set(page, tag);
+
+As already said before no changes needed in kasan_kmalloc_large. kasan_alloc_pages() alredy did tag_set().
+
+>  #endif
+>  	kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
+>  		KASAN_PAGE_REDZONE);
+> @@ -462,7 +473,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+>  	page = virt_to_head_page(ptr);
+>  
+>  	if (unlikely(!PageSlab(page))) {
+> -		if (reset_tag(ptr) != page_address(page)) {
+> +		if (ptr != page_address(page)) {
+>  			kasan_report_invalid_free(ptr, ip);
+>  			return;
+>  		}
+> @@ -475,7 +486,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+>  
+>  void kasan_kfree_large(void *ptr, unsigned long ip)
+>  {
+> -	if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
+> +	if (ptr != page_address(virt_to_head_page(ptr)))
+>  		kasan_report_invalid_free(ptr, ip);
+>  	/* The object will be poisoned by page_alloc. */
+>  }
