@@ -1,97 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753621AbeEOORY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:17:24 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52678 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753534AbeEOORT (ORCPT
+        id S1753703AbeEOORr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:17:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54930 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753360AbeEOORp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:17:19 -0400
-Date: Tue, 15 May 2018 17:16:55 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180515141655.idzuh2jfdkuu5grs@mwanda>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
- <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
- <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
- <20180423161742.66f939ba@vento.lan>
- <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
- <20180426204241.03a42996@vento.lan>
- <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
- <20180515085953.65bfa107@vento.lan>
+        Tue, 15 May 2018 10:17:45 -0400
+Date: Tue, 15 May 2018 16:17:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boaz Harrosh <boazh@netapp.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+Message-ID: <20180515141721.GF12217@hirez.programming.kicks-ass.net>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514144901.0fe99d240ff8a53047dd512e@linux-foundation.org>
+ <20180515004406.GB5168@bombadil.infradead.org>
+ <cff721c3-65e8-c1e8-9f6d-c37ce6e56416@netapp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515085953.65bfa107@vento.lan>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8893 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150145
+In-Reply-To: <cff721c3-65e8-c1e8-9f6d-c37ce6e56416@netapp.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 08:59:53AM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 14 May 2018 22:31:37 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
+On Tue, May 15, 2018 at 02:54:29PM +0300, Boaz Harrosh wrote:
+> At the beginning I was wishful thinking that the mm_cpumask(vma->vm_mm)
+> should have a single bit set just as the affinity of the thread on
+> creation of that thread. But then I saw that at %80 of the times some
+> other random bits are also set.
 > 
-> > Hi Mauro,
-> > 
-> > On 04/26/2018 06:42 PM, Mauro Carvalho Chehab wrote:
-> > 
-> > >>
-> > >> I noticed you changed the status of this series from rejected to new.
-> > > 
-> > > Yes.
-> > > 
-> > >> Also, there are other similar issues in media/pci/
-> > > 
-> > > Well, the issues will be there everywhere on all media drivers.
-> > > 
-> > > I marked your patches because I need to study it carefully, after
-> > > Peter's explanations. My plan is to do it next week. Still not
-> > > sure if the approach you took is the best one or not.
-> > > 
-> > > As I said, one possibility is to change the way v4l2-core handles
-> > > VIDIOC_ENUM_foo ioctls, but that would be make harder to -stable
-> > > backports.
-> > > 
-> > > I need a weekend to sleep on it.
-> > > 
-> > 
-> > I'm curious about how you finally resolved to handle these issues.
-> > 
-> > I noticed Smatch is no longer reporting them.
+> Yes Random. Always the thread affinity (single) bit was set but
+> then zero one or two more bits were set as well. Never seen more then
+> two though, which baffles me a lot.
 > 
-> There was no direct fix for it, but maybe this patch has something
-> to do with the smatch error report cleanup:
+> If it was like Matthew said .i.e the cpumask of the all process
+> then I would expect all the bits to be set. Because I have a thread
+> on each core. And also I would even expect that all vma->vm_mm
+> or maybe mm_cpumask(vma->vm_mm) to point to the same global object.
+> But it was not so. it was pointing to some thread unique object but
+> still those phantom bits were set all over. (And I am almost sure
+> same vma had those bits change over time)
 > 
-> commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56
-> Author: Sami Tolvanen <samitolvanen@google.com>
-> Date:   Tue May 8 13:56:12 2018 -0400
-> 
->     media: v4l2-ioctl: replace IOCTL_INFO_STD with stub functions
->     
->     This change removes IOCTL_INFO_STD and adds stub functions where
->     needed using the DEFINE_V4L_STUB_FUNC macro. This fixes indirect call
->     mismatches with Control-Flow Integrity, caused by calling standard
->     ioctls using a function pointer that doesn't match the function type.
->     
->     Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
->     Signed-off-by: Hans Verkuil <hansverk@cisco.com>
->     Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> 
+> So I would love some mm guy to explain where are those bits collected?
 
-Possibly...  There was an ancient bug in Smatch's function pointer
-handling.  I just pushed a fix for it now so the warning is there on
-linux-next.
+Depends on the architecture, some architectures only ever set bits,
+some, like x86, clear bits again. You want to look at switch_mm().
 
-regards,
-dan carpenter
+Basically x86 clears the bit again when we switch away from the mm and
+have/will invalidate TLBs for it in doing so.
+
+> Which brings me to another question. How can I find from
+> within a thread Say at the file_operations->mmap() call that the thread
+> is indeed core-pinned. What mm_cpumask should I inspect?
+
+is_percpu_thread().
