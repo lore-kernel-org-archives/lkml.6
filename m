@@ -1,102 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeEOXCk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:02:40 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45274 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752386AbeEOXCD (ORCPT
+        id S1752319AbeEOXEd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:04:33 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34566 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeEOXEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:02:03 -0400
-X-Google-Smtp-Source: AB8JxZrgCYoybayAtMRhrJNPlGYFd0Z10cN7dU02dtoxh1vPEplyrMLDswOde6RamBsPVtrAvj4KXA==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        linux-kernel@vger.kernel.org (open list), opendmb@gmail.com,
-        davem@davemloft.net
-Subject: [PATCH net v2 2/3] net: dsa: bcm_sf2: Fix IPv6 rules and chain ID
-Date: Tue, 15 May 2018 16:01:24 -0700
-Message-Id: <20180515230125.25886-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180515230125.25886-1-f.fainelli@gmail.com>
-References: <20180515230125.25886-1-f.fainelli@gmail.com>
+        Tue, 15 May 2018 19:04:32 -0400
+X-Google-Smtp-Source: AB8JxZpzJBL7hPsgE/+OJh7j0sWd+jdsqc3GmPiwMoOFrFJZ2HD2D2XFD18myGOsAzk02DwCBvCnRg==
+Date: Tue, 15 May 2018 16:04:30 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH RFC 6/8] rcu: Add back the Startedleaf tracepoint
+Message-ID: <20180515230430.GB7510@joelaf.mtv.corp.google.com>
+References: <20180514031541.67247-1-joel@joelfernandes.org>
+ <20180514031541.67247-7-joel@joelfernandes.org>
+ <20180514183823.GF26088@linux.vnet.ibm.com>
+ <20180515005709.GE209519@joelaf.mtv.corp.google.com>
+ <20180515034603.GY26088@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515034603.GY26088@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We had several issues that would make the programming of IPv6 rules both
-inconsistent and error prone:
+On Mon, May 14, 2018 at 08:46:03PM -0700, Paul E. McKenney wrote:
+> On Mon, May 14, 2018 at 05:57:09PM -0700, Joel Fernandes wrote:
+> > On Mon, May 14, 2018 at 11:38:23AM -0700, Paul E. McKenney wrote:
+> > > On Sun, May 13, 2018 at 08:15:39PM -0700, Joel Fernandes (Google) wrote:
+> > > > In recent discussion [1], the check for whether a leaf believes RCU is
+> > > > not idle, is being added back to funnel locking code, to avoid more
+> > > > locking. In this we are marking the leaf node for a future grace-period
+> > > > and bailing out since a GP is currently in progress. However the
+> > > > tracepoint is missing. Lets add it back.
+> > > > 
+> > > > Also add a small comment about why we do this check (basically the point
+> > > > is to avoid locking intermediate nodes unnecessarily) and clarify the
+> > > > comments in the trace event header now that we are doing traversal of
+> > > > one or more intermediate nodes.
+> > > > 
+> > > > [1] http://lkml.kernel.org/r/20180513190906.GL26088@linux.vnet.ibm.com
+> > > > 
+> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > 
+> > > Looks like a good idea, but it does not apply -- which is not a surprise,
+> > > given the change rate in this code.  I hand-applied as a modification
+> > > to c1b3f9fce26f ("rcu: Don't funnel-lock above leaf node if GP in progress")
+> > > with attribution, but with the changes below.  Please let me know if I
+> > > am missing something.
+> > > 
+> > > Ah, I see -- this commit depends on your earlier name-change commit.
+> > > I therefore made this patch use the old names.
+> > 
+> > Ok, I'll check your new tree and rebase.
+> 
+> Sounds good!
+> 
+> > > > ---
+> > > >  include/trace/events/rcu.h |  4 ++--
+> > > >  kernel/rcu/tree.c          | 11 ++++++++++-
+> > > >  2 files changed, 12 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+> > > > index 539900a9f8c7..dc0bd11739c7 100644
+> > > > --- a/include/trace/events/rcu.h
+> > > > +++ b/include/trace/events/rcu.h
+> > > > @@ -91,8 +91,8 @@ TRACE_EVENT(rcu_grace_period,
+> > > >   *
+> > > >   * "Startleaf": Request a grace period based on leaf-node data.
+> > > >   * "Prestarted": Someone beat us to the request
+> > > > - * "Startedleaf": Leaf-node start proved sufficient.
+> > > > - * "Startedleafroot": Leaf-node start proved sufficient after checking root.
+> > > > + * "Startedleaf": Leaf and one or more non-root nodes marked for future start.
+> > > 
+> > > Actually, we only get to that trace if all we did was mark the leaf
+> > > node, right?
+> > 
+> > I didn't think so. In the code we are doing the check for rnp every time we
+> > walk up the tree. So even when we are on an intermediate node, we do the
+> > check of the node we started with. I thought that's what you wanted to do. It
+> > makes sense to me to do so too.
+> 
+> If we are not on the initial (usually leaf) node, then the similar check
+> in the previous "if" statement would have sent us to unlock_out, right?
+> 
+> (And yes, I should have said "mark the initial node" above.)
 
-- the chain ID that we would be asking the hardware to put in the
-  packet's Broadcom tag would be off by one, it would return one of the
-  two indexes, but not the one user-space specified
+I may have missed this, sorry. 
 
-- when an user specified a particular location to insert a CFP rule at,
-  we would not be returning the same index, which would be confusing if
-  nothing else
+Yes, that would be true unless the check could be true not at the firsti
+iteration, but after the first iteration? (i.e. another path started the
+initially idle GP). That's why I changed it to "one or more non-root nodes
+marked".
 
-- finally, like IPv4, it would be possible to overflow the last entry by
-  re-programming it
+What do you think?
 
-Fix this by swapping the usage of rule_index[0] and rule_index[1] where
-relevant in order to return a consistent and correct user-space
-experience.
+thanks,
 
-Fixes: ba0696c22e7c ("net: dsa: bcm_sf2: Add support for IPv6 CFP rules")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/dsa/bcm_sf2_cfp.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
-index 9e04786e3139..6fd0f8a12cc2 100644
---- a/drivers/net/dsa/bcm_sf2_cfp.c
-+++ b/drivers/net/dsa/bcm_sf2_cfp.c
-@@ -565,19 +565,21 @@ static int bcm_sf2_cfp_ipv6_rule_set(struct bcm_sf2_priv *priv, int port,
- 	 * first half because the HW search is by incrementing addresses.
- 	 */
- 	if (fs->location == RX_CLS_LOC_ANY)
--		rule_index[0] = find_first_zero_bit(priv->cfp.used,
--						    bcm_sf2_cfp_rule_size(priv));
-+		rule_index[1] = find_first_zero_bit(priv->cfp.used,
-+						    priv->num_cfp_rules);
- 	else
--		rule_index[0] = fs->location;
-+		rule_index[1] = fs->location;
-+	if (rule_index[1] > bcm_sf2_cfp_rule_size(priv))
-+		return -ENOSPC;
- 
- 	/* Flag it as used (cleared on error path) such that we can immediately
- 	 * obtain a second one to chain from.
- 	 */
--	set_bit(rule_index[0], priv->cfp.used);
-+	set_bit(rule_index[1], priv->cfp.used);
- 
--	rule_index[1] = find_first_zero_bit(priv->cfp.used,
--					    bcm_sf2_cfp_rule_size(priv));
--	if (rule_index[1] > bcm_sf2_cfp_rule_size(priv)) {
-+	rule_index[0] = find_first_zero_bit(priv->cfp.used,
-+					    priv->num_cfp_rules);
-+	if (rule_index[0] > bcm_sf2_cfp_rule_size(priv)) {
- 		ret = -ENOSPC;
- 		goto out_err;
- 	}
-@@ -715,14 +717,14 @@ static int bcm_sf2_cfp_ipv6_rule_set(struct bcm_sf2_priv *priv, int port,
- 	/* Flag the second half rule as being used now, return it as the
- 	 * location, and flag it as unique while dumping rules
- 	 */
--	set_bit(rule_index[1], priv->cfp.used);
-+	set_bit(rule_index[0], priv->cfp.used);
- 	set_bit(rule_index[1], priv->cfp.unique);
- 	fs->location = rule_index[1];
- 
- 	return ret;
- 
- out_err:
--	clear_bit(rule_index[0], priv->cfp.used);
-+	clear_bit(rule_index[1], priv->cfp.used);
- 	return ret;
- }
- 
--- 
-2.14.1
+- Joel
