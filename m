@@ -1,37 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeEOUtr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 16:49:47 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42194 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752465AbeEOUtp (ORCPT
+        id S1752587AbeEOUx4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 16:53:56 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40854 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752236AbeEOUxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 16:49:45 -0400
-X-Google-Smtp-Source: AB8JxZoR1w0e0qvTl8kndLZSSlArllFTMcUSFUp8HA/vaiQk1g+HD2GEnxoyiJxVZhvMe2vp//0ZWc53EhBl9YjPL6M=
-MIME-Version: 1.0
-In-Reply-To: <20180513230237.GG677@sol.localdomain>
-References: <089e0825fc78410eaa056845781e@google.com> <20180513230237.GG677@sol.localdomain>
-From: Roland Dreier <roland@purestorage.com>
-Date: Tue, 15 May 2018 13:49:23 -0700
-Message-ID: <CAL1RGDVNaJ8OG+4ajmCZN1GnvsZUAqY3LXMRPv57mGSPJyhwAQ@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in __list_add_valid (5)
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, rds-devel@oss.oracle.com,
-        syzbot <syzbot+db1c219466daac1083df@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 May 2018 16:53:54 -0400
+X-Google-Smtp-Source: AB8JxZpsDYV+prF3cvWw1pPcPLqt7ynWSQEKtDbmn969k8aOZbKcbo+ma7tRvzRo4XChm77wsN4FKg==
+From: Alex Elder <elder@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] remoteproc: updates for new events
+Date: Tue, 15 May 2018 15:53:40 -0500
+Message-Id: <20180515205345.8090-1-elder@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Still reproducible on Linus' tree (commit 66e1c94db3cd4e) and on linux-next
-> (next-20180511).  Here's a simplified reproducer:
+This series changes the prototype for rproc_add_subdev().  The
+caller is now responsible for populating the function pointers
+recorded in the rproc_subdev structure, rather than having them be
+passed as arguments.  These two existing function pointers have been
+renamed ("probe" is now "start" and "remove" is now "stop"), and
+they are now optional.  Callback functions may now also be assigned
+for two new events (prior to start and after stop).
 
-Thanks!  That's a fantastic test case.
+					-Alex
 
-The issue is a race where rdma_listen() sees invalid state in the
-middle of an rdma_bind_addr() call that will ultimately fail.  I'll
-send a proposed patch shortly.
+Alex Elder (1):
+  remoteproc: rename subdev probe and remove functions
 
- - R.
+Bjorn Andersson (4):
+  remoteproc: Rename subdev functions to start/stop
+  remoteproc: Make start and stop in subdev optional
+  remoteproc: Make client initialize ops in rproc_subdev
+  remoteproc: Introduce prepare and unprepare for subdevices
+
+ drivers/remoteproc/qcom_common.c     |  26 ++++---
+ drivers/remoteproc/qcom_sysmon.c     |   5 +-
+ drivers/remoteproc/remoteproc_core.c | 110 ++++++++++++++++++++-------
+ include/linux/remoteproc.h           |  19 ++---
+ 4 files changed, 109 insertions(+), 51 deletions(-)
+
+-- 
+2.17.0
