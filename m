@@ -1,55 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeEOAuu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 20:50:50 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38011 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752334AbeEOAut (ORCPT
+        id S1752518AbeEOAvs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 20:51:48 -0400
+Received: from mail-vk0-f54.google.com ([209.85.213.54]:34857 "EHLO
+        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752479AbeEOAvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 20:50:49 -0400
-X-Google-Smtp-Source: AB8JxZpKjZtjysjhrMf8Fx4eI31DYZDgwIivZBmmf3IagzygYebDQL0VoHIia+FRvOYU/heQ21GBgw==
-From: James Kelly <jamespeterkelly@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: James Kelly <jamespeterkelly@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Skip clk_put for attached clocks when freeing context
-Date: Tue, 15 May 2018 10:50:17 +1000
-Message-Id: <20180515005017.46851-1-jamespeterkelly@gmail.com>
-X-Mailer: git-send-email 2.15.1 (Apple Git-101)
+        Mon, 14 May 2018 20:51:46 -0400
+X-Google-Smtp-Source: AB8JxZpb3mep21UAF08A/wNAEoI4Y9K5WAsyyxl7aUB17OOOHzoAHdghrq+AyBekaxwBMefnT7SqctFxGe4tQtSSOaU=
+MIME-Version: 1.0
+From: Joshua Hudson <joshudson@gmail.com>
+Date: Mon, 14 May 2018 17:51:45 -0700
+Message-ID: <CA+jjjYTDCPSxDrK43yQA2BR8hSDSygW_aCggPL2D9VSPxKtWDg@mail.gmail.com>
+Subject: USB Floppy Disk Driver
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4F0purf023303
 
-Capability to attach an existing clk to a MMIO regmap was
-introduced in 4.17rc1.
+Has anybody tried the USB floppy disk driver in awhile? I just did to
+read an old disk, and I couldn't read a single byte.
 
-However, when using attached clk, regmap does not do the clk_get.
-Therefore it should not do the clk_put when freeing the MMIO
-regmap context.
+I started thinking maybe the hardware's bad, but dd didn't raise en
+error even after I pulled it out and got "USB Disconnect" on the
+screen from kernel log.
 
-There does not appear to be any users of attached clocks yet
-so this would be a good time to make this change before anything
-depends on the existing behaviour.
+I still don't know if the code is broken or if my hardware's bad. It
+worked 15 years ago with a 2.6 series kernel.
 
-Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
----
- drivers/base/regmap/regmap-mmio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Kernel version:
 
-diff --git a/drivers/base/regmap/regmap-mmio.c b/drivers/base/regmap/regmap-mmio.c
-index 5cadfd3394d8..8741fb5f8f54 100644
---- a/drivers/base/regmap/regmap-mmio.c
-+++ b/drivers/base/regmap/regmap-mmio.c
-@@ -206,7 +206,8 @@ static void regmap_mmio_free_context(void *context)
- 
- 	if (!IS_ERR(ctx->clk)) {
- 		clk_unprepare(ctx->clk);
--		clk_put(ctx->clk);
-+		if (!ctx->attached_clk)
-+			clk_put(ctx->clk);
- 	}
- 	kfree(context);
- }
--- 
-2.15.1 (Apple Git-101)
+joshua@nova:~ϟ uname -a
+Linux nova 4.9.0-6-amd64 #1 SMP Debian 4.9.82-1+deb9u3 (2018-03-02)
+x86_64 GNU/Linux
+joshua@nova:~ϟ
