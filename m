@@ -1,58 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752735AbeEOJKo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:10:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53267 "EHLO mx2.suse.de"
+        id S1752564AbeEOJLM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:11:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53316 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752570AbeEOJKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:10:43 -0400
-Date: Tue, 15 May 2018 11:10:36 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
-Message-ID: <20180515091036.GC12670@dhcp22.suse.cz>
-References: <20180510115356.31164-1-pasha.tatashin@oracle.com>
- <20180510123039.GF5325@dhcp22.suse.cz>
- <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
+        id S1752240AbeEOJLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 05:11:10 -0400
+Date: Tue, 15 May 2018 11:11:08 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        =?ISO-8859-15?Q?Cl=E9ment_VUCHENER?= <clement.vuchener@gmail.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v9 0/2] hid-steam driver with user mode client dection
+In-Reply-To: <20180504101631.GA7496@casa>
+Message-ID: <nycvar.YFH.7.76.1805151110100.27054@cbobk.fhfr.pm>
+References: <20180416122703.22306-1-rodrigorivascosta@gmail.com> <nycvar.YFH.7.76.1805041008100.27054@cbobk.fhfr.pm> <20180504101631.GA7496@casa>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 11-05-18 10:17:55, Pavel Tatashin wrote:
-> > Thanks that helped me to see the problem. On the other hand isn't this a
-> > bit of an overkill? AFAICS this affects only NEED_PER_CPU_KM which is !SMP
-> > and DEFERRED_STRUCT_PAGE_INIT makes only very limited sense on UP,
-> > right?
-> 
-> > Or do we have more such places?
-> 
-> I do not know other places, but my worry is that trap_init() is arch
-> specific and we cannot guarantee that arches won't do virt to phys in
-> trap_init() in other places. Therefore, I think a proper fix is simply
-> allow DEFERRED_STRUCT_PAGE_INIT when it is safe to do virt to phys without
-> accessing struct pages, which is with SPARSEMEM_VMEMMAP.
+On Fri, 4 May 2018, Rodrigo Rivas Costa wrote:
 
-You are now disabling a potentially useful feature to SPARSEMEM users
-without having any evidence that they do suffer from the issue which is
-kinda sad. Especially when the only known offender is a UP pcp allocator
-implementation.
+> > If noone has any objections (last chance to raise them), I'll be 
+> > queuing this for 4.18.
+> 
+> That would be great, thanks!
+> 
+> Now that my distro upgraded to 4.16, without the hid-quirks array, I've been
+> testing it a bit more. 
+> 
+> It works great, but I've noticed that I've missed a couple of lines when
+> creating the client hdev.  It doesn't seem to cause any harm, and anyway 'type'
+> and 'country' are currently both 0 in my controller; only 'version' is visibly
+> different but who uses that?
+> 
+> Anyway, this would be the change, I don't know if it is worth a whole reroll...
 
-I will not insist of course but it seems like your fix doesn't really
-prevent virt_to_page or other direct page access either.
+I've put this on top of your patches and queued in for-4.18/hid-steam. 
+Thanks,
+
 -- 
-Michal Hocko
+Jiri Kosina
 SUSE Labs
