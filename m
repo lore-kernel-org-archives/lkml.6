@@ -1,71 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeEOBid (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 21:38:33 -0400
-Received: from mga01.intel.com ([192.55.52.88]:57617 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752237AbeEOBib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 21:38:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,402,1520924400";
-   d="scan'208";a="50855182"
-Date: Tue, 15 May 2018 09:38:20 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: kbuild-all@01.org, netdev@vger.kernel.org, davem@davemloft.net,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
-        vladbu@mellanox.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 05/14] net: sched: always take reference to action
-Message-ID: <201805150914.qi3ndJdl%fengguang.wu@intel.com>
-References: <1526308035-12484-6-git-send-email-vladbu@mellanox.com>
+        id S1752218AbeEOBmI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 21:42:08 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:54136 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752024AbeEOBmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 21:42:07 -0400
+Date: Mon, 14 May 2018 21:41:52 -0400
+From: Rich Felker <dalias@libc.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
+ device tree
+Message-ID: <20180515014152.GV1392@brightrain.aerifal.cx>
+References: <c1ec211d-cbe2-1139-edb0-8baa0e7364e8@physik.fu-berlin.de>
+ <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
+ <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
+ <20171117191706.GF1627@brightrain.aerifal.cx>
+ <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
+ <20180105212857.GR1627@brightrain.aerifal.cx>
+ <20180503013708.GC1392@brightrain.aerifal.cx>
+ <20180503023320.GD1392@brightrain.aerifal.cx>
+ <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
+ <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526308035-12484-6-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vlad,
+On Mon, May 07, 2018 at 10:40:34AM +0900, Yoshinori Sato wrote:
+> On Thu, 03 May 2018 19:07:38 +0900,
+> John Paul Adrian Glaubitz wrote:
+> > 
+> > [1  <text/plain; utf-8 (7bit)>]
+> > Hi Rich!
+> > 
+> > On 05/03/2018 04:33 AM, Rich Felker wrote:
+> > > I found the U-Boot stuff here:
+> > > 
+> > > https://ja.osdn.net/users/ysato/pf/uboot/wiki/FrontPage
+> > > 
+> > > but I'm not sure how to install it yet. Will try to figure it out.
+> > 
+> > Interesting. It seems the HDL-160U uses u-boot instead of lilo which
+> > is used on my USL-5P. Both are based on the LANDISK platform though.
+> > I wonder whether it is possible to convert the USL-5P to use u-boot
+> > instead of the very limited lilo.
+> > 
+> > As for the kernel configuration, for USL-5P, I had to use the kernel
+> > configuration attached to this mail. One important configuration setting
+> > is CONFIG_SH_PCLK_FREQ which has to be set to "33250000" otherwise
+> > the kernel won't boot properly.
+> > 
+> > I still have my USL-5P ready to be set up for testing a new kernel
+> > image with the device tree patches merged. Although I still don't
+> > know how to enable the internal (pseudo) IDE controller.
+> > 
+> > @Yoshinori:
+> > 
+> > Did the HDL-160U LANDISK device you have use u-boot by default or
+> > did you convert it from lilo?
+> 
+> Yes.
+> Replace sh-lilo's second stage with u-boot.
+> With this method it is unnecessary to rewrite Flash for boot.
 
-Thank you for the patch! Perhaps something to improve:
+Can you give me a brief explanation of how to reproduce the bootloader
+installation? For now I'm just using the existing MBR/partitioning you
+sent me, and replacing zImage.itb in /boot makes it attempt to load a
+new kernel, but I haven't gotten any output yet to know if it's
+working.
 
-[auto build test WARNING on net/master]
-[also build test WARNING on v4.17-rc5 next-20180514]
-[cannot apply to net-next/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Probably the most important thing I'm missing right now is what the
+its file for generating the zImage.itb should look like. I tried
+making one myself but it may be wrong. I'm also unsure whether I
+should use a zImage or vmlinux file as input, and if using a zImage
+file, what load address I should choose.
 
-url:    https://github.com/0day-ci/linux/commits/Vlad-Buslov/Modify-action-API-for-implementing-lockless-actions/20180515-025420
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+For now I'm using the upstream landisk board support (maybe not
+working, we'll see). Once I can confirm I'm getting some output and
+the kernel seems minimally functional, I'm going to switch to DT, but
+integrating the DT stuff with u-boot isn't important right away since
+I can start with a linked-in DT.
 
+At some point I'd also like to know how to reinstall u-boot on the MBR
+or whatever.
 
-sparse warnings: (new ones prefixed by >>)
-
-   net/sched/act_api.c:71:15: sparse: incorrect type in initializer (different address spaces) @@    expected struct tc_cookie [noderef] <asn:4>*__ret @@    got [noderef] <asn:4>*__ret @@
-   net/sched/act_api.c:71:15:    expected struct tc_cookie [noderef] <asn:4>*__ret
-   net/sched/act_api.c:71:15:    got struct tc_cookie *new_cookie
-   net/sched/act_api.c:71:13: sparse: incorrect type in assignment (different address spaces) @@    expected struct tc_cookie *old @@    got struct tc_cookie [noderef] <struct tc_cookie *old @@
-   net/sched/act_api.c:71:13:    expected struct tc_cookie *old
-   net/sched/act_api.c:71:13:    got struct tc_cookie [noderef] <asn:4>*[assigned] __ret
->> net/sched/act_api.c:287:6: sparse: symbol '__tcf_idr_check' was not declared. Should it be static?
-   net/sched/act_api.c:144:48: sparse: dereference of noderef expression
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Rich
