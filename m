@@ -1,190 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753524AbeEOORP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:17:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41498 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753263AbeEOORN (ORCPT
+        id S1753621AbeEOORY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:17:24 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52678 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753534AbeEOORT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:17:13 -0400
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
- <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Tue, 15 May 2018 16:17:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 10:17:19 -0400
+Date: Tue, 15 May 2018 17:16:55 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180515141655.idzuh2jfdkuu5grs@mwanda>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+ <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+ <20180423161742.66f939ba@vento.lan>
+ <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+ <20180426204241.03a42996@vento.lan>
+ <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+ <20180515085953.65bfa107@vento.lan>
 MIME-Version: 1.0
-In-Reply-To: <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051514-0044-0000-0000-00000552B140
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051514-0045-0000-0000-000028941788
-Message-Id: <1f9117bd-ed14-bde4-fdbd-cb3733c8c633@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515085953.65bfa107@vento.lan>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8893 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805150145
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/2018 21:42, Tony Krowiak wrote:
-> On 05/11/2018 01:18 PM, Halil Pasic wrote:
->>
->>
->> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
->>> Registers the matrix device created by the VFIO AP device
->>> driver with the VFIO mediated device framework.
->>> Registering the matrix device will create the sysfs
->>> structures needed to create mediated matrix devices
->>> each of which will be used to configure the AP matrix
->>> for a guest and connect it to the VFIO AP device driver.
->>>
->> [..]
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->>> b/drivers/s390/crypto/vfio_ap_ops.c
->>> new file mode 100644
->>> index 0000000..d7d36fb
->>> --- /dev/null
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>> @@ -0,0 +1,106 @@
->>> +// SPDX-License-Identifier: GPL-2.0+
->>> +/*
->>> + * Adjunct processor matrix VFIO device driver callbacks.
->>> + *
->>> + * Copyright IBM Corp. 2017
->>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> + *
->>> + */
->>> +#include <linux/string.h>
->>> +#include <linux/vfio.h>
->>> +#include <linux/device.h>
->>> +#include <linux/list.h>
->>> +#include <linux/ctype.h>
->>> +
->>> +#include "vfio_ap_private.h"
->>> +
->>> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
->>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
->>> +
->>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
->>> mdev_device *mdev)
->>> +{
->>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>> +
->>> +    ap_matrix->available_instances--;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->>> +{
->>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->>> +
->>> +    ap_matrix->available_instances++;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>
->> The above functions seem to be called with the lock of this 
->> auto-generated
->> mdev parent device held. That's why we don't have to care about 
->> synchronization
->> ourselves, right?
->
-> I would assume as much. The comments for the 'struct mdev_parent_ops' in
-> include/linux/mdev.h do not mention anything about synchronization, 
-> nor did I
-> see any locking or synchronization in the vfio_ccw implementation 
-> after which
-> I modeled my code, so frankly it is something I did not consider.
->
->>
->>
->> A small comment in the code could be helpful for mdev non-experts. 
->> Hell, I would
->> even consider documenting it for all mdev -- took me some time to 
->> figure out.
->
-> You may want to bring this up with the VFIO mdev maintainers, but I'd 
-> be happy to
-> include a comment in the functions in question if you think it important.
->
->>
->>
->> [..]
->>
->>
->>> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
->>> +{
->>> +    int ret;
->>> +
->>> +    ret = mdev_register_device(&ap_matrix->device, 
->>> &vfio_ap_matrix_ops);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    ap_matrix->available_instances = 
->>> AP_MATRIX_MAX_AVAILABLE_INSTANCES;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
->>> +{
->>> +    ap_matrix->available_instances--;
->>
->> What is this for? I don't understand.
->
-> To control the number of mediated devices one can create for the 
-> matrix device.
-> Once the max is reached, the mdev framework will not allow creation of 
-> another
-> mediated device until one is removed. This counter keeps track of the 
-> number
-> of instances that can be created. This is documented with the mediated
-> framework. You may want to take a look at:
->
-> Documentation/vfio-mediated-device.txt
-> Documentation/vfio.txt
-> Documentation/virtual/kvm/devices/vfio.txt
+On Tue, May 15, 2018 at 08:59:53AM -0300, Mauro Carvalho Chehab wrote:
+> Em Mon, 14 May 2018 22:31:37 -0500
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > On 04/26/2018 06:42 PM, Mauro Carvalho Chehab wrote:
+> > 
+> > >>
+> > >> I noticed you changed the status of this series from rejected to new.
+> > > 
+> > > Yes.
+> > > 
+> > >> Also, there are other similar issues in media/pci/
+> > > 
+> > > Well, the issues will be there everywhere on all media drivers.
+> > > 
+> > > I marked your patches because I need to study it carefully, after
+> > > Peter's explanations. My plan is to do it next week. Still not
+> > > sure if the approach you took is the best one or not.
+> > > 
+> > > As I said, one possibility is to change the way v4l2-core handles
+> > > VIDIOC_ENUM_foo ioctls, but that would be make harder to -stable
+> > > backports.
+> > > 
+> > > I need a weekend to sleep on it.
+> > > 
+> > 
+> > I'm curious about how you finally resolved to handle these issues.
+> > 
+> > I noticed Smatch is no longer reporting them.
+> 
+> There was no direct fix for it, but maybe this patch has something
+> to do with the smatch error report cleanup:
+> 
+> commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56
+> Author: Sami Tolvanen <samitolvanen@google.com>
+> Date:   Tue May 8 13:56:12 2018 -0400
+> 
+>     media: v4l2-ioctl: replace IOCTL_INFO_STD with stub functions
+>     
+>     This change removes IOCTL_INFO_STD and adds stub functions where
+>     needed using the DEFINE_V4L_STUB_FUNC macro. This fixes indirect call
+>     mismatches with Control-Flow Integrity, caused by calling standard
+>     ioctls using a function pointer that doesn't match the function type.
+>     
+>     Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+>     Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+>     Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> 
 
-This is what you do in create/remove.
-But here in unregister I agree with Halil, it does not seem to be usefull.
+Possibly...  There was an ancient bug in Smatch's function pointer
+handling.  I just pushed a fix for it now so the warning is there on
+linux-next.
 
->
->>
->>
->> Regards,
->> Halil
->>
->>> + mdev_unregister_device(&ap_matrix->device);
->>> +}
->
->
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+regards,
+dan carpenter
