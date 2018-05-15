@@ -1,100 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeEOPoN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:44:13 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:32815 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752931AbeEOPoL (ORCPT
+        id S1752569AbeEOPrt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:47:49 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2033 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752060AbeEOPrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:44:11 -0400
-From: Dan Murphy <dmurphy@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
-Date: Tue, 15 May 2018 10:43:51 -0500
-Message-ID: <20180515154352.20263-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
+        Tue, 15 May 2018 11:47:47 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, "David Airlie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>
+Subject: Re: [PATCH] drm: clarify adjusted_mode documentation for bridges
+Thread-Topic: [PATCH] drm: clarify adjusted_mode documentation for bridges
+Thread-Index: AQHT0BczUn0iEJHYOUCxPfTONo+jRaQIKrOAgAATa4CAKMgtgA==
+Date: Tue, 15 May 2018 15:47:17 +0000
+Message-ID: <e311abac-59c7-9813-27ec-260754e35fb2@st.com>
+References: <20180409152427.12449-1-philippe.cornu@st.com>
+ <b09d3039-41f7-5de1-7323-2f30ccd7141b@st.com>
+ <a33a7a7e-fb4f-6293-2dd8-0a9afb4e9a9a@codeaurora.org>
+In-Reply-To: <a33a7a7e-fb4f-6293-2dd8-0a9afb4e9a9a@codeaurora.org>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D433E953EFE8A44B9C697F233483A178@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4FFltsq000329
 
-Introduce the device tree bindings for the lm3601x
-family of LED torch, flash and IR drivers.
+Hi,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+Applied on drm-misc-next.
+Many thanks,
+Philippe :-)
 
-v6 - Removed multiple led child nodes, fixed example to display micro ranges
-for corresponding child nodes and added led-sources to define the current driver -
-https://patchwork.kernel.org/patch/10392121/
-
-v5 - No changes - https://patchwork.kernel.org/patch/10391743/
-v4 - Added " " around "=", changed strobe to flash on label, removed "support and
-register" comment and change ir lable to ir:torch - See v2 patchworks for comments
-v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
-v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-
- .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-new file mode 100644
-index 000000000000..27930a89e9a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-@@ -0,0 +1,47 @@
-+* Texas Instruments - lm3601x Single-LED Flash Driver
-+
-+The LM3601X are ultra-small LED flash drivers that
-+provide a high level of adjustability.
-+
-+Required properties:
-+	- compatible : Can be one of the following
-+		"ti,lm36010"
-+		"ti,lm36011"
-+	- reg : I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Required child properties:
-+	- reg : 0
-+	- led-sources:	0 - Indicates a IR mode
-+			1 - Indicates a Torch (white LED) mode
-+
-+Required properties for flash LED child nodes:
-+	See Documentation/devicetree/bindings/leds/common.txt
-+	- flash-max-microamp : Range from 11mA -> 1.5A
-+	- flash-max-timeout-us : Range from 40ms -> 1600ms
-+	- led-max-microamp : Range from 2.4mA -> 376mA
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+led-controller@64 {
-+	compatible = "ti,lm36010";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x64>;
-+
-+	led@0 {
-+		reg = <0>;
-+		label = "white:torch";
-+		led-max-microamp = <376000>;
-+		flash-max-microamp = <1500000>;
-+		flash-max-timeout-us = <1600000>;
-+		led-sources = <1>;
-+	};
-+}
-+
-+For more product information please see the links below:
-+http://www.ti.com/product/LM36010
-+http://www.ti.com/product/LM36011
--- 
-2.17.0.582.gccdcbd54c
+On 04/19/2018 07:00 PM, Archit Taneja wrote:
+> 
+> 
+> On Thursday 19 April 2018 09:20 PM, Philippe CORNU wrote:
+>> Hi Archit & Andrzej,
+>>
+>> May I ask you please a short review of this documentation update.
+>> Many thanks
+>> Philippe :-)
+>>
+>> On 04/09/2018 05:24 PM, Philippe Cornu wrote:
+>>> This patch clarifies the adjusted_mode documentation
+>>> for bridges.
+>>>
+> 
+> Reviewed-by: Archit Taneja <architt@codeaurora.org>
+> 
+>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>> ---
+>>> This patch follows discussions in:
+>>> - "drm: clarify adjusted_mode for a bridge connected to a crtc"
+>>>      https://patchwork.freedesktop.org/patch/206801/
+>>> - "drm: bridge: Constify mode arguments to bridge .mode_set() operation"
+>>>      https://patchwork.freedesktop.org/patch/215449/
+>>>
+>>>     include/drm/drm_bridge.h | 16 ++++++++++++++++
+>>>     include/drm/drm_crtc.h   | 11 +++++++----
+>>>     2 files changed, 23 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+>>> index 3270fec46979..7d632c6a9214 100644
+>>> --- a/include/drm/drm_bridge.h
+>>> +++ b/include/drm/drm_bridge.h
+>>> @@ -178,6 +178,22 @@ struct drm_bridge_funcs {
+>>>     	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
+>>>     	 * pipe (i.e.  clocks and timing signals) is off when this function is
+>>>     	 * called.
+>>> +	 *
+>>> +	 * The adjusted_mode parameter corresponds to the mode output by the CRTC
+>>> +	 * for the first bridge in the chain. It can be different from the mode
+>>> +	 * parameter that contains the desired mode for the connector at the end
+>>> +	 * of the bridges chain, for instance when the first bridge in the chain
+>>> +	 * performs scaling. The adjusted mode is mostly useful for the first
+>>> +	 * bridge in the chain and is likely irrelevant for the other bridges.
+>>> +	 *
+>>> +	 * For atomic drivers the adjusted_mode is the mode stored in
+>>> +	 * &drm_crtc_state.adjusted_mode.
+>>> +	 *
+>>> +	 * NOTE:
+>>> +	 *
+>>> +	 * If a need arises to store and access modes adjusted for other locations
+>>> +	 * than the connection between the CRTC and the first bridge, the DRM
+>>> +	 * framework will have to be extended with DRM bridge states.
+>>>     	 */
+>>>     	void (*mode_set)(struct drm_bridge *bridge,
+>>>     			 struct drm_display_mode *mode,
+>>> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+>>> index a2d81d2907a9..65f749a9e9d3 100644
+>>> --- a/include/drm/drm_crtc.h
+>>> +++ b/include/drm/drm_crtc.h
+>>> @@ -134,10 +134,13 @@ struct drm_crtc_state {
+>>>     	 *
+>>>     	 * Internal display timings which can be used by the driver to handle
+>>>     	 * differences between the mode requested by userspace in @mode and what
+>>> -	 * is actually programmed into the hardware. It is purely driver
+>>> -	 * implementation defined what exactly this adjusted mode means. Usually
+>>> -	 * it is used to store the hardware display timings used between the
+>>> -	 * CRTC and encoder blocks.
+>>> +	 * is actually programmed into the hardware.
+>>> +	 *
+>>> +	 * For drivers using drm_bridge, this stores the hardware display timings
+>>> +	 * used between the CRTC and the first bridge. For other drivers, the
+>>> +	 * meaning of the adjusted_mode field is purely driver implementation
+>>> +	 * defined information, and will usually be used to store the hardware
+>>> +	 * display timings used between the CRTC and encoder blocks.
+>>>     	 */
+>>>     	struct drm_display_mode adjusted_mode;
+>>>     
