@@ -1,93 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753711AbeEORx2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:53:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:36598 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752495AbeEORx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:53:27 -0400
-Date: Tue, 15 May 2018 18:53:08 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, will.deacon@arm.com,
-        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
- in atomic.h some more
-Message-ID: <20180515175307.m4xbkbicdrzo4qhb@lakrids.cambridge.arm.com>
-References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
- <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
- <20180509073327.GE12217@hirez.programming.kicks-ass.net>
- <20180515083556.GA30420@gmail.com>
- <20180515114144.GX12217@hirez.programming.kicks-ass.net>
- <20180515154333.bszh4nuowhocozuc@lakrids.cambridge.arm.com>
- <20180515171021.GI12217@hirez.programming.kicks-ass.net>
+        id S1753122AbeEORzY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:55:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60798 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbeEORzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:55:22 -0400
+Date: Tue, 15 May 2018 19:55:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED
+ flag
+Message-ID: <20180515175514.GM12217@hirez.programming.kicks-ass.net>
+References: <1526405884-4860-1-git-send-email-longman@redhat.com>
+ <1526405884-4860-2-git-send-email-longman@redhat.com>
+ <20180515174837.GL12217@hirez.programming.kicks-ass.net>
+ <4d823d09-b41c-2f86-40b7-f110bf30afd8@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515171021.GI12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <4d823d09-b41c-2f86-40b7-f110bf30afd8@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 07:10:21PM +0200, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 04:43:33PM +0100, Mark Rutland wrote:
-> > I *think* the table can encode enough info to generate atomic-long.h,
-> > atomic-instrumented.h, and the atomic.h ordering fallbacks. I'll need to
-> > flesh out the table and check that we don't end up clashing with
-> > some of the regular fallbacks.
+On Tue, May 15, 2018 at 01:52:06PM -0400, Waiman Long wrote:
+> On 05/15/2018 01:48 PM, Peter Zijlstra wrote:
+> > On Tue, May 15, 2018 at 01:38:03PM -0400, Waiman Long wrote:
+> >> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> >> index 30465a2..b7208e1 100644
+> >> --- a/kernel/locking/rwsem.c
+> >> +++ b/kernel/locking/rwsem.c
+> >> @@ -130,7 +130,8 @@ void up_read(struct rw_semaphore *sem)
+> >>  void up_write(struct rw_semaphore *sem)
+> >>  {
+> >>  	rwsem_release(&sem->dep_map, 1, _RET_IP_);
+> >> -	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
+> >> +	DEBUG_RWSEMS_WARN_ON((sem->owner != current) &&
+> >> +			     !rwsem_has_anonymous_owner(sem->owner));
+> > Why? Don't we always do percpu_rwsem_acquire() before up?
+> >
 > 
-> Yes, details details ;-)
-> 
-> > # name	meta	args...
-> > #
-> > # Where meta contains a string of:
-> > # * B - bool: returns bool, fully ordered
-> > # * V - void: returns void, fully ordered
-> 
-> void retuns are relaxed
+> This is to allow an unlock to happen in the unknown owner state. Yes, it
+> is not necessary to fix the percpu-rwsem problem. It is there just in
+> case a rwsem will be released in that state in the future.
 
-How about:
-
-  V - void: returns void, no ordering variants (implicitly relaxed)
-
-> > # * I - int: returns base type, all orderings
-> > # * R - return: returns base type, all orderings
-> > # * F - fetch: returns base type, all orderings
-> > # * T - try: returns bool, all orderings
-> 
-> Little more verbose than mine, I think we can get there with X and XB
-> instead of I and T, but whatever :-)
-
-Mhmm. I found it easier to do switch-like things this way, but it works
-regardless.
-
-> > # Where args contains list of type[:name], where type is:
-> > # * v - pointer to atomic base type (atomic or atomic64)
-> > # * i - base type (int or long)
-> > # * I - pointer to base type (int or long)
-> > #
-> > add		VRF	i	v
-> > sub		VRF	i	v
-> > inc		VRF	v
-> > dec		VRF	v
-> > or		VF	i	v
-> > and		VF	i	v
-> > andnot		VF	i	v
-> > xor		VF	i	v
-> > xchg		I	v	i
-> > cmpxchg		I	v	i:old	i:new
-> > try_cmpxchg	T	v	I:old	i:new
-> > add_and_test	B	i	v
-> > sub_and_test	B	i	v
-> > dec_and_test	B	v
-> > inc_and_test	B	v
-> 
-> Cute, that [:name].
-
-:D
-
-Thanks,
-Mark.
+Let's not allow that until there's a very good reason for it.
