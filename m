@@ -1,93 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752434AbeEOCy2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:54:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:47239 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752298AbeEOCyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:54:12 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Bart Van Assche <bart.vanassche@wdc.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
-In-Reply-To: <20180514184634.2160-2-bart.vanassche@wdc.com>
-References: <20180514184634.2160-1-bart.vanassche@wdc.com> <20180514184634.2160-2-bart.vanassche@wdc.com>
-Date: Tue, 15 May 2018 12:54:01 +1000
-Message-ID: <87lgclpr1y.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1752418AbeEOCy0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:54:26 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35393 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752366AbeEOCyY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 22:54:24 -0400
+X-Google-Smtp-Source: AB8JxZrHQHBBFH+mIL+RWIGsbU3bjlDDvJCx7pK5St0+K7V6aay6fIpT2CXKUaSF+ihz16Bjv8h4UA==
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Kaihua Zhong <zhongkaihua@huawei.com>, Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 1/5] arm64: dts: hi3660: Add mailbox node
+Date: Tue, 15 May 2018 10:53:11 +0800
+Message-Id: <1526352795-6991-2-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
+From: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Bart Van Assche <bart.vanassche@wdc.com> writes:
->
-...
-> diff --git a/Documentation/features/locking/cmpxchg64/arch-support.txt b/Documentation/features/locking/cmpxchg64/arch-support.txt
-> new file mode 100644
-> index 000000000000..65b3290ce5d5
-> --- /dev/null
-> +++ b/Documentation/features/locking/cmpxchg64/arch-support.txt
-> @@ -0,0 +1,31 @@
-> +#
-> +# Feature name:          cmpxchg64
-> +#         Kconfig:       ARCH_HAVE_CMPXCHG64
-> +#         description:   arch supports the cmpxchg64() API
-> +#
-> +    -----------------------
-> +    |         arch |status|
-> +    -----------------------
-> +    |       alpha: |  ok  |
-> +    |         arc: | TODO |
-> +    |         arm: |!thumb|
-> +    |       arm64: |  ok  |
-> +    |         c6x: | TODO |
-> +    |       h8300: | TODO |
-> +    |     hexagon: | TODO |
-> +    |        ia64: |  ok  |
-> +    |        m68k: |  ok  |
-> +    |  microblaze: | TODO |
-> +    |        mips: |64-bit|
-> +    |       nios2: | TODO |
-> +    |    openrisc: | TODO |
-> +    |      parisc: |  ok  |
-> +    |     powerpc: |64-bit|
+Add the mailbox controller node for hi3660 platform.
 
-I think that is correct for powerpc, we don't have a 32-bit
-implementation and there's no fallback it seems.
+Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -150,6 +150,7 @@ config PPC
->  	select ARCH_HAS_UBSAN_SANITIZE_ALL
->  	select ARCH_HAS_ZONE_DEVICE		if PPC_BOOK3S_64
->  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
-> +	select ARCH_HAVE_CMPXCHG64
-
-So shouldn't this should be:
-
-+	select ARCH_HAVE_CMPXCHG64		if PPC64
-
-And it should be sorted alphabetically, ie. above the previous NMI entry.
-
-cheers
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index ec3eb8e..b9e7c91 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -274,6 +274,14 @@
+ 			#reset-cells = <2>;
+ 		};
+ 
++		mailbox: mailbox@e896b000 {
++			compatible = "hisilicon,hi3660-mbox";
++			reg = <0x0 0xe896b000 0x0 0x1000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <3>;
++		};
++
+ 		dual_timer0: timer@fff14000 {
+ 			compatible = "arm,sp804", "arm,primecell";
+ 			reg = <0x0 0xfff14000 0x0 0x1000>;
+-- 
+1.9.1
