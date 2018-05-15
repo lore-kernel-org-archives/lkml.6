@@ -1,68 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752887AbeEOSPV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:15:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42602 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEOSPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:15:19 -0400
-Date: Tue, 15 May 2018 20:15:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, will.deacon@arm.com,
-        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
- in atomic.h some more
-Message-ID: <20180515181510.GM12235@hirez.programming.kicks-ass.net>
-References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
- <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
- <20180509073327.GE12217@hirez.programming.kicks-ass.net>
- <20180515083556.GA30420@gmail.com>
- <20180515114144.GX12217@hirez.programming.kicks-ass.net>
- <20180515154333.bszh4nuowhocozuc@lakrids.cambridge.arm.com>
- <20180515171021.GI12217@hirez.programming.kicks-ass.net>
- <20180515175307.m4xbkbicdrzo4qhb@lakrids.cambridge.arm.com>
- <20180515181136.GR12217@hirez.programming.kicks-ass.net>
+        id S1753067AbeEOSPs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:15:48 -0400
+Received: from muru.com ([72.249.23.125]:42258 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752458AbeEOSPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:15:46 -0400
+Date: Tue, 15 May 2018 11:15:43 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, bcousson@baylibre.com,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] ARM: dts: am437x boards: Correct (again) tps65218
+ irq type
+Message-ID: <20180515181543.GW98604@atomide.com>
+References: <20180508132053.5471-1-peter.ujfalusi@ti.com>
+ <20180508141600.GT98604@atomide.com>
+ <4b4100d0-85e1-659b-8f7e-b3d4b3925e82@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515181136.GR12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <4b4100d0-85e1-659b-8f7e-b3d4b3925e82@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 08:11:36PM +0200, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 06:53:08PM +0100, Mark Rutland wrote:
-
-> > > > # name	meta	args...
-> > > > #
-> > > > # Where meta contains a string of:
-> > > > # * B - bool: returns bool, fully ordered
-> > > > # * V - void: returns void, fully ordered
-> > > > # * I - int: returns base type, all orderings
-> > > > # * R - return: returns base type, all orderings
-> > > > # * F - fetch: returns base type, all orderings
-> > > > # * T - try: returns bool, all orderings
-> > > 
-> > > Little more verbose than mine, I think we can get there with X and XB
-> > > instead of I and T, but whatever :-)
-> > 
-> > Mhmm. I found it easier to do switch-like things this way, but it works
-> > regardless.
+* Keerthy <j-keerthy@ti.com> [180509 04:03]:
 > 
-> I'm a minimalist, but yeah whatever ;-)
+> 
+> On Tuesday 08 May 2018 07:46 PM, Tony Lindgren wrote:
+> > * Peter Ujfalusi <peter.ujfalusi@ti.com> [180508 13:22]:
+> >> Hi,
+> >>
+> >> While based on the datasheet of tps65218 the INT is low active, the GIC_SPI
+> >> does not support anythin but IRQ_TYPE_LEVEL_HIGH or IRQ_TYPE_EDGE_RISING:
+> >>
+> >> [    2.761814] genirq: Setting trigger mode 8 for irq 102 failed (irq_chip_set_type_parent+0x0/0x30)
+> >> [    2.770913] tps65218 0-0024: Failed to request IRQ 102 for tps65218: -22
+> >> [    2.777854] tps65218: probe of 0-0024 failed with error -22
+> > 
+> > So does the tps65218 have some register to control the interrupt
+> > direction or is it's datasheet wrong?
+> > 
+> > BTW, ADC might be a good test case for PMIC interrupt if it has one.
+> 
+> There is no ADC on this PMIC.
+> 
+> > 
+> >> Use LEVEL_HIGH for the interrupt as it looks to be the correct setting:
+> >> INTn of tps65218 is connected to NMIn of the SoC.
+> >>
+> >> The offending patches are only in linux-next.
+> > 
+> > OK
 
-Although; by having X we only have a single I. You currently have I as
-meta and argument type, which is prone to confusion or something.
+Applying these all into omap-for-v4.18/dt.
 
-Alternatively we could use 'p' for the argument pointer thing.
+Regards,
 
-> > > > # Where args contains list of type[:name], where type is:
-> > > > # * v - pointer to atomic base type (atomic or atomic64)
-> > > > # * i - base type (int or long)
-> > > > # * I - pointer to base type (int or long)
-> > > > #
+Tony
