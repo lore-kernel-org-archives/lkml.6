@@ -1,162 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeEOWhS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:37:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751333AbeEOWhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:37:17 -0400
-Date: Tue, 15 May 2018 18:37:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org
-Subject: [GIT PULL] tracing/x86/xen: Remove zero data size trace events
- trace_xen_mmu_flush_tlb{_all}
-Message-ID: <20180515183714.4030cd89@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751859AbeEOWkU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:40:20 -0400
+Received: from mail-it0-f47.google.com ([209.85.214.47]:35039 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeEOWkT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 18:40:19 -0400
+X-Google-Smtp-Source: AB8JxZrp1yXxofx/qQOJLE/sPhHViGZn2o2sg+K8WGZ7eiltqqDgCVJ1w0+pWNvTy00Yd5veHECMPQ==
+Reply-To: ahs3@redhat.com
+Subject: Re: linux-next 20180515 - ACPI disabled..
+To: valdis.kletnieks@vt.edu
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <50539.1526419088@turing-police.cc.vt.edu>
+ <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
+ <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
+ <58438.1526423130@turing-police.cc.vt.edu>
+From: Al Stone <ahs3@redhat.com>
+Organization: Red Hat, Inc.
+Message-ID: <8d3890a3-9875-63fb-bb42-311febec5700@redhat.com>
+Date: Tue, 15 May 2018 16:40:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <58438.1526423130@turing-police.cc.vt.edu>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-Linus,
+On 05/15/2018 04:25 PM, valdis.kletnieks@vt.edu wrote:
+> On Tue, 15 May 2018 15:49:15 -0600, Al Stone said:
+> 
+>> Not off-hand.  Could you please send me a copy of 
+>> /sys/firmware/acpi/tables/APIC
+> 
+> cat /sys/firmware/acpi/tables/APIC | od -x 0000000 5041 4349 0072 0000
+> 3903 4544 4c4c 2020 0000020 4243 3358 2020 0020 2009 0107 4d41 2049 0000040
+> 0013 0001 0000 fee0 0001 0000 0800 0001 0000060 0001 0000 0800 0202 0001
+> 0000 0800 0103 0000100 0001 0000 0800 0304 0001 0000 0c01 0002 0000120 0000
+> fec0 0000 0000 0a02 0000 0002 0000 0000140 0000 0a02 0900 0009 0000 000d
+> 0604 05ff 0000160 0100 0000162
 
-Some of the ftrace internal events use a zero for a data size of
-a field event. This is increasingly important for the histogram trigger
-work that is being extended.
+Thanks.
 
-While auditing trace events, I found that a couple of the xen events
-were used as just marking that a function was called, by creating
-a static array of size zero. This can play havoc with the tracing
-features if these events are used, because a zero size of a static
-array is denoted as a special nul terminated dynamic array (this is
-what the trace_marker code uses). But since the xen events have no
-size, they are not nul terminated, and unexpected results may occur.
+>> on this machine?  The commit cd8c65a6442b that I wrote looks like it got 
+>> pulled in on 20180430, which if I'm understanding correctly, seems to 
+>> have fixed the problem.  Did this work before 20180415?  I assume it 
+>> did.
+> 
+> 0430 is what I'm running right ow, and it works.  Everything before that 
+> too. It fell over sometime between 0430 and 0515,
 
-As trace events were never intended on being a marker to denote
-that a function was hit or not, especially since function tracing
-and kprobes can trivially do the same, the best course of action is
-to simply remove these events.
+Oh, I see.  I had read "0515" as "0415", hence my confusion.
 
+- -- 
+ciao,
+al
+- -----------------------------------
+Al Stone
+Software Engineer
+Red Hat, Inc.
+ahs3@redhat.com
+- -----------------------------------
+-----BEGIN PGP SIGNATURE-----
 
-Please pull the latest trace-v4.17-rc4-2 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.17-rc4-2
-
-Tag SHA1: 580faa7b1b80b1332683dc869732a4db8a506b9c
-Head SHA1: 45dd9b0666a162f8e4be76096716670cf1741f0e
-
-
-Steven Rostedt (VMware) (1):
-      tracing/x86/xen: Remove zero data size trace events trace_xen_mmu_flush_tlb{_all}
-
-----
- arch/x86/xen/mmu.c         |  4 +---
- arch/x86/xen/mmu_pv.c      |  4 +---
- include/trace/events/xen.h | 16 ----------------
- 3 files changed, 2 insertions(+), 22 deletions(-)
----------------------------
-commit 45dd9b0666a162f8e4be76096716670cf1741f0e
-Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Date:   Wed May 9 14:36:09 2018 -0400
-
-    tracing/x86/xen: Remove zero data size trace events trace_xen_mmu_flush_tlb{_all}
-    
-    Doing an audit of trace events, I discovered two trace events in the xen
-    subsystem that use a hack to create zero data size trace events. This is not
-    what trace events are for. Trace events add memory footprint overhead, and
-    if all you need to do is see if a function is hit or not, simply make that
-    function noinline and use function tracer filtering.
-    
-    Worse yet, the hack used was:
-    
-     __array(char, x, 0)
-    
-    Which creates a static string of zero in length. There's assumptions about
-    such constructs in ftrace that this is a dynamic string that is nul
-    terminated. This is not the case with these tracepoints and can cause
-    problems in various parts of ftrace.
-    
-    Nuke the trace events!
-    
-    Link: http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
-    
-    Cc: stable@vger.kernel.org
-    Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
-    Reviewed-by: Juergen Gross <jgross@suse.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index d33e7dbe3129..2d76106788a3 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -42,13 +42,11 @@ xmaddr_t arbitrary_virt_to_machine(void *vaddr)
- }
- EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
- 
--static void xen_flush_tlb_all(void)
-+static noinline void xen_flush_tlb_all(void)
- {
- 	struct mmuext_op *op;
- 	struct multicall_space mcs;
- 
--	trace_xen_mmu_flush_tlb_all(0);
--
- 	preempt_disable();
- 
- 	mcs = xen_mc_entry(sizeof(*op));
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 486c0a34d00b..2c30cabfda90 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1310,13 +1310,11 @@ unsigned long xen_read_cr2_direct(void)
- 	return this_cpu_read(xen_vcpu_info.arch.cr2);
- }
- 
--static void xen_flush_tlb(void)
-+static noinline void xen_flush_tlb(void)
- {
- 	struct mmuext_op *op;
- 	struct multicall_space mcs;
- 
--	trace_xen_mmu_flush_tlb(0);
--
- 	preempt_disable();
- 
- 	mcs = xen_mc_entry(sizeof(*op));
-diff --git a/include/trace/events/xen.h b/include/trace/events/xen.h
-index 7dd8f34c37df..fdcf88bcf0ea 100644
---- a/include/trace/events/xen.h
-+++ b/include/trace/events/xen.h
-@@ -352,22 +352,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
- DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
- DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
- 
--TRACE_EVENT(xen_mmu_flush_tlb_all,
--	    TP_PROTO(int x),
--	    TP_ARGS(x),
--	    TP_STRUCT__entry(__array(char, x, 0)),
--	    TP_fast_assign((void)x),
--	    TP_printk("%s", "")
--	);
--
--TRACE_EVENT(xen_mmu_flush_tlb,
--	    TP_PROTO(int x),
--	    TP_ARGS(x),
--	    TP_STRUCT__entry(__array(char, x, 0)),
--	    TP_fast_assign((void)x),
--	    TP_printk("%s", "")
--	);
--
- TRACE_EVENT(xen_mmu_flush_tlb_one_user,
- 	    TP_PROTO(unsigned long addr),
- 	    TP_ARGS(addr),
+iQIzBAEBCAAdFiEEiclaKI7ZGQ+4GJLWUwywAtdhsWwFAlr7Yb0ACgkQUwywAtdh
+sWwshQ//XvOPtjH5kB/OHR0jGP5LQ+9iiyJa40P6UhsW4dTFZbWLWOvhzqrdBJD2
+dyA7Xz3ig4zULS1ZAmIpubMixgekGa9VaMtJMumw4CiwqkuphLNnB6gFqZ5QkWS4
+YyGwW6zz2RSONf5Lq3K65mr+6cDHMhdtidtEunXzMOC6Ny8ELC52hIr295NpnyXn
+sv72SVdy9kQYHfxRv7K1IIbMKJZYRBN3TCoWFFJHbJH0stiLnCk+O+57QcsCKNWH
+ECJ6z8+kELo3BD42PLk7cRYoUKnyPsrGn+fAQvLD9rnknjVRPKhVjRilI9qr/HCo
+pmj0N9xNcEI0WK2feyN3vzYPeZbzwsxIiiCwd9E+bQIrwq8nI+fbhV6egFZlbwcR
+89w3Zhu31s7umcopLLHAEstm4STKOZGS54PdGQFku/Nff4GVes+vvjP1wC3yMEDL
+kUeOt5tLWgexEMOdXqo9YaMz2AUeog2Duk1PL27EiHjc4eGbSt1Yb9SgRFln03rH
+Orozfqjjwv6G4yWkz6sjZ/0T6ODWa+CW8qTr2WjFH2l2sj3ZT3DoemN4GkYo3O7x
+oI+7lKoY31L+GQnKluW6EceliANVmLlgNhlQv5v9i9NYFrgwj8UucJfJVQdJWVKk
+uJxhGITkkResHoPOfEuHsJ9Ks5wI22L6RiO9OTX2rr7accsA+aY=
+=Vj8z
+-----END PGP SIGNATURE-----
