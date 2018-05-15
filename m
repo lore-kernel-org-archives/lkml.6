@@ -1,266 +1,83 @@
-Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AB8JxZpdgp6CjsDqeWfX0WpabjNgvBkCiMWgsTco0Dc1A3Js4nmv0rJE8hcEN7jxWJRfoRXr1hNI
-ARC-Seal: i=1; a=rsa-sha256; t=1526404511; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526412759; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zqsq1YKwtwzvx7KXL4U5LY1v41gxI4ggT3VLqijZNk/3/AIgKENec4yPu56dlT7AwF
-         pAJ80+CKxRsfR+/PXxh1VLV9X70FNsKroXTYBM78tjZBnL64Cp9O5+LXxRU8+7fsu2dM
-         Wi4I6zTeT+2FjVCOdr4yWK5Wv/P+pJqLBgQr8UXnh6sx5l6jiYXD8JH7wMjXiweBpqfX
-         JgE4rjxDuRpxhszOdkXb4nHoL3QwLOAkZg3t99MGK3NigkUL2DRyJZ+VTgpzscO3guJr
-         ZxJT9xnT9db5uHTqPHREtYcNAhQXsjfo13Ww+Lt+kq6NmrrRdQvcrE41sxxSZFF6QL34
-         vYTA==
+        b=RFbMjEDYahlNcyPYDFzXOD+DWKJuZWdhBpx8v3Zzl/8Xy/u+i97nM5StS6fkavaKhk
+         NNQ3cHlCmrwtw/CozRl0udbnww5P0c7O/EmBNWtSl4i2Glstw0SC/56Cfj8N6S4sT97+
+         0IUW9IIQKEUNH/pr2wom0xLek8TxkFqlq5UIqiJnDADFFMNzyYjRc15ZOLtUmJmsVV8p
+         UnZ4DIdjEQvwLc5fwBLfpCv+oHHlNoTphnJw1rmC/3gZsBinNtHZRV8H4t3fhYR0w770
+         rXx6PnOZxfrn9BZvotXMsxT6njgKUSXs1G6aKqjljRXSREEpY6Gw+wd9tZRalpTwsako
+         kdqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=7lUUa4m7c+Y8lLOnuSmLCQCwlz8ERk/vzcxwh1lHbNY=;
-        b=Y6YdzMS3hTKFQ/qOokLzzAEARZhbzu7QE96en1hcE9L696yf7sJ723xBcc+2DYp0ry
-         RjJk5gbvhvkURzpBvlqkD0LxijloESl65XmqRJmPmy9wQEBRwwORNSeKMFJnQu/zLZ+R
-         I4yKZoi1UhS8xVngtxn8G3cqygGEUULgFCTfSbToXi9zdTwAvItD4fefBF29WVq6rQf+
-         yl5kjsXxmROj27osQ+9SqPNopzSNkca/8DlmF0Sof2hoK7C1EBfIxIhK5r/iFdKrTUx6
-         CqVTt66mjm3nZSdDZLeH5TQ+s5vuXwkjzbue62owdR442+7FhH84lY5wLbgXdTt1eNwC
-         d2EQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=/sIGq869TDazuANExpZKq/BbjZ2VpUjjQPu6iuBBB3E=;
+        b=MgHOwi9E972iP8uAQzJFvE2PeS686O31htsW8en3ST23ovsA+Nns9IP+V94qeit2Gx
+         UcfxYp2FlDpgadJkPuPMpY+28ltABwIECSMId2eZu8ITiYT/hbF178Zvbnc+NM8PfTb9
+         /h5cZdUAF2E27KrFye9k50SGVAppYFUFjz/U0bsp9yZge6TFVBli+Xw1Fai5NXkeS02a
+         Zt/WDOiR7MvyMmp4gAMBcYGFHUqoIajuNL4eOEsxfV4WjWfWkk0KD/ZHpOPzOEo6PrER
+         JbnAarFiozjBsQqxrpiVT1Olm1czeN8PRBfevOPwSb2Ek8GZFnrCVRUpG8RJXS357H0h
+         bC5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=H+1Nzbjl;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=H+1Nzbjl;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZqvRte1ltxX0wLFwbWVsFXMRoLhaPqb6mZ0YYdCfp0qTA9y8inClRW9w3/wvZDPEOC3mRDn2dMlYHZ2zEbOvJw=
+MIME-Version: 1.0
+In-Reply-To: <78b08b68-ff57-8dd8-6eb1-00548f275eac@arm.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com> <20180511235807.30834-3-jeremy.linton@arm.com>
+ <78b08b68-ff57-8dd8-6eb1-00548f275eac@arm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 15 May 2018 22:32:37 +0300
+Message-ID: <CAHp75VciOAMX1HWifZ+K9GiVicZRFrwHaGteJFVe1uFrh+qu0w@mail.gmail.com>
 Subject: Re: [PATCH v9 02/12] drivers: base: cacheinfo: setup DT cache
  properties early
-To: linux-acpi@vger.kernel.org
-Cc: Sudeep.Holla@arm.com, linux-arm-kernel@lists.infradead.org,
- Lorenzo.Pieralisi@arm.com, hanjun.guo@linaro.org, rjw@rjwysocki.net,
- Will.Deacon@arm.com, Catalin.Marinas@arm.com, gregkh@linuxfoundation.org,
- Mark.Rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, wangxiongfeng2@huawei.com,
- vkilari@codeaurora.org, ahs3@redhat.com, Dietmar.Eggemann@arm.com,
- Morten.Rasmussen@arm.com, palmer@sifive.com, lenb@kernel.org,
- john.garry@huawei.com, austinwc@codeaurora.org, tnowicki@caviumnetworks.com,
- jhugo@codeaurora.org, ard.biesheuvel@linaro.org
-References: <20180511235807.30834-1-jeremy.linton@arm.com>
- <20180511235807.30834-3-jeremy.linton@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <78b08b68-ff57-8dd8-6eb1-00548f275eac@arm.com>
-Date: Tue, 15 May 2018 12:15:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180511235807.30834-3-jeremy.linton@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Sudeep Holla <Sudeep.Holla@arm.com>,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Will Deacon <Will.Deacon@arm.com>,
+	Catalin Marinas <Catalin.Marinas@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Rutland <Mark.Rutland@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org,
+	Xiongfeng Wang <wangxiongfeng2@huawei.com>, vkilari@codeaurora.org,
+	Al Stone <ahs3@redhat.com>, Dietmar.Eggemann@arm.com, Morten.Rasmussen@arm.com,
+	Palmer Dabbelt <palmer@sifive.com>, Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
+	austinwc@codeaurora.org, tnowicki@caviumnetworks.com, jhugo@codeaurora.org,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600214158032002659?=
-X-GMAIL-MSGID: =?utf-8?q?1600551136473320870?=
+X-GMAIL-MSGID: =?utf-8?q?1600559784772360119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+On Tue, May 15, 2018 at 8:15 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
+> On 05/11/2018 06:57 PM, Jeremy Linton wrote:
 
-Have you had a chance to look at the cachinfo parts of this patch?
+>>   -     cache_size = of_get_property(this_leaf->of_node, propname, NULL);
+>> +       cache_size = of_get_property(np, propname, NULL);
+>>         if (cache_size)
+>>                 this_leaf->size = of_read_number(cache_size, 1);
 
-Comments?
+Can't you switch to of_read_property_uXX() variant here?
 
-Thanks,
+>> -               line_size = of_get_property(this_leaf->of_node, propname,
+>> NULL);
+>> +               line_size = of_get_property(np, propname, NULL);
 
+Ditto.
 
+>>   -     nr_sets = of_get_property(this_leaf->of_node, propname, NULL);
+>> +       nr_sets = of_get_property(np, propname, NULL);
+>>         if (nr_sets)
+>>                 this_leaf->number_of_sets = of_read_number(nr_sets, 1);
 
+Ditto.
 
-On 05/11/2018 06:57 PM, Jeremy Linton wrote:
-> The original intent in cacheinfo was that an architecture
-> specific populate_cache_leaves() would probe the hardware
-> and then cache_shared_cpu_map_setup() and
-> cache_override_properties() would provide firmware help to
-> extend/expand upon what was probed. Arm64 was really
-> the only architecture that was working this way, and
-> with the removal of most of the hardware probing logic it
-> became clear that it was possible to simplify the logic a bit.
-> 
-> This patch combines the walk of the DT nodes with the
-> code updating the cache size/line_size and nr_sets.
-> cache_override_properties() (which was DT specific) is
-> then removed. The result is that cacheinfo.of_node is
-> no longer used as a temporary place to hold DT references
-> for future calls that update cache properties. That change
-> helps to clarify its one remaining use (matching
-> cacheinfo nodes that represent shared caches) which
-> will be used by the ACPI/PPTT code in the following patches.
-> 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Tested-by: Vijaya Kumar K <vkilari@codeaurora.org>
-> Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> Tested-by: Tomasz Nowicki <Tomasz.Nowicki@cavium.com>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->   arch/riscv/kernel/cacheinfo.c |  1 -
->   drivers/base/cacheinfo.c      | 65 +++++++++++++++++++------------------------
->   2 files changed, 29 insertions(+), 37 deletions(-)
-> 
-> diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
-> index 10ed2749e246..0bc86e5f8f3f 100644
-> --- a/arch/riscv/kernel/cacheinfo.c
-> +++ b/arch/riscv/kernel/cacheinfo.c
-> @@ -20,7 +20,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
->   			 struct device_node *node,
->   			 enum cache_type type, unsigned int level)
->   {
-> -	this_leaf->of_node = node;
->   	this_leaf->level = level;
->   	this_leaf->type = type;
->   	/* not a sector cache */
-> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> index 09ccef7ddc99..a872523e8951 100644
-> --- a/drivers/base/cacheinfo.c
-> +++ b/drivers/base/cacheinfo.c
-> @@ -71,7 +71,7 @@ static inline int get_cacheinfo_idx(enum cache_type type)
->   	return type;
->   }
->   
-> -static void cache_size(struct cacheinfo *this_leaf)
-> +static void cache_size(struct cacheinfo *this_leaf, struct device_node *np)
->   {
->   	const char *propname;
->   	const __be32 *cache_size;
-> @@ -80,13 +80,14 @@ static void cache_size(struct cacheinfo *this_leaf)
->   	ct_idx = get_cacheinfo_idx(this_leaf->type);
->   	propname = cache_type_info[ct_idx].size_prop;
->   
-> -	cache_size = of_get_property(this_leaf->of_node, propname, NULL);
-> +	cache_size = of_get_property(np, propname, NULL);
->   	if (cache_size)
->   		this_leaf->size = of_read_number(cache_size, 1);
->   }
->   
->   /* not cache_line_size() because that's a macro in include/linux/cache.h */
-> -static void cache_get_line_size(struct cacheinfo *this_leaf)
-> +static void cache_get_line_size(struct cacheinfo *this_leaf,
-> +				struct device_node *np)
->   {
->   	const __be32 *line_size;
->   	int i, lim, ct_idx;
-> @@ -98,7 +99,7 @@ static void cache_get_line_size(struct cacheinfo *this_leaf)
->   		const char *propname;
->   
->   		propname = cache_type_info[ct_idx].line_size_props[i];
-> -		line_size = of_get_property(this_leaf->of_node, propname, NULL);
-> +		line_size = of_get_property(np, propname, NULL);
->   		if (line_size)
->   			break;
->   	}
-> @@ -107,7 +108,7 @@ static void cache_get_line_size(struct cacheinfo *this_leaf)
->   		this_leaf->coherency_line_size = of_read_number(line_size, 1);
->   }
->   
-> -static void cache_nr_sets(struct cacheinfo *this_leaf)
-> +static void cache_nr_sets(struct cacheinfo *this_leaf, struct device_node *np)
->   {
->   	const char *propname;
->   	const __be32 *nr_sets;
-> @@ -116,7 +117,7 @@ static void cache_nr_sets(struct cacheinfo *this_leaf)
->   	ct_idx = get_cacheinfo_idx(this_leaf->type);
->   	propname = cache_type_info[ct_idx].nr_sets_prop;
->   
-> -	nr_sets = of_get_property(this_leaf->of_node, propname, NULL);
-> +	nr_sets = of_get_property(np, propname, NULL);
->   	if (nr_sets)
->   		this_leaf->number_of_sets = of_read_number(nr_sets, 1);
->   }
-> @@ -135,32 +136,27 @@ static void cache_associativity(struct cacheinfo *this_leaf)
->   		this_leaf->ways_of_associativity = (size / nr_sets) / line_size;
->   }
->   
-> -static bool cache_node_is_unified(struct cacheinfo *this_leaf)
-> +static bool cache_node_is_unified(struct cacheinfo *this_leaf,
-> +				  struct device_node *np)
->   {
-> -	return of_property_read_bool(this_leaf->of_node, "cache-unified");
-> +	return of_property_read_bool(np, "cache-unified");
->   }
->   
-> -static void cache_of_override_properties(unsigned int cpu)
-> +static void cache_of_set_props(struct cacheinfo *this_leaf,
-> +			       struct device_node *np)
->   {
-> -	int index;
-> -	struct cacheinfo *this_leaf;
-> -	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-> -
-> -	for (index = 0; index < cache_leaves(cpu); index++) {
-> -		this_leaf = this_cpu_ci->info_list + index;
-> -		/*
-> -		 * init_cache_level must setup the cache level correctly
-> -		 * overriding the architecturally specified levels, so
-> -		 * if type is NONE at this stage, it should be unified
-> -		 */
-> -		if (this_leaf->type == CACHE_TYPE_NOCACHE &&
-> -		    cache_node_is_unified(this_leaf))
-> -			this_leaf->type = CACHE_TYPE_UNIFIED;
-> -		cache_size(this_leaf);
-> -		cache_get_line_size(this_leaf);
-> -		cache_nr_sets(this_leaf);
-> -		cache_associativity(this_leaf);
-> -	}
-> +	/*
-> +	 * init_cache_level must setup the cache level correctly
-> +	 * overriding the architecturally specified levels, so
-> +	 * if type is NONE at this stage, it should be unified
-> +	 */
-> +	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
-> +	    cache_node_is_unified(this_leaf, np))
-> +		this_leaf->type = CACHE_TYPE_UNIFIED;
-> +	cache_size(this_leaf, np);
-> +	cache_get_line_size(this_leaf, np);
-> +	cache_nr_sets(this_leaf, np);
-> +	cache_associativity(this_leaf);
->   }
->   
->   static int cache_setup_of_node(unsigned int cpu)
-> @@ -193,6 +189,7 @@ static int cache_setup_of_node(unsigned int cpu)
->   			np = of_node_get(np);/* cpu node itself */
->   		if (!np)
->   			break;
-> +		cache_of_set_props(this_leaf, np);
->   		this_leaf->of_node = np;
->   		index++;
->   	}
-> @@ -203,7 +200,6 @@ static int cache_setup_of_node(unsigned int cpu)
->   	return 0;
->   }
->   #else
-> -static void cache_of_override_properties(unsigned int cpu) { }
->   static inline int cache_setup_of_node(unsigned int cpu) { return 0; }
->   static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
->   					   struct cacheinfo *sib_leaf)
-> @@ -286,12 +282,6 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
->   	}
->   }
->   
-> -static void cache_override_properties(unsigned int cpu)
-> -{
-> -	if (of_have_populated_dt())
-> -		return cache_of_override_properties(cpu);
-> -}
-> -
->   static void free_cache_attributes(unsigned int cpu)
->   {
->   	if (!per_cpu_cacheinfo(cpu))
-> @@ -325,6 +315,10 @@ static int detect_cache_attributes(unsigned int cpu)
->   	if (per_cpu_cacheinfo(cpu) == NULL)
->   		return -ENOMEM;
->   
-> +	/*
-> +	 * populate_cache_leaves() may completely setup the cache leaves and
-> +	 * shared_cpu_map or it may leave it partially setup.
-> +	 */
->   	ret = populate_cache_leaves(cpu);
->   	if (ret)
->   		goto free_ci;
-> @@ -338,7 +332,6 @@ static int detect_cache_attributes(unsigned int cpu)
->   		goto free_ci;
->   	}
->   
-> -	cache_override_properties(cpu);
->   	return 0;
->   
->   free_ci:
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
