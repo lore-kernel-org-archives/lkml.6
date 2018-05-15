@@ -1,160 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752693AbeEOVaP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:30:15 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752411AbeEOV0L (ORCPT
+        id S1752030AbeEOVdj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:33:39 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33652 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeEOVdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:26:11 -0400
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Juergen Gross <jgross@suse.com>, Alok Kataria <akataria@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        <virtualization@lists.linux-foundation.org>
-Subject: [RFC 4/8] x86: prevent inline distortion by paravirt ops
-Date: Tue, 15 May 2018 07:11:11 -0700
-Message-ID: <20180515141124.84254-5-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
-References: <20180515141124.84254-1-namit@vmware.com>
+        Tue, 15 May 2018 17:33:38 -0400
+X-Google-Smtp-Source: AB8JxZpdBUeU5+Xw58uFUjmtNo/tVHGsLDQvYE2MOmJW5+IY8KGESCwVBvzOtYw6gUMBR08h9Wkqd9yP8BRPCKiac+k=
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180515175124.1770-1-pasha.tatashin@oracle.com> <20180515141240.c7587ed53a0ff32ff984e3d2@linux-foundation.org>
+In-Reply-To: <20180515141240.c7587ed53a0ff32ff984e3d2@linux-foundation.org>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Date: Tue, 15 May 2018 17:33:00 -0400
+X-Gmail-Original-Message-ID: <CAGM2reaoLmTa6v5rsOHFwcBYuxYq0AEoOy8BJktWN-WibWoEVA@mail.gmail.com>
+Message-ID: <CAGM2reaoLmTa6v5rsOHFwcBYuxYq0AEoOy8BJktWN-WibWoEVA@mail.gmail.com>
+Subject: Re: [PATCH v5] mm: don't allow deferred pages with NEED_PER_CPU_KM
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Dennis Zhou <dennisszhou@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=427
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805150210
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+> > My recent fix exposed this problem,
 
-The solution is to set an assembly macro and call it from the inlined
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+> "my recent fix" isn't very useful.  I changed this to identify
+> c9e97a1997 ("mm: initialize pages on demand during boot"), yes?
 
-The effect of the patch is a more aggressive inlining, which also
-causes a size increase of kernel.
+Yes, thank you.
 
-   text	   data	    bss	    dec	    hex	filename
-18131468 10068488 2936832 31136788 1db1c14 ./vmlinux before
-18146418 10064100 2936832 31147350 1db4556 ./vmlinux after (+10562)
-
-Static text symbols:
-Before:	39788
-After:	39673	(-115)
-
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: virtualization@lists.linux-foundation.org
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/paravirt_types.h | 53 +++++++++++++++------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
-
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..3fe99dab8266 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -346,20 +346,37 @@ extern struct pv_lock_ops pv_lock_ops;
- /*
-  * Generate some code, and mark it as patchable by the
-  * apply_paravirt() alternate instruction patcher.
-+ *
-+ * This generates an indirect call based on the operation type number.
-+ * The type number, computed in PARAVIRT_PATCH, is derived from the
-+ * offset into the paravirt_patch_template structure, and can therefore be
-+ * freely converted back into a structure offset.
-  */
--#define _paravirt_alt(insn_string, type, clobber)	\
--	"771:\n\t" insn_string "\n" "772:\n"		\
--	".pushsection .parainstructions,\"a\"\n"	\
--	_ASM_ALIGN "\n"					\
--	_ASM_PTR " 771b\n"				\
--	"  .byte " type "\n"				\
--	"  .byte 772b-771b\n"				\
--	"  .short " clobber "\n"			\
-+
-+asm ("\n"
-+	".macro __paravirt_alt type:req clobber:req pv_opptr:req\n"
-+	"771:\n\t"
-+	ANNOTATE_RETPOLINE_SAFE "\n\t"
-+	"call *\\pv_opptr\n"
-+	"772:\n\t"
-+	".pushsection .parainstructions,\"a\"\n\t"
-+	_ASM_ALIGN "\n\t"
-+	_ASM_PTR " 771b\n\t"
-+	".byte \\type\n\t"
-+	".byte 772b-771b\n\t"
-+	".short \\clobber\n\t"
- 	".popsection\n"
-+	".endm");
-+
-+#define _paravirt_alt(type, clobber, pv_opptr)				\
-+	"__paravirt_alt type=" __stringify(type)			\
-+	" clobber=" __stringify(clobber)				\
-+	" pv_opptr=" __stringify(pv_opptr) "\n\t"
- 
- /* Generate patchable code, with the default asm parameters. */
--#define paravirt_alt(insn_string)					\
--	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
-+#define paravirt_alt							\
-+	_paravirt_alt("%c[paravirt_typenum]", "%c[paravirt_clobber]",	\
-+		      "%c[paravirt_opptr]")
- 
- /* Simple instruction patching code. */
- #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
-@@ -387,16 +404,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
- 
- int paravirt_disable_iospace(void);
- 
--/*
-- * This generates an indirect call based on the operation type number.
-- * The type number, computed in PARAVIRT_PATCH, is derived from the
-- * offset into the paravirt_patch_template structure, and can therefore be
-- * freely converted back into a structure offset.
-- */
--#define PARAVIRT_CALL					\
--	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
--
- /*
-  * These macros are intended to wrap calls through one of the paravirt
-  * ops structs, so that they can be later identified and patched at
-@@ -534,7 +541,7 @@ int paravirt_disable_iospace(void);
- 		/* since this condition will never hold */		\
- 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -544,7 +551,7 @@ int paravirt_disable_iospace(void);
- 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
- 		} else {						\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -571,7 +578,7 @@ int paravirt_disable_iospace(void);
- 		PVOP_VCALL_ARGS;					\
- 		PVOP_TEST_NULL(op);					\
- 		asm volatile(pre					\
--			     paravirt_alt(PARAVIRT_CALL)		\
-+			     paravirt_alt				\
- 			     post					\
- 			     : call_clbr, ASM_CALL_CONSTRAINT		\
- 			     : paravirt_type(op),			\
--- 
-2.17.0
+Pavel
