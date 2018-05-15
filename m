@@ -1,96 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeEOSW3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:22:29 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:37011 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753913AbeEOSW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:22:26 -0400
-X-Google-Smtp-Source: AB8JxZpthU8IFK6F7zNkNNndE0kMCcF+Lsklv5LMe+592Vc3ect4IZMMjl2F6oG/zJT+Ev78pXzWHIVvo8Fw/EPBEkc=
+        id S1753576AbeEOSVd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:21:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59571 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752861AbeEOSVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:21:31 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Subject: [PATCH net-next 08/10] net: hns3: Fix for fiber link up problem
+Date: Tue, 15 May 2018 19:20:12 +0100
+Message-ID: <20180515182014.42196-9-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180515182014.42196-1-salil.mehta@huawei.com>
+References: <20180515182014.42196-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515174736.GB28489@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org> <20180509170159.29682-5-ilina@codeaurora.org>
- <CAD=FV=VCAaGsRH1e46e+YSPJMYHgHGWf9TcH5UrcuJadQGsLtw@mail.gmail.com> <20180515174736.GB28489@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 15 May 2018 11:22:23 -0700
-X-Google-Sender-Auth: zJ2vnEygaWazUiMLlFQzyLjFgIw
-Message-ID: <CAD=FV=W9ahLJNuJBmMgziabumkU9q_PS59Z822+tLBwRZU7euQ@mail.gmail.com>
-Subject: Re: [PATCH v8 04/10] drivers: qcom: rpmh: add RPMH helper functions
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-On Tue, May 15, 2018 at 10:47 AM, Lina Iyer <ilina@codeaurora.org> wrote:
-> On Fri, May 11 2018 at 14:17 -0600, Doug Anderson wrote:
->>
->> Hi,
->>
->> On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->>>
->>> +int rpmh_write(const struct device *dev, enum rpmh_state state,
->>> +              const struct tcs_cmd *cmd, u32 n)
->>> +{
->>> +       DECLARE_COMPLETION_ONSTACK(compl);
->>> +       DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
->>> +       int ret;
->>> +
->>> +       if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
->>> +               return -EINVAL;
->>> +
->>> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
->>> +       rpm_msg.msg.num_cmds = n;
->>> +
->>> +       ret = __rpmh_write(dev, state, &rpm_msg);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = wait_for_completion_timeout(&compl, RPMH_TIMEOUT_MS);
->>
->>
->> IMO it's almost never a good idea to use wait_for_completion_timeout()
->> together with a completion that's declared on the stack.  If you
->> somehow insist that this is a good idea then I need to see incredibly
->> clear and obvious code/comments that say why it's impossible that the
->> process might somehow try to signal the completion _after_
->> RPMH_TIMEOUT_MS has expired.
->>
->> Specifically if the timeout happens but the process could still signal
->> a completion later then they will access random data on the stack of a
->> function that has already returned.  This causes ridiculously
->> difficult-to-debug crashes.
->>
->>
->> NOTE: You've got timeout set to 10 seconds here.  Is that really even
->> useful?  IMO just call wait_for_completion() without a timeout.  It's
->> much better to have a nice clean hang than a random stack corruption.
->>
->>
-> The 10 sec timeout will guarantee that we will not get a response at all
-> anymore for the request. Usually requests can be considered failed if
-> there is no response in a few tens of microseconds. 10 sec is just an
-> arbitarily large number.
->
-> The reason we use timeout is that once the timeout happens, we know we
-> have failed, we could trigger a watchdog or crash the system. This is
-> very important for our productization in debugging RPMH failures. A
-> hang would not always trigger a watchdog and the failure would be silent
-> and possibly fatal but hard to debug.
+When hclge_ae_start is called, hdev->hw.mac.link may be set
+to one after up/down multi-times, which does not correspond to
+the link state of netdev when the netdev is up.
 
-If you intend the system to crash when this timeout happens then IMHO
-add a BUG_ON.  Then I won't worry about something coming around later
-and clobbering the stack.
+This fixes it by setting hdev->hw.mac.link to zero when
+hclge_ae_start is called.
 
--Doug
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index d060903..75d9b8c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -3756,6 +3756,7 @@ static int hclge_ae_start(struct hnae3_handle *handle)
+ 	hclge_cfg_mac_mode(hdev, true);
+ 	clear_bit(HCLGE_STATE_DOWN, &hdev->state);
+ 	mod_timer(&hdev->service_timer, jiffies + HZ);
++	hdev->hw.mac.link = 0;
+ 
+ 	/* reset tqp stats */
+ 	hclge_reset_tqp_stats(handle);
+@@ -3792,7 +3793,6 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
+ 
+ 	/* reset tqp stats */
+ 	hclge_reset_tqp_stats(handle);
+-	hclge_update_link_status(hdev);
+ }
+ 
+ static int hclge_get_mac_vlan_cmd_status(struct hclge_vport *vport,
+-- 
+2.7.4
