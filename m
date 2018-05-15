@@ -1,58 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeEOIUt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:20:49 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55253 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752228AbeEOIUq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:20:46 -0400
-X-Google-Smtp-Source: AB8JxZou4Yg4U95XM0wgYsVapGrFOIcyQ2gRLJBX+u4/hrLFL4lIz3EZ2PNPVNi4JTOi5vtAKlOKnQ==
-Date: Tue, 15 May 2018 10:20:43 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Vlad Buslov <vladbu@mellanox.com>, netdev@vger.kernel.org,
-        davem@davemloft.net, xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 00/14] Modify action API for implementing lockless actions
-Message-ID: <20180515082043.GH2134@nanopsycho.orion>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <23f37e5a-dd30-0ad3-a5ab-df22bf0ad7f9@mojatatu.com>
+        id S1752370AbeEOIWa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:22:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752044AbeEOIW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:22:28 -0400
+Date: Tue, 15 May 2018 09:22:23 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, james.morse@arm.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 08/18] arm64: convert raw syscall invocation to C
+Message-ID: <20180515082222.rcoyf6dsf2s2edgq@salmiak>
+References: <20180514125351.GK7753@e103592.cambridge.arm.com>
+ <20180514114104.oubxdf526hf2m6t5@lakrids.cambridge.arm.com>
+ <20180514202445.GA26773@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23f37e5a-dd30-0ad3-a5ab-df22bf0ad7f9@mojatatu.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180514202445.GA26773@light.dominikbrodowski.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, May 14, 2018 at 08:03:20PM CEST, jhs@mojatatu.com wrote:
->On 14/05/18 10:27 AM, Vlad Buslov wrote:
->> Currently, all netlink protocol handlers for updating rules, actions and
->> qdiscs are protected with single global rtnl lock which removes any
->> possibility for parallelism. This patch set is a first step to remove
->> rtnl lock dependency from TC rules update path. It updates act API to
->> use atomic operations, rcu and spinlocks for fine-grained locking. It
->> also extend API with functions that are needed to update existing
->> actions for parallel execution.
->> 
->> Outline of changes:
->> - Change tc action to use atomic reference and bind counters, rcu
->>    mechanism for cookie update.
->> - Extend action ops API with 'delete' function and 'unlocked' flag.
->> - Change action API to work with actions in lockless manner based on
->>    primitives implemented in previous patches.
->> - Extend action API with new functions necessary to implement unlocked
->>    actions.
->
->Please run all the tdc tests with these changes. This area has almost
->good test coverage at this point. If you need help just ping me.
+On Mon, May 14, 2018 at 10:24:45PM +0200, Dominik Brodowski wrote:
+> On Mon, May 14, 2018 at 12:41:10PM +0100, Mark Rutland wrote:
+> > I agree it would be nicer if it had a wrapper that took a pt_regs, even
+> > if it does nothing with it.
+> > 
+> > We can't use SYSCALL_DEFINE0() due to the fault injection muck, we'd
+> > need a ksys_ni_syscall() for our traps.c logic, and adding this
+> > uniformly would involve some arch-specific rework for x86, too, so I
+> > decided it was not worth the effort.
+> 
+> Couldn't you just open-code the "return -ENOSYS;" in traps.c?
 
-Oh, that reminds me. Vlad, please run also:
-tools/testing/selftests/net/forwarding/tc_*
+I guess so. I was just worried that debug logic might be added to the generic
+ni_syscall() in future, and wanted to avoid potential divergence.
 
-Thanks!
+> Error injection has no reasonable stable ABI/API expectations, so that's not
+> a show-stopper either.
+
+If people are happy with using SYSCALL_DEFINE0() for ni_syscall, I'm happy to
+do that -- it's just that we'll need a fixup for x86 as that will change the
+symbol name.
+
+Thanks,
+Mark.
