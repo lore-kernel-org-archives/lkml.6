@@ -1,73 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeEOLLS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:11:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49144 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752059AbeEOLLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:11:16 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH RFC v2 3/5] KVM: nVMX: add enlightened VMCS state
-References: <20180511133751.13414-1-vkuznets@redhat.com>
-        <20180511133751.13414-4-vkuznets@redhat.com>
-        <a4277986-1633-c39c-43a6-b056ae489230@redhat.com>
-Date: Tue, 15 May 2018 13:11:13 +0200
-In-Reply-To: <a4277986-1633-c39c-43a6-b056ae489230@redhat.com> (Paolo
-        Bonzini's message of "Mon, 14 May 2018 18:22:29 +0200")
-Message-ID: <87zi11jhri.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752767AbeEOLMF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 07:12:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58486 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752591AbeEOLME (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 07:12:04 -0400
+Date: Tue, 15 May 2018 04:11:59 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Boaz Harrosh <boazh@netapp.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Amit Golander <Amit.Golander@netapp.com>
+Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
+Message-ID: <20180515111159.GA31599@bombadil.infradead.org>
+References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
+ <20180514191551.GA27939@bombadil.infradead.org>
+ <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
+ <20180515004137.GA5168@bombadil.infradead.org>
+ <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On Tue, May 15, 2018 at 01:43:23PM +0300, Boaz Harrosh wrote:
+> On 15/05/18 03:41, Matthew Wilcox wrote:
+> > On Mon, May 14, 2018 at 10:37:38PM +0300, Boaz Harrosh wrote:
+> >> On 14/05/18 22:15, Matthew Wilcox wrote:
+> >>> On Mon, May 14, 2018 at 08:28:01PM +0300, Boaz Harrosh wrote:
+> >>>> On a call to mmap an mmap provider (like an FS) can put
+> >>>> this flag on vma->vm_flags.
+> >>>>
+> >>>> The VM_LOCAL_CPU flag tells the Kernel that the vma will be used
+> >>>> from a single-core only, and therefore invalidation (flush_tlb) of
+> >>>> PTE(s) need not be a wide CPU scheduling.
+> >>>
+> >>> I still don't get this.  You're opening the kernel up to being exploited
+> >>> by any application which can persuade it to set this flag on a VMA.
+> >>>
+> >>
+> >> No No this is not an application accessible flag this can only be set
+> >> by the mmap implementor at ->mmap() time (Say same as VM_VM_MIXEDMAP).
+> >>
+> >> Please see the zuf patches for usage (Again apologise for pushing before
+> >> a user)
+> >>
+> >> The mmap provider has all the facilities to know that this can not be
+> >> abused, not even by a trusted Server.
+> > 
+> > I don't think page tables work the way you think they work.
+> > 
+> > +               err = vm_insert_pfn_prot(zt->vma, zt_addr, pfn, prot);
+> > 
+> > That doesn't just insert it into the local CPU's page table.  Any CPU
+> > which directly accesses or even prefetches that address will also get
+> > the translation into its cache.
+> 
+> Yes I know, but that is exactly the point of this flag. I know that this
+> address is only ever accessed from a single core. Because it is an mmap (vma)
+> of an O_TMPFILE-exclusive file created in a core-pinned thread and I allow
+> only that thread any kind of access to this vma. Both the filehandle and the
+> mmaped pointer are kept on the thread stack and have no access from outside.
+> 
+> So the all point of this flag is the kernel driver telling mm that this
+> address is enforced to only be accessed from one core-pinned thread.
 
-> On 11/05/2018 15:37, Vitaly Kuznetsov wrote:
->> -	if (enable_shadow_vmcs)
->> -		to_vmx(vcpu)->nested.sync_shadow_vmcs = true;
->> +
->> +	if (vmx->nested.hv_evmcs)
->> +		vmx->nested.sync_enlightened_vmcs = true;
->> +	else if (enable_shadow_vmcs)
->> +		vmx->nested.sync_shadow_vmcs = true;
->>  }
->
-> These four lines are a bit repeated.  Perhaps change them to
->
-> 	if (enable_shadow_vmcs || vmx->nested.hv_evmcs)
-> 		vmx->nested.need_vmcs12_sync = true;
->
-> and elsewhere
->
-> 	if (vmx->nested.need_vmcs12_sync) {
-> 	       if (vmx->nested.hv_evmcs) {
-> 	               copy_vmcs12_to_enlightened(vmx);
-> 	               /* All fields are clean */
-> 	               vmx->nested.hv_evmcs->hv_clean_fields |=
-> 				HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
-> 			vmx->nested.sync_enlightened_vmcs = false;
-> 		} else {
-> 	                copy_vmcs12_to_shadow(vmx);
-> 		}
-> 		vmx->nested.need_vmcs12_sync = false;
-> 	}
->
-> ?
-
-True, we always know which VMCS we currently use so we can use a single
-flag. Will do, thanks!
-
--- 
-  Vitaly
+You're still thinking about this from the wrong perspective.  If you
+were writing a program to attack this facility, how would you do it?
+It's not exactly hard to leak one pointer's worth of information.
