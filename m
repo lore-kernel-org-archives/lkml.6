@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754049AbeEOQhB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:37:01 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38769 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeEOQg7 (ORCPT
+        id S932090AbeEOQhG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:37:06 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39194 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753474AbeEOQhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:36:59 -0400
-X-Google-Smtp-Source: AB8JxZrroYibPkdl0XqonYFEXx0ycO7FHIbjZWPE1PM+wt1rAz8LCychdQr7LWtdXiPAEl3f5eHbBg==
+        Tue, 15 May 2018 12:37:01 -0400
+X-Google-Smtp-Source: AB8JxZr6s6qG3rlv2bkPOjamZG7BTIqvS7WUedrfW2u36SWw275Qx0ardRM71tk7pBhG+LIPcatUWg==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -15,38 +15,62 @@ To: Neil Armstrong <narmstrong@baylibre.com>,
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] clk: meson: mpll: add round closest support
-Date: Tue, 15 May 2018 18:36:50 +0200
-Message-Id: <20180515163652.19980-1-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/2] clk: meson: axg: let mpll clocks round closest
+Date: Tue, 15 May 2018 18:36:52 +0200
+Message-Id: <20180515163652.19980-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180515163652.19980-1-jbrunet@baylibre.com>
+References: <20180515163652.19980-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATM, the mpll driver can only round the requested rate down, even if
-rounding up would have provided a better approximation of the requested
-rate.
+Let the mpll dividers achieve the closest rate possible, even if
+it means rounding the requested rate up.
 
-This patchset adds a flag to enable rounding to the closest rate possible,
-even if it means rounding up.
+This is done to improve the accuracy of the rates provided by these
+plls to the audio subsystem
 
-The flag is then enabled on the axg platform to improve the rates provided
-to the audio subsystem.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes since v1: [0]
- * Fix an error in calculation while rounding the rate down
-   (Thanks Martin for reporting it)
-
-[0]: https://lkml.kernel.org/r/20180420095603.29964-1-jbrunet@baylibre.com
-
-Jerome Brunet (2):
-  clk: meson: mpll: add round closest support
-  clk: meson: axg: let mpll clocks round closest
-
- drivers/clk/meson/axg.c      |  4 ++++
- drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
- drivers/clk/meson/clkc.h     |  3 +++
- 3 files changed, 26 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 5f5d468c1efe..bd4dbc696b88 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -461,6 +461,7 @@ static struct clk_regmap axg_mpll0_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -507,6 +508,7 @@ static struct clk_regmap axg_mpll1_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -553,6 +555,7 @@ static struct clk_regmap axg_mpll2_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+@@ -599,6 +602,7 @@ static struct clk_regmap axg_mpll3_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll3_div",
 -- 
 2.14.3
