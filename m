@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752760AbeEOIJl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:09:41 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51595 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752531AbeEOH7i (ORCPT
+        id S1752646AbeEOIJk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:09:40 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54951 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752539AbeEOH7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:38 -0400
-X-Google-Smtp-Source: AB8JxZpl+UsgTc2DVvEskmLqJT2o9zF1xF25o0AEE4HZ3m6ET5DXtdM7T1VgyBwLXhqKm2EQSMLwfQ==
+        Tue, 15 May 2018 03:59:40 -0400
+X-Google-Smtp-Source: AB8JxZr6XXbWN/27vx/87oi8Rpzw5uC/qNZ99CG/cEF2yqg7j7OmqS4Y6I52VXMyu4p2Ke8YDNQ8Ng==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 10/29] venus: hfi_venus: add suspend functionality for Venus 4xx
-Date: Tue, 15 May 2018 10:58:40 +0300
-Message-Id: <20180515075859.17217-11-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 11/29] venus: venc,vdec: adds clocks needed for venus 4xx
+Date: Tue, 15 May 2018 10:58:41 +0300
+Message-Id: <20180515075859.17217-12-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
@@ -25,43 +25,186 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds suspend (power collapse) functionality by reusing
-the suspend function for Venus 3xx and also enables idle indicator
-property for Venus 4xx (where it is disabled by default).
+This extends the clocks number to support suspend and resume
+on Venus version 4xx.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/hfi_venus.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/venus/core.h |  4 +--
+ drivers/media/platform/qcom/venus/vdec.c | 42 ++++++++++++++++++++++++++------
+ drivers/media/platform/qcom/venus/venc.c | 42 ++++++++++++++++++++++++++------
+ 3 files changed, 72 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 284da69eb81b..109116e1545d 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -878,6 +878,14 @@ static int venus_sys_set_default_properties(struct venus_hfi_device *hdev)
- 	if (ret)
- 		dev_warn(dev, "setting fw debug msg ON failed (%d)\n", ret);
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 8d3e150800c9..b5b9a84e9155 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -92,8 +92,8 @@ struct venus_core {
+ 	void __iomem *base;
+ 	int irq;
+ 	struct clk *clks[VIDC_CLKS_NUM_MAX];
+-	struct clk *core0_clk;
+-	struct clk *core1_clk;
++	struct clk *core0_clk, *core0_bus_clk;
++	struct clk *core1_clk, *core1_bus_clk;
+ 	struct video_device *vdev_dec;
+ 	struct video_device *vdev_enc;
+ 	struct v4l2_device v4l2_dev;
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index 261a51adeef2..c45452634e7e 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device *pdev)
+ 	if (!core)
+ 		return -EPROBE_DEFER;
  
-+	/*
-+	 * Idle indicator is disabled by default on some 4xx firmware versions,
-+	 * enable it explicitly in order to make suspend functional by checking
-+	 * WFI (wait-for-interrupt) bit.
-+	 */
-+	if (IS_V4(hdev->core))
-+		venus_sys_idle_indicator = true;
+-	if (core->res->hfi_version == HFI_VERSION_3XX) {
++	if (IS_V3(core) || IS_V4(core)) {
+ 		core->core0_clk = devm_clk_get(dev, "core");
+ 		if (IS_ERR(core->core0_clk))
+ 			return PTR_ERR(core->core0_clk);
+ 	}
+ 
++	if (IS_V4(core)) {
++		core->core0_bus_clk = devm_clk_get(dev, "bus");
++		if (IS_ERR(core->core0_bus_clk))
++			return PTR_ERR(core->core0_bus_clk);
++	}
 +
- 	ret = venus_sys_set_idle_message(hdev, venus_sys_idle_indicator);
- 	if (ret)
- 		dev_warn(dev, "setting idle response ON failed (%d)\n", ret);
-@@ -1525,7 +1533,8 @@ static int venus_suspend_3xx(struct venus_core *core)
+ 	platform_set_drvdata(pdev, core);
  
- static int venus_suspend(struct venus_core *core)
+ 	vdev = video_device_alloc();
+@@ -1132,12 +1138,23 @@ static __maybe_unused int vdec_runtime_suspend(struct device *dev)
  {
--	if (core->res->hfi_version == HFI_VERSION_3XX)
-+	if (core->res->hfi_version == HFI_VERSION_3XX ||
-+	    core->res->hfi_version == HFI_VERSION_4XX)
- 		return venus_suspend_3xx(core);
+ 	struct venus_core *core = dev_get_drvdata(dev);
  
- 	return venus_suspend_1xx(core);
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		clk_disable_unprepare(core->core0_bus_clk);
++
+ 	clk_disable_unprepare(core->core0_clk);
+-	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+ 
+ 	return 0;
+ }
+@@ -1147,12 +1164,23 @@ static __maybe_unused int vdec_runtime_resume(struct device *dev)
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
++
+ 	ret = clk_prepare_enable(core->core0_clk);
+-	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		ret |= clk_prepare_enable(core->core0_bus_clk);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 947001170a77..bc8c2e7a8d2c 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device *pdev)
+ 	if (!core)
+ 		return -EPROBE_DEFER;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_3XX) {
++	if (IS_V3(core) || IS_V4(core)) {
+ 		core->core1_clk = devm_clk_get(dev, "core");
+ 		if (IS_ERR(core->core1_clk))
+ 			return PTR_ERR(core->core1_clk);
+ 	}
+ 
++	if (IS_V4(core)) {
++		core->core1_bus_clk = devm_clk_get(dev, "bus");
++		if (IS_ERR(core->core1_bus_clk))
++			return PTR_ERR(core->core1_bus_clk);
++	}
++
+ 	platform_set_drvdata(pdev, core);
+ 
+ 	vdev = video_device_alloc();
+@@ -1276,12 +1282,23 @@ static __maybe_unused int venc_runtime_suspend(struct device *dev)
+ {
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		clk_disable_unprepare(core->core1_bus_clk);
++
+ 	clk_disable_unprepare(core->core1_clk);
+-	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+ 
+ 	return 0;
+ }
+@@ -1291,12 +1308,23 @@ static __maybe_unused int venc_runtime_resume(struct device *dev)
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
++
+ 	ret = clk_prepare_enable(core->core1_clk);
+-	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		ret |= clk_prepare_enable(core->core1_bus_clk);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+ 
+ 	return ret;
+ }
 -- 
 2.14.1
