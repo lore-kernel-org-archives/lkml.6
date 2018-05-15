@@ -1,78 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753433AbeEOPJd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:09:33 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:31425 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbeEOPJb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:09:31 -0400
-Subject: Re: MMC performance degradation due to too many requests
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <0ea1d2bf-fa0f-4b3d-556a-5dca5afbf2a9@ti.com>
- <CACRpkdaZ5G=gBHNwf7YMLEBOqC2UrO+YLrz09H4h8HWYN=av4w@mail.gmail.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <3e2c96fa-273e-192f-1caf-788de7659592@ti.com>
-Date: Tue, 15 May 2018 20:41:02 +0530
+        id S1753576AbeEOPLE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:11:04 -0400
+Received: from mga07.intel.com ([134.134.136.100]:37768 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753542AbeEOPLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 11:11:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="41126943"
+Subject: Re: [PATCH 0/15] x86/split_lock: Enable #AC exception for split
+ locked accesses
+To: Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Alan Cox <alan@linux.intel.com>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+Cc: x86 <x86@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ef39e053-ad81-2058-f66c-037f90b53516@intel.com>
+Date: Tue, 15 May 2018 08:10:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaZ5G=gBHNwf7YMLEBOqC2UrO+YLrz09H4h8HWYN=av4w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 05/14/2018 11:52 AM, Fenghua Yu wrote:
+> When executing an atomic instruction, sometimes the data access crosses
+> the cache line boundary. This causes performance degradation. Intel
+> introduces mechanism to detect such split lock issue via alignment check
+> fault.
 
-On Tuesday 15 May 2018 06:09 PM, Linus Walleij wrote:
-> On Mon, May 14, 2018 at 1:30 PM, Faiz Abbas <faiz_abbas@ti.com> wrote:
-> 
->> Also, I see many times the number of interrupts for mmc1 in 4.14.
-> (...)
->> I also printed out the size of the DMA transfers in the omap_hsmmc
->> driver during the dd command. I see that the maximum size of the dma
->> transfer has decreased from 1 MB to 256kB between 4.13 and 4.14.
-> 
-> This seems like my fault for removing the bounce buffer.
-> (The name bounce buffer is misleading, I suspect the right
-> term for what is was doing was "merge buffer" or something,
-> coalescing physically consecutive requests.)
-> 
-> commit de3ee99b097dd51938276e3af388cd4ad0f2750a
-> "mmc: Delete bounce buffer handling"
-> should be the culprit.
+This is still a pretty sparse description.
 
-I don't think so. I checked out to the commit before that and see that
-the interrupts are still too high.
+Could you describe the performance degradation?  Why is this not a
+"doctor it hurts when I do that" situation?
 
-> 
-> The bounce buffer only makes any performance impact if the
-> host DMA controller is unable to handle scatter-gather lists
-> so the number of segments is set down to 1.
-> 
-> Can you verifty that:
-> - mmc->max_segs == 1
+Could you also give us *some* idea which CPUs this will show up on?  Is
+it a one-off feature, or will it be available widely?
 
-No. It is 64 in v4.14. It was 1024 in v4.13.
+> Since kernel doesn't know when SMI comes, it's impossible for kernel
+> to disable split lock #AC before entering SMI. So SMI handler may
+> inherit kernel's split lock setting and kernel tester may end up
+> debug split lock issues in SMI.
 
-v4.14
-https://pastebin.ubuntu.com/p/4wXB2jb6zw/
-
-v4.13
-https://pastebin.ubuntu.com/p/dpd6kb4YJY/
-
-
-> - You were previously enabling CONFIG_MMC_BLOCK_BOUNCE
-
-Yes.
-
-Regards,
-Faiz
+What's a "kernel tester"?
