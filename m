@@ -1,73 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeEOUit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 16:38:49 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:60515 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752506AbeEOUir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 16:38:47 -0400
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, "David Airlie" <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philippe Cornu <philippe.cornu@st.com>
-Subject: [PATCH] drm/bridge: checkpatch strict minor updates
-Date: Tue, 15 May 2018 22:37:36 +0200
-Message-ID: <20180515203736.9224-1-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752430AbeEOUl7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 16:41:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752021AbeEOUl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 16:41:57 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.129.4.139]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_07:,,
- signatures=0
+To: Chanwoo Choi <cw00.choi@samsung.com>, David Airlie <airlied@linux.ie>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180514211610.26618-8-enric.balletbo@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        Lin Huang <hl@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <20180514211610.26618-8-enric.balletbo@collabora.com>
+Message-ID: <152641691632.237094.11483387696003404182@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RFC PATCH 07/10] clk: rockchip: set clk-ddr to GET_RATE_NOCACHE.
+Date: Tue, 15 May 2018 13:41:56 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FKg4Ek021717
 
-Minor fixes detected with "scripts/checkpatch.pl --strict"
+Quoting Enric Balletbo i Serra (2018-05-14 14:16:07)
+> From: Derek Basehore <dbasehore@chromium.org>
+> 
+> This adds the flag to the clk-ddr in rockchip to not use the cached
+> rate for get_rate. This is to handle timeout error conditions in SMC
+> for the set rate function.
 
-Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
----
-Detected when merging "drm: clarify adjusted_mode documentation for bridges"
-
- include/drm/drm_bridge.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 9917651a7fdd..70131ab57e8f 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -97,7 +97,7 @@ struct drm_bridge_funcs {
- 	/**
- 	 * @mode_fixup:
- 	 *
--	 * This callback is used to validate and adjust a mode. The paramater
-+	 * This callback is used to validate and adjust a mode. The parameter
- 	 * mode is the display mode that should be fed to the next element in
- 	 * the display chain, either the final &drm_connector or the next
- 	 * &drm_bridge. The parameter adjusted_mode is the input mode the bridge
-@@ -301,15 +301,15 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 		      struct drm_bridge *previous);
- 
- bool drm_bridge_mode_fixup(struct drm_bridge *bridge,
--			const struct drm_display_mode *mode,
--			struct drm_display_mode *adjusted_mode);
-+			   const struct drm_display_mode *mode,
-+			   struct drm_display_mode *adjusted_mode);
- enum drm_mode_status drm_bridge_mode_valid(struct drm_bridge *bridge,
- 					   const struct drm_display_mode *mode);
- void drm_bridge_disable(struct drm_bridge *bridge);
- void drm_bridge_post_disable(struct drm_bridge *bridge);
- void drm_bridge_mode_set(struct drm_bridge *bridge,
--			struct drm_display_mode *mode,
--			struct drm_display_mode *adjusted_mode);
-+			 struct drm_display_mode *mode,
-+			 struct drm_display_mode *adjusted_mode);
- void drm_bridge_pre_enable(struct drm_bridge *bridge);
- void drm_bridge_enable(struct drm_bridge *bridge);
- 
--- 
-2.15.1
+We need some more information here. Why does timeout error condition in
+set_rate() matter for get_rate()?
