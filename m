@@ -1,129 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752313AbeEOH0b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:26:31 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:39682 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeEOH03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:26:29 -0400
-X-Google-Smtp-Source: AB8JxZqdY4ktGx82OdM7k5nEb1Qq2vtAabD9rmbY3diir0ZUDCIzp+HtUYzbKzrCJFnRaJ113ZHzsBoUr2RlVE70stw=
+        id S1752235AbeEOH2K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:28:10 -0400
+Received: from sauhun.de ([88.99.104.3]:60774 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752102AbeEOH2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 03:28:09 -0400
+Date: Tue, 15 May 2018 09:28:07 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: pmcmsp: return message count on master_xfer
+ success
+Message-ID: <20180515072806.twsuirbmx2xs5rge@ninjato>
+References: <20180509194630.29047-1-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180515061854.GA30523@outlook.office365.com>
-References: <000000000000169606056b793179@google.com> <20180511183358.GA1492@outlook.office365.com>
- <CACT4Y+bt-HwBNA5REeZwoKAymCc-Da5rEU=yeeHodg7zByStQg@mail.gmail.com>
- <20180514180035.GA20189@outlook.office365.com> <CACT4Y+a9v+38=DUpTGu0doaf3xWW02PUzoC7idgwOg+rV2eFTQ@mail.gmail.com>
- <20180515061854.GA30523@outlook.office365.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 15 May 2018 09:26:07 +0200
-Message-ID: <CACT4Y+bGNABve5Ypzk8KEhZSLJ0eD7tmmxn6EJM7AnEGx2n31Q@mail.gmail.com>
-Subject: Re: possible deadlock in sk_diag_fill
-To: Andrei Vagin <avagin@virtuozzo.com>
-Cc: syzbot <syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com>,
-        avagin <avagin@openvz.org>, David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6klqfydcvsqnnam2"
+Content-Disposition: inline
+In-Reply-To: <20180509194630.29047-1-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 8:18 AM, Andrei Vagin <avagin@virtuozzo.com> wrote:
->> >> >> Hello,
->> >> >>
->> >> >> syzbot found the following crash on:
->> >> >>
->> >> >> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
->> >> >> git tree:       upstream
->> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=12164c97800000
->> >> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
->> >> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c1872be62e587eae9669
->> >> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> >> >> userspace arch: i386
->> >> >>
->> >> >> Unfortunately, I don't have any reproducer for this crash yet.
->> >> >>
->> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> >> Reported-by: syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com
->> >> >>
->> >> >>
->> >> >> ======================================================
->> >> >> WARNING: possible circular locking dependency detected
->> >> >> 4.17.0-rc3+ #59 Not tainted
->> >> >> ------------------------------------------------------
->> >> >> syz-executor1/25282 is trying to acquire lock:
->> >> >> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at: sk_diag_dump_icons
->> >> >> net/unix/diag.c:82 [inline]
->> >> >> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at:
->> >> >> sk_diag_fill.isra.5+0xa43/0x10d0 net/unix/diag.c:144
->> >> >>
->> >> >> but task is already holding lock:
->> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: spin_lock
->> >> >> include/linux/spinlock.h:310 [inline]
->> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_dump_icons
->> >> >> net/unix/diag.c:64 [inline]
->> >> >> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_fill.isra.5+0x94e/0x10d0
->> >> >> net/unix/diag.c:144
->> >> >>
->> >> >> which lock already depends on the new lock.
->> >> >
->> >> > In the code, we have a comment which explains why it is safe to take this lock
->> >> >
->> >> > /*
->> >> >  * The state lock is outer for the same sk's
->> >> >  * queue lock. With the other's queue locked it's
->> >> >  * OK to lock the state.
->> >> >  */
->> >> > unix_state_lock_nested(req);
->> >> >
->> >> > It is a question how to explain this to lockdep.
->> >>
->> >> Do I understand it correctly that (&u->lock)->rlock associated with
->> >> AF_UNIX is locked under rlock-AF_UNIX, and then rlock-AF_UNIX is
->> >> locked under (&u->lock)->rlock associated with AF_NETLINK? If so, I
->> >> think we need to split (&u->lock)->rlock by family too, so that we
->> >> have u->lock-AF_UNIX and u->lock-AF_NETLINK.
->> >
->> > I think here is another problem. lockdep woried about
->> > sk->sk_receive_queue vs unix_sk(s)->lock.
->> >
->> > sk_diag_dump_icons() takes sk->sk_receive_queue and then
->> > unix_sk(s)->lock.
->> >
->> > unix_dgram_sendmsg takes unix_sk(sk)->lock and then sk->sk_receive_queue.
->> >
->> > sk_diag_dump_icons() takes locks for two different sockets, but
->> > unix_dgram_sendmsg() takes locks for one socket.
->> >
->> > sk_diag_dump_icons
->> >         if (sk->sk_state == TCP_LISTEN) {
->> >                 spin_lock(&sk->sk_receive_queue.lock);
->> >                 skb_queue_walk(&sk->sk_receive_queue, skb) {
->> >                         unix_state_lock_nested(req);
->> >                                 spin_lock_nested(&unix_sk(s)->lock,
->> >
->> >
->> > unix_dgram_sendmsg
->> >         unix_state_lock(other)
->> >                 spin_lock(&unix_sk(s)->lock)
->> >         skb_queue_tail(&other->sk_receive_queue, skb);
->> >                 spin_lock_irqsave(&list->lock, flags);
->>
->>
->> Do you mean the following?
->> There is socket 1 with state lock (S1) and queue lock (Q2), and socket
->> 2 with state lock (S2) and queue lock (Q2). unix_dgram_sendmsg lock
->> S1->Q1. And sk_diag_dump_icons locks Q1->S2.
->> If yes, then this looks pretty much as deadlock. Consider that 2
->> unix_dgram_sendmsg in 2 different threads lock S1 and S2 respectively.
->> Now 2  sk_diag_dump_icons in 2 different threads lock Q1 and Q2
->> respectively. Now sk_diag_dump_icons want to lock S's, and
->> unix_dgram_sendmsg want to lock Q's. Nobody can proceed.
->
-> Q1 and S1 belongs to a listen socket, so they can't be taken from
-> unix_dgram_sendmsg().
 
-Should we then split Q1/S1 for listening and data sockets? I don't
-know it lockdep allows changing lock class on the fly, though. Always
-wondered if there was a single reason to mix listening and data
-sockets into a single thing on API level...
+--6klqfydcvsqnnam2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 09, 2018 at 09:46:29PM +0200, Peter Rosin wrote:
+> Returning zero is wrong in this case.
+>=20
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+
+Applied to for-current, thanks!
+
+
+--6klqfydcvsqnnam2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr6jAYACgkQFA3kzBSg
+Kbaciw//RnwWTyfCtwEIwaiR6lRkdAQUGEVT98Jo96ID5qGIQUFuWkIo3G33BuR4
+1kPXOVjcTAWO7ZtHjwqKczSKov/k2WmpyllO4oiSc9sUOxC3kk2nE6Kq0IEiL3uv
+oE4b3LTRbmXxgcdAw2QeOziBi6QaCp/NXdSvW4PmyoiRikQEFv7Z5ez+rGbGbwX5
+8t3zpdz+hDKh5vXaTtWcmyU3oDT30/5RcwFMiTA/AGbYK64cnFH277DpJnAeGtLe
+AbXGC0DIZWzCOcO8mhJPtGVhvNF7zJQs6SITjrrDMeFRrPgP4AN9hif2od+IZRxL
+ClC3bQMcdJjU/PK+sLlB9tmoiIPED90uMk0vC8uov5lVMerAUv137zA/btxLyuY6
+EmasH2Z/zAlVtorymnnVDh5/8auSl7eCE3kRrNhilA+WBz/kNq7vnrnBKWs6LSSw
+XJRoJ+ReJN8C4T8LOD3pp3DLPSkXU15YeQoshF9nw85oiEZWQfDOympWtKCAANZm
+5G/uSRgXxLOtDYaaZVdUdQzIT2bBBTBrZ+Z3ja/VGPcuQ/sm8DHkNnWYV3fCQuoF
+lG/emZ4rU3qduBCQGXCChL0jlSvEQXve3E1up12MTpJOKAQhSYEBg8KY5LlL8GX/
+a+H4oMloRNPxNMpvnY9DdnC4ZLSAtIn+z7CLl6FnN1KbwLmykmw=
+=0yAl
+-----END PGP SIGNATURE-----
+
+--6klqfydcvsqnnam2--
