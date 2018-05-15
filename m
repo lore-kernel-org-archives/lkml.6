@@ -1,87 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932208AbeEORX3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:23:29 -0400
-Received: from muru.com ([72.249.23.125]:42212 "EHLO muru.com"
+        id S932212AbeEOR0E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:26:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:36276 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932124AbeEORX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:23:28 -0400
-Date: Tue, 15 May 2018 10:23:24 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-Message-ID: <20180515172324.GS98604@atomide.com>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
- <20180501152615.GB98604@atomide.com>
- <b4d95a08-82fd-9f39-53e7-977351788c88@ti.com>
- <20180515171459.GP98604@atomide.com>
- <20180515171808.GR98604@atomide.com>
+        id S1754254AbeEOR0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:26:03 -0400
+Date: Tue, 15 May 2018 18:25:58 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
+ required
+Message-ID: <20180515172557.GK30654@e110439-lin>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-4-patrick.bellasi@arm.com>
+ <20180513060443.GB64158@joelaf.mtv.corp.google.com>
+ <20180513062538.GA116730@joelaf.mtv.corp.google.com>
+ <20180514163206.GF30654@e110439-lin>
+ <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
+ <20180515145343.GJ30654@e110439-lin>
+ <20180515165304.GH12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515171808.GR98604@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180515165304.GH12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180515 17:20]:
-> * Tony Lindgren <tony@atomide.com> [180515 17:17]:
-> > * Faiz Abbas <faiz_abbas@ti.com> [180515 06:05]:
-> > > Hi Tony,
-> > > 
-> > > On Tuesday 01 May 2018 08:56 PM, Tony Lindgren wrote:
-> > > > Hi,
-> > > > 
-> > > > * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
-> > > >> From: Lokesh Vutla <lokeshvutla@ti.com>
-> > > >>
-> > > >> Add MCAN hwmod data and register it for dra762 silicons.
-> > > >>
-> > > >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> > > >> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> > > >> ---
-> > > >>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
-> > > >>  1 file changed, 32 insertions(+)
-> > > >>
-> > > >> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > > >> index 62352d1..a2cd7f8 100644
-> > > >> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > > >> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > > >> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
-> > > >>  };
-> > > >>  
-> > > >>  /*
-> > > >> + * 'mcan' class
-> > > >> + *
-> > > >> + */
-> > > >> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
-> > > >> +	.name	= "mcan",
-> > > >> +};
-> > > > 
-> > > > Looks like you're missing the related struct omap_hwmod_class_sysconfig
-> > > > entry for this with the rev and sysconfig registers.
-> > > > 
-> > > 
-> > > Sorry, I missed this email earlier. The MCAN module doesn't have
-> > > sysconfig registers.
+On 15-May 18:53, Peter Zijlstra wrote:
+> On Tue, May 15, 2018 at 03:53:43PM +0100, Patrick Bellasi wrote:
+> > On 15-May 12:19, Vincent Guittot wrote:
+> > > On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > What about adding a new explicit callback at the end of:
+> >    update_blocked_averages() ?
 > > 
-> > If there's no sysconfig register you should have no need for adding
-> > anything to omap_hwmod_7xx_data.c. We now have the dts clkctrl
-> > clocks, you can just add that to the dts node for the device.
+> > Something like:
+> > 
+> > ---8<---
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index cb77407ba485..6eb0f31c656d 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7740,6 +7740,9 @@ static void update_blocked_averages(int cpu)
+> >         if (done)
+> >                 rq->has_blocked_load = 0;
+> >  #endif
+> > +
+> > +       cpufreq_update_util(rq, SCHED_CPUFREQ_IDLE);
+> > +
+> >         rq_unlock_irqrestore(rq, &rf);
+> >  }
+> > ---8<---
+> > 
+> > Where we can also pass in a new SCHED_CPUFREQ_IDLE flag just to notify
+> > schedutil that the CPU is currently IDLE?
+> > 
+> > Could that work?
 > 
-> However.. My guess is there is somewhere a top level interconnect
-> target module that uses DRA7XX_CM_WKUPAON_ADC_CLKCTRL. And that
-> module may have multiple child devices.
+> Simlarly you could add ENQUEUE/DEQUEUE flags I suppose. But let's do all
+> that later in separate patches and evaluate the impact separately, OK?
 
-And I'm guessing the top level module with sysconfig related
-registers is named "adc" :)
+Sure, that's better to keep on a separate patch.
 
-Regards,
+For the time being I'll just update this last patch with the above
+snippet just to have the same behavior we have right now.
 
-Tony
+Then maybe we can also split this last patch into a separate series to
+better evaluate the ideas to have "explicit" updates.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
