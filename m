@@ -1,63 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeEOR4i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:56:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752178AbeEOR4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:56:37 -0400
-Subject: Re: [PATCH v3 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED
- flag
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1526405884-4860-1-git-send-email-longman@redhat.com>
- <1526405884-4860-2-git-send-email-longman@redhat.com>
- <20180515174837.GL12217@hirez.programming.kicks-ass.net>
- <4d823d09-b41c-2f86-40b7-f110bf30afd8@redhat.com>
- <20180515175514.GM12217@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <764ff902-2e06-6cdd-dc06-4d69312989b6@redhat.com>
-Date: Tue, 15 May 2018 13:56:35 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180515175514.GM12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1752992AbeEOR6D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:58:03 -0400
+Received: from mga17.intel.com ([192.55.52.151]:36270 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752495AbeEOR6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:58:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="228737166"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2] x86/mtrr: Convert to use match_string() helper
+Date: Tue, 15 May 2018 20:57:59 +0300
+Message-Id: <20180515175759.89315-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 01:55 PM, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 01:52:06PM -0400, Waiman Long wrote:
->> On 05/15/2018 01:48 PM, Peter Zijlstra wrote:
->>> On Tue, May 15, 2018 at 01:38:03PM -0400, Waiman Long wrote:
->>>> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
->>>> index 30465a2..b7208e1 100644
->>>> --- a/kernel/locking/rwsem.c
->>>> +++ b/kernel/locking/rwsem.c
->>>> @@ -130,7 +130,8 @@ void up_read(struct rw_semaphore *sem)
->>>>  void up_write(struct rw_semaphore *sem)
->>>>  {
->>>>  	rwsem_release(&sem->dep_map, 1, _RET_IP_);
->>>> -	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
->>>> +	DEBUG_RWSEMS_WARN_ON((sem->owner != current) &&
->>>> +			     !rwsem_has_anonymous_owner(sem->owner));
->>> Why? Don't we always do percpu_rwsem_acquire() before up?
->>>
->> This is to allow an unlock to happen in the unknown owner state. Yes, it
->> is not necessary to fix the percpu-rwsem problem. It is there just in
->> case a rwsem will be released in that state in the future.
-> Let's not allow that until there's a very good reason for it.
+The helper returns index of the matching string in an array.
+Replace the open coded array lookup.
 
-Sure. I can remove that.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-Cheers,
-Longman
+- reword commit message
+
+ arch/x86/kernel/cpu/mtrr/if.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index d0fd1a5a098e..3cbae60663fa 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -137,17 +137,16 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
+ 		return -EINVAL;
+ 	ptr = skip_spaces(ptr + 5);
+ 
+-	for (i = 0; i < MTRR_NUM_TYPES; ++i) {
+-		if (strcmp(ptr, mtrr_strings[i]))
+-			continue;
+-		base >>= PAGE_SHIFT;
+-		size >>= PAGE_SHIFT;
+-		err = mtrr_add_page((unsigned long)base, (unsigned long)size, i, true);
+-		if (err < 0)
+-			return err;
+-		return len;
+-	}
+-	return -EINVAL;
++	i = match_string(mtrr_strings, MTRR_NUM_TYPES, ptr);
++	if (i < 0)
++		return i;
++
++	base >>= PAGE_SHIFT;
++	size >>= PAGE_SHIFT;
++	err = mtrr_add_page((unsigned long)base, (unsigned long)size, i, true);
++	if (err < 0)
++		return err;
++	return len;
+ }
+ 
+ static long
+-- 
+2.17.0
