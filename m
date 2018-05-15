@@ -1,141 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeEOVaB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:30:01 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:54610 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752412AbeEOV0M (ORCPT
+        id S1752693AbeEOVaP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:30:15 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752411AbeEOV0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:26:12 -0400
+        Tue, 15 May 2018 17:26:11 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Jan Beulich <JBeulich@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>, Kees Cook <keescook@chromium.org>,
-        <linux-sparse@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <virtualization@lists.linux-foundation.org>, <x86@kernel.org>
-Subject: [RFC 0/8] Improving compiler inlining decisions
-Date: Tue, 15 May 2018 07:11:07 -0700
-Message-ID: <20180515141124.84254-1-namit@vmware.com>
+        Juergen Gross <jgross@suse.com>, Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [RFC 4/8] x86: prevent inline distortion by paravirt ops
+Date: Tue, 15 May 2018 07:11:11 -0700
+Message-ID: <20180515141124.84254-5-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
+References: <20180515141124.84254-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set deals with an interesting yet stupid problem: code that
-does not get inlined despite its simplicity.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-I find 5 classes of causes:
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
-1. Inline assembly blocks in which code and data are added to
-alternative sections. The compiler is oblivious to the content of the
-blocks and assumes their cost in space and time is proportional to the
-number of the perceived assembly "instruction", according to the number
-of newlines and semicolons. Alternatives, paravirt and other mechanisms
-are affected.
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
 
-2. Inline assembly with redundant new-lines and semicolons. Similarly to
-(1) this code is considered "heavier" than it actually is.
+   text	   data	    bss	    dec	    hex	filename
+18131468 10068488 2936832 31136788 1db1c14 ./vmlinux before
+18146418 10064100 2936832 31147350 1db4556 ./vmlinux after (+10562)
 
-3. Code with constant value optimizations. Quite a few parts of the
-kernel check whether a variable is constant (using
-__builtin_constant_p()) and perform heavy computations in that case.
-These computations are eventually optimized out so they do not land in
-the binary. However, the cost of these computations is also associated
-with the calling function, which might prevent inlining of the calling
-function. ilog2() is an example for such case.
+Static text symbols:
+Before:	39788
+After:	39673	(-115)
 
-4. Code that is marked with the "cold" attribute, including all the
-__init functions. Some may consider it the desired behavior.
-
-5. Code that is marked with a different optimization levels. This
-affects for example vmx_vcpu_run(), inducing overheads of up to 10% on
-exit.
-
-
-This patch-set deals with some instances of first 3 classes. 
-
-For (1) we insert an assembly macro, and call it from the inline
-assembly block.  As a result, the compiler sees a single "instruction"
-and assigns the more appropriate cost to the code.
-
-For (2) the solution is trivial: just remove the newlines.
-
-(3) is somewhat tricky. The proposed solution is to use
-__builtin_choose_expr() to check whether a variable is actually constant
-instead of using an if-condition or the C ternary operator.
-__builtin_choose_expr() is evaluated earlier in the compilation, so it
-allows the compiler to associate the right cost for the variable case
-before the inlining decisions take place.  So far so good.
-
-Still, there is a drawback. Since __builtin_choose_expr() is evaluated
-earlier, it can fail to recognize constants, which an if-condition would
-recognize correctly.  As a result, this patch-set only applies it to the
-simplest cases.
-
-Overall this patch-set slightly increases the kernel size (my build was
-done using localmodconfig + localyesconfig for the record):
-
-   text    data     bss     dec     hex filename
-18126699 10066728 2936832 31130259 1db0293 ./vmlinux before
-18149210 10064048 2936832 31150090 1db500a ./vmlinux after (+0.06%)
-
-The patch-set eliminates many of the static text symbols:
-Before: 40033
-After:  39632   (-10%)
-
-There is a measurable effect on performance in some cases. A loop of
-MADV_DONTNEED/page-fault shows a 2% performance improvement with this
-patch-set.
-
-Some inline comments or self-explaining C macros might still be needed.
-
-[1] https://lkml.org/lkml/2018/5/5/159
-
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Juergen Gross <jgross@suse.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-sparse@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: virtualization@lists.linux-foundation.org
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
+Cc: virtualization@lists.linux-foundation.org
 
-Nadav Amit (8):
-  x86: objtool: use asm macro for better compiler decisions
-  x86: bug: prevent gcc distortions
-  x86: alternative: macrofy locks for better inlining
-  x86: prevent inline distortion by paravirt ops
-  x86: refcount: prevent gcc distortions
-  x86: removing unneeded new-lines
-  ilog2: preventing compiler distortion due to big condition
-  bitops: prevent compiler inline decision distortion
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/paravirt_types.h | 53 +++++++++++++++------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
- arch/x86/include/asm/alternative.h    | 28 ++++++++++----
- arch/x86/include/asm/asm.h            |  4 +-
- arch/x86/include/asm/bitops.h         |  8 ++--
- arch/x86/include/asm/bug.h            | 48 ++++++++++++++---------
- arch/x86/include/asm/cmpxchg.h        | 10 ++---
- arch/x86/include/asm/paravirt_types.h | 53 +++++++++++++++-----------
- arch/x86/include/asm/refcount.h       | 55 ++++++++++++++++-----------
- arch/x86/include/asm/special_insns.h  | 12 +++---
- include/linux/compiler.h              | 29 ++++++++++----
- include/linux/log2.h                  | 11 +++---
- 10 files changed, 156 insertions(+), 102 deletions(-)
-
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..3fe99dab8266 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -346,20 +346,37 @@ extern struct pv_lock_ops pv_lock_ops;
+ /*
+  * Generate some code, and mark it as patchable by the
+  * apply_paravirt() alternate instruction patcher.
++ *
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
+  */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
++
++asm ("\n"
++	".macro __paravirt_alt type:req clobber:req pv_opptr:req\n"
++	"771:\n\t"
++	ANNOTATE_RETPOLINE_SAFE "\n\t"
++	"call *\\pv_opptr\n"
++	"772:\n\t"
++	".pushsection .parainstructions,\"a\"\n\t"
++	_ASM_ALIGN "\n\t"
++	_ASM_PTR " 771b\n\t"
++	".byte \\type\n\t"
++	".byte 772b-771b\n\t"
++	".short \\clobber\n\t"
+ 	".popsection\n"
++	".endm");
++
++#define _paravirt_alt(type, clobber, pv_opptr)				\
++	"__paravirt_alt type=" __stringify(type)			\
++	" clobber=" __stringify(clobber)				\
++	" pv_opptr=" __stringify(pv_opptr) "\n\t"
+ 
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_alt							\
++	_paravirt_alt("%c[paravirt_typenum]", "%c[paravirt_clobber]",	\
++		      "%c[paravirt_opptr]")
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +404,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +541,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +551,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +578,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_alt				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
 -- 
 2.17.0
