@@ -1,67 +1,63 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2784231-1526396442-2-9174357119609239586
+X-Cyrus-Session-Id: sloti22d1t05-1731937-1526350646-2-4609426845295240066
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526396441; b=hBYeeXSndDfQfFf9izCYO4nB0jc8nQ526ttrtil328q/oPXLa6
-    N3DhV8YY/Ex+STn1W1SkvAYHTgQMT05JCrFI53saQHAoy8Pgjox5XSPH5D2JdMBC
-    +moRASV2L9oZGoafaR38ujx6byXKF+cWao5kRVt3z367z/yXzycTYkqmCDAcMGDq
-    9grJbXe9LNR6F4Tk2BPXqHfTkUo6wbNZDW99XLPhzVqfQw/JBpoNJ41n9HIVA2a9
-    SN0oRKr037VcA4YttfGGwq3mO1Mzq/CQfXJB8mQYxJ6FnguZpArIg0Q391buK5Jq
-    zm24Hcn0N1HWt0ezaNoTA7nTskUQiSX9AJdQ==
+    1526350645; b=IY6yHXAvOILshskRruCq9pnubax9SaSO8NJWnTKnae6WwGZdGw
+    vxdFc2JKCRqV0sia1bFKcfwbkYIXhR+wgLUzwIh4PiS/fD4soyWr2SST2d34ucHO
+    HRM0eSmRCUwo2EcQWT+EZX7+ha/c9z7hrVjExpNXQNWllIVcmQZoRxeVvXerPgr/
+    vFoH8xaK+4/7TLL0pjNO4TbyVbESUof5UY1rBlJ/ZcwBVSLrZfSl/SynmjCBq9Q8
+    QntPRjU9W9qDcA0WREBAc7je8if6nNWfpTn5PZCcp//q2+BT2zz7sLxF94b0HOX2
+    aFw9DZLbHwCF26XMl7txJM++aOCOcn2LMlOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526396441; bh=17mhP
-    8jPTdMWcbJrT5OCdNLNRaGS4a/Fyzrg049I8uQ=; b=DqR5+TtB6ZSDffMeagKhW
-    +8K99yM3bIcJl+9AAX8QGvuKxYAn9SE6VDI3CG/tjBMIYdAs8n5MB6Aqo7kNgaVJ
-    NgqDtjRpf8/Zo0T30RWNJVViMrKriFMaBWsuf2ZCFmr6NOY3rIUxLXbbz0MD/7vq
-    yfd+K0u32DDVLciedZVykc51jWcRowcgGwYMQnVUQ9UvxWOY0/KgJs+Sb16MYzZK
-    6X+63Itcj3VOLiP95kKMdJnLCH7Vg67Kht785ziUMNqRaqaIMkGNNle3czHGuVbB
-    H9RJqomv+g+rWPLePSIcKnEiqio6r9dcz689w4TNk33dD0Boh53cScwsRqS6W/PV
-    A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=uwLxTOEK
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=casper.20170209;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526350645; bh=j6ApX
+    81QGWrKPs5Oa0pHjIvaFaKIVv1fFF1Vr5MgLV4=; b=F7OhFaI0RyLCTmGn/MJnH
+    XzWaFp9Y2CEGtfoBNldy8D/qRfBGfgKII3X+RF5Ol93ct8ecytjySnaR9glhkF9M
+    JKJp2aTLgpnVBiIrWbSY//6ap4/v8Ak4llmQguJEdEYzDOWSdLz/Aq+x8i74KEnH
+    6UAtkwROJESPWM2vmoE0pRE0WsMQCVg/gWyBn8BXlQ0Y6fkbR4DIv5Y7rYyZhlVE
+    k8ohwSYrA+WVmmCytxRWO70ZAFC3/auzTpob8RrCdqudyCrLYVxhZQckvl2/wwOR
+    K6YhWfo7qmyCkJvJTfjqMaKcRmVsJ4FxZb96RQGE+CCex/VWCVShjXYbsMhThqVW
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+    x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=uwLxTOEK
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=casper.20170209;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+      smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+      x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
       header_is_org_domain=yes;
@@ -69,34 +65,30 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAPLa/0ljtJFWTLciWJJuVASwuGyBuyA1Qg9S0nxzumneZrvDLykbfSF8TqXPNUqGgHS6Ww4rqCGJ4BV1o/FSjBrHAOpauxQpxO5eDeW/7MD4VCo5qpx
-    XiamdomebFaANvfWOrIHwl736PnITPq8i7JgRpzCtQMILMy7CPm6C+aykGRnRX6aNL9PAdLHIEDv4gsxQvdJDIx5OKhNqLEFFNhKxIwQ9/DSStf6UfD5ocsJ
-    z3SgyXLYyO4OZIC0hr9TXg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=f163IYkzVpVaqwlJQ74A:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfL1Pg3bgqBlkvgC55H7nV2nrB4WOA4epwrTF/yHqNmotN5S4qlhxxjsHJxTZcCFfbiEanrRZiAzUQn6CEMAzKURObx1xHE3FEFhm4FghWvU36KOfigtu
+    XxPEgeUmjTrHLt8nLBY4BgWWCIiJ+jmURSgHKlTnurk7dx5hpUi3gYq/mwLP7yy89ycs3YKeeUO3qX1wtUAPboiXrbrI2OCc/QeWhY+M14CVUmjrVU9KtUHt
+    OJ+qbDf2+DrExsjEpWJvIQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=ySfo2T4IAAAA:8
+    a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8 a=XoljZmphCf-CZ_AndNQA:9
+    a=QoO5jAV0-8V3mT78:21 a=0ggCYed0Kxyu23Ah:21 a=CjuIK1q_8ugA:10
+    a=ZUkhVnNHqyo2at-WnAgH:22 a=1CNFftbPRP8L7MoqJWF3:22 a=_BcfOz0m4U4ohdxiHPKc:22
+    cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amavis-Alert: BAD HEADER SECTION, Improper folded header field made up
- entirely of whitespace (char 20 hex): X-Spam-Report: ....0 points, 5.0
- required)\n \n  pts rule nam[...]
-Date: Tue, 15 May 2018 16:00:22 +0100 (BST)
 From: James Simmons <jsimmons@infradead.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v2 1/5] staging: lustre: llite: add support set_acl method
- in inode operations
-In-Reply-To: <20180515113034.ywxhai4nrrvxs7nr@mwanda>
-Message-ID: <alpine.LFD.2.21.1805151600080.28403@casper.infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+ Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Subject: [PATCH 5/5] staging: lustre: mdc: use large xattr buffers for old
+ servers
+Date: Mon, 14 May 2018 22:17:03 -0400
+Message-Id: <1526350623-4616-6-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1526350623-4616-1-git-send-email-jsimmons@infradead.org>
 References: <1526350623-4616-1-git-send-email-jsimmons@infradead.org>
- <1526350623-4616-2-git-send-email-jsimmons@infradead.org>
- <20180515113034.ywxhai4nrrvxs7nr@mwanda>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180515_160022_194384_C1A02F76 
-X-CRM114-Status: GOOD (  12.87  )
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -107,13 +99,10 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Dmitry Eremin <dmitry.eremin@intel.com>,
- James Simmons <uja.ornl@yahoo.com>, Andreas Dilger <andreas.dilger@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, NeilBrown <neilb@suse.com>,
+Cc: "John L. Hammond" <john.hammond@intel.com>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Oleg Drokin <oleg.drokin@intel.com>,
- "John L. Hammond" <john.hammond@intel.com>,
  Lustre Development List <lustre-devel@lists.lustre.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -122,57 +111,85 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: "John L. Hammond" <john.hammond@intel.com>
 
-> On Mon, May 14, 2018 at 10:16:59PM -0400, James Simmons wrote:
-> > +#ifdef CONFIG_FS_POSIX_ACL
-> >  struct posix_acl *ll_get_acl(struct inode *inode, int type)
-> >  {
-> >  	struct ll_inode_info *lli = ll_i2info(inode);
-> > @@ -3043,6 +3044,64 @@ struct posix_acl *ll_get_acl(struct inode *inode, int type)
-> >  	return acl;
-> >  }
-> >  
-> > +int ll_set_acl(struct inode *inode, struct posix_acl *acl, int type)
-> > +{
-> > +	struct ll_sb_info *sbi = ll_i2sbi(inode);
-> > +	struct ptlrpc_request *req = NULL;
-> > +	const char *name = NULL;
-> > +	size_t value_size = 0;
-> > +	char *value = NULL;
-> > +	int rc;
-> 
-> "rc" needs to be initialized to zero.  It's disapppointing that GCC
-> doesn't catch this.
+Pre 2.10.1 MDTs will crash when they receive a listxattr (MDS_GETXATTR
+with OBD_MD_FLXATTRLS) RPC for an orphan or dead object. So for
+clients connected to these older MDTs, try to avoid sending listxattr
+RPCs by making the bulk getxattr (MDS_GETXATTR with OBD_MD_FLXATTRALL)
+more likely to succeed and thereby reducing the chances of falling
+back to listxattr.
 
-Thanks Dan. Will fix.
+Signed-off-by: John L. Hammond <john.hammond@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10912
+Reviewed-on: https://review.whamcloud.com/31990
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Reviewed-by: Fan Yong <fan.yong@intel.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c | 31 +++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+index a8aa0fa..b991c6f 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+@@ -326,8 +326,10 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
+ {
+ 	struct ptlrpc_request	*req;
+ 	struct ldlm_intent	*lit;
++	u32 min_buf_size = 0;
+ 	int rc, count = 0;
+ 	LIST_HEAD(cancels);
++	u32 buf_size = 0;
  
-> > +
-> > +	switch (type) {
-> > +	case ACL_TYPE_ACCESS:
-> > +		name = XATTR_NAME_POSIX_ACL_ACCESS;
-> > +		if (acl)
-> > +			rc = posix_acl_update_mode(inode, &inode->i_mode, &acl);
-> > +		break;
-> > +
-> > +	case ACL_TYPE_DEFAULT:
-> > +		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-> > +		if (!S_ISDIR(inode->i_mode))
-> > +			rc = acl ? -EACCES : 0;
-> > +		break;
-> > +
-> > +	default:
-> > +		rc = -EINVAL;
-> > +		break;
-> > +	}
-> > +	if (rc)
-> > +		return rc;
-> 
-> Otherwise rc can be uninitialized here.
-> 
-> regards,
-> dan carpenter
-> 
-> 
+ 	req = ptlrpc_request_alloc(class_exp2cliimp(exp),
+ 				   &RQF_LDLM_INTENT_GETXATTR);
+@@ -344,18 +346,33 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
+ 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
+ 	lit->opc = IT_GETXATTR;
+ 
++#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
++	/* If the supplied buffer is too small then the server will
++	 * return -ERANGE and llite will fallback to using non cached
++	 * xattr operations. On servers before 2.10.1 a (non-cached)
++	 * listxattr RPC for an orphan or dead file causes an oops. So
++	 * let's try to avoid sending too small a buffer to too old a
++	 * server. This is effectively undoing the memory conservation
++	 * of LU-9417 when it would be *more* likely to crash the
++	 * server. See LU-9856.
++	 */
++	if (exp->exp_connect_data.ocd_version < OBD_OCD_VERSION(2, 10, 1, 0))
++		min_buf_size = exp->exp_connect_data.ocd_max_easize;
++#endif
++	buf_size = max_t(u32, min_buf_size,
++			 GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++
+ 	/* pack the intended request */
+-	mdc_pack_body(req, &op_data->op_fid1, op_data->op_valid,
+-		      GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM, -1, 0);
++	mdc_pack_body(req, &op_data->op_fid1, op_data->op_valid, buf_size,
++		      -1, 0);
+ 
+-	req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_SERVER,
+-			     GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++	req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_SERVER, buf_size);
+ 
+-	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS, RCL_SERVER,
+-			     GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS, RCL_SERVER, buf_size);
+ 
+ 	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS_LENS, RCL_SERVER,
+-			     sizeof(u32) * GA_DEFAULT_EA_NUM);
++			     max_t(u32, min_buf_size,
++				   sizeof(u32) * GA_DEFAULT_EA_NUM));
+ 
+ 	req_capsule_set_size(&req->rq_pill, &RMF_ACL, RCL_SERVER, 0);
+ 
+-- 
+1.8.3.1
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
