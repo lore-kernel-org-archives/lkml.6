@@ -1,33 +1,34 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3069754-1526409340-2-17911939018331545809
+X-Cyrus-Session-Id: sloti22d1t05-2956902-1526406423-2-9957768454484158717
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526409340; b=b6E/X2mJPEYVpzE6mcynsNvnVe4fgHvwbRc2eNGaa1W3zGtozf
-    NlXIQOrWuzYTGnmd9UDSyQfvmr6eld/9byNGtY/aoZGzfdfEehrlOVm4aL76oWC6
-    jQyR3pxOgs+xs2mTOmCzBFyz+txpIYSa7SRqno0Q/9amz+IN4DQxzKg7VodBHBWu
-    H73OsS/T7EcAkFB14M1hOgzET6yb3KOKoqSc9eAXDCwNnYalBgZgbALFbiXmfN7D
-    7Um8jFbiTUW9tCIDWs3P87iRyf1zzKhsME2sQNMf6uRWXg0RmDML4hxjaqUo0bQY
-    yRDfbPoraU3XRc55zacv+HWJxYYelA4Tav4Q==
+    1526406423; b=he/gO71/S+x7rP4IHTX4waX/yA0AUPE9u2qHL1NIoglzG0IP3B
+    fzGxp3Cg8hpxMeMHPedrHHb3q+u8mTGV0g/RUz+aLiQGrqMVKUPnKe9BScYTj0Bv
+    jMg2oaqsUjwO1i9y37UXxXWM+au6DoYOUlIctNaKIpur749lahffMSGjx/zMPhxW
+    NS2SGRr1SL1gZjE31J3g6VQkcB3xaXm6aSOWG1ep4MX0pGDSlXO3wezt3JFZSW2j
+    k6eT31PrNE3lhpEMh2sdn5eTGr9ZLFw2vB79CtYYRbrgsGUjR1JR24ayPTGCHrfB
+    onevBbXqWDtwh+MUsZ8YL+vnB6XjPimCXVIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526409340;
-    bh=gfpUCpG9y0kZiVtVbZRGJRkcfeYPcfkOkEIxpdU+LPs=; b=gH7zHKPTFKcV
-    yPvIho7v+KLXYaqYi15dMisSjNV1YbUSwk9KY+ZboKoG6re2nuTE6Q4UL4Qirgf2
-    TBD2RT7g/ZSKX00IQy2ywyeuuCAk6kCZaI9jT2qe6mDy4LOXCP1dF+VUaOKZZTpA
-    JqF54zRQYxcjpSUzSDAyDmPnyucStMgKCdWngKEtOdDrrfBqfKUDJGmYFaA61wOO
-    e+JIdu9MUd/Z71pR2AhwuYkKaiZ6kbYjYZYpdwJoiDSU06FBp3FL82hpP4qrIryg
-    JHNWZW9XoOn7Gdmc6HcmoMAqduVm/llwpSxqDi3O/psld5XRQ+sqVEjz5pos7gpQ
-    y3xFRT9ldA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526406423; bh=1+2cH12ImSVoNNcAhnNbBJCnudBtAw
+    yoJSamIIf1Nf4=; b=jteeE66r4t6X1j5Hzq7mg5TAD6OXf2UoHSyD06XmUCQETz
+    kEh1XyZ3dnzXlGKQNpzdCEatjrd8S+B4Y8Zh2QKTSmkKE+I+sRaX97xl2/307wbO
+    5O01uXexx9FFS4VQLgtWXvgtGdoUwQOjzmsATArWbT6eiew0sr6oRYGfclsTPluM
+    Oe+YuRbbxt66ojlHPyjwH+3wY52ZDuFgvFg5hVLLpTSmZkavAjOcb2GzXSIFJEGL
+    iOUYVXTbKBfRtaZ/HjxulapeudjaDU4dFmFPn3Xq0g13/4F485TaiVpjDeszunmY
+    CHFBB9FpgChJr4DEuEnGzbMqRd/D99tqkmC4adJg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=om5HNFfC
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,12 +37,16 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    header.domain=infradead.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=om5HNFfC
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -50,26 +55,28 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+      header.domain=infradead.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIBpNP2Ge0sOXLClogqoTXMUFLW51/WHMFVwOonpfhxPe2V/E6HaGqGnJFsbYm6ArZPKVC6COpZGHkTbqTBVIjhEbEM7j2X9aIWiQ3Q7Kk7uxQwYXiaQ
-    6ydihIW63DIrVdKme39R8KXWiy7itGI07IjfeSG1EvmoMpnaP6ARmxJgCemlCWk/yBuJP0kNHsIWEUOkUdLgCNT+cUdiInZS7DK1edvXkQcOZgj9Jx+at76r
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=WQhqEe2HgKeNbJqoAeAA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfOlAeDMEgtgR3DQhBDavE/uC5A7Cr+tjbY4RSSD+ZU2K/oMRya9w2bvrTPtD+n3sUULUgwC+CRSMlojzpkg0TkyAaxy3m9saqYOPN+cLTOrBb0l9xPkt
+    tfbnkLUxuFY6+dIZc7yayH8Vov+xbIpd3UobRuCeMm2rQBHYsJ/K+QM/2IfcP8yA5ElJ1GkbDP9ERvAYdtJw02d7WhUCISVGhBm3UKZZtMrl/epGeFMF7sQ3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=xD6Js3U7bqTvQ6wHUBkA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeEOSfi (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 15 May 2018 14:35:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34508 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752668AbeEOSfi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 May 2018 14:35:38 -0400
-Subject: Re: [PATCH v3 2/2] locking/percpu-rwsem: Annotate rwsem ownership
- transfer by setting RWSEM_OWNER_UNKNOWN
-To: Peter Zijlstra <peterz@infradead.org>
+        id S1752956AbeEORq7 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 15 May 2018 13:46:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59544 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeEORq6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 May 2018 13:46:58 -0400
+Date: Tue, 15 May 2018 19:46:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
 Cc: Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -78,46 +85,23 @@ Cc: Ingo Molnar <mingo@redhat.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED
+ flag
+Message-ID: <20180515174646.GK12217@hirez.programming.kicks-ass.net>
 References: <1526405884-4860-1-git-send-email-longman@redhat.com>
- <1526405884-4860-3-git-send-email-longman@redhat.com>
- <20180515175805.GN12217@hirez.programming.kicks-ass.net>
- <1baa1a1a-a4a7-d706-8c01-5ff6a8757f97@redhat.com>
- <20180515180549.GP12217@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <fcdd9ebd-05b9-30b1-877a-db84aaa96770@redhat.com>
-Date: Tue, 15 May 2018 14:35:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ <1526405884-4860-2-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515180549.GP12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526405884-4860-2-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/15/2018 02:05 PM, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 02:02:00PM -0400, Waiman Long wrote:
->> On 05/15/2018 01:58 PM, Peter Zijlstra wrote:
->>> On Tue, May 15, 2018 at 01:38:04PM -0400, Waiman Long wrote:
->>>> +/*
->>>> + * Owner value to indicate the rwsem's owner is not currently known.
->>>> + */
->>>> +#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1)
->>> It might be nice to comment that this works and relies on having that
->>> ANON_OWNER bit set.
->> I am just trying not to expose internal working of rwsem, but I can
->> document that one of the bits is the real deal without specifying which one.
-> Thing is, you don't want someone changing this without knowing about
-> that one magic bit. It doesn't hurt to be explicit here.
->
-> Also, do we want -1L instead of a -1 literal?
->
-Yes, I should -1L instead.
+On Tue, May 15, 2018 at 01:38:03PM -0400, Waiman Long wrote:
+> +#define WSEM_ANONYMOUSLY_OWNED	((struct task_struct *)__RWSEM_ANONYMOUSLY_OWNED)
 
-Cheers,
-Longman
+typoed and unused..
