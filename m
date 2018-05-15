@@ -1,103 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeEOLR0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:17:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58012 "EHLO mail.bootlin.com"
+        id S1752783AbeEOLTw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 07:19:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58137 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752323AbeEOLRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:17:24 -0400
-Date: Tue, 15 May 2018 13:17:11 +0200
+        id S1752323AbeEOLTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 07:19:50 -0400
+Date: Tue, 15 May 2018 13:19:38 +0200
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Hao Zhang <hao5781286@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk,
-        Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Message-ID: <20180515111711.l2g4vgsal7yr6dbr@flea>
-References: <20180225135308.GA14561@arx-s1>
- <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
- <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+Message-ID: <20180515111938.ia6jttqijj2erxy4@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com>
+ <20180502113413.vv2r3ubfoh7gm3ms@flea>
+ <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
+ <20180514084050.ix5corfuvx33gsyn@flea>
+ <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gknln4zbx57iat3f"
+        protocol="application/pgp-signature"; boundary="v7lac66a75aajndc"
 Content-Disposition: inline
-In-Reply-To: <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com>
+In-Reply-To: <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
 User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gknln4zbx57iat3f
-Content-Type: text/plain; charset=utf-8
+--v7lac66a75aajndc
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Mon, May 14, 2018 at 10:45:44PM +0800, Hao Zhang wrote:
-> 2018-02-26 17:00 GMT+08:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> > Thanks for respinning this serie. It looks mostly good, but you still
-> > have a quite significant number of checkpatch (--strict) warnings that
-> > you should address.
+On Mon, May 14, 2018 at 04:01:15PM +0530, Jagan Teki wrote:
+> On Mon, May 14, 2018 at 2:10 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
+> >> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.c=
+om> wrote:
+> >> > Hi,
+> >> >
+> >> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+> >> >> +             hdmi_phy: hdmi-phy@1ef0000 {
+> >> >> +                     compatible =3D "allwinner,sun50i-a64-hdmi-phy=
+",
+> >> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
+> >> >> +                     reg =3D <0x01ef0000 0x10000>;
+> >> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDM=
+I_DDC>,
+> >> >> +                              <&ccu CLK_PLL_VIDEO1>;
+> >> >
+> >> > You were discussing that the PLL0 could also be used to clock the PH=
+Y,
+> >> > has that been figured out?
+> >>
+> >> This is what I understand from Fig: 3-3. Module Clock Diagram, both
+> >> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
+> >> configuration we need use proper PLL or some logic to get common PLL
+> >> don't know yet. Since this series adding tcon1 I've attached PLL1.
+> >
+> > You're not describing the TCON node here though, but the HDMI one, and
+> > the HDMI block is listed in both the PLL video 0 and 1.
 >=20
-> Thanks for reviews :) ,i'm sorry for that, it will be fixed next
-> time.  and, besides, in what situation were the checkpatch warning
-> can be ignore=EF=BC=9F
+> So how can we attach particular PLL with particular HDMI(PLL0 to HDMI0
+> and so-on) or do we need to attached both the PLL's any suggestion?
 
-The only one that can be reasonably be ignored is the long line
-warning, and only if complying to the limit would make it less easy to
-understand.
+I'm not sure what your question is here, just add the possibility to
+have an extra PLL if that makes sense to the binding.
 
-> >
-> > On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
-> >> +#define CAPTURE_IRQ_ENABLE_REG       0x0010
-> >> +#define CFIE(ch)     BIT(ch << 1 + 1)
-> >> +#define CRIE(ch)     BIT(ch << 1)
-> >
-> > You should also put your argument between parentheses here (and in all
-> > your other macros).
->=20
-> Do you mean like this ?
-> #define CFIE(ch)     BIT((ch) << 1 + 1)
-> #define CRIE(ch)     BIT((ch) << 1)
-
-Yep, exactly. Otherwise, if you do something like CRIE(1 + 1), the
-result will be BIT(1 + 1 << 1), which will expand to 3, instead of 4.
-
-Also, CFIE looks a bit weird here, is it the offset that is
-incremented, or the value? You should probably have parentheses to
-make it explicit.
-
-> >
-> >> +static const u16 div_m_table[] =3D {
-> >> +     1,
-> >> +     2,
-> >> +     4,
-> >> +     8,
-> >> +     16,
-> >> +     32,
-> >> +     64,
-> >> +     128,
-> >> +     256
-> >> +};
-> >
-> > If this is just a power of two, you can use either the power of two /
-> > ilog2 to switch back and forth, instead of using that table.
->=20
-> I think using table is more explicit and extended...
-
-If you didn't have a simple mapping between the register values and
-the divider value, then yeah, sure. But it's not the case here.
-
-Thanks!
 Maxime
 
 --=20
@@ -105,24 +89,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---gknln4zbx57iat3f
+--v7lac66a75aajndc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr6waEACgkQ0rTAlCFN
-r3RPFw/+JeurQEegEMeIm4JNTp7dnYT+zmfEGSK062yJIhYgiCXgWxxyqPd+2SnZ
-w0VoeGkC7ylD3R/5oRt5CCm2dce9JaOSJhYjRXU3zBsYicXQpWF0SgSgg8rfhmVb
-YFxPLqXYkW21szGXpufgx2en04pq9B1++FqbrgQzdKz4wc2UVGn9Ywz/se7FEDb1
-ACqJyolA3e7XiFJv3jhtZimoHGr1MReBNgPiwS9sHrGweB03R/NUfeb04G9w/ARo
-6DdeyHWjH+36TpZCzwMQPXwrqYpSjbFYEKf5vjVc2PB848+2h7p2vSmym/26vCkC
-xXvS/b/mNlp6EIEIWQs4ZdQKrYR4pCZq9M4WneBiLtVlq+ygiFn7uKeFGRjJukno
-iEiJrG3jOhnR2/37222rt/DZkb6oofJPtKyJadVwakQ3pFLeE8dB4a8xqsoHHoj1
-aPMzZhovzRNkWRZoeffbegOEVTahVABjrEiHuQb+8NDYbpb137pEHWJTRiBUhV+4
-h10Ez1d2OvugF7kZlkw2IVuzXdp4C5n3JMenTJ12el1JrjO7bfi+ddPVs3B/Iy7b
-CbPG/Ex+RAEULULg8dhpNmuweF5GN9pUlsAoxpPC/33Lg3Zx3AXyAdqWpjOLE0U7
-nOsqUEPtnywqyu7xGwPFN8LDagoXEhXn1V8vVEQUm3KNpvlFxgs=
-=apZD
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr6wkkACgkQ0rTAlCFN
+r3Tqag//dbQV1Oc4D43SXUZCymqniRo2QM1sWnt+4qbax7rh2BKJcBnV/Ue0qn07
+OqfqRQ1OygMr92fmd8F9VbWqWvp5ehgi28/SWnGjoJvwwzuapeE5BhZKN/BLCMM6
+JCFLNivGVeyo3EgSc7p0rzx8gFRrV9OOXfk1RBnWCDM24ep7o/SamrzVYEvZONHS
+5ryhl5xMNo48qt62codvMpsSW5Yoymsq45rQRHVqfs08TaVKXbcGOgUSdMlZPpou
+ZT0irqRYa2H1Dl6L/p5K0SG2xZhwrd3dHgpeNquI/hRC5CHKKVeYRCiDQ8OfP5c1
+cYAk1dMVixaoKGFac/fqW7Tw9n7p1ARDeW047eyPhM05105ovUwIXiDA8sTpIkzS
+WYuvrKI1x1rvc8krGTcT8BW9RRes9X0YAoymyjpAFdKAqWiLGdr04sBA2Jx4bTOh
+bGH3Tao4Ze7/HyDUdw1VWAgwzw0NJei8wlKrIg68BKlPAGEu1kCNDk7LfVHq1J1V
+aaw7WFtTNxQdEedWQVEotOeS+AasRYWva7e3zjxU3MT7taJPsifSiEMZlvRtspRP
+CYR06sUect1a7gYb3DnvZusXtSkOaoqxwsdTIUQU0IBvW15mrGpH5vN4DgEbohgY
+JPZtUCvBmHLYBk0FgPgtqQhxfVBb+3qnuFQDWNMqC72gMsbakgY=
+=qgzn
 -----END PGP SIGNATURE-----
 
---gknln4zbx57iat3f--
+--v7lac66a75aajndc--
