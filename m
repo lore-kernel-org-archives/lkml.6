@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753301AbeEOSVQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:21:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59840 "EHLO huawei.com"
+        id S1753766AbeEOSYI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:24:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59458 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752458AbeEOSVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:21:11 -0400
+        id S1753118AbeEOSVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:21:16 -0400
 From: Salil Mehta <salil.mehta@huawei.com>
 To: <davem@davemloft.net>
 CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>
-Subject: [PATCH net-next 02/10] net: hns3: Fix for the null pointer problem occurring when initializing ae_dev failed
-Date: Tue, 15 May 2018 19:20:06 +0100
-Message-ID: <20180515182014.42196-3-salil.mehta@huawei.com>
+Subject: [PATCH net-next 04/10] net: hns3: Change return type of hnae3_register_ae_dev
+Date: Tue, 15 May 2018 19:20:08 +0100
+Message-ID: <20180515182014.42196-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180515182014.42196-1-salil.mehta@huawei.com>
 References: <20180515182014.42196-1-salil.mehta@huawei.com>
@@ -28,109 +28,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fuyun Liang <liangfuyun1@huawei.com>
 
-When initializing ae_dev failed during loading hclge.ko, the drvdata will
-be set to null. When removing hns3.ko, we get a null ae_dev. It causes the
-null pointer problem.
+If hclge.ko has not been inserted, the value of ret always is zero
+in hnae3_register_ae_dev. If hclge.ko has been inserted, the value
+of ret is zero or non zero. Different execution ways have different
+results. It is confusing.
 
-This patch removes pci_set_drvdata from error handle of hclge_init_ae_dev
-to fix the bug, since pci_set_drvdata has been called in hns3_remove.
-Also, we do not need to uninit the ae_dev which is not initialized. And
-it may be the one which is initialized failed.
+The ae_dev which is initialized failed can be reinitialized when we
+remove hclge.ko and insert it again. For the case initializing client
+instance, it is just like the case initializing ae_dev. The main function
+of hnae3_register_ae_dev is adding the ae_dev to ad_dev list. Because
+adding ae_dev is always ok, we does not need to return any in this
+function.
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+This patch changes the return type of hnae3_register_ae_dev from int
+to void.
+
 Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.c               | 6 ++++++
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 5 +----
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 6 ++----
- 3 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c     | 5 +----
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h     | 2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 4 +---
+ 3 files changed, 3 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.c b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-index 1686ceb..ab2e72c 100644
+index 21cb0c5..cb93295 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hnae3.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-@@ -168,6 +168,9 @@ void hnae3_unregister_ae_algo(struct hnae3_ae_algo *ae_algo)
- 	mutex_lock(&hnae3_common_lock);
- 	/* Check if there are matched ae_dev */
- 	list_for_each_entry(ae_dev, &hnae3_ae_dev_list, node) {
-+		if (!hnae_get_bit(ae_dev->flag, HNAE3_DEV_INITED_B))
-+			continue;
-+
- 		id = pci_match_id(ae_algo->pdev_id_table, ae_dev->pdev);
- 		if (!id)
- 			continue;
-@@ -256,6 +259,9 @@ void hnae3_unregister_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	mutex_lock(&hnae3_common_lock);
- 	/* Check if there are matched ae_algo */
- 	list_for_each_entry(ae_algo, &hnae3_ae_algo_list, node) {
-+		if (!hnae_get_bit(ae_dev->flag, HNAE3_DEV_INITED_B))
-+			continue;
-+
- 		id = pci_match_id(ae_algo->pdev_id_table, ae_dev->pdev);
- 		if (!id)
- 			continue;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 343197a..c2501b1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5379,7 +5379,7 @@ static int hclge_pci_init(struct hclge_dev *hdev)
- 	ret = pci_enable_device(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to enable PCI device\n");
--		goto err_no_drvdata;
-+		return ret;
- 	}
+@@ -203,7 +203,7 @@ EXPORT_SYMBOL(hnae3_unregister_ae_algo);
+  * @ae_dev: the AE device
+  * NOTE: the duplicated name will not be checked
+  */
+-int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
++void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
+ {
+ 	const struct pci_device_id *id;
+ 	struct hnae3_ae_algo *ae_algo;
+@@ -224,7 +224,6 @@ int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
  
- 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-@@ -5417,8 +5417,6 @@ static int hclge_pci_init(struct hclge_dev *hdev)
- 	pci_release_regions(pdev);
- err_disable_device:
- 	pci_disable_device(pdev);
--err_no_drvdata:
--	pci_set_drvdata(pdev, NULL);
+ 		if (!ae_dev->ops) {
+ 			dev_err(&ae_dev->pdev->dev, "ae_dev ops are null\n");
+-			ret = -EOPNOTSUPP;
+ 			goto out_err;
+ 		}
  
- 	return ret;
+@@ -251,8 +250,6 @@ int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 
+ out_err:
+ 	mutex_unlock(&hnae3_common_lock);
+-
+-	return ret;
  }
-@@ -5594,7 +5592,6 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	pci_clear_master(pdev);
- 	pci_release_regions(pdev);
- 	pci_disable_device(pdev);
--	pci_set_drvdata(pdev, NULL);
- out:
- 	return ret;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 2dbffce..b7578c6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1563,7 +1563,7 @@ static int hclgevf_pci_init(struct hclgevf_dev *hdev)
- 	ret = pci_enable_device(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to enable PCI device\n");
--		goto err_no_drvdata;
-+		return ret;
- 	}
+ EXPORT_SYMBOL(hnae3_register_ae_dev);
  
- 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-@@ -1595,8 +1595,7 @@ static int hclgevf_pci_init(struct hclgevf_dev *hdev)
- 	pci_release_regions(pdev);
- err_disable_device:
- 	pci_disable_device(pdev);
--err_no_drvdata:
--	pci_set_drvdata(pdev, NULL);
-+
- 	return ret;
- }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index ffec231..ea6e6ea 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -515,7 +515,7 @@ struct hnae3_handle {
+ #define hnae_get_bit(origin, shift) \
+ 	hnae_get_field((origin), (0x1 << (shift)), (shift))
  
-@@ -1608,7 +1607,6 @@ static void hclgevf_pci_uninit(struct hclgevf_dev *hdev)
- 	pci_clear_master(pdev);
- 	pci_release_regions(pdev);
- 	pci_disable_device(pdev);
--	pci_set_drvdata(pdev, NULL);
- }
+-int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev);
++void hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev);
+ void hnae3_unregister_ae_dev(struct hnae3_ae_dev *ae_dev);
  
- static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
+ void hnae3_unregister_ae_algo(struct hnae3_ae_algo *ae_algo);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index af9e90f..ac75b5d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1576,9 +1576,7 @@ static int hns3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	ae_dev->dev_type = HNAE3_DEV_KNIC;
+ 	pci_set_drvdata(pdev, ae_dev);
+ 
+-	ret = hnae3_register_ae_dev(ae_dev);
+-	if (ret)
+-		return ret;
++	hnae3_register_ae_dev(ae_dev);
+ 
+ 	if (hns3_is_phys_func(pdev) && IS_ENABLED(CONFIG_PCI_IOV))
+ 		hns3_enable_sriov(pdev);
 -- 
 2.7.4
