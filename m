@@ -1,47 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754172AbeEOQpD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:45:03 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:44503 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754053AbeEOQpC (ORCPT
+        id S1754203AbeEOQpn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:45:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60812 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbeEOQpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:45:02 -0400
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: davem@davemloft.net, mchehab+samsung@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org
-Cc: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add Q: entry to kselftest for patchwork project
-Date: Tue, 15 May 2018 10:44:27 -0600
-Message-Id: <20180515164427.12201-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Tue, 15 May 2018 12:45:41 -0400
+Date: Tue, 15 May 2018 18:45:39 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Subject: Re: [patch-rt] sched,fair: Fix CFS bandwidth control  lockdep
+ DEADLOCK report
+Message-ID: <20180515164538.w4nnuqkkjj6lnp5c@linutronix.de>
+References: <20180503162934.b2ly6jz4a5tydaag@linutronix.de>
+ <1525414478.6761.5.camel@gmx.de>
+ <20180504104802.33e9a52f@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180504104802.33e9a52f@gandalf.local.home>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new patchwork project is created to track kselftest patches. Update
-the kselftest entry in the MAINTAINERS file adding Q: entry:
+On 2018-05-04 10:48:02 [-0400], Steven Rostedt wrote:
+> On Fri, 04 May 2018 08:14:38 +0200
+> Mike Galbraith <efault@gmx.de> wrote:
+> 
+…
+> Looks good to me.
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-https://patchwork.kernel.org/project/linux-kselftest/list/
+trimmed commit message, tagged stable, applied.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+> -- Steve
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 58b9861ccf99..ab577593d80a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7698,6 +7698,7 @@ KERNEL SELFTEST FRAMEWORK
- M:	Shuah Khan <shuah@kernel.org>
- L:	linux-kselftest@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-+Q:	https://patchwork.kernel.org/project/linux-kselftest/list/
- S:	Maintained
- F:	tools/testing/selftests/
- F:	Documentation/dev-tools/kselftest*
--- 
-2.14.1
+Sebastian
