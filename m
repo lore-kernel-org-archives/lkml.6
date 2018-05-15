@@ -1,60 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeEOMpk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:45:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49148 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752634AbeEOMph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:45:37 -0400
-Date: Tue, 15 May 2018 14:45:32 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
- non-spinnable in percpu_rwsem_release()
-Message-ID: <20180515124532.GA19429@redhat.com>
-References: <1526326267-22501-1-git-send-email-longman@redhat.com>
- <1526326267-22501-3-git-send-email-longman@redhat.com>
- <20180515085111.GW12217@hirez.programming.kicks-ass.net>
- <20180515110632.GA14527@redhat.com>
- <20180515115112.GZ12217@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515115112.GZ12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753387AbeEOMtO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:49:14 -0400
+Received: from mga09.intel.com ([134.134.136.24]:14385 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752995AbeEOMpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:45:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="41391214"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH V1 12/19] perf buildid-cache: kcore_copy: Keep phdr data in a list
+Date: Tue, 15 May 2018 15:43:26 +0300
+Message-Id: <1526388213-30696-13-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15, Peter Zijlstra wrote:
->
-> > > Afaict the whole .owner=NULL thing in release already stops the spinners
-> >
-> > Not really, the new writer will spin in this case, afaics.
-> >
-> > But this is another problem and probably we do not care. The new writer is
-> > almost impossible in this particular case, another freeze_super() should
-> > notice frozen != SB_UNFROZEN and return EBUSY.
->
-> rwsem_spin_on_owner() checks rwsem_owner_is_writer(), which does owner
-> && owner != RWSEM_READER_OWNED, which will fail for !owner.
+Currently, kcore_copy makes 2 program headers, one for the kernel text
+(namely kernel_map) and one for the modules (namely modules_map). Now more
+program headers are needed, but treating each program header as a special
+case results in much more code.
 
-Yep. So rwsem_spin_on_owner() goes to "out:" and returns
-!rwsem_owner_is_reader() == T.
+Instead, in preparation to add more program headers, change to keep program
+header data (phdr_data) in a list.
 
-IOW, afaics owner == NULL means "spin unconditionally", I guess this is for
-the case when the new writer is going to do rwsem_set_owner() or up_write()
-has already called rwsem_clear_owner() but didn't do up_write() yet.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/util/symbol-elf.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Probably makes sense, but the code is not very clean,
-
-> Or am I completely confused again?
-
-Or me, I am not sure.
-
-Oleg.
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 48943b834f11..b13873a6f368 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1388,6 +1388,7 @@ struct phdr_data {
+ 	off_t offset;
+ 	u64 addr;
+ 	u64 len;
++	struct list_head node;
+ };
+ 
+ struct kcore_copy_info {
+@@ -1399,6 +1400,7 @@ struct kcore_copy_info {
+ 	u64 last_module_symbol;
+ 	struct phdr_data kernel_map;
+ 	struct phdr_data modules_map;
++	struct list_head phdrs;
+ };
+ 
+ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+@@ -1510,6 +1512,11 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
+ 	if (elf_read_maps(elf, true, kcore_copy__read_map, kci) < 0)
+ 		return -1;
+ 
++	if (kci->kernel_map.len)
++		list_add_tail(&kci->kernel_map.node, &kci->phdrs);
++	if (kci->modules_map.len)
++		list_add_tail(&kci->modules_map.node, &kci->phdrs);
++
+ 	return 0;
+ }
+ 
+@@ -1678,6 +1685,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
+ 
++	INIT_LIST_HEAD(&kci.phdrs);
++
+ 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
+ 		return -1;
+ 
+-- 
+1.9.1
