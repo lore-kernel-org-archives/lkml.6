@@ -1,139 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753741AbeEOSVj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:21:39 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7690 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751859AbeEOSVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:21:36 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 07/10] net: hns3: Fixes the back pressure setting When sriov is enabled
-Date: Tue, 15 May 2018 19:20:11 +0100
-Message-ID: <20180515182014.42196-8-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180515182014.42196-1-salil.mehta@huawei.com>
-References: <20180515182014.42196-1-salil.mehta@huawei.com>
+        id S1754002AbeEOSW3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:22:29 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37011 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753913AbeEOSW0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:22:26 -0400
+X-Google-Smtp-Source: AB8JxZpthU8IFK6F7zNkNNndE0kMCcF+Lsklv5LMe+592Vc3ect4IZMMjl2F6oG/zJT+Ev78pXzWHIVvo8Fw/EPBEkc=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180515174736.GB28489@codeaurora.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org> <20180509170159.29682-5-ilina@codeaurora.org>
+ <CAD=FV=VCAaGsRH1e46e+YSPJMYHgHGWf9TcH5UrcuJadQGsLtw@mail.gmail.com> <20180515174736.GB28489@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 15 May 2018 11:22:23 -0700
+X-Google-Sender-Auth: zJ2vnEygaWazUiMLlFQzyLjFgIw
+Message-ID: <CAD=FV=W9ahLJNuJBmMgziabumkU9q_PS59Z822+tLBwRZU7euQ@mail.gmail.com>
+Subject: Re: [PATCH v8 04/10] drivers: qcom: rpmh: add RPMH helper functions
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+Hi,
 
-When sriov is enabled, the Qset and tc mapping is not longer one
-to one relation.
+On Tue, May 15, 2018 at 10:47 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+> On Fri, May 11 2018 at 14:17 -0600, Doug Anderson wrote:
+>>
+>> Hi,
+>>
+>> On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>>>
+>>> +int rpmh_write(const struct device *dev, enum rpmh_state state,
+>>> +              const struct tcs_cmd *cmd, u32 n)
+>>> +{
+>>> +       DECLARE_COMPLETION_ONSTACK(compl);
+>>> +       DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
+>>> +       int ret;
+>>> +
+>>> +       if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
+>>> +               return -EINVAL;
+>>> +
+>>> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
+>>> +       rpm_msg.msg.num_cmds = n;
+>>> +
+>>> +       ret = __rpmh_write(dev, state, &rpm_msg);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>> +       ret = wait_for_completion_timeout(&compl, RPMH_TIMEOUT_MS);
+>>
+>>
+>> IMO it's almost never a good idea to use wait_for_completion_timeout()
+>> together with a completion that's declared on the stack.  If you
+>> somehow insist that this is a good idea then I need to see incredibly
+>> clear and obvious code/comments that say why it's impossible that the
+>> process might somehow try to signal the completion _after_
+>> RPMH_TIMEOUT_MS has expired.
+>>
+>> Specifically if the timeout happens but the process could still signal
+>> a completion later then they will access random data on the stack of a
+>> function that has already returned.  This causes ridiculously
+>> difficult-to-debug crashes.
+>>
+>>
+>> NOTE: You've got timeout set to 10 seconds here.  Is that really even
+>> useful?  IMO just call wait_for_completion() without a timeout.  It's
+>> much better to have a nice clean hang than a random stack corruption.
+>>
+>>
+> The 10 sec timeout will guarantee that we will not get a response at all
+> anymore for the request. Usually requests can be considered failed if
+> there is no response in a few tens of microseconds. 10 sec is just an
+> arbitarily large number.
+>
+> The reason we use timeout is that once the timeout happens, we know we
+> have failed, we could trigger a watchdog or crash the system. This is
+> very important for our productization in debugging RPMH failures. A
+> hang would not always trigger a watchdog and the failure would be silent
+> and possibly fatal but hard to debug.
 
-This patch fixes it by mapping all pf and vf's Qset to tc.
+If you intend the system to crash when this timeout happens then IMHO
+add a BUG_ON.  Then I won't worry about something coming around later
+and clobbering the stack.
 
-Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 45 +++++++++++++++++++---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  5 +++
- 2 files changed, 45 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index c69ecab..262c125 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -500,7 +500,8 @@ static int hclge_tm_qs_schd_mode_cfg(struct hclge_dev *hdev, u16 qs_id, u8 mode)
- 	return hclge_cmd_send(&hdev->hw, &desc, 1);
- }
- 
--static int hclge_tm_qs_bp_cfg(struct hclge_dev *hdev, u8 tc)
-+static int hclge_tm_qs_bp_cfg(struct hclge_dev *hdev, u8 tc, u8 grp_id,
-+			      u32 bit_map)
- {
- 	struct hclge_bp_to_qs_map_cmd *bp_to_qs_map_cmd;
- 	struct hclge_desc desc;
-@@ -511,9 +512,8 @@ static int hclge_tm_qs_bp_cfg(struct hclge_dev *hdev, u8 tc)
- 	bp_to_qs_map_cmd = (struct hclge_bp_to_qs_map_cmd *)desc.data;
- 
- 	bp_to_qs_map_cmd->tc_id = tc;
--
--	/* Qset and tc is one by one mapping */
--	bp_to_qs_map_cmd->qs_bit_map = cpu_to_le32(1 << tc);
-+	bp_to_qs_map_cmd->qs_group_id = grp_id;
-+	bp_to_qs_map_cmd->qs_bit_map = cpu_to_le32(bit_map);
- 
- 	return hclge_cmd_send(&hdev->hw, &desc, 1);
- }
-@@ -1167,6 +1167,41 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
- 				      hdev->tm_info.hw_pfc_map);
- }
- 
-+/* Each Tc has a 1024 queue sets to backpress, it divides to
-+ * 32 group, each group contains 32 queue sets, which can be
-+ * represented by u32 bitmap.
-+ */
-+static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
-+{
-+	struct hclge_vport *vport = hdev->vport;
-+	u32 i, k, qs_bitmap;
-+	int ret;
-+
-+	for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
-+		qs_bitmap = 0;
-+
-+		for (k = 0; k < hdev->num_alloc_vport; k++) {
-+			u16 qs_id = vport->qs_offset + tc;
-+			u8 grp, sub_grp;
-+
-+			grp = hnae_get_field(qs_id, HCLGE_BP_GRP_ID_M,
-+					     HCLGE_BP_GRP_ID_S);
-+			sub_grp = hnae_get_field(qs_id, HCLGE_BP_SUB_GRP_ID_M,
-+						 HCLGE_BP_SUB_GRP_ID_S);
-+			if (i == grp)
-+				qs_bitmap |= (1 << sub_grp);
-+
-+			vport++;
-+		}
-+
-+		ret = hclge_tm_qs_bp_cfg(hdev, tc, i, qs_bitmap);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int hclge_mac_pause_setup_hw(struct hclge_dev *hdev)
- {
- 	bool tx_en, rx_en;
-@@ -1218,7 +1253,7 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
- 		dev_warn(&hdev->pdev->dev, "set pfc pause failed:%d\n", ret);
- 
- 	for (i = 0; i < hdev->tm_info.num_tc; i++) {
--		ret = hclge_tm_qs_bp_cfg(hdev, i);
-+		ret = hclge_bp_setup_hw(hdev, i);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 2dbe177..c2b6e8a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -89,6 +89,11 @@ struct hclge_pg_shapping_cmd {
- 	__le32 pg_shapping_para;
- };
- 
-+#define HCLGE_BP_GRP_NUM		32
-+#define HCLGE_BP_SUB_GRP_ID_S		0
-+#define HCLGE_BP_SUB_GRP_ID_M		GENMASK(4, 0)
-+#define HCLGE_BP_GRP_ID_S		5
-+#define HCLGE_BP_GRP_ID_M		GENMASK(9, 5)
- struct hclge_bp_to_qs_map_cmd {
- 	u8 tc_id;
- 	u8 rsvd[2];
--- 
-2.7.4
+-Doug
