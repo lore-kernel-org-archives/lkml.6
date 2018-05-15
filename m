@@ -1,28 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeEOG3Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:29:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60703 "EHLO
+        id S1752551AbeEOG3w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:29:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36653 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeEOG3W (ORCPT
+        with ESMTP id S1752219AbeEOG3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:29:22 -0400
-Date: Mon, 14 May 2018 23:28:45 -0700
-From: tip-bot for Paolo Bonzini <tipbot@zytor.com>
-Message-ID: <tip-a839195186a2bca1b2b46e57619e9ad5b8d42426@git.kernel.org>
-Cc: pbonzini@redhat.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
-        paulmck@linux.vnet.ibm.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, pbonzini@redhat.com,
-        peterz@infradead.org, hpa@zytor.com, will.deacon@arm.com,
-        paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1526340837-12222-4-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526340837-12222-4-git-send-email-paulmck@linux.vnet.ibm.com>
+        Tue, 15 May 2018 02:29:50 -0400
+Date: Mon, 14 May 2018 23:29:14 -0700
+From: "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
+Message-ID: <tip-35bb6ee6790600d29c598ebbf262359341f34e38@git.kernel.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, stern@rowland.harvard.edu,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        torvalds@linux-foundation.org, pbonzini@redhat.com, hpa@zytor.com,
+        peterz@infradead.org
+Reply-To: tglx@linutronix.de, akpm@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com, will.deacon@arm.com,
+        stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, pbonzini@redhat.com,
+        peterz@infradead.org, hpa@zytor.com
+In-Reply-To: <1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Fix cheat sheet typo
-Git-Commit-ID: a839195186a2bca1b2b46e57619e9ad5b8d42426
+Subject: [tip:locking/core] tools/memory-order: Improve key for SELF and SV
+Git-Commit-ID: 35bb6ee6790600d29c598ebbf262359341f34e38
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,19 +37,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a839195186a2bca1b2b46e57619e9ad5b8d42426
-Gitweb:     https://git.kernel.org/tip/a839195186a2bca1b2b46e57619e9ad5b8d42426
-Author:     Paolo Bonzini <pbonzini@redhat.com>
-AuthorDate: Mon, 14 May 2018 16:33:42 -0700
+Commit-ID:  35bb6ee6790600d29c598ebbf262359341f34e38
+Gitweb:     https://git.kernel.org/tip/35bb6ee6790600d29c598ebbf262359341f34e38
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Mon, 14 May 2018 16:33:43 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 15 May 2018 08:11:16 +0200
 
-tools/memory-model: Fix cheat sheet typo
+tools/memory-order: Improve key for SELF and SV
 
-"RWM" should be "RMW".
+The key for "SELF" was missing completely and the key for "SV" was
+a bit obtuse.  This commit therefore adds a key for "SELF" and improves
+the one for "SV".
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -61,22 +66,20 @@ Cc: linux-arch@vger.kernel.org
 Cc: luc.maranget@inria.fr
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
-Cc: stern@rowland.harvard.edu
-Link: http://lkml.kernel.org/r/1526340837-12222-4-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/Documentation/cheatsheet.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/memory-model/Documentation/cheatsheet.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/tools/memory-model/Documentation/cheatsheet.txt b/tools/memory-model/Documentation/cheatsheet.txt
-index 956b1ae4aafb..c0eafdaddfa4 100644
+index c0eafdaddfa4..46fe79afc737 100644
 --- a/tools/memory-model/Documentation/cheatsheet.txt
 +++ b/tools/memory-model/Documentation/cheatsheet.txt
-@@ -1,6 +1,6 @@
-                                   Prior Operation     Subsequent Operation
-                                   ---------------  ---------------------------
--                               C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-+                               C  Self  R  W  RMW  Self  R  W  DR  DW  RMW  SV
-                               --  ----  -  -  ---  ----  -  -  --  --  ---  --
- 
- Store, e.g., WRITE_ONCE()            Y                                       Y
+@@ -26,4 +26,5 @@ Key:	C:	Ordering is cumulative
+ 	DR:	Dependent read (address dependency)
+ 	DW:	Dependent write (address, data, or control dependency)
+ 	RMW:	Atomic read-modify-write operation
+-	SV	Same-variable access
++	SELF:	Orders self, as opposed to accesses before and/or after
++	SV:	Orders later accesses to the same variable
