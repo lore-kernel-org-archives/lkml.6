@@ -1,370 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754098AbeEOOmI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:42:08 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:42929 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbeEOOlv (ORCPT
+        id S1753726AbeEOOoe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:44:34 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:55938 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752145AbeEOOoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:41:51 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v2 2/4] PCI: dwc: Add support for EP mode
-Date: Tue, 15 May 2018 15:41:42 +0100
-Message-Id: <03ee2dacb6480e6ad1e3e97bd47e7a60cdffd333.1526395185.git.gustavo.pimentel@synopsys.com>
+        Tue, 15 May 2018 10:44:30 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Maciej W. Rozycki" <macro@mips.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [PATCH v4] MIPS: perf: Fix BMIPS5000 system mode counting
+Date: Tue, 15 May 2018 15:44:16 +0100
+Message-ID: <1526395456-23723-1-git-send-email-matt.redfearn@mips.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1526395185.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526395185.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1526395185.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526395185.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <1524219789-31241-8-git-send-email-matt.redfearn@mips.com>
+References: <1524219789-31241-8-git-send-email-matt.redfearn@mips.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1526395437-298554-23259-46541-1
+X-BESS-VER: 2018.6-r1805102334
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193012
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.50 BSF_RULE7568M          META: Custom Rule 7568M
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe controller dual mode is capable of operating in RC mode as well
-as EP mode by configuration option. Till now only RC mode was supported,
-with this patch is add EP support to the DesignWare driver.
+When perf is used in system mode, i.e. specifying a set of CPUs to
+count (perf -a -C cpu), event->cpu is set to the CPU number on which
+events should be counted. The current BMIPS500 variation of
+mipsxx_pmu_enable_event only over sets the counter to count the current
+CPU, so system mode does not work.
 
-Add new property on pci_epc structure which allow to configure
-pci_epf_test driver accordingly to the controller specific requirements.
+Fix this by removing this BMIPS5000 specific path and integrating it
+with the generic one. Since BMIPS5000 uses specific extensions to the
+perf control register, different fields must be set up to count the
+relevant CPU.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+
 ---
- drivers/pci/dwc/Kconfig                       |  37 +++++--
- drivers/pci/dwc/pcie-designware-ep.c          |   3 +
- drivers/pci/dwc/pcie-designware-plat.c        | 149 ++++++++++++++++++++++++--
- drivers/pci/endpoint/functions/pci-epf-test.c |   7 ++
- include/linux/pci-epc.h                       |   8 ++
- 5 files changed, 186 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
-index 8c1a516..ce9e5a5 100644
---- a/drivers/pci/dwc/Kconfig
-+++ b/drivers/pci/dwc/Kconfig
-@@ -51,16 +51,37 @@ config PCI_DRA7XX_EP
- 	  This uses the DesignWare core.
+Changes in v4:
+Fix compiler error from BRCM_PERFCTRL_VPEID flagged by Florian.
+
+Changes in v2:
+New patch to fix BMIPS5000 system mode perf.
+
+ arch/mips/include/asm/mipsregs.h     |  1 +
+ arch/mips/kernel/perf_event_mipsxx.c | 17 ++++++-----------
+ 2 files changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
+index a4baaaa02bc..6b0b06d2683 100644
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -735,6 +735,7 @@
+ #define MIPS_PERFCTRL_MT_EN_TC	(_ULCAST_(2) << 20)
  
- config PCIE_DW_PLAT
--	bool "Platform bus based DesignWare PCIe Controller"
--	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIE_DW_HOST
--	---help---
--	 This selects the DesignWare PCIe controller support. Select this if
--	 you have a PCIe controller on Platform bus.
-+	bool
+ /* PerfCnt control register MT extensions used by BMIPS5000 */
++#define BRCM_PERFCTRL_VPEID(v)	(_ULCAST_(1) << (12 + (v)))
+ #define BRCM_PERFCTRL_TC	(_ULCAST_(1) << 30)
  
--	 If you have a controller with this interface, say Y or M here.
-+config PCIE_DW_PLAT_HOST
-+	bool "Platform bus based DesignWare PCIe Controller - Host mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	select PCIE_DW_PLAT
-+	default y
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in host mode. There are two instances of PCIe controller in
-+	  Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
+ /* PerfCnt control register MT extensions used by Netlogic XLR */
+diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
+index 5b8811643e6..77d7167e303 100644
+--- a/arch/mips/kernel/perf_event_mipsxx.c
++++ b/arch/mips/kernel/perf_event_mipsxx.c
+@@ -364,16 +364,7 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
+ 		/* Make sure interrupt enabled. */
+ 		MIPS_PERFCTRL_IE;
  
--	 If unsure, say N.
-+config PCIE_DW_PLAT_EP
-+	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	select PCIE_DW_PLAT
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in endpoint mode. There are two instances of PCIe controller
-+	  in Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
+-#ifdef CONFIG_CPU_BMIPS5000
+-	{
+-		/* enable the counter for the calling thread */
+-		unsigned int vpe_id;
+-
+-		vpe_id = smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK;
+-		cpuc->saved_ctrl[idx] |= BIT(12 + vpe_id) | BRCM_PERFCTRL_TC;
+-	}
+-#else
+-#ifdef CONFIG_MIPS_MT_SMP
++#if defined(CONFIG_MIPS_MT_SMP) && !defined(CONFIG_CPU_BMIPS5000)
+ 	if (range > V) {
+ 		/* The counter is processor wide. Set it up to count all TCs. */
+ 		pr_debug("Enabling perf counter for all TCs\n");
+@@ -390,12 +381,16 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
+ 		 */
+ 		cpu = (event->cpu >= 0) ? event->cpu : smp_processor_id();
  
- config PCI_EXYNOS
- 	bool "Samsung Exynos PCIe controller"
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index 15b22a6..1eec441 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -411,6 +411,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 		return -ENOMEM;
++#if defined(CONFIG_CPU_BMIPS5000)
++		ctrl = BRCM_PERFCTRL_VPEID(cpu & MIPS_CPUID_TO_COUNTER_MASK);
++		ctrl |= BRCM_PERFCTRL_TC;
++#else
+ 		ctrl = M_PERFCTL_VPEID(cpu_vpe_id(&cpu_data[cpu]));
+ 		ctrl |= M_TC_EN_VPE;
++#endif
+ 		cpuc->saved_ctrl[idx] |= ctrl;
+ 		pr_debug("Enabling perf counter for CPU%d\n", cpu);
  	}
- 
-+	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
-+	EPC_FEATURE_SET_BAR(epc->features, BAR_0);
-+
- 	ep->epc = epc;
- 	epc_set_drvdata(epc, ep);
- 	dw_pcie_setup(pci);
-diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
-index 80a2782..5937fed 100644
---- a/drivers/pci/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/dwc/pcie-designware-plat.c
-@@ -12,19 +12,29 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
- #include <linux/types.h>
-+#include <linux/regmap.h>
- 
- #include "pcie-designware.h"
- 
- struct dw_plat_pcie {
--	struct dw_pcie		*pci;
-+	struct dw_pcie			*pci;
-+	struct regmap			*regmap;
-+	enum dw_pcie_device_mode	mode;
- };
- 
-+struct dw_plat_pcie_of_data {
-+	enum dw_pcie_device_mode	mode;
-+};
-+
-+static const struct of_device_id dw_plat_pcie_of_match[];
-+
- static int dw_plat_pcie_host_init(struct pcie_port *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -48,9 +58,53 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
- 	.set_num_vectors = dw_plat_set_num_vectors,
- };
- 
--static int dw_plat_add_pcie_port(struct pcie_port *pp,
-+static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	return 0;
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = dw_plat_pcie_establish_link,
-+};
-+
-+static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				     enum pci_epc_irq_type type,
-+				     u8 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
-+		return -EINVAL;
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_init = dw_plat_pcie_ep_init,
-+	.raise_irq = dw_plat_pcie_ep_raise_irq,
-+};
-+
-+static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
- 				 struct platform_device *pdev)
- {
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+	struct pcie_port *pp = &pci->pp;
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
-@@ -69,15 +123,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
- 
- 	ret = dw_pcie_host_init(pp);
- 	if (ret) {
--		dev_err(dev, "failed to initialize host\n");
-+		dev_err(dev, "Failed to initialize host\n");
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--static const struct dw_pcie_ops dw_pcie_ops = {
--};
-+static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
-+			       struct platform_device *pdev)
-+{
-+	int ret;
-+	struct dw_pcie_ep *ep;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+
-+	ep = &pci->ep;
-+	ep->ops = &pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
-+	pci->dbi_base2 = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base2))
-+		return PTR_ERR(pci->dbi_base2);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize endpoint\n");
-+		return ret;
-+	}
-+	return 0;
-+}
- 
- static int dw_plat_pcie_probe(struct platform_device *pdev)
- {
-@@ -86,6 +169,16 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	struct dw_pcie *pci;
- 	struct resource *res;  /* Resource from DT */
- 	int ret;
-+	const struct of_device_id *match;
-+	const struct dw_plat_pcie_of_data *data;
-+	enum dw_pcie_device_mode mode;
-+
-+	match = of_match_device(dw_plat_pcie_of_match, dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	data = (struct dw_plat_pcie_of_data *)match->data;
-+	mode = (enum dw_pcie_device_mode)data->mode;
- 
- 	dw_plat_pcie = devm_kzalloc(dev, sizeof(*dw_plat_pcie), GFP_KERNEL);
- 	if (!dw_plat_pcie)
-@@ -99,23 +192,59 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	pci->ops = &dw_pcie_ops;
- 
- 	dw_plat_pcie->pci = pci;
-+	dw_plat_pcie->mode = mode;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	if (!res)
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pci->dbi_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
- 
- 	platform_set_drvdata(pdev, dw_plat_pcie);
- 
--	ret = dw_plat_add_pcie_port(&pci->pp, pdev);
--	if (ret < 0)
--		return ret;
-+	switch (dw_plat_pcie->mode) {
-+	case DW_PCIE_RC_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_HOST))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_port(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case DW_PCIE_EP_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_EP))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_ep(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	default:
-+		dev_err(dev, "INVALID device type %d\n", dw_plat_pcie->mode);
-+	}
- 
- 	return 0;
- }
- 
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_rc_of_data = {
-+	.mode = DW_PCIE_RC_TYPE,
-+};
-+
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_ep_of_data = {
-+	.mode = DW_PCIE_EP_TYPE,
-+};
-+
- static const struct of_device_id dw_plat_pcie_of_match[] = {
--	{ .compatible = "snps,dw-pcie", },
-+	{
-+		.compatible = "snps,dw-pcie",
-+		.data = &dw_plat_pcie_rc_of_data,
-+	},
-+	{
-+		.compatible = "snps,dw-pcie-ep",
-+		.data = &dw_plat_pcie_ep_of_data,
-+	},
- 	{},
- };
- 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7cef851..bee401d 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -435,6 +435,13 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	if (WARN_ON_ONCE(!epc))
- 		return -EINVAL;
- 
-+	if (epc->features & EPC_FEATURE_NO_LINKUP_NOTIFIER)
-+		epf_test->linkup_notifier = false;
-+	else
-+		epf_test->linkup_notifier = true;
-+
-+	epf_test->test_reg_bar = EPC_FEATURE_GET_BAR(epc->features);
-+
- 	ret = pci_epc_write_header(epc, epf->func_no, header);
- 	if (ret) {
- 		dev_err(dev, "configuration header write failed\n");
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index af657ca..243eaa5 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -90,8 +90,16 @@ struct pci_epc {
- 	struct config_group		*group;
- 	/* spinlock to protect against concurrent access of EP controller */
- 	spinlock_t			lock;
-+	unsigned int			features;
- };
- 
-+#define EPC_FEATURE_NO_LINKUP_NOTIFIER		BIT(0)
-+#define EPC_FEATURE_BAR_MASK			(BIT(1) | BIT(2) | BIT(3))
-+#define EPC_FEATURE_SET_BAR(features, bar)	\
-+		(features |= (EPC_FEATURE_BAR_MASK & (bar << 1)))
-+#define EPC_FEATURE_GET_BAR(features)		\
-+		((features & EPC_FEATURE_BAR_MASK) >> 1)
-+
- #define to_pci_epc(device) container_of((device), struct pci_epc, dev)
- 
- #define pci_epc_create(dev, ops)    \
+-#endif /* CONFIG_CPU_BMIPS5000 */
+ 	/*
+ 	 * We do not actually let the counter run. Leave it until start().
+ 	 */
 -- 
 2.7.4
