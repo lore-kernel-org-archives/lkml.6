@@ -1,51 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeEOTIG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 15:08:06 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40050 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeEOTIE (ORCPT
+        id S1752662AbeEOTId (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 15:08:33 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52168 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752386AbeEOTIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 15:08:04 -0400
-X-Google-Smtp-Source: AB8JxZrkp8TpVFDdaXh5UlIa7Oiy3PSxA3XuGi4BOtGsk8gLrpyHVpMLw+9QGNfw/kmDl1NVWHDakQ==
-Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
-To: Qing Huang <qing.huang@oracle.com>, Tariq Toukan <tariqt@mellanox.com>,
-        davem@davemloft.net, haakon.bugge@oracle.com, yanjun.zhu@oracle.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180511192318.22342-1-qing.huang@oracle.com>
- <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
- <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com>
- <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
- <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <f71278c2-a111-1bf6-2ff3-d9a8dd46bfbe@gmail.com>
-Date: Tue, 15 May 2018 12:08:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 15 May 2018 15:08:31 -0400
+X-Google-Smtp-Source: AB8JxZqFGYO4SHqvZ18Ms5FQThRIMTHf8sa4w6n8RJrAO0ikqaJGKrmG/eN7w7ogi3iH5ivMi+x5rQ==
+Date: Tue, 15 May 2018 22:08:26 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: hch@lst.de, dhowells@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] proc: Add a way to make network proc files writable
+Message-ID: <20180515190826.GA4788@avx2>
 MIME-Version: 1.0
-In-Reply-To: <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/15/2018 11:53 AM, Qing Huang wrote:
+Christoph Hellwig wrote:
+> On Tue, May 01, 2018 at 12:20:33AM +0100, David Howells wrote:
+> > Provide two extra functions, proc_create_net_data_write() and
+> > proc_create_net_single_write() that act like their non-write versions but
+> > also set a write method in the proc_dir_entry struct.
+> > 
+> > An internal simple write function is provided that will copy its buffer and
+> > hand it to the pde->write() method if available (or give an error if not).
+> > The buffer may be modified by the write method.
 > 
->> This is control path so it is less latency-sensitive.
->> Let's not produce unnecessary degradation here, please call kvzalloc so we maintain a similar behavior when contiguous memory is available, and a fallback for resiliency.
-> 
-> No sure what exactly degradation is caused by vzalloc here. I think it's better to keep physically contiguous pages
-> to other requests which really need them. Besides slow path/mem compacting can be really expensive.
->
+> I thought of doing something like this, aѕ it would remove tons of
+> boilerplat code from a lot of procfs instances.  But I'd also like to
+> hear what Al and Alexey think of it.  We also should offer this for
+> non-net proc users as well.
 
-Just use kvzalloc(), and you get the benefit of having contiguous memory if available,
-without expensive compact phase.
+For the record I hate both series. This is kmalloc disease with its
+dozens of signatures to do the same thing slightly differently.
+It is just runtime .text reduction is hard to argue against.
 
-This thing _automatically_ falls back to vmalloc(), thus your problem will be solved.
+Function names become longer and signatures themselves become longer and
+now you're arguing about indentation and character limit.
 
-If you are not sure, trust others.
+I remember reading about abusing C99 intializers to emulate optional
+parameters somewhere. If it can be used (with bloat-o-meter in mind)
+it will be very much appreciated.
+
+Currently there are
+
+	->proc_fops
+	simple seq_file
+	custom seq_file with start and stop
+	optional write hook
+	->data pointer
+
+which is already way too much.
