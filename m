@@ -1,38 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753113AbeEOOcL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:32:11 -0400
-Received: from 8bytes.org ([81.169.241.247]:50496 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752725AbeEOOcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:32:10 -0400
-Date: Tue, 15 May 2018 16:32:08 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: Linux IOMMU Mailing List <iommu@lists.linux-foundation.org>,
-        linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jintack Lim <jintack@cs.columbia.edu>,
-        Alexander Witte <alexander.witte@baicanada.com>
-Subject: Re: [PATCH v3 0/2] iommu/vt-d: Fix mapping PSI missing for
- iommu_map()
-Message-ID: <20180515143208.2z3xgge3jifyhzep@8bytes.org>
-References: <20180504023453.25682-1-peterx@redhat.com>
+        id S1753729AbeEOOcW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:32:22 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:42883 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753207AbeEOOcU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:32:20 -0400
+Subject: Re: [PATCH 0/4] Add DesignWare EP support
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>, <kishon@ti.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <cover.1526368368.git.gustavo.pimentel@synopsys.com>
+From: Joao Pinto <Joao.Pinto@synopsys.com>
+Message-ID: <bd7d0219-e70a-df60-2b9f-5e74d6c282f4@synopsys.com>
+Date: Tue, 15 May 2018 15:32:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504023453.25682-1-peterx@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <cover.1526368368.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: pt-PT
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.107.19.88]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 10:34:51AM +0800, Peter Xu wrote:
-> Peter Xu (2):
->   iommu/vt-d: Introduce __mapping_notify_one()
->   iommu/vt-d: Fix iotlb psi missing for mappings
-> 
->  drivers/iommu/intel-iommu.c | 65 ++++++++++++++++++++++++++-----------
->  1 file changed, 46 insertions(+), 19 deletions(-)
+Hi Gustavo,
 
-Applied, thanks.
+Às 8:13 AM de 5/15/2018, Gustavo Pimentel escreveu:
+> The PCIe controller dual mode is capable of operating in RC mode as well
+> as EP mode by configuration option. Till now only RC mode was supported,
+> with this patch is add EP support to the DesignWare driver.
+> 
+> Gustavo Pimentel (4):
+>   bindings: PCI: designware: Example update
+>   PCI: dwc: Add support for EP mode
+>   bindings: PCI: designware: Add support for EP in DesignWare driver
+>   misc: pci_endpoint_test: Add DesignWare EP entry
+> 
+>  .../devicetree/bindings/pci/designware-pcie.txt    |  24 +++-
+>  drivers/misc/pci_endpoint_test.c                   |   1 +
+>  drivers/pci/dwc/Kconfig                            |  41 ++++--
+>  drivers/pci/dwc/pcie-designware-ep.c               |   3 +
+>  drivers/pci/dwc/pcie-designware-plat.c             | 149 +++++++++++++++++++--
+>  drivers/pci/endpoint/functions/pci-epf-test.c      |   7 +
+>  include/linux/pci-epc.h                            |   8 ++
+>  7 files changed, 206 insertions(+), 27 deletions(-)
+> 
+
+Thanks for this patch-set.
+
+Reviewed-by: Joao Pinto <jpinto@synopsys.com>
