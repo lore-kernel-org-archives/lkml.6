@@ -1,75 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeEOXOW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:14:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:38553 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750748AbeEOXOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:14:20 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 16 May 2018 09:14:10 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@imgtec.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: linux-next: manual merge of the mips-james tree with the mips-fixes
- tree
-Message-ID: <20180516091347.1763527b@canb.auug.org.au>
+        id S1752106AbeEOXOt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:14:49 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45851 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbeEOXOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 19:14:47 -0400
+X-Google-Smtp-Source: AB8JxZpzIGo0oH4vAffpcWIZLu8R584i8o28P1zCSqvxdF7N2SszroPTMwbGWBPtmPsM1kmcc1LC/Q==
+Date: Tue, 15 May 2018 17:14:45 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lidong Chen <jemmy858585@gmail.com>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
+        Lidong Chen <lidongchen@tencent.com>
+Subject: Re: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid
+ from ib_umem structure
+Message-ID: <20180515231445.GA15921@ziepe.ca>
+References: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/f_LJFff4UvJtT+9lDtoCXul"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/f_LJFff4UvJtT+9lDtoCXul
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 08, 2018 at 04:50:16PM +0800, Lidong Chen wrote:
+> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+> mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
+> 
+> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+> ---
+>  [v2]
+>  - use ib_ucontext tgid instread of tgid in ib_umem structure
+>  
+>  drivers/infiniband/core/umem.c | 7 +------
+>  include/rdma/ib_umem.h         | 1 -
+>  2 files changed, 1 insertion(+), 7 deletions(-)
 
-Hi all,
+Applied to for-rc, thanks.
 
-Today's linux-next merge of the mips-james tree got a conflict in:
+It would be nice to send a cleanup to have all the users of tgid doing
+this pattern
 
-  arch/mips/boot/dts/xilfpga/Makefile
+	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+  	if (!task)
+  		goto out;
+  	mm = get_task_mm(task);
 
-between commit:
+To call some kind of common function like ib_get_mr_mm(), just to make
+it really clear what is happening. 
 
-  a5a92abbce56 ("MIPS: xilfpga: Stop generating useless dtb.o")
-
-from the mips-fixes tree and commit:
-
-  fca3aa166422 ("MIPS: dts: Avoid unneeded built-in.a in DTS dirs")
-
-from the mips-james tree.
-
-I fixed it up (I just used the former update to this file) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/f_LJFff4UvJtT+9lDtoCXul
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr7acIACgkQAVBC80lX
-0GzEDQgAntxZgneNss2yQaUpsnj+wOitXNULB+jF3JAKcy80x4c8KJxBd9LGlMCU
-9+GZoat+1Hg8VAHL+VU5ZXjaxbEMs6X7JZBgTU70uExv3SXRbV4Jv/Hag/f1vTEl
-ZBqQl6IxtstlHdWBh8JdoWXRT+/v0BLb7sWmzZdmq6D8Wn48N4SyQobc7olUxs5R
-q+4Sh8UJNjumg2ESKCp0GOXaA+dct+GCSlfBJAhZPqCB/+l0XHfeBGaQMw08NPBP
-tX6hJx8XBxfYYn18aKavTs5wzk5PByHvezv7SadyPnmpkshOZr4S18gruuq/2EtG
-WN4NaNkAl0++6gAd6p+neyiijTCOqQ==
-=j8bZ
------END PGP SIGNATURE-----
-
---Sig_/f_LJFff4UvJtT+9lDtoCXul--
+Jason
