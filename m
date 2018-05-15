@@ -1,67 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeEOR07 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:26:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60979 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932143AbeEOR06 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:26:58 -0400
-Date: Tue, 15 May 2018 19:26:51 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180515172651.bhgaxta3czqgjpgu@linutronix.de>
-References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
- <20180426164623.tlv6kz5yopk6voxx@breakpoint.cc>
- <20180426185233.GU4813@piout.net>
- <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
- <20180502181046.GG19273@piout.net>
+        id S932222AbeEOR2n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:28:43 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62839 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932143AbeEOR2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:28:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="42021055"
+Date: Tue, 15 May 2018 10:29:09 -0700
+From: Fenghua Yu <fenghua.yu@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/15] x86/split_lock: Explicitly enable or disable #AC
+ for split locked accesses
+Message-ID: <20180515172908.GC244301@romley-ivt3.sc.intel.com>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+ <1526323945-211107-10-git-send-email-fenghua.yu@intel.com>
+ <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180502181046.GG19273@piout.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-02 20:10:46 [+0200], Alexandre Belloni wrote:
-> > > As said below, this is solving multiple issues, including the one for
-> > > SoCs that don't have the PIT.
-> > will the PIT be removed? Where it needs the PIT?
+On Tue, May 15, 2018 at 09:15:16AM -0700, Dave Hansen wrote:
+> On 05/14/2018 11:52 AM, Fenghua Yu wrote:
+> > By default, we don't set or clear the bit 29 in TEST_CTL MSR 0x33 and
+> > the bit is inherited from BIOS/hardware setting.
 > > 
+> > The kernel parameter "split_lock_ac=on/off" explicitly sets or clears
+> > the bit during boot time.
 > 
-> The last patch is unselecting the PIT driver so by default it is not
-> enabled. The PIT driver will stay just in case someone has to use it
-> e.g. when they are using all the TCB channels for something else.
-> However, recent Atmel SoC have a TCB without any output so it can ony be
-> used as a timer. Some other SoCs don't have a PIT at all.
+> The more I think about this...  Why do we need this at boot anyway?
+> Surely boot-time kernel code can't cause performance issues in the same
+> way that untrusted repeated userspace can.  Why don't we just let
+> userspace turn this on?
 
-The question was more "does it make sense to keep the 'old' PIT driver
-around or can it be removed and the TCB driver will be used by
-everyone"?
+Turning split lock earlier can captuer split lock performance issue
+in the boot path. Actually we did find two split lock issues during
+boot time by turning on the feature earlier (see patch 4 and 5).
 
-> > > The remaining one would be "clocksource: TCLIB: Allow higher clock rates
-> > > for clock events"
-> > 
-> > I see. So I would need to keep that patch in queue after it was
-> > dismissed from duty…
-> 
-> Boris suggested a DT binding to allow changing the rate but it didn't
-> reach consensus at the time. this is something that will ne to be
-> revived at some point and I would very much like having that upstream
-> too.
+I guess how to improve boot time is still a concern for client and VM.
+If split lock issue can be identified and fixed in boot time, it just
+helps and dosn't hurt anything.
 
-Does make sense to have a low frequency clock here? I think from
-clocksource point of view it makes sense to have it (highres) enabled
-and not having to adjust the DT first (not to mention to learn about
-it).
+Turning on the feature during boot time makes user easier to identify
+any split lock issue not just during boot time and also run time.
 
-Sebastian
+Having said that, there is a sysfs interface in patch #10 that allows
+user to turn on/off the feature during boot time.
+
+Does that sound better?
+
+Thanks.
+
+-Fenghua
