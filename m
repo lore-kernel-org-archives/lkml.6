@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753067AbeEOSPs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 14:15:48 -0400
-Received: from muru.com ([72.249.23.125]:42258 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752458AbeEOSPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 14:15:46 -0400
-Date: Tue, 15 May 2018 11:15:43 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, bcousson@baylibre.com,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] ARM: dts: am437x boards: Correct (again) tps65218
- irq type
-Message-ID: <20180515181543.GW98604@atomide.com>
-References: <20180508132053.5471-1-peter.ujfalusi@ti.com>
- <20180508141600.GT98604@atomide.com>
- <4b4100d0-85e1-659b-8f7e-b3d4b3925e82@ti.com>
+        id S1752963AbeEOSVH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 14:21:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59419 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752304AbeEOSVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 14:21:06 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 00/10] Misc. Bug Fixes and clean-ups for HNS3 Driver
+Date: Tue, 15 May 2018 19:20:04 +0100
+Message-ID: <20180515182014.42196-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b4100d0-85e1-659b-8f7e-b3d4b3925e82@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Keerthy <j-keerthy@ti.com> [180509 04:03]:
-> 
-> 
-> On Tuesday 08 May 2018 07:46 PM, Tony Lindgren wrote:
-> > * Peter Ujfalusi <peter.ujfalusi@ti.com> [180508 13:22]:
-> >> Hi,
-> >>
-> >> While based on the datasheet of tps65218 the INT is low active, the GIC_SPI
-> >> does not support anythin but IRQ_TYPE_LEVEL_HIGH or IRQ_TYPE_EDGE_RISING:
-> >>
-> >> [    2.761814] genirq: Setting trigger mode 8 for irq 102 failed (irq_chip_set_type_parent+0x0/0x30)
-> >> [    2.770913] tps65218 0-0024: Failed to request IRQ 102 for tps65218: -22
-> >> [    2.777854] tps65218: probe of 0-0024 failed with error -22
-> > 
-> > So does the tps65218 have some register to control the interrupt
-> > direction or is it's datasheet wrong?
-> > 
-> > BTW, ADC might be a good test case for PMIC interrupt if it has one.
-> 
-> There is no ADC on this PMIC.
-> 
-> > 
-> >> Use LEVEL_HIGH for the interrupt as it looks to be the correct setting:
-> >> INTn of tps65218 is connected to NMIn of the SoC.
-> >>
-> >> The offending patches are only in linux-next.
-> > 
-> > OK
+This patch-set mainly introduces various bug fixes, cleanups and one
+very small enhancement to existing HN3 driver code.
 
-Applying these all into omap-for-v4.18/dt.
+Fuyun Liang (7):
+  net: hns3: Fix for deadlock problem occurring when unregistering
+    ae_algo
+  net: hns3: Fix for the null pointer problem occurring when
+    initializing ae_dev failed
+  net: hns3: Add a check for client instance init state
+  net: hns3: Change return type of hnae3_register_ae_dev
+  net: hns3: Change return type of hnae3_register_ae_algo
+  net: hns3: Change return value in hnae3_register_client
+  net: hns3: Fixes the missing PCI iounmap for various legs
 
-Regards,
+Peng Li (1):
+  net: hns3: Add support of .sriov_configure in HNS3 driver
 
-Tony
+Yunsheng Lin (2):
+  net: hns3: Fixes the back pressure setting When sriov is enabled
+  net: hns3: Fix for fiber link up problem
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c        | 44 ++++++------
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  5 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 78 +++++++++++++++++++++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 55 +++------------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 45 +++++++++++--
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  5 ++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 10 +--
+ 7 files changed, 164 insertions(+), 78 deletions(-)
+
+-- 
+2.7.4
