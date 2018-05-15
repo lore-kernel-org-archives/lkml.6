@@ -1,131 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752744AbeEOV1y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:27:54 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752758AbeEOV0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:26:15 -0400
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [RFC 2/8] x86: bug: prevent gcc distortions
-Date: Tue, 15 May 2018 07:11:18 -0700
-Message-ID: <20180515141124.84254-12-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
-References: <20180515141124.84254-1-namit@vmware.com>
+        id S1752966AbeEOV2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:28:01 -0400
+Received: from ozlabs.org ([203.11.71.1]:48995 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752357AbeEOV17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:27:59 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 16 May 2018 07:27:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Message-ID: <20180516072753.49dd4d88@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Esv/mj_+i4EI9eXRJgfxgNo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+--Sig_/Esv/mj_+i4EI9eXRJgfxgNo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The solution is to set an assembly macro and call it from the inlinedv
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+Hi Linus,
 
-This patch increases the kernel size:
+Commit
 
-   text	   data	    bss	    dec	    hex	filename
-18126824 10067268 2936832 31130924 1db052c ./vmlinux before
-18127205 10068388 2936832 31132425 1db0b09 ./vmlinux after (+1501)
+  f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
 
-But enables more aggressive inlining (and probably branch decisions).
-The number of static text symbols in vmlinux is lower.
+is missing a Signed-off-by from its comitter.
 
-Before:	40015
-After:	39860	(-155)
+--=20
+Cheers,
+Stephen Rothwell
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+--Sig_/Esv/mj_+i4EI9eXRJgfxgNo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/bug.h | 48 +++++++++++++++++++++++---------------
- 1 file changed, 29 insertions(+), 19 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..a2d981beb6cb 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -30,33 +30,43 @@
- 
- #ifdef CONFIG_DEBUG_BUGVERBOSE
- 
--#define _BUG_FLAGS(ins, flags)						\
-+asm("\n"
-+	".macro __BUG_FLAGS ins:req file:req line:req flags:req size:req\n"
-+	"1:\t \\ins\n\t"
-+	".pushsection __bug_table,\"aw\"\n"
-+	"2:\t "__BUG_REL(1b)            "\t# bug_entry::bug_addr\n\t"
-+	__BUG_REL(\\file)		"\t# bug_entry::file\n\t"
-+	".word \\line"			"\t# bug_entry::line\n\t"
-+	".word \\flags"			"\t# bug_entry::flags\n\t"
-+	".org 2b+\\size\n\t"
-+	".popsection\n"
-+	".endm");
-+
-+#define _BUG_FLAGS(ins, flags)                                          \
- do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection"					\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
-+	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1 %c2 %c3"		\
-+		     : : "i" (__FILE__), "i" (__LINE__),                \
-+			 "i" (flags),                                   \
- 			 "i" (sizeof(struct bug_entry)));		\
- } while (0)
- 
- #else /* !CONFIG_DEBUG_BUGVERBOSE */
- 
-+asm("\n"
-+	".macro __BUG_FLAGS ins:req flags:req size:req\n"
-+	"1:\t \\ins\n\t"
-+	".pushsection __bug_table,\"aw\"\n"
-+	"2:\t" __BUG_REL(1b)		"\t# bug_entry::bug_addr\n\t"
-+	".word \\flags"			"\t# bug_entry::flags\n\t"
-+	".org 2b+\\size\n\t"
-+	".popsection\n"
-+	".endm");
-+
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection"					\
--		     : : "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
-+	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1"			\
-+		    : : "i" (flags),					\
-+			"i" (sizeof(struct bug_entry)));		\
- } while (0)
- 
- #endif /* CONFIG_DEBUG_BUGVERBOSE */
--- 
-2.17.0
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr7UNkACgkQAVBC80lX
+0Gyt9Af/Srrk1V+BIzb9JPSHNejyLMfpMmeohjYukPtnTS9i9mjGAoda6sCfZASz
+Os2rCvv6H8DOd3WE6oAT/pGgd7zzA7hLynuYFgLvCaB+3GgkLZLo9KELt37IzqBo
+6ts6OTGcZFrb/+L00enkEzDRS7TJtWZuca2LsSYLhjzvQZ//PQwrNmfsek0v7M0Q
+UQjXCknbGf5CWwmFkgGI1Bj+5/ijwQ5pwyS/9/1OGZslbAYu0QrjdB40MUDLggII
+StW0CbIcc3dUw5eqFzzxXCVeZd+NRl0RAPao8GMOB48RVIby9+0NSz1niHSeqmQ7
+rd0x90Tur+NC40x0JwRfC9r3bxOoiQ==
+=fO50
+-----END PGP SIGNATURE-----
+
+--Sig_/Esv/mj_+i4EI9eXRJgfxgNo--
