@@ -1,143 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeEOV3c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:29:32 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:19289 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeEOV33 (ORCPT
+        id S1752827AbeEOV3r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:29:47 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752537AbeEOV0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:29:29 -0400
-Subject: Re: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180515154352.20263-1-dmurphy@ti.com>
- <98319f30-2abe-158c-1b51-33d1df80e185@gmail.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
-Date: Tue, 15 May 2018 16:29:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 17:26:12 -0400
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [RFC 2/8] x86: bug: prevent gcc distortions
+Date: Tue, 15 May 2018 07:11:09 -0700
+Message-ID: <20180515141124.84254-3-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
+References: <20180515141124.84254-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <98319f30-2abe-158c-1b51-33d1df80e185@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-On 05/15/2018 04:13 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thanks for the update.
-> 
-> On 05/15/2018 05:43 PM, Dan Murphy wrote:
->> Introduce the device tree bindings for the lm3601x
->> family of LED torch, flash and IR drivers.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v6 - Removed multiple led child nodes, fixed example to display micro ranges
->> for corresponding child nodes and added led-sources to define the current driver -
->> https://patchwork.kernel.org/patch/10392121/
->>
->> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
->> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
->> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
->> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
->> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
->>
->>   .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
->>   1 file changed, 47 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->> new file mode 100644
->> index 000000000000..27930a89e9a5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->> @@ -0,0 +1,47 @@
->> +* Texas Instruments - lm3601x Single-LED Flash Driver
->> +
->> +The LM3601X are ultra-small LED flash drivers that
->> +provide a high level of adjustability.
->> +
->> +Required properties:
->> +    - compatible : Can be one of the following
->> +        "ti,lm36010"
->> +        "ti,lm36011"
->> +    - reg : I2C slave address
->> +    - #address-cells : 1
->> +    - #size-cells : 0
->> +
->> +Required child properties:
->> +    - reg : 0
->> +    - led-sources:    0 - Indicates a IR mode
->> +            1 - Indicates a Torch (white LED) mode
-> 
-> You don't need led-sources at all. Please use reg as in
-> the previous version. led-sources is useful for describing
-> more complex arrangements. Here reg will do.
+The solution is to set an assembly macro and call it from the inlinedv
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
-OK.  Thought we would keep consistent with the max IC.
+This patch increases the kernel size:
 
-> 
->> +
->> +Required properties for flash LED child nodes:
->> +    See Documentation/devicetree/bindings/leds/common.txt
->> +    - flash-max-microamp : Range from 11mA -> 1.5A
->> +    - flash-max-timeout-us : Range from 40ms -> 1600ms
->> +    - led-max-microamp : Range from 2.4mA -> 376mA
-> 
-> Please give also a step in the format like below
-> (taken from max77693):
-> 
->     Valid values: 62500 - 1000000, step by 62500 (rounded down)
+   text	   data	    bss	    dec	    hex	filename
+18126824 10067268 2936832 31130924 1db052c ./vmlinux before
+18127205 10068388 2936832 31132425 1db0b09 ./vmlinux after (+1501)
 
-I would do this but the step is not linear.  The step is 40ms from 40 -> 400.
-after that the step goes to 200ms from 400->1600.
+But enables more aggressive inlining (and probably branch decisions).
+The number of static text symbols in vmlinux is lower.
 
-same with the current ranges.
+Before:	40015
+After:	39860	(-155)
 
-Dan
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
-> 
-> 
->> +
->> +Optional child properties:
->> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Example:
->> +led-controller@64 {
->> +    compatible = "ti,lm36010";
->> +    #address-cells = <1>;
->> +    #size-cells = <0>;
->> +    reg = <0x64>;
->> +
->> +    led@0 {
->> +        reg = <0>;
->> +        label = "white:torch";
->> +        led-max-microamp = <376000>;
->> +        flash-max-microamp = <1500000>;
->> +        flash-max-timeout-us = <1600000>;
->> +        led-sources = <1>;
->> +    };
->> +}
->> +
->> +For more product information please see the links below:
->> +http://www.ti.com/product/LM36010
->> +http://www.ti.com/product/LM36011
->>
-> 
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/bug.h | 48 +++++++++++++++++++++++---------------
+ 1 file changed, 29 insertions(+), 19 deletions(-)
 
-
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..a2d981beb6cb 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -30,33 +30,43 @@
+ 
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ 
+-#define _BUG_FLAGS(ins, flags)						\
++asm("\n"
++	".macro __BUG_FLAGS ins:req file:req line:req flags:req size:req\n"
++	"1:\t \\ins\n\t"
++	".pushsection __bug_table,\"aw\"\n"
++	"2:\t "__BUG_REL(1b)            "\t# bug_entry::bug_addr\n\t"
++	__BUG_REL(\\file)		"\t# bug_entry::file\n\t"
++	".word \\line"			"\t# bug_entry::line\n\t"
++	".word \\flags"			"\t# bug_entry::flags\n\t"
++	".org 2b+\\size\n\t"
++	".popsection\n"
++	".endm");
++
++#define _BUG_FLAGS(ins, flags)                                          \
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection"					\
+-		     : : "i" (__FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
++	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1 %c2 %c3"		\
++		     : : "i" (__FILE__), "i" (__LINE__),                \
++			 "i" (flags),                                   \
+ 			 "i" (sizeof(struct bug_entry)));		\
+ } while (0)
+ 
+ #else /* !CONFIG_DEBUG_BUGVERBOSE */
+ 
++asm("\n"
++	".macro __BUG_FLAGS ins:req flags:req size:req\n"
++	"1:\t \\ins\n\t"
++	".pushsection __bug_table,\"aw\"\n"
++	"2:\t" __BUG_REL(1b)		"\t# bug_entry::bug_addr\n\t"
++	".word \\flags"			"\t# bug_entry::flags\n\t"
++	".org 2b+\\size\n\t"
++	".popsection\n"
++	".endm");
++
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection"					\
+-		     : : "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
++	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1"			\
++		    : : "i" (flags),					\
++			"i" (sizeof(struct bug_entry)));		\
+ } while (0)
+ 
+ #endif /* CONFIG_DEBUG_BUGVERBOSE */
 -- 
-------------------
-Dan Murphy
+2.17.0
