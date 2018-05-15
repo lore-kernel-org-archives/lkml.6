@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754096AbeEOQZG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:25:06 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:55397 "EHLO
+        id S932075AbeEOQ0E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:26:04 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:50262 "EHLO
         mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeEOQZC (ORCPT
+        with ESMTP id S1752453AbeEOQ0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:25:02 -0400
-X-Google-Smtp-Source: AB8JxZrOjPVXVO2EF02ze7KEWEERT6rGkvLL2Up39BItmCiNP40j/wMRaLZKd5blMZk+AobZ5oEKJZF6WL054WZee/AmAwcLXkE6
+        Tue, 15 May 2018 12:26:02 -0400
+X-Google-Smtp-Source: AB8JxZqvxYt6hgkHpo3ylw7NuKuk6ZV7Po6m+qznNsRk2my7ugMXwra6AvbvG+W6H5Oe0tAjy4TTvnt+l+kFi1h5O9liI58GyqPC
 MIME-Version: 1.0
-Date: Tue, 15 May 2018 09:25:01 -0700
+Date: Tue, 15 May 2018 09:26:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f4075056c410b96@google.com>
-Subject: KMSAN: uninit-value in __sctp_v6_cmp_addr
-From: syzbot <syzbot+85490c30c260afff22f2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
+Message-ID: <000000000000da269e056c410efd@google.com>
+Subject: KMSAN: uninit-value in vcs_read
+From: syzbot <syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        pombredanne@nexb.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,97 +28,85 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    74ee2200b89f kmsan: bump .config.example to v4.17-rc3
+HEAD commit:    e2ab7e8abba4 kmsan: temporarily disable visitAsmInstructio..
 git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=169efb5b800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=85490c30c260afff22f2
+console output: https://syzkaller.appspot.com/x/log.txt?x=158135db800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5bf8b7964e37a698
+dashboard link: https://syzkaller.appspot.com/bug?extid=fed4435f163beccc67eb
 compiler:       clang version 7.0.0 (trunk 329391)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=157e9237800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fe5de7800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17a2f91b800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bd452b800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+85490c30c260afff22f2@syzkaller.appspotmail.com
+Reported-by: syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KMSAN: uninit-value in __sctp_v6_cmp_addr+0x49a/0x850  
-net/sctp/ipv6.c:580
-CPU: 0 PID: 4453 Comm: syz-executor325 Not tainted 4.17.0-rc3+ #88
+BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184  
+[inline]
+BUG: KMSAN: uninit-value in vcs_read+0x18ba/0x1cc0  
+drivers/tty/vt/vc_screen.c:352
+CPU: 1 PID: 3501 Comm: syzkaller315412 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  __sctp_v6_cmp_addr+0x49a/0x850 net/sctp/ipv6.c:580
-  sctp_inet6_cmp_addr+0x3dc/0x400 net/sctp/ipv6.c:898
-  sctp_bind_addr_match+0x18b/0x2f0 net/sctp/bind_addr.c:330
-  sctp_addrs_lookup_transport+0x904/0xa20 net/sctp/input.c:942
-  __sctp_lookup_association net/sctp/input.c:985 [inline]
-  __sctp_rcv_lookup net/sctp/input.c:1249 [inline]
-  sctp_rcv+0x15e6/0x4d30 net/sctp/input.c:170
-  ip_local_deliver_finish+0x874/0xec0 net/ipv4/ip_input.c:215
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:256
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish+0xa36/0x1d00 net/ipv4/ip_input.c:396
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_rcv+0x118f/0x16d0 net/ipv4/ip_input.c:492
-  __netif_receive_skb_core+0x47df/0x4a90 net/core/dev.c:4592
-  __netif_receive_skb net/core/dev.c:4657 [inline]
-  process_backlog+0x62d/0xe20 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5801
-  __do_softirq+0x56d/0x93d kernel/softirq.c:285
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
-  </IRQ>
-  do_softirq kernel/softirq.c:329 [inline]
-  __local_bh_enable_ip+0x114/0x140 kernel/softirq.c:182
-  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
-  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
-  ip_finish_output2+0x135a/0x1470 net/ipv4/ip_output.c:231
-  ip_finish_output+0xcb2/0xff0 net/ipv4/ip_output.c:317
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip_output+0x505/0x5d0 net/ipv4/ip_output.c:405
-  dst_output include/net/dst.h:444 [inline]
-  ip_local_out net/ipv4/ip_output.c:124 [inline]
-  ip_queue_xmit+0x1a1e/0x1d10 net/ipv4/ip_output.c:504
-  sctp_v4_xmit+0x188/0x210 net/sctp/protocol.c:983
-  sctp_packet_transmit+0x3eaa/0x4350 net/sctp/output.c:650
-  sctp_outq_flush+0x1a7a/0x6320 net/sctp/outqueue.c:1197
-  sctp_outq_uncork+0xd2/0xf0 net/sctp/outqueue.c:776
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x8707/0x8d20 net/sctp/sm_sideeffect.c:1191
-  sctp_primitive_REQUESTHEARTBEAT+0x175/0x1a0 net/sctp/primitive.c:200
-  sctp_apply_peer_addr_params+0x207/0x1670 net/sctp/socket.c:2487
-  sctp_setsockopt_peer_addr_params net/sctp/socket.c:2683 [inline]
-  sctp_setsockopt+0x10e5f/0x11600 net/sctp/socket.c:4258
-  sock_common_setsockopt+0x136/0x170 net/core/sock.c:3039
-  __sys_setsockopt+0x4af/0x560 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0x15c/0x1c0 net/socket.c:1911
-  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43fef9
-RSP: 002b:00007ffc00d9bfd8 EFLAGS: 00000207 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fef9
-RDX: 0000000000000009 RSI: 0000000000000084 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000098 R09: 000000000000001c
-R10: 0000000020000180 R11: 0000000000000207 R12: 0000000000401820
-R13: 00000000004018b0 R14: 0000000000000000 R15: 0000000000000000
+  kmsan_internal_check_memory+0x125/0x1d0 mm/kmsan/kmsan.c:1157
+  kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+  copy_to_user include/linux/uaccess.h:184 [inline]
+  vcs_read+0x18ba/0x1cc0 drivers/tty/vt/vc_screen.c:352
+  __vfs_read+0x19f/0x8e0 fs/read_write.c:411
+  vfs_read+0x36c/0x6c0 fs/read_write.c:447
+  SYSC_pread64+0x275/0x310 fs/read_write.c:611
+  SyS_pread64+0x65/0x90 fs/read_write.c:598
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x443d39
+RSP: 002b:00007ffcbd3c35f8 EFLAGS: 00000213 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443d39
+RDX: 0000000000000083 RSI: 0000000020000140 RDI: 0000000000000003
+RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004019e0
+R13: 0000000000401a70 R14: 0000000000000000 R15: 0000000000000000
 
-Local variable description: ----dest@sctp_rcv
-Variable was created at:
-  sctp_rcv+0x13d/0x4d30 net/sctp/input.c:97
-  ip_local_deliver_finish+0x874/0xec0 net/ipv4/ip_input.c:215
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
+  kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
+  __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
+  vcs_read+0xd01/0x1cc0 drivers/tty/vt/vc_screen.c:274
+  __vfs_read+0x19f/0x8e0 fs/read_write.c:411
+  vfs_read+0x36c/0x6c0 fs/read_write.c:447
+  SYSC_pread64+0x275/0x310 fs/read_write.c:611
+  SyS_pread64+0x65/0x90 fs/read_write.c:598
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  __kmalloc+0x23c/0x350 mm/slub.c:3791
+  kmalloc include/linux/slab.h:517 [inline]
+  vc_allocate+0x438/0x800 drivers/tty/vt/vt.c:787
+  con_install+0x8c/0x640 drivers/tty/vt/vt.c:2876
+  tty_driver_install_tty drivers/tty/tty_io.c:1224 [inline]
+  tty_init_dev+0x1b0/0x1020 drivers/tty/tty_io.c:1324
+  tty_open_by_driver drivers/tty/tty_io.c:1959 [inline]
+  tty_open+0x15e9/0x2ea0 drivers/tty/tty_io.c:2007
+  chrdev_open+0xc20/0xd90 fs/char_dev.c:417
+  do_dentry_open+0xcc6/0x1430 fs/open.c:752
+  vfs_open+0x1b7/0x2e0 fs/open.c:866
+  do_last fs/namei.c:3379 [inline]
+  path_openat+0x460a/0x6520 fs/namei.c:3520
+  do_filp_open+0x261/0x640 fs/namei.c:3554
+  do_sys_open+0x624/0x960 fs/open.c:1059
+  SYSC_open+0xab/0xc0 fs/open.c:1077
+  SyS_open+0x54/0x80 fs/open.c:1072
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Bytes 0-79 of 131 are uninitialized
 ==================================================================
 
 
