@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeEOJJm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:09:42 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:36209 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752253AbeEOJIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752716AbeEOJJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:09:56 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:43033 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752260AbeEOJIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 May 2018 05:08:21 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v4 1/8] PCI: Make pci_get_new_domain_nr() static
-Date: Tue, 15 May 2018 11:07:00 +0200
-Message-Id: <80a86454baa7a240c859d6623a6e498d4003e417.1526375226.git.jan.kiszka@siemens.com>
+Subject: [PATCH v4 3/8] PCI: Rename device node parameter of of_pci_get_host_bridge_resources()
+Date: Tue, 15 May 2018 11:07:02 +0200
+Message-Id: <4df503604897aebbcb6e7ab98ef5f24916c6d382.1526375226.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526375226.git.jan.kiszka@siemens.com>
 References: <cover.1526375226.git.jan.kiszka@siemens.com>
@@ -26,74 +25,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
-Since they are defined in the same compilation unit,
-pci_get_new_domain_nr() can be made static, which also simplifies
-preprocessor conditionals.
-
-No functional change intended.
+We will add a real device parameter to this function soon.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 ---
- drivers/pci/pci.c   | 6 ++----
- include/linux/pci.h | 3 ---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/pci/of.c       | 18 +++++++++---------
+ include/linux/of_pci.h |  4 ++--
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index dbfe7c4f3776..fe28cd76eacd 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5719,15 +5719,14 @@ static void pci_no_domains(void)
- #endif
- }
- 
--#ifdef CONFIG_PCI_DOMAINS
-+#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static atomic_t __domain_nr = ATOMIC_INIT(-1);
- 
--int pci_get_new_domain_nr(void)
-+static int pci_get_new_domain_nr(void)
- {
- 	return atomic_inc_return(&__domain_nr);
- }
- 
--#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static int of_pci_bus_find_domain_nr(struct device *parent)
- {
- 	static int use_dt_domains = -1;
-@@ -5782,7 +5781,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
- 			       acpi_pci_bus_find_domain_nr(bus);
- }
- #endif
--#endif
- 
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index a28355c273ae..8d4778ef5806 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -245,7 +245,7 @@ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+ #if defined(CONFIG_OF_ADDRESS)
  /**
-  * pci_ext_cfg_avail - can we access extended PCI config space?
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 73178a2fcee0..963232a6cd2e 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
+  * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
+- * @dev: device node of the host bridge having the range property
++ * @dev_node: device node of the host bridge having the range property
+  * @busno: bus number associated with the bridge root bus
+  * @bus_max: maximum number of buses for this bridge
+  * @resources: list where the range of resources will be added after DT parsing
+@@ -262,7 +262,7 @@ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+  * It returns zero if the range parsing has been successful or a standard error
+  * value if it failed.
   */
- #ifdef CONFIG_PCI_DOMAINS
- extern int pci_domains_supported;
--int pci_get_new_domain_nr(void);
+-int of_pci_get_host_bridge_resources(struct device_node *dev,
++int of_pci_get_host_bridge_resources(struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+@@ -281,15 +281,15 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 	if (!bus_range)
+ 		return -ENOMEM;
+ 
+-	pr_info("host bridge %pOF ranges:\n", dev);
++	pr_info("host bridge %pOF ranges:\n", dev_node);
+ 
+-	err = of_pci_parse_bus_range(dev, bus_range);
++	err = of_pci_parse_bus_range(dev_node, bus_range);
+ 	if (err) {
+ 		bus_range->start = busno;
+ 		bus_range->end = bus_max;
+ 		bus_range->flags = IORESOURCE_BUS;
+ 		pr_info("  No bus range found for %pOF, using %pR\n",
+-			dev, bus_range);
++			dev_node, bus_range);
+ 	} else {
+ 		if (bus_range->end > bus_range->start + bus_max)
+ 			bus_range->end = bus_range->start + bus_max;
+@@ -297,7 +297,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 	pci_add_resource(resources, bus_range);
+ 
+ 	/* Check for ranges property */
+-	err = of_pci_range_parser_init(&parser, dev);
++	err = of_pci_range_parser_init(&parser, dev_node);
+ 	if (err)
+ 		goto parse_failed;
+ 
+@@ -327,7 +327,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 			goto parse_failed;
+ 		}
+ 
+-		err = of_pci_range_to_resource(&range, dev, res);
++		err = of_pci_range_to_resource(&range, dev_node, res);
+ 		if (err) {
+ 			kfree(res);
+ 			continue;
+@@ -336,13 +336,13 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 		if (resource_type(res) == IORESOURCE_IO) {
+ 			if (!io_base) {
+ 				pr_err("I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
+-					dev);
++					dev_node);
+ 				err = -EINVAL;
+ 				goto conversion_failed;
+ 			}
+ 			if (*io_base != (resource_size_t)OF_BAD_ADDR)
+ 				pr_warn("More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
+-					dev);
++					dev_node);
+ 			*io_base = range.cpu_addr;
+ 		}
+ 
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index 091033a6b836..74eec1943ad2 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -71,11 +71,11 @@ of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+ #endif
+ 
+ #if defined(CONFIG_OF_ADDRESS)
+-int of_pci_get_host_bridge_resources(struct device_node *dev,
++int of_pci_get_host_bridge_resources(struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base);
  #else
- enum { pci_domains_supported = 0 };
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- #endif /* CONFIG_PCI_DOMAINS */
- 
- /*
-@@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
- 
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- 
- #define dev_is_pci(d) (false)
- #define dev_is_pf(d) (false)
+-static inline int of_pci_get_host_bridge_resources(struct device_node *dev,
++static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
 -- 
 2.13.6
