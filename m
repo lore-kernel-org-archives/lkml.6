@@ -1,47 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752417AbeEOUW0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 16:22:26 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:43276 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbeEOUWZ (ORCPT
+        id S1752537AbeEOUXF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 16:23:05 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:45174 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbeEOUXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 16:22:25 -0400
-From: Richard Weinberger <richard@nod.at>
-To: David Oberhollenzer <goliath@sigma-star.at>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] libubigen: Maintain a eraseblock association table
-Date: Tue, 15 May 2018 22:22:16 +0200
-Message-ID: <5480742.m6jlgxS7AR@blindfold>
-In-Reply-To: <cc8f9abd-42b7-cc71-b89c-92c5cbd84aa3@sigma-star.at>
-References: <20180514112528.24092-1-richard@nod.at> <20180514112528.24092-5-richard@nod.at> <cc8f9abd-42b7-cc71-b89c-92c5cbd84aa3@sigma-star.at>
+        Tue, 15 May 2018 16:23:03 -0400
+X-Google-Smtp-Source: AB8JxZpPs6KNBc+Evqju25hFinj8cjc+JGsifE66zPi+MqS+orToqRdwpU2uGIDoGmreG9pbTVJ/53N+VIXCKzAnQzw=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180515100304.3daa7929@bbrezillon>
+References: <1525920400-11392-1-git-send-email-Jane.Wan@nokia.com>
+ <20180510140311.02805561@bbrezillon> <CAHp75VcET7PZYfeRkmiP=n_xCnDzEFYS98ZLjszc1fHjdfDF2A@mail.gmail.com>
+ <20180515093525.051856dd@bbrezillon> <CAHp75VevZCGOntYdj_B0T_SOKXFkWKLgyL2+1g2X9nRyhP5w=g@mail.gmail.com>
+ <20180515100304.3daa7929@bbrezillon>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 15 May 2018 23:23:02 +0300
+Message-ID: <CAHp75VeEhB=+x0toCtSvrq0zBLXVCASzN2BUDDgNParSYZc5BQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jane Wan <Jane.Wan@nokia.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>, ties.bos@nokia.com,
+        prabhakar.kushwaha@nxp.com,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        jagdish.gediya@nxp.com, Richard Weinberger <richard@nod.at>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 15. Mai 2018, 21:58:01 CEST schrieb David Oberhollenzer:
-> On 05/14/2018 01:25 PM, Richard Weinberger wrote:
-> > @@ -229,6 +234,12 @@ int ubigen_write_volume(const struct ubigen_info *ui,
-> >  		memset(outbuf + ui->data_offs + len, 0xFF,
-> >  		       ui->peb_size - ui->data_offs - len);
-> >  
-> > +		vi->eba[lnum] = lseek(out, 0, SEEK_CUR) / ui->peb_size;
-> > +		if (vi->eba[lnum] == -1) {
-> > +			sys_errmsg("cannot get offset of output file");
-> > +			goto out_free1;
-> > +		}
-> > +
-> >  		if (write(out, outbuf, ui->peb_size) != ui->peb_size) {
-> >  			sys_errmsg("cannot write %d bytes to the output file", ui->peb_size);
-> >  			goto out_free1;
-> 
-> Wouldn't that division swallow errors? If I interpret the C99 draft correctly, dividing
-> an lseek return value of -1 by ui->peb_size > 1 should result in 0.
+On Tue, May 15, 2018 at 11:03 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Tue, 15 May 2018 10:46:00 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>
+>> On Tue, May 15, 2018 at 10:35 AM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > On Mon, 14 May 2018 20:54:36 +0300
+>> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Yep, that needs fixing.
+>> >> >                         for (k = 0; k < nbufs; k++) {
+>> >> >                                 const u8 *srcbuf = srcbufs[j];
+>> >> >
+>> >> >                                 if (srcbuf[i] & BIT(k))
+>> >> >                                         m++;
+>> >> >                         }
+>> >>
+>> >> ...which is effectively hweightXX().
+>> >
+>> > No it's not.
+>>
+>> I don't see how "not". In the loop everithing except m and k are
+>> invariants. What did I miss?
+>
+> We're not counting the number of bits set in an uXX var, but the number
+> of set bits at the same position in different buffers.
 
-Thanks,
-//richard
+...on big picture. The excerpt above is hweight() against srcbuf[i].
+
+Let's rewrite it like this:
+
+                    const u8 *srcbuf = srcbufs[j];
+
+                    for (k = 0; k < nbufs; k++) {
+                               if (srcbuf[i] & BIT(k))
+                                      m++;
+                    }
+
+...and now it looks obvious:
+
+m += hweight...(srcbuf[i])
+
+_If_ nbufs is power of two we may use primitive helper.
+
+-- 
+With Best Regards,
+Andy Shevchenko
