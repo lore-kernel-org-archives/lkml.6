@@ -1,86 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeEOFUt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:20:49 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40949 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeEOFUr (ORCPT
+        id S1752270AbeEOFU7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:20:59 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33253 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeEOFU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:20:47 -0400
-X-Google-Smtp-Source: AB8JxZpSOxhz/u7ucS6c/MOpTnm//SwZjs8i9T6e+XeefiXHz0eGn6LBFp8YUqAbkvzNg6oKLhC2wg==
-Date: Tue, 15 May 2018 14:20:42 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180515052042.GB480@jagdpanzerIV>
-References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
- <20180511014515.GA895@jagdpanzerIV>
- <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
- <20180511062151.GA18160@jagdpanzerIV>
- <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
- <20180511095004.GA6575@jagdpanzerIV>
- <20180511093716.18329322@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511093716.18329322@gandalf.local.home>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Tue, 15 May 2018 01:20:57 -0400
+X-Google-Smtp-Source: AB8JxZquq4AFHUYVPCpRGw91puJNTRdYKWLfSMvgrwx3aYat37A2OqhVFjR97ViZgDk1K8lsn7GEbg==
+From: Pratik Jain <pratik.jain0509@gmail.com>
+To: abbotti@mev.co.uk
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Pratik Jain <pratik.jain0509@gmail.com>
+Subject: [PATCH] Staging:Comedi:comedi_compat32.c: Lindent changes
+Date: Tue, 15 May 2018 10:50:39 +0530
+Message-Id: <20180515052039.12828-1-pratik.jain0509@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Recommended indentation by Lindent on file comedi_compat32.c
 
-On (05/11/18 09:37), Steven Rostedt wrote:
-> > On (05/11/18 11:17), Dmitry Vyukov wrote:
-> > > 
-> > > From what I see, it seems that interrupts can be nested:  
-> > 
-> > Hm, I thought that in general IRQ handlers run with local IRQs
-> > disabled on CPU. So, generally, IRQs don't nest. Was I wrong?
-> > NMIs can nest, that's true; but I thought that at least IRQs
-> > don't.
-> 
-> We normally don't run nested interrupts, although as the comment in
-> preempt.h says:
-> 
->  * The hardirq count could in theory be the same as the number of
->  * interrupts in the system, but we run all interrupt handlers with
->  * interrupts disabled, so we cannot have nesting interrupts. Though
->  * there are a few palaeontologic drivers which reenable interrupts in
->  * the handler, so we need more than one bit here.
-> 
-> And no, NMI handlers do not nest. Yes, we deal with nested NMIs, but in
-> those cases, we just set a bit as a latch, and return, and when the
-> first NMI is complete, it checks that bit and if it is set, it executes
-> another NMI handler.
+Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
+---
+ drivers/staging/comedi/comedi_compat32.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Good to know!
-I thought that NMI can nest in some weird cases, like a breakpoint from
-NMI. This must be super tricky, given that nested NMI will corrupt the
-stack of the previous NMI, etc. Anyway.
-
-> > Well, hm. __irq_enter() does preempt_count_add(HARDIRQ_OFFSET) and
-> > __irq_exit() does preempt_count_sub(HARDIRQ_OFFSET). So, technically,
-> > you can store
-> > 
-> > 	preempt_count() & HARDIRQ_MASK
-> > 	preempt_count() & SOFTIRQ_MASK
-> > 	preempt_count() & NMI_MASK
-> >
-[..]
-> I handle nesting of different contexts in the ftrace ring buffer using
-> the preempt count. See trace_recursive_lock/unlock() in
-> kernel/trace/ring_buffer.c.
-
-Thanks. So you are also checking the preempt_count().
-
-	-ss
+diff --git a/drivers/staging/comedi/comedi_compat32.c b/drivers/staging/comedi/comedi_compat32.c
+index 97fb9388bc22..fa9d239474ee 100644
+--- a/drivers/staging/comedi/comedi_compat32.c
++++ b/drivers/staging/comedi/comedi_compat32.c
+@@ -34,7 +34,7 @@
+ struct comedi32_chaninfo_struct {
+ 	unsigned int subdev;
+ 	compat_uptr_t maxdata_list;	/* 32-bit 'unsigned int *' */
+-	compat_uptr_t flaglist;		/* 32-bit 'unsigned int *' */
++	compat_uptr_t flaglist;	/* 32-bit 'unsigned int *' */
+ 	compat_uptr_t rangelist;	/* 32-bit 'unsigned int *' */
+ 	unsigned int unused[4];
+ };
+@@ -57,16 +57,16 @@ struct comedi32_cmd_struct {
+ 	unsigned int scan_end_arg;
+ 	unsigned int stop_src;
+ 	unsigned int stop_arg;
+-	compat_uptr_t chanlist;		/* 32-bit 'unsigned int *' */
++	compat_uptr_t chanlist;	/* 32-bit 'unsigned int *' */
+ 	unsigned int chanlist_len;
+-	compat_uptr_t data;		/* 32-bit 'short *' */
++	compat_uptr_t data;	/* 32-bit 'short *' */
+ 	unsigned int data_len;
+ };
+ 
+ struct comedi32_insn_struct {
+ 	unsigned int insn;
+ 	unsigned int n;
+-	compat_uptr_t data;		/* 32-bit 'unsigned int *' */
++	compat_uptr_t data;	/* 32-bit 'unsigned int *' */
+ 	unsigned int subdev;
+ 	unsigned int chanspec;
+ 	unsigned int unused[3];
+@@ -74,7 +74,7 @@ struct comedi32_insn_struct {
+ 
+ struct comedi32_insnlist_struct {
+ 	unsigned int n_insns;
+-	compat_uptr_t insns;		/* 32-bit 'struct comedi_insn *' */
++	compat_uptr_t insns;	/* 32-bit 'struct comedi_insn *' */
+ };
+ 
+ /* Handle translated ioctl. */
+@@ -194,7 +194,7 @@ static int get_compat_cmd(struct comedi_cmd __user *cmd,
+ 	err |= __put_user(temp.uint, &cmd->stop_arg);
+ 	err |= __get_user(temp.uptr, &cmd32->chanlist);
+ 	err |= __put_user((unsigned int __force *)compat_ptr(temp.uptr),
+-			&cmd->chanlist);
++			  &cmd->chanlist);
+ 	err |= __get_user(temp.uint, &cmd32->chanlist_len);
+ 	err |= __put_user(temp.uint, &cmd->chanlist_len);
+ 	err |= __get_user(temp.uptr, &cmd32->data);
+-- 
+2.17.0
