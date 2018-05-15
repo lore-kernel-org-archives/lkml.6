@@ -1,62 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752272AbeEOGjl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:39:41 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55220 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752090AbeEOGjj (ORCPT
+        id S1752351AbeEOGj5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:39:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40225 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752315AbeEOGj4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:39:39 -0400
-X-Google-Smtp-Source: AB8JxZq7M0Xkdi9YD6+6nH9rIjB9FZOoMvfkXfQJ2xn4+3pKyX+qUl3El8dBJCnwmwDzHp7WN6kuCw==
-Date: Tue, 15 May 2018 08:39:35 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Jiri Slaby <jslaby@suse.cz>
-Cc: mingo@redhat.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH -resend 02/27] x86: assembly, use SYM_DATA for data
-Message-ID: <20180515063935.GA25721@gmail.com>
-References: <20180510080644.19752-1-jslaby@suse.cz>
- <20180510080644.19752-3-jslaby@suse.cz>
- <20180514080549.GB6607@gmail.com>
+        Tue, 15 May 2018 02:39:56 -0400
+Date: Mon, 14 May 2018 23:39:44 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-f8207b987fdc3768257704579bf29a717b4ea520@git.kernel.org>
+Cc: mingo@kernel.org, schwidefsky@de.ibm.com, tmricht@linux.ibm.com,
+        acme@redhat.com, tglx@linutronix.de, heiko.carstens@de.ibm.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        brueckner@linux.vnet.ibm.com
+Reply-To: brueckner@linux.vnet.ibm.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
+        tglx@linutronix.de, acme@redhat.com, tmricht@linux.ibm.com,
+        mingo@kernel.org, schwidefsky@de.ibm.com
+In-Reply-To: <20180503065837.71043-1-tmricht@linux.ibm.com>
+References: <20180503065837.71043-1-tmricht@linux.ibm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf test: "probe libc's inet_pton" fails on s390
+ due to missing inline
+Git-Commit-ID: f8207b987fdc3768257704579bf29a717b4ea520
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180514080549.GB6607@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  f8207b987fdc3768257704579bf29a717b4ea520
+Gitweb:     https://git.kernel.org/tip/f8207b987fdc3768257704579bf29a717b4ea520
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Thu, 3 May 2018 08:58:37 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 10 May 2018 15:19:30 -0300
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+perf test: "probe libc's inet_pton" fails on s390 due to missing inline
 
-> 
-> * Jiri Slaby <jslaby@suse.cz> wrote:
-> 
-> > We make proper use of SYM_DATA on global data instead of marking them as
-> > ENTRY. ENTRY is intended for functions and shall be paired with ENDPROC.
-> > ENTRY also aligns symbols which creates unnecessary holes here between
-> > data.
-> > 
-> > ENTRY from saved_eip in wakeup_32 and many saved_* in wakeup_64 is
-> > simply dropped, as these symbols are local only.
-> 
-> Yeah, so this commit talks about ENTRY() and ENDPROC(), while the new methods are 
-> SYM_FUNC_START()/END().
+perf test "probe libc's inet_pton & backtrace it with ping" fails on
+4.17.0rc3 on s/390. It turned out that function __inet_pton is reported
+as inline:
 
-BTW., I like the series otherwise: for example in my comment above I wrote up the 
-SYM_FUNC_START()/END() names from memory, without having to look up the 
-primitives.
+  [root@s8360047 perf]# ./perf script -i /tmp/perf.data.111
+  ping 12457 [000]  1584.478959: probe_libc:inet_pton: (3ffb5a347e8)
+                    1347e8 __inet_pton (inlined)
+                     f19d7 gaih_inet.constprop.5 (/usr/lib64/libc-2.24.so)
+                     f4c3f __GI_getaddrinfo (inlined)
+                      410b main (/usr/bin/ping)
 
-[ Then I double checked it from the series to make sure I got it right. ;-) ]
+Allow __inet_pton listed as inline.
 
-Before this I could never remember all these random, idiosyncratic, path dependent 
-macro names - now there's at least some good high level structure to them. So it's 
-a good step forward.
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180503065837.71043-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-	Ingo
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 016882dbbc16..ee86473643be 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,7 +16,7 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
++	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
