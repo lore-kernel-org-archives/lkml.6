@@ -1,66 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeEOKUn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:20:43 -0400
-Received: from mga18.intel.com ([134.134.136.126]:40959 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752343AbeEOKUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:20:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="55333502"
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
- <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
- <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
-Date: Tue, 15 May 2018 13:20:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752671AbeEOKWo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:22:44 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54222 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbeEOKWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:22:39 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180515102236euoutp023816b03eca1d0bac54fa52d526820d33~uyk1Dk3nN1820518205euoutp02w
+X-AuditID: cbfec7f4-713ff700000043e4-99-5afab4ebecd3
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 14/18] fbdev: modedb.c: fix a kernel-doc markup
+Date: Tue, 15 May 2018 12:22:34 +0200
+Message-id: <4109551.rZs3yKu93M@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <a712d724d034cedeab76335071f916808db77e7a.1525684985.git.mchehab+samsung@kernel.org>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djPc7qvt/yKMpj41MziyYF2RosrX9+z
+        WSxsW8JicaLvA6vF5V1z2Czef+pksthxahGzA7vH5hVaHptWdbJ53O8+zuSxuG8yq8fnTXIB
+        rFFcNimpOZllqUX6dglcGcdX3GIt6GWrOLxhEnMD42LWLkZODgkBE4mrl2+zdDFycQgJrGCU
+        +HZrLjOE85lRYnLzMxaYqtldx6ASyxglPp1ohWr5zShxa8pcRpAqNgEriYntq8BsEQEziZPn
+        jrKBFDELvGSUWH7qD9hCYQFniTON74BsDg4WAVWJO6+kQcK8ApoSu2Y9ACsRFfCS2LKvnQnE
+        5hRIljjZ848dokZQ4sfke2AXMQvIS+zbP5UVwtaROHtsHSPILgmBHWwSl/reQp3tInHn5hxG
+        CFtY4tXxLewQtoxEZ8dBJoiGZqCnd+xhhkhMYJTYs14IwraWOHz8ItQGPolJ26YzgxwtIcAr
+        0dEGVeIhcej/Sqj5jhLfp9xmhITKC0aJtfuWsUxglJ2F5PBZSA6fheTwBYzMqxjFU0uLc9NT
+        i43yUsv1ihNzi0vz0vWS83M3MQITxel/x7/sYNz1J+kQowAHoxIP744ZP6OEWBPLiitzDzFK
+        cDArifDuNgIK8aYkVlalFuXHF5XmpBYfYpTmYFES543TqIsSEkhPLEnNTk0tSC2CyTJxcEo1
+        MIpyVN5LWfggd0+F2VYhzsZT6RszJ8679ubGNYnC9/pu17ZK6sioepX1f81a/qrz2K2em3Nu
+        +yr/6zyt7vzolL+SwWQ/gUWmBZqVJXmeVx5v37LwuPyxZz783WWOSf/28POopFau6sx22GSl
+        ssP2O7NF0b1rB86bnp2zRn/Tpft1zVuNpYujnyixFGckGmoxFxUnAgDdCNbMEAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsVy+t/xq7qvt/yKMvi7S8ziyYF2RosrX9+z
+        WSxsW8JicaLvA6vF5V1z2Czef+pksthxahGzA7vH5hVaHptWdbJ53O8+zuSxuG8yq8fnTXIB
+        rFFcNimpOZllqUX6dglcGcdX3GIt6GWrOLxhEnMD42LWLkZODgkBE4nZXceYuxi5OIQEljBK
+        7D72jw3C+csocfb3FyaQKjYBK4mJ7asYQWwRATOJk+eOghUxC7xklNjYtB5slLCAs8SZxndA
+        NgcHi4CqxJ1X0iBhXgFNiV2zHoCViAp4SWzZ1w42k1MgWeLgz3csEMteMErcPHKADaJBUOLH
+        5HssIDazgLzEvv1TWSFsLYn1O48zTWDkn4WkbBaSsllIyhYwMq9iFEktLc5Nzy021CtOzC0u
+        zUvXS87P3cQIDOZtx35u3sF4aWPwIUYBDkYlHt4dM35GCbEmlhVX5h5ilOBgVhLh3W0EFOJN
+        SaysSi3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cAoeJo/tWz91Tm+
+        f4y8VdMs9v5/+i6c9Q2/5TWdRX9NDv8/l/XousyVaouesCwl1hVntd/tZjKofvoypFXk9fH/
+        Z0UqFZXX9XMas4ee+lWrevaGc8GjA/VPnntstLU4Jvvj9yRvjmeyEp48DyrupJVMdLNx7Nz3
+        8vbLH6se/rqp3nDvK6vGncCPSizFGYmGWsxFxYkATJiV3GICAAA=
+X-CMS-MailID: 20180515102235eucas1p196740463cc65cec23bada9202c66e6c8
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180507093605epcas3p332cb6a795335f41109dbb9544b1c4165
+X-RootMTR: 20180507093605epcas3p332cb6a795335f41109dbb9544b1c4165
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <CGME20180507093605epcas3p332cb6a795335f41109dbb9544b1c4165@epcas3p3.samsung.com>
+        <a712d724d034cedeab76335071f916808db77e7a.1525684985.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 06:22 AM, Chris Chiu wrote:
-> What if I change the 120MHz to 180MHz and then make sure that the I2C operates
-> in target FS mode frequency 400kHz via scope? Would there be any side effect?
-> Maybe some other busses frequency could be also affected and causing some other
-> component malfunction?
+On Monday, May 07, 2018 06:35:50 AM Mauro Carvalho Chehab wrote:
+> Use code blocks to avoid those warnings and make it look nicer.
 > 
-Should be safe. It is only clock rate information when registering a 
-fixed clock with known rate in intel-lpss.c and i2c-designware uses that 
-info when calculating the timing parameters. I.e. it doesn't change any 
-internal clocks.
+> 	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+> 	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+> 	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+> 	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-I'm trying to find a contact who can confirm what is the expected rate 
-of I2C input clock and is it common to all Cannon Lake HW.
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
--- 
-Jarkko
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
