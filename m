@@ -1,98 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753408AbeEOMxs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:53:48 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7251 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752102AbeEOMwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:52:51 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
-        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
-        <devel@acpica.org>
-CC: <gengdongjiu@huawei.com>, <huangshaoyu@huawei.com>,
-        <zhengxiang9@huawei.com>
-Subject: [PATCH v12 1/4] arm64: KVM: export the capability to set guest SError syndrome
-Date: Wed, 16 May 2018 04:58:04 +0800
-Message-ID: <1526417887-25843-2-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526417887-25843-1-git-send-email-gengdongjiu@huawei.com>
-References: <1526417887-25843-1-git-send-email-gengdongjiu@huawei.com>
+        id S1753391AbeEOMxr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:53:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51366 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753037AbeEOMxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:53:42 -0400
+Date: Tue, 15 May 2018 05:55:07 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH RFC 1/8] rcu: Add comment documenting how rcu_seq_snap
+ works
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180514031541.67247-1-joel@joelfernandes.org>
+ <20180514031541.67247-2-joel@joelfernandes.org>
+ <20180514173816.GA26088@linux.vnet.ibm.com>
+ <20180515015133.GH209519@joelaf.mtv.corp.google.com>
+ <20180515035951.GB26088@linux.vnet.ibm.com>
+ <20180515070243.GA55557@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515070243.GA55557@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051512-0056-0000-0000-0000044EA18D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009029; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032650; UDB=6.00527944; IPR=6.00811781;
+ MB=3.00021126; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 12:53:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051512-0057-0000-0000-00000892B5C5
+Message-Id: <20180515125507.GE26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805150132
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the arm64 RAS Extension, user space can inject a virtual-SError
-with specified ESR. So user space needs to know whether KVM support
-to inject such SError, this interface adds this query for this capability.
+On Tue, May 15, 2018 at 12:02:43AM -0700, Joel Fernandes wrote:
+> Hi Paul,
+> Good morning, hope you're having a great Tuesday. I managed to find some
+> evening hours today to dig into this a bit more.
+> 
+> On Mon, May 14, 2018 at 08:59:52PM -0700, Paul E. McKenney wrote:
+> > On Mon, May 14, 2018 at 06:51:33PM -0700, Joel Fernandes wrote:
+> > > On Mon, May 14, 2018 at 10:38:16AM -0700, Paul E. McKenney wrote:
+> > > > On Sun, May 13, 2018 at 08:15:34PM -0700, Joel Fernandes (Google) wrote:
+> > > > > rcu_seq_snap may be tricky for someone looking at it for the first time.
+> > > > > Lets document how it works with an example to make it easier.
+> > > > > 
+> > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > > ---
+> > > > >  kernel/rcu/rcu.h | 24 +++++++++++++++++++++++-
+> > > > >  1 file changed, 23 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> > > > > index 003671825d62..fc3170914ac7 100644
+> > > > > --- a/kernel/rcu/rcu.h
+> > > > > +++ b/kernel/rcu/rcu.h
+> > > > > @@ -91,7 +91,29 @@ static inline void rcu_seq_end(unsigned long *sp)
+> > > > >  	WRITE_ONCE(*sp, rcu_seq_endval(sp));
+> > > > >  }
+> > > > > 
+> > > > > -/* Take a snapshot of the update side's sequence number. */
+> > > > > +/*
+> > > > > + * Take a snapshot of the update side's sequence number.
+> > > > > + *
+> > > > > + * This function predicts what the grace period number will be the next
+> > > > > + * time an RCU callback will be executed, given the current grace period's
+> > > > > + * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
+> > > > > + * already in progress.
+> > > > 
+> > > > How about something like this?
+> > > > 
+> > > > 	This function returns the earliest value of the grace-period
+> > > > 	sequence number that will indicate that a full grace period has
+> > > > 	elapsed since the current time.  Once the grace-period sequence
+> > > > 	number has reached this value, it will be safe to invoke all
+> > > > 	callbacks that have been registered prior to the current time.
+> > > > 	This value is the current grace-period number plus two to the
+> > > > 	power of the number of low-order bits reserved for state, then
+> > > > 	rounded up to the next value in which the state bits are all zero.
+> > > 
+> > > This makes sense too, but do you disagree with what I said?
+> > 
+> > In a pedantic sense, definitely.  RCU callbacks are being executed pretty
+> > much all the time on a busy system, so it is only the recently queued
+> > ones that are guaranteed to be deferred that long.  And my experience
+> > indicates that someone really will get confused by that distinction,
+> > so I feel justified in being pedantic in this case.
+> 
+> Ok I agree, I'll include your comment above.
+> 
+> > > Also just to let you know, thanks so much for elaborately providing an
+> > > example on the other thread where we are discussing the rcu_seq_done check. I
+> > > will take some time to trace this down and see if I can zero in on the same
+> > > understanding as yours.
+> > > 
+> > > I get why we use rcu_seq_snap there in rcu_start_this_gp but the way it its
+> > > used is 'c' is the requested GP obtained from _snap, and we are comparing that with the existing
+> > > rnp->gp_seq in rcu_seq_done.  When that rnp->gp_seq reaches 'c', it only
+> > > means rnp->gp_seq is done, it doesn't tell us if 'c' is done which is what
+> > > we were trying to check in that loop... that's why I felt that check wasn't
+> > > correct - that's my (most likely wrong) take on the matter, and I'll get back
+> > > once I trace this a bit more hopefully today :-P
+> > 
+> > If your point is that interrupts are disabled throughout, so there isn't
+> > much chance of the grace period completing during that time, you are
+> > mostly right.  The places you might not be right are the idle loop and
+> > offline CPUs.  And yes, call_rcu() doesn't like queuing callbacks onto
+> > offline CPUs, but IIRC it is just fine in the case where callbacks have
+> > been offloaded from that CPU.
+> > 
+> > And if you instead say that "c" is the requested final ->gp_seq value
+> > obtained from _snap(), the thought process might go more easily.
+> 
+> Yes I agree with c being the requested final value which is the GP for which
+> the callbacks will be queued. At the end of the GP c, the callbacks will have
+> executed.
+> 
+> About the rcu_seq_done check and why I believe its not right to use it in
+> that funnel locking loop, if you could allow me to try argument my point from
+> a different angle...
+> 
+> We agreed that the way gp_seq numbers work and are compared with each other
+> to identify if a GP is elapsed or not, is different from the way the previous
+> numbers (gp_num) were compared.
+> 
+> Most notably, before the gp_seq conversions - inorder to start a GP, we were
+> doing gp_num += 1, and completed had to catch up to gp_num + 1 to mark the
+> end.
+> 
+> Now with gp_seq, for a gp to start, we don't do the "+1", we just set the
+> state bits. To mark the end, we clear the state bits and increment the gp_num
+> part of gp_seq.
+> 
+> However, in the below commit 12d6c129fd0a ("rcu: Convert grace-period
+> requests to ->gp_seq"). You did a one-to-one replacement of the ULONG_CMP_GE
+> with rcu_seq_done. You did so even though the gp_seq numbers work differently
+> from previously used numbers (gp_num and completed).
+> 
+> I would then argue that because of the differences above, a one-to-one
+> replacement of the ULONG_CMP_GE with the rcu_seq_done wouldn't make sense.
+> 
+> I argue this because, in previous code - the ULONG_CMP_GE made sense for the gp_num
+> way of things because, if c == gp_num, that means that :
+>  - c started already
+>  - c has finished.
+>  Which worked correctly, because we have nothing to do and we can bail
+>  without setting any flag.
+> 
+>  Where as now, with the gp_seq regime, c == gp_seq means:
+>  - c-1 finished   (I meant -1 subtracted from the gp_num part of c)
+>  This would cause us to bail without setting any flag for starting c.
+> 
+>  I did some tracing and I could never hit the rcu_seq_done check because it
+>  never happens in my tracing that _snap returned something for which
+>  rcu_seq_done returned true, so I'm not sure if this check is needed, but
+>  you're the expert ;)
+> 
+> @@ -1629,16 +1583,16 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+>          * not be released.
+>          */
+>         raw_lockdep_assert_held_rcu_node(rnp);
+> +       WARN_ON_ONCE(c & 0x2); /* Catch any lingering use of ->gpnum. */
+> +       WARN_ON_ONCE(((rnp->completed << RCU_SEQ_CTR_SHIFT) >> RCU_SEQ_CTR_SHIFT) != rcu_seq_ctr(rnp->gp_seq)); /* Catch any ->completed/->gp_seq mismatches. */
+>         trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+>         for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+>                 if (rnp_root != rnp)
+>                         raw_spin_lock_rcu_node(rnp_root);
+> -               WARN_ON_ONCE(ULONG_CMP_LT(rnp_root->gpnum +
+> -                                         need_future_gp_mask(), c));
+>                 if (need_future_gp_element(rnp_root, c) ||
+> -                   ULONG_CMP_GE(rnp_root->gpnum, c) ||
+> +                   rcu_seq_done(&rnp_root->gp_seq, c) ||
+> 
+>                      ^^^^
+> 		     A direct replacement of ULONG_CMP_GE is bit weird?  It
+> 		     means we bail out if c-1 completed, and we don't set any
+> 		     flag for starting c. That could result in the clean up
+> 		     never starting c?
 
-KVM will check whether system support RAS Extension, if supported, KVM
-returns true to user space, otherwise returns false.
+Ah, I see what you are getting at now.
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Reviewed-by: James Morse <james.morse@arm.com>
+What I do instead in 334dac2da529 ("rcu: Make rcu_nocb_wait_gp() check
+if GP already requested") is to push the request down to the leaves of
+the tree and to the rcu_data structure.  Once that commit is in place,
+the check for the grace period already being in progress isn't all
+that helpful, though I suppose that it could be added.  One way to
+do that would be to replace "rcu_seq_done(&rnp_root->gp_seq, c)" with
+ULONG_CMP_GE(rnp_root->gpnum, (c - RCU_SEQ_STATE_MASK))", but that seems
+a bit baroque to me.
 
-Change from V11:
-1. Change the commit message
-2. Update the Documentation/virtual/kvm/api.tx
----
- Documentation/virtual/kvm/api.txt | 11 +++++++++++
- arch/arm64/kvm/reset.c            |  3 +++
- include/uapi/linux/kvm.h          |  1 +
- 3 files changed, 15 insertions(+)
+The point of the rcu_seq_done() is to catch long delays, but given the
+current implementation, the fact that interrupts are disabled across
+all calls should prevent the rcu_seq_done() from ever returning true.
+(Famous last words!)  So, yes, it could be removed, in theory, at least.
+At least until the real-time guys force me to come up with a way to
+run this code with interrupts enabled (hopefully never!).
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index fc3ae95..66494a5 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4415,3 +4415,14 @@ Parameters: none
- This capability indicates if the flic device will be able to get/set the
- AIS states for migration via the KVM_DEV_FLIC_AISM_ALL attribute and allows
- to discover this without having to create a flic device.
-+
-+8.14 KVM_CAP_ARM_SET_SERROR_ESR
-+
-+Architectures: arm, arm64
-+
-+This capability indicates that userspace can specify the syndrome value reported
-+to the guest OS when guest takes a virtual SError interrupt exception.
-+If KVM has this capability, userspace can only specify the ISS field for the ESR
-+syndrome, it can not specify the EC field which is not under control by KVM.
-+If this virtual SError is taken to EL1 using AArch64, this value will be reported
-+in ISS filed of ESR_EL1.
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 3256b92..38c8a64 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ARM_PMU_V3:
- 		r = kvm_arm_support_pmu_v3();
- 		break;
-+	case KVM_CAP_ARM_INJECT_SERROR_ESR:
-+		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
-+		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
- 		r = 1;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 8fb90a0..3587b33 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -934,6 +934,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_S390_AIS_MIGRATION 150
- #define KVM_CAP_PPC_GET_CPU_CHAR 151
- #define KVM_CAP_S390_BPB 152
-+#define KVM_CAP_ARM_INJECT_SERROR_ESR 153
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-1.9.1
+If I were to do that, I would first wrap it with a WARN_ON_ONCE() and
+leave it that way for an extended period of testing.  Yes, I am paranoid.
+Why do you ask?  ;-)
+
+							Thanx, Paul
+
+>                     (rnp != rnp_root &&
+> -                    rnp_root->gpnum != rnp_root->completed)) {
+> +                    rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
+>                         trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
+>                         goto unlock_out;
+>                 }
+> 
+> 
+> 
+> 
