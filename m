@@ -1,90 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeEOPCQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:02:16 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:48054 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeEOPCM (ORCPT
+        id S1753433AbeEOPJd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:09:33 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:31425 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752606AbeEOPJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:02:12 -0400
-Date: Tue, 15 May 2018 08:02:05 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stewart@linux.vnet.ibm.com
-Subject: Re: [PATCH 0/3] Add support to disable sensor groups in P9
-Message-ID: <20180515150205.GA29321@roeck-us.net>
-References: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+        Tue, 15 May 2018 11:09:31 -0400
+Subject: Re: MMC performance degradation due to too many requests
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <0ea1d2bf-fa0f-4b3d-556a-5dca5afbf2a9@ti.com>
+ <CACRpkdaZ5G=gBHNwf7YMLEBOqC2UrO+YLrz09H4h8HWYN=av4w@mail.gmail.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <3e2c96fa-273e-192f-1caf-788de7659592@ti.com>
+Date: Tue, 15 May 2018 20:41:02 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <CACRpkdaZ5G=gBHNwf7YMLEBOqC2UrO+YLrz09H4h8HWYN=av4w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 04:24:32PM +0530, Shilpasri G Bhat wrote:
-> This patch series adds support to enable/disable OCC based
-> inband-sensor groups at runtime. The environmental sensor groups are
-> managed in HWMON and the remaining platform specific sensor groups are
-> managed in /sys/firmware/opal.
+Hi Linus,
+
+On Tuesday 15 May 2018 06:09 PM, Linus Walleij wrote:
+> On Mon, May 14, 2018 at 1:30 PM, Faiz Abbas <faiz_abbas@ti.com> wrote:
 > 
-> The firmware changes required for this patch is posted below:
-> https://lists.ozlabs.org/pipermail/skiboot/2018-March/010812.html
+>> Also, I see many times the number of interrupts for mmc1 in 4.14.
+> (...)
+>> I also printed out the size of the DMA transfers in the omap_hsmmc
+>> driver during the dd command. I see that the maximum size of the dma
+>> transfer has decreased from 1 MB to 256kB between 4.13 and 4.14.
 > 
-
-Sorry for not getting back earlier. This is a tough one.
-
-Key problem is that you are changing the ABI with those new attributes.
-On top of that, the attributes _do_ make some sense (many chips support
-enabling/disabling of individual sensors), suggesting that those or
-similar attributes may or even should at some point be added to the ABI.
-
-At the same time, returning "0" as measurement values when sensors are
-disabled does not seem like a good idea, since "0" is a perfectly valid
-measurement, at least for most sensors.
-
-Given that, we need to have a discussion about adding _enable attributes to
-the ABI (what is the scope, when should the attributes exist and when not,
-do we want/need power_enable or powerX_enable or both, and so on), and what
-to return if a sensor is disabled (such as -ENODATA). Once we have an
-agreement, we can continue with an implementation.
-
-Guenter
-
-> Shilpasri G Bhat (3):
->   powernv:opal-sensor-groups: Add support to enable sensor groups
->   hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
->   powernv: opal-sensor-groups: Add attributes to disable/enable sensors
+> This seems like my fault for removing the bounce buffer.
+> (The name bounce buffer is misleading, I suspect the right
+> term for what is was doing was "merge buffer" or something,
+> coalescing physically consecutive requests.)
 > 
->  .../ABI/testing/sysfs-firmware-opal-sensor-groups  |  34 ++++++
->  Documentation/hwmon/ibmpowernv                     |  31 ++++-
->  arch/powerpc/include/asm/opal-api.h                |   4 +-
->  arch/powerpc/include/asm/opal.h                    |   2 +
->  .../powerpc/platforms/powernv/opal-sensor-groups.c | 104 ++++++++++++-----
->  arch/powerpc/platforms/powernv/opal-wrappers.S     |   1 +
->  drivers/hwmon/ibmpowernv.c                         | 127 +++++++++++++++++++--
->  7 files changed, 265 insertions(+), 38 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
+> commit de3ee99b097dd51938276e3af388cd4ad0f2750a
+> "mmc: Delete bounce buffer handling"
+> should be the culprit.
+
+I don't think so. I checked out to the commit before that and see that
+the interrupts are still too high.
+
 > 
-> -- 
-> 1.8.3.1
+> The bounce buffer only makes any performance impact if the
+> host DMA controller is unable to handle scatter-gather lists
+> so the number of segments is set down to 1.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Can you verifty that:
+> - mmc->max_segs == 1
+
+No. It is 64 in v4.14. It was 1024 in v4.13.
+
+v4.14
+https://pastebin.ubuntu.com/p/4wXB2jb6zw/
+
+v4.13
+https://pastebin.ubuntu.com/p/dpd6kb4YJY/
+
+
+> - You were previously enabling CONFIG_MMC_BLOCK_BOUNCE
+
+Yes.
+
+Regards,
+Faiz
