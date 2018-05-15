@@ -1,77 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753048AbeEOMzq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:55:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45293 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752280AbeEOMzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:55:45 -0400
-Date: Tue, 15 May 2018 14:55:41 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
-Message-ID: <20180515125541.GH12670@dhcp22.suse.cz>
-References: <20180510115356.31164-1-pasha.tatashin@oracle.com>
- <20180510123039.GF5325@dhcp22.suse.cz>
- <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
- <20180515091036.GC12670@dhcp22.suse.cz>
- <CAGM2reaQusBA-nmQ5xqH4u-EVxgJCnaHAZs=1AXFOpNWTh7VbQ@mail.gmail.com>
+        id S1753349AbeEOM4L (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:56:11 -0400
+Received: from aer-iport-3.cisco.com ([173.38.203.53]:26446 "EHLO
+        aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753117AbeEOM4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:56:09 -0400
+X-IronPort-AV: E=Sophos;i="5.49,403,1520899200";
+   d="scan'208";a="3794164"
+Subject: Re: [PATCH 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
+ <1526388421-18808-3-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hansverk@cisco.com>
+Message-ID: <b27858bd-6a87-220a-cbec-586350377175@cisco.com>
+Date: Tue, 15 May 2018 14:56:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reaQusBA-nmQ5xqH4u-EVxgJCnaHAZs=1AXFOpNWTh7VbQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1526388421-18808-3-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: hansverk
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-05-18 08:17:27, Pavel Tatashin wrote:
-> Hi Michal,
-> 
-> Thank you for your reply, my comments below:
-> 
-> > You are now disabling a potentially useful feature to SPARSEMEM users
-> > without having any evidence that they do suffer from the issue which is
-> > kinda sad. Especially when the only known offender is a UP pcp allocator
-> > implementation.
-> 
-> True, but what is the use case for having SPARSEMEM without virtual mapping
-> and deferred struct page init together. Is it a common case to have
-> multiple gigabyte of memory and currently NUMA config to benefit from
-> deferred page init and yet not having a memory for virtual mapping of
-> struct pages? Or am I missing some common case here?
+On 05/15/18 14:46, Neil Armstrong wrote:
+> This patchs adds the cec_notifier feature to the intel_hdmi part
+> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+> between each HDMI ports.
+> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+> to an eventual CEC adapter.
 
-Well, I strongly suspect that this is more a momentum, then a real
-reason to stick with SPARSEMEM_MANUAL. I would really love to reduce the
-number of memory models we have. Getting rid of SPARSEMEM would be a
-good start as VMEMMAP should be much better.
- 
-> > I will not insist of course but it seems like your fix doesn't really
-> > prevent virt_to_page or other direct page access either.
-> 
-> I am not sure what do you mean, I do not prevent virt_to_page, but that is
-> OK for SPARSEMEM_VMEMMAP case, because we do not need to access "struct
-> page" for this operation, as translation is in page table. Yes, we do not
-> prohibit other struct page accesses before mm_init(), but we now have a
-> feature that checks for uninitialized struct page access, and if those will
-> happen, we will learn about them.
+You haven't figured yet out where to place the cec_notifier_put() call?
+Or did you forget?
 
-This will always be a maze as the early boot tends to be. Sad but true.
-That is why I am not really convinced we should use a large hammer and
-disallow deferred page initialization just because UP implementation of
-pcp does something too early. We should instead rule that one odd case.
-Your patch simply doesn't rule a large class of potential issues. It
-just rules out a potentially useful feature for an odd case. See my
-point?
--- 
-Michal Hocko
-SUSE Labs
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/i915/Kconfig      |  1 +
+>  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
+>  drivers/gpu/drm/i915/intel_hdmi.c | 10 ++++++++++
+>  3 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index dfd9588..2d65d56 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -23,6 +23,7 @@ config DRM_I915
+>  	select SYNC_FILE
+>  	select IOSF_MBI
+>  	select CRC32
+> +	select CEC_CORE if CEC_NOTIFIER
+>  	help
+>  	  Choose this option if you have a system that has "Intel Graphics
+>  	  Media Accelerator" or "HD Graphics" integrated graphics,
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index d436858..b50e51b 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -39,6 +39,7 @@
+>  #include <drm/drm_dp_mst_helper.h>
+>  #include <drm/drm_rect.h>
+>  #include <drm/drm_atomic.h>
+> +#include <media/cec-notifier.h>
+>  
+>  /**
+>   * __wait_for - magic wait macro
+> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
+>  	bool has_audio;
+>  	bool rgb_quant_range_selectable;
+>  	struct intel_connector *attached_connector;
+> +	struct cec_notifier *notifier;
+>  };
+>  
+>  struct intel_dp_mst_encoder;
+> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+> index 1baef4a..9b94d72 100644
+> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+>  		connected = true;
+>  	}
+>  
+> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
+> +
+>  	return connected;
+>  }
+>  
+> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  {
+>  	enum drm_connector_status status;
+>  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
+> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+>  
+>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+>  		      connector->base.id, connector->name);
+> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  
+>  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
+>  
+> +	if (status != connector_status_connected)
+> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
+> +
+>  	return status;
+>  }
+>  
+> @@ -2358,6 +2364,10 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+>  	}
+> +
+> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev, connector->name);
+> +	if (!intel_hdmi->notifier)
+> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
+>  }
+>  
+>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+> 
