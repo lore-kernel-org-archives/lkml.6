@@ -1,64 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeEOFeC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:34:02 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40800 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbeEOFeB (ORCPT
+        id S1752284AbeEOFeM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:34:12 -0400
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:36787 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752241AbeEOFeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:34:01 -0400
-X-Google-Smtp-Source: AB8JxZrWpesFYpjw8bTDosgOYkZfnUrNXfWBfSiQLkbUZTsGCi7F8H9LkDSXfwm8jo6KYCNenyOFww==
-Date: Tue, 15 May 2018 07:33:57 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: add the flag -fno-reorder-blocks-and-partition
-Message-ID: <20180515053357.GA18398@gmail.com>
-References: <alpine.LRH.2.02.1805150121340.30961@file01.intranet.prod.int.rdu2.redhat.com>
+        Tue, 15 May 2018 01:34:10 -0400
+X-Google-Smtp-Source: AB8JxZr5pRPvYwAth9LwRU/rfQPmYwSjJfhPVrsrhJnE1fIW5k+Hb4O+bi5in6ShRm/+/65ANHmBBtNFDsiGaf0tdpQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1805150121340.30961@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180514172508.GC252575@gmail.com>
+References: <20180514030007.GH677@sol.localdomain> <20180514030205.GI677@sol.localdomain>
+ <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com> <20180514172508.GC252575@gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 15 May 2018 07:33:48 +0200
+Message-ID: <CACT4Y+Y9O34yzF=0wj9X6kzW19x8o-0LECcWWTb7KJDo7KYaXA@mail.gmail.com>
+Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: KVM list <kvm@vger.kernel.org>, karahmed@amazon.de,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 14, 2018 at 7:25 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Mon, May 14, 2018 at 07:14:41AM +0200, Dmitry Vyukov wrote:
+>> On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>> > Sorry, messed up address for KVM mailing list.  See message below.
+>> >
+>> > On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
+>> >> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
+>> >> the kernel with no output (I'm testing in a VM, so it's using nested
+>> >> virtualization):
+>> >>
+>> >>       #include <fcntl.h>
+>> >>       #include <linux/kvm.h>
+>> >>       #include <sys/ioctl.h>
+>> >>
+>> >>       int main()
+>> >>       {
+>> >>               int dev, vm, cpu;
+>> >>               char page[4096] __attribute__((aligned(4096))) = { 0 };
+>> >>               struct kvm_userspace_memory_region memreg = {
+>> >>                       .memory_size = 4096,
+>> >>                       .userspace_addr = (unsigned long)page,
+>> >>               };
+>> >>               dev = open("/dev/kvm", O_RDONLY);
+>> >>               vm = ioctl(dev, KVM_CREATE_VM, 0);
+>> >>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
+>> >>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
+>> >>               ioctl(cpu, KVM_RUN, 0);
+>> >>       }
+>> >>
+>> >> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
+>> >> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
+>> >> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
+>> >> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
+>> >> crash somehow.  The following patch fixes it, though I don't know that it's the
+>> >> right solution; maybe KCOV should be disabled in the function instead, or maybe
+>> >> there's a more fundamental problem.  What do people think?
+>>
+>>
+>> If __sanitizer_cov_trace_pc() crashes, I would expect there must be
+>> few more of them here:
+>>
+>> if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+>>     svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+>>
+>> if (svm->spec_ctrl)
+>>     native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+>>
+>> Compiler inserts these callbacks into every basic block/edge.. Aren't there?
+>>
+>> Unfortunately we don't have an attribute that disables instrumentation
+>> of a single function. This is currently possible only on file level.
+>>
+>
+> Yes, due to the code dealing with MSR_IA32_SPEC_CTRL, there were several calls
+> to __sanitizer_cov_trace_pc() before the write to MSR_GS_BASE.  The patch I
+> tested moves the write to MSR_GS_BASE to before all of them, so it's once again
+> the first thing after the asm block.  Again I'm not sure it's the proper
+> solution, but it did make it stop crashing.
 
-* Mikulas Patocka <mpatocka@redhat.com> wrote:
+>From KCOV perspective:
+This is definitely the simplest and less intrusive solution.
+It's somewhat unreliable. But it's hard to tell if/when it will
+actually break in practice. Compiler can decide to insert the callback
+after asm block, or a branch can be added to wrmsrl (e.g. under some
+debug config). More reliable solution would be to restore registers in
+asm block itself, or move this to a separate file and disable
+instrumentation of that file (though, will not save from non-inlined
+wrmsrl). But again, the proposed solution may work well for the next
+10 years, so additional complexity may not worth it.
 
-> GCC 8 turns on -freorder-blocks-and-partition by default, the ORC unwinder 
-> can't deal with it and it results in a lot of warnings "sibling call from 
-> callable instruction with modified stack frame". This patch adds the 
-> -fno-reorder-blocks-and-partition option to KBUILD_CFLAGS.
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Cc: stable@vger.kernel.org
-> 
-> ---
->  arch/x86/Makefile |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> Index: linux-2.6/arch/x86/Makefile
-> ===================================================================
-> --- linux-2.6.orig/arch/x86/Makefile	2018-05-15 07:19:40.000000000 +0200
-> +++ linux-2.6/arch/x86/Makefile	2018-05-15 07:19:40.000000000 +0200
-> @@ -59,6 +59,7 @@ endif
->  #
->  KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
->  KBUILD_CFLAGS += $(call cc-option,-mno-avx,)
-> +KBUILD_CFLAGS += $(call cc-option,-fno-reorder-blocks-and-partition,)
-
-Could you check whether the latest objtool fixes in -tip:
-
-  git git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git master
-
-solves those warnings?
-
-Thanks,
-
-	Ingo
+Btw, I don't see anything about fs/gs in vmx_vcpu_run. Is it VMLAUNCH
+that saves/restores them?
