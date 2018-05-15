@@ -1,56 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752433AbeEOQAG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:00:06 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47246 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeEOQAF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:00:05 -0400
-X-Google-Smtp-Source: AB8JxZpfqL14g1LI0GPO6KcIoDPGIlo78IU4Xegh5BlfvBcEflX3SAP9P7AOEKvY6OI0QsLK7s/lgD+FcjscBLndY3c=
+        id S1753364AbeEOQBM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:01:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34200 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752506AbeEOQBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:01:08 -0400
+Date: Tue, 15 May 2018 18:01:04 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH RFC 1/2] vfio-ccw: forward halt/clear to device if
+ supported
+Message-ID: <20180515180104.646cba0c.cohuck@redhat.com>
+In-Reply-To: <d2030a0c-6ab6-a470-f7d7-0926a7ff2b28@linux.ibm.com>
+References: <20180509154910.23578-1-cohuck@redhat.com>
+        <20180509154910.23578-2-cohuck@redhat.com>
+        <d2030a0c-6ab6-a470-f7d7-0926a7ff2b28@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <20180510115356.31164-1-pasha.tatashin@oracle.com>
- <20180510123039.GF5325@dhcp22.suse.cz> <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
- <20180515091036.GC12670@dhcp22.suse.cz> <CAGM2reaQusBA-nmQ5xqH4u-EVxgJCnaHAZs=1AXFOpNWTh7VbQ@mail.gmail.com>
- <20180515125541.GH12670@dhcp22.suse.cz>
-In-Reply-To: <20180515125541.GH12670@dhcp22.suse.cz>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Tue, 15 May 2018 11:59:25 -0400
-X-Gmail-Original-Message-ID: <CAGM2reYGFjG38FW0nEf1gwRMfDyVQ7QCGZ83VewxXgedeT=Zsg@mail.gmail.com>
-Message-ID: <CAGM2reYGFjG38FW0nEf1gwRMfDyVQ7QCGZ83VewxXgedeT=Zsg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
-To: mhocko@kernel.org
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=528
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150161
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This will always be a maze as the early boot tends to be. Sad but true.
-> That is why I am not really convinced we should use a large hammer and
-> disallow deferred page initialization just because UP implementation of
-> pcp does something too early. We should instead rule that one odd case.
-> Your patch simply doesn't rule a large class of potential issues. It
-> just rules out a potentially useful feature for an odd case. See my
-> point?
+On Fri, 11 May 2018 11:53:52 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-Hi Michal,
+> On 09/05/2018 17:49, Cornelia Huck wrote:
+> > The initial version of vfio-ccw did not support forwarding of the
+> > halt or clear functions to the device, and we had to emulate them
+> > instead.
+> >
+> > For versions of the vfio-ccw kernel implementation that indeed do
+> > support halt/clear (by indicating them in the fctl of the scsw in
+> > the io_region), we can simply start making use of it. If the kernel
+> > does not support handling halt/clear, fall back to emulation.
+> >
+> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> > ---
+> >   hw/s390x/css.c         | 32 ++++++++++++++++++++++++++++----
+> >   hw/vfio/ccw.c          | 11 +++++++++--
+> >   include/hw/s390x/css.h | 10 +++++++---
+> >   3 files changed, 44 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/hw/s390x/css.c b/hw/s390x/css.c
+> > index 301bf1772f..b6727d0607 100644
+> > --- a/hw/s390x/css.c
+> > +++ b/hw/s390x/css.c
+> > @@ -1180,6 +1180,16 @@ static void sch_handle_start_func_virtual(SubchDev *sch)
+> >   
+> >   }
+> >   
+> > +static IOInstEnding sch_handle_clear_func_passthrough(SubchDev *sch)
+> > +{
+> > +    return s390_ccw_cmd_request(sch);
+> > +}
+> > +
+> > +static IOInstEnding sch_handle_halt_func_passthrough(SubchDev *sch)
+> > +{
+> > +    return s390_ccw_cmd_request(sch);
+> > +}
+> > +
+> >   static IOInstEnding sch_handle_start_func_passthrough(SubchDev *sch)
+> >   {
+> >   
+> > @@ -1233,13 +1243,27 @@ IOInstEnding do_subchannel_work_virtual(SubchDev *sch)
+> >   IOInstEnding do_subchannel_work_passthrough(SubchDev *sch)
+> >   {
+> >       SCSW *s = &sch->curr_status.scsw;
+> > +    static bool no_halt_clear;
+> >   
+> > +    /* if the kernel does not support halt/clear, fall back to emulation */
+> >       if (s->ctrl & SCSW_FCTL_CLEAR_FUNC) {
+> > -        /* TODO: Clear handling */
+> > -        sch_handle_clear_func(sch);
+> > +        if (no_halt_clear) {
+> > +            sch_handle_clear_func(sch);
+> > +        } else {
+> > +            if (sch_handle_clear_func_passthrough(sch) == IOINST_OPNOTSUPP) {
+> > +                no_halt_clear = true;
+> > +                sch_handle_halt_func(sch);
+> > +            }
+> > +        }
+> >       } else if (s->ctrl & SCSW_FCTL_HALT_FUNC) {
+> > -        /* TODO: Halt handling */
+> > -        sch_handle_halt_func(sch);
+> > +        if (no_halt_clear) {
+> > +            sch_handle_halt_func(sch);
+> > +        } else {
+> > +            if (sch_handle_halt_func_passthrough(sch) == IOINST_OPNOTSUPP) {
+> > +                no_halt_clear = true;
+> > +                sch_handle_halt_func(sch);
+> > +            }
+> > +        }
+> >       } else if (s->ctrl & SCSW_FCTL_START_FUNC) {
+> >           return sch_handle_start_func_passthrough(sch);
+> >       }
+> > diff --git a/hw/vfio/ccw.c b/hw/vfio/ccw.c
+> > index e67392c5f9..247901ae41 100644
+> > --- a/hw/vfio/ccw.c
+> > +++ b/hw/vfio/ccw.c
+> > @@ -60,6 +60,7 @@ static IOInstEnding vfio_ccw_handle_request(SubchDev *sch)
+> >   
+> >       memset(region, 0, sizeof(*region));
+> >   
+> > +    /* orb is only valid for ssch, but does not hurt for other functions */
+> >       memcpy(region->orb_area, &sch->orb, sizeof(ORB));
+> >       memcpy(region->scsw_area, &sch->curr_status.scsw, sizeof(SCSW));
+> >   
+> > @@ -70,8 +71,12 @@ again:
+> >           if (errno == EAGAIN) {
+> >               goto again;
+> >           }
+> > -        error_report("vfio-ccw: wirte I/O region failed with errno=%d", errno);
+> > -        ret = -errno;
+> > +        /* handle not supported operations like halt/clear on older kernels */
+> > +        if (ret != -EOPNOTSUPP) {
+> > +            error_report("vfio-ccw: write I/O region failed with errno=%d",
+> > +                         errno);
+> > +            ret = -errno;
+> > +        }
+> >       } else {
+> >           ret = region->ret_code;
+> >       }
+> > @@ -83,6 +88,8 @@ again:
+> >       case -ENODEV:
+> >       case -EACCES:
+> >           return IOINST_CC_NOT_OPERATIONAL;
+> > +    case -EOPNOTSUPP:
+> > +        return IOINST_OPNOTSUPP;
+> >       case -EFAULT:
+> >       default:
+> >           sch_gen_unit_exception(sch);
+> > diff --git a/include/hw/s390x/css.h b/include/hw/s390x/css.h
+> > index 35facb47d2..e33f26882b 100644
+> > --- a/include/hw/s390x/css.h
+> > +++ b/include/hw/s390x/css.h
+> > @@ -100,9 +100,11 @@ typedef struct CcwDataStream {
+> >   } CcwDataStream;
+> >   
+> >   /*
+> > - * IO instructions conclude according to this. Currently we have only
+> > - * cc codes. Valid values are 0, 1, 2, 3 and the generic semantic for
+> > + * IO instructions conclude according to this. One class of values are
+> > + * cc codes: Valid values are 0, 1, 2, 3 and the generic semantic for
+> >    * IO instructions is described briefly. For more details consult the PoP.
+> > + * Additionally, other endings may occur due to internal processing errors
+> > + * like lack of support for an operation.
+> >    */
+> >   typedef enum IOInstEnding {
+> >       /* produced expected result */
+> > @@ -112,7 +114,9 @@ typedef enum IOInstEnding {
+> >       /* inst. ineffective because busy with previously initiated function */
+> >       IOINST_CC_BUSY = 2,
+> >       /* inst. ineffective because not operational */
+> > -    IOINST_CC_NOT_OPERATIONAL = 3
+> > +    IOINST_CC_NOT_OPERATIONAL = 3,
+> > +    /* internal: operation not supported */
+> > +    IOINST_OPNOTSUPP = 4
+> >   } IOInstEnding;
+> >   
+> >   typedef struct SubchDev SubchDev;  
+> 
+> 
+> Couldn't we introduce ABI versioning ?
 
-OK, I will send an updated patch with disabling deferred pages only whe
-NEED_PER_CPU_KM. Hopefully, we won't see similar issues in other places.
+Can you elaborate what you're referring to?
 
-Thank you,
-Pavel
+If you mean checking capabilities of the kernel or so: If we can avoid
+that and just try (and stop if it does not work), I'd prefer that (no
+dependencies).
+
+The IOINST_OPNOTSUPP is a bit ugly, but I did not see a more elegant
+way to pass 'not supported' up to the caller.
