@@ -1,32 +1,32 @@
 Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZqZMhBYrEwI5moCUQ+QM5dSBPvyD6LKFeRgsEmaUhqTdaSd/0rGfPytSg7GFmb4DMAe3a7V
-ARC-Seal: i=1; a=rsa-sha256; t=1526353607; cv=none;
+X-Google-Smtp-Source: AB8JxZpxlEKW6BVaSijUOLiBAtJUXQZaEMqNb7z0dXjLNbV0LnNAXhRbmoS7iptpliWxewR/9qDH
+ARC-Seal: i=1; a=rsa-sha256; t=1526353614; cv=none;
         d=google.com; s=arc-20160816;
-        b=y5VuzzwuQw5+raM2e+0BvofsWSP9Iz8YXXUuntb4IG7f7O9ZIFDjcZ32JFkEWH3Y1G
-         cQwX8lwV0FXTs5s4WRGVKT/t+GnL7bRcTmKYyig5E4nqVIzcjtAtwF/sQvBz8C9ekJ19
-         9adnLDKeeZ4t8xu1Qgtq653bnz+ROZp3fgwNpuxnp+Fg8HUmx659zmcMAOAFeY02mZKT
-         zgmlQGiX+/8sLHw4F0IWod3gIJphcRWb/L3MKVNJtoc+UZGPDqLUdWCMT6blDS0QTnfQ
-         qXbLfdRErf9GajjHr6T9Uu5zPoSFG/+RV9PZ6JkhxoXs0F58O5QVCZA61vwmH9mS0W8K
-         q61g==
+        b=hmI+BuyB+eLEStxnwK7EjJ+fa0jmGdFJuuGXQodsZKZL2ixG9/wQsUUN/ayPqrvQLz
+         mK2dXtom0vK/yx0VquOZ1co/l2MQfsiqxEu1FYy7bPXQ+cr7RHeBKDQCKb0Bi61weaML
+         aJhXVh0pd0QZckjZBlaXZATq8M/CMKdnn4zR7p59Qq8yWc4oUl409lSTjJXUjvjxmxwl
+         f4dqdiWYJTklXioWJ3FuO+Sn4WdJkDTc1C4fqvo5NClkC7tvC9edgBJTZ9vj9eBQ/T/4
+         Wp6GRDOegNyF+8yLgiSj/VKO4jZ+cuz4zhE918agI2S9DNt9EioBBEpls+h0DVJRNLaX
+         ICzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=aOPAFLcbNrUfBMokknoWWZh6F1XVl0e/zgtOw7uagaM=;
-        b=MpWIj26pA5sfnP3LE4ROxdoAHksvqgFNba8w+bIq9gJJHK+gmQ8FkNijBkTWWsUggo
-         W5n9yslHQ0IocilIx03nA/uD8RXBkkG2tcUye0fZsWMrp598EXW0R2kMWycWOVhXfqRT
-         0wj6M2+XmMCMgqV4Yc99/O65LHqIcyVbLmnVESRbtCHCBHhT9TfEFlxtkv86ZoA31e8+
-         0OODnp17OfFmuHfpmjG/iwCuaYzPqMRLShat0JrmSZ1bfi2fhKXVNIOPBuvWIh/DkTUh
-         fGsSzxtr3YbyW4RKKcb42GidUu/nO680TU0dvjSwt6gu1z8YBAic/GUc3ODtD/LVEsEy
-         gq4A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=7IQP43I/gdy9VxE7EP6kgOd9q6qvbzSeEwUDWNx0GyA=;
+        b=FqjfvfXcDoyk+/MOr0seViM5RDVMU7ozhqmTzH9CHjBKnT24pjxM9IciM0cKQJqRML
+         omJuz7ih/A342davYlxJdyJZ9BV6D7hYN1maUbOu22g4FDVMb24KCkaA2ZUn/VCBd/Ko
+         E1GuiCMTli5pyCS38H+IdrYu82sJVcsnknjzhSQPHZOgEFSVazoJmmRlNeDRdN9ErDwk
+         mZt0jnYz8ZXtFZEGytg1BiApVLwJ3Cujpf2ueuPgRHv5VProvz8+hlXMNl+WLilFHzOy
+         jgH2/UjG4tkagezhvIngXRDrPwNfS7OUrPBDX3D+qeVdi5bNU/zOYGfCduYTiAtSlBu7
+         sadQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=GuIjjn/q;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=WUjJlGXa;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=aoG3mIV7;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Pq3f585y;
        spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=GuIjjn/q;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=WUjJlGXa;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=aoG3mIV7;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Pq3f585y;
        spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:xU76Wp6ra9X0plb8vECtOAfLBJEipwDX9nlWlOnxWqCEtk_cvxHA4A>
+X-ME-Sender: <xms:zU76WvO3W9KyI0MKEOm7_QKRehJvRCCO7SkssbgKtqGJDK0X_dAWkQ>
 From: "Tobin C. Harding" <me@tobin.cc>
 To: "Theodore Ts'o" <tytso@mit.edu>
 Cc: "Tobin C. Harding" <me@tobin.cc>,
@@ -39,59 +39,88 @@ Cc: "Tobin C. Harding" <me@tobin.cc>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] enable early printing of hashed pointers
-Date: Tue, 15 May 2018 13:06:23 +1000
-Message-Id: <1526353586-30092-1-git-send-email-me@tobin.cc>
+Subject: [PATCH v4 2/3] random: Return nbytes filled from hw RNG
+Date: Tue, 15 May 2018 13:06:25 +1000
+Message-Id: <1526353586-30092-3-git-send-email-me@tobin.cc>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526353586-30092-1-git-send-email-me@tobin.cc>
+References: <1526353586-30092-1-git-send-email-me@tobin.cc>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600497759818184768?=
-X-GMAIL-MSGID: =?utf-8?q?1600497759818184768?=
+X-GMAIL-THRID: =?utf-8?q?1600497767242955587?=
+X-GMAIL-MSGID: =?utf-8?q?1600497767242955587?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently if an attempt is made to print a pointer before there is
-enough entropy then '(____ptrval____)' is printed.  This makes debugging
-stack traces during early boot difficult.
+Currently the function get_random_bytes_arch() has return value 'void'.
+If the hw RNG fails we currently fall back to using get_random_bytes().
+This defeats the purpose of requesting random material from the hw RNG
+in the first place.
 
-One partial solution to this problem is to use the hw RNG if it is
-available.
+There are currently no intree users of get_random_bytes_arch().
 
-This version drops the final patch from the series to facilitate 
-merge via Ted's tree.
+Only get random bytes from the hw RNG, make function return the number
+of bytes retrieved from the hw RNG.
 
-Ted are you able to take these patches please?
-
-Patch 1 - Whitespace fixes.
-Patch 2 - Fix get_random_bytes_arch()
-Patch 3 - Use hw RNG for pointer hashing if available (by default).
-
-
-thanks,
-Tobin.
-
-v3 -> v4
- - remove last patch of series (command line option patch)
-
-v2 -> v3
- - Add __ro_after_init (suggested by Kees).
-
-v1 -> v2
- - Use min_t() instead of min() (thanks checkpatch).
- - Add __must_check to function declaration (thanks Steve).
- - Use hw RNG by default if available (as originally suggested by Kees).
- - Add command line option to use cryptographically insecure hashing.
-   If debug_early_boot is enabled use hash_long() instead of siphash
-   (as requested by Steve, and solves original problem for Anna-Maria).
-
-Tobin C. Harding (3):
-  random: Fix whitespace pre random-bytes work
-  random: Return nbytes filled from hw RNG
-  vsprintf: Use hw RNG for ptr_key
-
- drivers/char/random.c  | 19 ++++++++++---------
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ drivers/char/random.c  | 16 +++++++++-------
  include/linux/random.h |  2 +-
- lib/vsprintf.c         | 19 ++++++++++++++++---
- 3 files changed, 27 insertions(+), 13 deletions(-)
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 031d18b31e0f..4b0ec597e783 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1725,26 +1725,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
+  * key known by the NSA).  So it's useful if we need the speed, but
+  * only if we're willing to trust the hardware manufacturer not to
+  * have put in a back door.
++ *
++ * Return number of bytes filled in.
+  */
+-void get_random_bytes_arch(void *buf, int nbytes)
++int __must_check get_random_bytes_arch(void *buf, int nbytes)
+ {
+ 	char *p = buf;
++	int left = nbytes;
+ 
+-	trace_get_random_bytes_arch(nbytes, _RET_IP_);
+-	while (nbytes) {
++	trace_get_random_bytes_arch(left, _RET_IP_);
++	while (left) {
+ 		unsigned long v;
+-		int chunk = min(nbytes, (int)sizeof(unsigned long));
++		int chunk = min_t(int, left, (int)sizeof(unsigned long));
+ 
+ 		if (!arch_get_random_long(&v))
+ 			break;
+ 
+ 		memcpy(p, &v, chunk);
+ 		p += chunk;
+-		nbytes -= chunk;
++		left -= chunk;
+ 	}
+ 
+-	if (nbytes)
+-		get_random_bytes(p, nbytes);
++	return nbytes - left;
+ }
+ EXPORT_SYMBOL(get_random_bytes_arch);
+ 
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 2ddf13b4281e..f1c9bc5cd231 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -38,7 +38,7 @@ extern void get_random_bytes(void *buf, int nbytes);
+ extern int wait_for_random_bytes(void);
+ extern int add_random_ready_callback(struct random_ready_callback *rdy);
+ extern void del_random_ready_callback(struct random_ready_callback *rdy);
+-extern void get_random_bytes_arch(void *buf, int nbytes);
++extern int __must_check get_random_bytes_arch(void *buf, int nbytes);
+ 
+ #ifndef MODULE
+ extern const struct file_operations random_fops, urandom_fops;
 -- 
 2.7.4
