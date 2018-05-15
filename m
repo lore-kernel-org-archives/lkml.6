@@ -1,61 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeEOVnm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:43:42 -0400
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:40214 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752383AbeEOVnl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:43:41 -0400
-X-Google-Smtp-Source: AB8JxZptKNEo6kFFscACuZ5Dndgeoe/1ZNK1I6q7Il38EfmSUxfD+4bYwcLrH5hhXmcWgh6K5WbIJg==
-Date: Wed, 16 May 2018 00:43:37 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: "Anvin, H Peter" <h.peter.anvin@intel.com>
-Cc: "Ye, Xiaolong" <xiaolong.ye@intel.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        "tipbuild@zytor.com" <tipbuild@zytor.com>, "lkp@01.org" <lkp@01.org>
-Subject: Re: [lkp-robot] [x86/asm]  51bad67ffb: int3:#[##]
-Message-ID: <20180515214337.GA18021@avx2>
-References: <20180515080033.GA7714@yexl-desktop>
- <20180515210757.GA12225@avx2>
- <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
+        id S1751847AbeEOVsi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:48:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751149AbeEOVsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:48:37 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+Message-ID: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Date: Tue, 15 May 2018 14:48:36 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FLmkhR029012
 
-On Tue, May 15, 2018 at 09:25:53PM +0000, Anvin, H Peter wrote:
-> Why is that a problem?
-> Code: 00 00 00 eb e6 cc cc cc cc cc cc cc cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 5d e8 8f ff 8b 44 24 34 83 e0 03 83 f8 03 72 28 cc &lt;cc&gt; cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 3d e8 8f ff 89 e0
+Quoting Alexandre Torgue (2018-05-14 05:45:57)
 > 
-> EIP: ret_from_intr+0xd/0x14 SS:ESP: 0068:8603bfb4
 > 
-> INT3 slipped through M586 =&gt; X86_ALIGNMENT_16 :-\
+> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
+> > Quoting Alexandre Torgue (2018-05-04 00:54:16)
+> >> Stephen
+> >>
+> >> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+> >>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >>>
+> >>> Clock driver is mandatory if the machine is selected.
+> >>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+> >>> with the machine(s).
+> >>>
+> >>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+> >>>
+> >>
+> >> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+> > 
+> > Thanks for the bump. I missed this one. Of course, the user can still select
+> > the configs now, just it's annoying for upgrade path.
+> > 
+> >>
+> >>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> >>> ---
+> >>>    drivers/clk/Kconfig | 6 ++----
+> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> >>> index 24a5bc3..721572a 100644
+> >>> --- a/drivers/clk/Kconfig
+> >>> +++ b/drivers/clk/Kconfig
+> >>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+> >>>          Support for stm32mp157 SoC family clocks
+> >>>    
+> >>>    config COMMON_CLK_STM32F
+> >>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> >>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> >>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+> > 
+> > But the point of the change this patch is fixing was to expose these to
+> > the user to turn off they wanted. You'll need to do something like that
+> > again here, instead of removing the prompt and replacing it with a
+> > def_bool.
+> > 
+> 
+> Sorry I don't understand. Clock driver is mandatory to boot each 
+> platform and depends on machine type. Do you see a use case where we 
+> could need to disable the clock driver? (it would impose to change 
+> devicetree to use fixed clocks and to have a booloader which configures 
+> all PLL and clocks).
 
-I could make the patch x86_64 only, but!
-
-It crashed into the middle of the padding.
-
-796ef8fc <ret_from_intr>:
-796ef8fc:       8b 44 24 34             mov    eax,DWORD PTR [esp+0x34]
-796ef900:       83 e0 03                and    eax,0x3
-796ef903:       83 f8 03                cmp    eax,0x3
-796ef906:       72 28                   jb     796ef930 <resume_kernel>
-796ef908:       cc                      int3
-796ef909:       cc       <========>     int3
-796ef90a:       cc                      int3
-796ef90b:       cc                      int3
-796ef90c:       cc                      int3
-796ef90d:       cc                      int3
-796ef90e:       cc                      int3
-796ef90f:       cc                      int3
+No. My understanding of the patch that introduced the options was to
+allow the user to disable these drivers if they wanted to. I'm just
+reiterating the spirit of that patch. That must be wrong?
