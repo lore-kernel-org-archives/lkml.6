@@ -1,49 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753722AbeEOPBk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:01:40 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:40349 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753332AbeEOPBh (ORCPT
+        id S1752599AbeEOPCQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:02:16 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:48054 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752024AbeEOPCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:01:37 -0400
-X-Google-Smtp-Source: AB8JxZotYJupl+jgI7dXgq/rFr7s05ZzCGJs4UMcgIslu1VAx0dzw+cYsvK0l1XyC/me22R8+VYPruO3tiOpRhonJM4=
+        Tue, 15 May 2018 11:02:12 -0400
+Date: Tue, 15 May 2018 08:02:05 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stewart@linux.vnet.ibm.com
+Subject: Re: [PATCH 0/3] Add support to disable sensor groups in P9
+Message-ID: <20180515150205.GA29321@roeck-us.net>
+References: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <117ed9198ff46889d3e66a0d501fb574e60544ed.camel@redhat.com>
-References: <cover.1525878372.git.joe@perches.com> <51c5082a4add7520b4fac54e58ca26a8156bf5e8.1525878372.git.joe@perches.com>
- <117ed9198ff46889d3e66a0d501fb574e60544ed.camel@redhat.com>
-From: Selvin Xavier <selvin.xavier@broadcom.com>
-Date: Tue, 15 May 2018 20:31:15 +0530
-Message-ID: <CA+sbYW19fDrSnRiGt8JEhC6OUpziYJtXT3wUe6qENbTXnDVo+Q@mail.gmail.com>
-Subject: Re: [PATCH 6/6] infiniband: qplib_fp: Use dev_fmt
-To: Doug Ledford <dledford@redhat.com>
-Cc: Joe Perches <joe@perches.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        x86@kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 8:10 PM, Doug Ledford <dledford@redhat.com> wrote:
-> On Wed, 2018-05-09 at 08:15 -0700, Joe Perches wrote:
->> Convert the embedded dev_<level> uses to use the new dev_fmt
->> prefix and remove the prefix from the formats.
->>
->> Miscellanea:
->>
->> o Add missing terminating newlines to avoid possible interleaving
->> o Realign arguments
->>
->> Signed-off-by: Joe Perches <joe@perches.com>
->
-> I don't see any problem with this patch.  For the IB part:
->
-> Acked-by: Doug Ledford <dledford@redhat.com>
->
->
-Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+On Thu, Mar 22, 2018 at 04:24:32PM +0530, Shilpasri G Bhat wrote:
+> This patch series adds support to enable/disable OCC based
+> inband-sensor groups at runtime. The environmental sensor groups are
+> managed in HWMON and the remaining platform specific sensor groups are
+> managed in /sys/firmware/opal.
+> 
+> The firmware changes required for this patch is posted below:
+> https://lists.ozlabs.org/pipermail/skiboot/2018-March/010812.html
+> 
+
+Sorry for not getting back earlier. This is a tough one.
+
+Key problem is that you are changing the ABI with those new attributes.
+On top of that, the attributes _do_ make some sense (many chips support
+enabling/disabling of individual sensors), suggesting that those or
+similar attributes may or even should at some point be added to the ABI.
+
+At the same time, returning "0" as measurement values when sensors are
+disabled does not seem like a good idea, since "0" is a perfectly valid
+measurement, at least for most sensors.
+
+Given that, we need to have a discussion about adding _enable attributes to
+the ABI (what is the scope, when should the attributes exist and when not,
+do we want/need power_enable or powerX_enable or both, and so on), and what
+to return if a sensor is disabled (such as -ENODATA). Once we have an
+agreement, we can continue with an implementation.
+
+Guenter
+
+> Shilpasri G Bhat (3):
+>   powernv:opal-sensor-groups: Add support to enable sensor groups
+>   hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
+>   powernv: opal-sensor-groups: Add attributes to disable/enable sensors
+> 
+>  .../ABI/testing/sysfs-firmware-opal-sensor-groups  |  34 ++++++
+>  Documentation/hwmon/ibmpowernv                     |  31 ++++-
+>  arch/powerpc/include/asm/opal-api.h                |   4 +-
+>  arch/powerpc/include/asm/opal.h                    |   2 +
+>  .../powerpc/platforms/powernv/opal-sensor-groups.c | 104 ++++++++++++-----
+>  arch/powerpc/platforms/powernv/opal-wrappers.S     |   1 +
+>  drivers/hwmon/ibmpowernv.c                         | 127 +++++++++++++++++++--
+>  7 files changed, 265 insertions(+), 38 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
+> 
+> -- 
+> 1.8.3.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
