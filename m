@@ -1,82 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754442AbeEORSO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:18:14 -0400
-Received: from muru.com ([72.249.23.125]:42190 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753542AbeEORSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:18:12 -0400
-Date: Tue, 15 May 2018 10:18:08 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-Message-ID: <20180515171808.GR98604@atomide.com>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
- <20180501152615.GB98604@atomide.com>
- <b4d95a08-82fd-9f39-53e7-977351788c88@ti.com>
- <20180515171459.GP98604@atomide.com>
+        id S1754433AbeEORTo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:19:44 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:37346 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754235AbeEORTm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:19:42 -0400
+X-Google-Smtp-Source: AB8JxZptVMk5vyCpTANhmUnCgV7kq9RH029dU613T3WtzHXvMsFt2hpwp7xrzbOQ7lQvsvIoILR0qvE8HV/nZ5sem4I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515171459.GP98604@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180501003907.4322-3-ahs3@redhat.com>
+References: <20180501003907.4322-1-ahs3@redhat.com> <20180501003907.4322-3-ahs3@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 May 2018 19:19:41 +0200
+X-Google-Sender-Auth: 1fk48B1LtAFEEiHvrPjZwMwX_jk
+Message-ID: <CAJZ5v0j2qnB-CohTzdFzd1mgp0QAphxgTkXa9wVivh02JYnACA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ACPI: ensure acpi_parse_entries_array() does not
+ access non-existent table data
+To: Al Stone <ahs3@redhat.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180515 17:17]:
-> * Faiz Abbas <faiz_abbas@ti.com> [180515 06:05]:
-> > Hi Tony,
-> > 
-> > On Tuesday 01 May 2018 08:56 PM, Tony Lindgren wrote:
-> > > Hi,
-> > > 
-> > > * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
-> > >> From: Lokesh Vutla <lokeshvutla@ti.com>
-> > >>
-> > >> Add MCAN hwmod data and register it for dra762 silicons.
-> > >>
-> > >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> > >> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> > >> ---
-> > >>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
-> > >>  1 file changed, 32 insertions(+)
-> > >>
-> > >> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > >> index 62352d1..a2cd7f8 100644
-> > >> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > >> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> > >> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
-> > >>  };
-> > >>  
-> > >>  /*
-> > >> + * 'mcan' class
-> > >> + *
-> > >> + */
-> > >> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
-> > >> +	.name	= "mcan",
-> > >> +};
-> > > 
-> > > Looks like you're missing the related struct omap_hwmod_class_sysconfig
-> > > entry for this with the rev and sysconfig registers.
-> > > 
-> > 
-> > Sorry, I missed this email earlier. The MCAN module doesn't have
-> > sysconfig registers.
-> 
-> If there's no sysconfig register you should have no need for adding
-> anything to omap_hwmod_7xx_data.c. We now have the dts clkctrl
-> clocks, you can just add that to the dts node for the device.
+On Tue, May 1, 2018 at 2:39 AM, Al Stone <ahs3@redhat.com> wrote:
+> For ACPI tables that have subtables, acpi_parse_entries_array() gets used
+> to step through each of the subtables in memory.  The primary loop for this
+> was checking that the beginning location of the subtable being examined
+> plus the length of struct acpi_subtable_header was not beyond the end of
+> the complete ACPI table; if it wasn't, the subtable could be examined, but
+> if it was the loop would terminate as it should.
+>
+> In the middle of this subtable loop, a callback is used to examine the
+> subtable in detail.
+>
+> Should the callback function try to examine elements of the subtable that
+> are located past the subtable header, and the ACPI table containing this
+> subtable has an incorrect length, it is possible to access either invalid
+> or protected memory and cause a fault.  And, the length of struct
+> acpi_subtable_header will always be smaller than the length of the actual
+> subtable.
+>
+> To fix this, we make the main loop check that the beginning of the
+> subtable being examined plus the actual length of the subtable does
+> not go past the end of the enclosing ACPI table.  While this cannot
+> protect us from malicious callback functions, it can prevent us from
+> failing because of some poorly constructed ACPI tables.
+>
+> Found by inspection.  There is no functional change to existing code
+> that is known to work when calling acpi_parse_entries_array().
+>
+> Signed-off-by: Al Stone <ahs3@redhat.com>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> ---
+>  drivers/acpi/tables.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> index 4a3410aa6540..82c3e2c52dd9 100644
+> --- a/drivers/acpi/tables.c
+> +++ b/drivers/acpi/tables.c
+> @@ -274,8 +274,7 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
+>         entry = (struct acpi_subtable_header *)
+>             ((unsigned long)table_header + table_size);
+>
+> -       while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) <
+> -              table_end) {
+> +       while ((unsigned long)entry + entry->length <= table_end) {
+>                 if (max_entries && count >= max_entries)
+>                         break;
+>
+> --
 
-However.. My guess is there is somewhere a top level interconnect
-target module that uses DRA7XX_CM_WKUPAON_ADC_CLKCTRL. And that
-module may have multiple child devices.
+This breaks the CPU enumeration on my Dell XPS13 9360 (possibly among
+other things), so I'm dropping it.  I can send you acpidump output
+from that machine if need be.
 
-Regards,
-
-Tony
+Thanks,
+Rafael
