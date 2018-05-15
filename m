@@ -1,100 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeEOVIC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:08:02 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:37072 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeEOVIA (ORCPT
+        id S1752712AbeEOVIK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:08:10 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:51672 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752500AbeEOVIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:08:00 -0400
-Date: Tue, 15 May 2018 23:07:30 +0200
-From: Emil Goode <emil.fsw@goode.io>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
-Message-ID: <20180515210729.qtokt4zjlrbzdkem@lianli>
-References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
- <20180514084308.GA18312@ulmo>
+        Tue, 15 May 2018 17:08:01 -0400
+X-Google-Smtp-Source: AB8JxZpLL0Iyz13k6hs3K+zenLLnbIdxDMEJgpk5p+lzpkJ9raZ019Adh0Pa08YN0++bfI2Wn6d8ng==
+Date: Wed, 16 May 2018 00:07:57 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <h.peter.anvin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        tipbuild@zytor.com, lkp@01.org
+Subject: Re: [lkp-robot] [x86/asm]  51bad67ffb: int3:#[##]
+Message-ID: <20180515210757.GA12225@avx2>
+References: <20180515080033.GA7714@yexl-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180514084308.GA18312@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180515080033.GA7714@yexl-desktop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, May 15, 2018 at 04:00:33PM +0800, kernel test robot wrote:
 
-On Mon, May 14, 2018 at 10:43:08AM +0200, Thierry Reding wrote:
-> On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
-> > The compiler is complaining with the following errors:
-> > 
-> > drivers/gpu/host1x/cdma.c:94:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > drivers/gpu/host1x/cdma.c:113:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > The expected pointer type of the third argument to dma_alloc_wc() is
-> > dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
-> > expected pointer type.
-> > 
-> > Signed-off-by: Emil Goode <emil.fsw@goode.io>
-> > ---
-> >  drivers/gpu/host1x/cdma.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> > index 28541b280739..5e8b321a751e 100644
-> > --- a/drivers/gpu/host1x/cdma.c
-> > +++ b/drivers/gpu/host1x/cdma.c
-> > @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  
-> >  		size = iova_align(&host1x->iova, size);
-> >  
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  		if (err)
-> >  			goto iommu_free_iova;
-> >  	} else {
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> 
-> This doesn't seem right. There's no guarantee that phys_addr_t and
-> dma_addr_t will be compatible, so the above isn't always correct. Also,
-> I don't see a need for pb->phys to ever be phys_addr_t. It's allocated
-> through dma_alloc_wc() exclusively, so it should just be dma_addr_t.
+> [   11.182501] Code: 00 00 00 eb e6 cc cc cc cc cc cc cc cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 5d e8 8f ff 8b 44 24 34 83 e0 03 83 f8 03 72 28 cc <cc> cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 3d e8 8f ff 89 e0 
+> [   11.184326] EIP: ret_from_intr+0xd/0x14 SS:ESP: 0068:8603bfb4
 
-I agree that this is a better solution, however when changing pb->phys to dma_addr_t
-the type will be wrong when it's passed to iommu_map() as phys_addr_t is expected
-but that doesn't cause a compilation error.
-
-> Note that the !pb->phys check in host1x_pushbuffer_destroy() becomes
-> technically wrong if pb->phys is dma_addr_t (0 is a perfectly valid
-> value for dma_addr_t), so make sure to flip that to !pb->mapped instead.
-> pb->mapped and pb->phys are always set in tandem, and checking mapped
-> for non-NULL is the right check to test whether the pair is valid or
-> not.
-
-Ok I will change this as well.
-
-Best regards,
-
-Emil
+INT3 slipped through M586 => X86_ALIGNMENT_16 :-\
