@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeEOF6o (ORCPT <rfc822;w@1wt.eu>);
+        id S1752503AbeEOGAA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:00:00 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:45001 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeEOF6o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 May 2018 01:58:44 -0400
-Received: from david.siemens.de ([192.35.17.14]:60857 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752130AbeEOF6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:58:41 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH v3 7/8] PCI: Add support for unbinding the generic PCI host controller
-Date: Tue, 15 May 2018 07:58:15 +0200
-Message-Id: <0ddc38e9d589c9560cb6b59d768d880e6541ae47.1526363896.git.jan.kiszka@siemens.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 1/8] PCI: Make pci_get_new_domain_nr() static
+Date: Tue, 15 May 2018 07:58:09 +0200
+Message-Id: <80a86454baa7a240c859d6623a6e498d4003e417.1526363896.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1526363896.git.jan.kiszka@siemens.com>
 References: <cover.1526363896.git.jan.kiszka@siemens.com>
@@ -27,62 +26,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Particularly useful when working in virtual environments where the
-controller may come and go, but possibly not only there.
+The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
+Since they are defined in the same compilation unit,
+pci_get_new_domain_nr() can be made static, which also simplifies
+preprocessor conditionals.
 
-CC: Will Deacon <will.deacon@arm.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+No functional change intended.
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 ---
- drivers/pci/host/pci-host-common.c  | 13 +++++++++++++
- drivers/pci/host/pci-host-generic.c |  1 +
- include/linux/pci-ecam.h            |  1 +
- 3 files changed, 15 insertions(+)
+ drivers/pci/pci.c   | 6 ++----
+ include/linux/pci.h | 3 ---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
-index 5d028f53fdcd..d8f10451f273 100644
---- a/drivers/pci/host/pci-host-common.c
-+++ b/drivers/pci/host/pci-host-common.c
-@@ -101,5 +101,18 @@ int pci_host_common_probe(struct platform_device *pdev,
- 		return ret;
- 	}
- 
-+	platform_set_drvdata(pdev, bridge->bus);
-+	return 0;
-+}
-+
-+int pci_host_common_remove(struct platform_device *pdev)
-+{
-+	struct pci_bus *bus = platform_get_drvdata(pdev);
-+
-+	pci_lock_rescan_remove();
-+	pci_stop_root_bus(bus);
-+	pci_remove_root_bus(bus);
-+	pci_unlock_rescan_remove();
-+
- 	return 0;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index dbfe7c4f3776..fe28cd76eacd 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5719,15 +5719,14 @@ static void pci_no_domains(void)
+ #endif
  }
-diff --git a/drivers/pci/host/pci-host-generic.c b/drivers/pci/host/pci-host-generic.c
-index 45319ee3b484..dea3ec7592a2 100644
---- a/drivers/pci/host/pci-host-generic.c
-+++ b/drivers/pci/host/pci-host-generic.c
-@@ -95,5 +95,6 @@ static struct platform_driver gen_pci_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = gen_pci_probe,
-+	.remove = pci_host_common_remove,
- };
- builtin_platform_driver(gen_pci_driver);
-diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
-index baadad1aabbc..29efa09d686b 100644
---- a/include/linux/pci-ecam.h
-+++ b/include/linux/pci-ecam.h
-@@ -62,5 +62,6 @@ extern struct pci_ecam_ops xgene_v2_pcie_ecam_ops; /* APM X-Gene PCIe v2.x */
- /* for DT-based PCI controllers that support ECAM */
- int pci_host_common_probe(struct platform_device *pdev,
- 			  struct pci_ecam_ops *ops);
-+int pci_host_common_remove(struct platform_device *pdev);
+ 
+-#ifdef CONFIG_PCI_DOMAINS
++#ifdef CONFIG_PCI_DOMAINS_GENERIC
+ static atomic_t __domain_nr = ATOMIC_INIT(-1);
+ 
+-int pci_get_new_domain_nr(void)
++static int pci_get_new_domain_nr(void)
+ {
+ 	return atomic_inc_return(&__domain_nr);
+ }
+ 
+-#ifdef CONFIG_PCI_DOMAINS_GENERIC
+ static int of_pci_bus_find_domain_nr(struct device *parent)
+ {
+ 	static int use_dt_domains = -1;
+@@ -5782,7 +5781,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
+ 			       acpi_pci_bus_find_domain_nr(bus);
+ }
  #endif
- #endif
+-#endif
+ 
+ /**
+  * pci_ext_cfg_avail - can we access extended PCI config space?
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 73178a2fcee0..963232a6cd2e 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
+  */
+ #ifdef CONFIG_PCI_DOMAINS
+ extern int pci_domains_supported;
+-int pci_get_new_domain_nr(void);
+ #else
+ enum { pci_domains_supported = 0 };
+ static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+ static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
+-static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+ #endif /* CONFIG_PCI_DOMAINS */
+ 
+ /*
+@@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
+ 
+ static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+ static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
+-static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+ 
+ #define dev_is_pci(d) (false)
+ #define dev_is_pf(d) (false)
 -- 
 2.13.6
