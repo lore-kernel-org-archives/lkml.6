@@ -1,62 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeEOTpl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 15:45:41 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43430 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeEOTpj (ORCPT
+        id S1752932AbeEOTwL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 15:52:11 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:36177 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeEOTwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 15:45:39 -0400
-Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
-To: Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, davem@davemloft.net,
-        haakon.bugge@oracle.com, yanjun.zhu@oracle.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180511192318.22342-1-qing.huang@oracle.com>
- <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
- <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com>
- <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
- <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com>
- <f71278c2-a111-1bf6-2ff3-d9a8dd46bfbe@gmail.com>
-From: Qing Huang <qing.huang@oracle.com>
-Message-ID: <094279df-93c2-b06e-9f48-11be5cd78b69@oracle.com>
-Date: Tue, 15 May 2018 12:45:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 15:52:05 -0400
+X-Google-Smtp-Source: AB8JxZreFtLafT/52uedPYGY5y873kiNVtzqmcZsRw/dftqSwBbO2IPWdBAdt06mijnX1zrQ/lloZNYLEJCsPFnnLBA=
 MIME-Version: 1.0
-In-Reply-To: <f71278c2-a111-1bf6-2ff3-d9a8dd46bfbe@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=909
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150192
+In-Reply-To: <20180515180309.GC28489@codeaurora.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org> <20180509170159.29682-10-ilina@codeaurora.org>
+ <CAD=FV=Xvi8V43+J9v-mosU5WUDQtabg8gUbrkn6SCoNEYFtjUQ@mail.gmail.com>
+ <20180514195929.GA22950@codeaurora.org> <CAD=FV=U+6N9LqvAh-V5ZKd_QKL9yTe+P9gVkvH4tr-SsUaMwng@mail.gmail.com>
+ <20180515162326.GA28489@codeaurora.org> <CAD=FV=VTG4Y+uHXSR2T8GdRBzZcW4nZ7hExgaC=m3Wsm3KoubQ@mail.gmail.com>
+ <20180515180309.GC28489@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 15 May 2018 12:52:02 -0700
+X-Google-Sender-Auth: yV9bpkeWwX-VMtjb5FS5aDbEpMg
+Message-ID: <CAD=FV=XPhQEk9CWYs4Hd85-Tf8UqMfhV+4YoUzoUzDqys5E-zA@mail.gmail.com>
+Subject: Re: [PATCH v8 09/10] drivers: qcom: rpmh: add support for batch RPMH request
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 5/15/2018 12:08 PM, Eric Dumazet wrote:
->
-> On 05/15/2018 11:53 AM, Qing Huang wrote:
->>> This is control path so it is less latency-sensitive.
->>> Let's not produce unnecessary degradation here, please call kvzalloc so we maintain a similar behavior when contiguous memory is available, and a fallback for resiliency.
->> No sure what exactly degradation is caused by vzalloc here. I think it's better to keep physically contiguous pages
->> to other requests which really need them. Besides slow path/mem compacting can be really expensive.
+On Tue, May 15, 2018 at 11:03 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>>> Also, the bus requests have quite a churn during the course of an
+>>> usecase. They are setup and invalidated often.
+>>> It is faster to have them separate and invalidate the whole lot of the
+>>> batch_cache instead of intertwining them with requests from other
+>>> drivers and then figuring out which all must be invalidated and rebuilt
+>>> when the next batch requests comes in. Remember, that requests may come
+>>> from any driver any time and therefore will be mangled if we use the
+>>> same data structure. So to be faster and to avoid having mangled requests
+>>> in the TCS, I have kept the data structures separate.
 >>
-> Just use kvzalloc(), and you get the benefit of having contiguous memory if available,
-> without expensive compact phase.
->
-> This thing _automatically_ falls back to vmalloc(), thus your problem will be solved.
->
-> If you are not sure, trust others.
+>>
+>> If you need to find a certain group of requests then can't you just
+>> tag them and it's easy to find them?  I'm still not seeing the need
+>> for a whole separate code path and data structure.
+>>
+> Could be done but it will be slower and involve a lot more code than
+> separate data structures.
 
-Thanks for the review. There are many places in kernel and applications 
-where physically contiguous pages are needed.
-We saw quite a few issues when there were not enough contiguous phy mem 
-available. My main concern here is that why
-using physically contiguous pages when they are not really needed?
+When you say "a lot more code", you mean that you'll have to write a
+lot more code or that each request will execute a lot more code?  I
+would argue that very little code would need to be added (compared to
+your patch) if rpmh_write_batch() was implemented atop
+rpmh_write_async().  Even with extra tagging / prioritization it would
+be small.  I could try to prototype it I guess.
+
+I think you mean that it would _execute_ a lot more code and thus be
+slower.  Is that right?  Is your main argument here that statically
+pre-allocating 20 slots in an array is going to be a lot faster than
+kzalloc-ing 20 linked list nodes and chaining them together?  If
+you're truly worried about the kzalloc calls being slow, I suppose you
+could always allocate them with a kmem_cache.  ...but we're talking
+fewer than 20 kzalloc calls, right?
+
+I'll also make an argument (with no data to back me up) that
+maintaining separate functions for handling the batch cases will slow
+down your kernel because your footprint in the icache will be bigger
+and you'll be more likely to kick something else out that actually
+needs to run fast.
+
+
+>>>>>>> +       spin_unlock_irqrestore(&ctrlr->lock, flags);
+>>>>>>> +
+>>>>>>> +       return ret;
+>>>>>>> +}
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> As part of my overall confusion about why the batch cache is different
+>>>>>> than the normal one: for the normal use case you still call
+>>>>>> rpmh_rsc_write_ctrl_data() for things you put in your cache, but you
+>>>>>> don't for the batch cache.  I still haven't totally figured out what
+>>>>>> rpmh_rsc_write_ctrl_data() does, but it seems strange that you don't
+>>>>>> do it for the batch cache but you do for the other one.
+>>>>>>
+>>>>>>
+>>>>> flush_batch does write to the controller using
+>>>>> rpmh_rsc_write_ctrl_data()
+>>>>
+>>>>
+>>>>
+>>>> My confusion is that they happen at different times.  As I understand
+>>>> it:
+>>>>
+>>>> * For the normal case, you immediately calls
+>>>> rpmh_rsc_write_ctrl_data() and then later do the rest of the work.
+>>>>
+>>>> * For the batch case, you call both later.
+>>>>
+>>>> Is there a good reason for this, or is it just an arbitrary
+>>>> difference?  If there's a good reason, it should be documented.
+>>>>
+>>>>
+>>> In both the cases, the requests are cached in the rpmh library and are
+>>> only sent to the controller only when the flushed. I am not sure the
+>>> work is any different. The rpmh_flush() flushes out batch requests and
+>>> then the requests from other drivers.
+>>
+>>
+>> OK then, here are the code paths I see:
+>>
+>> rpmh_write
+>> => __rpmh_write
+>>   => cache_rpm_request()
+>>   => (state != RPMH_ACTIVE_ONLY_STATE): rpmh_rsc_send_data()
+>>
+>> rpmh_write_batch
+>> => (state != RPMH_ACTIVE_ONLY_STATE): cache_batch()
+>>   => No call to rpmh_rsc_send_data()
+>>
+>>
+>> Said another way:
+>>
+>> * if you call rpmh_write() for something you're going to defer you
+>> will still call cache_rpm_request() _before_ rpmh_write() returns.
+>>
+>> * if you call rpmh_write_batch() for something you're going to defer
+>> then you _don't_ call cache_rpm_request() before rpmh_write_batch()
+>> returns.
+>>
+>>
+>> Do you find a fault in my analysis of the current code?  If you see a
+>> fault then please point it out.  If you don't see a fault, please say
+>> why the behaviors are different.  I certainly understand that
+>> eventually you will call cache_rpm_request() for both cases.  It's
+>> just that in one case the call happens right away and the other case
+>> it is deferred.
+>
+> True. I see where your confusion is. It is because of an optimization and
+> our existential need for saving power at every opportunity.
+>
+> For rpmh_write path -
+> The reason being for the disparity is that, we can vote for a system low
+> power mode (modes where we flush the caches and put the entire silicon
+> is a low power state) at any point when all the CPUs are idle. If a
+> driver has updated its vote for a system resource, it needs to be
+> updated in the cache and thats what cache_rpm_request() does. Its
+> possible that we may enter a system low power mode immediately after
+> that. The rpmh_flush() would be called by the idle driver and we would
+> flush the cached values and enter the idle state. By writing immediately
+> to the TCS, we avoid increasing the latency of entering an idle state.
+>
+> For the rpmh_write_batch() path -
+> The Bus driver would invalidate the TCS and the batch_cache. The use
+> case fills up the batch_cache with values as needed by the use case.
+> While during the usecase, the CPUs can go idle and the idle drivers
+> would call rpmh_flush(). At that time, we would write the batch_cache
+> into the already invalidated TCSes and then write the rest of the cached
+> requests from ->cache. We then enter the low power modes.
+>
+> The optimization of writing the sleep/wake votes in the same context of
+> the driver making the request, helps us avoid writing some extra
+> registers in the critical idle path.
+
+I don't think I followed all that, but I'll try to read deeper into
+RPMh.  ...but one question: could the two paths be changed to be the
+same?  AKA would it be bad to call rpmh_rsc_send_data() synchronously
+in rpmh_write_batch()?
+
+If the two cases really need to behave differently then it should be
+documented in the code.
+
+
+-Doug
