@@ -1,215 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeEOURM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 16:17:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60464 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751149AbeEOURK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 16:17:10 -0400
-Subject: [PATCH] vfio/mdev: Check globally for duplicate devices
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kwankhede@nvidia.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com
-Date: Tue, 15 May 2018 14:17:04 -0600
-Message-ID: <20180515195947.12163.49363.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
+        id S1752610AbeEOUSY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 16:18:24 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:40950 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbeEOUSV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 16:18:21 -0400
+X-Google-Smtp-Source: AB8JxZrmd5resHQqMINLdBWuNvolcNqIpwygTPRTXBOZG3LnVy5R+wRMBmdfAtlJm5r/wCZuIhdptJuXa8gpfTSxt+U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180515031612.3k4hzaihrr6rmnhz@madcap2.tricolour.ca>
+References: <20180515130619.2e9e033c@canb.auug.org.au> <20180515031612.3k4hzaihrr6rmnhz@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 15 May 2018 16:18:19 -0400
+Message-ID: <CAHC9VhS02=ectGbx2EFQiZayR=vv9-scrN_mf9whT1KN5NWV8Q@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the audit tree with the selinux tree
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we create an mdev device, we check for duplicates against the
-parent device and return -EEXIST if found, but the mdev device
-namespace is global since we'll link all devices from the bus.  We do
-catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-with it comes a kernel warning and stack trace for trying to create
-duplicate sysfs links, which makes it an undesirable response.
+On Mon, May 14, 2018 at 11:16 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-05-15 13:06, Stephen Rothwell wrote:
+>> Hi Paul,
+>>
+>> Today's linux-next merge of the audit tree got a conflict in:
+>>
+>>   security/selinux/selinuxfs.c
+>>
+>> between commit:
+>>
+>>   4195ed425d3c ("audit: normalize MAC_STATUS record")
+>>
+>> from the selinux tree and commits:
+>>
+>>   cdfb6b341f0f ("audit: use inline function to get audit context")
+>>   d141136f523a ("audit: normalize MAC_POLICY_LOAD record")
+>>
+>> from the audit tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>
+> This was expected...  It looks ok.
 
-Therefore we should really be looking for duplicates across all mdev
-parent devices, or as implemented here, against our mdev device list.
+Agreed.  I had to apply the same patch to my testing kernels.
 
-Notably, mdev_parent.lock really only seems to be serializing device
-creation and removal per parent.  I'm not sure if this is necessary,
-mdev vendor drivers could easily provide this serialization if it
-is required, but a side-effect of holding the mdev_list_lock to
-protect the namespace is actually greater serialization across the
-create and remove paths, so mdev_parent.lock is removed.  If we can
-show that vendor drivers handle the create/remove paths themselves,
-perhaps we can refine the locking granularity.
+>> --
+>> Cheers,
+>> Stephen Rothwell
+>>
+>> diff --cc security/selinux/selinuxfs.c
+>> index c0cadbc5f85c,35fd77737c59..000000000000
+>> --- a/security/selinux/selinuxfs.c
+>> +++ b/security/selinux/selinuxfs.c
+>> @@@ -167,13 -167,11 +167,13 @@@ static ssize_t sel_write_enforce(struc
+>>                                     NULL);
+>>               if (length)
+>>                       goto out;
+>> -             audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> +             audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
+>>  -                    "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+>>  +                    "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>>  +                    " enabled=%d old-enabled=%d lsm=selinux res=1",
+>>                       new_value, old_value,
+>>                       from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>>  -                    audit_get_sessionid(current));
+>>  +                    audit_get_sessionid(current),
+>>  +                    selinux_enabled, selinux_enabled);
+>>               enforcing_set(state, new_value);
+>>               if (new_value)
+>>                       avc_ss_reset(state->avc, 0);
+>> @@@ -303,12 -299,10 +303,12 @@@ static ssize_t sel_write_disable(struc
+>>               length = selinux_disable(fsi->state);
+>>               if (length)
+>>                       goto out;
+>> -             audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> +             audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
+>>  -                    "selinux=0 auid=%u ses=%u",
+>>  +                    "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>>  +                    " enabled=%d old-enabled=%d lsm=selinux res=1",
+>>  +                    enforcing, enforcing,
+>>                       from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>>  -                    audit_get_sessionid(current));
+>>  +                    audit_get_sessionid(current), 0, 1);
+>>       }
+>>
+>>       length = count;
+>> @@@ -581,8 -575,8 +581,8 @@@ static ssize_t sel_write_load(struct fi
+>>       length = count;
+>>
+>>   out1:
+>> -     audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+>> +     audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+>>  -            "policy loaded auid=%u ses=%u",
+>>  +            "auid=%u ses=%u lsm=selinux res=1",
+>>               from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>>               audit_get_sessionid(current));
+>>   out:
+>
+>
+>
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/mdev/mdev_core.c    |   79 ++++++++++----------------------------
- drivers/vfio/mdev/mdev_private.h |    1 
- 2 files changed, 20 insertions(+), 60 deletions(-)
 
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index 126991046eb7..3d8898a2baaf 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *mdev)
- }
- EXPORT_SYMBOL(mdev_uuid);
- 
--static int _find_mdev_device(struct device *dev, void *data)
--{
--	struct mdev_device *mdev;
--
--	if (!dev_is_mdev(dev))
--		return 0;
--
--	mdev = to_mdev_device(dev);
--
--	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
--		return 1;
--
--	return 0;
--}
--
--static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
--{
--	struct device *dev;
--
--	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
--	if (dev) {
--		put_device(dev);
--		return true;
--	}
--
--	return false;
--}
--
- /* Should be called holding parent_list_lock */
- static struct mdev_parent *__find_parent_device(struct device *dev)
- {
-@@ -221,7 +193,6 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- 	}
- 
- 	kref_init(&parent->ref);
--	mutex_init(&parent->lock);
- 
- 	parent->dev = dev;
- 	parent->ops = ops;
-@@ -304,7 +275,7 @@ static void mdev_device_release(struct device *dev)
- int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- {
- 	int ret;
--	struct mdev_device *mdev;
-+	struct mdev_device *mdev, *tmp;
- 	struct mdev_parent *parent;
- 	struct mdev_type *type = to_mdev_type(kobj);
- 
-@@ -312,12 +283,14 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	if (!parent)
- 		return -EINVAL;
- 
--	mutex_lock(&parent->lock);
-+	mutex_lock(&mdev_list_lock);
- 
- 	/* Check for duplicate */
--	if (mdev_device_exist(parent, uuid)) {
--		ret = -EEXIST;
--		goto create_err;
-+	list_for_each_entry(tmp, &mdev_list, next) {
-+		if (!uuid_le_cmp(tmp->uuid, uuid)) {
-+			ret = -EEXIST;
-+			goto create_err;
-+		}
- 	}
- 
- 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-@@ -354,9 +327,6 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	mdev->type_kobj = kobj;
- 	dev_dbg(&mdev->dev, "MDEV: created\n");
- 
--	mutex_unlock(&parent->lock);
--
--	mutex_lock(&mdev_list_lock);
- 	list_add(&mdev->next, &mdev_list);
- 	mutex_unlock(&mdev_list_lock);
- 
-@@ -366,7 +336,7 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	device_unregister(&mdev->dev);
- 
- create_err:
--	mutex_unlock(&parent->lock);
-+	mutex_unlock(&mdev_list_lock);
- 	mdev_put_parent(parent);
- 	return ret;
- }
-@@ -376,12 +346,13 @@ int mdev_device_remove(struct device *dev, bool force_remove)
- 	struct mdev_device *mdev, *tmp;
- 	struct mdev_parent *parent;
- 	struct mdev_type *type;
--	int ret;
-+	int ret = 0;
- 	bool found = false;
- 
- 	mdev = to_mdev_device(dev);
- 
- 	mutex_lock(&mdev_list_lock);
-+
- 	list_for_each_entry(tmp, &mdev_list, next) {
- 		if (tmp == mdev) {
- 			found = true;
-@@ -389,35 +360,25 @@ int mdev_device_remove(struct device *dev, bool force_remove)
- 		}
- 	}
- 
--	if (found)
--		list_del(&mdev->next);
--
--	mutex_unlock(&mdev_list_lock);
--
--	if (!found)
--		return -ENODEV;
-+	if (!found) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
- 
- 	type = to_mdev_type(mdev->type_kobj);
- 	parent = mdev->parent;
--	mutex_lock(&parent->lock);
- 
- 	ret = mdev_device_remove_ops(mdev, force_remove);
--	if (ret) {
--		mutex_unlock(&parent->lock);
--
--		mutex_lock(&mdev_list_lock);
--		list_add(&mdev->next, &mdev_list);
--		mutex_unlock(&mdev_list_lock);
--
--		return ret;
--	}
-+	if (ret)
-+		goto out;
- 
-+	list_del(&mdev->next);
- 	mdev_remove_sysfs_files(dev, type);
- 	device_unregister(dev);
--	mutex_unlock(&parent->lock);
- 	mdev_put_parent(parent);
--
--	return 0;
-+out:
-+	mutex_unlock(&mdev_list_lock);
-+	return ret;
- }
- 
- static int __init mdev_init(void)
-diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
-index a9cefd70a705..85bb268c91be 100644
---- a/drivers/vfio/mdev/mdev_private.h
-+++ b/drivers/vfio/mdev/mdev_private.h
-@@ -20,7 +20,6 @@ struct mdev_parent {
- 	struct device *dev;
- 	const struct mdev_parent_ops *ops;
- 	struct kref ref;
--	struct mutex lock;
- 	struct list_head next;
- 	struct kset *mdev_types_kset;
- 	struct list_head type_list;
+
+-- 
+paul moore
+www.paul-moore.com
