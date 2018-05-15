@@ -1,59 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeEORvf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:51:35 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:56636 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752021AbeEORvd (ORCPT
+        id S1753479AbeEORwG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:52:06 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33707 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753309AbeEORwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:51:33 -0400
-Date: Tue, 15 May 2018 19:51:23 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Florian Westphal <fw@strlen.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: Re: linux-next: build warning after merge of the netfilter-next tree
-Message-ID: <20180515175123.ncxzaaexp3ehcpwx@breakpoint.cc>
-References: <20180507105519.1d34f19e@canb.auug.org.au>
- <20180508102101.768d5c52@canb.auug.org.au>
- <20180508071756.grie5wln2lpo52un@breakpoint.cc>
- <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
+        Tue, 15 May 2018 13:52:04 -0400
+X-ME-Sender: <xms:Qx77WvIPXKCZWTPco09CTC4LpANgvj5WBmYfcPi9bjhlYpolnXbopw>
+Date: Tue, 15 May 2018 10:52:02 -0700
+From: Andres Freund <andres@anarazel.de>
+To: "David S. Miller" <davem@davemloft.net>, mtk.manpages@gmail.com,
+        Kees Cook <keescook@chromium.org>, David Windsor <dwindsor@gmail.com>,
+        Hans Liljestrand <ishkamiel@gmail.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-man@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: SCM_RIGHTS and file descriptor limits
+Message-ID: <20180515175202.glz4e4gxtarefna5@alap3.anarazel.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, May 8, 2018 at 9:17 AM, Florian Westphal <fw@strlen.de> wrote:
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> >
-> >> > After merging the netfilter-next tree, today's linux-next build (x86_64
-> >> > allmodconfig) produced this warning:
-> >> >
-> >> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
-> >>
-> >> > Introduced by commit
-> >> >
-> >> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
-> >
-> > I'll send a fix for this, thanks for reporting.
-> 
-> +config NF_OSF
-> +       tristate 'Passive OS fingerprint infrastructure'
-> 
-> "There is no help available for this option."
-> 
-> Is this meant to be a user-visible symbol?
+Hi,
 
-No, its not.  I can send a patch in case you're too busy, let me know.
+I'm not sure if this is a documentation omission, kernel code bug,
+missing understanding on my part, or all of the above.
+
+I'm looking at recvmsg()'s behaviour for AF_UNIX, where the sender has
+sent an fd using SCM_RIGHTS, and the receiving process has already
+exceeded RLIMIT_NOFILE.
+
+By my reading of scm_detach_fds() (called from
+unix_stream_read_generic() / unix_dgram_recvmsg(), via scm_recv()), the
+error appears to just be thrown away, with no notification given to
+userland at all:
+
+void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
+{
+...
+	for (i=0, cmfptr=(__force int __user *)CMSG_DATA(cm); i<fdmax;
+	     i++, cmfptr++)
+	{
+		struct socket *sock;
+		int new_fd;
+		err = security_file_receive(fp[i]);
+		if (err)
+			break;
+		err = get_unused_fd_flags(MSG_CMSG_CLOEXEC & msg->msg_flags
+					  ? O_CLOEXEC : 0);
+		if (err < 0)
+			break;
+
+If I understand correctly no error is reported to the user (function
+returns void, no put_user() calls for the unsuccessful fds/i), but all
+the scm data is "consumed" via scm_destroy().
+
+Silently consuming data without reporting an error doesn't strike me as
+nice. Now admittedly scm is one of the more kludgey interfaces, and it's
+not entirely obvious how one would do much better without significant
+added complication - the correct behaviour seems to be to return EMFILE,
+but that'd need to somehow rewind the received data, which seems
+complicated...  On the other hand it's not generally knowable how many
+file descriptors the other side sent, so one really needs to duplicate
+all scm information on the data level to make sure nothing gets lost.
+
+In case this is something that won't be fixed, it seems appropriate to
+add a section to the man pages (hence CCing linux man-pages list)
+
+Greetings,
+
+Andres Freund
