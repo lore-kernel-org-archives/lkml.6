@@ -1,88 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeEOIG1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:06:27 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41953 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752566AbeEOH7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:49 -0400
-X-Google-Smtp-Source: AB8JxZqteM55v1MdXBMUg1TiXy9H1uH1TW2cpy0wa65rbaOKm27O3fDJQABwztScZlU6DGo2JE2FgA==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 19/29] venus: helpers: add buffer type argument to a helper
-Date: Tue, 15 May 2018 10:58:49 +0300
-Message-Id: <20180515075859.17217-20-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+        id S1752617AbeEOIJJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:09:09 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28000 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752556AbeEOIJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:09:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="41032299"
+Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
+ sample
+To: Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
+ <20180509145436.GV12217@hirez.programming.kicks-ass.net>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Message-ID: <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
+Date: Tue, 15 May 2018 11:08:59 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180509145436.GV12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds one more function argument to pass buffer type to
-set_output_resolution() helper function. That is a preparation
-to support secondary decoder output.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/helpers.c | 5 +++--
- drivers/media/platform/qcom/venus/helpers.h | 3 ++-
- drivers/media/platform/qcom/venus/venc.c    | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+Hi Andy,
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 94664a3ce3e2..5512fbfdebb9 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -456,12 +456,13 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
- EXPORT_SYMBOL_GPL(venus_helper_set_input_resolution);
- 
- int venus_helper_set_output_resolution(struct venus_inst *inst,
--				       unsigned int width, unsigned int height)
-+				       unsigned int width, unsigned int height,
-+				       u32 buftype)
- {
- 	u32 ptype = HFI_PROPERTY_PARAM_FRAME_SIZE;
- 	struct hfi_framesize fs;
- 
--	fs.buffer_type = HFI_BUFFER_OUTPUT;
-+	fs.buffer_type = buftype;
- 	fs.width = width;
- 	fs.height = height;
- 
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index cd306bd8978f..0de9989adcdb 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -36,7 +36,8 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height);
- int venus_helper_set_output_resolution(struct venus_inst *inst,
--				       unsigned int width, unsigned int height);
-+				       unsigned int width, unsigned int height,
-+				       u32 buftype);
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index f87d891325ea..8970f14b3a82 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -795,7 +795,8 @@ static int venc_init_session(struct venus_inst *inst)
- 		goto deinit;
- 
- 	ret = venus_helper_set_output_resolution(inst, inst->width,
--						 inst->height);
-+						 inst->height,
-+						 HFI_BUFFER_OUTPUT);
- 	if (ret)
- 		goto deinit;
- 
--- 
-2.14.1
+On 09.05.2018 17:54, Peter Zijlstra wrote:
+> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
+>>
+>> Store user space frame-pointer value (BP register) into Perf trace 
+>> on a sample for a process so the value becomes available when 
+>> unwinding call stacks for functions gaining event samples.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  arch/x86/kernel/perf_regs.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
+>> index e47b2dbbdef3..8d68658eff7f 100644
+>> --- a/arch/x86/kernel/perf_regs.c
+>> +++ b/arch/x86/kernel/perf_regs.c
+>> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+> 
+> 
+>>  	 * Most system calls don't save these registers, don't report them.
+> 
+> ^^^ that worries me and is the reason for the '-1's below. However I
+> think with all the PTI rework this might no longer be true.
+> 
+> The Changelog needs to state that user_regs->bp is in fact valid and
+> ideally point to the commits that makes it so. Also this patch should
+> update that comment.
+> 
+> Cc Andy who keeps better track of all that than me.
+
+Are there any thoughts so far? Feedback on the matter above is highly appreciated.
+
+Thanks,
+Alexey
+
+> 
+>>  	 */
+>>  	regs_user_copy->bx = -1;
+>> -	regs_user_copy->bp = -1;
+>> +	/*
+>> +	 * Store user space frame-pointer value on sample
+>> +	 * to facilitate stack unwinding for cases when
+>> +	 * user space executable code has such support
+>> +	 * enabled at compile time;
+>> +	 */
+>> +	regs_user_copy->bp = user_regs->bp;
+>>  	regs_user_copy->r12 = -1;
+>>  	regs_user_copy->r13 = -1;
+>>  	regs_user_copy->r14 = -1;
+> 
