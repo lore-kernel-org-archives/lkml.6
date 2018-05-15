@@ -1,53 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752583AbeEOJEI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:04:08 -0400
-Received: from mga06.intel.com ([134.134.136.31]:30442 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752452AbeEOJED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:04:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="55317053"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhi Wang <zhi.a.wang@intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the drm-intel tree
-In-Reply-To: <20180515073349.6efabb21@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180515073349.6efabb21@canb.auug.org.au>
-Date: Tue, 15 May 2018 12:06:36 +0300
-Message-ID: <87po1x1e5f.fsf@intel.com>
+        id S1752567AbeEOJFp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:05:45 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44089 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752317AbeEOJFn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 05:05:43 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Doug Smythies <doug.smythies@gmail.com>, dsmythies@telus.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH V5] cpufreq: intel_pstate: allow trace in passive mode
+Date: Tue, 15 May 2018 11:05:11 +0200
+Message-ID: <2717351.WdDDVb137V@aspire.rjw.lan>
+In-Reply-To: <1526312141.61700.5.camel@linux.intel.com>
+References: <1525328567-23747-1-git-send-email-dsmythies@telus.net> <3708753.N4DSO893cq@aspire.rjw.lan> <1526312141.61700.5.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Commits
->
->   cb8ba171ae6c ("drm/i915/gvt: let force_to_nonpriv cmd handler only valid for LRI cmd")
->   0438a1059877 ("drm/i915/gvt: do not return error on handling force_to_nonpriv registers")
->   3d8b9e258b9d ("drm/i915/gvt: let NOPID be the default value of force_to_nonpriv registers")
->   b99f514f5dfa ("drm/i915/gvt: Remove disable_warn_untrack and print untracked mmio with debug level")
->
-> are missing a Signed-off-by from their committer.
+On Monday, May 14, 2018 5:35:41 PM CEST Srinivas Pandruvada wrote:
+> On Sun, 2018-05-13 at 10:43 +0200, Rafael J. Wysocki wrote:
+> > On Thursday, May 3, 2018 8:22:47 AM CEST Doug Smythies wrote:
+> > > Allow use of the trace_pstate_sample trace function
+> > > when the intel_pstate driver is in passive mode.
+> > > Since the core_busy and scaled_busy fields are not
+> > > used, and it might be desirable to know which path
+> > > through the driver was used, either intel_cpufreq_target
+> > > or intel_cpufreq_fast_switch, re-task the core_busy
+> > > field as a flag indicator.
+> > > 
+> > > The user can then use the intel_pstate_tracer.py utility
+> > > to summarize and plot the trace.
+> > > 
+> > > Note: The core_busy feild still goes by that name
+> > > in include/trace/events/power.h and within the
+> > > intel_pstate_tracer.py script and csv file headers,
+> > > but it is graphed as "performance", and called
+> > > core_avg_perf now in the intel_pstate driver.
+> > > 
+> > > Sometimes, in passive mode, the driver is not called for
+> > > many tens or even hundreds of seconds. The user
+> > > needs to understand, and not be confused by, this limitation.
+> > > 
+> > > Signed-off-by: Doug Smythies <dsmythies@telus.net>
+> > 
+> > Srinivas, any comments or concerns?
+> > 
+> Looks fine. But as rest of code, prefer a newline after return.
+> So I am sending V6 version only with that change.
+> 
+> Thanks,
+> Srinivas
+> > > 
+> > > ---
+> > > 
+> > > V5: Changes as per Rafael J. Wysocki feedback.
+> > >     See: https://lkml.org/lkml/2018/1/7/270
+> > > 
+> > > V4: Only execute the trace specific overhead code if trace
+> > >     is enabled. Suggested by Srinivas Pandruvada.
+> > > 
+> > > V3: Move largely duplicate code to a subroutine.
+> > >     Suggested by Rafael J. Wysocki.
+> > > 
+> > > V2: prepare for resend. Rebase to current kernel, 4.15-rc3.
+> > > 
+> > > ---
+> > >  drivers/cpufreq/intel_pstate.c | 44
+> > > ++++++++++++++++++++++++++++++++++++++++--
+> > >  1 file changed, 42 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/cpufreq/intel_pstate.c
+> > > b/drivers/cpufreq/intel_pstate.c
+> > > index 17e566af..4a08686 100644
+> > > --- a/drivers/cpufreq/intel_pstate.c
+> > > +++ b/drivers/cpufreq/intel_pstate.c
+> > > @@ -1939,13 +1939,49 @@ static int
+> > > intel_cpufreq_verify_policy(struct cpufreq_policy *policy)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +/* Use of trace in passive mode:
+> > > + *
+> > > + * In passive mode the trace core_busy field (also known as the
+> > > + * performance field, and lablelled as such on the graphs; also
+> > > known as
+> > > + * core_avg_perf) is not needed and so is re-assigned to indicate
+> > > if the
+> > > + * driver call was via the normal or fast switch path. Various
+> > > graphs
+> > > + * output from the intel_pstate_tracer.py utility that include
+> > > core_busy
+> > > + * (or performance or core_avg_perf) have a fixed y-axis from 0 to
+> > > 100%,
+> > > + * so we use 10 to indicate the the normal path through the
+> > > driver, and
+> > > + * 90 to indicate the fast switch path through the driver.
+> > > + * The scaled_busy field is not used, and is set to 0.
+> > > + */
+> > > +
+> > > +#define	INTEL_PSTATE_TRACE_TARGET 10
+> > > +#define	INTEL_PSTATE_TRACE_FAST_SWITCH 90
+> > > +
+> > > +static void intel_cpufreq_trace(struct cpudata *cpu, unsigned int
+> > > trace_type, int old_pstate)
+> > > +{
+> > > +	struct sample *sample;
+> > > +
+> > > +	if (!trace_pstate_sample_enabled())
+> > > +		return;
+> one newline
+> 
+> > > +	if (!intel_pstate_sample(cpu, ktime_get()))
+> > > +		return;
+> one new line
+> 
+> > > +	sample = &cpu->sample;
+> > > +	trace_pstate_sample(trace_type,
+> > > +		0,
+> > > +		old_pstate,
+> > > +		cpu->pstate.current_pstate,
+> > > +		sample->mperf,
+> > > +		sample->aperf,
+> > > +		sample->tsc,
+> > > +		get_avg_frequency(cpu),
+> > > +		fp_toint(cpu->iowait_boost * 100));
+> > > +}
+> > > +
+> > >  static int intel_cpufreq_target(struct cpufreq_policy *policy,
+> > >  				unsigned int target_freq,
+> > >  				unsigned int relation)
+> > >  {
+> > >  	struct cpudata *cpu = all_cpu_data[policy->cpu];
+> > >  	struct cpufreq_freqs freqs;
+> > > -	int target_pstate;
+> > > +	int target_pstate, old_pstate;
+> > >  
+> > >  	update_turbo_state();
+> > >  
+> > > @@ -1965,12 +2001,14 @@ static int intel_cpufreq_target(struct
+> > > cpufreq_policy *policy,
+> > >  		break;
+> > >  	}
+> > >  	target_pstate = intel_pstate_prepare_request(cpu,
+> > > target_pstate);
+> > > +	old_pstate = cpu->pstate.current_pstate;
+> > >  	if (target_pstate != cpu->pstate.current_pstate) {
+> > >  		cpu->pstate.current_pstate = target_pstate;
+> > >  		wrmsrl_on_cpu(policy->cpu, MSR_IA32_PERF_CTL,
+> > >  			      pstate_funcs.get_val(cpu,
+> > > target_pstate));
+> > >  	}
+> > >  	freqs.new = target_pstate * cpu->pstate.scaling;
+> > > +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_TARGET,
+> > > old_pstate);
+> > >  	cpufreq_freq_transition_end(policy, &freqs, false);
+> > >  
+> > >  	return 0;
+> > > @@ -1980,13 +2018,15 @@ static unsigned int
+> > > intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
+> > >  					      unsigned int
+> > > target_freq)
+> > >  {
+> > >  	struct cpudata *cpu = all_cpu_data[policy->cpu];
+> > > -	int target_pstate;
+> > > +	int target_pstate, old_pstate;
+> > >  
+> > >  	update_turbo_state();
+> > >  
+> > >  	target_pstate = DIV_ROUND_UP(target_freq, cpu-
+> > > >pstate.scaling);
+> > >  	target_pstate = intel_pstate_prepare_request(cpu,
+> > > target_pstate);
+> > > +	old_pstate = cpu->pstate.current_pstate;
+> > >  	intel_pstate_update_pstate(cpu, target_pstate);
+> > > +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_FAST_SWITCH,
+> > > old_pstate);
+> > >  	return target_pstate * cpu->pstate.scaling;
+> > >  }
+> > >  
+> > > 
+> > 
+> > 
+> 
 
-Zhi's rebase fail leading to change of committer that I failed to
-reject. :(
-
-BR,
-Jani.
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+Applied, thanks!
