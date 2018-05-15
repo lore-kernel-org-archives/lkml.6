@@ -1,130 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeEOWXu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:23:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15193 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751853AbeEOWXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:23:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="39610189"
-From: thor.thayer@linux.intel.com
-To: dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv3] arm64: dts: stratix10: Add QSPI support for Stratix10
-Date: Tue, 15 May 2018 17:26:27 -0500
-Message-Id: <1526423187-27521-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752274AbeEOWYv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:24:51 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:41500 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeEOWYs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 18:24:48 -0400
+X-Google-Smtp-Source: AB8JxZpRl/kKuKJ2A/iArJE4OIYaa/eviU8hIISkw8nYWj3jG/2cEow/6t/wxvBYnuvtmg5K4tBiq/4pxkxyrxuDNiU=
+MIME-Version: 1.0
+In-Reply-To: <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
+References: <20180515154352.20263-1-dmurphy@ti.com> <20180515154352.20263-2-dmurphy@ti.com>
+ <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com> <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 16 May 2018 01:24:47 +0300
+Message-ID: <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Wed, May 16, 2018 at 1:08 AM, Dan Murphy <dmurphy@ti.com> wrote:
+> On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
+>> On Tue, May 15, 2018 at 6:43 PM, Dan Murphy <dmurphy@ti.com> wrote:
 
-Add qspi_clock
-   The qspi_clk frequency is updated by U-Boot before starting Linux.
-Add QSPI interface node.
-Add QSPI flash memory child node.
-   Setup the QSPI memory in 2 partitions.
+>>> +       depends on LEDS_CLASS && I2C && OF
+>>
+>> What is OF specific in this driver?
+>
+> as3645a_led_class_setup has a "of" dependency
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2  s/_/-/ in qspi-clk
-    rename flash node.
-    use partition child node notation
-v3  remove unused bus-num node
-    use device id from table (n25q00a)
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 21 +++++++++++++
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 35 ++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
+So what? Is it called from this driver or?
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index e6b059378dc0..d8c94d5ff4b4 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -119,6 +119,12 @@
- 				#clock-cells = <0>;
- 				compatible = "fixed-clock";
- 			};
-+
-+			qspi_clk: qspi-clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <200000000>;
-+			};
- 		};
- 
- 		gmac0: ethernet@ff800000 {
-@@ -466,5 +472,20 @@
- 				interrupts = <16 4>, <48 4>;
- 			};
- 		};
-+
-+		qspi: spi@ff8d2000 {
-+			compatible = "cdns,qspi-nor";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0xff8d2000 0x100>,
-+			      <0xff900000 0x100000>;
-+			interrupts = <0 3 4>;
-+			cdns,fifo-depth = <128>;
-+			cdns,fifo-width = <4>;
-+			cdns,trigger-address = <0x00000000>;
-+			clocks = <&qspi_clk>;
-+
-+			status = "disabled";
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index f9b1ef12db48..6edc4fa9fd42 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -147,3 +147,38 @@
- 		reg = <0x68>;
- 	};
- };
-+
-+&qspi {
-+	flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "n25q00a";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+
-+		m25p,fast-read;
-+		cdns,page-size = <256>;
-+		cdns,block-size = <16>;
-+		cdns,read-delay = <1>;
-+		cdns,tshsl-ns = <50>;
-+		cdns,tsd2d-ns = <50>;
-+		cdns,tchsh-ns = <4>;
-+		cdns,tslch-ns = <4>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			qspi_boot: partition@0 {
-+				label = "Boot and fpga data";
-+				reg = <0x0 0x4000000>;
-+			};
-+
-+			qspi_rootfs: partition@4000000 {
-+				label = "Root Filesystem - JFFS2";
-+				reg = <0x4000000 0x4000000>;
-+			};
-+		};
-+	};
-+};
+
+>>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
+>>> +       { 40000, 0x00 },
+>>> +       { 80000, 0x01 },
+>>> +       { 120000, 0x02 },
+>>> +       { 160000, 0x03 },
+>>> +       { 200000, 0x04 },
+>>> +       { 240000, 0x05 },
+>>> +       { 280000, 0x06 },
+>>> +       { 320000, 0x07 },
+>>> +       { 360000, 0x08 },
+>>> +       { 400000, 0x09 },
+>>> +       { 600000, 0x0a },
+>>> +       { 800000, 0x0b },
+>>> +       { 1000000, 0x0c },
+>>> +       { 1200000, 0x0d },
+>>> +       { 1400000, 0x0e },
+>>> +       { 1600000, 0x0f },
+>>
+>> Huh?!
+>
+> Please give comments that actually mean something other wise I will opt to ignore them.
+
+I did below.
+
+>> strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
+>
+> Not sure what equation you are trying to point out here.  But if you are trying to apply
+> a timeout step you cannot do this with this part.  As pointed out in the DT doc the timeout
+> step is not linear.
+
+Yeah, I know people are more than often too lazy to think.
+
+if (x < 9)
+ strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
+else
+ strobe_timeout = (400 + (x - 9) * 200) * MSECS_IN_SEC;
+
+>>> +               brightness_val = (brightness/2);
+>>
+>> Spaces.
+>
+> Not sure what this means checkpatch was clean
+
+Even besides missed whispaces it has redundant parens.
+
+checkpatch is not a silver bullet to get your code clean and nice.
+
+>> This is return led_...();
+>
+> That is a preference.  It does not have to be that way.
+
+What do you mean? We do not appreciate +LOCs for no (or even nagative!) benefit.
+
+>>> +               ret = of_property_read_string(led->led_node, "label", &name);
+>>
+>> device_property_...();
+>
+> It can be if the maintainer is requesting this.
+
+Jacek, if you need rationale behind this comment it's here: the driver
+has nothing DT specific and getting rid of OF centric programming
+allows to reuse the driver on non-DT platforms w/o touching a source
+code.
+
+> Is the trend to move to these functions?
+
+See above.
+
+> Most drivers use the "of" calls.
+
+So what?
+
+
+>>> +               if (!ret)
+>>
+>> if (ret) sounds more natural. And better just to split
+>>
+>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>> +                               "%s:%s", led->led_node->name, name);
+>>> +               else
+>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>> +                               "%s:torch", led->led_node->name);
+>>
+>> const char *tmp;
+>>
+>> ret = device_property_read_...(&tmp);
+>> if (ret)
+>>  tmp = ...
+>> sprintf(...);
+
+No comments on this?
+
+>>> +       led = devm_kzalloc(&client->dev,
+>>> +                           sizeof(struct lm3601x_led), GFP_KERNEL);
+>>
+>> sizeof(*led) and one line in the result
+
+And this?
+
+
+>>> +       { },
+>>
+>> Terminators better w/o comma.
+>
+> Looking at other drivers adding comma's on the sentinel is accepted.  See the as3645a driver
+
+So what?
+
+Terminator at compile time even better.
+
+>>> +       {},
+>>
+>> Ditto.
+>
+> See above
+
+See above.
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
