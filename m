@@ -1,184 +1,89 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288167; cv=none;
+Return-Path: <daniel.lezcano@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526380040; cv=none;
         d=google.com; s=arc-20160816;
-        b=U3qdbFr0ym47GxZiuo5zDWsUEMs1EI8v60g8vIZV51Una1VZbZ95otYJugIH5yJNuw
-         Hpr/DkCvjEVOZ1OuwE3EDLx2dlmBxNf9GCerQFg+YRtewU/KtntSzYTJ4IlYICI1r67/
-         xZ9oiQYd8KMD3vniAZgL1GihDjClmRVgurIM8G+dNXY9MkqPjehc/Jb5mY9Ond+gjXy3
-         3oChrBiSL/Ds3GTYZibNO2jCiu2zuEPXLtLbCSQQND7FRBnNsigpnPtBZd9OBNwtthWa
-         z42tr2xhG/7IXMUP0FJmi6Jz6NC2HwrDirpu8wYzvce76UpxN6jlRbKfyJOB14BNRLVB
-         jpBA==
+        b=owshFhqfCQnYzmv+j/soqCxEleTByR4RiSechR+iXvxzPXwDNRJ+10BlSli0zY6Px6
+         f55lh/1AGbMNDksgUFofNM4I4AxBEiEYfYR04i7r8rQvgXmuIQetvgXVv2BzP5SLtUYR
+         TXVoe3dBtrDm+d4gaizF7nrke9XRAzL5VsDINH7NbnrKm8awLtWG2QK/nZq3zY+9zBsD
+         6sOBQvR3yIB64xJ4nDUO6zmw7w6F74OfHJEl6S95AAM5m02hdAG4aI+Ic0dN9cYMo8gd
+         rVJWnDnxYp0ZbimDVLZNfNbMWjEZ7Bgr3fbfeitAWGcdvpkVrZXkdGLf265z7cIXOAAu
+         hSqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=YUFJIUoY3B3ZtQsKdHonvy3g7YnxVyJWIrER/dt+G5E=;
-        b=N5uRrrQmnopoU59MxVsrMu/QXXLFriTb5Erhea4ssw6vPND/gkoplDcCFiduCns2AP
-         JrjZwwtoyWbwdBWMPzxQSEsGBlBYnSaVNv885npE0i8vWCNsvuH7Ur9+psMYQOC8WGDC
-         ZYCJu7J+iD2eKMsF50PPTy/8fGRYCgQzg34atj4KBnbpx2rWffqW/EjcPD4Sho+v+Vlq
-         LdonNTUhEsr4nJK1rtB3l6OftnL56hepyO8rJa46dgueq6pXE4iA5GCMP/716Pjy9Elo
-         qUMFplRaLvX6G8tKPFZ0c9vzyHd1pfh2UP4NQ+VR61kRGeBb26JZiGJ3NqS3W6+h/7M6
-         17Ow==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=Mg4TzCv1taza9PHf/YZizkiTKKhmuEFIKVpAvZusn+0=;
+        b=xpxdpDhH5puBBKdJ07uElHs2VeMEt5v9CEmCUVRCPtPovjRoo8Z/nQAiMHu8skCfjQ
+         uNRld9qnB5qPKtu2idZBwHI3qEs5t5aYwPymcKv9Hbczd6Cb12ESdLLKTd16NCf17111
+         mcsE4EzC2pEPaNlayIDIOqyR6ZDOOiuc9eQ+bk1D5gzf3iJijBTCE6kW4r09nZvEMOrT
+         5KNtMQWvTyCd0HYosGnwHRIAqNMnMcnlX9C1dVYkvRBuzwzyKGMkYQsVjMc+zzGEp40t
+         D0ZkTdSD8aiIXBSPNkKPdFqo712EAME6YRf5eNqD2BVwA+wZQ8RxsP2nYO6MnP0T+Hhu
+         QF9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=AfdjUSlB;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dkim=pass header.i=@linaro.org header.s=google header.b=BQd38arJ;
+       spf=pass (google.com: domain of daniel.lezcano@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.lezcano@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=AfdjUSlB;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dkim=pass header.i=@linaro.org header.s=google header.b=BQd38arJ;
+       spf=pass (google.com: domain of daniel.lezcano@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.lezcano@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoUTif3IrgjRAcddxrmVR+4AVUdYDHUFyepLtYtTzPvfjGiYTRzBkW4uwRzGJMF4jLAFVLxlQ==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: tglx@linutronix.de,
-	john.stultz@linaro.org,
-	daniel.lezcano@linaro.org,
-	arnd@arndb.de,
-	tony@atomide.com,
-	aaro.koskinen@iki.fi,
-	linux@armlinux.org.uk,
-	mark.rutland@arm.com,
-	marc.zyngier@arm.com
-Cc: baolin.wang@linaro.org,
-	broonie@kernel.org,
-	paulmck@linux.vnet.ibm.com,
-	mlichvar@redhat.com,
-	rdunlap@infradead.org,
-	kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	pombredanne@nexb.com,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	heiko@sntech.de,
-	linus.walleij@linaro.org,
-	viresh.kumar@linaro.org,
-	mingo@kernel.org,
-	hpa@zytor.com,
-	peterz@infradead.org,
-	douly.fnst@cn.fujitsu.com,
-	len.brown@intel.com,
-	rajvi.jingar@intel.com,
-	alexandre.belloni@bootlin.com,
-	x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 00/10] Add persistent clock support
-Date: Mon, 14 May 2018 16:55:26 +0800
-Message-Id: <cover.1526285602.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+X-Google-Smtp-Source: AB8JxZr3z/KZDw7DnxgjnDrDprZRD4Pt82YDDDEc+kWi7PYt0ORR+lYGXCkuIIBEl8Y5XtvAiRlKGA==
+Date: Tue, 15 May 2018 12:27:15 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: tglx@linutronix.de, john.stultz@linaro.org, arnd@arndb.de,
+	tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk,
+	mark.rutland@arm.com, marc.zyngier@arm.com, broonie@kernel.org,
+	paulmck@linux.vnet.ibm.com, mlichvar@redhat.com,
+	rdunlap@infradead.org, kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org, pombredanne@nexb.com,
+	thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de,
+	linus.walleij@linaro.org, viresh.kumar@linaro.org, mingo@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, douly.fnst@cn.fujitsu.com,
+	len.brown@intel.com, rajvi.jingar@intel.com,
+	alexandre.belloni@bootlin.com, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [RFC PATCH 00/10] Add persistent clock support
+Message-ID: <20180515102715.GO29062@mai>
+References: <cover.1526285602.git.baolin.wang@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600429141477472075?=
-X-GMAIL-MSGID: =?utf-8?q?1600429141477472075?=
+X-GMAIL-MSGID: =?utf-8?q?1600525476970478599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+On Mon, May 14, 2018 at 04:55:26PM +0800, Baolin Wang wrote:
+> Hi,
+> 
+> We will meet below issues when compensating the suspend time for the timekeeping.
+> 
+> 1. We have too many different ways of dealing with persistent timekeeping
+> across architectures, so it is hard for one driver to compatable with different
+> architectures.
+> 
+> 2. On some platforms (such as Spreadtrum platform), we registered the high
+> resolution timer as one clocksource to update the OS time, but the high
+> resolution timer will be stopped in suspend state. So we use another one
+> always-on timer (but low resolution) to calculate the suspend time to
+> compensate the OS time. Though we can register the always-on timer as one
+> clocksource, we need re-calculate the mult/shift with one larger conversion
+> range to calculate the suspend time and need update the clock in case of
+> running over the always-on timer.
 
-We will meet below issues when compensating the suspend time for the timekeeping.
+First, can you elaborate what you mean by 'suspend state' ? On which power
+domain the clocksource belongs to?
 
-1. We have too many different ways of dealing with persistent timekeeping
-across architectures, so it is hard for one driver to compatable with different
-architectures.
-
-2. On some platforms (such as Spreadtrum platform), we registered the high
-resolution timer as one clocksource to update the OS time, but the high
-resolution timer will be stopped in suspend state. So we use another one
-always-on timer (but low resolution) to calculate the suspend time to
-compensate the OS time. Though we can register the always-on timer as one
-clocksource, we need re-calculate the mult/shift with one larger conversion
-range to calculate the suspend time and need update the clock in case of
-running over the always-on timer.
-
-More duplicate code will be added if other platforms meet this case.
-
-3. Now we have 3 sources that could be used to compensate the OS time:
-Nonstop clocksource during suspend, persistent clock and rtc device,
-which is complicated. Another hand is that the nonstop clocksource can
-risk wrapping if the suspend time is too long, so we need one mechanism
-to wake up the system before the nonstop clocksource wrapping.
-
-According to above issues, we can introduce one common persistent clock
-framework to compatable with different architectures, in future we will
-remove the persistent clock implementation for each architecture. Also
-this framework will implement common code to help drivers to register easily.
-Moreover if we converted all SUSPEND_NONSTOP clocksource to register to
-be one persistent clock, we can remove the SUSPEND_NONSTOP clocksource
-accounting in timekeeping, which means we can only compensate the OS time
-from persistent clock and RTC.
-
-Will be appreciated for any comments. Thank you all.
-
-
-Arnd posted some comments as below last time, but we did not get a general
-consensus, so I post them again.
-
-Arnd said:
-
-"I was planning to discuss this with Daniel and John during Linaro Connect,
-but that didn't happen, so I'd like to bring up the bigger picture here again.
-
-Today, we have a number of subsystem-type interfaces that deal with
-time keeping in the wider sense (I might be missing some):
- - clock source
- - clock event
- - sched clock
- - real time clock
- - ptp clock
- - persistent clock
-
-The first five have separate registration interfaces and may all refer
-to different hardware blocks, or (more commonly) have some overlap
-in the hardware. The fifth one is generalized by your series, without it
-it's really architecture specific (as the other ones were one one point).
-
-Are we happy with that structure in the long run? One of my earlier
-comments on this series was that I thought it should be combined with
-the clocksource registration, but upon talking to Baolin about it more,
-I realized that this just follows the same structure that we have for the
-others.
-
-In theory, we could have a more abstract way of registering a clock
-hardware that interfaces with any combination of the six subsystems
-I mentioned above, with a superset of the subsystem specific structures
-and a set of flags that indicate what a particular device is usable for.
-
-Combining all six might be a bit too much (in particular rtc, though
-it clearly overlaps the persistent-clk case), but what your general
-ideas on where we should be heading? Is it worth reworking the
-core kernel portion of the subsystems to simplify the individual
-drivers?"
-
-Baolin Wang (10):
-  time: Add persistent clock support
-  clocksource: sprd: Add one persistent timer for Spreadtrum platform
-  arm: omap: Convert 32K counter to use persistent clock
-  clocksource: tegra20_timer: Remove register_persistent_clock() API
-  arm: time: Remove the persistent clock support for ARM
-  clocksource: arm_arch_timer: Register the persistent clock
-  clocksource: timer-ti-32k: Register the persistent clock
-  clocksource: time-pistachio: Register the persistent clock
-  x86: tsc: Register the persistent clock
-  time: timekeeping: Remove time compensating from nonstop clocksources
-
- arch/arm/include/asm/mach/time.h     |    4 -
- arch/arm/kernel/time.c               |   36 -------
- arch/arm/plat-omap/Kconfig           |    1 +
- arch/arm/plat-omap/counter_32k.c     |   44 ++-------
- arch/x86/Kconfig                     |    1 +
- arch/x86/kernel/tsc.c                |   16 +++
- drivers/clocksource/Kconfig          |    4 +
- drivers/clocksource/arm_arch_timer.c |   10 ++
- drivers/clocksource/tegra20_timer.c  |   12 ++-
- drivers/clocksource/time-pistachio.c |    3 +
- drivers/clocksource/timer-sprd.c     |   80 +++++++++++++++
- drivers/clocksource/timer-ti-32k.c   |    4 +
- include/linux/persistent_clock.h     |   21 ++++
- kernel/time/Kconfig                  |    4 +
- kernel/time/Makefile                 |    1 +
- kernel/time/persistent_clock.c       |  180 ++++++++++++++++++++++++++++++++++
- kernel/time/timekeeping.c            |   19 +---
- 17 files changed, 345 insertions(+), 95 deletions(-)
- create mode 100644 include/linux/persistent_clock.h
- create mode 100644 kernel/time/persistent_clock.c
 
 -- 
-1.7.9.5
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
