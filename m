@@ -1,155 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeEOMTd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:19:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:59478 "EHLO foss.arm.com"
+        id S1753305AbeEOMTl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:19:41 -0400
+Received: from gofer.mess.org ([88.97.38.141]:43053 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752421AbeEOMTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:19:31 -0400
-Date: Tue, 15 May 2018 13:19:26 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/18] arm64: move sve_user_{enable, disable} to
- <asm/fpsimd.h>
-Message-ID: <20180515121921.GN7753@e103592.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-7-mark.rutland@arm.com>
- <20180514110649.GC7753@e103592.cambridge.arm.com>
- <20180515103936.v5ytofdq3qqtsomn@lakrids.cambridge.arm.com>
+        id S1752421AbeEOMTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:19:36 -0400
+Date: Tue, 15 May 2018 13:19:33 +0100
+From: Sean Young <sean@mess.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>
+Subject: Re: [PATCH v1 1/4] media: rc: introduce BPF_PROG_IR_DECODER
+Message-ID: <20180515121933.ogyvf4fi6sezzryy@gofer.mess.org>
+References: <cover.1526331777.git.sean@mess.org>
+ <32a944171d5c48abf126259595b0088ce3122c91.1526331777.git.sean@mess.org>
+ <089862eb-8d37-6479-3c2a-ba6199ae7d3c@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515103936.v5ytofdq3qqtsomn@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <089862eb-8d37-6479-3c2a-ba6199ae7d3c@infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:39:36AM +0100, Mark Rutland wrote:
-> On Mon, May 14, 2018 at 12:06:50PM +0100, Dave Martin wrote:
-> > On Mon, May 14, 2018 at 10:46:28AM +0100, Mark Rutland wrote:
-> > > In subsequent patches, we'll want to make use of sve_user_enable() and
-> > > sve_user_disable() outside of kernel/fpsimd.c. Let's move these to
-> > > <asm/fpsimd.h> where we can make use of them.
-> > > 
-> > > To avoid ifdeffery in sequences like:
-> > > 
-> > > if (system_supports_sve() && some_condition
-> > > 	sve_user_disable();
-> > > 
-> > > ... empty stubs are provided when support for SVE is not enabled.
-> > > 
-> > > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > Cc: Dave Martin <dave.martin@arm.com>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > ---
-> > >  arch/arm64/include/asm/fpsimd.h | 17 ++++++++++++++++-
-> > >  arch/arm64/kernel/fpsimd.c      | 11 -----------
-> > >  2 files changed, 16 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
-> > > index aa7162ae93e3..7377d7593c06 100644
-> > > --- a/arch/arm64/include/asm/fpsimd.h
-> > > +++ b/arch/arm64/include/asm/fpsimd.h
-> > > @@ -16,11 +16,13 @@
-> > >  #ifndef __ASM_FP_H
-> > >  #define __ASM_FP_H
-> > >  
-> > > -#include <asm/ptrace.h>
-> > >  #include <asm/errno.h>
-> > > +#include <asm/ptrace.h>
-> > > +#include <asm/sysreg.h>
-> > >  
-> > >  #ifndef __ASSEMBLY__
-> > >  
-> > > +#include <linux/build_bug.h>
-> > >  #include <linux/cache.h>
-> > >  #include <linux/init.h>
-> > >  #include <linux/stddef.h>
-> > > @@ -81,6 +83,16 @@ extern int sve_set_vector_length(struct task_struct *task,
-> > >  extern int sve_set_current_vl(unsigned long arg);
-> > >  extern int sve_get_current_vl(void);
-> > >  
-> > > +static inline void sve_user_disable(void)
-> > > +{
-> > > +	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
-> > > +}
-> > > +
-> > > +static inline void sve_user_enable(void)
-> > > +{
-> > > +	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
-> > > +}
-> > > +
-> > >  /*
-> > >   * Probing and setup functions.
-> > >   * Calls to these functions must be serialised with one another.
-> > > @@ -107,6 +119,9 @@ static inline int sve_get_current_vl(void)
-> > >  	return -EINVAL;
-> > >  }
-> > >  
-> > > +static inline void sve_user_disable(void) { }
-> > > +static inline void sve_user_enable(void) { }
-> > > +
+On Mon, May 14, 2018 at 04:27:19PM -0700, Randy Dunlap wrote:
+> On 05/14/2018 02:10 PM, Sean Young wrote:
+> > Add support for BPF_PROG_IR_DECODER. This type of BPF program can call
+> 
+> Kconfig file below uses IR_BPF_DECODER instead of the symbol name above.
+> 
+> and then patch 3 says a third choice:
+> The context provided to a BPF_PROG_RAWIR_DECODER is a struct ir_raw_event;
+
+
+Yes, you're right. I guess the source/trigger is raw IR events; decoding
+is something you're likely to do, but not necessarily. So:
+
+bpf type: BPF_PROG_TYPE_RAWIR_EVENT, has context struct bpf_rawir_event. 
+
+Then we can call the Kconfig option CONFIG_BPF_RAW_IR_EVENT
+
+
+Sean
+> 
+> > rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
+> > that the last key should be repeated.
 > > 
-> > Alternatively, just move the full definitions outside the #ifdef
-> > CONFIG_ARM64_SVE.
-> 
-> Can do, though I was trying to keep the exsting pattern with empty
-> inlines for the !CONFIG_ARM64_SVE case.
-
-There isn't really a pattern.  I tried to avoid dummy versions where
-there's no real reason to have them.  I don't _think_ they're really
-needed here, unless I missed something.  Did you get build failures
-without them?
-
-> > All calls to these should be shadowed by an if
-> > (system_supports_sve()) in any case, and setting/clearing ZEN_EL0EN
-> > in the CPACR_EL1 ought to be harmless now that the meaning of these
-> > bits architecturally committed.
+> > Signed-off-by: Sean Young <sean@mess.org>
+> > ---
+> >  drivers/media/rc/Kconfig          |  8 +++
+> >  drivers/media/rc/Makefile         |  1 +
+> >  drivers/media/rc/ir-bpf-decoder.c | 93 +++++++++++++++++++++++++++++++
+> >  include/linux/bpf_types.h         |  3 +
+> >  include/uapi/linux/bpf.h          | 16 +++++-
+> >  5 files changed, 120 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/media/rc/ir-bpf-decoder.c
 > > 
-> > Ideally we would have a BUG_ON(!system_supports_sve()) in those
-> > functions, but we won't won't to pay the cost in a production kernel.
+> > diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+> > index eb2c3b6eca7f..10ad6167d87c 100644
+> > --- a/drivers/media/rc/Kconfig
+> > +++ b/drivers/media/rc/Kconfig
+> > @@ -120,6 +120,14 @@ config IR_IMON_DECODER
+> >  	   remote control and you would like to use it with a raw IR
+> >  	   receiver, or if you wish to use an encoder to transmit this IR.
+> >  
+> > +config IR_BPF_DECODER
+> > +	bool "Enable IR raw decoder using BPF"
+> > +	depends on BPF_SYSCALL
+> > +	depends on RC_CORE=y
+> > +	help
+> > +	   Enable this option to make it possible to load custom IR
+> > +	   decoders written in BPF.
+> > +
+> >  endif #RC_DECODERS
+> >  
+> >  menuconfig RC_DEVICES
+> > diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
+> > index 2e1c87066f6c..12e1118430d0 100644
+> > --- a/drivers/media/rc/Makefile
+> > +++ b/drivers/media/rc/Makefile
+> > @@ -5,6 +5,7 @@ obj-y += keymaps/
+> >  obj-$(CONFIG_RC_CORE) += rc-core.o
+> >  rc-core-y := rc-main.o rc-ir-raw.o
+> >  rc-core-$(CONFIG_LIRC) += lirc_dev.o
+> > +rc-core-$(CONFIG_IR_BPF_DECODER) += ir-bpf-decoder.o
 > 
-> Earlier I'd put BUILD_BUG() in the body for the !CONFIG_ARM64_SVE case,
-> to catch that kind of thing -- I could restore that.
-
-IIUC:
-
-	if (0) {
-		BUILD_BUG_ON(1);
-	}
-
-can still fire, in which case it's futile checking for CONFIG_ARM64_SVE
-in most of the SVE support code.
-
-Anyway, CONFIG_ARM64_SVE doesn't capture the whole condition.
-
 > 
-> > >  static inline void sve_init_vq_map(void) { }
-> > >  static inline void sve_update_vq_map(void) { }
-> > >  static inline int sve_verify_vq_map(void) { return 0; }
-> > > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> > > index 088940387a4d..79a81c7d85c6 100644
-> > > --- a/arch/arm64/kernel/fpsimd.c
-> > > +++ b/arch/arm64/kernel/fpsimd.c
-> > > @@ -159,7 +159,6 @@ static void sve_free(struct task_struct *task)
-> > >  	__sve_free(task);
-> > >  }
-> > >  
-> > > -
-> > 
-> > Hmmm, Ack.  Check for conflicts with the KVM FPSIMD rework [1] (though
-> > trivial).
-> 
-> I'll assume that Ack stands regardless. :)
-
-Actually, I was just commenting on the deleted blank line...  not that
-there is any massive issue with this patch, though.
-
-Cheers
----Dave
+> -- 
+> ~Randy
