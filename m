@@ -1,83 +1,93 @@
-Return-Path: <ahiliation@yahoo.co.in>
-X-Google-Smtp-Source: AB8JxZrt12UOX9cTdp/auJNVUYPtXvtjKM5yXa0wrN+0BDur0uFcbeUL+fi4l9Y1NgTmk1LrnKTm
-ARC-Seal: i=1; a=rsa-sha256; t=1526335325; cv=none;
+Return-Path: <shuah@kernel.org>
+X-Google-Smtp-Source: AB8JxZpcnRRY9+R9WfTVjFtVxvFxzJb0SQgZv3w1nBpsvgbMaH4g3IeXlhQHq34NgL7xRogrxlu2
+ARC-Seal: i=1; a=rsa-sha256; t=1526415792; cv=none;
         d=google.com; s=arc-20160816;
-        b=QU1hKZqZ+zdNbdPiMyGzFAzMcZdM/19Pa5kZrhVgyjqE73eYN0ropLx3/qUHPJRPQw
-         Zf6M2NNkaEXg1xT7h7BVDTRXCE/2+1bZOMqKFo1UdtrviVlomy05lLAYiq91buWQ8DxR
-         9wNio83DfE6d40KfqiicpTghmRl/MENmXfGkCi6zyBkdq2QCR3g9eICBa2wuJtUmYwPs
-         ARMEeTumrVg8SjBFAG2fkYNVJWLmB00fG+CC6m7dayCi2xXSivfZq0bHtiBKMHeODsik
-         W0EwaR2mSucxixSBD+Z+prMyTXkbpndZm6Vy3bvZ48Ts8jioQSqx5jf/3w0n295WuPNI
-         z+Eg==
+        b=DbswGULmhs/U6FfIXR/YtyKJCcW0QBoXrx7AX9SEdEaG8RIOM2MouKKFdBNHFipuSF
+         lBkv7APUoEIa8lt75PqY7cyUhwqb0mJefCb1OtwAcpxomZOeCwznto8oLAcJsow4cIGB
+         jtU4scI3lWM0C+1z0d8A3XzFa6GYNgCR0UPn3nzBQcfHALNipXNY+EwcN6Jnc4bGn4/j
+         pZzTdJTtt/YWNQ9dy65y6Trt0TVH/fz3aI3ilzgi4HKIwFnvWhpuTq2TpZebpGeJ6BE5
+         VwuxOVyF1dDLJ1aSPJaF1YHGHA/yRezdd36DegQC/MCLaZRgx7XLi5I7AXmWO9t9mRgY
+         OqcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=4Ugpn4mrtJm7ENiNBt+Bnq8KamOJl5RnkThZJENqjVQ=;
-        b=rs4B6/psNDkdyb33ouaVEs7MY0aoDDbLBm4MrTatyqssYpFFKTTr8ZTAHSNJBG1Boo
-         Tyd7OVDtt1kejGSC51+9hPD9b9cgIX51U18+86/h3XxGttfKbI0giwWmAh20UBnOgaeG
-         FthdFZDjIaCBKuN2SvRFWCDtzcbwHqPwyz/d3GqZ+YS7kVF5etJcFk6qnbNyD9qduSn3
-         lLdIaa7VRtg9goF1gQVSOqWnAyO96+L23bemH6WnDezBibuloZnj9hhchRGcYNAGeJYV
-         rTFdCWl1PAtI22eg5wnYW1xar3sXPn/7RL9GroZSOCDnroGJ0WlwJ5afhSsbET6H8n2w
-         zCFQ==
+        bh=oDh03Jqs41dasKqqesiHQtOHhJjbCIJ6m47lO+YHOts=;
+        b=FAE3x/UNvaS6s8PcVy7pr4pofsRx0ORwYEACIGwrzspi/vHlWsoUMXGBRNYocHXuIn
+         sQLbiigsdCznIS17ekWK0PZWdjFLkY+DTZL461k4OVo/D35VDUl7abWUze0bwESTSJu1
+         KbwmmOKrnnMqXlNQMa1A64/p/bvGZfODVeCaqf2xwT/Jg/6BIU2QPR8dWuvVLxaOJoak
+         kW0VETkP1kQEC+uXM9Reboa5586cnctDFlYAGd6G7ADcdgiGhY/IaXQfxcAMMQ8tHEz5
+         YfoGbl24okhLZjqs3eQHQIu9cyvEGYorJXQs+ZBNz8XVqfKfBge6oqR+SxydPnz10thk
+         0GyA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=s30N/frZ;
-       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.244.83 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=s30N/frZ;
-       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.244.83 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
-X-YMail-OSG: ZYg7_I4VM1lFjXtpTmGv23XZb9FAzXDmXHcJ941zD1SEzTV9SC4kMBBKEkg1d8X
- a6JArHhd7BklB3_50JeXqu9X7TrD57.6urzwFu3dvzI8.UBOZWm3QXOR2KwwmIV7tDHCA_RsxVOD
- uj_gEp1Etm8DaoPVknw5jY7VT.g78gdmpKwoDziTlHe58jdciuqvwX9vS8dtOalVVR7s7emNZ.4j
- M5WCyZj7QSazeTa6oUKsoYlYEP6HDuuxnEk75VzFnC3PFheo2uWnR0Ixq9SliewRhFt9qQfEdD5L
- WjqwCuKKmU3BtfaKFOHqfX0oWVMbrxsAOB4L5Hoa3adsA_QHJh.W5pZ5MscW_YwfRu1Epuut4cn9
- d.rTpzQoDoVj02E4YeidAmjIJZ53fU3isceUuMHt3kx_kfm4ucl3j2DWZtZcsBqBXa7YAAbqD_wM
- jZREJc_r3wQEpIcljsscyj2kO2eE3R.W5lmwbzoAw_KAUwkBkFN5YAccSQH94K0GozuyA079HByQ
- AVIuMXOD0e.WN6e.RzrkMZzWN9X8bJnp3onMhtUPUhBehnc.9PPSM5rA_Y0w7aR9S4BLhOpPZ0Vr
- XtPcqHYtrgAVXbnKXJ9iyNox4JokwWleefNIUjV9Mrl0dhQt75bEnkp9sUnWReVshChe.bC3WAs_
- tuh_QNODqebc2yVQE5U11YA_vW7wOqsUd
-From: Jeffrin Jose T <ahiliation@yahoo.co.in>
-To: shuah@kernel.org,
-	kstewart@linuxfoundation.org,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	gregkh@linuxfoundation.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeffrin Jose T <ahiliation@yahoo.co.in>,
-	Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
-Subject: [PATCH] selftest: intel_pstate: More accurate error message and also a debug support message from aperf.c
-Date: Tue, 15 May 2018 03:31:54 +0530
-Message-Id: <20180514220154.9507-1-ahiliation@yahoo.co.in>
-X-Mailer: git-send-email 2.17.0
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Subject: Re: [PATCH] selftest: intel_pstate: More accurate error message and
+ also a debug support message from aperf.c
+To: Jeffrin Jose T <ahiliation@yahoo.co.in>, kstewart@linuxfoundation.org,
+ tglx@linutronix.de, pombredanne@nexb.com, gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jeffrin Jose T <jeffrin@rajagiritech.edu.in>, Shuah Khan <shuah@kernel.org>
+References: <20180514220154.9507-1-ahiliation@yahoo.co.in>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <f84c3812-8c4f-fa4a-962e-256dbc6d66df@kernel.org>
+Date: Tue, 15 May 2018 14:22:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180514220154.9507-1-ahiliation@yahoo.co.in>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600478158436689024?=
-X-GMAIL-MSGID: =?utf-8?q?1600478590126238447?=
+X-GMAIL-MSGID: =?utf-8?q?1600562966674987423?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix for  aperf.c to produce the path of the file which is in mention
-during error report.CONFIG_X86_MSR=m support requirement is also mentioned.
+On 05/14/2018 04:01 PM, Jeffrin Jose T wrote:
+> Fix for  aperf.c to produce the path of the file which is in mention
+> during error report.CONFIG_X86_MSR=m support requirement is also mentioned.
+> 
+> Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+> ---
+>  tools/testing/selftests/intel_pstate/aperf.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
+> index d21edea9c560..da98c1673f08 100644
+> --- a/tools/testing/selftests/intel_pstate/aperf.c
+> +++ b/tools/testing/selftests/intel_pstate/aperf.c
+> @@ -41,7 +41,9 @@ int main(int argc, char **argv) {
+>  	fd = open(msr_file_name, O_RDONLY);
+>  
+>  	if (fd == -1) {
+> -		perror("Failed to open")> +		printf("Failed to open /dev/cpu/%d/msr:", cpu);
 
-Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
----
- tools/testing/selftests/intel_pstate/aperf.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Why are you deleting perror() and add a printf() for the error message perror()
+printf()?
 
-diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
-index d21edea9c560..da98c1673f08 100644
---- a/tools/testing/selftests/intel_pstate/aperf.c
-+++ b/tools/testing/selftests/intel_pstate/aperf.c
-@@ -41,7 +41,9 @@ int main(int argc, char **argv) {
- 	fd = open(msr_file_name, O_RDONLY);
- 
- 	if (fd == -1) {
--		perror("Failed to open");
-+		printf("Failed to open /dev/cpu/%d/msr:", cpu);
-+		printf(" No such file or directory:");
-+		printf(" Make sure CONFIG_X86_MSR=m support is Enabled\n");
- 		return 1;
- 	}
- 
--- 
-2.17.0
+Why not collapse these messages into one and use strerror() to include the
+error string? 
+> +		printf(" No such file or directory:")
+
+Not necessarily. open(0 could fail due to insufficient permissions. That is why
+using strerror() or perror() is the correct way so the real error message gets
+printed.
+
+> +		printf(" Make sure CONFIG_X86_MSR=m support is Enabled\n");
+
+Might not be the real reason why the opeN() failed.
+
+>  		return 1;
+>  	}
+
+The return should be KSFT_SKIP instead of 1
+>  
+> 
+
+thanks,
+-- Shuah
