@@ -1,75 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752953AbeEOQaM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:30:12 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37831 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751309AbeEOQaK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:30:10 -0400
-X-Google-Smtp-Source: AB8JxZqjN9dv0PhIpwndexd/P5oSfaAqN5tpa8owkNjEHesWYZVI/Q/IXDfU3L8W8dhX3Fc0Uagt5A==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a sample
-From: Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15E302)
-In-Reply-To: <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
-Date: Tue, 15 May 2018 09:30:05 -0700
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Message-Id: <F6BF3B97-F955-4644-A033-4D20CA7F1922@amacapital.net>
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com> <20180509145436.GV12217@hirez.programming.kicks-ass.net> <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
+        id S1753545AbeEOQay (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:30:54 -0400
+Received: from mga17.intel.com ([192.55.52.151]:31009 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751917AbeEOQax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 12:30:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
+   d="scan'208";a="199574995"
+Subject: Re: [PATCH 0/15] x86/split_lock: Enable #AC exception for split
+ locked accesses
+To: Alan Cox <alan@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+ <ef39e053-ad81-2058-f66c-037f90b53516@intel.com>
+ <1526401576.5391.2.camel@linux.intel.com>
+Cc: x86 <x86@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <7e3fd8ee-a17b-a469-22d9-4acf152e2527@intel.com>
+Date: Tue, 15 May 2018 09:30:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1526401576.5391.2.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FGUJSL000746
 
+On 05/15/2018 09:26 AM, Alan Cox wrote:
+>> Could you describe the performance degradation?  Why is this not a
+>> "doctor it hurts when I do that" situation?
+> They already know it hurts - the question is why and where.
 
-> On May 15, 2018, at 1:08 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
-> 
-> 
-> Hi Andy,
-> 
->> On 09.05.2018 17:54, Peter Zijlstra wrote:
->>> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
->>> 
->>> Store user space frame-pointer value (BP register) into Perf trace 
->>> on a sample for a process so the value becomes available when 
->>> unwinding call stacks for functions gaining event samples.
->>> 
->>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->>> ---
->>> arch/x86/kernel/perf_regs.c | 8 +++++++-
->>> 1 file changed, 7 insertions(+), 1 deletion(-)
->>> 
->>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
->>> index e47b2dbbdef3..8d68658eff7f 100644
->>> --- a/arch/x86/kernel/perf_regs.c
->>> +++ b/arch/x86/kernel/perf_regs.c
->>> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->> 
->> 
->>>     * Most system calls don't save these registers, don't report them.
->> 
->> ^^^ that worries me and is the reason for the '-1's below. However I
->> think with all the PTI rework this might no longer be true.
->> 
->> The Changelog needs to state that user_regs->bp is in fact valid and
->> ideally point to the commits that makes it so. Also this patch should
->> update that comment.
->> 
->> Cc Andy who keeps better track of all that than me.
-> 
-> Are there any thoughts so far? Feedback on the matter above is highly appreciated.
+I thought there were also cross-VM and cross-process concerns where
+somebody unprivileged can make the whole system slow down.  They might
+even be malicious, so this isn't something that *just* hurts one app or
+one VM.
 
-Sorry, I missed this. Can you forward the original patch?  I don’t have it.
-These days, system calls should save all registers, but I’m not entirely sure I want to promise that they’ll continue to do so forever.
+I think that's what I wanted to see hit the changelog.
