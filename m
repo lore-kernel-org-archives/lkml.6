@@ -1,100 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752387AbeEOGV6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:21:58 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34156 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752089AbeEOGVx (ORCPT
+        id S1752256AbeEOGVw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:21:52 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:50743 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeEOGVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:21:53 -0400
-X-Google-Smtp-Source: AB8JxZp6ALzs0w5eEx71Oi3sEcSMAaXMRoK02Z0bpOxBzpoLMUp2axg5s1vm1lheQwRwZ0IvhgzItw==
-Date: Tue, 15 May 2018 08:21:48 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Richter <tmricht@linux.ibm.com>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 0/5] perf/urgent fixes
-Message-ID: <20180515062148.GA7581@gmail.com>
-References: <20180514122321.27304-1-acme@kernel.org>
+        Tue, 15 May 2018 02:21:49 -0400
+X-Google-Smtp-Source: AB8JxZquP4WzKujPoCMw6U8ic2SRfrLHFFFZl38p3CY2T2qIJvxApHa2n9aeWKygWmZyIRuZYdIy32DaGkEebwNNE3E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514122321.27304-1-acme@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180514164812.GI30654@e110439-lin>
+References: <20180511131509.16275-1-patrick.bellasi@arm.com>
+ <20180511131509.16275-2-patrick.bellasi@arm.com> <CAKfTPtD3GJH3LLp6tpYoz7Uf0eXb-ZLMbGdQdRUsAgczZMr47g@mail.gmail.com>
+ <20180514164812.GI30654@e110439-lin>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 15 May 2018 08:21:28 +0200
+Message-ID: <CAKfTPtBmhgNRmyAs-0UZQwgb8-We08uvgHfPMv+Rv4ipRqNWDA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] sched/cpufreq: always consider blocked FAIR utilization
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14 May 2018 at 18:48, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> On 14-May 11:16, Vincent Guittot wrote:
+>> Hi Patrick,
+>
+> Hi Vincent,
+>
+>> On 11 May 2018 at 15:15, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+>> > Since the refactoring introduced by:
+>> >
+>> >    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+>> >
+>> > we aggregate FAIR utilization only if this class has runnable tasks.
+>> > This was mainly due to avoid the risk to stay on an high frequency just
+>> > because of the blocked utilization of a CPU not being properly decayed
+>> > while the CPU was idle.
+>> >
+>> > However, since:
+>> >
+>> >    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+>> >
+>> > the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+>> >
+>> > This allows us to use the FAIR blocked utilization as a safe mechanism
+>> > to gracefully reduce the frequency only if no FAIR tasks show up on a
+>> > CPU for a reasonable period of time.
+>> >
+>> > Moreover, we also reduce the frequency drops of CPUs running periodic
+>> > tasks which, depending on the task periodicity and the time required
+>> > for a frequency switch, was increasing the chances to introduce some
+>> > undesirable performance variations.
+>> >
+>> > Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+>> > Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+>> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> > Cc: Ingo Molnar <mingo@redhat.com>
+>> > Cc: Peter Zijlstra <peterz@infradead.org>
+>> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
+>> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> > Cc: Joel Fernandes <joelaf@google.com>
+>> > Cc: linux-kernel@vger.kernel.org
+>> > Cc: linux-pm@vger.kernel.org
+>>
+>> With this patch, I can't see the spurious OPP changes that I was seeing before
+>
+> Cool thanks... regarding OPP updates I've added some more comments in
+> my reply to Joel's comments to my last patch of this series.
+>
+> Would be nice if you can have a look... toward the end there are some
+> considerations about schedutil updates (indirectly) triggered by your
+> patches for blocked load updates on IDLE CPUs.
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+I have started to have a look at the 3rd patch and was checking if
+there were some hole and your proposal regarding the update of blocked
+load and the removed utilization
+I will read your latest comment.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 49cf4a4b3f5a8b02556dd4f45c5cee598d4fc799:
-> 
->   Merge tag 'perf-urgent-for-mingo-4.17-20180507' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-05-10 20:09:00 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180514
-> 
-> for you to fetch changes up to c23080a6e4e853cff2834436e3cf33eae7723900:
-> 
->   perf tools: Add missing newline when parsing empty BPF proggie (2018-05-11 12:10:02 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> - Fix segfault when processing unknown threads in cs-etm (Leo Yan)
-> 
-> - Fix "perf test inet_pton" on s390 failing due to missing inline (Thomas Richter)
-> 
-> - Display all available events on 'perf annotate --stdio' (Jin Yao)
-> 
-> - Add missing newline when parsing empty BPF proggie (Arnaldo Carvalho de Melo)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (1):
->       perf tools: Add missing newline when parsing empty BPF proggie
-> 
-> Jin Yao (1):
->       perf annotate: Display all available events on --stdio
-> 
-> Leo Yan (2):
->       perf cs-etm: Support unknown_thread in cs_etm_auxtrace
->       perf cs-etm: Remove redundant space
-> 
-> Thomas Richter (1):
->       perf test: "probe libc's inet_pton" fails on s390 due to missing inline
-> 
->  .../tests/shell/record+probe_libc_inet_pton.sh     |  2 +-
->  tools/perf/util/annotate.c                         |  3 +++
->  tools/perf/util/cs-etm.c                           | 28 ++++++++++++++++++----
->  tools/perf/util/parse-events.c                     |  2 +-
->  4 files changed, 29 insertions(+), 6 deletions(-)
-
-Pulled, thanks a lot Arnaldo!
-
-	Ingo
+>
+>> FWIW
+>> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+>> Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+>
+> Thanks for testing, will add these to the next respin.
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
