@@ -1,102 +1,312 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752235AbeEOFMs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:12:48 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43561 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752149AbeEOFMq (ORCPT
+        id S1752280AbeEOFNU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:13:20 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45116 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbeEOFNS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:12:46 -0400
-X-Google-Smtp-Source: AB8JxZoErpeOByaoJNs3EAB7Pk+ByVTbkXt74wt/R/cyktlQPDhnpJe8cpS6goC9S0qY61yavyl2Qg==
-Date: Tue, 15 May 2018 10:42:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rjw@rjwysocki.net, edubezval@gmail.com, kevin.wangtao@linaro.org,
-        leo.yan@linaro.org, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        daniel.thompson@linaro.org
-Subject: Re: [PATCH V2] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180515051241.xdrjj6u4ssqcatvy@vireshk-i7>
-References: <1525948458-23488-1-git-send-email-daniel.lezcano@linaro.org>
- <1525955163-14556-1-git-send-email-daniel.lezcano@linaro.org>
- <20180511093221.z5jfv4bo5kcdrzp4@vireshk-i7>
- <20180511115539.GC29062@mai>
+        Tue, 15 May 2018 01:13:18 -0400
+X-Google-Smtp-Source: AB8JxZoNVL5Z9aGSwfNpBKZXfKRaQla8Ce9+PV7UZP6mfcqDaSUHhU6fnEiOvcwQqv+K4XoVYlJojg==
+Date: Tue, 15 May 2018 14:13:11 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 06/11] arm64: kexec_file: allow for loading
+ Image-format kernel
+Message-ID: <20180515051308.GD2737@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-7-takahiro.akashi@linaro.org>
+ <c604b578-6667-3532-eac9-55c428001025@arm.com>
+ <20180507072139.GF11326@linaro.org>
+ <6f0df3a8-a691-80f1-85de-3e0ead852f12@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180511115539.GC29062@mai>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <6f0df3a8-a691-80f1-85de-3e0ead852f12@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-05-18, 13:55, Daniel Lezcano wrote:
-> On Fri, May 11, 2018 at 03:02:21PM +0530, viresh kumar wrote:
-> > On 10-05-18, 14:26, Daniel Lezcano wrote:
-> > > +int idle_injection_start(struct idle_injection_device *ii_dev)
-> > > +{
-> > > +	if (!atomic_read(&ii_dev->idle_duration_ms))
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (!atomic_read(&ii_dev->run_duration_ms))
-> > > +		return -EINVAL;
+James,
+
+On Fri, May 11, 2018 at 06:07:06PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 07/05/18 08:21, AKASHI Takahiro wrote:
+> > On Tue, May 01, 2018 at 06:46:11PM +0100, James Morse wrote:
+> >> On 25/04/18 07:26, AKASHI Takahiro wrote:
+> >>> This patch provides kexec_file_ops for "Image"-format kernel. In this
+> >>> implementation, a binary is always loaded with a fixed offset identified
+> >>> in text_offset field of its header.
+> 
+> >>> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> >>> index e4de1223715f..3cba4161818a 100644
+> >>> --- a/arch/arm64/include/asm/kexec.h
+> >>> +++ b/arch/arm64/include/asm/kexec.h
+> >>> @@ -102,6 +102,56 @@ struct kimage_arch {
+> >>>  	void *dtb_buf;
+> >>>  };
+> >>>  
+> >>> +/**
+> >>> + * struct arm64_image_header - arm64 kernel image header
+> >>> + *
+> >>> + * @pe_sig: Optional PE format 'MZ' signature
+
+To be precise, this is NOT a PE signature but MS-DOS header's magic.
+(There is another "PE" signature in PE COFF file header pointed to by
+'pe_header'.)
+I will correct its name.
+
+> >>> + * @branch_code: Instruction to branch to stext
+> >>> + * @text_offset: Image load offset, little endian
+> >>> + * @image_size: Effective image size, little endian
+> >>> + * @flags:
+> >>> + *	Bit 0: Kernel endianness. 0=little endian, 1=big endian
+> >>
+> >> Page size? What about 'phys_base'?, (whatever that is...)
+> >> Probably best to refer to Documentation/arm64/booting.txt here, its the
+> >> authoritative source of what these fields mean.
 > > 
-> > You are required to have them as atomic variables to take care of the
-> > races while they are set ? 
+> > While we don't care other bit fields for now, I will add the reference
+> > to the Documentation file.
 > 
-> The race is when you change the values, while the idle injection is acting and
-> you read those values in the idle injection thread function.
+> Thanks, I don't want to create a second, incomplete set of documentation!
+
+I will leave a minimum of description of parameters here.
+
 > 
-> > What about getting the durations as arguments to this routine then ?
 > 
-> May be I missed your point but I don't think that will change the above.
-
-Well, it can. Can you explain the kind of use-cases you have in mind ?
-
-For example, what I assumed to be the usecase was:
-
-idle_injection_start(iidev, idle_duration, run_duration);
-
-and then at some point of time:
-
-idle_injection_stop(iidev);
-
-
-With this, you would be required to stop the idle injection stuff to
-reconfigure the durations. And then you will never have a race which
-you mentioned above.
-
-What you are trying to do is something like this:
-
-idle_injection_set_duration(idle_duration, run_duration);
-idle_injection_start(iidev);
-
-and then at some point of time:
-idle_injection_set_duration(idle_duration2, run_duration2);
-
-and then at some point of time:
-idle_injection_stop(iidev);
-
-I am not sure if we would ever want to do something like this. Or if
-stopping the idle injection to start it again is that bad of an idea.
-
-> > > +struct idle_injection_device *
-> > > +idle_injection_register(struct cpumask *cpumask, const char *name)
-> > > +{
-> > > +	struct idle_injection_device *ii_dev;
-> > > +	struct smp_hotplug_thread *smp_hotplug_thread;
-> > > +	char *idle_injection_comm;
-> > > +	int cpu, ret;
-> > > +
-> > > +	ret = -ENOMEM;
+> >>> +	u64 reserved[3];
+> >>> +	u8 magic[4];
+> >>> +	u32 pe_header;
+> >>> +};
+> >>
+> >> I'm surprised we don't have a definition for this already, I guess its always
+> >> done in asm. We have kernel/image.h that holds some of this stuff, if we are
+> >> going to validate the flags, is it worth adding the code there, (and moving it
+> >> to include/asm)?
 > > 
-> > Maybe merge it earlier only ?
+> > A comment at the beginning of this file says,
+> >     #ifndef LINKER_SCRIPT
+> >     #error This file should only be included in vmlinux.lds.S
+> >     #endif
+> > Let me think about.
 > 
-> What do you mean ? int ret = -ENOMEM ?
+> Ah, I missed that.
+> 
+> Having two definitions of something makes me nervous that they can become
+> different... looks like that header belongs to the linker, and shouldn't be used
+> here then.
 
-Yes.
+OK.
 
--- 
-viresh
+> 
+> >> I guess you skip the MZ prefix as its not present for !EFI?
+
+Correct, but MZ checking in probe function is just an informative message.
+
+> > 
+> > CONFIG_KEXEC_IMAGE_VERIFY_SIG depends on the fact that the file
+> > format is PE (that is, EFI is enabled).
+> 
+> So if the signature checking is enabled, its already been checked.
+
+The signature, either MZ or PE, in a file will be actually checked
+in verify_pefile_signature().
+
+> 
+> >> Could we check branch_code is non-zero, and text-offset points within image-size?
+> > 
+> > We could do it, but I don't think this check is very useful.
+> > 
+> >>
+> >> We could check that this platform supports the page-size/endian config that this
+> >> Image was built with... We get a message from the EFI stub if the page-size
+> >> can't be supported, it would be nice to do the same here (as we can).
+> > 
+> > There is no restriction on page-size or endianness for kexec.
+> 
+> No, but it won't boot if the hardware doesn't support it. The kernel will spin
+> at a magic address that is, difficult, to debug without JTAG. The bug report
+> will be "it didn't boot".
+
+OK.
+Added sanity checks for cpu features, endianness as well as page size.
+
+> 
+> > What will be the purpose of this check?
+> 
+> These values are in the header so that the bootloader can check them, then print
+> a meaningful error. Here, kexec_file_load() is playing the part of the bootloader.
+> 
+> I'm assuming kexec_file_load() can only be used to kexec linux... unlike regular
+> kexec. Is this where I'm going wrong?
+> 
+> 
+> >>> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> >>> new file mode 100644
+> >>> index 000000000000..4dd524ad6611
+> >>> --- /dev/null
+> >>> +++ b/arch/arm64/kernel/kexec_image.c
+> >>> @@ -0,0 +1,79 @@
+> >>
+> >>> +static void *image_load(struct kimage *image,
+> >>> +				char *kernel, unsigned long kernel_len,
+> >>> +				char *initrd, unsigned long initrd_len,
+> >>> +				char *cmdline, unsigned long cmdline_len)
+> >>> +{
+> >>> +	struct kexec_buf kbuf;
+> >>> +	struct arm64_image_header *h = (struct arm64_image_header *)kernel;
+> >>> +	unsigned long text_offset;
+> >>> +	int ret;
+> >>> +
+> >>> +	/* Load the kernel */
+> >>> +	kbuf.image = image;
+> >>> +	kbuf.buf_min = 0;
+> >>> +	kbuf.buf_max = ULONG_MAX;
+> >>> +	kbuf.top_down = false;
+> >>> +
+> >>> +	kbuf.buffer = kernel;
+> >>> +	kbuf.bufsz = kernel_len;
+> >>> +	kbuf.memsz = le64_to_cpu(h->image_size);
+> >>> +	text_offset = le64_to_cpu(h->text_offset);
+> >>> +	kbuf.buf_align = SZ_2M;
+> >>
+> >>> +	/* Adjust kernel segment with TEXT_OFFSET */
+> >>> +	kbuf.memsz += text_offset;
+> >>> +
+> >>> +	ret = kexec_add_buffer(&kbuf);
+> >>> +	if (ret)
+> >>> +		goto out;
+> >>> +
+> >>> +	image->arch.kern_segment = image->nr_segments - 1;
+> >>
+> >> You only seem to use kern_segment here, and in load_other_segments() called
+> >> below. Could it not be a local variable passed in? Instead of arch-specific data
+> >> we keep forever?
+> > 
+> > No, kern_segment is also used in load_other_segments() in machine_kexec_file.c.
+> > To optimize memory hole allocation logic in locate_mem_hole_callback(),
+> > we need to know the exact range of kernel image (start and end).
+> 
+> That's the second user. My badly-made point is one calls the other, but passes
+> the data via some until-kexec lifetime struct. (its not important, just an
+> indicator this worked differently in the past and hasn't been cleaned up).
+> I meant something like [0].
+
+OK, but instead of adding kern_seg, I want to change the interface to:
+
+| extern int load_other_segments(struct kimage *image,
+|		unsigned long kernel_load_addr, unsigned long kernel_size,
+|		char *initrd, unsigned long initrd_len,
+|		char *cmdline, unsigned long cmdline_len);
+
+This way, we will in future be able to address an issue I mentioned in
+my previous e-mail. (If we support vmlinux, the kernel occupies two segments
+for text and data, respectively.)
+
+Thanks,
+-Takahiro AKASHI
+
+
+> 
+> Thanks,
+> 
+> James
+> 
+> 
+> [0] a diff is worth a thousand words:
+> --------------------%<--------------------
+> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_
+> kexec_file.c
+> index 762f9102899c..c50ce844f09e 100644
+> --- a/arch/arm64/kernel/machine_kexec_file.c
+> +++ b/arch/arm64/kernel/machine_kexec_file.c
+> @@ -325,11 +325,10 @@ static int prepare_elf_headers(void **addr, unsigned long *sz)
+>         return ret;
+>  }
+> 
+> -int load_other_segments(struct kimage *image,
+> +int load_other_segments(struct kimage *image, struct kexec_segment *kern_seg,
+>                         char *initrd, unsigned long initrd_len,
+>                         char *cmdline, unsigned long cmdline_len)
+>  {
+> -       struct kexec_segment *kern_seg;
+>         struct kexec_buf kbuf;
+>         void *hdrs_addr;
+>         unsigned long hdrs_sz;
+> @@ -368,7 +367,6 @@ int load_other_segments(struct kimage *image,
+>                                  image->arch.elf_load_addr, hdrs_sz, hdrs_sz);
+>         }
+> 
+> -       kern_seg = &image->segment[image->arch.kern_segment];
+>         kbuf.image = image;
+>         /* not allocate anything below the kernel */
+>         kbuf.buf_min = kern_seg->mem + kern_seg->memsz;
+> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> index 891f2484969d..085cb69293ca 100644
+> --- a/arch/arm64/include/asm/kexec.h
+> +++ b/arch/arm64/include/asm/kexec.h
+> @@ -173,8 +172,10 @@ static inline int arm64_header_check_pe_sig(const struct ar
+> m64_image_header *h)
+>  extern const struct kexec_file_ops kexec_image_ops;
+> 
+>  struct kimage;
+> +struct kexec_segment;
+> 
+>  extern int load_other_segments(struct kimage *image,
+> +               struct kexec_segment *kern_seg,
+>                 char *initrd, unsigned long initrd_len,
+>                 char *cmdline, unsigned long cmdline_len);
+>  #endif
+> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> index 7c11beefe65f..0e032d30a79c 100644
+> --- a/arch/arm64/kernel/kexec_image.c
+> +++ b/arch/arm64/kernel/kexec_image.c
+> @@ -37,6 +37,7 @@ static void *image_load(struct kimage *image,
+>                                 char *cmdline, unsigned long cmdline_len)
+>  {
+>         struct kexec_buf kbuf;
+> +       struct kexec_segment *kern_seg;
+>         struct arm64_image_header *h = (struct arm64_image_header *)kernel;
+>         unsigned long text_offset;
+>         int ret;
+> @@ -65,17 +66,17 @@ static void *image_load(struct kimage *image,
+>         if (ret)
+>                 goto out;
+> 
+> -       image->arch.kern_segment = image->nr_segments - 1;
+> -       image->segment[image->arch.kern_segment].mem += text_offset;
+> -       image->segment[image->arch.kern_segment].memsz -= text_offset;
+> -       image->start = image->segment[image->arch.kern_segment].mem;
+> +       kern_seg = &image->segment[image->nr_segments - 1];
+> +       kern_seg->mem += text_offset;
+> +       kern_seg->memsz -= text_offset;
+> +       image->start = kern_seg->mem;
+> 
+>         pr_debug("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+> -                               image->segment[image->arch.kern_segment].mem,
+> +                               kern_seg->mem,
+>                                 kbuf.bufsz, kbuf.memsz);
+> 
+>         /* Load additional data */
+> -       ret = load_other_segments(image, initrd, initrd_len,
+> +       ret = load_other_segments(image, kern_seg, initrd, initrd_len,
+>                                 cmdline, cmdline_len);
+> 
+>  out:
+> --------------------%<--------------------
