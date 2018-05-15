@@ -1,82 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeEOWZk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:25:40 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:34308 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751149AbeEOWZi (ORCPT
+        id S1752240AbeEOW0J (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:26:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34022 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751859AbeEOW0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:25:38 -0400
-X-Google-Smtp-Source: AB8JxZoOidBld1ZvBruAUOWjRMrmn2rygxPxwwFpseGR45Wp4Vmd5mNggSqu0T1uc20pgsRWdJsHBA==
-From: valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To: ahs3@redhat.com
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next 20180515 - ACPI disabled..
-In-Reply-To: <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
-References: <50539.1526419088@turing-police.cc.vt.edu> <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
- <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1526423130_2497P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date: Tue, 15 May 2018 18:25:30 -0400
-Message-ID: <58438.1526423130@turing-police.cc.vt.edu>
+        Tue, 15 May 2018 18:26:08 -0400
+Date: Wed, 16 May 2018 00:25:46 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+cc: "Anvin, H Peter" <h.peter.anvin@intel.com>,
+        "Ye, Xiaolong" <xiaolong.ye@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        "tipbuild@zytor.com" <tipbuild@zytor.com>, "lkp@01.org" <lkp@01.org>
+Subject: Re: [lkp-robot] [x86/asm] 51bad67ffb: int3:#[##]
+In-Reply-To: <20180515214337.GA18021@avx2>
+Message-ID: <alpine.DEB.2.21.1805160009230.1605@nanos.tec.linutronix.de>
+References: <20180515080033.GA7714@yexl-desktop> <20180515210757.GA12225@avx2> <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com> <20180515214337.GA18021@avx2>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1526423130_2497P
-Content-Type: text/plain; charset=us-ascii
+On Wed, 16 May 2018, Alexey Dobriyan wrote:
 
-On Tue, 15 May 2018 15:49:15 -0600, Al Stone said:
+> On Tue, May 15, 2018 at 09:25:53PM +0000, Anvin, H Peter wrote:
+> > Why is that a problem?
+> > Code: 00 00 00 eb e6 cc cc cc cc cc cc cc cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 5d e8 8f ff 8b 44 24 34 83 e0 03 83 f8 03 72 28 cc &lt;cc&gt; cc cc cc cc cc cc fa 8d b6 00 00 00 00 e8 3d e8 8f ff 89 e0
+> > 
+> > EIP: ret_from_intr+0xd/0x14 SS:ESP: 0068:8603bfb4
+> > 
+> > INT3 slipped through M586 =&gt; X86_ALIGNMENT_16 :-\
+> 
+> I could make the patch x86_64 only, but!
+> 
+> It crashed into the middle of the padding.
+> 
+> 796ef8fc <ret_from_intr>:
+> 796ef8fc:       8b 44 24 34             mov    eax,DWORD PTR [esp+0x34]
+> 796ef900:       83 e0 03                and    eax,0x3
+> 796ef903:       83 f8 03                cmp    eax,0x3
+> 796ef906:       72 28                   jb     796ef930 <resume_kernel>
+> 796ef908:       cc                      int3
+> 796ef909:       cc       <========>     int3
 
-> Not off-hand.  Could you please send me a copy of /sys/firmware/acpi/tables/APIC
+EIP points to the second int3 because that's where a simple return would
+return to. do_trap() does not handle int3 special.
 
-cat /sys/firmware/acpi/tables/APIC | od -x
-0000000 5041 4349 0072 0000 3903 4544 4c4c 2020
-0000020 4243 3358 2020 0020 2009 0107 4d41 2049
-0000040 0013 0001 0000 fee0 0001 0000 0800 0001
-0000060 0001 0000 0800 0202 0001 0000 0800 0103
-0000100 0001 0000 0800 0304 0001 0000 0c01 0002
-0000120 0000 fec0 0000 0000 0a02 0000 0002 0000
-0000140 0000 0a02 0900 0009 0000 000d 0604 05ff
-0000160 0100
-0000162
+>From a quick check that seems to be the only code sequence which has:
 
-> on this machine?  The commit cd8c65a6442b that I wrote looks like it got pulled
-> in on 20180430, which if I'm understanding correctly, seems to have fixed the
-> problem.  Did this work before 20180415?  I assume it did.
+     jcc     lbl
 
-0430 is what I'm running right ow, and it works.  Everything before that too.
-It fell over sometime between 0430 and 0515,
+ENTRY(foo)
 
-> What puzzles me is that this message:
->
->    ACPI: [APIC:0x05] Invalid zero length
->
-> should only have shown up if the MADT has a broken subtable, and I think that
-> bit of code has been that way for quite some time (git blame says somewhere
-> around 2012 when the test for this condition was put in).
+and ENTRY() aligns to a 16 byte boundary. So the simple fix for that is
+below. We need objtool support to detect such places ...
 
+Thanks,
 
---==_Exmh_1526423130_2497P
-Content-Type: application/pgp-signature
+	tglx
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
+8<-------------------
 
-iQEVAwUBWvteWo0DS38y7CIcAQJhTggAoiu8+B4mhmiBhryQoqlstVmkbH8CJ2dP
-xpm1cHb+D5uStRY1QnwDPiKn/avJIbdcF8z0aI4AHLkrlAdZMPZ52+hOZORgne/+
-hUoygcXOfU+QzYRSBq4ey/wCBQotOuocc9tJTkmASN3ZfGpFb/kbR+xXmrq8zrVD
-3yJ0TtAbMratiAQ91aEEMNHpzX4QHgoOBECOIIvzba4Ylpbm+Wseq7Xs7dMLEkIN
-KmniuuGJrbVSOd9UelWvfAMqVBHuWH55+TEcgkFSjbrsn9fbe5gI7xfyVnP0Iwap
-NkrFmRue+2HHblSxOTK9mSoDcmsQOT44+DRUiQblZmG83rCllciJOw==
-=5bpC
------END PGP SIGNATURE-----
-
---==_Exmh_1526423130_2497P--
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -338,6 +338,11 @@ END(ret_from_fork)
+ 	cmpl	$USER_RPL, %eax
+ 	jb	resume_kernel			# not returning to v8086 or userspace
+ 
++	/*
++	 * Jump over the alignment padding which is filled with int3 instructions
++	 */
++	jmp	resume_userspace
++
+ ENTRY(resume_userspace)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF
