@@ -1,99 +1,438 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753047AbeEOJRa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 05:17:30 -0400
-Received: from mail-dm3nam03on0075.outbound.protection.outlook.com ([104.47.41.75]:60032
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752980AbeEOJR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 05:17:26 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com;
-Date: Tue, 15 May 2018 17:16:36 +0800
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: berlin2q: fix irq type for arm twd timer
-Message-ID: <20180515171636.6414cbc5@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY2PR01CA0014.jpnprd01.prod.outlook.com
- (2603:1096:404:a::26) To DM5PR03MB2636.namprd03.prod.outlook.com
- (2603:10b6:3:43::10)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2636;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;3:sn23UMQ2c8lRVSqBOnND3BHn9UB6kn2uLoraHmp1bmaZGo5HS5dXbFeVORqaXa64Y6sr8oPy+RK1XhjgZ+t3Qb9mWFafwI1FbrrSts2ZOAH3gz52F90cskjxXxNCTo7iEXf7lIYd97reKrzzsjgnCeqoVBTxgtxYqCdfBoKweHu6T1B1koV+IUhCVdzAK0olfhFOQE5nMNZ28QXcVOU2iPIbgUquMjs8kvBEMXAteTPtvSKVh4MOYfBNWH9mDcLG;25:LTBN7QKhFD42ZvYkWcBDOsL20Sszal1CYFXBZJ3N5D1Lm3Kfcprcv5dHQfbKnWnzC5f+JHVaUNOXY6SjbHTjifyZIzK0OM/eHd3voeKppc7PprBVjPySK21ivMiI5GC/L1/ZopNQKJuGj7+otd19SoIiaAT/T0vdEuyM1qTsnHc0DZK3cuZYomDIunZ75wlCbTfDNJ3gQEBtX7uIgPPBhyDkqedf7G+KPaTwZ6JC4SYtXrEJby5c9BikbZy5EFc4vplv2nCuNGWrqpZhnTWobXnJBJBX/Sk9RB8Evm7F6WbMTed7Z66CcQS1tiOAP4kHS6qtIeXa/jVJeFnxPxAQRg==;31:TGKm5v6kw3hYDd8rH88HLv+zEkD96zcTPe7rF7I8TYzNX98RiMcBa9xMDzIj0b3oKi982816xtGQz1eiSi9yJR66KEC5sJekbFzgkEDm/wFyelEDBwrywHUjITsJSk8uZQ3aKnP2sORfDUeYxxTjZptNs9mB0KbSwMXVC5C8u7AYc2RdJC1H5s0Fm82/FHobDp99FGhUf/sXh+1zSjR+IG1WEI0U+QW+NWJwBr5hN1I=
-X-MS-TrafficTypeDiagnostic: DM5PR03MB2636:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;20:L9INfaEN3S7HEd6KWmb9FH2QiL5WZLBj1WxVYceAQZr6kOWjOs5L43uM6Duc4tfJl+VRiTHIR4FsmMrc/qV6kx1x/2ISd3I5WfOdWshl7sNTwwUnxs0XYLaVhKsAB2NtHx1k7/mpUdIwFHUuqU9XLzb6IfwBKiJoGJzsrvbIwfaOWziEehkQGAn5QbkTpYeLzMuf7fBt7btR5GGnCPWPEKrcnymz8lYkIVfXnoYCLldK3AeFGMLPMIoq/HSiwgQRtMo5l/5L3wWi+bOYTdUWZF5Ju+IUc92lU+xRPnL5pOV+Hm8ilkIEmQZjos4Ata+tIqvDe1k9Ix9yt69XTl4cAQDLRx4nqj743qm5Tgn0/6mwBHiVqWEvvSjaopjoqG49RheQsVkVUElUWoWeIlRvHn87jfpDUyhMvnRjbVPq4OGBsFybUUt8q2wa8rFdbMdnT8iOlOyPPMLLx+wUkzIAC8+VVQKuGW2pUy/3dq7yAZIEGcubDkUGscS4VaQDO/Ql;4:5ILIvic+Eeq2fujgNdEV0mYarg87PHRiJqxzWkICqjt3J2OUB9rS4nbEZyvihrpseeS/EqGSpZegilpHeDVoLRliAHqLmOEKcfwKU3WIapzpzytn4dEgEZ9bc1frUFl4qPHegN33w9zzFewT1E0DocMEC6P/yVo+feiICrGV4d8fjOserTBATj4i07sELbOwZB4+A7Ny/OHVenFSs16G9AFlSps91QRyXTQaSQUqgNd9gKRMS8HMdeQtQiT1zmrxFMKbGgR7xzH5N/oKs1Hyyg==
-X-Microsoft-Antispam-PRVS: <DM5PR03MB2636A2ED69A7803DBC7A9018ED930@DM5PR03MB2636.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR03MB2636;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2636;
-X-Forefront-PRVS: 0673F5BE31
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(396003)(39380400002)(39860400002)(189003)(199004)(59450400001)(72206003)(55016002)(97736004)(33896004)(305945005)(6506007)(105586002)(386003)(478600001)(486006)(230700001)(106356001)(52116002)(5660300001)(7696005)(6666003)(53936002)(47776003)(68736007)(9686003)(8676002)(23726003)(1076002)(81156014)(81166006)(66066001)(25786009)(2906002)(316002)(6116002)(86362001)(110136005)(8936002)(476003)(186003)(16526019)(7736002)(26005)(956004)(50466002)(39060400002)(3846002)(50226002)(1857600001)(4326008)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2636;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB2636;23:Mc3I99PuNtKTIcx8jUVle25HEyGeAieX/dSqvth7v?=
- =?us-ascii?Q?5/Cm4Ckj3355SwsubacPdUwGP2KXOfNM9RivLltrrkKkIgHS90OsEqzkAQ60?=
- =?us-ascii?Q?/aL7wT/JLls6Lrraa/3Ldy5XwnWRQf6fEGzT84A4ODTaZBXldA13EyLjKbds?=
- =?us-ascii?Q?PYWIDPYfZTBF+5Xldwv7w6+nA8pFVkJBY+tTzkKz/X6CEKOyBA7OaSvOPosV?=
- =?us-ascii?Q?1gT+T7tfOgTPA6iWg/ECewe7M8CGUZpIXZB0mZob5EB7RDb5zqLWoo5bppGs?=
- =?us-ascii?Q?T7LPDU3j8POd9s4CmZ7t2xpjkaG7JIHCoEJ8SJc3G2ipDXYFDCIQdthLLN4p?=
- =?us-ascii?Q?/M8zjJ9VYq87iInxizAKPdMVY1ebKR3aFHNTAo0+s1J4E2+UmqG2tRhIxfUp?=
- =?us-ascii?Q?yH3ULBx0M/X0i85HLXyMJAlr7+LNnF1Xe+aUZmQ+UUPiUHhQ5LoRpm//cStz?=
- =?us-ascii?Q?GJV3cmHM+axyZQAsKjmN+E1qxz2Ip6M1j3tG/staXoVckSwYs3zu2gG8mnbb?=
- =?us-ascii?Q?knD/e58EshC3flxlL/WNkwn79i5jJeG8IOttnKcBUNvcmVgw5ao60VvSonJ5?=
- =?us-ascii?Q?mF07/ICADK27p+BgVWaqiHZDtxZHn982ZHe8264WammBVWAEY5Gp9wTvucy3?=
- =?us-ascii?Q?y1rhK7sWo//u0Ijfzddb3cFxg/AXDMLZKsv3F/SJduDSNYyz51+pFvA1HpLs?=
- =?us-ascii?Q?V5kHXuOw3aAbMieFF5hCLKj7YX4pBv52fa0QpdF4m3hCSNEVAIF99dfcDFR6?=
- =?us-ascii?Q?0FrQ/0WytJzBr/FqkX8ps5qqDCsWddm3Ii8bEJmmtcGJ3UlP7Mhwl7yMtziH?=
- =?us-ascii?Q?XLkcGRyKgqGvZ4nSK8u0KgS3dgC8sLM2KHtkW32rEvIuwbJRkyQ5MzsoSEwH?=
- =?us-ascii?Q?38sGBvTs1SQ8bWavefu2pziCVz984rcQSAad/WXnzU82AKS9RkfoWG83znEC?=
- =?us-ascii?Q?Np/dEYTbYBiry+mnz9muVGEjwPjjkJWS4ewePfmPxd4lHxsD4MDuAOt/+Wxp?=
- =?us-ascii?Q?zEHyYUve5we8sx+HA9A14qbAzYqx7ZXKQUxEvqHgCVq4mpnX6QNTpoa4CvZZ?=
- =?us-ascii?Q?5B/JoDtrB/GePu1mwFStkwgZQ5jew6MnyPHhtWJ9GQG5mTvz+CATSzVwJV4j?=
- =?us-ascii?Q?9yq9penX0YdW48/+Eh5obV6F93jbfg1sh6jM190ECBpY4FBsoCJhkS4RaT6g?=
- =?us-ascii?Q?4AMmhul6lzU6lXyBf3ae2jews8a3tVuQlGaW+5VqFIcCfu5WakJ2HYBZ9L7s?=
- =?us-ascii?Q?IhvZPSkOBhVWP5vDyo=3D?=
-X-Microsoft-Antispam-Message-Info: sIAgYAJcYtR+9VU56ae7m3v05CQ25jiqPSWoN4BhfsyZMHfYlQd+oGRGc9xBUuetCVmbmTLl0lwZl6YVwOr3CNSnPsPL1EUUorvLVwVPo/q9tT1/an5PAWUEBWZYQpv+2xRKFAdfmFEoeXIOnR+FLpHFTIn/gqU9TPTltyumoWIbsXltEoDShF8bXBcG1Shw
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;6:1Guj37kdHIvQp6OC0VVg/BpoWzVo7os3xm9fmJU10Nuv5kiPCZefMcB00MuMN6T5oBnXo8dYnX51/d9Qkq4e4ipkbyrmCLfc+oQxWskikR7Hs2M+mJ8ltw0cilUBi4qkJQoQH+zIh5KvWaVrEIOfAUClh4s72jnCFvQWOFGuc0CVQTcYSmifWGK0em3m87TKhMpCAQxMJFUcnxseOmSKU2r0Faxx56J+zGEWG+OfzeC5EJTelBMdYZqZRcNbYIB4bdkKMbDVprRvQq1hqKL2mVRxFAklJ0Mw1kX+zlnFXMMcfgzcDuFiU2ira5MIxFa5PquY0YYqREZYZo62f7Shw2fEaHet2AwXwh/n9dgJS/y1aRDNeY7MyqDcDxNffxTdIEzYOeyL143bz9Ob7Yd8oxyBLcsxIfQT9FFHr/4q5fSKA7h5P+wPISnILmB2KY/4LVWaZCXH+YXg9duM7cY3lA==;5:DA8KTeZoRor3lu4P/2da6iZayTdEDDePy6za+v0ROX92uanJ8XM6crig0u1jFWEHa5npGTPnxqGQ8fLn3kX0PDoJiH0biWVuyVtYzkO2XmzHZhHjNIaRBKtL5tnhnV3EdBpVM+nYEHhDUTCtp8947HGMD84MWWCtH6SJNeYj5a0=;24:CdgqeLIatYg+pPZqSlZeD3q8U1KAxN7cyiR9aFLEPmAluszQEcraEMMe3yX/ekD8h0fPjvoUmz63JCdsrx9UafJyENTXk5KOacxPv4+hmio=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;7:vSP3zzsvQL/lRj1NkDb2g3rBXf7iyQn34ACQ8xFmj8S3buaP0MVLSjUgusQVy1iFm65IkWHfTikacaH+Q4xj58JeA/SL2tXmXSd0DTZq6Y4dCiHGpi0Y998mAVBQQr3uKwoWRLVDLiRbAKujNc5Oa5VBtsKRS2Dj21xsxuqiFkoJcSqA9Lt+pwCKBUgB15nsawNiKTYYXcRNVM7/4Bj8Xm9vwN6xkeeXHXFOkXu1uc29X0JD4gq3MUtK5CvF/4U0
-X-MS-Office365-Filtering-Correlation-Id: e5358f05-a349-4fbe-4b7c-08d5ba44abd5
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 09:17:22.8561 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5358f05-a349-4fbe-4b7c-08d5ba44abd5
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2636
+        id S1752827AbeEOJOi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 05:14:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752591AbeEOJOd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 05:14:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DEFC60131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        rjw@rjwysocki.net, linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v7 08/14] dt: qcom: Add opp and thermal to the msm8996
+Date: Tue, 15 May 2018 12:13:30 +0300
+Message-Id: <1526375616-16904-9-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix below warning about PPI interrupts configuration:
-"GIC: PPI13 is secure or misconfigured"
-
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/boot/dts/berlin2q.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 260 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/berlin2q.dtsi b/arch/arm/boot/dts/berlin2q.dtsi
-index 7cba798152b9..f11254e70f57 100644
---- a/arch/arm/boot/dts/berlin2q.dtsi
-+++ b/arch/arm/boot/dts/berlin2q.dtsi
-@@ -164,7 +164,7 @@
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0xad0600 0x20>;
- 			clocks = <&chip_clk CLKID_TWD>;
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152c..e6cf290 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -97,6 +98,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -109,6 +113,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
  		};
  
- 		gic: interrupt-controller@ad1000 {
+@@ -117,6 +124,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -129,6 +139,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -155,6 +168,182 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <422400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <844800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <960000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 <1228800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <403200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <806400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <883200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <940800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 <1248000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 <1555200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 <1632000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 <1708800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 <1785600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 <1824000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 <1920000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 <2073600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 <2150400000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -163,18 +352,34 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal1 {
+@@ -184,18 +389,34 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -205,18 +426,33 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -226,9 +462,14 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+@@ -238,6 +479,16 @@
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
+@@ -414,7 +665,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+@@ -1001,7 +1252,7 @@
+ 
+ 				pinctrl-names = "default", "sleep";
+ 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
+-				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
++				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
+ 
+ 				vdda-supply = <&pm8994_l28>;
+ 
 -- 
-2.17.0
+1.9.1
