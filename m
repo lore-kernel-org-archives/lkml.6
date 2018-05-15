@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeEOGXq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:23:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35689 "EHLO
+        id S1752374AbeEOGYP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:24:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36321 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeEOGXo (ORCPT
+        with ESMTP id S1752165AbeEOGYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:23:44 -0400
-Date: Mon, 14 May 2018 23:23:21 -0700
+        Tue, 15 May 2018 02:24:14 -0400
+Date: Mon, 14 May 2018 23:23:51 -0700
 From: tip-bot for SeongJae Park <tipbot@zytor.com>
-Message-ID: <tip-df9e0cc85c014868e57d2466239623f150c81b1a@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        paulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        will.deacon@arm.com, sj38.park@gmail.com, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: paulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        sj38.park@gmail.com
-In-Reply-To: <1526338533-6044-4-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526338533-6044-4-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <tip-e2ba8041f2edb2e998f2bd7b3fd5f2bcf6a5edd4@git.kernel.org>
+Cc: sj38.park@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, akpm@linux-foundation.org,
+        tglx@linutronix.de, will.deacon@arm.com, torvalds@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com
+Reply-To: tglx@linutronix.de, akpm@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        sj38.park@gmail.com, paulmck@linux.vnet.ibm.com,
+        torvalds@linux-foundation.org, will.deacon@arm.com
+In-Reply-To: <1526338533-6044-5-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526338533-6044-5-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:locking/core] locking/memory-barriers.txt/kokr: Update Korean
- translation to cross-reference "tools/memory-model/"
-Git-Commit-ID: df9e0cc85c014868e57d2466239623f150c81b1a
+ translation to fix description of data dependency barriers
+Git-Commit-ID: e2ba8041f2edb2e998f2bd7b3fd5f2bcf6a5edd4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,18 +36,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  df9e0cc85c014868e57d2466239623f150c81b1a
-Gitweb:     https://git.kernel.org/tip/df9e0cc85c014868e57d2466239623f150c81b1a
+Commit-ID:  e2ba8041f2edb2e998f2bd7b3fd5f2bcf6a5edd4
+Gitweb:     https://git.kernel.org/tip/e2ba8041f2edb2e998f2bd7b3fd5f2bcf6a5edd4
 Author:     SeongJae Park <sj38.park@gmail.com>
-AuthorDate: Mon, 14 May 2018 15:55:29 -0700
+AuthorDate: Mon, 14 May 2018 15:55:30 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 15 May 2018 08:11:14 +0200
 
-locking/memory-barriers.txt/kokr: Update Korean translation to cross-reference "tools/memory-model/"
+locking/memory-barriers.txt/kokr: Update Korean translation to fix description of data dependency barriers
 
 Translate this commit to Korean:
 
-  621df431b0ac ("Documentation/memory-barriers.txt: Cross-reference "tools/memory-model/"")
+  51de78892b12 ("memory-barriers: Fix description of data dependency barriers")
 
 Signed-off-by: SeongJae Park <sj38.park@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
@@ -67,23 +65,24 @@ Cc: luc.maranget@inria.fr
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
 Cc: stern@rowland.harvard.edu
-Link: http://lkml.kernel.org/r/1526338533-6044-4-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526338533-6044-5-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/translations/ko_KR/memory-barriers.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/translations/ko_KR/memory-barriers.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-index 44e47c2d33cf..2c0ab128cd04 100644
+index 2c0ab128cd04..99ef4ca1c1bf 100644
 --- a/Documentation/translations/ko_KR/memory-barriers.txt
 +++ b/Documentation/translations/ko_KR/memory-barriers.txt
-@@ -36,6 +36,9 @@ Documentation/memory-barriers.txt
- 부분도 있고, 의도하진 않았지만 사람에 의해 쓰였다보니 불완전한 부분도 있습니다.
- 이 문서는 리눅스에서 제공하는 다양한 메모리 배리어들을 사용하기 위한
- 안내서입니다만, 뭔가 이상하다 싶으면 (그런게 많을 겁니다) 질문을 부탁드립니다.
-+일부 이상한 점들은 공식적인 메모리 일관성 모델과 tools/memory-model/ 에 있는
-+관련 문서를 참고해서 해결될 수 있을 겁니다.  그러나, 이 메모리 모델조차도 그
-+관리자들의 의견의 집합으로 봐야지, 절대 옳은 예언자로 신봉해선 안될 겁니다.
+@@ -427,8 +427,8 @@ CPU 에게 기대할 수 있는 최소한의 보장사항 몇가지가 있습니
+      데이터 의존성 배리어는 읽기 배리어의 보다 완화된 형태입니다.  두개의 로드
+      오퍼레이션이 있고 두번째 것이 첫번째 것의 결과에 의존하고 있을 때(예:
+      두번째 로드가 참조할 주소를 첫번째 로드가 읽는 경우), 두번째 로드가 읽어올
+-     데이터는 첫번째 로드에 의해 그 주소가 얻어지기 전에 업데이트 되어 있음을
+-     보장하기 위해서 데이터 의존성 배리어가 필요할 수 있습니다.
++     데이터는 첫번째 로드에 의해 그 주소가 얻어진 뒤에 업데이트 됨을 보장하기
++     위해서 데이터 의존성 배리어가 필요할 수 있습니다.
  
- 다시 말하지만, 이 문서는 리눅스가 하드웨어에 기대하는 사항에 대한 명세서가
- 아닙니다.
+      데이터 의존성 배리어는 상호 의존적인 로드 오퍼레이션들 사이의 부분적 순서
+      세우기입니다; 스토어 오퍼레이션들이나 독립적인 로드들, 또는 중복되는
