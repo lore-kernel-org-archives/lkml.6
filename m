@@ -1,47 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752795AbeEOVMn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:12:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59498 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752354AbeEOVMm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:12:42 -0400
-Date: Tue, 15 May 2018 14:12:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mhocko@suse.com,
-        linux-mm@kvack.org, mgorman@techsingularity.net, mingo@kernel.org,
-        peterz@infradead.org, rostedt@goodmis.org, fengguang.wu@intel.com,
-        dennisszhou@gmail.com
-Subject: Re: [PATCH v5] mm: don't allow deferred pages with NEED_PER_CPU_KM
-Message-Id: <20180515141240.c7587ed53a0ff32ff984e3d2@linux-foundation.org>
-In-Reply-To: <20180515175124.1770-1-pasha.tatashin@oracle.com>
-References: <20180515175124.1770-1-pasha.tatashin@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752730AbeEOVO1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752354AbeEOVOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 17:14:25 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com,
+        mturquette@baylibre.com, christian.koenig@amd.com, airlied@redhat.com,
+        Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+ <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+ <20362702.FCbsg9xPKv@aspire.rjw.lan>
+ <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+Message-ID: <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+Date: Tue, 15 May 2018 14:14:24 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FLEW1f025324
 
-On Tue, 15 May 2018 13:51:24 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
-
-> It is unsafe to do virtual to physical translations before mm_init() is
-> called if struct page is needed in order to determine the memory section
-> number (see SECTION_IN_PAGE_FLAGS). This is because only in mm_init() we
-> initialize struct pages for all the allocated memory when deferred struct
-> pages are used.
+Quoting Agrawal, Akshu (2018-05-15 02:39:08)
 > 
-> My recent fix exposed this problem,
-
-"my recent fix" isn't very useful.  I changed this to identify
-c9e97a1997 ("mm: initialize pages on demand during boot"), yes?
-
 > 
-> Fixes: 3a80a7fa7989 ("mm: meminit: initialise a subset of struct pages if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set")
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
+> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
+> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+> >> 48Mhz of frequency.
+> >> The clock is available for general system use.
+> >>
+> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> > 
+> > I'm not sure if the Stephen Boyd's comments on one of the previous
+> > versions of this patch have been addressed.  Have they?
+> > 
+> > In any case, if I'm expected to take this, I need an ACK from Stephen on it.
+> > 
+> > Thanks,
+> > Rafael
+> > 
+> 
+> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
+> 
+> Stephen, if you are Ok with this can you please ACK it.
+> 
 
-And I added cc:stable.
+It could go via clk tree and meet up with the acpi patch in -next right?
+I'm fine with it going through acpi path though so whichever way works.
