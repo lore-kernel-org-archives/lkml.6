@@ -1,67 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753171AbeEOMJr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:09:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34682 "EHLO
+        id S1753255AbeEOMNR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:13:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35092 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753121AbeEOMJq (ORCPT
+        with ESMTP id S1752804AbeEOMNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:09:46 -0400
-Date: Tue, 15 May 2018 14:09:39 +0200
+        Tue, 15 May 2018 08:13:15 -0400
+Date: Tue, 15 May 2018 14:13:09 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Boaz Harrosh <boazh@netapp.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Jeff Moyer <jmoyer@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-Message-ID: <20180515120939.GA12217@hirez.programming.kicks-ass.net>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <20180515111159.GA31599@bombadil.infradead.org>
- <6999e635-e804-99d0-12fc-c13ff3e9ca58@netapp.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        will.deacon@arm.com, mark.rutland@arm.com,
+        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
+ in atomic.h some more
+Message-ID: <20180515121309.GL12235@hirez.programming.kicks-ass.net>
+References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
+ <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
+ <20180509073327.GE12217@hirez.programming.kicks-ass.net>
+ <20180515083556.GA30420@gmail.com>
+ <20180515114144.GX12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6999e635-e804-99d0-12fc-c13ff3e9ca58@netapp.com>
+In-Reply-To: <20180515114144.GX12217@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 02:41:41PM +0300, Boaz Harrosh wrote:
-> On 15/05/18 14:11, Matthew Wilcox wrote:
-
-> > You're still thinking about this from the wrong perspective.  If you
-> > were writing a program to attack this facility, how would you do it?
-> > It's not exactly hard to leak one pointer's worth of information.
-> > 
+On Tue, May 15, 2018 at 01:41:44PM +0200, Peter Zijlstra wrote:
+> #!/bin/bash
 > 
-> That would be very hard. Because that program would:
-> - need to be root
-> - need to start and pretend it is zus Server with the all mount
->   thread thing, register new filesystem, grab some pmem devices.
-> - Mount the said filesystem on said pmem. Create core-pinned ZT threads
->   for all CPUs, start accepting IO.
-> - And only then it can start leaking the pointer and do bad things.
->   The bad things it can do to the application, not to the Kernel.
+> gen_proto() {
+> 	local cnt=0;
+> 
+> 	proto=$1; shift;
+> 	ret=$1; shift;
+> 	pfx=$1; shift;
+> 	sfx=$1; shift;
+> 
+> 	echo -n "${ret} ";
+> 
+> 	name=${proto%(*};
+> 	echo -n "${pfx}${name}${sfx}("
+> 
+> 	args=${proto#*\(};
+> 	for arg in ${args//[,)]/ };
+> 	do
+> 		if [ $cnt -gt 0 ]
+> 		then
+> 			echo -n ", ";
+> 		fi
+> 		let cnt++;
+> 		echo -n "${TYPES[$arg]} ${arg}"
+> 	done
+> 	echo ");"
+> }
+> 
+> gen_proto_order() {
+> 	gen_proto $1 $2 $3 $4
+> 	gen_proto $1 $2 $3 $4_acquire
+> 	gen_proto $1 $2 $3 $4_release
+> 	gen_proto $1 $2 $3 $4_relaxed
+> }
+> 
+> gen_void_protos() {
+> 	grep -v -e "^$" -e "^#" atomic.tbl | while read proto meta;
+> 	do
+> 		gen_proto ${proto} "void" ${TYPES[pfx]} ""
+> 	done
+> }
+> 
+> gen_return_protos() {
+> 	grep -v -e "^$" -e "^#" atomic.tbl | while read proto meta;
+> 	do
+> 		if [[ $meta =~ "R" ]]; then
+> 			gen_proto_order ${proto} ${TYPES[i]} ${TYPES[pfx]} "_return"
+> 		fi
+> 	done
+> }
+> 
+> gen_fetch_protos() {
+> 	grep -v -e "^$" -e "^#" atomic.tbl | while read proto meta;
+> 	do
+> 		if [[ $meta =~ "F" ]]; then
+> 			gen_proto_order ${proto} ${TYPES[i]} "${TYPES[pfx]}fetch_" ""
+> 		fi
+> 	done
+> }
+> 
+> gen_exchange_protos() {
+> 	grep -v -e "^$" -e "^#" atomic.tbl | while read proto meta;
+> 	do
+> 		if [[ $meta =~ "X" ]]; then
 
-No I think you can do bad things to the kernel at that point. Consider
-it populating the TLBs on the 'wrong' CPU by 'inadvertenly' touching
-'random' memory.
+			ret=${TYPES[i]};
+			if [[ $meta =~ "B" ]]; then
+				ret="bool"
+			fi
+			gen_proto_order ${proto} ${ret} ${TYPES[pfx]} ""
 
-Then cause an invalidation and get the page re-used for kernel bits.
-
-Then access that page through the 'stale' TLB entry we still have on the
-'wrong' CPU and corrupt kernel data.
+> 		fi
+> 	done
+> }
+> 
+> gen_protos() {
+> 	gen_void_protos
+> 	gen_return_protos
+> 	gen_fetch_protos
+> 	gen_exchange_protos
+> }
+> 
+> declare -A TYPES=( [pfx]="atomic_" [v]="atomic_t *" [i]="int" [j]="int" [I]="int *" )
+> 
+> gen_protos
+> 
+> declare -A TYPES=( [pfx]="atomic64_" [v]="atomic64_t *" [i]="s64" [j]="s64" [I]="s64 *" )
+> 
+> gen_protos
+> 
+> declare -A TYPES=( [pfx]="atomic_long_" [v]="atomic_long_t *" [i]="long" [j]="long" [I]="long *" )
+> 
+> gen_protos
+> 
+> 
