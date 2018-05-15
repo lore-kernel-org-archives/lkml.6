@@ -1,98 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752378AbeEOH7b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:59:31 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41918 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752097AbeEOH72 (ORCPT
+        id S1752471AbeEOIPr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:15:47 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41488 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752195AbeEOIPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:28 -0400
-X-Google-Smtp-Source: AB8JxZqm+wbt59PpSdmPrtP7xPkvavbWoCNQh8hBnkm1u52DWfwon4yHSx5H1tkAi8dD2o+zQ7NoJg==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 00/29] Venus updates
-Date: Tue, 15 May 2018 10:58:30 +0300
-Message-Id: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
+        Tue, 15 May 2018 04:15:44 -0400
+X-Google-Smtp-Source: AB8JxZr6hshopX9kzeSAG7VNCHc+1DFMwdVtBR94e2eVu0ARcPjzzeqK1+BaTsfNWv5FgApRbwMEdg==
+Date: Tue, 15 May 2018 10:15:36 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+Message-ID: <20180515081536.GA4901@andrea>
+References: <20180514184634.2160-1-bart.vanassche@wdc.com>
+ <20180514184634.2160-2-bart.vanassche@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514184634.2160-2-bart.vanassche@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Bart,
 
-Here is v2 with following comments addressed:
+On Mon, May 14, 2018 at 11:46:33AM -0700, Bart Van Assche wrote:
 
-* reworked venus suspend 3xx and reuse it for 4xx.
-* drop 10/28 patch from v1, i.e. call of session_continue when
-  buffer requirements are not sufficient.
-* fixed kbuild test robot warning in 11/28 by allocating instance
-  variable from heap.
-* spelling typo in 15/28.
-* added Reviewed-by for DT changes.
-* extended 28/28 HEVC support for encoder, now the profile and
-  level are selected properly.
+[...]
 
-Comments are welcome!
+> diff --git a/Documentation/features/locking/cmpxchg64/arch-support.txt b/Documentation/features/locking/cmpxchg64/arch-support.txt
+> new file mode 100644
+> index 000000000000..65b3290ce5d5
+> --- /dev/null
+> +++ b/Documentation/features/locking/cmpxchg64/arch-support.txt
+> @@ -0,0 +1,31 @@
+> +#
+> +# Feature name:          cmpxchg64
+> +#         Kconfig:       ARCH_HAVE_CMPXCHG64
+> +#         description:   arch supports the cmpxchg64() API
+> +#
+> +    -----------------------
+> +    |         arch |status|
+> +    -----------------------
+> +    |       alpha: |  ok  |
+> +    |         arc: | TODO |
+> +    |         arm: |!thumb|
+> +    |       arm64: |  ok  |
+> +    |         c6x: | TODO |
+> +    |       h8300: | TODO |
+> +    |     hexagon: | TODO |
+> +    |        ia64: |  ok  |
+> +    |        m68k: |  ok  |
+> +    |  microblaze: | TODO |
+> +    |        mips: |64-bit|
+> +    |       nios2: | TODO |
+> +    |    openrisc: | TODO |
+> +    |      parisc: |  ok  |
+> +    |     powerpc: |64-bit|
+> +    |        s390: |  ok  |
+> +    |          sh: | TODO |
+> +    |       sparc: |  ok  |
+> +    |          um: | TODO |
+> +    |   unicore32: | TODO |
+> +    |         x86: |  ok  |
+> +    |      xtensa: |  ok  |
+> +    -----------------------
 
-regards,
-Stan
+nds32 and riscv seem to be missing from the table. I'd also suggest
+sticking to the three entries documented in
 
-Stanimir Varbanov (29):
-  venus: hfi_msgs: correct pointer increment
-  venus: hfi: preparation to support venus 4xx
-  venus: hfi: update sequence event to handle more properties
-  venus: hfi_cmds: add set_properties for 4xx version
-  venus: hfi: support session continue for 4xx version
-  venus: hfi: handle buffer output2 type as well
-  venus: hfi_venus: add halt AXI support for Venus 4xx
-  venus: hfi_venus: fix suspend function for venus 3xx versions
-  venus: hfi_venus: move set of default properties to core init
-  venus: hfi_venus: add suspend functionality for Venus 4xx
-  venus: venc,vdec: adds clocks needed for venus 4xx
-  venus: add common capability parser
-  venus: helpers: make a commmon function for power_enable
-  venus: core: delete not used flag for buffer mode
-  venus: helpers: rename a helper function and use buffer mode from caps
-  venus: add a helper function to set dynamic buffer mode
-  venus: add helper function to set actual buffer size
-  venus: delete no longer used bufmode flag from instance
-  venus: helpers: add buffer type argument to a helper
-  venus: helpers: add a new helper to set raw format
-  venus: helpers,vdec,venc: add helpers to set work mode and core usage
-  venus: helpers: extend set_num_bufs helper with one more argument
-  venus: helpers: add a helper to return opb buffer sizes
-  venus: vdec: get required input buffers as well
-  venus: vdec: new function for output configuration
-  venus: move frame size calculations in common place
-  venus: implementing multi-stream support
-  venus: add sdm845 compatible and resource data
-  venus: add HEVC codec support
+  Documentation/features/arch-support.txt
+  
+and using the header comment to provide any additional information.
 
- .../devicetree/bindings/media/qcom,venus.txt       |   1 +
- drivers/media/platform/qcom/venus/Makefile         |   3 +-
- drivers/media/platform/qcom/venus/core.c           | 107 ++++
- drivers/media/platform/qcom/venus/core.h           |  93 ++--
- drivers/media/platform/qcom/venus/helpers.c        | 558 +++++++++++++++++++--
- drivers/media/platform/qcom/venus/helpers.h        |  23 +-
- drivers/media/platform/qcom/venus/hfi.c            |  12 +-
- drivers/media/platform/qcom/venus/hfi.h            |   9 +
- drivers/media/platform/qcom/venus/hfi_cmds.c       |  64 ++-
- drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
- drivers/media/platform/qcom/venus/hfi_msgs.c       | 401 +++------------
- drivers/media/platform/qcom/venus/hfi_parser.c     | 291 +++++++++++
- drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
- drivers/media/platform/qcom/venus/hfi_venus.c      |  95 +++-
- drivers/media/platform/qcom/venus/hfi_venus_io.h   |  25 +
- drivers/media/platform/qcom/venus/vdec.c           | 316 +++++++-----
- drivers/media/platform/qcom/venus/venc.c           | 211 ++++----
- 17 files changed, 1689 insertions(+), 677 deletions(-)
- create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
- create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
+A script that refreshes the arch support status file in place (from
+the Kconfig files) is currently available in linux-next: c.f.,
 
--- 
-2.14.1
+  Documentation/features/scripts/features-refresh.sh
+
+  Andrea
