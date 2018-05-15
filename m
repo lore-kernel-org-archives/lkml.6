@@ -1,40 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752363AbeEOIfi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:35:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49828 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeEOIfg (ORCPT
+        id S1752475AbeEOIgD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:36:03 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50345 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752297AbeEOIgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:35:36 -0400
-Date: Tue, 15 May 2018 10:35:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
- non-spinnable in percpu_rwsem_release()
-Message-ID: <20180515083525.GV12217@hirez.programming.kicks-ass.net>
-References: <1526326267-22501-1-git-send-email-longman@redhat.com>
- <1526326267-22501-3-git-send-email-longman@redhat.com>
+        Tue, 15 May 2018 04:36:01 -0400
+X-Google-Smtp-Source: AB8JxZoXnTjDtBs+Dj/PtlJkifFGQHQ2/lq/NnXBmqMQ5XWZevttNUBQ9r1oFL19tG7corxoHwJm/g==
+Date: Tue, 15 May 2018 10:35:56 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        will.deacon@arm.com, mark.rutland@arm.com,
+        torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        tglx@linutronix.de, hpa@zytor.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:locking/core] locking/atomics: Simplify the op definitions
+ in atomic.h some more
+Message-ID: <20180515083556.GA30420@gmail.com>
+References: <20180505083635.622xmcvb42dw5xxh@gmail.com>
+ <tip-87d655a48dfe74293f72dc001ed042142cf00d44@git.kernel.org>
+ <20180509073327.GE12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526326267-22501-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509073327.GE12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 03:31:07PM -0400, Waiman Long wrote:
-> The percpu_rwsem_release() is called when the ownership of the embedded
-> rwsem is to be transferred to another task. The new owner, however, may
-> take a while to get the ownership of the lock via percpu_rwsem_acquire().
-> During that period, the rwsem is now marked as writer-owned with no
-> optimistic spinning.
 
-This does not explain the problem sufficiently to even begin considering
-if the proposed solution is sensible.
+* Peter Zijlstra <peterz@infradead.org> wrote:
+
+> And if we're going to do codegen, we might as well all generate this
+> anyway, so all this mucking about is a complete waste of time.
+
+I'm not yet convinced that it will be cleaner, but can be convinced in principle, 
+but meanwhile the existing code is arguably butt-ugly and bloaty.
+
+Regarding these cleanups, we had this before:
+
+ /* atomic_add_return_relaxed */
+ #ifndef atomic_add_return_relaxed
+ #define  atomic_add_return_relaxed	atomic_add_return
+ #define  atomic_add_return_acquire	atomic_add_return
+ #define  atomic_add_return_release	atomic_add_return
+
+ #else /* atomic_add_return_relaxed */
+
+ #ifndef atomic_add_return_acquire
+ #define  atomic_add_return_acquire(...)					\
+	__atomic_op_acquire(atomic_add_return, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_add_return_release
+ #define  atomic_add_return_release(...)					\
+	__atomic_op_release(atomic_add_return, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_add_return
+ #define  atomic_add_return(...)						\
+	__atomic_op_fence(atomic_add_return, __VA_ARGS__)
+ #endif
+ #endif /* atomic_add_return_relaxed */
+
+Which is 23 lines per definition.
+
+Now we have this much more compact definition:
+
+ #ifndef atomic_add_return_relaxed
+ # define atomic_add_return_relaxed		atomic_add_return
+ # define atomic_add_return_acquire		atomic_add_return
+ # define atomic_add_return_release		atomic_add_return
+ #else
+ # ifndef atomic_add_return
+ #  define atomic_add_return(...)		__op_fence(atomic_add_return, __VA_ARGS__)
+ #  define atomic_add_return_acquire(...)	__op_acquire(atomic_add_return, __VA_ARGS__)
+ #  define atomic_add_return_release(...)	__op_release(atomic_add_return, __VA_ARGS__)
+ # endif
+ #endif
+
+Which is just _half_ the linecount.
+
+Automated code generation might improve this some more, but the net effect on the 
+core <linux/atomic.h> code right now is 373 lines removed:
+
+  include/linux/atomic.h | 1109 ++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------------------------------------------
+  1 file changed, 368 insertions(+), 741 deletions(-)
+
+... <linux/atomic.h> shrunk to just 709 lines.
+
+The x86/include/asm/atomic64_64.h file got smaller as well due to the cleanups:
+
+  arch/x86/include/asm/atomic64_64.h | 216 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------
+  1 file changed, 97 insertions(+), 119 deletions(-)
+
+So unless you can clean this up and shrink this even more, these changes are 
+obviously justified on their own.
+
+Thanks,
+
+	Ingo
