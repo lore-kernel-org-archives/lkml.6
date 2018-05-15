@@ -1,189 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeEOGeA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:34:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35217 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752094AbeEOGd7 (ORCPT
+        id S1752467AbeEOGeN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:34:13 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:55267 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752206AbeEOGeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:33:59 -0400
-Date: Mon, 14 May 2018 23:33:17 -0700
-From: tip-bot for Alan Stern <tipbot@zytor.com>
-Message-ID: <tip-fd0359dbac3df00d1c6c22769e7d647b16b920cc@git.kernel.org>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-        paulmck@linux.vnet.ibm.com, stern@rowland.harvard.edu,
-        luc.maranget@inria.fr, linux-kernel@vger.kernel.org, npiggin@gmail.com,
-        boqun.feng@gmail.com, peterz@infradead.org, hpa@zytor.com,
-        dhowells@redhat.com, will.deacon@arm.com, j.alglave@ucl.ac.uk,
-        akiyks@gmail.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, stern@rowland.harvard.edu,
-        paulmck@linux.vnet.ibm.com, luc.maranget@inria.fr,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, torvalds@linux-foundation.org,
-        hpa@zytor.com, peterz@infradead.org, dhowells@redhat.com,
-        mingo@kernel.org, j.alglave@ucl.ac.uk, akiyks@gmail.com,
-        will.deacon@arm.com, npiggin@gmail.com, boqun.feng@gmail.com
-In-Reply-To: <1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Improve comments in lock.cat
-Git-Commit-ID: fd0359dbac3df00d1c6c22769e7d647b16b920cc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 May 2018 02:34:11 -0400
+Subject: Re: [RFC PATCH 3/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
+ <1526337639-3568-4-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <38dcd327-004c-3fb3-8e22-3b3b92542fc9@xs4all.nl>
+Date: Tue, 15 May 2018 08:34:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1526337639-3568-4-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEDiYGIEtMJLKoCjG56nQnmwDS0BTwYrz7Kdy21pP1RXjA70Wn1MEBJ0VXtwKdx7XvN4M667qTqNrJd/x7eDKkAzoM3AZOAMfXnWaz4c8wOi/1GlYUZO
+ vw21FFYlzjJrKnq3QGJH3YbWvCcL3+8F8MCK94QB4AAWay2/Ohe/zHih0zeHSS+x/Mrzlq9NPuZJREQdykfdufle1Cv/6C72OaYu4fdt3XpFco9Pf5QPLiuo
+ Dku5xh5NfurkhQdNdOYO1lnIbLAn99W+Qj1ZfrpxI60Gn4upuSuAua6uYD6RCYMIBBpYt7QkU7Sz/aIrSH9MUofoBb2DAIs31M9A3RGLsEXYbPN8g5jdTmrl
+ QH2Vmbi0XuwnsVXiYALbco5di82Tc7iPd0U5hyUV3YDE93Z4LlOQVoOqZrZaZv2Wl+8lDuHXhZal01YQvG89OPxdmxoMxQpL2TITJxRf9Nh8zZhLoWlku79k
+ CxfwlouAqgzGjMCSm3LXhHloMxNTl7UFGiksGgZyYy/Xq7DiXR2ipVLxiJ9LOFkTAiYTk9+3SV4ZDIw83/BhuDqYfdiC9ZRzLWrGKtYqRtsxShp5Z9A7yvfu
+ OH0Ep5RAQit5aeGhPoCgWmbpN1MhcXOpwZAuxRieBd5DOH2aAoL9R54wNIVTxWcPjbxyskadRbNArog7L9e6ohLB3AkVOQudnEHiU8zW7eRBxkDbo9+ChXKE
+ Avs554EDHMo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fd0359dbac3df00d1c6c22769e7d647b16b920cc
-Gitweb:     https://git.kernel.org/tip/fd0359dbac3df00d1c6c22769e7d647b16b920cc
-Author:     Alan Stern <stern@rowland.harvard.edu>
-AuthorDate: Mon, 14 May 2018 16:33:51 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 15 May 2018 08:11:18 +0200
+On 05/15/2018 12:40 AM, Neil Armstrong wrote:
+> This patchs adds the cec_notifier feature to the intel_hdmi part
+> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+> between each HDMI ports.
+> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+> to an eventual CEC adapter.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
+>  drivers/gpu/drm/i915/intel_hdmi.c | 10 ++++++++++
 
-tools/memory-model: Improve comments in lock.cat
+The Kconfig also needs to be changed. In the DRM_I915 you need to add:
 
-This patch improves the comments in tools/memory-model/lock.cat.  In
-addition to making the text more uniform and removing redundant
-comments, it adds a description of all the possible locking events
-that herd can generate.
+	select CEC_CORE if CEC_NOTIFIER
 
-Tested-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: parri.andrea@gmail.com
-Link: http://lkml.kernel.org/r/1526340837-12222-13-git-send-email-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/memory-model/lock.cat | 51 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 15 deletions(-)
+Otherwise you'll get problems if the cec driver is a module and i915 is built-in.
 
-diff --git a/tools/memory-model/lock.cat b/tools/memory-model/lock.cat
-index 1f6d67e79065..df74de2148f6 100644
---- a/tools/memory-model/lock.cat
-+++ b/tools/memory-model/lock.cat
-@@ -4,15 +4,35 @@
-  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>
-  *)
- 
--(* Generate coherence orders and handle lock operations *)
- (*
-- * Warning, crashes with herd7 versions strictly before 7.48.
-- * spin_islocked is functional from version 7.49.
-+ * Generate coherence orders and handle lock operations
-  *
-+ * Warning: spin_is_locked() crashes herd7 versions strictly before 7.48.
-+ * spin_is_locked() is functional from herd7 version 7.49.
-  *)
-+
- include "cross.cat"
- 
--(* From lock reads to their partner lock writes *)
-+(*
-+ * The lock-related events generated by herd are as follows:
-+ *
-+ * LKR		Lock-Read: the read part of a spin_lock() or successful
-+ *			spin_trylock() read-modify-write event pair
-+ * LKW		Lock-Write: the write part of a spin_lock() or successful
-+ *			spin_trylock() RMW event pair
-+ * UL		Unlock: a spin_unlock() event
-+ * LF		Lock-Fail: a failed spin_trylock() event
-+ * RL		Read-Locked: a spin_is_locked() event which returns True
-+ * RU		Read-Unlocked: a spin_is_locked() event which returns False
-+ *
-+ * LKR and LKW events always come paired, like all RMW event sequences.
-+ *
-+ * LKR, LF, RL, and RU are read events; LKR has Acquire ordering.
-+ * LKW and UL are write events; UL has Release ordering.
-+ * LKW, LF, RL, and RU have no ordering properties.
-+ *)
-+
-+(* Link Lock-Reads to their RMW-partner Lock-Writes *)
- let lk-rmw = ([LKR] ; po-loc ; [LKW]) \ (po ; po)
- let rmw = rmw | lk-rmw
- 
-@@ -29,18 +49,16 @@ flag ~empty LKW \ range(lk-rmw) as unpaired-LKW
- (* This will be allowed if we implement spin_is_locked() *)
- flag ~empty LKR \ domain(lk-rmw) as unpaired-LKR
- 
--(* There should be no R or W accesses to spinlocks *)
-+(* There should be no ordinary R or W accesses to spinlocks *)
- let ALL-LOCKS = LKR | LKW | UL | LF
- flag ~empty [M \ IW] ; loc ; [ALL-LOCKS] as mixed-lock-accesses
- 
- (* The final value of a spinlock should not be tested *)
- flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
- 
--(*
-- * Backward compatibility
-- *)
--let RL = try RL with emptyset (* defined herd7 >= 7.49 *)
--let RU = try RU with emptyset (* defined herd7 >= 7.49 *)
-+(* Backward compatibility *)
-+let RL = try RL with emptyset
-+let RU = try RU with emptyset
- 
- (* Treat RL as a kind of LF: a read with no ordering properties *)
- let LF = LF | RL
-@@ -55,7 +73,6 @@ let W = W | LKW
- let Release = Release | UL
- let Acquire = Acquire | LKR
- 
--
- (* Match LKW events to their corresponding UL events *)
- let critical = ([LKW] ; po-loc ; [UL]) \ (po-loc ; [LKW | UL] ; po-loc)
- 
-@@ -65,7 +82,6 @@ flag ~empty UL \ range(critical) as unmatched-unlock
- let UNMATCHED-LKW = LKW \ domain(critical)
- empty ([UNMATCHED-LKW] ; loc ; [UNMATCHED-LKW]) \ id as unmatched-locks
- 
--
- (* rfi for LF events: link each LKW to the LF events in its critical section *)
- let rfi-lf = ([LKW] ; po-loc ; [LF]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
- 
-@@ -86,18 +102,23 @@ let all-possible-rfe-lf =
- with rfe-lf from cross(all-possible-rfe-lf)
- let rf-lf = rfe-lf | rfi-lf
- 
--(* Read from unlock, ie islocked returning false, slightly different *)
-+(*
-+ * RU, i.e., spin_is_locked() returning False, is slightly different.
-+ * We rely on the memory model to rule out cases where spin_is_locked()
-+ * within one of the lock's critical sections returns False.
-+ *)
- 
--(* islocked returning false can read from the last po-previous unlock *)
-+(* rfi for RU events: an RU may read from the last po-previous UL *)
- let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
- 
--(* any islocked returning false can read from any external unlock *)
-+(* rfe for RU events: an RU may read from an external UL or the initial write *)
- let all-possible-rfe-ru =
-    let possible-rfe-ru r =
-      let pair-to-relation p = p ++ 0
-      in map pair-to-relation (((UL|IW) * {r}) & loc & ext)
-   in map possible-rfe-ru RU
- 
-+(* Generate all rf relations for RU events *)
- with rfe-ru from cross(all-possible-rfe-ru)
- let rf-ru = rfe-ru | rfi-ru
- 
+Regards,
+
+	Hans
