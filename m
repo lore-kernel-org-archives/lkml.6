@@ -1,206 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754121AbeEOPQz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:16:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752622AbeEOPQw (ORCPT
+        id S1754143AbeEOPS7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:18:59 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36025 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754123AbeEOPS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:16:52 -0400
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To: pmorel@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
- <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
- <1f9117bd-ed14-bde4-fdbd-cb3733c8c633@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 15 May 2018 11:16:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 15 May 2018 11:18:58 -0400
+X-Google-Smtp-Source: AB8JxZr0nwPDQryhfALKwbqIl/7wh+vCH4q8R4zOcCUlccDfb3L1xVgQ+NnDSM9rhvp5FHkU+RVu4A==
+Date: Tue, 15 May 2018 08:18:53 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jolsa@redhat.com, namhyung@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, torvalds@linux-foundation.org,
+        ysato@users.sourceforge.jp, benh@kernel.crashing.org,
+        Catalin Marinas <catalin.marinas@arm.com>, chris@zankel.net,
+        paulus@samba.org, Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, mpe@ellerman.id.au, dalias@libc.org,
+        Ingo Molnar <mingo@kernel.org>, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, luto@kernel.org, acme@kernel.org,
+        jcmvbkbc@gmail.com
+Subject: Re: [PATCH 8/9] perf/breakpoint: Split breakpoint "check" and
+ "commit"
+Message-ID: <20180515151853.GB169754@joelaf.mtv.corp.google.com>
+References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
+ <1525634395-23380-9-git-send-email-frederic@kernel.org>
+ <CAEi0qNkSUig2i92qEpPekO1Z0kDTVB+95UKbJy5b+9YKQHfciA@mail.gmail.com>
+ <20180515135259.GB24389@lerouge>
 MIME-Version: 1.0
-In-Reply-To: <1f9117bd-ed14-bde4-fdbd-cb3733c8c633@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051515-0052-0000-0000-000002EEE5F2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009030; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032698; UDB=6.00527973; IPR=6.00811829;
- MB=3.00021127; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 15:16:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051515-0053-0000-0000-00005CB16B0A
-Message-Id: <afd54b28-e61c-a81e-41a3-6142d7277400@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515135259.GB24389@lerouge>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 10:17 AM, Pierre Morel wrote:
-> On 14/05/2018 21:42, Tony Krowiak wrote:
->> On 05/11/2018 01:18 PM, Halil Pasic wrote:
->>>
->>>
->>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
->>>> Registers the matrix device created by the VFIO AP device
->>>> driver with the VFIO mediated device framework.
->>>> Registering the matrix device will create the sysfs
->>>> structures needed to create mediated matrix devices
->>>> each of which will be used to configure the AP matrix
->>>> for a guest and connect it to the VFIO AP device driver.
->>>>
->>> [..]
->>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->>>> b/drivers/s390/crypto/vfio_ap_ops.c
->>>> new file mode 100644
->>>> index 0000000..d7d36fb
->>>> --- /dev/null
->>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>>> @@ -0,0 +1,106 @@
->>>> +// SPDX-License-Identifier: GPL-2.0+
->>>> +/*
->>>> + * Adjunct processor matrix VFIO device driver callbacks.
->>>> + *
->>>> + * Copyright IBM Corp. 2017
->>>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>>> + *
->>>> + */
->>>> +#include <linux/string.h>
->>>> +#include <linux/vfio.h>
->>>> +#include <linux/device.h>
->>>> +#include <linux/list.h>
->>>> +#include <linux/ctype.h>
->>>> +
->>>> +#include "vfio_ap_private.h"
->>>> +
->>>> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
->>>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
->>>> +
->>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
->>>> mdev_device *mdev)
->>>> +{
->>>> +    struct ap_matrix *ap_matrix = 
->>>> to_ap_matrix(mdev_parent_dev(mdev));
->>>> +
->>>> +    ap_matrix->available_instances--;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->>>> +{
->>>> +    struct ap_matrix *ap_matrix = 
->>>> to_ap_matrix(mdev_parent_dev(mdev));
->>>> +
->>>> +    ap_matrix->available_instances++;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>
->>> The above functions seem to be called with the lock of this 
->>> auto-generated
->>> mdev parent device held. That's why we don't have to care about 
->>> synchronization
->>> ourselves, right?
->>
->> I would assume as much. The comments for the 'struct mdev_parent_ops' in
->> include/linux/mdev.h do not mention anything about synchronization, 
->> nor did I
->> see any locking or synchronization in the vfio_ccw implementation 
->> after which
->> I modeled my code, so frankly it is something I did not consider.
->>
->>>
->>>
->>> A small comment in the code could be helpful for mdev non-experts. 
->>> Hell, I would
->>> even consider documenting it for all mdev -- took me some time to 
->>> figure out.
->>
->> You may want to bring this up with the VFIO mdev maintainers, but I'd 
->> be happy to
->> include a comment in the functions in question if you think it 
->> important.
->>
->>>
->>>
->>> [..]
->>>
->>>
->>>> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
->>>> +{
->>>> +    int ret;
->>>> +
->>>> +    ret = mdev_register_device(&ap_matrix->device, 
->>>> &vfio_ap_matrix_ops);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    ap_matrix->available_instances = 
->>>> AP_MATRIX_MAX_AVAILABLE_INSTANCES;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
->>>> +{
->>>> +    ap_matrix->available_instances--;
->>>
->>> What is this for? I don't understand.
->>
->> To control the number of mediated devices one can create for the 
->> matrix device.
->> Once the max is reached, the mdev framework will not allow creation 
->> of another
->> mediated device until one is removed. This counter keeps track of the 
->> number
->> of instances that can be created. This is documented with the mediated
->> framework. You may want to take a look at:
->>
->> Documentation/vfio-mediated-device.txt
->> Documentation/vfio.txt
->> Documentation/virtual/kvm/devices/vfio.txt
->
-> This is what you do in create/remove.
-> But here in unregister I agree with Halil, it does not seem to be usefull.
+On Tue, May 15, 2018 at 03:53:00PM +0200, Frederic Weisbecker wrote:
+> On Mon, May 07, 2018 at 12:46:06AM +0000, Joel Fernandes wrote:
+> > On Sun, May 6, 2018 at 12:22 PM Frederic Weisbecker <frederic@kernel.org>
+> > wrote:
+> > 
+> > > arch_validate_hwbkpt_settings() mixes up attribute check and commit into
+> > > a single code entity. Therefore the validation may return an error due to
+> > > incorrect atributes while still leaving halfway modified architecture
+> > > breakpoint struct.
+> > 
+> > > Now that we have split its logic on all archs, we can remove this
+> > > misdesigned function and call directly the arch check and commit
+> > > functions instead. This allows us to later avoid commiting
+> > > a breakpoint to architecture when its slot couldn't be allocated.
+> > 
+> > [...]
+> > > diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+> > > index 6e28d28..6896ceeb 100644
+> > > --- a/kernel/events/hw_breakpoint.c
+> > > +++ b/kernel/events/hw_breakpoint.c
+> > > @@ -402,11 +402,12 @@ int dbg_release_bp_slot(struct perf_event *bp)
+> > 
+> > >   static int validate_hw_breakpoint(struct perf_event *bp)
+> > >   {
+> > > -       int ret;
+> > > +       int err;
+> > 
+> > > -       ret = arch_validate_hwbkpt_settings(bp);
+> > > -       if (ret)
+> > > -               return ret;
+> > > +       err = hw_breakpoint_arch_check(bp, &bp->attr);
+> > > +       if (err)
+> > > +               return err;
+> > > +       hw_breakpoint_arch_commit(bp);
+> > 
+> > minor nit:
+> > To preserve bisectability, shouldn't this be the following in this and
+> > earlier patches?
+> > 
+> >         err = hw_breakpoint_arch_check(bp, &bp->attr);
+> >         hw_breakpoint_arch_commit(bp);
+> >         if (err)
+> >                 return err;
+> > 
+> > And then in patch 9/9 you can fix it the right way?
+> 
+> I don't see how it was breaking bisectability.
 
-If that is in fact what Halil was asking, then I misinterpreted his 
-question; I
-thought he was asking what the available_instances was used for. You are
-correct, this does not belong here although it makes little difference given
-this is called only when the driver, which creates the matrix device, is 
-unloaded.
-It is necessary in the register function to initialize its value, but I'll
-remove it from here.
+Sorry may be I used wrong words, I meant keeping the restructure patch as
+just for restvructuring and then changing the logic later. But I'm Ok with
+what you have, and also like Peter's __weak thing suggestion.
 
->
->
->>
->>>
->>>
->>> Regards,
->>> Halil
->>>
->>>> + mdev_unregister_device(&ap_matrix->device);
->>>> +}
->>
->>
->
+> Anyway I'm rewriting it entirely to use:
+> 
+>     struct arch_hw_breakpoint hw;
+>     int err;
+> 
+>     err = hw_breakpoint_arch_parse(bp, attr, &hw);
+>     if (err)
+>         return err;
+
+Cool, if you don't mind do CC me on patches, Thanks.
+
+Just to update you about my email address change, the new one is: joel@joelfernandes.org
+
+thanks,
+
+- Joel
