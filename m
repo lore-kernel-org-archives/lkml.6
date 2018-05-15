@@ -1,45 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752146AbeEOCtJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:49:09 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52702 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeEOCtI (ORCPT
+        id S1752337AbeEOCv4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:51:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34516 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbeEOCvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:49:08 -0400
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>, LKML <linux-kernel@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] scsi: clean up generated file scsi_devinfo_tbl.c
+        Mon, 14 May 2018 22:51:53 -0400
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] mptlan: fix mpt_lan_sdu_send()'s return type
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
-Date: Mon, 14 May 2018 22:48:38 -0400
-In-Reply-To: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org> (Randy
-        Dunlap's message of "Sun, 13 May 2018 17:10:52 -0700")
-Message-ID: <yq17eo5my61.fsf@oracle.com>
+References: <20180424131558.3010-1-luc.vanoostenryck@gmail.com>
+        <yq1h8niyb63.fsf@oracle.com>
+        <20180508154415.neutsgpi2nwffwec@ltop.local>
+Date: Mon, 14 May 2018 22:51:38 -0400
+In-Reply-To: <20180508154415.neutsgpi2nwffwec@ltop.local> (Luc Van
+        Oostenryck's message of "Tue, 8 May 2018 17:44:16 +0200")
+Message-ID: <yq136ytmy11.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8893 signatures=668698
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=586
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=517
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150026
+ engine=8.0.1-1711220000 definitions=main-1805150027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Randy,
+Luc,
 
-> "make clean" should remove the generated file "scsi_devinfo_tbl.c", so
-> list it in the clean-files variable so that the file gets cleaned up.
+>> You forgot to update the function prototype accordingly.
+>
+> Hmmm, the function mpt_lan_sdu_send() has no other declaration
+> than the one I modified the return type in this patch.
+>
+> Must be a misunderstanding somewhere.
 
-Applied to 4.17/scsi-fixes. Thank you!
+My bad, I thought you were updating mpt_lan_send_reply().
+
+Applied to 4.18/scsi-queue.
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
