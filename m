@@ -1,30 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752551AbeEOG3w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:29:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36653 "EHLO
+        id S1752557AbeEOGaJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:30:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47623 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752219AbeEOG3u (ORCPT
+        with ESMTP id S1752129AbeEOGaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:29:50 -0400
-Date: Mon, 14 May 2018 23:29:14 -0700
+        Tue, 15 May 2018 02:30:07 -0400
+Date: Mon, 14 May 2018 23:29:43 -0700
 From: "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-35bb6ee6790600d29c598ebbf262359341f34e38@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, stern@rowland.harvard.edu,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        torvalds@linux-foundation.org, pbonzini@redhat.com, hpa@zytor.com,
-        peterz@infradead.org
-Reply-To: tglx@linutronix.de, akpm@linux-foundation.org,
-        paulmck@linux.vnet.ibm.com, will.deacon@arm.com,
-        stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, torvalds@linux-foundation.org, pbonzini@redhat.com,
-        peterz@infradead.org, hpa@zytor.com
-In-Reply-To: <1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com>
-References: <1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com>
+Message-ID: <tip-bfd403bb3617e17a272e1189e5c76253052c22b8@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        stern@rowland.harvard.edu, will.deacon@arm.com, hpa@zytor.com,
+        paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org
+Reply-To: hpa@zytor.com, will.deacon@arm.com, torvalds@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com, mingo@kernel.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, stern@rowland.harvard.edu, tglx@linutronix.de
+In-Reply-To: <1526340837-12222-6-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <1526340837-12222-6-git-send-email-paulmck@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-order: Improve key for SELF and SV
-Git-Commit-ID: 35bb6ee6790600d29c598ebbf262359341f34e38
+Subject: [tip:locking/core] tools/memory-order: Update the cheat-sheet to
+ show that smp_mb__after_atomic() orders later RMW operations
+Git-Commit-ID: bfd403bb3617e17a272e1189e5c76253052c22b8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,20 +36,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  35bb6ee6790600d29c598ebbf262359341f34e38
-Gitweb:     https://git.kernel.org/tip/35bb6ee6790600d29c598ebbf262359341f34e38
+Commit-ID:  bfd403bb3617e17a272e1189e5c76253052c22b8
+Gitweb:     https://git.kernel.org/tip/bfd403bb3617e17a272e1189e5c76253052c22b8
 Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-AuthorDate: Mon, 14 May 2018 16:33:43 -0700
+AuthorDate: Mon, 14 May 2018 16:33:44 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 15 May 2018 08:11:16 +0200
 
-tools/memory-order: Improve key for SELF and SV
+tools/memory-order: Update the cheat-sheet to show that smp_mb__after_atomic() orders later RMW operations
 
-The key for "SELF" was missing completely and the key for "SV" was
-a bit obtuse.  This commit therefore adds a key for "SELF" and improves
-the one for "SV".
+The current cheat sheet does not claim that smp_mb__after_atomic()
+orders later RMW atomic operations, which it must, at least against
+earlier RMW atomic operations and whatever precedes them.
 
-Reported-by: Paolo Bonzini <pbonzini@redhat.com>
+This commit therefore adds the needed "Y".
+
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -66,20 +66,22 @@ Cc: linux-arch@vger.kernel.org
 Cc: luc.maranget@inria.fr
 Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
-Link: http://lkml.kernel.org/r/1526340837-12222-5-git-send-email-paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1526340837-12222-6-git-send-email-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/memory-model/Documentation/cheatsheet.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/memory-model/Documentation/cheatsheet.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/memory-model/Documentation/cheatsheet.txt b/tools/memory-model/Documentation/cheatsheet.txt
-index c0eafdaddfa4..46fe79afc737 100644
+index 46fe79afc737..33ba98d72b16 100644
 --- a/tools/memory-model/Documentation/cheatsheet.txt
 +++ b/tools/memory-model/Documentation/cheatsheet.txt
-@@ -26,4 +26,5 @@ Key:	C:	Ordering is cumulative
- 	DR:	Dependent read (address dependency)
- 	DW:	Dependent write (address, data, or control dependency)
- 	RMW:	Atomic read-modify-write operation
--	SV	Same-variable access
-+	SELF:	Orders self, as opposed to accesses before and/or after
-+	SV:	Orders later accesses to the same variable
+@@ -14,7 +14,7 @@ smp_wmb()                                  Y    W           Y       Y    W
+ smp_mb() & synchronize_rcu()  CP        Y  Y    Y        Y  Y   Y   Y    Y
+ Successful full non-void RMW  CP     Y  Y  Y    Y     Y  Y  Y   Y   Y    Y   Y
+ smp_mb__before_atomic()       CP        Y  Y    Y        a  a   a   a    Y
+-smp_mb__after_atomic()        CP        a  a    Y        Y  Y   Y   Y
++smp_mb__after_atomic()        CP        a  a    Y        Y  Y   Y   Y    Y
+ 
+ 
+ Key:	C:	Ordering is cumulative
