@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeEOIB6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:01:58 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46013 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752608AbeEOH7y (ORCPT
+        id S1752689AbeEOICj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:02:39 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37214 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbeEOH7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:54 -0400
-X-Google-Smtp-Source: AB8JxZpx8Wdik48wveb0RFCAm/JfWvi2U8PV5g9JTuMXCU/jdWoTysUR2NJdFpUu52cmy5YKDWJklQ==
+        Tue, 15 May 2018 03:59:53 -0400
+X-Google-Smtp-Source: AB8JxZq+W3opkmaaV6Qi3QkW/fKERBpi6paXu8uGnucVQ3rsv63wUyF74B2MFX6n2sm9Lp37uz01YA==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 24/29] venus: vdec: get required input buffers as well
-Date: Tue, 15 May 2018 10:58:54 +0300
-Message-Id: <20180515075859.17217-25-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 23/29] venus: helpers: add a helper to return opb buffer sizes
+Date: Tue, 15 May 2018 10:58:53 +0300
+Message-Id: <20180515075859.17217-24-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
@@ -25,105 +25,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework and rename vdec_cap_num_buffers() to get the number of
-input buffers too.
+Add a helper function to return current output picture buffer size.
+OPB sizes can vary depending on the selected decoder output(s).
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/vdec.c | 41 +++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+ drivers/media/platform/qcom/venus/core.h    | 10 ++++++++++
+ drivers/media/platform/qcom/venus/helpers.c | 15 +++++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  1 +
+ 3 files changed, 26 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 898c5edb91f5..5a5e3e2fece4 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -603,19 +603,32 @@ static int vdec_init_session(struct venus_inst *inst)
- 	return ret;
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 255292899204..4d6c05f156c4 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -234,6 +234,11 @@ struct venus_buffer {
+  * @num_output_bufs:	holds number of output buffers
+  * @input_buf_size	holds input buffer size
+  * @output_buf_size:	holds output buffer size
++ * @output2_buf_size:	holds secondary decoder output buffer size
++ * @dpb_buftype:	decoded picture buffer type
++ * @dpb_fmt:		decodec picture buffre raw format
++ * @opb_buftype:	output picture buffer type
++ * @opb_fmt:		output picture buffer raw format
+  * @reconfig:	a flag raised by decoder when the stream resolution changed
+  * @reconfig_width:	holds the new width
+  * @reconfig_height:	holds the new height
+@@ -282,6 +287,11 @@ struct venus_inst {
+ 	unsigned int num_output_bufs;
+ 	unsigned int input_buf_size;
+ 	unsigned int output_buf_size;
++	unsigned int output2_buf_size;
++	u32 dpb_buftype;
++	u32 dpb_fmt;
++	u32 opb_buftype;
++	u32 opb_fmt;
+ 	bool reconfig;
+ 	u32 reconfig_width;
+ 	u32 reconfig_height;
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index f04d16953b3a..f0a0fca60c76 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -611,6 +611,21 @@ int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype)
  }
+ EXPORT_SYMBOL_GPL(venus_helper_set_bufsize);
  
--static int vdec_cap_num_buffers(struct venus_inst *inst, unsigned int *num)
-+static int vdec_num_buffers(struct venus_inst *inst, unsigned int *in_num,
-+			    unsigned int *out_num)
++unsigned int venus_helper_get_opb_size(struct venus_inst *inst)
++{
++	/* the encoder has only one output */
++	if (inst->session_type == VIDC_SESSION_TYPE_ENC)
++		return inst->output_buf_size;
++
++	if (inst->opb_buftype == HFI_BUFFER_OUTPUT)
++		return inst->output_buf_size;
++	else if (inst->opb_buftype == HFI_BUFFER_OUTPUT2)
++		return inst->output2_buf_size;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(venus_helper_get_opb_size);
++
+ static void delayed_process_buf_func(struct work_struct *work)
  {
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	struct hfi_buffer_requirements bufreq;
- 	int ret;
- 
-+	*in_num = *out_num = 0;
-+
- 	ret = vdec_init_session(inst);
- 	if (ret)
- 		return ret;
- 
-+	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
-+	if (ret)
-+		goto deinit;
-+
-+	*in_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
-+
- 	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
-+	if (ret)
-+		goto deinit;
- 
--	*num = bufreq.count_actual;
-+	*out_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
- 
-+deinit:
- 	hfi_session_deinit(inst);
- 
- 	return ret;
-@@ -626,7 +639,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, num;
-+	unsigned int p, in_num, out_num;
- 	int ret = 0;
- 
- 	if (*num_planes) {
-@@ -649,35 +662,29 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 		return 0;
- 	}
- 
-+	ret = vdec_num_buffers(inst, &in_num, &out_num);
-+	if (ret)
-+		return ret;
-+
- 	switch (q->type) {
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		*num_planes = inst->fmt_out->num_planes;
- 		sizes[0] = get_framesize_compressed(inst->out_width,
- 						    inst->out_height);
- 		inst->input_buf_size = sizes[0];
-+		*num_buffers = max(*num_buffers, in_num);
- 		inst->num_input_bufs = *num_buffers;
--
--		ret = vdec_cap_num_buffers(inst, &num);
--		if (ret)
--			break;
--
--		inst->num_output_bufs = num;
-+		inst->num_output_bufs = out_num;
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
- 
--		ret = vdec_cap_num_buffers(inst, &num);
--		if (ret)
--			break;
--
--		*num_buffers = max(*num_buffers, num);
--
- 		for (p = 0; p < *num_planes; p++)
- 			sizes[p] = get_framesize_uncompressed(p, inst->width,
- 							      inst->height);
--
--		inst->num_output_bufs = *num_buffers;
- 		inst->output_buf_size = sizes[0];
-+		*num_buffers = max(*num_buffers, out_num);
-+		inst->num_output_bufs = *num_buffers;
- 		break;
- 	default:
- 		ret = -EINVAL;
+ 	struct venus_buffer *buf, *n;
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index 8ff4bd3ef958..92be45894a69 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -48,6 +48,7 @@ int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
+ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
+ int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
+ int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
++unsigned int venus_helper_get_opb_size(struct venus_inst *inst);
+ void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
+ void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
+ void venus_helper_init_instance(struct venus_inst *inst);
 -- 
 2.14.1
