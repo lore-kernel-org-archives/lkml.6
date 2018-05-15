@@ -1,70 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeEOIKv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:10:51 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:23956 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752421AbeEOIJf (ORCPT
+        id S1752764AbeEOILX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:11:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36849 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752510AbeEOH7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:09:35 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520899200";
-   d="scan'208";a="54652593"
-Date: Tue, 15 May 2018 09:09:29 +0100
-From: Wei Liu <wei.liu2@citrix.com>
-To: Weiwei Jia <harrynjit@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        Weiwei Jia <harryxiyou@gmail.com>, <jianchen.shan@gmail.com>,
-        <kvm@vger.kernel.org>, <dingxn@gmail.com>,
-        Wei Liu <wei.liu2@citrix.com>
-Subject: Re: [Xen-devel] [RFC][PATCH] KVM: APPLES can improve the performance
- of applications and virtualized systems by up to 49%
-Message-ID: <20180515080929.rkqmmumjoxtlqctd@citrix.com>
-References: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 15 May 2018 03:59:37 -0400
+X-Google-Smtp-Source: AB8JxZoOOJPuW98qBaQEbm3rEAJHyXujXCM/ZcdiDpabEM5fzzJ985mQPQf9wS/qy68PZRovk3/F3Q==
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 08/29] venus: hfi_venus: fix suspend function for venus 3xx versions
+Date: Tue, 15 May 2018 10:58:38 +0300
+Message-Id: <20180515075859.17217-9-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 12, 2018 at 04:27:04PM +0800, Weiwei Jia wrote:
-> Dear all,
-> 
-> Recently, we made a few improvements on effectively utilizing Pause
-> Loop Exiting (PLE) support for higher throughput on virtualized
-> systems. Basically, it solves two problems: 1) how to adjust
-> PLE_Window; 2) how to select virtual CPUs to schedule on VM_EXITs
-> caused by PLE. Our tests with standard benchmarks show that the
-> approach can improve performance by up to 49%. The approach shows
-> promising performance and is easy to implement. We think that it would
-> be wonderful if Linux/KVM and XEN can consider the approach.
-> 
-> We already have a prototype implementation based on KVM (Linux Kernel
-> 3.19.8). Our patch for Linux Kernel 3.19.8 and the paper describing
-> our idea are available in Github repository [1][2][3]. We are pleased
-> to revise our patch in order to merge it into Linux/KVM and XEN. We
-> hope that you can test and adopt our approach/techniques. We are
-> pleased to get some comments/suggestions on the approach and on how
-> the idea can be adopted/tested by Linux/KVM and XEN. Thank you.
-> 
-> [1] APPLES paper: https://github.com/sysmen/apples/tree/master/paper
-> [2] APPLES patch:
-> https://github.com/sysmen/apples/blob/master/patches/3.19.8-APPLES.patch
-> [3] APPLES patch README:
-> https://github.com/sysmen/apples/blob/master/patches/README.txt
-> 
+This fixes the suspend function for Venus 3xx versions by
+add a check for WFI (wait for interrupt) bit. This bit
+is on when the ARM9 is idle and entered in low power mode.
 
-Is PV spinlock involved in your test? There is no mention of it in your
-paper.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/hfi_venus.c    | 59 ++++++++++++++++--------
+ drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
+ 2 files changed, 41 insertions(+), 19 deletions(-)
 
-Wei.
-
-> Best Regards,
-> Sysmen Research Group
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 53546174aab8..aac351f699a0 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -1447,7 +1447,7 @@ static int venus_suspend_3xx(struct venus_core *core)
+ {
+ 	struct venus_hfi_device *hdev = to_hfi_priv(core);
+ 	struct device *dev = core->dev;
+-	u32 ctrl_status, wfi_status;
++	u32 ctrl_status, cpu_status;
+ 	int ret;
+ 	int cnt = 100;
+ 
+@@ -1463,29 +1463,50 @@ static int venus_suspend_3xx(struct venus_core *core)
+ 		return -EINVAL;
+ 	}
+ 
+-	ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+-	if (!(ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)) {
+-		wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
++	/*
++	 * Power collapse sequence for Venus 3xx and 4xx versions:
++	 * 1. Check for ARM9 and video core to be idle by checking WFI bit
++	 *    (bit 0) in CPU status register and by checking Idle (bit 30) in
++	 *    Control status register for video core.
++	 * 2. Send a command to prepare for power collapse.
++	 * 3. Check for WFI and PC_READY bits.
++	 */
++
++	while (--cnt) {
++		cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
+ 		ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+ 
+-		ret = venus_prepare_power_collapse(hdev, false);
+-		if (ret) {
+-			dev_err(dev, "prepare for power collapse fail (%d)\n",
+-				ret);
+-			return ret;
+-		}
++		if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
++		    ctrl_status & CPU_CS_SCIACMDARG0_INIT_IDLE_MSG_MASK)
++			break;
+ 
+-		cnt = 100;
+-		while (cnt--) {
+-			wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
+-			ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+-			if (ctrl_status & CPU_CS_SCIACMDARG0_PC_READY &&
+-			    wfi_status & BIT(0))
+-				break;
+-			usleep_range(1000, 1500);
+-		}
++		usleep_range(1000, 1500);
+ 	}
+ 
++	if (!cnt)
++		return -ETIMEDOUT;
++
++	ret = venus_prepare_power_collapse(hdev, false);
++	if (ret) {
++		dev_err(dev, "prepare for power collapse fail (%d)\n", ret);
++		return ret;
++	}
++
++	cnt = 100;
++	while (--cnt) {
++		cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
++		ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
++
++		if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
++		    ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)
++			break;
++
++		usleep_range(1000, 1500);
++	}
++
++	if (!cnt)
++		return -ETIMEDOUT;
++
+ 	mutex_lock(&hdev->lock);
+ 
+ 	ret = venus_power_off(hdev);
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+index 76f47936d0fa..12e3d33a3d82 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
++++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+@@ -108,6 +108,7 @@
+ 
+ #define WRAPPER_CPU_CGC_DIS			(WRAPPER_BASE + 0x2010)
+ #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
++#define WRAPPER_CPU_STATUS_WFI			BIT(0)
+ #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
+ 
+ /* Venus 4xx */
+-- 
+2.14.1
