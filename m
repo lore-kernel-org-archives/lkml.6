@@ -1,68 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752321AbeEOHC6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 03:02:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42432 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752280AbeEOHC5 (ORCPT
+        id S1752246AbeEOHEX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 03:04:23 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44181 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752094AbeEOHEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:02:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD8B460540
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 2/2] phy: qcom-qusb2: Quiet -EPROBE_DEFER from
- qusb2_phy_probe()
-To: Douglas Anderson <dianders@chromium.org>, kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20180514224222.54495-1-dianders@chromium.org>
- <20180514224222.54495-2-dianders@chromium.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <80918639-ca58-aa1c-a288-a5fd56ff78cb@codeaurora.org>
-Date: Tue, 15 May 2018 12:32:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 03:04:21 -0400
+X-Google-Smtp-Source: AB8JxZp9TTVJPg/J3S1YNq85AFKKjezt06KusJyhGUZ7MWOYgOcuaZAl3j79kj+Y+PLTfs5YiQD1kYPw/reaxKdqqqo=
 MIME-Version: 1.0
-In-Reply-To: <20180514224222.54495-2-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CAOQ4uxiL+x0Q8jgUZFOmrM5yndE0sDRRTSci2B-y5Y-r+QMCxA@mail.gmail.com>
+References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+ <1526326267-22501-3-git-send-email-longman@redhat.com> <CAOQ4uxiL+x0Q8jgUZFOmrM5yndE0sDRRTSci2B-y5Y-r+QMCxA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 15 May 2018 10:04:20 +0300
+Message-ID: <CAOQ4uxgDFb1jgKBx9p=DVXqBpx_Jiw_zDggf5PPN+=qhv-xTsw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
+ non-spinnable in percpu_rwsem_release()
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
-
-
-On 5/15/2018 4:12 AM, Douglas Anderson wrote:
-> The -EPROBE_DEFER virus demands special case code to avoid printing
-> error messages when the error is only -EPROBE_DEFER.  Spread the virus
-> to a new host: qusb2_phy_probe().  Specifically handle when our
-> regulators might not be ready yet.
+On Tue, May 15, 2018 at 8:42 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Mon, May 14, 2018 at 10:31 PM, Waiman Long <longman@redhat.com> wrote:
+>> The percpu_rwsem_release() is called when the ownership of the embedded
+>> rwsem is to be transferred to another task. The new owner, however, may
+>> take a while to get the ownership of the lock via percpu_rwsem_acquire().
+>> During that period, the rwsem is now marked as writer-owned with no
+>> optimistic spinning.
+>>
 >
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+> Waiman,
 >
->   drivers/phy/qualcomm/phy-qcom-qusb2.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+> Thanks for the fix. I will test it soon.
 >
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> index 94afeac1a19e..26354618fd45 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> @@ -711,7 +711,9 @@ static int qusb2_phy_probe(struct platform_device *pdev)
->   
->   	ret = devm_regulator_bulk_get(dev, num, qphy->vregs);
->   	if (ret) {
-> -		dev_err(dev, "failed to get regulator supplies\n");
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(dev, "failed to get regulator supplies: %d\n",
-> +				ret);
->   		return ret;
->   	}
->   
-Thanks for the patch.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> For this commit message I suggest that you add parts of the reproducer
+> found here:
+> https://marc.info/?l=linux-fsdevel&m=152622016219975&w=2
+>
 
-regards
-Vivek
+fsfreeze is happy with these changes.
+
+You may add:
+Tested-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks,
+Amir.
