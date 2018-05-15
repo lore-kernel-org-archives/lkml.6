@@ -1,87 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932212AbeEOR0E (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:26:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:36276 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754254AbeEOR0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:26:03 -0400
-Date: Tue, 15 May 2018 18:25:58 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
- required
-Message-ID: <20180515172557.GK30654@e110439-lin>
-References: <20180510150553.28122-1-patrick.bellasi@arm.com>
- <20180510150553.28122-4-patrick.bellasi@arm.com>
- <20180513060443.GB64158@joelaf.mtv.corp.google.com>
- <20180513062538.GA116730@joelaf.mtv.corp.google.com>
- <20180514163206.GF30654@e110439-lin>
- <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
- <20180515145343.GJ30654@e110439-lin>
- <20180515165304.GH12217@hirez.programming.kicks-ass.net>
+        id S932223AbeEOR07 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:26:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60979 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932143AbeEOR06 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:26:58 -0400
+Date: Tue, 15 May 2018 19:26:51 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180515172651.bhgaxta3czqgjpgu@linutronix.de>
+References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
+ <20180426164623.tlv6kz5yopk6voxx@breakpoint.cc>
+ <20180426185233.GU4813@piout.net>
+ <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
+ <20180502181046.GG19273@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180515165304.GH12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180502181046.GG19273@piout.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-May 18:53, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 03:53:43PM +0100, Patrick Bellasi wrote:
-> > On 15-May 12:19, Vincent Guittot wrote:
-> > > On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > What about adding a new explicit callback at the end of:
-> >    update_blocked_averages() ?
+On 2018-05-02 20:10:46 [+0200], Alexandre Belloni wrote:
+> > > As said below, this is solving multiple issues, including the one for
+> > > SoCs that don't have the PIT.
+> > will the PIT be removed? Where it needs the PIT?
 > > 
-> > Something like:
-> > 
-> > ---8<---
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index cb77407ba485..6eb0f31c656d 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7740,6 +7740,9 @@ static void update_blocked_averages(int cpu)
-> >         if (done)
-> >                 rq->has_blocked_load = 0;
-> >  #endif
-> > +
-> > +       cpufreq_update_util(rq, SCHED_CPUFREQ_IDLE);
-> > +
-> >         rq_unlock_irqrestore(rq, &rf);
-> >  }
-> > ---8<---
-> > 
-> > Where we can also pass in a new SCHED_CPUFREQ_IDLE flag just to notify
-> > schedutil that the CPU is currently IDLE?
-> > 
-> > Could that work?
 > 
-> Simlarly you could add ENQUEUE/DEQUEUE flags I suppose. But let's do all
-> that later in separate patches and evaluate the impact separately, OK?
+> The last patch is unselecting the PIT driver so by default it is not
+> enabled. The PIT driver will stay just in case someone has to use it
+> e.g. when they are using all the TCB channels for something else.
+> However, recent Atmel SoC have a TCB without any output so it can ony be
+> used as a timer. Some other SoCs don't have a PIT at all.
 
-Sure, that's better to keep on a separate patch.
+The question was more "does it make sense to keep the 'old' PIT driver
+around or can it be removed and the TCB driver will be used by
+everyone"?
 
-For the time being I'll just update this last patch with the above
-snippet just to have the same behavior we have right now.
+> > > The remaining one would be "clocksource: TCLIB: Allow higher clock rates
+> > > for clock events"
+> > 
+> > I see. So I would need to keep that patch in queue after it was
+> > dismissed from duty…
+> 
+> Boris suggested a DT binding to allow changing the rate but it didn't
+> reach consensus at the time. this is something that will ne to be
+> revived at some point and I would very much like having that upstream
+> too.
 
-Then maybe we can also split this last patch into a separate series to
-better evaluate the ideas to have "explicit" updates.
+Does make sense to have a low frequency clock here? I think from
+clocksource point of view it makes sense to have it (highres) enabled
+and not having to adjust the DT first (not to mention to learn about
+it).
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Sebastian
