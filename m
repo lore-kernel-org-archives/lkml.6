@@ -1,99 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752284AbeEOFeM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:34:12 -0400
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:36787 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeEOFeK (ORCPT
+        id S1752331AbeEOFeb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:34:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45013 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeEOFe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:34:10 -0400
-X-Google-Smtp-Source: AB8JxZr5pRPvYwAth9LwRU/rfQPmYwSjJfhPVrsrhJnE1fIW5k+Hb4O+bi5in6ShRm/+/65ANHmBBtNFDsiGaf0tdpQ=
+        Tue, 15 May 2018 01:34:28 -0400
+Date: Mon, 14 May 2018 22:33:48 -0700
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33@git.kernel.org>
+Cc: mingo@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jpoimboe@redhat.com, rdunlap@infradead.org,
+        torvalds@linux-foundation.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, rdunlap@infradead.org, hpa@zytor.com
+In-Reply-To: <b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com>
+References: <b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] objtool: Detect RIP-relative switch table
+ references
+Git-Commit-ID: 6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180514172508.GC252575@gmail.com>
-References: <20180514030007.GH677@sol.localdomain> <20180514030205.GI677@sol.localdomain>
- <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com> <20180514172508.GC252575@gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 15 May 2018 07:33:48 +0200
-Message-ID: <CACT4Y+Y9O34yzF=0wj9X6kzW19x8o-0LECcWWTb7KJDo7KYaXA@mail.gmail.com>
-Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: KVM list <kvm@vger.kernel.org>, karahmed@amazon.de,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 7:25 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Mon, May 14, 2018 at 07:14:41AM +0200, Dmitry Vyukov wrote:
->> On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
->> > Sorry, messed up address for KVM mailing list.  See message below.
->> >
->> > On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
->> >> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
->> >> the kernel with no output (I'm testing in a VM, so it's using nested
->> >> virtualization):
->> >>
->> >>       #include <fcntl.h>
->> >>       #include <linux/kvm.h>
->> >>       #include <sys/ioctl.h>
->> >>
->> >>       int main()
->> >>       {
->> >>               int dev, vm, cpu;
->> >>               char page[4096] __attribute__((aligned(4096))) = { 0 };
->> >>               struct kvm_userspace_memory_region memreg = {
->> >>                       .memory_size = 4096,
->> >>                       .userspace_addr = (unsigned long)page,
->> >>               };
->> >>               dev = open("/dev/kvm", O_RDONLY);
->> >>               vm = ioctl(dev, KVM_CREATE_VM, 0);
->> >>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
->> >>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
->> >>               ioctl(cpu, KVM_RUN, 0);
->> >>       }
->> >>
->> >> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
->> >> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
->> >> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
->> >> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
->> >> crash somehow.  The following patch fixes it, though I don't know that it's the
->> >> right solution; maybe KCOV should be disabled in the function instead, or maybe
->> >> there's a more fundamental problem.  What do people think?
->>
->>
->> If __sanitizer_cov_trace_pc() crashes, I would expect there must be
->> few more of them here:
->>
->> if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
->>     svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
->>
->> if (svm->spec_ctrl)
->>     native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
->>
->> Compiler inserts these callbacks into every basic block/edge.. Aren't there?
->>
->> Unfortunately we don't have an attribute that disables instrumentation
->> of a single function. This is currently possible only on file level.
->>
->
-> Yes, due to the code dealing with MSR_IA32_SPEC_CTRL, there were several calls
-> to __sanitizer_cov_trace_pc() before the write to MSR_GS_BASE.  The patch I
-> tested moves the write to MSR_GS_BASE to before all of them, so it's once again
-> the first thing after the asm block.  Again I'm not sure it's the proper
-> solution, but it did make it stop crashing.
+Commit-ID:  6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
+Gitweb:     https://git.kernel.org/tip/6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Mon, 14 May 2018 08:53:24 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 15 May 2018 07:30:59 +0200
 
->From KCOV perspective:
-This is definitely the simplest and less intrusive solution.
-It's somewhat unreliable. But it's hard to tell if/when it will
-actually break in practice. Compiler can decide to insert the callback
-after asm block, or a branch can be added to wrmsrl (e.g. under some
-debug config). More reliable solution would be to restore registers in
-asm block itself, or move this to a separate file and disable
-instrumentation of that file (though, will not save from non-inlined
-wrmsrl). But again, the proposed solution may work well for the next
-10 years, so additional complexity may not worth it.
+objtool: Detect RIP-relative switch table references
 
-Btw, I don't see anything about fs/gs in vmx_vcpu_run. Is it VMLAUNCH
-that saves/restores them?
+Typically a switch table can be found by detecting a .rodata access
+followed an indirect jump:
+
+    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
+    1970:	00
+			196d: R_X86_64_32S	.rodata+0x438
+    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
+			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
+
+Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
+access uses RIP-relative addressing:
+
+    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
+			19c0: R_X86_64_PC32	.rodata+0x45c
+    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
+			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
+
+In this case the relocation addend needs to be adjusted accordingly in
+order to find the location of the switch table.
+
+The fix is for case 3 (as described in the comments), but also make the
+existing case 1 & 2 checks more precise by only adjusting the addend for
+R_X86_64_PC32 relocations.
+
+This fixes the following warnings:
+
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/objtool/check.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 9bb04fddd3c8..f4bbce838433 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -903,24 +903,24 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ {
+ 	struct rela *text_rela, *rodata_rela;
+ 	struct instruction *orig_insn = insn;
++	unsigned long table_offset;
+ 
++	/* case 1 & 2 */
+ 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+ 	if (text_rela && text_rela->sym == file->rodata->sym &&
+ 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
+ 
+-		/* case 1 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend);
+-		if (rodata_rela)
+-			return rodata_rela;
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32) {
++			/* case 2 */
++			table_offset += 4;
++			file->ignore_unreachables = true;
++		}
+ 
+-		/* case 2 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend + 4);
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+ 		if (!rodata_rela)
+ 			return NULL;
+ 
+-		file->ignore_unreachables = true;
+ 		return rodata_rela;
+ 	}
+ 
+@@ -954,18 +954,21 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		if (!text_rela || text_rela->sym != file->rodata->sym)
+ 			continue;
+ 
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32)
++			table_offset += 4;
++
+ 		/*
+ 		 * Make sure the .rodata address isn't associated with a
+ 		 * symbol.  gcc jump tables are anonymous data.
+ 		 */
+-		if (find_symbol_containing(file->rodata, text_rela->addend))
+-			continue;
+-
+-		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
+-		if (!rodata_rela)
++		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		return rodata_rela;
++		/* mov [rodata addr], %reg */
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
++		if (rodata_rela)
++			return rodata_rela;
+ 	}
+ 
+ 	return NULL;
