@@ -1,140 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932109AbeEOQX0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:23:26 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:36525 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753984AbeEOQXY (ORCPT
+        id S932122AbeEOQXd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:23:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43618 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753984AbeEOQX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:23:24 -0400
-X-Google-Smtp-Source: AB8JxZoE5lQEIYtZbPnLL9zPspK9TVCcD63ThCtLhbb0noCMj0Hh/tleYc8yD0TrTizNOQ4tO/Cibg==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 5/8] gpio: gpio-mm: Utilize for_each_set_clump macro
-Date: Tue, 15 May 2018 12:23:17 -0400
-Message-Id: <524f6b5cb6a340522a563ee7e3e89313aafe1486.1526400945.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1526400945.git.vilhelm.gray@gmail.com>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com>
+        Tue, 15 May 2018 12:23:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6C56660540
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 15 May 2018 10:23:26 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
+Subject: Re: [PATCH v8 09/10] drivers: qcom: rpmh: add support for batch RPMH
+ request
+Message-ID: <20180515162326.GA28489@codeaurora.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org>
+ <20180509170159.29682-10-ilina@codeaurora.org>
+ <CAD=FV=Xvi8V43+J9v-mosU5WUDQtabg8gUbrkn6SCoNEYFtjUQ@mail.gmail.com>
+ <20180514195929.GA22950@codeaurora.org>
+ <CAD=FV=U+6N9LqvAh-V5ZKd_QKL9yTe+P9gVkvH4tr-SsUaMwng@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=U+6N9LqvAh-V5ZKd_QKL9yTe+P9gVkvH4tr-SsUaMwng@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump macro to simplify code and improve clarity.
+On Tue, May 15 2018 at 09:52 -0600, Doug Anderson wrote:
+>Hi,
+>
+>On Mon, May 14, 2018 at 12:59 PM, Lina Iyer <ilina@codeaurora.org> wrote:
+>
+>>>>  /**
+>>>> @@ -77,12 +82,14 @@ struct rpmh_request {
+>>>>   * @cache: the list of cached requests
+>>>>   * @lock: synchronize access to the controller data
+>>>>   * @dirty: was the cache updated since flush
+>>>> + * @batch_cache: Cache sleep and wake requests sent as batch
+>>>>   */
+>>>>  struct rpmh_ctrlr {
+>>>>         struct rsc_drv *drv;
+>>>>         struct list_head cache;
+>>>>         spinlock_t lock;
+>>>>         bool dirty;
+>>>> +       const struct rpmh_request *batch_cache[RPMH_MAX_BATCH_CACHE];
+>>>
+>>>
+>>> I'm pretty confused about why the "batch_cache" is separate from the
+>>> normal cache.  As far as I can tell the purpose of the two is the same
+>>> but you have two totally separate code paths and data structures.
+>>>
+>> Due to a hardware limitation, requests made by bus drivers must be set
+>> up in the sleep and wake TCS first before setting up the requests from
+>> other drivers. Bus drivers use batch mode for any and all RPMH
+>> communication. Hence their request are the only ones in the batch_cache.
+>
+>This is totally not obvious and not commented.  Why not rename to
+>"priority" instead of "batch"?
+>
+>If the only requirement is that these come first, that's still no
+>reason to use totally separate code paths and mechanisms.  These
+>requests can still use the same data structures / functions and just
+>be ordered to come first, can't they?  ...or given a boolean
+>"priority" and you can do two passes through your queue: one to do the
+>priority ones and one to do the secondary ones.
+>
+>
+The bus requests have a certain order and cannot be mutated by the
+RPMH driver. It has to be maintained in the TCS in the same order.
+Also, the bus requests have quite a churn during the course of an
+usecase. They are setup and invalidated often.
+It is faster to have them separate and invalidate the whole lot of the
+batch_cache instead of intertwining them with requests from other
+drivers and then figuring out which all must be invalidated and rebuilt
+when the next batch requests comes in. Remember, that requests may come
+from any driver any time and therefore will be mangled if we use the
+same data structure. So to be faster and to avoid having mangled requests
+in the TCS, I have kept the data structures separate.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-gpio-mm.c | 67 +++++++++----------------------------
- 1 file changed, 16 insertions(+), 51 deletions(-)
+>>>> +       spin_unlock_irqrestore(&ctrlr->lock, flags);
+>>>> +
+>>>> +       return ret;
+>>>> +}
+>>>
+>>>
+>>> As part of my overall confusion about why the batch cache is different
+>>> than the normal one: for the normal use case you still call
+>>> rpmh_rsc_write_ctrl_data() for things you put in your cache, but you
+>>> don't for the batch cache.  I still haven't totally figured out what
+>>> rpmh_rsc_write_ctrl_data() does, but it seems strange that you don't
+>>> do it for the batch cache but you do for the other one.
+>>>
+>>>
+>> flush_batch does write to the controller using
+>> rpmh_rsc_write_ctrl_data()
+>
+>My confusion is that they happen at different times.  As I understand it:
+>
+>* For the normal case, you immediately calls
+>rpmh_rsc_write_ctrl_data() and then later do the rest of the work.
+>
+>* For the batch case, you call both later.
+>
+>Is there a good reason for this, or is it just an arbitrary
+>difference?  If there's a good reason, it should be documented.
+>
+>
+In both the cases, the requests are cached in the rpmh library and are
+only sent to the controller only when the flushed. I am not sure the
+work is any different. The rpmh_flush() flushes out batch requests and
+then the requests from other drivers.
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index b56ff2efbf36..72668da8bf8d 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -172,46 +172,23 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(port_state & mask);
- }
- 
-+static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+
- static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	unsigned long *bits)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
- 	size_t i;
--	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	size_t word;
-+	unsigned int offset;
- 	unsigned long port_state;
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
--
--		/* read bits from current gpio port */
-+	for_each_set_clump(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
- 		port_state = inb(gpiommgpio->base + ports[i]);
--
--		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= port_state << word_offset;
-+		bits[word] |= port_state << offset;
- 	}
- 
- 	return 0;
-@@ -242,37 +219,25 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	unsigned int i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int port;
--	unsigned int out_port;
-+	size_t i;
-+	size_t word;
-+	unsigned int offset;
-+	unsigned int iomask;
- 	unsigned int bitmask;
- 	unsigned long flags;
- 
--	/* set bits are evaluated a gpio register size at a time */
--	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
--		/* no more set bits in this mask word; skip to the next word */
--		if (!mask[BIT_WORD(i)]) {
--			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
--			continue;
--		}
--
--		port = i / gpio_reg_size;
--		out_port = (port > 2) ? port + 1 : port;
--		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
-+	for_each_set_clump(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
-+		iomask = mask[word] >> offset;
-+		bitmask = iomask & (bits[word] >> offset);
- 
- 		spin_lock_irqsave(&gpiommgpio->lock, flags);
- 
- 		/* update output state data and set device gpio register */
--		gpiommgpio->out_state[port] &= ~mask[BIT_WORD(i)];
--		gpiommgpio->out_state[port] |= bitmask;
--		outb(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
-+		gpiommgpio->out_state[i] &= ~iomask;
-+		gpiommgpio->out_state[i] |= bitmask;
-+		outb(gpiommgpio->out_state[i], gpiommgpio->base + ports[i]);
- 
- 		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
--
--		/* prepare for next gpio register set */
--		mask[BIT_WORD(i)] >>= gpio_reg_size;
--		bits[BIT_WORD(i)] >>= gpio_reg_size;
- 	}
- }
- 
--- 
-2.17.0
+Thanks,
+Lina
