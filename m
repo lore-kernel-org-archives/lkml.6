@@ -1,168 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753086AbeEON3r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 09:29:47 -0400
-Received: from mx144.netapp.com ([216.240.21.25]:2239 "EHLO mx144.netapp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752377AbeEON3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 09:29:45 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="257427058"
+        id S1753439AbeEONbj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 09:31:39 -0400
+Received: from mail-bn3nam01on0054.outbound.protection.outlook.com ([104.47.33.54]:28412
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752863AbeEONbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 09:31:36 -0400
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Boaz.Harrosh@netapp.com;
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-To: Matthew Wilcox <willy@infradead.org>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com>
- <20180514191551.GA27939@bombadil.infradead.org>
- <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com>
- <20180515004137.GA5168@bombadil.infradead.org>
- <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
- <20180515111159.GA31599@bombadil.infradead.org>
- <6999e635-e804-99d0-12fc-c13ff3e9ca58@netapp.com>
- <20180515120355.GE31599@bombadil.infradead.org>
-CC: Jeff Moyer <jmoyer@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-From: Boaz Harrosh <boazh@netapp.com>
-Message-ID: <afe2c02f-3ecd-5f54-53ab-d45c11a5b4aa@netapp.com>
-Date: Tue, 15 May 2018 16:29:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+ smtp.mailfrom=Thomas.Lendacky@amd.com;
+Subject: Re: [PATCH 0/2] support kdump for AMD secure memory encryption(sme)
+To: Lianbo Jiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org
+Cc: kexec@lists.infradead.org, dyoung@redhat.com
+References: <20180515015133.4363-1-lijiang@redhat.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=thomas.lendacky@amd.com; prefer-encrypt=mutual; keydata=
+ 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
+ zSNqP+QUNp6BotWI
+Message-ID: <55bda494-bee4-5696-03e5-fc21c9d6b631@amd.com>
+Date: Tue, 15 May 2018 08:31:25 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180515120355.GE31599@bombadil.infradead.org>
+In-Reply-To: <20180515015133.4363-1-lijiang@redhat.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [207.232.55.62]
-X-ClientProxiedBy: AM0PR0402CA0021.eurprd04.prod.outlook.com
- (2603:10a6:208:15::34) To DM5PR06MB3082.namprd06.prod.outlook.com
- (2603:10b6:4:3f::31)
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: SN4PR0501CA0151.namprd05.prod.outlook.com
+ (2603:10b6:803:2c::29) To DM2PR12MB0171.namprd12.prod.outlook.com
+ (2a01:111:e400:50ce::22)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(2017052603328)(7193020);SRVR:DM5PR06MB3082;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;3:F/sxU3YBqH8f/gnbVKM/lzxNIStMo0d6CDRLVFXtKakjc5zYI3zlwsiznl0mmwIoKnF6l0eljOhbmkuJbGv7O0vDh3c2Zx4e9XeFkWc4BIrrJZkGIWKwSTB9MGCccGOOq8wpmtrdXceo5nKy6utSJgIEBNNXsHLUGUpu7p0WrDWWJ9fcBL06f8fPtU96ojcgr2CUUCuAQ9HV8f3Zr+z8+JZ/QEbjD697i7nQ2b4k2QBu6sin1ZbHl+fMvGWmbKHQ;25:VjMkASblL23BCrrhwHHhg2wwbqHmgp9x47D0hMQ0WnUwBXnUfD/Kbhz8e+wfWi1DbjkAnyS18pL7lvYNJe+zzTU33uKhti9hxCTsXIxZcd6jmfjLqlolMqlAruquSUb0nk+4YFeooTHtb16Ok7l0P63bat8bT4sNLveMnx76C2HAiVOYvJsEQQzGfjb9RrSs0dZWRRrTjGzMuPCBuFx2KsJbmCpbKUBU0idkXNeS2qTFG+zveI/apjpAgc04IsdspiIut2ZTPTSoqh8gY5LMQCUV1l9BUZV6GH5MYZlbY+AY8/GvvgFw3szlPgICZazZFzLiUfQTK9sLaXB4Tt3a1A==;31:DgFbWZsMU/PlQ2vb8lYSINRevULIG6beG5X8VNp8Nf401xgOchsGulJuBOkXL7tB9Vp3nQBmHx0sIyq/cBgnWAlzCVHM1UCjpIn4U3xRB4Zgvk2T23RiUvhSc5tsr5z9UZGtUvV77aQ82lu5/UvYfUlxgL7DCTlItBZagpte7oc61nqOJcErvwku3SO8GSDggmgJTnqZnB+xnz6yYN/N3AU8gY3pBbhW78cJhhYH9ks=
-X-MS-TrafficTypeDiagnostic: DM5PR06MB3082:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;20:MmAHQtrCXwP49p1Oz69PfQvKhOx9jytdQULX+8vv9vf5SVAIKoRSjKRpA4lhdUql6wGCj6eugedaq1NST7RQyfMa0mQjktSOifxUXJmnzIM6J6COnSTnL3PN1ET17f5BwRZ/uOsh/ZL2B2cDKLOAfQJwPekTVSEoBs4su9kGwjEgSi7d8bok0Oh+9eErG5IJ6X9imIsh1dOd9wRwMRj01saqiw8LLsnvKqp2P1sXfPlZDkGfCyqoAr5sTyOPUuOD5tiUx9qw3cMchMsHba6Yhz6QIe/zmcgazXKUWncpeXK5tUwj4yH5O8gVmbqoUQHoZNWNBL0DA651KsC4NN1pf2GiWwBHlY4QLyYgIVvav0+G5U+aalc9nuYoT7+tgx1oIRt3dkuNmkAHJdsIwKuN05Uj/hqWgDOJz5ea55MIzFpogQMZQ9KnJLbhawCwZAZ9gC7L1Dl3Fjf3EDhbf29CDQXfK0INWTf84V8ekYEqrGVpdcNxus8JRpxdo/Uo0nrv;4:+ksGwrXWDg7qy7wGKTK3lwFDTHTap95A5fOuENEGolowfT/LgTZMxqJn48zTVABCwVmU+AF5jDRya67xSIxsBfb9TG6A5NzaIWDoZ9z+C4Tq9YKjAJhVn+2LfyG1sPF3GI9kkaJ+wJWqACRNM+D1wtxckPe7j8cShwrq+9Xd2Z9/hju11V1ThDEaZSLifDhNnXYSQCMscEoGaRmZuPM4AtOuLhLYrexzd7+EawgvioBx0qoEgEQbrdQwaUJWyA/hUT2rB4Ra2LHWXBYYK/ydWLtRDoEMJ+QS42LxeVBOLVF/cST3vgtvojNscEkazrwq
-X-Microsoft-Antispam-PRVS: <DM5PR06MB30825F0C135D75DC3D3C6F37EE930@DM5PR06MB3082.namprd06.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(158342451672863);
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM2PR12MB0171;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0171;3:lYpuDHpwV3exVfaoP1tFZSWkCmxh5nDJf39ztZNEdgK4O81/H/uJ6OL6LCE7auW1t0HjcHh49pnoHo3ZSM5p7V8zdPUH2oknsWe05LsPmkbIJcFovGpHRsy0HkUHTQudJIC8qLW+TLilS+7aH9OShbrv0wegnEJP7ltl7SxkB3ox154RNsMN6u9PqUy9BkiRPgwWJa7NhJJlDi6UOQyuiHq5edR25lIUOD9Y5VtcNoor2Xa2eGFyxAxZLL9TEtmw;25:OuiHxAXUgMCxr3II4tCl5VyriLDF6BjH96pnknuAx7JdCU4lhGy9joi8c7IAUCIs2AYYUYsxg3i/TkV5f63Om6J+PL05XQgTZ9eJj0htKhGuRZGfJIcQlyyHiyk+p+dTTuV6/QonB9W2UC56PQKC2VbX1R+oGE6Fs2FHKIZYBHrfOAn9q56hi0s14Po46BxyTWWhgW7m8Sp0cNyBbIdy6Iff0W9mL0sk0GRuGUm1sVgd7AkkB0FgqHnCv/9ezytG2vT5uF7uEoX343F8UMrSvwOsIXkbQcJOmr+W5Cf3SiEUR8Lcu9ky2fXiUuxP1sGsEZ/ApA2Pdai7Uptjhiy3SA==;31:BAdR2gq8E6KfV2IiFwdlDJZAMSwcxjX3Zg25OZjzq8DraqZs/Bv434cYRS1VvLB+AAneIivXIezArcTc28m/bDp5BV98wa+uCYtUd9mRN0H0Jw1TzALxGvE3Tfrj+0Qz8gMnwolg3kRo41VbxZj7YvgYIw1kqqMjIRDRCn1cnCFjBb9lqkyAaK1To7qQHeh3ywe/FVfKF5XPdDMlzCXqSAr2N4JDyye2Erw7by5owHk=
+X-MS-TrafficTypeDiagnostic: DM2PR12MB0171:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0171;20:e283osbDYo717Vl79LN+4mVBMbXEFt0SkOn5YvAa/3ZJIAu+NS2W6mP+5FDjvf98INC8c3I037dDdmbu3kmdnwdTFHcCVemKurCdwnXTLF2yEazKQ3Gc6Ya4dfitp4wb6GYeE1Cujs4LrVB/36wnxXc4y/22+E57/8YRd9dwKcw02UP/vmg/0+nRDlTi91UXqlkosMVJ/Hbpmu7FdH4Wl+aEF2/34VHsGZqf5xd3BBWsfASjrbgpf7X27m2aVz1Vt+rOfOGbhmKsWRPpZTPQnG7JrH/KMr8LfE+l6dbUdidhQM65NXNiE31y2LVFPav+/mzT1245ps9cIVySOqn3gtwMWbfyOB1p0WbyUqvPxHgbQMspVet8GejFXXglqlZ314MP1ZhL3VUbhfvWz0spUA2W77VRcp079RFBcZdCVckNi5X1gejJNoOhihPu/aCuGhg6R0o1GVGit5TOMXW1cVc/dTrFNaVoYotNAjr7xg/YKHEEpWggpU/3mNZlJljm;4:D1uIvsHH5Ifoi5oNMXsjSMs4KedW2ExkvFL/E/04+dEOnOozzevTiwIP278/ZoyQqVA/k+9tApiLBQM6LIxVclGmUxMATbQBVQW58PwBEolbBVIKsX47wxqEkrGw8uCMxZHIDqUWrpBi8mGz776xcxCNF2roRMIvtyw9/dKzNXuo90/cOAoLXvQMGId7Uahx/bAFh6zUEs3npFCceSQnWmoaALQB+JvJluKqJG7JxgE/ModqIeYMk76Ez3UZG35/fbgIVh8EomN8Dp6WkancIdGJaJjk8PRBBjDSuFb4xcV3twW4TNlf1iyJo8Y6ftEJkebnbTKlMz8cDfDYZA5+1NLDVoqrie54P950YkavbsNE5vKwu2pXHNxE/Fu6Shru9WhFfjdpLvjDe24T+Irr9S18DaYF3WhNpO36iM5tlP0=
+X-Microsoft-Antispam-PRVS: <DM2PR12MB0171EDC8CA6DD8BDAED75057EC930@DM2PR12MB0171.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(158342451672863)(166708455590820)(767451399110)(84791874153150);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR06MB3082;BCL:0;PCL:0;RULEID:;SRVR:DM5PR06MB3082;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM2PR12MB0171;BCL:0;PCL:0;RULEID:;SRVR:DM2PR12MB0171;
 X-Forefront-PRVS: 0673F5BE31
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39860400002)(376002)(396003)(346002)(39380400002)(189003)(199004)(7736002)(76176011)(305945005)(68736007)(59450400001)(93886005)(52116002)(52146003)(36756003)(23676004)(2486003)(230700001)(6486002)(53546011)(229853002)(316002)(386003)(6116002)(3846002)(47776003)(66066001)(4326008)(8666007)(65806001)(65956001)(7416002)(8676002)(16576012)(97736004)(58126008)(26005)(31686004)(81156014)(81166006)(77096007)(31696002)(72206003)(6666003)(107886003)(486006)(64126003)(6246003)(54906003)(16526019)(50466002)(2616005)(6916009)(476003)(956004)(5660300001)(2906002)(11346002)(65826007)(25786009)(106356001)(53936002)(105586002)(446003)(8936002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR06MB3082;H:[10.0.0.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjA2TUIzMDgyOzIzOnhUQ3V6YkM4QXZuSlNNNzVKZi83OGJaUnR5?=
- =?utf-8?B?MDZGVTl2elBhRjJMZXpXL2ZyL0J2WEZJNVdGZWpGOTFReEZ4SzdiT01Ua3JK?=
- =?utf-8?B?MHdVNERXT21Ib2Uza2U5cDFTTjZCQWNpdlg1Z1QxR3dzbXRyN2dva1F3WE8x?=
- =?utf-8?B?SC9vMHhhNE8rSy8rWEF4U2hBK1o1MmVOR1JHVkU2Vm55TzZ1QVF4MGhITUR5?=
- =?utf-8?B?UTNuMklZR1h0Qy9hMWQvZlo1VmNPMXZRNTVhL2NuaHhza00rZEVzQVVVNnEr?=
- =?utf-8?B?MjNWZGxsSUhJMzJWbTNDOHloOXVDZS9Sb3hXUHlRdGNGWnhxQlRhNGhiTVNV?=
- =?utf-8?B?ZjlXWUZSQ3huM3M1Mmo2R3V6YUdKSGE0VFJvY1M3bnludkxZN29hL1NHNE5P?=
- =?utf-8?B?a1ZNMlRhejNNbVh0T3M5aG45NGJ3R0RLRisrSjdRQ0hWeE1UcmhndU10ajhH?=
- =?utf-8?B?NS90c3JvYm9iUVZEWHVua1ZOY3diZExlN0wxdHVNbGdtTmVXbFJybndLVnRD?=
- =?utf-8?B?anN2OCtHZVFWR01YUG9BVUZpaHNWSFEzK1BjbWRJK0lEdnErcUJUNGliOVdZ?=
- =?utf-8?B?cDVQRTc4MzdVRGhDR1NoVHNCV2oyckpoLzFCNlhUdDFwM3dFRThyUGZWQ2JE?=
- =?utf-8?B?VU5WLytvVWpTamhsenhNeUdYY1dLOHA1aG5kdis0YnZSSmNUTzRJa2ppRDMy?=
- =?utf-8?B?VWpUZExUOEhCUy9mTVFJT0lxRDkrUWpoeHdIVUppZ003K3IxYVNGVk5qMlJq?=
- =?utf-8?B?NVFQZkRlMGo4WlF1Rnp5cVpBS2Q0M2RyNXREejA0UmxrZ2xBVUJBblNEV3F3?=
- =?utf-8?B?cWRkVCthRGlRSVdQWEl6OGc1R25yNm5ETnNDaXFvMWR0d1hGODF0ak40bDE1?=
- =?utf-8?B?WUpDNk9HTnFVUVdQRDBwYytodjlxNnQ5SlRIc1FPQVN6VkFRWUZsekp2TUZP?=
- =?utf-8?B?T20vVXdjTFluRTN5TjhpMHptRTJoMkRvYUhiVXNrR3IxRnlOOFpjLzNubjFa?=
- =?utf-8?B?Y0V2VDduWmJBZ3lhRkdIRFJtSzdqNDFOcVBGRXg0eHY0MlBEWXFvdUw5bk9W?=
- =?utf-8?B?WnFDTDNJZUZUeHcwSStrQTloR1pnb3RVZnRJeWx6VnNhbkkxVUZpUGxXVVJa?=
- =?utf-8?B?S1kvVFAxSCsyUnNBSURlSHJSb2txNjMvNi9nc3hGdXdUVC9hVUFRcm9uRGhk?=
- =?utf-8?B?T084RThIZVgwR3RFdDdMeW1wSVl1c2JLbStxQWpKeUtqS0pVbnVoY3ozNWgw?=
- =?utf-8?B?QnpzWEtjZGJkYUIyb05DMkRTMzlhQjlCM3oyTUp2U1BjVGpobzQzajd1OVpX?=
- =?utf-8?B?RzkyRFFobjVBZnFjTExibklwUHc4NEdHd0xueUtOWk0zQXZqb3hWUWptK3Bs?=
- =?utf-8?B?cUxpdW9VS1NMWWJjeExHMEJUT3VvMkU3Sng3QnhONmZvUDRacUVyQVdZaXFs?=
- =?utf-8?B?cjl1YmtEOGMwelk2ZkZ2cldoVEEzL28ra054V1lpK3ZRdVc0d1lOZEF5b210?=
- =?utf-8?B?WjR4cFE1dnJYbjJmSTF3SGJoQ0tmaUx1YSs1RnErS0Y5MW5WUTZxU1BVMWU2?=
- =?utf-8?B?UW50TWxiejgyZGFuWUlPZnFKdC9tUWhoeUIxT0JNVGo0RmtIYWwwQXhKWnRR?=
- =?utf-8?B?NVhWa2h2Tm1iZFJMOUtsRmNqMW1pbmY1OHlidTNvQnVFVnBRaUVkNGVlejBX?=
- =?utf-8?B?eEdQTTRuKzBQNkhQTjh4dHROUFI3SFE1clB1VDg2emF1NU5LTy83MGxtMk5V?=
- =?utf-8?B?QjB3ek9tNDVWcndGVEpVUG1VQXliS2tlU0VEZW1VY2duUklNOE9JR1ZlOFV5?=
- =?utf-8?B?bDlzUWRNaEtrbVlsbUVIb2FQYTYwOEQ0Z2lxN3ZiSDVsYjFQNXNTUDBmQklQ?=
- =?utf-8?B?SzJob0Q0T3JmRzJEcWxlQ2N0SkFUY2RGVFpXbG1uVG5uSHh1cG9MQ2M5c3NI?=
- =?utf-8?B?MzJhZzRDd2FkNDNRZloycUgwbmJ2R21JVlYrSkNoMWlrNC90TGs0cytrUnVK?=
- =?utf-8?B?RWRIaGRhS0xxWjlGblFmRlJka2RVdm40YWlPVnJLbm51THd1WUxJTlVIQjU1?=
- =?utf-8?Q?0IMn5LGiTXjkoTneS7sgP/M6M?=
-X-Microsoft-Antispam-Message-Info: M9tuwc4FfJXxNmuyKE68DLzmfWJHgX9Dz6p03wDecckkXFGH/ZFL/czCk7tQ4XSqWlXLZ3sdwgibdO0CTjy4W010tHpIhFHTZ1Tp0xMfUF1TN37DUv2NWxynLYAtqb8OKkLd2FORv+lTfsSLKlkxl0GYirnBetxJUCdkmRaQXG3H9ez7fbvTOVrPODM8OJhR
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;6:Gv4LN0Oszob79hpc6+C/mx34sVC2e1ezoYlWPZ0tpj3xREgX/1vAqTkyGVI+p1h+n8aH4aGECpjE0cOAn4zX0CbnFDEbXW45SyfCbsq7CI1JZ9lAy/SEhsAF9NgVLq5bCSaKp3O+LjqBojCv+/PFA3bYgDs6ZrB9BA5D394iK+NN89Pf8yJ9RMsbGHpVZehy+f3dowShatDuQg3oBT+Z57qwlyJ7OPzbzhFFwSq9fDfNlYZx1NflHjwkhGTLnfGoAHQOies0eiJYxRBlx+Lzaiu/xgDTEaOr9jDV/bTsZA1MXRrrrhhgP2NGFdqYElVgJ32ga9erHEVyd3dOpjJRRi+Pe3JwlJJnobLScNsVyZ12Ooga0J11C8wWyrhZDK20pPj0X0RpqlQ4kDkSNkjW98wq9lrmqETm0Xh0tcudHausdafx0WEcB3rU3s7cwr67+xWmc9RafRz3o1qoVNL6mw==;5:P9trnvc7VMd3CdUVHKdwx63y+GMjkzQu8lo0Do5+GqXms/ZeP+pNiP86BrQ2oQBehNN4V5pPhCgjVFDRd6spcQXgb/5Luv3qMTuO/d4UZfvqm/Mqfju7PxLCzkW7UiY14TSW1gpwwczAYs8B7OiKrHJwhPxLEJJRceV7QMFoQSk=;24:MOKfy5+Xv9U1bHRplINjdtNHw5LetejhDvQaf5MzLWhwX8MpObkYI4eNwY5rFGnZH1GyEfmT5uRzkMI3FSXIoyWyP6dfuYrlX1XNAx4pCXw=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(376002)(346002)(396003)(366004)(39380400002)(39860400002)(189003)(199004)(8676002)(31696002)(305945005)(478600001)(966005)(486006)(68736007)(50466002)(77096007)(3260700006)(4326008)(476003)(25786009)(6306002)(8936002)(7736002)(58126008)(6666003)(53936002)(86362001)(16576012)(81156014)(81166006)(31686004)(11346002)(446003)(59450400001)(53546011)(230700001)(72206003)(386003)(97736004)(316002)(47776003)(65826007)(26005)(6486002)(956004)(2616005)(65956001)(66066001)(36756003)(3846002)(2906002)(64126003)(16526019)(23676004)(65806001)(52116002)(5660300001)(229853002)(6246003)(6116002)(106356001)(52146003)(186003)(105586002)(76176011)(2486003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR12MB0171;H:[10.236.64.67];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTJQUjEyTUIwMTcxOzIzOnJEWjZlUGZxN0lGOEkrY29LMWhGaXdWVkxL?=
+ =?utf-8?B?VFE4YlI5QWxmRzFEY3lTbzlaVnZqSjRBVVhzMWYwUzRPUFdqOEdUYmdkZW45?=
+ =?utf-8?B?cEN5OXloTW9XSVBULzdidWViNmJIQXVBRlNnN2I1NElSckx2bXppbmlJQUpn?=
+ =?utf-8?B?cHdvTGRSeXlwK2ZrcGpsRUlFSUs1aUovbzQwNytoM2g5dGxpaWlNaFd0UGMv?=
+ =?utf-8?B?QXRRSUFzei9sSmIvZm1mdHJQSnFDc0I1VTlkd3hCVkZHYjFSbVlBTkhTK0FC?=
+ =?utf-8?B?S3orSWJTTUpKcVJYbUo4Q3Nja3lvdG9sSmJobTFiMWx2V1NqdDlhQk0xVlVL?=
+ =?utf-8?B?ZDJCaEdlS1FGUkt5cC9nTDZnRy9lTlZUODNseDlLOEN5bXB4TDd0Y2xiV2p4?=
+ =?utf-8?B?R0xRQ2VaSkJub1hpQUhsaXE0L3BHWFRkSmRNd1hXbU5XeUI4dnZ0ZFZqNko5?=
+ =?utf-8?B?UkV6Mm9TR05KeFMyQ2t1RUQwNUhhNGRXM2lJbmU3WmQwclRjMDZOSDRMOFdF?=
+ =?utf-8?B?bmFvYmhvNE9WeTRRbm1XVURKM3EvWW1GbUYzS2xoUWgrbkNuWVM3TCs2QUQ4?=
+ =?utf-8?B?ZWNHRjhZS1owM3VZbExRQ0d5TXhDVU9Kay9veEhZSURVck83cUplYWxDbzFO?=
+ =?utf-8?B?ZlBhMWdTRTU5MTNnUWcwLzN0cjdrdjBRRXBYeGRNSzNuQjFxei9QOE5zR280?=
+ =?utf-8?B?aE5Vb0hGUXY0dnNwQUpOSUxkQjk0eGZvZFV2SGFRcEVDTzZKRit6YlFGTE8x?=
+ =?utf-8?B?MTgxaWNqUkszWFZITTZzbWFLc0Q4b1p4bk5aV3BqUlJlb2p5Z0lMK1Z3TGZK?=
+ =?utf-8?B?Mm1rWW55UlZ5NUcvZ1FtQ2lIMkJ4RWsrMlI5QmI1c2FHc2toTHhNWTZldlpR?=
+ =?utf-8?B?dDNTR3g4WGJNOUdCbzlPU3RNTWNITHI1MnV3YWlHRW82ZmRDWllKbzhhdytS?=
+ =?utf-8?B?SGxvQVFuSndMUUJPc2Rva0RRS3BLM1RxdEJyS3hQYW5KWlVFV1k4VTd3N1pm?=
+ =?utf-8?B?QUt2a21Fc1ExZGhNY2FKZSszN1RqK3lDUmM3R1lQOGYwTXczS2lGM25xZnVS?=
+ =?utf-8?B?U2RTSFA2eDVVNlRDLzdMS24ySzhxVTFEempaTXF0MU9NSzhkN1dnMEdHVURq?=
+ =?utf-8?B?TlBIaXVLT1ZrSEdQMGY3emxBMzJIVlN1Sm1rVlA4SGY5RXk4MUllVmxkQ0ND?=
+ =?utf-8?B?bjMveFI3R3ROSm9hcnhrQmY5bGNPT0xmRVJtVDlPRk9oQVFqMjFhR3A3Y1R2?=
+ =?utf-8?B?VFFRZjkvdGVCZGQrRktHWk1PcEpmcUZjZ2cvT2pHWVhsd3dXb0N4a0ZkTVFG?=
+ =?utf-8?B?RnRXaUFWRE1MWkVXd1FpazZDMVVCbS9EV2l0ZlF6NmZZd1NYMm0vSStlTkJQ?=
+ =?utf-8?B?amFsYlRta284TFRVVjhlS1lFQW1xZDNmRS9OcTNFeTdLUW14Nkw0N0owZmFz?=
+ =?utf-8?B?ZStyend0ZVVFbDdLVG1JTS9IODVhUFNZeXAyd20yODNUZXd2alpTODJnL3Y5?=
+ =?utf-8?B?cnNndFNsSjRaWjV2eVhObGJOaGswQ3ZxYVZrQ3RBeTdXUFRxTUJiMkNpaWxK?=
+ =?utf-8?B?VThGaGF5T1huajgwa0w3dXplK3pta2tRTTdDQXRBTnByRUNIVkxRcmtjNENS?=
+ =?utf-8?B?d1hGcUk2cTZTMUZyZlpDUzNmWjVTY3A5bVBXaWxzOGl3d3VOTGp4RWtnRndi?=
+ =?utf-8?B?ZEw5a042MXBuZ1RtUExrNWxlSXpSVVc3OXhGVHdkSFhydjlxMXdPdTZFb3Rv?=
+ =?utf-8?B?NTYwQTc5RG9odXVoMFV1UVlDZlI1d3RlZkNmc1dadDFOYkk3NHEzRG1KRW5U?=
+ =?utf-8?B?eCtaOXlaWEZZRUxIMlBkaGFzMmVmcGZnYSs3WGlDNVFLNVMrcWJsZ2FDT3kv?=
+ =?utf-8?B?OVIxeVdlSDE3UHMxekkxZFNEdklYL296ejlacXRuUCs5Z0N4dTNJd05xUkRa?=
+ =?utf-8?B?NlRNRDVIV1ljRExJL1FVZWsvYkN5VDZsdEdlejFoSzV5TGJXajg2UXcreEhW?=
+ =?utf-8?B?OEMrM2JMVmVJclFYY0xFVkpVN0IxUHNaQUZ1dEdKc04zYnVlZ3BEb045b2pS?=
+ =?utf-8?Q?Qwus=3D?=
+X-Microsoft-Antispam-Message-Info: yFEkzlHssm8EE8luK7E75rDUnA0gbI7sO4U+J7w4kQIwLK3YWpyw9KFPK4byiZYH4JoWmWrj/69JsPoWKmG+u9u0EFdhPcl5Vwx6NBNotXgCMEry+0a+qXNwNvCiUMjUe6L1k+LpvK+4kcLP23CNQeQIVKM25i7K8qjl8BBJeYF1Aave+4aLk67/91Mtteyg
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0171;6:FXtlk0o4jvvAjFgeknIOtV1CGoG6EbzLEDWxDI4Xt/ygctRCN5PkNJHhsN443pLCTyJiB8KkmFQhiiCISmnY6bBt1wZ4PDBqPbHylTG32Vo5bSgAaASygQrvPnt464lo1UnleKj9oQZXHXZ53dfbP19XgsrCvE8Kx558ZE90VXOkT23izbqWs3Qp89tgdOk9gWkDKnC2rWqc4S5VW2TrC807dLn0Q8+5K2EPVN/3PV+mI4JGk0GTH8i/sxuHcW2fQbL1XdMHjJCl2AledyDXhOxYE3HFI6ze5/+7UEWBGjZSFR/sEo/xCDJZH+mVxZtOhD+2+hQqzHNP/q9bZOVgNV6d8oOqEEu8tUvVnuoiY/TZLWo8b5fXylitRYKHPhgzBwIYqDo9yDVlbPI1s09z0dMFuVSE9TTOTlhNcCERlpZWBdLNsP+9tkVMsJwn+AJPG+4mg5X68GO9PWCzJygWAw==;5:2BpOyJ6RJt4qdA8otLAR0I5rrVCOoHtsyHX3nHN25fXuDHA8x0rqfF1Osq7S5oWPACk1yz5PPgzEno3gIjx9+Q433sW7Z4NCZ4RXmf44XtlFTgeTsN+nDJ/NRA39QTPM2PxyA9aQvI8fHx2efXC8gNzmfE3kp0dAHyjIgtDXzFA=;24:Hf8kt8vTlfBOA0WMFtoFCQMgQdlxbzXsswms62mtbCxgo688GXmhxapL96/r7BEykq9sbxB0Z4/o2z0n03y/qZr3F5sOluEPSSIsgOvRics=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR06MB3082;7:EuKeY94DgnMk9TujQBGh4qT4XeAK5yoF2U2J0r17zNd/sqYsOUDItHc64pg9Z6Hm/SaCNGO53leAwAxXsvziU6KXMEc45EwvWEWiVOEyZxMGCcpPlNkR9Rb3kM7XYgME6hSk5Vp1EHCwNwKxXhcluNdHZ5pStYsRwbaYaGjAmISi+a54ChPLHTulYlc4T2+lvK9uwj2Uxywh3AZWT9qKX8WxhTMje/eI/ZrMQXGuH/JAIyYT5E6dxm8qLc850ic+
-X-MS-Office365-Filtering-Correlation-Id: a43346e5-001b-4f79-40ae-08d5ba67ea1f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 13:29:37.6825 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a43346e5-001b-4f79-40ae-08d5ba67ea1f
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0171;7:zr9Ony4cTiOqBAeMHFmqt3clXyPwLhUwlDLRPWEIQ1OTcezMGjVWdHEYkSx0e2rmhL8xK8tmQ8P5PY1lZVWCDJqg6TSe6kgm/oJvme3KeWO9kyOkDHSUHy4Kx2UbbWrs0UPwlyEi+lCn01GN0HBZvdeIRuP0TSRs3sHZtQmeHft7EX0vx9j6XXVDkqvsgqtG+cj8deCwvFQFjnjyn9w1KxVj4Hn5IHUPYJHthLeWMHLyP859ve0Dxzkjo1Pg6oz8;20:kfTzo5jGXNqyIsxRWO7eiJFQmjebtWy0X/ONy6T23c8Kq/cz2I420VXImfKKOxd4thnXSz/rg4qKkDFRdQMYtXguekjIOSnSboEl9b4pZxKev6cCEcL70DFRtDMFxvj1IdhR4OAPw8vLdRXPIOAuYZTIGzcC8/paJGZWpFfXQWQeLTT5QD7Cj0+SdSevK8G7S3+DyOslCXLP/l1luWOPCM+ECFuj2zw0M2wLKAFmKqDaTv7iPONyr3VK1AgIonDG
+X-MS-Office365-Filtering-Correlation-Id: 9e260eb6-c273-40f1-bd5c-08d5ba682be6
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 13:31:30.7606 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e260eb6-c273-40f1-bd5c-08d5ba682be6
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR06MB3082
-X-OriginatorOrg: netapp.com
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR12MB0171
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/18 15:03, Matthew Wilcox wrote:
-> On Tue, May 15, 2018 at 02:41:41PM +0300, Boaz Harrosh wrote:
->> That would be very hard. Because that program would:
->> - need to be root
->> - need to start and pretend it is zus Server with the all mount
->>   thread thing, register new filesystem, grab some pmem devices.
->> - Mount the said filesystem on said pmem. Create core-pinned ZT threads
->>   for all CPUs, start accepting IO.
->> - And only then it can start leaking the pointer and do bad things.
+On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
+> It is convenient to remap the old memory encrypted to the second kernel by
+> calling ioremap_encrypted().
 > 
-> All of these things you've done for me by writing zus Server.  All I
-> have to do now is compromise zus Server.
+> When sme enabled on AMD server, we also need to support kdump. Because
+> the memory is encrypted in the first kernel, we will remap the old memory
+> encrypted to the second kernel(crash kernel), and sme is also enabled in
+> the second kernel, otherwise the old memory encrypted can not be decrypted.
+> Because simply changing the value of a C-bit on a page will not
+> automatically encrypt the existing contents of a page, and any data in the
+> page prior to the C-bit modification will become unintelligible. A page of
+> memory that is marked encrypted will be automatically decrypted when read
+> from DRAM and will be automatically encrypted when written to DRAM.
 > 
->>   The bad things it can do to the application, not to the Kernel.
->>   And as a full filesystem it can do those bad things to the application
->>   through the front door directly not needing the mismatch tlb at all.
+> For the kdump, it is necessary to distinguish whether the memory is
+> encrypted. Furthermore, we should also know which part of the memory is
+> encrypted or decrypted. We will appropriately remap the memory according
+> to the specific situation in order to tell cpu how to deal with the
+> data(encrypted or decrypted). For example, when sme enabled, if the old
+> memory is encrypted, we will remap the old memory in encrypted way, which
+> will automatically decrypt the old memory encrypted when we read those data
+> from the remapping address.
 > 
-> That's not true.  When I have a TLB entry that points to a page of kernel
-> ram, I can do almost anything, depending on what the kernel decides to
-> do with that ram next.  Maybe it's page cache again, in which case I can
-> affect whatever application happens to get it allocated.  Maybe it's a
-> kmalloc page next, in which case I can affect any part of the kernel.
-> Maybe it's a page table, then I can affect any process.
+>  ----------------------------------------------
+> | first-kernel | second-kernel | kdump support |
+> |      (mem_encrypt=on|off)    |   (yes|no)    | 
+> |--------------+---------------+---------------|
+> |     on       |     on        |     yes       |
+> |     off      |     off       |     yes       |
+> |     on       |     off       |     no        |
+> |     off      |     on        |     no        |
+> |______________|_______________|_______________|
 > 
->> That said. It brings up a very important point that I wanted to talk about.
->> In this design the zuf(Kernel) and the zus(um Server) are part of the distribution.
->> I would like to have the zus module be signed by the distro's Kernel's key and
->> checked on loadtime. I know there is an effort by Redhat guys to try and sign all
->> /sbin/* servers and have Kernel check these. So this is not the first time people
->> have thought about that.
+> Test tools:
+> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+> Author: Lianbo Jiang <lijiang@redhat.com>
+> Date:   Mon May 14 17:02:40 2018 +0800
+> Note: This patch can only dump vmcore in the case of SME enabled.
 > 
-> You're getting dangerously close to admitting that the entire point
-> of this exercise is so that you can link non-GPL NetApp code into the
-> kernel in clear violation of the GPL.
+> crash-7.2.1: https://github.com/crash-utility/crash.git
+> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
+> Author: Dave Anderson <anderson@redhat.com>
+> Date:   Fri May 11 15:54:32 2018 -0400
+> 
+> Test environment:
+> HP ProLiant DL385Gen10 AMD EPYC 7251
+> 8-Core Processor
+> 32768 MB memory
+> 600 GB disk space
+> 
+> Linux 4.17-rc4:
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> commit 75bc37fefc44 ("Linux 4.17-rc4")
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Sun May 6 16:57:38 2018 -1000
+> 
+> Reference:
+> AMD64 Architecture Programmer's Manual
+> https://support.amd.com/TechDocs/24593.pdf
 > 
 
-It is not that at all. What I'm trying to do is enable a zero-copy,
-synchronous, low latency, low overhead. highly parallel - a new modern
-interface with application servers.
+Have you also tested this with SEV?  It would be nice if the kdump
+changes you make work with both SME and SEV.
 
-You yourself had such a project that could easily be served out-of-the-box
-with zufs, of a device that wanted to sit in user-mode.
+Thanks,
+Tom
 
-Sometimes it is very convenient and needed for Servers to sit in
-user-mode. And this interface allows that. And it is not always
-a licensing thing. Though yes licensing is also an issue sometimes.
-It is the reality we are living in.
-
-But please indulge me I am curious how the point of signing /sbin/
-servers, made you think about GPL licensing issues?
-
-That said, is your point that as long as user-mode servers are sloooowwww
-they are OK to be supported but if they are as fast as the kernel,
-(as demonstrated a zufs based FS was faster then xfs-dax on same pmem)
-Then it is a GPL violation?
-
-Thanks
-Boaz
+> Lianbo Jiang (2):
+>   add a function(ioremap_encrypted) for kdump when AMD sme enabled.
+>   support kdump when AMD secure memory encryption is active
+> 
+>  arch/x86/include/asm/dmi.h      | 14 +++++++++++++-
+>  arch/x86/include/asm/io.h       |  2 ++
+>  arch/x86/kernel/acpi/boot.c     |  8 ++++++++
+>  arch/x86/kernel/crash_dump_64.c | 27 +++++++++++++++++++++++++++
+>  arch/x86/mm/ioremap.c           | 25 +++++++++++++++++--------
+>  drivers/acpi/tables.c           | 14 +++++++++++++-
+>  drivers/iommu/amd_iommu_init.c  |  9 ++++++++-
+>  fs/proc/vmcore.c                | 36 +++++++++++++++++++++++++++++++-----
+>  include/linux/crash_dump.h      |  4 ++++
+>  kernel/kexec_core.c             | 12 ++++++++++++
+>  10 files changed, 135 insertions(+), 16 deletions(-)
+> 
