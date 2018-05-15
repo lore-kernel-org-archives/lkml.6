@@ -1,136 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeEOPrt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:47:49 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2033 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752060AbeEOPrr (ORCPT
+        id S1753861AbeEOPuV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:50:21 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37083 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbeEOPuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:47:47 -0400
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, "David Airlie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>
-Subject: Re: [PATCH] drm: clarify adjusted_mode documentation for bridges
-Thread-Topic: [PATCH] drm: clarify adjusted_mode documentation for bridges
-Thread-Index: AQHT0BczUn0iEJHYOUCxPfTONo+jRaQIKrOAgAATa4CAKMgtgA==
-Date: Tue, 15 May 2018 15:47:17 +0000
-Message-ID: <e311abac-59c7-9813-27ec-260754e35fb2@st.com>
-References: <20180409152427.12449-1-philippe.cornu@st.com>
- <b09d3039-41f7-5de1-7323-2f30ccd7141b@st.com>
- <a33a7a7e-fb4f-6293-2dd8-0a9afb4e9a9a@codeaurora.org>
-In-Reply-To: <a33a7a7e-fb4f-6293-2dd8-0a9afb4e9a9a@codeaurora.org>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D433E953EFE8A44B9C697F233483A178@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
- signatures=0
+        Tue, 15 May 2018 11:50:19 -0400
+X-Google-Smtp-Source: AB8JxZpXPAWuaEocZmeCGNeekXBtM0XtKc/GnW2UNe73MzbJN/Zl1JmnzmyOiPutvMNkPuLjpxaSdg==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v3 2/8] lib/test_bitmap.c: Add for_each_set_clump test cases
+Date: Tue, 15 May 2018 11:50:12 -0400
+Message-Id: <cd96a1716108b85eb0c5274fb88bca401afa871a.1526397764.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1526397764.git.vilhelm.gray@gmail.com>
+References: <cover.1526397764.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4FFltsq000329
 
-Hi,
+The introduction of the for_each_set_clump macro warrants test cases to
+verify the implementation. This patch adds test case checks for whether
+an out-of-bounds clump index is returned, a zero clump is returned, or
+the returned clump value differs from the expected clump value. A 4-bit
+clump size is chosen in order to verify non-8-bit iteration.
 
-Applied on drm-misc-next.
-Many thanks,
-Philippe :-)
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ lib/test_bitmap.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-On 04/19/2018 07:00 PM, Archit Taneja wrote:
-> 
-> 
-> On Thursday 19 April 2018 09:20 PM, Philippe CORNU wrote:
->> Hi Archit & Andrzej,
->>
->> May I ask you please a short review of this documentation update.
->> Many thanks
->> Philippe :-)
->>
->> On 04/09/2018 05:24 PM, Philippe Cornu wrote:
->>> This patch clarifies the adjusted_mode documentation
->>> for bridges.
->>>
-> 
-> Reviewed-by: Archit Taneja <architt@codeaurora.org>
-> 
->>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> ---
->>> This patch follows discussions in:
->>> - "drm: clarify adjusted_mode for a bridge connected to a crtc"
->>>      https://patchwork.freedesktop.org/patch/206801/
->>> - "drm: bridge: Constify mode arguments to bridge .mode_set() operation"
->>>      https://patchwork.freedesktop.org/patch/215449/
->>>
->>>     include/drm/drm_bridge.h | 16 ++++++++++++++++
->>>     include/drm/drm_crtc.h   | 11 +++++++----
->>>     2 files changed, 23 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
->>> index 3270fec46979..7d632c6a9214 100644
->>> --- a/include/drm/drm_bridge.h
->>> +++ b/include/drm/drm_bridge.h
->>> @@ -178,6 +178,22 @@ struct drm_bridge_funcs {
->>>     	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
->>>     	 * pipe (i.e.  clocks and timing signals) is off when this function is
->>>     	 * called.
->>> +	 *
->>> +	 * The adjusted_mode parameter corresponds to the mode output by the CRTC
->>> +	 * for the first bridge in the chain. It can be different from the mode
->>> +	 * parameter that contains the desired mode for the connector at the end
->>> +	 * of the bridges chain, for instance when the first bridge in the chain
->>> +	 * performs scaling. The adjusted mode is mostly useful for the first
->>> +	 * bridge in the chain and is likely irrelevant for the other bridges.
->>> +	 *
->>> +	 * For atomic drivers the adjusted_mode is the mode stored in
->>> +	 * &drm_crtc_state.adjusted_mode.
->>> +	 *
->>> +	 * NOTE:
->>> +	 *
->>> +	 * If a need arises to store and access modes adjusted for other locations
->>> +	 * than the connection between the CRTC and the first bridge, the DRM
->>> +	 * framework will have to be extended with DRM bridge states.
->>>     	 */
->>>     	void (*mode_set)(struct drm_bridge *bridge,
->>>     			 struct drm_display_mode *mode,
->>> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
->>> index a2d81d2907a9..65f749a9e9d3 100644
->>> --- a/include/drm/drm_crtc.h
->>> +++ b/include/drm/drm_crtc.h
->>> @@ -134,10 +134,13 @@ struct drm_crtc_state {
->>>     	 *
->>>     	 * Internal display timings which can be used by the driver to handle
->>>     	 * differences between the mode requested by userspace in @mode and what
->>> -	 * is actually programmed into the hardware. It is purely driver
->>> -	 * implementation defined what exactly this adjusted mode means. Usually
->>> -	 * it is used to store the hardware display timings used between the
->>> -	 * CRTC and encoder blocks.
->>> +	 * is actually programmed into the hardware.
->>> +	 *
->>> +	 * For drivers using drm_bridge, this stores the hardware display timings
->>> +	 * used between the CRTC and the first bridge. For other drivers, the
->>> +	 * meaning of the adjusted_mode field is purely driver implementation
->>> +	 * defined information, and will usually be used to store the hardware
->>> +	 * display timings used between the CRTC and encoder blocks.
->>>     	 */
->>>     	struct drm_display_mode adjusted_mode;
->>>     
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index de16f7869fb1..395e4f4fe43d 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -88,6 +88,39 @@ __check_eq_u32_array(const char *srcfile, unsigned int line,
+ 	return true;
+ }
+ 
++static bool __init __check_eq_clump(const char *srcfile, unsigned int line,
++				    const size_t clump_index, const size_t size,
++				    const unsigned char *const clump_exp,
++				    const unsigned long *const bits,
++				    const size_t index,
++				    const unsigned int offset)
++{
++	unsigned long clump;
++	unsigned long exp;
++
++	if (clump_index >= size) {
++		pr_warn("[%s:%u] clump index out-of-bounds: expected less than %zu, got %zu\n",
++			srcfile, line, size, clump_index);
++		return false;
++	}
++
++	exp = clump_exp[clump_index];
++	if (!exp) {
++		pr_warn("[%s:%u] clump index for zero clump: expected nonzero clump, got clump index %zu with clump value 0",
++			srcfile, line, clump_index);
++		return false;
++	}
++
++	clump = (bits[index] >> offset) & 0xF;
++	if (clump != exp) {
++		pr_warn("[%s:%u] expected 0x%lX, got 0x%lX",
++			srcfile, line, exp, clump);
++		return false;
++	}
++
++	return true;
++}
++
+ #define __expect_eq(suffix, ...)					\
+ 	({								\
+ 		int result = 0;						\
+@@ -104,6 +137,7 @@ __check_eq_u32_array(const char *srcfile, unsigned int line,
+ #define expect_eq_bitmap(...)		__expect_eq(bitmap, ##__VA_ARGS__)
+ #define expect_eq_pbl(...)		__expect_eq(pbl, ##__VA_ARGS__)
+ #define expect_eq_u32_array(...)	__expect_eq(u32_array, ##__VA_ARGS__)
++#define expect_eq_clump(...)		__expect_eq(clump, ##__VA_ARGS__)
+ 
+ static void __init test_zero_clear(void)
+ {
+@@ -352,6 +386,42 @@ static void noinline __init test_mem_optimisations(void)
+ 	}
+ }
+ 
++static const unsigned char clump_exp[] __initconst = {
++	0x1,	/* 1 bit set */
++	0x2,	/* non-edge 1 bit set */
++	0x0,	/* zero bits set */
++	0xE,	/* 3 bits set */
++	0xE,	/* Repeated clump */
++	0xF,	/* 4 bits set */
++	0x3,	/* 2 bits set */
++	0x5,	/* non-adjacent 2 bits set */
++};
++
++static void __init test_for_each_set_clump(void)
++{
++	size_t clump;
++	size_t index;
++	unsigned int offset;
++#define CLUMP_BITMAP_NUMBITS 32
++	DECLARE_BITMAP(bits, CLUMP_BITMAP_NUMBITS);
++#define CLUMP_SIZE 4
++	const size_t size = DIV_ROUND_UP(CLUMP_BITMAP_NUMBITS, CLUMP_SIZE);
++
++	/* set bitmap to test case */
++	bitmap_zero(bits, CLUMP_BITMAP_NUMBITS);
++	bitmap_set(bits, 0, 1);		/* 0x1 */
++	bitmap_set(bits, 5, 6);		/* 0x2 */
++	bitmap_set(bits, 13, 16);	/* 0xE */
++	bitmap_set(bits, 17, 20);	/* 0xE */
++	bitmap_set(bits, 20, 24);	/* 0xF */
++	bitmap_set(bits, 24, 26);	/* 0x3 */
++	bitmap_set(bits, 28, 29);	/* 0x5 - part 1 */
++	bitmap_set(bits, 30, 31);	/* 0x5 - part 2 */
++
++	for_each_set_clump(clump, index, offset, bits, size, CLUMP_SIZE)
++		expect_eq_clump(clump, size, clump_exp, bits, index, offset);
++}
++
+ static int __init test_bitmap_init(void)
+ {
+ 	test_zero_clear();
+@@ -360,6 +430,7 @@ static int __init test_bitmap_init(void)
+ 	test_bitmap_arr32();
+ 	test_bitmap_parselist();
+ 	test_mem_optimisations();
++	test_for_each_set_clump();
+ 
+ 	if (failed_tests == 0)
+ 		pr_info("all %u tests passed\n", total_tests);
+-- 
+2.17.0
