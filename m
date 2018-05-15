@@ -1,189 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeEOCFe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:05:34 -0400
-Received: from mx.socionext.com ([202.248.49.38]:43662 "EHLO mx.socionext.com"
+        id S1752135AbeEOCOk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:14:40 -0400
+Received: from mx.socionext.com ([202.248.49.38]:43834 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752222AbeEOCFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:05:32 -0400
+        id S1752044AbeEOCOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 22:14:39 -0400
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Abylay Ospan <aospan@netup.ru>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] media: helene: add I2C device probe function
-Date: Tue, 15 May 2018 11:05:20 +0900
-Message-Id: <20180515020520.31676-1-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH RESEND] clk: uniphier: add LD11/LD20 stream demux system clock
+Date: Tue, 15 May 2018 11:14:16 +0900
+Message-Id: <20180515021416.31760-1-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds I2C probe function to use dvb_module_probe()
-with this driver.
+Add clock for MPEG2 transport stream I/O and demux system (HSC) on
+UniPhier LD11/LD20 SoCs.
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/media/dvb-frontends/helene.c | 88 ++++++++++++++++++++++++++--
- drivers/media/dvb-frontends/helene.h |  2 +
- 2 files changed, 86 insertions(+), 4 deletions(-)
+ drivers/clk/uniphier/clk-uniphier-sys.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
-index a0d0b53c91d7..04033f0c278b 100644
---- a/drivers/media/dvb-frontends/helene.c
-+++ b/drivers/media/dvb-frontends/helene.c
-@@ -666,7 +666,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
- 	return 0;
- }
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index ebc78ab2df05..4f5ff9fa11fd 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -51,6 +51,9 @@
+ #define UNIPHIER_LD11_SYS_CLK_STDMAC(idx)				\
+ 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x210c, 8)
  
--static int helene_set_params(struct dvb_frontend *fe)
-+static int helene_set_params_t(struct dvb_frontend *fe)
- {
- 	u8 data[MAX_WRITE_REGSIZE];
- 	u32 frequency;
-@@ -835,6 +835,19 @@ static int helene_set_params(struct dvb_frontend *fe)
- 	return 0;
- }
++#define UNIPHIER_LD11_SYS_CLK_HSC(idx)					\
++	UNIPHIER_CLK_GATE("hsc", (idx), NULL, 0x210c, 9)
++
+ #define UNIPHIER_PRO4_SYS_CLK_GIO(idx)					\
+ 	UNIPHIER_CLK_GATE("gio", (idx), NULL, 0x2104, 6)
  
-+static int helene_set_params(struct dvb_frontend *fe)
-+{
-+	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-+
-+	if (p->delivery_system == SYS_DVBT ||
-+	    p->delivery_system == SYS_DVBT2 ||
-+	    p->delivery_system == SYS_ISDBT ||
-+	    p->delivery_system == SYS_DVBC_ANNEX_A)
-+		return helene_set_params_t(fe);
-+
-+	return helene_set_params_s(fe);
-+}
-+
- static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- {
- 	struct helene_priv *priv = fe->tuner_priv;
-@@ -843,7 +856,7 @@ static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- 	return 0;
- }
- 
--static const struct dvb_tuner_ops helene_tuner_ops = {
-+static const struct dvb_tuner_ops helene_tuner_ops_t = {
- 	.info = {
- 		.name = "Sony HELENE Ter tuner",
- 		.frequency_min = 1000000,
-@@ -853,7 +866,7 @@ static const struct dvb_tuner_ops helene_tuner_ops = {
- 	.init = helene_init,
- 	.release = helene_release,
- 	.sleep = helene_sleep,
--	.set_params = helene_set_params,
-+	.set_params = helene_set_params_t,
- 	.get_frequency = helene_get_frequency,
- };
- 
-@@ -871,6 +884,20 @@ static const struct dvb_tuner_ops helene_tuner_ops_s = {
- 	.get_frequency = helene_get_frequency,
- };
- 
-+static const struct dvb_tuner_ops helene_tuner_ops = {
-+	.info = {
-+		.name = "Sony HELENE Sat/Ter tuner",
-+		.frequency_min = 500000,
-+		.frequency_max = 1200000000,
-+		.frequency_step = 1000,
-+	},
-+	.init = helene_init,
-+	.release = helene_release,
-+	.sleep = helene_sleep,
-+	.set_params = helene_set_params,
-+	.get_frequency = helene_get_frequency,
-+};
-+
- /* power-on tuner
-  * call once after reset
-  */
-@@ -1032,7 +1059,7 @@ struct dvb_frontend *helene_attach(struct dvb_frontend *fe,
- 	if (fe->ops.i2c_gate_ctrl)
- 		fe->ops.i2c_gate_ctrl(fe, 0);
- 
--	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
-+	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops_t,
- 			sizeof(struct dvb_tuner_ops));
- 	fe->tuner_priv = priv;
- 	dev_info(&priv->i2c->dev,
-@@ -1042,6 +1069,59 @@ struct dvb_frontend *helene_attach(struct dvb_frontend *fe,
- }
- EXPORT_SYMBOL(helene_attach);
- 
-+static int helene_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct helene_config *config = client->dev.platform_data;
-+	struct dvb_frontend *fe = config->fe;
-+	struct device *dev = &client->dev;
-+	struct helene_priv *priv;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->i2c_address = client->addr;
-+	priv->i2c = client->adapter;
-+	priv->set_tuner_data = config->set_tuner_priv;
-+	priv->set_tuner = config->set_tuner_callback;
-+	priv->xtal = config->xtal;
-+
-+	if (fe->ops.i2c_gate_ctrl)
-+		fe->ops.i2c_gate_ctrl(fe, 1);
-+
-+	if (helene_x_pon(priv) != 0)
-+		return -EINVAL;
-+
-+	if (fe->ops.i2c_gate_ctrl)
-+		fe->ops.i2c_gate_ctrl(fe, 0);
-+
-+	memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
-+	       sizeof(struct dvb_tuner_ops));
-+	fe->tuner_priv = priv;
-+	i2c_set_clientdata(client, priv);
-+
-+	dev_info(dev, "Sony HELENE attached on addr=%x at I2C adapter %p\n",
-+		 priv->i2c_address, priv->i2c);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id helene_id[] = {
-+	{ "helene", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, helene_id);
-+
-+static struct i2c_driver helene_driver = {
-+	.driver = {
-+		.name = "helene",
-+	},
-+	.probe    = helene_probe,
-+	.id_table = helene_id,
-+};
-+module_i2c_driver(helene_driver);
-+
- MODULE_DESCRIPTION("Sony HELENE Sat/Ter tuner driver");
- MODULE_AUTHOR("Abylay Ospan <aospan@netup.ru>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/media/dvb-frontends/helene.h b/drivers/media/dvb-frontends/helene.h
-index c9fc81c7e4e7..ceaa283708cb 100644
---- a/drivers/media/dvb-frontends/helene.h
-+++ b/drivers/media/dvb-frontends/helene.h
-@@ -46,6 +46,8 @@ struct helene_config {
- 	void	*set_tuner_priv;
- 	int	(*set_tuner_callback)(void *, int);
- 	enum helene_xtal xtal;
-+
-+	struct dvb_frontend *fe;
- };
- 
- #if IS_REACHABLE(CONFIG_DVB_HELENE)
+@@ -182,6 +185,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
+ 	/* Index 5 reserved for eMMC PHY */
+ 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
++	UNIPHIER_LD11_SYS_CLK_HSC(9),
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
+ 	UNIPHIER_LD11_SYS_CLK_AIO(40),
+ 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
+@@ -215,6 +219,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	UNIPHIER_LD20_SYS_CLK_SD,
+ 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
++	UNIPHIER_LD11_SYS_CLK_HSC(9),
+ 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
+ 	/*
+ 	 * clock for USB Link is enabled by the logic "OR" of bit 14 and bit 15.
 -- 
 2.17.0
