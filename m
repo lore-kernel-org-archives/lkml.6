@@ -1,90 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeEORrk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:47:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47008 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752749AbeEORri (ORCPT
+        id S1753244AbeEORsN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:48:13 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39508 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752458AbeEORsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:47:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03A60603D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Tue, 15 May 2018 11:47:36 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>, rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Message-ID: <20180515174736.GB28489@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-5-ilina@codeaurora.org>
- <CAD=FV=VCAaGsRH1e46e+YSPJMYHgHGWf9TcH5UrcuJadQGsLtw@mail.gmail.com>
+        Tue, 15 May 2018 13:48:12 -0400
+X-Google-Smtp-Source: AB8JxZoc8hd8ESaFFzNfdQ3s79P4usbsoWDKTbAWeX3uGT6XzxWulXZ0BlqwlRr91uURPJdckW22KkKLHRrq5iU8GQk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=VCAaGsRH1e46e+YSPJMYHgHGWf9TcH5UrcuJadQGsLtw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180514135759.r4jxnw7mp3h6ak36@quack2.suse.cz>
+References: <20180512045921.18311-1-deepa.kernel@gmail.com>
+ <20180512045921.18311-6-deepa.kernel@gmail.com> <20180514135759.r4jxnw7mp3h6ak36@quack2.suse.cz>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Date: Tue, 15 May 2018 10:48:11 -0700
+Message-ID: <CABeXuvqso4mbFMmTnScwtxpNFYRGT8AoEdA=KKfBmOFMPGpWzQ@mail.gmail.com>
+Subject: Re: [PATCH 5/6] udf: Simplify calls to udf_disk_stamp_to_time
+To: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>, Jan Kara <jack@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11 2018 at 14:17 -0600, Doug Anderson wrote:
->Hi,
+On Mon, May 14, 2018 at 6:57 AM, Jan Kara <jack@suse.cz> wrote:
+> Hello,
 >
->On Wed, May 9, 2018 at 10:01 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->> +int rpmh_write(const struct device *dev, enum rpmh_state state,
->> +              const struct tcs_cmd *cmd, u32 n)
->> +{
->> +       DECLARE_COMPLETION_ONSTACK(compl);
->> +       DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
->> +       int ret;
->> +
->> +       if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
->> +               return -EINVAL;
->> +
->> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
->> +       rpm_msg.msg.num_cmds = n;
->> +
->> +       ret = __rpmh_write(dev, state, &rpm_msg);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = wait_for_completion_timeout(&compl, RPMH_TIMEOUT_MS);
+> On Fri 11-05-18 21:59:20, Deepa Dinamani wrote:
+>> Subsequent patches in the series convert inode timestamps
+>> to use struct timespec64 instead of struct timespec as
+>> part of solving the y2038 problem.
+>>
+>> commit fd3cfad374d4 ("udf: Convert udf_disk_stamp_to_time() to use mktime64()")
+>> eliminated the NULL return condition from udf_disk_stamp_to_time().
+>> udf_time_to_disk_time() is always called with a valid dest pointer and
+>> the return value is ignored.
+>> Further, caller can as well check the dest pointer being passed in rather
+>> than return argument.
+>> Make both the functions return void.
+>>
+>> This will make the inode timestamp conversion simpler.
+>>
+>> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+>> Cc: jack@suse.com
 >
->IMO it's almost never a good idea to use wait_for_completion_timeout()
->together with a completion that's declared on the stack.  If you
->somehow insist that this is a good idea then I need to see incredibly
->clear and obvious code/comments that say why it's impossible that the
->process might somehow try to signal the completion _after_
->RPMH_TIMEOUT_MS has expired.
+> I'm fine with this. Just one bug below:
 >
->Specifically if the timeout happens but the process could still signal
->a completion later then they will access random data on the stack of a
->function that has already returned.  This causes ridiculously
->difficult-to-debug crashes.
+>> diff --git a/fs/udf/super.c b/fs/udf/super.c
+>> index 0d27d41f5c6e..bd0ae64bc31c 100644
+>> --- a/fs/udf/super.c
+>> +++ b/fs/udf/super.c
+>> @@ -862,6 +862,9 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
+>>       struct buffer_head *bh;
+>>       uint16_t ident;
+>>       int ret = -ENOMEM;
+>> +#ifdef UDFFS_DEBUG
+>> +     struct timestamp *ts;
+>> +#endif
+>>
+>>       outstr = kmalloc(128, GFP_NOFS);
+>>       if (!outstr)
+>> @@ -880,15 +883,14 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
+>>
+>>       pvoldesc = (struct primaryVolDesc *)bh->b_data;
+>>
+>> -     if (udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
+>> -                           pvoldesc->recordingDateAndTime)) {
+>> +     udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
+>> +                           pvoldesc->recordingDateAndTime);
+>>  #ifdef UDFFS_DEBUG
+>> -             struct timestamp *ts = &pvoldesc->recordingDateAndTime;
+>> -             udf_debug("recording time %04u/%02u/%02u %02u:%02u (%x)\n",
+>> -                       le16_to_cpu(ts->year), ts->month, ts->day, ts->hour,
+>> -                       ts->minute, le16_to_cpu(ts->typeAndTimezone));
+>> +     *ts = &pvoldesc->recordingDateAndTime;
 >
->
->NOTE: You've got timeout set to 10 seconds here.  Is that really even
->useful?  IMO just call wait_for_completion() without a timeout.  It's
->much better to have a nice clean hang than a random stack corruption.
->
->
-The 10 sec timeout will guarantee that we will not get a response at all
-anymore for the request. Usually requests can be considered failed if
-there is no response in a few tens of microseconds. 10 sec is just an
-arbitarily large number.
+> This should be 'ts ='.
 
-The reason we use timeout is that once the timeout happens, we know we
-have failed, we could trigger a watchdog or crash the system. This is
-very important for our productization in debugging RPMH failures. A
-hang would not always trigger a watchdog and the failure would be silent
-and possibly fatal but hard to debug.
+Thanks, I will fix this in v2.
 
--- Lina
+> Do you prefer me taking this patch through my tree or will you carry it as
+> a part of your series?
+
+I can carry the patch as part of the series.
+
+-Deepa
