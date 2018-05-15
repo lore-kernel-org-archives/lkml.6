@@ -1,67 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752851AbeEOLYI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 07:24:08 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36605 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752740AbeEOLYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 07:24:06 -0400
-X-Google-Smtp-Source: AB8JxZq5PAu3IF4VdoOZSnTcFLK4QTb4zOg8MywWtbVErROZ1jGyf/vUwHmyoEe/HXIIlr6xnwqnqg==
-Date: Tue, 15 May 2018 13:24:04 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 07/14] net: sched: use reference counting action init
-Message-ID: <20180515112404.GL2134@nanopsycho.orion>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-8-git-send-email-vladbu@mellanox.com>
+        id S1752883AbeEOLdI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 07:33:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752747AbeEOLdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 07:33:06 -0400
+Date: Tue, 15 May 2018 13:33:03 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as
+ non-spinnable in percpu_rwsem_release()
+Message-ID: <20180515113303.GB14527@redhat.com>
+References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+ <1526326267-22501-3-git-send-email-longman@redhat.com>
+ <20180515083525.GV12217@hirez.programming.kicks-ass.net>
+ <20180515090052.cvlt3e7ue6bm4c2c@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526308035-12484-8-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180515090052.cvlt3e7ue6bm4c2c@quack2.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, May 14, 2018 at 04:27:08PM CEST, vladbu@mellanox.com wrote:
->Change action API to assume that action init function always takes
->reference to action, even when overwriting existing action. This is
->necessary because action API continues to use action pointer after init
->function is done. At this point action becomes accessible for concurrent
->modifications so user must always hold reference to it.
+On 05/15, Jan Kara wrote:
 >
->Implement helper put list function to atomically release list of actions
->after action API init code is done using them.
->
->Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->---
-> net/sched/act_api.c | 38 +++++++++++++++++---------------------
-> 1 file changed, 17 insertions(+), 21 deletions(-)
->
+> Now this behavior upsets lockdep and that's why we fool it by telling the
+> semaphore got released before returning to userspace (through
+> percpu_rwsem_release() helper) and similarly we tell lockdep we've got the
+> semaphore when an unfreeze syscall is called by percpu_rwsem_acquire(). Now
+> Amir has discovered that also rwsem debugging code gets confused by this
+> behavior
 
-[...]
+Yes, plus someone else has already reported the problem a month ago,
 
+> and previously also someone noticed that rwsem spinning does not
+> make sense and can be broken by this behavior.
 
->@@ -1196,8 +1190,7 @@ tca_action_gd(struct net *net, struct nlattr *nla, struct nlmsghdr *n,
-> 		return ret;
-> 	}
-> err:
->-	if (event != RTM_GETACTION)
+Well, this doesn't really matter but again, freeze_super() checks
+frozen == SB_UNFROZEN under sb->s_umount and only then does sb_wait_write(),
+when the previous writer has already realeased this lock. So the new writer
+will never spin after lockdep_sb_freeze_release() clears ->owner.
 
-Howcome you do this for RTM_GETACTION now too? Where is the related "get"?
-
-
->-		tcf_action_destroy(&actions, 0);
->+	tcf_action_put_lst(&actions);
-> 	return ret;
-> }
-> 
-
-[...]
+Oleg.
