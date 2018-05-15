@@ -1,140 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753446AbeEOQBn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 12:01:43 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37918 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752986AbeEOQAx (ORCPT
+        id S1753569AbeEOQCO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 12:02:14 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56002 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752922AbeEOQCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 12:00:53 -0400
-X-Google-Smtp-Source: AB8JxZoZJ95yHSJiBajbEF06miu1Rnmkx/d8uEyu2OoqVJthViHEVXKhSUEwZnGGEJ5PDIGKw90iqR2zbrdMFK1i0GE=
-MIME-Version: 1.0
-In-Reply-To: <20180514141800.f1be30ce9d1f6ae20ca2d04c@arm.com>
-References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
- <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
- <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com> <a09cbbb5-0237-31f5-dc81-d816c9ec26c5@infradead.org>
- <20180514141800.f1be30ce9d1f6ae20ca2d04c@arm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 15 May 2018 10:00:51 -0600
-Message-ID: <CANLsYkzaFYd=Uo7ZNxiuE3bsg7FrRTyaVEqj=j5mg6zoXDXNLg@mail.gmail.com>
-Subject: Re: [PATCH v3] coresight: documentation: update sysfs section
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 May 2018 12:02:07 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180515160205euoutp01dc022edb764f3e013df2657c8760b30f~u3NOmjWgO0895308953euoutp01I
+X-AuditID: cbfec7f5-b45ff700000028a9-ce-5afb047c9e5a
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: exynos: fix type of thermal trip points for
+ Exynos7
+Date: Tue, 15 May 2018 18:02:02 +0200
+Message-id: <66371602.d1UHUK4g0h@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <CAJKOXPdW7Ovo9GW=29tqa3rEAkSFgrEzbxm_wdGmRpamgk2-ig@mail.gmail.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEIsWRmVeSWpSXmKPExsWy7djP87o1LL+jDHZuE7F4MG8bm8X58xvY
+        LTY9vsZqcXnXHDaLz71HGC1mnN/H5MDmsWlVJ5vH5iX1Hn1bVjF6fN4kF8ASxWWTkpqTWZZa
+        pG+XwJXx+9kxpoKXLBUtHRtZGxg/MncxcnJICJhIrD/8jKWLkYtDSGAFo8SPd01gCSGBz4wS
+        i1bGwBTdeD6dBSK+jFHi8IpyiIbfjBKt9+ewgSTYBKwkJravYgSxRQQ0Ja7//c4KUsQscI1R
+        4unE/2DdwgJhElv77oMVsQioSpyYshrM5hXQkjjXdJEVxBYV8JLYsq+dCcTmFAiW6P+7kBWi
+        RlDix+R7YHOYBeQl9u2fygph60icPbaOEWSZhMAaNomDh6awQZztIvHg4A12CFtY4tXxLVC2
+        jERnx0EmiIZmRolvO/ZAA2MCo8Se9UIQtrXE4eMXoTbwSUzaNh2ohgMozivR0QZV4iFxefEr
+        VgjbUWL6843MkGA5wiix4EAT8wRG2VlIDp+F5PBZSA5fwMi8ilE8tbQ4Nz212DgvtVyvODG3
+        uDQvXS85P3cTIzAlnP53/OsOxn1/kg4xCnAwKvHwVl7/FSXEmlhWXJl7iFGCg1lJhHe30c8o
+        Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxxGnVRQgLpiSWp2ampBalFMFkmDk6pBsbbGk4q97dN
+        Obbj3XGh9hxn++WvN4a2RlReL9LPfFv34MRcw/N8c/p13A6+bK6/t75khbP74t2s/AFfnXa1
+        Rnn2TL3ZJ/rGS/TxRw7h9osL+K3mymvtmJByOe/9r+g7VvxP+DUZts3JijRRaffe9H3/zdnW
+        Jw5/zupKc5z9/UB/Vtga7y1yy+yUWIozEg21mIuKEwFKCUU/BQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xa7rVLL+jDB7OV7B4MG8bm8X58xvY
+        LTY9vsZqcXnXHDaLz71HGC1mnN/H5MDmsWlVJ5vH5iX1Hn1bVjF6fN4kF8ASxWWTkpqTWZZa
+        pG+XwJXx+9kxpoKXLBUtHRtZGxg/MncxcnJICJhI3Hg+naWLkYtDSGAJo8SSrQfYIJy/jBJv
+        TzewgVSxCVhJTGxfxQhiiwhoSlz/+50VpIhZ4BqjxIUX91hAEsICYRJb++6DFbEIqEqcmLIa
+        zOYV0JI413SRFcQWFfCS2LKvnamLkYODUyBYYs8jTohlxxglTjy6wQpRLyjxYzLETGYBeYl9
+        +6eyQthaEut3HmeawMg/C0nZLCRls5CULWBkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREY
+        uNuO/dy8g/HSxuBDjAIcjEo8vBXXf0UJsSaWFVfmHmKU4GBWEuHdbfQzSog3JbGyKrUoP76o
+        NCe1+BCjNAeLkjjveYPKKCGB9MSS1OzU1ILUIpgsEwenVANjyYNzonuDv5k9dnBkvda8Yd15
+        zY069o6mrw7uzJp25R57v9nT1ad+acvueHBaV+PFIusd5QnFU+90iW8rl89ddzzEtid0y3vB
+        Leev+Hb47jcPW/ptffqXipVPWt66Mj9ZsUiy+1dk8M15ddeX8Ryf/acgRFqnmMu49Y/l46dZ
+        O6w6jvJxO3ZdVGIpzkg01GIuKk4EAPg5TQ1YAgAA
+X-CMS-MailID: 20180515160203eucas1p1a5cc7f7a797a31aef0ab764736c941df
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1
+X-RootMTR: 20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1
+References: <CGME20180515123755eucas1p278a9c1e9cb0101e406e3839e27f8b3b1@eucas1p2.samsung.com>
+        <1702366.qL959G52Hi@amdc3058>
+        <CAJKOXPdW7Ovo9GW=29tqa3rEAkSFgrEzbxm_wdGmRpamgk2-ig@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 13:18, Kim Phillips <kim.phillips@arm.com> wrote:
-> - Align and show updated ls devices output from the TC2, based on
->   current driver
->
-> - Provide an example from an ETMv4 based system (Juno)
->
-> - Reflect changes to the way the RAM write pointer is accessed since
->   it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
->   management entries").
->
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+On Tuesday, May 15, 2018 02:59:33 PM Krzysztof Kozlowski wrote:
+> On Tue, May 15, 2018 at 2:37 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> > Currently Exynos thermal driver treats as "active" all specified
+> > trip points before reaching maximum number of hardware supported
+> > trip points.
+> 
+> The trip point type describe the way how system should act - use
+> active or passive cooling. It is independent of thermal driver. I do
 
-I'm good with this version - Jonathan, should I take this through my
-tree of you'll take care of it?
+OK, I see it now. Please disregard this patch.
 
-In case of the former:
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-> ---
-> v3: address Randy Dunlap's showns->shown,  corrected - and + line merging
-> v2: address Mathieu's comment about clarifying the sinks on the Juno
->     vs. TC2 platforms.
->
->  Documentation/trace/coresight.txt | 43 +++++++++++++++++++------------
->  1 file changed, 26 insertions(+), 17 deletions(-)
->
-> diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-> index 6f0120c3a4f1..15d2a0f1e1b8 100644
-> --- a/Documentation/trace/coresight.txt
-> +++ b/Documentation/trace/coresight.txt
-> @@ -141,13 +141,25 @@ register the device with the core framework.  The unregister function takes
->  a reference to a "struct coresight_device", obtained at registration time.
->
->  If everything goes well during the registration process the new devices will
-> -show up under /sys/bus/coresight/devices, as showns here for a TC2 platform:
-> +show up under /sys/bus/coresight/devices, as shown here for a TC2 platform:
->
->  root:~# ls /sys/bus/coresight/devices/
-> -replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
-> -20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-> +20010000.etb   20040000.funnel 2201d000.ptm  2203d000.etm  replicator
-> +20030000.tpiu  2201c000.ptm    2203c000.etm  2203e000.etm
->  root:~#
->
-> +and here for a Juno platform:
-> +
-> +root@juno:~# ls /sys/bus/coresight/devices/
-> +20010000.etf    20120000.replicator  22040000.etm     230c0000.funnel
-> +20030000.tpiu   20130000.funnel      220c0000.funnel  23140000.etm
-> +20040000.funnel  20140000.etf        22140000.etm     23240000.etm
-> +20070000.etr    20150000.funnel      23040000.etm     23340000.etm
-> +root@juno:~#
-> +
-> +Note that on Juno users can select the ETF, ETR and TPIU as a sink target while
-> +on TC2, the ETB and TPIU can be selected.
-> +
->  The functions take a "struct coresight_device", which looks like this:
->
->  struct coresight_desc {
-> @@ -193,16 +205,16 @@ the information carried in "THIS_MODULE".
->  How to use the tracer modules
->  -----------------------------
->
-> -Before trace collection can start, a coresight sink needs to be identify.
-> +Before trace collection can start, a coresight sink needs to be identified.
->  There is no limit on the amount of sinks (nor sources) that can be enabled at
->  any given moment.  As a generic operation, all device pertaining to the sink
->  class will have an "active" entry in sysfs:
->
->  root:/sys/bus/coresight/devices# ls
-> -replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
-> -20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-> +20010000.etb   20040000.funnel 2201d000.ptm  2203d000.etm  replicator
-> +20030000.tpiu  2201c000.ptm    2203c000.etm  2203e000.etm
->  root:/sys/bus/coresight/devices# ls 20010000.etb
-> -enable_sink  status  trigger_cntr
-> +enable_sink  mgmt  power  subsystem  trigger_cntr  uevent
->  root:/sys/bus/coresight/devices# echo 1 > 20010000.etb/enable_sink
->  root:/sys/bus/coresight/devices# cat 20010000.etb/enable_sink
->  1
-> @@ -216,16 +228,13 @@ trigger a trace capture:
->  root:/sys/bus/coresight/devices# echo 1 > 2201c000.ptm/enable_source
->  root:/sys/bus/coresight/devices# cat 2201c000.ptm/enable_source
->  1
-> -root:/sys/bus/coresight/devices# cat 20010000.etb/status
-> -Depth:          0x2000
-> -Status:         0x1
-> -RAM read ptr:   0x0
-> -RAM wrt ptr:    0x19d3   <----- The write pointer is moving
-> -Trigger cnt:    0x0
-> -Control:        0x1
-> -Flush status:   0x0
-> -Flush ctrl:     0x2001
-> -root:/sys/bus/coresight/devices#
-> +
-> +Observe the write pointer moving:
-> +
-> +root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-> +0x1a8
-> +root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-> +0x19a6
->
->  Trace collection is stopped the same way:
->
-> --
-> 2.17.0
->
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
