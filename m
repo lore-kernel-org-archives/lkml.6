@@ -1,110 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeEODqJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:46:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752060AbeEODqI (ORCPT
+        id S1752219AbeEODxZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:53:25 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.200]:21336 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752060AbeEODxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:46:08 -0400
-Date: Mon, 14 May 2018 20:47:33 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 7/8] rcu: trace CleanupMore condition only if needed
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-8-joel@joelfernandes.org>
- <20180514192028.GG26088@linux.vnet.ibm.com>
- <20180515010131.GF209519@joelaf.mtv.corp.google.com>
+        Mon, 14 May 2018 23:53:22 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+ <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+ <20180423161742.66f939ba@vento.lan>
+ <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+ <20180426204241.03a42996@vento.lan>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+Date: Mon, 14 May 2018 22:31:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515010131.GF209519@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051503-2213-0000-0000-000002A57396
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009027; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032468; UDB=6.00527835; IPR=6.00811599;
- MB=3.00021117; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 03:46:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051503-2214-0000-0000-00005A1F51AC
-Message-Id: <20180515034733.GZ26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150037
+In-Reply-To: <20180426204241.03a42996@vento.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fIQgp-003qnB-Gy
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:33656
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 06:01:31PM -0700, Joel Fernandes wrote:
-> On Mon, May 14, 2018 at 12:20:28PM -0700, Paul E. McKenney wrote:
-> > On Sun, May 13, 2018 at 08:15:40PM -0700, Joel Fernandes (Google) wrote:
-> > > Currently the tree RCU clean up code records a CleanupMore trace event
-> > > even if the GP was already in progress. This makes CleanupMore show up
-> > > twice for no reason. Avoid it.
-> > > 
-> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > 
-> > Good catch, and I applied this patch.  I did rework the commit log
-> > a bit, so please look it over to make sure I didn't mess it up.
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > commit 52c4e689efd975f5383895b1bc1b91bc90fdd372
-> > Author: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > Date:   Sun May 13 20:15:40 2018 -0700
-> > 
-> >     rcu: Produce last "CleanupMore" trace only if late-breaking request
-> >     
-> >     Currently the tree RCU clean-up code records a "CleanupMore" trace
-> >     event in response to late-arriving grace-period requests even if the
-> >     grace period was already requested. This makes "CleanupMore" show up an
-> >     extra time (in addition to once for each rcu_node structure that was
-> >     previously marked with the request) for no good reason.  This commit
-> >     therefore avoids emitting this trace message unless the only if the only
-> >     request for this next grace period arrived during or after the cleanup
-> >     scan of the rcu_node structures.
-> 
-> Yes, this is fine except "unless the only if the only" should be "unless the".
+Hi Mauro,
 
-I did update this after sending, and I still have "the the".  Will fix on
-next rebase.  As my daughter recently reminded me, the Law of Conservation
-of Bugs.  ;-)
+On 04/26/2018 06:42 PM, Mauro Carvalho Chehab wrote:
 
-							Thanx, Paul
+>>
+>> I noticed you changed the status of this series from rejected to new.
+> 
+> Yes.
+> 
+>> Also, there are other similar issues in media/pci/
+> 
+> Well, the issues will be there everywhere on all media drivers.
+> 
+> I marked your patches because I need to study it carefully, after
+> Peter's explanations. My plan is to do it next week. Still not
+> sure if the approach you took is the best one or not.
+> 
+> As I said, one possibility is to change the way v4l2-core handles
+> VIDIOC_ENUM_foo ioctls, but that would be make harder to -stable
+> backports.
+> 
+> I need a weekend to sleep on it.
+> 
 
-> thanks,
-> 
-> - Joel
-> 
-> >     
-> >     Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > 
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 8063a0478870..de6447dd73de 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -2072,7 +2072,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
-> >  	rsp->gp_state = RCU_GP_IDLE;
-> >  	/* Check for GP requests since above loop. */
-> >  	rdp = this_cpu_ptr(rsp->rda);
-> > -	if (ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
-> > +	if (!needgp && ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
-> >  		trace_rcu_this_gp(rnp, rdp, rnp->gp_seq_needed,
-> >  				  TPS("CleanupMore"));
-> >  		needgp = true;
-> > 
-> 
+I'm curious about how you finally resolved to handle these issues.
+
+I noticed Smatch is no longer reporting them.
+
+Thanks
+--
+Gustavo
