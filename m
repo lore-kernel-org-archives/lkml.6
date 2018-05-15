@@ -1,77 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeEOCxy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:53:54 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:48189 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752057AbeEOCxv (ORCPT
+        id S1752332AbeEOCyO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:54:14 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46481 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752295AbeEOCyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:53:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w4F2qVSv002191
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        user-mode-linux-user@lists.sourceforge.net,
-        user-mode-linux-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Andy Lutomirski <luto@amacapital.net>, Jeff Dike <jdike@addtoit.com>
-Subject: [PATCH 3/3] x86/build: vdso: put generated linker scripts to $(obj)/
-Date: Tue, 15 May 2018 11:52:24 +0900
-Message-Id: <1526352744-28229-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526352744-28229-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526352744-28229-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 14 May 2018 22:54:09 -0400
+X-Google-Smtp-Source: AB8JxZq4v/0B9thu3Gt/GYximp1JljIi/XnmnCZPl/s3x1DGHQ2uFqOgLk+kKOx1H95WuJGntpel7Q==
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 0/5] Hi3660: enable power management features
+Date: Tue, 15 May 2018 10:53:10 +0800
+Message-Id: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's put generated files to $(obj)/ rather than $(src)/ although
-this is just a matter of taste because both are the same.
+Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
+Linux-next branch and other drivers are existed in Linux mainline kernel), so
+this patch series is to enable power management features on hi3660.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+This patch series includes device tree binding for mailbox, stub clock and CPU
+OPPs, and has one patch to consolidate the Kconfigs for driver modules.
 
- arch/x86/entry/vdso/Makefile | 4 ++--
- arch/x86/um/vdso/Makefile    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+This patch set have been tested on Hikey960 and also verified the patch 'hisi:
+Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 690df4c..261802b 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -51,7 +51,7 @@ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
- 			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
- 			$(DISABLE_LTO)
- 
--$(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
-+$(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
- 	$(call if_changed,vdso)
- 
- HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/$(SUBARCH)/include/uapi
-@@ -119,7 +119,7 @@ $(obj)/%.so: OBJCOPYFLAGS := -S
- $(obj)/%.so: $(obj)/%.so.dbg
- 	$(call if_changed,objcopy)
- 
--$(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
-+$(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
- 	$(call if_changed,vdso)
- 
- CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
-diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
-index 3af55cd..822ccdb 100644
---- a/arch/x86/um/vdso/Makefile
-+++ b/arch/x86/um/vdso/Makefile
-@@ -30,7 +30,7 @@ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
- 
- $(obj)/vdso.o: $(src)/vdso.S $(obj)/vdso.so
- 
--$(obj)/vdso.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
-+$(obj)/vdso.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
- 	$(call if_changed,vdso)
- 
- $(obj)/%.so: OBJCOPYFLAGS := -S
+Changes from v1:
+* Changed patch subject from "dts: arm64: hi3660" to "arm64: dts: hi3660".
+
+
+Daniel Lezcano (1):
+  hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
+
+Kaihua Zhong (2):
+  arm64: dts: hi3660: Add mailbox node
+  arm64: dts: hi3660: Add stub clock node
+
+Leo Yan (1):
+  arm64: dts: hi3660: Add CPU frequency scaling support
+
+Tao Wang (1):
+  arm64: dts: hi3660: Add thermal cooling management
+
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
+ arch/arm64/configs/defconfig              |   1 -
+ drivers/clk/hisilicon/Kconfig             |  13 +--
+ drivers/mailbox/Kconfig                   |  12 ++-
+ 4 files changed, 161 insertions(+), 10 deletions(-)
+
 -- 
-2.7.4
+1.9.1
