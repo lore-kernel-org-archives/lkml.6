@@ -1,176 +1,423 @@
-Return-Path: <luwei.kang@intel.com>
-X-Google-Smtp-Source: AB8JxZpcVazRELomrC+A/AhdtfZ/ncSCZrjqFPPDpHckhBjVPmdNnwCe2wS9pgJiHjq56Rt8TRd+
-ARC-Seal: i=1; a=rsa-sha256; t=1526288579; cv=none;
+Return-Path: <andriy.shevchenko@linux.intel.com>
+X-Google-Smtp-Source: AB8JxZpB0YJTk2x3XqITbPAxnSozxqwzuL2kMrxJ78S3s0rPIo/kzCZWExXaHbmAgZJVNfqStC6c
+ARC-Seal: i=1; a=rsa-sha256; t=1526405527; cv=none;
         d=google.com; s=arc-20160816;
-        b=MsKus97zcii/wKM6sKcgB/q9W79M8vuEU64DUIBWBxV/anDllo6tIGahc/R5Bsue4w
-         VK58eugXW+mQdG0Y1X24fzo/DuFmE5Au4loQM24UmZFOlQu04m9zCEWKSwMi1ooJgZ3R
-         Ev101uL83lISqsG2szIaYhpmi9rVZaJSRS+VyClITDj/LW4M5ldYuKVEZsWg8jiuvb7A
-         gybQY1q90iSXjRKTWXtN56Wl3HBswWcjSpPu1dgTvnYHttb/nJQ+5h5cfJwVxKNYfm4s
-         D6uW1RLmtDndFgjZohH8sigQbQd5rbofkcSZQVOfjkHZmyzOterQeTaKlVndjDFQNvKJ
-         WM/w==
+        b=Ii5sNlcL9dgBiFCdVjgWRTtm4KAeiO74eA+wz/w4QrRxFab10wA8qY/pCDSyQKVONn
+         u3L9U4B17h+vPU3Rs5XfLxY5huBXzR8HirmqvVOMgn0YFF4ivhfgDDt9tpGeMB/tBltX
+         gpnNJt8pE13Sp2kfJPYPMViFn7cpzbJPbNoufhGnA8VWd2IEY8mgpXO9OSZmPfcf8ShC
+         bShVAceh15MNB2GI34gkQoA6k6BEWgO6iu5wtAiBkZUT1uIwM4m9JwB0SjOo0e0j9Py9
+         UbMo+hZpOZ/85sCSPXgxcKkwmf1O2/VETz2qPPAHRgNND/WFEKDMZFs40BhUVMIbZZ4t
+         wkVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=Qga+XYuw5xmy11ruZ+MPl0BoXMXLic1P7zATOf+8+dY=;
-        b=ZJdcB6bwERrZIuiQDmCpxAUo12Odj2texwo/NsUDUNrijpkSx+r0PkgcrDoCcfT/DD
-         jTivRWiM/F0+ph5zbXlBx46ZahD1YMKoUNIrjISooo7BpSQAwbQKa7Ljys3Y4rHdcdcx
-         zaZZiUb0Ecfw9vip2hkuZ9MOi5B61pxDwymfr4ID0KsRZm+EQ85IheARTXj0FyvIieUk
-         kjXogXQ+STlf5NwRkETl2kGk5vrQOAnQXv1WiZmDzNM1SUIpcpG2AJczekhLufABKOab
-         rGbtdJzgKseqyxZb4YqAd0L4uvmRe+SgAe0lsayVYCItnRlTUVQRm8dQ18SFcLqvwis5
-         TLAA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=IKJBawOUl5E9pBdx6nEa5V/1ojM9shke59Qc36tpbHQ=;
+        b=y5Jg511D39qH6AH2XYkicyMI/cnZt+vtdMr3+bHFWOyH0CQm20PvQ5TSV14PFHrJFi
+         xjfmC5sCeCEm22blR7xEDsKjAUO7agP7NqOM0FC9yFHtbqcVGOXPETli6Mi9jQGj/MXL
+         Ko5cOIKGViG/bM9YcycSC3kqrwSrUZ51zsnDNUH5I5XfSAfSmsgiMaqW6jMemysB12bs
+         BtL73Wm97rIsq8DvaOS/ngXu5TLWyHZeaPp4Kv4MUwzxwgwv2UJigu6zrjU+v2sjPjJ5
+         GHkd+QL4zpM0l/Yuwm5sGBN+EtoeJtghrDOa2w6yIqJhyAKK7v6Wf2tNYodVs7jWBx6A
+         knKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,399,1520924400";
-   d="scan'208";a="39701827"
-From: Luwei Kang <luwei.kang@intel.com>
-To: kvm@vger.kernel.org
-Cc: tglx@linutronix.de,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	x86@kernel.org,
-	chao.p.peng@linux.intel.com,
-	thomas.lendacky@amd.com,
-	bp@suse.de,
-	Kan.liang@intel.com,
-	Janakarajan.Natarajan@amd.com,
-	dwmw@amazon.co.uk,
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="46567267"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
-	alexander.shishkin@linux.intel.com,
-	peterz@infradead.org,
-	mathieu.poirier@linaro.org,
-	kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	david@redhat.com,
-	bsd@redhat.com,
-	yu.c.zhang@linux.intel.com,
-	joro@8bytes.org,
-	Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v8 02/12] perf/x86/intel/pt: Change pt_cap_get() to a public function
-Date: Mon, 14 May 2018 18:57:02 +0800
-Message-Id: <1526295432-20640-3-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
-References: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	linux-efi@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+	Lukas Wunner <lukas@wunner.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3] device property: Get rid of union aliasing
+Date: Tue, 15 May 2018 20:32:02 +0300
+Message-Id: <20180515173202.84296-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429573601015380?=
-X-GMAIL-MSGID: =?utf-8?q?1600429573601015380?=
+X-GMAIL-THRID: =?utf-8?q?1600552202231950083?=
+X-GMAIL-MSGID: =?utf-8?q?1600552202231950083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+The commit
 
-Change pt_cap_get() to a public function that KVM
-can access this function to check if specific
-feature is supported on hardware.
+  318a19718261 ("device property: refactor built-in properties support")
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+went way too far and brought a union aliasing. Partially revert it here
+to get rid of union aliasing.
+
+Note, all Apple properties are considered as u8 arrays. To get a value
+of any of them the caller must use device_property_read_u8_array().
+
+What union aliasing is?
+~~~~~~~~~~~~~~~~~~~~~~~
+The C99 standard in section 6.2.5 paragraph 20 defines union type as
+"an overlapping nonempty set of member objects". It also states in
+section 6.7.2.1 paragraph 14 that "the value of at most one of the
+members can be stored in a union object at any time'.
+
+Union aliasing is a type punning mechanism using union members to store
+as one type and read back as another.
+
+Why it's not good?
+~~~~~~~~~~~~~~~~~~
+Section 6.2.6.1 paragraph 6 says that a union object may not be a trap
+representation, although its member objects may be.
+
+Meanwhile annex J.1 says that "the value of a union member other than
+the last one stored into" is unspecified [removed in C11].
+
+In TC3, a footnote is added which specifies that accessing a member of a
+union other than the last one stored causes "the object representation"
+to be re-interpreted in the new type and specifically refers to this as
+"type punning". This conflicts to some degree with Annex J.1.
+
+While it's working in Linux with GCC, the use of union members to do
+type punning is not clear area in the C standard and might lead to
+unspecified behaviour.
+
+More information is available in this [1] blog post.
+
+[1]: https://davmac.wordpress.com/2010/02/26/c99-revisited/
+
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/x86/events/intel/pt.c      |  3 ++-
- arch/x86/events/intel/pt.h      | 21 ---------------------
- arch/x86/include/asm/intel_pt.h | 23 +++++++++++++++++++++++
- 3 files changed, 25 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 3b99394..c80e2f5 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -75,7 +75,7 @@
- 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
- };
- 
--static u32 pt_cap_get(enum pt_capabilities cap)
-+u32 pt_cap_get(enum pt_capabilities cap)
- {
- 	struct pt_cap_desc *cd = &pt_caps[cap];
- 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
-@@ -83,6 +83,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
- 
- 	return (c & cd->mask) >> shift;
+- change a wording for Apple case to explicitly tell
+  that properties are u8 arrays for now
+- ACK for EFI part (code kept the same in v3, so I added this ACK)
+
+ drivers/base/property.c                 | 104 ++++++++++++++++++++----
+ drivers/firmware/efi/apple-properties.c |   8 +-
+ include/linux/property.h                |  52 ++++++------
+ 3 files changed, 117 insertions(+), 47 deletions(-)
+
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 8f205f6461ed..240ab5230ff6 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -56,6 +56,72 @@ pset_prop_get(const struct property_set *pset, const char *name)
+ 	return NULL;
  }
-+EXPORT_SYMBOL_GPL(pt_cap_get);
  
- static ssize_t pt_cap_show(struct device *cdev,
- 			   struct device_attribute *attr,
-diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
-index 0050ca1..269e15a 100644
---- a/arch/x86/events/intel/pt.h
-+++ b/arch/x86/events/intel/pt.h
-@@ -45,30 +45,9 @@ struct topa_entry {
- 	u64	rsvd4	: 16;
- };
- 
--#define PT_CPUID_LEAVES		2
--#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
--
- /* TSC to Core Crystal Clock Ratio */
- #define CPUID_TSC_LEAF		0x15
- 
--enum pt_capabilities {
--	PT_CAP_max_subleaf = 0,
--	PT_CAP_cr3_filtering,
--	PT_CAP_psb_cyc,
--	PT_CAP_ip_filtering,
--	PT_CAP_mtc,
--	PT_CAP_ptwrite,
--	PT_CAP_power_event_trace,
--	PT_CAP_topa_output,
--	PT_CAP_topa_multiple_entries,
--	PT_CAP_single_range_output,
--	PT_CAP_payloads_lip,
--	PT_CAP_num_address_ranges,
--	PT_CAP_mtc_periods,
--	PT_CAP_cycle_thresholds,
--	PT_CAP_psb_periods,
--};
--
- struct pt_pmu {
- 	struct pmu		pmu;
- 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index b523f51..4270421 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -2,10 +2,33 @@
- #ifndef _ASM_X86_INTEL_PT_H
- #define _ASM_X86_INTEL_PT_H
- 
-+#define PT_CPUID_LEAVES		2
-+#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
++static const void *property_get_pointer(const struct property_entry *prop)
++{
++	switch (prop->type) {
++	case DEV_PROP_U8:
++		if (prop->is_array)
++			return prop->pointer.u8_data;
++		return &prop->value.u8_data;
++	case DEV_PROP_U16:
++		if (prop->is_array)
++			return prop->pointer.u16_data;
++		return &prop->value.u16_data;
++	case DEV_PROP_U32:
++		if (prop->is_array)
++			return prop->pointer.u32_data;
++		return &prop->value.u32_data;
++	case DEV_PROP_U64:
++		if (prop->is_array)
++			return prop->pointer.u64_data;
++		return &prop->value.u64_data;
++	case DEV_PROP_STRING:
++		if (prop->is_array)
++			return prop->pointer.str;
++		return &prop->value.str;
++	default:
++		return NULL;
++	}
++}
 +
-+enum pt_capabilities {
-+	PT_CAP_max_subleaf = 0,
-+	PT_CAP_cr3_filtering,
-+	PT_CAP_psb_cyc,
-+	PT_CAP_ip_filtering,
-+	PT_CAP_mtc,
-+	PT_CAP_ptwrite,
-+	PT_CAP_power_event_trace,
-+	PT_CAP_topa_output,
-+	PT_CAP_topa_multiple_entries,
-+	PT_CAP_single_range_output,
-+	PT_CAP_payloads_lip,
-+	PT_CAP_num_address_ranges,
-+	PT_CAP_mtc_periods,
-+	PT_CAP_cycle_thresholds,
-+	PT_CAP_psb_periods,
-+};
++static void property_set_pointer(struct property_entry *prop, const void *pointer)
++{
++	switch (prop->type) {
++	case DEV_PROP_U8:
++		if (prop->is_array)
++			prop->pointer.u8_data = pointer;
++		else
++			prop->value.u8_data = *((u8 *)pointer);
++		break;
++	case DEV_PROP_U16:
++		if (prop->is_array)
++			prop->pointer.u16_data = pointer;
++		else
++			prop->value.u16_data = *((u16 *)pointer);
++		break;
++	case DEV_PROP_U32:
++		if (prop->is_array)
++			prop->pointer.u32_data = pointer;
++		else
++			prop->value.u32_data = *((u32 *)pointer);
++		break;
++	case DEV_PROP_U64:
++		if (prop->is_array)
++			prop->pointer.u64_data = pointer;
++		else
++			prop->value.u64_data = *((u64 *)pointer);
++		break;
++	case DEV_PROP_STRING:
++		if (prop->is_array)
++			prop->pointer.str = pointer;
++		else
++			prop->value.str = pointer;
++		break;
++	default:
++		break;
++	}
++}
 +
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
- void cpu_emergency_stop_pt(void);
-+extern u32 pt_cap_get(enum pt_capabilities cap);
- #else
- static inline void cpu_emergency_stop_pt(void) {}
-+static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
- #endif
+ static const void *pset_prop_find(const struct property_set *pset,
+ 				  const char *propname, size_t length)
+ {
+@@ -65,10 +131,7 @@ static const void *pset_prop_find(const struct property_set *pset,
+ 	prop = pset_prop_get(pset, propname);
+ 	if (!prop)
+ 		return ERR_PTR(-EINVAL);
+-	if (prop->is_array)
+-		pointer = prop->pointer.raw_data;
+-	else
+-		pointer = &prop->value.raw_data;
++	pointer = property_get_pointer(prop);
+ 	if (!pointer)
+ 		return ERR_PTR(-ENODATA);
+ 	if (length > prop->length)
+@@ -698,16 +761,17 @@ EXPORT_SYMBOL_GPL(fwnode_property_get_reference_args);
  
- #endif /* _ASM_X86_INTEL_PT_H */
+ static void property_entry_free_data(const struct property_entry *p)
+ {
++	const void *pointer = property_get_pointer(p);
+ 	size_t i, nval;
+ 
+ 	if (p->is_array) {
+-		if (p->is_string && p->pointer.str) {
++		if (p->type == DEV_PROP_STRING && p->pointer.str) {
+ 			nval = p->length / sizeof(const char *);
+ 			for (i = 0; i < nval; i++)
+ 				kfree(p->pointer.str[i]);
+ 		}
+-		kfree(p->pointer.raw_data);
+-	} else if (p->is_string) {
++		kfree(pointer);
++	} else if (p->type == DEV_PROP_STRING) {
+ 		kfree(p->value.str);
+ 	}
+ 	kfree(p->name);
+@@ -716,7 +780,7 @@ static void property_entry_free_data(const struct property_entry *p)
+ static int property_copy_string_array(struct property_entry *dst,
+ 				      const struct property_entry *src)
+ {
+-	char **d;
++	const char **d;
+ 	size_t nval = src->length / sizeof(*d);
+ 	int i;
+ 
+@@ -734,40 +798,44 @@ static int property_copy_string_array(struct property_entry *dst,
+ 		}
+ 	}
+ 
+-	dst->pointer.raw_data = d;
++	dst->pointer.str = d;
+ 	return 0;
+ }
+ 
+ static int property_entry_copy_data(struct property_entry *dst,
+ 				    const struct property_entry *src)
+ {
++	const void *pointer = property_get_pointer(src);
++	const void *new;
+ 	int error;
+ 
+ 	if (src->is_array) {
+ 		if (!src->length)
+ 			return -ENODATA;
+ 
+-		if (src->is_string) {
++		if (src->type == DEV_PROP_STRING) {
+ 			error = property_copy_string_array(dst, src);
+ 			if (error)
+ 				return error;
++			new = dst->pointer.str;
+ 		} else {
+-			dst->pointer.raw_data = kmemdup(src->pointer.raw_data,
+-							src->length, GFP_KERNEL);
+-			if (!dst->pointer.raw_data)
++			new = kmemdup(pointer, src->length, GFP_KERNEL);
++			if (!new)
+ 				return -ENOMEM;
+ 		}
+-	} else if (src->is_string) {
+-		dst->value.str = kstrdup(src->value.str, GFP_KERNEL);
+-		if (!dst->value.str && src->value.str)
++	} else if (src->type == DEV_PROP_STRING) {
++		new = kstrdup(src->value.str, GFP_KERNEL);
++		if (!new && src->value.str)
+ 			return -ENOMEM;
+ 	} else {
+-		dst->value.raw_data = src->value.raw_data;
++		new = pointer;
+ 	}
+ 
+ 	dst->length = src->length;
+ 	dst->is_array = src->is_array;
+-	dst->is_string = src->is_string;
++	dst->type = src->type;
++
++	property_set_pointer(dst, new);
+ 
+ 	dst->name = kstrdup(src->name, GFP_KERNEL);
+ 	if (!dst->name)
+diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
+index adaa9a3714b9..60a95719ecb8 100644
+--- a/drivers/firmware/efi/apple-properties.c
++++ b/drivers/firmware/efi/apple-properties.c
+@@ -13,6 +13,9 @@
+  *
+  * You should have received a copy of the GNU General Public License
+  * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ *
++ * Note, all properties are considered as u8 arrays.
++ * To get a value of any of them the caller must use device_property_read_u8_array().
+  */
+ 
+ #define pr_fmt(fmt) "apple-properties: " fmt
+@@ -96,12 +99,13 @@ static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
+ 		entry[i].name = key;
+ 		entry[i].length = val_len - sizeof(val_len);
+ 		entry[i].is_array = !!entry[i].length;
+-		entry[i].pointer.raw_data = ptr + key_len + sizeof(val_len);
++		entry[i].type = DEV_PROP_U8;
++		entry[i].pointer.u8_data = ptr + key_len + sizeof(val_len);
+ 
+ 		if (dump_properties) {
+ 			dev_info(dev, "property: %s\n", entry[i].name);
+ 			print_hex_dump(KERN_INFO, pr_fmt(), DUMP_PREFIX_OFFSET,
+-				16, 1, entry[i].pointer.raw_data,
++				16, 1, entry[i].pointer.u8_data,
+ 				entry[i].length, true);
+ 		}
+ 
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 2eea4b310fc2..ac8a1ebc4c1b 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -178,7 +178,7 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
+  * @name: Name of the property.
+  * @length: Length of data making up the value.
+  * @is_array: True when the property is an array.
+- * @is_string: True when property is a string.
++ * @type: Type of the data in unions.
+  * @pointer: Pointer to the property (an array of items of the given type).
+  * @value: Value of the property (when it is a single item of the given type).
+  */
+@@ -186,10 +186,9 @@ struct property_entry {
+ 	const char *name;
+ 	size_t length;
+ 	bool is_array;
+-	bool is_string;
++	enum dev_prop_type type;
+ 	union {
+ 		union {
+-			const void *raw_data;
+ 			const u8 *u8_data;
+ 			const u16 *u16_data;
+ 			const u32 *u32_data;
+@@ -197,7 +196,6 @@ struct property_entry {
+ 			const char * const *str;
+ 		} pointer;
+ 		union {
+-			unsigned long long raw_data;
+ 			u8 u8_data;
+ 			u16 u16_data;
+ 			u32 u32_data;
+@@ -213,55 +211,55 @@ struct property_entry {
+  * and structs.
+  */
+ 
+-#define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _val_)	\
+-(struct property_entry) {					\
+-	.name = _name_,						\
+-	.length = ARRAY_SIZE(_val_) * sizeof(_type_),		\
+-	.is_array = true,					\
+-	.is_string = false,					\
+-	{ .pointer = { ._type_##_data = _val_ } },		\
++#define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _Type_, _val_)	\
++(struct property_entry) {						\
++	.name = _name_,							\
++	.length = ARRAY_SIZE(_val_) * sizeof(_type_),			\
++	.is_array = true,						\
++	.type = DEV_PROP_##_Type_,					\
++	{ .pointer = { ._type_##_data = _val_ } },			\
+ }
+ 
+ #define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u8, _val_)
++	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u8, U8, _val_)
+ #define PROPERTY_ENTRY_U16_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u16, _val_)
++	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u16, U16, _val_)
+ #define PROPERTY_ENTRY_U32_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u32, _val_)
++	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u32, U32, _val_)
+ #define PROPERTY_ENTRY_U64_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, _val_)
++	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, U64, _val_)
+ 
+ #define PROPERTY_ENTRY_STRING_ARRAY(_name_, _val_)		\
+ (struct property_entry) {					\
+ 	.name = _name_,						\
+ 	.length = ARRAY_SIZE(_val_) * sizeof(const char *),	\
+ 	.is_array = true,					\
+-	.is_string = true,					\
++	.type = DEV_PROP_STRING,				\
+ 	{ .pointer = { .str = _val_ } },			\
+ }
+ 
+-#define PROPERTY_ENTRY_INTEGER(_name_, _type_, _val_)	\
+-(struct property_entry) {				\
+-	.name = _name_,					\
+-	.length = sizeof(_type_),			\
+-	.is_string = false,				\
+-	{ .value = { ._type_##_data = _val_ } },	\
++#define PROPERTY_ENTRY_INTEGER(_name_, _type_, _Type_, _val_)	\
++(struct property_entry) {					\
++	.name = _name_,						\
++	.length = sizeof(_type_),				\
++	.type = DEV_PROP_##_Type_,				\
++	{ .value = { ._type_##_data = _val_ } },		\
+ }
+ 
+ #define PROPERTY_ENTRY_U8(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u8, _val_)
++	PROPERTY_ENTRY_INTEGER(_name_, u8, U8, _val_)
+ #define PROPERTY_ENTRY_U16(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u16, _val_)
++	PROPERTY_ENTRY_INTEGER(_name_, u16, U16, _val_)
+ #define PROPERTY_ENTRY_U32(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u32, _val_)
++	PROPERTY_ENTRY_INTEGER(_name_, u32, U32, _val_)
+ #define PROPERTY_ENTRY_U64(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u64, _val_)
++	PROPERTY_ENTRY_INTEGER(_name_, u64, U64, _val_)
+ 
+ #define PROPERTY_ENTRY_STRING(_name_, _val_)		\
+ (struct property_entry) {				\
+ 	.name = _name_,					\
+ 	.length = sizeof(_val_),			\
+-	.is_string = true,				\
++	.type = DEV_PROP_STRING,			\
+ 	{ .value = { .str = _val_ } },			\
+ }
+ 
 -- 
-1.8.3.1
+2.17.0
