@@ -1,100 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752471AbeEOIPr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:15:47 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41488 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752195AbeEOIPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 04:15:44 -0400
-X-Google-Smtp-Source: AB8JxZr6hshopX9kzeSAG7VNCHc+1DFMwdVtBR94e2eVu0ARcPjzzeqK1+BaTsfNWv5FgApRbwMEdg==
-Date: Tue, 15 May 2018 10:15:36 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
-Message-ID: <20180515081536.GA4901@andrea>
-References: <20180514184634.2160-1-bart.vanassche@wdc.com>
- <20180514184634.2160-2-bart.vanassche@wdc.com>
+        id S1752559AbeEOIQJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:16:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47142 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752482AbeEOIQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 04:16:07 -0400
+Date: Tue, 15 May 2018 10:16:02 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Anders Roxell <anders.roxell@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: i801: fix unused-function warning
+Message-ID: <20180515101602.79ff49cf@endymion>
+In-Reply-To: <CAHp75VdJEzDsvJmv812wvc5p=frqc3KU8HW=y4cGULYEp4=SKQ@mail.gmail.com>
+References: <20180510152719.6e37b10e@endymion>
+        <20180514093326.30314-1-anders.roxell@linaro.org>
+        <CAHp75VdJEzDsvJmv812wvc5p=frqc3KU8HW=y4cGULYEp4=SKQ@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514184634.2160-2-bart.vanassche@wdc.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
+Hi Andy,
 
-On Mon, May 14, 2018 at 11:46:33AM -0700, Bart Van Assche wrote:
+On Mon, 14 May 2018 20:18:37 +0300, Andy Shevchenko wrote:
+> On Mon, May 14, 2018 at 12:33 PM, Anders Roxell
+> <anders.roxell@linaro.org> wrote:
+> > With CONFIG_PM, we get a harmless build warning:
+> > drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
+> >  static int i801_resume(struct device *dev)
+> >             ^~~~~~~~~~~
+> > drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
+> >  static int i801_suspend(struct device *dev)
+> >             ^~~~~~~~~~~~  
+> 
+> > -#ifdef CONFIG_PM
+> > +#ifdef CONFIG_PM_SLEEP
+> >  static int i801_suspend(struct device *dev)  
+> 
+> The better pattern is to get rid of ugly ifdef and supply
+> __maybe_unused annotation to each function in question.
 
-[...]
+That was Anders' first proposal, but it was declined by the driver
+maintainer (me.) See:
 
-> diff --git a/Documentation/features/locking/cmpxchg64/arch-support.txt b/Documentation/features/locking/cmpxchg64/arch-support.txt
-> new file mode 100644
-> index 000000000000..65b3290ce5d5
-> --- /dev/null
-> +++ b/Documentation/features/locking/cmpxchg64/arch-support.txt
-> @@ -0,0 +1,31 @@
-> +#
-> +# Feature name:          cmpxchg64
-> +#         Kconfig:       ARCH_HAVE_CMPXCHG64
-> +#         description:   arch supports the cmpxchg64() API
-> +#
-> +    -----------------------
-> +    |         arch |status|
-> +    -----------------------
-> +    |       alpha: |  ok  |
-> +    |         arc: | TODO |
-> +    |         arm: |!thumb|
-> +    |       arm64: |  ok  |
-> +    |         c6x: | TODO |
-> +    |       h8300: | TODO |
-> +    |     hexagon: | TODO |
-> +    |        ia64: |  ok  |
-> +    |        m68k: |  ok  |
-> +    |  microblaze: | TODO |
-> +    |        mips: |64-bit|
-> +    |       nios2: | TODO |
-> +    |    openrisc: | TODO |
-> +    |      parisc: |  ok  |
-> +    |     powerpc: |64-bit|
-> +    |        s390: |  ok  |
-> +    |          sh: | TODO |
-> +    |       sparc: |  ok  |
-> +    |          um: | TODO |
-> +    |   unicore32: | TODO |
-> +    |         x86: |  ok  |
-> +    |      xtensa: |  ok  |
-> +    -----------------------
+https://marc.info/?l=linux-kernel&m=152588526520326&w=2
 
-nds32 and riscv seem to be missing from the table. I'd also suggest
-sticking to the three entries documented in
+__maybe_unused is just a way to prevent the compiler from doing its
+job. If it's really what you want, you might as well build with
+-Wno-unused, instead of crippling the code with yet another annotation.
 
-  Documentation/features/arch-support.txt
-  
-and using the header comment to provide any additional information.
+I can't see how building unused code only to discard it later can be
+better than a proper #ifdef which will only build the code when we
+actually need it.
 
-A script that refreshes the arch support status file in place (from
-the Kconfig files) is currently available in linux-next: c.f.,
+Maybe there are cases where __maybe_unused is actually needed, but in
+my opinion that should be the last resort option. That's not the case
+here.
 
-  Documentation/features/scripts/features-refresh.sh
-
-  Andrea
+-- 
+Jean Delvare
+SUSE L3 Support
