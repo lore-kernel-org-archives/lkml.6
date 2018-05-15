@@ -1,104 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeEOW6w (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:58:52 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37414 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbeEOW6t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:58:49 -0400
-X-Google-Smtp-Source: AB8JxZqbC1PxfTanmKDMmxpLclO3E5zAEczFItym8Od5PRfaKVx058eQJcN9GYEL5ovY2gKVM9dAUw==
-Date: Wed, 16 May 2018 01:58:45 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: mingo@kernel.org, tglx@linutronix.de
-Cc: Peter Anvin <h.peter.anvin@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        id S1752584AbeEOXA2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 19:00:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751881AbeEOXAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 19:00:25 -0400
+Date: Tue, 15 May 2018 19:00:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>,
-        torvalds@linux-foundation.org, x86@kernel.org
-Subject: [PATCH v2] x86/asm: Pad assembly functions with INT3 instructions
-Message-ID: <20180515225845.GB21902@avx2>
-References: <20180515080033.GA7714@yexl-desktop>
- <20180515210757.GA12225@avx2>
- <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
- <20180515214337.GA18021@avx2>
- <CA+55aFy6_fJkmuWDZC=d_WE+_oYHtXXCbb=R31jyC1qDKZ8HJw@mail.gmail.com>
- <20180515225028.GA21902@avx2>
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>, tcharding <me@tobin.cc>
+Subject: Re: [PATCH] vsprintf: Fix memory barriers of ptr_key to
+ have_filed_random_ptr_key
+Message-ID: <20180515190022.3b5f96b4@gandalf.local.home>
+In-Reply-To: <20180515184117.5fb0b7fa@gandalf.local.home>
+References: <20180515100558.21df515e@gandalf.local.home>
+        <CA+55aFyBHRmXLo07f_7qt7szaDvppMStfX5Sq9Df6mZSy+qYvA@mail.gmail.com>
+        <20180515145744.3bdcbbe9@gandalf.local.home>
+        <CA+55aFwOoMHJaK5LmgmKKPvPUpTUBKSXS67cwaXwm2p-eG6ycQ@mail.gmail.com>
+        <20180515161027.468e8975@gandalf.local.home>
+        <CA+55aFztxY-w=0tPZ8KAenENA7NCYSWUcCPV4Nzs0ffwrh3G4Q@mail.gmail.com>
+        <20180515184117.5fb0b7fa@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180515225028.GA21902@avx2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use INT3 instead of NOP. All that padding between functions is
-an illegal area, no legitimate code should jump into it.
+On Tue, 15 May 2018 18:41:17 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I've checked x86_64 allyesconfig disassembly, all changes looks sane:
-INT3 is only used after RET or unconditional JMP.
+> On Tue, 15 May 2018 15:31:37 -0700
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+> > > we could always do this:    
+> > 
+> > Ugh. I think I prefer the barriers.  
+> 
 
-On i386:
-* promote ret_from_exception into ENTRY as it has corresponding END,
-* demote "resume_userspace" -- unused,
-* delete ALIGN directive in page_fault. It is leftover from x86 assembly
-  cleanups.
+If it is that if statement you don't like. We can get rid of it. On
+early boot, the code is called from preemptable context, it's only
+later that it is not. So we know when we can call it directly and when
+we need to have a work queue.
 
-    commit d211af055d0c12dc3416c2886e6fbdc6eb74a381
-    i386: get rid of the use of KPROBE_ENTRY / KPROBE_END
-
-  has ALIGN directive before branch target which makes sense.
-  All the code after ALIGN disappeared later.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- arch/x86/entry/entry_32.S      |    6 +-----
- arch/x86/include/asm/linkage.h |    2 +-
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -320,8 +320,7 @@ END(ret_from_fork)
-  */
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 30c0cb8cc9bc..69d3ed8557ce 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1669,19 +1669,21 @@ char *pointer_string(char *buf, char *end, const void *ptr,
+ 	return number(buf, end, (unsigned long int)ptr, spec);
+ }
  
- 	# userspace resumption stub bypassing syscall exit tracing
--	ALIGN
--ret_from_exception:
-+ENTRY(ret_from_exception)
- 	preempt_stop(CLBR_ANY)
- ret_from_intr:
- #ifdef CONFIG_VM86
-@@ -337,8 +336,6 @@ ret_from_intr:
- #endif
- 	cmpl	$USER_RPL, %eax
- 	jb	resume_kernel			# not returning to v8086 or userspace
--
--ENTRY(resume_userspace)
- 	DISABLE_INTERRUPTS(CLBR_ANY)
- 	TRACE_IRQS_OFF
- 	movl	%esp, %eax
-@@ -910,7 +907,6 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
- ENTRY(page_fault)
- 	ASM_CLAC
- 	pushl	$do_page_fault
--	ALIGN
- 	jmp common_exception
- END(page_fault)
+-static bool have_filled_random_ptr_key __read_mostly;
++static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
+ static siphash_key_t ptr_key __read_mostly;
  
---- a/arch/x86/include/asm/linkage.h
-+++ b/arch/x86/include/asm/linkage.h
-@@ -18,7 +18,7 @@
- 	name:
+-static void fill_random_ptr_key(struct random_ready_callback *unused)
++static void enable_ptr_key_workfn(struct work_struct *work)
+ {
+ 	get_random_bytes(&ptr_key, sizeof(ptr_key));
+-	/*
+-	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
+-	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
+-	 * after get_random_bytes() returns.
+-	 */
+-	smp_mb();
+-	WRITE_ONCE(have_filled_random_ptr_key, true);
++	/* Needs to run from preemptable context */
++	static_branch_disable(&not_filled_random_ptr_key);
++}
++
++static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
++
++static void fill_random_ptr_key(struct random_ready_callback *unused)
++{
++	queue_work(system_unbound_wq, &enable_ptr_key_work);
+ }
  
- #if defined(CONFIG_X86_64) || defined(CONFIG_X86_ALIGNMENT_16)
--#define __ALIGN		.p2align 4, 0x90
-+#define __ALIGN		.p2align 4, 0xCC
- #define __ALIGN_STR	__stringify(__ALIGN)
- #endif
+ static struct random_ready_callback random_ready = {
+@@ -1695,7 +1697,7 @@ static int __init initialize_ptr_random(void)
+ 	if (!ret) {
+ 		return 0;
+ 	} else if (ret == -EALREADY) {
+-		fill_random_ptr_key(&random_ready);
++		enable_ptr_key_workfn(&enable_ptr_key_work);
+ 		return 0;
+ 	}
  
+@@ -1709,7 +1711,7 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+ 	unsigned long hashval;
+ 	const int default_width = 2 * sizeof(ptr);
+ 
+-	if (unlikely(!have_filled_random_ptr_key)) {
++	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
+ 		spec.field_width = default_width;
+ 		/* string length must be less than default_width */
+ 		return string(buf, end, "(ptrval)", spec);
+
+-- Steve
