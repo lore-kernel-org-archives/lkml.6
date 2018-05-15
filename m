@@ -1,161 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeEOATC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 20:19:02 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:59174 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752222AbeEOATA (ORCPT
+        id S1752403AbeEOAYE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 20:24:04 -0400
+Received: from smtprelay0073.hostedemail.com ([216.40.44.73]:38774 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752078AbeEOAYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 20:19:00 -0400
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.220.135
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
- state
+        Mon, 14 May 2018 20:24:03 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3874:4321:5007:6119:7903:8957:10004:10400:10848:11232:11658:11914:12296:12740:12760:12895:13069:13184:13229:13311:13357:13439:14096:14097:14659:14721:21080:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: fly33_7a693e05d7e3b
+X-Filterd-Recvd-Size: 2079
+Message-ID: <0cb282d85c37d9b626933a03574848d17430f04c.camel@perches.com>
+Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging
+ output
+From: Joe Perches <joe@perches.com>
 To: paulmck@linux.vnet.ibm.com
-Cc: Joel Fernandes <joel@joelfernandes.org>, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com, peterz@infradead.org
-References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
- <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
- <20180511161746.GX26088@linux.vnet.ibm.com>
- <20180511224138.GA89902@joelaf.mtv.corp.google.com>
- <9f2e445b-15b0-d1fa-832c-f801efc34d03@lge.com>
- <20180514210441.GL26088@linux.vnet.ibm.com>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <91b94658-677b-d0f0-3703-b53ba644977f@lge.com>
-Date: Tue, 15 May 2018 09:18:57 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180514210441.GL26088@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
+Date: Mon, 14 May 2018 17:23:59 -0700
+In-Reply-To: <20180514235832.GR26088@linux.vnet.ibm.com>
+References: <cover.1525964381.git.joe@perches.com>
+         <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
+         <20180514202910.GI26088@linux.vnet.ibm.com>
+         <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
+         <20180514222456.GO26088@linux.vnet.ibm.com>
+         <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
+         <20180514235832.GR26088@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-05-14 at 16:58 -0700, Paul E. McKenney wrote:
+> OK, so if I define pr_fmt as follows, I get the old behavior?
+> 
+> 	#define pr_fmt(fmt) fmt
 
+yes.
 
-On 2018-05-15 06:04, Paul E. McKenney wrote:
-> On Mon, May 14, 2018 at 11:59:41AM +0900, Byungchul Park wrote:
->> On 2018-05-12 오전 7:41, Joel Fernandes wrote:
->>> On Fri, May 11, 2018 at 09:17:46AM -0700, Paul E. McKenney wrote:
->>>> On Fri, May 11, 2018 at 09:57:54PM +0900, Byungchul Park wrote:
->>>>> Hello folks,
->>>>>
->>>>> I think I wrote the title in a misleading way.
->>>>>
->>>>> Please change the title to something else such as,
->>>>> "rcu: Report a quiescent state when it's in the state" or,
->>>>> "rcu: Add points reporting quiescent states where proper" or so on.
->>>>>
->>>>> On 2018-05-11 오후 5:30, Byungchul Park wrote:
->>>>>> We expect a quiescent state of TASKS_RCU when cond_resched_tasks_rcu_qs()
->>>>>> is called, no matter whether it actually be scheduled or not. However,
->>>>>> it currently doesn't report the quiescent state when the task enters
->>>>>> into __schedule() as it's called with preempt = true. So make it report
->>>>>> the quiescent state unconditionally when cond_resched_tasks_rcu_qs() is
->>>>>> called.
->>>>>>
->>>>>> And in TINY_RCU, even though the quiescent state of rcu_bh also should
->>>>>> be reported when the tick interrupt comes from user, it doesn't. So make
->>>>>> it reported.
->>>>>>
->>>>>> Lastly in TREE_RCU, rcu_note_voluntary_context_switch() should be
->>>>>> reported when the tick interrupt comes from not only user but also idle,
->>>>>> as an extended quiescent state.
->>>>>>
->>>>>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
->>>>>> ---
->>>>>>   include/linux/rcupdate.h | 4 ++--
->>>>>>   kernel/rcu/tiny.c        | 6 +++---
->>>>>>   kernel/rcu/tree.c        | 4 ++--
->>>>>>   3 files changed, 7 insertions(+), 7 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
->>>>>> index ee8cf5fc..7432261 100644
->>>>>> --- a/include/linux/rcupdate.h
->>>>>> +++ b/include/linux/rcupdate.h
->>>>>> @@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
->>>>>>    */
->>>>>>   #define cond_resched_tasks_rcu_qs() \
->>>>>>   do { \
->>>>>> -	if (!cond_resched()) \
->>>>>> -		rcu_note_voluntary_context_switch_lite(current); \
->>>>>> +	rcu_note_voluntary_context_switch_lite(current); \
->>>>>> +	cond_resched(); \
->>>>
->>>> Ah, good point.
->>>>
->>>> Peter, I have to ask...  Why is "cond_resched()" considered a preemption
->>>> while "schedule()" is not?
->>>
->>> Infact something interesting I inferred from the __schedule loop related to
->>> your question:
->>>
->>> switch_count can either be set to prev->invcsw or prev->nvcsw. If we can
->>> assume that switch_count reflects whether the context switch is involuntary
->>> or voluntary,
->>> task-running-state	preempt		switch_count
->>> 0 (running)		1		involuntary
->>> 0			0		involuntary
->>> 1			0		voluntary
->>> 1			1		involuntary
->>>
->>> According to the above table, both the task's running state and the preempt
->>> parameter to __schedule should be used together to determine if the switch is
->>> a voluntary one or not.
->>>
->>> So this code in rcu_note_context_switch should really be:
->>> if (!preempt && !(current->state & TASK_RUNNING))
->>> 	rcu_note_voluntary_context_switch_lite(current);
->>>
->>> According to the above table, cond_resched always classifies as an
->>> involuntary switch which makes sense to me. Even though cond_resched is
->>
->> Hello guys,
->>
->> The classification for nivcsw/nvcsw used in scheduler core, Joel, you
->> showed us is different from that used in when we distinguish between
->> non preemption/voluntary preemption/preemption/full and so on, even
->> they use the same word, "voluntary" though.
->>
->> The name, rcu_note_voluntary_context_switch_lite() used in RCU has
->> a lot to do with the latter, the term of preemption. Furthermore, I
->> think the function should be called even when calling schedule() for
->> sleep as well. I think it would be better to change the function
->> name to something else to prevent confusing, it's up to Paul tho. :)
+> I just queued
+> a commit to be squashed into my version of your patch 18/18 that adds
+> this to kernel/rcu/rcu_segcblist.c.  This joins the ones that your
+> patch added to kernel/rcu/srcutree.c and kernel/rcu/tree.c.
 > 
-> Given what it currently does, the name should be rcu_tasks_qs() to go
-> along with rcu_bh_qs(), rcu_preempt_qs(), and rcu_sched_qs().  Much as
-> I would like cond_resched() to be an RCU-tasks quiescent state, it is
-> nothingness for PREEMPT=y kernels, and Peter has indicated a strong
-> interest in having it remain so.  But I did update a few comments.
+> Should I also add "#define pr_fmt(fmt) "rcu: " fmt" to these files?
 > 
-> I left rcu_note_voluntary_context_switch() alone because it should be
-> disappearing entirely Real Soon Now.
-> 
-> Please see patch below.
-> 
-> 							Thanx, Paul
-> 
-> PS.  Oddly enough, the recent patch removing the "if" from
->       cond_resched_tasks_rcu_qs() is (technically speaking) pointless.
->       If the kernel contains RCU-tasks, it must be preemptible, which
->       means that cond_resched() unconditionally returns false, which
->       in turn means that rcu_note_voluntary_context_switch_lite() was
->       unconditionally invoked.
-> 
->       Simiarly, in non-preemptible kernels, where cond_resched()
->       might well return true, rcu_note_voluntary_context_switch_lite()
->       is a no-op.
+> kernel/rcu/srcutiny.c
+> kernel/rcu/sync.c
+> kernel/rcu/tiny.c
 
-Interesting. Right. Thanks for your explanation. :)
+Well, I don't actually remember why the define
+was added to rcu_segcblist.c.
 
--- 
-Thanks,
-Byungchul
+Most of this was done via a script which looked
+for pr_<level> uses without a pr_fmt in the same
+file.
+
+Dunno why rcu_segcblist was modified.
+Maybe it was a braino.
