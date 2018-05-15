@@ -1,73 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeEOGDL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 02:03:11 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:11684 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752097AbeEOGDJ (ORCPT
+        id S1752226AbeEOGEz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 02:04:55 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39264 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbeEOGEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 02:03:09 -0400
-Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <bcousson@baylibre.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <paul@pwsan.com>,
-        <lokeshvutla@ti.com>, <linux@armlinux.org.uk>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
- <20180501152615.GB98604@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <b4d95a08-82fd-9f39-53e7-977351788c88@ti.com>
-Date: Tue, 15 May 2018 11:34:16 +0530
+        Tue, 15 May 2018 02:04:53 -0400
+X-Google-Smtp-Source: AB8JxZpwjz5LpFnP9XZQvUnGH8LBCyLlSzu8j46IE01UcejFhSLsi2uw/KBt030V+SQyx2TJRI3P/Q==
+Subject: Re: [PATCH] ARM: dts: chromecast: override bad bootloader memory info
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc: linux-kernel@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/Synaptics Berlin SoC support"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+References: <20180514215645.17592-2-tommyhebb@gmail.com>
+ <20180515102939.3ab8797c@xhacker.debian>
+From: Tom Hebb <tommyhebb@gmail.com>
+Message-ID: <9d800fe2-6c59-1125-5d05-9ca0faa95150@gmail.com>
+Date: Tue, 15 May 2018 02:04:50 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180501152615.GB98604@atomide.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180515102939.3ab8797c@xhacker.debian>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+Hi,
 
-On Tuesday 01 May 2018 08:56 PM, Tony Lindgren wrote:
+On 05/14/2018 10:29 PM, Jisheng Zhang wrote:
 > Hi,
 > 
-> * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
->> From: Lokesh Vutla <lokeshvutla@ti.com>
+> On Mon, 14 May 2018 17:56:45 -0400 Thomas Hebb  wrote:
+> 
+>> On the Chromecast, the bootloader provides us with an ATAG_MEM of
+>> start=0x01000000 and size=0x3eff8000. This is clearly incorrect, as the
+>> range given encompasses nearly a GiB but the Chromecast only has 512MiB
+>> of RAM! Additionally, this causes the kernel to be decompressed at
+>> 0x00008000, below the claimed beginning of RAM, and so the boot fails.
 >>
->> Add MCAN hwmod data and register it for dra762 silicons.
+>> Since the existing ATAG parsing code runs before the kernel is even
+>> decompressed and irrevocably patches the device tree, don't even try
+> 
+> This means you enabled ARM_ATAG_DTB_COMPAT. could we disable it instead?
+> The ATAG is useless when we provide dtb. And IIRC, the ATAG is provided due
+> to legacy history code.
+> 
+> Thanks
+
+Thanks for the quick review! It's true that compiling without
+ARM_ATAG_DTB_COMPAT will prevent ATAG_MEM from getting parsed at all.
+However, it will also prevent ATAG_CMDLINE from getting parsed, and the
+command line from the Chromecast's bootloader does actually contain some
+useful information--notably the mode in which the system was booted
+(normal or recovery).
+
+Userspace could conceivably want this information, so it's preferable
+for the kernel to boot regardless of whether ARM_ATAG_DTB_COMPAT is
+enabled. That's the intent of this patch.
+
+I do agree in principle that ARM_ATAG_DTB_COMPAT should be disabled
+whenever possible.
+
+>> to bypass it. Instead, use the "linux,usable-memory" property instead
+>> of the "reg" property to define the real range. The ATAG code only
+>> overwrites reg, but linux,usable-memory is checked first in the OF
+>> driver, so the fact that reg gets changed makes no difference.
 >>
->> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
 >> ---
->>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
+>>  arch/arm/boot/dts/berlin2cd-google-chromecast.dts | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
 >>
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> index 62352d1..a2cd7f8 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
->>  };
+>> diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+>> index 20f31cdeaf38..54221f55bfa2 100644
+>> --- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+>> +++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+>> @@ -52,7 +52,17 @@
 >>  
->>  /*
->> + * 'mcan' class
->> + *
->> + */
->> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
->> +	.name	= "mcan",
->> +};
+>>  	memory@0 {
+>>  		device_type = "memory";
+>> -		reg = <0x00000000 0x20000000>; /* 512 MB */
+>> +
+>> +		/*
+>> +		 * We're using "linux,usable-memory" instead of "reg" here
+>> +		 * because the (signed and encrypted) bootloader that shipped
+>> +		 * with this device provides an incorrect memory range in
+>> +		 * ATAG_MEM. Linux helpfully overrides the "reg" property with
+>> +		 * data from the ATAG, so we can't specify the proper range
+>> +		 * normally. Fortunately, this alternate property is checked
+>> +		 * first by the OF driver, so we can (ab)use it instead.
+>> +		 */
+>> +		linux,usable-memory = <0x00000000 0x20000000>; /* 512 MB */
+>>  	};
+>>  
+>>  	leds {
 > 
-> Looks like you're missing the related struct omap_hwmod_class_sysconfig
-> entry for this with the rev and sysconfig registers.
-> 
-
-Sorry, I missed this email earlier. The MCAN module doesn't have
-sysconfig registers.
-
-Thanks,
-Faiz
