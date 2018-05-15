@@ -1,151 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeEOPf3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:35:29 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57647 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753987AbeEOPf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:35:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="56111918"
-Date: Tue, 15 May 2018 18:35:21 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        linux-media@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to
- intel_hdmi
-Message-ID: <20180515153521.GB23723@intel.com>
+        id S1753987AbeEOPfl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:35:41 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:56987 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752522AbeEOPfj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 11:35:39 -0400
+Subject: Re: [PATCH v2 5/5] media: platform: Add Chrome OS EC CEC driver
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
- <1526395342-15481-3-git-send-email-narmstrong@baylibre.com>
+ <1526395342-15481-6-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ec0506cf-2c7a-ebb6-3f40-2dffd30367f2@xs4all.nl>
+Date: Tue, 15 May 2018 17:35:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1526395342-15481-3-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1526395342-15481-6-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFYiF2IqCyEbm2bfiJw/4cCAuyFrU3r7dZlbOPKlnhB8cBYAe9kwftK9UYZCpbcQRZmUVWFg7CNQQBzoFL/FulW/KBdyLSUqQ2xgCgVH6T4Gci3QL/C3
+ jhrl6gDES+L8EPqnHkuXanegZXB//W0slth0jxqbhWRT2qwSfQWD/SSlEVPnE3wG/Fw/E3kIxJT03oDYbdkdHawZBzO8+aQln72pgWnf9Oii8Y1BtZNS9+5w
+ xNBFOILxttjHJj8k8Z8qSYBuG983RJec+w8ixxLoq0ba/+PVn7HVK8GVlpLNuNdaX6T8OzQ6+WwO7BMWK9CjGIY5kPU4kwmLHuGCD94SbuxjgRTgjjE0XcNi
+ zV0nYLo3wOhMK3FsLu4/tLJArjJ47auPTBSNkS3Ka1EjjJlRIbII5mAK0qTqFNiK5wr5nc/+AFACWq2Z507En0TjcvfxbJ75jm12kadZB/e36SThDlZSZE9A
+ teukzIrbNOvvZUcJeLBmoMK5HG+Q6FsETJNNjRpUGTWR2B4COXnHcpYfT/gLD9BDWfvcCsLIJyYi6cc1LUnTr8cnHUSs+rODnP6LyBDJtEIcS5g1Q5bAknWL
+ /3egDc1Fv4nI01JPpo2UkaIJ2QFjxDnTWHHW/XTL9JPVSwnoET3S6iFfp6lgWOpn0Eiq0Qp6z5UToeRTNpbX3lvqbHWoTM9zSayRnFK6q6wqjJ2xvmfyX5Nr
+ 45ALByZU5L4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 04:42:19PM +0200, Neil Armstrong wrote:
-> This patchs adds the cec_notifier feature to the intel_hdmi part
-> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-> between each HDMI ports.
-> The changes will allow the i915 HDMI code to notify EDID and HPD changes
-> to an eventual CEC adapter.
+On 05/15/2018 04:42 PM, Neil Armstrong wrote:
+> The Chrome OS Embedded Controller can expose a CEC bus, this patch add the
+> driver for such feature of the Embedded Controller.
+> 
+> This driver is part of the cros-ec MFD and will be add as a sub-device when
+> the feature bit is exposed by the EC.
+> 
+> The controller will only handle a single logical address and handles
+> all the messages retries and will only expose Success or Error.
+> 
+> The controller will be tied to the HDMI CEC notifier by using the platform
+> DMI Data and the i915 device name and connector name.
 > 
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  drivers/gpu/drm/i915/Kconfig      |  1 +
->  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
->  drivers/gpu/drm/i915/intel_hdmi.c | 12 ++++++++++++
->  3 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index dfd9588..2d65d56 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -23,6 +23,7 @@ config DRM_I915
->  	select SYNC_FILE
->  	select IOSF_MBI
->  	select CRC32
-> +	select CEC_CORE if CEC_NOTIFIER
->  	help
->  	  Choose this option if you have a system that has "Intel Graphics
->  	  Media Accelerator" or "HD Graphics" integrated graphics,
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index d436858..b50e51b 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -39,6 +39,7 @@
->  #include <drm/drm_dp_mst_helper.h>
->  #include <drm/drm_rect.h>
->  #include <drm/drm_atomic.h>
-> +#include <media/cec-notifier.h>
->  
->  /**
->   * __wait_for - magic wait macro
-> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
->  	bool has_audio;
->  	bool rgb_quant_range_selectable;
->  	struct intel_connector *attached_connector;
-> +	struct cec_notifier *notifier;
->  };
->  
->  struct intel_dp_mst_encoder;
-> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-> index 1baef4a..e98103d 100644
-> --- a/drivers/gpu/drm/i915/intel_hdmi.c
-> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
-> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
->  		connected = true;
->  	}
->  
-> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
-> +
->  	return connected;
->  }
->  
-> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  {
->  	enum drm_connector_status status;
->  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
->  
->  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
->  		      connector->base.id, connector->name);
-> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  
->  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
->  
-> +	if (status != connector_status_connected)
-> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
-> +
->  	return status;
->  }
->  
-> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
->  
->  static void intel_hdmi_destroy(struct drm_connector *connector)
->  {
-> +	if (intel_attached_hdmi(connector)->notifier)
-> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
->  	kfree(to_intel_connector(connector)->detect_edid);
->  	drm_connector_cleanup(connector);
->  	kfree(connector);
-> @@ -2358,6 +2366,10 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
->  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
->  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
->  	}
-> +
-> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev, connector->name);
 
-What are we doing with the connector name here? Those are not actually
-guaranteed to be stable, and any change in the connector probe order
-may cause the name to change.
+<snip>
 
-> +	if (!intel_hdmi->notifier)
-> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
->  }
->  
->  void intel_hdmi_init(struct drm_i915_private *dev_priv,
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+> +static SIMPLE_DEV_PM_OPS(cros_ec_cec_pm_ops,
+> +	cros_ec_cec_suspend, cros_ec_cec_resume);
+> +
+> +/*
+> + * The Firmware only handles single CEC interface tied to a single HDMI
 
--- 
-Ville Syrjälä
-Intel
+single CEC -> a single CEC
+
+> + * connector we specify along the DRM device name handling the HDMI output
+
+along -> along with
+
+> + */
+> +
+> +struct cec_dmi_match {
+> +	char *sys_vendor;
+> +	char *product_name;
+> +	char *devname;
+> +	char *conn;
+> +};
+> +
+
+Looks good!
+
+Regards,
+
+	Hans
