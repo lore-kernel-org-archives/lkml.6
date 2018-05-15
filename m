@@ -1,99 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeEODXE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:23:04 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41328 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbeEODW5 (ORCPT
+        id S1752159AbeEODXB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:23:01 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35335 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752118AbeEODW4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:22:57 -0400
-X-Google-Smtp-Source: AB8JxZqZCkUtiu1lppp/EpTFB/hJLxW92KH32oDTf+1soN5Jix5xQhLcUfPM9MuR2wC+MakHOpXKPw==
-From: Lin Huang <hl@rock-chips.com>
-To: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com
-Cc: dianders@chromium.org, briannorris@chromium.org,
-        linux-rockchip@lists.infradead.org, heiko@sntech.de,
-        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v4 2/4] Documentation: bindings: add phy_config for Rockchip USB Type-C PHY
-Date: Tue, 15 May 2018 11:22:38 +0800
-Message-Id: <1526354560-23135-2-git-send-email-hl@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526354560-23135-1-git-send-email-hl@rock-chips.com>
-References: <1526354560-23135-1-git-send-email-hl@rock-chips.com>
+        Mon, 14 May 2018 23:22:56 -0400
+X-Google-Smtp-Source: AB8JxZpChC2uIy6eWlYGGwzxa1E4LdpjoU+vCGHGNXLUkwe7vEoF5kSNbeUg0KGMzY5KOqKLR3AIyCy3jve7VlTX3us=
+MIME-Version: 1.0
+In-Reply-To: <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
+References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
+ <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
+ <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com> <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
+ <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com> <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Tue, 15 May 2018 11:22:54 +0800
+Message-ID: <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
+Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Adrian Salido <salidoa@google.com>,
+        Jason Gerecke <killertofu@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If want to do training outside DP Firmware, need phy voltage swing
-and pre_emphasis value.
+On Mon, May 14, 2018 at 10:20 PM, Jarkko Nikula
+<jarkko.nikula@linux.intel.com> wrote:
+> On 05/10/2018 03:03 PM, Chris Chiu wrote:
+>>
+>> Report from guys who can access scope. If i2c-sda-falling-time-ns=400ns
+>> , HCNT increase to 117, the SCL high duration is 576ns as follows
+>> https://pasteboard.co/HkwERvP.png
+>>
+>> The original SCL high duration (HCNT = 105, 120MHz) is as follows
+>> https://pasteboard.co/HkwFxgY.png
+>>
+>> So the HCNT does affect but per this HCNT/LCNT value, just not 400kHz
+>> as expected. Any suggestion?
+>>
+> Thanks for measurements. I was sidetracked last week so I don't have yet
+> explanation why signals run faster than expected :-(
+>
+> Using 120 MHz SPT I2C clocks in commit b418bbff36dd ("mfd: intel-lpss: Add
+> Intel Cannonlake PCI IDs") is clearly wrong but before going to 133 MHz
+> (which work for you but still runs too fast) I would like to find
+> explanation why it appears to be much higher.
+>
+> --
+> Jarkko
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
-Changes in v2:
-- None 
-Changes in v3:
-- modify property description and add this property to Example
-Change in v4:
-- None
+What if I change the 120MHz to 180MHz and then make sure that the I2C operates
+in target FS mode frequency 400kHz via scope? Would there be any side effect?
+Maybe some other busses frequency could be also affected and causing some other
+component malfunction?
 
- .../devicetree/bindings/phy/phy-rockchip-typec.txt | 29 +++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-index 960da7f..af298f2 100644
---- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-+++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-@@ -17,7 +17,8 @@ Required properties:
- 
- Optional properties:
-  - extcon : extcon specifier for the Power Delivery
--
-+ - rockchip,phy_config : A list of voltage swing(mv) and pre-emphasis
-+			(dB) pairs.
- Required nodes : a sub-node is required for each port the phy provides.
- 		 The sub-node name is used to identify dp or usb3 port,
- 		 and shall be the following entries:
-@@ -50,6 +51,19 @@ Example:
- 			 <&cru SRST_P_UPHY0_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
- 
-+		rockchip,phy_config =<0x2a 0x00
-+			0x1f 0x15
-+			0x14 0x22
-+			0x02 0x2b
-+			0x21 0x00
-+			0x12 0x15
-+			0x02 0x22
-+			0 0
-+			0x15 0x00
-+			0x00 0x15
-+			0 0
-+			0 0>;
-+
- 		tcphy0_dp: dp-port {
- 			#phy-cells = <0>;
- 		};
-@@ -74,6 +88,19 @@ Example:
- 			 <&cru SRST_P_UPHY1_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
- 
-+		rockchip,phy_config =<0x2a 0x00
-+			0x1f 0x15
-+			0x14 0x22
-+			0x02 0x2b
-+			0x21 0x00
-+			0x12 0x15
-+			0x02 0x22
-+			0 0
-+			0x15 0x00
-+			0x00 0x15
-+			0 0
-+			0 0>;
-+
- 		tcphy1_dp: dp-port {
- 			#phy-cells = <0>;
- 		};
--- 
-2.7.4
+Chris
