@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeEOIGa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 04:06:30 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36836 "EHLO
+        id S1752653AbeEOIG1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 04:06:27 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41953 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752565AbeEOH7s (ORCPT
+        with ESMTP id S1752566AbeEOH7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 03:59:48 -0400
-X-Google-Smtp-Source: AB8JxZqjyXbVmzYKQYdVnJ107XbzYOFFEJQL2+UTCiZWJ45VTvDK0IT80xOBAxbMxQQZfHSep1iEDg==
+        Tue, 15 May 2018 03:59:49 -0400
+X-Google-Smtp-Source: AB8JxZqteM55v1MdXBMUg1TiXy9H1uH1TW2cpy0wa65rbaOKm27O3fDJQABwztScZlU6DGo2JE2FgA==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 18/29] venus: delete no longer used bufmode flag from instance
-Date: Tue, 15 May 2018 10:58:48 +0300
-Message-Id: <20180515075859.17217-19-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 19/29] venus: helpers: add buffer type argument to a helper
+Date: Tue, 15 May 2018 10:58:49 +0300
+Message-Id: <20180515075859.17217-20-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
 References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
@@ -25,53 +25,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Delete no longer used flag cap_bufs_mode_dynamic from instance
-structure.
+This adds one more function argument to pass buffer type to
+set_output_resolution() helper function. That is a preparation
+to support secondary decoder output.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.h       | 2 --
- drivers/media/platform/qcom/venus/hfi_parser.c | 6 +-----
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ drivers/media/platform/qcom/venus/helpers.c | 5 +++--
+ drivers/media/platform/qcom/venus/helpers.h | 3 ++-
+ drivers/media/platform/qcom/venus/venc.c    | 3 ++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index c46334454cd9..255292899204 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -249,7 +249,6 @@ struct venus_buffer {
-  * @priv:	a private for HFI operations callbacks
-  * @session_type:	the type of the session (decoder or encoder)
-  * @hprop:	a union used as a holder by get property
-- * @cap_bufs_mode_dynamic:	buffers allocation mode capability
-  */
- struct venus_inst {
- 	struct list_head list;
-@@ -298,7 +297,6 @@ struct venus_inst {
- 	const struct hfi_inst_ops *ops;
- 	u32 session_type;
- 	union hfi_get_property hprop;
--	bool cap_bufs_mode_dynamic;
- };
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index 94664a3ce3e2..5512fbfdebb9 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -456,12 +456,13 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ EXPORT_SYMBOL_GPL(venus_helper_set_input_resolution);
  
- #define IS_V1(core)	((core)->res->hfi_version == HFI_VERSION_1XX)
-diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-index f9181d999b23..ad039a3444b8 100644
---- a/drivers/media/platform/qcom/venus/hfi_parser.c
-+++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-@@ -75,13 +75,9 @@ static void parse_alloc_mode(struct venus_core *core, struct venus_inst *inst,
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+-				       unsigned int width, unsigned int height)
++				       unsigned int width, unsigned int height,
++				       u32 buftype)
+ {
+ 	u32 ptype = HFI_PROPERTY_PARAM_FRAME_SIZE;
+ 	struct hfi_framesize fs;
  
- 	while (num_entries--) {
- 		if (mode->buffer_type == HFI_BUFFER_OUTPUT ||
--		    mode->buffer_type == HFI_BUFFER_OUTPUT2) {
--			if (*type == HFI_BUFFER_MODE_DYNAMIC && inst)
--				inst->cap_bufs_mode_dynamic = true;
--
-+		    mode->buffer_type == HFI_BUFFER_OUTPUT2)
- 			for_each_codec(core->caps, ARRAY_SIZE(core->caps),
- 				       codecs, domain, fill_buf_mode, type, 1);
--		}
+-	fs.buffer_type = HFI_BUFFER_OUTPUT;
++	fs.buffer_type = buftype;
+ 	fs.width = width;
+ 	fs.height = height;
  
- 		type++;
- 	}
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index cd306bd8978f..0de9989adcdb 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -36,7 +36,8 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height);
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+-				       unsigned int width, unsigned int height);
++				       unsigned int width, unsigned int height,
++				       u32 buftype);
+ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
+ 			      unsigned int output_bufs);
+ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index f87d891325ea..8970f14b3a82 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -795,7 +795,8 @@ static int venc_init_session(struct venus_inst *inst)
+ 		goto deinit;
+ 
+ 	ret = venus_helper_set_output_resolution(inst, inst->width,
+-						 inst->height);
++						 inst->height,
++						 HFI_BUFFER_OUTPUT);
+ 	if (ret)
+ 		goto deinit;
+ 
 -- 
 2.14.1
