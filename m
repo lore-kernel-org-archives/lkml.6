@@ -1,91 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeEORmy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:42:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751099AbeEORmw (ORCPT
+        id S1752825AbeEORnB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:43:01 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39999 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeEORmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:42:52 -0400
-Date: Tue, 15 May 2018 10:44:16 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nitzan Carmi <nitzanc@mellanox.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Keith Busch <keith.busch@intel.com>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180514134636.61831bcc@canb.auug.org.au>
+        Tue, 15 May 2018 13:42:53 -0400
+X-Google-Smtp-Source: AB8JxZp30nN02iP5bbFuVhxff6pgY2YlqbmcoKqQWxsXEPjg/RSKA2QaWCKm0Z0F7R/pJzKWa9VSTk2HbCrxiYFs0NA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514134636.61831bcc@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051517-0036-0000-0000-000002F52D3C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009030; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032747; UDB=6.00528002; IPR=6.00811878;
- MB=3.00021129; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-15 17:42:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051517-0037-0000-0000-000044585960
-Message-Id: <20180515174416.GJ26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150176
+In-Reply-To: <20180514225052.GA39419@beast>
+References: <20180514225052.GA39419@beast>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Date: Tue, 15 May 2018 10:42:52 -0700
+Message-ID: <CABeXuvotW=hwDB4O4k_to031zbXxrbSLO0-AkBUP02s8Hb6h8Q@mail.gmail.com>
+Subject: Re: [PATCH v2] pstore: Convert internal records to timespec64
+To: Kees Cook <keescook@chromium.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 01:46:36PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the rcu tree got a conflict in:
-> 
->   drivers/nvme/host/core.c
-> 
-> between commit:
-> 
->   12d9f07022dc ("nvme: fix use-after-free in nvme_free_ns_head")
-> 
-> from Linus' tree and commit:
-> 
->   d9cf21bae6cf ("nvme: Avoid flush dependency in delete controller flow")
-> 
-> from the rcu tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
-Thank you, Stephen!!!
+I think for 4.18, I can include it as part of my series.
 
-							Thanx, Paul
+Thanks,
+-Deepa
 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/nvme/host/core.c
-> index 99b857e5a7a9,c3cea8a29843..000000000000
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@@ -351,8 -349,7 +351,8 @@@ static void nvme_free_ns_head(struct kr
->   	nvme_mpath_remove_disk(head);
->   	ida_simple_remove(&head->subsys->ns_ida, head->instance);
->   	list_del_init(&head->entry);
-> - 	cleanup_srcu_struct(&head->srcu);
-> + 	cleanup_srcu_struct_quiesced(&head->srcu);
->  +	nvme_put_subsystem(head->subsys);
->   	kfree(head);
->   }
->   
+On Mon, May 14, 2018 at 3:50 PM, Kees Cook <keescook@chromium.org> wrote:
+> This prepares pstore for converting the VFS layer to timespec64.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> I can carry this for v4.18 unless you'd like to do it as part of your series?
+> ---
+>  drivers/firmware/efi/efi-pstore.c | 27 ++++++++++++++-------------
+>  fs/pstore/inode.c                 |  3 ++-
+>  fs/pstore/platform.c              |  2 +-
+>  fs/pstore/ram.c                   | 21 ++++++++++++++-------
+>  include/linux/pstore.h            |  2 +-
+>  5 files changed, 32 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+> index 5a0fa939d70f..cfe87b465819 100644
+> --- a/drivers/firmware/efi/efi-pstore.c
+> +++ b/drivers/firmware/efi/efi-pstore.c
+> @@ -28,10 +28,9 @@ static int efi_pstore_close(struct pstore_info *psi)
+>         return 0;
+>  }
+>
+> -static inline u64 generic_id(unsigned long timestamp,
+> -                            unsigned int part, int count)
+> +static inline u64 generic_id(u64 timestamp, unsigned int part, int count)
+>  {
+> -       return ((u64) timestamp * 100 + part) * 1000 + count;
+> +       return (timestamp * 100 + part) * 1000 + count;
+>  }
+>
+>  static int efi_pstore_read_func(struct efivar_entry *entry,
+> @@ -42,7 +41,8 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+>         int i;
+>         int cnt;
+>         unsigned int part;
+> -       unsigned long time, size;
+> +       unsigned long size;
+> +       u64 time;
+>
+>         if (efi_guidcmp(entry->var.VendorGuid, vendor))
+>                 return 0;
+> @@ -50,7 +50,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+>         for (i = 0; i < DUMP_NAME_LEN; i++)
+>                 name[i] = entry->var.VariableName[i];
+>
+> -       if (sscanf(name, "dump-type%u-%u-%d-%lu-%c",
+> +       if (sscanf(name, "dump-type%u-%u-%d-%llu-%c",
+>                    &record->type, &part, &cnt, &time, &data_type) == 5) {
+>                 record->id = generic_id(time, part, cnt);
+>                 record->part = part;
+> @@ -62,7 +62,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+>                 else
+>                         record->compressed = false;
+>                 record->ecc_notice_size = 0;
+> -       } else if (sscanf(name, "dump-type%u-%u-%d-%lu",
+> +       } else if (sscanf(name, "dump-type%u-%u-%d-%llu",
+>                    &record->type, &part, &cnt, &time) == 4) {
+>                 record->id = generic_id(time, part, cnt);
+>                 record->part = part;
+> @@ -71,7 +71,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+>                 record->time.tv_nsec = 0;
+>                 record->compressed = false;
+>                 record->ecc_notice_size = 0;
+> -       } else if (sscanf(name, "dump-type%u-%u-%lu",
+> +       } else if (sscanf(name, "dump-type%u-%u-%llu",
+>                           &record->type, &part, &time) == 3) {
+>                 /*
+>                  * Check if an old format,
+> @@ -250,9 +250,10 @@ static int efi_pstore_write(struct pstore_record *record)
+>         /* Since we copy the entire length of name, make sure it is wiped. */
+>         memset(name, 0, sizeof(name));
+>
+> -       snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu-%c",
+> +       snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld-%c",
+>                  record->type, record->part, record->count,
+> -                record->time.tv_sec, record->compressed ? 'C' : 'D');
+> +                (long long)record->time.tv_sec,
+> +                record->compressed ? 'C' : 'D');
+>
+>         for (i = 0; i < DUMP_NAME_LEN; i++)
+>                 efi_name[i] = name[i];
+> @@ -327,15 +328,15 @@ static int efi_pstore_erase(struct pstore_record *record)
+>         char name[DUMP_NAME_LEN];
+>         int ret;
+>
+> -       snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu",
+> +       snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld",
+>                  record->type, record->part, record->count,
+> -                record->time.tv_sec);
+> +                (long long)record->time.tv_sec);
+>         ret = efi_pstore_erase_name(name);
+>         if (ret != -ENOENT)
+>                 return ret;
+>
+> -       snprintf(name, sizeof(name), "dump-type%u-%u-%lu",
+> -               record->type, record->part, record->time.tv_sec);
+> +       snprintf(name, sizeof(name), "dump-type%u-%u-%lld",
+> +               record->type, record->part, (long long)record->time.tv_sec);
+>         ret = efi_pstore_erase_name(name);
+>
+>         return ret;
+> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+> index 5fcb845b9fec..75afe5eb0574 100644
+> --- a/fs/pstore/inode.c
+> +++ b/fs/pstore/inode.c
+> @@ -392,7 +392,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+>         inode->i_private = private;
+>
+>         if (record->time.tv_sec)
+> -               inode->i_mtime = inode->i_ctime = record->time;
+> +               inode->i_mtime = inode->i_ctime =
+> +                       timespec64_to_timespec(record->time);
+>
+>         d_add(dentry, inode);
+>
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index dc720573fd53..c238ab8ba31d 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -328,7 +328,7 @@ void pstore_record_init(struct pstore_record *record,
+>         record->psi = psinfo;
+>
+>         /* Report zeroed timestamp if called before timekeeping has resumed. */
+> -       record->time = ns_to_timespec(ktime_get_real_fast_ns());
+> +       record->time = ns_to_timespec64(ktime_get_real_fast_ns());
+>  }
+>
+>  /*
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 49b2bc114868..69e893076ab7 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -38,6 +38,11 @@
+>
+>  #define RAMOOPS_KERNMSG_HDR "===="
+>  #define MIN_MEM_SIZE 4096UL
+> +#if __BITS_PER_LONG == 64
+> +# define TVSEC_FMT "%ld"
+> +#else
+> +# define TVSEC_FMT "%lld"
+> +#endif
+>
+>  static ulong record_size = MIN_MEM_SIZE;
+>  module_param(record_size, ulong, 0400);
+> @@ -153,21 +158,23 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
+>         return prz;
+>  }
+>
+> -static int ramoops_read_kmsg_hdr(char *buffer, struct timespec *time,
+> +static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
+>                                   bool *compressed)
+>  {
+>         char data_type;
+>         int header_length = 0;
+>
+> -       if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n%n", &time->tv_sec,
+> -                       &time->tv_nsec, &data_type, &header_length) == 3) {
+> +       if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n%n",
+> +                  &time->tv_sec, &time->tv_nsec, &data_type,
+> +                  &header_length) == 3) {
+>                 if (data_type == 'C')
+>                         *compressed = true;
+>                 else
+>                         *compressed = false;
+> -       } else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu\n%n",
+> -                       &time->tv_sec, &time->tv_nsec, &header_length) == 2) {
+> -                       *compressed = false;
+> +       } else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu\n%n",
+> +                         &time->tv_sec, &time->tv_nsec,
+> +                         &header_length) == 2) {
+> +               *compressed = false;
+>         } else {
+>                 time->tv_sec = 0;
+>                 time->tv_nsec = 0;
+> @@ -360,7 +367,7 @@ static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
+>         char *hdr;
+>         size_t len;
+>
+> -       hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n",
+> +       hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n",
+>                 record->time.tv_sec,
+>                 record->time.tv_nsec / 1000,
+>                 record->compressed ? 'C' : 'D');
+> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+> index 61f806a7fe29..a15bc4d48752 100644
+> --- a/include/linux/pstore.h
+> +++ b/include/linux/pstore.h
+> @@ -71,7 +71,7 @@ struct pstore_record {
+>         struct pstore_info      *psi;
+>         enum pstore_type_id     type;
+>         u64                     id;
+> -       struct timespec         time;
+> +       struct timespec64       time;
+>         char                    *buf;
+>         ssize_t                 size;
+>         ssize_t                 ecc_notice_size;
+> --
+> 2.17.0
+>
+>
+> --
+> Kees Cook
+> Pixel Security
