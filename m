@@ -1,10 +1,11 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2852936-1526400168-2-106218866143296208
+X-Cyrus-Session-Id: sloti22d1t05-2820460-1526400198-2-8613916623562425248
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
@@ -12,24 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526400167; b=EvJUw7W/yyVVkaj5pycF4L8caZfrZ+XDLNlq9RQ2x5sbPPg7Cy
-    IJso9l0WZPiyeJRcLxwBWE+qIuOt6TCVzBeQ777yNsiAu4TpBV2Jb+0p4x0Aptdb
-    4c3u6aG5F8MZq9uuS8tAybxteLNKOvV5mMwZhlv6FWpEDgS4cZyCFBpIydTEVOBy
-    vCHdCYXtveBMDNmzYmpuyLcINTT7CGEw2/AKfrskgWHH+7K61S3zqXumNlCFI4yx
-    UkuyAsWAmJQCqXpE1SLIjJzz0Zk8UKlI17d1PaaI/BBdDUBdfaUN33cbK2AIRkp9
-    SKbpaEtWS3TSdCI1860TYtURB8WX9Ckp6lxg==
+    1526400197; b=Z/i/JJrjB8KdJXPyYosI1zkDqZ0HjqhUCVT8+EsHhVPbeWU1Tf
+    ZFGlbg3lo57IzNZUSiPKiYQLv6nYIgyBTGNxXs5zJNewRjrTP4X4iJ39nt2itfDT
+    3vJqVoBtbhWYbL2Oho7MCVdfTXYoTjTLPvv5K+dXp2fJXHy5RZGVTPhpy00Sq/DF
+    iCCoOns1/1HRty2vrvcMgzJCjHMXWv9uWRf2pL+QqTSEE4/N9J5lx+qvKsgQC6f7
+    5nlDxXk5lKAGiiFCZ6Kc/031b0rLMAEgHvFt2HkhFGeTEWKyC0vHarQ2cQtG4rBg
+    0ex58tdsXHqQJR43TN6RcQl+bQvgvdkq5rDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526400167; bh=ytjmk10uORuHSLPSfCxbPaxcvbMdJG
-    3oh7qgZNcABLA=; b=OH0keyQKa485SfEUc8e1O+z2189Y9MS69y/gqK2qmvK+ny
-    swd2xbZz5xgP6JBmN3wzZWAXkwjhagv9XcndOeXYcdeVvyQ4Va6d1wQepeKUXdMB
-    NnMEq7eSWqViPWQ6pM101etz7Ug7vS5Q9elbRQwT55RQ2YBITs3leMUKOxZ3qZ3F
-    DgJ/dknIMIPjDIiUeVPe+YUmGWGuSYZJxnb+L1ZKzbYdyIhMd+nS400LD64OmaR8
-    rFoLUJ2n0nwlYVdYVO4VmBfU0beMPlr45tbnLdtW/Am43EUO+UAjAAa8MmVrbgk7
-    ki0iL6X20fUez4z3bEF8NQG6CMBGAetxur7mAgLw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526400197; bh=
+    MTvrwJGhyyXqSAX1PNWffok77ziJ5PzTRzIOG6c0UAk=; b=SGFrnisr5wtjwDwX
+    zBLxpWrJCq2WazWYr0kUhOe/kMeX/LU1MjWG0LaMEDLppXuxV9vnHgirIXthFB1W
+    VGJHZFJrj7IEo0zL/hZuXU1vXtLg1FKU2vhoD+I6l9QuB6xh0/BE1Glb/H1/ZHrt
+    UBj8Jxe2k5bV3eb8qJZxS+uyOa9z5im7GdaAXKjTMBXUz9QLxA52U3k86lfhZhNl
+    v49/R5R4egknj4KnjhouZWCGQ0PRVCKkH3QevnMybQoZZ2d5OZ2hvTz5crxGz/kQ
+    WNZoCZK0jiO3KK3c0it08J2CVQmIUMz4uLWqDgMoTLXsXb6TasgQ+rOBI7+D4bAL
+    ehXoCw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=mBOSvIoS
+    header.d=infradead.org header.i=@infradead.org header.b=UQ2n9jn0
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
@@ -44,10 +46,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=infradead.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=mBOSvIoS
+      header.d=infradead.org header.i=@infradead.org header.b=UQ2n9jn0
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
@@ -63,20 +65,21 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAgiz/teULfjlDSdwq6PLYe7P1Pfh69kEMx2BQaaZjWGBmCNY/p/yWiTdwL/rewOTqNeG0n/e1JkCEHOv+XwtBwFwXdgjOY5EaHpJEPSvD+Pr+MGafJB
-    Jx/pSbtJTet8X7lP7TTTiK61jL4/X9QSF53xbpCuQxJAGVgy0V7aIoZIE5Wt+7F7CvH5aMZColY/NKWY3veDfRRL//+jx0uDRZYqZLBCBH69FYYPO+AYfKN7
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAfWl5knxHsmmV+zkTi/aXs4LZbiy7NKEBxw39FLbv8bTJo41iaXNTiyspCAkYzZ72nZc4AeRMD8eJd6jaToSOOjjTfiNAiGEXKu6rY03nbwU/M8nBC8
+    ApWHty9rumQ5Pt/qW8jlEb3WMEyaLwjrfEb0434AT9edzMqR+S0GG5QxysJ8AqFd2ID9PsuNc3t81QpxHi2NWD42ffLPenxc7F83mEkCxB0+MhW6bCJPtDpy
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=yMhMjlubAAAA:8
-    a=VwQbUJbxAAAA:8 a=C4-KwePKuOrHnoknaPoA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=ZNa7TQ0pAAAA:8 a=VwQbUJbxAAAA:8 a=_jyNjG163UNa4w9HebYA:9
+    a=snlWHivmDySmj9uY:21 a=W2B1JoGU7TJzd_yx:21 a=x8gzFH9gYPwA:10
+    a=vJYgOXllGJzHSJiAounk:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752748AbeEOQAv (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 12:00:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55480 "EHLO
+        id S1753642AbeEOQCw (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 12:02:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55484 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeEOQAt (ORCPT
+        with ESMTP id S1752632AbeEOQAt (ORCPT
         <rfc822;linux-usb@vger.kernel.org>); Tue, 15 May 2018 12:00:49 -0400
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
@@ -88,10 +91,12 @@ To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
         Kent Overstreet <kent.overstreet@gmail.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Subject: [PATCH 0/2] Use sbitmap instead of percpu_ida
-Date: Tue, 15 May 2018 09:00:41 -0700
-Message-Id: <20180515160043.27044-1-willy@infradead.org>
+Subject: [PATCH 1/2] Convert target drivers to use sbitmap
+Date: Tue, 15 May 2018 09:00:42 -0700
+Message-Id: <20180515160043.27044-2-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180515160043.27044-1-willy@infradead.org>
+References: <20180515160043.27044-1-willy@infradead.org>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -100,39 +105,428 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a pretty rough-and-ready conversion of the target drivers
-from using percpu_ida to sbitmap.  It compiles; I don't have a target
-setup, so it's completely untested.  I haven't tried to do anything
-particularly clever here, so it's possible that, for example, the wait
-queue in iscsi_target_util could be more clever, like the block layer
-uses multiple wait queues to avoid pingpongs.  Or maybe we could figure
-out a way to not store the CPU that the ID was allocated on, or perhaps
-the options I specified to sbitmap_queue_init() are suboptimal.
+The sbitmap and the percpu_ida perform essentially the same task,
+allocating tags for commands.  Since the sbitmap is more used than
+the percpu_ida, convert the percpu_ida users to the sbitmap API.
 
-Patch 2 isn't interesting; it just deletes the implementation.  Patch 1
-will be where all the action is.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c        | 16 ++++++-----
+ drivers/target/iscsi/iscsi_target_util.c | 34 +++++++++++++++++++++---
+ drivers/target/sbp/sbp_target.c          |  8 +++---
+ drivers/target/target_core_transport.c   |  5 ++--
+ drivers/target/tcm_fc/tfc_cmd.c          | 11 ++++----
+ drivers/usb/gadget/function/f_tcm.c      |  8 +++---
+ drivers/vhost/scsi.c                     |  9 ++++---
+ drivers/xen/xen-scsiback.c               |  8 +++---
+ include/target/iscsi/iscsi_target_core.h |  1 +
+ include/target/target_core_base.h        |  5 ++--
+ 10 files changed, 73 insertions(+), 32 deletions(-)
 
-Matthew Wilcox (2):
-  Convert target drivers to use sbitmap
-  Remove percpu_ida
-
- drivers/scsi/qla2xxx/qla_target.c        |  16 +-
- drivers/target/iscsi/iscsi_target_util.c |  34 +-
- drivers/target/sbp/sbp_target.c          |   8 +-
- drivers/target/target_core_transport.c   |   5 +-
- drivers/target/tcm_fc/tfc_cmd.c          |  11 +-
- drivers/usb/gadget/function/f_tcm.c      |   8 +-
- drivers/vhost/scsi.c                     |   9 +-
- drivers/xen/xen-scsiback.c               |   8 +-
- include/linux/percpu_ida.h               |  83 -----
- include/target/iscsi/iscsi_target_core.h |   1 +
- include/target/target_core_base.h        |   5 +-
- lib/Makefile                             |   2 +-
- lib/percpu_ida.c                         | 391 -----------------------
- 13 files changed, 74 insertions(+), 507 deletions(-)
- delete mode 100644 include/linux/percpu_ida.h
- delete mode 100644 lib/percpu_ida.c
-
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 025dc2d3f3de..cdf671c2af61 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3719,7 +3719,8 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
+ 		return;
+ 	}
+ 	cmd->jiffies_at_free = get_jiffies_64();
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	sbitmap_queue_clear(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag,
++			cmd->se_cmd.map_cpu);
+ }
+ EXPORT_SYMBOL(qlt_free_cmd);
+ 
+@@ -4084,7 +4085,8 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1, 0);
+ 
+ 	qlt_decr_num_pend_cmds(vha);
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	sbitmap_queue_clear(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag,
++			cmd->se_cmd.map_cpu);
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 
+ 	spin_lock_irqsave(&ha->tgt.sess_lock, flags);
+@@ -4215,9 +4217,9 @@ static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
+ {
+ 	struct se_session *se_sess = sess->se_sess;
+ 	struct qla_tgt_cmd *cmd;
+-	int tag;
++	int tag, cpu;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0)
+ 		return NULL;
+ 
+@@ -4230,6 +4232,7 @@ static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
+ 	qlt_incr_num_pend_cmds(vha);
+ 	cmd->vha = vha;
+ 	cmd->se_cmd.map_tag = tag;
++	cmd->se_cmd.map_cpu = cpu;
+ 	cmd->sess = sess;
+ 	cmd->loop_id = sess->loop_id;
+ 	cmd->conf_compl_supported = sess->conf_compl_supported;
+@@ -5212,7 +5215,7 @@ qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 	struct fc_port *sess;
+ 	struct se_session *se_sess;
+ 	struct qla_tgt_cmd *cmd;
+-	int tag;
++	int tag, cpu;
+ 	unsigned long flags;
+ 
+ 	if (unlikely(tgt->tgt_stop)) {
+@@ -5244,7 +5247,7 @@ qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 
+ 	se_sess = sess->se_sess;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0)
+ 		return;
+ 
+@@ -5275,6 +5278,7 @@ qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 	cmd->reset_count = ha->base_qpair->chip_reset;
+ 	cmd->q_full = 1;
+ 	cmd->qpair = ha->base_qpair;
++	cmd->se_cmd.map_cpu = cpu;
+ 
+ 	if (qfull) {
+ 		cmd->q_full = 1;
+diff --git a/drivers/target/iscsi/iscsi_target_util.c b/drivers/target/iscsi/iscsi_target_util.c
+index 4435bf374d2d..28bcffae609f 100644
+--- a/drivers/target/iscsi/iscsi_target_util.c
++++ b/drivers/target/iscsi/iscsi_target_util.c
+@@ -17,7 +17,7 @@
+  ******************************************************************************/
+ 
+ #include <linux/list.h>
+-#include <linux/percpu_ida.h>
++#include <linux/sched/signal.h>
+ #include <net/ipv6.h>         /* ipv6_addr_equal() */
+ #include <scsi/scsi_tcq.h>
+ #include <scsi/iscsi_proto.h>
+@@ -147,6 +147,28 @@ void iscsit_free_r2ts_from_list(struct iscsi_cmd *cmd)
+ 	spin_unlock_bh(&cmd->r2t_lock);
+ }
+ 
++int iscsit_wait_for_tag(struct se_session *se_sess, int state, int *cpup)
++{
++	int tag = -1;
++	DEFINE_WAIT(wait);
++	struct sbq_wait_state *ws;
++
++	if (state == TASK_RUNNING)
++		return tag;
++
++	ws = &se_sess->sess_tag_pool.ws[0];
++	for (;;) {
++		prepare_to_wait_exclusive(&ws->wait, &wait, state);
++		if (signal_pending_state(state, current))
++			break;
++		schedule();
++		tag = sbitmap_queue_get(&se_sess->sess_tag_pool, cpup);
++	}
++
++	finish_wait(&ws->wait, &wait);
++	return tag;
++}
++
+ /*
+  * May be called from software interrupt (timer) context for allocating
+  * iSCSI NopINs.
+@@ -155,9 +177,11 @@ struct iscsi_cmd *iscsit_allocate_cmd(struct iscsi_conn *conn, int state)
+ {
+ 	struct iscsi_cmd *cmd;
+ 	struct se_session *se_sess = conn->sess->se_sess;
+-	int size, tag;
++	int size, tag, cpu;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, state);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
++	if (tag < 0)
++		tag = iscsit_wait_for_tag(se_sess, state, &cpu);
+ 	if (tag < 0)
+ 		return NULL;
+ 
+@@ -166,6 +190,7 @@ struct iscsi_cmd *iscsit_allocate_cmd(struct iscsi_conn *conn, int state)
+ 	memset(cmd, 0, size);
+ 
+ 	cmd->se_cmd.map_tag = tag;
++	cmd->se_cmd.map_cpu = cpu;
+ 	cmd->conn = conn;
+ 	cmd->data_direction = DMA_NONE;
+ 	INIT_LIST_HEAD(&cmd->i_conn_node);
+@@ -711,7 +736,8 @@ void iscsit_release_cmd(struct iscsi_cmd *cmd)
+ 	kfree(cmd->iov_data);
+ 	kfree(cmd->text_in_ptr);
+ 
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, se_cmd->map_tag);
++	sbitmap_queue_clear(&sess->se_sess->sess_tag_pool, se_cmd->map_tag,
++			se_cmd->map_cpu);
+ }
+ EXPORT_SYMBOL(iscsit_release_cmd);
+ 
+diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
+index fb1003921d85..c58f9f04c6be 100644
+--- a/drivers/target/sbp/sbp_target.c
++++ b/drivers/target/sbp/sbp_target.c
+@@ -926,15 +926,16 @@ static struct sbp_target_request *sbp_mgt_get_req(struct sbp_session *sess,
+ {
+ 	struct se_session *se_sess = sess->se_sess;
+ 	struct sbp_target_request *req;
+-	int tag;
++	int tag, cpu;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	req = &((struct sbp_target_request *)se_sess->sess_cmd_map)[tag];
+ 	memset(req, 0, sizeof(*req));
+ 	req->se_cmd.map_tag = tag;
++	req->se_cmd.map_cpu = cpu;
+ 	req->se_cmd.tag = next_orb;
+ 
+ 	return req;
+@@ -1460,7 +1461,8 @@ static void sbp_free_request(struct sbp_target_request *req)
+ 	kfree(req->pg_tbl);
+ 	kfree(req->cmd_buf);
+ 
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	sbitmap_queue_clear(&se_sess->sess_tag_pool, se_cmd->map_tag,
++			se_cmd->map_cpu);
+ }
+ 
+ static void sbp_mgt_agent_process(struct work_struct *work)
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index 4558f2e1fe1b..3103890ed109 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -260,7 +260,8 @@ int transport_alloc_session_tags(struct se_session *se_sess,
+ 		}
+ 	}
+ 
+-	rc = percpu_ida_init(&se_sess->sess_tag_pool, tag_num);
++	rc = sbitmap_queue_init_node(&se_sess->sess_tag_pool, tag_num, -1,
++			false, GFP_KERNEL, NUMA_NO_NODE);
+ 	if (rc < 0) {
+ 		pr_err("Unable to init se_sess->sess_tag_pool,"
+ 			" tag_num: %u\n", tag_num);
+@@ -547,7 +548,7 @@ void transport_free_session(struct se_session *se_sess)
+ 		target_put_nacl(se_nacl);
+ 	}
+ 	if (se_sess->sess_cmd_map) {
+-		percpu_ida_destroy(&se_sess->sess_tag_pool);
++		sbitmap_queue_free(&se_sess->sess_tag_pool);
+ 		kvfree(se_sess->sess_cmd_map);
+ 	}
+ 	kmem_cache_free(se_sess_cache, se_sess);
+diff --git a/drivers/target/tcm_fc/tfc_cmd.c b/drivers/target/tcm_fc/tfc_cmd.c
+index ec372860106f..b3e3364b7147 100644
+--- a/drivers/target/tcm_fc/tfc_cmd.c
++++ b/drivers/target/tcm_fc/tfc_cmd.c
+@@ -28,7 +28,6 @@
+ #include <linux/configfs.h>
+ #include <linux/ctype.h>
+ #include <linux/hash.h>
+-#include <linux/percpu_ida.h>
+ #include <asm/unaligned.h>
+ #include <scsi/scsi_tcq.h>
+ #include <scsi/libfc.h>
+@@ -92,7 +91,8 @@ static void ft_free_cmd(struct ft_cmd *cmd)
+ 	if (fr_seq(fp))
+ 		fc_seq_release(fr_seq(fp));
+ 	fc_frame_free(fp);
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	sbitmap_queue_clear(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag,
++			cmd->se_cmd.map_cpu);
+ 	ft_sess_put(sess);	/* undo get from lookup at recv */
+ }
+ 
+@@ -448,9 +448,9 @@ static void ft_recv_cmd(struct ft_sess *sess, struct fc_frame *fp)
+ 	struct ft_cmd *cmd;
+ 	struct fc_lport *lport = sess->tport->lport;
+ 	struct se_session *se_sess = sess->se_sess;
+-	int tag;
++	int tag, cpu;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0)
+ 		goto busy;
+ 
+@@ -458,10 +458,11 @@ static void ft_recv_cmd(struct ft_sess *sess, struct fc_frame *fp)
+ 	memset(cmd, 0, sizeof(struct ft_cmd));
+ 
+ 	cmd->se_cmd.map_tag = tag;
++	cmd->se_cmd.map_cpu = cpu;
+ 	cmd->sess = sess;
+ 	cmd->seq = fc_seq_assign(lport, fp);
+ 	if (!cmd->seq) {
+-		percpu_ida_free(&se_sess->sess_tag_pool, tag);
++		sbitmap_queue_clear(&se_sess->sess_tag_pool, tag, cpu);
+ 		goto busy;
+ 	}
+ 	cmd->req_frame = fp;		/* hold frame during cmd */
+diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
+index d78dbb73bde8..b335f4f33bc3 100644
+--- a/drivers/usb/gadget/function/f_tcm.c
++++ b/drivers/usb/gadget/function/f_tcm.c
+@@ -1071,15 +1071,16 @@ static struct usbg_cmd *usbg_get_cmd(struct f_uas *fu,
+ {
+ 	struct se_session *se_sess = tv_nexus->tvn_se_sess;
+ 	struct usbg_cmd *cmd;
+-	int tag;
++	int tag, cpu;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	cmd = &((struct usbg_cmd *)se_sess->sess_cmd_map)[tag];
+ 	memset(cmd, 0, sizeof(*cmd));
+ 	cmd->se_cmd.map_tag = tag;
++	cmd->se_cmd.map_cpu = cpu;
+ 	cmd->se_cmd.tag = cmd->tag = scsi_tag;
+ 	cmd->fu = fu;
+ 
+@@ -1288,7 +1289,8 @@ static void usbg_release_cmd(struct se_cmd *se_cmd)
+ 	struct se_session *se_sess = se_cmd->se_sess;
+ 
+ 	kfree(cmd->data_buf);
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	sbitmap_queue_clear(&se_sess->sess_tag_pool, se_cmd->map_tag,
++			se_cmd->map_cpu);
+ }
+ 
+ static u32 usbg_sess_get_index(struct se_session *se_sess)
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 7ad57094d736..1fadaa39f322 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -46,7 +46,6 @@
+ #include <linux/virtio_scsi.h>
+ #include <linux/llist.h>
+ #include <linux/bitmap.h>
+-#include <linux/percpu_ida.h>
+ 
+ #include "vhost.h"
+ 
+@@ -324,7 +323,8 @@ static void vhost_scsi_release_cmd(struct se_cmd *se_cmd)
+ 	}
+ 
+ 	vhost_scsi_put_inflight(tv_cmd->inflight);
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	sbitmap_queue_clear(&se_sess->sess_tag_pool, se_cmd->map_tag,
++			se_cmd->map_cpu);
+ }
+ 
+ static u32 vhost_scsi_sess_get_index(struct se_session *se_sess)
+@@ -567,7 +567,7 @@ vhost_scsi_get_tag(struct vhost_virtqueue *vq, struct vhost_scsi_tpg *tpg,
+ 	struct se_session *se_sess;
+ 	struct scatterlist *sg, *prot_sg;
+ 	struct page **pages;
+-	int tag;
++	int tag, cpu;
+ 
+ 	tv_nexus = tpg->tpg_nexus;
+ 	if (!tv_nexus) {
+@@ -576,7 +576,7 @@ vhost_scsi_get_tag(struct vhost_virtqueue *vq, struct vhost_scsi_tpg *tpg,
+ 	}
+ 	se_sess = tv_nexus->tvn_se_sess;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0) {
+ 		pr_err("Unable to obtain tag for vhost_scsi_cmd\n");
+ 		return ERR_PTR(-ENOMEM);
+@@ -591,6 +591,7 @@ vhost_scsi_get_tag(struct vhost_virtqueue *vq, struct vhost_scsi_tpg *tpg,
+ 	cmd->tvc_prot_sgl = prot_sg;
+ 	cmd->tvc_upages = pages;
+ 	cmd->tvc_se_cmd.map_tag = tag;
++	cmd->tvc_se_cmd.map_cpu = cpu;
+ 	cmd->tvc_tag = scsi_tag;
+ 	cmd->tvc_lun = lun;
+ 	cmd->tvc_task_attr = task_attr;
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 7bc88fd43cfc..d2c71b8608f0 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -654,9 +654,9 @@ static struct vscsibk_pend *scsiback_get_pend_req(struct vscsiif_back_ring *ring
+ 	struct scsiback_nexus *nexus = tpg->tpg_nexus;
+ 	struct se_session *se_sess = nexus->tvn_se_sess;
+ 	struct vscsibk_pend *req;
+-	int tag, i;
++	int tag, cpu, i;
+ 
+-	tag = percpu_ida_alloc(&se_sess->sess_tag_pool, TASK_RUNNING);
++	tag = sbitmap_queue_get(&se_sess->sess_tag_pool, &cpu);
+ 	if (tag < 0) {
+ 		pr_err("Unable to obtain tag for vscsiif_request\n");
+ 		return ERR_PTR(-ENOMEM);
+@@ -665,6 +665,7 @@ static struct vscsibk_pend *scsiback_get_pend_req(struct vscsiif_back_ring *ring
+ 	req = &((struct vscsibk_pend *)se_sess->sess_cmd_map)[tag];
+ 	memset(req, 0, sizeof(*req));
+ 	req->se_cmd.map_tag = tag;
++	req->se_cmd.map_cpu = cpu;
+ 
+ 	for (i = 0; i < VSCSI_MAX_GRANTS; i++)
+ 		req->grant_handles[i] = SCSIBACK_INVALID_HANDLE;
+@@ -1379,7 +1380,8 @@ static void scsiback_release_cmd(struct se_cmd *se_cmd)
+ {
+ 	struct se_session *se_sess = se_cmd->se_sess;
+ 
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	sbitmap_queue_clear(&se_sess->sess_tag_pool, se_cmd->map_tag,
++			se_cmd->map_cpu);
+ }
+ 
+ static u32 scsiback_sess_get_index(struct se_session *se_sess)
+diff --git a/include/target/iscsi/iscsi_target_core.h b/include/target/iscsi/iscsi_target_core.h
+index cf5f3fff1f1a..f2e6abea8490 100644
+--- a/include/target/iscsi/iscsi_target_core.h
++++ b/include/target/iscsi/iscsi_target_core.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/dma-direction.h>     /* enum dma_data_direction */
+ #include <linux/list.h>              /* struct list_head */
++#include <linux/sched.h>
+ #include <linux/socket.h>            /* struct sockaddr_storage */
+ #include <linux/types.h>             /* u8 */
+ #include <scsi/iscsi_proto.h>        /* itt_t */
+diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
+index 9f9f5902af38..cd417b17fee6 100644
+--- a/include/target/target_core_base.h
++++ b/include/target/target_core_base.h
+@@ -4,7 +4,7 @@
+ 
+ #include <linux/configfs.h>      /* struct config_group */
+ #include <linux/dma-direction.h> /* enum dma_data_direction */
+-#include <linux/percpu_ida.h>    /* struct percpu_ida */
++#include <linux/sbitmap.h>
+ #include <linux/percpu-refcount.h>
+ #include <linux/semaphore.h>     /* struct semaphore */
+ #include <linux/completion.h>
+@@ -454,6 +454,7 @@ struct se_cmd {
+ 	int			sam_task_attr;
+ 	/* Used for se_sess->sess_tag_pool */
+ 	unsigned int		map_tag;
++	int			map_cpu;
+ 	/* Transport protocol dependent state, see transport_state_table */
+ 	enum transport_state_table t_state;
+ 	/* See se_cmd_flags_table */
+@@ -607,7 +608,7 @@ struct se_session {
+ 	struct list_head	sess_wait_list;
+ 	spinlock_t		sess_cmd_lock;
+ 	void			*sess_cmd_map;
+-	struct percpu_ida	sess_tag_pool;
++	struct sbitmap_queue	sess_tag_pool;
+ };
+ 
+ struct se_device;
 -- 
 2.17.0
 
