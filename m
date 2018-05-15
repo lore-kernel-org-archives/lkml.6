@@ -1,187 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753143AbeEOMyT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 08:54:19 -0400
-Received: from aer-iport-4.cisco.com ([173.38.203.54]:3782 "EHLO
-        aer-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbeEOMyO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 08:54:14 -0400
-X-IronPort-AV: E=Sophos;i="5.49,403,1520899200";
-   d="scan'208";a="3795011"
-Subject: Re: [PATCH 1/5] media: cec-notifier: Get notifier by device and
- connector name
-To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1526388421-18808-1-git-send-email-narmstrong@baylibre.com>
- <1526388421-18808-2-git-send-email-narmstrong@baylibre.com>
-From: Hans Verkuil <hansverk@cisco.com>
-Message-ID: <13501ccd-b346-4eb8-49c8-a92d85e3e5df@cisco.com>
-Date: Tue, 15 May 2018 14:54:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1753048AbeEOMzq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 08:55:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45293 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752280AbeEOMzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 08:55:45 -0400
+Date: Tue, 15 May 2018 14:55:41 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
+Message-ID: <20180515125541.GH12670@dhcp22.suse.cz>
+References: <20180510115356.31164-1-pasha.tatashin@oracle.com>
+ <20180510123039.GF5325@dhcp22.suse.cz>
+ <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
+ <20180515091036.GC12670@dhcp22.suse.cz>
+ <CAGM2reaQusBA-nmQ5xqH4u-EVxgJCnaHAZs=1AXFOpNWTh7VbQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1526388421-18808-2-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-User: hansverk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2reaQusBA-nmQ5xqH4u-EVxgJCnaHAZs=1AXFOpNWTh7VbQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
-
-Two small comments below:
-
-On 05/15/18 14:46, Neil Armstrong wrote:
-> In non device-tree world, we can need to get the notifier by the driver
-> name directly and eventually defer probe if not yet created.
+On Tue 15-05-18 08:17:27, Pavel Tatashin wrote:
+> Hi Michal,
 > 
-> This patch adds a variant of the get function by using the device name
-> instead and will not create a notifier if not yet created.
+> Thank you for your reply, my comments below:
 > 
-> But the i915 driver exposes at least 2 HDMI connectors, this patch also
-> adds the possibility to add a connector name tied to the notifier device
-> to form a tuple and associate different CEC controllers for each HDMI
-> connectors.
+> > You are now disabling a potentially useful feature to SPARSEMEM users
+> > without having any evidence that they do suffer from the issue which is
+> > kinda sad. Especially when the only known offender is a UP pcp allocator
+> > implementation.
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/media/cec/cec-notifier.c | 12 +++++++++---
->  include/media/cec-notifier.h     | 30 ++++++++++++++++++++++++++++--
->  2 files changed, 37 insertions(+), 5 deletions(-)
+> True, but what is the use case for having SPARSEMEM without virtual mapping
+> and deferred struct page init together. Is it a common case to have
+> multiple gigabyte of memory and currently NUMA config to benefit from
+> deferred page init and yet not having a memory for virtual mapping of
+> struct pages? Or am I missing some common case here?
+
+Well, I strongly suspect that this is more a momentum, then a real
+reason to stick with SPARSEMEM_MANUAL. I would really love to reduce the
+number of memory models we have. Getting rid of SPARSEMEM would be a
+good start as VMEMMAP should be much better.
+ 
+> > I will not insist of course but it seems like your fix doesn't really
+> > prevent virt_to_page or other direct page access either.
 > 
-> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
-> index 16dffa0..7038abae1 100644
-> --- a/drivers/media/cec/cec-notifier.c
-> +++ b/drivers/media/cec/cec-notifier.c
-> @@ -21,6 +21,7 @@ struct cec_notifier {
->  	struct list_head head;
->  	struct kref kref;
->  	struct device *dev;
-> +	const char *conn;
->  	struct cec_adapter *cec_adap;
->  	void (*callback)(struct cec_adapter *adap, u16 pa);
->  
-> @@ -30,13 +31,14 @@ struct cec_notifier {
->  static LIST_HEAD(cec_notifiers);
->  static DEFINE_MUTEX(cec_notifiers_lock);
->  
-> -struct cec_notifier *cec_notifier_get(struct device *dev)
-> +struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
->  {
->  	struct cec_notifier *n;
->  
->  	mutex_lock(&cec_notifiers_lock);
->  	list_for_each_entry(n, &cec_notifiers, head) {
-> -		if (n->dev == dev) {
-> +		if (n->dev == dev &&
-> +		    (!conn || !strcmp(n->conn, conn))) {
->  			kref_get(&n->kref);
->  			mutex_unlock(&cec_notifiers_lock);
->  			return n;
-> @@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->  	if (!n)
->  		goto unlock;
->  	n->dev = dev;
-> +	if (conn)
-> +		n->conn = kstrdup(conn, GFP_KERNEL);
->  	n->phys_addr = CEC_PHYS_ADDR_INVALID;
->  	mutex_init(&n->lock);
->  	kref_init(&n->kref);
-> @@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->  	mutex_unlock(&cec_notifiers_lock);
->  	return n;
->  }
-> -EXPORT_SYMBOL_GPL(cec_notifier_get);
-> +EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
->  
->  static void cec_notifier_release(struct kref *kref)
->  {
-> @@ -62,6 +66,8 @@ static void cec_notifier_release(struct kref *kref)
->  		container_of(kref, struct cec_notifier, kref);
->  
->  	list_del(&n->head);
-> +	if (n->conn)
+> I am not sure what do you mean, I do not prevent virt_to_page, but that is
+> OK for SPARSEMEM_VMEMMAP case, because we do not need to access "struct
+> page" for this operation, as translation is in page table. Yes, we do not
+> prohibit other struct page accesses before mm_init(), but we now have a
+> feature that checks for uninitialized struct page access, and if those will
+> happen, we will learn about them.
 
-No need for this if, kfree already tests the pointer.
-
-> +		kfree(n->conn);
->  	kfree(n);
->  }
->  
-> diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
-> index cf0add7..73f92c7 100644
-> --- a/include/media/cec-notifier.h
-> +++ b/include/media/cec-notifier.h
-> @@ -20,6 +20,23 @@ struct cec_notifier;
->  #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
->  
->  /**
-> + * cec_notifier_get_conn - find or create a new cec_notifier for the given
-> + * device and connector tuple.
-> + * @dev: device that sends the events.
-> + * @conn: the connector name from which the event occurs
-> + *
-> + * If a notifier for device @dev already exists, then increase the refcount
-> + * and return that notifier.
-> + *
-> + * If it doesn't exist, then allocate a new notifier struct and return a
-> + * pointer to that new struct.
-> + *
-> + * Return NULL if the memory could not be allocated.
-> + */
-> +struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-> +					   const char *conn);
-> +
-> +/**
->   * cec_notifier_get - find or create a new cec_notifier for the given device.
->   * @dev: device that sends the events.
->   *
-> @@ -31,7 +48,10 @@ struct cec_notifier;
->   *
->   * Return NULL if the memory could not be allocated.
->   */
-> -struct cec_notifier *cec_notifier_get(struct device *dev);
-> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-> +{
-> +	return cec_notifier_get_conn(dev, NULL);
-> +}
->  
->  /**
->   * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
-> @@ -85,12 +105,18 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
->  			       struct cec_notifier *notifier);
->  
->  #else
-> -static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-> +static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-> +							 const char *conn)
->  {
->  	/* A non-NULL pointer is expected on success */
->  	return (struct cec_notifier *)0xdeadfeed;
->  }
->  
-> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-> +{
-> +	return cec_notifier_get_conn(dev, NULL);
-> +}
-
-Just move this function to after the #if ... #else ... #endif
-After all, it is the same static inline for both.
-
-> +
->  static inline void cec_notifier_put(struct cec_notifier *n)
->  {
->  }
-> 
-
-Regards,
-
-	Hans
+This will always be a maze as the early boot tends to be. Sad but true.
+That is why I am not really convinced we should use a large hammer and
+disallow deferred page initialization just because UP implementation of
+pcp does something too early. We should instead rule that one odd case.
+Your patch simply doesn't rule a large class of potential issues. It
+just rules out a potentially useful feature for an odd case. See my
+point?
+-- 
+Michal Hocko
+SUSE Labs
