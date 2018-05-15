@@ -1,73 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932222AbeEOR2n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 13:28:43 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62839 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932143AbeEOR2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 13:28:42 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="42021055"
-Date: Tue, 15 May 2018 10:29:09 -0700
-From: Fenghua Yu <fenghua.yu@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/15] x86/split_lock: Explicitly enable or disable #AC
- for split locked accesses
-Message-ID: <20180515172908.GC244301@romley-ivt3.sc.intel.com>
-References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
- <1526323945-211107-10-git-send-email-fenghua.yu@intel.com>
- <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
+        id S932231AbeEORen (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 13:34:43 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:40799 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932143AbeEORel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 13:34:41 -0400
+X-Google-Smtp-Source: AB8JxZrCSsc9NmFitDG+v6ZCp5GTzytQfiKr4SVgXEktxBKZUatMl5KKWEoxVvfJSgFDjNU/0rPLpQ==
+Date: Tue, 15 May 2018 10:34:37 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Nick Simonov <nicksimonovv@gmail.com>
+Cc: rydberg@bitmath.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: fix coding style issues in input.c
+Message-ID: <20180515173437.GC205769@dtor-ws>
+References: <1525874834-20432-1-git-send-email-nicksimonovv@gmail.com>
+ <20180510003313.GD91762@dtor-ws>
+ <20180511230120.GA23354@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180511230120.GA23354@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 09:15:16AM -0700, Dave Hansen wrote:
-> On 05/14/2018 11:52 AM, Fenghua Yu wrote:
-> > By default, we don't set or clear the bit 29 in TEST_CTL MSR 0x33 and
-> > the bit is inherited from BIOS/hardware setting.
+On Sat, May 12, 2018 at 02:01:20AM +0300, Nick Simonov wrote:
+>  Wed, May 09, 2018 at 05:33:13PM -0700, Dmitry Torokhov wrote:
+> > Hi NIck,
 > > 
-> > The kernel parameter "split_lock_ac=on/off" explicitly sets or clears
-> > the bit during boot time.
+> > On Wed, May 09, 2018 at 05:07:14PM +0300, Nick Simonov wrote:
+> > > This is a patch to the input.c file that fixes
+> > > up warning found by checkpatch.pl tool
+> > > 
+> > > Signed-off-by: Nick Simonov <nicksimonovv@gmail.com>
+> > > ---
+> > >  drivers/input/input.c | 52 ++++++++++++++++++++++++++++++++-------------------
+> > >  1 file changed, 33 insertions(+), 19 deletions(-)
+> > > 
+> > > diff --git a/drivers/input/input.c b/drivers/input/input.c
+> > > index 9785546..e18fdae 100644
+> > > --- a/drivers/input/input.c
+> > > +++ b/drivers/input/input.c
+> > > @@ -1,3 +1,4 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > >  /*
+> > >   * The input core
+> > >   *
+> > > @@ -252,7 +253,8 @@ static int input_handle_abs_event(struct input_dev *dev,
+> > >  	}
+> > >  
+> > >  	/* Flush pending "slot" event */
+> > > -	if (is_mt_event && mt && mt->slot != input_abs_get_val(dev, ABS_MT_SLOT)) {
+> > > +	if (is_mt_event && mt && mt->slot !=
+> > > +		input_abs_get_val(dev, ABS_MT_SLOT)) {
+> > >  		input_abs_set_val(dev, ABS_MT_SLOT, mt->slot);
+> > 
+> > So now it is not immediately clear what is part of condition and what is
+> > part of body.
+> > 
+> > I am sorry to say, but with most of these changes the cure is worse than
+> > the disease. If you were fixing the code and adjusted the affected lines
+> > so they are under 80 columns limit that would be one thing, but just
+> > reformatting for the sake of it is not really helpful.
+> > 
+> > Thanks.
+> > 
+> > -- 
+> > Dmitry
 > 
-> The more I think about this...  Why do we need this at boot anyway?
-> Surely boot-time kernel code can't cause performance issues in the same
-> way that untrusted repeated userspace can.  Why don't we just let
-> userspace turn this on?
+> Dmitry thanks for your comment. I deleted all my changes except one
+> and prepare a new patch for it. 
+> 
+> In function input_set_capability when it go through default statment 
+> it is use hard coded function name "input_set_capability" in pr_err() call.
+> I replace it using "%s" __func__ instead.
 
-Turning split lock earlier can captuer split lock performance issue
-in the boot path. Actually we did find two split lock issues during
-boot time by turning on the feature earlier (see patch 4 and 5).
+> From 2aef27ca4896b8d9e64fd1417965793acfba3653 Mon Sep 17 00:00:00 2001
+> From: Nick Simonov <nicksimonovv@gmail.com>
+> Date: Sat, 12 May 2018 01:24:47 +0300
+> Subject: [PATCH] input: replace hard coded string with __func__ in pr_err()
+> 
+> Change hardcoded string "input_set_capability"
+> in pr_err() function call, replace it with
+> "%s" __func__ instead.
+> 
+> Signed-off-by: Nick Simonov <nicksimonovv@gmail.com>
 
-I guess how to improve boot time is still a concern for client and VM.
-If split lock issue can be identified and fixed in boot time, it just
-helps and dosn't hurt anything.
+Applied, thank you.
 
-Turning on the feature during boot time makes user easier to identify
-any split lock issue not just during boot time and also run time.
+> ---
+>  drivers/input/input.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/input.c b/drivers/input/input.c
+> index 9785546..6365c19 100644
+> --- a/drivers/input/input.c
+> +++ b/drivers/input/input.c
+> @@ -1943,8 +1943,7 @@ void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int
+>  		break;
+>  
+>  	default:
+> -		pr_err("input_set_capability: unknown type %u (code %u)\n",
+> -		       type, code);
+> +		pr_err("%s: unknown type %u (code %u)\n", __func__, type, code);
+>  		dump_stack();
+>  		return;
+>  	}
+> -- 
+> 2.7.4
+> 
 
-Having said that, there is a sysfs interface in patch #10 that allows
-user to turn on/off the feature during boot time.
 
-Does that sound better?
-
-Thanks.
-
--Fenghua
+-- 
+Dmitry
