@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeEOOk5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 10:40:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60144 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753965AbeEOOko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 10:40:44 -0400
-Message-ID: <117ed9198ff46889d3e66a0d501fb574e60544ed.camel@redhat.com>
-Subject: Re: [PATCH 6/6] infiniband: qplib_fp: Use dev_fmt
-From: Doug Ledford <dledford@redhat.com>
-To: Joe Perches <joe@perches.com>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
-Cc: x86@kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 15 May 2018 10:40:42 -0400
-In-Reply-To: <51c5082a4add7520b4fac54e58ca26a8156bf5e8.1525878372.git.joe@perches.com>
-References: <cover.1525878372.git.joe@perches.com>
-         <51c5082a4add7520b4fac54e58ca26a8156bf5e8.1525878372.git.joe@perches.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-k7eLPhUI2HJkNmQ8vgQd"
-Mime-Version: 1.0
+        id S1754020AbeEOOlh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 10:41:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753285AbeEOOlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 10:41:35 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v4 0/3] ARM: dts: tegra: Add 256 MB Colibri-T20 and cleanups
+Date: Tue, 15 May 2018 16:41:22 +0200
+Message-Id: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---=-k7eLPhUI2HJkNmQ8vgQd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2018-05-09 at 08:15 -0700, Joe Perches wrote:
-> Convert the embedded dev_<level> uses to use the new dev_fmt
-> prefix and remove the prefix from the formats.
->=20
-> Miscellanea:
->=20
-> o Add missing terminating newlines to avoid possible interleaving
-> o Realign arguments
->=20
-> Signed-off-by: Joe Perches <joe@perches.com>
+Changes since v3:
+1. Patch 3/3: Just reduce the memory of existing DTSI
+   (suggested by Marcel).
 
-I don't see any problem with this patch.  For the IB part:
 
-Acked-by: Doug Ledford <dledford@redhat.com>
+Best regards,
+Krzysztof
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-k7eLPhUI2HJkNmQ8vgQd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+Krzysztof Kozlowski (3):
+  ARM: dts: tegra: Remove skeleton.dtsi and fix DTC warnings for /memory
+  ARM: dts: tegra: Fix unit_address_vs_reg and
+    avoid_unnecessary_addr_size DTC warnings
+  ARM: dts: tegra: Work safely with 256 MB Colibri-T20 modules
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlr68WoACgkQuCajMw5X
-L92/0Q//bGW3mh1Eok5Q5JHlmfBjRO1hf3NIFGMtEsjJFqOwptqWg+nFdkwwg3TQ
-V4laIumHEhmgVKBzxtiX2nIitNrY79NO8Au99TAetJuzEtRPENdOY4QrIbdYBo8O
-kj3pKpafBum08uwmZMj13hvAaiEJZl5pRqYQ3xhoCybxW5l5gQkdJYGaKvMnefws
-3yxjGIq1KzFw0z0nwZZR2a8UKPz7wEKG0y/yN5K3oK1K2BX8+qxHblulbr+8ezdr
-lJFJV53B23aepGBOb5pBShpnjcABOqcATJmS9Yd1WtJ9064FcNrjMq/PUFPGqxuP
-GchlXvAKsrCovGxZcdGrHxmxmFJ1Q8e8nKc/fM8E1J1JYg1DhlDds6gWoRnA5ah3
-eIMX26giAzWDZykeVfHT/0NrJ3kRm9ydULHGG6Xw3NbgwgRTxERbeU25xfE7wVBn
-X2kuYe9wsScY2BgGfQ1m1bKG8nTnByrERvL864G/Lo3pbgfbtuKL9CPoQCJGFl2V
-+665A9H0L1+Wy2dZPCppeWXJvYNckn8Z6UxsON4dDVDNeKDDn9D44b8RvLEo60y3
-BzbBbSAjZSfZPNkV8Pa6akVpppdJY6U6lWmf9RS52bEpWgMmjvAQZSs6vfy/kdja
-ESmW0d4yTC3wrV91X8a+1ecoYjaZ2pgiDtiEQG6EAEjTaK4i4gM=
-=tYVD
------END PGP SIGNATURE-----
+ arch/arm/boot/dts/tegra114-dalmore.dts      |  3 ++-
+ arch/arm/boot/dts/tegra114-roth.dts         |  3 ++-
+ arch/arm/boot/dts/tegra114-tn7.dts          |  3 ++-
+ arch/arm/boot/dts/tegra114.dtsi             |  4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi |  3 ++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      |  3 ++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   |  3 ++-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        |  3 ++-
+ arch/arm/boot/dts/tegra124-venice2.dts      |  3 ++-
+ arch/arm/boot/dts/tegra124.dtsi             |  2 --
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 12 +++++++++---
+ arch/arm/boot/dts/tegra20-harmony.dts       |  3 ++-
+ arch/arm/boot/dts/tegra20-iris-512.dts      |  2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts         |  3 ++-
+ arch/arm/boot/dts/tegra20-seaboard.dts      |  3 ++-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi     |  3 ++-
+ arch/arm/boot/dts/tegra20-trimslice.dts     |  3 ++-
+ arch/arm/boot/dts/tegra20-ventana.dts       |  3 ++-
+ arch/arm/boot/dts/tegra20.dtsi              |  7 +++++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi       |  9 ++++++---
+ arch/arm/boot/dts/tegra30-beaver.dts        |  6 ++----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       |  3 ++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      |  5 ++---
+ arch/arm/boot/dts/tegra30.dtsi              |  7 +++++--
+ 24 files changed, 62 insertions(+), 37 deletions(-)
 
---=-k7eLPhUI2HJkNmQ8vgQd--
+-- 
+2.7.4
