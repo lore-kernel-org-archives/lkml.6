@@ -1,151 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeEOFeb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 01:34:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45013 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeEOFe2 (ORCPT
+        id S1752359AbeEOFeh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 01:34:37 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44276 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbeEOFec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 01:34:28 -0400
-Date: Mon, 14 May 2018 22:33:48 -0700
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33@git.kernel.org>
-Cc: mingo@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jpoimboe@redhat.com, rdunlap@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, rdunlap@infradead.org, hpa@zytor.com
-In-Reply-To: <b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com>
-References: <b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] objtool: Detect RIP-relative switch table
- references
-Git-Commit-ID: 6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 May 2018 01:34:32 -0400
+X-Google-Smtp-Source: AB8JxZqRtz2RtOtm/hwUvMpA74dmzPizJMYhMCMu3wUfnDJY/FlnlBkgKvrWN02Y9bUMMPDhCknwtF1i7QTT8SlWdNI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1526305693.2897.16.camel@baylibre.com>
+References: <20180501185902.3556-1-linux.amoon@gmail.com> <1526305693.2897.16.camel@baylibre.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 15 May 2018 11:04:11 +0530
+Message-ID: <CANAwSgSMu1q0sLHhyhVmh0WMEOQaUD+cbsvwhQ2ebOO=hju=Og@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM64: dts: meson-gxbb: odroidc2: enable sdcard UHS modes
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
-Gitweb:     https://git.kernel.org/tip/6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Mon, 14 May 2018 08:53:24 -0500
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 15 May 2018 07:30:59 +0200
+Hi Jerome
 
-objtool: Detect RIP-relative switch table references
+On 14 May 2018 at 19:18, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Wed, 2018-05-02 at 00:29 +0530, Anand Moon wrote:
+>> Enable UHS modes for sdcard, on odroidc2.
+>>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+>> index 54954b314a45..c90f8b46c60c 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+>> @@ -258,6 +258,11 @@
+>>       cap-sd-highspeed;
+>>       max-frequency = <100000000>;
+>>       disable-wp;
+>> +     sd-uhs-sdr12;
+>> +     sd-uhs-sdr25;
+>> +     sd-uhs-sdr50;
+>> +     sd-uhs-sdr104;
+>> +     sd-uhs-ddr50;
+>>
+>>       cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+>>       cd-inverted;
+>
+> Hi Anand,
+>
+> I tried a few sdcards on the OC2 with your 2 patches.
+> Like with the libretech-cc, sdr104@200Mhz works "mostly", but, with some
+> sdcards, it does not - please see below. The same sdcards appear to be working
+> fine on my laptop.
+>
+> This is something I have not been able to crack yet on the libretech-cc.
+>
+> I'd suggest dropping sdr104 and keeping the max frequency at 100Mhz until we can
+> figure out the problem here.
+>
+> With this changed:
+>
+> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> dd if=/dev/mmcblk1 of=/dev/zero bs=4M
+> [  446.925817] mmc1: tuning execution failed: -5
+> [  446.956597] mmc1: tuning execution failed: -5
+> [  489.957810] print_req_error: I/O error, dev mmcblk1, sector 6654424
+> [  490.141975] print_req_error: I/O error, dev mmcblk1, sector 6656440
+> [  490.148304] print_req_error: I/O error, dev mmcblk1, sector 6656944
+> [  490.349650] print_req_error: I/O error, dev mmcblk1, sector 6658456
+> [  491.804382] print_req_error: I/O error, dev mmcblk1, sector 6747688
+> [  492.281246] print_req_error: I/O error, dev mmcblk1, sector 6784992
+> [  492.419034] print_req_error: I/O error, dev mmcblk1, sector 6785496
+> [  492.865878] print_req_error: I/O error, dev mmcblk1, sector 6791800
+> [  493.023809] print_req_error: I/O error, dev mmcblk1, sector 6792192
+> [  493.024435] Buffer I/O error on dev mmcblk1, logical block 849024, async page
+> read
+> [  493.217751] print_req_error: I/O error, dev mmcblk1, sector 6792808
+> [  494.891779] mmc1: tuning execution failed: -5
+> [  495.374186] print_req_error: 3 callbacks suppressed
+> [  495.374193] print_req_error: I/O error, dev mmcblk1, sector 6854576
+> [  495.767498] print_req_error: I/O error, dev mmcblk1, sector 6860000
+> [  496.013104] print_req_error: I/O error, dev mmcblk1, sector 6863024
+> [  496.223042] print_req_error: I/O error, dev mmcblk1, sector 6864032
+> [  496.227003] print_req_error: I/O error, dev mmcblk1, sector 6864536
+> [  496.375175] print_req_error: I/O error, dev mmcblk1, sector 6864176
+> [  496.375806] Buffer I/O error on dev mmcblk1, logical block 858022, async page
+> read
+> [  496.521229] print_req_error: I/O error, dev mmcblk1, sector 6864184
+> [  496.521852] Buffer I/O error on dev mmcblk1, logical block 858023, async page
+> read
+> [  503.596978] print_req_error: I/O error, dev mmcblk1, sector 6983312
+> [  503.597606] Buffer I/O error on dev mmcblk1, logical block 872914, async page
+> read
+> [  505.280621] print_req_error: I/O error, dev mmcblk1, sector 7004536
+> [  505.281249] Buffer I/O error on dev mmcblk1, logical block 875567, async page
+> read
+> [  507.372560] print_req_error: I/O error, dev mmcblk1, sector 7048696
+> [  507.373192] Buffer I/O error on dev mmcblk1, logical block 881087, async page
+> read
+> [  511.355248] print_req_error: I/O error, dev mmcblk1, sector 7131352
+> [  511.355883] Buffer I/O error on dev mmcblk1, logical block 891419, async page
+> read
+> [  511.369076] print_req_error: I/O error, dev mmcblk1, sector 7131352
+> [  511.369694] Buffer I/O error on dev mmcblk1, logical block 891419, async page
+> read
+> dd: error reading '/dev/mmcblk1': Input/output error
+> 868+7 records in
+> 868+7 records out
+> 3651252224 bytes (3.7 GB, 3.4 GiB) copied, 66.7736 s, 54.7 MB/s
 
-Typically a switch table can be found by detecting a .rodata access
-followed an indirect jump:
 
-    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
-    1970:	00
-			196d: R_X86_64_32S	.rodata+0x438
-    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
-			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
+Thank for your testing, I will also do some more testing on all the
+sdcard and share you the result..
 
-Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
-access uses RIP-relative addressing:
+Mean while Sandisk Ultra microSDHC UHS-I card @A1 32GB shows.
 
-    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
-			19c0: R_X86_64_PC32	.rodata+0x45c
-    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
-			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
+On my Odroid C2:
 
-In this case the relocation addend needs to be adjusted accordingly in
-order to find the location of the switch table.
+[    1.165784] meson-gx-mmc d0074000.mmc: allocated mmc-pwrseq
+[    1.403756] meson-gx-mmc d0072000.mmc: Got CD GPIO
+[    1.456160] Waiting for root device /dev/mmcblk1p2...
+[    1.608180] mmc1: new ultra high speed SDR104 SDHC card at address aaaa
+[    1.610002] mmcblk1: mmc1:aaaa JULIE 29.7 GiB
+[    1.617811]  mmcblk1: p1 p2
 
-The fix is for case 3 (as described in the comments), but also make the
-existing case 1 & 2 checks more precise by only adjusting the addend for
-R_X86_64_PC32 relocations.
+Also I did not encounter and read/write failure on the sdcard but I
+will re-test them.
 
-This fixes the following warnings:
+root@odroid64:~#  dd if=/dev/mmcblk1 of=/dev/zero bs=4M
+7609+1 records in
+7609+1 records out
+31914983424 bytes (32 GB, 30 GiB) copied, 368.637 s, 86.6 MB/s
+root@odroid64:~#
 
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/objtool/check.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 9bb04fddd3c8..f4bbce838433 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -903,24 +903,24 @@ static struct rela *find_switch_table(struct objtool_file *file,
- {
- 	struct rela *text_rela, *rodata_rela;
- 	struct instruction *orig_insn = insn;
-+	unsigned long table_offset;
- 
-+	/* case 1 & 2 */
- 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
- 	if (text_rela && text_rela->sym == file->rodata->sym &&
- 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
- 
--		/* case 1 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend);
--		if (rodata_rela)
--			return rodata_rela;
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32) {
-+			/* case 2 */
-+			table_offset += 4;
-+			file->ignore_unreachables = true;
-+		}
- 
--		/* case 2 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend + 4);
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
- 		if (!rodata_rela)
- 			return NULL;
- 
--		file->ignore_unreachables = true;
- 		return rodata_rela;
- 	}
- 
-@@ -954,18 +954,21 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		if (!text_rela || text_rela->sym != file->rodata->sym)
- 			continue;
- 
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32)
-+			table_offset += 4;
-+
- 		/*
- 		 * Make sure the .rodata address isn't associated with a
- 		 * symbol.  gcc jump tables are anonymous data.
- 		 */
--		if (find_symbol_containing(file->rodata, text_rela->addend))
--			continue;
--
--		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
--		if (!rodata_rela)
-+		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
- 
--		return rodata_rela;
-+		/* mov [rodata addr], %reg */
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
-+		if (rodata_rela)
-+			return rodata_rela;
- 	}
- 
- 	return NULL;
+Best Regards
+-Anand
