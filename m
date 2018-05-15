@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-436143-1526283705-2-8605013904473450226
+X-Cyrus-Session-Id: sloti22d1t05-2020282-1526364696-2-718116525551839462
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,367 +12,278 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526283704; b=B6+C0O2JjHdkti1/vk17CTA3ArcFvtbpzk94AVxskjBmwxC/uY
-    aOR+jKTcl7fxI2O1yfUowaa4EaUUaKqO59h4xU/LtnUB0d5s9EZg8FE8NDft7Lja
-    +XHl0OfaDv24XYQ0RKwAnWsvqVD9e3MbPcd2GXJI5cDZadCiUYFOwUV1/+xWeAlF
-    bVsB6edtYufuqg8n+SYvXFkzBXN3F5eLy9tJK04yK8oz1gQtARRu1wxzVFajvasJ
-    3kYIXYgBV0SAcig5qrk+JJ9BzCuv9BrWJwCwtESpG6TxX4JX4ivncv7Su5kCC9ty
-    aNaR/MZJ9pSJ+QjYbtyoQJ6aBAYjK9r5366w==
+    1526364695; b=jB2e1pKeJRVx/1erVB8ehnHb8oVrEtkPgqCEQbUOgi51xF+vbI
+    zU2ovSITrdXkxCiAYq+FQ87Ek32mMjXZrKPE5vlKQQEjhxisu07Zh9NGnUP4SspV
+    5flfqVHk2Pq4dZ4V1wqUrzmoaJjXAlZRzaY3NaOzlgq840b1x6xpMlthl99WfpCJ
+    lr8f8ySACpVB7WOg74RNfdfPoYOUc97AKYVnG2zEyr+39YmyEmp3uFPOQHLfdhq4
+    vR0bYXExF6sucnpqQBfWjtT7Ph+kX8KK5EZ1t9mYLkUfRGrjQgUVzlM97XmvHt0V
+    zwKYNvSRdsxiIs8Zfj85waLGalkyB2/0z+Pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1526283704; bh=f85petV7iljwsCwIK/dL146fZCz5C7
-    XripxBPvW0ZLQ=; b=Jb3hMhyPDXCeGITZUIvwUqiSJIelgNaGlQXBP00hHj/HZk
-    /XpnFQsyd3QGTbYx1Bu9JI8pa3RlvaR+8Vd1g1dFV53xONwvkDdewEQI2Sh47RT8
-    NxDeoWWyh76Uz2WKbTPewcoqfqinjax+pik6d2nbfbMzyd5AMY8Kpkx7ujz3SNOJ
-    r9oGC5exiZOMk0dxIVSWlSsD1G562QUL6Fg+eIBvcICOgohD35sJq/99m4CBhUvm
-    RjvEUyRbycIyHzyqmYBIxS5OjWapevzdOr2+iwzwWGXA9xHtDh5ry/tViYrGUX6P
-    s2EB6cm1jeNVrhzqftwSezL36265B+2gTSyGnefg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=cI0SEL8e x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526364695;
+    bh=+qqKPJDAGu0BejEvlAUokiiCxt+jd2PF/spQ3beYLNQ=; b=jl5lcQLoMACq
+    D+b4BBHzttmrqCjvuWcoI8mL56qRe93pnMxpkseRXoH4VjIuaa8ZOY+uAdCEaYDj
+    ru7rzM4UMdaI+f86CWPqQ/SW3yzCU+r4fTYSDmdibXREvlUHCYl/+P4So5CNpAzQ
+    cmXBAuCCFxh43nbTHLTjxOIUdM9+aQ/FzR0z1bYxAiQZb8I59tG7c56/emfn9DzW
+    lT7e2yGJ7eT+Gn12Zsb7zMf/jGS3602/P0o/j/nojzxKDcUOu3NLoCsRR7O+uLVw
+    45RH2UnXALgdy4J+HIH0KApE+mOkJW5FA4KwOPP2LKbG/Ka8IdZgujZJUmMmr5U8
+    fsVf0dEE/g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+    header.i=@linaro.org header.b=i5MG9L1b x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=JlbEgl++;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=cI0SEL8e x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+      header.i=@linaro.org header.b=i5MG9L1b x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=JlbEgl++;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFCBkwM3D7xBLyk385cS0lYO3okpOrCMv9pdS/gInPyfqExzwpybNE4DJ4dK6mjqkZ+gVlO5abrj36eKgvXryfQdw/zktW4ASshZSaKeK6gPElonW8YB
-    VN20VhPCKeiXJTScTm7ZP0wUzQJZtempkym0OWmk46ld+iwLi6MPYbSMMgjsuqG6SDFUQHkkJ/GBKlkN/ADDoMghOB+xt4uJXX+wh5GQckFdX/CFtwwRHQB9
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfC3JdOnzBGJON9if2oLUopZWxkmzGoClq5hOm94ljABB97SR/HC0NdyRXrGv0sVgGHkiEXVEr1jx+gdU2yyL3adJjcjtHix2Lg++YWW9A3QI1l2F9k+A
+    BS0fgUqf2hkd+8PcjK7lkJN+iq8/D/Ji3VwQg77WEb9Ayli14Enw9Ufhmcxoc4y5AjhJXOXXVyztE7uP7Mwfo/YiEgcvOSyY1F//LnDsWT843ifeP/FxQGyd
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=_yzArvceousA:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=JfrnYn6hAAAA:8
-    a=20KFwNOVAAAA:8 a=_Wotqz80AAAA:8 a=t0M9nft4AAAA:8 a=meVymXHHAAAA:8
-    a=t7CeM3EgAAAA:8 a=i0EeH86SAAAA:8 a=1XWaLZrsAAAA:8 a=sozttTNsAAAA:8
-    a=dZ7Af3Q_AAAA:8 a=1EsaE_6oAAAA:8 a=eh1Yez-EAAAA:8 a=CbDCq_QkAAAA:8
-    a=WTJdmG3rAAAA:8 a=yPCof4ZbAAAA:8 a=rEqvwrX8AAAA:8 a=pGLkceISAAAA:8
-    a=7d_E57ReAAAA:8 a=3-RhneuVAAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8
-    a=VnNF1IyMAAAA:8 a=FOH2dFAWAAAA:8 a=6HqC31iMbdQxTYMCFBMA:9
-    a=eQJVtvdJB1Pdw7NO:21 a=8L8TqKtc0mv_kM05:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=buJP51TR1BpY-zbLSsyS:22 a=9blVyPJtsqGH_lG0htnH:22 a=2JgSa4NbpEOStq-L5dxp:22
-    a=FdTzh2GWekK77mhwV6Dw:22 a=aeg5Gbbo78KNqacMgKqU:22 a=xnyMoErWsJe9py2mg6Iw:22
-    a=3ZumFrijQQ-2J9H5h8ct:22 a=1qrBK16LubpBFNPVNq2M:22 a=q3NGepEMMmKWaCv8Sx90:22
-    a=2B8fXRCmRxTqFPaLtVU6:22 a=jhqOcbufqs7Y1TYCrUUU:22 a=VLVLkjT_5ZicWzSuYqSo:22
+    a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+    a=QkmShpKx7UJm5Tc08a0A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeENHl2 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:41:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752623AbeENGwL (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 02:52:11 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/56] 4.4.132-stable review
-Date: Mon, 14 May 2018 08:48:05 +0200
-Message-Id: <20180514064754.853201981@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
+        id S1752186AbeEOGLc (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 15 May 2018 02:11:32 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34344 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752155AbeEOGLb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 15 May 2018 02:11:31 -0400
+X-Google-Smtp-Source: AB8JxZocacq7dNCKFtutAd+VjFdheBgcr1n2sV5Y3DsHx61ngj4PFW3qUsEEXJHiQ6R77s5MVF3ounNBbA63F0K4HxA=
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.132-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.132-rc1
-X-KernelTest-Deadline: 2018-05-16T06:48+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
+References: <20180514064754.853201981@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 15 May 2018 11:41:29 +0530
+Message-ID: <CA+G9fYt+MmxpZL6jzrqxwj_9d=FJ3d+Z=xA1MbWzeTdhzYLYzQ@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/56] 4.4.132-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.4.132 release.
-There are 56 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed May 16 06:47:39 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.132-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.132-rc1
-
-Peter Zijlstra <peterz@infradead.org>
-    perf/x86: Fix possible Spectre-v1 indexing for x86_pmu::event_map()
-
-Peter Zijlstra <peterz@infradead.org>
-    perf/core: Fix possible Spectre-v1 indexing for ->aux_pages[]
-
-Peter Zijlstra <peterz@infradead.org>
-    perf/x86/msr: Fix possible Spectre-v1 indexing in the MSR driver
-
-Peter Zijlstra <peterz@infradead.org>
-    perf/x86/cstate: Fix possible Spectre-v1 indexing for pkg_msr
-
-Peter Zijlstra <peterz@infradead.org>
-    perf/x86: Fix possible Spectre-v1 indexing for hw_perf_event cache_*
-
-Masami Hiramatsu <mhiramat@kernel.org>
-    tracing/uprobe_event: Fix strncpy corner case
-
-Hans de Goede <hdegoede@redhat.com>
-    Revert "Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174"
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    atm: zatm: Fix potential Spectre v1
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    net: atm: Fix potential Spectre v1
-
-Jimmy Assarsson <extja@kvaser.com>
-    can: kvaser_usb: Increase correct stats counter in kvaser_usb_rx_can_msg()
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    tracing: Fix regex_match_front() to not over compare the test string
-
-Hans de Goede <hdegoede@redhat.com>
-    libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
-
-Johan Hovold <johan@kernel.org>
-    rfkill: gpio: fix memory leak in probe error path
-
-Yi Zhao <yi.zhao@windriver.com>
-    xfrm_user: fix return value from xfrm_user_rcv_msg
-
-Wei Fang <fangwei1@huawei.com>
-    f2fs: fix a dead loop in f2fs_fiemap()
-
-Jan Kara <jack@suse.cz>
-    bdi: Fix oops in wb_workfn()
-
-Eric Dumazet <edumazet@google.com>
-    tcp: fix TCP_REPAIR_QUEUE bound checking
-
-Jiri Olsa <jolsa@kernel.org>
-    perf: Remove superfluous allocation error check
-
-Eric Dumazet <edumazet@google.com>
-    soreuseport: initialise timewait reuseport field
-
-Eric Dumazet <edumazet@google.com>
-    dccp: initialize ireq->ir_mark
-
-Eric Dumazet <edumazet@google.com>
-    net: fix uninit-value in __hw_addr_add_ex()
-
-Eric Dumazet <edumazet@google.com>
-    net: initialize skb->peeked when cloning
-
-Eric Dumazet <edumazet@google.com>
-    net: fix rtnh_ok()
-
-Eric Dumazet <edumazet@google.com>
-    netlink: fix uninit-value in netlink_sendmsg
-
-Eric Dumazet <edumazet@google.com>
-    crypto: af_alg - fix possible uninit-value in alg_bind()
-
-Julian Anastasov <ja@ssi.bg>
-    ipvs: fix rtnl_lock lockups caused by start_sync_thread
-
-Bin Liu <b-liu@ti.com>
-    usb: musb: host: fix potential NULL pointer dereference
-
-SZ Lin (林上智) <sz.lin@moxa.com>
-    USB: serial: option: adding support for ublox R410M
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: option: reimplement interface masking
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: Accept bulk endpoints with 1024-byte maxpacket
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    USB: serial: visor: handle potential invalid device configuration
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    test_firmware: fix setting old custom fw path back on exit, second try
-
-Thomas Hellstrom <thellstrom@vmware.com>
-    drm/vmwgfx: Fix a buffer object leak
-
-Danit Goldberg <danitg@mellanox.com>
-    IB/mlx5: Use unlimited rate when static rate is not supported
-
-SZ Lin (林上智) <sz.lin@moxa.com>
-    NET: usb: qmi_wwan: add support for ublox R410M PID 0x90b2
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/mlx5: Protect from shift operand overflow
-
-Roland Dreier <roland@purestorage.com>
-    RDMA/ucma: Allow resolving address w/o specifying source address
-
-Darrick J. Wong <darrick.wong@oracle.com>
-    xfs: prevent creating negative-sized file via INSERT_RANGE
-
-Vittorio Gambaletta (VittGam) <linuxbugs@vittgam.net>
-    Input: atmel_mxt_ts - add touchpad button mapping for Samsung Chromebook Pro
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    Input: leds - fix out of bound access
-
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    tracepoint: Do not warn on ENOMEM
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: aloop: Add missing cable lock to ctl API callbacks
-
-Robert Rosengren <robert.rosengren@axis.com>
-    ALSA: aloop: Mark paused device as inactive
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: pcm: Check PCM state at xfern compat ioctl
-
-Kristian Evensen <kristian.evensen@gmail.com>
-    USB: serial: option: Add support for Quectel EP06
-
-Markus Pargmann <mpa@pengutronix.de>
-    gpmi-nand: Handle ECC Errors in erased pages
-
-Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-    ath10k: rebuild crypto header in rx data frames
-
-Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-    ath10k: fix rfc1042 header retrieval in QCA4019 with eth decap mode
-
-David Spinadel <david.spinadel@intel.com>
-    mac80211: Add RX flag to indicate ICV stripped
-
-Sara Sharon <sara.sharon@intel.com>
-    mac80211: allow same PN for AMSDU sub-frames
-
-Sara Sharon <sara.sharon@intel.com>
-    mac80211: allow not sending MIC up from driver for HW crypto
-
-Tejun Heo <tj@kernel.org>
-    percpu: include linux/sched.h for cond_resched()
-
-Alexander Yarygin <yarygin@linux.vnet.ibm.com>
-    KVM: s390: Enable all facility bits that are known good for passthrough
-
-Teng Qin <qinteng@fb.com>
-    bpf: map_get_next_key to return first key on NULL
-
-Tan Xiaojun <tanxiaojun@huawei.com>
-    perf/core: Fix the perf_cpu_time_max_percent check
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |   4 +-
- arch/s390/kvm/kvm-s390.c                          |   4 +-
- arch/x86/kernel/cpu/perf_event.c                  |   8 +-
- arch/x86/kernel/cpu/perf_event_intel_cstate.c     |   2 +
- arch/x86/kernel/cpu/perf_event_msr.c              |   9 +-
- crypto/af_alg.c                                   |   8 +-
- drivers/ata/libata-core.c                         |   3 +
- drivers/atm/zatm.c                                |   3 +
- drivers/bluetooth/btusb.c                         |   2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c               |   1 +
- drivers/infiniband/core/ucma.c                    |   2 +-
- drivers/infiniband/hw/mlx5/qp.c                   |  22 +-
- drivers/input/input-leds.c                        |   8 +-
- drivers/input/touchscreen/atmel_mxt_ts.c          |   9 +
- drivers/mtd/nand/gpmi-nand/gpmi-nand.c            |  78 +++-
- drivers/net/can/usb/kvaser_usb.c                  |   2 +-
- drivers/net/usb/qmi_wwan.c                        |   1 +
- drivers/net/wireless/ath/ath10k/core.c            |   8 +
- drivers/net/wireless/ath/ath10k/core.h            |   4 +
- drivers/net/wireless/ath/ath10k/htt_rx.c          | 100 ++++-
- drivers/net/wireless/ath/wcn36xx/txrx.c           |   2 +-
- drivers/usb/core/config.c                         |   4 +-
- drivers/usb/musb/musb_host.c                      |   4 +-
- drivers/usb/serial/option.c                       | 448 ++++++++--------------
- drivers/usb/serial/visor.c                        |  69 ++--
- fs/f2fs/data.c                                    |   2 +-
- fs/fs-writeback.c                                 |   2 +-
- fs/xfs/xfs_file.c                                 |  14 +-
- include/net/inet_timewait_sock.h                  |   1 +
- include/net/mac80211.h                            |  14 +-
- include/net/nexthop.h                             |   2 +-
- kernel/bpf/arraymap.c                             |   2 +-
- kernel/bpf/hashtab.c                              |   9 +-
- kernel/bpf/syscall.c                              |  20 +-
- kernel/events/callchain.c                         |  10 +-
- kernel/events/core.c                              |   2 +-
- kernel/events/ring_buffer.c                       |   7 +-
- kernel/trace/trace_events_filter.c                |   3 +
- kernel/trace/trace_uprobe.c                       |   2 +
- kernel/tracepoint.c                               |   4 +-
- mm/percpu.c                                       |   1 +
- net/atm/lec.c                                     |   9 +-
- net/core/dev_addr_lists.c                         |   4 +-
- net/core/skbuff.c                                 |   1 +
- net/dccp/ipv4.c                                   |   1 +
- net/dccp/ipv6.c                                   |   1 +
- net/ipv4/inet_timewait_sock.c                     |   1 +
- net/ipv4/tcp.c                                    |   2 +-
- net/mac80211/util.c                               |   5 +-
- net/mac80211/wep.c                                |   3 +-
- net/mac80211/wpa.c                                |  45 ++-
- net/netfilter/ipvs/ip_vs_ctl.c                    |   8 -
- net/netfilter/ipvs/ip_vs_sync.c                   | 155 ++++----
- net/netlink/af_netlink.c                          |   2 +
- net/rfkill/rfkill-gpio.c                          |   7 +-
- net/xfrm/xfrm_user.c                              |   2 +-
- sound/core/pcm_compat.c                           |   2 +
- sound/core/seq/seq_virmidi.c                      |   4 +-
- sound/drivers/aloop.c                             |  29 +-
- tools/testing/selftests/firmware/fw_filesystem.sh |   6 +-
- 60 files changed, 656 insertions(+), 531 deletions(-)
+On 14 May 2018 at 12:18, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
+ote:
+> This is the start of the stable review cycle for the 4.4.132 release.
+> There are 56 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed May 16 06:47:39 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.132-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.132-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: e33795f7a573385b26763104b63355823de20e4b
+git describe: v4.4.131-57-ge33795f7a573
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.131-57-ge33795f7a573
+
+
+No regressions (compared to build v4.4.131-51-g9aa0dca71729)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+juno-r2 - arm64
+* boot - pass: 21
+* kselftest - skip: 37, pass: 29
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 53, pass: 28
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 140, pass: 1010
+* ltp-timers-tests - pass: 13
+
+qemu_x86_64
+* boot - pass: 20
+* kselftest - skip: 40, pass: 40
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 155, pass: 995
+* ltp-timers-tests - pass: 13
+
+x15 - arm
+* boot - pass: 20
+* kselftest - skip: 36, pass: 29
+* libhugetlbfs - skip: 1, pass: 87
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 18, pass: 63
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 5, pass: 58
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 2, pass: 20
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 78, pass: 1072
+* ltp-timers-tests - pass: 13
+
+x86_64
+* boot - pass: 22
+* kselftest - skip: 37, pass: 41
+* kselftest-vsyscall-mode-native - fail: 1, skip: 37, pass: 40
+* kselftest-vsyscall-mode-none - skip: 37, pass: 41
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 5, pass: 58
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 5, pass: 9
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 119, pass: 1031
+* ltp-timers-tests - pass: 13
+
+Hikey board test results,
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.132-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git tag: 4.4.132-rc1-hikey-20180514-190
+git commit: 36ca71c104750c04fb621d8fce5843a66a21fa88
+git describe: 4.4.132-rc1-hikey-20180514-190
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.132-rc1-hikey-20180514-190
+
+No regressions (compared to build 4.4.132-rc1-hikey-20180511-188)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+hi6220-hikey - arm64
+* boot - pass: 20,
+* kselftest - pass: 27, skip: 38
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 28, skip: 53
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1008, skip: 142
+* ltp-timers-tests - pass: 13,
+
+--=20
+Linaro QA (BETA)
+https://qa-reports.linaro.org
