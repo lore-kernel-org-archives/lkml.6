@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752968AbeEOV0Z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:26:25 -0400
+        id S1752952AbeEOV0W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:26:22 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48538 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752852AbeEOV0S (ORCPT
+        by vger.kernel.org with ESMTP id S1752881AbeEOV0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 May 2018 17:26:18 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [RFC 6/8] x86: removing unneeded new-lines
-Date: Tue, 15 May 2018 07:11:22 -0700
-Message-ID: <20180515141124.84254-16-namit@vmware.com>
+        Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: [RFC 7/8] ilog2: preventing compiler distortion due to big condition
+Date: Tue, 15 May 2018 07:11:23 -0700
+Message-ID: <20180515141124.84254-17-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180515141124.84254-1-namit@vmware.com>
 References: <20180515141124.84254-1-namit@vmware.com>
@@ -25,154 +23,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+There are several places in the kernel in which there is a condition
+that is based on whether the input is known to be constant in
+compilation time. If it is, there are complex computations, which only
+take place during compilation time.
 
-This patch removes unneeded new-lines and semicolons to prevent such
-distortion.
+Although this scheme works correctly, when GCC computes the expected
+cost of this code in time and size, it disregards the fact that the
+computations of the "constant" case will not take place during runtime
+for the non-constant case. The cost of these functions is considered to
+be much higher.  As a result, inline and branching decisions of the
+compiler are distorted. Specifically, functions are less likely to be
+inlined due to their preserved big size and execution time.
 
-Functions such as nfs_io_completion_put() get inlined. Its overall
-effect is not shown in the absolute numbers, but it seems to enable
-slightly better inlining:
+One of this cases is ilog2() which performs a complicated condition for
+constant inputs.
+
+The solution is to use __builtin_choose_expr() to detect whether the
+input is constant instead of a C condition. GCC evaluates the builtin
+earlier, which allows it to improve code-generation decisions.
+
+This patch allows to inline functions such as tbl_size().
 
    text	   data	    bss	    dec	    hex	filename
-18148228 10063968 2936832 31149028 1db4be4 ./vmlinux before
-18148888 10064016 2936832 31149736 1db4ea8 ./vmlinux after (+708)
+18148888 10064016 2936832 31149736 1db4ea8 ./vmlinux before
+18149165 10064176 2936832 31150173 1db505d ./vmlinux after (+437)
 
 Static text symbols:
-Before:	39649
-After:	39650	(+1)
+Before:	39650
+After:	39643	(-7)
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/asm.h           |  4 ++--
- arch/x86/include/asm/cmpxchg.h       | 10 +++++-----
- arch/x86/include/asm/special_insns.h | 12 ++++++------
- 3 files changed, 13 insertions(+), 13 deletions(-)
+ include/linux/log2.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 219faaec51df..571ceec97976 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -51,10 +51,10 @@
-  * The output operand must be type "bool".
+diff --git a/include/linux/log2.h b/include/linux/log2.h
+index 41a1ae010993..aa4dac874339 100644
+--- a/include/linux/log2.h
++++ b/include/linux/log2.h
+@@ -83,7 +83,8 @@ unsigned long __rounddown_pow_of_two(unsigned long n)
   */
- #ifdef __GCC_ASM_FLAG_OUTPUTS__
--# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
-+# define CC_SET(c) "\n\t/* output condition code " #c "*/"
- # define CC_OUT(c) "=@cc" #c
- #else
--# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
-+# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]"
- # define CC_OUT(c) [_cc_ ## c] "=qm"
- #endif
+ #define ilog2(n)				\
+ (						\
+-	__builtin_constant_p(n) ? (		\
++	__builtin_choose_expr(			\
++		__builtin_constant_p(n), (	\
+ 		(n) < 2 ? 0 :			\
+ 		(n) & (1ULL << 63) ? 63 :	\
+ 		(n) & (1ULL << 62) ? 62 :	\
+@@ -147,10 +148,10 @@ unsigned long __rounddown_pow_of_two(unsigned long n)
+ 		(n) & (1ULL <<  4) ?  4 :	\
+ 		(n) & (1ULL <<  3) ?  3 :	\
+ 		(n) & (1ULL <<  2) ?  2 :	\
+-		1 ) :				\
+-	(sizeof(n) <= 4) ?			\
+-	__ilog2_u32(n) :			\
+-	__ilog2_u64(n)				\
++		1),				\
++		(sizeof(n) <= 4) ?		\
++		__ilog2_u32(n) :		\
++		__ilog2_u64(n))			\
+  )
  
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index e3efd8a06066..2be9582fcb2e 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -44,22 +44,22 @@ extern void __add_wrong_size(void)
- 	        __typeof__ (*(ptr)) __ret = (arg);			\
- 		switch (sizeof(*(ptr))) {				\
- 		case __X86_CASE_B:					\
--			asm volatile (lock #op "b %b0, %1\n"		\
-+			asm volatile (lock #op "b %b0, %1"		\
- 				      : "+q" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_W:					\
--			asm volatile (lock #op "w %w0, %1\n"		\
-+			asm volatile (lock #op "w %w0, %1"		\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_L:					\
--			asm volatile (lock #op "l %0, %1\n"		\
-+			asm volatile (lock #op "l %0, %1"		\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_Q:					\
--			asm volatile (lock #op "q %q0, %1\n"		\
-+			asm volatile (lock #op "q %q0, %1"		\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
-@@ -134,7 +134,7 @@ extern void __add_wrong_size(void)
- 	__raw_cmpxchg((ptr), (old), (new), (size), LOCK_PREFIX)
- 
- #define __sync_cmpxchg(ptr, old, new, size)				\
--	__raw_cmpxchg((ptr), (old), (new), (size), "lock; ")
-+	__raw_cmpxchg((ptr), (old), (new), (size), "lock ")
- 
- #define __cmpxchg_local(ptr, old, new, size)				\
- 	__raw_cmpxchg((ptr), (old), (new), (size), "")
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 317fc59b512c..9c56059aaf24 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -19,7 +19,7 @@ extern unsigned long __force_order;
- static inline unsigned long native_read_cr0(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr0,%0\n\t" : "=r" (val), "=m" (__force_order));
-+	asm volatile("mov %%cr0,%0" : "=r" (val), "=m" (__force_order));
- 	return val;
- }
- 
-@@ -31,7 +31,7 @@ static inline void native_write_cr0(unsigned long val)
- static inline unsigned long native_read_cr2(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr2,%0\n\t" : "=r" (val), "=m" (__force_order));
-+	asm volatile("mov %%cr2,%0" : "=r" (val), "=m" (__force_order));
- 	return val;
- }
- 
-@@ -43,7 +43,7 @@ static inline void native_write_cr2(unsigned long val)
- static inline unsigned long __native_read_cr3(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr3,%0\n\t" : "=r" (val), "=m" (__force_order));
-+	asm volatile("mov %%cr3,%0" : "=r" (val), "=m" (__force_order));
- 	return val;
- }
- 
-@@ -67,7 +67,7 @@ static inline unsigned long native_read_cr4(void)
- 		     : "=r" (val), "=m" (__force_order) : "0" (0));
- #else
- 	/* CR4 always exists on x86_64. */
--	asm volatile("mov %%cr4,%0\n\t" : "=r" (val), "=m" (__force_order));
-+	asm volatile("mov %%cr4,%0" : "=r" (val), "=m" (__force_order));
- #endif
- 	return val;
- }
-@@ -101,7 +101,7 @@ static inline u32 __read_pkru(void)
- 	 * "rdpkru" instruction.  Places PKRU contents in to EAX,
- 	 * clears EDX and requires that ecx=0.
- 	 */
--	asm volatile(".byte 0x0f,0x01,0xee\n\t"
-+	asm volatile(".byte 0x0f,0x01,0xee"
- 		     : "=a" (pkru), "=d" (edx)
- 		     : "c" (ecx));
- 	return pkru;
-@@ -115,7 +115,7 @@ static inline void __write_pkru(u32 pkru)
- 	 * "wrpkru" instruction.  Loads contents in EAX to PKRU,
- 	 * requires that ecx = edx = 0.
- 	 */
--	asm volatile(".byte 0x0f,0x01,0xef\n\t"
-+	asm volatile(".byte 0x0f,0x01,0xef"
- 		     : : "a" (pkru), "c"(ecx), "d"(edx));
- }
- #else
+ /**
 -- 
 2.17.0
