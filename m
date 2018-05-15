@@ -1,152 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeEOD0Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 23:26:16 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53958 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeEOD0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 23:26:15 -0400
-Subject: Re: [PATCH -mm] mm, hugetlb: Pass fault address to no page handler
-To: "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-References: <20180515005756.28942-1-ying.huang@intel.com>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <2f97bdea-d873-19d7-ff55-9a625bdfdd67@oracle.com>
-Date: Mon, 14 May 2018 20:25:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752220AbeEOD2l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 23:28:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54936 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752044AbeEOD2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 23:28:39 -0400
+Date: Mon, 14 May 2018 23:28:08 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get
+ audit context
+Message-ID: <20180515032808.ulyaotjyu4ye3ajp@madcap2.tricolour.ca>
+References: <cover.1526173613.git.rgb@redhat.com>
+ <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
+ <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
+ <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
 MIME-Version: 1.0
-In-Reply-To: <20180515005756.28942-1-ying.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8893 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805150032
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515030545.7oiyz33rzoj6sxs5@madcap2.tricolour.ca>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/14/2018 05:57 PM, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
+On 2018-05-14 23:05, Richard Guy Briggs wrote:
+> On 2018-05-14 17:44, Paul Moore wrote:
+> > On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Recognizing that the audit context is an internal audit value, use an
+> > > access function to retrieve the audit context pointer for the task
+> > > rather than reaching directly into the task struct to get it.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  include/linux/audit.h                | 14 ++++++--
+> > >  include/net/xfrm.h                   |  2 +-
+> > >  kernel/audit.c                       |  6 ++--
+> > >  kernel/audit_watch.c                 |  2 +-
+> > >  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
+> > >  net/bridge/netfilter/ebtables.c      |  2 +-
+> > >  net/core/dev.c                       |  2 +-
+> > >  net/netfilter/x_tables.c             |  2 +-
+> > >  net/netlabel/netlabel_user.c         |  2 +-
+> > >  security/integrity/ima/ima_api.c     |  2 +-
+> > >  security/integrity/integrity_audit.c |  2 +-
+> > >  security/lsm_audit.c                 |  2 +-
+> > >  security/selinux/hooks.c             |  4 +--
+> > >  security/selinux/selinuxfs.c         |  6 ++--
+> > >  security/selinux/ss/services.c       | 12 +++----
+> > >  15 files changed, 64 insertions(+), 60 deletions(-)
+> > 
+> > Merged, but there was some fuzz due to the missing 1/5 patch and a
+> > handfull of checkpatch.pl fixes.  Please take a look at the commit in
+> > the audit/next branch and if anything looks awry please send a patch
+> > to fix it.
 > 
-> This is to take better advantage of huge page clearing
-> optimization (c79b57e462b5d, "mm: hugetlb: clear target sub-page last
-> when clearing huge page").  Which will clear to access sub-page last
-> to avoid the cache lines of to access sub-page to be evicted when
-> clearing other sub-pages.  This needs to get the address of the
-> sub-page to access, that is, the fault address inside of the huge
-> page.  So the hugetlb no page fault handler is changed to pass that
-> information.  This will benefit workloads which don't access the begin
-> of the huge page after page fault.
+> Some of that fuzz was due to the two patches (ghak46/47) that went
+> through the xelinux tree...  There will be a merge conflict.
 > 
-> With this patch, the throughput increases ~28.1% in vm-scalability
-> anon-w-seq test case with 88 processes on a 2 socket Xeon E5 2699 v4
-> system (44 cores, 88 threads).  The test case creates 88 processes,
-> each process mmap a big anonymous memory area and writes to it from
-> the end to the begin.  For each process, other processes could be seen
-> as other workload which generates heavy cache pressure.  At the same
-> time, the cache miss rate reduced from ~36.3% to ~25.6%, the
-> IPC (instruction per cycle) increased from 0.3 to 0.37, and the time
-> spent in user space is reduced ~19.3%
+> Otherwise, looks ok.
 
-Since this patch only addresses hugetlbfs huge pages, I would suggest
-making that more explicit in the commit message.  Other than that, the
-changes look fine to me.
+Spoke too soon, missed one from the new seccomp actions_logged...
 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Patch pending...
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
--- 
-Mike Kravetz
-
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@fb.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> Cc: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> ---
->  mm/hugetlb.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> > paul moore
 > 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 129088710510..3de6326abf39 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3677,7 +3677,7 @@ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
->  
->  static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  			   struct address_space *mapping, pgoff_t idx,
-> -			   unsigned long address, pte_t *ptep, unsigned int flags)
-> +			   unsigned long faddress, pte_t *ptep, unsigned int flags)
->  {
->  	struct hstate *h = hstate_vma(vma);
->  	int ret = VM_FAULT_SIGBUS;
-> @@ -3686,6 +3686,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct page *page;
->  	pte_t new_pte;
->  	spinlock_t *ptl;
-> +	unsigned long address = faddress & huge_page_mask(h);
->  
->  	/*
->  	 * Currently, we are forced to kill the process in the event the
-> @@ -3749,7 +3750,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  				ret = VM_FAULT_SIGBUS;
->  			goto out;
->  		}
-> -		clear_huge_page(page, address, pages_per_huge_page(h));
-> +		clear_huge_page(page, faddress, pages_per_huge_page(h));
->  		__SetPageUptodate(page);
->  		set_page_huge_active(page);
->  
-> @@ -3871,7 +3872,7 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
->  #endif
->  
->  int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
-> -			unsigned long address, unsigned int flags)
-> +			unsigned long faddress, unsigned int flags)
->  {
->  	pte_t *ptep, entry;
->  	spinlock_t *ptl;
-> @@ -3883,8 +3884,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct hstate *h = hstate_vma(vma);
->  	struct address_space *mapping;
->  	int need_wait_lock = 0;
-> -
-> -	address &= huge_page_mask(h);
-> +	unsigned long address = faddress & huge_page_mask(h);
->  
->  	ptep = huge_pte_offset(mm, address, huge_page_size(h));
->  	if (ptep) {
-> @@ -3914,7 +3914,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  
->  	entry = huge_ptep_get(ptep);
->  	if (huge_pte_none(entry)) {
-> -		ret = hugetlb_no_page(mm, vma, mapping, idx, address, ptep, flags);
-> +		ret = hugetlb_no_page(mm, vma, mapping, idx, faddress, ptep, flags);
->  		goto out_mutex;
->  	}
->  
-> 
+> - RGB
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
