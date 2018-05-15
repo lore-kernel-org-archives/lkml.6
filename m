@@ -1,240 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeEOKO7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:14:59 -0400
-Received: from mail-bn3nam01on0049.outbound.protection.outlook.com ([104.47.33.49]:41349
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752379AbeEOKO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:14:57 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com;
-Date: Tue, 15 May 2018 18:14:07 +0800
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: berlin*-dts: use SPDX-License-Identifier for
- berlin based board
-Message-ID: <20180515181407.1848452b@xhacker.debian>
-In-Reply-To: <20180515181216.6d82f7fc@xhacker.debian>
-References: <20180515181216.6d82f7fc@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752729AbeEOKTp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:19:45 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38312 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752481AbeEOKTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:19:43 -0400
+X-Google-Smtp-Source: AB8JxZoQkX9YC6us2VssInhX3RNXlJsTmOBSXTLnE8VSFqkvenmLYSqI3JE2O+cFh/fuZqaagCfYmgiyK84nXYizDFw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY1PR01CA0182.jpnprd01.prod.outlook.com (2603:1096:402::34)
- To DM5PR03MB2635.namprd03.prod.outlook.com (2603:10b6:3:43::9)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2635;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2635;3:zySQUoXIKtXhBjFWIoNNkuhwN1FSymHyk8zyQfm2z/ZgsnA0UwCzTqyQTireDzgX7J5lKREiI59nlzLJxmBXf76ms1s02neqY0i/orY07OdQMDMBhKMCVPmFngJGEJIvkAsHxsiqjsRGhlpEDTiJrZHiG46TSoYdAOgisfWj+UwmOZWpUz9SzJnK+DguYZMeJpiNatqMg3GhLhODrKhcvgoK8P/DZEQAyOWni1ufveiAaS9mJrhU+PfAtA+AI1zb;25:L22MsrZLKRFVkj/hnjPuaw0TkzlexLnK6A/c1gcOmzS++1b7qRBqhx4SvxXM8U+yT+DKLp1Rw/7cWtp+c8/nLELw1KfYWlwXTrd8iHSHfBwaKnGGlSvs4QcYxI6cKNHzGv0sMjwD1smARNSfupgiqyDepNsB4I82SnmE7nZrMTeVbcDp+RdB7oD5afeuZcjzsMVm7bktZw3PXyzvNFu4PRli69Wo5mHWeKmmoAb1Aoe1bJOZVK4jcGQyhJNV0v01Ga0bbbfRCHr5McSrp4mcHKKCenqsKdSM5sfXIDnA1BowhQCzbyqP6qO4a12qDvsRv8/zMsqUcUujP1ebYJMRSg==;31:m7E4eNEi9AWY9gp6eMpC/GdZpdI0b1LUyd3hrkIik5asHYdCM2QycEWeX9hFrgRJ9v0UajZMU8KZvVrMMIsrjyCaP1C3VjwQvWVFjVDkQTWH+1KAcxAgx3sy2rYsok5ZDn1tofw6u/6Wmmv7PnwrJxSg/fI7Cwq9/ziOEq0y2HNJbfRiV5OMMNahViX5Xrd0ygbf/LVZCgVxUje3pB348jsJXnisaopmCUYj1Qz9uF0=
-X-MS-TrafficTypeDiagnostic: DM5PR03MB2635:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2635;20:MZpuMOrPLvctDf/xNDgFFLXuxAlyL/DVbVFqT3q3PvuCsere1t5lq9bBf3Lj0BtOpwUA99VZLIC3g7Sqc2pgaEL9MSmO9GVQnNbl3k99/p44RsdELZs076oLL9sbsYQynRDAIm0CkEzNJZHt1gKNQ2JJ9UAA6i6UKuOq6HzaMQSH/RarXPVpkWUO3YEGrTOWe5x+YbAlxM80qTV4GTQx1jMylGk5MMwKXTqqdpHjJyzM14uiMrG+ed2X8AJwURnaNWtxT/5nM7qyWXMYjSxE5FRvM2sU0ZRE7lqyB+nAPIHTePaSRCtyVv9Y3koDQz5s0I2H+pcRn3lcEoz/y+re7QguJH2td5VdMQh/kBRJ2P9L+JHhp9PF0JSsHfjj5+QqYlv7y75/YAP1oYbdEpkoxaxzz7h8DK7hlJ7RjJ+2BOkZtT8DJaKSvm76RuKb4WHTEEMJEtNrGeqCkrjI11bDoq3sKLN/d6J8qni8wy+vZR4icC5HnOUXbDxy1L1StTBK;4:H/cdXQMxAn+97FwGkRB/owCxaU7cZMCgOnXPcUfy10/bsbmTc3hEY3XC17P/w5gn9JlDaY5uC+IRfswsn7zsO5NcNimjamAh+5QpPZqWZOVI6iaWdekzZfwxujUrPWC7bdVJmTSIgph0HYZ7JtZK1P3EfMogeYNeVzIvhvJMwty19lGi0J3SW5FZRCG6WWU7Spq1yePpg0V8HcXIGzoSoSQzDn/tRW0ZpO/pU45u0Z+RkGfyLbRJAm+bhmknZ+9wcF+sn6mwXQjk/Gw2bpiTFhQDyIXYXkE4atnBVeEsDaWDBbxinBN5v5u+DonBpWU0UpzXZv0s+k5wDBO1ZyqBzUZRMdeGGpSoYPydzsFVf5k=
-X-Microsoft-Antispam-PRVS: <DM5PR03MB2635458275CC07FA3415AE2DED930@DM5PR03MB2635.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(58145275503218);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR03MB2635;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2635;
-X-Forefront-PRVS: 0673F5BE31
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39380400002)(366004)(346002)(39860400002)(199004)(189003)(6116002)(386003)(6506007)(97736004)(59450400001)(7696005)(53936002)(55016002)(6306002)(47776003)(316002)(110136005)(9686003)(33896004)(72206003)(476003)(966005)(3846002)(1076002)(575784001)(52116002)(478600001)(956004)(446003)(11346002)(86362001)(26005)(16526019)(76176011)(486006)(186003)(23676004)(81166006)(8746002)(81156014)(7736002)(8676002)(8936002)(4326008)(2906002)(6666003)(106356001)(25786009)(5660300001)(39060400002)(68736007)(66066001)(50466002)(50226002)(305945005)(105586002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2635;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjAzTUIyNjM1OzIzOlhtcXRxTEY5dzJwUDM0QWlNT00xMmVRWVkz?=
- =?utf-8?B?Tm5GUmZVUWliY3pQN1laa1MvZVEzOVRhOVhZUXVKbk9PeVZyc1lNc0tMTCtU?=
- =?utf-8?B?cG5GcmxOcjV1U0hhaGNFam1rVW5SZDl6R1l0bXI5cFdaenh2Y21BQm9EMEwy?=
- =?utf-8?B?SFZ4NjRIUEtieHRBSVJ5S0licEoxRzB4RER6RERHanpvNmJXMXNKVXlBV3ll?=
- =?utf-8?B?UUlnVGo2QXo3KzdPUGlvdjBWbGdPOXBWcUtEdGNUcWh6aTNhekF5YkpwWHc2?=
- =?utf-8?B?ek5wWWJQbkg5WUUyOFlkRERMMDlYV2J0YzRvWmcrblNTNSs1eEFTbFE2OTZ2?=
- =?utf-8?B?aC9RdWwyaWtYTTFhY091UzMzUjNHbFdXOWtmamovcUpMZDJmQVJDT2JNcGti?=
- =?utf-8?B?d1prUEZQQmxzZm5nbFRxVTN2NkRqVjRna0ZteXlVSGRnWE5VdUNWUGI1K2pD?=
- =?utf-8?B?dWh0VGFZaW0vVlV4R1pBSnI3NjRhZE9MUVN1dEZ2UmdpNHRxU2poZjNXcEpn?=
- =?utf-8?B?SVNZYmszUzhCMlRjTjlQcUp2R3E2RGoxZ0NDeXdMUmtVeVNFdENzYkp6NS9P?=
- =?utf-8?B?OEhzdzJpT0ROVndvNVFEUTZWOFczRkQ0dk1rNnE0YkV4UUxpM2NnajgzNGpq?=
- =?utf-8?B?dlhNUkFuK09sLzFURDNHSlRHMmtqV0xRcG1xSW1FTmVrYzh3dy9FSWxYbTQ1?=
- =?utf-8?B?OVhra3Y3NkJXVmVoakNnWUh6TzkrUEdjMHlEa09QYmpFYW9FT3lLZ3I4VVV3?=
- =?utf-8?B?azFZdEM4NWR5Wm9oSXZmekZQUm8vQ1I0R2p5S2FIdFlNZ2FvallvSjNDY2NP?=
- =?utf-8?B?WFJ6c2tSdjdxbGlpekxvRnU5dG40Z0xkTW1yTWNtcWEzTUttUldacmJVK2s0?=
- =?utf-8?B?c25pZWxOUERsTmNoZ1NuZGp4cnpvelFsL3doN3ZYdzFhbFhQZmxzVGY4eVFm?=
- =?utf-8?B?azlJRjA2aTNpVElEblpwMDd2aUFGOW00UkdST3B2eW9ZNDY0aWJVZDlPME5j?=
- =?utf-8?B?RXN5cFJCb2gzZXhsaHNIWGE1OWtwWFRQcUNad09makROaHE0Tk41Vmo4dDhD?=
- =?utf-8?B?YnJlTG1qbFFybllMNDM2TW1zU3pjcGMyMkFIVHZobWtDbFlXeS9BcDUvckJY?=
- =?utf-8?B?a2JLQk5JbG9TWDZlNEdpZWFxYmJTVWkvTUFmT3c4dDZYVkxudTFGb0lqMDFE?=
- =?utf-8?B?aUhkNTQ4dVpaOEY3Y1BGdFRTQVM3V1c2WG9hZDljN0JKeWllUDhlTzhFUlFO?=
- =?utf-8?B?cS9UWnV0TWROeEhLNEVUZFk0ZXFuTUJ2T0p6VUVlZHQwUy9Md25ibDNXZWFF?=
- =?utf-8?B?ejV1ekJQRU9sd1dZM2JRN0dKOVBLUi8vVllJY0NQL2JTUUhyeGNiWU14RU9J?=
- =?utf-8?B?VkJURXo0NHczbXBIZVljMzJBTXBYSm5jWURVSk5Pd1pqRnduY2xUNEl5bHNS?=
- =?utf-8?B?VzJXVVB3UGlVcmRoUGhzQlduYlVlS1NWa3hNVUZUL1lScFl2TjlRaElpOUZo?=
- =?utf-8?B?MFUzUFVyNU9SSGJ5ZG90RmdwRGw5VUZTZVBlWlFLZThIcDBYNmxVVlR3WWta?=
- =?utf-8?B?SnhQRlNnQ2Q4Z3BpTDMyS041MFZKamdwL0lxRHd0aEkzQXE4a1I1b1NQbUEy?=
- =?utf-8?B?VU13a3BRUzdrS3ZXVkFsWUZOakhVODNZQU1NbUJWZWU5YTdvUzNyc1N1dkxZ?=
- =?utf-8?B?b0JZUkk5YzYyanhjYWdHRTluYVExQkg0OGJlMWYrMm5RMSsrM21YaTZSbXVB?=
- =?utf-8?B?V2lOWDBtWkl4alVyNzNlbWxtTXY3ZEFwaXFPaW5yTmduRVdSbUZrVGw4WnJx?=
- =?utf-8?Q?CXbwmY7c22msM?=
-X-Microsoft-Antispam-Message-Info: QOvoGOz6BUycyYWyXtv+IkS2KW4PpaLG4JE2gD3BACwyf7K4/H2xS5Pwmvt98QUgZNKl5SAU0Ob/IIFXXtqvkfYteK38vUGtrazEdMi0HlYTA80JaI2qw/WrcMrp3rn/ZMHN2cdxe62FHy4m+H/V1LuBGq5Uu2faqmG1u+SMPVKCG3qeRhL4V5lFLSOsjORV
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2635;6:6W4Ja86gcZdTItKGr41oeh5vHWu7qWgyoA5tM+sdovdb5iwBRy5UCmStc5cKOaZ4t0bdzr47iPZmDTmZzSd6BAXguh81N2SGQWaCa/90ViS3DaEQJHXbTepD+0ysX3VR5j2jmGTqvThAJ43nEMHuF6eUfyTChSPFerk4ijPXBJvwa6VY+Qza1qEoCqnMQUF59qcfBb9Ai2LO7S3Ee5C95rkl5z5/axcxVXxU2QKF9TnIqhyIAA+2L7X6SGoCnDQ35YV1uo7Nxw9PBb9wvg0rFLm2aZ1X4xbJN+/AmeY0r9Or6wCrfHra2CqBTa7Lov4SadQpRnsxUy9wUE/3o614q+OiHiAoo0J/Nli0A5wxHlkyaVopIsZ2HEERaQc/9muiJRwGD/tv5F7WatI0DA11S/d5q0Wn+4u+PGh8AtcZZtcpqrLHM5vr+82AzuHX3lDv0UZ83h47pYaiH/4jVoGbSg==;5:c0uX9C49XUhA+2yytHowR+WHhwLld7yM9qn9+m/mMnRpL7X2BACc7RsFXQcCSsZP4Jau5IOJq2CKb1qdpEb0/I7yCaJRdw4qIPSf2yL3oYmAKjrvrFKTm74vggS17M9qksXzNho7rDp7ZpxWFgKpZQEvZEvnV8awlR36m9YPxXk=;24:/+LxZdU53adu7+5yLJpdn2VQWbuyYYAju1Zq4v9bA5EO3QJLD1n4JT1+iZ43SVir3qNt+u5VD5cPwXj9/ngYLKh5fyfMZCOclhC10zDPxkg=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2635;7:XWKErYJ50cnWUC6lzYPFrAlyoZucCXU+JfNhO8c+At5w39gkQlcrpS3yMVe3ceWGz+FY6B2316FxtDpYF7fKLx3tN8Db3vWiYgpw+QVpyx0AtzoHutbr5YSh1traxTiRlzWITBUhIipNe3BlXfoqiPMsI9rEEcD0aMfutT0NLW1VZqN1UFVwx29nlzYpKXHoiwqBn0t2EDGN2ydov/0/dK0AYlIT7umDW0LnAKyjD16EIYUaAvhuz0GoA6KFUdIW
-X-MS-Office365-Filtering-Correlation-Id: 6b799398-e935-4a2a-84d2-08d5ba4cb431
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2018 10:14:52.7936 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b799398-e935-4a2a-84d2-08d5ba4cb431
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2635
+In-Reply-To: <20180514163206.GF30654@e110439-lin>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-4-patrick.bellasi@arm.com> <20180513060443.GB64158@joelaf.mtv.corp.google.com>
+ <20180513062538.GA116730@joelaf.mtv.corp.google.com> <20180514163206.GF30654@e110439-lin>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 15 May 2018 12:19:21 +0200
+Message-ID: <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when required
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4FAF4c6010351
 
-Follow the recent trend for the license description, and also fix the
-wrongly stated X11 to MIT.
+On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> On 12-May 23:25, Joel Fernandes wrote:
+>> On Sat, May 12, 2018 at 11:04:43PM -0700, Joel Fernandes wrote:
+>> > On Thu, May 10, 2018 at 04:05:53PM +0100, Patrick Bellasi wrote:
+>> > > Schedutil updates for FAIR tasks are triggered implicitly each time a
+>> > > cfs_rq's utilization is updated via cfs_rq_util_change(), currently
+>> > > called by update_cfs_rq_load_avg(), when the utilization of a cfs_rq has
+>> > > changed, and {attach,detach}_entity_load_avg().
+>> > >
+>> > > This design is based on the idea that "we should callback schedutil
+>> > > frequently enough" to properly update the CPU frequency at every
+>> > > utilization change. However, such an integration strategy has also
+>> > > some downsides:
+>> >
+>> > Hi Patrick,
+>
+> Hi Joel,
+>
 
-As already pointed on the DT ML, the X11 license text [1] is explicitly
-for the X Consortium and has a couple of extra clauses. The MIT
-license text [2] is actually what the current DT files claim.
+[...]
 
-[1] https://spdx.org/licenses/X11.html
-[2] https://spdx.org/licenses/MIT.html
+>> > > @@ -5456,10 +5443,12 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>> > >           update_cfs_group(se);
+>> > >   }
+>> > >
+>> > > + /* The task is no more visible from the root cfs_rq */
+>> > >   if (!se)
+>> > >           sub_nr_running(rq, 1);
+>> > >
+>> > >   util_est_dequeue(&rq->cfs, p, task_sleep);
+>> > > + cpufreq_update_util(rq, 0);
+>> >
+>> > One question about this change. In enqueue, throttle and unthrottle - you are
+>> > conditionally calling cpufreq_update_util incase the task was
+>> > visible/not-visible in the hierarchy.
+>> >
+>> > But in dequeue you're unconditionally calling it. Seems a bit inconsistent.
+>> > Is this because of util_est or something? Could you add a comment here
+>> > explaining why this is so?
+>>
+>> The big question I have is incase se != NULL, then its still visible at the
+>> root RQ level.
+>
+> My understanding it that you get !se at dequeue time when we are
+> dequeuing a task from a throttled RQ. Isn't it?
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts    | 33 +------------------
- .../boot/dts/berlin2cd-google-chromecast.dts  | 33 +------------------
- arch/arm/boot/dts/berlin2q-marvell-dmp.dts    | 33 +------------------
- 3 files changed, 3 insertions(+), 96 deletions(-)
+Yes se becomes NULL only when you reach root domain
 
-diff --git a/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts b/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
-index 1c475796d17f..64a297759eb9 100644
---- a/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
-+++ b/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
-@@ -1,39 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /*
-  * Device Tree file for Sony NSZ-GS7
-  *
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is licensed under the terms of the GNU General Public
-- *     License version 2. This program is licensed "as is" without any
-- *     warranty of any kind, whether express or implied.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
-index ca24def0ce13..540115172d3a 100644
---- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
-+++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
-@@ -1,39 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /*
-  * Device Tree file for Google Chromecast
-  *
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is licensed under the terms of the GNU General Public
-- *     License version 2. This program is licensed "as is" without any
-- *     warranty of any kind, whether express or implied.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/berlin2q-marvell-dmp.dts b/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
-index 57aa5f8a7c77..c162f98cb8e8 100644
---- a/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
-+++ b/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
-@@ -1,37 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /*
-  * Copyright (C) 2014 Antoine Ténart <antoine.tenart@free-electrons.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is licensed under the terms of the GNU General Public
-- *     License version 2. This program is licensed "as is" without any
-- *     warranty of any kind, whether express or implied.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
--- 
-2.17.0
+>
+> Thus, this means you are dequeuing a throttled task, I guess for
+> example because of a migration.
+> However, the point is that a task dequeue from a throttled RQ _is
+> already_ not visible from the root RQ, because of the sub_nr_running()
+> done by throttle_cfs_rq().
+>
+>> In that case should we still call the util_est_dequeue and the
+>> cpufreq_update_util?
+>
+> I had a better look at the different code paths and I've possibly come
+> up with some interesting observations. Lemme try to resume theme here.
+>
+> First of all, we need to distinguish from estimated utilization
+> updates and schedutil updates, since they respond to two very
+> different goals.
+>
+>
+> .:: Estimated utilization updates
+> =================================
+>
+> Goal: account for the amount of utilization we are going to
+>       expect on a CPU
+>
+> At {en,de}queue time, util_est_{en,de}queue() is always
+> unconditionally called because it tracks the utilization which is
+> estimated to be generated by all the RUNNABLE tasks.
+>
+> We do not care about throttled/un-throttled RQ here because the effect
+> of throttling is already folded into the estimated utilization.
+>
+> For example, a 100% tasks which is placed into a 50% bandwidth
+> limited TG will generate a 50% (estimated) utilization. Thus, when the
+> task is enqueued we can account immediately for that utilization
+> although the RQ can be currently throttled.
+>
+>
+> .:: Schedutil updates
+> =====================
+>
+> Goal: select a better frequency, if and _when_ required
+>
+> At enqueue time, if the task is visible at the root RQ the it's
+> expected to run within a scheduler latency period. Thus, it makes
+> sense to call immediately schedutil to account for its estimated
+> utilization to possibly increase the OPP.
+>
+> If instead the task is enqueued into a throttled RQ, then I'm
+> skipping the update since the task will not run until the RQ is
+> actually un-throttled.
+>
+> HOWEVER, I would say that in general we could skip this last
+> optimization and always unconditionally update schedutil at enqueue
+> time considering the fact that the effects of a throttled RQ are
+> always reflected into the (estimated) utilization of a task.
+
+I think so too
+
+>
+> At dequeue time instead, since we certainly removed some estimated
+> utilization, then I unconditionally updated schedutil.
+>
+> HOWEVER, I was not considering these two things:
+>
+> 1. for a task going to sleep, we still have its blocked utilization
+>    accounted in the cfs_rq utilization.
+
+It might be still interesting to reduce the frequency because the
+blocked utilization can be lower than its estimated utilization.
+
+>
+> 2. for a task being migrated, at dequeue time we still have not
+>    removed the task's utilization from the cfs_rq's utilization.
+>    This usually happens later, for example we can have:
+>
+>       move_queued_task()
+>          dequeue_task()                      --> CFS task dequeued
+>          set_task_cpu()                         --> schedutil updated
+>             migrate_task_rq_fair()
+>                detach_entity_cfs_rq()
+>                   detach_entity_load_avg()   --> CFS util removal
+>          enqueue_task()
+>
+> Moreover, the "CFS util removal" actually affects the cfs_rq only if
+> we hold the RQ lock, otherwise we know that it's just back annotated
+> as "removed" utilization and the actual cfs_rq utilization is fixed up
+> at the next chance we have the RQ lock.
+>
+> Thus, I would say that in both cases, at dequeue time it does not make
+> sense to update schedutil since we always see the task's utilization
+> in the cfs_rq and thus we will not reduce the frequency.
+
+Yes only attach/detach make sense from an utilization pov and that's
+where we should check for a frequency update for utilization
+
+>
+> NOTE, this is true independently from the refactoring I'm proposing.
+> At dequeue time, although we call update_load_avg() on the root RQ,
+> it does not make sense to update schedutil since we still see either
+> the blocked utilization of a sleeping task or the not yet removed
+> utilization of a migrating task. In both cases the risk is to ask for
+> an higher OPP right when a CPU is going to be IDLE.
+
+We have to take care of not mixing the opportunity to update the
+frequency when we are updating the utilization with the policy that we
+want to apply regarding (what we think that is) the best time to
+update the frequency. Like saying that we should wait a bit more to
+make sure that the current utilization is sustainable because a
+frequency change is expensive on the platform (or not)
+
+It's not because a task is dequeued that we should not update and
+increase the frequency; Or even that we should not decrease it because
+we have just taken into account some removed utilization of a previous
+migration.
+The same happen when a task migrates, we don't know if the utilization
+that is about to be migrated, will be higher or lower than the normal
+update of the utilization (since the last update) and can not generate
+a frequency change
+
+I see your explanation above like a kind of policy where you want to
+balance the cost of a frequency change with the probability that we
+will not have to re-update the frequency soon.
+
+I agree that some scheduling events give higher chances of a
+sustainable utilization level and we should favor these events when
+the frequency change is costly but I'm not sure that we should remove
+all other opportunity to udjust the frequency to the current
+utilization level when the cost is low or negligible.
+
+Can't we classify the utilization events into some kind of major and
+minor changes ?
+
+>
+> Moreover, it seems that in general we prefer a "conservative" approach
+> in frequency reduction.
+> For example it could be harmful to trigger a frequency reduction when
+> a task is migrating off a CPU, if right after another task should be
+> instead migrated into the same CPU.
+>
+>
+> .:: Conclusions
+> ===============
+>
+> All that considered, I think I've convinced myself that we really need
+> to notify schedutil only in these cases:
+>
+>  1. enqueue time
+>     because of the changes in estimated utilization and the
+>     possibility to just straight to a better OPP
+>
+>  2. task tick time
+>     because of the possible ramp-up of the utilization
+>
+> Another case is related to remote CPUs blocked utilization update,
+> after the recent Vincent's patches. Currently indeed:
+>
+>   update_blocked_averages()
+>      update_load_avg()
+>         --> update schedutil
+>
+> and thus, potentially we wake up an IDLE cluster just to reduce its
+> OPP. If the cluster is in a deep idle state, I'm not entirely sure
+> this is good from an energy saving standpoint.
+> However, with the patch I'm proposing we are missing that support,
+> meaning that an IDLE cluster will get its utilization decayed but we
+> don't wake it up just to drop its frequency.
+
+So more than deciding in the scheduler if we should wake it up or not,
+we should give a chance to cpufreq to decide if it wants to update the
+frequency or not as this decision is somehow platform specific: cost
+of frequency change, clock topology and shared clock, voltage topology
+...
+
+Regards,
+Vincent
+>
+> Perhaps we should better pass in this information to schedutil via a
+> flag (e.g. SCHED_FREQ_REMOTE_UPDATE) and implement there a policy to
+> decide if and when it makes sense to drop the OPP. Or otherwise find a
+> way for the special DL tasks to always run on the lower capacity_orig
+> CPUs.
+>
+>> Sorry if I missed something obvious.
+>
+> Thanks for the question it has actually triggered a better analysis of
+> what we have and what we need.
+>
+> Looking forward to some feedbacks about the above before posting a new
+> version of this last patch.
+>
+>> thanks!
+>>
+>> - Joel
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
