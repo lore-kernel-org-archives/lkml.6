@@ -1,102 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753543AbeEOPyG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 11:54:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:58822 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752428AbeEOPyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 11:54:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,403,1520924400";
-   d="scan'208";a="199562098"
-Subject: Re: [PATCH 01/15] x86/split_lock: Add CONFIG and enumerate #AC
- exception for split locked access feature
-To: Fenghua Yu <fenghua.yu@intel.com>
-References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
- <1526323945-211107-2-git-send-email-fenghua.yu@intel.com>
- <3194fef3-68a7-327b-395b-a98bbb12e40a@intel.com>
- <20180515154156.GA244301@romley-ivt3.sc.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4d597ddd-1be6-f903-ab28-e76a498ba652@intel.com>
-Date: Tue, 15 May 2018 08:54:02 -0700
+        id S1752304AbeEOP66 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 11:58:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750810AbeEOP65 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 11:58:57 -0400
+Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, pmorel@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
+ <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
+ <1f9117bd-ed14-bde4-fdbd-cb3733c8c633@linux.ibm.com>
+ <afd54b28-e61c-a81e-41a3-6142d7277400@linux.vnet.ibm.com>
+From: Halil Pasic <pasic@linux.ibm.com>
+Date: Tue, 15 May 2018 17:48:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180515154156.GA244301@romley-ivt3.sc.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <afd54b28-e61c-a81e-41a3-6142d7277400@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051515-0008-0000-0000-000004F6BDBE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051515-0009-0000-0000-00001E8B2503
+Message-Id: <1fb8d1ab-02d5-c170-08e8-a77526fbb7c4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805150161
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 08:41 AM, Fenghua Yu wrote:
-> On Tue, May 15, 2018 at 08:36:35AM -0700, Dave Hansen wrote:
->> On 05/14/2018 11:52 AM, Fenghua Yu wrote:
->>> +#include <linux/printk.h>
->>> +#include <asm/msr.h>
->>> +
->>> +static bool split_lock_ac_supported;
->> Was there a reason not to use an X86_FEATURE* bit for this?
-> The feature is not enumerated in cpuid. It's detected by writing 1
-> to bit 29 in MSR 0x33.
-> 
-> So it can't fit in X86_FEATURE, right?
 
-We have X86_FEATURE_*'s for lots of things, even software constructs
-that have no representation in the hardware CPUID.
+
+On 05/15/2018 05:16 PM, Tony Krowiak wrote:
+> On 05/15/2018 10:17 AM, Pierre Morel wrote:
+>> On 14/05/2018 21:42, Tony Krowiak wrote:
+>>> On 05/11/2018 01:18 PM, Halil Pasic wrote:
+>>>>
+>>>>
+>>>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
+>>>>> Registers the matrix device created by the VFIO AP device
+>>>>> driver with the VFIO mediated device framework.
+>>>>> Registering the matrix device will create the sysfs
+>>>>> structures needed to create mediated matrix devices
+>>>>> each of which will be used to configure the AP matrix
+>>>>> for a guest and connect it to the VFIO AP device driver.
+>>>>>
+>>>> [..]
+>>>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>>>>> new file mode 100644
+>>>>> index 0000000..d7d36fb
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>>>> @@ -0,0 +1,106 @@
+>>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>>> +/*
+>>>>> + * Adjunct processor matrix VFIO device driver callbacks.
+>>>>> + *
+>>>>> + * Copyright IBM Corp. 2017
+>>>>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>>> + *
+>>>>> + */
+>>>>> +#include <linux/string.h>
+>>>>> +#include <linux/vfio.h>
+>>>>> +#include <linux/device.h>
+>>>>> +#include <linux/list.h>
+>>>>> +#include <linux/ctype.h>
+>>>>> +
+>>>>> +#include "vfio_ap_private.h"
+>>>>> +
+>>>>> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
+>>>>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>>>>> +
+>>>>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+>>>>> +{
+>>>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+>>>>> +
+>>>>> +    ap_matrix->available_instances--;
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+>>>>> +{
+>>>>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+>>>>> +
+>>>>> +    ap_matrix->available_instances++;
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>
+>>>> The above functions seem to be called with the lock of this auto-generated
+>>>> mdev parent device held. That's why we don't have to care about synchronization
+>>>> ourselves, right?
+>>>
+>>> I would assume as much. The comments for the 'struct mdev_parent_ops' in
+>>> include/linux/mdev.h do not mention anything about synchronization, nor did I
+>>> see any locking or synchronization in the vfio_ccw implementation after which
+>>> I modeled my code, so frankly it is something I did not consider.
+>>>
+>>>>
+>>>>
+>>>> A small comment in the code could be helpful for mdev non-experts. Hell, I would
+>>>> even consider documenting it for all mdev -- took me some time to figure out.
+>>>
+>>> You may want to bring this up with the VFIO mdev maintainers, but I'd be happy to
+>>> include a comment in the functions in question if you think it important.
+>>>
+>>>>
+>>>>
+>>>> [..]
+>>>>
+>>>>
+>>>>> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+>>>>> +{
+>>>>> +    int ret;
+>>>>> +
+>>>>> +    ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
+>>>>> +{
+>>>>> +    ap_matrix->available_instances--;
+>>>>
+>>>> What is this for? I don't understand.
+>>>
+>>> To control the number of mediated devices one can create for the matrix device.
+>>> Once the max is reached, the mdev framework will not allow creation of another
+>>> mediated device until one is removed. This counter keeps track of the number
+>>> of instances that can be created. This is documented with the mediated
+>>> framework. You may want to take a look at:
+>>>
+>>> Documentation/vfio-mediated-device.txt
+>>> Documentation/vfio.txt
+>>> Documentation/virtual/kvm/devices/vfio.txt
+>>
+>> This is what you do in create/remove.
+>> But here in unregister I agree with Halil, it does not seem to be usefull.
+> 
+> If that is in fact what Halil was asking, then I misinterpreted his question; I
+> thought he was asking what the available_instances was used for. You are
+> correct, this does not belong here although it makes little difference given
+> this is called only when the driver, which creates the matrix device, is unloaded.
+> It is necessary in the register function to initialize its value, but I'll
+> remove it from here.
+> 
+
+I questioned the dubious usage of ap_matrix->available_instances rather than
+asking what is the variable for.
+
+If I've had this deemed damaging I would have asked if it's damaging in a way
+I think it is. For example take my comment on 'KVM: s390: interfaces to manage
+guest's AP matrix'.
+
+Regards,
+Halil
+
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>> Regards,
+>>>> Halil
+>>>>
+>>>>> + mdev_unregister_device(&ap_matrix->device);
+>>>>> +}
+>>>
+>>>
+>>
+> 
