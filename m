@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752418AbeEOCy0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 22:54:26 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35393 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752366AbeEOCyY (ORCPT
+        id S1752479AbeEOCyv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 22:54:51 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:37759 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752454AbeEOCys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 22:54:24 -0400
-X-Google-Smtp-Source: AB8JxZrHQHBBFH+mIL+RWIGsbU3bjlDDvJCx7pK5St0+K7V6aay6fIpT2CXKUaSF+ihz16Bjv8h4UA==
+        Mon, 14 May 2018 22:54:48 -0400
+X-Google-Smtp-Source: AB8JxZplKOKwD2ZcEVKQs7+jWSGjWmdC1Xg9CPDCndAoX6Pj/N0yF6a5xVaOfBPFqdpv2tVmf6ec/g==
 From: Leo Yan <leo.yan@linaro.org>
 To: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -18,9 +18,9 @@ To: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Kaihua Zhong <zhongkaihua@huawei.com>, Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 1/5] arm64: dts: hi3660: Add mailbox node
-Date: Tue, 15 May 2018 10:53:11 +0800
-Message-Id: <1526352795-6991-2-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v2 2/5] arm64: dts: hi3660: Add stub clock node
+Date: Tue, 15 May 2018 10:53:12 +0800
+Message-Id: <1526352795-6991-3-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
@@ -30,28 +30,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Add the mailbox controller node for hi3660 platform.
+Add stub clock node for hi3660 platform.
 
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
 Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index ec3eb8e..b9e7c91 100644
+index b9e7c91..3a3bcff 100644
 --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
 +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -274,6 +274,14 @@
- 			#reset-cells = <2>;
+@@ -282,6 +282,13 @@
+ 			#mbox-cells = <3>;
  		};
  
-+		mailbox: mailbox@e896b000 {
-+			compatible = "hisilicon,hi3660-mbox";
-+			reg = <0x0 0xe896b000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <3>;
++		stub_clock: stub_clock@e896b500 {
++			compatible = "hisilicon,hi3660-stub-clk";
++			reg = <0x0 0xe896b500 0x0 0x0100>;
++			#clock-cells = <1>;
++			mboxes = <&mailbox 13 3 0>;
 +		};
 +
  		dual_timer0: timer@fff14000 {
