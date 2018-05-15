@@ -1,85 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752867AbeEOVSS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 17:18:18 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:45718 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752389AbeEOVSQ (ORCPT
+        id S1752739AbeEOVUv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 17:20:51 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55918 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752483AbeEOVUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 17:18:16 -0400
-X-Google-Smtp-Source: AB8JxZotfjNos+g5mLfSMyhjtHipReOIaxgAi9plOXuzmBdP2IUcnQSUoEWF5St9WeB/Na5AbflTbA==
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-From: valdis.kletnieks@vt.edu
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Al Stone <ahs3@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: linux-next 20180515 - ACPI disabled..
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1526419088_2497P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        Tue, 15 May 2018 17:20:49 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date: Tue, 15 May 2018 17:18:08 -0400
-Message-ID: <50539.1526419088@turing-police.cc.vt.edu>
+Date: Tue, 15 May 2018 23:20:46 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH v4 3/3] ARM: dts: tegra: Work safely with 256 MB
+ Colibri-T20 modules
+In-Reply-To: <1526395285-19006-4-git-send-email-krzk@kernel.org>
+References: <1526395285-19006-1-git-send-email-krzk@kernel.org>
+ <1526395285-19006-4-git-send-email-krzk@kernel.org>
+Message-ID: <fce1d8c51fc3fd74fe61933fe9b59654@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1526419088_2497P
-Content-Type: text/plain; charset=us-ascii
+On 15.05.2018 16:41, Krzysztof Kozlowski wrote:
+> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
+> expecting the bootloader to do the fixup of /memory node.  However in
+> case it does not happen, let's stay on safe side by limiting the memory
+> to 256 MB for both versions of Colibri-T20.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> RFT:
+> Not tested on 512 MB module as I have only the 256 MB one.
+> 
+> Changes since v3:
+> 1. Reduce the memory in existing DTSI instead of creating a new one
+>    (suggested by Marcel).
+> 
+> Changes since v2:
+> 1. Do not add new compatible but use everywhere existing
+>    "toradex,colibri_t20-512" (suggested by Rob).
+> 
+> Changes since v1:
+> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>    my bootloader uses mem= argument).
+> ---
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 9 +++++++--
+>  arch/arm/boot/dts/tegra20-iris-512.dts     | 2 +-
 
-Seeing this at boot with linux-next 20180415.  ACPI gets disabled, hilarity and hijinks
-result - everything from a lot of stuff can't find an IRQ to the dual-core w/ HT CPU
-coming up as just 1 core no HT. 20180430 works just fine...
+I don't like this variant too much.
 
-[    0.000000] ACPI: Early table checksum verification disabled
-[    0.000000] ACPI: RSDP 0x00000000CB7F1000 000024 (v02 DELL  )
-[    0.000000] ACPI: XSDT 0x00000000CB7F1088 000094 (v01 DELL   CBX3     01072009 AMI  00010013)
-[    0.000000] ACPI: FACP 0x00000000CB7FB720 00010C (v05 DELL   CBX3     01072009 AMI  00010013)
-[    0.000000] ACPI: DSDT 0x00000000CB7F11B0 00A56F (v02 DELL   CBX3     00000021 INTL 20091112)
-[    0.000000] ACPI: FACS 0x00000000CCFED080 000040
-[    0.000000] ACPI: APIC 0x00000000CB7FB830 000072 (v03 DELL   CBX3     01072009 AMI  00010013)
-[    0.000000] ACPI: FPDT 0x00000000CB7FB8A8 000044 (v01 DELL   CBX3     01072009 AMI  00010013)
-[    0.000000] ACPI: TCPA 0x00000000CB7FB8F0 000032 (v02 APTIO4 NAPAASF  00000001 MSFT 01000013)
-[    0.000000] ACPI: MCFG 0x00000000CB7FB928 00003C (v01 DELL   CBX3     01072009 MSFT 00000097)
-[    0.000000] ACPI: HPET 0x00000000CB7FB968 000038 (v01 DELL   CBX3     01072009 AMI. 00000005)
-[    0.000000] ACPI: SSDT 0x00000000CB7FB9A0 000415 (v01 SataRe SataTabl 00001000 INTL 20091112)
-[    0.000000] ACPI: SSDT 0x00000000CB7FBDB8 0009B9 (v01 PmRef  Cpu0Ist  00003000 INTL 20051117)
-[    0.000000] ACPI: SSDT 0x00000000CB7FC778 000B22 (v01 PmRef  CpuPm    00003000 INTL 20051117)
-[    0.000000] ACPI: DMAR 0x00000000CB7FD2A0 000080 (v01 INTEL  SNB      00000001 INTL 00000001)
-[    0.000000] ACPI: ASF! 0x00000000CB7FD320 0000A5 (v32 INTEL   HCG     00000001 TFSM 000F4240)
-[    0.000000] ACPI: SSDT 0x00000000CB7FD3C8 000579 (v01 AMITCG PROC     00000001 INTL 20051117)
-[    0.000000] ACPI: BGRT 0x00000000CB7FD948 000038 (v00 ??              01072009 AMI  00010013)
-[    0.000000] ACPI: SSDT 0x00000000CB7FD980 00198A (v01 NvdRef NvdTabl  00001000 INTL 20091112)
-[    0.000000] ACPI: Local APIC address 0xfee00000
-[    0.000000] ACPI: [APIC:0x05] Invalid zero length
-[    0.000000] ACPI: Error parsing LAPIC address override entry
-[    0.000000] ACPI: Invalid BIOS MADT, disabling ACPI
-[    0.000000] tsc: Fast TSC calibration using PIT
+Can we not just drop the 512? And while at it, I would prefer to see the
+usual $soc-$module-$carrier schema, as we use with all the other modules
+of the Colibri and Apalis family.
 
-On next-20180430, the boot goes like this, and continues properly:
+e.g.
+tegra20-colibri-512.dtsi -> tegra20-colibri.dtsi
+tegra20-iris-512.dts -> tegra20-colibri-iris.dts
 
-[    0.000000] ACPI: SSDT 0x00000000CB7FD980 00198A (v01 NvdRef NvdTabl  00001000 INTL 20091112)
-[    0.000000] ACPI: Local APIC address 0xfee00000
-[    0.000000] tsc: Fast TSC calibration using PIT
+Yes, it is somewhat churn, but I would prefer it for the sake of clarity
+and consistency...
 
-Not seeing any commits to drivers/acpi/tables.c other than Al Stone's.
-
-This ringing any bells before I go bisecting?
+--
+Stefan
 
 
---==_Exmh_1526419088_2497P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWvtOkI0DS38y7CIcAQJ/ngf+IUIK/wrskwZHulluQ7Qi3IwgoT0dcl9F
-ENageNbGhvgXKSNFfUN1tVP2lb5VPQYmeOmt1ChxyRNUDqXuYxSj/x55qYz+WW3y
-fcxqIDknlt4WefOZOD7RKV8TncXF2dnj1JjDx5BWMHWOF8YcOtwYmIx/REJkPIS/
-f9PRyCoylhlq/r8ljpXzmjUsa0fohTvJSpHopUCQjWuVoo+R9ridEnZAtffEw8M7
-+MrsAw7T6PODp2WyuJ9yeFXI3t/fQj2m8WZQmh8veZWlBa9AeHWm+wk9sk6waZH4
-JkDioKCJzLqm7TPKhuDtPB8PEvoZvJInCyRrc7+a+7opJxZFOwGDBw==
-=xp5J
------END PGP SIGNATURE-----
-
---==_Exmh_1526419088_2497P--
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index 305efb275b48..b9387c540450 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -2,7 +2,7 @@
+>  #include "tegra20.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB";
+> +	model = "Toradex Colibri T20 256/512 MB";
+>  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
+> @@ -12,7 +12,12 @@
+>  
+>  	memory@0 {
+>  		device_type = "memory";
+> -		reg = <0x00000000 0x20000000>;
+> +		/*
+> +		 * Set memory to 256 MB to be safe as this could be used on
+> +		 * 256 or 512 MB module. It is expected from bootloader
+> +		 * to fix this up for 512 MB version.
+> +		 */
+> +		reg = <0x00000000 0x10000000>;
+>  	};
+>  
+>  	host1x@50000000 {
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
+> b/arch/arm/boot/dts/tegra20-iris-512.dts
+> index 40126388946d..efaa96228722 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
+> @@ -4,7 +4,7 @@
+>  #include "tegra20-colibri-512.dtsi"
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB on Iris";
+> +	model = "Toradex Colibri T20 256/512 MB on Iris";
+>  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+>  	aliases {
