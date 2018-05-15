@@ -1,57 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeEOKmy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 06:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752192AbeEOKmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 06:42:52 -0400
-X-Google-Smtp-Source: AB8JxZrJRAnoOJkH/9Y5nShuQeVSwl9lvpSV2EMGVKazlOUSFei8o198ES/TaHEgP1I2f28J2nNn/di7UjL7yzztenA=
+        id S1752642AbeEOKtF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 06:49:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752403AbeEOKtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 06:49:03 -0400
+Date: Tue, 15 May 2018 12:49:00 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH RFC 11/19] perf tools: Synthesize and process mmap events
+ for x86_64 KPTI entry trampolines
+Message-ID: <20180515104900.GB7425@krava>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-12-git-send-email-adrian.hunter@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180509224313.5e5fe381@canb.auug.org.au>
-References: <20180503020550.GP2714@sirena.org.uk> <20180503031000.GC29205@thunk.org>
- <0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net> <20180503224217.GR2714@sirena.org.uk>
- <20180503230905.GA98604@atomide.com> <CAPDyKFrCKkRHwOh-7yfFbvMp+Ykhs7oXrDwhTShSPvUBvpn2ZQ@mail.gmail.com>
- <20180509084440.GW13402@sirena.org.uk> <CAKMK7uEWYmhA3owSeYM9tNA0tpMm5=4Yqda2j=VfMWi7i8ya8w@mail.gmail.com>
- <20180509090346.GY13402@sirena.org.uk> <20180509204727.7ff38021@canb.auug.org.au>
- <20180509105534.GE7985@vkoul-mobl> <20180509224313.5e5fe381@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 15 May 2018 12:42:49 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf=y_D4qA-M=cf4nuL3-J4D9k5UrVo=fDPjJwtntCUBFA@mail.gmail.com>
-Message-ID: <CAJKOXPf=y_D4qA-M=cf4nuL3-J4D9k5UrVo=fDPjJwtntCUBFA@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "ksummit-discuss@lists.linuxfoundation.org"
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525866228-30321-12-git-send-email-adrian.hunter@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 2:43 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Vinod,
->
-> On Wed, 9 May 2018 16:25:34 +0530 Vinod Koul <vinod.koul@linaro.org> wrote:
->> >
->> > I currently have 44 such fixes branches.  More welcome!
->>
->> Great so do you want us to send fixes branch or scan the existing trees and add
->> them.
->
-> The former.
+On Wed, May 09, 2018 at 02:43:40PM +0300, Adrian Hunter wrote:
+> Like the kernel text, the location of x86_64 KPTI entry trampolines must be
+> recorded in the perf.data file. Like the kernel, synthesize a mmap event
+> for that, and add processing for it.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+>  tools/perf/util/event.c   | 90 +++++++++++++++++++++++++++++++++++++++++++++--
+>  tools/perf/util/machine.c | 28 +++++++++++++++
+>  2 files changed, 115 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index aafa9878465f..d810ff8488b1 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -888,9 +888,80 @@ int kallsyms__get_function_start(const char *kallsyms_filename,
+>  	return 0;
+>  }
+>  
+> -int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
+> -				       perf_event__handler_t process,
+> -				       struct machine *machine)
+> +#if defined(__x86_64__)
 
-Please merge following fixes branches from my trees:
-Tree: samsung-krzk
-git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
-branch: fixes
+also this could go under arch/x86/
 
-Tree: pinctrl-samsung
-git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
-branch: pinctrl-fixes
+jirka
 
-Although both are currently empty... but I guess you are collecting
-this also for future.
+> +
+> +static int perf_event__synthesize_special_kmaps(struct perf_tool *tool,
+> +						perf_event__handler_t process,
+> +						struct machine *machine)
+> +{
+> +	int rc = 0;
+> +	struct map *pos;
+> +	struct map_groups *kmaps = &machine->kmaps;
+> +	struct maps *maps = &kmaps->maps;
+> +	union perf_event *event = zalloc(sizeof(event->mmap) +
+> +					 machine->id_hdr_size);
+> +
+> +	if (!event) {
+> +		pr_debug("Not enough memory synthesizing mmap event "
+> +			 "for special kernel maps\n");
+> +		return -1;
+> +	}
+> +
 
-Best regards,
-Krzysztof
+SNIP
