@@ -1,89 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751859AbeEOWkU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 18:40:20 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:35039 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeEOWkT (ORCPT
+        id S1752061AbeEOWkq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 18:40:46 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:36926 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeEOWkp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 18:40:19 -0400
-X-Google-Smtp-Source: AB8JxZrp1yXxofx/qQOJLE/sPhHViGZn2o2sg+K8WGZ7eiltqqDgCVJ1w0+pWNvTy00Yd5veHECMPQ==
-Reply-To: ahs3@redhat.com
-Subject: Re: linux-next 20180515 - ACPI disabled..
-To: valdis.kletnieks@vt.edu
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <50539.1526419088@turing-police.cc.vt.edu>
- <CAHp75VdwDPumYBphE0BTE=ngsvGkWKuOr9QjBv4c+yw-1pKBWg@mail.gmail.com>
- <664f2475-9718-d38e-7270-3426c94f86e8@redhat.com>
- <58438.1526423130@turing-police.cc.vt.edu>
-From: Al Stone <ahs3@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <8d3890a3-9875-63fb-bb42-311febec5700@redhat.com>
-Date: Tue, 15 May 2018 16:40:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 15 May 2018 18:40:45 -0400
+Date: Tue, 15 May 2018 23:40:18 +0100
+From: "Maciej W. Rozycki" <macro@mips.com>
+To: James Hogan <jhogan@kernel.org>
+CC: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <Paul.Burton@mips.com>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] MIPS: Add FP_MODE regset support
+Message-ID: <alpine.DEB.2.00.1805111326000.10896@tp.orcam.me.uk>
+User-Agent: Alpine 2.00 (DEB 1167 2008-08-23)
 MIME-Version: 1.0
-In-Reply-To: <58438.1526423130@turing-police.cc.vt.edu>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [10.20.78.107]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1526424027-637138-23741-17424-1
+X-BESS-VER: 2018.6-r1805102334
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193020
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Define an NT_MIPS_FP_MODE core file note and implement a corresponding 
+regset holding the state handled by PR_SET_FP_MODE and PR_GET_FP_MODE 
+prctl(2) requests.  This lets debug software correctly interpret the 
+contents of floating-point general registers both in live debugging and 
+in core files, and also switch floating-point modes of a live process.
 
-On 05/15/2018 04:25 PM, valdis.kletnieks@vt.edu wrote:
-> On Tue, 15 May 2018 15:49:15 -0600, Al Stone said:
-> 
->> Not off-hand.  Could you please send me a copy of 
->> /sys/firmware/acpi/tables/APIC
-> 
-> cat /sys/firmware/acpi/tables/APIC | od -x 0000000 5041 4349 0072 0000
-> 3903 4544 4c4c 2020 0000020 4243 3358 2020 0020 2009 0107 4d41 2049 0000040
-> 0013 0001 0000 fee0 0001 0000 0800 0001 0000060 0001 0000 0800 0202 0001
-> 0000 0800 0103 0000100 0001 0000 0800 0304 0001 0000 0c01 0002 0000120 0000
-> fec0 0000 0000 0a02 0000 0002 0000 0000140 0000 0a02 0900 0009 0000 000d
-> 0604 05ff 0000160 0100 0000162
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+---
+NB due to patch conflicts this change relies on the DSP ASE regset series 
+<https://patchwork.kernel.org/patch/10402171/> to be applied first.
+---
+ arch/mips/kernel/ptrace.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/elf.h  |    1 
+ 2 files changed, 64 insertions(+)
 
-Thanks.
-
->> on this machine?  The commit cd8c65a6442b that I wrote looks like it got 
->> pulled in on 20180430, which if I'm understanding correctly, seems to 
->> have fixed the problem.  Did this work before 20180415?  I assume it 
->> did.
-> 
-> 0430 is what I'm running right ow, and it works.  Everything before that 
-> too. It fell over sometime between 0430 and 0515,
-
-Oh, I see.  I had read "0515" as "0415", hence my confusion.
-
-- -- 
-ciao,
-al
-- -----------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
-- -----------------------------------
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEiclaKI7ZGQ+4GJLWUwywAtdhsWwFAlr7Yb0ACgkQUwywAtdh
-sWwshQ//XvOPtjH5kB/OHR0jGP5LQ+9iiyJa40P6UhsW4dTFZbWLWOvhzqrdBJD2
-dyA7Xz3ig4zULS1ZAmIpubMixgekGa9VaMtJMumw4CiwqkuphLNnB6gFqZ5QkWS4
-YyGwW6zz2RSONf5Lq3K65mr+6cDHMhdtidtEunXzMOC6Ny8ELC52hIr295NpnyXn
-sv72SVdy9kQYHfxRv7K1IIbMKJZYRBN3TCoWFFJHbJH0stiLnCk+O+57QcsCKNWH
-ECJ6z8+kELo3BD42PLk7cRYoUKnyPsrGn+fAQvLD9rnknjVRPKhVjRilI9qr/HCo
-pmj0N9xNcEI0WK2feyN3vzYPeZbzwsxIiiCwd9E+bQIrwq8nI+fbhV6egFZlbwcR
-89w3Zhu31s7umcopLLHAEstm4STKOZGS54PdGQFku/Nff4GVes+vvjP1wC3yMEDL
-kUeOt5tLWgexEMOdXqo9YaMz2AUeog2Duk1PL27EiHjc4eGbSt1Yb9SgRFln03rH
-Orozfqjjwv6G4yWkz6sjZ/0T6ODWa+CW8qTr2WjFH2l2sj3ZT3DoemN4GkYo3O7x
-oI+7lKoY31L+GQnKluW6EceliANVmLlgNhlQv5v9i9NYFrgwj8UucJfJVQdJWVKk
-uJxhGITkkResHoPOfEuHsJ9Ks5wI22L6RiO9OTX2rr7accsA+aY=
-=Vj8z
------END PGP SIGNATURE-----
+linux-mips-nt-fp-mode.diff
+Index: linux-jhogan-test/arch/mips/kernel/ptrace.c
+===================================================================
+--- linux-jhogan-test.orig/arch/mips/kernel/ptrace.c	2018-05-09 23:53:34.999776000 +0100
++++ linux-jhogan-test/arch/mips/kernel/ptrace.c	2018-05-09 23:54:22.778128000 +0100
+@@ -759,10 +759,57 @@ static int dsp_active(struct task_struct
+ 	return cpu_has_dsp ? NUM_DSP_REGS + 1 : -ENODEV;
+ }
+ 
++/* Copy the FP mode setting to the supplied NT_MIPS_FP_MODE buffer.  */
++static int fp_mode_get(struct task_struct *target,
++		       const struct user_regset *regset,
++		       unsigned int pos, unsigned int count,
++		       void *kbuf, void __user *ubuf)
++{
++	int fp_mode;
++
++	fp_mode = mips_get_process_fp_mode(target);
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &fp_mode, 0,
++				   sizeof(fp_mode));
++}
++
++/*
++ * Copy the supplied NT_MIPS_FP_MODE buffer to the FP mode setting.
++ *
++ * We optimize for the case where `count % sizeof(int) == 0', which
++ * is supposed to have been guaranteed by the kernel before calling
++ * us, e.g. in `ptrace_regset'.  We enforce that requirement, so
++ * that we can safely avoid preinitializing temporaries for partial
++ * mode writes.
++ */
++static int fp_mode_set(struct task_struct *target,
++		       const struct user_regset *regset,
++		       unsigned int pos, unsigned int count,
++		       const void *kbuf, const void __user *ubuf)
++{
++	int fp_mode;
++	int err;
++
++	BUG_ON(count % sizeof(int));
++
++	if (pos + count > sizeof(fp_mode))
++		return -EIO;
++
++	err = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &fp_mode, 0,
++				 sizeof(fp_mode));
++	if (err)
++		return err;
++
++	if (count > 0)
++		err = mips_set_process_fp_mode(target, fp_mode);
++
++	return err;
++}
++
+ enum mips_regset {
+ 	REGSET_GPR,
+ 	REGSET_FPR,
+ 	REGSET_DSP,
++	REGSET_FP_MODE,
+ };
+ 
+ struct pt_regs_offset {
+@@ -877,6 +924,14 @@ static const struct user_regset mips_reg
+ 		.set		= dsp32_set,
+ 		.active		= dsp_active,
+ 	},
++	[REGSET_FP_MODE] = {
++		.core_note_type	= NT_MIPS_FP_MODE,
++		.n		= 1,
++		.size		= sizeof(int),
++		.align		= sizeof(int),
++		.get		= fp_mode_get,
++		.set		= fp_mode_set,
++	},
+ };
+ 
+ static const struct user_regset_view user_mips_view = {
+@@ -917,6 +972,14 @@ static const struct user_regset mips64_r
+ 		.set		= dsp64_set,
+ 		.active		= dsp_active,
+ 	},
++	[REGSET_FP_MODE] = {
++		.core_note_type	= NT_MIPS_FP_MODE,
++		.n		= 1,
++		.size		= sizeof(int),
++		.align		= sizeof(int),
++		.get		= fp_mode_get,
++		.set		= fp_mode_set,
++	},
+ };
+ 
+ static const struct user_regset_view user_mips64_view = {
+Index: linux-jhogan-test/include/uapi/linux/elf.h
+===================================================================
+--- linux-jhogan-test.orig/include/uapi/linux/elf.h	2018-05-09 23:53:35.003775000 +0100
++++ linux-jhogan-test/include/uapi/linux/elf.h	2018-05-09 23:54:22.787132000 +0100
+@@ -425,6 +425,7 @@ typedef struct elf64_shdr {
+ #define NT_METAG_TLS	0x502		/* Metag TLS pointer */
+ #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
+ #define NT_MIPS_DSP	0x700		/* MIPS DSP ASE registers */
++#define NT_MIPS_FP_MODE	0x701		/* MIPS floating-point mode */
+ 
+ /* Note header in a PT_NOTE section */
+ typedef struct elf32_note {
