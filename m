@@ -1,79 +1,163 @@
-Return-Path: <giulio.benetti@micronovasrl.com>
-X-Google-Smtp-Source: AB8JxZqZ9yxeKz5LggnFoLnchWTqFOgfCm3VdlFQxMufgVsPyKJ7gPb2/jy1gfO5ZgDizI09kiyp
-ARC-Seal: i=1; a=rsa-sha256; t=1526485095; cv=none;
-        d=google.com; s=arc-20160816;
-        b=L+iX0t8BghHd1CPvbvRZlqSvl1ddeZVag3gBZ7RpKvsmDfImP/VOOSnzKFMGAWe6tj
-         ak6XURA+0qAr4UhTJLrW/CI39E1ewus92OF/gIt6k18oQZQvTH9QP9VC1c9IkT7+dQNy
-         uelaeRonS63Bv7StLjcBAPIX/QXMSRqHEDaj7aLKic5KsQPCNdup4Xn5+1wLKmcEVo5+
-         5ylTKtW5M4gqL6DFSHu5qQUZHYbPf/gvTcKIS4CBcnNgNrpG9IPpYa2P3GVN60bHmgHq
-         dJjjcF4NPse2SMZebRrEw5pdQvRhWQ3Zm9O3pRb1QB8NxxJ3A8/RFpYqUJ//F4N/1305
-         LY/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=L8nakm+iyiWNI9aVShl/x8PKGAEt4g9x3Mt4KLsjRK8=;
-        b=RoK/W5hJNHtcsjzot2TTq0dL+qFIYiDixwejWEyKQJ631DGMu3R6OMLGwAvF+cZCut
-         WdZ+c+102a6V5JwY0uJkb9v97z5+eFsjbtXCQCdsgu+NKzJAKIRoLeRYQY3s7KChMN2g
-         KWQivKajcilfKCpKz+L4nG155vUnezWLhvcIVvVfeCmxrVau48Gagpx6Gq+Z8niSBSQt
-         F+syAqnVgj1Rw9dC6ghAtkUixAdPTpjlC/UA8DBzaBO0Tsi7wcZlUp96hy5BbWZjSrca
-         imwnV0KWrctyukNqjbKCgUkONzFaGSvgFf5hi2+ZuBwRQkJmcpRhCJzQo0uh98cV5XQC
-         utjw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=Xo7QLn2I;
-       spf=pass (google.com: domain of giulio.benetti@micronovasrl.com designates 212.103.203.10 as permitted sender) smtp.mailfrom=giulio.benetti@micronovasrl.com
-Authentication-Results: mx.google.com;
-       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=Xo7QLn2I;
-       spf=pass (google.com: domain of giulio.benetti@micronovasrl.com designates 212.103.203.10 as permitted sender) smtp.mailfrom=giulio.benetti@micronovasrl.com
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-	reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.899
-Subject: Re: [PATCH] tty: fix typo in ASYNCB_FOURPORT comment
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: tglx@linutronix.de, pombredanne@nexb.com, kstewart@linuxfoundation.org,
- linux-kernel@vger.kernel.org
-References: <20180516143931.89679-1-giulio.benetti@micronovasrl.com>
- <20180516153622.GA23725@kroah.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <0073aeb2-15b6-cf2d-91a5-8e05f535793d@micronovasrl.com>
-Date: Wed, 16 May 2018 17:38:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-420442-1526483125-3-3325855271581966661
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='ISO-8859-15'
+X-Attached: 0011-ftrace-selftest-Have-the-reset_trigger-code-be-a-bit.patch
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526483125; b=HOKmTj//c8RWC5ovYxNg4a3k/Oj9iQMVa3jcUWory6F/fhMXXF
+    duZRqAFkUHDaKXQi6laRjhF+t4DLeRTFlnB7pWgF7LclGktWgyQcgQU0aLWANHEv
+    ZHVQI+AQQYkK/RRa2xnOP/8zylPb8MxFiGnCD3ipY6UvmoMaikv+4UXSJRgk9jpJ
+    hRv24tci6JNr0nyW+Bm5J3wfgW7ocYyHll5W9aM4sLChvjk5pKa5K3qKG5HWNtds
+    O4DA189Gbz/8p30sVJey81AZk8Tgo8GohTx597RQlP5n8lrYHvnqO3eLhiKAqnVT
+    VBiMqiwNUrxgawcteC0eCiZ+MzlxuxhhYDSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:mime-version:content-type:sender:list-id; s=fm2; t=
+    1526483125; bh=lmP1p5ClzalYZicMX0Eo/fnRSHUL1/ytKDrNYS0/9ao=; b=k
+    icVYnz7x/vTiZ5153lXVwuWrvQGPs4J2xzjmSIuBe5yNtBbfwthBooqG9zND4nNo
+    B36kmYcO/9y4fxxlQA5mb9gZEZ4uLUCCXybrHNZdfVt+Z0Bts3Xtaoxdx1CyBXFs
+    ahWiaAQCI/v/rRQ5O2ry0LzpiEWdASat224M0ZiIT+M9jSj3EKP14LoTwWcv8cg0
+    RQWZMw5s2wev7ResQf/bepeEYKZlKxTkYSeE/6tnZCXTuVTV1zypm80T/YtfEsxw
+    HExlI0zHMMFV5wkLrsvjCtM9ZTXcSSz91PsBPVQGdGQ/ttkQus9FURdAlJut+XWP
+    x4Er/hrKfnC40/VRlFLtg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJUa0wjsoMHhJg4+rj2sEXAJHUjhlNHTpoy94EpQmANmklQ5WvdurRgCLtPX9KYkWdCskKMaP9yBYyAf6lgnsr6yE6Xi7gEqtxGXMi2hYwn1FVHFfbI0
+    c/zX0Y028JQmdZFPjeHsVkIjm8p2Ha0qbqph4NViBQYs9DQOL6lYlCer7mRW4vS0q+XYTlkRKwNmjHle7sMWdmu784T+t6mHKqxWG53UWbMeEBXHocz7OJkb
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Q9fys5e9bTEA:10 a=VUJBJC2UJ8kA:10
+    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=LqzWqcw_idgH_oglLg8A:9 a=PUjeQqilurYA:10
+    a=2JgSa4NbpEOStq-L5dxp:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752026AbeEPPCk (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 11:02:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751457AbeEPPCC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 16 May 2018 11:02:02 -0400
+Message-Id: <20180516150200.946375138@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Wed, 16 May 2018 11:00:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH v3 11/14] ftrace/selftest: Have the reset_trigger code be a bit more careful
+References: <20180516150012.135869655@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180516153622.GA23725@kroah.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0011-ftrace-selftest-Have-the-reset_trigger-code-be-a-bit.patch
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600631959743697096?=
-X-GMAIL-MSGID: =?utf-8?q?1600635635282521492?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Il 16/05/2018 17:36, Greg KH ha scritto:
-> On Wed, May 16, 2018 at 04:39:31PM +0200, Giulio Benetti wrote:
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
->> ---
->>   include/uapi/linux/tty_flags.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Sorry, but I can't take patches without any changelog text at all.
-> Please fix up and resend.
+The trigger code is picky in how it can be disabled as there may be
+dependencies between different events and synthetic events. Change the order
+on how triggers are reset.
 
-Sure.
-Thanks
+ 1) Reset triggers of all synthetic events first
+ 2) Remove triggers with actions attached to them
+ 3) Remove all other triggers
 
+If this order isn't followed, then some triggers will not be reset, and an
+error may happen because a trigger is busy.
+
+Cc: stable@vger.kernel.org
+Fixes: cfa0963dc474f ("kselftests/ftrace : Add event trigger testcases")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ .../testing/selftests/ftrace/test.d/functions | 21 ++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+index 2a4f16fc9819..8393b1c06027 100644
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -15,14 +15,29 @@ reset_tracer() { # reset the current tracer
+     echo nop > current_tracer
+ }
+ 
+-reset_trigger() { # reset all current setting triggers
+-    grep -v ^# events/*/*/trigger |
++reset_trigger_file() {
++    # remove action triggers first
++    grep -H ':on[^:]*(' $@ |
++    while read line; do
++        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
++	file=`echo $line | cut -f1 -d:`
++	echo "!$cmd" >> $file
++    done
++    grep -Hv ^# $@ |
+     while read line; do
+         cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+-	echo "!$cmd" > `echo $line | cut -f1 -d:`
++	file=`echo $line | cut -f1 -d:`
++	echo "!$cmd" > $file
+     done
+ }
+ 
++reset_trigger() { # reset all current setting triggers
++    if [ -d events/synthetic ]; then
++        reset_trigger_file events/synthetic/*/trigger
++    fi
++    reset_trigger_file events/*/*/trigger
++}
++
+ reset_events_filter() { # reset all current setting filters
+     grep -v ^none events/*/*/filter |
+     while read line; do
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale ¤ 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+2.17.0
