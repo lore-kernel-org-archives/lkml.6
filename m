@@ -1,122 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752567AbeEPNq4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:46:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20582 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752205AbeEPNqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:46:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
-   d="scan'208";a="199844293"
-Subject: Re: [PATCH V1 06/19] perf tools: Fix kernel_start for PTI on x86
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
- <1526388213-30696-7-git-send-email-adrian.hunter@intel.com>
- <20180516130029.GA18538@kernel.org>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <56a4889f-6ea9-d7c6-3f1e-ea9738d314d0@intel.com>
-Date: Wed, 16 May 2018 16:45:41 +0300
+        id S1752563AbeEPNtN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:49:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752386AbeEPNtI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:49:08 -0400
+Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
+ matrix
+To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <f2646170-1aaf-8447-4c02-0679909d754f@linux.ibm.com>
+ <a9206728-2673-c8de-851b-323027a398fa@linux.vnet.ibm.com>
+ <f8c88504-55dc-99a8-90a1-2ddf63a20091@linux.ibm.com>
+ <13331f80-8821-6de3-ca29-7a3ea869e4f1@linux.vnet.ibm.com>
+ <1891f565-284f-ab30-ebc7-8fef85b5fba7@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 16 May 2018 09:48:58 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180516130029.GA18538@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1891f565-284f-ab30-ebc7-8fef85b5fba7@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051613-8235-0000-0000-00000D82A8DA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01033149; UDB=6.00528242; IPR=6.00812280;
+ MB=3.00021145; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 13:49:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051613-8236-0000-0000-000040FD23EC
+Message-Id: <a02a8fa0-9b05-41cf-4507-d4540b279247@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160141
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/05/18 16:00, Arnaldo Carvalho de Melo wrote:
-> Em Tue, May 15, 2018 at 03:43:20PM +0300, Adrian Hunter escreveu:
->> On x86_64, PTI entry trampolines are less than the start of kernel text,
->> but still above 2^63. So leave kernel_start = 1ULL << 63 for x86_64.
+On 05/16/2018 09:15 AM, Pierre Morel wrote:
+> On 16/05/2018 15:12, Tony Krowiak wrote:
+>> On 05/16/2018 03:48 AM, Pierre Morel wrote:
+>>> On 15/05/2018 18:07, Tony Krowiak wrote:
+>>>> On 05/15/2018 10:55 AM, Pierre Morel wrote:
+>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>> Provides interfaces to manage the AP adapters, usage domains
+>>>>>> and control domains assigned to a KVM guest.
+>>>>>>
+>>>>>> The guest's SIE state description has a satellite structure 
+>>>>>> called the
+>>>>>> Crypto Control Block (CRYCB) containing three bitmask fields
+>>>>>> identifying the adapters, queues (domains) and control domains
+>>>>>> assigned to the KVM guest:
+>>>>>>
+>>> ...snip...
+>>>>>> +}
+>>>>>
+>>>>> This function (ap_validate_queue_sharing) only verifies that VM 
+>>>>> don't share queues.
+>>>>> What about the queues used by a host application?
+>>>>
+>>>> How can that be verified from this function? I suppose I could put 
+>>>> a check in here to
+>>>> verify that the queues are reserved by the vfio_ap device driver, 
+>>>> but that would
+>>>> be redundant because an AP queue can not be assigned to a mediated 
+>>>> matrix device
+>>>> via its sysfs attributes unless it is reserved by the vfio_ap 
+>>>> device driver (see
+>>>> patches 7, 8 and 9).
+>>>>
+>>>>>
+>>>>>
+>>>>> I understand that you want to implement  these checks within KVM 
+>>>>> but this is
+>>>>> related to which queue devices are bound to the matrix and which 
+>>>>> one are not.
+>>>>
+>>>> See my comments above and below about AP queue assignment to the 
+>>>> mediated matrix
+>>>> device. The one verification we can't do when the devices are 
+>>>> assigned is whether
+>>>> another guest is using the queue because assignment occurs before 
+>>>> the guest using
+>>>> the queue is started in which case we have no access to KVM. It 
+>>>> makes no sense to
+>>>> do so at assignment time anyway because it doesn't matter until the 
+>>>> guest using
+>>>> the mediated matrix device is started, so that check is done in KVM.
+>>>>
+>>>>>
+>>>>>
+>>>>> I think that this should be related somehow to the bounded queue 
+>>>>> devices and
+>>>>> therefor implemented inside the matrix driver.
+>>>>
+>>>> As I stated above, when an AP queue is assigned to the mediated 
+>>>> matrix device via
+>>>> its sysfs attributes, a check is done to verify that it is bound to 
+>>>> the vfio_ap
+>>>> device driver (see patches 7, 8 and 9). If not, then assignment 
+>>>> will be rejected;
+>>>> therefore, it will not be possible to configure a CRYCB with AP 
+>>>> queues that are
+>>>> not bound to the device driver.
+>>>
+>>> This patch and te followed patches take care that the queues are 
+>>> bound to the
+>>> matrix driver when they are assigned to the matrix using the sysfs 
+>>> entries.
+>>>
+>>> But they do not take care that the queue can not be unbound before 
+>>> you start
+>>> the guest, and they are not in the path if the admin decide to 
+>>> unbind a queue
+>>> at some later time.
 >>
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->> ---
->>  tools/perf/util/machine.c | 16 +++++++++++++++-
->>  tools/perf/util/machine.h |  2 ++
->>  2 files changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
->> index 72a351613d85..2f39a4d014de 100644
->> --- a/tools/perf/util/machine.c
->> +++ b/tools/perf/util/machine.c
->> @@ -2296,6 +2296,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
->>  	return 0;
->>  }
->>  
->> +/*
->> + * Compares the raw arch string. N.B. see instead perf_env__arch() if a
->> + * normalized arch is needed.
->> + */
->> +bool machine__is(struct machine *machine, const char *arch)
->> +{
->> +	return machine && machine->env && !strcmp(machine->env->arch, arch);
->> +}
->> +
-> 
-> Broke 'perf top':
-> 
-> gdb perf
-> bt
-> bt
-> #0  __strcmp_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcmp-sse2-unaligned.S:31
-> #1  0x0000000000528b1e in machine__is (machine=0xc55548, arch=0x7d9058 "x86_64") at util/machine.c:2305
-> #2  0x0000000000528bbb in machine__get_kernel_start (machine=0xc55548) at util/machine.c:2329
-> #3  0x00000000004df894 in machine__kernel_start (machine=0xc55548) at util/machine.h:90
-> #4  0x00000000004df8e0 in machine__kernel_ip (machine=0xc55548, ip=140352692842292) at util/machine.h:96
-> #5  0x00000000004e3a9c in thread__find_map (thread=0x21f9de0, cpumode=2 '\002', addr=140352692842292, al=0x7fffffff8160)
->     at util/event.c:1550
-> #6  0x00000000004e3c51 in machine__resolve (machine=0xc55548, al=0x7fffffff8160, sample=0x7fffffff8360) at util/event.c:1591
-> #7  0x000000000045a274 in perf_event__process_sample (tool=0x7fffffffa720, event=0x7fffea662878, evsel=0xc120e0, 
->     sample=0x7fffffff8360, machine=0xc55548) at builtin-top.c:734
-> #8  0x000000000045a91c in perf_top__mmap_read_idx (top=0x7fffffffa720, idx=3) at builtin-top.c:872
-> #9  0x000000000045aa6b in perf_top__mmap_read (top=0x7fffffffa720) at builtin-top.c:898
-> #10 0x000000000045b460 in __cmd_top (top=0x7fffffffa720) at builtin-top.c:1167
-> #11 0x000000000045c973 in cmd_top (argc=0, argv=0x7fffffffe0e0) at builtin-top.c:1509
-> #12 0x00000000004ce403 in run_builtin (p=0xac5670 <commands+336>, argc=1, argv=0x7fffffffe0e0) at perf.c:303
-> #13 0x00000000004ce670 in handle_internal_command (argc=1, argv=0x7fffffffe0e0) at perf.c:355
-> #14 0x00000000004ce7c2 in run_argv (argcp=0x7fffffffdf3c, argv=0x7fffffffdf30) at perf.c:399
-> #15 0x00000000004ceb90 in main (argc=1, argv=0x7fffffffe0e0) at perf.c:543
-> (gdb) fr 1
-> #1  0x0000000000528b1e in machine__is (machine=0xc55548, arch=0x7d9058 "x86_64") at util/machine.c:2305
-> 2305		return machine && machine->env && !strcmp(machine->env->arch, arch);
-> (gdb) list
-> 2300	 * Compares the raw arch string. N.B. see instead perf_env__arch() if a
-> 2301	 * normalized arch is needed.
-> 2302	 */
-> 2303	bool machine__is(struct machine *machine, const char *arch)
-> 2304	{
-> 2305		return machine && machine->env && !strcmp(machine->env->arch, arch);
-> 2306	}
-> 2307	
-> 2308	int machine__get_kernel_start(struct machine *machine)
-> 2309	{
-> (gdb) p machine
-> $1 = (struct machine *) 0xc55548
-> (gdb) p machine->env
-> $2 = (struct perf_env *) 0xc06400 <perf_env>
-> (gdb) p machine-env->arch
-> No symbol "env" in current context.
-> (gdb) p machine->env->arch
-> $3 = 0x0
-> (gdb)
-> 
+>> That is a good point. I need to put a check in the device driver at 
+>> the time
+>> the mediated device fd is opened to verify that the queues being 
+>> configured in
+>> the guest's CRYCB are bound to the driver.
+>
+> not only, you also need to avoid the possibility of unbinding the device.
+> For this you need to use the remove callback from the driver.
 
-If there is no perf_data then perf_session__new() uses perf_env but it seems
-perf_env.arch is not initialized.  Would it be OK to initialize
-perf_env.arch and perf_env.nr_cpus_avail?
+I thought I addressed this already. The definition of the remove 
+callback does
+not specify a return value, so there is currently no way to prevent the 
+AP bus
+from removing the queue device on unbind. I sent an email to Harald to 
+discuss
+adding a return value to the callback.
+
+>
+>
+>>
+>>>
+>>>
+>>>>
+>>>>>
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Pierre
+>>>>>
+>>>>
+>>>
+>>
+>
