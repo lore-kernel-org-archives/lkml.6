@@ -1,33 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752815AbeEPKf5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:35:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57995 "EHLO
+        id S1752749AbeEPKfd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:35:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50221 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752561AbeEPKfz (ORCPT
+        with ESMTP id S1752154AbeEPKf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:35:55 -0400
-Date: Wed, 16 May 2018 03:35:24 -0700
+        Wed, 16 May 2018 06:35:29 -0400
+Date: Wed, 16 May 2018 03:34:54 -0700
 From: tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-5a817641f68a6399a5fac8b7d2da67a73698ffed@git.kernel.org>
-Cc: willy@infradead.org, amir73il@gmail.com, hpa@zytor.com, jack@suse.cz,
-        oleg@redhat.com, akpm@linux-foundation.org, will.deacon@arm.com,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, longman@redhat.com, tglx@linutronix.de,
-        dave@stgolabs.net, tytso@mit.edu, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org
-Reply-To: longman@redhat.com, linux-kernel@vger.kernel.org,
-        paulmck@linux.vnet.ibm.com, tytso@mit.edu, peterz@infradead.org,
-        dave@stgolabs.net, tglx@linutronix.de, akpm@linux-foundation.org,
-        hpa@zytor.com, jack@suse.cz, oleg@redhat.com, willy@infradead.org,
-        amir73il@gmail.com, torvalds@linux-foundation.org, will.deacon@arm.com,
-        mingo@kernel.org
-In-Reply-To: <1526420991-21213-3-git-send-email-longman@redhat.com>
-References: <1526420991-21213-3-git-send-email-longman@redhat.com>
+Message-ID: <tip-d7d760efad70c7a030725499bf9f342f04af24dd@git.kernel.org>
+Cc: dave@stgolabs.net, peterz@infradead.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com, willy@infradead.org, tytso@mit.edu,
+        jack@suse.cz, longman@redhat.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, oleg@redhat.com, amir73il@gmail.com,
+        paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        will.deacon@arm.com
+Reply-To: akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        will.deacon@arm.com, tglx@linutronix.de, longman@redhat.com,
+        jack@suse.cz, linux-kernel@vger.kernel.org, amir73il@gmail.com,
+        oleg@redhat.com, tytso@mit.edu, willy@infradead.org, mingo@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, dave@stgolabs.net,
+        torvalds@linux-foundation.org
+In-Reply-To: <1526420991-21213-2-git-send-email-longman@redhat.com>
+References: <1526420991-21213-2-git-send-email-longman@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] locking/percpu-rwsem: Annotate rwsem ownership
- transfer by setting RWSEM_OWNER_UNKNOWN
-Git-Commit-ID: 5a817641f68a6399a5fac8b7d2da67a73698ffed
+Subject: [tip:locking/urgent] locking/rwsem: Add a new
+ RWSEM_ANONYMOUSLY_OWNED flag
+Git-Commit-ID: d7d760efad70c7a030725499bf9f342f04af24dd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -40,42 +40,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5a817641f68a6399a5fac8b7d2da67a73698ffed
-Gitweb:     https://git.kernel.org/tip/5a817641f68a6399a5fac8b7d2da67a73698ffed
+Commit-ID:  d7d760efad70c7a030725499bf9f342f04af24dd
+Gitweb:     https://git.kernel.org/tip/d7d760efad70c7a030725499bf9f342f04af24dd
 Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Tue, 15 May 2018 17:49:51 -0400
+AuthorDate: Tue, 15 May 2018 17:49:50 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 16 May 2018 11:45:16 +0200
+CommitDate: Wed, 16 May 2018 11:45:15 +0200
 
-locking/percpu-rwsem: Annotate rwsem ownership transfer by setting RWSEM_OWNER_UNKNOWN
+locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
 
-The filesystem freezing code needs to transfer ownership of a rwsem
-embedded in a percpu-rwsem from the task that does the freezing to
-another one that does the thawing by calling percpu_rwsem_release()
-after freezing and percpu_rwsem_acquire() before thawing.
+There are use cases where a rwsem can be acquired by one task, but
+released by another task. In thess cases, optimistic spinning may need
+to be disabled.  One example will be the filesystem freeze/thaw code
+where the task that freezes the filesystem will acquire a write lock
+on a rwsem and then un-owns it before returning to userspace. Later on,
+another task will come along, acquire the ownership, thaw the filesystem
+and release the rwsem.
 
-However, the new rwsem debug code runs afoul with this scheme by warning
-that the task that releases the rwsem isn't the one that acquires it,
-as reported by Amir Goldstein:
+Bit 0 of the owner field was used to designate that it is a reader
+owned rwsem. It is now repurposed to mean that the owner of the rwsem
+is not known. If only bit 0 is set, the rwsem is reader owned. If bit
+0 and other bits are set, it is writer owned with an unknown owner.
+One such value for the latter case is (-1L). So we can set owner to 1 for
+reader-owned, -1 for writer-owned. The owner is unknown in both cases.
 
-  DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
-  WARNING: CPU: 1 PID: 1401 at /home/amir/build/src/linux/kernel/locking/rwsem.c:133 up_write+0x59/0x79
+To handle transfer of rwsem ownership, the higher level code should
+set the owner field to -1 to indicate a write-locked rwsem with unknown
+owner.  Optimistic spinning will be disabled in this case.
 
-  Call Trace:
-   percpu_up_write+0x1f/0x28
-   thaw_super_locked+0xdf/0x120
-   do_vfs_ioctl+0x270/0x5f1
-   ksys_ioctl+0x52/0x71
-   __x64_sys_ioctl+0x16/0x19
-   do_syscall_64+0x5d/0x167
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Once the higher level code figures who the new owner is, it can then
+set the owner field accordingly.
 
-To work properly with the rwsem debug code, we need to annotate that the
-rwsem ownership is unknown during the tranfer period until a brave soul
-comes forward to acquire the ownership. During that period, optimistic
-spinning will be disabled.
-
-Reported-by: Amir Goldstein <amir73il@gmail.com>
 Tested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Waiman Long <longman@redhat.com>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
@@ -90,65 +85,130 @@ Cc: Theodore Y. Ts'o <tytso@mit.edu>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-fsdevel@vger.kernel.org
-Link: http://lkml.kernel.org/r/1526420991-21213-3-git-send-email-longman@redhat.com
+Link: http://lkml.kernel.org/r/1526420991-21213-2-git-send-email-longman@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/percpu-rwsem.h | 6 +++++-
- include/linux/rwsem.h        | 6 ++++++
- kernel/locking/rwsem-xadd.c  | 2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ kernel/locking/rwsem-xadd.c | 17 +++++++----------
+ kernel/locking/rwsem.c      |  2 --
+ kernel/locking/rwsem.h      | 30 +++++++++++++++++++++---------
+ 3 files changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index b1f37a89e368..79b99d653e03 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- 	lock_release(&sem->rw_sem.dep_map, 1, ip);
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
--		sem->rw_sem.owner = NULL;
-+		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
- #endif
- }
- 
-@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+	if (!read)
-+		sem->rw_sem.owner = current;
-+#endif
- }
- 
- #endif
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 56707d5ff6ad..ab93b6eae696 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -44,6 +44,12 @@ struct rw_semaphore {
- #endif
- };
- 
-+/*
-+ * Setting bit 0 of the owner field with other non-zero bits will indicate
-+ * that the rwsem is writer-owned with an unknown owner.
-+ */
-+#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
-+
- extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
 diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 604d247ea8c3..a90336779375 100644
+index e795908f3607..604d247ea8c3 100644
 --- a/kernel/locking/rwsem-xadd.c
 +++ b/kernel/locking/rwsem-xadd.c
-@@ -352,6 +352,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
- 	struct task_struct *owner;
- 	bool ret = true;
+@@ -357,11 +357,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
  
-+	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
+ 	rcu_read_lock();
+ 	owner = READ_ONCE(sem->owner);
+-	if (!rwsem_owner_is_writer(owner)) {
+-		/*
+-		 * Don't spin if the rwsem is readers owned.
+-		 */
+-		ret = !rwsem_owner_is_reader(owner);
++	if (!owner || !is_rwsem_owner_spinnable(owner)) {
++		ret = !owner;	/* !owner is spinnable */
+ 		goto done;
+ 	}
+ 
+@@ -382,11 +379,11 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ {
+ 	struct task_struct *owner = READ_ONCE(sem->owner);
+ 
+-	if (!rwsem_owner_is_writer(owner))
+-		goto out;
++	if (!is_rwsem_owner_spinnable(owner))
++		return false;
+ 
+ 	rcu_read_lock();
+-	while (sem->owner == owner) {
++	while (owner && (READ_ONCE(sem->owner) == owner)) {
+ 		/*
+ 		 * Ensure we emit the owner->on_cpu, dereference _after_
+ 		 * checking sem->owner still matches owner, if that fails,
+@@ -408,12 +405,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 		cpu_relax();
+ 	}
+ 	rcu_read_unlock();
+-out:
 +
- 	if (need_resched())
- 		return false;
+ 	/*
+ 	 * If there is a new owner or the owner is not set, we continue
+ 	 * spinning.
+ 	 */
+-	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
++	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
+ }
  
+ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 30465a2f2b6c..bc1e507be9ff 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -221,5 +221,3 @@ void up_read_non_owner(struct rw_semaphore *sem)
+ EXPORT_SYMBOL(up_read_non_owner);
+ 
+ #endif
+-
+-
+diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+index a17cba8d94bb..b9d0e72aa80f 100644
+--- a/kernel/locking/rwsem.h
++++ b/kernel/locking/rwsem.h
+@@ -1,20 +1,24 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * The owner field of the rw_semaphore structure will be set to
+- * RWSEM_READ_OWNED when a reader grabs the lock. A writer will clear
++ * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
+  * the owner field when it unlocks. A reader, on the other hand, will
+  * not touch the owner field when it unlocks.
+  *
+- * In essence, the owner field now has the following 3 states:
++ * In essence, the owner field now has the following 4 states:
+  *  1) 0
+  *     - lock is free or the owner hasn't set the field yet
+  *  2) RWSEM_READER_OWNED
+  *     - lock is currently or previously owned by readers (lock is free
+  *       or not set by owner yet)
+- *  3) Other non-zero value
+- *     - a writer owns the lock
++ *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
++ *     - lock is owned by an anonymous writer, so spinning on the lock
++ *       owner should be disabled.
++ *  4) Other non-zero value
++ *     - a writer owns the lock and other writers can spin on the lock owner.
+  */
+-#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
++#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
++#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
+ 
+ #ifdef CONFIG_DEBUG_RWSEMS
+ # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
+@@ -51,14 +55,22 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
+ 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
+ }
+ 
+-static inline bool rwsem_owner_is_writer(struct task_struct *owner)
++/*
++ * Return true if the a rwsem waiter can spin on the rwsem's owner
++ * and steal the lock, i.e. the lock is not anonymously owned.
++ * N.B. !owner is considered spinnable.
++ */
++static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
+ {
+-	return owner && owner != RWSEM_READER_OWNED;
++	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
+ }
+ 
+-static inline bool rwsem_owner_is_reader(struct task_struct *owner)
++/*
++ * Return true if rwsem is owned by an anonymous writer or readers.
++ */
++static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
+ {
+-	return owner == RWSEM_READER_OWNED;
++	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
+ }
+ #else
+ static inline void rwsem_set_owner(struct rw_semaphore *sem)
