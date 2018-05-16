@@ -1,99 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752095AbeEPEbp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 00:31:45 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51919 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeEPEbn (ORCPT
+        id S1752173AbeEPEcY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 00:32:24 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36632 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeEPEcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 00:31:43 -0400
-X-Google-Smtp-Source: AB8JxZrGI/sbaZ1vLKBD8awSaEkFdg5yiGQgbqvs/3dzRQIFku3IUdNNLDRiGvwic7oGru+i5gvJn87Y2KwbWCgX6MI=
+        Wed, 16 May 2018 00:32:22 -0400
+X-Google-Smtp-Source: AB8JxZpI02PYI6vTi98iBhKTIout6+hxfTLofYiefWA/DW83RwBGsVPmhpWPbs/9W8pSr+EGw63P5Q==
+Date: Wed, 16 May 2018 10:02:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Markus Mayer <code@mmayer.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+        Power Management List <linux-pm@vger.kernel.org>,
+        ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: brcmstb-avs-cpufreq: sort frequencies in
+ ascending order
+Message-ID: <20180516043218.7ktq5vjq2rhcszz5@vireshk-i7>
+References: <20180516034954.56475-1-code@mmayer.net>
 MIME-Version: 1.0
-In-Reply-To: <1520507013-2410-1-git-send-email-alim.akhtar@samsung.com>
-References: <CGME20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03@epcas1p4.samsung.com>
- <1520507013-2410-1-git-send-email-alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Date: Wed, 16 May 2018 10:01:01 +0530
-Message-ID: <CAGOxZ52yZ8Xqype7AVsH43DWOA2byh2kW3SGsfHyHtzqSH6QPw@mail.gmail.com>
-Subject: Re: [RFC PATCH V2] scsi: ufs: Add specific callback for setting DMA mask
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        vinayak holikatti <vinholikatti@gmail.com>, subhashj@codeaurora.org,
-        devicetree@vger.kernel.org,
-        Shaik Ameer Basha <shaik.ameer@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516034954.56475-1-code@mmayer.net>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping !!!
+On 15-05-18, 20:49, Markus Mayer wrote:
+> From: Markus Mayer <mmayer@broadcom.com>
+> 
+> Most CPUfreq drivers (at least on ARM) seem to be sorting the available
+> frequencies from lowest to highest. To match this behaviour, we reverse
+> the sorting order in brcmstb-avs-cpufreq, so it is now also lowest to
+> highest.
 
-On Thu, Mar 8, 2018 at 4:33 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
-> Currently DMA mask for UFS HCI is set by reading CAP register's
-> [64AS] bit. Some HCI controller like Exynos support 36-bit bus address.
-> This works perfectly fine with DMA mask set as 64 in case there is no
-> IOMMU attached to HCI.
-> In case if HCI is behind an IOMMU, setting DMA mask as 64 bit won't
-> work as HCI has only 36bit addressing and SMMU has created mapping of
-> 64 bit and as the device truncates the address, its mapping will not
-> be found by iommu.
-> To resolve such issues, let the variant driver sets its own DMA mask.
->
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+The reasoning isn't correct. Just because everyone else is doing it
+doesn't make it right and so you shouldn't change just because of
+that.
+
+What you must written instead in the commit log is that the cpufreq
+core performs better if the table is sorted (in any order), and so we
+must sort it as well.
+
+But I feel the table is already sorted for your platform, isn't it?
+And I don't see a clear advantage of merging this patch.
+
+> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
 > ---
->  drivers/scsi/ufs/ufshcd.c | 3 +++
->  drivers/scsi/ufs/ufshcd.h | 2 ++
->  2 files changed, 5 insertions(+)
->
-> I am not sure if there are other ways available to handle such cases.
-> The IOMMU I am talking about is arm-smmu and it DT binding does not
-> give much idea about handling such cases.
-> Have tested this patch with HCI controller with IOMMU attached.
->
-> Changes Since V1:
->         - Fixed build issue as reported by Kbuild test robot.
->
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index a355d98..9a1374e 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -7781,6 +7781,9 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
->   */
->  static int ufshcd_set_dma_mask(struct ufs_hba *hba)
+>  drivers/cpufreq/brcmstb-avs-cpufreq.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcmstb-avs-cpufreq.c
+> index b07559b9ed99..7dac3205d3eb 100644
+> --- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
+> +++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
+> @@ -403,7 +403,7 @@ brcm_avs_get_freq_table(struct device *dev, struct private_data *priv)
 >  {
-> +       if (hba->vops && hba->vops->set_dma_mask)
-> +               return hba->vops->set_dma_mask(hba);
-> +
->         if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT) {
->                 if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
->                         return 0;
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 1332e54..89c6dae 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -297,6 +297,7 @@ struct ufs_pwr_mode_info {
->   * @resume: called during host controller PM callback
->   * @dbg_register_dump: used to dump controller debug information
->   * @phy_initialization: used to initialize phys
-> + * @set_dma_mask: used to set variant specific DMA mask
->   */
->  struct ufs_hba_variant_ops {
->         const char *name;
-> @@ -325,6 +326,7 @@ struct ufs_hba_variant_ops {
->         int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
->         void    (*dbg_register_dump)(struct ufs_hba *hba);
->         int     (*phy_initialization)(struct ufs_hba *);
-> +       int     (*set_dma_mask)(struct ufs_hba *hba);
->  };
->
->  /* clock gating state  */
-> --
+>  	struct cpufreq_frequency_table *table;
+>  	unsigned int pstate;
+> -	int i, ret;
+> +	int p, i, ret;
+>  
+>  	/* Remember P-state for later */
+>  	ret = brcm_avs_get_pstate(priv, &pstate);
+> @@ -415,12 +415,13 @@ brcm_avs_get_freq_table(struct device *dev, struct private_data *priv)
+>  	if (!table)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	for (i = AVS_PSTATE_P0; i <= AVS_PSTATE_MAX; i++) {
+> -		ret = brcm_avs_set_pstate(priv, i);
+> +	for (p = AVS_PSTATE_MAX, i = 0; p >= 0; p--, i++) {
+> +		ret = brcm_avs_set_pstate(priv, p);
+>  		if (ret)
+>  			return ERR_PTR(ret);
+>  		table[i].frequency = brcm_avs_get_frequency(priv->base);
+> -		table[i].driver_data = i;
+> +		/* Store the corresponding P-state with each frequency */
+> +		table[i].driver_data = p;
+>  	}
+>  	table[i].frequency = CPUFREQ_TABLE_END;
+>  
+> -- 
 > 2.7.4
->
-
-
 
 -- 
-Regards,
-Alim
+viresh
