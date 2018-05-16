@@ -1,162 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeEPJI4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:08:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33506 "EHLO mail.bootlin.com"
+        id S1752133AbeEPJMf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:12:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46023 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752389AbeEPJIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:08:52 -0400
-Date: Wed, 16 May 2018 11:08:39 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Chris Moore <moore@free.fr>,
-        "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
- contents of ONFI parameter
-Message-ID: <20180516110839.46e881c6@bbrezillon>
-In-Reply-To: <20180516094227.14132e74@xps13>
-References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
-        <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
-        <20180515093429.34902670@bbrezillon>
-        <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
-        <20180516094227.14132e74@xps13>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751046AbeEPJMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:12:33 -0400
+Date: Wed, 16 May 2018 11:12:26 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Subject: Re: [PATCH -mm] mm, hugetlb: Pass fault address to no page handler
+Message-ID: <20180516091226.GM12670@dhcp22.suse.cz>
+References: <20180515005756.28942-1-ying.huang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515005756.28942-1-ying.huang@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 09:42:27 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-
-> Hi Chris,
+On Tue 15-05-18 08:57:56, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> > >>> +static void nand_bit_wise_majority(const void **srcbufs,
-> > >>> +				   unsigned int nsrcbufs,
-> > >>> +				   void *dstbuf,
-> > >>> +				   unsigned int bufsize)
-> > >>> +{
-> > >>> +	int i, j, k;
-> > >>> +
-> > >>> +	for (i = 0; i < bufsize; i++) {
-> > >>> +		u8 cnt, val;
-> > >>> +
-> > >>> +		val = 0;
-> > >>> +		for (j = 0; j < 8; j++) {
-> > >>> +			cnt = 0;
-> > >>> +			for (k = 0; k < nsrcbufs; k++) {
-> > >>> +				const u8 *srcbuf = srcbufs[k];
-> > >>> +
-> > >>> +				if (srcbuf[i] & BIT(j))
-> > >>> +					cnt++;
-> > >>> +			}
-> > >>> +			if (cnt > nsrcbufs / 2)
-> > >>> +				val |= BIT(j);
-> > >>> +		}
-> > >>> +		((u8 *)dstbuf)[i] = val;
-> > >>> +	}
-> > >>> +}
-> > >>> +
-> > >>> +/*
-> > >>>     * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
-> > >>>     */
-> > >>>    static int nand_flash_detect_onfi(struct nand_chip *chip)
-> > >>> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
-> > >>>    		return 0;    
-> > >>>    >>>    	/* ONFI chip: allocate a buffer to hold its parameter page */    
-> > >>> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> > >>> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> > >>>    	if (!p)
-> > >>>    		return -ENOMEM;    
-> > >>>    >>> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)    
-> > >>>    	}    
-> > >>>    >>>    	for (i = 0; i < 3; i++) {    
-> > >>> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> > >>> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
-> > >>>    		if (ret) {
-> > >>>    			ret = 0;
-> > >>>    			goto free_onfi_param_page;
-> > >>>    		}    
-> > >>>    >>> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==    
-> > >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
-> > >>>    				le16_to_cpu(p->crc)) {
-> > >>> +			if (i)
-> > >>> +				memcpy(p, &p[i], sizeof(*p));
-> > >>>    			break;
-> > >>>    		}
-> > >>>    	}    
-> > >>>    >>>    	if (i == 3) {    
-> > >>> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> > >>> -		goto free_onfi_param_page;
-> > >>> +		const void *srcbufs[3] = {p, p + 1, p + 2};
-> > >>> +
-> > >>> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
-> > >>> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
-> > >>> +				       sizeof(*p));
-> > >>> +
-> > >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
-> > >>> +				le16_to_cpu(p->crc)) {
-> > >>> +			pr_err("ONFI parameter recovery failed, aborting\n");
-> > >>> +			goto free_onfi_param_page;
-> > >>> +		}
-> > >>>    	}    
-> > >>>    >>>    	/* Check version */    
-> > >> This version is still hard coded for a three sample bitwise majority vote.
-> > >> So why not use the method which I suggested previously for v2 and which
-> > >> I repeat below?    
-> > > Because I want the nand_bit_wise_majority() function to work with
-> > > nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
-> > > page, but NAND vendor can decide to put more). Also, if the X copies of
-> > > the PARAM are corrupted (which is rather unlikely), that means we
-> > > already spent quite a lot of time reading the different copies and
-> > > calculating the CRC, so I think we don't care about perf optimizations
-> > > when doing bit-wise majority.
-> > >    
-> > >> The three sample bitwise majority can be implemented without bit level
-> > >> manipulation using the identity:
-> > >> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
-> > >> This can be factorized slightly to (a & (b | c)) | (b & c)
-> > >> This enables the operation to be performed 8, 16, 32 or even 64 bits at
-> > >> a time depending on the hardware.
-> > >>
-> > >> This method is not only faster and but also more compact.
-> > >>    
-> > 
-> > I do understand that the ONFI specifications permit more than 3 copies.
-> > However elsewhere the proposed code shows no intention of handling other cases.
-> > The constant 3 is hard coded in the following lines extracted from the proposed code:
-> > ...
-> > +    p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> > ...
-> >       for (i = 0; i < 3; i++) {
-> > ...
-> >       if (i == 3) {
-> > ...
-> > +        const void *srcbufs[3] = {p, p + 1, p + 2};
-> > 
-> > Moreover the last of these is difficult to generalize.  
+> This is to take better advantage of huge page clearing
+> optimization (c79b57e462b5d, "mm: hugetlb: clear target sub-page last
+> when clearing huge page").  Which will clear to access sub-page last
+> to avoid the cache lines of to access sub-page to be evicted when
+> clearing other sub-pages.  This needs to get the address of the
+> sub-page to access, that is, the fault address inside of the huge
+> page.  So the hugetlb no page fault handler is changed to pass that
+> information.  This will benefit workloads which don't access the begin
+> of the huge page after page fault.
 > 
-> Indeed, this is something to improve. I think Boris' request was to
-> prepare changes like this one, to avoid the situation where the code
-> does not scale (like this 'p, p + 1, p + 2').
+> With this patch, the throughput increases ~28.1% in vm-scalability
+> anon-w-seq test case with 88 processes on a 2 socket Xeon E5 2699 v4
+> system (44 cores, 88 threads).  The test case creates 88 processes,
+> each process mmap a big anonymous memory area and writes to it from
+> the end to the begin.  For each process, other processes could be seen
+> as other workload which generates heavy cache pressure.  At the same
+> time, the cache miss rate reduced from ~36.3% to ~25.6%, the
+> IPC (instruction per cycle) increased from 0.3 to 0.37, and the time
+> spent in user space is reduced ~19.3%
 
-Yep, here is a quick/untested patch [1] making ONFI param page
-detection and recovery more robust by reading more than 3 param pages if
-there are more. And that's the reason I want a generic bit-wise
-majority helper, not something that only works for 3 copies.
+This paragraph is confusing as Mike mentioned already. It would be
+probably more helpful to see how was the test configured to use hugetlb
+pages and what is the end benefit.
 
-[1]http://code.bulix.org/t21eys-335698
+I do not have any real objection to the implementation so feel free to
+add
+Acked-by: Michal Hocko <mhocko@suse.com>
+I am just wondering what is the usecase driving this. Or is it just a
+generic optimization that always makes sense to do? Indicating that in
+the changelog would be helpful as well.
+
+Thanks!
+
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Shaohua Li <shli@fb.com>
+> Cc: Christopher Lameter <cl@linux.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> Cc: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> ---
+>  mm/hugetlb.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 129088710510..3de6326abf39 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -3677,7 +3677,7 @@ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
+>  
+>  static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			   struct address_space *mapping, pgoff_t idx,
+> -			   unsigned long address, pte_t *ptep, unsigned int flags)
+> +			   unsigned long faddress, pte_t *ptep, unsigned int flags)
+>  {
+>  	struct hstate *h = hstate_vma(vma);
+>  	int ret = VM_FAULT_SIGBUS;
+> @@ -3686,6 +3686,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	struct page *page;
+>  	pte_t new_pte;
+>  	spinlock_t *ptl;
+> +	unsigned long address = faddress & huge_page_mask(h);
+>  
+>  	/*
+>  	 * Currently, we are forced to kill the process in the event the
+> @@ -3749,7 +3750,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  				ret = VM_FAULT_SIGBUS;
+>  			goto out;
+>  		}
+> -		clear_huge_page(page, address, pages_per_huge_page(h));
+> +		clear_huge_page(page, faddress, pages_per_huge_page(h));
+>  		__SetPageUptodate(page);
+>  		set_page_huge_active(page);
+>  
+> @@ -3871,7 +3872,7 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
+>  #endif
+>  
+>  int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+> -			unsigned long address, unsigned int flags)
+> +			unsigned long faddress, unsigned int flags)
+>  {
+>  	pte_t *ptep, entry;
+>  	spinlock_t *ptl;
+> @@ -3883,8 +3884,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	struct hstate *h = hstate_vma(vma);
+>  	struct address_space *mapping;
+>  	int need_wait_lock = 0;
+> -
+> -	address &= huge_page_mask(h);
+> +	unsigned long address = faddress & huge_page_mask(h);
+>  
+>  	ptep = huge_pte_offset(mm, address, huge_page_size(h));
+>  	if (ptep) {
+> @@ -3914,7 +3914,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  
+>  	entry = huge_ptep_get(ptep);
+>  	if (huge_pte_none(entry)) {
+> -		ret = hugetlb_no_page(mm, vma, mapping, idx, address, ptep, flags);
+> +		ret = hugetlb_no_page(mm, vma, mapping, idx, faddress, ptep, flags);
+>  		goto out_mutex;
+>  	}
+>  
+> -- 
+> 2.16.1
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
