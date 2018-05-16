@@ -1,97 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeEPNin (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:38:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58594 "EHLO mail.kernel.org"
+        id S1752689AbeEPNix (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:38:53 -0400
+Received: from ozlabs.org ([203.11.71.1]:53525 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752245AbeEPNii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:38:38 -0400
-Message-Id: <20180516133836.518686476@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Wed, 16 May 2018 09:36:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>, tom.zanussi@linux.intel.com
-Subject: [PATCH RT 3/5] tracing: Restore proper field flag printing when displaying triggers
-References: <20180516133642.521479369@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0003-tracing-Restore-proper-field-flag-printing-when-disp.patch
+        id S1752657AbeEPNiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:38:51 -0400
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 942cc40ae4354fee1e97137346434a2697d97e02
+In-Reply-To: <20180510155439.16582-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: macintosh/windfarm: fix spelling mistake: "ttarged" -> "ttarget"
+Message-Id: <40mFrn3sMLz9s3G@ozlabs.org>
+Date: Wed, 16 May 2018 23:38:49 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14.40-rt31-rc1 stable review patch.
-If anyone has any objections, please let me know.
+On Thu, 2018-05-10 at 15:54:39 UTC, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in debug messages of a structure
+> field name
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-------------------
+Applied to powerpc next, thanks.
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+https://git.kernel.org/powerpc/c/942cc40ae4354fee1e97137346434a
 
-[ commit 608940dabe1bd2ce4c97524004ec86637cf80f2c ]
-
-The flag-printing code used when displaying hist triggers somehow got
-dropped during refactoring of the inter-event patchset.  This restores
-it.
-
-Below are a couple examples - in the first case, .usecs wasn't being
-displayed properly for common_timestamps and the second illustrates
-the same for other flags such as .execname.
-
-Before:
-
-  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  hist:keys=common_pid:vals=hitcount,count:sort=count:size=2048 [active]
-
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  hist:keys=pid:vals=hitcount:ts0=common_timestamp:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-
-After:
-
-  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  hist:keys=common_pid.execname:vals=hitcount,count:sort=count:size=2048 [active]
-
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-
-Link: http://lkml.kernel.org/r/492bab42ff21806600af98a8ea901af10efbee0c.1524790601.git.tom.zanussi@linux.intel.com
-
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_hist.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 9dac8bae4f34..4745ed588607 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -4916,6 +4916,16 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
- 		seq_printf(m, "%s", field_name);
- 	} else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
- 		seq_puts(m, "common_timestamp");
-+
-+	if (hist_field->flags) {
-+		if (!(hist_field->flags & HIST_FIELD_FL_VAR_REF) &&
-+		    !(hist_field->flags & HIST_FIELD_FL_EXPR)) {
-+			const char *flags = get_hist_field_flags(hist_field);
-+
-+			if (flags)
-+				seq_printf(m, ".%s", flags);
-+		}
-+	}
- }
- 
- static int event_hist_trigger_print(struct seq_file *m,
--- 
-2.17.0
+cheers
