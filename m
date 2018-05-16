@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeEPSCn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:02:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59947 "EHLO
+        id S1752149AbeEPSDJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:03:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60881 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeEPSCl (ORCPT
+        with ESMTP id S1751328AbeEPSDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:02:41 -0400
-Date: Wed, 16 May 2018 11:02:29 -0700
+        Wed, 16 May 2018 14:03:08 -0400
+Date: Wed, 16 May 2018 11:02:58 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-y7dkhakejz3013o0w21n98xd@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
-        jolsa@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
-        dsahern@gmail.com
-Reply-To: hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, wangnan0@huawei.com, dsahern@gmail.com,
-        namhyung@kernel.org, jolsa@kernel.org
+Message-ID: <tip-zmeg52dlvy51rdlhyumfl5yf@git.kernel.org>
+Cc: namhyung@kernel.org, adrian.hunter@intel.com, hpa@zytor.com,
+        dsahern@gmail.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, wangnan0@huawei.com,
+        acme@redhat.com
+Reply-To: hpa@zytor.com, adrian.hunter@intel.com, namhyung@kernel.org,
+        mingo@kernel.org, dsahern@gmail.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, tglx@linutronix.de, wangnan0@huawei.com,
+        acme@redhat.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf bpf: Add 'examples' directories
-Git-Commit-ID: 8f12a2ff00e5e48ad5618167bac72cad7c9f214e
+Subject: [tip:perf/core] perf bpf: Add bpf.h to be used in eBPF proggies
+Git-Commit-ID: dd8e4ead6e983acea959d10252688ef1471106fe
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,95 +33,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8f12a2ff00e5e48ad5618167bac72cad7c9f214e
-Gitweb:     https://git.kernel.org/tip/8f12a2ff00e5e48ad5618167bac72cad7c9f214e
+Commit-ID:  dd8e4ead6e983acea959d10252688ef1471106fe
+Gitweb:     https://git.kernel.org/tip/dd8e4ead6e983acea959d10252688ef1471106fe
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 4 May 2018 11:56:15 -0300
+AuthorDate: Fri, 4 May 2018 12:23:29 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 15 May 2018 14:31:23 -0300
 
-perf bpf: Add 'examples' directories
+perf bpf: Add bpf.h to be used in eBPF proggies
 
-The first one is the bare minimum that bpf infrastructure accepts before
-it expects actual events to be set up:
+So, the first helper is the one shortening a variable/function section
+attribute, from, for instance:
 
-  $ cat tools/perf/examples/bpf/empty.c
   char _license[] __attribute__((section("license"), used)) = "GPL";
-  int _version __attribute__((section("version"), used)) = LINUX_VERSION_CODE;
-  $
 
-If you remove that "version" line, then it will be refused with:
+to:
 
-  # perf trace -e tools/perf/examples/bpf/empty.c
-  event syntax error: 'tools/perf/examples/bpf/empty.c'
-                       \___ Failed to load tools/perf/examples/bpf/empty.c from source: 'version' section incorrect or lost
+  char _license[] SEC("license") = "GPL";
 
-  (add -v to see detail)
-  Run 'perf list' for a list of valid events
+Convert empty.c to that and it becomes:
 
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
+  # cat ~acme/lib/examples/perf/bpf/empty.c
+  #include <bpf.h>
 
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
-  #
-
-The next ones will, step by step, show simple filters, then the needs
-for headers will be made clear, it will be put in place and tested with
-new examples, rinse, repeat.
-
-Back to using this first one to test the perf+bpf infrastructure:
-
-If we run it will fail, as no functions are present connecting with,
-say, a tracepoint or a function using the kprobes or uprobes
-infrastructure:
-
-  # perf trace -e tools/perf/examples/bpf/empty.c
-  WARNING: event parser found nothing
-  invalid or unsupported event: 'tools/perf/examples/bpf/empty.c'
-  Run 'perf list' for a list of valid events
-
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
-
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
-  #
-
-But, if we set things up to dump the generated object file to a file,
-and do this after having run 'make install', still on the developer's
-$HOME directory:
-
-  # cat ~/.perfconfig
-  [llvm]
-
-	dump-obj = true
-  #
-  # perf trace -e ~acme/lib/examples/perf/bpf/empty.c
-  LLVM: dumping /home/acme/lib/examples/perf/bpf/empty.o
-  WARNING: event parser found nothing
-  invalid or unsupported event: '/home/acme/lib/examples/perf/bpf/empty.c'
-  <SNIP>
-  #
-
-We can look at the dumped object file:
-
-  # ls -la ~acme/lib/examples/perf/bpf/empty.o
-  -rw-r--r--. 1 root root 576 May  4 12:10 /home/acme/lib/examples/perf/bpf/empty.o
-  # file ~acme/lib/examples/perf/bpf/empty.o
-  /home/acme/lib/examples/perf/bpf/empty.o: ELF 64-bit LSB relocatable, *unknown arch 0xf7* version 1 (SYSV), not stripped
-  # readelf -sw ~acme/lib/examples/perf/bpf/empty.o
-
-  Symbol table '.symtab' contains 3 entries:
-     Num:    Value          Size Type    Bind   Vis      Ndx Name
-       0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
-       1: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT    3 _license
-       2: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT    4 _version
-  #
-  # tools/bpf/bpftool/bpftool --pretty ~acme/lib/examples/perf/bpf/empty.o
-  null
+  char _license[] SEC("license") = "GPL";
+  int _version SEC("version") = LINUX_VERSION_CODE;
   #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
@@ -129,89 +65,45 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-y7dkhakejz3013o0w21n98xd@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-zmeg52dlvy51rdlhyumfl5yf@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config      | 7 +++++++
- tools/perf/Makefile.perf        | 3 +++
- tools/perf/examples/bpf/empty.c | 2 ++
- 3 files changed, 12 insertions(+)
+ tools/perf/Makefile.perf        | 1 +
+ tools/perf/examples/bpf/empty.c | 6 ++++--
+ tools/perf/include/bpf/bpf.h    | 5 +++++
+ 3 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 3bca9a733f0e..b5ac356ba323 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -886,6 +886,7 @@ endif
- # Among the variables below, these:
- #   perfexecdir
- #   perf_include_dir
-+#   perf_examples_dir
- #   template_dir
- #   mandir
- #   infodir
-@@ -906,6 +907,7 @@ mandir = share/man
- infodir = share/info
- perfexecdir = libexec/perf-core
- perf_include_dir = lib/include/perf
-+perf_examples_dir = lib/examples/perf
- sharedir = $(prefix)/share
- template_dir = share/perf-core/templates
- STRACE_GROUPS_DIR = share/perf-core/strace/groups
-@@ -937,6 +939,7 @@ mandir_SQ = $(subst ','\'',$(mandir))
- infodir_SQ = $(subst ','\'',$(infodir))
- perfexecdir_SQ = $(subst ','\'',$(perfexecdir))
- perf_include_dir_SQ = $(subst ','\'',$(perf_include_dir))
-+perf_examples_dir_SQ = $(subst ','\'',$(perf_examples_dir))
- template_dir_SQ = $(subst ','\'',$(template_dir))
- htmldir_SQ = $(subst ','\'',$(htmldir))
- tipdir_SQ = $(subst ','\'',$(tipdir))
-@@ -948,16 +951,19 @@ srcdir_SQ = $(subst ','\'',$(srcdir))
- ifneq ($(filter /%,$(firstword $(perfexecdir))),)
- perfexec_instdir = $(perfexecdir)
- perf_include_instdir = $(perf_include_dir)
-+perf_examples_instdir = $(perf_examples_dir)
- STRACE_GROUPS_INSTDIR = $(STRACE_GROUPS_DIR)
- tip_instdir = $(tipdir)
- else
- perfexec_instdir = $(prefix)/$(perfexecdir)
- perf_include_instdir = $(prefix)/$(perf_include_dir)
-+perf_examples_instdir = $(prefix)/$(perf_examples_dir)
- STRACE_GROUPS_INSTDIR = $(prefix)/$(STRACE_GROUPS_DIR)
- tip_instdir = $(prefix)/$(tipdir)
- endif
- perfexec_instdir_SQ = $(subst ','\'',$(perfexec_instdir))
- perf_include_instdir_SQ = $(subst ','\'',$(perf_include_instdir))
-+perf_examples_instdir_SQ = $(subst ','\'',$(perf_examples_instdir))
- STRACE_GROUPS_INSTDIR_SQ = $(subst ','\'',$(STRACE_GROUPS_INSTDIR))
- tip_instdir_SQ = $(subst ','\'',$(tip_instdir))
- 
-@@ -1006,6 +1012,7 @@ $(call detected_var,STRACE_GROUPS_DIR_SQ)
- $(call detected_var,prefix_SQ)
- $(call detected_var,perfexecdir_SQ)
- $(call detected_var,perf_include_dir_SQ)
-+$(call detected_var,perf_examples_dir_SQ)
- $(call detected_var,tipdir_SQ)
- $(call detected_var,srcdir_SQ)
- $(call detected_var,LIBDIR)
 diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index d9663b1cf43e..9343b7d945bb 100644
+index 9343b7d945bb..c63a3971d719 100644
 --- a/tools/perf/Makefile.perf
 +++ b/tools/perf/Makefile.perf
-@@ -770,6 +770,9 @@ endif
+@@ -770,6 +770,7 @@ endif
  ifndef NO_LIBBPF
  	$(call QUIET_INSTALL, lib) \
  		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
-+	$(call QUIET_INSTALL, lib) \
-+		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
-+		$(INSTALL) examples/bpf/*.c '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
- endif
- 	$(call QUIET_INSTALL, perf-archive) \
- 		$(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
++		$(INSTALL) include/bpf/*.h '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
+ 	$(call QUIET_INSTALL, lib) \
+ 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
+ 		$(INSTALL) examples/bpf/*.c '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
 diff --git a/tools/perf/examples/bpf/empty.c b/tools/perf/examples/bpf/empty.c
-new file mode 100644
-index 000000000000..78754df53ac1
---- /dev/null
+index 78754df53ac1..86f97763355d 100644
+--- a/tools/perf/examples/bpf/empty.c
 +++ b/tools/perf/examples/bpf/empty.c
-@@ -0,0 +1,2 @@
-+char _license[] __attribute__((section("license"), used)) = "GPL";
-+int _version __attribute__((section("version"), used)) = LINUX_VERSION_CODE;
+@@ -1,2 +1,4 @@
+-char _license[] __attribute__((section("license"), used)) = "GPL";
+-int _version __attribute__((section("version"), used)) = LINUX_VERSION_CODE;
++#include <bpf.h>
++
++char _license[] SEC("license") = "GPL";
++int _version SEC("version") = LINUX_VERSION_CODE;
+diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
+new file mode 100644
+index 000000000000..003afcab4e51
+--- /dev/null
++++ b/tools/perf/include/bpf/bpf.h
+@@ -0,0 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef _PERF_BPF_H
++#define _PERF_BPF_H
++#define SEC(NAME) __attribute__((section(NAME),  used))
++#endif /* _PERF_BPF_H */
