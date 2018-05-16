@@ -1,107 +1,87 @@
-Return-Path: <SRS0=ubV+=ID=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AB8JxZr3g/5UXkUyG3f8AV87FvATdh7Qp4g1x/R5sIqTP35IywJKecRyW7tiw2VAIK5hJoj1Keqh
-ARC-Seal: i=1; a=rsa-sha256; t=1526483631; cv=none;
+Return-Path: <me@tobin.cc>
+X-Google-Smtp-Source: AB8JxZpmuEZU15Qin/ifTgQkNQbhvdZ3a/JbOy2VL6OoucvNWCkCrcItNUqfapmBfz4VQzbXavEI
+ARC-Seal: i=1; a=rsa-sha256; t=1526510523; cv=none;
         d=google.com; s=arc-20160816;
-        b=QFHrbz6axolOjIFRhsCknZnw6GplcUS73O2QdyblpuGbLhkh2AfwbrmuThwi85jbFm
-         PcrrdXseKf4o1GSQwjjVNLVOt4FWS68TNradCvhzhqhxoAAYcCG6kU0AhEwIOG96JYVu
-         sFP/hKibQ2+hRiUd4Q1Jw5H8d/pRXIu88GA0HRsbhzQc35X15ovYVLBUQqcS42JZ4AEp
-         2HMpP5AMKLvptfsP8AOkR5lfmE/TA77Oj99AZ6AJzbwPsFOGJ16SSmqL4XBbMZEpSlMx
-         WW4nWa1iAMnBcQgXlFkVzsnXNn0zj/ZkaFQ34HVP5RGiCq81SGwCkpAfw9ekApidAEtG
-         OXMg==
+        b=fbVu3GKTaTmyv1AudO3UQczIyB8Ox4XrbXbhkQw5EAzW2Yh0PhiFcX6rKuvFueekAr
+         PPIQBVwPh/5bPKq6un36QX5x9dn8rej8IxNwTSkXdPvbGOaK8DyuImvtSula6vVjMHpz
+         PI7QW1hUzsa+P8y/um6/vvy+O2WQajR0htuxfYuGohUlVtnZPn4Dk+myx7rXSDbb0gwz
+         HxyJ5sAyCgIvg1W8iS5Lq3oTC2l37jTwLD1syL3HLGqB+eOTKOdWndwvhq+e+LEFTe6y
+         iaLJ7RSv6Hw1Xh5kLdWGhz4BVUO2KdhwbZEN2IuuUNy06Rt2tqorlMGfq+lcpmF6mnCm
+         jm5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=gvOlCEduzzo2KA5L/Qg4QZEnsHFtDqefT8vEs9JmCGY=;
-        b=qPGHmXl7HFoPIDxRNP1r3RpARTRN0sht8f1oyuLBKDbGX/PPSzpALA7JEsx4k6LDr6
-         kWHBwQyt1bj5yCWTPzjEot7EZmazpIurzF/fjg7ADc8XMsPt5shEBc4GHdOZAFZ4BTZI
-         1M02I6HEJTpZ+ClsNc0ptcSIRnPz10ecwxFCU3gZ32CntPzjG6bC3ARbMS4c0nGuZTqz
-         48oCe6V4TFil1U56WwjqzXplZgQ5Rsvs9ozIkmYoVjY2sS+fw3ED8BYUaPQ5/AThV0mx
-         lErtyiSDNcDTErb45pvKXg5stp4teTawSwtoN2qrox9r3Noz5xiSTwA8tp1NVhNcRjwz
-         tnKA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=BYeL1KeEUktL12rTDEFPqffA5SBuronlPosQeDSr1+A=;
+        b=RCwzJ+1cSBaHUMu18jju+Wm1YZ+M6WedEvahEVaTscYEIRJaUiBVpnesmt/rq5CMAb
+         ooWlXP/GwaF0bTFRDJNYbwfkB4DELiZln/n5tt8omqlsmyutubicK12LlS2zZYKq9AcU
+         CxbK8pwQO8S86uvmD4g25snVhc1QovxVcyivNNih1Fv1OkuA9mqnlAW0YVuLbQp0JXr5
+         GeOHqU2C4ChS34iUIjDGsOIICqYP0Lf8B86fEzZ+1q9LROFvCuy5jUBD5yOlBqxlSOUp
+         rV5gBRiQpi0XLuY4D/t3Djb2IUET39DQkeDA8cuKIFNXETTn8/OvHUYWKn+lnLANSgML
+         HBrg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of srs0=ubv+=id=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ubV+=ID=goodmis.org=rostedt@kernel.org
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=RfDLCE9s;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=SfotI4Gx;
+       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of srs0=ubv+=id=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ubV+=ID=goodmis.org=rostedt@kernel.org
-Date: Wed, 16 May 2018 11:13:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Linus Torvalds
- <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Kees
- Cook <keescook@chromium.org>, Anna-Maria Gleixner
- <anna-maria@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=RfDLCE9s;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=SfotI4Gx;
+       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+X-ME-Proxy: <xmx:urP8WsZfPUpSkGQC4XJnfrJlbtOCVGCnUjFhU3j6AhEpSc5hpacY7Q>
+X-ME-Proxy: <xmx:urP8Wu-XJJl1_Y41aImndoI5kpE7Es3PU1bRzxalyCq4jW5Mgsdvng>
+X-ME-Proxy: <xmx:urP8WpOBdAlLTzWh8b3lzIZ7BPXCv1-1eFiEiey1f6k9saoqYnTYgQ>
+X-ME-Proxy: <xmx:urP8WhTehEgJAVPngXNSMZPoApSgnon762unRePno-lmJYDszIsTMw>
+X-ME-Proxy: <xmx:urP8WoKXArggNTpl9wZf6NNuJfAAY--YWMzcMPL3FLkZOdSvN-TUTg>
+X-ME-Proxy: <xmx:urP8WiOMv59qPF4az1HgMFe_Pl51j_MqIrNHW2CzLTtVs1bO0XY1xA>
+X-ME-Sender: <xms:urP8Wp4EApcHxRm9U-xTg1VurYzeE3jpwfgnjnFcg3CqTnttLC09xw>
+Date: Thu, 17 May 2018 08:41:58 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Kees Cook <keescook@chromium.org>,
+	Anna-Maria Gleixner <anna-maria@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v5 0/3] enable early printing of hashed pointers
-Message-ID: <20180516111348.1abf69a1@gandalf.local.home>
-In-Reply-To: <1526426259-23012-1-git-send-email-me@tobin.cc>
+Message-ID: <20180516224158.GD25268@eros>
 References: <1526426259-23012-1-git-send-email-me@tobin.cc>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180516111348.1abf69a1@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516111348.1abf69a1@gandalf.local.home>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600573966123035587?=
-X-GMAIL-MSGID: =?utf-8?q?1600634100684642255?=
+X-GMAIL-MSGID: =?utf-8?q?1600662298992144397?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, May 16, 2018 at 11:13:48AM -0400, Steven Rostedt wrote:
+> 
+> I think the series looks good, although if Linus takes my last patch,
+> it may conflict badly with the third patch. I'll have to look into that.
 
-I think the series looks good, although if Linus takes my last patch,
-it may conflict badly with the third patch. I'll have to look into that.
+I applied your PR patch ontop of mainline (imitating Linus pulling) any
+yes patch 3 of this set has a merge conflict.
 
-Anyway, Andrew, you want to take this in your tree?
+> Anyway, Andrew, you want to take this in your tree?
 
--- Steve
+I split this set up into it's current form because Ted offered to take
+it through his tree.  There has been no response from him though since
+doing so.  He has ack'ed the first 2 patches (that touch
+drivers/char/random.c and include/linux/random.c).
 
+Since this is not overly urgent stuff is it easier for everyone involved
+if I wait until the PR to Linus goes through then rebase this, add the
+other vsprintf patch back onto the set and send it all to Andrew?
 
-On Wed, 16 May 2018 09:17:36 +1000
-"Tobin C. Harding" <me@tobin.cc> wrote:
+Usual disclaimer about being a massive noob, please correct me if I am
+out of line.  My aim is to make the job of others more simple.
 
-> Currently if an attempt is made to print a pointer before there is
-> enough entropy then '(____ptrval____)' is printed.  This makes debugging
-> stack traces during early boot difficult.
-> 
-> One partial solution to this problem is to use the hw RNG if it is
-> available.
-> 
-> Patch 1 - Whitespace fixes.
-> Patch 2 - Fix get_random_bytes_arch()
-> Patch 3 - Use hw RNG for pointer hashing if available (by default).
-> 
-> 
-> thanks,
-> Tobin.
-> 
-> v4 -> v5
->  - Use 'upside-down-xmas-tree' style to declare local variables (Steve)
->  - Added Reviewed-by tag from Steve (patch 2 and 3).
-> 
-> v3 -> v4
->  - remove last patch of series (command line option patch)
-> 
-> v2 -> v3
->  - Add __ro_after_init (suggested by Kees).
-> 
-> v1 -> v2
->  - Use min_t() instead of min() (thanks checkpatch).
->  - Add __must_check to function declaration (thanks Steve).
->  - Use hw RNG by default if available (as originally suggested by Kees).
->  - Add command line option to use cryptographically insecure hashing.
->    If debug_early_boot is enabled use hash_long() instead of siphash
->    (as requested by Steve, and solves original problem for Anna-Maria).
->  - Added Acked-by tag from Ted (patch 1 and 2)
-> 
-> 
-> 
-> *** BLURB HERE ***
-> 
-> Tobin C. Harding (3):
->   random: Fix whitespace pre random-bytes work
->   random: Return nbytes filled from hw RNG
->   vsprintf: Use hw RNG for ptr_key
-> 
->  drivers/char/random.c  | 19 ++++++++++---------
->  include/linux/random.h |  2 +-
->  lib/vsprintf.c         | 19 ++++++++++++++++---
->  3 files changed, 27 insertions(+), 13 deletions(-)
-> 
+thanks,
+Tobin.
