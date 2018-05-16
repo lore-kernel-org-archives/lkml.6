@@ -1,61 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeEPVKz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:10:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbeEPVKx (ORCPT
+        id S1752374AbeEPVLM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:11:12 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42042 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752276AbeEPVLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:10:53 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 16 May 2018 17:11:05 -0400
+X-Google-Smtp-Source: AB8JxZpNxQ7UsGWbTEu6HrhjoBj2w0hdtL5UL5ADx8Jx1O9w3fFEnMqv5Dzl2YDK+jInC+N4ONr2lw==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] PM / devfreq: Remove redundant frequency adjustment from governors
 Date: Wed, 16 May 2018 14:10:51 -0700
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Asutosh Das <asutoshd@codeaurora.org>
-Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] scsi: ufs-qcom: Enable
- UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE quirk
-In-Reply-To: <e81a03ffb59d1f9155e26dd1d71ec495811c2937.1525343531.git.asutoshd@codeaurora.org>
-References: <cover.1525343531.git.asutoshd@codeaurora.org>
- <e81a03ffb59d1f9155e26dd1d71ec495811c2937.1525343531.git.asutoshd@codeaurora.org>
-Message-ID: <c9c320de2d571663fbfd96fbb858b2b5@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Message-Id: <20180516211051.78875-1-mka@chromium.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-03 04:07, Asutosh Das wrote:
-> Enable UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE quirk to avoid failures
-> in seen on some UFS devices.
-> 
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufs-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-> index 4563d2e..d9edef8 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.c
-> +++ b/drivers/scsi/ufs/ufs-qcom.c
-> @@ -1105,7 +1105,7 @@ static void ufs_qcom_advertise_quirks(struct 
-> ufs_hba *hba)
-> 
->  	if (host->hw_ver.major >= 0x2) {
->  		hba->quirks |= UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION;
-> -
-> +		hba->quirks |= UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE;
->  		if (!ufs_qcom_cap_qunipro(host))
->  			/* Legacy UniPro mode still need following quirks */
->  			hba->quirks |= (UFSHCD_QUIRK_DELAY_BEFORE_DME_CMDS
+The performance, powersave, simpleondemand and userspace governors
+determine a target frequency and then adjust it according to the
+df->min/max_freq limits that might have been set by user space. This
+adjustment is redundant, it is done in update_devfreq() for any
+governor, right after governor->get_target_freq().
 
-We may not need this.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/devfreq/governor_performance.c    | 10 ++--------
+ drivers/devfreq/governor_powersave.c      |  5 -----
+ drivers/devfreq/governor_simpleondemand.c |  7 +------
+ drivers/devfreq/governor_userspace.c      | 16 ++++------------
+ 4 files changed, 7 insertions(+), 31 deletions(-)
 
+diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
+index 4d23ecfbd948..31ee30622c00 100644
+--- a/drivers/devfreq/governor_performance.c
++++ b/drivers/devfreq/governor_performance.c
+@@ -16,14 +16,8 @@
+ static int devfreq_performance_func(struct devfreq *df,
+ 				    unsigned long *freq)
+ {
+-	/*
+-	 * target callback should be able to get floor value as
+-	 * said in devfreq.h
+-	 */
+-	if (!df->max_freq)
+-		*freq = UINT_MAX;
+-	else
+-		*freq = df->max_freq;
++	*freq = UINT_MAX;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
+index 0c42f23249ef..50a891f7c92d 100644
+--- a/drivers/devfreq/governor_powersave.c
++++ b/drivers/devfreq/governor_powersave.c
+@@ -16,11 +16,6 @@
+ static int devfreq_powersave_func(struct devfreq *df,
+ 				  unsigned long *freq)
+ {
+-	/*
+-	 * target callback should be able to get ceiling value as
+-	 * said in devfreq.h
+-	 */
+-	*freq = df->min_freq;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
+index 28e0f2de7100..7ed733c528f4 100644
+--- a/drivers/devfreq/governor_simpleondemand.c
++++ b/drivers/devfreq/governor_simpleondemand.c
+@@ -27,7 +27,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
+ 	unsigned int dfso_upthreshold = DFSO_UPTHRESHOLD;
+ 	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
+ 	struct devfreq_simple_ondemand_data *data = df->data;
+-	unsigned long max = (df->max_freq) ? df->max_freq : UINT_MAX;
++	unsigned long max = UINT_MAX;
+ 
+ 	err = devfreq_update_stats(df);
+ 	if (err)
+@@ -85,11 +85,6 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
+ 	b = div_u64(b, (dfso_upthreshold - dfso_downdifferential / 2));
+ 	*freq = (unsigned long) b;
+ 
+-	if (df->min_freq && *freq < df->min_freq)
+-		*freq = df->min_freq;
+-	if (df->max_freq && *freq > df->max_freq)
+-		*freq = df->max_freq;
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
+index 080607c3f34d..378d84c011df 100644
+--- a/drivers/devfreq/governor_userspace.c
++++ b/drivers/devfreq/governor_userspace.c
+@@ -26,19 +26,11 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
+ {
+ 	struct userspace_data *data = df->data;
+ 
+-	if (data->valid) {
+-		unsigned long adjusted_freq = data->user_frequency;
+-
+-		if (df->max_freq && adjusted_freq > df->max_freq)
+-			adjusted_freq = df->max_freq;
+-
+-		if (df->min_freq && adjusted_freq < df->min_freq)
+-			adjusted_freq = df->min_freq;
+-
+-		*freq = adjusted_freq;
+-	} else {
++	if (data->valid)
++		*freq = data->user_frequency;
++	else
+ 		*freq = df->previous_freq; /* No user freq specified yet */
+-	}
++
+ 	return 0;
+ }
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0.441.gb46fe60e1d-goog
