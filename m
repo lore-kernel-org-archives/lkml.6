@@ -1,75 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeEPOhj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:37:39 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:23451 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbeEPOhh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:37:37 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WivdN1GDmY"
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CACRpkda_nrL8HQL3y+tvHKff+5zKykd3Ym1waEm=JC1tFQbbcw@mail.gmail.com>
-Date: Wed, 16 May 2018 16:37:23 +0200
-Cc: Kumar Gala <galak@codeaurora.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Message-Id: <9213FFC0-3C2B-447D-AA2C-55D7F93CFA27@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com> <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com> <6AA622D1-DA8C-4C58-8EAE-555989E69149@goldelico.com> <CACRpkda_nrL8HQL3y+tvHKff+5zKykd3Ym1waEm=JC1tFQbbcw@mail.gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3124)
+        id S1752508AbeEPOiZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:38:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752433AbeEPOiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 10:38:23 -0400
+Date: Wed, 16 May 2018 16:38:17 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio/mdev: Check globally for duplicate devices
+Message-ID: <20180516163817.41175428.cohuck@redhat.com>
+In-Reply-To: <20180516082320.43d4ac06@w520.home>
+References: <20180515195947.12163.49363.stgit@gimli.home>
+        <20180516110506.40b7516b.cohuck@redhat.com>
+        <20180516082320.43d4ac06@w520.home>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GEbiUo009284
 
+On Wed, 16 May 2018 08:23:20 -0600
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-> Am 16.05.2018 um 16:31 schrieb Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, 16 May 2018 11:05:06 +0200
+> Cornelia Huck <cohuck@redhat.com> wrote:
 > 
-> On Wed, May 16, 2018 at 3:32 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->>> Am 16.05.2018 um 13:53 schrieb Linus Walleij <linus.walleij@linaro.org>:
->>> On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->>> 
->>>> V5:
->>>> * fix wrong split up between patches 1/7and 2/7.
->>> 
->>> I applied patches 1, 2, 3 so we get some movement on the patch
->>> set and not too much for you to rebase.
->> 
->> thanks!
->> 
->> Well, I already had edited the commit messages for resending...
->> 
->>> 
->>> It's fine to just resend the rest next time.
->> 
->> There is only one point open before resending:
->> 
->> what is the preferred style to be used for PCAL_GPIO_MASK?
->> 
->> * GENMASK(4, 0)
->> * or 0x1f
+> > On Tue, 15 May 2018 14:17:04 -0600
+> > Alex Williamson <alex.williamson@redhat.com> wrote:
+> >   
+> > > When we create an mdev device, we check for duplicates against the
+> > > parent device and return -EEXIST if found, but the mdev device
+> > > namespace is global since we'll link all devices from the bus.  We do
+> > > catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
+> > > with it comes a kernel warning and stack trace for trying to create
+> > > duplicate sysfs links, which makes it an undesirable response.
+> > > 
+> > > Therefore we should really be looking for duplicates across all mdev
+> > > parent devices, or as implemented here, against our mdev device list.
+> > > 
+> > > Notably, mdev_parent.lock really only seems to be serializing device
+> > > creation and removal per parent.  I'm not sure if this is necessary,
+> > > mdev vendor drivers could easily provide this serialization if it
+> > > is required, but a side-effect of holding the mdev_list_lock to
+> > > protect the namespace is actually greater serialization across the
+> > > create and remove paths, so mdev_parent.lock is removed.  If we can
+> > > show that vendor drivers handle the create/remove paths themselves,
+> > > perhaps we can refine the locking granularity.    
+> > 
+> > I'm not sure whether more locking granularity on the create/remove
+> > paths is really worth the effort.  
 > 
-> No strong opinion... sorry. Whatever you & the other driver
-> contributors are most convenient with.
+> Perhaps not, but I thought I should at least mention it as a
+> consideration.
+> 
+> > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> > > ---
+> > >  drivers/vfio/mdev/mdev_core.c    |   79 ++++++++++----------------------------
+> > >  drivers/vfio/mdev/mdev_private.h |    1 
+> > >  2 files changed, 20 insertions(+), 60 deletions(-)    
+> > 
+> > In general, I think this patch makes sense; some nits below.
+> >   
+> > > 
+> > > diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+> > > index 126991046eb7..3d8898a2baaf 100644
+> > > --- a/drivers/vfio/mdev/mdev_core.c
+> > > +++ b/drivers/vfio/mdev/mdev_core.c    
+> >   
+> > > @@ -376,12 +346,13 @@ int mdev_device_remove(struct device *dev, bool force_remove)
+> > >  	struct mdev_device *mdev, *tmp;
+> > >  	struct mdev_parent *parent;
+> > >  	struct mdev_type *type;
+> > > -	int ret;
+> > > +	int ret = 0;    
+> > 
+> > I don't think you need to init this, as ret should either be set to
+> > -ENODEV or the return code of mdev_device_remove_ops(), shouldn't it?  
+> 
+> Yep, I think this is a leftover from before I decided I should goto a
+> common out, it's unnecessary now.  Removed.
 
-Ok, then let's keep the GENMASK(4, 0) since nobody did complain
-about it.
+OK, with that change
 
-BR and thanks,
-Nikolaus
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
