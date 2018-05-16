@@ -1,97 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeEPU7E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:59:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27516 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751130AbeEPU7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:59:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,407,1520924400";
-   d="scan'208";a="40490061"
-Message-ID: <1526504342.61700.87.camel@linux.intel.com>
-Subject: Re: [RFC/RFT] [PATCH 07/10] cpufreq: intel_pstate: HWP boost
- performance on busy task migrate
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
-        Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@arm.com>,
+        id S1751395AbeEPVCU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:02:20 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:54898 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbeEPVCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 17:02:18 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH v5 4/4] rtc: ds1307: add frequency_test_enable sysfs
+ attribute to check tick on m41txx
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, alexandre.belloni@bootlin.com,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 16 May 2018 13:59:02 -0700
-In-Reply-To: <CAJZ5v0ixBnniXkaKJPywCsPkNp33BY7yDGnnMJ5kavP_g4ULFg@mail.gmail.com>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
-         <20180516044911.28797-8-srinivas.pandruvada@linux.intel.com>
-         <CAJZ5v0ixBnniXkaKJPywCsPkNp33BY7yDGnnMJ5kavP_g4ULFg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
+References: <20180516103251.74707-1-giulio.benetti@micronovasrl.com>
+ <20180516103251.74707-4-giulio.benetti@micronovasrl.com>
+ <CAHp75VdC74jW+Vox2ogDVzG17Z3kD0Vg-1du4SeK30WajT7N-Q@mail.gmail.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <836407b4-8c51-5efa-8e29-f487bbcb528d@micronovasrl.com>
+Date: Wed, 16 May 2018 23:02:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdC74jW+Vox2ogDVzG17Z3kD0Vg-1du4SeK30WajT7N-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-16 at 11:49 +0200, Rafael J. Wysocki wrote:
-> On Wed, May 16, 2018 at 6:49 AM, Srinivas Pandruvada
-> <srinivas.pandruvada@linux.intel.com> wrote:
-> > When a busy task migrates to a new CPU boost HWP prformance to max.
-> > This
-> > helps workloads on servers with per core P-states, which saturates
-> > all
-> > CPUs and then they migrate frequently. But changing limits has
-> > extra over
-> > head of issuing new HWP Request MSR, which takes 1000+
-> > cycles. So this change limits setting HWP Request MSR.
-> > Rate control in setting HWP Requests:
-> > - If the current performance is around P1, simply ignore.
-> > - Once set wait till hold time, till remove boost. While the boost
-> >  is on, another flags is notified, it will prolong boost.
-> > - The task migrates needs to have some utilzation which is more
-> > than threshold utilization, which will trigger P-state above
-> > minimum.
-> > 
-> > Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel
-> > .com>
-> > ---
-> >  drivers/cpufreq/intel_pstate.c | 37
-> > ++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 36 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/intel_pstate.c
-> > b/drivers/cpufreq/intel_pstate.c
-> > index d418265..ec455af 100644
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -227,6 +227,7 @@ struct global_params {
-> >   *                     defines callback and arguments
-> >   * @hwp_boost_active:  HWP performance is boosted on this CPU
-> >   * @last_io_update:    Last time when IO wake flag was set
-> > + * @migrate_hint:      Set when scheduler indicates thread
-> > migration
-> >   *
-> >   * This structure stores per CPU instance data for all CPUs.
-> >   */
-> > @@ -263,6 +264,7 @@ struct cpudata {
-> >         call_single_data_t csd;
-> >         bool hwp_boost_active;
-> >         u64 last_io_update;
-> > +       bool migrate_hint;
-> 
-> Why do you need this in the struct?
-> 
-> It looks like it only is used locally in
-> intel_pstate_update_util_hwp().
-It is required as we set just set a flag for the new CPU in its cpudata
-that a task is migrated on it. We update performance on the next tick
-on local cpu only when the rq utilization is updated to check whether
-it is worth boosting.
+Hi,
 
-Thanks,
-Srinivas
+Il 16/05/2018 22:22, Andy Shevchenko ha scritto:
+> On Wed, May 16, 2018 at 1:32 PM, Giulio Benetti
+> <giulio.benetti@micronovasrl.com> wrote:
+>> On m41txx you can enable open-drain OUT pin to check if offset is ok.
+>> Enabling OUT pin with frequency_test_enable attribute, OUT pin will tick
+>> 512 times faster than 1s tick base.
+>>
+>> Enable or Disable FT bit on CONTROL register if freq_test is 1 or 0.
+>>
+>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> 
+>> +static ssize_t frequency_test_enable_store(struct device *dev,
+>> +                                          struct device_attribute *attr,
+>> +                                          const char *buf, size_t count)
+>> +{
+>> +       struct ds1307 *ds1307 = dev_get_drvdata(dev);
+>> +       unsigned long freq_test = 0;
+>> +       int retval;
+>> +
+>> +       retval = kstrtoul(buf, 10, &freq_test);
+>> +       if ((retval < 0) || (retval > 1)) {
+> 
+> kstrtobool() then?
+
+Yes, you're right.
+
+> 
+>> +               dev_err(dev, "Failed to store RTC Frequency Test attribute\n");
+> 
+>> +               return -EINVAL;
+> 
+> ...and do not shadow actual error code.
+
+Ok
+
+> 
+>> +       }
+>> +
+>> +       regmap_update_bits(ds1307->regmap, M41TXX_REG_CONTROL, M41TXX_BIT_FT,
+>> +                          freq_test ? M41TXX_BIT_FT : 0);
+>> +
+> 
+>> +       return retval ? retval : count;
+> 
+> Does the condition make any sense?
+
+You're right, not at all.
+I changed it into:
+"return count;"
+
+> 
+>> +}
+> 
+>> +static ssize_t frequency_test_enable_show(struct device *dev,
+>> +                                         struct device_attribute *attr,
+>> +                                         char *buf)
+>> +{
+> 
+>> +       int freq_test_en = 0;
+> 
+>> +       if (ctrl_reg & M41TXX_BIT_FT)
+>> +               freq_test_en = true;
+>> +       else
+>> +               freq_test_en = false;
+>> +
+>> +       return sprintf(buf, "%d\n", freq_test_en);
+> 
+> So, is it boolean or integer? This code makes it confusing a lot.
+
+It is a boolean, so now I've updated with this:
+
+if (ctrl_reg & M41TXX_BIT_FT)
+	return scnprintf(buf, PAGE_SIZE, "on\n");
+else
+	return scnprintf(buf, PAGE_SIZE, "off\n");
+
+> 
+>> +}
+> 
+
+Thank you very much for review
+
+Giulio Benetti
