@@ -1,98 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753099AbeEPJtM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:49:12 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43400 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752514AbeEPJs5 (ORCPT
+        id S1753391AbeEPJtn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:49:43 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:34850 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753101AbeEPJtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:48:57 -0400
-X-Google-Smtp-Source: AB8JxZq7u8+l9OO3taCX1McC869fZ1G6NRP6IERRW6Q1l5G8/s9mljKkjgY9v1CuDf5X4RCukANS+A==
-Date: Wed, 16 May 2018 11:48:50 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 14/14] net: sched: implement delete for all actions
-Message-ID: <20180516094850.GF1972@nanopsycho>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-15-git-send-email-vladbu@mellanox.com>
+        Wed, 16 May 2018 05:49:39 -0400
+X-Google-Smtp-Source: AB8JxZpxgWu6GukTFymI+d2uM/UpExPAue1tDFLOxCJEqu4+rBMPFwABH5YOXAxtVbmcaQDDfcgYea5c8I9ODgtMGUA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526308035-12484-15-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180516044911.28797-8-srinivas.pandruvada@linux.intel.com>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com> <20180516044911.28797-8-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 May 2018 11:49:38 +0200
+X-Google-Sender-Auth: xI1y0S9IHUPXCyjOV9yPwTg1YeE
+Message-ID: <CAJZ5v0ixBnniXkaKJPywCsPkNp33BY7yDGnnMJ5kavP_g4ULFg@mail.gmail.com>
+Subject: Re: [RFC/RFT] [PATCH 07/10] cpufreq: intel_pstate: HWP boost
+ performance on busy task migrate
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
+        Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, May 14, 2018 at 04:27:15PM CEST, vladbu@mellanox.com wrote:
->Implement delete function that is required to delete actions without
->holding rtnl lock. Use action API function that atomically deletes action
->only if it is still in action idr. This implementation prevents concurrent
->threads from deleting same action twice.
+On Wed, May 16, 2018 at 6:49 AM, Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+> When a busy task migrates to a new CPU boost HWP prformance to max. This
+> helps workloads on servers with per core P-states, which saturates all
+> CPUs and then they migrate frequently. But changing limits has extra over
+> head of issuing new HWP Request MSR, which takes 1000+
+> cycles. So this change limits setting HWP Request MSR.
+> Rate control in setting HWP Requests:
+> - If the current performance is around P1, simply ignore.
+> - Once set wait till hold time, till remove boost. While the boost
+>  is on, another flags is notified, it will prolong boost.
+> - The task migrates needs to have some utilzation which is more
+> than threshold utilization, which will trigger P-state above minimum.
 >
->Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->---
-> net/sched/act_bpf.c        |  8 ++++++++
-> net/sched/act_connmark.c   |  8 ++++++++
-> net/sched/act_csum.c       |  8 ++++++++
-> net/sched/act_gact.c       |  8 ++++++++
-> net/sched/act_ife.c        |  8 ++++++++
-> net/sched/act_ipt.c        | 16 ++++++++++++++++
-> net/sched/act_mirred.c     |  8 ++++++++
-> net/sched/act_nat.c        |  8 ++++++++
-> net/sched/act_pedit.c      |  8 ++++++++
-> net/sched/act_police.c     |  8 ++++++++
-> net/sched/act_sample.c     |  8 ++++++++
-> net/sched/act_simple.c     |  8 ++++++++
-> net/sched/act_skbedit.c    |  8 ++++++++
-> net/sched/act_skbmod.c     |  8 ++++++++
-> net/sched/act_tunnel_key.c |  8 ++++++++
-> net/sched/act_vlan.c       |  8 ++++++++
-> 16 files changed, 136 insertions(+)
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  drivers/cpufreq/intel_pstate.c | 37 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
 >
->diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
->index 0bf4ecf..36f7f66 100644
->--- a/net/sched/act_bpf.c
->+++ b/net/sched/act_bpf.c
->@@ -394,6 +394,13 @@ static int tcf_bpf_search(struct net *net, struct tc_action **a, u32 index,
-> 	return tcf_idr_search(tn, a, index);
-> }
-> 
->+static int tcf_bpf_delete(struct net *net, u32 index)
->+{
->+	struct tc_action_net *tn = net_generic(net, bpf_net_id);
->+
->+	return tcf_idr_find_delete(tn, index);
->+}
->+
-> static struct tc_action_ops act_bpf_ops __read_mostly = {
-> 	.kind		=	"bpf",
-> 	.type		=	TCA_ACT_BPF,
->@@ -404,6 +411,7 @@ static struct tc_action_ops act_bpf_ops __read_mostly = {
-> 	.init		=	tcf_bpf_init,
-> 	.walk		=	tcf_bpf_walker,
-> 	.lookup		=	tcf_bpf_search,
->+	.delete		=	tcf_bpf_delete,
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index d418265..ec455af 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -227,6 +227,7 @@ struct global_params {
+>   *                     defines callback and arguments
+>   * @hwp_boost_active:  HWP performance is boosted on this CPU
+>   * @last_io_update:    Last time when IO wake flag was set
+> + * @migrate_hint:      Set when scheduler indicates thread migration
+>   *
+>   * This structure stores per CPU instance data for all CPUs.
+>   */
+> @@ -263,6 +264,7 @@ struct cpudata {
+>         call_single_data_t csd;
+>         bool hwp_boost_active;
+>         u64 last_io_update;
+> +       bool migrate_hint;
 
-I wonder, right before this patch, how the idr index got removed?
-delete op is NULL and I didn't find anyone else to do it.
+Why do you need this in the struct?
 
-Also, after this patch, does it make sense to have following check in
-tcf_action_del_1()?
+It looks like it only is used locally in intel_pstate_update_util_hwp().
 
-       if (ops->delete)
-	       err = ops->delete(net, index);
-
-Looks like ops->delete is non-null for all.
-
-Seems to me that you need to introduce this patch filling up the delete
-op in all acts and only after that introduce a code that actually calls
-it.
-
-[...]
+>  };
