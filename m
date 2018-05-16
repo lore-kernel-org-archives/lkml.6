@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-654-1526464016-2-4895185651965974907
+X-Cyrus-Session-Id: sloti22d1t05-62429-1526464013-2-14871860390836184980
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,27 +13,27 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464015; b=ew8CtJ5lZj/4k7BEkxhe6nJ8YWSPzzQz5Ib9duBawxt8EGSiIT
-    TvG1uc1m0Yvre2Ht1ahQu8tawzklCTlvdVzU5OSjlLngc5wEAaYSnp0nBS0CAFhE
-    AhL3jJ3OBv92zeNX0S0Kk0r1V4HCZxs7mPhy11C+jYj7YorOPWdu0xN2uM00ykqM
-    PdXyKLQwCGTNIzKVw6qZxv7AkABwA5lQTH5tlJ92i0t8GscMEFOHo3FqpDwsyRv3
-    SHpCWF92du96LUmESTcashU4JDLbnN28IatiQkVlQDatPfEIh6PRxkQduncyuz7P
-    dPu5dk6cjdof1Zq1uT51r4WoilRPiZlGm9Fw==
+    1526464012; b=FYbyPkXIVZiPiBLiUQ5b3FtfVuklhESRpAiGoKKbKv+1722a/2
+    Bv2czAovufQPClqOTTa99dbNTYpiZqpU27hR/QONckdpyChVmw8sS4yglu7tUn9n
+    Ki6P73SdWCBhxMJY9fzIga1m1mTlK+7Q4y9C2grayBBMKSLQdCm8XAgq/0Zy6gUA
+    07UnSOW8dW69BcUi0RJsmILwktOoaIJvSzKbSTCCxJxpyVIwMXZaAoS7I7dMw2m/
+    4NWDs3BB8EBSBrMHQaZd8DVXEgh6LrZzMKfYn/M45HF7uGnCuBdFI4J1izrY7B4y
+    LOOY8MuDCVUd9f4aQ9reH4hYgihibcrsEFPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464015; bh=gNUHM
-    EhryuWCsRcocQkxqpk+HAE7KPg5opsnx2RwWe0=; b=HOUj+7PeWXm1vXejxnd2y
-    NX29D6QYHw6If7ljgvdhDnh6HJIRLinzpToQQMXYZsaMfjWTAYgmY0xXZKJs275n
-    10045bkxsvLyPmi+RpZ09n4G3bQjRu4dur8GGj7pvvHtwri8FHyxBmZdCP0iGQET
-    OW51Io5/mQAXgUC84RgbFfFd21tYBuP/cWHmBvgdKDuPOWFN8x0NP7tM8EYISecj
-    FKqMcRd6fo9/J/bFTYOetjZFxzLy4TVQR2pqJdxB6bBWYQqgu2D0aCGBn78MLWK7
-    qTHqrJYZU8W3UASd7hlsz/4Aqt020K1Ou/+ifNGmBww5S7mDwWTDg2mx2QET25CQ
-    g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464012; bh=aFUBL
+    lOckY2HDOa9L8WAcrQn4t9HLBA7NhllyKNVtBk=; b=AtRLjPthLKJJmD/6a4SAA
+    SeTXQ8IaAX2Oj2aRMDXw5/CeqIFyhY4rrmHLVSVmnpNVVio+C+AXVN9eRc3el024
+    k3ds2Jwcqlh5MOj1xzCqnXcNq3RF207+Sa19L7aCo/vstjTntgnqn4tOFydRAxUt
+    k9cXTzGJrD8Y4HzqBO68mez+c+WK/U3aiULyC/NGXCszNscm1JSliz+yq4mIF2W7
+    +/z53dJWL8JqZqs2EX4e+fXBfIeODADaGGzbNFf2C+mOBAgzuyFa6MtSch959fg6
+    0+HfnvMejbfc7tYI9F0Se4+DbtlHkUljgnDQMqIx9sy4yAMn8fksIcQ4NyLtTjiR
+    A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=R1Q8wUz2
+    header.d=infradead.org header.i=@infradead.org header.b=a6ZnYFs/
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -49,10 +49,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=R1Q8wUz2
+      header.d=infradead.org header.i=@infradead.org header.b=a6ZnYFs/
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -69,22 +69,23 @@ Authentication-Results: mx2.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAgfPxM0RWLu61zx+Yre3m8qEOrS//JTxNnCuP5Um9IOpiIoEVPKM2pCJkUx01A6bkBkdGI6oh/pz6LjmKNVm/8UeVTpR2xAPNx65lrzemnJMv47qS2J
-    4QV0CKCh6+mU2uf9nH+VvQpTL4a1erJdeDPyh8SzBR9aCfiuFPi4zJ0Yh4sl9sBc6LvfRSRLG1hpZ747iOno4en4Y6Tx/9zpwa+FJ46I+1VavxHaVX/D1wG/
-    QXifqCyWgICS+5Ucku1fzA==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+X-CM-Envelope: MS4wfFckTQst3cUKELyW2YCofOxw3KQFgrEV3oVZv+QDIpIALz009nnp+n4CI4RKICLLeXRTCcQqnoNFWXiff4XPTbFA3rmGCG8siARi8aulloj/SyIjQZaH
+    /95eRXqqt073gRSavKbCgHCzEVS9/RBKOQLwYgAUnmMQX3ofjd7UIjI+QW0mydNXDqEu5MQRhpYV+DgZ0MYuxGAj+4ss2PeQSm9nEROnqOUoycZ9teWRe+Lg
+    eFVctXmobGMxWB2wbAw2/Q==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=qHYdmk5srm4cNRxzpugA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=P-IC7800AAAA:8 a=DDOyTI_5AAAA:8
+    a=easfzybDChy4AbOaNI4A:9 a=CjuIK1q_8ugA:10 a=d3PnA9EDa4IxuAV0gXij:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 30/42] bonding: switch to proc_create_seq_data
-Date: Wed, 16 May 2018 11:43:34 +0200
-Message-Id: <20180516094346.20506-31-hch@lst.de>
+Subject: [PATCH 29/42] rtc/proc: switch to proc_create_single_data
+Date: Wed, 16 May 2018 11:43:33 +0200
+Message-Id: <20180516094346.20506-30-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -118,95 +119,62 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And use proc private data directly instead of doing a detour
-through seq->private.
+And stop trying to get a reference on the submodule, procfs code deals
+with release after an unloaded module and thus removed proc entry.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/net/bonding/bond_procfs.c | 36 ++++++-------------------------
- 1 file changed, 6 insertions(+), 30 deletions(-)
+ drivers/rtc/rtc-proc.c | 33 ++-------------------------------
+ 1 file changed, 2 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_procfs.c b/drivers/net/bonding/bond_procfs.c
-index 01059f1a7bca..9f7d83e827c3 100644
---- a/drivers/net/bonding/bond_procfs.c
-+++ b/drivers/net/bonding/bond_procfs.c
-@@ -10,7 +10,7 @@
- static void *bond_info_seq_start(struct seq_file *seq, loff_t *pos)
- 	__acquires(RCU)
- {
--	struct bonding *bond = seq->private;
-+	struct bonding *bond = PDE_DATA(file_inode(seq->file));
- 	struct list_head *iter;
- 	struct slave *slave;
- 	loff_t off = 0;
-@@ -29,7 +29,7 @@ static void *bond_info_seq_start(struct seq_file *seq, loff_t *pos)
+diff --git a/drivers/rtc/rtc-proc.c b/drivers/rtc/rtc-proc.c
+index 31e7e23cc5be..a9dd9218fae2 100644
+--- a/drivers/rtc/rtc-proc.c
++++ b/drivers/rtc/rtc-proc.c
+@@ -107,40 +107,11 @@ static int rtc_proc_show(struct seq_file *seq, void *offset)
+ 	return 0;
+ }
  
- static void *bond_info_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	struct bonding *bond = seq->private;
-+	struct bonding *bond = PDE_DATA(file_inode(seq->file));
- 	struct list_head *iter;
- 	struct slave *slave;
- 	bool found = false;
-@@ -56,7 +56,7 @@ static void bond_info_seq_stop(struct seq_file *seq, void *v)
- 
- static void bond_info_show_master(struct seq_file *seq)
- {
--	struct bonding *bond = seq->private;
-+	struct bonding *bond = PDE_DATA(file_inode(seq->file));
- 	const struct bond_opt_value *optval;
- 	struct slave *curr, *primary;
- 	int i;
-@@ -167,7 +167,7 @@ static void bond_info_show_master(struct seq_file *seq)
- static void bond_info_show_slave(struct seq_file *seq,
- 				 const struct slave *slave)
- {
--	struct bonding *bond = seq->private;
-+	struct bonding *bond = PDE_DATA(file_inode(seq->file));
- 
- 	seq_printf(seq, "\nSlave Interface: %s\n", slave->dev->name);
- 	seq_printf(seq, "MII Status: %s\n", bond_slave_link_status(slave->link));
-@@ -257,38 +257,14 @@ static const struct seq_operations bond_info_seq_ops = {
- 	.show  = bond_info_seq_show,
- };
- 
--static int bond_info_open(struct inode *inode, struct file *file)
+-static int rtc_proc_open(struct inode *inode, struct file *file)
 -{
--	struct seq_file *seq;
--	int res;
+-	int ret;
+-	struct rtc_device *rtc = PDE_DATA(inode);
 -
--	res = seq_open(file, &bond_info_seq_ops);
--	if (!res) {
--		/* recover the pointer buried in proc_dir_entry data */
--		seq = file->private_data;
--		seq->private = PDE_DATA(inode);
--	}
+-	if (!try_module_get(rtc->owner))
+-		return -ENODEV;
 -
+-	ret = single_open(file, rtc_proc_show, rtc);
+-	if (ret)
+-		module_put(rtc->owner);
+-	return ret;
+-}
+-
+-static int rtc_proc_release(struct inode *inode, struct file *file)
+-{
+-	int res = single_release(inode, file);
+-	struct rtc_device *rtc = PDE_DATA(inode);
+-
+-	module_put(rtc->owner);
 -	return res;
 -}
 -
--static const struct file_operations bond_info_fops = {
--	.owner   = THIS_MODULE,
--	.open    = bond_info_open,
--	.read    = seq_read,
--	.llseek  = seq_lseek,
--	.release = seq_release,
+-static const struct file_operations rtc_proc_fops = {
+-	.open		= rtc_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= rtc_proc_release,
 -};
 -
- void bond_create_proc_entry(struct bonding *bond)
+ void rtc_proc_add_device(struct rtc_device *rtc)
  {
- 	struct net_device *bond_dev = bond->dev;
- 	struct bond_net *bn = net_generic(dev_net(bond_dev), bond_net_id);
+ 	if (is_rtc_hctosys(rtc))
+-		proc_create_data("driver/rtc", 0, NULL, &rtc_proc_fops, rtc);
++		proc_create_single_data("driver/rtc", 0, NULL, rtc_proc_show,
++				rtc);
+ }
  
- 	if (bn->proc_dir) {
--		bond->proc_entry = proc_create_data(bond_dev->name,
--						    0444, bn->proc_dir,
--						    &bond_info_fops, bond);
-+		bond->proc_entry = proc_create_seq_data(bond_dev->name, 0444,
-+				bn->proc_dir, &bond_info_seq_ops, bond);
- 		if (bond->proc_entry == NULL)
- 			netdev_warn(bond_dev, "Cannot create /proc/net/%s/%s\n",
- 				    DRV_NAME, bond_dev->name);
+ void rtc_proc_del_device(struct rtc_device *rtc)
 -- 
 2.17.0
 
