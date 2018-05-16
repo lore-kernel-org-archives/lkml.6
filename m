@@ -1,63 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeEPLok (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:44:40 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38060 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeEPLoi (ORCPT
+        id S1752599AbeEPLpM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:45:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45210 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751844AbeEPLpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:44:38 -0400
-Date: Wed, 16 May 2018 14:42:54 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Paul Burton <paul.burton@mips.com>,
-        Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error
- return paths
-Message-ID: <20180516114254.wffddft537t45yfg@mwanda>
-References: <20180509134031.11611-1-colin.king@canonical.com>
- <20180509140135.4dndt3baomtxups5@mwanda>
- <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
- <20180510065951.fiojonx5f776z5jm@mwanda>
- <152640892003.34267.13202118557714072290@swboyd.mtv.corp.google.com>
+        Wed, 16 May 2018 07:45:10 -0400
+Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 16 May 2018 07:45:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152640892003.34267.13202118557714072290@swboyd.mtv.corp.google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805160119
+In-Reply-To: <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051611-0028-0000-0000-000009A08C9E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01033107; UDB=6.00528218; IPR=6.00812239;
+ MB=3.00021143; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 11:45:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051611-0029-0000-0000-00003AD97985
+Message-Id: <ea3904e7-0c7e-c8d4-556f-fc18edfe6709@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160120
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:28:40AM -0700, Stephen Boyd wrote:
-> Quoting Dan Carpenter (2018-05-09 23:59:51)
-> > It would be nice to make things static check clean.  One idea would be
-> > that the static checker could ignore resource leaks in __init functions.
-> > 
-> 
-> Typically if the stuff is so important that it doesn't work without it
-> then we throw in a panic() or a BUG() call to indicate that all hope is
-> lost. Otherwise, I'm not sure what's wrong with adding in proper error
-> paths for clean recovery.
+On 05/16/2018 04:21 AM, Pierre Morel wrote:
+> On 07/05/2018 17:11, Tony Krowiak wrote:
+>> Introduces a new AP device driver. This device driver
+>> is built on the VFIO mediated device framework. The framework
+>> provides sysfs interfaces that facilitate passthrough
+>> access by guests to devices installed on the linux host.
+> ...snip...
+>> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+>> +{
+>
+> You should take care of the ap devices when they are added or removed
+> from the matrix.
+> I suggest you add a remove callback to avoid unbinding a queue while
+> it is assigned to a guest.
 
-In clk_boston_setup() then we'd have to put a ton of BUG()s in there to
-silence all the warnings.  Right now the static checkers only care about
-kmalloc() but in a year or two they'll be clever enough to care about
-everything leaked in this function.  I don't think adding BUG() calls
-is a good idea.
+This is not possible without a change to the AP bus. The remove callback
+returns void, so there is no way to indicate to the AP bus not to remove
+the queue device. I'll talk to Harald about this.
 
-Plus, I have a private static checker warning for that.  When the BTRFS
-filesystem was merged 10 years ago it used to call BUG() all the time if
-allocations failed so I made a static checker warning to spot that
-anti-pattern...
 
-regards,
-dan carpenter
+>
+>
+>> +    return 0;
+>> +}
+>> +
+>> +static void vfio_ap_matrix_dev_release(struct device *dev)
+>> +{
+>> +    struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
+>> +
+>> +    kfree(ap_matrix);
+>> +}
+> ...snip...
+>
