@@ -1,49 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeEPOVi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:21:38 -0400
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:44791 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeEPOVg (ORCPT
+        id S1752628AbeEPOWA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:22:00 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39942 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751914AbeEPOV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:21:36 -0400
-X-Google-Smtp-Source: AB8JxZo/Vl+PqKeXhSUsYgNnUBB6+v0NUdY9EoILBPowN68nn/TvjdEs+0RMRZK9wFmcqI3GKt7o1w==
-Date: Wed, 16 May 2018 16:21:31 +0200
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the hid tree
-Message-ID: <20180516142131.GA12325@casa>
-References: <20180516071731.59cf5d23@canb.auug.org.au>
+        Wed, 16 May 2018 10:21:58 -0400
+X-Google-Smtp-Source: AB8JxZooRh1+Aa+NttpiHu26uB76EP/8Ec9zgDGQpNjqpYxwMuxXFiYmWcC83L2M2DTwX3Bm3zp42sCPNCjtEogteyI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516071731.59cf5d23@canb.auug.org.au>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509102348.20953-1-ckeepax@opensource.cirrus.com>
+References: <20180509102348.20953-1-ckeepax@opensource.cirrus.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 May 2018 16:21:57 +0200
+Message-ID: <CACRpkdbF-8OEtvJNhVf3tcM+CCUUUD7Mscv_1GZ_X9CzrpfJDA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v5] mfd: arizona: Update DT doc to support more
+ standard reset binding
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, patches@opensource.cirrus.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:17:40AM +1000, Stephen Rothwell wrote:
-> Hi Jiri,
-> 
-> Commit
-> 
->   f82719790751 ("HID: steam: add battery device.")
-> 
-> is missing a Signed-off-by from its author.
-Hi, Stephen, Jiri
-I'm the author of this commit. Sorry for that, but I'm unsure about what
-is to be done now. Should I resubmit the patch? Or can it be amended any
-other way? Or it is not a big deal anyway?
+On Wed, May 9, 2018 at 12:23 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-Best regards.
---
-Rodrigo Rivas Costa
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
