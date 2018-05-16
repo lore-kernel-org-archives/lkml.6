@@ -1,75 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751332AbeEPQ5s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 12:57:48 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36396 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeEPQ5p (ORCPT
+        id S1751228AbeEPRBp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:01:45 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:36062 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbeEPRBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 12:57:45 -0400
-X-Google-Smtp-Source: AB8JxZpLKGAZ/j7sqMirhAxODZYFqOr/hqiXdHk2DMS0Dqa0XepVx2QmoUp7crgi9onEVd2+v0idvA==
-Date: Wed, 16 May 2018 10:57:39 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Hal Rosenstock <hal@dev.mellanox.co.il>
-Cc: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
-        Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-Message-ID: <20180516165739.GD25661@ziepe.ca>
-References: <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
- <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
- <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
- <20180514210200.GN21531@ziepe.ca>
- <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
- <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
- <20180515190424.GL5615@ziepe.ca>
- <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
- <20180516151201.GA25661@ziepe.ca>
- <695ae613-931a-50ba-2b83-9d172e0ac2bc@dev.mellanox.co.il>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <695ae613-931a-50ba-2b83-9d172e0ac2bc@dev.mellanox.co.il>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 16 May 2018 13:01:40 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij05fypFHKw=="
+X-RZG-CLASS-ID: mo00
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: galak@codeaurora.org, andy.shevchenko@gmail.com,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v6 1/3] gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+Date: Wed, 16 May 2018 19:01:24 +0200
+Message-Id: <7c9ab1d702eb62755993321865d260fa54b90358.1526490085.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
+In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
+References: <cover.1526490085.git.hns@goldelico.com>
+In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
+References: <cover.1526490085.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:42:37PM -0400, Hal Rosenstock wrote:
+The of_device_table is missing the PCA_PCAL flag so the
+pcal6524 would be operated in tca6424 compatibility mode which
+does not handle the new interrupt mask registers.
 
-> >>> The only time you could need a new REJ code is if the GMP is using a
-> >>> PKey different from the REQ - which is a pretty goofy thing to do
-> >>> considering this VM case.
-> >>
-> >> Its goofy. In the CX-3 shared port model, the BTH.PKey is the
-> >> default one and the REQ.PKey is the full one even if the sending
-> >> VM’s port only is a limited member. This patch series fixes the last
-> >> issue.
-> > 
-> > Again, this is wrong, the BTH.Pkey and REQ.Pkey should be the same -
-> 
-> I do not believe there is anything in the spec that requires this. I
-> agree it's the simplest use model though.
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/gpio/gpio-pca953x.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-The spec doesn't require it, but the design of the Linux CM certainly
-does.
-
-> > If BTH.Pkey != REQ.PKey then the requestor side has to obviously
-> > select two PKeys, which is basically impossible.
-> > 
-> > The VM should not be part of the default partition, for instance.
-> 
-> I think that the VM is at least a limited member of the default partition.
-
-Well, being a limited member still means the default pkey cannot be
-used for CM GMPs.
-
-I actually can't think of why you'd want to do this, better to put the
-SM nodes in all the pkeys and reserve the default pkey completely for
-the network management control plane.
-
-Jason
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 7d37692d672e..2b667166e855 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -58,6 +58,7 @@
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
+ #define PCA_PCAL		0x0200
++#define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
+ #define PCA953X_TYPE		0x1000
+ #define PCA957X_TYPE		0x2000
+ #define PCA_TYPE_MASK		0xF000
+@@ -946,8 +947,8 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "nxp,pca9575", .data = OF_957X(16, PCA_INT), },
+ 	{ .compatible = "nxp,pca9698", .data = OF_953X(40, 0), },
+ 
+-	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
+-	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
++	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_LATCH_INT), },
++	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_LATCH_INT), },
+ 
+ 	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
+ 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
+-- 
+2.12.2
