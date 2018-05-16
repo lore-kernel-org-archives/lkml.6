@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEPHR1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:17:27 -0400
-Received: from mail-eopbgr10090.outbound.protection.outlook.com ([40.107.1.90]:45463
+        id S1752684AbeEPHRj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:17:39 -0400
+Received: from mail-eopbgr10138.outbound.protection.outlook.com ([40.107.1.138]:46976
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752060AbeEPHRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:17:23 -0400
+        id S1751664AbeEPHRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:17:30 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -27,62 +27,71 @@ Cc: Peter Rosin <peda@axentia.se>,
         openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: [PATCH v2 1/2] i2c: algos: make use of i2c_8bit_addr_from_msg
-Date: Wed, 16 May 2018 09:16:46 +0200
-Message-Id: <20180516071647.29277-2-peda@axentia.se>
+Subject: [PATCH v2 2/2] i2c: busses: make use of i2c_8bit_addr_from_msg
+Date: Wed, 16 May 2018 09:16:47 +0200
+Message-Id: <20180516071647.29277-3-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180516071647.29277-1-peda@axentia.se>
 References: <20180516071647.29277-1-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [85.226.244.23]
 X-ClientProxiedBy: HE1PR0102CA0028.eurprd01.prod.exchangelabs.com
  (2603:10a6:7:14::41) To HE1PR0202MB2780.eurprd02.prod.outlook.com
  (2603:10a6:3:e8::22)
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2780;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;3:UxRDSy+ig9Phn5pqkNtrm4geIhdSJhKofNnzXEG2tkUwVWJTBdiuZ62eCxPzEOHXYsr+7t3ZkdmXnK5WnrTGarsj352a03lwNn825cshqyIO8AnlY1GCda5dIWnoAT0iQPMXept+6n227J9ZM9pk+/eJ9SAYDXfbHa72w8EvOdkCGxWPzSVbbpRMmKrg9LbCZk/X6Ycy85JfSrJl3n+Ge5RfiNbzPCBjFcRZQ/xFzJx/kYygMX3lv5hBCxsvT6qB;25:a9+/u9EeKlHn/oq/rNbIxgQanG4AAL1KWIRcCjWf0ty16fu6Ye+kVo+STUr5TejXb8Xo+tMjTOR4CHhos/X4BUbY8vkOlNI8EJojYLv0SpGykPY48wFVuRnUiZEQp4JiPM4ohAaA82WyoMi5fmX03jabZ/qoONmFOeMqSxTxOL5vjR+WHHYRMOucDv/r+ua6t4T/AosBORp3/cs9WvejF3miaKBujxO9NwvNKpHi2ywuqLJaLgsAzPgVZBcIg5QtejpGLo4uTghAQ/blsfkeceFfNZOUGO+nhzyBpqR7jGXIOHvq4cr90aPHferMGXLOYrdwwP98ucc/V/82j+H8lw==;31:rU3mXqz8rugoQkiXVVHhFuvI5SgKc7LgP2LEINOM+SJ6+vj5xGvVc7JunIdgXgdFgNIQzZ8NByWrKQKZqmL++cA2lflgzh/F2yTBq4nHrWC/mfTRfDr2tjs78ku3/MfUM7NznVNvwGB9di5BRCuvrRhNBFWlYx/JdrU76LS8A+sutqpJldvHPOAPWWHDj1+eM8tWqOBCra631ywWkMWPqQzOGQq4HmVmkSUgy9WOoDY=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;3:AEBymDRqmHtUEx2xo1Kq0wap03uUTylzTsu2HgiGLYppuCPvgsduWiS2YkreEtttyxW7ENDzk5gKwEl+InP37mgRl//7nvy+Z7/Fefx5G1i+7KXKzBQqSYI7zMU3Ac792nlxBvpQN65c6K/xHd9RGOCgp40LDmgopa9PudRCeOZqWHMbSyL6c6l8bFxwSELi806aEsg4g7HHR6FXDCYfvRRYPZOXsd/DtxbItyx9e3rrHnt8pDICMo7IKdgbh7yL;25:lM+N6tDJnXJxUjcC/8kTgWCSo4S0ctdWxE/dem9uCIZOYXB2LRmZbvsXODb8eoUJpSqvWjFayM1Voh7FLg0vIVKHzXsSIVL9k5FvyEVI2y1Gegw1ZJFpuRwSTn7cFxy0QkDdLIySuQm9SwawyBICEj0fOGFQ4H81eI8Q4uTuBKgTHyhPmiRcPiMsIe4XxUVYTgfaj+voANDd8FDaeVFf5jBPZ/N6bOEtJKJv8f+yol8i2nX/Wvrvpfj7fs3eftWWkd6SzhYn0PEed54tzG2kjhpPj+WxIpfKfMWMrVXmTP0iyLZsU2eqLKQqwrawXDMb/XpYXtQtD+1Iivwz28UgrQ==;31:KHzUW7cGMRrKOnEoC5HLC0iipYwMpOSjzhYP+XNBUpqrDJ6XGd93qIwanGVbFJgJEah+ab23Jad77sqn1M5gJ4Lgy6ASerRxK656yUTvntGjEI0d3AtbORfVvA5iqEkDPwAXrIZ9pjmLvJK0JS+Rke2Kaqpdfl9tc+1sJGd8ZkAz7cQK20MmQM8q5O5dfwtfJHt2z1EtEB5p9PjMmEqnAhWgqr/oNlgcCBGlK6D48PA=
 X-MS-TrafficTypeDiagnostic: HE1PR0202MB2780:
-X-Microsoft-Antispam-PRVS: <HE1PR0202MB278072FB5AF31CA3DBA29B84BC920@HE1PR0202MB2780.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB27807243F67FCE7344EA3B69BC920@HE1PR0202MB2780.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123564045)(2016111802025)(20161123558120)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:HE1PR0202MB2780;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2780;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;4:6chxjFDa91/t5Hh+5uWvMoGI3jGUuF75r46DGxbTNXIfgwreGY4RgSKxnrxwgzX1ozDQ+o25wICOmM5QPvKALTYJ0+Mgqw7f6+2pYwHhpz0lDHWw/l7TOkRiCqqwt/m1vg2ar4uG/4IHJREzIPwPXY1afzxGX6kqaOV1RmgRnLnsLfgnEbBIGCHf6tRQacCgtF3XAu0bTlFtouRetbBxHJE/7ddD8Aw2S6H3kHOU9J2K5BDenvmPkiMlOb7q4+DOyZ3K3jEhBuk8saB80HBspA==
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;4:/lxtm9GxkloVum681K71t0pUqeCpRolkDApHX2zHeZyRm7fCIZGS5GptHi7REA5Y/6Q9HR+jVnq1nWCHs4wKhd2NXSZSVh3s+W9rWIkTn2IR7Y/cE3eNFG50kQ/FzrksTZFKytKoEk/nAO0z5CmBY9EZcbwb2A/PcwuBXz1iBX95XYRjpboXd/PFD6zNC4eqKK0BH/aW8S+JVlmFMqipCEc0LGLBP8R3acdjHvCDCn1+fJISYPhEThXZOTIfesuaFJEdXE0qN2WervOMUa75yA==
 X-Forefront-PRVS: 0674DC6DD3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39830400003)(39380400002)(396003)(346002)(189003)(199004)(54906003)(76176011)(15760500003)(16586007)(316002)(68736007)(52116002)(6666003)(51416003)(6916009)(66066001)(47776003)(386003)(6506007)(81156014)(81166006)(305945005)(7416002)(5660300001)(7736002)(97736004)(50226002)(8676002)(25786009)(2351001)(2361001)(8936002)(36756003)(2906002)(53936002)(478600001)(6512007)(575784001)(16526019)(86362001)(106356001)(4326008)(186003)(26005)(11346002)(476003)(1076002)(486006)(6486002)(956004)(2616005)(50466002)(446003)(48376002)(6116002)(3846002)(74482002)(105586002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2780;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0202MB2780;23:X056sjrjIIZWYaDZLUa8Q+z2K9kt2uw29tSAMYg?=
- =?us-ascii?Q?6qxIAS1S5BX2yQnDkvZVTJlZkKS0FK3H2p9spSz94ftzJQU0blWkGl3wK7f9?=
- =?us-ascii?Q?vDCtaLko4/pMOZ3mTxM2DYYQ9iEgAJQpZmVCWnWZpFFjmv8xJ0t2mmR5mP+y?=
- =?us-ascii?Q?ZP/dafwaNdACae7hw8mnkPI0fLPOQ1m+6MxFBqcRjlhUKyTw4qXfPsxz0jbI?=
- =?us-ascii?Q?q9u+MJoNH956OvLngGuEJBH3kC82yee+QMnlmQpw2Are3t79MwOzV2AUjM0j?=
- =?us-ascii?Q?1Tu4mITEWKU9Czg68tsY9FopBMWyi+VuWjij7dlB2lV97hEpe92NRUZ4JEt+?=
- =?us-ascii?Q?ySYjlvfYvAqE0oGJud68eEuJ7940ZrLC5ufFbQe89Nov1kjunXjYZyP36toL?=
- =?us-ascii?Q?UE29Ck7yffXwDMhIgYIV2L7bVTummifUIj5uH6oZkPnVI7Oikkfnxm9Xlzdy?=
- =?us-ascii?Q?+0XvwWhGpe6W60GCgWyNTiFZ62wQWj4vB3E6WQxDW/RoQXP/+V6ZKMCWFCRk?=
- =?us-ascii?Q?4Qs6zDKNEwaRoKrdiFFTsRiU+ZP/wAHc8NS9XzmzbBjj2z10QGyQMFOd1dxm?=
- =?us-ascii?Q?fM4gcIco1EfMkebDz/uwFkDzCKCgQ6yNiKAJ8CMIBEfQSuLX4ZpJssbbR5ob?=
- =?us-ascii?Q?o0AKwtNFYIHss5n8l/fsenzgKlCXRkpAT0eOU8cZK4YvhPoiSphyxjl9ifdQ?=
- =?us-ascii?Q?jHxEh5S8juCa+yiHQm8oJ7Bub0/LoV4Ud+zZe19qzHWZamEgfNQqti/Bnrx3?=
- =?us-ascii?Q?zB5aiZ1EQsU/BDC/zduOGv/KcgYBEh2SnAEW44GIB4mAU4W9SLjHJa5yq1BO?=
- =?us-ascii?Q?xjdIrISYbHlwZAekH4qIUhJSRIdiC6T6Vne2YkJ31PqJnI0RuzKsL7kn+99T?=
- =?us-ascii?Q?bBVo87KgtDmvoaqTdz10R9VynapzbTaa6v5bvFaLoQ6W2R4tTElcQvOf2VBa?=
- =?us-ascii?Q?dA0F+Bg4z8sXm49pPukvGNWzFCLAh54hBZzc+BQeL8+cCQN3FnQuR4K4wavO?=
- =?us-ascii?Q?X4vjVhgGGBRCdySnsYj0d9V77RKjvSglHQnyINx9qyziEEMCzcPAKKTRxI/+?=
- =?us-ascii?Q?tg2oM3MNNx+Mwu+Yhjso8vKNqOM298ZC8iUTs2uWOOYk+Bb663dHhFqhF+jg?=
- =?us-ascii?Q?N8KFFL1LTioPttIOltWmlROJIPHjRwaA/qJTzf2VUq/wVy6Hbe2TdVRa36eS?=
- =?us-ascii?Q?/vgoPsjNze5wsWsB2JVZBXPcoc1q20AQ0ZEHJC9TaHC1S/vcSaC/kYmEo15R?=
- =?us-ascii?Q?25WSQkTIhqjI6fI4WrHDvspUOpOjECR/N3DDVbhx7ca2BSW2xiYlV3y+voVb?=
- =?us-ascii?Q?+WkV/h2zAJH+TkvHzTQsbjYnBjL0hpEZeiy3q7P5fhI1PNv3krn/Xn4O32KI?=
- =?us-ascii?Q?oyO5vjb0kvP9a+4FzFG6ejFMhK94=3D?=
-X-Microsoft-Antispam-Message-Info: tnrlPy2GvYQyN8yzj7A2J5RPHfr8K76zf3NayMjsW7nYiQb+gNraPeePWMJwoEsBzDeTfy6/TA9caFjMl9eg+I+VJWz2SN7Rpyj2OylTeGVvi57fjvX0xXk1BFza5ymRW6tdXW3kGuijW4k59HKlHnlE/kJA0IXC05SK+aqeo4K9zME04TpEPXpzhd3PVVdh
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;6:T1A0Siue9BvDTDIpE6eJ3q4iGLze+vxzdm9ClWXXKBVeuaFNxlnCzG0pLuJo8agl0ZMK4FKqkO7s+5A5euLYs9Hvjku5IN17kwj559PDvzrayVGxyGvNfHgsIDWsIqRTqRF3VUlYWFGXBP7RT2lqqJ0Pbw3cuyw04m5CVFrMG9QYLZB9Pb6L7lcaLhQjB/zfsrDnGVlCf2FmpVcBsTF8Xqrq+42q9Q8/F7Nr197KzKmU0SLHiJc5gJfck3jKZxv7TmqG38Ryf3VvBUjFpj+l2NEBb3+52NAEAHv9rbVkQlbmMVYSjO/49XdpsRSg3KRXnUT1rBXMXxH2D4V/4IjRLkTjkTZ1lCM8ocOICdFOvsMrLdivGGgUBCj78XvpbPoVL0/xZXrtXTsTG9NEBLoMpIHLJlcH0C1jkE5RDD0xW3k0pCpzSNVUtzx0WKb9kE/c+iwJ48TcHOTL+07OBrbf6w==;5:oF9lxuZTyXMDvSktSuMn1Us/pLoA/ORp+z/TOnUBPeWfwSduYuAm7vqvnB4bEeprgxriPuaW40PLsx9/kt5hd5a+Z6qXHediqyFcp/sciwQQgwrPFjf58525ikRPVAcYN72isgekgJYYOzKQ+S4tpuXZUNxWr88c6n6feh9oZno=;24:FZ+eOxiYUMHDx5YYUnok2+KtL6C3S6nJ6GV8CRPdBGHKprlc2qPBFyoCISFDTJNKzOGRwJZ8XSwReA9+Z4DFvqbkKtKcqKzDzz51IQ2Jgjw=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39830400003)(39380400002)(396003)(346002)(189003)(199004)(59450400001)(54906003)(76176011)(2870700001)(15760500003)(316002)(68736007)(52116002)(6666003)(23676004)(6916009)(66066001)(47776003)(386003)(6506007)(81156014)(81166006)(551934003)(305945005)(7416002)(5660300001)(7736002)(97736004)(50226002)(8676002)(25786009)(2351001)(2361001)(8936002)(36756003)(2906002)(53936002)(478600001)(6512007)(575784001)(16526019)(86362001)(106356001)(4326008)(186003)(26005)(11346002)(476003)(1076002)(486006)(6486002)(956004)(2616005)(50466002)(446003)(6116002)(3846002)(74482002)(105586002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2780;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDJNQjI3ODA7MjM6eE5HUmZtVXQyYzBaTkJ4LzZubkdiSFFN?=
+ =?utf-8?B?anZmbHd5NlNwSGw4VlZCanRoSFQ4VnJrQkhZTjVRRTN6NmlaazlIazRQbU5N?=
+ =?utf-8?B?VmQ1RTJJam9sdVIwa1N4d21hM1hObzR2RXAzOEpxeHR0amg1STFEVWt2Wnpi?=
+ =?utf-8?B?bGpJc0RuZ3N6WERQczRtZ2xnbWZsYkZrNFI4SGVhcWNVUnl2RTdjdjBKbTlm?=
+ =?utf-8?B?VlNHTUhRZFpIcUsvMG16bjl6eVlLZStBMzl5WVZ2UWJ2VEJXZzd4aGNoaFNz?=
+ =?utf-8?B?NVkyd1dHZXNUSEM3VlVPRk9IRVBPUk1yQkxreENMRkUvSGkvd3c5YkxEOFox?=
+ =?utf-8?B?bzRSRGdqZDZnQU5Oc1oyZUUzOUl2cm8zQ0RxZkc1RnJwMllzSXc0bFV4TlZL?=
+ =?utf-8?B?SnVDR0wrTHhhM1A5Y0EyRlVua2xuSUtFOG16NlYxcmtlTFFkSEc4REM5UkZt?=
+ =?utf-8?B?eHpLNlRxdFdpc0MzSzJPYnRNNVYwb1BEV0pobnM3V2xHMEhpYVY4bGd4eS9T?=
+ =?utf-8?B?anRienhhcm9qSDVFM3FhR1p0Y1c4dnk3STJWOHU2dE0wZCtVYzZXWDA5a2Ni?=
+ =?utf-8?B?ZDNOVG5SSVlkWU1WVWtJbnVtOGNvdGtuRmlZSVFxTGpWYXVHSGFhM2l4RUc1?=
+ =?utf-8?B?Y1E1cTdxVlR6NTB2eWFwZUJVUVZZOUFRMm82ZE50MmJBR29XTGJDc0g3VVNy?=
+ =?utf-8?B?WFZ5TnZlQkpQZG9RaGp6K0JTQ1ExZCs2RmM2aVByU1lQcWFrRjUzUjYzQTds?=
+ =?utf-8?B?VEF4bjZ1TXRIaVhkT05YRDJaM2lxT3hMTHlVVmNKM2dLcGdqL1FVUHFMNUIy?=
+ =?utf-8?B?azRVRldDbXNsOWFHWFlIVTFVa05aREJLWXdZMkhvY0oyL2JVak4weDlnUDQx?=
+ =?utf-8?B?WG1FNU5rRUpCL2NhcmhLU3ZjZ2hMTldPRGYrQ3lZYW02dHR1UlprZXUyVzZX?=
+ =?utf-8?B?QTR3Uit5aU1HZFZjOWpjaEZYMnZHbGM5QWYwNmNZNmlMd3MvRFpybHF3bE9w?=
+ =?utf-8?B?R0dxaGYxdHVvTG1yS2VkWmdCRWx6Ujg3a0NHTzBVU0YxNEcxUEtXZi9uZ1VK?=
+ =?utf-8?B?NGxVVmRMV3JSNDF6Tm8xOTkzbVhLckl1dEVQb214Q3JxTHdwd2xBYTBWVXBm?=
+ =?utf-8?B?RGhZbktvS2pZWksrMUNXcng0Zjk1MkR3UDZENm5DandGbHdIUUZTRHVtdk9M?=
+ =?utf-8?B?MitiOXN0ZTlzQXhaUmx6VVRZWVMwMVJWeVBPL0M3c2x6NUhoVnFUNnU1RzFi?=
+ =?utf-8?B?eXZJNGV5VWxTeklnOWdYNjNnbmpNUGZOVlR6U3hwTlBDbGk0UG9CU3Z5OVR6?=
+ =?utf-8?B?MklnekdkMzlnbzczUllGaTFGdWlpL0RQT1h3OW5udm5RYTAydlNaOTFOVTV2?=
+ =?utf-8?B?ckljNHFtVkxGbVNIMFVDdVNFU0NJcWlGN1pFUThvcnFGcmV6SzVPTUJFZmJK?=
+ =?utf-8?B?all3blFmaDV0Y081QUEwNi9mWGVLOFZxNDY0Z1Nad3F5ZmNidms0eUNtYlZu?=
+ =?utf-8?B?dEVaaC9LbFd1SlhCODZFTzlaaUc5Z2NoazY4ZGNJZlpwekk1cjB2YnBVQkc5?=
+ =?utf-8?B?eGpnY1NZZ2dqK1VNa0N4bk5Gb3hZeVlDdGo2QXUvTTl0K3pZZjdNTW43N01W?=
+ =?utf-8?B?ZVY1aXNYM0hqRVlMYXRNdUJOamUwRVV0dzFQdGR2WEJIK0RhZEFtd0lYQ01z?=
+ =?utf-8?B?QXFMNXV6QXVOT1JhWVVFeUxLcTFjWkpzbzFuYWZkWGYrN1ZIaU9SMXlndHFi?=
+ =?utf-8?B?SnlremxZWFUrR1dOcW9kVUY5S3d0UGJhODU0RFhFTTJSR0wxMThZeUN6YWhB?=
+ =?utf-8?B?QlFkT2l4RGc1cG10Qi9vQUdYVTRMVmZ1YjdyN1QwU05ta0sxSkFKTU9wUzVM?=
+ =?utf-8?Q?fBoQFPsonR+mSAiVSYpkyYcX3b3unOBRUk?=
+X-Microsoft-Antispam-Message-Info: CC5S+u6GK9MXx9YPyI/KBiqU1rF2X2SsVx3VwhJHmbdZExHRQr11/shLk/RQA9SiyPWtwwwwW8DdyUonECUGyNh9Pt6NoMFNPHOdCRmzG76xv7Te8geihtWeDQY1V6PaPJeUEEdAptrP70dB4TfWOArM7jw0QEhApQ4j0SzDni9DqeKBSWT9dWZ1l5hHjpbJ
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;6:kdJYXrDvPg+JrQhL4X5Zy0tSOiqK34Pcu3v1Y5snIBLZLHIIUHL4W2XB3vgrAxdSr71xeckDZX6lUcgsevOtXNn3fVMuwCvkKZGGe4Sw3BjWUmbYDY9Bjx9zS7YzXpcflVUD7qfhR7QjL2Dj6zSo9/ByxkTelNyCYWjj8NyJo6QIP+s9tikNrc/4UfsEPlCYWoeD+yx0UHRKPGI3CQ/c9+B7sU9UBhI3+2F6l9NDaYvlC3pXFxwKGbkiwREquf/+mwUZmKCJIIRZE9E2fN7ew8Jci41odW6tDl5tgp+gUkvYwRgRiCCui+nKpzTIdu///IBrGaN8nypsCkWUiciILI61ElZkNHpw3JxvuLmK8gTGc0V19UsXl4Rx2BT/AuoeQbEyLKVYhp633bXfM3K1RrIfVBwcjtbqJ+83OcG9dstw6aSyXp/AtDd9SlNFchiDagvT+2aUm9lqUVTmG0SYAg==;5:RpsGByWjrfUUyhP1vepv7CKoiwdHi+o7hj1tmbxNPtPvWj2PB/DAEZ5cSiRxH6xdgwnpRTLvDOU+HQFfaDoEz1cOJW8swijoAksKqKlQwZWy0Rk+MXsvXspaznmxwSM+6i8Njj7wMheqXQkpGn6I2NmHWMyyhPp50W49SE9J40U=;24:+5fTq+qoey0+6p2tO5niN5zV5loQXu+1ZG+Ziq2VAmNDEK5Vgbb5ZiCd/iDF2z88wgF8ImGU+cPferuts9wdCTeSCneBOGhibPwXZso2+Xo=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;7:hakthizG7BuJJigzvcRY8CEzZtZr+yVmAVDwzHmNfot0ahUTi9HpW29ItijCDnM6v/Q6fF7TJd/Zusx5p9YxSuZX1Y6sc8IS07xKGwPMzgqL1sL8Klz/RQtzlpDIuCcnOYScivMyo4GN3ffRxhGxgySIltHMS7vstMWdcQ/pesKtwia7fxS1Yk+ZsCcTR/K/RvyQZYmKTH7quIx2GSy8oxuQTLKaNbYW4bFbsTM+jCUBZ/IFxdbTYdyh2NDlluOr
-X-MS-Office365-Filtering-Correlation-Id: db99ebe0-a8a4-4b11-07e5-08d5bafd0fca
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2780;7:wVmbDiCimm+VZ+ORVd0gv9re3X8StiHUqQ9uPVsDLAAB+HbpOpo8+UC8bkzJDww+d5KeBwfiFOYBxotuOIqqUMmsFRfhyq8L/H91oFpSGephWZBPjPOPvbMho5Y1OxUolyxKGDCtKuc/01TG+k2TG/vvl5aITxGGXnMlaQAMZTVhCoLLUh9IXGxflUzfe2UeNWk2K/5FqiO3bTbDxYMKjRkE5/a023HcnOJuc/mFHG58WwHCY+wXhxYiy2zF4dJk
+X-MS-Office365-Filtering-Correlation-Id: a1083341-7af5-4c9c-64fd-08d5bafd1375
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 07:17:19.2184 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db99ebe0-a8a4-4b11-07e5-08d5bafd0fca
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 07:17:25.3746 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1083341-7af5-4c9c-64fd-08d5bafd1375
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2780
@@ -92,64 +101,484 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Because it looks neater.
 
+For diolan, this allows factoring out some code that is now common
+between if and else.
+
+For eg20t, pch_i2c_writebytes is always called with a write in
+msgs->flags, and pch_i2c_readbytes with a read.
+
+For imx, i2c_imx_dma_write and i2c_imx_write are always called with a
+write in msgs->flags, and i2c_imx_read with a read.
+
+For qup, qup_i2c_write_tx_fifo_v1 is always called with a write in
+qup->msg->flags.
+
+For stu300, also restructure debug output for resends, since that
+code as a result is only handling debug output.
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net> [diolan]
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de> [emf32 and imx]
+Acked-by: Linus Walleij <linus.walleij@linaro.org> [stu300]
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/i2c/algos/i2c-algo-bit.c | 4 +---
- drivers/i2c/algos/i2c-algo-pca.c | 5 +----
- drivers/i2c/algos/i2c-algo-pcf.c | 8 ++------
- 3 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/i2c/busses/i2c-aspeed.c     |  3 +--
+ drivers/i2c/busses/i2c-axxia.c      |  5 +++--
+ drivers/i2c/busses/i2c-diolan-u2c.c | 11 ++++-------
+ drivers/i2c/busses/i2c-efm32.c      |  3 +--
+ drivers/i2c/busses/i2c-eg20t.c      |  5 ++---
+ drivers/i2c/busses/i2c-emev2.c      |  2 +-
+ drivers/i2c/busses/i2c-hix5hd2.c    |  9 ++-------
+ drivers/i2c/busses/i2c-imx-lpi2c.c  |  4 +---
+ drivers/i2c/busses/i2c-imx.c        | 10 +++++-----
+ drivers/i2c/busses/i2c-kempld.c     |  7 +++----
+ drivers/i2c/busses/i2c-mxs.c        |  9 +++------
+ drivers/i2c/busses/i2c-ocores.c     |  5 +----
+ drivers/i2c/busses/i2c-pasemi.c     |  2 +-
+ drivers/i2c/busses/i2c-qup.c        |  2 +-
+ drivers/i2c/busses/i2c-rcar.c       |  2 +-
+ drivers/i2c/busses/i2c-riic.c       |  5 ++---
+ drivers/i2c/busses/i2c-stu300.c     | 22 +++++++++++++---------
+ drivers/i2c/busses/i2c-xiic.c       | 11 ++---------
+ 18 files changed, 47 insertions(+), 70 deletions(-)
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index 3df0efd69ae3..4a34f311e1ff 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -519,9 +519,7 @@ static int bit_doAddress(struct i2c_adapter *i2c_adap, struct i2c_msg *msg)
- 			}
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index 7d4aeb4465b3..60e4d0e939a3 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -335,13 +335,12 @@ static void aspeed_i2c_do_start(struct aspeed_i2c_bus *bus)
+ {
+ 	u32 command = ASPEED_I2CD_M_START_CMD | ASPEED_I2CD_M_TX_CMD;
+ 	struct i2c_msg *msg = &bus->msgs[bus->msgs_index];
+-	u8 slave_addr = msg->addr << 1;
++	u8 slave_addr = i2c_8bit_addr_from_msg(msg);
+ 
+ 	bus->master_state = ASPEED_I2C_MASTER_START;
+ 	bus->buf_index = 0;
+ 
+ 	if (msg->flags & I2C_M_RD) {
+-		slave_addr |= 1;
+ 		command |= ASPEED_I2CD_M_RX_CMD;
+ 		/* Need to let the hardware know to NACK after RX. */
+ 		if (msg->len == 1 && !(msg->flags & I2C_M_RECV_LEN))
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 13f07482ec68..f70b097fd567 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -351,13 +351,15 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
+ 		 *   addr_2: addr[7:0]
+ 		 */
+ 		addr_1 = 0xF0 | ((msg->addr >> 7) & 0x06);
++		if (i2c_m_rd(msg))
++			addr_1 |= 1;	/* Set the R/nW bit of the address */
+ 		addr_2 = msg->addr & 0xFF;
+ 	} else {
+ 		/* 7-bit address
+ 		 *   addr_1: addr[6:0] | (R/nW)
+ 		 *   addr_2: dont care
+ 		 */
+-		addr_1 = (msg->addr << 1) & 0xFF;
++		addr_1 = i2c_8bit_addr_from_msg(msg);
+ 		addr_2 = 0;
+ 	}
+ 
+@@ -365,7 +367,6 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
+ 		/* I2C read transfer */
+ 		rx_xfer = i2c_m_recv_len(msg) ? I2C_SMBUS_BLOCK_MAX : msg->len;
+ 		tx_xfer = 0;
+-		addr_1 |= 1;	/* Set the R/nW bit of the address */
+ 	} else {
+ 		/* I2C write transfer */
+ 		rx_xfer = 0;
+diff --git a/drivers/i2c/busses/i2c-diolan-u2c.c b/drivers/i2c/busses/i2c-diolan-u2c.c
+index f718ee4e3332..3f28317cde39 100644
+--- a/drivers/i2c/busses/i2c-diolan-u2c.c
++++ b/drivers/i2c/busses/i2c-diolan-u2c.c
+@@ -360,11 +360,11 @@ static int diolan_usb_xfer(struct i2c_adapter *adapter, struct i2c_msg *msgs,
+ 			if (ret < 0)
+ 				goto abort;
  		}
- 	} else {		/* normal 7bit address	*/
--		addr = msg->addr << 1;
--		if (flags & I2C_M_RD)
--			addr |= 1;
-+		addr = i2c_8bit_addr_from_msg(msg);
- 		if (flags & I2C_M_REV_DIR_ADDR)
- 			addr ^= 1;
- 		ret = try_address(i2c_adap, addr, retries);
-diff --git a/drivers/i2c/algos/i2c-algo-pca.c b/drivers/i2c/algos/i2c-algo-pca.c
-index e370804ec8bc..883a290f6a4d 100644
---- a/drivers/i2c/algos/i2c-algo-pca.c
-+++ b/drivers/i2c/algos/i2c-algo-pca.c
-@@ -112,11 +112,8 @@ static int pca_address(struct i2c_algo_pca_data *adap,
- 		       struct i2c_msg *msg)
++		ret = diolan_i2c_put_byte_ack(dev,
++					      i2c_8bit_addr_from_msg(pmsg));
++		if (ret < 0)
++			goto abort;
+ 		if (pmsg->flags & I2C_M_RD) {
+-			ret =
+-			    diolan_i2c_put_byte_ack(dev, (pmsg->addr << 1) | 1);
+-			if (ret < 0)
+-				goto abort;
+ 			for (j = 0; j < pmsg->len; j++) {
+ 				u8 byte;
+ 				bool ack = j < pmsg->len - 1;
+@@ -393,9 +393,6 @@ static int diolan_usb_xfer(struct i2c_adapter *adapter, struct i2c_msg *msgs,
+ 				pmsg->buf[j] = byte;
+ 			}
+ 		} else {
+-			ret = diolan_i2c_put_byte_ack(dev, pmsg->addr << 1);
+-			if (ret < 0)
+-				goto abort;
+ 			for (j = 0; j < pmsg->len; j++) {
+ 				ret = diolan_i2c_put_byte_ack(dev,
+ 							      pmsg->buf[j]);
+diff --git a/drivers/i2c/busses/i2c-efm32.c b/drivers/i2c/busses/i2c-efm32.c
+index aa336ba89aa3..5f2bab878b2c 100644
+--- a/drivers/i2c/busses/i2c-efm32.c
++++ b/drivers/i2c/busses/i2c-efm32.c
+@@ -144,8 +144,7 @@ static void efm32_i2c_send_next_msg(struct efm32_i2c_ddata *ddata)
+ 	struct i2c_msg *cur_msg = &ddata->msgs[ddata->current_msg];
+ 
+ 	efm32_i2c_write32(ddata, REG_CMD, REG_CMD_START);
+-	efm32_i2c_write32(ddata, REG_TXDATA, cur_msg->addr << 1 |
+-			(cur_msg->flags & I2C_M_RD ? 1 : 0));
++	efm32_i2c_write32(ddata, REG_TXDATA, i2c_8bit_addr_from_msg(cur_msg));
+ }
+ 
+ static void efm32_i2c_send_next_byte(struct efm32_i2c_ddata *ddata)
+diff --git a/drivers/i2c/busses/i2c-eg20t.c b/drivers/i2c/busses/i2c-eg20t.c
+index bdeab0174fec..835d54ac2971 100644
+--- a/drivers/i2c/busses/i2c-eg20t.c
++++ b/drivers/i2c/busses/i2c-eg20t.c
+@@ -414,7 +414,7 @@ static s32 pch_i2c_writebytes(struct i2c_adapter *i2c_adap,
+ 		iowrite32(addr_8_lsb, p + PCH_I2CDR);
+ 	} else {
+ 		/* set 7 bit slave address and R/W bit as 0 */
+-		iowrite32(addr << 1, p + PCH_I2CDR);
++		iowrite32(i2c_8bit_addr_from_msg(msgs), p + PCH_I2CDR);
+ 		if (first)
+ 			pch_i2c_start(adap);
+ 	}
+@@ -538,8 +538,7 @@ static s32 pch_i2c_readbytes(struct i2c_adapter *i2c_adap, struct i2c_msg *msgs,
+ 		iowrite32(addr_2_msb | TEN_BIT_ADDR_MASK, p + PCH_I2CDR);
+ 	} else {
+ 		/* 7 address bits + R/W bit */
+-		addr = (((addr) << 1) | (I2C_RD));
+-		iowrite32(addr, p + PCH_I2CDR);
++		iowrite32(i2c_8bit_addr_from_msg(msgs), p + PCH_I2CDR);
+ 	}
+ 
+ 	/* check if it is the first message */
+diff --git a/drivers/i2c/busses/i2c-emev2.c b/drivers/i2c/busses/i2c-emev2.c
+index d2e84480fbe9..ba9b6ea48a31 100644
+--- a/drivers/i2c/busses/i2c-emev2.c
++++ b/drivers/i2c/busses/i2c-emev2.c
+@@ -149,7 +149,7 @@ static int __em_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msg,
+ 	em_clear_set_bit(priv, 0, I2C_BIT_STT0, I2C_OFS_IICC0);
+ 
+ 	/* Send slave address and R/W type */
+-	writeb((msg->addr << 1) | read, priv->base + I2C_OFS_IIC0);
++	writeb(i2c_8bit_addr_from_msg(msg), priv->base + I2C_OFS_IIC0);
+ 
+ 	/* Wait for transaction */
+ 	status = em_i2c_wait_for_event(priv);
+diff --git a/drivers/i2c/busses/i2c-hix5hd2.c b/drivers/i2c/busses/i2c-hix5hd2.c
+index bb68957d3da5..399b64c4c620 100644
+--- a/drivers/i2c/busses/i2c-hix5hd2.c
++++ b/drivers/i2c/busses/i2c-hix5hd2.c
+@@ -73,7 +73,6 @@
+ #define I2C_OVER_INTR		BIT(0)
+ 
+ #define HIX5I2C_MAX_FREQ	400000		/* 400k */
+-#define HIX5I2C_READ_OPERATION	0x01
+ 
+ enum hix5hd2_i2c_state {
+ 	HIX5I2C_STAT_RW_ERR = -1,
+@@ -311,12 +310,8 @@ static void hix5hd2_i2c_message_start(struct hix5hd2_i2c_priv *priv, int stop)
+ 	hix5hd2_i2c_clr_all_irq(priv);
+ 	hix5hd2_i2c_enable_irq(priv);
+ 
+-	if (priv->msg->flags & I2C_M_RD)
+-		writel_relaxed((priv->msg->addr << 1) | HIX5I2C_READ_OPERATION,
+-			       priv->regs + HIX5I2C_TXR);
+-	else
+-		writel_relaxed(priv->msg->addr << 1,
+-			       priv->regs + HIX5I2C_TXR);
++	writel_relaxed(i2c_8bit_addr_from_msg(priv->msg),
++		       priv->regs + HIX5I2C_TXR);
+ 
+ 	writel_relaxed(I2C_WRITE | I2C_START, priv->regs + HIX5I2C_COM);
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+index e6da2c7a9a3e..159d23211600 100644
+--- a/drivers/i2c/busses/i2c-imx-lpi2c.c
++++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+@@ -180,15 +180,13 @@ static int lpi2c_imx_start(struct lpi2c_imx_struct *lpi2c_imx,
+ 			   struct i2c_msg *msgs)
  {
- 	int sta = pca_get_con(adap);
--	int addr;
-+	int addr = i2c_8bit_addr_from_msg(msg);
+ 	unsigned int temp;
+-	u8 read;
  
--	addr = ((0x7f & msg->addr) << 1);
--	if (msg->flags & I2C_M_RD)
--		addr |= 1;
- 	DEB2("=== SLAVE ADDRESS %#04x+%c=%#04x\n",
- 	     msg->addr, msg->flags & I2C_M_RD ? 'R' : 'W', addr);
+ 	temp = readl(lpi2c_imx->base + LPI2C_MCR);
+ 	temp |= MCR_RRF | MCR_RTF;
+ 	writel(temp, lpi2c_imx->base + LPI2C_MCR);
+ 	writel(0x7f00, lpi2c_imx->base + LPI2C_MSR);
  
-diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-index 270d84bfc2c6..5c29a4d397cf 100644
---- a/drivers/i2c/algos/i2c-algo-pcf.c
-+++ b/drivers/i2c/algos/i2c-algo-pcf.c
-@@ -291,13 +291,9 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
- static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
- 			 struct i2c_msg *msg)
+-	read = msgs->flags & I2C_M_RD;
+-	temp = (msgs->addr << 1 | read) | (GEN_START << 8);
++	temp = i2c_8bit_addr_from_msg(msgs) | (GEN_START << 8);
+ 	writel(temp, lpi2c_imx->base + LPI2C_MTDR);
+ 
+ 	return lpi2c_imx_bus_busy(lpi2c_imx);
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index d7267dd9c7bf..bcb41fc75043 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -630,7 +630,7 @@ static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
+ 	 * Write slave address.
+ 	 * The first byte must be transmitted by the CPU.
+ 	 */
+-	imx_i2c_write_reg(msgs->addr << 1, i2c_imx, IMX_I2C_I2DR);
++	imx_i2c_write_reg(i2c_8bit_addr_from_msg(msgs), i2c_imx, IMX_I2C_I2DR);
+ 	reinit_completion(&i2c_imx->dma->cmd_complete);
+ 	time_left = wait_for_completion_timeout(
+ 				&i2c_imx->dma->cmd_complete,
+@@ -760,10 +760,10 @@ static int i2c_imx_write(struct imx_i2c_struct *i2c_imx, struct i2c_msg *msgs)
+ 	int i, result;
+ 
+ 	dev_dbg(&i2c_imx->adapter.dev, "<%s> write slave address: addr=0x%x\n",
+-		__func__, msgs->addr << 1);
++		__func__, i2c_8bit_addr_from_msg(msgs));
+ 
+ 	/* write slave address */
+-	imx_i2c_write_reg(msgs->addr << 1, i2c_imx, IMX_I2C_I2DR);
++	imx_i2c_write_reg(i2c_8bit_addr_from_msg(msgs), i2c_imx, IMX_I2C_I2DR);
+ 	result = i2c_imx_trx_complete(i2c_imx);
+ 	if (result)
+ 		return result;
+@@ -796,10 +796,10 @@ static int i2c_imx_read(struct imx_i2c_struct *i2c_imx, struct i2c_msg *msgs, bo
+ 
+ 	dev_dbg(&i2c_imx->adapter.dev,
+ 		"<%s> write slave address: addr=0x%x\n",
+-		__func__, (msgs->addr << 1) | 0x01);
++		__func__, i2c_8bit_addr_from_msg(msgs));
+ 
+ 	/* write slave address */
+-	imx_i2c_write_reg((msgs->addr << 1) | 0x01, i2c_imx, IMX_I2C_I2DR);
++	imx_i2c_write_reg(i2c_8bit_addr_from_msg(msgs), i2c_imx, IMX_I2C_I2DR);
+ 	result = i2c_imx_trx_complete(i2c_imx);
+ 	if (result)
+ 		return result;
+diff --git a/drivers/i2c/busses/i2c-kempld.c b/drivers/i2c/busses/i2c-kempld.c
+index e879190b5d1d..1c874aaa0447 100644
+--- a/drivers/i2c/busses/i2c-kempld.c
++++ b/drivers/i2c/busses/i2c-kempld.c
+@@ -124,15 +124,14 @@ static int kempld_i2c_process(struct kempld_i2c_data *i2c)
+ 		/* 10 bit address? */
+ 		if (i2c->msg->flags & I2C_M_TEN) {
+ 			addr = 0xf0 | ((i2c->msg->addr >> 7) & 0x6);
++			/* Set read bit if necessary */
++			addr |= (i2c->msg->flags & I2C_M_RD) ? 1 : 0;
+ 			i2c->state = STATE_ADDR10;
+ 		} else {
+-			addr = (i2c->msg->addr << 1);
++			addr = i2c_8bit_addr_from_msg(i2c->msg);
+ 			i2c->state = STATE_START;
+ 		}
+ 
+-		/* Set read bit if necessary */
+-		addr |= (i2c->msg->flags & I2C_M_RD) ? 1 : 0;
+-
+ 		kempld_write8(pld, KEMPLD_I2C_DATA, addr);
+ 		kempld_write8(pld, KEMPLD_I2C_CMD, I2C_CMD_START);
+ 
+diff --git a/drivers/i2c/busses/i2c-mxs.c b/drivers/i2c/busses/i2c-mxs.c
+index e617bd600794..f62ae3d42232 100644
+--- a/drivers/i2c/busses/i2c-mxs.c
++++ b/drivers/i2c/busses/i2c-mxs.c
+@@ -180,9 +180,10 @@ static int mxs_i2c_dma_setup_xfer(struct i2c_adapter *adap,
+ 	struct dma_async_tx_descriptor *desc;
+ 	struct mxs_i2c_dev *i2c = i2c_get_adapdata(adap);
+ 
++	i2c->addr_data = i2c_8bit_addr_from_msg(msg);
++
+ 	if (msg->flags & I2C_M_RD) {
+ 		i2c->dma_read = true;
+-		i2c->addr_data = (msg->addr << 1) | I2C_SMBUS_READ;
+ 
+ 		/*
+ 		 * SELECT command.
+@@ -240,7 +241,6 @@ static int mxs_i2c_dma_setup_xfer(struct i2c_adapter *adap,
+ 		}
+ 	} else {
+ 		i2c->dma_read = false;
+-		i2c->addr_data = (msg->addr << 1) | I2C_SMBUS_WRITE;
+ 
+ 		/*
+ 		 * WRITE command.
+@@ -371,7 +371,7 @@ static int mxs_i2c_pio_setup_xfer(struct i2c_adapter *adap,
+ 			struct i2c_msg *msg, uint32_t flags)
  {
--	unsigned short flags = msg->flags;
--	unsigned char addr;
-+	unsigned char addr = i2c_8bit_addr_from_msg(msg);
+ 	struct mxs_i2c_dev *i2c = i2c_get_adapdata(adap);
+-	uint32_t addr_data = msg->addr << 1;
++	uint32_t addr_data = i2c_8bit_addr_from_msg(msg);
+ 	uint32_t data = 0;
+ 	int i, ret, xlen = 0, xmit = 0;
+ 	uint32_t start;
+@@ -411,8 +411,6 @@ static int mxs_i2c_pio_setup_xfer(struct i2c_adapter *adap,
+ 		 */
+ 		BUG_ON(msg->len > 4);
  
--	addr = msg->addr << 1;
--	if (flags & I2C_M_RD)
--		addr |= 1;
--	if (flags & I2C_M_REV_DIR_ADDR)
-+	if (msg->flags & I2C_M_REV_DIR_ADDR)
- 		addr ^= 1;
- 	i2c_outb(adap, addr);
+-		addr_data |= I2C_SMBUS_READ;
+-
+ 		/* SELECT command. */
+ 		mxs_i2c_pio_trigger_write_cmd(i2c, MXS_CMD_I2C_SELECT,
+ 					      addr_data);
+@@ -450,7 +448,6 @@ static int mxs_i2c_pio_setup_xfer(struct i2c_adapter *adap,
+ 		 * fast enough. It is possible to transfer arbitrary amount
+ 		 * of data using PIO write.
+ 		 */
+-		addr_data |= I2C_SMBUS_WRITE;
  
+ 		/*
+ 		 * The LSB of data buffer is the first byte blasted across
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index 8c42ca7107b2..a540916689b2 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -222,10 +222,7 @@ static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	i2c->nmsgs = num;
+ 	i2c->state = STATE_START;
+ 
+-	oc_setreg(i2c, OCI2C_DATA,
+-			(i2c->msg->addr << 1) |
+-			((i2c->msg->flags & I2C_M_RD) ? 1:0));
+-
++	oc_setreg(i2c, OCI2C_DATA, i2c_8bit_addr_from_msg(i2c->msg));
+ 	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
+ 
+ 	if (wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
+diff --git a/drivers/i2c/busses/i2c-pasemi.c b/drivers/i2c/busses/i2c-pasemi.c
+index df1dbc92a024..55fd5c6f3cca 100644
+--- a/drivers/i2c/busses/i2c-pasemi.c
++++ b/drivers/i2c/busses/i2c-pasemi.c
+@@ -121,7 +121,7 @@ static int pasemi_i2c_xfer_msg(struct i2c_adapter *adapter,
+ 
+ 	read = msg->flags & I2C_M_RD ? 1 : 0;
+ 
+-	TXFIFO_WR(smbus, MTXFIFO_START | (msg->addr << 1) | read);
++	TXFIFO_WR(smbus, MTXFIFO_START | i2c_8bit_addr_from_msg(msg));
+ 
+ 	if (read) {
+ 		TXFIFO_WR(smbus, msg->len | MTXFIFO_READ |
+diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+index 904dfec7ab96..025232207aeb 100644
+--- a/drivers/i2c/busses/i2c-qup.c
++++ b/drivers/i2c/busses/i2c-qup.c
+@@ -453,7 +453,7 @@ static void qup_i2c_write_tx_fifo_v1(struct qup_i2c_dev *qup)
+ {
+ 	struct qup_i2c_block *blk = &qup->blk;
+ 	struct i2c_msg *msg = qup->msg;
+-	u32 addr = msg->addr << 1;
++	u32 addr = i2c_8bit_addr_from_msg(msg);
+ 	u32 qup_tag;
+ 	int idx;
+ 	u32 val;
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index c6915b835396..17b91ddbe013 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -329,7 +329,7 @@ static void rcar_i2c_prepare_msg(struct rcar_i2c_priv *priv)
+ 	if (priv->msgs_left == 1)
+ 		priv->flags |= ID_LAST_MSG;
+ 
+-	rcar_i2c_write(priv, ICMAR, (priv->msg->addr << 1) | read);
++	rcar_i2c_write(priv, ICMAR, i2c_8bit_addr_from_msg(priv->msg));
+ 	/*
+ 	 * We don't have a test case but the HW engineers say that the write order
+ 	 * of ICMSR and ICMCR depends on whether we issue START or REP_START. Since
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 95c2f1ce3cad..5f1fca7880b1 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -167,15 +167,14 @@ static irqreturn_t riic_tdre_isr(int irq, void *data)
+ 		return IRQ_NONE;
+ 
+ 	if (riic->bytes_left == RIIC_INIT_MSG) {
+-		val = !!(riic->msg->flags & I2C_M_RD);
+-		if (val)
++		if (riic->msg->flags & I2C_M_RD)
+ 			/* On read, switch over to receive interrupt */
+ 			riic_clear_set_bit(riic, ICIER_TIE, ICIER_RIE, RIIC_ICIER);
+ 		else
+ 			/* On write, initialize length */
+ 			riic->bytes_left = riic->msg->len;
+ 
+-		val |= (riic->msg->addr << 1);
++		val = i2c_8bit_addr_from_msg(riic->msg);
+ 	} else {
+ 		val = *riic->buf;
+ 		riic->buf++;
+diff --git a/drivers/i2c/busses/i2c-stu300.c b/drivers/i2c/busses/i2c-stu300.c
+index dc63236b45b2..e866c481bfc3 100644
+--- a/drivers/i2c/busses/i2c-stu300.c
++++ b/drivers/i2c/busses/i2c-stu300.c
+@@ -602,20 +602,24 @@ static int stu300_send_address(struct stu300_dev *dev,
+ 	u32 val;
+ 	int ret;
+ 
+-	if (msg->flags & I2C_M_TEN)
++	if (msg->flags & I2C_M_TEN) {
+ 		/* This is probably how 10 bit addresses look */
+ 		val = (0xf0 | (((u32) msg->addr & 0x300) >> 7)) &
+ 			I2C_DR_D_MASK;
+-	else
+-		val = ((msg->addr << 1) & I2C_DR_D_MASK);
++		if (msg->flags & I2C_M_RD)
++			/* This is the direction bit */
++			val |= 0x01;
++	} else {
++		val = i2c_8bit_addr_from_msg(msg);
++	}
+ 
+-	if (msg->flags & I2C_M_RD) {
+-		/* This is the direction bit */
+-		val |= 0x01;
+-		if (resend)
++	if (resend) {
++		if (msg->flags & I2C_M_RD)
+ 			dev_dbg(&dev->pdev->dev, "read resend\n");
+-	} else if (resend)
+-		dev_dbg(&dev->pdev->dev, "write resend\n");
++		else
++			dev_dbg(&dev->pdev->dev, "write resend\n");
++	}
++
+ 	stu300_wr8(val, dev->virtbase + I2C_DR);
+ 
+ 	/* For 10bit addressing, await 10bit request (EVENT 9) */
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index c80527816ad0..1818c3b5c8d7 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -143,12 +143,6 @@ struct xiic_i2c {
+ 
+ #define XIIC_TX_RX_INTERRUPTS (XIIC_INTR_RX_FULL_MASK | XIIC_TX_INTERRUPTS)
+ 
+-/* The following constants are used with the following macros to specify the
+- * operation, a read or write operation.
+- */
+-#define XIIC_READ_OPERATION  1
+-#define XIIC_WRITE_OPERATION 0
+-
+ /*
+  * Tx Fifo upper bit masks.
+  */
+@@ -556,8 +550,7 @@ static void xiic_start_recv(struct xiic_i2c *i2c)
+ 	if (!(msg->flags & I2C_M_NOSTART))
+ 		/* write the address */
+ 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+-			(msg->addr << 1) | XIIC_READ_OPERATION |
+-			XIIC_TX_DYN_START_MASK);
++			i2c_8bit_addr_from_msg(msg) | XIIC_TX_DYN_START_MASK);
+ 
+ 	xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
+ 
+@@ -585,7 +578,7 @@ static void xiic_start_send(struct xiic_i2c *i2c)
+ 
+ 	if (!(msg->flags & I2C_M_NOSTART)) {
+ 		/* write the address */
+-		u16 data = ((msg->addr << 1) & 0xfe) | XIIC_WRITE_OPERATION |
++		u16 data = i2c_8bit_addr_from_msg(msg) |
+ 			XIIC_TX_DYN_START_MASK;
+ 		if ((i2c->nmsgs == 1) && msg->len == 0)
+ 			/* no data and last message -> add STOP */
 -- 
 2.11.0
