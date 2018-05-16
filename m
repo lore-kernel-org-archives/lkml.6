@@ -1,114 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751367AbeEPRrg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:47:36 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42379 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750799AbeEPRre (ORCPT
+        id S1751698AbeEPRs6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:48:58 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:51224 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751225AbeEPRs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:47:34 -0400
-X-Google-Smtp-Source: AB8JxZrJXK2gU0nmkn+anLwjdgJrMd1DWtWE8P8+f4uC3+SQQGEKoc5CqZOxfrghtBKFNK2T//4lSg==
-Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
- configuration
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180514144029.16019-1-andr2000@gmail.com>
- <20180514144029.16019-2-andr2000@gmail.com> <20180516171528.GD21971@dtor-ws>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
-Date: Wed, 16 May 2018 20:47:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 16 May 2018 13:48:56 -0400
+From: Matt Mullins <mmullins@fb.com>
+To: "David S. Miller" <davem@davemloft.net>
+CC: Matt Mullins <mmullins@fb.com>, Ilya Lesokhin <ilyal@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Dave Watson <davejwatson@fb.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH net] tls: don't use stack memory in a scatterlist
+Date: Wed, 16 May 2018 10:48:40 -0700
+Message-ID: <20180516174841.2119-1-mmullins@fb.com>
+X-Mailer: git-send-email 2.14.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <20180516171528.GD21971@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 08:15 PM, Dmitry Torokhov wrote:
-> Hi Oleksandr,
->
-> On Mon, May 14, 2018 at 05:40:29PM +0300, Oleksandr Andrushchenko wrote:
->> @@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
->>   	if (!info->page)
->>   		goto error_nomem;
->>   
->> -	/* Set input abs params to match backend screen res */
->> -	abs = xenbus_read_unsigned(dev->otherend,
->> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
->> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
->> -						  XENKBD_FIELD_WIDTH,
->> -						  ptr_size[KPARAM_X]);
->> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
->> -						  XENKBD_FIELD_HEIGHT,
->> -						  ptr_size[KPARAM_Y]);
->> -	if (abs) {
->> -		ret = xenbus_write(XBT_NIL, dev->nodename,
->> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
->> -		if (ret) {
->> -			pr_warn("xenkbd: can't request abs-pointer\n");
->> -			abs = 0;
->> -		}
->> -	}
->> +	/*
->> +	 * The below are reverse logic, e.g. if the feature is set, then
->> +	 * do not expose the corresponding virtual device.
->> +	 */
->> +	with_kbd = !xenbus_read_unsigned(dev->nodename,
->> +					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
->>   
->> -	touch = xenbus_read_unsigned(dev->nodename,
->> -				     XENKBD_FIELD_FEAT_MTOUCH, 0);
->> -	if (touch) {
->> +	with_ptr = !xenbus_read_unsigned(dev->nodename,
->> +					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
->> +
->> +	/* Direct logic: if set, then create multi-touch device. */
->> +	with_mtouch = xenbus_read_unsigned(dev->nodename,
->> +					   XENKBD_FIELD_FEAT_MTOUCH, 0);
->> +	if (with_mtouch) {
->>   		ret = xenbus_write(XBT_NIL, dev->nodename,
->>   				   XENKBD_FIELD_REQ_MTOUCH, "1");
->>   		if (ret) {
->>   			pr_warn("xenkbd: can't request multi-touch");
->> -			touch = 0;
->> +			with_mtouch = 0;
->>   		}
->>   	}
-> Does it make sense to still end up calling xenkbd_connect_backend() when
-> all interfaces (keyboard, pointer, and multitouch) are disabled? Should
-> we do:
->
-> 	if (!(with_kbd || || with_ptr || with_mtouch))
-> 		return -ENXIO;
->
-> ?
-It does make sense. Then we probably need to move all xenbus_read_unsigned
-calls to the very beginning of the .probe, so no memory allocations are made
-which will be useless if we return -ENXIO, e.g. something like
+scatterlist code expects virt_to_page() to work, which fails with
+CONFIG_VMAP_STACK=y.
 
-static int xenkbd_probe(struct xenbus_device *dev,
-                   const struct xenbus_device_id *id)
-{
-     int ret, i;
-     bool with_mtouch, with_kbd, with_ptr;
-     struct xenkbd_info *info;
-     struct input_dev *kbd, *ptr, *mtouch;
+Fixes: c46234ebb4d1e ("tls: RX path for ktls")
+Signed-off-by: Matt Mullins <mmullins@fb.com>
+---
+ include/net/tls.h | 3 +++
+ net/tls/tls_sw.c  | 9 ++++-----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-<read with_mtouch, with_kbd, with_ptr here>
-
-if (!(with_kbd | with_ptr | with_mtouch))
-         return -ENXIO;
-
-Does the above looks ok?
-> Thanks.
->
-Thank you,
-Oleksandr
+diff --git a/include/net/tls.h b/include/net/tls.h
+index b400d0bb7448..f5fb16da3860 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -97,6 +97,9 @@ struct tls_sw_context {
+ 	u8 control;
+ 	bool decrypted;
+ 
++	char rx_aad_ciphertext[TLS_AAD_SPACE_SIZE];
++	char rx_aad_plaintext[TLS_AAD_SPACE_SIZE];
++
+ 	/* Sending context */
+ 	char aad_space[TLS_AAD_SPACE_SIZE];
+ 
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index 71e79597f940..e1c93ce74e0f 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -680,7 +680,6 @@ static int decrypt_skb(struct sock *sk, struct sk_buff *skb,
+ 	struct scatterlist *sgin = &sgin_arr[0];
+ 	struct strp_msg *rxm = strp_msg(skb);
+ 	int ret, nsg = ARRAY_SIZE(sgin_arr);
+-	char aad_recv[TLS_AAD_SPACE_SIZE];
+ 	struct sk_buff *unused;
+ 
+ 	ret = skb_copy_bits(skb, rxm->offset + TLS_HEADER_SIZE,
+@@ -698,13 +697,13 @@ static int decrypt_skb(struct sock *sk, struct sk_buff *skb,
+ 	}
+ 
+ 	sg_init_table(sgin, nsg);
+-	sg_set_buf(&sgin[0], aad_recv, sizeof(aad_recv));
++	sg_set_buf(&sgin[0], ctx->rx_aad_ciphertext, TLS_AAD_SPACE_SIZE);
+ 
+ 	nsg = skb_to_sgvec(skb, &sgin[1],
+ 			   rxm->offset + tls_ctx->rx.prepend_size,
+ 			   rxm->full_len - tls_ctx->rx.prepend_size);
+ 
+-	tls_make_aad(aad_recv,
++	tls_make_aad(ctx->rx_aad_ciphertext,
+ 		     rxm->full_len - tls_ctx->rx.overhead_size,
+ 		     tls_ctx->rx.rec_seq,
+ 		     tls_ctx->rx.rec_seq_size,
+@@ -803,12 +802,12 @@ int tls_sw_recvmsg(struct sock *sk,
+ 			if (to_copy <= len && page_count < MAX_SKB_FRAGS &&
+ 			    likely(!(flags & MSG_PEEK)))  {
+ 				struct scatterlist sgin[MAX_SKB_FRAGS + 1];
+-				char unused[21];
+ 				int pages = 0;
+ 
+ 				zc = true;
+ 				sg_init_table(sgin, MAX_SKB_FRAGS + 1);
+-				sg_set_buf(&sgin[0], unused, 13);
++				sg_set_buf(&sgin[0], ctx->rx_aad_plaintext,
++					   TLS_AAD_SPACE_SIZE);
+ 
+ 				err = zerocopy_from_iter(sk, &msg->msg_iter,
+ 							 to_copy, &pages,
+-- 
+2.14.1
