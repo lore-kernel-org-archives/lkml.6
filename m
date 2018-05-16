@@ -1,175 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeEPHma (ORCPT <rfc822;w@1wt.eu>);
+        id S1752565AbeEPHmj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:42:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57806 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751449AbeEPHma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 03:42:30 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45796 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPHm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:42:27 -0400
-X-Google-Smtp-Source: AB8JxZrhK9aONnn5fWnA1+ZDfPByKz9D0SLTDKN0c9yI/XB3qI7ctIrrZO8Tya+30JN/CAdb/4UVwA==
-Subject: Re: [PATCH v2 4/5] mfd: cros_ec_dev: Add CEC sub-device registration
-To: Enric Balletbo Serra <eballetbo@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
-        seanpaul@google.com, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Fabien Parent <fparent@baylibre.com>, felixe@google.com,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
-        Benson Leung <bleung@google.com>, darekm@google.com,
-        linux-media@vger.kernel.org
-References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
- <1526395342-15481-5-git-send-email-narmstrong@baylibre.com>
- <568980a1-9c22-ccdb-de43-ba88cdce4ecd@xs4all.nl>
- <CAFqH_52nkk=ATeNoOdhmfAioD30sbg_kyAxr259bydLj9Z6xJg@mail.gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <0ac61992-3946-63f2-02ed-0dcfa3058a1a@baylibre.com>
-Date: Wed, 16 May 2018 09:42:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Date: Wed, 16 May 2018 09:42:27 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Chris Moore <moore@free.fr>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
+        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
+        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+Message-ID: <20180516094227.14132e74@xps13>
+In-Reply-To: <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
+References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
+        <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
+        <20180515093429.34902670@bbrezillon>
+        <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_52nkk=ATeNoOdhmfAioD30sbg_kyAxr259bydLj9Z6xJg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+Hi Chris,
 
-On 15/05/2018 18:40, Enric Balletbo Serra wrote:
-> Hi Neil,
+> >>> +static void nand_bit_wise_majority(const void **srcbufs,
+> >>> +				   unsigned int nsrcbufs,
+> >>> +				   void *dstbuf,
+> >>> +				   unsigned int bufsize)
+> >>> +{
+> >>> +	int i, j, k;
+> >>> +
+> >>> +	for (i = 0; i < bufsize; i++) {
+> >>> +		u8 cnt, val;
+> >>> +
+> >>> +		val = 0;
+> >>> +		for (j = 0; j < 8; j++) {
+> >>> +			cnt = 0;
+> >>> +			for (k = 0; k < nsrcbufs; k++) {
+> >>> +				const u8 *srcbuf = srcbufs[k];
+> >>> +
+> >>> +				if (srcbuf[i] & BIT(j))
+> >>> +					cnt++;
+> >>> +			}
+> >>> +			if (cnt > nsrcbufs / 2)
+> >>> +				val |= BIT(j);
+> >>> +		}
+> >>> +		((u8 *)dstbuf)[i] = val;
+> >>> +	}
+> >>> +}
+> >>> +
+> >>> +/*
+> >>>     * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
+> >>>     */
+> >>>    static int nand_flash_detect_onfi(struct nand_chip *chip)
+> >>> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+> >>>    		return 0;  
+> >>>    >>>    	/* ONFI chip: allocate a buffer to hold its parameter page */  
+> >>> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> >>> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+> >>>    	if (!p)
+> >>>    		return -ENOMEM;  
+> >>>    >>> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)  
+> >>>    	}  
+> >>>    >>>    	for (i = 0; i < 3; i++) {  
+> >>> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
+> >>> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
+> >>>    		if (ret) {
+> >>>    			ret = 0;
+> >>>    			goto free_onfi_param_page;
+> >>>    		}  
+> >>>    >>> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==  
+> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
+> >>>    				le16_to_cpu(p->crc)) {
+> >>> +			if (i)
+> >>> +				memcpy(p, &p[i], sizeof(*p));
+> >>>    			break;
+> >>>    		}
+> >>>    	}  
+> >>>    >>>    	if (i == 3) {  
+> >>> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> >>> -		goto free_onfi_param_page;
+> >>> +		const void *srcbufs[3] = {p, p + 1, p + 2};
+> >>> +
+> >>> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
+> >>> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
+> >>> +				       sizeof(*p));
+> >>> +
+> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
+> >>> +				le16_to_cpu(p->crc)) {
+> >>> +			pr_err("ONFI parameter recovery failed, aborting\n");
+> >>> +			goto free_onfi_param_page;
+> >>> +		}
+> >>>    	}  
+> >>>    >>>    	/* Check version */  
+> >> This version is still hard coded for a three sample bitwise majority vote.
+> >> So why not use the method which I suggested previously for v2 and which
+> >> I repeat below?  
+> > Because I want the nand_bit_wise_majority() function to work with
+> > nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
+> > page, but NAND vendor can decide to put more). Also, if the X copies of
+> > the PARAM are corrupted (which is rather unlikely), that means we
+> > already spent quite a lot of time reading the different copies and
+> > calculating the CRC, so I think we don't care about perf optimizations
+> > when doing bit-wise majority.
+> >  
+> >> The three sample bitwise majority can be implemented without bit level
+> >> manipulation using the identity:
+> >> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
+> >> This can be factorized slightly to (a & (b | c)) | (b & c)
+> >> This enables the operation to be performed 8, 16, 32 or even 64 bits at
+> >> a time depending on the hardware.
+> >>
+> >> This method is not only faster and but also more compact.
+> >>  
 > 
-> I suspect that this patch will conflict with some patches that will be
-> queued for 4.18 that also introduces new devices, well, for now I
-> don't see these merged in the Lee's tree.
+> I do understand that the ONFI specifications permit more than 3 copies.
+> However elsewhere the proposed code shows no intention of handling other cases.
+> The constant 3 is hard coded in the following lines extracted from the proposed code:
+> ...
+> +    p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+> ...
+>       for (i = 0; i < 3; i++) {
+> ...
+>       if (i == 3) {
+> ...
+> +        const void *srcbufs[3] = {p, p + 1, p + 2};
+> 
+> Moreover the last of these is difficult to generalize.
 
-Indeed, I found your patches, I'll rebase this one when Lee pushes them in his tree.
-
-> 
-> Based on some reviews I got when I send a patch to this file ...
-> 
-> 2018-05-15 17:29 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
->> On 05/15/2018 04:42 PM, Neil Armstrong wrote:
->>> The EC can expose a CEC bus, thus add the cros-ec-cec MFD sub-device
->>> when the CEC feature bit is present.
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>
->> For what it is worth (not an MFD expert):
->>
->> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
->>
->> Thanks!
->>
->>         Hans
->>
->>> ---
->>>  drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
->>>  1 file changed, 16 insertions(+)
->>>
->>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
->>> index eafd06f..57064ec 100644
->>> --- a/drivers/mfd/cros_ec_dev.c
->>> +++ b/drivers/mfd/cros_ec_dev.c
->>> @@ -383,6 +383,18 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->>>       kfree(msg);
->>>  }
->>>
->>> +static void cros_ec_cec_register(struct cros_ec_dev *ec)
->>> +{
->>> +     int ret;
->>> +     struct mfd_cell cec_cell = {
->>> +             .name = "cros-ec-cec",
->>> +     };
->>> +
->>> +     ret = mfd_add_devices(ec->dev, 0, &cec_cell, 1, NULL, 0, NULL);
->>> +     if (ret)
->>> +             dev_err(ec->dev, "failed to add EC CEC\n");
->>> +}
->>> +
-> 
-> Do not create a single function to only call mfd_add_devices, instead
-> do the following on top:
-> 
-> static const struct mfd_cell cros_ec_cec_cells[] = {
->         { .name = "cros-ec-cec" }
-> };
-
-OK
-
-> 
-> 
->>>  static int ec_device_probe(struct platform_device *pdev)
->>>  {
->>>       int retval = -ENOMEM;
->>> @@ -422,6 +434,10 @@ static int ec_device_probe(struct platform_device *pdev)
->>>       if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->>>               cros_ec_sensors_register(ec);
->>>
->>> +     /* check whether this EC handles CEC. */
->>> +     if (cros_ec_check_features(ec, EC_FEATURE_CEC))
->>> +             cros_ec_cec_register(ec);
->>> +
-> 
-> and use PLATFORM_DEVID_AUTO and the ARRAY_SIZE macro, something like this.
-> 
-> /* Check whether this EC instance handles CEC */
-> if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
->         retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
->                                                   cros_ec_cec_cells,
->                                                   ARRAY_SIZE(cros_ec_cec_cells),
->                                                   NULL, 0, NULL);
->         if (retval)
->                 dev_err(ec->dev, "failed to add cros-ec-cec device: %d\n",
->                              retval);
-> }
-
-Ok, like the RTC registration.
+Indeed, this is something to improve. I think Boris' request was to
+prepare changes like this one, to avoid the situation where the code
+does not scale (like this 'p, p + 1, p + 2').
 
 Thanks,
-Neil
-
-> 
-> Best regards,
->   Enric
-> 
->>>       /* Take control of the lightbar from the EC. */
->>>       lb_manual_suspend_ctrl(ec, 1);
->>>
->>>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Miquèl
