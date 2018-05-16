@@ -1,33 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeEPKfd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:35:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50221 "EHLO
+        id S1752274AbeEPKhP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:37:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39827 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752154AbeEPKf3 (ORCPT
+        with ESMTP id S1751471AbeEPKhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:35:29 -0400
-Date: Wed, 16 May 2018 03:34:54 -0700
-From: tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-d7d760efad70c7a030725499bf9f342f04af24dd@git.kernel.org>
-Cc: dave@stgolabs.net, peterz@infradead.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, hpa@zytor.com, willy@infradead.org, tytso@mit.edu,
-        jack@suse.cz, longman@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, oleg@redhat.com, amir73il@gmail.com,
-        paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        will.deacon@arm.com
-Reply-To: akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-        will.deacon@arm.com, tglx@linutronix.de, longman@redhat.com,
-        jack@suse.cz, linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        oleg@redhat.com, tytso@mit.edu, willy@infradead.org, mingo@kernel.org,
-        hpa@zytor.com, peterz@infradead.org, dave@stgolabs.net,
-        torvalds@linux-foundation.org
-In-Reply-To: <1526420991-21213-2-git-send-email-longman@redhat.com>
-References: <1526420991-21213-2-git-send-email-longman@redhat.com>
+        Wed, 16 May 2018 06:37:14 -0400
+Date: Wed, 16 May 2018 03:35:52 -0700
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d@git.kernel.org>
+Cc: hughd@google.com, eric.dumazet@gmail.com, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
+        peterz@infradead.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Reply-To: hughd@google.com, hpa@zytor.com, eric.dumazet@gmail.com,
+        mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
+        peterz@infradead.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
+References: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] locking/rwsem: Add a new
- RWSEM_ANONYMOUSLY_OWNED flag
-Git-Commit-ID: d7d760efad70c7a030725499bf9f342f04af24dd
+Subject: [tip:x86/urgent] x86/boot/compressed/64: Set up GOT for
+ paging_prepare() and cleanup_trampoline()
+Git-Commit-ID: 5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -40,175 +36,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d7d760efad70c7a030725499bf9f342f04af24dd
-Gitweb:     https://git.kernel.org/tip/d7d760efad70c7a030725499bf9f342f04af24dd
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Tue, 15 May 2018 17:49:50 -0400
+Commit-ID:  5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
+Gitweb:     https://git.kernel.org/tip/5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Wed, 16 May 2018 11:01:28 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 16 May 2018 11:45:15 +0200
+CommitDate: Wed, 16 May 2018 12:15:13 +0200
 
-locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
+x86/boot/compressed/64: Set up GOT for paging_prepare() and cleanup_trampoline()
 
-There are use cases where a rwsem can be acquired by one task, but
-released by another task. In thess cases, optimistic spinning may need
-to be disabled.  One example will be the filesystem freeze/thaw code
-where the task that freezes the filesystem will acquire a write lock
-on a rwsem and then un-owns it before returning to userspace. Later on,
-another task will come along, acquire the ownership, thaw the filesystem
-and release the rwsem.
+Eric and Hugh have reported instant reboot due to my recent changes in
+decompression code.
 
-Bit 0 of the owner field was used to designate that it is a reader
-owned rwsem. It is now repurposed to mean that the owner of the rwsem
-is not known. If only bit 0 is set, the rwsem is reader owned. If bit
-0 and other bits are set, it is writer owned with an unknown owner.
-One such value for the latter case is (-1L). So we can set owner to 1 for
-reader-owned, -1 for writer-owned. The owner is unknown in both cases.
+The root cause is that I didn't realize that we need to adjust GOT to be
+able to run C code that early.
 
-To handle transfer of rwsem ownership, the higher level code should
-set the owner field to -1 to indicate a write-locked rwsem with unknown
-owner.  Optimistic spinning will be disabled in this case.
+The problem is only visible with an older toolchain. Binutils >= 2.24 is
+able to eliminate GOT references by replacing them with RIP-relative
+address loads:
 
-Once the higher level code figures who the new owner is, it can then
-set the owner field accordingly.
+  https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=80d873266dec
 
-Tested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jan Kara <jack@suse.cz>
+We need to adjust GOT two times:
+
+ - before calling paging_prepare() using the initial load address
+ - before calling C code from the relocated kernel
+
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Reported-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Theodore Y. Ts'o <tytso@mit.edu>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-fsdevel@vger.kernel.org
-Link: http://lkml.kernel.org/r/1526420991-21213-2-git-send-email-longman@redhat.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 194a9749c73d ("x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G")
+Link: http://lkml.kernel.org/r/20180516080131.27913-2-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c | 17 +++++++----------
- kernel/locking/rwsem.c      |  2 --
- kernel/locking/rwsem.h      | 30 +++++++++++++++++++++---------
- 3 files changed, 28 insertions(+), 21 deletions(-)
+ arch/x86/boot/compressed/head_64.S | 68 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 55 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index e795908f3607..604d247ea8c3 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -357,11 +357,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fca012baba19..d17af6a4bfc9 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -305,6 +305,25 @@ ENTRY(startup_64)
+ 	/* Set up the stack */
+ 	leaq	boot_stack_end(%rbx), %rsp
  
- 	rcu_read_lock();
- 	owner = READ_ONCE(sem->owner);
--	if (!rwsem_owner_is_writer(owner)) {
--		/*
--		 * Don't spin if the rwsem is readers owned.
--		 */
--		ret = !rwsem_owner_is_reader(owner);
-+	if (!owner || !is_rwsem_owner_spinnable(owner)) {
-+		ret = !owner;	/* !owner is spinnable */
- 		goto done;
- 	}
- 
-@@ -382,11 +379,11 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- {
- 	struct task_struct *owner = READ_ONCE(sem->owner);
- 
--	if (!rwsem_owner_is_writer(owner))
--		goto out;
-+	if (!is_rwsem_owner_spinnable(owner))
-+		return false;
- 
- 	rcu_read_lock();
--	while (sem->owner == owner) {
-+	while (owner && (READ_ONCE(sem->owner) == owner)) {
- 		/*
- 		 * Ensure we emit the owner->on_cpu, dereference _after_
- 		 * checking sem->owner still matches owner, if that fails,
-@@ -408,12 +405,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- 		cpu_relax();
- 	}
- 	rcu_read_unlock();
--out:
++	/*
++	 * paging_prepare() and cleanup_trampoline() below can have GOT
++	 * references. Adjust the table with address we are running at.
++	 *
++	 * Zero RAX for adjust_got: the GOT was not adjusted before;
++	 * there's no adjustment to undo.
++	 */
++	xorq	%rax, %rax
++
++	/*
++	 * Calculate the address the binary is loaded at and use it as
++	 * a GOT adjustment.
++	 */
++	call	1f
++1:	popq	%rdi
++	subq	$1b, %rdi
++
++	call	adjust_got
 +
  	/*
- 	 * If there is a new owner or the owner is not set, we continue
- 	 * spinning.
- 	 */
--	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
-+	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
- }
+ 	 * At this point we are in long mode with 4-level paging enabled,
+ 	 * but we might want to enable 5-level paging or vice versa.
+@@ -381,6 +400,21 @@ trampoline_return:
+ 	pushq	$0
+ 	popfq
  
- static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 30465a2f2b6c..bc1e507be9ff 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -221,5 +221,3 @@ void up_read_non_owner(struct rw_semaphore *sem)
- EXPORT_SYMBOL(up_read_non_owner);
- 
- #endif
--
--
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a17cba8d94bb..b9d0e72aa80f 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -1,20 +1,24 @@
- /* SPDX-License-Identifier: GPL-2.0 */
++	/*
++	 * Previously we've adjusted the GOT with address the binary was
++	 * loaded at. Now we need to re-adjust for relocation address.
++	 *
++	 * Calculate the address the binary is loaded at, so that we can
++	 * undo the previous GOT adjustment.
++	 */
++	call	1f
++1:	popq	%rax
++	subq	$1b, %rax
++
++	/* The new adjustment is the relocation address */
++	movq	%rbx, %rdi
++	call	adjust_got
++
  /*
-  * The owner field of the rw_semaphore structure will be set to
-- * RWSEM_READ_OWNED when a reader grabs the lock. A writer will clear
-+ * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
-  * the owner field when it unlocks. A reader, on the other hand, will
-  * not touch the owner field when it unlocks.
-  *
-- * In essence, the owner field now has the following 3 states:
-+ * In essence, the owner field now has the following 4 states:
-  *  1) 0
-  *     - lock is free or the owner hasn't set the field yet
-  *  2) RWSEM_READER_OWNED
-  *     - lock is currently or previously owned by readers (lock is free
-  *       or not set by owner yet)
-- *  3) Other non-zero value
-- *     - a writer owns the lock
-+ *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
-+ *     - lock is owned by an anonymous writer, so spinning on the lock
-+ *       owner should be disabled.
-+ *  4) Other non-zero value
-+ *     - a writer owns the lock and other writers can spin on the lock owner.
+  * Copy the compressed kernel to the end of our buffer
+  * where decompression in place becomes safe.
+@@ -481,19 +515,6 @@ relocated:
+ 	shrq	$3, %rcx
+ 	rep	stosq
+ 
+-/*
+- * Adjust our own GOT
+- */
+-	leaq	_got(%rip), %rdx
+-	leaq	_egot(%rip), %rcx
+-1:
+-	cmpq	%rcx, %rdx
+-	jae	2f
+-	addq	%rbx, (%rdx)
+-	addq	$8, %rdx
+-	jmp	1b
+-2:
+-	
+ /*
+  * Do the extraction, and jump to the new kernel..
   */
--#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
-+#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
-+#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
+@@ -512,6 +533,27 @@ relocated:
+  */
+ 	jmp	*%rax
  
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-@@ -51,14 +55,22 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
- }
- 
--static inline bool rwsem_owner_is_writer(struct task_struct *owner)
 +/*
-+ * Return true if the a rwsem waiter can spin on the rwsem's owner
-+ * and steal the lock, i.e. the lock is not anonymously owned.
-+ * N.B. !owner is considered spinnable.
++ * Adjust the global offset table
++ *
++ * RAX is the previous adjustment of the table to undo (use 0 if it's the
++ * first time we touch GOT).
++ * RDI is the new adjustment to apply.
 + */
-+static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
- {
--	return owner && owner != RWSEM_READER_OWNED;
-+	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
- }
- 
--static inline bool rwsem_owner_is_reader(struct task_struct *owner)
-+/*
-+ * Return true if rwsem is owned by an anonymous writer or readers.
-+ */
-+static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
- {
--	return owner == RWSEM_READER_OWNED;
-+	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
- }
- #else
- static inline void rwsem_set_owner(struct rw_semaphore *sem)
++adjust_got:
++	/* Walk through the GOT adding the address to the entries */
++	leaq	_got(%rip), %rdx
++	leaq	_egot(%rip), %rcx
++1:
++	cmpq	%rcx, %rdx
++	jae	2f
++	subq	%rax, (%rdx)	/* Undo previous adjustment */
++	addq	%rdi, (%rdx)	/* Apply the new adjustment */
++	addq	$8, %rdx
++	jmp	1b
++2:
++	ret
++
+ 	.code32
+ /*
+  * This is the 32-bit trampoline that will be copied over to low memory.
