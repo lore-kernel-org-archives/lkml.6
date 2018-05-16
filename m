@@ -1,302 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752588AbeEPHdY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:33:24 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20231 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeEPHdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:33:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="199763221"
-Subject: Re: [PATCH V5 2/3] mmc: sdhci: Add support for O2 hardware tuning
-To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Xiaoguang Yu <xiaoguang.yu@bayhubtech.com>,
-        Shirley Her <shirley.her@bayhubtech.com>,
-        Yuxiang Wan <yuxiang.wan@bayhubtech.com>
-References: <20180420163812.9868-1-ernest.zhang@bayhubtech.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <4d6d75ef-2e6a-e397-3148-7a9d8de7ad1f@intel.com>
-Date: Wed, 16 May 2018 10:32:10 +0300
+        id S1752289AbeEPHef (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:34:35 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57435 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751040AbeEPHec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:34:32 -0400
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+ <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+Date: Wed, 16 May 2018 09:34:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180420163812.9868-1-ernest.zhang@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/18 19:38, ernest.zhang wrote:
-> Add hardware tuning function instead of software tuning because O2/Bayhub
-> SD host controller support hardware tuning.
+
+
+On 05/15/2018 11:48 PM, Stephen Boyd wrote:
+> Quoting Alexandre Torgue (2018-05-14 05:45:57)
+>>
+>>
+>> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
+>>> Quoting Alexandre Torgue (2018-05-04 00:54:16)
+>>>> Stephen
+>>>>
+>>>> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+>>>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>>>
+>>>>> Clock driver is mandatory if the machine is selected.
+>>>>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+>>>>> with the machine(s).
+>>>>>
+>>>>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+>>>>>
+>>>>
+>>>> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+>>>
+>>> Thanks for the bump. I missed this one. Of course, the user can still select
+>>> the configs now, just it's annoying for upgrade path.
+>>>
+>>>>
+>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>>>> ---
+>>>>>     drivers/clk/Kconfig | 6 ++----
+>>>>>     1 file changed, 2 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>>>> index 24a5bc3..721572a 100644
+>>>>> --- a/drivers/clk/Kconfig
+>>>>> +++ b/drivers/clk/Kconfig
+>>>>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+>>>>>           Support for stm32mp157 SoC family clocks
+>>>>>     
+>>>>>     config COMMON_CLK_STM32F
+>>>>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+>>>>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+>>>>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+>>>
+>>> But the point of the change this patch is fixing was to expose these to
+>>> the user to turn off they wanted. You'll need to do something like that
+>>> again here, instead of removing the prompt and replacing it with a
+>>> def_bool.
+>>>
+>>
+>> Sorry I don't understand. Clock driver is mandatory to boot each
+>> platform and depends on machine type. Do you see a use case where we
+>> could need to disable the clock driver? (it would impose to change
+>> devicetree to use fixed clocks and to have a booloader which configures
+>> all PLL and clocks).
 > 
-> Changes in V5:
-
-The change log goes below the --- line or in a separate cover email.
-
-> 	In function sdhci_o2_send_tuning, mrq.data should set to NULL for
-> 	cmd.data has been set to NULL.
+> No. My understanding of the patch that introduced the options was to
+> allow the user to disable these drivers if they wanted to. I'm just
+> reiterating the spirit of that patch. That must be wrong?
 > 
-> Changes in V4:
-> 	Patch V3 delete register SDHCI_TRANSFER_MODE write operation before
-> 	send hardware tuning command in function sdhci_o2_send_tuning. This
-> 	is a mistake. The write operation is essential for tuning command.
-> 	Add it back.
-> 
-> Changes in V3:
-> 	Rebase the patch on the mmc tree 'next' branch.
-> 
-> Changes in V2:
-> 	Modify code format, and delete unused code path.
-> 
-> Changes in V1:
-> 	Add many functions to execute hardware tuning for eMMC 1.8V HS200
-> 	mode, the hardware tuning procedure is based on O2/Bayhub hardware
-> 	tuning spec.
-> 
-> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
-> ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 175 +++++++++++++++++++++++++++++++++++
->  drivers/mmc/host/sdhci.c             |   5 +-
->  2 files changed, 179 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index ba59db6a..96adaae 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -17,6 +17,9 @@
->   */
->  
->  #include <linux/pci.h>
-> +#include <linux/mmc/host.h>
-> +#include <linux/mmc/mmc.h>
-> +#include <linux/delay.h>
->  
->  #include "sdhci.h"
->  #include "sdhci-pci.h"
-> @@ -55,6 +58,176 @@
->  
->  #define O2_SD_VENDOR_SETTING	0x110
->  #define O2_SD_VENDOR_SETTING2	0x1C8
-> +#define O2_SD_HW_TUNING_DISABLE	BIT(4)
-> +
-> +static void sdhci_o2_start_tuning(struct sdhci_host *host)
-
-This is the same as sdhci_start_tuning() so please export and use that instead.
-
-> +{
-> +	u16 ctrl;
-> +
-> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +	ctrl |= SDHCI_CTRL_EXEC_TUNING;
-> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +
-> +	/*
-> +	 * As per the Host Controller spec v3.00, tuning command
-> +	 * generates Buffer Read Ready interrupt, so enable that.
-> +	 *
-> +	 * Note: The spec clearly says that when tuning sequence
-> +	 * is being performed, the controller does not generate
-> +	 * interrupts other than Buffer Read Ready interrupt. But
-> +	 * to make sure we don't hit a controller bug, we _only_
-> +	 * enable Buffer Read Ready interrupt here.
-> +	 */
-> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_SIGNAL_ENABLE);
-> +}
-> +
-> +static void sdhci_o2_end_tuning(struct sdhci_host *host)
-
-This is the same as sdhci_end_tuning() so please export and use that instead.
-
-> +{
-> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> +}
-> +
-> +static inline bool sdhci_data_line_cmd(struct mmc_command *cmd)
-> +{
-> +	return cmd->data || cmd->flags & MMC_RSP_BUSY;
-> +}
-> +
-> +static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
-> +{
-> +	if (sdhci_data_line_cmd(mrq->cmd))
-> +		del_timer(&host->data_timer);
-> +	else
-> +		del_timer(&host->timer);
-> +}
-> +
-> +static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
-> +{
-> +	u16 reg;
-> +
-> +	/* enable hardware tuning */
-> +	reg = sdhci_readw(host, O2_SD_VENDOR_SETTING);
-> +	reg &= ~O2_SD_HW_TUNING_DISABLE;
-> +	sdhci_writew(host, reg, O2_SD_VENDOR_SETTING);
-> +}
-> +
-> +static int sdhci_o2_send_tuning(struct sdhci_host *host, u32 opcode)
-
-This is the same as sdhci_send_tuning() except for the cmd.flags.
-Please export sdhci_send_tuning() and use that instead.  If you really need
-different cmd.flags then add them as a parameter.
-
-> +{
-> +	struct mmc_command cmd = { };
-> +	struct mmc_request mrq = { };
-> +	unsigned long flags;
-> +	u32 b = host->sdma_boundary;
-> +
-> +	cmd.opcode = opcode;
-> +	cmd.flags = MMC_RSP_PRESENT | MMC_RSP_OPCODE | MMC_RSP_CRC;
-> +	cmd.mrq = &mrq;
-> +	cmd.data = NULL;
-> +	mrq.cmd = &cmd;
-> +	mrq.data = NULL;
-> +
-> +	spin_lock_irqsave(&host->lock, flags);
-> +
-> +	sdhci_writew(host, SDHCI_MAKE_BLKSZ(b, 64), SDHCI_BLOCK_SIZE);
-> +
-> +	/*
-> +	 * The tuning block is sent by the card to the host controller.
-> +	 * So we set the TRNS_READ bit in the Transfer Mode register.
-> +	 * This also takes care of setting DMA Enable and Multi Block
-> +	 * Select in the same register to 0.
-> +	 */
-> +	sdhci_writew(host, SDHCI_TRNS_READ, SDHCI_TRANSFER_MODE);
-> +
-> +	sdhci_send_command(host, &cmd);
-> +
-> +	host->cmd = NULL;
-> +
-> +	sdhci_del_timer(host, &mrq);
-> +
-> +	host->tuning_done = 0;
-> +
-> +	mmiowb();
-> +	spin_unlock_irqrestore(&host->lock, flags);
-> +
-> +	/* Wait for Buffer Read Ready interrupt */
-> +	wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
-> +			   msecs_to_jiffies(50));
-> +	return 0;
-> +}
-> +
-> +static void sdhci_o2_reset_tuning(struct sdhci_host *host)
-> +{
-> +	u16 ctrl;
-> +
-> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +	ctrl &= ~SDHCI_CTRL_TUNED_CLK;
-> +	ctrl &= ~SDHCI_CTRL_EXEC_TUNING;
-> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +}
-> +
-> +static void __sdhci_o2_execute_tuning(struct sdhci_host *host, u32 opcode)
-> +{
-> +	int i;
-> +
-> +	sdhci_o2_send_tuning(host, MMC_SEND_TUNING_BLOCK_HS200);
-> +
-> +	for (i = 0; i < 150; i++) {
-> +		u16 ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +
-> +		if (!(ctrl & SDHCI_CTRL_EXEC_TUNING)) {
-> +			if (ctrl & SDHCI_CTRL_TUNED_CLK) {
-> +				host->tuning_done = true;
-> +				return;
-> +			}
-> +			pr_warn("%s: HW tuning failed !\n",
-> +				mmc_hostname(host->mmc));
-> +			break;
-> +		}
-> +
-> +		mdelay(1);
-> +	}
-> +
-> +	pr_info("%s: Tuning failed, falling back to fixed sampling clock\n",
-> +		mmc_hostname(host->mmc));
-> +	sdhci_o2_reset_tuning(host);
-> +}
-> +
-> +static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	int current_bus_width = 0;
-> +
-> +	/*
-> +	 * This handler only implements the eMMC tuning that is specific to
-> +	 * this controller.  Fall back to the standard method for other TIMING.
-> +	 */
-> +	if (host->timing != MMC_TIMING_MMC_HS200)
-> +		return sdhci_execute_tuning(mmc, opcode);
-> +
-> +	if (WARN_ON(opcode != MMC_SEND_TUNING_BLOCK_HS200))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * o2 sdhci host didn't support 8bit emmc tuning
-> +	 */
-> +	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
-> +		current_bus_width = mmc->ios.bus_width;
-> +		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
-> +	}
-> +
-> +	sdhci_o2_set_tuning_mode(host);
-> +
-> +	sdhci_o2_start_tuning(host);
-> +
-> +	__sdhci_o2_execute_tuning(host, opcode);
-> +
-> +	sdhci_o2_end_tuning(host);
-> +
-> +	if (current_bus_width == MMC_BUS_WIDTH_8)
-> +		sdhci_set_bus_width(host, current_bus_width);
-> +
-> +	host->flags &= ~SDHCI_HS400_TUNING;
-> +	return 0;
-> +}
->  
->  static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
->  {
-> @@ -215,6 +388,8 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
->  			}
->  		}
->  
-> +		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
-> +
->  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
->  			break;
->  		/* set dll watch dog timer */
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 2ededa7..3bf6117 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -955,7 +955,10 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  	if (data == NULL) {
->  		if (host->quirks2 &
->  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
-> -			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +			/* must not clear SDHCI_TRANSFER_MODE when tuning */
-> +			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) {
-> +				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +			}
-
-Unnecessary {}
-
->  		} else {
->  		/* clear Auto CMD settings for no data CMDs */
->  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
-> 
+Actually initial patch is a mistake. You can't boot STM32 platform 
+without clock driver. This patch fixes that, and offers the possibility 
+to not build the clock driver of the machine which are not used 
+(currently all machine are selected but to reduce memory footprint you 
+could disable not used machine in defconfig).
