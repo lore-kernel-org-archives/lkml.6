@@ -1,72 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEPHyt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:54:49 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:32843 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeEPHys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:54:48 -0400
-X-Google-Smtp-Source: AB8JxZo2LzqgIIi5YPTRb9u8l6FCMIYM5jVNevyD1zmvQX7lk2Rfx5f4EN/WR6aXXF/wvp2d7pr1oryc5qUqeKMjmBw=
+        id S1752618AbeEPH4u convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:56:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58397 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752022AbeEPH4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:56:48 -0400
+Date: Wed, 16 May 2018 09:56:46 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Chris Moore <moore@free.fr>
+Cc: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
+        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
+        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+Message-ID: <20180516095646.5a4d77ed@bbrezillon>
+In-Reply-To: <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
+References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
+        <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
+        <20180515093429.34902670@bbrezillon>
+        <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180516070814.GA20588@fergus.ozlabs.ibm.com>
-References: <20180510182719.GA22217@jordon-HP-15-Notebook-PC>
- <CAFqt6zbxWkOQXtKZXyDae=ZEQR+d0xf42fvnvUoBSHQZcHRCBg@mail.gmail.com> <20180516070814.GA20588@fergus.ozlabs.ibm.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Wed, 16 May 2018 13:24:45 +0530
-Message-ID: <CAFqt6zaRyuJLr9wt3a7dAf2Ef4-k=ONZj2fY2q+_rvXYDRss8g@mail.gmail.com>
-Subject: Re: [PATCH v2] powerpc: kvm: Change return type to vm_fault_t
-To: Paul Mackerras <paulus@ozlabs.org>
-Cc: benh@kernel.crashing.org, mpe@ellerman.id.au,
-        Matthew Wilcox <willy@infradead.org>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:38 PM, Paul Mackerras <paulus@ozlabs.org> wrote:
-> On Wed, May 16, 2018 at 10:11:11AM +0530, Souptick Joarder wrote:
->> On Thu, May 10, 2018 at 11:57 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->> > Use new return type vm_fault_t for fault handler
->> > in struct vm_operations_struct. For now, this is
->> > just documenting that the function returns a
->> > VM_FAULT value rather than an errno.  Once all
->> > instances are converted, vm_fault_t will become
->> > a distinct type.
->> >
->> > commit 1c8f422059ae ("mm: change return type to
->> > vm_fault_t")
->> >
->> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> > ---
->> > v2: Updated the change log
->> >
->> >  arch/powerpc/kvm/book3s_64_vio.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
->> > index 4dffa61..346ac0d 100644
->> > --- a/arch/powerpc/kvm/book3s_64_vio.c
->> > +++ b/arch/powerpc/kvm/book3s_64_vio.c
->> > @@ -237,7 +237,7 @@ static void release_spapr_tce_table(struct rcu_head *head)
->> >         kfree(stt);
->> >  }
->> >
->> > -static int kvm_spapr_tce_fault(struct vm_fault *vmf)
->> > +static vm_fault_t kvm_spapr_tce_fault(struct vm_fault *vmf)
->> >  {
->> >         struct kvmppc_spapr_tce_table *stt = vmf->vma->vm_file->private_data;
->> >         struct page *page;
->> > --
->> > 1.9.1
->> >
->>
->> If no comment, we would like to get this patch in queue
->> for 4.18.
->
-> It looks fine - I'll queue it up.
->
-> Paul.
+On Wed, 16 May 2018 09:32:57 +0200
+Chris Moore <moore@free.fr> wrote:
 
-Thanks Paul :)
+> Hi,
+> 
+> Le 15/05/2018 à 09:34, Boris Brezillon a écrit :
+> > On Tue, 15 May 2018 06:45:51 +0200
+> > Chris Moore <moore@free.fr> wrote:
+> >  
+> >> Hi,
+> >>
+> >> Le 13/05/2018 à 06:30, Wan, Jane (Nokia - US/Sunnyvale) a écrit :  
+> >>> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid CRC values, the bit-wise majority may be used to recover the contents of the parameter pages from the parameter page copies present.
+> >>>
+> >>> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> >>> ---
+> >>> v7: change debug print messages
+> >>> v6: support the cases that srcbufs are not contiguous
+> >>> v5: make the bit-wise majority functon generic
+> >>> v4: move the bit-wise majority code in a separate function
+> >>> v3: fix warning message detected by kbuild test robot
+> >>> v2: rebase the changes on top of v4.17-rc1
+> >>>    
+> >>> drivers/mtd/nand/raw/nand_base.c |   50 ++++++++++++++++++++++++++++++++++----
+> >>>    1 file changed, 45 insertions(+), 5 deletions(-)
+> >>>
+> >>> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> >>> index 72f3a89..b43b784 100644
+> >>> --- a/drivers/mtd/nand/raw/nand_base.c
+> >>> +++ b/drivers/mtd/nand/raw/nand_base.c
+> >>> @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
+> >>>    }
+> >>>    
+> >>>    /*
+> >>> + * Recover data with bit-wise majority
+> >>> + */
+> >>> +static void nand_bit_wise_majority(const void **srcbufs,
+> >>> +				   unsigned int nsrcbufs,
+> >>> +				   void *dstbuf,
+> >>> +				   unsigned int bufsize)
+> >>> +{
+> >>> +	int i, j, k;
+> >>> +
+> >>> +	for (i = 0; i < bufsize; i++) {
+> >>> +		u8 cnt, val;
+> >>> +
+> >>> +		val = 0;
+> >>> +		for (j = 0; j < 8; j++) {
+> >>> +			cnt = 0;
+> >>> +			for (k = 0; k < nsrcbufs; k++) {
+> >>> +				const u8 *srcbuf = srcbufs[k];
+> >>> +
+> >>> +				if (srcbuf[i] & BIT(j))
+> >>> +					cnt++;
+> >>> +			}
+> >>> +			if (cnt > nsrcbufs / 2)
+> >>> +				val |= BIT(j);
+> >>> +		}
+> >>> +		((u8 *)dstbuf)[i] = val;
+> >>> +	}
+> >>> +}
+> >>> +
+> >>> +/*
+> >>>     * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
+> >>>     */
+> >>>    static int nand_flash_detect_onfi(struct nand_chip *chip)
+> >>> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+> >>>    		return 0;
+> >>>    
+> >>>    	/* ONFI chip: allocate a buffer to hold its parameter page */
+> >>> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> >>> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+> >>>    	if (!p)
+> >>>    		return -ENOMEM;
+> >>>    
+> >>> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+> >>>    	}
+> >>>    
+> >>>    	for (i = 0; i < 3; i++) {
+> >>> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
+> >>> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
+> >>>    		if (ret) {
+> >>>    			ret = 0;
+> >>>    			goto free_onfi_param_page;
+> >>>    		}
+> >>>    
+> >>> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
+> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
+> >>>    				le16_to_cpu(p->crc)) {
+> >>> +			if (i)
+> >>> +				memcpy(p, &p[i], sizeof(*p));
+> >>>    			break;
+> >>>    		}
+> >>>    	}
+> >>>    
+> >>>    	if (i == 3) {
+> >>> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> >>> -		goto free_onfi_param_page;
+> >>> +		const void *srcbufs[3] = {p, p + 1, p + 2};
+> >>> +
+> >>> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
+> >>> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
+> >>> +				       sizeof(*p));
+> >>> +
+> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
+> >>> +				le16_to_cpu(p->crc)) {
+> >>> +			pr_err("ONFI parameter recovery failed, aborting\n");
+> >>> +			goto free_onfi_param_page;
+> >>> +		}
+> >>>    	}
+> >>>    
+> >>>    	/* Check version */  
+> >> This version is still hard coded for a three sample bitwise majority vote.
+> >> So why not use the method which I suggested previously for v2 and which
+> >> I repeat below?  
+> > Because I want the nand_bit_wise_majority() function to work with
+> > nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
+> > page, but NAND vendor can decide to put more). Also, if the X copies of
+> > the PARAM are corrupted (which is rather unlikely), that means we
+> > already spent quite a lot of time reading the different copies and
+> > calculating the CRC, so I think we don't care about perf optimizations
+> > when doing bit-wise majority.
+> >  
+> >> The three sample bitwise majority can be implemented without bit level
+> >> manipulation using the identity:
+> >> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
+> >> This can be factorized slightly to (a & (b | c)) | (b & c)
+> >> This enables the operation to be performed 8, 16, 32 or even 64 bits at
+> >> a time depending on the hardware.
+> >>
+> >> This method is not only faster and but also more compact.
+> >>  
+> 
+> I do understand that the ONFI specifications permit more than 3 copies.
+> However elsewhere the proposed code shows no intention of handling other 
+> cases.
+> The constant 3 is hard coded in the following lines extracted from the 
+> proposed code:
+> ...
+> +    p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+> ...
+>       for (i = 0; i < 3; i++) {
+> ...
+>       if (i == 3) {
+> ...
+> +        const void *srcbufs[3] = {p, p + 1, p + 2};
+> 
+> Moreover the last of these is difficult to generalize.
+
+Not that much. We just have to allocate srcbufs dynamically and
+krealloc() everytime we want to add a new entry.
+
+May I ask why you care that much about this optimization? As I said, if
+we really have to read all the copies to realize none of them is good,
+we already lost a lot of time, so having a "suboptimal but generic"
+version of the bit-wise majority shouldn't hurt that much.
