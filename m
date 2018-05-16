@@ -1,154 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752704AbeEPIB6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:01:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55442 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752614AbeEPIBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:01:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
-   d="scan'208";a="56324660"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 1/2] x86/boot/compressed/64: Set up GOT for paging_prepare() and cleanup_trampoline()
-Date: Wed, 16 May 2018 11:01:28 +0300
-Message-Id: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180516080131.27913-1-kirill.shutemov@linux.intel.com>
-References: <20180516080131.27913-1-kirill.shutemov@linux.intel.com>
+        id S1752747AbeEPICH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:02:07 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:63818 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751319AbeEPICE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 04:02:04 -0400
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+ <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+ <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+ <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <503ec7d8-e493-3458-e974-5fab5649aaf8@st.com>
+Date: Wed, 16 May 2018 10:01:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric and Hugh have reported instant reboot due to my recent changes in
-decompression code.
 
-The root cause is that I didn't realize that we need to adjust GOT to be
-able to run C code that early.
 
-The problem is only visible with an older toolchain. Binutils >= 2.24 is
-able to eliminate GOT references by replacing them with RIP-relative
-address loads[1].
-
-We need to adjust GOT two times:
- - before calling paging_prepare() using the initial load address
- - before calling C code from the relocated kernel
-
-[1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=80d873266dec
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: 194a9749c73d ("x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: Hugh Dickins <hughd@google.com>
----
- arch/x86/boot/compressed/head_64.S | 68 ++++++++++++++++++++++++------
- 1 file changed, 55 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fca012baba19..d17af6a4bfc9 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -305,6 +305,25 @@ ENTRY(startup_64)
- 	/* Set up the stack */
- 	leaq	boot_stack_end(%rbx), %rsp
- 
-+	/*
-+	 * paging_prepare() and cleanup_trampoline() below can have GOT
-+	 * references. Adjust the table with address we are running at.
-+	 *
-+	 * Zero RAX for adjust_got: the GOT was not adjusted before;
-+	 * there's no adjustment to undo.
-+	 */
-+	xorq	%rax, %rax
-+
-+	/*
-+	 * Calculate the address the binary is loaded at and use it as
-+	 * a GOT adjustment.
-+	 */
-+	call	1f
-+1:	popq	%rdi
-+	subq	$1b, %rdi
-+
-+	call	adjust_got
-+
- 	/*
- 	 * At this point we are in long mode with 4-level paging enabled,
- 	 * but we might want to enable 5-level paging or vice versa.
-@@ -381,6 +400,21 @@ trampoline_return:
- 	pushq	$0
- 	popfq
- 
-+	/*
-+	 * Previously we've adjusted the GOT with address the binary was
-+	 * loaded at. Now we need to re-adjust for relocation address.
-+	 *
-+	 * Calculate the address the binary is loaded at, so that we can
-+	 * undo the previous GOT adjustment.
-+	 */
-+	call	1f
-+1:	popq	%rax
-+	subq	$1b, %rax
-+
-+	/* The new adjustment is the relocation address */
-+	movq	%rbx, %rdi
-+	call	adjust_got
-+
- /*
-  * Copy the compressed kernel to the end of our buffer
-  * where decompression in place becomes safe.
-@@ -481,19 +515,6 @@ relocated:
- 	shrq	$3, %rcx
- 	rep	stosq
- 
--/*
-- * Adjust our own GOT
-- */
--	leaq	_got(%rip), %rdx
--	leaq	_egot(%rip), %rcx
--1:
--	cmpq	%rcx, %rdx
--	jae	2f
--	addq	%rbx, (%rdx)
--	addq	$8, %rdx
--	jmp	1b
--2:
--	
- /*
-  * Do the extraction, and jump to the new kernel..
-  */
-@@ -512,6 +533,27 @@ relocated:
-  */
- 	jmp	*%rax
- 
-+/*
-+ * Adjust the global offset table
-+ *
-+ * RAX is the previous adjustment of the table to undo (use 0 if it's the
-+ * first time we touch GOT).
-+ * RDI is the new adjustment to apply.
-+ */
-+adjust_got:
-+	/* Walk through the GOT adding the address to the entries */
-+	leaq	_got(%rip), %rdx
-+	leaq	_egot(%rip), %rcx
-+1:
-+	cmpq	%rcx, %rdx
-+	jae	2f
-+	subq	%rax, (%rdx)	/* Undo previous adjustment */
-+	addq	%rdi, (%rdx)	/* Apply the new adjustment */
-+	addq	$8, %rdx
-+	jmp	1b
-+2:
-+	ret
-+
- 	.code32
- /*
-  * This is the 32-bit trampoline that will be copied over to low memory.
--- 
-2.17.0
+On 05/16/2018 09:57 AM, Stephen Boyd wrote:
+> Quoting Alexandre Torgue (2018-05-16 00:34:21)
+>>>>
+>>>> Sorry I don't understand. Clock driver is mandatory to boot each
+>>>> platform and depends on machine type. Do you see a use case where we
+>>>> could need to disable the clock driver? (it would impose to change
+>>>> devicetree to use fixed clocks and to have a booloader which configures
+>>>> all PLL and clocks).
+>>>
+>>> No. My understanding of the patch that introduced the options was to
+>>> allow the user to disable these drivers if they wanted to. I'm just
+>>> reiterating the spirit of that patch. That must be wrong?
+>>>
+>> Actually initial patch is a mistake. You can't boot STM32 platform
+>> without clock driver. This patch fixes that, and offers the possibility
+>> to not build the clock driver of the machine which are not used
+>> (currently all machine are selected but to reduce memory footprint you
+>> could disable not used machine in defconfig).
+> 
+> Ok I stuck the patch into clk-fixes. Will send off to Linus tomorrow or the
+> next day.
+> 
+Thanks Stephen
