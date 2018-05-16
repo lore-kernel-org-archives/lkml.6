@@ -1,181 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeEPNOe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:14:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752670AbeEPNMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:12:44 -0400
-Date: Wed, 16 May 2018 09:12:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Tobin C. Harding" <me@tobin.cc>
-Subject: [GIT PULL] vsprintf: Replace memory barrier with static_key for
- random_ptr_key update
-Message-ID: <20180516091241.2ea940d1@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752716AbeEPNPt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:15:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752539AbeEPNPq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:15:46 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
+ matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <f2646170-1aaf-8447-4c02-0679909d754f@linux.ibm.com>
+ <a9206728-2673-c8de-851b-323027a398fa@linux.vnet.ibm.com>
+ <f8c88504-55dc-99a8-90a1-2ddf63a20091@linux.ibm.com>
+ <13331f80-8821-6de3-ca29-7a3ea869e4f1@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 16 May 2018 15:15:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <13331f80-8821-6de3-ca29-7a3ea869e4f1@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051613-0020-0000-0000-0000041DD20D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051613-0021-0000-0000-000042B2EEBD
+Message-Id: <1891f565-284f-ab30-ebc7-8fef85b5fba7@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16/05/2018 15:12, Tony Krowiak wrote:
+> On 05/16/2018 03:48 AM, Pierre Morel wrote:
+>> On 15/05/2018 18:07, Tony Krowiak wrote:
+>>> On 05/15/2018 10:55 AM, Pierre Morel wrote:
+>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>> Provides interfaces to manage the AP adapters, usage domains
+>>>>> and control domains assigned to a KVM guest.
+>>>>>
+>>>>> The guest's SIE state description has a satellite structure called 
+>>>>> the
+>>>>> Crypto Control Block (CRYCB) containing three bitmask fields
+>>>>> identifying the adapters, queues (domains) and control domains
+>>>>> assigned to the KVM guest:
+>>>>>
+>> ...snip...
+>>>>> +}
+>>>>
+>>>> This function (ap_validate_queue_sharing) only verifies that VM 
+>>>> don't share queues.
+>>>> What about the queues used by a host application?
+>>>
+>>> How can that be verified from this function? I suppose I could put a 
+>>> check in here to
+>>> verify that the queues are reserved by the vfio_ap device driver, 
+>>> but that would
+>>> be redundant because an AP queue can not be assigned to a mediated 
+>>> matrix device
+>>> via its sysfs attributes unless it is reserved by the vfio_ap device 
+>>> driver (see
+>>> patches 7, 8 and 9).
+>>>
+>>>>
+>>>>
+>>>> I understand that you want to implement  these checks within KVM 
+>>>> but this is
+>>>> related to which queue devices are bound to the matrix and which 
+>>>> one are not.
+>>>
+>>> See my comments above and below about AP queue assignment to the 
+>>> mediated matrix
+>>> device. The one verification we can't do when the devices are 
+>>> assigned is whether
+>>> another guest is using the queue because assignment occurs before 
+>>> the guest using
+>>> the queue is started in which case we have no access to KVM. It 
+>>> makes no sense to
+>>> do so at assignment time anyway because it doesn't matter until the 
+>>> guest using
+>>> the mediated matrix device is started, so that check is done in KVM.
+>>>
+>>>>
+>>>>
+>>>> I think that this should be related somehow to the bounded queue 
+>>>> devices and
+>>>> therefor implemented inside the matrix driver.
+>>>
+>>> As I stated above, when an AP queue is assigned to the mediated 
+>>> matrix device via
+>>> its sysfs attributes, a check is done to verify that it is bound to 
+>>> the vfio_ap
+>>> device driver (see patches 7, 8 and 9). If not, then assignment will 
+>>> be rejected;
+>>> therefore, it will not be possible to configure a CRYCB with AP 
+>>> queues that are
+>>> not bound to the device driver.
+>>
+>> This patch and te followed patches take care that the queues are 
+>> bound to the
+>> matrix driver when they are assigned to the matrix using the sysfs 
+>> entries.
+>>
+>> But they do not take care that the queue can not be unbound before 
+>> you start
+>> the guest, and they are not in the path if the admin decide to unbind 
+>> a queue
+>> at some later time.
+>
+> That is a good point. I need to put a check in the device driver at 
+> the time
+> the mediated device fd is opened to verify that the queues being 
+> configured in
+> the guest's CRYCB are bound to the driver.
 
-Linus,
+not only, you also need to avoid the possibility of unbinding the device.
+For this you need to use the remove callback from the driver.
 
-The memory barrier usage in updating the random ptr hash for %p in
-vsprintf is incorrect. Instead of adding the read memory barrier
-into vsprintf() which will cause a slight degradation to a commonly
-used function in the kernel just to solve a very unlikely race
-condition that can only happen at boot up, change the code from
-using a variable branch to a static_branch. Not only does this solve
-the race condition, it actually will improve the performance of
-vsprintf() by removing the conditional branch that is only needed
-at boot.
+>
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>> Regards,
+>>>>
+>>>> Pierre
+>>>>
+>>>
+>>
+>
 
-
-Please pull the latest trace-v4.17-rc5-vsprintf tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.17-rc5-vsprintf
-
-Tag SHA1: 3e2a2dfc8987e9a2b4e185b65a9b48c374c80791
-Head SHA1: 85f4f12d51397f1648e1f4350f77e24039b82d61
-
-
-Steven Rostedt (VMware) (1):
-      vsprintf: Replace memory barrier with static_key for random_ptr_key update
-
-----
- lib/vsprintf.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
----------------------------
-commit 85f4f12d51397f1648e1f4350f77e24039b82d61
-Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Date:   Tue May 15 22:24:52 2018 -0400
-
-    vsprintf: Replace memory barrier with static_key for random_ptr_key update
-    
-    Reviewing Tobin's patches for getting pointers out early before
-    entropy has been established, I noticed that there's a lone smp_mb() in
-    the code. As with most lone memory barriers, this one appears to be
-    incorrectly used.
-    
-    We currently basically have this:
-    
-            get_random_bytes(&ptr_key, sizeof(ptr_key));
-            /*
-             * have_filled_random_ptr_key==true is dependent on get_random_bytes().
-             * ptr_to_id() needs to see have_filled_random_ptr_key==true
-             * after get_random_bytes() returns.
-             */
-            smp_mb();
-            WRITE_ONCE(have_filled_random_ptr_key, true);
-    
-    And later we have:
-    
-            if (unlikely(!have_filled_random_ptr_key))
-                    return string(buf, end, "(ptrval)", spec);
-    
-    /* Missing memory barrier here. */
-    
-            hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
-    
-    As the CPU can perform speculative loads, we could have a situation
-    with the following:
-    
-            CPU0                            CPU1
-            ----                            ----
-                                       load ptr_key = 0
-       store ptr_key = random
-       smp_mb()
-       store have_filled_random_ptr_key
-    
-                                       load have_filled_random_ptr_key = true
-    
-                                        BAD BAD BAD! (you're so bad!)
-    
-    Because nothing prevents CPU1 from loading ptr_key before loading
-    have_filled_random_ptr_key.
-    
-    But this race is very unlikely, but we can't keep an incorrect smp_mb() in
-    place. Instead, replace the have_filled_random_ptr_key with a static_branch
-    not_filled_random_ptr_key, that is initialized to true and changed to false
-    when we get enough entropy. If the update happens in early boot, the
-    static_key is updated immediately, otherwise it will have to wait till
-    entropy is filled and this happens in an interrupt handler which can't
-    enable a static_key, as that requires a preemptible context. In that case, a
-    work_queue is used to enable it, as entropy already took too long to
-    establish in the first place waiting a little more shouldn't hurt anything.
-    
-    The benefit of using the static key is that the unlikely branch in
-    vsprintf() now becomes a nop.
-    
-    Link: http://lkml.kernel.org/r/20180515100558.21df515e@gandalf.local.home
-    
-    Cc: stable@vger.kernel.org
-    Fixes: ad67b74d2469d ("printk: hash addresses printed with %p")
-    Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 30c0cb8cc9bc..23920c5ff728 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1669,19 +1669,22 @@ char *pointer_string(char *buf, char *end, const void *ptr,
- 	return number(buf, end, (unsigned long int)ptr, spec);
- }
- 
--static bool have_filled_random_ptr_key __read_mostly;
-+static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
- static siphash_key_t ptr_key __read_mostly;
- 
--static void fill_random_ptr_key(struct random_ready_callback *unused)
-+static void enable_ptr_key_workfn(struct work_struct *work)
- {
- 	get_random_bytes(&ptr_key, sizeof(ptr_key));
--	/*
--	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
--	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
--	 * after get_random_bytes() returns.
--	 */
--	smp_mb();
--	WRITE_ONCE(have_filled_random_ptr_key, true);
-+	/* Needs to run from preemptible context */
-+	static_branch_disable(&not_filled_random_ptr_key);
-+}
-+
-+static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
-+
-+static void fill_random_ptr_key(struct random_ready_callback *unused)
-+{
-+	/* This may be in an interrupt handler. */
-+	queue_work(system_unbound_wq, &enable_ptr_key_work);
- }
- 
- static struct random_ready_callback random_ready = {
-@@ -1695,7 +1698,8 @@ static int __init initialize_ptr_random(void)
- 	if (!ret) {
- 		return 0;
- 	} else if (ret == -EALREADY) {
--		fill_random_ptr_key(&random_ready);
-+		/* This is in preemptible context */
-+		enable_ptr_key_workfn(&enable_ptr_key_work);
- 		return 0;
- 	}
- 
-@@ -1709,7 +1713,7 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
- 	unsigned long hashval;
- 	const int default_width = 2 * sizeof(ptr);
- 
--	if (unlikely(!have_filled_random_ptr_key)) {
-+	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
- 		spec.field_width = default_width;
- 		/* string length must be less than default_width */
- 		return string(buf, end, "(ptrval)", spec);
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
