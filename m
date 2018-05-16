@@ -1,69 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752038AbeEPWMB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:12:01 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38488 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbeEPWL7 (ORCPT
+        id S1751533AbeEPWSl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:18:41 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44888 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751228AbeEPWSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 18:11:59 -0400
-X-Google-Smtp-Source: AB8JxZq4OmmEsGRAicjdiBRh/brmDM/6kgKUWjHudiCV168Ktk8nwuEAHwhJwfvgZGDegsLI6q32QQ==
-Message-ID: <1526508715.28243.34.camel@arista.com>
-Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
-From: Dmitry Safonov <dima@arista.com>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 16 May 2018 23:11:55 +0100
-In-Reply-To: <20180516205437.GB4378@thunk.org>
-References: <20180510125211.12583-1-dima@arista.com>
-         <20180510125211.12583-2-dima@arista.com> <20180510181901.GG8335@thunk.org>
-         <1525977460.28243.2.camel@arista.com> <20180510194041.GH8335@thunk.org>
-         <1525981807.28243.9.camel@arista.com> <20180511035150.GJ8335@thunk.org>
-         <1526042463.28243.21.camel@arista.com>
-         <1526485573.28243.30.camel@arista.com> <20180516205437.GB4378@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 16 May 2018 18:18:39 -0400
+X-Google-Smtp-Source: AB8JxZpD8p/UWXdGk/kCXI584HSrzZgl/eAhPvQs3L2RQm7gtFNXbCPh22tNRZzkxswr5NtQgo+RNw==
+Date: Thu, 17 May 2018 00:18:36 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] arm64: dts: renesas: draak: Describe CVBS input
+Message-ID: <20180516221836.GH17948@bigcity.dyn.berto.se>
+References: <1526478129-16465-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526478129-16465-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526478129-16465-3-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-16 at 16:54 -0400, Theodore Y. Ts'o wrote:
-> On Wed, May 16, 2018 at 04:46:13PM +0100, Dmitry Safonov wrote:
-> > > Yeah, but what you print is not total sum, it's since the last
-> > > interval because without mentioned flag ___ratelimit() will flush
-> > > missed counter and print "suppressed" message.  They might even
-> > > double if say other proccess has called get_random_bytes() got to
-> > > ___ratelimit() and got preempted. This thread finishes
-> > > initializing random driver and prints this not-proper-sum
-> > > statistics, and when the code flow is back in the first context,
-> > > it will print statistics again from ___ratelimit() function.
-> > 
-> > So, does it make sense to you, Theodore?
-> > If not - I'll just resend second patch rebasing and dropping this
-> > one.
-> 
-> Yes, it's correct that it's not the total sum.  I guess your
-> complaint
-> is that some of the messages are using the "callbacks suppressed"
-> message, and the last one is using the random drvier's custom message
-> which I think is much more user-friendly.  That being said, although
-> I
-> think "callbacks suppressed is a terrible message, I agree that using
-> a single message makes more sense.  So setting the
-> RATELIMIT_MSG_ON_RELEASE and then calling ratelimit_state_exit() from
-> crng_reseed() does make sense.
-> 
-> In the future I'd like to push for some way to customize --- or
-> perhaps just fix --- "callbacks suppressed" to something more sane
-> like, "messages ratelimited", but that's more of an aesthetics issue.
+Hi Jacopo,
 
-Thanks, Ted.
-As you've looked inside lib/ratelimit, care to review 2 patch from the
-series maybe?
+Thanks for your patch.
+
+On 2018-05-16 15:42:08 +0200, Jacopo Mondi wrote:
+> Describe CVBS video input through analog video decoder ADV7180
+> connected to video input interface VIN4.
+> 
+> The video input signal path is shared with HDMI video input, and
+> selected by on-board switches SW-53 and SW-54 with CVBS input selected
+> by the default switches configuration.
+
+You are missing your SoB line :-)
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 36 ++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> index d03f194..9aba28f 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -142,6 +142,11 @@
+>  		groups = "usb0";
+>  		function = "usb0";
+>  	};
+> +
+> +	vin4_pins_cvbs: vin4 {
+> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
+> +		function = "vin4";
+> +	};
+>  };
+>  
+>  &i2c0 {
+> @@ -154,6 +159,17 @@
+>  		reg = <0x50>;
+>  		pagesize = <8>;
+>  	};
+> +
+> +	analog-video@20 {
+> +		compatible = "adi,adv7180";
+> +		reg = <0x20>;
+> +
+> +		port {
+> +			adv7180_out: endpoint {
+> +				remote-endpoint = <&vin4_in>;
+> +			};
+> +		};
+> +	};
+>  };
+>  
+>  &i2c1 {
+> @@ -246,3 +262,23 @@
+>  	timeout-sec = <60>;
+>  	status = "okay";
+>  };
+> +
+> +&vin4 {
+> +	pinctrl-0 = <&vin4_pins_cvbs>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			vin4_in: endpoint {
+> +				remote-endpoint = <&adv7180_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> -- 
+> 2.7.4
+> 
 
 -- 
-Thanks,
-             Dmitry
+Regards,
+Niklas Söderlund
