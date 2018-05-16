@@ -1,114 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeEPXNI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:13:08 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45398 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeEPXNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:13:07 -0400
-X-Google-Smtp-Source: AB8JxZpp1H06gt+xAkKkSQVr0DZhlVmRP+GPtlhtxkXHlVBJ3graG6hyQdDnMfGHoq9M5sBY6fSfRw==
-Date: Wed, 16 May 2018 16:13:05 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 6/8] rcu: Add back the Startedleaf tracepoint
-Message-ID: <20180516231305.GB221547@joelaf.mtv.corp.google.com>
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-7-joel@joelfernandes.org>
- <20180514183823.GF26088@linux.vnet.ibm.com>
- <20180515005709.GE209519@joelaf.mtv.corp.google.com>
- <20180515034603.GY26088@linux.vnet.ibm.com>
- <20180515230430.GB7510@joelaf.mtv.corp.google.com>
- <20180516154829.GE3803@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516154829.GE3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751642AbeEPXPK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:15:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751163AbeEPXPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:15:09 -0400
+Date: Thu, 17 May 2018 08:15:04 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2 11/14] ftrace/selftest: Have the reset_trigger code
+ be a bit more careful
+Message-Id: <20180517081504.119ed2cd0fedc2a43199d86a@kernel.org>
+In-Reply-To: <20180516100004.1e9c774c@gandalf.local.home>
+References: <20180514205845.017925650@goodmis.org>
+        <20180514205958.915494639@goodmis.org>
+        <20180516215350.4fb775e101bc6a122bfe3282@kernel.org>
+        <20180516100004.1e9c774c@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:48:29AM -0700, Paul E. McKenney wrote:
-> On Tue, May 15, 2018 at 04:04:30PM -0700, Joel Fernandes wrote:
-> > On Mon, May 14, 2018 at 08:46:03PM -0700, Paul E. McKenney wrote:
-> > > On Mon, May 14, 2018 at 05:57:09PM -0700, Joel Fernandes wrote:
-> > > > On Mon, May 14, 2018 at 11:38:23AM -0700, Paul E. McKenney wrote:
-> > > > > On Sun, May 13, 2018 at 08:15:39PM -0700, Joel Fernandes (Google) wrote:
-> > > > > > In recent discussion [1], the check for whether a leaf believes RCU is
-> > > > > > not idle, is being added back to funnel locking code, to avoid more
-> > > > > > locking. In this we are marking the leaf node for a future grace-period
-> > > > > > and bailing out since a GP is currently in progress. However the
-> > > > > > tracepoint is missing. Lets add it back.
-> > > > > > 
-> > > > > > Also add a small comment about why we do this check (basically the point
-> > > > > > is to avoid locking intermediate nodes unnecessarily) and clarify the
-> > > > > > comments in the trace event header now that we are doing traversal of
-> > > > > > one or more intermediate nodes.
-> > > > > > 
-> > > > > > [1] http://lkml.kernel.org/r/20180513190906.GL26088@linux.vnet.ibm.com
-> > > > > > 
-> > > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > > > 
-> > > > > Looks like a good idea, but it does not apply -- which is not a surprise,
-> > > > > given the change rate in this code.  I hand-applied as a modification
-> > > > > to c1b3f9fce26f ("rcu: Don't funnel-lock above leaf node if GP in progress")
-> > > > > with attribution, but with the changes below.  Please let me know if I
-> > > > > am missing something.
-> > > > > 
-> > > > > Ah, I see -- this commit depends on your earlier name-change commit.
-> > > > > I therefore made this patch use the old names.
-> > > > 
-> > > > Ok, I'll check your new tree and rebase.
-> > > 
-> > > Sounds good!
-> > > 
-> > > > > > ---
-> > > > > >  include/trace/events/rcu.h |  4 ++--
-> > > > > >  kernel/rcu/tree.c          | 11 ++++++++++-
-> > > > > >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-> > > > > > index 539900a9f8c7..dc0bd11739c7 100644
-> > > > > > --- a/include/trace/events/rcu.h
-> > > > > > +++ b/include/trace/events/rcu.h
-> > > > > > @@ -91,8 +91,8 @@ TRACE_EVENT(rcu_grace_period,
-> > > > > >   *
-> > > > > >   * "Startleaf": Request a grace period based on leaf-node data.
-> > > > > >   * "Prestarted": Someone beat us to the request
-> > > > > > - * "Startedleaf": Leaf-node start proved sufficient.
-> > > > > > - * "Startedleafroot": Leaf-node start proved sufficient after checking root.
-> > > > > > + * "Startedleaf": Leaf and one or more non-root nodes marked for future start.
-> > > > > 
-> > > > > Actually, we only get to that trace if all we did was mark the leaf
-> > > > > node, right?
-> > > > 
-> > > > I didn't think so. In the code we are doing the check for rnp every time we
-> > > > walk up the tree. So even when we are on an intermediate node, we do the
-> > > > check of the node we started with. I thought that's what you wanted to do. It
-> > > > makes sense to me to do so too.
-> > > 
-> > > If we are not on the initial (usually leaf) node, then the similar check
-> > > in the previous "if" statement would have sent us to unlock_out, right?
-> > > 
-> > > (And yes, I should have said "mark the initial node" above.)
-> > 
-> > I may have missed this, sorry. 
-> > 
-> > Yes, that would be true unless the check could be true not at the firsti
-> > iteration, but after the first iteration? (i.e. another path started the
-> > initially idle GP). That's why I changed it to "one or more non-root nodes
-> > marked".
+On Wed, 16 May 2018 10:00:04 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Wed, 16 May 2018 21:53:50 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> After the first iteration, the check after setting ->gp_seq_needed is
-> dead code.  If that check would have succeeded, the same check in the
-> big "if" statement would have taken the early exit.
+> > On Mon, 14 May 2018 16:58:56 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > > 
+> > > The trigger code is picky in how it can be disabled as there may be
+> > > dependencies between different events and synthetic events. Change the order
+> > > on how triggers are reset.
+> > > 
+> > >  1) Reset triggers of all synthetic events first
+> > >  2) Remove triggers with actions attached to them
+> > >  3) Remove all other triggers
+> > > 
+> > > If this order isn't followed, then some triggers will not be reset, and an
+> > > error may happen because a trigger is busy.  
+> > 
+> > Ah, right!
+> > 
+> > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> Thanks!
+> 
+> > 
+> > I think this should go into stable tree too.
+> 
+> I wonder if I should break this into two patches then.
+> 
+> One for the actions before attached, and one for synthetic events?
+> 
+> Hmm, maybe not. As it can handle not having synthetic events, it should
+> be OK to let the update go to a time when they were not there.
+> 
+> Thoughts?
 
-Oh yes, ofcourse!! I understand it now. thanks,
+I think the latest test-set can be run on the any stable kernel,
+and this correctly checks existence of the knob, so you don't need
+to split it.
 
- - Joel
+Thank you, 
+
+> 
+> -- Steve
+> 
+> > 
+> > Thank you!
+> > 
+> > > 
+> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > ---
+> > >  .../testing/selftests/ftrace/test.d/functions | 21 ++++++++++++++++---
+> > >  1 file changed, 18 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+> > > index 2a4f16fc9819..8393b1c06027 100644
+> > > --- a/tools/testing/selftests/ftrace/test.d/functions
+> > > +++ b/tools/testing/selftests/ftrace/test.d/functions
+> > > @@ -15,14 +15,29 @@ reset_tracer() { # reset the current tracer
+> > >      echo nop > current_tracer
+> > >  }
+> > >  
+> > > -reset_trigger() { # reset all current setting triggers
+> > > -    grep -v ^# events/*/*/trigger |
+> > > +reset_trigger_file() {
+> > > +    # remove action triggers first
+> > > +    grep -H ':on[^:]*(' $@ |
+> > > +    while read line; do
+> > > +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+> > > +	file=`echo $line | cut -f1 -d:`
+> > > +	echo "!$cmd" >> $file
+> > > +    done
+> > > +    grep -Hv ^# $@ |
+> > >      while read line; do
+> > >          cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+> > > -	echo "!$cmd" > `echo $line | cut -f1 -d:`
+> > > +	file=`echo $line | cut -f1 -d:`
+> > > +	echo "!$cmd" > $file
+> > >      done
+> > >  }
+> > >  
+> > > +reset_trigger() { # reset all current setting triggers
+> > > +    if [ -d events/synthetic ]; then
+> > > +        reset_trigger_file events/synthetic/*/trigger
+> > > +    fi
+> > > +    reset_trigger_file events/*/*/trigger
+> > > +}
+> > > +
+> > >  reset_events_filter() { # reset all current setting filters
+> > >      grep -v ^none events/*/*/filter |
+> > >      while read line; do
+> > > -- 
+> > > 2.17.0
+> > > 
+> > >   
+> > 
+> > 
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
