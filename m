@@ -1,77 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEPPpk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:45:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33880 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeEPPpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:45:38 -0400
-Date: Wed, 16 May 2018 11:45:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>, tom.zanussi@linux.intel.com
-Subject: Re: [PATCH RT 3/5] tracing: Restore proper field flag printing when
- displaying triggers
-Message-ID: <20180516114535.6c3dbd1b@gandalf.local.home>
-In-Reply-To: <20180516153213.mh5zgxzd2hwnkvuh@linutronix.de>
-References: <20180516133642.521479369@goodmis.org>
-        <20180516133836.518686476@goodmis.org>
-        <20180516153213.mh5zgxzd2hwnkvuh@linutronix.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751379AbeEPPqT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:46:19 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36967 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeEPPqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 11:46:18 -0400
+X-Google-Smtp-Source: AB8JxZqlWJCLSkZnzhJs66sC9gMXAXes2Xf+6X6oI3ycqGv+0ESbVXya72qBGAqMlXcu6m/5K8k/+Q==
+Message-ID: <1526485573.28243.30.camel@arista.com>
+Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
+From: Dmitry Safonov <dima@arista.com>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 May 2018 16:46:13 +0100
+In-Reply-To: <1526042463.28243.21.camel@arista.com>
+References: <20180510125211.12583-1-dima@arista.com>
+         <20180510125211.12583-2-dima@arista.com> <20180510181901.GG8335@thunk.org>
+         <1525977460.28243.2.camel@arista.com> <20180510194041.GH8335@thunk.org>
+         <1525981807.28243.9.camel@arista.com> <20180511035150.GJ8335@thunk.org>
+         <1526042463.28243.21.camel@arista.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 17:32:14 +0200
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> On 2018-05-16 09:36:45 [-0400], Steven Rostedt wrote:
-> > diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> > index 9dac8bae4f34..4745ed588607 100644
-> > --- a/kernel/trace/trace_events_hist.c
-> > +++ b/kernel/trace/trace_events_hist.c
-> > @@ -4916,6 +4916,16 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
-> >  		seq_printf(m, "%s", field_name);
-> >  	} else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
-> >  		seq_puts(m, "common_timestamp");
-> > +
-> > +	if (hist_field->flags) {
-> > +		if (!(hist_field->flags & HIST_FIELD_FL_VAR_REF) &&
-> > +		    !(hist_field->flags & HIST_FIELD_FL_EXPR)) {
-> > +			const char *flags = get_hist_field_flags(hist_field);
-> > +
-> > +			if (flags)
-> > +				seq_printf(m, ".%s", flags);
-> > +		}
-> > +	}
-> >  }
-> >  
-> >  static int event_hist_trigger_print(struct seq_file *m,  
+On Fri, 2018-05-11 at 13:41 +0100, Dmitry Safonov wrote:
+> On Thu, 2018-05-10 at 23:51 -0400, Theodore Y. Ts'o wrote:
+> > On Thu, May 10, 2018 at 08:50:07PM +0100, Dmitry Safonov wrote:
+> > > random uses __ratelimit() which calls ___ratelimit() with a
+> > > function
+> > > name. Depending on !RATELIMIT_MSG_ON_RELEASE it prints how many
+> > > messages were suppressed every ratelimit interval (1 second for
+> > > random)
+> > > and flushes ratelimit_state::missed:
+> > 
+> > So the thing about the ratelimit system is that if you have a burst
+> > of
+> > 1,000,000 within the one second burst window, and then nothing ever
+> > again, you will never see a message accounting for those 1,000,000
+> > "callbacks" (which is a terrible wording; it just confuses people).
+> > 
+> > If you have a burst of 1,000,000 calls to ratelimit, and then a
+> > month
+> > goes by, and *then* a single call to __ratelimit is called by
+> > printk,
+> > only *the* does the message about the suppressed "callback" get
+> > printed.
 > 
-> For v4.16 I needed commit 0ae7961e75c3 ("tracing: Fix display of hist
-> trigger expressions containing timestamps") in order to get this one
-
-Yes, I assumed you had it as you pulled it into 4.14-rt. I was just
-looking at what 4.14-rt has. Anything you added there you should add to
-4.16-rt as well.
-
-> cleanly applied. Comparing with -rc3 it looks like commit 5e4cf2bf6d1c
-> ("tracing: Fix a potential NULL dereference") would be great addition.
-
-Good catch, yeah, I should pull that in too.
-
+> Yes, if the initialization time of driver is lesser than a second.
+> If it's 1.1 sec - you'll have prints from ___ratelimit() and from
+> your
+> driver too. And they differ in format.
 > 
-> Safe to take them, right?
+> > So in the case of the random driver, once the random driver is
+> > fully
+> > intialized, there will never be a call to __ratelimit() for the
+> > urandom ratelimit structures, so we manually print out the final
+> > number of suppressed message so there is proper accounting for
+> > them.
+> 
+> So, there is this flag, AFAICS, which perfectly fits your purpose
+> RATELIMIT_MSG_ON_RELEASE which will omit printing how many messages
+> were suppressed every interval of ___ratelimit(). And that will allow
+> you to print total in the end.
+> 
+> > It is not a double-count.  If we didn't do that, those suppressed
+> > warnings would never be mentioned by the kernel.
+> 
+> Yeah, but what you print is not total sum, it's since the last
+> interval
+> because without mentioned flag ___ratelimit() will flush missed
+> counter
+> and print "suppressed" message.
+> They might even double if say other proccess has called
+> get_random_bytes() got to ___ratelimit() and got preempted. This
+> thread
+> finishes initializing random driver and prints this not-proper-sum
+> statistics, and when the code flow is back in the first context, it
+> will print statistics again from ___ratelimit() function. 
 
-Yep.
+So, does it make sense to you, Theodore?
+If not - I'll just resend second patch rebasing and dropping this one.
 
--- Steve
+-- 
+Thanks,
+             Dmitry
