@@ -1,281 +1,194 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4190028-1526463917-2-13039885722308785725
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248,
-  MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='de', MailFrom='org'
-X-Spam-charsets: subject='UTF-8', plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526463916; b=ev6Ecw4l3aF3/GLacPF/WZwcklZzwoUF1rtzE9IBiP6DHoY82X
-    2dKe85qsbACxsQL/M9McorPF72rqyE7coLQyEUBdGDGa4BMV5kj6LseZZ8wFibWh
-    zxqYfTN1wMatkvCDmL43eB4ptbg2CJ0Intn+vYd5WhjOJiHjxVYQMbUUowQzS/UM
-    GDYcfxKmggbnMM9+C3vI/IdAQ8teYb6MTRp3kft9w/byCndmX3RbVE2GPfgaE9TV
-    R1oRkdkaa7VbSQnQNuks5uwHuoLb1+iZHKLFua5yJycE7lXj8vh68nJAqMCCkox8
-    vrhzEc3ei9YtSaZfuaZL1bGGVROms6U2D3jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526463916; bh=KLS8o
-    IoJcDmoq3Ih5K5izXhp5d2btee9SLoDAT/iKC8=; b=B6eLCm/W9qkmDwRbKfo95
-    Poo7gjVNhSz0QT2N+MUSQnF5Iadb1MyCZx0hxBHV4BYysB5hyeuKvyTHWZmT8erq
-    DZIbBqaNrkdDNbRiGOfAASML1tee+azmCgh+0/QPYFwX36EL4dreEXCLE/wEhubE
-    8KRY3JdMO/PFu2A5CZhyIDb9OhF/ENCuiTfgaU5q8pTRkCppQW4r4NlMlNgGDOz8
-    0TI/TLnV56juWeVQGqU1UVkRJ9Q7VGdkQ/qmLEWaRgsUpVIWcXhSMw/iBMvzw6YM
-    3is9K1GuY70sUknZ4GKs+6VnPj7rkdJYeX0OgNl04PslJiyFbBIrAGTiKkJ/bvNY
-    g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=WHbAC+oz
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=lst.de header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=WHbAC+oz
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=lst.de header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN6K9It6HBx9VNFhQIGg//2OU9EhL0S0KrA7ixDaKCfg1A7TWIutR8+d8hDXIvbkSNTExpBrIIbxDyTRJ0pA/IRj/jLnDbkdS6Y4US96RuPwgTroA6cT
-    VHODFBtIQXv5PRXGa7EhDCd11xQR2l0lGAbq379x+bD2+TnyZEUd+lSfVNsc08fPVpKeZ+cuX+JHeVYlhlrYi3mo7qxkhFjTREllupUO06G+gd5nk/A7qfZJ
-    utZLUEAQdkZ9YfZoth8c7w==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=zCwnPa-Y9NYygOW7hOAA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Return-Path: <BATV+8c5add14d4fec8f33fc9+5379+infradead.org+hch@bombadil.srs.infradead.org>
+X-Google-Smtp-Source: AB8JxZokKKWrmchCcDaS1JuSvwbgknoJBHL5SKNRdKpKydVAfo9khfJeHzvYCtlpmInIC/J2YCeF
+ARC-Seal: i=1; a=rsa-sha256; t=1526463894; cv=none;
+        d=google.com; s=arc-20160816;
+        b=M+duepP9YOW3PuyvfLEA/iVawpTaazeQMh9xuuN3JX5/ZPNyv10RXvmjJk9OP0HL+P
+         smZP7g/GeLjSNiwcvFpF2w6x4XHH+oNThJ4wAeJJFMB5zKFMPHBUXL4JR856CMSBF+oW
+         g9e+GouO5b2Dm9z27tzhx2C1XAPZf4XX7He9aucho9j8IWVL8/c5pTyNHkoDDFU4e6Eu
+         p6Sw+W7OfnwGNuMARKFf9f5ZCD98A4nCm/3ZoT3YMFFgj5NzOC1RxQscOvRKvImIb10D
+         pKqmqtYaPXObiOulnk7abtx/U3REvKVxP7KvRO8mq25c8kJeg5ME7yLdTXu1LhPirFUE
+         d1SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=IBw29W98o9JhaE0Ol1cLFdA5CBPn6ll6ey0TFerNt7I=;
+        b=zvqDgMQSJl2YKsRAI/K8DbWDAR7GZs2AUU8y2cRGnxydbRfAFYVpoyp3XK0MNiFWBM
+         mdftwZD3P8wUnaLoy9J67RrMgzVxo8oNG/lvsaiH2Hig/iRDfAFF15D7QewqOmAosnCV
+         W6YzSOl0LOmwwBeTA4jZWNgNHFvYXtzDZIO9n8rn+AnkcFGr7oTAjVdRD8RnGbMyj3Q3
+         gvFy+qMfywd8ZSDJItRmPCra9HWWPDwf/Jz1qtoQjGAFAMU+6U4hK1SUlor4WbQRbsW/
+         YfO9hQoHaI/efTY5PCEOcsJ0IjLefRiBYv1c1GN5QN+6OycaB/zwPWCqACcHC2fEkHT4
+         BYzw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=oCTiSmwD;
+       spf=pass (google.com: best guess record for domain of batv+8c5add14d4fec8f33fc9+5379+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+8c5add14d4fec8f33fc9+5379+infradead.org+hch@bombadil.srs.infradead.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=oCTiSmwD;
+       spf=pass (google.com: best guess record for domain of batv+8c5add14d4fec8f33fc9+5379+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+8c5add14d4fec8f33fc9+5379+infradead.org+hch@bombadil.srs.infradead.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 12/42] =?UTF-8?q?ipv{4,
- 6}/raw:=20simplify=20=D1=95eq=5Ffil?= =?UTF-8?q?e=20code?=
-Date: Wed, 16 May 2018 11:43:16 +0200
-Message-Id: <20180516094346.20506-13-hch@lst.de>
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-acpi@vger.kernel.org,
+	drbd-dev@lists.linbit.com,
+	linux-ide@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-afs@lists.infradead.org,
+	linux-ext4@vger.kernel.org,
+	jfs-discussion@lists.sourceforge.net,
+	netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 14/42] net/kcm: simplify proc registration
+Date: Wed, 16 May 2018 11:43:18 +0200
+Message-Id: <20180516094346.20506-15-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
-MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
- linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
- linux-ext4@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
- megaraidlinux.pdl@broadcom.com, drbd-dev@lists.linbit.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600613404140378891?=
+X-GMAIL-MSGID: =?utf-8?q?1600613404140378891?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Pass the hashtable to the proc private data instead of copying
-it into the per-file private data.
+Remove a couple indirections to make the code look like most other
+protocols.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/raw.h |  4 ----
- net/ipv4/raw.c    | 36 ++++++++++++------------------------
- net/ipv6/raw.c    |  6 ++++--
- 3 files changed, 16 insertions(+), 30 deletions(-)
+ net/kcm/kcmproc.c | 71 ++++++++++++-----------------------------------
+ 1 file changed, 17 insertions(+), 54 deletions(-)
 
-diff --git a/include/net/raw.h b/include/net/raw.h
-index 99d26d0c4a19..9c9fa98a91a4 100644
---- a/include/net/raw.h
-+++ b/include/net/raw.h
-@@ -48,7 +48,6 @@ void raw_proc_exit(void);
- struct raw_iter_state {
- 	struct seq_net_private p;
- 	int bucket;
--	struct raw_hashinfo *h;
- };
+diff --git a/net/kcm/kcmproc.c b/net/kcm/kcmproc.c
+index 1fac92543094..6d0667e62baf 100644
+--- a/net/kcm/kcmproc.c
++++ b/net/kcm/kcmproc.c
+@@ -15,12 +15,6 @@
+ #include <net/tcp.h>
  
- static inline struct raw_iter_state *raw_seq_private(struct seq_file *seq)
-@@ -58,9 +57,6 @@ static inline struct raw_iter_state *raw_seq_private(struct seq_file *seq)
- void *raw_seq_start(struct seq_file *seq, loff_t *pos);
- void *raw_seq_next(struct seq_file *seq, void *v, loff_t *pos);
- void raw_seq_stop(struct seq_file *seq, void *v);
--int raw_seq_open(struct inode *ino, struct file *file,
--		 struct raw_hashinfo *h, const struct seq_operations *ops);
+ #ifdef CONFIG_PROC_FS
+-struct kcm_seq_muxinfo {
+-	char				*name;
+-	const struct file_operations	*seq_fops;
+-	const struct seq_operations	seq_ops;
+-};
 -
- #endif
- 
- int raw_hash_sk(struct sock *sk);
-diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
-index 1b4d3355624a..ae57962b31e3 100644
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -1003,11 +1003,12 @@ struct proto raw_prot = {
- static struct sock *raw_get_first(struct seq_file *seq)
+ static struct kcm_mux *kcm_get_first(struct seq_file *seq)
  {
- 	struct sock *sk;
-+	struct raw_hashinfo *h = PDE_DATA(file_inode(seq->file));
- 	struct raw_iter_state *state = raw_seq_private(seq);
- 
- 	for (state->bucket = 0; state->bucket < RAW_HTABLE_SIZE;
- 			++state->bucket) {
--		sk_for_each(sk, &state->h->ht[state->bucket])
-+		sk_for_each(sk, &h->ht[state->bucket])
- 			if (sock_net(sk) == seq_file_net(seq))
- 				goto found;
- 	}
-@@ -1018,6 +1019,7 @@ static struct sock *raw_get_first(struct seq_file *seq)
- 
- static struct sock *raw_get_next(struct seq_file *seq, struct sock *sk)
- {
-+	struct raw_hashinfo *h = PDE_DATA(file_inode(seq->file));
- 	struct raw_iter_state *state = raw_seq_private(seq);
- 
- 	do {
-@@ -1027,7 +1029,7 @@ static struct sock *raw_get_next(struct seq_file *seq, struct sock *sk)
- 	} while (sk && sock_net(sk) != seq_file_net(seq));
- 
- 	if (!sk && ++state->bucket < RAW_HTABLE_SIZE) {
--		sk = sk_head(&state->h->ht[state->bucket]);
-+		sk = sk_head(&h->ht[state->bucket]);
- 		goto try_again;
- 	}
- 	return sk;
-@@ -1045,9 +1047,9 @@ static struct sock *raw_get_idx(struct seq_file *seq, loff_t pos)
- 
- void *raw_seq_start(struct seq_file *seq, loff_t *pos)
- {
--	struct raw_iter_state *state = raw_seq_private(seq);
-+	struct raw_hashinfo *h = PDE_DATA(file_inode(seq->file));
- 
--	read_lock(&state->h->lock);
-+	read_lock(&h->lock);
- 	return *pos ? raw_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
- }
- EXPORT_SYMBOL_GPL(raw_seq_start);
-@@ -1067,9 +1069,9 @@ EXPORT_SYMBOL_GPL(raw_seq_next);
- 
- void raw_seq_stop(struct seq_file *seq, void *v)
- {
--	struct raw_iter_state *state = raw_seq_private(seq);
-+	struct raw_hashinfo *h = PDE_DATA(file_inode(seq->file));
- 
--	read_unlock(&state->h->lock);
-+	read_unlock(&h->lock);
- }
- EXPORT_SYMBOL_GPL(raw_seq_stop);
- 
-@@ -1110,25 +1112,10 @@ static const struct seq_operations raw_seq_ops = {
- 	.show  = raw_seq_show,
+ 	struct net *net = seq_file_net(seq);
+@@ -86,14 +80,6 @@ struct kcm_proc_mux_state {
+ 	int idx;
  };
  
--int raw_seq_open(struct inode *ino, struct file *file,
--		 struct raw_hashinfo *h, const struct seq_operations *ops)
+-static int kcm_seq_open(struct inode *inode, struct file *file)
 -{
--	int err;
--	struct raw_iter_state *i;
+-	struct kcm_seq_muxinfo *muxinfo = PDE_DATA(inode);
 -
--	err = seq_open_net(ino, file, ops, sizeof(struct raw_iter_state));
--	if (err < 0)
--		return err;
--
--	i = raw_seq_private((struct seq_file *)file->private_data);
--	i->h = h;
--	return 0;
+-	return seq_open_net(inode, file, &muxinfo->seq_ops,
+-			   sizeof(struct kcm_proc_mux_state));
 -}
--EXPORT_SYMBOL_GPL(raw_seq_open);
 -
- static int raw_v4_seq_open(struct inode *inode, struct file *file)
+ static void kcm_format_mux_header(struct seq_file *seq)
  {
--	return raw_seq_open(inode, file, &raw_v4_hashinfo, &raw_seq_ops);
-+	return seq_open_net(inode, file, &raw_seq_ops,
-+			sizeof(struct raw_iter_state));
+ 	struct net *net = seq_file_net(seq);
+@@ -246,6 +232,19 @@ static int kcm_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
  }
  
- static const struct file_operations raw_seq_fops = {
-@@ -1140,7 +1127,8 @@ static const struct file_operations raw_seq_fops = {
++static const struct seq_operations kcm_seq_ops = {
++	.show	= kcm_seq_show,
++	.start	= kcm_seq_start,
++	.next	= kcm_seq_next,
++	.stop	= kcm_seq_stop,
++};
++
++static int kcm_seq_open(struct inode *inode, struct file *file)
++{
++	return seq_open_net(inode, file, &kcm_seq_ops,
++			   sizeof(struct kcm_proc_mux_state));
++}
++
+ static const struct file_operations kcm_seq_fops = {
+ 	.open		= kcm_seq_open,
+ 	.read		= seq_read,
+@@ -253,37 +252,6 @@ static const struct file_operations kcm_seq_fops = {
+ 	.release	= seq_release_net,
+ };
  
- static __net_init int raw_init_net(struct net *net)
+-static struct kcm_seq_muxinfo kcm_seq_muxinfo = {
+-	.name		= "kcm",
+-	.seq_fops	= &kcm_seq_fops,
+-	.seq_ops	= {
+-		.show	= kcm_seq_show,
+-		.start	= kcm_seq_start,
+-		.next	= kcm_seq_next,
+-		.stop	= kcm_seq_stop,
+-	}
+-};
+-
+-static int kcm_proc_register(struct net *net, struct kcm_seq_muxinfo *muxinfo)
+-{
+-	struct proc_dir_entry *p;
+-	int rc = 0;
+-
+-	p = proc_create_data(muxinfo->name, 0444, net->proc_net,
+-			     muxinfo->seq_fops, muxinfo);
+-	if (!p)
+-		rc = -ENOMEM;
+-	return rc;
+-}
+-EXPORT_SYMBOL(kcm_proc_register);
+-
+-static void kcm_proc_unregister(struct net *net,
+-				struct kcm_seq_muxinfo *muxinfo)
+-{
+-	remove_proc_entry(muxinfo->name, net->proc_net);
+-}
+-EXPORT_SYMBOL(kcm_proc_unregister);
+-
+ static int kcm_stats_seq_show(struct seq_file *seq, void *v)
  {
--	if (!proc_create("raw", 0444, net->proc_net, &raw_seq_fops))
-+	if (!proc_create_data("raw", 0444, net->proc_net, &raw_seq_fops,
-+			&raw_v4_hashinfo))
- 		return -ENOMEM;
+ 	struct kcm_psock_stats psock_stats;
+@@ -404,16 +372,11 @@ static const struct file_operations kcm_stats_seq_fops = {
+ 
+ static int kcm_proc_init_net(struct net *net)
+ {
+-	int err;
+-
+ 	if (!proc_create("kcm_stats", 0444, net->proc_net,
+-			 &kcm_stats_seq_fops)) {
+-		err = -ENOMEM;
++			 &kcm_stats_seq_fops))
+ 		goto out_kcm_stats;
+-	}
+ 
+-	err = kcm_proc_register(net, &kcm_seq_muxinfo);
+-	if (err)
++	if (!proc_create("kcm", 0444, net->proc_net, &kcm_seq_fops))
+ 		goto out_kcm;
  
  	return 0;
-diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
-index 5eb9b08947ed..dade69bf61e6 100644
---- a/net/ipv6/raw.c
-+++ b/net/ipv6/raw.c
-@@ -1306,7 +1306,8 @@ static const struct seq_operations raw6_seq_ops = {
- 
- static int raw6_seq_open(struct inode *inode, struct file *file)
- {
--	return raw_seq_open(inode, file, &raw_v6_hashinfo, &raw6_seq_ops);
-+	return seq_open_net(inode, file, &raw6_seq_ops,
-+			sizeof(struct raw_iter_state));
+@@ -421,12 +384,12 @@ static int kcm_proc_init_net(struct net *net)
+ out_kcm:
+ 	remove_proc_entry("kcm_stats", net->proc_net);
+ out_kcm_stats:
+-	return err;
++	return -ENOMEM;
  }
  
- static const struct file_operations raw6_seq_fops = {
-@@ -1318,7 +1319,8 @@ static const struct file_operations raw6_seq_fops = {
- 
- static int __net_init raw6_init_net(struct net *net)
+ static void kcm_proc_exit_net(struct net *net)
  {
--	if (!proc_create("raw6", 0444, net->proc_net, &raw6_seq_fops))
-+	if (!proc_create_data("raw6", 0444, net->proc_net, &raw6_seq_fops,
-+			&raw_v6_hashinfo))
- 		return -ENOMEM;
+-	kcm_proc_unregister(net, &kcm_seq_muxinfo);
++	remove_proc_entry("kcm", net->proc_net);
+ 	remove_proc_entry("kcm_stats", net->proc_net);
+ }
  
- 	return 0;
 -- 
 2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
