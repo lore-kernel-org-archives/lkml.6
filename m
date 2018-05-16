@@ -1,132 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeEPVLM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:11:12 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42042 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752276AbeEPVLF (ORCPT
+        id S1752423AbeEPVLW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:11:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53870 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752276AbeEPVLT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:11:05 -0400
-X-Google-Smtp-Source: AB8JxZpNxQ7UsGWbTEu6HrhjoBj2w0hdtL5UL5ADx8Jx1O9w3fFEnMqv5Dzl2YDK+jInC+N4ONr2lw==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] PM / devfreq: Remove redundant frequency adjustment from governors
-Date: Wed, 16 May 2018 14:10:51 -0700
-Message-Id: <20180516211051.78875-1-mka@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Wed, 16 May 2018 17:11:19 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 14:11:17 -0700
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] scsi: ufs: Add LCC quirk for host and device
+In-Reply-To: <0aa7ff1ff67e0c01d6347b932cfe7ce801ef09fc.1525343531.git.asutoshd@codeaurora.org>
+References: <cover.1525343531.git.asutoshd@codeaurora.org>
+ <0aa7ff1ff67e0c01d6347b932cfe7ce801ef09fc.1525343531.git.asutoshd@codeaurora.org>
+Message-ID: <b96ac094fc3c99d4f0f47f266f38f778@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The performance, powersave, simpleondemand and userspace governors
-determine a target frequency and then adjust it according to the
-df->min/max_freq limits that might have been set by user space. This
-adjustment is redundant, it is done in update_devfreq() for any
-governor, right after governor->get_target_freq().
+On 2018-05-03 04:07, Asutosh Das wrote:
+> LCC (Line Control Command) is being used for communication between
+> UFS host and UFS device. But some hosts might have the issue with
+> issuing the LCC commands to UFS device and in this case LCC could be
+> explicitly disabled.
+> 
+> But there could be a need where we don't want to disable the LCC
+> on both host & device; hence this change splits the quirk in 2 parts
+> one for host and one for device.
+> 
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 16 ++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h | 12 ++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index f3083fe..6dabce8 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -4116,6 +4116,11 @@ static int ufshcd_disable_tx_lcc(struct ufs_hba
+> *hba, bool peer)
+>  	return err;
+>  }
+> 
+> +static inline int ufshcd_disable_host_tx_lcc(struct ufs_hba *hba)
+> +{
+> +	return ufshcd_disable_tx_lcc(hba, false);
+> +}
+> +
+>  static inline int ufshcd_disable_device_tx_lcc(struct ufs_hba *hba)
+>  {
+>  	return ufshcd_disable_tx_lcc(hba, true);
+> @@ -4172,6 +4177,17 @@ static int ufshcd_link_startup(struct ufs_hba 
+> *hba)
+>  		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 1);
+>  	}
+> 
+> +	if (hba->quirks & UFSHCD_BROKEN_LCC_PROCESSING_ON_HOST) {
+> +		ret = ufshcd_disable_device_tx_lcc(hba);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	if (hba->quirks & UFSHCD_BROKEN_LCC_PROCESSING_ON_DEVICE) {
+> +		ret = ufshcd_disable_host_tx_lcc(hba);
+> +		if (ret)
+> +			goto out;
+> +	}
+>  	if (link_startup_again) {
+>  		link_startup_again = false;
+>  		retries = DME_LINKSTARTUP_RETRIES;
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index bb4ecfb..0417c42 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -598,6 +598,18 @@ struct ufs_hba {
+>  	 * TX_LCC.
+>  	 */
+>  	#define UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE		UFS_BIT(8)
+> +
+> +	/*
+> +	 * If UFS device is having issue in processing LCC (Line Control
+> +	 * Command) coming from UFS host controller then enable this quirk.
+> +	 * When this quirk is enabled, host controller driver should disable
+> +	 * the LCC transmission on UFS host controller (by clearing
+> +	 * TX_LCC_ENABLE attribute of host to 0).
+> +	 */
+> +	#define UFSHCD_BROKEN_LCC_PROCESSING_ON_DEVICE		0x100
+> +
+> +	#define UFSHCD_BROKEN_LCC_PROCESSING_ON_HOST		0x200
+> +
+>  	unsigned int quirks;	/* Deviations from standard UFSHCI spec. */
+> 
+>  	/* Device deviations from standard UFS device spec. */
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/devfreq/governor_performance.c    | 10 ++--------
- drivers/devfreq/governor_powersave.c      |  5 -----
- drivers/devfreq/governor_simpleondemand.c |  7 +------
- drivers/devfreq/governor_userspace.c      | 16 ++++------------
- 4 files changed, 7 insertions(+), 31 deletions(-)
+Please check if these quirks are really needed for commercial version of 
+UFS host controllers.
 
-diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-index 4d23ecfbd948..31ee30622c00 100644
---- a/drivers/devfreq/governor_performance.c
-+++ b/drivers/devfreq/governor_performance.c
-@@ -16,14 +16,8 @@
- static int devfreq_performance_func(struct devfreq *df,
- 				    unsigned long *freq)
- {
--	/*
--	 * target callback should be able to get floor value as
--	 * said in devfreq.h
--	 */
--	if (!df->max_freq)
--		*freq = UINT_MAX;
--	else
--		*freq = df->max_freq;
-+	*freq = UINT_MAX;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-index 0c42f23249ef..50a891f7c92d 100644
---- a/drivers/devfreq/governor_powersave.c
-+++ b/drivers/devfreq/governor_powersave.c
-@@ -16,11 +16,6 @@
- static int devfreq_powersave_func(struct devfreq *df,
- 				  unsigned long *freq)
- {
--	/*
--	 * target callback should be able to get ceiling value as
--	 * said in devfreq.h
--	 */
--	*freq = df->min_freq;
- 	return 0;
- }
- 
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index 28e0f2de7100..7ed733c528f4 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -27,7 +27,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	unsigned int dfso_upthreshold = DFSO_UPTHRESHOLD;
- 	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
- 	struct devfreq_simple_ondemand_data *data = df->data;
--	unsigned long max = (df->max_freq) ? df->max_freq : UINT_MAX;
-+	unsigned long max = UINT_MAX;
- 
- 	err = devfreq_update_stats(df);
- 	if (err)
-@@ -85,11 +85,6 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	b = div_u64(b, (dfso_upthreshold - dfso_downdifferential / 2));
- 	*freq = (unsigned long) b;
- 
--	if (df->min_freq && *freq < df->min_freq)
--		*freq = df->min_freq;
--	if (df->max_freq && *freq > df->max_freq)
--		*freq = df->max_freq;
--
- 	return 0;
- }
- 
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index 080607c3f34d..378d84c011df 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -26,19 +26,11 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
- {
- 	struct userspace_data *data = df->data;
- 
--	if (data->valid) {
--		unsigned long adjusted_freq = data->user_frequency;
--
--		if (df->max_freq && adjusted_freq > df->max_freq)
--			adjusted_freq = df->max_freq;
--
--		if (df->min_freq && adjusted_freq < df->min_freq)
--			adjusted_freq = df->min_freq;
--
--		*freq = adjusted_freq;
--	} else {
-+	if (data->valid)
-+		*freq = data->user_frequency;
-+	else
- 		*freq = df->previous_freq; /* No user freq specified yet */
--	}
-+
- 	return 0;
- }
- 
 -- 
-2.17.0.441.gb46fe60e1d-goog
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
