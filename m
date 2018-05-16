@@ -1,91 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753377AbeEPJwj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:52:39 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35247 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753264AbeEPJwf (ORCPT
+        id S1753426AbeEPJww (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:52:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38128 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeEPJwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:52:35 -0400
-X-Google-Smtp-Source: AB8JxZry8f/5NS/0CUiy9GNxlQSiuOsm+pF6+YiCxDhaim6lqLdQzXB93fB8dmik1tA5uKiqbA1DWmA7j2x+DqfaC8s=
+        Wed, 16 May 2018 05:52:49 -0400
+Date: Wed, 16 May 2018 11:52:42 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] x86/boot/compressed/64: Set up GOT for paging_prepare()
+ and cleanup_trampoline()
+In-Reply-To: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1805161151490.1627@nanos.tec.linutronix.de>
+References: <20180516080131.27913-1-kirill.shutemov@linux.intel.com> <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180515090110.26820-1-peng.fan@nxp.com>
-References: <20180515090110.26820-1-peng.fan@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 16 May 2018 11:52:33 +0200
-Message-ID: <CAPDyKFpKGhLrj-px1E3C_tq3_2GAxWpzSgr5TXJU7s8-jokf9g@mail.gmail.com>
-Subject: Re: [RFC] platform: detach from PM domains on shutdown
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 May 2018 at 11:01, Peng Fan <peng.fan@nxp.com> wrote:
-> When reboot Linux, the PM domains attached to a device
-> are not shutdown. To SoCs which relys on reset the whole SoC,
-> there is no need to shutdown PM domains, but to Linux running
-> in a virtual machine with devices pass-through, we could not
-> reset the whole SoC. Currently we need Linux to shutdown its
-> PM domains when reboot.
+On Wed, 16 May 2018, Kirill A. Shutemov wrote:
 
-I am not sure I understand exactly why the PM domain needs to be
-shutdown for these cases, could you please elaborate a bit on that.
+> Eric and Hugh have reported instant reboot due to my recent changes in
+> decompression code.
+> 
+> The root cause is that I didn't realize that we need to adjust GOT to be
+> able to run C code that early.
+> 
+> The problem is only visible with an older toolchain. Binutils >= 2.24 is
+> able to eliminate GOT references by replacing them with RIP-relative
+> address loads[1].
+> 
+> We need to adjust GOT two times:
+>  - before calling paging_prepare() using the initial load address
+>  - before calling C code from the relocated kernel
+> 
+> [1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=80d873266dec
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Fixes: 194a9749c73d ("x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G")
+> Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+> Reported-by: Hugh Dickins <hughd@google.com>
 
-BTW, what platform are you running on and also what PM domains are being used?
+Very nice and well done!
 
-Anyway, it seems like there may be need for certain cases, but
-certainly not all - especially since it may slow down the shutdown
-process, when not needed.
-
-Can we make this runtime configurable, via sysfs or whatever that makes sense!?
-
->
-> commit 2d30bb0b3889 ("platform: Do not detach from PM domains on shutdown"),
-> removes what this patch tries to add, because of a warning.
-> commit e79aee49bcf9 ("PM: Avoid false-positive warnings in dev_pm_domain_set()")
-> already fixes the false alarm warning. So let's detach the power domain
-> to shutdown PM domains after driver shutdown.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->
-> I do not find a better place to shutdown power domain when reboot Linux,
-> so add back the line that commit 2d30bb0b3889 removes, because it is
-> a false alarm warning as commit e79aee49bcf9 describes.
->
->  drivers/base/platform.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 8075ddc70a17..a5929f24dc3c 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -616,6 +616,7 @@ static void platform_drv_shutdown(struct device *_dev)
->
->         if (drv->shutdown)
->                 drv->shutdown(dev);
-> +       dev_pm_domain_detach(_dev, true);
-
-This would somewhat work, but only for platform devices. To make this
-fully work, we need to call dev_pm_domain_detach() from amba, spi, etc
-as well.
-
-Perhaps another option to manage this more generally, an without
-having detach devices, could be to extend the struct dev_pm_domain
-with a new callback, "->shutdown()" and then make the driver core call
-it from device_shutdown().
-
-Typically, for genpd, I would probably count the number of calls being
-made to ->shutdown() per PM domain, then when it reaches the number of
-attached devices to it, allow to power off it.
-
-Let's see what Rafael thinks about it.
-
-Kind regards
-Uffe
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
