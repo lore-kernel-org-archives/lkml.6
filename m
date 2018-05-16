@@ -1,95 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751227AbeEPRPf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:15:35 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:45322 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbeEPRPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:15:33 -0400
-X-Google-Smtp-Source: AB8JxZqH2ypyJmX9vFUrAgoF3O37e9EvdeKH6saQrBhR+yzJ53B+HRFlUZta4IlK2EtA++SHJMSICg==
-Date: Wed, 16 May 2018 10:15:28 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
- configuration
-Message-ID: <20180516171528.GD21971@dtor-ws>
-References: <20180514144029.16019-1-andr2000@gmail.com>
- <20180514144029.16019-2-andr2000@gmail.com>
+        id S1751367AbeEPR1b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:27:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:48772 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750846AbeEPR13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 13:27:29 -0400
+Date: Wed, 16 May 2018 19:31:58 +0200
+From: "hch@lst.de" <hch@lst.de>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "israelr@mellanox.com" <israelr@mellanox.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "sebott@linux.ibm.com" <sebott@linux.ibm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
+        "maxg@mellanox.com" <maxg@mellanox.com>,
+        "tj@kernel.org" <tj@kernel.org>
+Subject: Re: [PATCH v9 2/2] blk-mq: Rework blk-mq timeout handling again
+Message-ID: <20180516173158.GA6022@lst.de>
+References: <20180515225124.20428-1-bart.vanassche@wdc.com> <20180515225124.20428-6-bart.vanassche@wdc.com> <20180516125110.GA32078@lst.de> <8058d72fef475caffa78c962bc4220f5f8fa3dde.camel@wdc.com> <20180516162432.GA4398@lst.de> <bd17181940994eb459e84e4d5940b1af8a725ded.camel@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514144029.16019-2-andr2000@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <bd17181940994eb459e84e4d5940b1af8a725ded.camel@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleksandr,
+On Wed, May 16, 2018 at 04:47:54PM +0000, Bart Van Assche wrote:
+> I think your patch changes the order of changing the request state and
+> calling mod_timer(). In my patch the request state and the deadline are
+> updated first and mod_timer() is called afterwards. I think your patch
+> changes the order of these operations into the following:
+> (1) __blk_mq_start_request() sets the request deadline.
+> (2) __blk_mq_start_request() calls __blk_add_timer() which in turn calls
+>     mod_timer().
+> (3) __blk_mq_start_request() changes the request state into MQ_RQ_IN_FLIGHT.
+> 
+> In the unlikely event of a significant delay between (2) and (3) it can
+> happen that the timer fires and examines and ignores the request because
+> its state differs from MQ_RQ_IN_FLIGHT. If the request for which this
+> happened times out its timeout will only be handled the next time
+> blk_mq_timeout_work() is called. Is this the behavior you intended?
 
-On Mon, May 14, 2018 at 05:40:29PM +0300, Oleksandr Andrushchenko wrote:
-> @@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
->  	if (!info->page)
->  		goto error_nomem;
->  
-> -	/* Set input abs params to match backend screen res */
-> -	abs = xenbus_read_unsigned(dev->otherend,
-> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-> -						  XENKBD_FIELD_WIDTH,
-> -						  ptr_size[KPARAM_X]);
-> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-> -						  XENKBD_FIELD_HEIGHT,
-> -						  ptr_size[KPARAM_Y]);
-> -	if (abs) {
-> -		ret = xenbus_write(XBT_NIL, dev->nodename,
-> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-> -		if (ret) {
-> -			pr_warn("xenkbd: can't request abs-pointer\n");
-> -			abs = 0;
-> -		}
-> -	}
-> +	/*
-> +	 * The below are reverse logic, e.g. if the feature is set, then
-> +	 * do not expose the corresponding virtual device.
-> +	 */
-> +	with_kbd = !xenbus_read_unsigned(dev->nodename,
-> +					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
->  
-> -	touch = xenbus_read_unsigned(dev->nodename,
-> -				     XENKBD_FIELD_FEAT_MTOUCH, 0);
-> -	if (touch) {
-> +	with_ptr = !xenbus_read_unsigned(dev->nodename,
-> +					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
-> +
-> +	/* Direct logic: if set, then create multi-touch device. */
-> +	with_mtouch = xenbus_read_unsigned(dev->nodename,
-> +					   XENKBD_FIELD_FEAT_MTOUCH, 0);
-> +	if (with_mtouch) {
->  		ret = xenbus_write(XBT_NIL, dev->nodename,
->  				   XENKBD_FIELD_REQ_MTOUCH, "1");
->  		if (ret) {
->  			pr_warn("xenkbd: can't request multi-touch");
-> -			touch = 0;
-> +			with_mtouch = 0;
->  		}
->  	}
-
-Does it make sense to still end up calling xenkbd_connect_backend() when
-all interfaces (keyboard, pointer, and multitouch) are disabled? Should
-we do:
-
-	if (!(with_kbd || || with_ptr || with_mtouch))
-		return -ENXIO;
-
-?
-
-Thanks.
-
--- 
-Dmitry
+We can move the timer manipulation after the change easily I think.
+It would make sense to add comments explaining the ordering.
