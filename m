@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEPMOU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:14:20 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48311 "EHLO
+        id S1752673AbeEPMOW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:14:22 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51141 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPMOS (ORCPT
+        with ESMTP id S1751510AbeEPMOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 08:14:18 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -14,9 +14,9 @@ Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>,
         Erik Schmauss <erik.schmauss@intel.com>,
         Bob Moore <robert.moore@intel.com>,
         "Wang, Wendy" <wendy.wang@intel.com>
-Subject: [PATCH 2/2] ACPI: EC: Dispatch the EC GPE directly on s2idle wake
-Date: Wed, 16 May 2018 14:13:21 +0200
-Message-ID: <3221007.8CUDle5b3u@aspire.rjw.lan>
+Subject: [PATCH 1/2] ACPICA: Introduce acpi_dispatch_gpe()
+Date: Wed, 16 May 2018 14:12:03 +0200
+Message-ID: <1877957.ohNgiH8Sko@aspire.rjw.lan>
 In-Reply-To: <2406722.gU2bUHd7bl@aspire.rjw.lan>
 References: <2406722.gU2bUHd7bl@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -28,71 +28,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On platforms where the Low Power S0 Idle _DSM interface is used,
-on wakeup from suspend-to-idle, when it is known that the ACPI SCI
-has triggered while suspended, dispatch the EC GPE in order to catch
-all EC events that may have triggered the wakeup before carrying out
-the noirq phase of device resume.
-
-That is needed to handle power button wakeup on some platforms where
-the EC goes into a low-power mode during suspend-to-idle and while in
-that mode it will discard events after a timeout.  If that timeout is
-shorter than the time it takes to complete the noirq resume of
-devices, looking for EC events after the latter is too late.
+Introduce acpi_dispatch_gpe() as a wrapper around acpi_ev_detect_gpe()
+for checking if the given GPE (as represented by a GPE device handle
+and a GPE number) is currently active and dispatching it (if that's
+the case) outside of interrupt context.
 
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reported-by: Zhang Rui <rui.zhang@intel.com>
-Tested-by: Wendy Wang <wendy.wang@intel.com>
 ---
- drivers/acpi/ec.c       |    6 ++++++
- drivers/acpi/internal.h |    1 +
- drivers/acpi/sleep.c    |    7 +++++++
- 3 files changed, 14 insertions(+)
+ drivers/acpi/acpica/evgpe.c   |    6 ++++++
+ drivers/acpi/acpica/evxfgpe.c |   22 ++++++++++++++++++++++
+ include/acpi/acpixf.h         |    1 +
+ 3 files changed, 29 insertions(+)
 
-Index: linux-pm/drivers/acpi/ec.c
+Index: linux-pm/drivers/acpi/acpica/evgpe.c
 ===================================================================
---- linux-pm.orig/drivers/acpi/ec.c
-+++ linux-pm/drivers/acpi/ec.c
-@@ -1034,6 +1034,12 @@ void acpi_ec_unblock_transactions(void)
- 		acpi_ec_start(first_ec, true);
- }
+--- linux-pm.orig/drivers/acpi/acpica/evgpe.c
++++ linux-pm/drivers/acpi/acpica/evgpe.c
+@@ -634,6 +634,12 @@ acpi_ev_detect_gpe(struct acpi_namespace
  
-+void acpi_ec_dispatch_gpe(void)
+ 	flags = acpi_os_acquire_lock(acpi_gbl_gpe_lock);
+ 
++	if (!gpe_event_info) {
++		gpe_event_info = acpi_ev_get_gpe_event_info(gpe_device, gpe_number);
++		if (!gpe_event_info)
++			goto error_exit;
++	}
++
+ 	/* Get the info block for the entire GPE register */
+ 
+ 	gpe_register_info = gpe_event_info->register_info;
+Index: linux-pm/drivers/acpi/acpica/evxfgpe.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evxfgpe.c
++++ linux-pm/drivers/acpi/acpica/evxfgpe.c
+@@ -639,6 +639,28 @@ ACPI_EXPORT_SYMBOL(acpi_get_gpe_status)
+ 
+ /*******************************************************************************
+  *
++ * FUNCTION:    acpi_gispatch_gpe
++ *
++ * PARAMETERS:  gpe_device          - Parent GPE Device. NULL for GPE0/GPE1
++ *              gpe_number          - GPE level within the GPE block
++ *
++ * RETURN:      None
++ *
++ * DESCRIPTION: Detect and dispatch a General Purpose Event to either a function
++ *              (e.g. EC) or method (e.g. _Lxx/_Exx) handler.
++ *
++ ******************************************************************************/
++void acpi_dispatch_gpe(acpi_handle gpe_device, u32 gpe_number)
 +{
-+	if (first_ec)
-+		acpi_dispatch_gpe(NULL, first_ec->gpe);
++	ACPI_FUNCTION_TRACE(acpi_dispatch_gpe);
++
++	acpi_ev_detect_gpe(gpe_device, NULL, gpe_number);
 +}
 +
- /* --------------------------------------------------------------------------
-                                 Event Management
-    -------------------------------------------------------------------------- */
-Index: linux-pm/drivers/acpi/internal.h
++ACPI_EXPORT_SYMBOL(acpi_dispatch_gpe)
++
++/*******************************************************************************
++ *
+  * FUNCTION:    acpi_finish_gpe
+  *
+  * PARAMETERS:  gpe_device          - Namespace node for the GPE Block
+Index: linux-pm/include/acpi/acpixf.h
 ===================================================================
---- linux-pm.orig/drivers/acpi/internal.h
-+++ linux-pm/drivers/acpi/internal.h
-@@ -188,6 +188,7 @@ int acpi_ec_ecdt_probe(void);
- int acpi_ec_dsdt_probe(void);
- void acpi_ec_block_transactions(void);
- void acpi_ec_unblock_transactions(void);
-+void acpi_ec_dispatch_gpe(void);
- int acpi_ec_add_query_handler(struct acpi_ec *ec, u8 query_bit,
- 			      acpi_handle handle, acpi_ec_query_func func,
- 			      void *data);
-Index: linux-pm/drivers/acpi/sleep.c
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.c
-+++ linux-pm/drivers/acpi/sleep.c
-@@ -989,6 +989,13 @@ static void acpi_s2idle_wake(void)
- 	    !irqd_is_wakeup_armed(irq_get_irq_data(acpi_sci_irq))) {
- 		pm_system_cancel_wakeup();
- 		s2idle_wakeup = true;
-+		/*
-+		 * On some platforms with the LPS0 _DSM device noirq resume
-+		 * takes too much time for EC wakeup events to survive, so look
-+		 * for them now.
-+		 */
-+		if (lps0_device_handle)
-+			acpi_ec_dispatch_gpe();
- 	}
- }
- 
+--- linux-pm.orig/include/acpi/acpixf.h
++++ linux-pm/include/acpi/acpixf.h
+@@ -753,6 +753,7 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_sta
+ 						     u32 gpe_number,
+ 						     acpi_event_status
+ 						     *event_status))
++void acpi_dispatch_gpe(acpi_handle gpe_device, u32 gpe_number);
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_disable_all_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_runtime_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_wakeup_gpes(void))
