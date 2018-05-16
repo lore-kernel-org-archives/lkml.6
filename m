@@ -1,69 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-62429-1526464035-2-13624012900614091827
+X-Cyrus-Session-Id: sloti22d1t05-654-1526464026-2-4558162194013316878
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464034; b=fGx2zGEC6hlXja/ngbL728/WcUJl1NYbq9mBrpiFNC5R6Xc27t
-    RWKzv049qYCMTPplh8zF7pJzIiq+S1Ff4MXFDIKMFV2wk0nKOH9C/yCM2ciG64qN
-    e06usEw+0VlFlBzFBxVpb0cMtXMxfzTnZ8Vp+/c5PL3M9dHYnWhNyixfozEd2RJB
-    s4ZRtkNss+9oO7iGOJD02ssBbBZH2gj3khZMeGRawdZM5/ueT1Z1GXlp3WO2T7pl
-    0nf2jaHJG6jPpjCzqAx6daZnfodDHT2e98gt2dWb5m/bT9BMHaJUCA/6tCFqQ/kB
-    EvHvkZ4cKo+E7MHu3voWUTAzVKLnLjLlpbxQ==
+    1526464026; b=SrGR7kuo4hJnkE6dDCZB3On+aoirbCWwdmVhzfl47uJBzTB7HF
+    RQG4cpFq5fJU2SggAgURd/kmkSwHbU1Goj6yLPkfWo2WMUgJsYX0KrYfb9GXwqX7
+    I/b46vWQ1ARBSHae8n5DTRROFi0mBAZhRGBN0KZe+BHh6LKvUJczl+3S+2nwK2tR
+    Vl6gHdvDh3WzqWOnC2vG06vPzTI72c7ZSVQfBKYFHTkDWqvxxQckG/b1Fiuszwxd
+    giLGW8OXVmCJO0nhzmWAlD9bIblCPD69cWqlQOFELg2D8s7PtUMv41D6khAIKsKk
+    ehw2OWZ21o5BfmRLnAyF2G9eAnE+KSUgGnBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464034; bh=1nRHd
-    rV51Y1SEOG6fglOL+q20P4GEKP/FJBOimhvt14=; b=I6J+Df9J1BSNVfW3KLzLU
-    hFhMrAyQLJxchqrUNDtKPcC3l2O3/C35g8OV1abYPQFbnkzGibDJD+6rByyRinhy
-    ihAxs+3zpct40xgRYzH/qTxo0es/tn632nX5lgT20KdKB5cKBUufcGbBf+yiPVjB
-    UuRay2ccrdBVIdZ6RquW37bg6ZPwZ2lsfnDSSRiBXsIfHI1xtDwDvz+NIYPjCTS/
-    t82F0js+D9cmdmNrgimBuoArLFt2lSXqQqIF+TnIusk8BOlKaM0Kc7ETY6x4a2w7
-    y/CTw6AV+EfPKmaPJjOntz5m4cSOegaSUS2tVt5KfBdTgraX+p4uxCTVDTFu3L04
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464026; bh=CTdAX
+    +wQ97hjNqR/Uy3fqkolSov/fdbnlLVAekmHgqs=; b=ETKIEBBBw8IavqjaOmd7a
+    2CI1jWkRZP8yig4j5cjt0lcerzcmcoHwW2ZYJRD+MpEqKlCYKfiuPp4vv8sMzV6f
+    98B7W4sDUFcVE6Qk0ptNWPjIrJONHvHVD05hMqdFz45cT7MfqDDFYecmEiWrU+fi
+    jIk3dVHvU+ZrBZM82ncAF+i/nxP6GzxtfW7bzZ/p8ySZhr1mMmVTqfSkHqS4qFu2
+    0kB59vpdPUM7mTnY8+UFQnR+dm1zITh6pZ/YJePX7JlxWm2kq1Se3vKMPZ/Zku8v
+    8AJRV3hUDPnj8E89SF+vjFEK1/sLA0EtThb/CxHbbjglIj2AkiHwCJZhIHUcWNzA
+    A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=jper9igC
+    header.d=infradead.org header.i=@infradead.org header.b=nqzLA+Wk
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=lst.de header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=jper9igC
+      header.d=infradead.org header.i=@infradead.org header.b=nqzLA+Wk
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+      smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=lst.de header.result=pass
       header_is_org_domain=yes;
@@ -71,12 +69,12 @@ Authentication-Results: mx3.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNyz385C4epCGh7Ai8oaIAHycXoMrDNDqm1KqQ1FM/mXHvITXef2Bb5xYJNxAtbXFJ3JXN6b4Y/CzGa/GsuxscbrHwBW1Ur8BZCKsw2eVvmGdmt9tzt4
-    jM4GM30iDA6krJqSRxZRgiVs4ZI88viVyJSatdhx3ZcNiZKPHQza+DecWQeAKdl4ZN38SEQoZf5pb8OmCGRytWifRMmCVtwA43h39+WIb5/DLGaz4e0wpqyA
-    zPcbGwXVElnI1xW9fZOnEw==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=e0Z0VjiGqk7erTgq0IUA:9
+X-CM-Envelope: MS4wfN93SL/5DFMxhARrPZuNTiCN5z+nfzcER2HTo7+R/8yB6A/xxcY12G/FEEynKAUU0F9k6w1pzNQJ2n5ydgrO69AKgJAF+RAhWS5cB6U5Vr5xgFgN/oi6
+    O9O13PAIjsn8exp2iMsxnsEB+uE1UHi8ZG4sjmd2b1/bZZ4AtJu99YkssIR/m3et+QDTJWgbgzf6lmZ5Juv/fZx2TYHjipAxOBn1J+RFchL87vRHd8Ur+09w
+    sDEl1kFNAQmSMXx9tiX38g==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=hKdEH_Ywdm7tl--R1_4A:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -84,9 +82,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 40/42] ide: replace ->proc_fops with ->proc_show
-Date: Wed, 16 May 2018 11:43:44 +0200
-Message-Id: <20180516094346.20506-41-hch@lst.de>
+Subject: [PATCH 32/42] neigh: switch to proc_create_seq_data
+Date: Wed, 16 May 2018 11:43:36 +0200
+Message-Id: <20180516094346.20506-33-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -120,459 +118,91 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Just set up the show callback in the tty_operations, and use
-proc_create_single_data to create the file without additional
-boilerplace code.
+And use proc private data directly instead of doing a detour
+through seq->private.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/ide/ide-cd.c          |  15 +---
- drivers/ide/ide-disk_proc.c   |  62 ++--------------
- drivers/ide/ide-floppy_proc.c |  17 +----
- drivers/ide/ide-proc.c        | 136 +++++-----------------------------
- drivers/ide/ide-tape.c        |  17 +----
- include/linux/ide.h           |   6 +-
- 6 files changed, 31 insertions(+), 222 deletions(-)
+ net/core/neighbour.c | 31 ++++++-------------------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
-index 5a8e8e3c22cd..b52a7bdace52 100644
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -1426,21 +1426,8 @@ static int idecd_capacity_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index ce519861be59..1fb43bff417d 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -59,7 +59,7 @@ static int pneigh_ifdown_and_unlock(struct neigh_table *tbl,
+ 				    struct net_device *dev);
  
--static int idecd_capacity_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idecd_capacity_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idecd_capacity_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idecd_capacity_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static ide_proc_entry_t idecd_proc[] = {
--	{ "capacity", S_IFREG|S_IRUGO, &idecd_capacity_proc_fops },
-+	{ "capacity", S_IFREG|S_IRUGO, idecd_capacity_proc_show },
- 	{}
+ #ifdef CONFIG_PROC_FS
+-static const struct file_operations neigh_stat_seq_fops;
++static const struct seq_operations neigh_stat_seq_ops;
+ #endif
+ 
+ /*
+@@ -1558,8 +1558,8 @@ void neigh_table_init(int index, struct neigh_table *tbl)
+ 		panic("cannot create neighbour cache statistics");
+ 
+ #ifdef CONFIG_PROC_FS
+-	if (!proc_create_data(tbl->id, 0, init_net.proc_net_stat,
+-			      &neigh_stat_seq_fops, tbl))
++	if (!proc_create_seq_data(tbl->id, 0, init_net.proc_net_stat,
++			      &neigh_stat_seq_ops, tbl))
+ 		panic("cannot create neighbour proc dir entry");
+ #endif
+ 
+@@ -2786,7 +2786,7 @@ EXPORT_SYMBOL(neigh_seq_stop);
+ 
+ static void *neigh_stat_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+-	struct neigh_table *tbl = seq->private;
++	struct neigh_table *tbl = PDE_DATA(file_inode(seq->file));
+ 	int cpu;
+ 
+ 	if (*pos == 0)
+@@ -2803,7 +2803,7 @@ static void *neigh_stat_seq_start(struct seq_file *seq, loff_t *pos)
+ 
+ static void *neigh_stat_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+-	struct neigh_table *tbl = seq->private;
++	struct neigh_table *tbl = PDE_DATA(file_inode(seq->file));
+ 	int cpu;
+ 
+ 	for (cpu = *pos; cpu < nr_cpu_ids; ++cpu) {
+@@ -2822,7 +2822,7 @@ static void neigh_stat_seq_stop(struct seq_file *seq, void *v)
+ 
+ static int neigh_stat_seq_show(struct seq_file *seq, void *v)
+ {
+-	struct neigh_table *tbl = seq->private;
++	struct neigh_table *tbl = PDE_DATA(file_inode(seq->file));
+ 	struct neigh_statistics *st = v;
+ 
+ 	if (v == SEQ_START_TOKEN) {
+@@ -2861,25 +2861,6 @@ static const struct seq_operations neigh_stat_seq_ops = {
+ 	.stop	= neigh_stat_seq_stop,
+ 	.show	= neigh_stat_seq_show,
  };
- 
-diff --git a/drivers/ide/ide-disk_proc.c b/drivers/ide/ide-disk_proc.c
-index 82a36ced4e96..95d239b2f646 100644
---- a/drivers/ide/ide-disk_proc.c
-+++ b/drivers/ide/ide-disk_proc.c
-@@ -52,19 +52,6 @@ static int idedisk_cache_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int idedisk_cache_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idedisk_cache_proc_show, PDE_DATA(inode));
--}
 -
--static const struct file_operations idedisk_cache_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idedisk_cache_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-static int neigh_stat_seq_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &neigh_stat_seq_ops);
+-
+-	if (!ret) {
+-		struct seq_file *sf = file->private_data;
+-		sf->private = PDE_DATA(inode);
+-	}
+-	return ret;
 -};
 -
- static int idedisk_capacity_proc_show(struct seq_file *m, void *v)
- {
- 	ide_drive_t*drive = (ide_drive_t *)m->private;
-@@ -73,19 +60,6 @@ static int idedisk_capacity_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int idedisk_capacity_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idedisk_capacity_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idedisk_capacity_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idedisk_capacity_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-static const struct file_operations neigh_stat_seq_fops = {
+-	.open 	 = neigh_stat_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release,
 -};
 -
- static int __idedisk_proc_show(struct seq_file *m, ide_drive_t *drive, u8 sub_cmd)
- {
- 	u8 *buf;
-@@ -114,43 +88,17 @@ static int idedisk_sv_proc_show(struct seq_file *m, void *v)
- 	return __idedisk_proc_show(m, m->private, ATA_SMART_READ_VALUES);
- }
+ #endif /* CONFIG_PROC_FS */
  
--static int idedisk_sv_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idedisk_sv_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idedisk_sv_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idedisk_sv_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int idedisk_st_proc_show(struct seq_file *m, void *v)
- {
- 	return __idedisk_proc_show(m, m->private, ATA_SMART_READ_THRESHOLDS);
- }
- 
--static int idedisk_st_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idedisk_st_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idedisk_st_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idedisk_st_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- ide_proc_entry_t ide_disk_proc[] = {
--	{ "cache",	  S_IFREG|S_IRUGO, &idedisk_cache_proc_fops	},
--	{ "capacity",	  S_IFREG|S_IRUGO, &idedisk_capacity_proc_fops	},
--	{ "geometry",	  S_IFREG|S_IRUGO, &ide_geometry_proc_fops	},
--	{ "smart_values", S_IFREG|S_IRUSR, &idedisk_sv_proc_fops	},
--	{ "smart_thresholds", S_IFREG|S_IRUSR, &idedisk_st_proc_fops	},
-+	{ "cache",	  S_IFREG|S_IRUGO, idedisk_cache_proc_show	},
-+	{ "capacity",	  S_IFREG|S_IRUGO, idedisk_capacity_proc_show	},
-+	{ "geometry",	  S_IFREG|S_IRUGO, ide_geometry_proc_show	},
-+	{ "smart_values", S_IFREG|S_IRUSR, idedisk_sv_proc_show		},
-+	{ "smart_thresholds", S_IFREG|S_IRUSR, idedisk_st_proc_show	},
- 	{}
- };
- 
-diff --git a/drivers/ide/ide-floppy_proc.c b/drivers/ide/ide-floppy_proc.c
-index 471457ebea67..7f697ddb5fe5 100644
---- a/drivers/ide/ide-floppy_proc.c
-+++ b/drivers/ide/ide-floppy_proc.c
-@@ -14,22 +14,9 @@ static int idefloppy_capacity_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int idefloppy_capacity_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idefloppy_capacity_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idefloppy_capacity_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idefloppy_capacity_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- ide_proc_entry_t ide_floppy_proc[] = {
--	{ "capacity",	S_IFREG|S_IRUGO, &idefloppy_capacity_proc_fops	},
--	{ "geometry",	S_IFREG|S_IRUGO, &ide_geometry_proc_fops	},
-+	{ "capacity",	S_IFREG|S_IRUGO, idefloppy_capacity_proc_show	},
-+	{ "geometry",	S_IFREG|S_IRUGO, ide_geometry_proc_show		},
- 	{}
- };
- 
-diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
-index b3b8b8822d6a..45c997430332 100644
---- a/drivers/ide/ide-proc.c
-+++ b/drivers/ide/ide-proc.c
-@@ -56,19 +56,6 @@ static int ide_imodel_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int ide_imodel_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_imodel_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_imodel_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_imodel_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int ide_mate_proc_show(struct seq_file *m, void *v)
- {
- 	ide_hwif_t	*hwif = (ide_hwif_t *) m->private;
-@@ -80,19 +67,6 @@ static int ide_mate_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int ide_mate_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_mate_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_mate_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_mate_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int ide_channel_proc_show(struct seq_file *m, void *v)
- {
- 	ide_hwif_t	*hwif = (ide_hwif_t *) m->private;
-@@ -101,19 +75,6 @@ static int ide_channel_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int ide_channel_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_channel_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_channel_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_channel_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int ide_identify_proc_show(struct seq_file *m, void *v)
- {
- 	ide_drive_t *drive = (ide_drive_t *)m->private;
-@@ -141,19 +102,6 @@ static int ide_identify_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int ide_identify_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_identify_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_identify_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_identify_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- /**
-  *	ide_find_setting	-	find a specific setting
-  *	@st: setting table pointer
-@@ -441,27 +389,14 @@ static const struct file_operations ide_settings_proc_fops = {
- 	.write		= ide_settings_proc_write,
- };
- 
--static int ide_capacity_proc_show(struct seq_file *m, void *v)
-+int ide_capacity_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m, "%llu\n", (long long)0x7fffffff);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(ide_capacity_proc_show);
- 
--static int ide_capacity_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_capacity_proc_show, NULL);
--}
--
--const struct file_operations ide_capacity_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_capacity_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--EXPORT_SYMBOL_GPL(ide_capacity_proc_fops);
--
--static int ide_geometry_proc_show(struct seq_file *m, void *v)
-+int ide_geometry_proc_show(struct seq_file *m, void *v)
- {
- 	ide_drive_t	*drive = (ide_drive_t *) m->private;
- 
-@@ -471,20 +406,7 @@ static int ide_geometry_proc_show(struct seq_file *m, void *v)
- 			drive->bios_cyl, drive->bios_head, drive->bios_sect);
- 	return 0;
- }
--
--static int ide_geometry_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_geometry_proc_show, PDE_DATA(inode));
--}
--
--const struct file_operations ide_geometry_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_geometry_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--EXPORT_SYMBOL(ide_geometry_proc_fops);
-+EXPORT_SYMBOL(ide_geometry_proc_show);
- 
- static int ide_dmodel_proc_show(struct seq_file *seq, void *v)
- {
-@@ -495,19 +417,6 @@ static int ide_dmodel_proc_show(struct seq_file *seq, void *v)
- 	return 0;
- }
- 
--static int ide_dmodel_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_dmodel_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_dmodel_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_dmodel_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int ide_driver_proc_show(struct seq_file *m, void *v)
- {
- 	ide_drive_t		*drive = (ide_drive_t *)m->private;
-@@ -523,19 +432,6 @@ static int ide_driver_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int ide_driver_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ide_driver_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations ide_driver_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= ide_driver_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int ide_media_proc_show(struct seq_file *m, void *v)
- {
- 	ide_drive_t	*drive = (ide_drive_t *) m->private;
-@@ -567,11 +463,10 @@ static const struct file_operations ide_media_proc_fops = {
- };
- 
- static ide_proc_entry_t generic_drive_entries[] = {
--	{ "driver",	S_IFREG|S_IRUGO,	 &ide_driver_proc_fops	},
--	{ "identify",	S_IFREG|S_IRUSR,	 &ide_identify_proc_fops},
--	{ "media",	S_IFREG|S_IRUGO,	 &ide_media_proc_fops	},
--	{ "model",	S_IFREG|S_IRUGO,	 &ide_dmodel_proc_fops	},
--	{ "settings",	S_IFREG|S_IRUSR|S_IWUSR, &ide_settings_proc_fops},
-+	{ "driver",	S_IFREG|S_IRUGO,	 ide_driver_proc_show	},
-+	{ "identify",	S_IFREG|S_IRUSR,	 ide_identify_proc_show	},
-+	{ "media",	S_IFREG|S_IRUGO,	 ide_media_proc_show	},
-+	{ "model",	S_IFREG|S_IRUGO,	 ide_dmodel_proc_show	},
- 	{}
- };
- 
-@@ -582,7 +477,7 @@ static void ide_add_proc_entries(struct proc_dir_entry *dir, ide_proc_entry_t *p
- 	if (!dir || !p)
- 		return;
- 	while (p->name != NULL) {
--		ent = proc_create_data(p->name, p->mode, dir, p->proc_fops, data);
-+		ent = proc_create_single_data(p->name, p->mode, dir, p->show, data);
- 		if (!ent) return;
- 		p++;
- 	}
-@@ -647,8 +542,12 @@ void ide_proc_port_register_devices(ide_hwif_t *hwif)
- 			continue;
- 
- 		drive->proc = proc_mkdir(drive->name, parent);
--		if (drive->proc)
-+		if (drive->proc) {
- 			ide_add_proc_entries(drive->proc, generic_drive_entries, drive);
-+			proc_create_data("setting", S_IFREG|S_IRUSR|S_IWUSR,
-+					drive->proc, &ide_settings_proc_fops,
-+					drive);
-+		}
- 		sprintf(name, "ide%d/%s", (drive->name[2]-'a')/2, drive->name);
- 		ent = proc_symlink(drive->name, proc_ide_root, name);
- 		if (!ent) return;
-@@ -658,6 +557,7 @@ void ide_proc_port_register_devices(ide_hwif_t *hwif)
- void ide_proc_unregister_device(ide_drive_t *drive)
- {
- 	if (drive->proc) {
-+		remove_proc_entry("settings", drive->proc);
- 		ide_remove_proc_entries(drive->proc, generic_drive_entries);
- 		remove_proc_entry(drive->name, proc_ide_root);
- 		remove_proc_entry(drive->name, drive->hwif->proc);
-@@ -666,9 +566,9 @@ void ide_proc_unregister_device(ide_drive_t *drive)
- }
- 
- static ide_proc_entry_t hwif_entries[] = {
--	{ "channel",	S_IFREG|S_IRUGO,	&ide_channel_proc_fops	},
--	{ "mate",	S_IFREG|S_IRUGO,	&ide_mate_proc_fops	},
--	{ "model",	S_IFREG|S_IRUGO,	&ide_imodel_proc_fops	},
-+	{ "channel",	S_IFREG|S_IRUGO,	ide_channel_proc_show	},
-+	{ "mate",	S_IFREG|S_IRUGO,	ide_mate_proc_show	},
-+	{ "model",	S_IFREG|S_IRUGO,	ide_imodel_proc_show	},
- 	{}
- };
- 
-diff --git a/drivers/ide/ide-tape.c b/drivers/ide/ide-tape.c
-index fd57e8ccc47a..ac2c6820c65a 100644
---- a/drivers/ide/ide-tape.c
-+++ b/drivers/ide/ide-tape.c
-@@ -1847,22 +1847,9 @@ static int idetape_name_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int idetape_name_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, idetape_name_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations idetape_name_proc_fops = {
--	.owner		= THIS_MODULE,
--	.open		= idetape_name_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static ide_proc_entry_t idetape_proc[] = {
--	{ "capacity",	S_IFREG|S_IRUGO,	&ide_capacity_proc_fops	},
--	{ "name",	S_IFREG|S_IRUGO,	&idetape_name_proc_fops	},
-+	{ "capacity",	S_IFREG|S_IRUGO,	ide_capacity_proc_show	},
-+	{ "name",	S_IFREG|S_IRUGO,	idetape_name_proc_show	},
- 	{}
- };
- 
-diff --git a/include/linux/ide.h b/include/linux/ide.h
-index ca9d34feb572..752464f5a772 100644
---- a/include/linux/ide.h
-+++ b/include/linux/ide.h
-@@ -961,7 +961,7 @@ __IDE_PROC_DEVSET(_name, _min, _max, NULL, NULL)
- typedef struct {
- 	const char	*name;
- 	umode_t		mode;
--	const struct file_operations *proc_fops;
-+	int (*show)(struct seq_file *, void *);
- } ide_proc_entry_t;
- 
- void proc_ide_create(void);
-@@ -973,8 +973,8 @@ void ide_proc_unregister_port(ide_hwif_t *);
- void ide_proc_register_driver(ide_drive_t *, struct ide_driver *);
- void ide_proc_unregister_driver(ide_drive_t *, struct ide_driver *);
- 
--extern const struct file_operations ide_capacity_proc_fops;
--extern const struct file_operations ide_geometry_proc_fops;
-+int ide_capacity_proc_show(struct seq_file *m, void *v);
-+int ide_geometry_proc_show(struct seq_file *m, void *v);
- #else
- static inline void proc_ide_create(void) { ; }
- static inline void proc_ide_destroy(void) { ; }
+ static inline size_t neigh_nlmsg_size(void)
 -- 
 2.17.0
 
