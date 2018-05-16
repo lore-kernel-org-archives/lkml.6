@@ -1,35 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeEPTIU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 15:08:20 -0400
-Received: from ms.lwn.net ([45.79.88.28]:37700 "EHLO ms.lwn.net"
+        id S1751389AbeEPTK1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 15:10:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56501 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751986AbeEPTIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 15:08:17 -0400
-Date: Wed, 16 May 2018 13:08:13 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] Documentation: gpio: driver: Fix a typo and some odd
- grammar
-Message-ID: <20180516130813.2e3544cd@lwn.net>
-In-Reply-To: <20180516120800.12517-1-j.neuschaefer@gmx.net>
-References: <20180516120800.12517-1-j.neuschaefer@gmx.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1750953AbeEPTK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 15:10:26 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] rtc: nvmem: don't return an error when not enabled
+Date: Wed, 16 May 2018 21:10:13 +0200
+Message-Id: <20180516191013.28689-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 14:08:00 +0200
-Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
+Avoid reporting an error when RTC_NVMEM is not selected.
 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Reported-by: kernel test robot <xiaolong.ye@intel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ include/linux/rtc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
-
-jon
+diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+index 4c007f69082f..6268208760e9 100644
+--- a/include/linux/rtc.h
++++ b/include/linux/rtc.h
+@@ -285,7 +285,7 @@ void rtc_nvmem_unregister(struct rtc_device *rtc);
+ static inline int rtc_nvmem_register(struct rtc_device *rtc,
+ 				     struct nvmem_config *nvmem_config)
+ {
+-	return -ENODEV;
++	return 0;
+ }
+ static inline void rtc_nvmem_unregister(struct rtc_device *rtc) {}
+ #endif
+-- 
+2.17.0
