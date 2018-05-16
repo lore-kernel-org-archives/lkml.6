@@ -1,79 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeEPG7A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 02:59:00 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30166 "EHLO pegase1.c-s.fr"
+        id S1752427AbeEPHAw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:00:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751040AbeEPG67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 02:58:59 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: get rid of PMD_PAGE_SIZE() and _PMD_SIZE
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180516065857.8043B6F6F2@po14934vm.idsi0.si.c-s.fr>
-Date: Wed, 16 May 2018 08:58:57 +0200 (CEST)
+        id S1752358AbeEPHAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:00:50 -0400
+Date: Wed, 16 May 2018 16:00:45 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH -tip v2 0/5] kprobes: x86: Cleanup jprobe implementation
+ on x86
+Message-Id: <20180516160045.cfb2058f21129e94bbe1ebdc@kernel.org>
+In-Reply-To: <152086565510.32679.6953754320525763743.stgit@devbox>
+References: <152086565510.32679.6953754320525763743.stgit@devbox>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PMD_PAGE_SIZE() is nowhere used and _PMD_SIZE is only
-used by PMD_PAGE_SIZE().
+On Mon, 12 Mar 2018 23:40:55 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-This patch removes them.
+> Hello,
+> 
+> Since we decided to remove jprobe from kernel last year,
+> its APIs are disabled and we worked on moving in-kernel
+> jprobe users to kprobes or trace-events. And now no jprobe
+> users are here anymore.
+> 
+> This series removes jprobe implementation from x86 and
+> generic code. I would like to send other series for each
+> arch. After all those patches are merged, I will remove
+> jprobes APIs and data structures, since changing those
+> definitions will break build on other archs.
+> 
+> Here is the series of patches to show how to do that.
+> I've dropped arch-independent header changes from this
+> version and merged kprobe-user code changes into the
+> last patch since that changed the kprobes expected
+> behavior when the kprobes modifies execution path.
+> (no need to enable preempt anymore)
+> 
+>  - Remove jprobe functions (register/unregister,
+>    setjump/longjump) from generic/arch-dependent code.
+>    [1/5][2/5]
+>  - Remove break_handler related code.
+>    [3/5][4/5]
+>  - Do not disable preemption on exception handler
+>    [5/5]
+> 
+> As I said above, the last patch [5/5] will change the
+> expected behavior on x86. Other archs also have to change
+> it. But anyway, currently such execution-path modifying
+> users in tree are very limited and only works on x86.
+> So we can safely modify it.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- Superseeds "powerpc: get rid of PMD_PAGE_SIZE()" sent a few minutes ago.
+Ah, I forgot I had sent this in March... 
+Basically, this is same thing what I sent last week, and this is more
+aggressively removing all the jprobes related code including
+break_handler. I would like to merge both series and start sending
+new series, including removing jprobe test code too.
 
- arch/powerpc/include/asm/nohash/32/pte-40x.h | 3 ---
- arch/powerpc/include/asm/pte-common.h        | 8 --------
- 2 files changed, 11 deletions(-)
+Thank you,
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-40x.h b/arch/powerpc/include/asm/nohash/32/pte-40x.h
-index 124f9ac23a1e..bb4b3a4b92a0 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-40x.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-40x.h
-@@ -52,12 +52,9 @@
- 
- #define _PMD_PRESENT	0x400	/* PMD points to page of PTEs */
- #define _PMD_BAD	0x802
--#define _PMD_SIZE	0x0e0	/* size field, != 0 for large-page PMD entry */
- #define _PMD_SIZE_4M	0x0c0
- #define _PMD_SIZE_16M	0x0e0
- 
--#define PMD_PAGE_SIZE(pmdval)	(1024 << (((pmdval) & _PMD_SIZE) >> 4))
--
- /* Until my rework is finished, 40x still needs atomic PTE updates */
- #define PTE_ATOMIC_UPDATES	1
- 
-diff --git a/arch/powerpc/include/asm/pte-common.h b/arch/powerpc/include/asm/pte-common.h
-index c4a72c7a8c83..050b0d775324 100644
---- a/arch/powerpc/include/asm/pte-common.h
-+++ b/arch/powerpc/include/asm/pte-common.h
-@@ -60,10 +60,6 @@
- #ifndef _PMD_PRESENT_MASK
- #define _PMD_PRESENT_MASK	_PMD_PRESENT
- #endif
--#ifndef _PMD_SIZE
--#define _PMD_SIZE	0
--#define PMD_PAGE_SIZE(pmd)	bad_call_to_PMD_PAGE_SIZE()
--#endif
- #ifndef _PMD_USER
- #define _PMD_USER	0
- #endif
-@@ -88,11 +84,7 @@
- #define _PTE_NONE_MASK	_PAGE_HPTEFLAGS
- #endif
- 
--/* Make sure we get a link error if PMD_PAGE_SIZE is ever called on a
-- * kernel without large page PMD support
-- */
- #ifndef __ASSEMBLY__
--extern unsigned long bad_call_to_PMD_PAGE_SIZE(void);
- 
- /*
-  * Don't just check for any non zero bits in __PAGE_USER, since for book3e
 -- 
-2.13.3
+Masami Hiramatsu <mhiramat@kernel.org>
