@@ -1,207 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeEPMRa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:17:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47012 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752081AbeEPMR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:17:29 -0400
-Subject: Re: [RFC v4 4/5] virtio_ring: add event idx support in packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: wexu@redhat.com, jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-5-tiwei.bie@intel.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <64f5085b-4b62-d545-36e0-0951c11b29a8@redhat.com>
-Date: Wed, 16 May 2018 20:17:21 +0800
+        id S1752636AbeEPMSF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:18:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53390 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752186AbeEPMSD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:18:03 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 02/13] KVM: s390: refactor crypto initialization
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-3-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <67656726-4d9b-44e1-1e2b-ab11de83f513@linux.ibm.com>
+ <6835f3b9-c660-fe7c-5583-8706cc1fa732@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 16 May 2018 14:17:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180516083737.26504-5-tiwei.bie@intel.com>
+In-Reply-To: <6835f3b9-c660-fe7c-5583-8706cc1fa732@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051612-0012-0000-0000-000005D729AD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051612-0013-0000-0000-000019544E2D
+Message-Id: <40b5c7d2-a855-f11b-3dbd-afdc8fae268d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160125
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年05月16日 16:37, Tiwei Bie wrote:
-> This commit introduces the event idx support in
-> packed ring.
+On 16/05/2018 13:14, Tony Krowiak wrote:
+> On 05/16/2018 04:51 AM, Pierre Morel wrote:
+>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>> This patch refactors the code that initializes the crypto
+>>> configuration for a guest. The crypto configuration is contained in
+>>> a crypto control block (CRYCB) which is a satellite control block to
+>>> our main hardware virtualization control block. The CRYCB is
+>>> attached to the main virtualization control block via a CRYCB
+>>> designation (CRYCBD) designation field containing the address of
+>>> the CRYCB as well as its format.
+>>>
+>>> Prior to the introduction of AP device virtualization, there was
+>>> no need to provide access to or specify the format of the CRYCB for
+>>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>>> on the host system. With the introduction of AP device virtualization,
+>>> the CRYCB and its format must be made accessible to the guest
+>>> regardless of the presence of the MSAX3 facility as long as the
+>>> AP instructions are installed on the host.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>   arch/s390/kvm/kvm-s390.c         |   64 
+>>> ++++++++++++++++++++++++++-----------
+>>>   2 files changed, 46 insertions(+), 19 deletions(-)
+>>>
+>>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>>> b/arch/s390/include/asm/kvm_host.h
+>>> index 81cdb6b..5393c4d 100644
+>>> --- a/arch/s390/include/asm/kvm_host.h
+>>> +++ b/arch/s390/include/asm/kvm_host.h
+>>> @@ -255,6 +255,7 @@ struct kvm_s390_sie_block {
+>>>       __u8    reservede4[4];        /* 0x00e4 */
+>>>       __u64    tecmc;            /* 0x00e8 */
+>>>       __u8    reservedf0[12];        /* 0x00f0 */
+>>> +#define CRYCB_FORMAT_MASK 0x00000003
+>>>   #define CRYCB_FORMAT1 0x00000001
+>>>   #define CRYCB_FORMAT2 0x00000003
+>>>       __u32    crycbd;            /* 0x00fc */
+>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>> index 1f50de7..99779a6 100644
+>>> --- a/arch/s390/kvm/kvm-s390.c
+>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>> @@ -1875,14 +1875,35 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>>>       return r;
+>>>   }
+>>>
+>>> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>> +/*
+>>> + * The format of the crypto control block (CRYCB) is specified in 
+>>> the 3 low
+>>> + * order bits of the CRYCB designation (CRYCBD) field as follows:
+>>> + * Format 0: Neither the message security assist extension 3 
+>>> (MSAX3) nor the
+>>> + *             AP extended addressing (APXA) facility are installed.
+>>> + * Format 1: The APXA facility is not installed but the MSAX3 
+>>> facility is.
+>>> + * Format 2: Both the APXA and MSAX3 facilities are installed
+>>> + */
+>>> +static void kvm_s390_format_crycb(struct kvm *kvm)
+>>>   {
+>>> -    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>>> kvm->arch.crypto.crycb;
+>>> +    /* Clear the CRYCB format bits - i.e., set format 0 by default */
+>>> +    kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
+>>> +
+>>> +    /* Check whether MSAX3 is installed */
+>>> +    if (!test_kvm_facility(kvm, 76))
+>>> +        return;
+>>>
+>>>       if (kvm_ap_apxa_installed())
+>>>           kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>>>       else
+>>>           kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>>> + one lin
+>>> +    /* Enable AES/DEA protected key functions by default */
+>>> +    kvm->arch.crypto.aes_kw = 1;
+>>> +    kvm->arch.crypto.dea_kw = 1;
+>>> + get_random_bytes(kvm->arch.crypto.crycb->aes_wrapping_key_mask,
+>>> + sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+>>> + get_random_bytes(kvm->arch.crypto.crycb->dea_wrapping_key_mask,
+>>> + sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>>   }
+>>>
+>>>   static u64 kvm_s390_get_initial_cpuid(void)
+>>> @@ -1896,19 +1917,17 @@ static u64 kvm_s390_get_initial_cpuid(void)
+>>>
+>>>   static void kvm_s390_crypto_init(struct kvm *kvm)
+>>>   {
+>>> -    if (!test_kvm_facility(kvm, 76))
+>>> +    /*
+>>> +     * If neither the AP instructions nor the message security assist
+>>> +     * extension 3 (MSAX3) are installed, there is no need to 
+>>> initialize a
+>>> +     * crypto control block (CRYCB) for the guest.
+>>> +     */
+>>> +    if (!kvm_ap_instructions_available() && !test_kvm_facility(kvm, 
+>>> 76))
+>>>           return;
+>>>
+>>>       kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>>> -    kvm_s390_set_crycb_format(kvm);
+>>
+>>
+>> For my point of view the all patch can be reduced to putting this
+>> call (kvm_s390_set_crycb_format(kvm);) before testing for facility 76.
+>>
+>> (and setting the format correctly in kvm_s390_set_crycb_format(kvm))
 >
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> ---
->   drivers/virtio/virtio_ring.c | 75 +++++++++++++++++++++++++++++++++---
->   1 file changed, 70 insertions(+), 5 deletions(-)
+> I don't see what that buys us; it will just be reshuffling of the logic.
+> The idea here is that all of the code related to formatting the CRYCB for
+> use by the guest is contained in the kvm_s390_format_crycb(kvm) function.
+> We don't need a CRYCB, however, if the AP instructions are not installed
+> and the MSAX3 facility is not installed, so why even call
+> kvm_s390_format_crycb(kvm) in that case?
+
+It byes a lot of lines.
+I mean that you do exactly the same by only using 3 lines inserted 
+instead of 65 changes.
+No logic change.
+
 >
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index c6c5deb0e3ae..de3839f3621a 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1006,7 +1006,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
->   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> -	u16 flags;
-> +	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
->   	bool needs_kick;
->   	u32 snapshot;
->   
-> @@ -1015,9 +1015,19 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   	 * suppressions. */
->   	virtio_mb(vq->weak_barriers);
->   
-> +	old = vq->next_avail_idx - vq->num_added;
-> +	new = vq->next_avail_idx;
-> +	vq->num_added = 0;
-> +
->   	snapshot = *(u32 *)vq->vring_packed.device;
-> +	off_wrap = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot & 0xffff));
->   	flags = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot >> 16)) & 0x3;
->   
-> +	wrap_counter = off_wrap >> 15;
-> +	event_idx = off_wrap & ~(1<<15);
-> +	if (wrap_counter != vq->wrap_counter)
-> +		event_idx -= vq->vring_packed.num;
-> +
->   #ifdef DEBUG
->   	if (vq->last_add_time_valid) {
->   		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
-> @@ -1026,7 +1036,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   	vq->last_add_time_valid = false;
->   #endif
->   
-> -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> +	if (flags == VRING_EVENT_F_DESC)
-> +		needs_kick = vring_need_event(event_idx, new, old);
-> +	else
-> +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
->   	END_USE(vq);
->   	return needs_kick;
->   }
-> @@ -1098,7 +1111,7 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
->   					  void **ctx)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> -	u16 last_used, id;
-> +	u16 wrap_counter, last_used, id;
->   	void *ret;
->   
->   	START_USE(vq);
-> @@ -1138,6 +1151,19 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
->   	ret = vq->desc_state[id].data;
->   	detach_buf_packed(vq, last_used, id, ctx);
->   
-> +	wrap_counter = vq->wrap_counter;
-> +	if (vq->last_used_idx > vq->next_avail_idx)
-> +		wrap_counter ^= 1;
-> +
-> +	/* If we expect an interrupt for the next entry, tell host
-> +	 * by writing event index and flush out the write before
-> +	 * the read in the next get_buf call. */
-> +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-> +		virtio_store_mb(vq->weak_barriers,
-> +				&vq->vring_packed.driver->off_wrap,
-> +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-> +						(wrap_counter << 15)));
-> +
->   #ifdef DEBUG
->   	vq->last_add_time_valid = false;
->   #endif
-> @@ -1160,15 +1186,27 @@ static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
->   static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> +	u16 wrap_counter;
->   
->   	START_USE(vq);
->   
->   	/* We optimistically turn back on interrupts, then check if there was
->   	 * more to do. */
-> +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> +	 * either clear the flags bit or point the event index at the next
-> +	 * entry. Always update the event index to keep code simple. */
-> +
-> +	wrap_counter = vq->wrap_counter;
-> +	if (vq->last_used_idx > vq->next_avail_idx)
+>>
+>>
+>>
+>>> -
+>>> -    /* Enable AES/DEA protected key functions by default */
+>>> -    kvm->arch.crypto.aes_kw = 1;
+>>> -    kvm->arch.crypto.dea_kw = 1;
+>>> - get_random_bytes(kvm->arch.crypto.crycb->aes_wrapping_key_mask,
+>>> - sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+>>> - get_random_bytes(kvm->arch.crypto.crycb->dea_wrapping_key_mask,
+>>> - sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>> +    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>>> kvm->arch.crypto.crycb;
+>>> +    kvm_s390_format_crycb(kvm);
+>>>   }
+>>>
+>>>   static void sca_dispose(struct kvm *kvm)
+>>> @@ -2430,17 +2449,24 @@ void kvm_arch_vcpu_postcreate(struct 
+>>> kvm_vcpu *vcpu)
+>>>
+>>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>>>   {
+>>> -    if (!test_kvm_facility(vcpu->kvm, 76))
+>>> +    /*
+>>> +     * If a crypto control block designation (CRYCBD) has not been
+>>> +     * initialized
+>>> +     */
+>>> +    if (vcpu->kvm->arch.crypto.crycbd == 0)
+>>>           return;
+>>>
+>>> -    vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
+>>> +    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>>
+>>> -    if (vcpu->kvm->arch.crypto.aes_kw)
+>>> -        vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>>> -    if (vcpu->kvm->arch.crypto.dea_kw)
+>>> -        vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>>> +    /* If MSAX3 is installed, set up protected key support */
+>>> +    if (test_kvm_facility(vcpu->kvm, 76)) {
+>>> +        vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
+>>>
+>>> -    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>> +        if (vcpu->kvm->arch.crypto.aes_kw)
+>>> +            vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>>> +        if (vcpu->kvm->arch.crypto.dea_kw)
+>>> +            vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>>> +    }
+>>>   }
+>>>
+>>>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+>>
+>>
+>
 
-Should this be ">=" consider rx refill may try to completely fill the ring?
-
-> +		wrap_counter ^= 1;
-> +
-> +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> +			vq->last_used_idx | (wrap_counter << 15));
->   
->   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
->   		virtio_wmb(vq->weak_barriers);
-> -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> +						     VRING_EVENT_F_ENABLE;
->   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
->   							vq->event_flags_shadow);
->   	}
-> @@ -1194,15 +1232,40 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
->   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> +	u16 bufs, used_idx, wrap_counter;
->   
->   	START_USE(vq);
->   
->   	/* We optimistically turn back on interrupts, then check if there was
->   	 * more to do. */
-> +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> +	 * either clear the flags bit or point the event index at the next
-> +	 * entry. Always update the event index to keep code simple. */
-> +
-> +	/* TODO: tune this threshold */
-> +	if (vq->next_avail_idx < vq->last_used_idx)
-> +		bufs = (vq->vring_packed.num + vq->next_avail_idx -
-> +				vq->last_used_idx) * 3 / 4;
-> +	else
-> +		bufs = (vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
-> +
-> +	wrap_counter = vq->wrap_counter;
-> +	if (vq->last_used_idx > vq->next_avail_idx)
-> +		wrap_counter ^= 1;
-> +
-> +	used_idx = vq->last_used_idx + bufs;
-> +	if (used_idx >= vq->vring_packed.num) {
-> +		used_idx -= vq->vring_packed.num;
-> +		wrap_counter ^= 1;
-> +	}
-
-Looks correct but maybe it's better to add some comments for such logic.
-
-> +
-> +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> +			used_idx | (wrap_counter << 15));
->   
->   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
->   		virtio_wmb(vq->weak_barriers);
-> -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> +						     VRING_EVENT_F_ENABLE;
->   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
->   							vq->event_flags_shadow);
->   	}
-> @@ -1869,8 +1932,10 @@ void vring_transport_features(struct virtio_device *vdev)
->   		switch (i) {
->   		case VIRTIO_RING_F_INDIRECT_DESC:
->   			break;
-> +#if 0
->   		case VIRTIO_RING_F_EVENT_IDX:
->   			break;
-> +#endif
-
-Maybe it's time to remove this #if 0.
-
-Thanks
-
->   		case VIRTIO_F_VERSION_1:
->   			break;
->   		case VIRTIO_F_IOMMU_PLATFORM:
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
