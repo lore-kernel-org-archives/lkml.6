@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeEPPGO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:06:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48634 "EHLO mail.kernel.org"
+        id S1752503AbeEPPG3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751290AbeEPPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751273AbeEPPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 11:02:01 -0400
-Message-Id: <20180516150159.757510877@goodmis.org>
+Message-Id: <20180516150159.619411766@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 16 May 2018 11:00:16 -0400
+Date: Wed, 16 May 2018 11:00:15 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -22,40 +22,77 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v3 04/14] tracing: Add brackets in ftrace event dynamic arrays
+Subject: [PATCH v3 03/14] tracing: Have event_trace_init() called by trace_init_tracefs()
 References: <20180516150012.135869655@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0004-tracing-Add-brackets-in-ftrace-event-dynamic-arrays.patch
+Content-Disposition: inline; filename=0003-tracing-Have-event_trace_init-called-by-trace_init_t.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-The dynamic arrays defined for ftrace internal events, such as the buf field
-for trace_marker (ftrace/print) did not have brackets which makes the filter
-code not accept it as a string. This is not currently an issues because the
-filter code doesn't do anything for these events, but they will in the
-future, and this needs to be fixed for when it does.
+Instead of having both trace_init_tracefs() and event_trace_init() be called
+by fs_initcall() routines, have event_trace_init() called directly by
+trace_init_tracefs(). This will guarantee order of how the events are
+created with respect to the rest of the ftrace infrastructure. This is
+needed to be able to assoctiate event files with ftrace internal events,
+such as the trace_marker.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace.c        | 2 ++
+ kernel/trace/trace.h        | 1 +
+ kernel/trace/trace_events.c | 4 +---
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
-index 548e62eb5c46..d842f1eadfe5 100644
---- a/kernel/trace/trace_export.c
-+++ b/kernel/trace/trace_export.c
-@@ -117,7 +117,7 @@ static void __always_unused ____ftrace_check_##name(void)		\
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 414d7210b2ec..e0d6ffb76985 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8111,6 +8111,8 @@ static __init int tracer_init_tracefs(void)
+ 	if (IS_ERR(d_tracer))
+ 		return 0;
  
- #undef __dynamic_array
- #define __dynamic_array(type, item)					\
--	ret = trace_define_field(event_call, #type, #item,		\
-+	ret = trace_define_field(event_call, #type "[]", #item,  \
- 				 offsetof(typeof(field), item),		\
- 				 0, is_signed_type(type), filter_type);\
- 	if (ret)							\
++	event_trace_init();
++
+ 	init_tracer_tracefs(&global_trace, d_tracer);
+ 	ftrace_init_tracefs_toplevel(&global_trace, d_tracer);
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 8ecca43d6aea..2414fd72dedd 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1451,6 +1451,7 @@ trace_find_event_field(struct trace_event_call *call, char *name);
+ extern void trace_event_enable_cmd_record(bool enable);
+ extern void trace_event_enable_tgid_record(bool enable);
+ 
++extern int event_trace_init(void);
+ extern int event_trace_add_tracer(struct dentry *parent, struct trace_array *tr);
+ extern int event_trace_del_tracer(struct trace_array *tr);
+ 
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index caf76355f0a3..5b647904a65b 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -3144,7 +3144,7 @@ static __init int event_trace_enable_again(void)
+ 
+ early_initcall(event_trace_enable_again);
+ 
+-static __init int event_trace_init(void)
++__init int event_trace_init(void)
+ {
+ 	struct trace_array *tr;
+ 	struct dentry *d_tracer;
+@@ -3189,8 +3189,6 @@ void __init trace_event_init(void)
+ 	event_trace_enable();
+ }
+ 
+-fs_initcall(event_trace_init);
+-
+ #ifdef CONFIG_FTRACE_STARTUP_TEST
+ 
+ static DEFINE_SPINLOCK(test_spinlock);
 -- 
 2.17.0
