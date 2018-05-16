@@ -1,53 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeEPH36 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:29:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35174 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbeEPH35 (ORCPT
+        id S1752214AbeEPHbZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:31:25 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44710 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbeEPHbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:29:57 -0400
-Date: Wed, 16 May 2018 09:29:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
-        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
-        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-Message-ID: <20180516072929.GN12235@hirez.programming.kicks-ass.net>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
- <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
- <20180516071640.GU12217@hirez.programming.kicks-ass.net>
+        Wed, 16 May 2018 03:31:22 -0400
+X-Google-Smtp-Source: AB8JxZpTNgfQE91PYjUps0AHQkT6GHoWJUZt0zPgPaMqZlrmy5qnIFoRufKGw1MKA5TTAlihdKX4mg==
+Subject: Re: [Intel-gfx] [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to
+ intel_hdmi
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        linux-media@vger.kernel.org
+References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
+ <1526395342-15481-3-git-send-email-narmstrong@baylibre.com>
+ <20180515153521.GB23723@intel.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <aff8c86f-b282-c901-5ef5-c5ee334aeedc@baylibre.com>
+Date: Wed, 16 May 2018 09:31:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516071640.GU12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180515153521.GB23723@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 09:16:40AM +0200, Peter Zijlstra wrote:
-> On Tue, May 15, 2018 at 09:49:03PM -0700, Srinivas Pandruvada wrote:
-> > intel_pstate has two operating modes: active and passive. In "active"
-> > mode, the in-built scaling governor is used and in "passive" mode,
-> > the driver can be used with any governor like "schedutil". In "active"
-> > mode the utilization values from schedutil is not used and there is
-> > a requirement from high performance computing use cases, not to read
-> > any APERF/MPERF MSRs. In this case no need to use CPU cycles for
-> > frequency invariant accounting by reading APERF/MPERF MSRs.
-> > With this change frequency invariant account is only enabled in
-> > "passive" mode.
+Hi Ville,
+
+On 15/05/2018 17:35, Ville Syrjälä wrote:
+> On Tue, May 15, 2018 at 04:42:19PM +0200, Neil Armstrong wrote:
+>> This patchs adds the cec_notifier feature to the intel_hdmi part
+>> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+>> between each HDMI ports.
+>> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+>> to an eventual CEC adapter.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/i915/Kconfig      |  1 +
+>>  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
+>>  drivers/gpu/drm/i915/intel_hdmi.c | 12 ++++++++++++
+>>  3 files changed, 15 insertions(+)
+>>
+
+[..]
+
+>>  }
+>>  
+>> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
+>>  
+>>  static void intel_hdmi_destroy(struct drm_connector *connector)
+>>  {
+>> +	if (intel_attached_hdmi(connector)->notifier)
+>> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
+>>  	kfree(to_intel_connector(connector)->detect_edid);
+>>  	drm_connector_cleanup(connector);
+>>  	kfree(connector);
+>> @@ -2358,6 +2366,10 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+>>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+>>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+>>  	}
+>> +
+>> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev, connector->name);
 > 
-> WTH is active/passive? Is passive when we select performance governor?
+> What are we doing with the connector name here? Those are not actually
+> guaranteed to be stable, and any change in the connector probe order
+> may cause the name to change.
 
-Bah, I cannot read it seems. active is when we use the intel_pstate
-governor and passive is when we use schedutil and only use intel_pstate
-as a driver.
+The i915 driver can expose multiple HDMI connectors, but each connected will
+have a different EDID and CEC physical address, so we will need a different notifier
+for each connector.
 
-> Also; you have to explain why using APERF/MPERF is bad in that case. Why
-> do they care if we read those MSRs during the tick?
+The connector name is DRM dependent, but user-space actually uses this name for
+operations, so I supposed it was kind of stable.
 
-That still stands.. this needs to be properly explained.
+Anyway, is there another stable id/name/whatever that can be used to make a name to
+distinguish the HDMI connectors ?
+
+Neil
+
+> 
+>> +	if (!intel_hdmi->notifier)
+>> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
+>>  }
+>>  
+>>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+>> -- 
+>> 2.7.4
+>>
+>> _______________________________________________
+>> Intel-gfx mailing list
+>> Intel-gfx@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+> 
