@@ -1,76 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeEPUY5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:24:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38273 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeEPUYz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:24:55 -0400
-Date: Wed, 16 May 2018 13:24:45 -0700
-From: tip-bot for Mathieu Malaterre <tipbot@zytor.com>
-Message-ID: <tip-db6f9e55c8d80a4a1a329b9b68a1d370bffb6aad@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, sboyd@kernel.org,
-        john.stultz@linaro.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        malat@debian.org
-Reply-To: malat@debian.org, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, john.stultz@linaro.org,
-        sboyd@kernel.org
-In-Reply-To: <20180516195943.31924-1-malat@debian.org>
-References: <20180516195943.31924-1-malat@debian.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] clocksource: Move inline keyword to the beginning
- of function declarations
-Git-Commit-ID: db6f9e55c8d80a4a1a329b9b68a1d370bffb6aad
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1751481AbeEPUZD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:25:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:54416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750847AbeEPUZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 16:25:00 -0400
+Date: Wed, 16 May 2018 15:24:58 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] coresight: documentation: update sysfs section
+Message-Id: <20180516152458.d392b0d1e09393da30e2aeb6@arm.com>
+In-Reply-To: <20180516131823.4b1a3ecb@lwn.net>
+References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
+        <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
+        <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
+        <20180516131823.4b1a3ecb@lwn.net>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  db6f9e55c8d80a4a1a329b9b68a1d370bffb6aad
-Gitweb:     https://git.kernel.org/tip/db6f9e55c8d80a4a1a329b9b68a1d370bffb6aad
-Author:     Mathieu Malaterre <malat@debian.org>
-AuthorDate: Wed, 16 May 2018 21:59:43 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 16 May 2018 22:21:32 +0200
+On Wed, 16 May 2018 13:18:23 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-clocksource: Move inline keyword to the beginning of function declarations
+> On Mon, 14 May 2018 12:19:59 -0500
+> Kim Phillips <kim.phillips@arm.com> wrote:
+> 
+> > - Align and show updated ls devices output from the TC2, based on
+> >   current driver
+> > 
+> > - Provide an example from an ETMv4 based system (Juno)
+> > 
+> > - Reflect changes to the way the RAM write pointer is accessed since
+> >   it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
+> >   management entries").
+> 
+> So I was going to apply this, but it's been pretty badly corrupted by
+> your mailer.  Could I ask you to retry, please?
 
-The inline keyword was not at the beginning of the function declarations.
-Fix the following warnings triggered when using W=1:
+I had sent a v3 that corrected the issue, in the same thread, here:
 
-  kernel/time/clocksource.c:456:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
-  kernel/time/clocksource.c:457:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
+https://lkml.org/lkml/2018/5/14/1190
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/20180516195943.31924-1-malat@debian.org
+Mathieu acked that one.
 
----
- kernel/time/clocksource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 56fd2239674f..f89a78e2792b 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -442,8 +442,8 @@ static inline int __clocksource_watchdog_work(void) { return 0; }
- static bool clocksource_is_watchdog(struct clocksource *cs) { return false; }
- void clocksource_mark_unstable(struct clocksource *cs) { }
- 
--static void inline clocksource_watchdog_lock(unsigned long *flags) { }
--static void inline clocksource_watchdog_unlock(unsigned long *flags) { }
-+static inline void clocksource_watchdog_lock(unsigned long *flags) { }
-+static inline void clocksource_watchdog_unlock(unsigned long *flags) { }
- 
- #endif /* CONFIG_CLOCKSOURCE_WATCHDOG */
- 
+Kim
