@@ -1,203 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeEPVOT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:14:19 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:45085 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeEPVOQ (ORCPT
+        id S1752389AbeEPVOr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:14:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56618 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeEPVOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:14:16 -0400
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-References: <20180515154352.20263-1-dmurphy@ti.com>
- <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
- <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
- <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
- <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <52380a68-9e33-f52a-134d-5d4a928b5383@ti.com>
-Date: Wed, 16 May 2018 16:13:57 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 16 May 2018 17:14:45 -0400
 MIME-Version: 1.0
-In-Reply-To: <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 14:14:43 -0700
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH v2 10/10] scsi: ufs: Add clock ungating to a separate
+ workqueue
+In-Reply-To: <0bfae28dbfb4cf86e80435639b92c7f4023041dc.1525343531.git.asutoshd@codeaurora.org>
+References: <cover.1525343531.git.asutoshd@codeaurora.org>
+ <0bfae28dbfb4cf86e80435639b92c7f4023041dc.1525343531.git.asutoshd@codeaurora.org>
+Message-ID: <9b3fe3b9f1bd2f7c36dcd840acf7848d@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek and Andy
+On 2018-05-03 04:07, Asutosh Das wrote:
+> From: Vijay Viswanath <vviswana@codeaurora.org>
+> 
+> UFS driver can receive a request during memory reclaim by kswapd.
+> So when ufs driver puts the ungate work in queue, and if there are no
+> idle workers, kthreadd is invoked to create a new kworker. Since
+> kswapd task holds a mutex which kthreadd also needs, this can cause
+> a deadlock situation. So ungate work must be done in a separate
+> work queue with WQ_MEM_RECLAIM flag enabled.
+> Such a workqueue will have a rescue thread which will be called
+> when the above deadlock condition is possible.
+> 
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 11 ++++++++++-
+>  drivers/scsi/ufs/ufshcd.h |  1 +
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 557d538..3be61b7 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1483,7 +1483,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
+>  		hba->clk_gating.state = REQ_CLKS_ON;
+>  		trace_ufshcd_clk_gating(dev_name(hba->dev),
+>  					hba->clk_gating.state);
+> -		schedule_work(&hba->clk_gating.ungate_work);
+> +		queue_work(hba->clk_gating.clk_gating_workq,
+> +			   &hba->clk_gating.ungate_work);
+>  		/*
+>  		 * fall through to check if we should wait for this
+>  		 * work to be done or not.
+> @@ -1669,6 +1670,8 @@ static ssize_t
+> ufshcd_clkgate_enable_store(struct device *dev,
+> 
+>  static void ufshcd_init_clk_gating(struct ufs_hba *hba)
+>  {
+> +	char wq_name[sizeof("ufs_clk_gating_00")];
+> +
+>  	if (!ufshcd_is_clkgating_allowed(hba))
+>  		return;
+> 
+> @@ -1676,6 +1679,11 @@ static void ufshcd_init_clk_gating(struct 
+> ufs_hba *hba)
+>  	INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
+>  	INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
+> 
+> +	snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
+> +		 hba->host->host_no);
+> +	hba->clk_gating.clk_gating_workq = alloc_ordered_workqueue(wq_name,
+> +							   WQ_MEM_RECLAIM);
+> +
+>  	hba->clk_gating.is_enabled = true;
+> 
+>  	hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
+> @@ -1703,6 +1711,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba 
+> *hba)
+>  	device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
+>  	cancel_work_sync(&hba->clk_gating.ungate_work);
+>  	cancel_delayed_work_sync(&hba->clk_gating.gate_work);
+> +	destroy_workqueue(hba->clk_gating.clk_gating_workq);
+>  }
+> 
+>  /* Must be called with host lock acquired */
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 76c31d5..2e6bdc0 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -361,6 +361,7 @@ struct ufs_clk_gating {
+>  	struct device_attribute enable_attr;
+>  	bool is_enabled;
+>  	int active_reqs;
+> +	struct workqueue_struct *clk_gating_workq;
+>  };
+> 
+>  struct ufs_saved_pwr_info {
 
-On 05/16/2018 04:02 PM, Jacek Anaszewski wrote:
-> Hi Andy and Dan,
-> 
-
-I will make all the changes then.  I don't want to go through and ack each one.
-
-Thanks for the guidance and the reviews.
-
-It will take a couple days to find all the comments and get this all fixed up.
-
-Dan
-
-> On 05/16/2018 12:24 AM, Andy Shevchenko wrote:
->> On Wed, May 16, 2018 at 1:08 AM, Dan Murphy <dmurphy@ti.com> wrote:
->>> On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
->>>> On Tue, May 15, 2018 at 6:43 PM, Dan Murphy <dmurphy@ti.com> wrote:
->>
->>>>> +       depends on LEDS_CLASS && I2C && OF
->>>>
->>>> What is OF specific in this driver?
->>>
->>> as3645a_led_class_setup has a "of" dependency
->>
->> So what? Is it called from this driver or?
->>
->>
->>>>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
->>>>> +       { 40000, 0x00 },
->>>>> +       { 80000, 0x01 },
->>>>> +       { 120000, 0x02 },
->>>>> +       { 160000, 0x03 },
->>>>> +       { 200000, 0x04 },
->>>>> +       { 240000, 0x05 },
->>>>> +       { 280000, 0x06 },
->>>>> +       { 320000, 0x07 },
->>>>> +       { 360000, 0x08 },
->>>>> +       { 400000, 0x09 },
->>>>> +       { 600000, 0x0a },
->>>>> +       { 800000, 0x0b },
->>>>> +       { 1000000, 0x0c },
->>>>> +       { 1200000, 0x0d },
->>>>> +       { 1400000, 0x0e },
->>>>> +       { 1600000, 0x0f },
->>>>
->>>> Huh?!
->>>
->>> Please give comments that actually mean something other wise I will opt to ignore them.
->>
->> I did below.
->>
->>>> strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
->>>
->>> Not sure what equation you are trying to point out here.  But if you are trying to apply
->>> a timeout step you cannot do this with this part.  As pointed out in the DT doc the timeout
->>> step is not linear.
->>
->> Yeah, I know people are more than often too lazy to think.
->>
->> if (x < 9)
->>   strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
->> else
->>   strobe_timeout = (400 + (x - 9) * 200) * MSECS_IN_SEC;
->>
-> 
-> I like the idea.
-> 
->>>>> +               brightness_val = (brightness/2);
->>>>
->>>> Spaces.
->>>
->>> Not sure what this means checkpatch was clean
->>
->> Even besides missed whispaces it has redundant parens.
->>
->> checkpatch is not a silver bullet to get your code clean and nice.
->>
->>>> This is return led_...();
->>>
->>> That is a preference.  It does not have to be that way.
-> 
-> I missed that. Dan, please follow Andy's advise.
-> 
->>
->> What do you mean? We do not appreciate +LOCs for no (or even nagative!) benefit.
->>
->>>>> +               ret = of_property_read_string(led->led_node, "label", &name);
->>>>
->>>> device_property_...();
->>>
->>> It can be if the maintainer is requesting this.
->>
->> Jacek, if you need rationale behind this comment it's here: the driver
->> has nothing DT specific and getting rid of OF centric programming
->> allows to reuse the driver on non-DT platforms w/o touching a source
->> code.
-> 
-> It has an added value, so yes, let's use it as a standard approach
-> from now on.
-> 
->>> Is the trend to move to these functions?
->>
->> See above.
->>
->>> Most drivers use the "of" calls.
->>
->> So what?
->>
->>
->>>>> +               if (!ret)
->>>>
->>>> if (ret) sounds more natural. And better just to split
->>>>
->>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>> +                               "%s:%s", led->led_node->name, name);
->>>>> +               else
->>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>> +                               "%s:torch", led->led_node->name);
->>>>
->>>> const char *tmp;
->>>>
->>>> ret = device_property_read_...(&tmp);
->>>> if (ret)
->>>>   tmp = ...
->>>> sprintf(...);
-> 
-> We're no longer taking devicename section of a LED class device name
-> from DT, so it will look differently anyway.
-> 
->> No comments on this?
->>
->>>>> +       led = devm_kzalloc(&client->dev,
->>>>> +                           sizeof(struct lm3601x_led), GFP_KERNEL);
->>>>
->>>> sizeof(*led) and one line in the result
->>
->> And this?
-> 
-> Ack.
-> 
->>
->>>>> +       { },
->>>>
->>>> Terminators better w/o comma.
->>>
->>> Looking at other drivers adding comma's on the sentinel is accepted.  See the as3645a driver
->>
->> So what?
->>
->> Terminator at compile time even better.
->>
->>>>> +       {},
->>>>
->>>> Ditto.
->>>
->>> See above
->>
->> See above.
->>
-> 
-
+Looks good to me.
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 
 -- 
-------------------
-Dan Murphy
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
