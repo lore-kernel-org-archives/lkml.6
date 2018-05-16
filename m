@@ -1,107 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeEPNGq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:06:46 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52960 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPNGo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:06:44 -0400
-Subject: Re: INFO: task hung in blk_queue_enter
-To: syzbot <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
-        linux-block@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Dan Williams <dan.j.williams@intel.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        dvyukov@google.com, Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Martin Steigerwald <martin@lichtvoll.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-References: <0000000000009b212b056ae6dbad@google.com>
- <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
-Date: Wed, 16 May 2018 22:05:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1752528AbeEPNHW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:07:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751151AbeEPNHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:07:21 -0400
+Date: Wed, 16 May 2018 22:07:16 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2 13/14] tracing/selftest: Add selftests to test
+ trace_marker histogram triggers
+Message-Id: <20180516220716.60174e9edd8d9f970fcd37e1@kernel.org>
+In-Reply-To: <20180514205959.230719465@goodmis.org>
+References: <20180514205845.017925650@goodmis.org>
+        <20180514205959.230719465@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tetsuo Handa wrote:
-> I couldn't check whether freeze_depth in blk_freeze_queue_start() was 1,
-> but presumably q->mq_freeze_depth > 0 because syz-executor7(PID=5010) is
-> stuck at wait_event() in blk_queue_enter().
+On Mon, 14 May 2018 16:58:58 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Since flags == 0, preempt == false. Since stuck at wait_event(), success == false.
-> Thus, atomic_read(&q->mq_freeze_depth) > 0 if blk_queue_dying(q) == false. And I
-> guess blk_queue_dying(q) == false because we are just trying to freeze/unfreeze.
+> Add a couple of tests that test the trace_marker histogram triggers.
+> One does a straight histogram test, the other will create a synthetic event
+> and test the latency between two different writes (using filters to
+> differentiate between them).
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  .../trigger/trigger-trace-marker-synthetic.tc | 66 +++++++++++++++++++
+>  .../test.d/trigger/trigger-trace-marker.tc    | 49 ++++++++++++++
+>  2 files changed, 115 insertions(+)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> new file mode 100644
+> index 000000000000..8e7a043da7fb
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+
+OK, since the synthetic event may need histogram support, so this testname is OK.
+
+
+> @@ -0,0 +1,66 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: event trigger - test histogram with synthetic event
+> +# flags:
+> +
+> +do_reset() {
+> +    reset_trigger
+> +    echo > set_event
+> +    echo > synthetic_events
+> +    clear_trace
+> +}
+> +
+> +fail() { #msg
+> +    do_reset
+> +    echo $1
+> +    exit_fail
+> +}
+> +
+> +if [ ! -f set_event ]; then
+> +    echo "event tracing is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f synthetic_events ]; then
+> +    echo "synthetic events not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -d events/ftrace/print ]; then
+> +    echo "event trace_marker is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f events/ftrace/print/trigger ]; then
+> +    echo "event trigger is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f events/ftrace/print/hist ]; then
+> +    echo "hist trigger is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +do_reset
+> +
+> +echo "Test histogram trace_marker to trace_marker latency histogram trigger"
+> +
+> +echo 'latency u64 lat' > synthetic_events
+> +echo 'hist:keys=common_pid:ts0=common_timestamp.usecs if buf == "start"' > events/ftrace/print/trigger
+> +echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(ftrace.print).latency($lat) if buf == "end"' >> events/ftrace/print/trigger
+> +echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
+> +echo -n "start" > trace_marker
+> +echo -n "end" > trace_marker
+
+Ah, this is a great example how we can use this combination :D
+
+> +
+> +cnt=`grep 'hitcount: *1$' events/ftrace/print/hist | wc -l`
+> +
+> +if [ $cnt -ne 2 ]; then
+> +    fail "hist trace_marker trigger did not trigger correctly"
+> +fi
+> +
+> +grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
+> +    fail "hist trigger did not trigger "
+> +
+> +do_reset
+> +
+> +exit 0
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+> new file mode 100644
+> index 000000000000..48e7ac1ccbc1
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+
+But this test actually kicks histogram, maybe trigger-trace-marker-hist.tc will be better, since we may need to add a simpler testcase just for checking whether trace-marker works with some actions (e.g. enable/disable other events).
+
+Thank you,
+
+> @@ -0,0 +1,49 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: event trigger - test histogram trigger
+> +# flags: instance
+> +
+> +do_reset() {
+> +    reset_trigger
+> +    echo > set_event
+> +    clear_trace
+> +}
+> +
+> +fail() { #msg
+> +    do_reset
+> +    echo $1
+> +    exit_fail
+> +}
+> +
+> +if [ ! -f set_event ]; then
+> +    echo "event tracing is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -d events/ftrace/print ]; then
+> +    echo "event trace_marker is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f events/ftrace/print/trigger ]; then
+> +    echo "event trigger is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f events/ftrace/print/hist ]; then
+> +    echo "hist trigger is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +do_reset
+> +
+> +echo "Test histogram trace_marker tigger"
+> +
+> +echo 'hist:keys=common_pid' > events/ftrace/print/trigger
+> +for i in `seq 1 10` ; do echo "hello" > trace_marker; done
+> +grep 'hitcount: *10$' events/ftrace/print/hist > /dev/null || \
+> +    fail "hist trigger did not trigger correct times on trace_marker"
+> +
+> +do_reset
+> +
+> +exit 0
+> -- 
+> 2.17.0
+> 
 > 
 
-I was able to reproduce the hung up using modified reproducer, and got values
-using below debug printk() patch.
 
-  --- a/block/blk-core.c
-  +++ b/block/blk-core.c
-  @@ -950,10 +950,12 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
-   		 */
-   		smp_rmb();
-   
-  -		wait_event(q->mq_freeze_wq,
-  -			   (atomic_read(&q->mq_freeze_depth) == 0 &&
-  -			    (preempt || !blk_queue_preempt_only(q))) ||
-  -			   blk_queue_dying(q));
-  +		while (wait_event_timeout(q->mq_freeze_wq,
-  +					  (atomic_read(&q->mq_freeze_depth) == 0 &&
-  +					   (preempt || !blk_queue_preempt_only(q))) ||
-  +					  blk_queue_dying(q), 10 * HZ) == 0)
-  +			printk("%s(%u): q->mq_freeze_depth=%d preempt=%d blk_queue_preempt_only(q)=%d blk_queue_dying(q)=%d\n",
-  +			       current->comm, current->pid, atomic_read(&q->mq_freeze_depth), preempt, blk_queue_preempt_only(q), blk_queue_dying(q));
-   		if (blk_queue_dying(q))
-   			return -ENODEV;
-   	}
-
-[   75.869126] print_req_error: I/O error, dev loop0, sector 0
-[   85.983146] a.out(8838): q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
-[   96.222884] a.out(8838): q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
-[  106.463322] a.out(8838): q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
-[  116.702912] a.out(8838): q->mq_freeze_depth=1 preempt=0 blk_queue_preempt_only(q)=0 blk_queue_dying(q)=0
-
-One ore more threads are waiting for q->mq_freeze_depth to become 0. But the
-thread who incremented q->mq_freeze_depth at blk_freeze_queue_start(q) from
-blk_freeze_queue() is waiting at blk_mq_freeze_queue_wait(). Therefore,
-atomic_read(&q->mq_freeze_depth) == 0 condition for wait_event() in
-blk_queue_enter() will never be satisfied. But what does that wait_event()
-want to do? Isn't "start freezing" a sort of blk_queue_dying(q) == true?
-Since percpu_ref_tryget_live(&q->q_usage_counter) failed and the queue is
-about to be frozen, shouldn't we treat atomic_read(&q->mq_freeze_depth) != 0
-as if blk_queue_dying(q) == true? That is, something like below:
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 85909b4..59e2496 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -951,10 +951,10 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 		smp_rmb();
- 
- 		wait_event(q->mq_freeze_wq,
--			   (atomic_read(&q->mq_freeze_depth) == 0 &&
--			    (preempt || !blk_queue_preempt_only(q))) ||
-+			   atomic_read(&q->mq_freeze_depth) ||
-+			   (preempt || !blk_queue_preempt_only(q)) ||
- 			   blk_queue_dying(q));
--		if (blk_queue_dying(q))
-+		if (atomic_read(&q->mq_freeze_depth) || blk_queue_dying(q))
- 			return -ENODEV;
- 	}
- }
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
