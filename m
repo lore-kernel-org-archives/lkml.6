@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeEPLS4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:18:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46166 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeEPLSy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:18:54 -0400
-Date: Wed, 16 May 2018 04:18:51 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 01/14] orangefs: don't return errno values from ->fault
-Message-ID: <20180516111851.GA20670@bombadil.infradead.org>
-References: <20180516054348.15950-1-hch@lst.de>
- <20180516054348.15950-2-hch@lst.de>
+        id S1752506AbeEPLVe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:21:34 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39796 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751182AbeEPLVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:21:33 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <tklauser@distanz.ch>, <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: ethoc: Remove useless test before clk_disable_unprepare
+Date: Wed, 16 May 2018 19:18:22 +0800
+Message-ID: <20180516111822.26440-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516054348.15950-2-hch@lst.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:43:35AM +0200, Christoph Hellwig wrote:
-> +	rc = orangefs_inode_getattr(file->f_mapping->host, 0, 1, STATX_SIZE);
->  	if (rc) {
->  		gossip_err("%s: orangefs_inode_getattr failed, "
->  		    "rc:%d:.\n", __func__, rc);
-> -		return rc;
-> +		return VM_FAULT_SIGBUS;
+clk_disable_unprepare() already checks that the clock pointer is valid.
+No need to test it before calling it.
 
-Nope.  orangefs_inode_getattr can return -ENOMEM.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/ethoc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
->  	}
->  	return filemap_fault(vmf);
->  }
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/net/ethernet/ethoc.c b/drivers/net/ethernet/ethoc.c
+index 8bb0db9..00a5727 100644
+--- a/drivers/net/ethernet/ethoc.c
++++ b/drivers/net/ethernet/ethoc.c
+@@ -1246,8 +1246,7 @@ static int ethoc_probe(struct platform_device *pdev)
+ 	mdiobus_unregister(priv->mdio);
+ 	mdiobus_free(priv->mdio);
+ free2:
+-	if (priv->clk)
+-		clk_disable_unprepare(priv->clk);
++	clk_disable_unprepare(priv->clk);
+ free:
+ 	free_netdev(netdev);
+ out:
+@@ -1271,8 +1270,7 @@ static int ethoc_remove(struct platform_device *pdev)
+ 			mdiobus_unregister(priv->mdio);
+ 			mdiobus_free(priv->mdio);
+ 		}
+-		if (priv->clk)
+-			clk_disable_unprepare(priv->clk);
++		clk_disable_unprepare(priv->clk);
+ 		unregister_netdev(netdev);
+ 		free_netdev(netdev);
+ 	}
+-- 
+2.7.0
