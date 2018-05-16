@@ -1,103 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeEPUZz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:25:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58669 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbeEPUZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:25:54 -0400
-Date: Wed, 16 May 2018 22:25:52 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1751395AbeEPU1s (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:27:48 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34371 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeEPU1q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 16:27:46 -0400
+X-Google-Smtp-Source: AB8JxZqIfaWG0FMXguOb2wmUXL8pCKMtWrDZnwD4VGNkzHsuS71iAHnbLjMRiN9RTEWE8cQIhkoOFA==
+From: Mathieu Malaterre <malat@debian.org>
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] rtc: stm32: rework register management to prepare
- other version of RTC
-Message-ID: <20180516202552.GA24496@piout.net>
-References: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
- <1525880770-22263-2-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH] bpf: add __printf verification to bpf_verifier_vlog
+Date: Wed, 16 May 2018 22:27:41 +0200
+Message-Id: <20180516202741.20861-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525880770-22263-2-git-send-email-amelie.delaunay@st.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+__printf is useful to verify format and arguments. ‘bpf_verifier_vlog’
+function is used twice in verifier.c in both cases the caller function
+already uses the __printf gcc attribute.
 
-On 09/05/2018 17:46:08+0200, Amelie Delaunay wrote:
->  static void stm32_rtc_wpr_unlock(struct stm32_rtc *rtc)
->  {
-> -	writel_relaxed(RTC_WPR_1ST_KEY, rtc->base + STM32_RTC_WPR);
-> -	writel_relaxed(RTC_WPR_2ND_KEY, rtc->base + STM32_RTC_WPR);
-> +	struct stm32_rtc_registers regs = rtc->data->regs;
+Remove the following warning, triggered with W=1:
 
-regs should probably be a pointer to ensure that no copy is made. I've
-actually checked and it doesn't make a difference because gcc is smart
-enough to not make the copy.
+  kernel/bpf/verifier.c:176:2: warning: function might be possible candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
 
-> +
-> +	writel_relaxed(RTC_WPR_1ST_KEY, rtc->base + regs.wpr);
-> +	writel_relaxed(RTC_WPR_2ND_KEY, rtc->base + regs.wpr);
->  }
->  
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ include/linux/bpf_verifier.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-...
-
->  static irqreturn_t stm32_rtc_alarm_irq(int irq, void *dev_id)
->  {
->  	struct stm32_rtc *rtc = (struct stm32_rtc *)dev_id;
-> -	unsigned int isr, cr;
-> +	struct stm32_rtc_registers regs = rtc->data->regs;
-> +	struct stm32_rtc_events evts = rtc->data->events;
-
-Ditto for evts.
-
-> +	unsigned int status, cr;
->  
->  	mutex_lock(&rtc->rtc_dev->ops_lock);
->  
-> -	isr = readl_relaxed(rtc->base + STM32_RTC_ISR);
-> -	cr = readl_relaxed(rtc->base + STM32_RTC_CR);
-> +	status = readl_relaxed(rtc->base + regs.isr);
-> +	cr = readl_relaxed(rtc->base + regs.cr);
->  
-> -	if ((isr & STM32_RTC_ISR_ALRAF) &&
-> +	if ((status & evts.alra) &&
->  	    (cr & STM32_RTC_CR_ALRAIE)) {
->  		/* Alarm A flag - Alarm interrupt */
->  		dev_dbg(&rtc->rtc_dev->dev, "Alarm occurred\n");
-
-...
-
-> @@ -641,7 +710,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
->  
->  	/*
->  	 * After a system reset, RTC_ISR.INITS flag can be read to check if
-> -	 * the calendar has been initalized or not. INITS flag is reset by a
-> +	 * the calendar has been initialized or not. INITS flag is reset by a
->  	 * power-on reset (no vbat, no power-supply). It is not reset if
->  	 * rtc_ck parent clock has changed (so RTC prescalers need to be
->  	 * changed). That's why we cannot rely on this flag to know if RTC
-> @@ -666,7 +735,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
->  			 "alarm won't be able to wake up the system");
->  
->  	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
-> -			&stm32_rtc_ops, THIS_MODULE);
-> +						&stm32_rtc_ops, THIS_MODULE);
->  	if (IS_ERR(rtc->rtc_dev)) {
->  		ret = PTR_ERR(rtc->rtc_dev);
->  		dev_err(&pdev->dev, "rtc device registration failed, err=%d\n",
-
-Those two changes should go into a separate cleanup patch.
-
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 7e61c395fddf..ebf78f8ddfa1 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -197,8 +197,8 @@ struct bpf_verifier_env {
+ 	u32 subprog_cnt;
+ };
+ 
+-void bpf_verifier_vlog(struct bpf_verifier_log *log, const char *fmt,
+-		       va_list args);
++__printf(2, 0) void bpf_verifier_vlog(struct bpf_verifier_log *log,
++				      const char *fmt, va_list args);
+ __printf(2, 3) void bpf_verifier_log_write(struct bpf_verifier_env *env,
+ 					   const char *fmt, ...);
+ 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.11.0
