@@ -1,58 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751328AbeEPUcn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:32:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58997 "EHLO mail.bootlin.com"
+        id S1751395AbeEPUlo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:41:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49256 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeEPUcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:32:41 -0400
-Date: Wed, 16 May 2018 22:32:40 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] rtc: stm32: add stm32mp1 rtc support
-Message-ID: <20180516203240.GB24496@piout.net>
-References: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
- <1525880770-22263-4-git-send-email-amelie.delaunay@st.com>
+        id S1751033AbeEPUlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 16:41:44 -0400
+Subject: Re: [PATCH] mm: save two stranding bit in gfp_mask
+To: Shakeel Butt <shakeelb@google.com>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20180516202023.167627-1-shakeelb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <90167afa-ecfb-c5ef-3554-ddb7e6ac9728@suse.cz>
+Date: Wed, 16 May 2018 22:39:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525880770-22263-4-git-send-email-amelie.delaunay@st.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180516202023.167627-1-shakeelb@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 17:46:10+0200, Amelie Delaunay wrote:
->  struct stm32_rtc_registers {
-> @@ -86,6 +98,9 @@ struct stm32_rtc_registers {
->  	u8 prer;
->  	u8 alrmar;
->  	u8 wpr;
-> +	u8 sr;
-> +	u8 scr;
-> +	u16 verr;
+On 05/16/2018 10:20 PM, Shakeel Butt wrote:
+> ___GFP_COLD and ___GFP_OTHER_NODE were removed but their bits were
+> stranded. Slide existing gfp masks to make those two bits available.
 
-All those offsets should probably be u16 or u32...
+Well, there are already available for hypothetical new flags. Is there
+anything that benefits from a smaller __GFP_BITS_SHIFT? Otherwise no big
+objection, besides the churn. Maybe move the last (well, before
+NOLOCKDEP) two flags to the "holes" instead of shifting everything? That
+would be closer to what compaction does...
+There's also an ongoing effort to make the lowest 4 flags a number,
+would that mean more free bits and churn soon?
+I would also dislike having to learn new numbers for typical flag
+combinations to recognize them in oom reports/alloc failures, but
+somebody had the great idea to print those symbolically, so nevermind.
 
-> +	if (regs.verr != UNDEF_REG) {
+Vlastimil
 
-...else, this is not working, as reported by kbuild
-
-> +		u32 ver = readl_relaxed(rtc->base + regs.verr);
-> +
-> +		dev_info(&pdev->dev, "registered rev:%d.%d\n",
-> +			 (ver >> STM32_RTC_VERR_MAJREV_SHIFT) & 0xF,
-> +			 (ver >> STM32_RTC_VERR_MINREV_SHIFT) & 0xF);
-> +	}
-> +
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
