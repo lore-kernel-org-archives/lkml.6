@@ -1,45 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeEPMCS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:02:18 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:55233 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeEPMCR (ORCPT
+        id S1752591AbeEPMCb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:02:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751786AbeEPMC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:02:17 -0400
-X-Google-Smtp-Source: AB8JxZpP4sdZ5IJMKp2ifrCiLSUTUSCFdh8W0DBogTH5KjzI9CjvlIlKx1Q6nAduyWoPgzBiFaFg83Gx32w9OTqE7Tc=
-MIME-Version: 1.0
-In-Reply-To: <1525135334-28506-3-git-send-email-matheus@castello.eng.br>
-References: <1525030092-3643-3-git-send-email-matheus@castello.eng.br>
- <1525135334-28506-1-git-send-email-matheus@castello.eng.br> <1525135334-28506-3-git-send-email-matheus@castello.eng.br>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 14:02:15 +0200
-Message-ID: <CACRpkdaz01EPL2JBzuXW=qmi68u3oPwGHZcXyZsQAExgxkxD2A@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] pinctrl: bcm2835: Add support for output-low
- output-high properties
-To: Matheus Castello <matheus@castello.eng.br>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 May 2018 08:02:28 -0400
+From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, mpe@ellerman.id.au, ego@linux.vnet.ibm.com,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: [PATCH] cpuidle/powernv : init all present cpus for deep states
+Date: Wed, 16 May 2018 17:32:14 +0530
+X-Mailer: git-send-email 2.5.5
+X-TM-AS-GCONF: 00
+x-cbid: 18051612-0040-0000-0000-0000043A62DB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051612-0041-0000-0000-0000263F79BD
+Message-Id: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 2:42 AM, Matheus Castello
-<matheus@castello.eng.br> wrote:
+Init all present cpus for deep states instead of "all possible" cpus.
+Init fails if the possible cpu is gaurded. Resulting in making only
+non-deep states available for cpuidle/hotplug.
 
-> Properties to set initial value of pin output buffer.
-> This can be useful for configure hardware in overlay files, and in early
-> boot for checking it states in QA sanity tests.
->
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+---
+ arch/powerpc/platforms/powernv/idle.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch applied with Stefan's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
+index 1f12ab1..1c5d067 100644
+--- a/arch/powerpc/platforms/powernv/idle.c
++++ b/arch/powerpc/platforms/powernv/idle.c
+@@ -79,7 +79,7 @@ static int pnv_save_sprs_for_deep_states(void)
+ 	uint64_t msr_val = MSR_IDLE;
+ 	uint64_t psscr_val = pnv_deepest_stop_psscr_val;
+ 
+-	for_each_possible_cpu(cpu) {
++	for_each_present_cpu(cpu) {
+ 		uint64_t pir = get_hard_smp_processor_id(cpu);
+ 		uint64_t hsprg0_val = (uint64_t)paca_ptrs[cpu];
+ 
+@@ -814,7 +814,7 @@ static int __init pnv_init_idle_states(void)
+ 		int cpu;
+ 
+ 		pr_info("powernv: idle: Saving PACA pointers of all CPUs in their thread sibling PACA\n");
+-		for_each_possible_cpu(cpu) {
++		for_each_present_cpu(cpu) {
+ 			int base_cpu = cpu_first_thread_sibling(cpu);
+ 			int idx = cpu_thread_in_core(cpu);
+ 			int i;
+-- 
+2.5.5
