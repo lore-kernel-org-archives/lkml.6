@@ -1,145 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751328AbeEPQmo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 12:42:44 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33798 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeEPQmm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 12:42:42 -0400
-X-Google-Smtp-Source: AB8JxZqiAfu1OntfGM53Us1TOPTkkV36fBeW37HOgTpJ0hYGr45JfoBPRLBQSep8VfjU/2i6P3qGsw==
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?Q?H=c3=a5kon_Bugge?= <haakon.bugge@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20180509093020.24503-3-Haakon.Bugge@oracle.com>
- <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
- <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
- <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
- <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
- <20180514210200.GN21531@ziepe.ca>
- <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
- <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
- <20180515190424.GL5615@ziepe.ca>
- <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
- <20180516151201.GA25661@ziepe.ca>
-From: Hal Rosenstock <hal@dev.mellanox.co.il>
-Message-ID: <695ae613-931a-50ba-2b83-9d172e0ac2bc@dev.mellanox.co.il>
-Date: Wed, 16 May 2018 12:42:37 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180516151201.GA25661@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
+        id S1751596AbeEPQoE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 12:44:04 -0400
+Received: from mail-by2nam01on0057.outbound.protection.outlook.com ([104.47.34.57]:31106
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750847AbeEPQoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 12:44:02 -0400
+From: Nadav Amit <namit@vmware.com>
+To: Jan Beulich <JBeulich@suse.com>
+CC: "keescook@chromium.org" <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: Re: [RFC 5/8] x86: refcount: prevent gcc distortions
+Thread-Topic: [RFC 5/8] x86: refcount: prevent gcc distortions
+Thread-Index: AQHT7JOArUMsIGn6skKZaqvOLrG0XKQx8fiAgACfDYA=
+Date: Wed, 16 May 2018 16:44:00 +0000
+Message-ID: <8B7DE95F-5E57-44F0-90E0-CCBA35F98A07@vmware.com>
+References: <20180515141124.84254-1-namit@vmware.com>
+ <20180515141124.84254-15-namit@vmware.com>
+ <5AFBDA6302000078001C31AC@prv1-mh.provo.novell.com>
+In-Reply-To: <5AFBDA6302000078001C31AC@prv1-mh.provo.novell.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN2PR05MB2463;7:QV9Rxt27J8KL/DOSgvlqrCNl7wi3NYmt+XtP6dOKZNPx0oFzmYJIk1kM9vhxiHQX9WEVCZ8dTLbmasU1r5DuAYss4dc1aFVR3nYcBllQht05z8QTTYnLqu/4+o+2C/h7SfObMYt3ezwcky7WzuSexkpf+ix/8j4sq9Lr6feevxuzUVNeDtLK/Bg6zatEcq9NuPEW7imrOVo/fyoYkN4N4oRR9Vids6teJHW50xhK0azpdSuvhwZ9c8ujnBlVs3yV;20:6WRfkSPl6HSXX+eVfBbhNXiYGuNtUhIKvEMabsiySFaGfkNBv+KEit0JXDbLp+R3Bf6r5LmNs5TKrqk58+wNZQ3PuJTaVAGd2fMUKCO4AkwUR4enlVPtA/uI2t4AhnfmX5AmzcHO8ed6kAvWXRgIZ8OnX5A1IMuTBRczZNjoQHU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN2PR05MB2463;
+x-ms-traffictypediagnostic: SN2PR05MB2463:
+x-microsoft-antispam-prvs: <SN2PR05MB2463814164CC9BEDF79290B4D0920@SN2PR05MB2463.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:SN2PR05MB2463;BCL:0;PCL:0;RULEID:;SRVR:SN2PR05MB2463;
+x-forefront-prvs: 0674DC6DD3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(39380400002)(39860400002)(199004)(189003)(97736004)(83716003)(8936002)(68736007)(5660300001)(4326008)(53936002)(476003)(26005)(2616005)(2900100001)(6512007)(102836004)(186003)(11346002)(6346003)(6246003)(446003)(86362001)(8676002)(82746002)(5250100002)(81166006)(81156014)(486006)(6486002)(105586002)(53546011)(3280700002)(54906003)(6506007)(36756003)(66066001)(6116002)(316002)(76176011)(33656002)(3846002)(478600001)(25786009)(99286004)(14454004)(6436002)(229853002)(2906002)(106356001)(6916009)(305945005)(3660700001)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR05MB2463;H:SN2PR05MB2654.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com;
+x-microsoft-antispam-message-info: Ro0U+HZAY5Tq/hH43PRJY2PJ/2Qx04iYASwF85QqTG7DNyhvX7J/6lHkehxa9Lh/Nv6O+5Uf2W2TD18YbNBmKH2mp1sJimkuWp5j09zojgnlws4hpnis+wt5vk5boiVK4oBnjS8x1i9XGxUNrNYR8shE+7msv+4LG345xsLfKzOC6XvBCmbir8iRgtPEohQ4
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F080A07341CC1C4BA04D31F85993E34A@namprd05.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: a2752866-e30e-4ee4-541c-08d5bb4c39b7
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2752866-e30e-4ee4-541c-08d5bb4c39b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2018 16:44:00.0936
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR05MB2463
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GGiAtq017217
 
-On 5/16/2018 11:12 AM, Jason Gunthorpe wrote:
-> On Wed, May 16, 2018 at 08:47:21AM +0200, Håkon Bugge wrote:
-> 
->>> This is not a difficult issue.
->>>
->>> If the GMP is properly tagged with the right PKey then it will never
->>> be delivered to the VM if the VM does not have the PKey in the
->>> table.
->>
->> Not quite right. For the shared port model, a GMP will (most
->> probably) be accepted by the physical port, due to:
-> 
-> Sure, but I am talking about the VM's 'virtual port'.
-> 
->> So, if the GMP is destined to VM1, which is a limited member, but we
->> have another VM2 which is a full member of the same partition, the
->> GMP will pass the HCA’s PKey check.
-> 
-> Sure.
-> 
->>> It is up to the hypervisor to block GMPs that have Pkeys not in
->>> the virtual PKey table of the VF.
->>
->> The packet is received by the HCA and stripped from IB headers, in
->> particular the BTH. How can the "hypervisor" block it when its
->> doesn’t have access to the GMP’s BTH.PKey?
-> 
-> This is wrong too, in Linux the WC's for GMP packets include the pkey
-> index that was used to RX the packet. This is a Linux extension
-> matching the one on the sending side.
-> 
-> The hypervisor *must* block these GMPs, it is a hard requirement of
-> the pkey security model for VMs.
+Jan Beulich <JBeulich@suse.com> wrote:
 
-Aside from the pkey enforcement at the VF, there is also the issue of
-the pkey trap - if physical port model is followed for shared virtual
-ports, trap should be generated which could look confusing to SM as well
-as counting in some error counter (for physical port, it's either
-PortCounter:Port[Xmit Rcv]ConstraintErrors.
+>>>> On 15.05.18 at 16:11, <namit@vmware.com> wrote:
+>> --- a/arch/x86/include/asm/refcount.h
+>> +++ b/arch/x86/include/asm/refcount.h
+>> @@ -14,34 +14,43 @@
+>>  * central refcount exception. The fixup address for the exception points
+>>  * back to the regular execution flow in .text.
+>>  */
+>> -#define _REFCOUNT_EXCEPTION				\
+>> -	".pushsection .text..refcount\n"		\
+>> -	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+>> -	"112:\t" ASM_UD2 "\n"				\
+>> -	ASM_UNREACHABLE					\
+>> -	".popsection\n"					\
+>> -	"113:\n"					\
+>> +
+>> +asm ("\n"
+>> +	".macro __REFCOUNT_EXCEPTION counter:vararg\n\t"
+>> +	".pushsection .text..refcount\n"
+>> +	"111:\tlea \\counter, %" _ASM_CX "\n"
+>> +	"112:\t" ASM_UD2 "\n\t"
+>> +	ASM_UNREACHABLE
+>> +	".popsection\n\t"
+>> +	"113:\n"
+>> 	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+>> +	".endm");
+> 
+> A few comments on assembly code formatting - while gas at present is
+> relatively lax in this regard, I wouldn't exclude that there might be a
+> more strict mode in the future, and that such a mode might eventually
+> become the default. Furthermore these formatting aspects affect
+> readability of the assembly produced, should anyone ever find a need
+> to look at it (perhaps because of some breakage) - I certainly do every
+> once in a while.
+> 
+> Labels should be placed without any indentation (but of course there
+> may be more than one on a line, in which case subsequent ones may
+> of course be arbitrarily indented). Instructions and directives, otoh,
+> should be placed with at least a single tab or space of indentation
+> (unless preceded by a label, in which case the extra white space still
+> helps readability).
 
-> AFAIK the Mellanox drivers do this right - do you know differently?
-> 
->>> The only time you could need a new REJ code is if the GMP is using a
->>> PKey different from the REQ - which is a pretty goofy thing to do
->>> considering this VM case.
->>
->> Its goofy. In the CX-3 shared port model, the BTH.PKey is the
->> default one and the REQ.PKey is the full one even if the sending
->> VM’s port only is a limited member. This patch series fixes the last
->> issue.
-> 
-> Again, this is wrong, the BTH.Pkey and REQ.Pkey should be the same -
+Writing these patches, I looked at the generated assembly, and there did not
+appear to be a standard. IIRC, .pushsection directives were not always
+inlined. I will fix it according to your comments.
 
-I do not believe there is anything in the spec that requires this. I
-agree it's the simplest use model though.
+> I'm also not sure about the purpose of the leading plain newline here.
+> gcc annotates code resulting from inline assembly anyway iirc, so
+> proper visual separation should already be available.
 
-> please fix that first before trying to change anything else.
-> 
->>> Remember the SM doesn't know what Pkeys are in the VM, so it is
->>> basically impossible for the REQ side to reliably select two different
->>> pkeys and know that they will bothmake it to the VM.
->>
->> The active side should use the "authentic" PKey in the REQ
->> message. That is the one that would be used in BTH.PKey when
->> communication has been established. This is implemented by this
->> patch series.
->>
->> Not sure what you mean by "reliably select two different pkeys". The
->> CM REQ message contains one PKey.
-> 
-> If BTH.Pkey != REQ.PKey then the requestor side has to obviously
-> select two PKeys, which is basically impossible.
-> 
-> The VM should not be part of the default partition, for instance.
+Right. It was only to get the macro directive not tabulated, but as you
+said, it should be tabulated, so I will remove it.
 
-I think that the VM is at least a limited member of the default partition.
+> 
+> If I was the maintainer of this code, I would also object to the
+> mis-alignment your file scope asm()-s have ("asm (" is 5 characters,
+> which doesn't equal a tab's width).
 
--- Hal
+I tried many formats (including the one you propose), and eventually went
+with the one that made checkpatch not yell at me. I will revert to the one
+you propose, which makes most sense, and ignore checkpatch warnings.
 
->> See above, not sure how that could be implemented. And if it is
->> solved by the HCA trapping the GMP due to the PKey check, it doesn’t
->> help me, as the purpose of the series is to avoid (excessive) PKey
->> traps sent to the SM.
-> 
-> It might not help you, but is shows this fix for the pkey trap issue
-> is wrong. You must fix the pkey traps on the sending side, not on the
-> responder side..
-> 
->>> If I recall there were bugs here in mlx drivers, where the driver
->>> sent with the wrong Pkey. I think this has actually been fixed
->>> now, so please check the upstream kernel to be sure the Pkey is
->>> not what it is supposed to be.
->>
->> Let me get back to you with some ibdumps here.
-> 
-> Upstream kernel (eg 4.16) and newish Mellanox firmware please.
-> 
-> And it would be fantastic if you could ID why this is happening, AFAIK
-> it should be OK in the kernel.
-> 
-> Jason
-> 
+Thanks,
+Nadav
