@@ -1,308 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeEPHpf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:45:35 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:39289 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbeEPHpd (ORCPT
+        id S1752454AbeEPHrX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:47:23 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45044 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbeEPHrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:45:33 -0400
-X-Google-Smtp-Source: AB8JxZozWyrDBkv9+CQrwNS/OJxZFBnEIkprz0V39PHuZX9s22tTj9+ZJfs6XBA0Q0ryrMO8+bQ8hg==
-Subject: Re: [PATCH v2 3/5] mfd: cros-ec: Introduce CEC commands and events
- definitions.
-To: Hans Verkuil <hverkuil@xs4all.nl>, airlied@linux.ie,
-        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
-        seanpaul@google.com
-Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
-        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Stefan Adolfsson <sadolfsson@chromium.org>
-References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
- <1526395342-15481-4-git-send-email-narmstrong@baylibre.com>
- <774f11b2-d21a-7dd5-4463-bcdff1f6535f@xs4all.nl>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <53f91641-80b0-b568-e1a2-0da4764c51e4@baylibre.com>
-Date: Wed, 16 May 2018 09:45:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 16 May 2018 03:47:21 -0400
+X-Google-Smtp-Source: AB8JxZqH1oOBuAkxltry0+XHo+IG5PsG3/B4d/U05nweTssrJlcoGUZo06ZLN/WGZ10ZgX2OkSySaFYw79tUW1Ovy0Y=
 MIME-Version: 1.0
-In-Reply-To: <774f11b2-d21a-7dd5-4463-bcdff1f6535f@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
+References: <20180509172606.29387-1-david@lechnology.com> <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
+ <CAMRc=MdO0EtzDHp3RF4ym3umWM_KfhvpWHV2+Y3270ygKz9iGw@mail.gmail.com> <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Wed, 16 May 2018 09:47:20 +0200
+Message-ID: <CAMpxmJUKGS_wm1O+HJBt2yY=BQ4169ka1p0264O-PJFdGj5Fdg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v10_00=2F27=5D_ARM=3A_davinci=3A_convert_to_commo?=
+        =?UTF-8?Q?n_clock_framework=E2=80=8B?=
+To: Adam Ford <aford173@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Lechner <david@lechnology.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
-
-On 15/05/2018 17:28, Hans Verkuil wrote:
-> On 05/15/2018 04:42 PM, Neil Armstrong wrote:
->> The EC can expose a CEC bus, this patch adds the CEC related definitions
->> needed by the cros-ec-cec driver.
->> Having a 16 byte mkbp event size makes it possible to send CEC
->> messages from the EC to the AP directly inside the mkbp event
->> instead of first doing a notification and then a read.
+2018-05-16 0:44 GMT+02:00 Adam Ford <aford173@gmail.com>:
+> On Tue, May 15, 2018 at 4:25 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> 2018-05-14 2:40 GMT+02:00 Adam Ford <aford173@gmail.com>:
+>>> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
+>>>> This series converts mach-davinci to use the common clock framework.
+>>>>
+>>>> The series works like this, the first 3 patches fix some issues with the clock
+>>>> drivers that have already been accepted into the mainline kernel.
+>>>>
+>>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>>>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>>>> around the legacy clocks so that we can switch easily between the old and the
+>>>> new.
+>>>>
+>>>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>>> of the old clock code.
+>>>>
+>>>> The final four patches add device tree clock support to the one SoC that
+>>>> supports it.
+>>>>
+>>>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+>>>> board file).
+>>>>
+>>>
+>>> I am not sure if I did something wrong, but I attempted to build and I
+>>> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
+>>> however the legacy board file boot was OK.
+>>>
+>>> make davinci_all_defconfig ARCH=arm
+>>> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
+>>>
+>>> 3140416 bytes read in 1464 ms (2 MiB/s)
+>>> 20353 bytes read in 15 ms (1.3 MiB/s)
+>>> ## Flattened Device Tree blob at c0600000
+>>>    Booting using the fdt blob at 0xc0600000
+>>>    Loading Device Tree to c7e57000, end c7e5ef80 ... OK
+>>>
+>>> Starting kernel ...
+>>>
+>>> Uncompressing Linux... done, booting the kernel.
+>>>
+>>> (and hang)
+>>>
+>>> If you have some suggestions, I am try them as I get time.
+>>>
+>>> adam
+>>>
 >>
->> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/platform/chrome/cros_ec_proto.c | 42 +++++++++++++----
->>  include/linux/mfd/cros_ec.h             |  2 +-
->>  include/linux/mfd/cros_ec_commands.h    | 80 +++++++++++++++++++++++++++++++++
->>  3 files changed, 114 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
->> index e7bbdf9..ba47f79 100644
->> --- a/drivers/platform/chrome/cros_ec_proto.c
->> +++ b/drivers/platform/chrome/cros_ec_proto.c
->> @@ -504,29 +504,53 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
->>  }
->>  EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
->>  
->> +static int get_next_event_xfer(struct cros_ec_device *ec_dev,
->> +			       struct cros_ec_command *msg,
->> +			       int version, uint32_t size)
->> +{
->> +	int ret;
->> +
->> +	msg->version = version;
->> +	msg->command = EC_CMD_GET_NEXT_EVENT;
->> +	msg->insize = size;
->> +	msg->outsize = 0;
->> +
->> +	ret = cros_ec_cmd_xfer(ec_dev, msg);
->> +	if (ret > 0) {
->> +		ec_dev->event_size = ret - 1;
->> +		memcpy(&ec_dev->event_data, msg->data, size);
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->>  static int get_next_event(struct cros_ec_device *ec_dev)
->>  {
->>  	u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
->>  	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
->> +	static int cmd_version = 1;
->>  	int ret;
->>  
->> +	BUILD_BUG_ON(sizeof(union ec_response_get_next_data_v1) != 16);
-> 
-> Use the define instead of hardcoding 16. I'm not really sure why you need this.
-> If cec_message uses the right define for the array size (see my comment below),
-> then this really can't go wrong, can it?
+>> Runs fine on da850-lcdk and dm365-evm. I'll test the da850-evm
+>> tomorrow when I'll have access to it.
+>
+> I set the bootargs to: bootargs=console=ttyS2,115200n8
+> clk_ignore_unused root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
+>
+> I enabled DEBUG_LL and EARLY_PRINTK, yet when it loads, I only get:
+>
+> ## Flattened Device Tree blob at c0600000
+>    Booting using the fdt blob at 0xc0600000
+>    Loading Device Tree to c7e57000, end c7e5ef35 ... OK
+>
+> Starting kernel ...
+>
+> Uncompressing Linux... done, booting the kernel.
+>
+>
+> I am doing this at my home, so I don't have a debugger for the
+> DA850-EVM.  I am using a SOM that is an AM1808, but I vaguely remember
+> something about enabling a DSP clock somewhere, but I cannot seem to
+> find the e-mail.  I know its counter intuitive that we'd need to
+> enable a clock that runs the DSP since it doesn't exist on the AM1808,
+> but I would have thought the clk_ignore_unused would have worked
+> around that issue.
+>
+> If someone else has a DA850-EVM or suggestions, I'm willing to try
+> them as I have time.
+>
+> adam
 
-This is taken from the chrome kernelk, to be sure the size is ok, but yes it should be 16, I'll see
-if I can drop this.
+Hi Adam,
 
-> 
->> +
->>  	if (ec_dev->suspended) {
->>  		dev_dbg(ec_dev->dev, "Device suspended.\n");
->>  		return -EHOSTDOWN;
->>  	}
->>  
->> -	msg->version = 0;
->> -	msg->command = EC_CMD_GET_NEXT_EVENT;
->> -	msg->insize = sizeof(ec_dev->event_data);
->> -	msg->outsize = 0;
->> +	if (cmd_version == 1) {
->> +		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
->> +					  sizeof(ec_dev->event_data));
->> +		if (ret != EC_RES_INVALID_VERSION)
->> +			return ret;
->>  
->> -	ret = cros_ec_cmd_xfer(ec_dev, msg);
->> -	if (ret > 0) {
->> -		ec_dev->event_size = ret - 1;
->> -		memcpy(&ec_dev->event_data, msg->data,
->> -		       sizeof(ec_dev->event_data));
->> +		/* Fallback to version 0 for future send attempts */
->> +		cmd_version = 0;
->>  	}
->>  
->> +	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
->> +				  sizeof(struct ec_response_get_next_event));
->> +
->>  	return ret;
->>  }
->>  
->> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
->> index 2d4e23c..f3415eb 100644
->> --- a/include/linux/mfd/cros_ec.h
->> +++ b/include/linux/mfd/cros_ec.h
->> @@ -147,7 +147,7 @@ struct cros_ec_device {
->>  	bool mkbp_event_supported;
->>  	struct blocking_notifier_head event_notifier;
->>  
->> -	struct ec_response_get_next_event event_data;
->> +	struct ec_response_get_next_event_v1 event_data;
->>  	int event_size;
->>  	u32 host_event_wake_mask;
->>  };
->> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
->> index f2edd99..18df466 100644
->> --- a/include/linux/mfd/cros_ec_commands.h
->> +++ b/include/linux/mfd/cros_ec_commands.h
->> @@ -804,6 +804,8 @@ enum ec_feature_code {
->>  	EC_FEATURE_MOTION_SENSE_FIFO = 24,
->>  	/* EC has RTC feature that can be controlled by host commands */
->>  	EC_FEATURE_RTC = 27,
->> +	/* EC supports CEC commands */
->> +	EC_FEATURE_CEC = 35,
->>  };
->>  
->>  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
->> @@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
->>  	/* EC sent a sysrq command */
->>  	EC_MKBP_EVENT_SYSRQ = 6,
->>  
->> +	/* Notify the AP that something happened on CEC */
->> +	EC_MKBP_CEC_EVENT = 8,
->> +
->> +	/* Send an incoming CEC message to the AP */
->> +	EC_MKBP_EVENT_CEC_MESSAGE = 9,
->> +
->>  	/* Number of MKBP events */
->>  	EC_MKBP_EVENT_COUNT,
->>  };
->> @@ -2093,12 +2101,31 @@ union ec_response_get_next_data {
->>  	uint32_t   sysrq;
->>  } __packed;
->>  
->> +union ec_response_get_next_data_v1 {
->> +	uint8_t   key_matrix[16];
->> +
->> +	/* Unaligned */
->> +	uint32_t  host_event;
->> +
->> +	uint32_t   buttons;
->> +	uint32_t   switches;
->> +	uint32_t   sysrq;
->> +	uint32_t   cec_events;
->> +	uint8_t    cec_message[16];
->> +} __packed;
->> +
->>  struct ec_response_get_next_event {
->>  	uint8_t event_type;
->>  	/* Followed by event data if any */
->>  	union ec_response_get_next_data data;
->>  } __packed;
->>  
->> +struct ec_response_get_next_event_v1 {
->> +	uint8_t event_type;
->> +	/* Followed by event data if any */
->> +	union ec_response_get_next_data_v1 data;
->> +} __packed;
->> +
->>  /* Bit indices for buttons and switches.*/
->>  /* Buttons */
->>  #define EC_MKBP_POWER_BUTTON	0
->> @@ -2828,6 +2855,59 @@ struct ec_params_reboot_ec {
->>  /* Current version of ACPI memory address space */
->>  #define EC_ACPI_MEM_VERSION_CURRENT 1
->>  
->> +/*****************************************************************************/
->> +/*
->> + * HDMI CEC commands
->> + *
->> + * These commands are for sending and receiving message via HDMI CEC
->> + */
->> +#define MAX_CEC_MSG_LEN 16
-> 
-> Hmm, uapi/linux/cec.h already defines CEC_MAX_MSG_SIZE with the same value.
-> Perhaps it is better to include linux/cec.h here instead of creating a second
-> define?
-> 
-> And shouldn't this define also be used for the cec_message array above?
+everything works fine for me both when booting the DTB and in legacy
+mode on da850-evm.
 
-These defines are tied to the Embedded Controller API, so it may be goog to keep them
-separated from the rest of the Linux APO, I'll see about using the define in the event
-struct, but I think they want to have a formal array size using a number.
+I'm using the following bootargs:
+    ip=dhcp console=ttyS2,115200n8 root=/dev/nfs rw nfsroot=<snip!>,v3
+nfsrootdebug
 
-Neil
+Regular davinci_all_defconfig on David's common-clk-v11 branch.
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
->> +
->> +/* CEC message from the AP to be written on the CEC bus */
->> +#define EC_CMD_CEC_WRITE_MSG 0x00B8
->> +
->> +/* Message to write to the CEC bus */
->> +struct ec_params_cec_write {
->> +	uint8_t msg[MAX_CEC_MSG_LEN];
->> +} __packed;
->> +
->> +/* Set various CEC parameters */
->> +#define EC_CMD_CEC_SET 0x00BA
->> +
->> +struct ec_params_cec_set {
->> +	uint8_t cmd; /* enum cec_command */
->> +	union {
->> +		uint8_t enable;
->> +		uint8_t address;
->> +	};
->> +} __packed;
->> +
->> +/* Read various CEC parameters */
->> +#define EC_CMD_CEC_GET 0x00BB
->> +
->> +struct ec_params_cec_get {
->> +	uint8_t cmd; /* enum cec_command */
->> +} __packed;
->> +
->> +struct ec_response_cec_get {
->> +	union {
->> +		uint8_t enable;
->> +		uint8_t address;
->> +	};
->> +} __packed;
->> +
->> +enum cec_command {
->> +	/* CEC reading, writing and events enable */
->> +	CEC_CMD_ENABLE,
->> +	/* CEC logical address  */
->> +	CEC_CMD_LOGICAL_ADDRESS,
->> +};
->> +
->> +/* Events from CEC to AP */
->> +enum mkbp_cec_event {
->> +	EC_MKBP_CEC_SEND_OK			= 1 << 0,
->> +	EC_MKBP_CEC_SEND_FAILED			= 1 << 1,
->> +};
->>  
->>  /*****************************************************************************/
->>  /*
->>
-> 
+Best regards,
+Bartosz Golaszewski
