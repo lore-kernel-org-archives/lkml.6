@@ -1,187 +1,576 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeEPMoR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:44:17 -0400
-Received: from mail-he1eur01on0085.outbound.protection.outlook.com ([104.47.0.85]:6198
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751151AbeEPMoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:44:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vladbu@mellanox.com;
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com> <1526308035-12484-13-git-send-email-vladbu@mellanox.com> <20180516095953.GI1972@nanopsycho> <vbf4lj724th.fsf@reg-r-vrt-018-180.mtr.labs.mlnx> <20180516122600.GM1972@nanopsycho>
-User-agent: mu4e 0.9.16; emacs 25.3.50.2
-From: Vlad Buslov <vladbu@mellanox.com>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 12/14] net: sched: retry action check-insert on concurrent modification
-In-reply-to: <20180516122600.GM1972@nanopsycho>
-Date: Wed, 16 May 2018 15:43:58 +0300
-Message-ID: <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+        id S1752406AbeEPMqq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:46:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:47403 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751395AbeEPMqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:46:44 -0400
+Date: Wed, 16 May 2018 14:51:10 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Tejun Heo <tj@kernel.org>, Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Ming Lei <ming.lei@redhat.com>, Sebastian Ott <sebott@linux.ibm.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Israel Rukshin <israelr@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>
+Subject: Re: [PATCH v9 2/2] blk-mq: Rework blk-mq timeout handling again
+Message-ID: <20180516125110.GA32078@lst.de>
+References: <20180515225124.20428-1-bart.vanassche@wdc.com> <20180515225124.20428-6-bart.vanassche@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [37.142.13.130]
-X-ClientProxiedBy: VI1P195CA0047.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::36) To HE1PR05MB4698.eurprd05.prod.outlook.com
- (2603:10a6:7:9a::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB4698;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4698;3:33Ru3jmA9ipPeIsJt1LufEVmuWU70aOkIl1MILadfbanTOwTmX96TkF0WXgUQBT6Wr4G5GvXDNcXyL03e5QnnkWT7QLqY65bzDKUneiz9xiOQQ4cHQ/K+rFeZCo69/I3q4tlg7wIA3VlbnOD198OpQEXqv39mWunfbM7NwtJXsDeABF7UUcYQir4kEzyaZU6z3kUXrlFyiD4iBHmUqj7epfyNKayF4oCGn3do9jeh9DZqNBle3UHWEFiWhAbe2TG;25:zNK7uCPfbjKecUN/fwrgUbcI7FvHcOdGRxsR5+SRO+mmVswZZt29ei01SXYAGtsxS6Ry5PwfWlvxczDPCIQsXEyURZR6qQWftYED73ERsUfBdLgcdEy4xWhU6FqHVS+vSbJhUoYy7YgstAzmiBHO/D1gvC4q/1ZEfcHL68XXbGe3vA6XIZd866lQeU1nNK/Wem52DaGkWxO7X+VmCKPUTOp5ElEMjCWTuFhQd3KzaqS/JTfhnkMeDO040l+jBo/xprIUJfv4w+F/2cNNQxvMmxArgs/Z6C8BnAWJCopoK3s+Cth83VNtsKF7I1MFnqnyuZ+LcH7ytSxn58x6yDqomA==;31:TtTDa+Yty12TMewl0/TGEH5G2XJZBJQm5C2j+Hu53R9lPF79lp81/QzoSo2H5AxHg3B0vob1OMkEojlroYXQGiBjPB5sCe1vkE7n/SnRvk09I7lPJDn3oGrdvG70fGgDkSshdKk/dN39NZTxiOWbn4DWBZ94gNcxyBaumCVSOOIk6VRVugGbHP0CuSdb9IbeQSwAiHW6IlRH3eb5ANMCKMLCYMSySori0P5dhcfs2kU=
-X-MS-TrafficTypeDiagnostic: HE1PR05MB4698:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4698;20:BRat4ecE7pAPVdrpMUkzL8jwUNURSWfiFVIdqSXi77DMIfnCjW51Si0oozc8sJP9rvVMtMHSZz/LHXaE4n4rPL6r5JqQyqQXU7G7F3CuYe5alVgsWOg3/d4VcAZ+82cuCUxAVqtVvC/WvJIQShjFZS98QtwTEtCJ+TkmqWCFeXr7o5LFmOFfI7ouds07QLp7uB6wLTHB6QKtXrS+N3M4T9ULJN+m0wbWj4yp6AVtKUkrjK5aCtRnIIFCI5q1REheJvRZULltOK9LEiPxMCAtzGbPeJPwhBL9ZsyLjlcdVYEvKy1gO68HoUI8TatJ0y9KkESd38ES/9JDdFO3MKi8tH7e+3BHQuMV0TsFJZ01Rb72OeX5rp75eI1MbI5V4ucFKOhWrTPdTvDiFKmHcBNI77OaHYTCHgjNl3NRcg4HMiPsXpHgUpwgcXxd07U3HzZ4j8+x9bcgUbLHqqy1FcbWcCyxczsgTHEDLHmwFlHRS9BZCKc+IRgT0t5rmZvM5/0p;4:YuP+z7VD80a5qceeViqIszdZLVkyy7lsjF3bqb+/N5Q5zyyFUfkBfuxbWuQS5dS7dcUg3VVpfxiy4QeSIITLCIs7Xj46rebsE0awHBiI3WXv//Bit7+lE4OxN2r5rMP28/HkeuC9Cs8kYRyWr9DzvuERhUbKaA0XQMLlOHvTB55i5LeunHWUta/dR80JJocg1Kjnl1b3aLZvDnCxhdgyKUqGmCGYzSxW55ziCiywUCNEO7j4Av+stbSZHOZ2ZbnwIRSMnZa/EovXkzW2M3k+UCuTEaKq6oCh7MxbEhEGWT6r+4CT+dk4Z/1aOzOA455Z
-X-Microsoft-Antispam-PRVS: <HE1PR05MB4698F3C994A92771A860C6A7AD920@HE1PR05MB4698.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(17755550239193);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:HE1PR05MB4698;BCL:0;PCL:0;RULEID:;SRVR:HE1PR05MB4698;
-X-Forefront-PRVS: 0674DC6DD3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39380400002)(39860400002)(376002)(396003)(51444003)(189003)(199004)(6246003)(9686003)(25786009)(107886003)(478600001)(97736004)(6512007)(4326008)(386003)(11346002)(53936002)(476003)(956004)(81166006)(446003)(8936002)(93886005)(16526019)(81156014)(47776003)(7736002)(229853002)(26005)(8676002)(316002)(66066001)(2906002)(6916009)(305945005)(486006)(105586002)(106356001)(6486002)(7696005)(52116002)(51416003)(6666003)(86362001)(76176011)(3846002)(59450400001)(58126008)(39060400002)(6116002)(16586007)(68736007)(5660300001)(48376002)(50466002)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB4698;H:reg-r-vrt-018-180.mtr.labs.mlnx.mellanox.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:3;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR05MB4698;23:ZRe0Ia8BLW9dg/Lrj5/+/10a9wY6dtAUAJ4Db8gvS?=
- =?us-ascii?Q?WMs9CkB6gvVdxIAT6OAc6xtf4iDMTldOfjGob9HlbrIjCCU45IlFY3mP6BY7?=
- =?us-ascii?Q?gnIDQWIMQ9JqCUTZWk2/9HIJsCNDwXjE+9VdssQIuknTiGGSplQQXvvtubeq?=
- =?us-ascii?Q?4xUO2PQVKIGcanQLxesKnjgmbLk4FAHqR3ukGwr8Js0WIImThVIyfhQD/K2M?=
- =?us-ascii?Q?yyTvKCj2cvXvyX3GrZv/1S6u2pTvYvv7TH+/UNOTs+A+CtPeRnTc5zgERipk?=
- =?us-ascii?Q?7BAsqveWBiVkpnzP5dsRcyu6T+tHiUiUMwJiyPQmqIYPwCdZjEDTl519g8QS?=
- =?us-ascii?Q?fIA05Q4NBhSydJiQjTEJ0V8F04erd2DexbVy6UzUPPFN5CppTLi4K7/zR9dD?=
- =?us-ascii?Q?Q4j6Y1qie27q8VPlDgfE2c2490onLPgmHko4ubEeB7csQ3wWhq3fCRQTpQ/q?=
- =?us-ascii?Q?us+4NutnQ3+JefUTX53O6yDSTp32/7fi5qmdcUMDQV4STkuGDqaegQe7wmM0?=
- =?us-ascii?Q?pdPBSgltZ1KA2UdS2/IN7CM9ebr4zJs3e+2MY4lYhjPNh9M5iWyZPwG7TV6k?=
- =?us-ascii?Q?PBwMAZcU74uBRiIBWVfmQljjAt1hgdV7FDaveIjomg28sW2oEbqJHXyjRwuj?=
- =?us-ascii?Q?hrXIrnskEUkjUOT2YAKAzjCyn+efw16GPqDG21oMS2vjNnfHFWKHiwf8rcnG?=
- =?us-ascii?Q?no31AoBMtCrFnDtr+jzGcNU/nzuo732Jhws6Vn780SxTWz7B1mr++EVxSWw7?=
- =?us-ascii?Q?c5qkWI+8t+VsFNFDzJACaMqPT32t7XrIu9CAUanG8ap1kIwh/fIBrqsYMMFC?=
- =?us-ascii?Q?oFyALgBvWYcenGurhQwtUjMpuUlLclGQEF8IdoExOcRrFgr569VyBse3kk4f?=
- =?us-ascii?Q?Djsvs28fNJBlIr9us+wMdI3xqx5g38SA4Wa+Q3ierojaKB4ZHQQTZ50T89q2?=
- =?us-ascii?Q?z499b6/byPFhxCdexHFA0NskdKJ+NM4rDE3+eNbId1LrEtIbiNP7lcw6XRc7?=
- =?us-ascii?Q?tihxqZdyMnWd5qqF7k+GTyacg5SNXnZkZMAzjnjZVa0b53Gj5vAy7RozDqG0?=
- =?us-ascii?Q?VPm0W2Thl0FtRMPbUI0jbGu+jg+bhK43iI4SOZ24nEMUgsOQRjQtMXznONF2?=
- =?us-ascii?Q?s/NPGJ8NjNFnRCc5+3fi2RotXFULr3SBeEKzOC3GnctDFPuZIosnA0onDq4T?=
- =?us-ascii?Q?bapoDSUFQwvSFO3Np8FZRJ4DGGqmM3MJwueLmKI2g3KjsdK+UYZeBQaFm93y?=
- =?us-ascii?Q?L/LeDXPzR1pFhBovVFUZpygiUnt+JePhfeoCI6pM8IOjJkj1NSgQyoqv/pNK?=
- =?us-ascii?Q?oOyL50vYfYK0dsOrwrkUrw=3D?=
-X-Microsoft-Antispam-Message-Info: OkCgNzG1UeofulzhDiXgL1KQggilEnITk0vzecbYJrEk0QPUdVy2I14Il1KXZSlkrvtngtzVr507BI2tyTPDqhfoU4KLQwfOHlj9M5hVK2qorLJIACawXz4Dc+ywomcno83BKg+B/pUc9UKEanoiU4G8xIJrulAmBy1deVCFDSyAnjxDjjI0k+HtqWJ6VkGe
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4698;6:D+cVNF/CJ8V8NgcT+KjMfQjAeEVzAUhD0HiD0IBRgT1h6vUzMGWzPWFa/IT2QrjELmRf4T//h7c+O3kH+bmPDkk/mdhp71SQJp4oo98yZaGCA+8/tcRgv2rKsrRzavKRXKb8UDU3kpmLtrVGy+fW36GT5VQKt8XccafJcqDk2Q4ztO65SHIqh+vckPDoyvBFku3KDqAyZXH+U0upPZziMWa9R5ST72D3xwsAPriec75yRh+2aq3ro4SoAYEvXFQsG7UUoaUBMN6HOImr3eBgENCnyiIU+r8kr+ZAiEuaPpDEUXMeSfefTYYJXEzlG4yMKnYhDAV3J1k9ov45TqMYOYPWSIB6UoEyoeLHYaX3QIyyf6r25Vq8u+ujUlC8K09IyBAoH3sdZHzzMTvasKxctyu8BbJ2RV+HczTXdQ6pJ9+i9g9V/t5yL9K6a1+WTKM0+gozHYhRabV7Afm4hhA8kg==;5:C4CKeEwOCLnu9ZBt0AgaHD7o9QRCa/CYrm2bFBP5GAdL0XChOB6VEkGV2Ts2t87x9Kt9vVkTFejZTZD2T9b8d32EoN8A8KmFgMxmIFl+evrfNPCv/P8UvD9V0QLA+ByL+ssgWpz6JQEbY+BAM2Rsx7z9nim3fCFm8dKCcmI+zRg=;24:AMjnNW+PNHecSgD+gNIjJSpwWPyUrspOpYte85jDH0/I7KRhama7R4b/h8woEuYe7CWG4kUpc4udACH4qekqro50dlziTbEtoXDKZajnnCw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4698;7:4R1ZePp02K3+GMrgpy0zWF9TWGxz4JevDGUnAn5ej6R8GKzCiupBJ9cEo4U++VRqpx2WqQ70QIlZLZFSRmlywmh/Lr36TJ1NHroy0B4U20E3EqcJbM053p9tYtEPRDDhVyPvOYewOiizRLwLLlvt0zp+0V8Be9Lm8cKPwSkWJAFLqkdZVD8sdo+QNVQETMP9kh6nZKOZINNPOwNPu3yP7mUtdof5Q9drXuBrPiGO00KDwzLqZCXvq51fgqrK4yhM
-X-MS-Office365-Filtering-Correlation-Id: 4b4c9930-79ea-4881-f791-08d5bb2ab7b4
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 12:44:05.9935
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b4c9930-79ea-4881-f791-08d5bb2ab7b4
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB4698
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515225124.20428-6-bart.vanassche@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I've been looking at this carefully, and I don't think we need cmpxchg64
+at all, and we don't need anywhere near as many cmpxchg operations either.
 
-On Wed 16 May 2018 at 12:26, Jiri Pirko <jiri@resnulli.us> wrote:
-> Wed, May 16, 2018 at 01:55:06PM CEST, vladbu@mellanox.com wrote:
->>
->>On Wed 16 May 2018 at 09:59, Jiri Pirko <jiri@resnulli.us> wrote:
->>> Mon, May 14, 2018 at 04:27:13PM CEST, vladbu@mellanox.com wrote:
->>>>Retry check-insert sequence in action init functions if action with same
->>>>index was inserted concurrently.
->>>>
->>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>>>---
->>>> net/sched/act_bpf.c        | 8 +++++++-
->>>> net/sched/act_connmark.c   | 8 +++++++-
->>>> net/sched/act_csum.c       | 8 +++++++-
->>>> net/sched/act_gact.c       | 8 +++++++-
->>>> net/sched/act_ife.c        | 8 +++++++-
->>>> net/sched/act_ipt.c        | 8 +++++++-
->>>> net/sched/act_mirred.c     | 8 +++++++-
->>>> net/sched/act_nat.c        | 8 +++++++-
->>>> net/sched/act_pedit.c      | 8 +++++++-
->>>> net/sched/act_police.c     | 9 ++++++++-
->>>> net/sched/act_sample.c     | 8 +++++++-
->>>> net/sched/act_simple.c     | 9 ++++++++-
->>>> net/sched/act_skbedit.c    | 8 +++++++-
->>>> net/sched/act_skbmod.c     | 8 +++++++-
->>>> net/sched/act_tunnel_key.c | 9 ++++++++-
->>>> net/sched/act_vlan.c       | 9 ++++++++-
->>>> 16 files changed, 116 insertions(+), 16 deletions(-)
->>>>
->>>>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
->>>>index 5554bf7..7e20fdc 100644
->>>>--- a/net/sched/act_bpf.c
->>>>+++ b/net/sched/act_bpf.c
->>>>@@ -299,10 +299,16 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
->>>> 
->>>> 	parm = nla_data(tb[TCA_ACT_BPF_PARMS]);
->>>> 
->>>>+replay:
->>>> 	if (!tcf_idr_check(tn, parm->index, act, bind)) {
->>>> 		ret = tcf_idr_create(tn, parm->index, est, act,
->>>> 				     &act_bpf_ops, bind, true);
->>>>-		if (ret < 0)
->>>>+		/* Action with specified index was created concurrently.
->>>>+		 * Check again.
->>>>+		 */
->>>>+		if (parm->index && ret == -ENOSPC)
->>>>+			goto replay;
->>>>+		else if (ret)
->>>
->>> Hmm, looks like you are doing the same/very similar thing in every act
->>> code. I think it would make sense to introduce a helper function for
->>> this purpose.
->>
->>This code uses goto so it can't be easily refactored into standalone
->>function. Could you specify which part of this code you suggest to
->>extract?
->
-> Hmm, looking at the code, I think that what would help is to have a
-> helper that would atomically check if index exists and if not, it would
-> allocate one. Something like:
->
->
-> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
-> 			struct tc_action **a, int bind)
-> {
-> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
-> 	struct tc_action *p;
-> 	int err;
->
-> 	spin_lock(&idrinfo->lock);
-> 	if (*index) {
-> 		p = idr_find(&idrinfo->action_idr, *index);
-> 		if (p) {
-> 			if (bind)
-> 	   			p->tcfa_bindcnt++;
-> 			p->tcfa_refcnt++;
-> 			*a = p;
-> 			err = 0;
-> 		} else {
-> 			*a = NULL;
-> 			err = idr_alloc_u32(idr, NULL, index,
-> 					    *index, GFP_ATOMIC);
-> 		}
-> 	} else {
-> 		*index = 1;
-> 		*a = NULL;
-> 		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
-> 	}
-> 	spin_unlock(&idrinfo->lock);
-> 	return err;
-> }
->
-> The act code would just check if "a" is NULL and if so, it would call
-> tcf_idr_create() with allocated index as arg.
+The only reason to include the deadline in the atomic operation is the
+blk_abort_request case, as the blk_mq_add_timer never modifies the
+deadline of a request that someone could be racing with.  So if we
+introduce a new aborted state for use by blk_abort_request we can modify
+the deadline separately (and in fact have a common field with the legacy
+path).
 
-What about multiple actions that have arbitrary code between initial
-check and idr allocation that is currently inside tcf_idr_create()?
+Also anytime we call blk_mq_change_rq_state and don't care about the
+previous state it is a pretty clear indicator that we aren't racing
+with anyone else  For blk_mq_free_request that obviously is the case
+as the request must have completed before, and for the requeue case
+we assume that.  If it isn't the case we have a deeper problem going
+way back.
 
->
->
->>
->>>
->>> [...]
->>
+Below is a lightly tested patch on top of yours to implement these
+suggestions, and also making sure we only access the generation/state
+using WRITE_ONCE, READ_ONLY and cmpxchg to avoid any races due to
+reordering.
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 40c9aa085613..5960e14025e6 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -274,6 +274,40 @@ bool blk_mq_can_queue(struct blk_mq_hw_ctx *hctx)
+ }
+ EXPORT_SYMBOL(blk_mq_can_queue);
+ 
++/**
++ * blk_mq_change_rq_state - atomically test and set request state
++ * @rq: Request pointer.
++ * @old_state: Old request state.
++ * @new_state: New request state.
++ *
++ * Returns %true if and only if the old state was @old and if the state has
++ * been changed into @new.
++ */
++static inline bool blk_mq_change_rq_state(struct request *rq,
++		enum mq_rq_state old_state, enum mq_rq_state new_state)
++{
++	union request_sag sag = READ_ONCE(rq->sag);
++	union request_sag old = sag, new = sag;
++
++	BUILD_BUG_ON(sizeof(union request_sag) != sizeof(u32));
++
++	old.state = old_state;
++	new.state = new_state;
++	return cmpxchg(&rq->sag.val, old.val, new.val) == old.val;
++}
++
++static inline void blk_mq_set_rq_state(struct request *rq,
++		enum mq_rq_state new_state)
++{
++	union request_sag sag = READ_ONCE(rq->sag);
++
++	if (new_state == MQ_RQ_IN_FLIGHT)
++		sag.generation++;
++	sag.state = new_state;
++
++	WRITE_ONCE(rq->sag, sag);
++}
++
+ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+ 		unsigned int tag, unsigned int op)
+ {
+@@ -318,7 +352,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+ 	rq->special = NULL;
+ 	/* tag was already set */
+ 	rq->extra_len = 0;
+-	WARN_ON_ONCE(rq->das.state != MQ_RQ_IDLE);
++	WARN_ON_ONCE(blk_mq_rq_state(rq) != MQ_RQ_IDLE);
+ 
+ 	INIT_LIST_HEAD(&rq->timeout_list);
+ 	rq->timeout = 0;
+@@ -494,8 +528,7 @@ void blk_mq_free_request(struct request *rq)
+ 	if (blk_rq_rl(rq))
+ 		blk_put_rl(blk_rq_rl(rq));
+ 
+-	if (!blk_mq_change_rq_state(rq, blk_mq_rq_state(rq), MQ_RQ_IDLE))
+-		WARN_ON_ONCE(true);
++	blk_mq_set_rq_state(rq, MQ_RQ_IDLE);
+ 	if (rq->tag != -1)
+ 		blk_mq_put_tag(hctx, hctx->tags, ctx, rq->tag);
+ 	if (sched_tag != -1)
+@@ -619,6 +652,14 @@ int blk_mq_request_started(struct request *rq)
+ }
+ EXPORT_SYMBOL_GPL(blk_mq_request_started);
+ 
++static inline void __blk_mq_start_request(struct request *rq)
++{
++	rq->__deadline = jiffies +
++		(rq->timeout ? rq->timeout : rq->q->rq_timeout);
++	__blk_add_timer(rq, rq->__deadline);
++	blk_mq_set_rq_state(rq, MQ_RQ_IN_FLIGHT);
++}
++
+ void blk_mq_start_request(struct request *rq)
+ {
+ 	struct request_queue *q = rq->q;
+@@ -636,7 +677,7 @@ void blk_mq_start_request(struct request *rq)
+ 		wbt_issue(q->rq_wb, rq);
+ 	}
+ 
+-	blk_mq_add_timer(rq, MQ_RQ_IDLE, MQ_RQ_IN_FLIGHT);
++	__blk_mq_start_request(rq);
+ 
+ 	if (q->dma_drain_size && blk_rq_bytes(rq)) {
+ 		/*
+@@ -652,16 +693,18 @@ EXPORT_SYMBOL(blk_mq_start_request);
+ static void __blk_mq_requeue_request(struct request *rq)
+ {
+ 	struct request_queue *q = rq->q;
+-	enum mq_rq_state old_state = blk_mq_rq_state(rq);
+ 
+ 	blk_mq_put_driver_tag(rq);
+ 
+ 	trace_block_rq_requeue(q, rq);
+ 	wbt_requeue(q->rq_wb, rq);
+ 
+-	if (old_state != MQ_RQ_IDLE) {
+-		if (!blk_mq_change_rq_state(rq, old_state, MQ_RQ_IDLE))
+-			WARN_ON_ONCE(true);
++	/*
++	 * Note: the driver must ensure this doesn't race with completions or
++	 * timeouts.
++	 */
++	if (blk_mq_rq_state(rq) != MQ_RQ_IDLE) {
++		blk_mq_set_rq_state(rq, MQ_RQ_IDLE);
+ 		if (q->dma_drain_size && blk_rq_bytes(rq))
+ 			rq->nr_phys_segments--;
+ 	}
+@@ -778,7 +821,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
+ 		__blk_mq_complete_request(req);
+ 		break;
+ 	case BLK_EH_RESET_TIMER:
+-		blk_mq_add_timer(req, MQ_RQ_COMPLETE, MQ_RQ_IN_FLIGHT);
++		__blk_mq_start_request(req);
+ 		break;
+ 	case BLK_EH_NOT_HANDLED:
+ 		break;
+@@ -792,23 +835,26 @@ static void blk_mq_check_expired(struct blk_mq_hw_ctx *hctx,
+ 		struct request *rq, void *priv, bool reserved)
+ {
+ 	struct blk_mq_timeout_data *data = priv;
+-	union blk_deadline_and_state das = READ_ONCE(rq->das);
+ 	unsigned long now = jiffies;
+-	int32_t diff_jiffies = das.deadline - now;
+-	int32_t diff_next = das.deadline - data->next;
+-	enum mq_rq_state rq_state = das.state;
++	unsigned long deadline = READ_ONCE(rq->__deadline);
++	union request_sag sag = READ_ONCE(rq->sag);
++	union request_sag aborted_sag = sag;
++	long diff_jiffies = deadline - now;
++	long diff_next = deadline - data->next;
+ 
+ 	/*
+-	 * Make sure that rq->aborted_gstate != rq->das if rq->deadline has not
++	 * Make sure that rq->aborted_sag != rq->sag if rq->deadline has not
+ 	 * yet been reached even if a request gets recycled before
+-	 * blk_mq_terminate_expired() is called and the value of rq->deadline
++	 * blk_mq_terminate_expired() is called and the value of rq->__deadline
+ 	 * is not modified due to the request recycling.
+ 	 */
+-	rq->aborted_gstate = das;
+-	rq->aborted_gstate.generation ^= (1UL << 29);
+-	if (diff_jiffies <= 0 && rq_state == MQ_RQ_IN_FLIGHT) {
+-		/* request timed out */
+-		rq->aborted_gstate = das;
++	aborted_sag.generation ^= (1u << 29);
++	WRITE_ONCE(rq->aborted_sag, aborted_sag);
++
++	if (sag.state == MQ_RQ_ABORTED ||
++	    (sag.state == MQ_RQ_IN_FLIGHT && diff_jiffies <= 0)) {
++		/* request aborted or timed out */
++		WRITE_ONCE(rq->aborted_sag, sag);
+ 		data->nr_expired++;
+ 		hctx->nr_expired++;
+ 	} else if (!data->next_set) {
+@@ -819,23 +865,21 @@ static void blk_mq_check_expired(struct blk_mq_hw_ctx *hctx,
+ 		/* data->next is later than deadline; reduce data->next. */
+ 		data->next += diff_next;
+ 	}
+-
+ }
+ 
+ static void blk_mq_terminate_expired(struct blk_mq_hw_ctx *hctx,
+ 		struct request *rq, void *priv, bool reserved)
+ {
+-	union blk_deadline_and_state old_val = rq->aborted_gstate;
+-	union blk_deadline_and_state new_val = old_val;
+-
+-	new_val.state = MQ_RQ_COMPLETE;
++	union request_sag old = READ_ONCE(rq->aborted_sag);
++	union request_sag new = old;
+ 
+ 	/*
+-	 * We marked @rq->aborted_gstate and waited for ongoing .queue_rq()
+-	 * calls. If rq->das has not changed that means that it
+-	 * is now safe to change the request state and to handle the timeout.
++	 * We marked @rq->aborted_sag and waited for ongoing .queue_rq() calls.
++	 * If rq->sag has not changed that means that it is now safe to change
++	 * the request state and to handle the timeout.
+ 	 */
+-	if (blk_mq_set_rq_state(rq, old_val, new_val))
++	new.state = MQ_RQ_COMPLETE;
++	if (cmpxchg(&rq->sag.val, old.val, new.val) == old.val)
+ 		blk_mq_rq_timed_out(rq, reserved);
+ }
+ 
+@@ -916,6 +960,12 @@ static void blk_mq_timeout_work(struct work_struct *work)
+ 	blk_queue_exit(q);
+ }
+ 
++void blk_mq_abort_request(struct request *rq)
++{
++	if (blk_mq_change_rq_state(rq, MQ_RQ_IN_FLIGHT, MQ_RQ_ABORTED))
++		kblockd_schedule_work(&rq->q->timeout_work);
++}
++
+ struct flush_busy_ctx_data {
+ 	struct blk_mq_hw_ctx *hctx;
+ 	struct list_head *list;
+@@ -1983,10 +2033,6 @@ static int blk_mq_init_request(struct blk_mq_tag_set *set, struct request *rq,
+ {
+ 	int ret;
+ 
+-#ifndef CONFIG_ARCH_HAVE_CMPXCHG64
+-	spin_lock_init(&rq->das_lock);
+-#endif
+-
+ 	if (set->ops->init_request) {
+ 		ret = set->ops->init_request(set, rq, hctx_idx, node);
+ 		if (ret)
+diff --git a/block/blk-mq.h b/block/blk-mq.h
+index 42320011d264..42721d6331df 100644
+--- a/block/blk-mq.h
++++ b/block/blk-mq.h
+@@ -2,7 +2,6 @@
+ #ifndef INT_BLK_MQ_H
+ #define INT_BLK_MQ_H
+ 
+-#include <asm/cmpxchg.h>
+ #include "blk-stat.h"
+ #include "blk-mq-tag.h"
+ 
+@@ -31,11 +30,11 @@ struct blk_mq_ctx {
+ 	struct kobject		kobj;
+ } ____cacheline_aligned_in_smp;
+ 
+-/* See also blk_deadline_and_state.state. */
+ enum mq_rq_state {
+ 	MQ_RQ_IDLE		= 0,
+ 	MQ_RQ_IN_FLIGHT		= 1,
+-	MQ_RQ_COMPLETE		= 2,
++	MQ_RQ_ABORTED		= 2,
++	MQ_RQ_COMPLETE		= 3,
+ };
+ 
+ void blk_mq_freeze_queue(struct request_queue *q);
+@@ -48,6 +47,7 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+ 				bool wait);
+ struct request *blk_mq_dequeue_from_ctx(struct blk_mq_hw_ctx *hctx,
+ 					struct blk_mq_ctx *start);
++void blk_mq_abort_request(struct request *rq);
+ 
+ /*
+  * Internal helpers for allocating/freeing the request map
+@@ -97,106 +97,13 @@ extern void blk_mq_hctx_kobj_init(struct blk_mq_hw_ctx *hctx);
+ 
+ void blk_mq_release(struct request_queue *q);
+ 
+-static inline bool blk_mq_set_rq_state(struct request *rq,
+-				       union blk_deadline_and_state old_val,
+-				       union blk_deadline_and_state new_val)
+-{
+-#ifdef CONFIG_ARCH_HAVE_CMPXCHG64
+-	return cmpxchg64(&rq->das.das, old_val.das, new_val.das) == old_val.das;
+-#else
+-	unsigned long flags;
+-	bool res = false;
+-
+-	spin_lock_irqsave(&rq->das_lock, flags);
+-	if (rq->das.das == old_val.das) {
+-		rq->das = new_val;
+-		res = true;
+-	}
+-	spin_unlock_irqrestore(&rq->das_lock, flags);
+-
+-	return res;
+-#endif
+-}
+-
+-/*
+- * If the state of request @rq equals @old_state, update deadline and request
+- * state atomically to @time and @new_state. blk-mq only. cmpxchg64() is only
+- * used if there could be a concurrent update attempt from another context.
+- */
+-static inline bool blk_mq_rq_set_deadline(struct request *rq,
+-					  unsigned long new_time,
+-					  enum mq_rq_state old_state,
+-					  enum mq_rq_state new_state)
+-{
+-	union blk_deadline_and_state old_val, new_val;
+-
+-	if (old_state != MQ_RQ_IN_FLIGHT) {
+-		old_val = READ_ONCE(rq->das);
+-		if (old_val.state != old_state)
+-			return false;
+-		new_val = old_val;
+-		new_val.deadline = new_time;
+-		new_val.state = new_state;
+-		if (new_state == MQ_RQ_IN_FLIGHT)
+-			new_val.generation++;
+-		WRITE_ONCE(rq->das.das, new_val.das);
+-		return true;
+-	}
+-
+-	do {
+-		old_val = READ_ONCE(rq->das);
+-		if (old_val.state != old_state)
+-			return false;
+-		new_val = old_val;
+-		new_val.deadline = new_time;
+-		new_val.state = new_state;
+-		if (new_state == MQ_RQ_IN_FLIGHT)
+-			new_val.generation++;
+-	} while (!blk_mq_set_rq_state(rq, old_val, new_val));
+-
+-	return true;
+-}
+-
+ /**
+  * blk_mq_rq_state() - read the current MQ_RQ_* state of a request
+  * @rq: target request.
+  */
+ static inline enum mq_rq_state blk_mq_rq_state(struct request *rq)
+ {
+-	return rq->das.state;
+-}
+-
+-/**
+- * blk_mq_change_rq_state - atomically test and set request state
+- * @rq: Request pointer.
+- * @old_state: Old request state.
+- * @new_state: New request state.
+- *
+- * Returns %true if and only if the old state was @old and if the state has
+- * been changed into @new.
+- */
+-static inline bool blk_mq_change_rq_state(struct request *rq,
+-					  enum mq_rq_state old_state,
+-					  enum mq_rq_state new_state)
+-{
+-	union blk_deadline_and_state das = READ_ONCE(rq->das);
+-	union blk_deadline_and_state old_val = das;
+-	union blk_deadline_and_state new_val = das;
+-
+-	old_val.state = old_state;
+-	new_val.state = new_state;
+-	if (new_state == MQ_RQ_IN_FLIGHT)
+-		new_val.generation++;
+-	/*
+-	 * For transitions from state in-flight to another state cmpxchg64()
+-	 * must be used. For other state transitions it is safe to use
+-	 * WRITE_ONCE().
+-	 */
+-	if (old_state != MQ_RQ_IN_FLIGHT) {
+-		WRITE_ONCE(rq->das.das, new_val.das);
+-		return true;
+-	}
+-	return blk_mq_set_rq_state(rq, old_val, new_val);
++	return READ_ONCE(rq->sag).state;
+ }
+ 
+ static inline struct blk_mq_ctx *__blk_mq_get_ctx(struct request_queue *q,
+diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+index 549dfda7190c..19fca827a272 100644
+--- a/block/blk-timeout.c
++++ b/block/blk-timeout.c
+@@ -157,14 +157,7 @@ void blk_timeout_work(struct work_struct *work)
+ void blk_abort_request(struct request *req)
+ {
+ 	if (req->q->mq_ops) {
+-		/*
+-		 * All we need to ensure is that timeout scan takes place
+-		 * immediately and that scan sees the new timeout value.
+-		 * No need for fancy synchronizations.
+-		 */
+-		if (blk_mq_rq_set_deadline(req, jiffies, MQ_RQ_IN_FLIGHT,
+-					   MQ_RQ_IN_FLIGHT))
+-			kblockd_schedule_work(&req->q->timeout_work);
++		blk_mq_abort_request(req);
+ 	} else {
+ 		if (blk_mark_rq_complete(req))
+ 			return;
+@@ -185,7 +178,7 @@ unsigned long blk_rq_timeout(unsigned long timeout)
+ 	return timeout;
+ }
+ 
+-static void __blk_add_timer(struct request *req, unsigned long deadline)
++void __blk_add_timer(struct request *req, unsigned long deadline)
+ {
+ 	struct request_queue *q = req->q;
+ 	unsigned long expiry;
+@@ -238,28 +231,3 @@ void blk_add_timer(struct request *req)
+ 
+ 	return __blk_add_timer(req, deadline);
+ }
+-
+-/**
+- * blk_mq_add_timer - set the deadline for a single request
+- * @req:	request for which to set the deadline.
+- * @old:	current request state.
+- * @new:	new request state.
+- *
+- * Sets the deadline of a request if and only if it has state @old and
+- * at the same time changes the request state from @old into @new. The caller
+- * must guarantee that the request state won't be modified while this function
+- * is in progress.
+- */
+-void blk_mq_add_timer(struct request *req, enum mq_rq_state old,
+-		      enum mq_rq_state new)
+-{
+-	struct request_queue *q = req->q;
+-	unsigned long deadline;
+-
+-	if (!req->timeout)
+-		req->timeout = q->rq_timeout;
+-	deadline = jiffies + req->timeout;
+-	if (!blk_mq_rq_set_deadline(req, deadline, old, new))
+-		WARN_ON_ONCE(true);
+-	return __blk_add_timer(req, deadline);
+-}
+diff --git a/block/blk.h b/block/blk.h
+index 984367308b11..81a36c96aba2 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -170,8 +170,7 @@ static inline bool bio_integrity_endio(struct bio *bio)
+ void blk_timeout_work(struct work_struct *work);
+ unsigned long blk_rq_timeout(unsigned long timeout);
+ void blk_add_timer(struct request *req);
+-void blk_mq_add_timer(struct request *req, enum mq_rq_state old,
+-		      enum mq_rq_state new);
++void __blk_add_timer(struct request *req, unsigned long deadline);
+ void blk_delete_timer(struct request *);
+ 
+ 
+@@ -193,21 +192,21 @@ void blk_account_io_done(struct request *req, u64 now);
+ /*
+  * EH timer and IO completion will both attempt to 'grab' the request, make
+  * sure that only one of them succeeds. Steal the bottom bit of the
+- * das field for this.
++ * __deadline field for this.
+  */
+ static inline int blk_mark_rq_complete(struct request *rq)
+ {
+-	return test_and_set_bit(0, &rq->das.legacy_deadline);
++	return test_and_set_bit(0, &rq->__deadline);
+ }
+ 
+ static inline void blk_clear_rq_complete(struct request *rq)
+ {
+-	clear_bit(0, &rq->das.legacy_deadline);
++	clear_bit(0, &rq->__deadline);
+ }
+ 
+ static inline bool blk_rq_is_complete(struct request *rq)
+ {
+-	return test_bit(0, &rq->das.legacy_deadline);
++	return test_bit(0, &rq->__deadline);
+ }
+ 
+ /*
+@@ -316,12 +315,12 @@ static inline void req_set_nomerge(struct request_queue *q, struct request *req)
+  */
+ static inline void blk_rq_set_deadline(struct request *rq, unsigned long time)
+ {
+-	rq->das.legacy_deadline = time & ~0x1UL;
++	rq->__deadline = time & ~0x1UL;
+ }
+ 
+ static inline unsigned long blk_rq_deadline(struct request *rq)
+ {
+-	return rq->das.legacy_deadline & ~0x1UL;
++	return rq->__deadline & ~0x1UL;
+ }
+ 
+ /*
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 771dbdc8758c..5288e9c3fdbf 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -130,14 +130,12 @@ typedef __u32 __bitwise req_flags_t;
+ #define RQF_NOMERGE_FLAGS \
+ 	(RQF_STARTED | RQF_SOFTBARRIER | RQF_FLUSH_SEQ | RQF_SPECIAL_PAYLOAD)
+ 
+-union blk_deadline_and_state {
++union request_sag {
+ 	struct {
+-		uint32_t generation:30;
+-		uint32_t state:2;
+-		uint32_t deadline;
++		u32	generation : 30;
++		u32	state : 2;
+ 	};
+-	unsigned long legacy_deadline;
+-	uint64_t das;
++	u32		val;
+ };
+ 
+ /*
+@@ -242,24 +240,19 @@ struct request {
+ 
+ 	unsigned int extra_len;	/* length of alignment and padding */
+ 
+-	/*
+-	 * ->aborted_gstate is used by the timeout to claim a specific
+-	 * recycle instance of this request.  See blk_mq_timeout_work().
+-	 */
+-	union blk_deadline_and_state aborted_gstate;
+-
+-#ifndef CONFIG_ARCH_HAVE_CMPXCHG64
+-	spinlock_t das_lock;
+-#endif
++	 /*
++	  * ->aborted_sagis used by the timeout to claim a specific recycle
++	  * instance of this request.  See blk_mq_timeout_work().
++	  */
++	union request_sag sag;
++	union request_sag aborted_sag;
+ 
+ 	/*
+ 	 * Access through blk_rq_deadline() and blk_rq_set_deadline(),
+ 	 * blk_mark_rq_complete(), blk_clear_rq_complete() and
+-	 * blk_rq_is_complete() for legacy queues or blk_mq_rq_state(),
+-	 * blk_mq_change_rq_state() and blk_mq_rq_set_deadline() for
+-	 * blk-mq queues.
++	 * blk_rq_is_complete() for legacy queues.
+ 	 */
+-	union blk_deadline_and_state das;
++	unsigned long __deadline;
+ 
+ 	struct list_head timeout_list;
+ 
