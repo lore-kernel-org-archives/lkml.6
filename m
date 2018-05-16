@@ -1,57 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEPSJB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:09:01 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37051 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeEPSI7 (ORCPT
+        id S1751868AbeEPSMV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:12:21 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:43298 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeEPSMU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:08:59 -0400
-X-Google-Smtp-Source: AB8JxZrdncw50xBxAzKuoY+p3PUEDyNnc5b0v2A2UGcl2mzIIHpldKy5nge21nj4QBwPFtw8aHnVpA==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: rishabhb@codeaurora.org
-From: Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <385198cbb91c4a36ad758997916ad271@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, evgreen@chromium.org, robh@kernel.org
-References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
- <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
- <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
- <385198cbb91c4a36ad758997916ad271@codeaurora.org>
-Message-ID: <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
-Date: Wed, 16 May 2018 11:08:57 -0700
+        Wed, 16 May 2018 14:12:20 -0400
+Date: Wed, 16 May 2018 14:12:18 -0400 (EDT)
+Message-Id: <20180516.141218.827550466386531999.davem@davemloft.net>
+To: f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, andrew@lunn.ch,
+        vivien.didelot@savoirfairelinux.com, linux-kernel@vger.kernel.org,
+        opendmb@gmail.com
+Subject: Re: [PATCH net v2 0/3] net: dsa: bcm_sf2: CFP fixes
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180515230125.25886-1-f.fainelli@gmail.com>
+References: <20180515230125.25886-1-f.fainelli@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GI96IT025953
 
-Quoting rishabhb@codeaurora.org (2018-05-16 10:33:14)
-> On 2018-05-16 10:03, Stephen Boyd wrote:
-> > Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
-> 
-> >> +
-> >> +- max-slices:
-> >> +       usage: required
-> >> +       Value Type: <u32>
-> >> +       Definition: Number of cache slices supported by hardware
-> >> +
-> >> +Example:
-> >> +
-> >> +       llcc: qcom,llcc@1100000 {
-> > 
-> > cache-controller@1100000 ?
-> > 
-> We have tried to use consistent naming convention as in llcc_* 
-> everywhere.
-> Using cache-controller will mix and match the naming convention. Also in
-> the documentation it is explained what llcc is and its full form.
-> 
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Tue, 15 May 2018 16:01:22 -0700
 
-DT prefers standard node names as opposed to vendor specific node names.
-Isn't it a cache controller? I fail to see why this can't be done.
+> This patch series fixes a number of usability issues with the SF2 Compact Field
+> Processor code:
+> 
+> - we would not be properly bound checking the location when we let the kernel
+>   automatically place rules with RX_CLS_LOC_ANY
+> 
+> - when using IPv6 rules and user space specifies a location identifier we
+>   would be off by one in what the chain ID (within the Broadcom tag) indicates
+> 
+> - it would be possible to delete one of the two slices of an IPv6 while leaving
+>   the other one programming leading to various problems
+
+Series applied, thanks.
+
+Queue up for -stable?
