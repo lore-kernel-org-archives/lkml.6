@@ -1,123 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeEPMvR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:51:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58602 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752829AbeEPMvI (ORCPT
+        id S1752884AbeEPMvX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:51:23 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38632 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752868AbeEPMvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:51:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3C7B60B23
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH V6 07/12] ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
-Date: Wed, 16 May 2018 18:19:59 +0530
-Message-Id: <1526475004-10341-8-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
-References: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
+        Wed, 16 May 2018 08:51:18 -0400
+X-Google-Smtp-Source: AB8JxZpONqhsmo+sA+JJat+iWOB8tE/XFCG4CTOR/6/AiMCShSZbvz60phd0KlSfE6wpzTWRysUFYEc1NR2koFt7wwA=
+MIME-Version: 1.0
+In-Reply-To: <no_message-id@ru>
+References: <no_message-id@ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 May 2018 14:51:16 +0200
+Message-ID: <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
+To: Grigoryev Denis <grigoryev@fastwel.ru>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the common data for all dk07 based boards.
+On Fri, May 4, 2018 at 6:53 PM, Grigoryev Denis <grigoryev@fastwel.ru> wrote:
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi | 75 +++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+> The driver stores the result of irq_set_type() in the internal variables
+> irq_trig_raise and irq_trig_fall, which later are used to determine
+> the GPIOs that must be re-configured as input. These variables retain their
+> value between gpiolib's  export / unexport, resulting in an incorrect
+> state in some cases. The corresponding bits in the variables
+> irq_trig_raise and irq_trig_fall should be cleared in irq_shutdown().
+>
+> Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
+> ---
+>  drivers/gpio/gpio-pca953x.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index d2ead4b..b41be8c 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+>         return 0;
+>  }
+>
+> +static void pca953x_irq_shutdown(struct irq_data *d)
+> +{
+> +       struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
+> +       u8 mask = 1 << (d->hwirq % BANK_SZ);
+> +
+> +       chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
+> +       chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
+> +}
+> +
+>  static struct irq_chip pca953x_irq_chip = {
+>         .name                   = "pca953x",
+>         .irq_mask               = pca953x_irq_mask,
+> @@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
+>         .irq_bus_lock           = pca953x_irq_bus_lock,
+>         .irq_bus_sync_unlock    = pca953x_irq_bus_sync_unlock,
+>         .irq_set_type           = pca953x_irq_set_type,
+> +       .irq_shutdown           = pca953x_irq_shutdown,
+>  };
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
-new file mode 100644
-index 0000000..9f1a5a66
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include "qcom-ipq4019.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1";
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x20000000>; /* 512MB */
-+	};
-+
-+	aliases {
-+		serial0 = &blsp1_uart1;
-+		serial1 = &blsp1_uart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	soc {
-+		pinctrl@1000000 {
-+			serial_0_pins: serial0-pinmux {
-+				pins = "gpio16", "gpio17";
-+				function = "blsp_uart0";
-+				bias-disable;
-+			};
-+
-+			i2c_0_pins: i2c-0-pinmux {
-+				pins = "gpio20", "gpio21";
-+				function = "blsp_i2c0";
-+				bias-disable;
-+			};
-+
-+			nand_pins: nand-pins {
-+				pins = "gpio53", "gpio55", "gpio56",
-+				       "gpio57", "gpio58", "gpio59",
-+				       "gpio60", "gpio62", "gpio63",
-+				       "gpio64", "gpio65", "gpio66",
-+				       "gpio67", "gpio68", "gpio69";
-+				function = "qpic";
-+                        };
-+		};
-+
-+		serial@78af000 {
-+			pinctrl-0 = <&serial_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		dma@7884000 {
-+			status = "ok";
-+		};
-+
-+		i2c@78b7000 { /* BLSP1 QUP2 */
-+			pinctrl-0 = <&i2c_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		dma@7984000 {
-+			status = "ok";
-+		};
-+
-+		qpic-nand@79b0000 {
-+			pinctrl-0 = <&nand_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
-+};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+This driver has a big set of users, so putting some maintainers
+in the loop so we can get some patch review.
+
+Yours,
+Linus Walleij
