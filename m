@@ -1,98 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeEPTxV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 15:53:21 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:43018 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeEPTxT (ORCPT
+        id S1751596AbeEPTyD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 15:54:03 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32780 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEPTyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 15:53:19 -0400
-X-Google-Smtp-Source: AB8JxZo/4FVIPrOL3ZkbXZ7M+Pxauz69tQPfVVR1Ga3MRfqFk1VJXrG8frVoLzBntrY90QikAisFOK/KY6VqcLDnR/U=
+        Wed, 16 May 2018 15:54:02 -0400
+X-Google-Smtp-Source: AB8JxZp4WtxvDd9yS4BSQlL10X1hxoIgQQMQ16F/qoGFwySTlStquIBPM7pBDHJU8Cfj422MU44BWg==
+From: Mathieu Malaterre <malat@debian.org>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Mathieu Malaterre <malat@debian.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/debug: Move print_rt_rq and print_dl_rq declarations to kernel/sched/sched.h
+Date: Wed, 16 May 2018 21:53:47 +0200
+Message-Id: <20180516195348.30426-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 May 2018 22:53:18 +0300
-Message-ID: <CAHp75Vdm4q39hoXoodDQPwEdhi-C+jF7yaxHqHi41mrT0kXGnA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] pcal6524 extensions and fixes for pca953x driver
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 8:01 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> V6:
-> * added proper attribution to the formula used for fixing the
->   pcal6524 register address (changes commit message only)
-> * add back missing first patch from V2 that defines the
->   PCA_LATCH_INT constant
-> * removed patches already merged
->
+In commit 6b55c9654fcc ("sched/debug: Move print_cfs_rq() declaration to
+kernel/sched/sched.h"), ‘print_cfs_rq’ prototype was added to
+<kernel/sched/sched.h> right next to prototypes for ‘print_cfs_stats’,
+‘print_rt_stats’ and ‘print_dl_stats’. Update this previous commit
+and also move related prototypes: ‘print_rt_rq’ and ‘print_dl_rq’.
+Remove existing extern declarations now that they not needed anymore.
 
-Thanks for an update.
-I think we still need to address the constant representation in patch 2.
+Silence the following gcc warning, triggered at W=1:
 
-For the rest take my
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+  kernel/sched/debug.c:573:6: warning: no previous prototype for ‘print_rt_rq’ [-Wmissing-prototypes]
+  kernel/sched/debug.c:603:6: warning: no previous prototype for ‘print_dl_rq’ [-Wmissing-prototypes]
 
-> 2018-04-28 18:33:42: V5:
-> * fix wrong split up between patches 1/7 and 2/7.
->
-> 2018-04-26 19:35:07: V4:
-> * introduced PCA_LATCH_INT constant to make of_table more
->   readable (suggested by Andy Shevchenko)
-> * converted all register constants to hex in a separate
->   patch (suggested by Andy Shevchenko)
-> * separated additional pcal953x and pcal6524 register
->   definitions into separate patches (suggested by Andy Shevchenko)
-> * made special pcal6524 address adjustment more readable
->   (suggested by Andy Shevchenko)
-> * moved gpio-controller and interrupt-controller to the
->   "required" section (reviewed by Rob Herring)
->
-> 2018-04-10 18:07:07: V3:
-> * add Reported-by: and Reviewed-by:
-> * fix wording for bindings description and example
-> * convert all register offsets to hex
-> * omit the LEVEL-IRQ RFC/hack commit
->
-> 2018-04-04 21:00:27: V2:
-> * added PCA_PCAL flags if matched through of-table
-> * fix address calculation for extended PCAL6524 registers
-> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
->   test in combination with ts3a227e driver
-> * improve description of bindings for optional vcc-supply
->   and interrupt-controller;
->
-> 2018-03-10 09:32:53: no initial description
->
-> H. Nikolaus Schaller (3):
->   gpio: pca953x: set the PCA_PCAL flag also when matching by DT
->   gpio: pca953x: define masks for addressing common and extended
->     registers
->   gpio: pca953x: fix address calculation for pcal6524
->
->  drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> --
-> 2.12.2
->
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ kernel/sched/deadline.c | 2 --
+ kernel/sched/rt.c       | 2 --
+ kernel/sched/sched.h    | 5 +++--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-
-
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 125703d9b25e..1356afd1eeb6 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2731,8 +2731,6 @@ bool dl_cpu_busy(unsigned int cpu)
+ #endif
+ 
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+-
+ void print_dl_stats(struct seq_file *m, int cpu)
+ {
+ 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 7aef6b4e885a..ef3c4e6f5345 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2701,8 +2701,6 @@ int sched_rr_handler(struct ctl_table *table, int write,
+ }
+ 
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
+-
+ void print_rt_stats(struct seq_file *m, int cpu)
+ {
+ 	rt_rq_iter_t iter;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 15750c222ca2..1f0a4bc6a39d 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2025,8 +2025,9 @@ extern bool sched_debug_enabled;
+ extern void print_cfs_stats(struct seq_file *m, int cpu);
+ extern void print_rt_stats(struct seq_file *m, int cpu);
+ extern void print_dl_stats(struct seq_file *m, int cpu);
+-extern void
+-print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
++extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+ #ifdef CONFIG_NUMA_BALANCING
+ extern void
+ show_numa_stats(struct task_struct *p, struct seq_file *m);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
