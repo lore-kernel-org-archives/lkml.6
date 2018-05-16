@@ -1,50 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeEPUJI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:09:08 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52766 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEPUJG (ORCPT
+        id S1751619AbeEPULq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:11:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36958 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEPULo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:09:06 -0400
-X-Google-Smtp-Source: AB8JxZrABBpoKjhTcjr0DUh35ojqjdlGmhfBohNbNM8QRR3wsbeQ+Re0c2JX5EEX7oJCAbmz8wQHlg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Ingo Molnar <mingo@redhat.com>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] =?UTF-8?q?sched/deadline:=20make=20function=20=E2=80=98gr?= =?UTF-8?q?ub=5Freclaim=E2=80=99=20static?=
-Date: Wed, 16 May 2018 22:09:02 +0200
-Message-Id: <20180516200902.959-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        Wed, 16 May 2018 16:11:44 -0400
+X-Google-Smtp-Source: AB8JxZoPNz1CIqWwuAUf7eWa1KNTxuB4PkEghqDMaS55CY2Fh9l5ZYHvOwxJOkvrECjvdiex+yNxIg==
+Subject: Re: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com,
+        pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <98319f30-2abe-158c-1b51-33d1df80e185@gmail.com>
+ <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <03934462-13ef-59c0-aa27-01a003bf7baa@gmail.com>
+Date: Wed, 16 May 2018 22:10:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since function ‘grub_reclaim’ can be made static, make it so.
-Silence the following gcc warning (W=1):
+Dan,
 
-  kernel/sched/deadline.c:1120:5: warning: no previous prototype for ‘grub_reclaim’ [-Wmissing-prototypes]
+On 05/15/2018 11:29 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 05/15/2018 04:13 PM, Jacek Anaszewski wrote:
+>> Hi Dan,
+>>
+>> Thanks for the update.
+>>
+>> On 05/15/2018 05:43 PM, Dan Murphy wrote:
+>>> Introduce the device tree bindings for the lm3601x
+>>> family of LED torch, flash and IR drivers.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>
+>>> v6 - Removed multiple led child nodes, fixed example to display micro ranges
+>>> for corresponding child nodes and added led-sources to define the current driver -
+>>> https://patchwork.kernel.org/patch/10392121/
+>>>
+>>> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
+>>> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
+>>> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
+>>> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
+>>> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+>>>
+>>>    .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
+>>>    1 file changed, 47 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>> new file mode 100644
+>>> index 000000000000..27930a89e9a5
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>> @@ -0,0 +1,47 @@
+>>> +* Texas Instruments - lm3601x Single-LED Flash Driver
+>>> +
+>>> +The LM3601X are ultra-small LED flash drivers that
+>>> +provide a high level of adjustability.
+>>> +
+>>> +Required properties:
+>>> +    - compatible : Can be one of the following
+>>> +        "ti,lm36010"
+>>> +        "ti,lm36011"
+>>> +    - reg : I2C slave address
+>>> +    - #address-cells : 1
+>>> +    - #size-cells : 0
+>>> +
+>>> +Required child properties:
+>>> +    - reg : 0
+>>> +    - led-sources:    0 - Indicates a IR mode
+>>> +            1 - Indicates a Torch (white LED) mode
+>>
+>> You don't need led-sources at all. Please use reg as in
+>> the previous version. led-sources is useful for describing
+>> more complex arrangements. Here reg will do.
+> 
+> OK.  Thought we would keep consistent with the max IC.
+> 
+>>
+>>> +
+>>> +Required properties for flash LED child nodes:
+>>> +    See Documentation/devicetree/bindings/leds/common.txt
+>>> +    - flash-max-microamp : Range from 11mA -> 1.5A
+>>> +    - flash-max-timeout-us : Range from 40ms -> 1600ms
+>>> +    - led-max-microamp : Range from 2.4mA -> 376mA
+>>
+>> Please give also a step in the format like below
+>> (taken from max77693):
+>>
+>>      Valid values: 62500 - 1000000, step by 62500 (rounded down)
+> 
+> I would do this but the step is not linear.  The step is 40ms from 40 -> 400.
+> after that the step goes to 200ms from 400->1600.
+> 
+> same with the current ranges.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you're going to apply Andy's formula in the driver, then you can
+present it also here. Anyway, please avoid using non-standard "->"
+symbol in favor of "to" if you're using "from".
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index d6196bc6cbb5..1356afd1eeb6 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1117,7 +1117,7 @@ extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
-  * should be larger than 2^(64 - 20 - 8), which is more than 64 seconds.
-  * So, overflow is not an issue here.
-  */
--u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
-+static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
- {
- 	u64 u_inact = rq->dl.this_bw - rq->dl.running_bw; /* Utot - Uact */
- 	u64 u_act;
+Or even better I propose to list allowed values - there are not
+so many of them.
+
 -- 
-2.11.0
+Best regards,
+Jacek Anaszewski
