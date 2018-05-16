@@ -1,174 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeEPK1R (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:27:17 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:58462 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752184AbeEPK1P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:27:15 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH v4 4/4] rtc: ds1307: add freq_test sysfs attribute to
- check tick on m41txx
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
- <20180516100526.73549-4-giulio.benetti@micronovasrl.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <72e1b582-d9c5-523b-9a21-5ad2c6fb1d98@micronovasrl.com>
-Date: Wed, 16 May 2018 12:27:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752594AbeEPK2S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:28:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54732 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752038AbeEPK2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:28:17 -0400
+Date: Wed, 16 May 2018 11:28:12 +0100
+From: Mel Gorman <mgorman@suse.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Joonsoo Kim <js1304@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
+Message-ID: <20180516102811.huem4rg3mfmp2v5d@suse.de>
+References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
+ <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
+ <20180504103322.2nbadmnehwdxxaso@suse.de>
+ <CAAmzW4PKZFbAS6UEYKP2BBAqgk0=yTMuJRMTz--_0YTj-SjKvw@mail.gmail.com>
+ <aa3452e1-db01-42ae-29eb-b23572e88969@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180516100526.73549-4-giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <aa3452e1-db01-42ae-29eb-b23572e88969@suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oh, sorry, I've forgotten to reword commit log.
-I follow with v5 patchset.
-Sorry again.
+On Wed, May 16, 2018 at 11:35:55AM +0200, Vlastimil Babka wrote:
+> On 05/08/2018 03:00 AM, Joonsoo Kim wrote:
+> >> classzone predates my involvement with Linux but I would be less concerneed
+> >> about what the original intent was and instead ensure that classzone index
+> >> is consistent, sane and potentially renamed while preserving the intent of
+> >> "reserve pages in lower zones when an allocation request can use higher
+> >> zones". While historically the critical intent was to preserve Normal and
+> >> to a lesser extent DMA on 32-bit systems, there still should be some care
+> >> of DMA32 so we should not lose that.
+> > 
+> > Agreed!
+> > 
+> >> With the patch, the allocator looks like it would be fine as just
+> >> reservations change. I think it's unlikely that CMA usage will result
+> >> in lowmem starvation.  Compaction becomes a bit weird as classzone index
+> >> has no special meaning versis highmem and I think it'll be very easy to
+> >> forget.
+> 
+> I don't understand this point, what do you mean about highmem here?
 
-Giulio
+I mean it has no special meaning as compaction is not primarily concerned
+with lowmem protections as it compacts within a zone. It preserves watermarks
+but it does not have the same degree of criticality as the page allocator
+and reclaim is concerned with.
 
-Il 16/05/2018 12:05, Giulio Benetti ha scritto:
-> On m41txx you can enable open-drain OUT pin to check if offset is ok.
-> Enabling OUT pin with freq_test attribute, OUT pin will tick 512 times
-> faster than 1s tick base.
+> I've
+> checked and compaction seems to use classzone_idx 1) to pass it to
+> watermark checks as part of compaction suitability checks, i.e. the
+> usual lowmem protection, and 2) to limit compaction of higher zones in
+> kcompactd if the direct compactor can't use them anyway - seems this
+> part has currently the same zone imbalance problem as reclaim.
 > 
-> Enable or Disable FT bit on CONTROL register if freq_test is 1 or 0.
+
+Originally the watermark check for compaction was primarily about not
+depleting a single zone but the checks were duplicated anyway. It's not
+actually super critical for it to preserve lowmem zones as any memory
+usage by compaction is transient.
+
+> > Agreed!
+> > I will update this patch to reflect your comment. If someone have an idea
+> > on renaming this variable, please let me know.
 > 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
-> V3 => V4:
-> * change attribute from freq_test to frequency_test_enable
-> * use regmap_update_bits instead of regmap_write
+> Pehaps max_zone_idx? Seems a bit more clear than "high_zoneidx". And I
+> have no idea what was actually meant by "class".
 > 
->   drivers/rtc/rtc-ds1307.c | 99 ++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 99 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 2797d01bfa1d..de98ddc39515 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -1053,6 +1053,99 @@ static int m41txx_rtc_set_offset(struct device *dev, long offset)
->   				  ctrl_reg);
->   }
->   
-> +static ssize_t frequency_test_enable_store(struct device *dev,
-> +					   struct device_attribute *attr,
-> +					   const char *buf, size_t count)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned long freq_test = 0;
-> +	int retval;
-> +
-> +	retval = kstrtoul(buf, 10, &freq_test);
-> +	if ((retval < 0) || (retval > 1)) {
-> +		dev_err(dev, "Failed to store RTC Frequency Test attribute\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	regmap_update_bits(ds1307->regmap, M41TXX_REG_CONTROL, M41TXX_BIT_FT,
-> +			   freq_test ? M41TXX_BIT_FT : 0);
-> +
-> +	return retval ? retval : count;
-> +}
-> +
-> +static ssize_t frequency_test_enable_show(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  char *buf)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	int freq_test_en = 0;
-> +	unsigned int ctrl_reg;
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	if (ctrl_reg & M41TXX_BIT_FT)
-> +		freq_test_en = true;
-> +	else
-> +		freq_test_en = false;
-> +
-> +	return sprintf(buf, "%d\n", freq_test_en);
-> +}
-> +
-> +static DEVICE_ATTR_RW(frequency_test_enable);
-> +
-> +static struct attribute *rtc_freq_test_attrs[] = {
-> +	&dev_attr_frequency_test_enable.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group rtc_freq_test_attr_group = {
-> +	.attrs		= rtc_freq_test_attrs,
-> +};
-> +
-> +static void rtc_calib_remove_sysfs_group(void *_dev)
-> +{
-> +	struct device *dev = _dev;
-> +
-> +	sysfs_remove_group(&dev->kobj, &rtc_freq_test_attr_group);
-> +}
-> +
-> +static int ds1307_add_frequency_test(struct ds1307 *ds1307)
-> +{
-> +	int err = 0;
-> +
-> +	switch (ds1307->type) {
-> +	case m41t0:
-> +	case m41t00:
-> +	case m41t11:
-> +		/* Export sysfs entries */
-> +		err = sysfs_create_group(&(ds1307->dev)->kobj,
-> +					 &rtc_freq_test_attr_group);
-> +		if (err) {
-> +			dev_err(ds1307->dev,
-> +				"Failed to create sysfs group: %d\n",
-> +				err);
-> +			return err;
-> +		}
-> +
-> +		err = devm_add_action_or_reset(ds1307->dev,
-> +					       rtc_calib_remove_sysfs_group,
-> +					       ds1307->dev);
-> +		if (err) {
-> +			dev_err(ds1307->dev,
-> +				"Failed to add sysfs cleanup action: %d\n",
-> +				err);
-> +			sysfs_remove_group(&(ds1307->dev)->kobj,
-> +					   &rtc_freq_test_attr_group);
-> +			return err;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
->   /*----------------------------------------------------------------------*/
->   
->   static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
-> @@ -1794,6 +1887,12 @@ static int ds1307_probe(struct i2c_client *client,
->   	if (err)
->   		return err;
->   
-> +	err = ds1307_add_frequency_test(ds1307);
-> +	if (err) {
-> +		rtc_device_unregister(ds1307->rtc);
-> +		return err;
-> +	}
-> +
->   	if (chip->nvram_size) {
->   		struct nvmem_config nvmem_cfg = {
->   			.name = "ds1307_nvram",
-> 
+
+I don't have a better suggestion.
+
+-- 
+Mel Gorman
+SUSE Labs
