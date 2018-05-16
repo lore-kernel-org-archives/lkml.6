@@ -1,89 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeEPHIp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:08:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751285AbeEPHIo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:08:44 -0400
-Date: Wed, 16 May 2018 12:38:35 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [RFC] powerpc/emulate_step: Fix kernel crash when VSX is not
- present
-To: mpe@ellerman.id.au, Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Michael Neuling <mikey@neuling.org>
-Cc: anton@samba.org, cyrilbur@gmail.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, matthew.brown.dev@gmail.com,
-        paulus@samba.org, sandipan@linux.vnet.ibm.com
-References: <20180516054021.5328-1-ravi.bangoria@linux.ibm.com>
-In-Reply-To: <20180516054021.5328-1-ravi.bangoria@linux.ibm.com>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18051607-0008-0000-0000-000004F6F4E1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051607-0009-0000-0000-00001E8B604C
-Message-Id: <1526454049.ztv236j5bs.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160072
+        id S1752400AbeEPHJe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:09:34 -0400
+Received: from mout.gmx.net ([212.227.15.19]:49535 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751485AbeEPHJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:09:31 -0400
+Date: Wed, 16 May 2018 16:09:15 +0900 (JST)
+Message-Id: <20180516.160915.1252752723511457980.teika@gmx.com>
+To: aaron.ma@canonical.com, dmitry.torokhov@gmail.com
+Cc: benjamin.tissoires@redhat.com, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads
+ (series 80)
+From: Teika Kazura <teika@gmx.com>
+In-Reply-To: <ca40347e-44cd-aa93-75ba-1bf0a63705be@canonical.com>
+References: <CAO-hwJJnHPEQ+R+8qWb1Dn+otqgmbcKgiNDOyNkVBD+xdzY_zw@mail.gmail.com>
+        <00f701d3d627$bcf41de0$36dc59a0$@emc.com.tw>
+        <ca40347e-44cd-aa93-75ba-1bf0a63705be@canonical.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:C38PHNBPB+rZylK3mcnLJGW5ADESiN1m/vqEMSxpfewnkwkKbUN
+ bgxKKzvcx8wfT3Bt0LcCUqDnu0kF/Y/OpEBuc6TWZ6GeMq8w5cFzt2+1hwtrAUrXg/3CPYS
+ ZVFLeLUgM8VV0PHrN+0X5q8DEK2gWDCADmeXruc5yl7IJf8aCfF/SdeMyIDt6FyD11pcza2
+ 8Ot6r4mhcaM6DrQYMmJpw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Mp7en1E2duk=:gxhfKEp2wQiRV2oo/t7kOk
+ fAkczVmFUUJDq3QhOAYLQFNXuTAgBCvkZjWSpxw3orWC6eFEJypMserQxLmr2Fc+xUMFPJYXA
+ tyoFkBmC+wdpi5yeGKhr2DOYyiKQvGd2pH71xX6A+2kS+2XEHf0zQzzXPCB68Oo6O0xdvO1VY
+ ZyoPJRGWLTt9QzMh7qDgWrq7Xl2Ao38oW5YU9AmiBp/hrT2iGTFkrK4No154hmniiF2yjjx5R
+ 6QqwFFIDH2cxBO1cZc4Q/OmVYbD0E3gEbx226b5UfhbrRl7/fWHSfHFSdBOwdjWT6Qtw9UeNi
+ dQGS1E1xO2rVfvOQWdlUyPdLpYYDLsHBvPIlWwikqF4JoAKZOaafkRez9Fr0/8baATPD8g8A0
+ aJnaFzAzP5FYZUMdknx30B4v+fNAsssYOvzUKBJBdlhuRVZp6tWI/6GYs7LOiHk+R6Y3a2Lxl
+ SxBRg67oa3KNKUYKoBFaJKx+vBHydMa4sK9HUp7PBrI00kaQnbuAWVY0+H3spFJ2TlNz5/SI9
+ NjIv+KOnzEVXgE7oahQbL+UB6Q9BKJ1Mo8+1iVC6malzAG4HGYQqqO0YEFVP2klz83zk7WhYa
+ okzbugbaQFZrFbNCRgaAxX/Y+CqM2Qxm/wnMKezYJmbWTlFT6atXp1rjjZLZy9fbMIAQPd2Jb
+ OFMtkT9jGVNYr7K6mXcZ9Ko+7gh44B/TLhlwE3J445epJzyKSiCeOOaqLsJfYn0qUFg92fZF2
+ uyixThdOqepyods4E5Sh4fUkh5KabiEIs3imh3LmIXR34/kDXIM5IJYO7V4ikIAkzZhwWhTFm
+ ktdbham
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Adding Mikey]
+From: Aaron Ma <aaron.ma@canonical.com>
+Date:   Tue, 17 Apr 2018 19:42:27 +0800
 
-Ravi Bangoria wrote:
-> emulate_step() is not checking runtime VSX feature flag before
-> emulating an instruction. This can cause kernel oops when kernel
-> is compiled with CONFIG_VSX=y but running on machine where VSX is
-> not supported or disabled. Ex, while running emulate_step tests on
-> P6 machine:
+> Could you apply my patch too?
 > 
->   ...
->   emulate_step_test: lvx            : PASS
->   emulate_step_test: stvx           : PASS
->   Oops: Exception in kernel mode, sig: 4 [#1]
->   NIP [c000000000095c24] .load_vsrn+0x28/0x54
->   LR [c000000000094bdc] .emulate_loadstore+0x167c/0x17b0
->   Call Trace:
->   [c0000000494c3770] [40fe240c7ae147ae] 0x40fe240c7ae147ae (unreliable)
->   [c0000000494c37f0] [c000000000094bdc] .emulate_loadstore+0x167c/0x17b0
->   [c0000000494c3900] [c000000000094f6c] .emulate_step+0x25c/0x5bc
->   [c0000000494c39b0] [c000000000ec90dc] .test_lxvd2x_stxvd2x+0x64/0x154
->   [c0000000494c3b90] [c000000000ec9204] .test_emulate_step+0x38/0x4c
->   [c0000000494c3c00] [c00000000000de2c] .do_one_initcall+0x5c/0x2c0
->   [c0000000494c3cd0] [c000000000eb4bf8] .kernel_init_freeable+0x314/0x4cc
->   [c0000000494c3db0] [c00000000000e1e4] .kernel_init+0x24/0x160
->   [c0000000494c3e30] [c00000000000bc24] .ret_from_kernel_thread+0x58/0xb4
+> It add LEN0096 that Benjamin's patch doesn't include.
 > 
-> With fix:
->   ...
->   emulate_step_test: stvx           : PASS
->   emulate_step_test: lxvd2x         : FAIL
->   emulate_step_test: stxvd2x        : FAIL
+> +	"LEN0096", /* X280 */
 
-Those tests should also be updated to skip testing these instructions if 
-!CPU_FTR_VSX.
+Aaron, in your original patch in last Oct [1], both *LEN0092 and* LEN0096 were aded. Which should be the case, both two, or only LEN0096?
 
-> 
-> Fixes: https://github.com/linuxppc/linux/issues/148
-> 
-> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
-> Note: VSX was first introduced on P6. But there are many VSX instructions
->       which were introduced in later versions. So ideally, analyse_instr()
->       should check for ISA version along with opcode.
+[1] https://www.spinics.net/lists/kernel/msg2625450.html
 
-Yes, this patch should be useful for when VSX is not present. For 
-specific instructions, we should add a cpu feature check.
-
-- Naveen
+Teika (Teika kazura)
