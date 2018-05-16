@@ -1,273 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeEPOzU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:55:20 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40230 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeEPOzS (ORCPT
+        id S1751370AbeEPO4u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:56:50 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:7602 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeEPO4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:55:18 -0400
-X-Google-Smtp-Source: AB8JxZrZk+whWPJ34bE+cFIWe//Fv/T65lHAxFpINWnP/YhKT33hreopCZbNBp3qjjw923WoGGutDQ==
-Date: Wed, 16 May 2018 16:55:15 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 12/14] net: sched: retry action check-insert on
- concurrent modification
-Message-ID: <20180516145515.GP1972@nanopsycho>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-13-git-send-email-vladbu@mellanox.com>
- <20180516095953.GI1972@nanopsycho>
- <vbf4lj724th.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180516122600.GM1972@nanopsycho>
- <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180516132135.GN1972@nanopsycho>
- <vbfvabn1zic.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180516141319.GO1972@nanopsycho>
- <vbfsh6r1xsv.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+        Wed, 16 May 2018 10:56:47 -0400
+X-IronPort-AV: E=Sophos;i="5.49,406,1520870400";
+   d="scan'208";a="78334351"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com"
+        <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>,
+        "alan.christopher.jenkins@gmail.com"
+        <alan.christopher.jenkins@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "dvyukov@google.com" <dvyukov@google.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "martin@lichtvoll.de" <martin@lichtvoll.de>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+        "hare@suse.com" <hare@suse.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Subject: Re: INFO: task hung in blk_queue_enter
+Thread-Topic: INFO: task hung in blk_queue_enter
+Thread-Index: AQHT3uN1vjf30+PzmEGU/VFOyUa326QwxqcAgAGolwCAAB8sAA==
+Date: Wed, 16 May 2018 14:56:42 +0000
+Message-ID: <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+References: <0000000000009b212b056ae6dbad@google.com>
+         <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
+         <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+In-Reply-To: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0607;7:fxoIcmeARQrRdhQ+D1AznCY9EO62oW2QJp3ubfwNCh9AV+aMIaBJOFvSC+IPWoa+NKsC3gu4dwEJ1wVXRf1FdlnqQ10ottmvReEtlHinjxVJo8PIe6vvE/1rEBsjo+MImXAmNcA7q0P335gby5Dd1DegClWJ2c4uco0CBn7zLKx78+t+sZw05O6sSDPmFY/8FPFPs+ijcwlnKHXYFPy1bPEwYVnPHNSB1f1swbLTDOsg6zckVeO2EiRtHcknMiFe;20:ctqsGqNRKmNda8oK+Iz8n6YBjWCmU8/yX0bATFsGjUJh245amix5Ey8jvWKZ3xDmNW/lB1+NvxRvQoLx+b8kPS+cK++aQvQXUs5dOHvNMtih9CSwk/ZkvR/RWLEqWg4NEyk/I0cMdtEZlhI9XNULtQ2ceSmkd2QZD4U9jLYU1yw=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0607;
+x-ms-traffictypediagnostic: MWHPR04MB0607:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB06078F12BE778DCD742A3BFD98920@MWHPR04MB0607.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR04MB0607;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0607;
+x-forefront-prvs: 0674DC6DD3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(346002)(39860400002)(396003)(366004)(377424004)(51444003)(199004)(189003)(446003)(66066001)(6506007)(11346002)(105586002)(25786009)(76176011)(59450400001)(102836004)(26005)(186003)(2900100001)(106356001)(99286004)(6116002)(3846002)(8676002)(68736007)(81166006)(8936002)(2201001)(5250100002)(36756003)(2501003)(478600001)(86362001)(7416002)(81156014)(6436002)(4326008)(72206003)(305945005)(6512007)(2906002)(5660300001)(6486002)(486006)(2616005)(476003)(7736002)(97736004)(229853002)(53936002)(39060400002)(118296001)(6246003)(110136005)(3280700002)(54906003)(14454004)(316002)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0607;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: zccUOzRrCyyR758OMspND9Atg4pgapaebC17SFqFGMbePhY4/jeVYWudpjDD7kZ1XxYrmBPORmx5G+9ZIcPC6DLYcC/1MGREKIqY7MECaoRkZJoPwOsVqBnOE77GFMovyAKnfmZs/9TDirnMBw9x+zRwl1dfkUh+MW4CfNtkI9t9tGVI15WZSjpPFLHkBrU6
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D1CA9707F198184EA5F02F5680C69B6C@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vbfsh6r1xsv.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MS-Office365-Filtering-Correlation-Id: 8772c867-0e43-4492-c68e-08d5bb3d3ca7
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8772c867-0e43-4492-c68e-08d5bb3d3ca7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2018 14:56:42.6101
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0607
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GEuwFS012820
 
-Wed, May 16, 2018 at 04:26:40PM CEST, vladbu@mellanox.com wrote:
->
->On Wed 16 May 2018 at 14:13, Jiri Pirko <jiri@resnulli.us> wrote:
->> Wed, May 16, 2018 at 03:52:20PM CEST, vladbu@mellanox.com wrote:
->>>
->>>On Wed 16 May 2018 at 13:21, Jiri Pirko <jiri@resnulli.us> wrote:
->>>> Wed, May 16, 2018 at 02:43:58PM CEST, vladbu@mellanox.com wrote:
->>>>>
->>>>>On Wed 16 May 2018 at 12:26, Jiri Pirko <jiri@resnulli.us> wrote:
->>>>>> Wed, May 16, 2018 at 01:55:06PM CEST, vladbu@mellanox.com wrote:
->>>>>>>
->>>>>>>On Wed 16 May 2018 at 09:59, Jiri Pirko <jiri@resnulli.us> wrote:
->>>>>>>> Mon, May 14, 2018 at 04:27:13PM CEST, vladbu@mellanox.com wrote:
->>>>>>>>>Retry check-insert sequence in action init functions if action with same
->>>>>>>>>index was inserted concurrently.
->>>>>>>>>
->>>>>>>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>>>>>>>>---
->>>>>>>>> net/sched/act_bpf.c        | 8 +++++++-
->>>>>>>>> net/sched/act_connmark.c   | 8 +++++++-
->>>>>>>>> net/sched/act_csum.c       | 8 +++++++-
->>>>>>>>> net/sched/act_gact.c       | 8 +++++++-
->>>>>>>>> net/sched/act_ife.c        | 8 +++++++-
->>>>>>>>> net/sched/act_ipt.c        | 8 +++++++-
->>>>>>>>> net/sched/act_mirred.c     | 8 +++++++-
->>>>>>>>> net/sched/act_nat.c        | 8 +++++++-
->>>>>>>>> net/sched/act_pedit.c      | 8 +++++++-
->>>>>>>>> net/sched/act_police.c     | 9 ++++++++-
->>>>>>>>> net/sched/act_sample.c     | 8 +++++++-
->>>>>>>>> net/sched/act_simple.c     | 9 ++++++++-
->>>>>>>>> net/sched/act_skbedit.c    | 8 +++++++-
->>>>>>>>> net/sched/act_skbmod.c     | 8 +++++++-
->>>>>>>>> net/sched/act_tunnel_key.c | 9 ++++++++-
->>>>>>>>> net/sched/act_vlan.c       | 9 ++++++++-
->>>>>>>>> 16 files changed, 116 insertions(+), 16 deletions(-)
->>>>>>>>>
->>>>>>>>>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
->>>>>>>>>index 5554bf7..7e20fdc 100644
->>>>>>>>>--- a/net/sched/act_bpf.c
->>>>>>>>>+++ b/net/sched/act_bpf.c
->>>>>>>>>@@ -299,10 +299,16 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
->>>>>>>>> 
->>>>>>>>> 	parm = nla_data(tb[TCA_ACT_BPF_PARMS]);
->>>>>>>>> 
->>>>>>>>>+replay:
->>>>>>>>> 	if (!tcf_idr_check(tn, parm->index, act, bind)) {
->>>>>>>>> 		ret = tcf_idr_create(tn, parm->index, est, act,
->>>>>>>>> 				     &act_bpf_ops, bind, true);
->>>>>>>>>-		if (ret < 0)
->>>>>>>>>+		/* Action with specified index was created concurrently.
->>>>>>>>>+		 * Check again.
->>>>>>>>>+		 */
->>>>>>>>>+		if (parm->index && ret == -ENOSPC)
->>>>>>>>>+			goto replay;
->>>>>>>>>+		else if (ret)
->>>>>>>>
->>>>>>>> Hmm, looks like you are doing the same/very similar thing in every act
->>>>>>>> code. I think it would make sense to introduce a helper function for
->>>>>>>> this purpose.
->>>>>>>
->>>>>>>This code uses goto so it can't be easily refactored into standalone
->>>>>>>function. Could you specify which part of this code you suggest to
->>>>>>>extract?
->>>>>>
->>>>>> Hmm, looking at the code, I think that what would help is to have a
->>>>>> helper that would atomically check if index exists and if not, it would
->>>>>> allocate one. Something like:
->>>>>>
->>>>>>
->>>>>> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
->>>>>> 			struct tc_action **a, int bind)
->>>>>> {
->>>>>> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
->>>>>> 	struct tc_action *p;
->>>>>> 	int err;
->>>>>>
->>>>>> 	spin_lock(&idrinfo->lock);
->>>>>> 	if (*index) {
->>>>>> 		p = idr_find(&idrinfo->action_idr, *index);
->>>>>> 		if (p) {
->>>>>> 			if (bind)
->>>>>> 	   			p->tcfa_bindcnt++;
->>>>>> 			p->tcfa_refcnt++;
->>>>>> 			*a = p;
->>>>>> 			err = 0;
->>>>>> 		} else {
->>>>>> 			*a = NULL;
->>>>>> 			err = idr_alloc_u32(idr, NULL, index,
->>>>>> 					    *index, GFP_ATOMIC);
->>>>>> 		}
->>>>>> 	} else {
->>>>>> 		*index = 1;
->>>>>> 		*a = NULL;
->>>>>> 		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
->>>>>> 	}
->>>>>> 	spin_unlock(&idrinfo->lock);
->>>>>> 	return err;
->>>>>> }
->>>>>>
->>>>>> The act code would just check if "a" is NULL and if so, it would call
->>>>>> tcf_idr_create() with allocated index as arg.
->>>>>
->>>>>What about multiple actions that have arbitrary code between initial
->>>>>check and idr allocation that is currently inside tcf_idr_create()?
->>>>
->>>> Why it would be a problem to have them after the allocation?
->>>
->>>Lets look at mirred for exmple:
->>>	exists = tcf_idr_check(tn, parm->index, a, bind);
->>>	if (exists && bind)
->>>		return 0;
->>>
->>>	switch (parm->eaction) {
->>>	case TCA_EGRESS_MIRROR:
->>>	case TCA_EGRESS_REDIR:
->>>	case TCA_INGRESS_REDIR:
->>>	case TCA_INGRESS_MIRROR:
->>>		break;
->>>	default:
->>>		if (exists)
->>>			tcf_idr_release(*a, bind);
->>>		NL_SET_ERR_MSG_MOD(extack, "Unknown mirred option");
->>>		return -EINVAL;
->>>	}
->>>	if (parm->ifindex) {
->>>		dev = __dev_get_by_index(net, parm->ifindex);
->>>		if (dev == NULL) {
->>>			if (exists)
->>>				tcf_idr_release(*a, bind);
->>>			return -ENODEV;
->>>		}
->>>		mac_header_xmit = dev_is_mac_header_xmit(dev);
->>>	} else {
->>>		dev = NULL;
->>>	}
->>>
->>>	if (!exists) {
->>>		if (!dev) {
->>>			NL_SET_ERR_MSG_MOD(extack, "Specified device does not exist");
->>>			return -EINVAL;
->>>		}
->>>		ret = tcf_idr_create(tn, parm->index, est, a,
->>>				     &act_mirred_ops, bind, true);
->>>		/* Action with specified index was created concurrently.
->>>		 * Check again.
->>>		 */
->>>		if (parm->index && ret == -ENOSPC)
->>>			goto replay;
->>>		else if (ret)
->>>			return ret;
->>>
->>>There are several returns and cleanup is only performed when action
->>>exists. So all code like that will have to be audited to also remove
->>>index from idr, otherwise idr handles leak on return.
->>
->> Yeah. You have to take care of the error path.
->>
->>
->>>
->>>>
->>>> There is one issue though with my draft. tcf_idr_insert() function
->>>> which actually assigns a "p" pointer to the idr index is called later on.
->>>> Until that happens, the idr_find() would return NULL even if the index
->>>> is actually allocated. We cannot assign "p" in tcf_idr_check_alloc()
->>>> because it is allocated only later on in tcf_idr_create(). But that is
->>>> resolvable by the following trick:
->>>>
->>>> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
->>>> 			struct tc_action **a, int bind)
->>>> {
->>>> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
->>>> 	struct tc_action *p;
->>>> 	int err;
->>>>
->>>> again:
->>>> 	spin_lock(&idrinfo->lock);
->>>> 	if (*index) {
->>>>  		p = idr_find(&idrinfo->action_idr, *index);
->>>> 		if (IS_ERR(p)) {
->>>> 			/* This means that another process allocated
->>>> 			 * index but did not assign the pointer yet.
->>>> 			 */
->>>> 			spin_unlock(&idrinfo->lock);
->>>> 			goto again;
->>>> 		}
->>>>  		if (p) {
->>>>  			if (bind)
->>>>  	   			p->tcfa_bindcnt++;
->>>>  			p->tcfa_refcnt++;
->>>>  			*a = p;
->>>>  			err = 0;
->>>>  		} else {
->>>>  			*a = NULL;
->>>>  			err = idr_alloc_u32(idr, NULL, index,
->>>>  					    *index, GFP_ATOMIC);
->>>> 			idr_replace(&idrinfo->action_idr,
->>>> 				    ERR_PTR(-EBUSY), *index);
->>>>  		}
->>>>  	} else {
->>>>  		*index = 1;
->>>> 		*a = NULL;
->>>>  		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
->>>> 		idr_replace(&idrinfo->action_idr, ERR_PTR(-EBUSY), *index);
->>>>  	}
->>>>  	spin_unlock(&idrinfo->lock);
->>>>  	return err;
->>>> }
->>>>
->>>
->>>So users of action idr that might perform concurrent lookups are also
->>>have to be changed to check for error pointers, that now can be inserted
->>>into idr? Seems like a complex change...
->>
->> You can just add a simple check into tcf_idr_lookup(). Where else?
->>
->
->To me it looks like we take something simple and already working, and
->make it complex to save few lines of code in action init...
+On Wed, 2018-05-16 at 22:05 +0900, Tetsuo Handa wrote:
+> One ore more threads are waiting for q->mq_freeze_depth to become 0. But the
+> thread who incremented q->mq_freeze_depth at blk_freeze_queue_start(q) from
+> blk_freeze_queue() is waiting at blk_mq_freeze_queue_wait(). Therefore,
+> atomic_read(&q->mq_freeze_depth) == 0 condition for wait_event() in
+> blk_queue_enter() will never be satisfied. But what does that wait_event()
+> want to do? Isn't "start freezing" a sort of blk_queue_dying(q) == true?
+> Since percpu_ref_tryget_live(&q->q_usage_counter) failed and the queue is
+> about to be frozen, shouldn't we treat atomic_read(&q->mq_freeze_depth) != 0
+> as if blk_queue_dying(q) == true? That is, something like below:
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 85909b4..59e2496 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -951,10 +951,10 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+>  		smp_rmb();
+>  
+>  		wait_event(q->mq_freeze_wq,
+> -			   (atomic_read(&q->mq_freeze_depth) == 0 &&
+> -			    (preempt || !blk_queue_preempt_only(q))) ||
+> +			   atomic_read(&q->mq_freeze_depth) ||
+> +			   (preempt || !blk_queue_preempt_only(q)) ||
+>  			   blk_queue_dying(q));
+> -		if (blk_queue_dying(q))
+> +		if (atomic_read(&q->mq_freeze_depth) || blk_queue_dying(q))
+>  			return -ENODEV;
+>  	}
+>  }
 
-Well it is not only about saving lines of code but also to avoid
-duplications of code. And duplications lead to bugs. That's why I
-believe that helper here is needed.
+That change looks wrong to me. Additionally, I think that you are looking in
+the wrong direction. Since blk_mq_freeze_queue_wait() and blk_queue_enter()
+work fine for all block drivers except the loop driver I think that you should
+have a closer look at how the loop driver uses this block layer functionality.
 
+Thanks,
 
->
->Anyway, how should I do patch split for this?
->Patch to implement function you outlined and another one to modify all
->actions to use it(with all refactoring to not leak references)? Or patch
->per action is better approach?
-
-If you do it per-action, you would end up with many patches. It is not
-needed I believe.
+Bart.
