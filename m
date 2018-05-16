@@ -1,299 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753463AbeEPKFy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:05:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16001 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753248AbeEPKFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:49 -0400
-Message-Id: <0c2eac830e9dbc814b3c16201fb4dce1d4499392.1526464250.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
-References: <cover.1526464250.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 12/14] powerpc/mm: Make pte_fragment_alloc() common to
- PPC32 and PPC64
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 16 May 2018 12:05:47 +0200 (CEST)
+        id S1753427AbeEPKFq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:05:46 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:57486 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753135AbeEPKFl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:41 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v4 2/4] rtc: ds1307: support m41t11 variant
+Date: Wed, 16 May 2018 12:05:24 +0200
+Message-Id: <20180516100526.73549-2-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
+References: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to allow the 8xx to handle pte_fragments, this patch
-makes it common to PPC32 and PPC64 by moving the related code
-to common files and by defining a new config item called
-CONFIG_NEED_PTE_FRAG
+The m41t11 variant is very similar to the already supported m41t00 and
+m41t0, but it has also 56 bytes of NVRAM.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Add it to driver taking into account NVRAM section.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- arch/powerpc/include/asm/mmu_context.h | 28 ++++++++++++++
- arch/powerpc/include/asm/page.h        |  2 +-
- arch/powerpc/mm/mmu_context_book3s64.c | 28 --------------
- arch/powerpc/mm/pgtable.c              | 67 ++++++++++++++++++++++++++++++++++
- arch/powerpc/mm/pgtable_64.c           | 67 ----------------------------------
- arch/powerpc/platforms/Kconfig.cputype |  5 +++
- 6 files changed, 101 insertions(+), 96 deletions(-)
+ .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
+ drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
-index 1835ca1505d6..252988f7e219 100644
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -262,5 +262,33 @@ static inline u64 pte_to_hpte_pkey_bits(u64 pteflags)
- 
- #endif /* CONFIG_PPC_MEM_KEYS */
- 
-+#ifdef CONFIG_NEED_PTE_FRAG
-+static inline void destroy_pagetable_page(struct mm_struct *mm)
-+{
-+	int count;
-+	void *pte_frag;
-+	struct page *page;
-+
-+	pte_frag = mm->context.pte_frag;
-+	if (!pte_frag)
-+		return;
-+
-+	page = virt_to_page(pte_frag);
-+	/* drop all the pending references */
-+	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
-+	/* We allow PTE_FRAG_NR fragments from a PTE page */
-+	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
-+		pgtable_page_dtor(page);
-+		free_unref_page(page);
-+	}
-+}
-+
-+#else
-+static inline void destroy_pagetable_page(struct mm_struct *mm)
-+{
-+	return;
-+}
-+#endif
-+
- #endif /* __KERNEL__ */
- #endif /* __ASM_POWERPC_MMU_CONTEXT_H */
-diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-index db7be0779d55..cd10564ff7df 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -344,7 +344,7 @@ struct vm_area_struct;
-  */
- typedef pte_t *pgtable_t;
- #else
--#if defined(CONFIG_PPC_64K_PAGES) && defined(CONFIG_PPC64)
-+#if defined(CONFIG_NEED_PTE_FRAG)
- typedef pte_t *pgtable_t;
- #else
- typedef struct page *pgtable_t;
-diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
-index b75194dff64c..2f55a4e3c09a 100644
---- a/arch/powerpc/mm/mmu_context_book3s64.c
-+++ b/arch/powerpc/mm/mmu_context_book3s64.c
-@@ -192,34 +192,6 @@ static void destroy_contexts(mm_context_t *ctx)
- 	spin_unlock(&mmu_context_lock);
- }
- 
--#ifdef CONFIG_PPC_64K_PAGES
--static void destroy_pagetable_page(struct mm_struct *mm)
--{
--	int count;
--	void *pte_frag;
--	struct page *page;
--
--	pte_frag = mm->context.pte_frag;
--	if (!pte_frag)
--		return;
--
--	page = virt_to_page(pte_frag);
--	/* drop all the pending references */
--	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
--	/* We allow PTE_FRAG_NR fragments from a PTE page */
--	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
--		pgtable_page_dtor(page);
--		free_unref_page(page);
--	}
--}
--
--#else
--static inline void destroy_pagetable_page(struct mm_struct *mm)
--{
--	return;
--}
--#endif
--
- void destroy_context(struct mm_struct *mm)
- {
- #ifdef CONFIG_SPAPR_TCE_IOMMU
-diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index 9f361ae571e9..2d34755ed727 100644
---- a/arch/powerpc/mm/pgtable.c
-+++ b/arch/powerpc/mm/pgtable.c
-@@ -264,3 +264,70 @@ unsigned long vmalloc_to_phys(void *va)
- 	return __pa(pfn_to_kaddr(pfn)) + offset_in_page(va);
- }
- EXPORT_SYMBOL_GPL(vmalloc_to_phys);
-+
-+#ifdef CONFIG_NEED_PTE_FRAG
-+static pte_t *get_from_cache(struct mm_struct *mm)
-+{
-+	void *pte_frag, *ret;
-+
-+	spin_lock(&mm->page_table_lock);
-+	ret = mm->context.pte_frag;
-+	if (ret) {
-+		pte_frag = ret + PTE_FRAG_SIZE;
-+		/*
-+		 * If we have taken up all the fragments mark PTE page NULL
-+		 */
-+		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
-+			pte_frag = NULL;
-+		mm->context.pte_frag = pte_frag;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+	return (pte_t *)ret;
-+}
-+
-+static pte_t *__alloc_for_cache(struct mm_struct *mm, int kernel)
-+{
-+	void *ret = NULL;
-+	struct page *page;
-+
-+	if (!kernel) {
-+		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
-+		if (!page)
-+			return NULL;
-+		if (!pgtable_page_ctor(page)) {
-+			__free_page(page);
-+			return NULL;
-+		}
-+	} else {
-+		page = alloc_page(PGALLOC_GFP);
-+		if (!page)
-+			return NULL;
-+	}
-+
-+	ret = page_address(page);
-+	spin_lock(&mm->page_table_lock);
-+	/*
-+	 * If we find pgtable_page set, we return
-+	 * the allocated page with single fragement
-+	 * count.
-+	 */
-+	if (likely(!mm->context.pte_frag)) {
-+		set_page_count(page, PTE_FRAG_NR);
-+		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+
-+	return (pte_t *)ret;
-+}
-+
-+pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
-+{
-+	pte_t *pte;
-+
-+	pte = get_from_cache(mm);
-+	if (pte)
-+		return pte;
-+
-+	return __alloc_for_cache(mm, kernel);
-+}
-+#endif
-diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index dd1102a246e4..1d8dc37d98a7 100644
---- a/arch/powerpc/mm/pgtable_64.c
-+++ b/arch/powerpc/mm/pgtable_64.c
-@@ -139,73 +139,6 @@ struct page *pmd_page(pmd_t pmd)
- 	return virt_to_page(pmd_page_vaddr(pmd));
- }
- 
--#ifdef CONFIG_PPC_64K_PAGES
--static pte_t *get_from_cache(struct mm_struct *mm)
--{
--	void *pte_frag, *ret;
--
--	spin_lock(&mm->page_table_lock);
--	ret = mm->context.pte_frag;
--	if (ret) {
--		pte_frag = ret + PTE_FRAG_SIZE;
--		/*
--		 * If we have taken up all the fragments mark PTE page NULL
--		 */
--		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
--			pte_frag = NULL;
--		mm->context.pte_frag = pte_frag;
--	}
--	spin_unlock(&mm->page_table_lock);
--	return (pte_t *)ret;
--}
--
--static pte_t *__alloc_for_cache(struct mm_struct *mm, int kernel)
--{
--	void *ret = NULL;
--	struct page *page;
--
--	if (!kernel) {
--		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
--		if (!page)
--			return NULL;
--		if (!pgtable_page_ctor(page)) {
--			__free_page(page);
--			return NULL;
--		}
--	} else {
--		page = alloc_page(PGALLOC_GFP);
--		if (!page)
--			return NULL;
--	}
--
--	ret = page_address(page);
--	spin_lock(&mm->page_table_lock);
--	/*
--	 * If we find pgtable_page set, we return
--	 * the allocated page with single fragement
--	 * count.
--	 */
--	if (likely(!mm->context.pte_frag)) {
--		set_page_count(page, PTE_FRAG_NR);
--		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
--	}
--	spin_unlock(&mm->page_table_lock);
--
--	return (pte_t *)ret;
--}
--
--pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
--{
--	pte_t *pte;
--
--	pte = get_from_cache(mm);
--	if (pte)
--		return pte;
--
--	return __alloc_for_cache(mm, kernel);
--}
--#endif /* CONFIG_PPC_64K_PAGES */
--
- void pte_fragment_free(unsigned long *table, int kernel)
- {
- 	struct page *page = virt_to_page(table);
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 8606fa253089..906f0ebd1e08 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -337,6 +337,11 @@ config PPC_MM_SLICES
- 	default y if PPC_8xx && HUGETLB_PAGE
- 	default n
- 
-+config NEED_PTE_FRAG
-+	bool
-+	default y if PPC_BOOK3S_64 && PPC_64K_PAGES
-+	default n
-+
- config PPC_HAVE_PMU_SUPPORT
-        bool
- 
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+index d28d6e7f6ae8..ce6469c1a516 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 	"maxim,ds3231",
+ 	"st,m41t0",
+ 	"st,m41t00",
++	"st,m41t11",
+ 	"microchip,mcp7940x",
+ 	"microchip,mcp7941x",
+ 	"pericom,pt7c4338",
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index 32aadcbc377f..0ab0c166da83 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -44,6 +44,7 @@ enum ds_type {
+ 	ds_3231,
+ 	m41t0,
+ 	m41t00,
++	m41t11,
+ 	mcp794xx,
+ 	rx_8025,
+ 	rx_8130,
+@@ -226,6 +227,11 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t11] = {
++		/* this is battery backed SRAM */
++		.nvram_offset	= 8,
++		.nvram_size	= 56,
++	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+ 		/* this is battery backed SRAM */
+@@ -248,6 +254,7 @@ static const struct i2c_device_id ds1307_id[] = {
+ 	{ "ds3231", ds_3231 },
+ 	{ "m41t0", m41t0 },
+ 	{ "m41t00", m41t00 },
++	{ "m41t11", m41t11 },
+ 	{ "mcp7940x", mcp794xx },
+ 	{ "mcp7941x", mcp794xx },
+ 	{ "pt7c4338", ds_1307 },
+@@ -304,6 +311,10 @@ static const struct of_device_id ds1307_of_match[] = {
+ 		.compatible = "st,m41t00",
+ 		.data = (void *)m41t00
+ 	},
++	{
++		.compatible = "st,m41t11",
++		.data = (void *)m41t11
++	},
+ 	{
+ 		.compatible = "microchip,mcp7940x",
+ 		.data = (void *)mcp794xx
+@@ -346,6 +357,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
+ 	{ .id = "DS3231", .driver_data = ds_3231 },
+ 	{ .id = "M41T0", .driver_data = m41t0 },
+ 	{ .id = "M41T00", .driver_data = m41t00 },
++	{ .id = "M41T11", .driver_data = m41t11 },
+ 	{ .id = "MCP7940X", .driver_data = mcp794xx },
+ 	{ .id = "MCP7941X", .driver_data = mcp794xx },
+ 	{ .id = "PT7C4338", .driver_data = ds_1307 },
+@@ -1574,6 +1586,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1307:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/* clock halted?  turn it on, so clock can tick. */
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+@@ -1639,6 +1652,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1340:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/*
+ 		 * NOTE: ignores century bits; fix before deploying
+ 		 * systems that will run through year 2100.
 -- 
-2.13.3
+2.17.0
