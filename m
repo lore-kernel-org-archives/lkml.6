@@ -1,153 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeEPNUJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:20:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44416 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751151AbeEPNUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:20:07 -0400
-Subject: Re: [PATCH 1/2] add a function(ioremap_encrypted) for kdump when AMD
- sme enabled.
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
-Cc: kexec@lists.infradead.org, dyoung@redhat.com
-References: <20180515015133.4363-1-lijiang@redhat.com>
- <20180515015133.4363-2-lijiang@redhat.com>
- <8c8f20cc-b39d-137c-9d71-1e566f905acb@amd.com>
-From: lijiang <lijiang@redhat.com>
-Message-ID: <7b36c2ea-5e96-d554-aaff-97587bc268e9@redhat.com>
-Date: Wed, 16 May 2018 21:19:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1752424AbeEPNVj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:21:39 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39571 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEPNVh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:21:37 -0400
+X-Google-Smtp-Source: AB8JxZrPD2hwHHDURRPGda0wiPaiHjRg8cMZi+rxwzO2i9x9dPQqMqiVgWp0EM/ljuh3NkYuT+Myig==
+Date: Wed, 16 May 2018 15:21:35 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 12/14] net: sched: retry action check-insert on
+ concurrent modification
+Message-ID: <20180516132135.GN1972@nanopsycho>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-13-git-send-email-vladbu@mellanox.com>
+ <20180516095953.GI1972@nanopsycho>
+ <vbf4lj724th.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+ <20180516122600.GM1972@nanopsycho>
+ <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
-In-Reply-To: <8c8f20cc-b39d-137c-9d71-1e566f905acb@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wed, May 16, 2018 at 02:43:58PM CEST, vladbu@mellanox.com wrote:
+>
+>On Wed 16 May 2018 at 12:26, Jiri Pirko <jiri@resnulli.us> wrote:
+>> Wed, May 16, 2018 at 01:55:06PM CEST, vladbu@mellanox.com wrote:
+>>>
+>>>On Wed 16 May 2018 at 09:59, Jiri Pirko <jiri@resnulli.us> wrote:
+>>>> Mon, May 14, 2018 at 04:27:13PM CEST, vladbu@mellanox.com wrote:
+>>>>>Retry check-insert sequence in action init functions if action with same
+>>>>>index was inserted concurrently.
+>>>>>
+>>>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>>>>>---
+>>>>> net/sched/act_bpf.c        | 8 +++++++-
+>>>>> net/sched/act_connmark.c   | 8 +++++++-
+>>>>> net/sched/act_csum.c       | 8 +++++++-
+>>>>> net/sched/act_gact.c       | 8 +++++++-
+>>>>> net/sched/act_ife.c        | 8 +++++++-
+>>>>> net/sched/act_ipt.c        | 8 +++++++-
+>>>>> net/sched/act_mirred.c     | 8 +++++++-
+>>>>> net/sched/act_nat.c        | 8 +++++++-
+>>>>> net/sched/act_pedit.c      | 8 +++++++-
+>>>>> net/sched/act_police.c     | 9 ++++++++-
+>>>>> net/sched/act_sample.c     | 8 +++++++-
+>>>>> net/sched/act_simple.c     | 9 ++++++++-
+>>>>> net/sched/act_skbedit.c    | 8 +++++++-
+>>>>> net/sched/act_skbmod.c     | 8 +++++++-
+>>>>> net/sched/act_tunnel_key.c | 9 ++++++++-
+>>>>> net/sched/act_vlan.c       | 9 ++++++++-
+>>>>> 16 files changed, 116 insertions(+), 16 deletions(-)
+>>>>>
+>>>>>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+>>>>>index 5554bf7..7e20fdc 100644
+>>>>>--- a/net/sched/act_bpf.c
+>>>>>+++ b/net/sched/act_bpf.c
+>>>>>@@ -299,10 +299,16 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
+>>>>> 
+>>>>> 	parm = nla_data(tb[TCA_ACT_BPF_PARMS]);
+>>>>> 
+>>>>>+replay:
+>>>>> 	if (!tcf_idr_check(tn, parm->index, act, bind)) {
+>>>>> 		ret = tcf_idr_create(tn, parm->index, est, act,
+>>>>> 				     &act_bpf_ops, bind, true);
+>>>>>-		if (ret < 0)
+>>>>>+		/* Action with specified index was created concurrently.
+>>>>>+		 * Check again.
+>>>>>+		 */
+>>>>>+		if (parm->index && ret == -ENOSPC)
+>>>>>+			goto replay;
+>>>>>+		else if (ret)
+>>>>
+>>>> Hmm, looks like you are doing the same/very similar thing in every act
+>>>> code. I think it would make sense to introduce a helper function for
+>>>> this purpose.
+>>>
+>>>This code uses goto so it can't be easily refactored into standalone
+>>>function. Could you specify which part of this code you suggest to
+>>>extract?
+>>
+>> Hmm, looking at the code, I think that what would help is to have a
+>> helper that would atomically check if index exists and if not, it would
+>> allocate one. Something like:
+>>
+>>
+>> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
+>> 			struct tc_action **a, int bind)
+>> {
+>> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>> 	struct tc_action *p;
+>> 	int err;
+>>
+>> 	spin_lock(&idrinfo->lock);
+>> 	if (*index) {
+>> 		p = idr_find(&idrinfo->action_idr, *index);
+>> 		if (p) {
+>> 			if (bind)
+>> 	   			p->tcfa_bindcnt++;
+>> 			p->tcfa_refcnt++;
+>> 			*a = p;
+>> 			err = 0;
+>> 		} else {
+>> 			*a = NULL;
+>> 			err = idr_alloc_u32(idr, NULL, index,
+>> 					    *index, GFP_ATOMIC);
+>> 		}
+>> 	} else {
+>> 		*index = 1;
+>> 		*a = NULL;
+>> 		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
+>> 	}
+>> 	spin_unlock(&idrinfo->lock);
+>> 	return err;
+>> }
+>>
+>> The act code would just check if "a" is NULL and if so, it would call
+>> tcf_idr_create() with allocated index as arg.
+>
+>What about multiple actions that have arbitrary code between initial
+>check and idr allocation that is currently inside tcf_idr_create()?
+
+Why it would be a problem to have them after the allocation?
+
+There is one issue though with my draft. tcf_idr_insert() function
+which actually assigns a "p" pointer to the idr index is called later on.
+Until that happens, the idr_find() would return NULL even if the index
+is actually allocated. We cannot assign "p" in tcf_idr_check_alloc()
+because it is allocated only later on in tcf_idr_create(). But that is
+resolvable by the following trick:
+
+int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
+			struct tc_action **a, int bind)
+{
+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+	struct tc_action *p;
+	int err;
+
+again:
+	spin_lock(&idrinfo->lock);
+	if (*index) {
+ 		p = idr_find(&idrinfo->action_idr, *index);
+		if (IS_ERR(p)) {
+			/* This means that another process allocated
+			 * index but did not assign the pointer yet.
+			 */
+			spin_unlock(&idrinfo->lock);
+			goto again;
+		}
+ 		if (p) {
+ 			if (bind)
+ 	   			p->tcfa_bindcnt++;
+ 			p->tcfa_refcnt++;
+ 			*a = p;
+ 			err = 0;
+ 		} else {
+ 			*a = NULL;
+ 			err = idr_alloc_u32(idr, NULL, index,
+ 					    *index, GFP_ATOMIC);
+			idr_replace(&idrinfo->action_idr,
+				    ERR_PTR(-EBUSY), *index);
+ 		}
+ 	} else {
+ 		*index = 1;
+		*a = NULL;
+ 		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
+		idr_replace(&idrinfo->action_idr, ERR_PTR(-EBUSY), *index);
+ 	}
+ 	spin_unlock(&idrinfo->lock);
+ 	return err;
+}
 
 
-在 2018年05月15日 22:34, Tom Lendacky 写道:
-> On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
->> It is convenient to remap the old memory encrypted to the second kernel
->> by calling ioremap_encrypted().
->>
->> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
->> ---
->>  arch/x86/include/asm/io.h |  2 ++
->>  arch/x86/mm/ioremap.c     | 25 +++++++++++++++++--------
->>  2 files changed, 19 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
->> index f6e5b93..06d2a9f 100644
->> --- a/arch/x86/include/asm/io.h
->> +++ b/arch/x86/include/asm/io.h
->> @@ -192,6 +192,8 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
->>  #define ioremap_cache ioremap_cache
->>  extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
->>  #define ioremap_prot ioremap_prot
->> +extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
->> +#define ioremap_encrypted ioremap_encrypted
->>  
->>  /**
->>   * ioremap     -   map bus memory into CPU space
->> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
->> index c63a545..7a52d1e 100644
->> --- a/arch/x86/mm/ioremap.c
->> +++ b/arch/x86/mm/ioremap.c
->> @@ -131,7 +131,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
->>   * caller shouldn't need to know that small detail.
->>   */
->>  static void __iomem *__ioremap_caller(resource_size_t phys_addr,
->> -		unsigned long size, enum page_cache_mode pcm, void *caller)
->> +		unsigned long size, enum page_cache_mode pcm,
->> +		void *caller, bool encrypted)
->>  {
->>  	unsigned long offset, vaddr;
->>  	resource_size_t last_addr;
->> @@ -199,7 +200,8 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
->>  	 * resulting mapping.
->>  	 */
->>  	prot = PAGE_KERNEL_IO;
->> -	if (sev_active() && mem_flags.desc_other)
->> +	if ((sev_active() && mem_flags.desc_other) ||
->> +			(encrypted && sme_active()))
-> 
-> You only need the encrypted check here.  If sme is not active,
-> then the pgprot_encrypted will basically be a no-op.
-> 
-Great! Thank you, Tom.
-It will be fixed.
 
-Lianbo
-> Also, extra indents.
-> 
-> Thanks,
-> Tom
-> 
->>  		prot = pgprot_encrypted(prot);
->>  
->>  	switch (pcm) {
->> @@ -291,7 +293,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
->>  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
->>  
->>  	return __ioremap_caller(phys_addr, size, pcm,
->> -				__builtin_return_address(0));
->> +				__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL(ioremap_nocache);
->>  
->> @@ -324,7 +326,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
->>  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
->>  
->>  	return __ioremap_caller(phys_addr, size, pcm,
->> -				__builtin_return_address(0));
->> +				__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL_GPL(ioremap_uc);
->>  
->> @@ -341,7 +343,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
->>  void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
->>  {
->>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
->> -					__builtin_return_address(0));
->> +					__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL(ioremap_wc);
->>  
->> @@ -358,14 +360,21 @@ EXPORT_SYMBOL(ioremap_wc);
->>  void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
->>  {
->>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
->> -					__builtin_return_address(0));
->> +					__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL(ioremap_wt);
->>  
->> +void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
->> +{
->> +	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
->> +				__builtin_return_address(0), true);
->> +}
->> +EXPORT_SYMBOL(ioremap_encrypted);
->> +
->>  void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
->>  {
->>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
->> -				__builtin_return_address(0));
->> +				__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL(ioremap_cache);
->>  
->> @@ -374,7 +383,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
->>  {
->>  	return __ioremap_caller(phys_addr, size,
->>  				pgprot2cachemode(__pgprot(prot_val)),
->> -				__builtin_return_address(0));
->> +				__builtin_return_address(0), false);
->>  }
->>  EXPORT_SYMBOL(ioremap_prot);
->>  
+
+
+>
 >>
+>>
+>>>
+>>>>
+>>>> [...]
+>>>
+>
