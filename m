@@ -1,10 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4128544-1526459195-2-17320134642184897871
+X-Cyrus-Session-Id: sloti22d1t05-4128544-1526459186-2-16835951844053523486
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='RU'
 X-Spam-charsets: 
@@ -12,26 +13,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526459194; b=MGu4ZxiJEiZnVvLEqMONziiQrhxsd+x89gziKLJpF2vKaTKsV4
-    nB6Nj7D5FObtkEwEuZa6Y04TZIprD422GvTZrqhPeL0YtO5KZGRPisybKy1aPPdy
-    6lpiuAhYpx9axje1Maoty6a73Z6NF7+T1+5eQxJ398pU4Vl7g7wmq+gpi2coyl8g
-    MSMR8juOQqh51iJFagYWTJUcxTuj7tEu9OoNRa1lgvSGtsy+cIGwmnuMeieO2btZ
-    RVFuGzbf5YvC6te8aNWMsVQC6+2+5iwkrfEwLVoxZivS3Xm/qThXOg6pi9Dm3lXq
-    q/xsHfH3UOpdmPmAhA9MDx41oXQ80DwbLuMQ==
+    1526459186; b=OTGk8dr2Z5NyHgmjgKLc8N2FjVbD9wRtg4jkEeWspBHJANJ6Sv
+    G0qKYyGsbnyQMvq3Or365NlakgYIrnIqmhvrfi4krKKzXhhMyCvlBRTa/5AwP2qH
+    sjtCoh6VpI8mH4SOzqBiWO6c1VGt+4bLXIixzdh4vGKnRKNXWGMpX6QNbtRP3oa2
+    R/r+F2NWvJQ6M71XgVlx4cDa/4MEBoZKLXNWhA+QN3IsLCA8DS0wAdkkrXmi0I8E
+    t6l1Un9AXgvp5KS4Tftxu6a/GeIps9sO5vTu+nQi81W3YPl5z7xtefpKwcdrpt82
+    YCRnWuldT6T7vFk12Eb1rTZbRRR3FacJendA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526459194; bh=lsRT21eZLZcBsNBzUHZP6bqHMfLwMt
-    EUOfTUPwKHJxU=; b=KUN7TtLN3OXStbXmpyIC8DLeA5q0zp8wHLXn5k0g0zcRKr
-    4KDIZZgXm8X+5aCvhf3J+w6/yep1QJLFtY8ybHje/GJ83haeRahKGD/sJ/pyjgjN
-    pCmALAoaj+v8LskedJ2MJvM8OPD+dG6svyngBCsX46vpS2A66QSr85xkKUabCXdb
-    Eh4a+M3M1DFT1sSVdf0GPwKpu+XLxJEMPuUhE7ODqy/IYs31YWIyDvfubrXUQkZO
-    wuTt3m5Qmv7COArlw3+IuWNfqSImrxYS4frMP6B3d+ueap9YsBDahL87dYPXJ1Bk
-    LPvuGknCu6xfg3gl6RDlgfqoeV1BfS7gRtVTzXVA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526459186; bh=L25YFGneYb7ZsaajzFAdXAz9YKL6wk
+    D6h0lArWDYYxk=; b=lq0TNvshdAyCIqQlCoA5QSf+zeeu6dCA5mYHPCO8ynANcB
+    CCMdynpgCN6iwXx7tXtu7l3dIeh0QaqfR/fINeE1B7T2XAgeae4ppRd7eWiCWN29
+    jNJ2JTx7nVIJGCKrpvbSoK/K+5i/RAgKJKRma+NYLdhzm2z6NbaPf7cqCruFgV0q
+    Th7Z+tXA6RO9Uvr12jwyJqyWlJbMeAvJxvbt7F6sOJDAdCU5vranCt1wlVFFGbTX
+    Eg9m0wlTXz7VLlX4k6u7t9hdFJs0pygz1QBp5JYdP9Z2cx0vGakjhjx+naUhn1FF
+    7FNa2J8XyN1SaUqY4jqh/pMDans//YXAseAo3NZg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
     header.d=caviumnetworks.onmicrosoft.com
-    header.i=@caviumnetworks.onmicrosoft.com header.b=CfeNH4BU x-bits=1024
+    header.i=@caviumnetworks.onmicrosoft.com header.b=IBns7yz7 x-bits=1024
     x-keytype=rsa x-algorithm=sha256 x-selector=selector1-cavium-com;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=caviumnetworks.com;
@@ -46,11 +47,11 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=caviumnetworks.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
       header.d=caviumnetworks.onmicrosoft.com
-      header.i=@caviumnetworks.onmicrosoft.com header.b=CfeNH4BU x-bits=1024
+      header.i=@caviumnetworks.onmicrosoft.com header.b=IBns7yz7 x-bits=1024
       x-keytype=rsa x-algorithm=sha256 x-selector=selector1-cavium-com;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=caviumnetworks.com;
@@ -66,26 +67,24 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEMHtvzsYnqvHr8J4REn5GH8Ma+PRsWNvBJSr3jLslkoW8PbpvalsgJXpSJc8qR9GG06jlHZt8xqYOutVxKDNmk1CZiKLHphmVReyy13HDEIn94S6wg4
-    /PpVIsD4vpbyrnhSGjOogZhPCmC1GnHpQY3Q0ddiX7kq69fFjFJhwMDI7ynMXwFXIB8f8jy+Dum0Lnm6E7cs4YEYaQhSgVw5xHoqkc33ppTmcjPRXH+kQwXM
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMqIFgEyLHGhSCGXZo1R05p/UrbwgOpTE81V5dhwd2xJRut4vQDp1eGsnp7PNtvk6/Rb5G6qqylBdmqvI9Rs98VBE+yDkB60yyhMAFWnFbIajoRlNmsP
+    Gg9n0a8BNTBDv4uEvkkd7Q2Nk3djMcqEGbqKlU/HNySL56rLx77evyPuo873uzObM18+0GFaY/EAUWSJhw8UhnMEO+lm94cVrAe/tDPFCU1oIB4dYE2t+pZh
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=osDrW2AON7y1HyiAeOL6jdcP5bE=:19
-    a=sFUR1tI3dlkA:10 a=P23N9hKgfBoA:10 a=yGmpZmWGxwcA:10 a=VUJBJC2UJ8kA:10
-    a=ifRc6kEuNzAA:10 a=zAyngx5bAAAA:8 a=enOvQawGAAAA:8 a=pGLkceISAAAA:8
-    a=mDV3o1hIAAAA:8 a=VwQbUJbxAAAA:8 a=z82fghl1wHTNHNTuOfsA:9
-    a=t_uuJzYMQdXFO3Sv:21 a=-8lTkuO5oPoJRZFR:21 a=x8gzFH9gYPwA:10
-    a=4LA4qAFo6bo561LpWNDU:22 a=OuzhcWw_GC9nAYdNdRwA:22 a=_FVE-zBwftR9WsbkzFJk:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=sFUR1tI3dlkA:10 a=P23N9hKgfBoA:10 a=H9XALQ4oeggA:10 a=VUJBJC2UJ8kA:10
+    a=ifRc6kEuNzAA:10 a=enOvQawGAAAA:8 a=7CQSdrXTAAAA:8 a=VwQbUJbxAAAA:8
+    a=ckEhL5b42KKRoA_7hdkA:9 a=x8gzFH9gYPwA:10 a=OuzhcWw_GC9nAYdNdRwA:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeEPIWn (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 16 May 2018 04:22:43 -0400
-Received: from mail-by2nam01on0075.outbound.protection.outlook.com ([104.47.34.75]:58385
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1753082AbeEPI0G (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 04:26:06 -0400
+Received: from mail-sn1nam02on0046.outbound.protection.outlook.com ([104.47.36.46]:25024
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752874AbeEPIWd (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 16 May 2018 04:22:33 -0400
+        id S1751319AbeEPIWz (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 16 May 2018 04:22:55 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yuri.Norov@cavium.com;
 From: Yury Norov <ynorov@caviumnetworks.com>
@@ -121,322 +120,203 @@ Cc: Yury Norov <ynorov@caviumnetworks.com>,
         Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
         Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
         Steve Ellcey <sellcey@caviumnetworks.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Andrew Pinski <apinski@cavium.com>,
-        Andrew Pinski <Andrew.Pinski@caviumnetworks.com>
-Subject: [PATCH 17/24] arm64: ilp32: add sys_ilp32.c and a separate table (in entry.S) to use it
-Date: Wed, 16 May 2018 11:19:02 +0300
-Message-Id: <20180516081910.10067-18-ynorov@caviumnetworks.com>
+        Szabolcs Nagy <szabolcs.nagy@arm.com>
+Subject: [PATCH 19/24] arm64: signal32: move ilp32 and aarch32 common code to separated file
+Date: Wed, 16 May 2018 11:19:04 +0300
+Message-Id: <20180516081910.10067-20-ynorov@caviumnetworks.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516081910.10067-1-ynorov@caviumnetworks.com>
 References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [176.59.36.13]
-X-ClientProxiedBy: VI1PR08CA0114.eurprd08.prod.outlook.com
- (2603:10a6:800:d4::16) To SN6PR07MB4384.namprd07.prod.outlook.com
- (2603:10b6:805:58::15)
+X-ClientProxiedBy: VI1PR08CA0111.eurprd08.prod.outlook.com
+ (2603:10a6:800:d4::13) To BYAPR07MB4373.namprd07.prod.outlook.com
+ (2603:10b6:a02:c0::16)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4384;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;3:X5lnRTJteecAEFRmMz4c5iCmTu4WflLBtgoYg/hc2Ca/oc2RtPVrNRhHbQ20b2QEPKqasL6AdD4G1ghCdYpUSw6aIhRxhGHADL/rFhhbXzMkwDnrdCoRmOl6NDna84/klO+JZrtgUiWrq3IgOXPOHZpuV9wBKY1/VnsXnSti6ObCPSNRcwkRBwg4COOMi7Zp6LyNE44yzXmLcQ4fSw5XAhZYIQ5a3t3s5PFJ0i08AqOkq3v/AaqOXuDsG1l703NS;25:D4wrvlIO0Rwh4qj6aCidnmR0IGgKGJPt1sRQEkZL0UyGWYvnIYqPkZwVO1LhVCtLwP11JSAvSXTNlFYiz3AKXosVeiY2uDe9du/wi7ZYDHqEz4NTAMPq7Hg0nubnwT5bNj0iN6WJAILFXYAboajLpK0zpBegkJKsuz0Vw/3M9trqSpBX7S556u/LiVxLkt3tc3INaBBTEb6RXirrNwDByWwlj8+vYX/SBvgNYMuIQpdaBbtANvzFaFRe6SoBuU55FvXgP56qlJxJnYzoKAumhkbPzp9MTOqh+ap4BWf2UyQ2lXC96p5YoOdWwQ98EndS8/3mgt98cZ1P994qWnS3Rw==;31:2sOYSHQiOhClV4tbcII6nfVx0jJnxKT4TZrbh1vcxpvbmYzAvhQYt34OlmWfhB/HlpFgCJD0TOmMfsDadtanLdI0uzpp1XAEnilPU5iNsXpZZwVY/mqPIVBK1NX8dQmLeofBdOa/OceiN6oLxBti3TsyNK7uPLQKczhlhcu7TQK69MKTVvAfMdC6GpQHZGFD/wMXq6h8YaEVwByPinIluzycKt5pGYOoF1F8npjsA5I=
-X-MS-TrafficTypeDiagnostic: SN6PR07MB4384:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;20:lSRSuLmTKoxxmhReNTEOb9CX4P0eHPSBfy7LE2p0hZCIEIajuwyKPeOHQuvPLiYVZJ0ncn68ZTns1SMMbbuNXz6hAI0vb0t8dJFC9+yKs6oTYRp7d6SRQG7JeMWowybN61FVjcA/4L57jQqBJ/L5aTdqS+skWLZBOgwywTjOKnZXkUOzohaEFZkmdB0lk5kA/gY7306xRQASRlzddZGYlpAQMyVyjBrfTpolRg7ETtCq2xZfnbGubX9nk6K7Ps+BK1niXN6tzG7XuSRdfnnombZMcqc/eaSO7GsgLRkvtoCYnViFrlntL3YumZHtfguq2/vEBMgBXeS5duTnWI+eiL8jZ08IFj4HTAZvX3nqvtlxdL5+NA2l1ennd1uNNB281ae2R6IM5QiSE/NfrL7MBrBlnGKRjzUvNEW7/GxKdrGktgFADCZQXMV+LH0TZ1B+LJXbm5vW1fZWU5VDORm1YNDXKugPbnOyf1ueJ5VoA5LeemvITdciRBSVmA1uwIpCEQGLX8n2AIi1Pu7Ck4wvwAWxiHFuNxxs8s9SRe2RyRIHyiEdb72RjgDlqBl0F3TQgJog8yqeH7T6QzgQSyM4A8Dk9PEE0mZ1iloMEJWmDpE=
-X-Microsoft-Antispam-PRVS: <SN6PR07MB4384CC03BEA807B98599B18FE3920@SN6PR07MB4384.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(250305191791016)(22074186197030)(85827821059158);
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4373;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4373;3:DILY91qX/3RCf+SaqbCFdd9O3pw+AYjVaESOT7ENBjK9bBNUuFG31I3ZiTdl25oORmHtNqPMiDARCL62/Yaeru7p1927nQWYhPznRjjCxD5u9oRoHV8QxOy4LojZz+D+2ceTBS2ty88gjNN1DVG+YBMnlJE6ceMJTUfewf7HHglArC/v6igVGAyPdNMEGdBMkOvW4UlQdPE3R234hrDcYhB51ZgQ0AC5Dd5PryUXmt7Pi1Ef5Wq42M5Z3zj1dqUU;25:6WVjlGo5KOh+BuRotF2/QVe2iulLVMSObtTH+xKyNLxntvw3B7lL4ef6r+wiXEfYwj9OOrVOb3CoAsvJyQMyPl/YelkBmakPa0WwlrZR5hlmpH7iFAPl7dOghhc3ymu9hhMHnkc/KMS0oim/JRPflbL47+CCuVC+YzlzO9X2zDsipyd8DGn0vCvZBCoFTwd0lbgGbAT41LqKX8Uk+Qdz2uftsgOKiRP4013f6LzX03mXPswuOOxPDxnSIk44z42qBK33RnV3f5Zbd7q61BnM95ik/fhpwjadFkbhbYjdilBLAlyuKga0VtQEpzOaQRSxYJAfARpbHCdQdY4UbX8TvA==;31:bZdc8SW8R37JnMs3x+GnLLnnNoWopvKVXIxPyXhy5czZuG1RIVXHWYAtA+SgRlA9NeDxudl4tfSk5paUfCnTT++Udy5dVgzhWZ8hEAMjXUvkRBMvV2nMRIgzjuul6TYKERkXbklCaGNIs0IlDVk1H8y5SYNUjHTxq+xstVYic0f9NJjBp1XbnOa7H5QHzftcurX/gaYZwv1fK1o6gPHRzHAA6Rd7XbUox0fN2zMsrUg=
+X-MS-TrafficTypeDiagnostic: BYAPR07MB4373:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4373;20:eXQACVUyJ7A9HZORlrFKUs8q3BmuJenqWk4kBzrde/06bdbSp7ROBWoZpWobU9HvxKwcfFIpAxL2ePKb2qCywmB/H/NcbYoUaVXN3TM3qW7FxWewWKnLHMSUPX8IgJYS+aQpNXthD1K9AUcFN97vITCLScBgKDBBV0B+14ixw26NBiA50csqhGrio48TqGM/3WjDiL+vj7UKn/lZmz1AHIla9F0Qe8S5xk6t+4yYtafsuXm2C8WryZTluhRRcF/pav6Ruj4Rxt8x0B8bdOnfYo6uiMo7fIPuCPoGG3hej1h1Fx0kOJ9Gb0EVxLOSaiAAP8JasZnirSpisChIFGHUZNn+vUAvFTMuo2qzWUmvC++QK/ogiUbx3AyqF+/McXrnqJLWQJxIQfQw9LVbERAabNQf9b4nAQw8BUIHBxhlqAGfsDz/WfDyz1g6XXSzWRsEyv2dkAD0wIalH2kqZLOszMduBCXSSO5AZWMfNP3Nv7n0X2aMbQtfiVIhz6EZn6nIodPp0d9oMEyzinFo7ApJFE0BcyUSGouJoAKALYU9xJzhOlDUOzW490m8cs1YOcHcueSPFi3XVkzIygrVCTbzDN/3iK7hg/x963IHMXFbOb8=;4:m9StfvWIUyD/CCmAx7SOXJtb5PpayWb9iGJlG+wcBozxVAYBJTMh2XzHIBSneNb0MAIaB4aWSkRRn9rmL8hkU982tCLSBXYS9sOAg56WnUx8n9ih0zDe+OMib1lFUGfoNL2aoKm7JFZGLMEyR1qsbYoFRLmV+JsuA4qfw3WEiMGe7X4lHqzwTIriWB31QyzZa7h65PUtJEAtaF9BFcM/j6rToXP+fEtu5nCJVHq4spsYxMZ6E6HhRO84EU9vEx2UujpAGArPvyP9p26eqkmvzQLpOn0BiMz6KYcoKdIeo2xsFkYs8Ygv9HSQ0L4z4l+v
+X-Microsoft-Antispam-PRVS: <BYAPR07MB43738FA566D7A8C89900F7ECE3920@BYAPR07MB4373.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:SN6PR07MB4384;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4384;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;4:YaoXOFSnDsVuPLRW8XfRZyXONQofVWlJe7JaEIHbOD45C3stDQ/8ylnr3b2GV8+NR8eJfp675mhZJhOrsvyw+9LnuCfNs7sYLHlV7aeEG9T+DBVZygirZ0Xw4LJ5PCGn8W8udhS9V7mBPvr+5yAyfX8G17SLh9FVncEYJs4n9UpsE/TE0lLfPSbt0WGJdrQ3+hceivDEp+8sJ9xVPxs8EdXA7WzFiIi4i35AmbZesjONLeH+7flRroByPrOHx0w9gH57/cPMXd9n/hRr4rWitZf2gE/UcEBRaMb0/fohniTSeeW2/B6xu11/5/GFb+GX+H2sYCa6TSoUsuTn0nOvSaw/6zYG5rYayakJseRMk2bmRjtuD42+uCD1AE0KBFnV
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(3002001)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BYAPR07MB4373;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4373;
 X-Forefront-PRVS: 0674DC6DD3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(366004)(39380400002)(39860400002)(376002)(346002)(189003)(199004)(6306002)(36756003)(25786009)(7406005)(6496006)(7736002)(305945005)(2906002)(105586002)(76176011)(52116002)(51416003)(7416002)(66066001)(486006)(6486002)(6666003)(42882007)(11346002)(316002)(446003)(16586007)(956004)(39060400002)(2616005)(54906003)(110136005)(478600001)(26005)(107886003)(386003)(59450400001)(53936002)(47776003)(50466002)(3846002)(106356001)(81166006)(81156014)(48376002)(8676002)(6116002)(76506005)(50226002)(68736007)(476003)(72206003)(16526019)(97736004)(5660300001)(186003)(4326008)(1076002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4384;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4384;23:cPUKIGHvZINqDKRIs4BzLiM5ynR14vDPiUL7NySAQ?=
- =?us-ascii?Q?gDauqGbRjAf2mU2vJzklD17JwhTbFid4vG5hbVRMGVo8DYg68cvJ3Qv3uP3C?=
- =?us-ascii?Q?4AeuCHWleNmOBQHAcV4WWw38tVHe81TYNvhroy3hmz1zFbqGHNyXmFr2XxaJ?=
- =?us-ascii?Q?yM9MzLpZQSq58V9149ZK+AomQG7RkEzZZeRUdQRw/FZaTFlxnS7EDBpLv8hn?=
- =?us-ascii?Q?JO+arO6Vulv64Lvngm/MI/L3d7uqn6OCJ5OsZoCswq/MQIgxcPLict5AxU1+?=
- =?us-ascii?Q?fN79uORvGLFRjKUya7PgZzaPU3zV7BU/ZmAcsBP9MVaS6ZzXjNwsAiXOrT4f?=
- =?us-ascii?Q?FZPdGHt6DENDyIp4dtJVY1ufxcIjfCUS9t+k6zxBL3me0j3m4mGDaCPj3KhF?=
- =?us-ascii?Q?3MLpWYZv0Mo7Lc7dKvFZfaoS/dAiZ8nSk4e1SJ2XVoH5/XGuqJRkFm26g5T+?=
- =?us-ascii?Q?JS5Xs4wbECoGY65I35/0rDRIa/xMCa7NlvL/FSBmXkqQLjkqryCh/gI6D97X?=
- =?us-ascii?Q?BAIzt9/HNK/Xwh2jnFD1xU353L15i1p6Sgt4yDuWe04n8SjAot7zYorpUeZR?=
- =?us-ascii?Q?1Ktk+KCE0gdjFu5ycwroctPYogVpzJetEjER4EkICKrkJefu6kidg384p0Ym?=
- =?us-ascii?Q?KIAI1AZuOAddznN5MkHfQc2YYdN9n5QhrVOejPKzxY68JcxYFRWGnv0mM3t2?=
- =?us-ascii?Q?/IZvyg8YcCKQphv33xT/gYZ/1KjjBlVFe3ssOJX05DpgJ4lRyAafBIIP4Au5?=
- =?us-ascii?Q?MeTcSY+JH6s+kFn9i4bqUU+J9FjIZAeI6ruWHvWzYnboTrgkqMylvkWE7lF+?=
- =?us-ascii?Q?Ev+EaVONq2hUsGri6wkLmFsvy/Wia/rBTlDTTB72JqB7v6gS9ICFeRzYzpnq?=
- =?us-ascii?Q?hep1To2NJNXqeTGnKCaDcBP3RRU3xEPX1PUc/vVZSYJYtWrgPEh2Y6PKf7x6?=
- =?us-ascii?Q?dBCGi/eFXm5VpinxwwGcgYbhcjc6lnT0Ua++8OKH2TbdvC1fWUK8y3bLLQsG?=
- =?us-ascii?Q?G8ZDFVJuLcb8ZM0nZfZF9p/oo/bXvYAdJnEkuBgS69e1tRIHLPUfvbJ1c+om?=
- =?us-ascii?Q?jTDNThs7rPlgdMJnfSEbczl41ou6W/GG+5DTzm8GDM3UpiNJs331XLvkNgiY?=
- =?us-ascii?Q?uo13vSBVowQbNz8+fNHLvEQzeV9HMOPGk1JgtWFJ+a27R9HFdbwjV2qjN2l7?=
- =?us-ascii?Q?NHOcBmO9xY2I9mnqVIGAZnN5qRNV63qFa02M6Hwv80J3tPWpVXxebSVNO/id?=
- =?us-ascii?Q?FIhaW5iBiboXy2G/hTbsppLrmdvgPz9g+Z35X9oa4FhgyK4RFmsyiAng+phV?=
- =?us-ascii?Q?jKY90fPDk3GDAf9oycD164MnsWzT7uIHJdH5Rxqa+5tOp7e71cAvYVEneOrO?=
- =?us-ascii?Q?gsCjnfKWdaN1YGy+jxaRYL3elSetV17u3TS1yH+iKMdI8EY?=
-X-Microsoft-Antispam-Message-Info: 9sbl/X61wZ+qlIZUO2t1h+VGm+Ca15ebOwZPNBKBpBr4NBt6g9Ian9eLIGYSRieD/CxUAJ87smMunhVx0lgAMgFAKOeSIdqLzVaBecBYl4T8bcZPUlEHAo6Cf1dX+FZ+BTvflQ2uxW47lDNax/D7tCgDswvGwzwzVHzoSDLIMfTTVYLaNs2O55YT5AHlq70x
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;6:jLV1e6xr4KUHRvJo8XSgrUMh1tB02OyDXuc+ZC6WQK1ece+10qnbCA0QOG8EJu2NSdWErJkWYfgmJwXtz6jLCgV79huUVWnZvaCc67ewFnQNMzKzuUb/lDhd+SA+ltrTs+XSCZx9llZN4l1AoG7v5zwaYYMboltmjTtKKQh664ULWujw0hwF18NOE9VgzHAHsaejhm4Qr29vhwlU+9j8jz0M2HNg3igqx1swAqLt6q2gd/411cyEANNpOK/WGL4Xvud7yyezatjB/kCAmIcJU1Gg4afnFBpNVQzCvdIiG7rBosMTuM2MMxbaAjcNxerFbd/eEzCBbpbpWwuYKRa1V2axPy0H4VlSSFm0E9PxeV5YyocWDjNCOXaHDym6ytc6y1w7dxz+U9WSGDup+no7utFWRKQKsLrKl4VCSJd7nwgzEoFwoXYCjKbXWuoeL3esoNqv8HvSf7oXeK5TyvDDOA==;5:4eSJhPGtgpw1ydgqj0xsB9vm/cFpACOlpRAHj8PoYI47nn0qMapyDcP2/zq/whFSjddr/dAV1eJNXStzeGMsO9alpjurjTgkYfGp1QpF8ard8NMxH+Tfo84q9X+dytIwump54LIhim6CiR2k5J4cvlkRWgSo5pwnhBQ0IgQyt4I=;24:JmG3C/oJSgRereh5C/GSeB4Ia9RTPdGMUk9bzxoIs24326MxkYdHTYHl++RlpDRZFtl+pbKOzCM5cnSr51O1FufYhvWKN6yMZT9If/HLcVk=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(376002)(39380400002)(396003)(346002)(39860400002)(366004)(189003)(199004)(575784001)(2906002)(305945005)(39060400002)(7736002)(42882007)(7416002)(7406005)(446003)(11346002)(956004)(476003)(2616005)(53936002)(106356001)(68736007)(6666003)(36756003)(47776003)(4326008)(5660300001)(3846002)(6116002)(25786009)(50466002)(72206003)(386003)(76176011)(76506005)(54906003)(110136005)(26005)(6496006)(66066001)(105586002)(1076002)(48376002)(8936002)(50226002)(6486002)(8676002)(486006)(81166006)(81156014)(478600001)(52116002)(186003)(59450400001)(16586007)(97736004)(16526019)(316002)(51416003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4373;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR07MB4373;23:TEQUAcTm0hxsKfzP7H0JdcU01/7QKVPXTMd8X4Pe7?=
+ =?us-ascii?Q?L19pYa5nKWuoNxIPTEdMpvJ0v68NDuSHT1oUdIP8tiw81DmDtmmyum4AKF6i?=
+ =?us-ascii?Q?5ETvgM5Slhrm62ezVX9lR3adN+6HfbI681iZbvqQZRgstb/8xm/0IijtWfa0?=
+ =?us-ascii?Q?UWRxSJPQgRjeg87UBphzUOIiX5WKFgjlTQMjdbctnLA9Z8ocLiso+f66uWA+?=
+ =?us-ascii?Q?zn3Dfz+qtZczgyGtLEji4GU49TupP1VDzbAqlbOwJtjKqpkt+vAq3E6LHgY2?=
+ =?us-ascii?Q?c78UhaOaNEeg0BPVtIVJD9bdowoyqaLObGRYOG2gUEYjh5CeQhquX6FQBabn?=
+ =?us-ascii?Q?LDAj/spQHPxwfEwT8lOsntvL6FW+D2XpNukFxAJzaxculnlt79cAqckv+nZ/?=
+ =?us-ascii?Q?eto+8CKRAimOJ8lBdCKJWbogCbQSSn4xvokAC1SkyQ9UGt7yCxnaEYkjB5ot?=
+ =?us-ascii?Q?9Hb9bRmZJdbTkRkhMf/Jz/pYMxeFygjBFR67hYRO9daU8vkyaVx8T4nu00tx?=
+ =?us-ascii?Q?zMf3RNh7fWOu6Pas+kN6ERwke+kQAsVWg9v79iMoO2T+KVKtrN9QkE6M3Rnm?=
+ =?us-ascii?Q?YF+o0P/gtF3hMSolBuZF+9VDPLLaTtTWQFvRSvnl1PIeiM+ydE31CZFXBjuu?=
+ =?us-ascii?Q?R2XwRw5uZIcyecdjhZPsMlukOON2kb60kwssQBoTR/cGNpc+6UbVjTqgbq31?=
+ =?us-ascii?Q?lfTJVOsDF4bepelwCyMBSZRq4HP5q+Ilq60Zn+mKlM1N0ckYMvSJoviQUVJU?=
+ =?us-ascii?Q?s7mMeaQKgWmenAMuzwtrw+ICes6IkDQuKdTbCqGf6k99SFoJjxG5Y5Bw96NS?=
+ =?us-ascii?Q?zsMx4L4307Fe5tAc46vLoE1CJwk58+4v5HVr1Iy7xRxIgQI7/4aTUWcVYSwx?=
+ =?us-ascii?Q?kg/CMSTsetzpyFOPhWz+nhatm39iNpTnqEpf5hq2eDAqdqowBSKt2kWbMmZT?=
+ =?us-ascii?Q?dTaeEKbypPXYSIQBcPp4UjToFOjie8J9+nBvxDZ6eAsPdnM6/0jItC6zvSVG?=
+ =?us-ascii?Q?nactm/GWQYwPebBX/gtN15dN8NhfaBorD/fBErQT1KJUX2kdWwfVZOApiLEf?=
+ =?us-ascii?Q?TzQZzbhdXqEKIIbUTpR2mJUzb3q6or8z496n989mpnZZKSEGFatjlb1Devq7?=
+ =?us-ascii?Q?QVvEzbGN84oUnT0fWfaBgzmKyNKvH0A0p/DuXnPSqwD/5fn5FO+bgeeH5dKz?=
+ =?us-ascii?Q?5K7xrXKyaGobm/EZZakX/ZUgEiHPF5Y8aUpM4XyN/gQOa9LHmPfjTBh+7m7T?=
+ =?us-ascii?Q?FoGf/N7/n9HBkuA5HDTLAUW3nFvpxVeF2M81DCcklHJGkoAGX21Reok7YeEj?=
+ =?us-ascii?Q?HeoSHnMPisP4Q4sXDYSdIu1yRoE9mW6kkzZcZVI2M2ys4KjzpzrSW9sqSUXu?=
+ =?us-ascii?Q?dzKspnNU1I/C/RZBIsbVEwY2Ew=3D?=
+X-Microsoft-Antispam-Message-Info: 3cpCnXBCYFKqbwL8/vUR/h2nOn4KV69HvgQ73EbujgRRrJBo64I6c+IDE3OsynHizz0Qq7sKsT66fLFZYKrOfEgc1IqWmzHkl5AuBnBg7X17kX0iADfGy8NdFKB+C6fCFEnWqudg8TW3xRorxbKSgUc2sC9rP0IPXzhvtp4tB74WJ4svY8rmJKsAZJgPgblv
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4373;6:ai6A8VxFZnKSbLg3kdD4mQUvx2HQJ/aJw6U4OR1bVIRzsVKPrtzfO47CExkWdmnmmM81q1uOR/nlTAKvBygKbOTqX2jhXaYQcdhvUgVYWb+UXFm2taQ4F7FguJNG9A2VfnY/WsGom1qpw9C36NdTl0WCBSw2/GJYi+1pKX6gUgCUbGEu5Kr15I6oekI+RI1wh31/H/EQ8IWhNoZchTsCkTe1KZMymfDpQ9ThDSr37fH9WTLYLWue6lCFPPCbQsOJkpT+HriGz5exqulmuD6YVnM89l9/u9kwOGYc/ncs+FHvIpVJcKZ/VQ0PHuteNe94A7rvsDf9W5Hi8ZHCI5StbPNzjavvo3OR0vpsVhfnc87alAifpNpyI+YigleJqm2w7saZA1o8QTJXdlcoVLzcpPBfvMzRyw/3vvBGyUuKS8OwwQQFqoa1xjgwI7FqhDmcya0hz+Tt2m7pKQD0fxwrzw==;5:g3HeMdbzKLfS3WdgFywOI1IUR/w/8ax1Q67D8reojtYPJw54sq/1Q8+R+d/fjDBUPsGeyz8OVTMdl3iaCd18qC9nv1WpgYYVFpYj2cH+IERage1jcrdw/6+8dalW+WnlNp9npDRE9kqXdjKPBuVtRyEClEZO5kP4pC+owVLhMV8=;24:Q/w1yvbXJJVSQEKr0kPM/KIdcr6z0GJml1FY+smktc3htkDA7xRTJVvOx41CH1uDth44Gw67/CpA7HnYrvznk96DilPyFVvEdMbhit5gvZs=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;7:ZBp9JRlmuRbV1+Xsx+sd7vyNowC3424FMc8KEZA9M8UXe7TpBkRtfBye19kcnh0/nWlO+BjxY+eO/5EX6YtfiWyJL7MbCXoqXEMJ9fGLaKgKXGWepogGWTeExstoxptTblJmHwBEuu7JM5A66GGIaUvzhs0szWggYLmPelMSOs9bC8R+Jcr61abbVcWiQIzsAWmtWwSx+Q+GbfTD9mWF8gEv3EtoPQE8mxDhq3Gd+dEr7jxamXMNv9Fk3dVbBeYi
-X-MS-Office365-Filtering-Correlation-Id: 0c800a41-dd5b-47d8-216b-08d5bb062b08
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4373;7:wYLmRh/w/csQuUMFF+wD+hnpQ/zc8s+2Kjy/Xd3P3XX9ne2I7H5cjUys4VmZz46oKaz0+G3LkcQrlvOWI0s1fidYoMz+MHYZC6uj7USblC/0b/LzrRuQBpObF3EIx6kAbjtOKEQI+OwRzYYcNLXh7z32iVHLdvtcT40iroOMX+gN3Qbd3wjvKlcFUapldM/hNMdL0muHOGtU0jmtYc2S31bh0SMKYW5v7pLIInmNScXc5eIFA575fTswGDmDde3S
+X-MS-Office365-Filtering-Correlation-Id: 02d4fd64-225d-4aa1-5bf4-08d5bb0638eb
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 08:22:30.2225 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c800a41-dd5b-47d8-216b-08d5bb062b08
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 08:22:53.3033 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02d4fd64-225d-4aa1-5bf4-08d5bb0638eb
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4384
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4373
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andrew Pinski <apinski@cavium.com>
+ILP32 needs to mix 32bit struct siginfo and 64bit sigframe for its signal
+handlers. Move the existing compat code for copying siginfo to user space
+and manipulating signal masks into signal32_common.c so it can be used to
+deliver aarch32 and ilp32 signals.
 
-Add a separate syscall-table for ILP32, which dispatches either to native
-LP64 system call implementation or to compat-syscalls, as appropriate.
-
-Signed-off-by: Andrew Pinski <Andrew.Pinski@caviumnetworks.com>
 Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-Signed-off-by: Bamvor Jian Zhang <bamv2005@gmail.com>
 ---
- arch/arm64/include/asm/unistd.h      |  8 ++-
- arch/arm64/include/uapi/asm/unistd.h | 12 ++++
- arch/arm64/kernel/Makefile           |  2 +-
- arch/arm64/kernel/entry.S            | 31 +++++++++-
- arch/arm64/kernel/sys_ilp32.c        | 90 ++++++++++++++++++++++++++++
- 5 files changed, 137 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm64/kernel/sys_ilp32.c
+ arch/arm64/include/asm/signal32_common.h | 13 +++++++++
+ arch/arm64/kernel/Makefile               |  2 +-
+ arch/arm64/kernel/signal32.c             | 23 +--------------
+ arch/arm64/kernel/signal32_common.c      | 37 ++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+), 23 deletions(-)
+ create mode 100644 arch/arm64/include/asm/signal32_common.h
+ create mode 100644 arch/arm64/kernel/signal32_common.c
 
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 99d29290c98b..1bf5572cd078 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -13,12 +13,16 @@
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--#ifdef CONFIG_AARCH32_EL0
+diff --git a/arch/arm64/include/asm/signal32_common.h b/arch/arm64/include/asm/signal32_common.h
+new file mode 100644
+index 000000000000..10bcdf6b8b4c
+--- /dev/null
++++ b/arch/arm64/include/asm/signal32_common.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#ifndef __ASM_SIGNAL32_COMMON_H
++#define __ASM_SIGNAL32_COMMON_H
 +
 +#ifdef CONFIG_COMPAT
- #define __ARCH_WANT_COMPAT_STAT64
-+#define __ARCH_WANT_SYS_LLSEEK
-+#endif
 +
-+#ifdef CONFIG_AARCH32_EL0
- #define __ARCH_WANT_SYS_GETHOSTNAME
- #define __ARCH_WANT_SYS_PAUSE
- #define __ARCH_WANT_SYS_GETPGRP
--#define __ARCH_WANT_SYS_LLSEEK
- #define __ARCH_WANT_SYS_NICE
- #define __ARCH_WANT_SYS_SIGPENDING
- #define __ARCH_WANT_SYS_SIGPROCMASK
-diff --git a/arch/arm64/include/uapi/asm/unistd.h b/arch/arm64/include/uapi/asm/unistd.h
-index 439b1c55c827..80f1cb4ae2e1 100644
---- a/arch/arm64/include/uapi/asm/unistd.h
-+++ b/arch/arm64/include/uapi/asm/unistd.h
-@@ -15,7 +15,19 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
-+/*
-+ * Use AARCH32 interface for sys_sync_file_range() as it passes 64-bit arguments.
-+ */
-+#if defined(__ILP32__) || defined(__SYSCALL_COMPAT)
-+#define __ARCH_WANT_SYNC_FILE_RANGE2
-+#endif
++int put_sigset_t(compat_sigset_t __user *uset, sigset_t *set);
++int get_sigset_t(sigset_t *set, const compat_sigset_t __user *uset);
 +
-+/*
-+ * AARCH64/ILP32 is introduced after next syscalls were deprecated.
-+ */
-+#if !(defined(__ILP32__) || defined(__SYSCALL_COMPAT))
- #define __ARCH_WANT_RENAMEAT
- #define __ARCH_WANT_SET_GET_RLIMIT
-+#endif
- 
- #include <asm-generic/unistd.h>
++#endif /* CONFIG_COMPAT*/
++
++#endif /* __ASM_SIGNAL32_COMMON_H */
 diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 2dde9ae508ec..a6db407d4089 100644
+index a6db407d4089..9e127c47a25c 100644
 --- a/arch/arm64/kernel/Makefile
 +++ b/arch/arm64/kernel/Makefile
-@@ -28,7 +28,7 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
- 
+@@ -29,7 +29,7 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
  arm64-obj-$(CONFIG_AARCH32_EL0)		+= sys32.o kuser32.o signal32.o 	\
  					   sys_compat.o entry32.o binfmt_elf32.o
--arm64-obj-$(CONFIG_ARM64_ILP32)		+= binfmt_ilp32.o
-+arm64-obj-$(CONFIG_ARM64_ILP32)		+= binfmt_ilp32.o sys_ilp32.o
- arm64-obj-$(CONFIG_COMPAT)		+= entry32_common.o
+ arm64-obj-$(CONFIG_ARM64_ILP32)		+= binfmt_ilp32.o sys_ilp32.o
+-arm64-obj-$(CONFIG_COMPAT)		+= entry32_common.o
++arm64-obj-$(CONFIG_COMPAT)		+= entry32_common.o signal32_common.o
  arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
  arm64-obj-$(CONFIG_MODULES)		+= arm64ksyms.o module.o
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 698907724eed..d03542418f9b 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -401,6 +401,23 @@ tsk	.req	x28		// current thread_info
+ arm64-obj-$(CONFIG_ARM64_MODULE_PLTS)	+= module-plts.o
+diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
+index 739e13b54820..fdcc210028b5 100644
+--- a/arch/arm64/kernel/signal32.c
++++ b/arch/arm64/kernel/signal32.c
+@@ -26,6 +26,7 @@
+ #include <asm/esr.h>
+ #include <asm/fpsimd.h>
+ #include <asm/signal32.h>
++#include <asm/signal32_common.h>
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
  
- 	.text
+@@ -103,28 +104,6 @@ struct a32_rt_sigframe {
  
-+#ifdef CONFIG_ARM64_ILP32
-+/*
-+ * AARCH64/ILP32. Zero top halves of x0-x7
-+ * registers as userspace may put garbage there.
-+ */
-+	.macro	delouse_input_regs
-+	mov w0, w0
-+	mov w1, w1
-+	mov w2, w2
-+	mov w3, w3
-+	mov w4, w4
-+	mov w5, w5
-+	mov w6, w6
-+	mov w7, w7
-+	.endm
-+#endif
-+
+ #define _BLOCKABLE (~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
+ 
+-static inline int put_sigset_t(compat_sigset_t __user *uset, sigset_t *set)
+-{
+-	compat_sigset_t	cset;
+-
+-	cset.sig[0] = set->sig[0] & 0xffffffffull;
+-	cset.sig[1] = set->sig[0] >> 32;
+-
+-	return copy_to_user(uset, &cset, sizeof(*uset));
+-}
+-
+-static inline int get_sigset_t(sigset_t *set,
+-			       const compat_sigset_t __user *uset)
+-{
+-	compat_sigset_t s32;
+-
+-	if (copy_from_user(&s32, uset, sizeof(*uset)))
+-		return -EFAULT;
+-
+-	set->sig[0] = s32.sig[0] | (((long)s32.sig[1]) << 32);
+-	return 0;
+-}
+-
  /*
-  * Exception vectors.
-  */
-@@ -695,6 +712,7 @@ el0_svc_compat:
- 	 */
- 	ldr	x16, [tsk, #TSK_TI_FLAGS]	// load thread flags
- 	adrp	stbl, compat_sys_call_table	// load compat syscall table pointer
-+	ldr     x19, [tsk, #TSK_TI_FLAGS]
- 	mov	wscno, w7			// syscall number in w7 (r7)
- 	mov     wsc_nr, #__NR_compat_syscalls
- 	b	el0_svc_naked
-@@ -916,14 +934,15 @@ ENDPROC(ret_to_user)
- el0_svc:
- 	ldr	x16, [tsk, #TSK_TI_FLAGS]	// load thread flags
- 	adrp	stbl, sys_call_table		// load syscall table pointer
-+	ldr	x19, [tsk, #TSK_TI_FLAGS]
- 	mov	wscno, w8			// syscall number in w8
- 	mov	wsc_nr, #__NR_syscalls
- 
- #ifdef CONFIG_ARM64_SVE
- alternative_if_not ARM64_SVE
--	b	el0_svc_naked
-+	b	el0_svc_select_table
- alternative_else_nop_endif
--	tbz	x16, #TIF_SVE, el0_svc_naked	// Skip unless TIF_SVE set:
-+	tbz	x16, #TIF_SVE, el0_svc_select_table	// Skip unless TIF_SVE set:
- 	bic	x16, x16, #_TIF_SVE		// discard SVE state
- 	str	x16, [tsk, #TSK_TI_FLAGS]
- 
-@@ -939,12 +958,18 @@ alternative_else_nop_endif
- 	msr	cpacr_el1, x9			// synchronised by eret to el0
- #endif
- 
-+el0_svc_select_table:
-+#ifdef CONFIG_ARM64_ILP32
-+	tbz	x19, #TIF_32BIT_AARCH64, el0_svc_naked	// We are using LP64  syscall table
-+	adrp	stbl, sys_call_ilp32_table	// load ilp32 syscall table pointer
-+	delouse_input_regs
-+#endif
- el0_svc_naked:					// compat entry point
- 	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
- 	enable_daif
- 	ct_user_exit 1
- 
--	tst	x16, #_TIF_SYSCALL_WORK		// check for syscall hooks
-+	tst	x19, #_TIF_SYSCALL_WORK		// check for syscall hooks
- 	b.ne	__sys_trace
- 	cmp     wscno, wsc_nr			// check upper syscall limit
- 	b.hs	ni_sys
-diff --git a/arch/arm64/kernel/sys_ilp32.c b/arch/arm64/kernel/sys_ilp32.c
+  * VFP save/restore code.
+  *
+diff --git a/arch/arm64/kernel/signal32_common.c b/arch/arm64/kernel/signal32_common.c
 new file mode 100644
-index 000000000000..9803d7806328
+index 000000000000..21995fc4e0b4
 --- /dev/null
-+++ b/arch/arm64/kernel/sys_ilp32.c
-@@ -0,0 +1,90 @@
++++ b/arch/arm64/kernel/signal32_common.c
+@@ -0,0 +1,37 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +
 +/*
-+ * AArch64- ILP32 specific system calls implementation
++ * Based on arch/arm/kernel/signal.c
 + *
-+ * Copyright (C) 2018 Cavium Inc.
-+ * Author: Andrew Pinski <apinski@cavium.com>
++ * Copyright (C) 1995-2009 Russell King
++ * Copyright (C) 2012 ARM Ltd.
++ * Modified by Will Deacon <will.deacon@arm.com>
 + */
 +
-+#define __SYSCALL_COMPAT
-+
-+#include <linux/compiler.h>
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/mm.h>
-+#include <linux/msg.h>
-+#include <linux/export.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/syscalls.h>
 +#include <linux/compat.h>
-+#include <asm-generic/syscalls.h>
++#include <linux/signal.h>
++#include <linux/uaccess.h>
 +
-+/*
-+ * AARCH32 requires 4-page alignment for shared memory,
-+ * but AARCH64 - only 1 page. This is the only difference
-+ * between compat and native sys_shmat(). So ILP32 just pick
-+ * AARCH64 version.
-+ */
-+#define compat_sys_shmat		sys_shmat
-+
-+/*
-+ * ILP32 needs special handling for some ptrace requests.
-+ */
-+#define sys_ptrace			compat_sys_ptrace
-+
-+/*
-+ * Using AARCH32 interface for syscalls that take 64-bit
-+ * parameters in registers.
-+ */
-+#define compat_sys_fadvise64_64		compat_sys_fadvise64_64_wrapper
-+#define compat_sys_fallocate		compat_sys_fallocate_wrapper
-+#define compat_sys_ftruncate64		compat_sys_ftruncate64_wrapper
-+#define compat_sys_pread64		compat_sys_pread64_wrapper
-+#define compat_sys_pwrite64		compat_sys_pwrite64_wrapper
-+#define compat_sys_readahead		compat_sys_readahead_wrapper
-+#define compat_sys_sync_file_range2	compat_sys_sync_file_range2_wrapper
-+#define compat_sys_truncate64		compat_sys_truncate64_wrapper
-+#define sys_mmap2			compat_sys_mmap2_wrapper
-+
-+/*
-+ * Using AARCH32 interface for syscalls that take the size of
-+ * struct statfs as an argument, as it's calculated differently
-+ * in kernel and user spaces.
-+ */
-+#define compat_sys_fstatfs64		compat_sys_fstatfs64_wrapper
-+#define compat_sys_statfs64		compat_sys_statfs64_wrapper
-+
-+/*
-+ * Using custom wrapper for rt_sigreturn() to handle custom
-+ * struct rt_sigframe.
-+ */
-+#define compat_sys_rt_sigreturn        ilp32_sys_rt_sigreturn_wrapper
-+
-+asmlinkage long compat_sys_fstatfs64_wrapper(void);
-+asmlinkage long compat_sys_statfs64_wrapper(void);
-+asmlinkage long compat_sys_fadvise64_64_wrapper(void);
-+asmlinkage long compat_sys_fallocate_wrapper(void);
-+asmlinkage long compat_sys_ftruncate64_wrapper(void);
-+asmlinkage long compat_sys_mmap2_wrapper(void);
-+asmlinkage long compat_sys_pread64_wrapper(void);
-+asmlinkage long compat_sys_pwrite64_wrapper(void);
-+asmlinkage long compat_sys_readahead_wrapper(void);
-+asmlinkage long compat_sys_sync_file_range2_wrapper(void);
-+asmlinkage long compat_sys_truncate64_wrapper(void);
-+asmlinkage long ilp32_sys_rt_sigreturn_wrapper(void);
-+
-+#include <asm/syscall.h>
-+
-+#undef __SYSCALL
-+#define __SYSCALL(nr, sym)	[nr] = sym,
-+
-+/*
-+ * The sys_call_ilp32_table array must be 4K aligned to be accessible from
-+ * kernel/entry.S.
-+ */
-+void *sys_call_ilp32_table[__NR_syscalls] __aligned(4096) = {
-+	[0 ... __NR_syscalls - 1] = sys_ni_syscall,
++#include <asm/signal32_common.h>
 +#include <asm/unistd.h>
-+};
++
++int put_sigset_t(compat_sigset_t __user *uset, sigset_t *set)
++{
++	compat_sigset_t	cset;
++
++	cset.sig[0] = set->sig[0] & 0xffffffffull;
++	cset.sig[1] = set->sig[0] >> 32;
++
++	return copy_to_user(uset, &cset, sizeof(*uset));
++}
++
++int get_sigset_t(sigset_t *set, const compat_sigset_t __user *uset)
++{
++	compat_sigset_t s32;
++
++	if (copy_from_user(&s32, uset, sizeof(*uset)))
++		return -EFAULT;
++
++	set->sig[0] = s32.sig[0] | (((long)s32.sig[1]) << 32);
++	return 0;
++}
 -- 
 2.17.0
 
