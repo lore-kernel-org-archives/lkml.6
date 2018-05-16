@@ -1,145 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeEPFh1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:37:27 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:46862 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPFh0 (ORCPT
+        id S1751608AbeEPFko (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:40:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751151AbeEPFkn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:37:26 -0400
-X-Google-Smtp-Source: AB8JxZqjyBIt02KIgs0WK6+iLCwK6S40lfm4m0+gDMBMCuwNpDV8Em44YfHZMkYhovQ1n/Ve7sWFVoZY2Sc8ycBz9Y8=
-MIME-Version: 1.0
-In-Reply-To: <1526420991-21213-3-git-send-email-longman@redhat.com>
-References: <1526420991-21213-1-git-send-email-longman@redhat.com> <1526420991-21213-3-git-send-email-longman@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 16 May 2018 08:37:24 +0300
-Message-ID: <CAOQ4uxgtsj=u8uVHJJHHuYEVWbf2BFg4YH9emMZrO4ZG+vf_4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] locking/percpu-rwsem: Annotate rwsem ownership
- transfer by setting RWSEM_OWNER_UNKNOWN
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 May 2018 01:40:43 -0400
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To: mpe@ellerman.id.au
+Cc: benh@kernel.crashing.org, paulus@samba.org,
+        naveen.n.rao@linux.vnet.ibm.com, anton@samba.org, cyrilbur@gmail.com,
+        matthew.brown.dev@gmail.com, sandipan@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [RFC] powerpc/emulate_step: Fix kernel crash when VSX is not present
+Date: Wed, 16 May 2018 11:10:21 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18051605-0012-0000-0000-000005D703F4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051605-0013-0000-0000-0000195425B7
+Message-Id: <20180516054021.5328-1-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160057
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:49 AM, Waiman Long <longman@redhat.com> wrote:
-> The filesystem freezing code needs to transfer ownership of a rwsem
-> embedded in a percpu-rwsem from the task that does the freezing to
-> another one that does the thawing by calling percpu_rwsem_release()
-> after freezing and percpu_rwsem_acquire() before thawing.
->
-> However, the new rwsem debug code runs afoul with this scheme by warning
-> that the task that releases the rwsem isn't the one that acquires it.
->
-> [   20.302978] ------------[ cut here ]------------
-> [   20.305016] DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
-> [   20.305029] WARNING: CPU: 1 PID: 1401 at
-> /home/amir/build/src/linux/kernel/locking/rwsem.c:133 up_write+0x59/0x79
-> [   20.311252] CPU: 1 PID: 1401 Comm: fsfreeze Not tainted 4.17.0-rc3-xfstests-00049-g39e47bf59eb3 #3276
-> [   20.314808] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> [   20.318403] RIP: 0010:up_write+0x59/0x79
-> [   20.320928] RSP: 0018:ffffc90000717e48 EFLAGS: 00010286
-> [   20.322955] RAX: 0000000000000030 RBX: ffff880078f1c680 RCX: ffff880078e42200
-> [   20.325665] RDX: ffffffff810cc9c1 RSI: 0000000000000001 RDI: 0000000000000202
-> [   20.328844] RBP: ffffc90000717e80 R08: 0000000000000001 R09: 0000000000000001
-> [   20.332340] R10: ffffc90000717c58 R11: ffffffff836807ad R12: ffff880078f1c388
-> [   20.335095] R13: ffff880078a8b980 R14: 0000000000000000 R15: 00000000fffffff7
-> [   20.338009] FS:  00007fb61ca42700(0000) GS:ffff88007f400000(0000) knlGS:0000000000000000
-> [   20.341423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   20.343772] CR2: 00007fb61c559b30 CR3: 0000000078da6000 CR4: 00000000000006e0
-> [   20.346463] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   20.349201] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   20.351960] Call Trace:
-> [   20.352911]  percpu_up_write+0x1f/0x28
-> [   20.354344]  thaw_super_locked+0xdf/0x120
-> [   20.355944]  do_vfs_ioctl+0x270/0x5f1
-> [   20.357390]  ? __se_sys_newfstat+0x2e/0x39
-> [   20.358969]  ? entry_SYSCALL_64_after_hwframe+0x59/0xbe
-> [   20.360991]  ksys_ioctl+0x52/0x71
-> [   20.362384]  __x64_sys_ioctl+0x16/0x19
-> [   20.363702]  do_syscall_64+0x5d/0x167
-> [   20.365099]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> To work properly with the rwsem debug code, we need to annotate that the
-> rwsem ownership is unknown during the tranfer period until a brave soul
-> comes forward to acquire the ownership. During that period, optimistic
-> spinning will be disabled.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
+emulate_step() is not checking runtime VSX feature flag before
+emulating an instruction. This can cause kernel oops when kernel
+is compiled with CONFIG_VSX=y but running on machine where VSX is
+not supported or disabled. Ex, while running emulate_step tests on
+P6 machine:
 
-Looks good and tested
+  ...
+  emulate_step_test: lvx            : PASS
+  emulate_step_test: stvx           : PASS
+  Oops: Exception in kernel mode, sig: 4 [#1]
+  NIP [c000000000095c24] .load_vsrn+0x28/0x54
+  LR [c000000000094bdc] .emulate_loadstore+0x167c/0x17b0
+  Call Trace:
+  [c0000000494c3770] [40fe240c7ae147ae] 0x40fe240c7ae147ae (unreliable)
+  [c0000000494c37f0] [c000000000094bdc] .emulate_loadstore+0x167c/0x17b0
+  [c0000000494c3900] [c000000000094f6c] .emulate_step+0x25c/0x5bc
+  [c0000000494c39b0] [c000000000ec90dc] .test_lxvd2x_stxvd2x+0x64/0x154
+  [c0000000494c3b90] [c000000000ec9204] .test_emulate_step+0x38/0x4c
+  [c0000000494c3c00] [c00000000000de2c] .do_one_initcall+0x5c/0x2c0
+  [c0000000494c3cd0] [c000000000eb4bf8] .kernel_init_freeable+0x314/0x4cc
+  [c0000000494c3db0] [c00000000000e1e4] .kernel_init+0x24/0x160
+  [c0000000494c3e30] [c00000000000bc24] .ret_from_kernel_thread+0x58/0xb4
 
-Thanks,
-Amir.
+With fix:
+  ...
+  emulate_step_test: stvx           : PASS
+  emulate_step_test: lxvd2x         : FAIL
+  emulate_step_test: stxvd2x        : FAIL
 
-> ---
->  include/linux/percpu-rwsem.h | 6 +++++-
->  include/linux/rwsem.h        | 6 ++++++
->  kernel/locking/rwsem-xadd.c  | 2 ++
->  3 files changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-> index b1f37a8..79b99d6 100644
-> --- a/include/linux/percpu-rwsem.h
-> +++ b/include/linux/percpu-rwsem.h
-> @@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
->         lock_release(&sem->rw_sem.dep_map, 1, ip);
->  #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
->         if (!read)
-> -               sem->rw_sem.owner = NULL;
-> +               sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
->  #endif
->  }
->
-> @@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
->                                         bool read, unsigned long ip)
->  {
->         lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-> +#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-> +       if (!read)
-> +               sem->rw_sem.owner = current;
-> +#endif
->  }
->
->  #endif
-> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-> index 56707d5..ab93b6e 100644
-> --- a/include/linux/rwsem.h
-> +++ b/include/linux/rwsem.h
-> @@ -44,6 +44,12 @@ struct rw_semaphore {
->  #endif
->  };
->
-> +/*
-> + * Setting bit 0 of the owner field with other non-zero bits will indicate
-> + * that the rwsem is writer-owned with an unknown owner.
-> + */
-> +#define RWSEM_OWNER_UNKNOWN    ((struct task_struct *)-1L)
-> +
->  extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
->  extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
->  extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
-> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-> index 604d247..a903367 100644
-> --- a/kernel/locking/rwsem-xadd.c
-> +++ b/kernel/locking/rwsem-xadd.c
-> @@ -352,6 +352,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
->         struct task_struct *owner;
->         bool ret = true;
->
-> +       BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
-> +
->         if (need_resched())
->                 return false;
->
-> --
-> 1.8.3.1
->
+Fixes: https://github.com/linuxppc/linux/issues/148
+
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+Note: VSX was first introduced on P6. But there are many VSX instructions
+      which were introduced in later versions. So ideally, analyse_instr()
+      should check for ISA version along with opcode.
+
+ arch/powerpc/lib/sstep.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
+index 34d68f1b1b40..470942f9c567 100644
+--- a/arch/powerpc/lib/sstep.c
++++ b/arch/powerpc/lib/sstep.c
+@@ -1173,6 +1173,7 @@ int analyse_instr(struct instruction_op *op, const struct pt_regs *regs,
+ 	unsigned long int val, val2;
+ 	unsigned int mb, me, sh;
+ 	long ival;
++	int type;
+ 
+ 	op->type = COMPUTE;
+ 
+@@ -2544,6 +2545,15 @@ int analyse_instr(struct instruction_op *op, const struct pt_regs *regs,
+ #endif /* __powerpc64__ */
+ 
+ 	}
++
++#ifdef CONFIG_VSX
++	type = op->type & INSTR_TYPE_MASK;
++	if ((type == LOAD_VSX || type == STORE_VSX) &&
++	    !cpu_has_feature(CPU_FTR_VSX)) {
++		return -1;
++	}
++#endif /* CONFIG_VSX */
++
+ 	return 0;
+ 
+  logical_done:
+-- 
+2.16.2
