@@ -1,91 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeEPNRo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:17:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53936 "EHLO mx1.redhat.com"
+        id S1752226AbeEPNUJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:20:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44416 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751151AbeEPNRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:17:40 -0400
-Subject: Re: [PATCH v4 2/2] locking/percpu-rwsem: Annotate rwsem ownership
- transfer by setting RWSEM_OWNER_UNKNOWN
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-References: <1526420991-21213-1-git-send-email-longman@redhat.com>
- <1526420991-21213-3-git-send-email-longman@redhat.com>
- <CAOQ4uxgtsj=u8uVHJJHHuYEVWbf2BFg4YH9emMZrO4ZG+vf_4Q@mail.gmail.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <3bbdbfa8-0a18-e4e9-eaa9-085022e4e11a@redhat.com>
-Date: Wed, 16 May 2018 09:17:39 -0400
+        id S1751151AbeEPNUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:20:07 -0400
+Subject: Re: [PATCH 1/2] add a function(ioremap_encrypted) for kdump when AMD
+ sme enabled.
+To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
+Cc: kexec@lists.infradead.org, dyoung@redhat.com
+References: <20180515015133.4363-1-lijiang@redhat.com>
+ <20180515015133.4363-2-lijiang@redhat.com>
+ <8c8f20cc-b39d-137c-9d71-1e566f905acb@amd.com>
+From: lijiang <lijiang@redhat.com>
+Message-ID: <7b36c2ea-5e96-d554-aaff-97587bc268e9@redhat.com>
+Date: Wed, 16 May 2018 21:19:54 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxgtsj=u8uVHJJHHuYEVWbf2BFg4YH9emMZrO4ZG+vf_4Q@mail.gmail.com>
+In-Reply-To: <8c8f20cc-b39d-137c-9d71-1e566f905acb@amd.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 01:37 AM, Amir Goldstein wrote:
-> On Wed, May 16, 2018 at 12:49 AM, Waiman Long <longman@redhat.com> wrote:
->> The filesystem freezing code needs to transfer ownership of a rwsem
->> embedded in a percpu-rwsem from the task that does the freezing to
->> another one that does the thawing by calling percpu_rwsem_release()
->> after freezing and percpu_rwsem_acquire() before thawing.
->>
->> However, the new rwsem debug code runs afoul with this scheme by warning
->> that the task that releases the rwsem isn't the one that acquires it.
->>
->> [   20.302978] ------------[ cut here ]------------
->> [   20.305016] DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
->> [   20.305029] WARNING: CPU: 1 PID: 1401 at
->> /home/amir/build/src/linux/kernel/locking/rwsem.c:133 up_write+0x59/0x79
->> [   20.311252] CPU: 1 PID: 1401 Comm: fsfreeze Not tainted 4.17.0-rc3-xfstests-00049-g39e47bf59eb3 #3276
->> [   20.314808] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
->> BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
->> [   20.318403] RIP: 0010:up_write+0x59/0x79
->> [   20.320928] RSP: 0018:ffffc90000717e48 EFLAGS: 00010286
->> [   20.322955] RAX: 0000000000000030 RBX: ffff880078f1c680 RCX: ffff880078e42200
->> [   20.325665] RDX: ffffffff810cc9c1 RSI: 0000000000000001 RDI: 0000000000000202
->> [   20.328844] RBP: ffffc90000717e80 R08: 0000000000000001 R09: 0000000000000001
->> [   20.332340] R10: ffffc90000717c58 R11: ffffffff836807ad R12: ffff880078f1c388
->> [   20.335095] R13: ffff880078a8b980 R14: 0000000000000000 R15: 00000000fffffff7
->> [   20.338009] FS:  00007fb61ca42700(0000) GS:ffff88007f400000(0000) knlGS:0000000000000000
->> [   20.341423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   20.343772] CR2: 00007fb61c559b30 CR3: 0000000078da6000 CR4: 00000000000006e0
->> [   20.346463] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> [   20.349201] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> [   20.351960] Call Trace:
->> [   20.352911]  percpu_up_write+0x1f/0x28
->> [   20.354344]  thaw_super_locked+0xdf/0x120
->> [   20.355944]  do_vfs_ioctl+0x270/0x5f1
->> [   20.357390]  ? __se_sys_newfstat+0x2e/0x39
->> [   20.358969]  ? entry_SYSCALL_64_after_hwframe+0x59/0xbe
->> [   20.360991]  ksys_ioctl+0x52/0x71
->> [   20.362384]  __x64_sys_ioctl+0x16/0x19
->> [   20.363702]  do_syscall_64+0x5d/0x167
->> [   20.365099]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> To work properly with the rwsem debug code, we need to annotate that the
->> rwsem ownership is unknown during the tranfer period until a brave soul
->> comes forward to acquire the ownership. During that period, optimistic
->> spinning will be disabled.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Looks good and tested
->
-> Thanks,
-> Amir.
->
-Thanks for the testing.
 
-Cheers,
-Longman
+
+在 2018年05月15日 22:34, Tom Lendacky 写道:
+> On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
+>> It is convenient to remap the old memory encrypted to the second kernel
+>> by calling ioremap_encrypted().
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/x86/include/asm/io.h |  2 ++
+>>  arch/x86/mm/ioremap.c     | 25 +++++++++++++++++--------
+>>  2 files changed, 19 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+>> index f6e5b93..06d2a9f 100644
+>> --- a/arch/x86/include/asm/io.h
+>> +++ b/arch/x86/include/asm/io.h
+>> @@ -192,6 +192,8 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
+>>  #define ioremap_cache ioremap_cache
+>>  extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
+>>  #define ioremap_prot ioremap_prot
+>> +extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
+>> +#define ioremap_encrypted ioremap_encrypted
+>>  
+>>  /**
+>>   * ioremap     -   map bus memory into CPU space
+>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+>> index c63a545..7a52d1e 100644
+>> --- a/arch/x86/mm/ioremap.c
+>> +++ b/arch/x86/mm/ioremap.c
+>> @@ -131,7 +131,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+>>   * caller shouldn't need to know that small detail.
+>>   */
+>>  static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>> -		unsigned long size, enum page_cache_mode pcm, void *caller)
+>> +		unsigned long size, enum page_cache_mode pcm,
+>> +		void *caller, bool encrypted)
+>>  {
+>>  	unsigned long offset, vaddr;
+>>  	resource_size_t last_addr;
+>> @@ -199,7 +200,8 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>>  	 * resulting mapping.
+>>  	 */
+>>  	prot = PAGE_KERNEL_IO;
+>> -	if (sev_active() && mem_flags.desc_other)
+>> +	if ((sev_active() && mem_flags.desc_other) ||
+>> +			(encrypted && sme_active()))
+> 
+> You only need the encrypted check here.  If sme is not active,
+> then the pgprot_encrypted will basically be a no-op.
+> 
+Great! Thank you, Tom.
+It will be fixed.
+
+Lianbo
+> Also, extra indents.
+> 
+> Thanks,
+> Tom
+> 
+>>  		prot = pgprot_encrypted(prot);
+>>  
+>>  	switch (pcm) {
+>> @@ -291,7 +293,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
+>>  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
+>>  
+>>  	return __ioremap_caller(phys_addr, size, pcm,
+>> -				__builtin_return_address(0));
+>> +				__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL(ioremap_nocache);
+>>  
+>> @@ -324,7 +326,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
+>>  	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
+>>  
+>>  	return __ioremap_caller(phys_addr, size, pcm,
+>> -				__builtin_return_address(0));
+>> +				__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL_GPL(ioremap_uc);
+>>  
+>> @@ -341,7 +343,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
+>>  void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
+>>  {
+>>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
+>> -					__builtin_return_address(0));
+>> +					__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL(ioremap_wc);
+>>  
+>> @@ -358,14 +360,21 @@ EXPORT_SYMBOL(ioremap_wc);
+>>  void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
+>>  {
+>>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
+>> -					__builtin_return_address(0));
+>> +					__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL(ioremap_wt);
+>>  
+>> +void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
+>> +{
+>> +	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
+>> +				__builtin_return_address(0), true);
+>> +}
+>> +EXPORT_SYMBOL(ioremap_encrypted);
+>> +
+>>  void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
+>>  {
+>>  	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
+>> -				__builtin_return_address(0));
+>> +				__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL(ioremap_cache);
+>>  
+>> @@ -374,7 +383,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
+>>  {
+>>  	return __ioremap_caller(phys_addr, size,
+>>  				pgprot2cachemode(__pgprot(prot_val)),
+>> -				__builtin_return_address(0));
+>> +				__builtin_return_address(0), false);
+>>  }
+>>  EXPORT_SYMBOL(ioremap_prot);
+>>  
+>>
