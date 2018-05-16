@@ -1,106 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeEPFs1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:48:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57756 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752524AbeEPFoj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:44:39 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, devel@lists.orangefs.org,
-        ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-mtd@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        lustre-devel@lists.lustre.org, linux-arm-kernel@lists.infradead.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH 06/14] btrfs: separate errno from VM_FAULT_* values
-Date: Wed, 16 May 2018 07:43:40 +0200
-Message-Id: <20180516054348.15950-7-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180516054348.15950-1-hch@lst.de>
-References: <20180516054348.15950-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1752510AbeEPFvk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:51:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52029 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751389AbeEPFvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 01:51:38 -0400
+From: Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH] Makefile: disable PIE before testing asm goto
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andreas Faerber <afaerber@suse.com>
+Message-Id: <20180516055136.6F4EAA095A@unicorn.suse.cz>
+Date: Wed, 16 May 2018 07:51:36 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/btrfs/ctree.h |  2 +-
- fs/btrfs/inode.c | 19 ++++++++++---------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+Since commit e501ce957a78 ("x86: Force asm-goto"), aarch64 build on
+distributions which enable PIE by default (e.g. openSUSE Tumbleweed) does
+not detect support for asm goto correctly. The problem is that ARM specific
+part of scripts/gcc-goto.sh fails with PIE even with recent gcc versions.
+Moving the asm goto detection up in Makefile put it before the place where
+we disable PIE. As a result, kernel is built without jump label support.
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 1485cd130e2b..02a0de73c1d1 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3203,7 +3203,7 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
- 			 size_t size, struct bio *bio,
- 			 unsigned long bio_flags);
- void btrfs_set_range_writeback(void *private_data, u64 start, u64 end);
--int btrfs_page_mkwrite(struct vm_fault *vmf);
-+vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf);
- int btrfs_readpage(struct file *file, struct page *page);
- void btrfs_evict_inode(struct inode *inode);
- int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index ec9db248c499..f4f03f0f4556 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8824,7 +8824,7 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
-  * beyond EOF, then the page is guaranteed safe against truncation until we
-  * unlock the page.
-  */
--int btrfs_page_mkwrite(struct vm_fault *vmf)
-+vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
-@@ -8836,7 +8836,8 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 	char *kaddr;
- 	unsigned long zero_start;
- 	loff_t size;
--	int ret;
-+	vm_fault_t ret;
-+	int err;
- 	int reserved = 0;
- 	u64 reserved_space;
- 	u64 page_start;
-@@ -8858,14 +8859,14 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 	 * end up waiting indefinitely to get a lock on the page currently
- 	 * being processed by btrfs_page_mkwrite() function.
- 	 */
--	ret = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
-+	err = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
- 					   reserved_space);
--	if (!ret) {
--		ret = file_update_time(vmf->vma->vm_file);
-+	if (!err) {
-+		err = file_update_time(vmf->vma->vm_file);
- 		reserved = 1;
- 	}
--	if (ret) {
--		if (ret == -ENOMEM)
-+	if (err) {
-+		if (err == -ENOMEM)
- 			ret = VM_FAULT_OOM;
- 		else /* -ENOSPC, -EIO, etc */
- 			ret = VM_FAULT_SIGBUS;
-@@ -8927,9 +8928,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 			  EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
- 			  0, 0, &cached_state);
+Move the lines disabling PIE before the asm goto test to make it work.
+
+Fixes: e501ce957a78 ("x86: Force asm-goto")
+Reported-by: Andreas Faerber <afaerber@suse.com>
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index ba3106b36597..5532a15c4781 100644
+--- a/Makefile
++++ b/Makefile
+@@ -500,6 +500,9 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
+ RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+ export RETPOLINE_CFLAGS
  
--	ret = btrfs_set_extent_delalloc(inode, page_start, end, 0,
-+	err = btrfs_set_extent_delalloc(inode, page_start, end, 0,
- 					&cached_state, 0);
--	if (ret) {
-+	if (err) {
- 		unlock_extent_cached(io_tree, page_start, page_end,
- 				     &cached_state);
- 		ret = VM_FAULT_SIGBUS;
++KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
++KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
++
+ # check for 'asm goto'
+ ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+   CC_HAVE_ASM_GOTO := 1
+@@ -621,8 +624,6 @@ endif # $(dot-config)
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
+ 
+-KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+-KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+ CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
+ export CFLAGS_GCOV CFLAGS_KCOV
+ 
 -- 
-2.17.0
+2.16.3
