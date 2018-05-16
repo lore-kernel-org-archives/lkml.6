@@ -1,136 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752215AbeEPJFP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:05:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41618 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751182AbeEPJFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:05:12 -0400
-Date: Wed, 16 May 2018 11:05:06 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio/mdev: Check globally for duplicate devices
-Message-ID: <20180516110506.40b7516b.cohuck@redhat.com>
-In-Reply-To: <20180515195947.12163.49363.stgit@gimli.home>
-References: <20180515195947.12163.49363.stgit@gimli.home>
-Organization: Red Hat GmbH
+        id S1752274AbeEPJHu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:07:50 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34303 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeEPJHr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:07:47 -0400
+X-Google-Smtp-Source: AB8JxZok/FuMa2YD+Bo710OjUydWBYvwt+aBwg9JqkHayd6rxkO8mMi4h8RTntWXLsF6PwTcEhQmARu+Kvy6RMRv0j0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180516072929.GN12235@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+ <20180516071640.GU12217@hirez.programming.kicks-ass.net> <20180516072929.GN12235@hirez.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 May 2018 11:07:46 +0200
+X-Google-Sender-Auth: WzJSCOSGzasQt3_2tSuu9xHmcbo
+Message-ID: <CAJZ5v0gFJQK4FbLx=cOpefSAp2idknC5v7yFm41q+kytK05p_g@mail.gmail.com>
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018 14:17:04 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+On Wed, May 16, 2018 at 9:29 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, May 16, 2018 at 09:16:40AM +0200, Peter Zijlstra wrote:
+>> On Tue, May 15, 2018 at 09:49:03PM -0700, Srinivas Pandruvada wrote:
+>> > intel_pstate has two operating modes: active and passive. In "active"
+>> > mode, the in-built scaling governor is used and in "passive" mode,
+>> > the driver can be used with any governor like "schedutil". In "active"
+>> > mode the utilization values from schedutil is not used and there is
+>> > a requirement from high performance computing use cases, not to read
+>> > any APERF/MPERF MSRs. In this case no need to use CPU cycles for
+>> > frequency invariant accounting by reading APERF/MPERF MSRs.
+>> > With this change frequency invariant account is only enabled in
+>> > "passive" mode.
+>>
+>> WTH is active/passive? Is passive when we select performance governor?
+>
+> Bah, I cannot read it seems. active is when we use the intel_pstate
+> governor and passive is when we use schedutil and only use intel_pstate
+> as a driver.
+>
+>> Also; you have to explain why using APERF/MPERF is bad in that case. Why
+>> do they care if we read those MSRs during the tick?
+>
+> That still stands.. this needs to be properly explained.
 
-> When we create an mdev device, we check for duplicates against the
-> parent device and return -EEXIST if found, but the mdev device
-> namespace is global since we'll link all devices from the bus.  We do
-> catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-> with it comes a kernel warning and stack trace for trying to create
-> duplicate sysfs links, which makes it an undesirable response.
-> 
-> Therefore we should really be looking for duplicates across all mdev
-> parent devices, or as implemented here, against our mdev device list.
-> 
-> Notably, mdev_parent.lock really only seems to be serializing device
-> creation and removal per parent.  I'm not sure if this is necessary,
-> mdev vendor drivers could easily provide this serialization if it
-> is required, but a side-effect of holding the mdev_list_lock to
-> protect the namespace is actually greater serialization across the
-> create and remove paths, so mdev_parent.lock is removed.  If we can
-> show that vendor drivers handle the create/remove paths themselves,
-> perhaps we can refine the locking granularity.
+I guess this is from the intel_pstate perspective only.
 
-I'm not sure whether more locking granularity on the create/remove
-paths is really worth the effort.
+The active mode is only used with HWP, so intel_pstate doesn't look at
+the utilization (in any form) in the passive mode today.
 
-> 
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
->  drivers/vfio/mdev/mdev_core.c    |   79 ++++++++++----------------------------
->  drivers/vfio/mdev/mdev_private.h |    1 
->  2 files changed, 20 insertions(+), 60 deletions(-)
-
-In general, I think this patch makes sense; some nits below.
-
-> 
-> diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-> index 126991046eb7..3d8898a2baaf 100644
-> --- a/drivers/vfio/mdev/mdev_core.c
-> +++ b/drivers/vfio/mdev/mdev_core.c
-
-> @@ -376,12 +346,13 @@ int mdev_device_remove(struct device *dev, bool force_remove)
->  	struct mdev_device *mdev, *tmp;
->  	struct mdev_parent *parent;
->  	struct mdev_type *type;
-> -	int ret;
-> +	int ret = 0;
-
-I don't think you need to init this, as ret should either be set to
--ENODEV or the return code of mdev_device_remove_ops(), shouldn't it?
-
->  	bool found = false;
->  
->  	mdev = to_mdev_device(dev);
->  
->  	mutex_lock(&mdev_list_lock);
-> +
-
-unrelated whitespace change
-
->  	list_for_each_entry(tmp, &mdev_list, next) {
->  		if (tmp == mdev) {
->  			found = true;
-> @@ -389,35 +360,25 @@ int mdev_device_remove(struct device *dev, bool force_remove)
->  		}
->  	}
->  
-> -	if (found)
-> -		list_del(&mdev->next);
-> -
-> -	mutex_unlock(&mdev_list_lock);
-> -
-> -	if (!found)
-> -		return -ENODEV;
-> +	if (!found) {
-> +		ret = -ENODEV;
-> +		goto out;
-> +	}
->  
->  	type = to_mdev_type(mdev->type_kobj);
->  	parent = mdev->parent;
-> -	mutex_lock(&parent->lock);
->  
->  	ret = mdev_device_remove_ops(mdev, force_remove);
-> -	if (ret) {
-> -		mutex_unlock(&parent->lock);
-> -
-> -		mutex_lock(&mdev_list_lock);
-> -		list_add(&mdev->next, &mdev_list);
-> -		mutex_unlock(&mdev_list_lock);
-> -
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto out;
-
-This change really simplyfies the code, nice.
-
->  
-> +	list_del(&mdev->next);
->  	mdev_remove_sysfs_files(dev, type);
->  	device_unregister(dev);
-> -	mutex_unlock(&parent->lock);
->  	mdev_put_parent(parent);
-> -
-> -	return 0;
-> +out:
-> +	mutex_unlock(&mdev_list_lock);
-> +	return ret;
->  }
->  
->  static int __init mdev_init(void)
+Still, there are other reasons for PELT to be scale-invariant, so ...
