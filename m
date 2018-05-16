@@ -1,104 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751228AbeEPPBo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:01:44 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35890 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750786AbeEPPBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:01:42 -0400
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Thread-Topic: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Thread-Index: AQHT0XoURhB9br3sCUChmBQl/h9UpqQDmnwAgA9bIgCAFBx/gIALa4OAgAALVoA=
-Date: Wed, 16 May 2018 15:01:10 +0000
-Message-ID: <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
- <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
- <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
-In-Reply-To: <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E48E5DD0B59E9B4983E70FFD62A551BB@st.com>
+        id S1751984AbeEPPCI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:02:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751259AbeEPPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 11:02:01 -0400
+Message-Id: <20180516150159.483627079@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Wed, 16 May 2018 11:00:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v3 02/14] tracing: Add __find_event_file() to find event files without
+ restrictions
+References: <20180516150012.135869655@goodmis.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_08:,,
- signatures=0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0002-tracing-Add-__find_event_file-to-find-event-files-wi.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GF1mma012838
 
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
+By adding the function __find_event_file() that can search for files without
+restrictions, such as if the event associated with the file has a reg
+function, or if it has the "ignore" flag set, the files that are associated
+to ftrace internal events (like trace_marker and function events) can be
+found and used.
 
-On 05/16/2018 04:20 PM, Linus Walleij wrote:
-> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
-> 
->> Indeed, stmfx has other functions than GPIO. But, after comments done
->> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
->> child drivers into a single PINCTRL/GPIO driver because of the following
->> reasons:
->> - Other stmfx functions (IDD measurement and TouchScreen controller) are
->> not used on any of the boards using an stmfx and supported by Linux, so
->> no way to test these functions, and no need to maintain them while they
->> are not being used.
->> - But, in the case a new board will use more than GPIO function on
->> stmfx, the actual implementation allow to easily extract common init
->> part of stmfx and put it in an MFD driver.
->>
->> So I could remove gpio sub-node and put its contents in stmfx node and
->> keep single PINCTRL/GPIO driver for the time being.
->> Please advise,
-> 
-> I would normally advice to use the right modeling from the start, create
-> the MFD driver and spawn the devices from there. It is confusing
-> if the layout of the driver(s) doesn't really match the layout of the
-> hardware.
-> 
-> I understand that it is a pain to write new MFD drivers to get your
-> things going and it would be "nice to get this working really quick
-> now" but in my experience it is better to do it right from the start.
-> 
+find_event_file() still returns a "filtered" file, as most callers need a
+valid trace event file. One created by the trace_events.h macros and not one
+created for parsing ftrace specific events.
 
-Hi Linus,
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.h        |  3 +++
+ kernel/trace/trace_events.c | 22 +++++++++++++++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-Thanks for your advice. I understand the point.
-So, the right modeling would be to:
-- create an MFD driver with the common init part of stmfx
-- remove all common init part of stmfx-pinctrl driver and keep only all 
-gpio/pinctrl functions.
-
-I will not develop the other stmfx functions (IDD measurement driver and 
-TouchScreen controller driver) because, as explained ealier, they are 
-not used on any of the boards using an stmfx and supported by Linux, so 
-no way to test these functions, and no need to maintain them while they 
-are not being used.
-
-Lee, are you OK with that ?
-
-Regards,
-Amelie
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 24b666891eaf..8ecca43d6aea 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1454,6 +1454,9 @@ extern void trace_event_enable_tgid_record(bool enable);
+ extern int event_trace_add_tracer(struct dentry *parent, struct trace_array *tr);
+ extern int event_trace_del_tracer(struct trace_array *tr);
+ 
++extern struct trace_event_file *__find_event_file(struct trace_array *tr,
++						  const char *system,
++						  const char *event);
+ extern struct trace_event_file *find_event_file(struct trace_array *tr,
+ 						const char *system,
+ 						const char *event);
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 05c7172c6667..caf76355f0a3 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2473,8 +2473,9 @@ __trace_add_event_dirs(struct trace_array *tr)
+ 	}
+ }
+ 
++/* Returns any file that matches the system and event */
+ struct trace_event_file *
+-find_event_file(struct trace_array *tr, const char *system,  const char *event)
++__find_event_file(struct trace_array *tr, const char *system, const char *event)
+ {
+ 	struct trace_event_file *file;
+ 	struct trace_event_call *call;
+@@ -2485,10 +2486,7 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
+ 		call = file->event_call;
+ 		name = trace_event_name(call);
+ 
+-		if (!name || !call->class || !call->class->reg)
+-			continue;
+-
+-		if (call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
++		if (!name || !call->class)
+ 			continue;
+ 
+ 		if (strcmp(event, name) == 0 &&
+@@ -2498,6 +2496,20 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
+ 	return NULL;
+ }
+ 
++/* Returns valid trace event files that match system and event */
++struct trace_event_file *
++find_event_file(struct trace_array *tr, const char *system, const char *event)
++{
++	struct trace_event_file *file;
++
++	file = __find_event_file(tr, system, event);
++	if (!file || !file->event_call->class->reg ||
++	    file->event_call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
++		return NULL;
++
++	return file;
++}
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
+ /* Avoid typos */
+-- 
+2.17.0
