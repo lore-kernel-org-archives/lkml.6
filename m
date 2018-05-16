@@ -1,126 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeEPOH2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:07:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:12966 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751510AbeEPOH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:07:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="41417153"
-Date: Wed, 16 May 2018 17:07:20 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        linux-media@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to
- intel_hdmi
-Message-ID: <20180516140720.GD23723@intel.com>
-References: <1526395342-15481-1-git-send-email-narmstrong@baylibre.com>
- <1526395342-15481-3-git-send-email-narmstrong@baylibre.com>
- <20180515153521.GB23723@intel.com>
- <aff8c86f-b282-c901-5ef5-c5ee334aeedc@baylibre.com>
- <e0f99123-1463-c082-122e-67cf0d106e25@baylibre.com>
+        id S1752366AbeEPOJu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:09:50 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:42182 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752026AbeEPOJs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 10:09:48 -0400
+X-Google-Smtp-Source: AB8JxZqfEEhlah2tKKHwH1QM1FfoPQk87P7Mgw3DxHHo+nWdpLXMSYuhcxVPFKeGOGCrDTNxblfVjDqZBpoHQyNDe24=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0f99123-1463-c082-122e-67cf0d106e25@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180515141124.84254-18-namit@vmware.com>
+References: <20180515141124.84254-1-namit@vmware.com> <20180515141124.84254-18-namit@vmware.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 16 May 2018 07:09:46 -0700
+X-Google-Sender-Auth: CalvUtI-o9jZ6A_ZDtvzltBNi0I
+Message-ID: <CAGXu5jKGdy_VGpAnNGbK14fp43d3XuKU+b_1FMWFC1WFyg4WxA@mail.gmail.com>
+Subject: Re: [RFC 8/8] bitops: prevent compiler inline decision distortion
+To: Nadav Amit <namit@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 09:40:17AM +0200, Neil Armstrong wrote:
-> On 16/05/2018 09:31, Neil Armstrong wrote:
-> > Hi Ville,
-> > 
-> > On 15/05/2018 17:35, Ville Syrjälä wrote:
-> >> On Tue, May 15, 2018 at 04:42:19PM +0200, Neil Armstrong wrote:
-> >>> This patchs adds the cec_notifier feature to the intel_hdmi part
-> >>> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-> >>> between each HDMI ports.
-> >>> The changes will allow the i915 HDMI code to notify EDID and HPD changes
-> >>> to an eventual CEC adapter.
-> >>>
-> >>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> >>> ---
-> >>>  drivers/gpu/drm/i915/Kconfig      |  1 +
-> >>>  drivers/gpu/drm/i915/intel_drv.h  |  2 ++
-> >>>  drivers/gpu/drm/i915/intel_hdmi.c | 12 ++++++++++++
-> >>>  3 files changed, 15 insertions(+)
-> >>>
-> > 
-> > [..]
-> > 
-> >>>  }
-> >>>  
-> >>> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
-> >>>  
-> >>>  static void intel_hdmi_destroy(struct drm_connector *connector)
-> >>>  {
-> >>> +	if (intel_attached_hdmi(connector)->notifier)
-> >>> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
-> >>>  	kfree(to_intel_connector(connector)->detect_edid);
-> >>>  	drm_connector_cleanup(connector);
-> >>>  	kfree(connector);
-> >>> @@ -2358,6 +2366,10 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
-> >>>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
-> >>>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
-> >>>  	}
-> >>> +
-> >>> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev, connector->name);
-> >>
-> >> What are we doing with the connector name here? Those are not actually
-> >> guaranteed to be stable, and any change in the connector probe order
-> >> may cause the name to change.
-> > 
-> > The i915 driver can expose multiple HDMI connectors, but each connected will
-> > have a different EDID and CEC physical address, so we will need a different notifier
-> > for each connector.
-> > 
-> > The connector name is DRM dependent, but user-space actually uses this name for
-> > operations, so I supposed it was kind of stable.
-> > 
-> > Anyway, is there another stable id/name/whatever that can be used to make a name to
-> > distinguish the HDMI connectors ?
-> 
-> Would "HDMI %c", port_name(port) be OK to use ?
+On Tue, May 15, 2018 at 7:11 AM, Nadav Amit <namit@vmware.com> wrote:
+> There are several places in the kernel in which there is a condition
+> that is based on whether the input is known to be constant in
+> compilation time. If it is, there are complex computations, which only
+> take place during compilation time.
 
-Yeah, something like seems like a reasonable approach. That does mean
-we have to be a little careful with changing enum port or port_name()
-in the future, but I guess we could just add a small function to
-generated the name/id specifically for this thing.
+What we found while rewriting the min()/max() defines was that GCC's
+__builtin_choose_expr() evaluates constant expressions, not the wider
+possibility of constant values. And the older the GCC the less
+__builtin_constant_p() would resolve to a constant expression, which
+would force __builtin_choose_expr() along the "non constant" path.
 
-We're also going to have to think what to do with enum port and
-port_name() on ICL+ though. There we won't just have A-F but also
-TC1-TC<n>. Hmm. Looks like what we have for those ports in our
-codebase ATM is a bit wonky since we haven't even changed
-port_name() to give us the TC<n> type names.
+> Although this scheme works correctly, when GCC computes the expected
+> cost of this code in time and size, it disregards the fact that the
+> computations of the "constant" case will not take place during runtime
+> for the non-constant case. The cost of these functions is considered to
+> be much higher.  As a result, inline and branching decisions of the
+> compiler are distorted. Specifically, functions are less likely to be
+> inlined due to their preserved big size and execution time.
+>
+> One of this cases is test_bit() which performs some computations for
+> constant inputs.
+>
+> The solution is to use __builtin_choose_expr() to detect whether the
+> input is constant instead of a C condition. GCC evaluates the builtin
+> earlier, which allows it to improve code-generation decisions.
 
-Also we might not want "HDMI" in the identifier since the physical
-port is not HDMI specific. There are different things we could call
-these but I think we could just go with a generic "Port A-F" and
-"Port TC1-TC<n>" approach. I think something like that should work
-fine for current and upcoming hardware. And in theory that could
-then be used for other things as well which need a stable
-identifier.
+In the case of test_bit(), I *think* all the optimization-desired
+cases are already only constant expressions, so I think this is safe,
+but I wouldn't want to do this generally for uses of
+__builtin_constant_p().
 
-Oh, and now I recall that input subsystem at least has some kind
-of "physical path" property on devices. So I guess what we're
-dicussing is a somewhat similar idea. I think input drivers
-generally include the pci/usb/etc. device in the path as well.
-Even though we currently only ever have the one pci device it
-would seem like decent idea to include that information in our
-identifiers as well. Or what do you think?
+-Kees
+
+>
+> This patch allows function such as bitmap_pos_to_ord() to be inlined.
+> Its overall effect on size:
+>
+>    text    data     bss     dec     hex filename
+> 18149165 10064176 2936832 31150173 1db505d ./vmlinux before
+> 18149210 10064048 2936832 31150090 1db500a ./vmlinux after (-83)
+>
+> Static text symbols:
+> Before: 39643
+> After:  39632   (-11)
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/include/asm/bitops.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+> index 9f645ba57dbb..f1cb1c9125a9 100644
+> --- a/arch/x86/include/asm/bitops.h
+> +++ b/arch/x86/include/asm/bitops.h
+> @@ -349,10 +349,10 @@ static __always_inline bool variable_test_bit(long nr, volatile const unsigned l
+>  static bool test_bit(int nr, const volatile unsigned long *addr);
+>  #endif
+>
+> -#define test_bit(nr, addr)                     \
+> -       (__builtin_constant_p((nr))             \
+> -        ? constant_test_bit((nr), (addr))      \
+> -        : variable_test_bit((nr), (addr)))
+> +#define test_bit(nr, addr)                                     \
+> +       __builtin_choose_expr(__builtin_constant_p((nr)),       \
+> +               constant_test_bit((nr), (addr)),                \
+> +               variable_test_bit((nr), (addr)))
+>
+>  /**
+>   * __ffs - find first set bit in word
+> --
+> 2.17.0
+>
+
+
 
 -- 
-Ville Syrjälä
-Intel
+Kees Cook
+Pixel Security
