@@ -1,132 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751786AbeEPJgB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:36:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49391 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751046AbeEPJf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:35:58 -0400
-Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
-To: Joonsoo Kim <js1304@gmail.com>, Mel Gorman <mgorman@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
-        Ye Xiaolong <xiaolong.ye@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
- <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
- <20180504103322.2nbadmnehwdxxaso@suse.de>
- <CAAmzW4PKZFbAS6UEYKP2BBAqgk0=yTMuJRMTz--_0YTj-SjKvw@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- A3XDrKOXTZil3g8D
-Message-ID: <aa3452e1-db01-42ae-29eb-b23572e88969@suse.cz>
-Date: Wed, 16 May 2018 11:35:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAAmzW4PKZFbAS6UEYKP2BBAqgk0=yTMuJRMTz--_0YTj-SjKvw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1752081AbeEPJhx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:37:53 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.132]:16174 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751182AbeEPJhu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:37:50 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRWlGSWpSXmKPExsUSt3Opse7r37+
+  jDD4f1LA41bKH3WLand2sFlcuHmKymPrwCZtF44z5rBbfrnQwWVzeNYfNonNXP6vFhu9rGR04
+  PTZ8bmLzaL30l81jdsNFFo+ds+6ye2xa1cnmse/tMjaP9Vuusnh83iQXwBHFmpmXlF+RwJrRs
+  ewiY8FLxYrmSR9ZGxg3KHYxcnEICSxllDi7uYuli5GTg03AQmLyiQdsILaIQKLEnuc7mUBsZo
+  FeZoklE7NAbGGBCIlLt7eyQNRESvx7OZEJwnaSmLZ+BlCcnYNFQFXiMidIlFcgQOLxxHtgFUI
+  Cuxkl2u+BTecUsJaY8nYFmM0oICvxpXE1M8QmcYlbT+aD1UsICEgs2XOeGcIWlXj5+B8rhC0v
+  sf3bb3YI217i9b13LBC2vsSjx48YIWxDiVXTDkDFzSWaJi0EqucAmq8psX6XPsQqRYkp3Q/ZI
+  c4UlDg58wnLBEbxWUiumIXQMQtJxywkHQsYWVYxWiQVZaZnlOQmZuboGhoY6BoaGukaGRjqGp
+  ma6iVW6SbrpZbqlqcWl+ga6iWWF+sVV+Ym56To5aWWbGIEpgIGINjB+Ohb8iFGSQ4mJVHe6d2
+  /o4T4kvJTKjMSizPii0pzUosPMcpwcChJ8PoBU4uQYFFqempFWmYOMCnBpCU4eJREeF/8Akrz
+  Fhck5hZnpkOkTjHqcjy5PK2HWYglLz8vVUqc1xRkhgBIUUZpHtwIWIK8xCgrJczLCHSUEE9Ba
+  lFuZgmq/CtGcQ5GJWFeK5ApPJl5JXCbXgEdwQR0BOMBsCNKEhFSUsD0lt1t8WG9XcC1MvPkx9
+  p72i+7+p3JNt0T+NRkzzT3HSwr90RJXzzqzicsc01hVWjjRWbOucoWLZeX1t9ZtT5YrHzBYsY
+  nvZ8YEr3sONf862ksmpW8901CMO/JBo17p7JXzjxg7JK976aN2mOnnw19slUbDqxcrsHAGCqs
+  cEp32ZILTcd+1U5QYinOSDTUYi4qTgQAR1CDkYsDAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-3.tower-302.messagelabs.com!1526463467!3123!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+CC: "djkurtz@chromium.org" <djkurtz@chromium.org>,
+        "Alexander.Deucher@amd.com" <Alexander.Deucher@amd.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] ASoC: da7219: read fmw property to get mclk for
+ non-dts systems
+Thread-Topic: [PATCH v3] ASoC: da7219: read fmw property to get mclk for
+ non-dts systems
+Thread-Index: AQHT4rThMROUX0IB20eBW5/kFdM036QfSrWggARc3wCADoE7oA==
+Date: Wed, 16 May 2018 09:37:46 +0000
+Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1ED3D3@SW-EX-MBX01.diasemi.com>
+References: <1525334313-28661-1-git-send-email-akshu.agrawal@amd.com>
+ <2E89032DDAA8B9408CB92943514A0337014C1EA102@SW-EX-MBX01.diasemi.com>
+ <e17e2c9e-923d-fea6-26be-5f14c99a45cb@amd.com>
+In-Reply-To: <e17e2c9e-923d-fea6-26be-5f14c99a45cb@amd.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.24.43]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 16/05/2018 07:55:00
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4G9bw6x021732
 
-On 05/08/2018 03:00 AM, Joonsoo Kim wrote:
->> classzone predates my involvement with Linux but I would be less concerneed
->> about what the original intent was and instead ensure that classzone index
->> is consistent, sane and potentially renamed while preserving the intent of
->> "reserve pages in lower zones when an allocation request can use higher
->> zones". While historically the critical intent was to preserve Normal and
->> to a lesser extent DMA on 32-bit systems, there still should be some care
->> of DMA32 so we should not lose that.
+On 07 May 2018 05:50, Agrawal, Akshu wrote:
+
+Apologies for the delay in response. Please see comments below.
+
+> On 5/4/2018 2:45 PM, Adam Thomson wrote:
+> > On 03 May 2018 08:59, Akshu Agrawal wrote:
+> >
+> >> Non-dts based systems can use ACPI DSDT to pass on the mclk
+> >> to da7219.
+> >> This enables da7219 mclk to be linked to system clock.
+> >> Enable/Disable of the mclk is already handled in the codec so
+> >> platform drivers don't have to explicitly do handling of mclk.
+> >>
+> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> >> ---
+> >> v2: Fixed kbuild error
+> >> v3: Add corresponding clk_put for clk_get
+> >>  include/sound/da7219.h    |  2 ++
+> >>  sound/soc/codecs/da7219.c | 10 +++++++++-
+> >>  2 files changed, 11 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/include/sound/da7219.h b/include/sound/da7219.h
+> >> index 1bfcb16..df7ddf4 100644
+> >> --- a/include/sound/da7219.h
+> >> +++ b/include/sound/da7219.h
+> >> @@ -38,6 +38,8 @@ struct da7219_pdata {
+> >>
+> >>  	const char *dai_clks_name;
+> >>
+> >> +	const char *mclk_name;
+> >> +
+> >>  	/* Mic */
+> >>  	enum da7219_micbias_voltage micbias_lvl;
+> >>  	enum da7219_mic_amp_in_sel mic_amp_in_sel;
+> >> diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+> >> index 980a6a8..ecd46fc 100644
+> >> --- a/sound/soc/codecs/da7219.c
+> >> +++ b/sound/soc/codecs/da7219.c
+> >> @@ -1624,6 +1624,8 @@ static struct da7219_pdata
+> *da7219_fw_to_pdata(struct
+> >> snd_soc_component *compone
+> >>  		dev_warn(dev, "Using default clk name: %s\n",
+> >>  			 pdata->dai_clks_name);
+> >>
+> >> +	device_property_read_string(dev, "dlg,mclk-name", &pdata->mclk_name);
+> >> +
+> >
+> > Personally am still not keen on this. To me the use of a device_property_*
+> > function suggests the same property resides in both DT and ACPI, but here we're
+> > only using this for the ACPI case. DT has no want or need for this. I still feel
+> > we should look at something more generic in the clock framework, although I do
+> > agree with Mark that this should be properly specced.
+> >
 > 
-> Agreed!
+> I am not an expert in field of ACPI, IMO forming a Spec and changing
+> ACPI to have DT like clock framework is good to have but a bigger change
+> which should be taken up later.
+
+That's fair enough, but I wonder who will take that on. Really would be
+beneficial to have something generic on the ACPI side.
+ 
+> The current code of handling of mclk in the driver is usable only by DT.
+> The device_property (though ACPI specific) makes this code, a common
+> code for DT and ACPI based devices.
 > 
->> With the patch, the allocator looks like it would be fine as just
->> reservations change. I think it's unlikely that CMA usage will result
->> in lowmem starvation.  Compaction becomes a bit weird as classzone index
->> has no special meaning versis highmem and I think it'll be very easy to
->> forget.
+> https://www.kernel.org/doc/Documentation/acpi/DSD-properties-rules.txt
+> "....Still, for the sake of code re-use, it may make sense to provide as
+> much of the configuration data as possible in the form of device
+> properties and complement that with an ACPI-specific mechanism suitable
+> for the use case at hand......"
 
-I don't understand this point, what do you mean about highmem here? I've
-checked and compaction seems to use classzone_idx 1) to pass it to
-watermark checks as part of compaction suitability checks, i.e. the
-usual lowmem protection, and 2) to limit compaction of higher zones in
-kcompactd if the direct compactor can't use them anyway - seems this
-part has currently the same zone imbalance problem as reclaim.
+Given that on the DT side there's the expectation that the generic 'clock-names'
+property might be provided to the driver, could we not reuse that rather than
+introducing 'dlg,mclk-name' and diverging DT and ACPI properties?
 
->> Similarly, vmscan can reclaim pages from remote nodes and zones
->> that are higher than the original request. That is not likely to be a
->> problem but it's a change in behaviour and easy to miss.
->>
->> Fundamentally, I find it extremely weird we now have two variables that are
->> essentially the same thing. They should be collapsed into one variable,
->> renamed and documented on what the index means for page allocator,
->> compaction, vmscan and the special casing around CMA.
 > 
-> Agreed!
-> I will update this patch to reflect your comment. If someone have an idea
-> on renaming this variable, please let me know.
-
-Pehaps max_zone_idx? Seems a bit more clear than "high_zoneidx". And I
-have no idea what was actually meant by "class".
-
-> Thanks.
-> 
+> Thanks,
+> Akshu
