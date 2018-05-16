@@ -1,838 +1,139 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098225-1526049769-2-18381121447976177011
+X-Cyrus-Session-Id: sloti22d1t05-886641-1526504172-2-6882977581515887788
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526049769; b=aRXDAzkHH5WJoUY4XMcWphzRh0e+m/iBqpMDouKTKY2ncLazfr
-    gELfW7NBVXa4cCo+u4OHI1N6rmHoBqSuFwbnbNYTasZhuqdUEGRz4Yl+1nNX8sib
-    gqH1grhO4I1GBc4QUD7JbmffZ30PcgjZGBctY4TW6AOZuCbJD7+HF8YG8vxFQp+N
-    ZayTOniE/7AqlroPbhkxxJ2FGTzhzdz+dIA+yR0XQnz9w+R7+1GVkTh6+rmh8pEc
-    +lcZZbOPlKBAI0ObG2X88uE+jJG+b1XLY9x4k7INFzPv/BYlzsdwyJ7LoX1YvsH0
-    4yO07kUHzbUEPqMtshF4QA+p2Fzqcr63hEuQ==
+    1526504172; b=eo8qd/gpOrShjdqQem9wgVMuS9vvea70FfNOcnbGteLvv60LTw
+    vSa4v5JGcJ9SG5uko2aOIXZbPckVW/2z4QEq0XjomzfQv745hNvpMt4ha2iA7p/w
+    KUSm6UBidnH1Lfrxi0yayYCNT2w90IVxjOkOdREvO3BJVLZrXBLT+kMny36xpo5Y
+    0STDRb6H3kNx7kR1toGrEMknUiezmZE537zZk0T2+bNlmKfh7VmpDgoQ7tEAMwwH
+    mqJHLS28nsjqzmdZRnAgTu/Wz27VVgDverfAK6F7vIcRTdm/iAOrLDhtvqb0eI3A
+    WThUtfvnPqxqpUxL7qbYN04YyML2a85ZjY0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1526049769; bh=o
-    CC5vFtWkQEMsEE4x6bMemInDuFDtG8aOks4CNskA5k=; b=BzBFaS+HgN4XsNULV
-    9NzmN4GQu5AO+bzbviUxFORRxXjgo7y968VSAJoGxIPCpU8Oc4P/6Of70PU64zhE
-    sesOQs3vqiN7J59yuKEPbnpcAaSeNeSN0FgkkOcLoGUCKBW/vuJqSpu5sxs82emj
-    EGKwMoMHKRliiMHzbgDg8wTkPDouGfO/2YUBASqfOmEhfF7xhRCD1vYVg/AuW5Vv
-    Jf3Ud0x09tvY8H4ZLyrIG0EXbGAcfEuVJeAUExncg5KK9kQBoxj4D3lFaiwD4eZ8
-    nrq6OaFzpCtoRfLZEkTe/A/6Q+NmO12+2LbyG3IiBlT6gQH/Y3X8y6rEKkstNll8
-    7skqg==
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:cc:content-type:sender:list-id; s=fm2; t=1526504172; bh=0cDd
+    Fqte1CWz6Fi4VRRI8FF8pV5F7lYRb+HbBCeQWEQ=; b=G1ElEfbXV9f5ijIGoeNe
+    jcQ3GGbSDIki0D3XXNEzlrdllwZ3zqRSP+O6F5X5jefPWb7fqFuT22Ybqj4LWcgU
+    VwN71CX7mESY5eOPUBQ9dzPklYj//onGu9Iu8+T8qmsEXIt0GbI/ksCtSiVhIj+a
+    VXI2kVCbV4w8LQC0p25vQlORRq9k4F+Jum9kPCUU9pc6gBb0i3Ve9hg7symbKVst
+    jYnb6HmQA04Efod9UNnn94UuzECHGlxLozHy+iTYlarYPFHpTAM7JpzSpj41gdwe
+    SYemTRpYBQRWOEsUauUEFZFSSNGsdvlF23WIPggLTwO5NmcYs+78R488Z1kdtJmC
+    Jg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=paul-moore-com.20150623.gappssmtp.com
+    header.i=@paul-moore-com.20150623.gappssmtp.com header.b=oZ2+W3Uw
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=VwvrOZtF;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=paul-moore.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=paul-moore-com.20150623.gappssmtp.com
+      header.i=@paul-moore-com.20150623.gappssmtp.com header.b=oZ2+W3Uw
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=VwvrOZtF;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=paul-moore.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDs4Ugq/GWMk+UqD8k5yfpnE/CKLPPc3JtPnttSDHmozkRN1XYjbCQMSrJ/ElRfTzEw6OsBeX/W0UlU9z6qT+gWU+OZX6EDsR+VPaxv0lw3EaltMljcj
-    3rILjrrA2SpWSvAvgU0+m1mb3y+Orwx/Vl2gqS5IEHJI4gvd8wSlJ8eEQE1+CPVdXMvW3v70bqA4gKrH1uR4oaHwWudiLva0cQ9EQEafnfMikj6L99ZUhqZ5
-    gk9x1d+zqTsXR1QZFmrtzQ==
+X-CM-Envelope: MS4wfFT8FvTDGD8HxzFzuHbbS5+cPtK/93bVgUbvLMQcLLj4qt1GiSFefN1py8F/RfayUa/anIH36r3wWoEYm47wRfStz6E7MX8tW2YOpD3yRyzUPedI7Z8x
+    nTweWOHBX8cUJip/7Rn/kXt9TDYJXDRJFpaaoSqzJa5u+/UZNsS/2FfMHikyMn3m19h1MRV+KmgR06FYGNtxWJcGvboYF66pR7GKni+lmMCICLTIBGLqDvzk
+    hE0UT10VWLhsnCdflK6JMA==
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VnNF1IyMAAAA:8
-    a=VwQbUJbxAAAA:8 a=tMvW9pFfeMsYXIxLRQcA:9 a=r5lMvkzzqWW3Uvmz:21
-    a=uBh_r1yT9b-Olxkf:21 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=xVhDTqbCAAAA:8 a=yCOx7083dxSEFXcUPX0A:9
+    a=UoK8bPlv_A4Fo60R:21 a=h_TDiobR3riGgBI9:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=GrmWmAYt4dzCMttCBZOh:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeEKOmo (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 11 May 2018 10:42:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43370 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752959AbeEKOmn (ORCPT
+        id S1751467AbeEPU4K (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 16 May 2018 16:56:10 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39901 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbeEPU4J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 May 2018 10:42:43 -0400
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
-        mkayaalp@cs.binghamton.edu, James.Bottomley@HansenPartnership.com,
-        zohar@linux.vnet.ibm.com, ebiederm@xmission.com,
-        john.johansen@canonical.com, Yuqiong Sun <suny@us.ibm.com>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [RFC PATCH v4 1/5] ima: Add IMA namespace support
-Date: Fri, 11 May 2018 10:42:26 -0400
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
-References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051114-0028-0000-0000-00000998CFCF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009006; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01030766; UDB=6.00526815; IPR=6.00809898;
- MB=3.00021049; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-11 14:42:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051114-0029-0000-0000-00003AC58BD0
-Message-Id: <20180511144230.75384-2-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110139
+        Wed, 16 May 2018 16:56:09 -0400
+X-Google-Smtp-Source: AB8JxZqGnx2T3wOlxsQ6avWzaADR8qX8tt81Gdx83jfHECw8AFrTSNU7yeQIQAzReVykclN2B14zFCYUQ4cra2+GqZ0=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 16 May 2018 16:56:07 -0400
+Message-ID: <CAHC9VhQfFXGXqx9seQy-EdTHauyqarYnCVChjd3s6BexQ+tE6A@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v4.17 (#1)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Yuqiong Sun <suny@us.ibm.com>
+Hi Linus,
 
-Add a new CONFIG_IMA_NS config option that enables one to create a new IMA
-namespace. We do this by writing a file into IMA's new securityfs 'unshare'
-file, which will have a new child process get the IMA namespace. We create
-the IMA namespace when a user writes a boolean '1' into this file and
-we cache the IMA namespace on the task_struct and take it from there upon
-the next clone().
+A small pull request to fix a few regressions in the SELinux/SCTP code
+with applications that call bind() with AF_UNSPEC/INADDR_ANY.  The
+individual commit descriptions have more information, but the commits
+themselves should be self explanatory.  Please merge.
 
-Currently, the iam_ns contains no useful IMA data but only a dummy inter-
-face. This patch creates the framework for namespacing the different as-
-pects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
+Thanks,
+-Paul
 
-At this point one can create and activate a new IMA namespace by writing
-a '1' into IMA's unshare file and subsequently creating a new process.
-The 'ls -l' shows that the IMA namespace inode number temporarily changes
-while the new IMA namespace is active after it was set up.
+--
+The following changes since commit 6b6bc6205d98796361962ee282a063f18ba8dc57:
 
-ls -l /proc/self/ns/ima
-echo 1 > /sys/kernel/security/ima/unshare
-ls -l /proc/self/ns/ima
-ls -l /proc/self/ns/ima
+ selinux: wrap AVC state (2018-03-20 16:58:17 -0400)
 
-Changelog:
-v4:
-* Use IMA's securityfs to spawn a new namespace using unshare file
+are available in the Git repository at:
 
-v3:
-* Use CLONE_NEWUSER instead of CLONE_NEWNS flag
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20180516
 
-v2:
-* Moved ima_init_ns and related functions into own file that is
-  always compiled; init_ima_ns will always be there
-* Fixed putting of imans->parent
-* Move IMA namespace creation from nsproxy into mount namespace
-  code; get rid of procfs operations for IMA namespace
+for you to fetch changes up to 4152dc91b5932e7fe49a5afed62a068b2f31d196:
 
-v1:
-* Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
-* Use existing ima.h headers
-* Move the ima_namespace.c to security/integrity/ima/ima_ns.c
-* Fix typo INFO->INO
-* Each namespace free's itself, removed recursively free'ing
-  until init_ima_ns from free_ima_ns()
+ selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
+   (2018-05-14 15:20:59 -0400)
 
-Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- fs/proc/namespaces.c                     |   3 +
- include/linux/ima.h                      |  50 ++++++++++
- include/linux/nsproxy.h                  |   2 +
- include/linux/proc_ns.h                  |   1 +
- include/linux/sched.h                    |   6 ++
- include/linux/user_namespace.h           |   1 +
- init/Kconfig                             |   8 ++
- kernel/fork.c                            |   5 +
- kernel/nsproxy.c                         |  25 ++++-
- kernel/ucount.c                          |   1 +
- security/integrity/ima/Makefile          |   3 +-
- security/integrity/ima/ima.h             |  32 ++++++
- security/integrity/ima/ima_fs.c          |  55 +++++++++++
- security/integrity/ima/ima_init.c        |   4 +
- security/integrity/ima/ima_init_ima_ns.c |  40 ++++++++
- security/integrity/ima/ima_ns.c          | 162 +++++++++++++++++++++++++++++++
- 16 files changed, 396 insertions(+), 2 deletions(-)
- create mode 100644 security/integrity/ima/ima_init_ima_ns.c
- create mode 100644 security/integrity/ima/ima_ns.c
+----------------------------------------------------------------
+selinux/stable-4.17 PR 20180516
 
-diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
-index 59b17e509f46..cc5e8e217412 100644
---- a/fs/proc/namespaces.c
-+++ b/fs/proc/namespaces.c
-@@ -33,6 +33,9 @@ static const struct proc_ns_operations *ns_entries[] = {
- #ifdef CONFIG_CGROUPS
- 	&cgroupns_operations,
- #endif
-+#ifdef CONFIG_IMA_NS
-+	&imans_operations,
-+#endif
- };
- 
- static const char *proc_ns_get_link(struct dentry *dentry,
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 0e4647e0eb60..27a332cd0438 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -105,4 +105,54 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
- 	return 0;
- }
- #endif /* CONFIG_IMA_APPRAISE */
-+
-+struct ima_namespace {
-+	struct kref kref;
-+	struct user_namespace *user_ns;
-+	struct ucounts *ucounts;
-+	struct ns_common ns;
-+	struct ima_namespace *parent;
-+};
-+
-+extern struct ima_namespace init_ima_ns;
-+
-+#ifdef CONFIG_IMA_NS
-+
-+struct ima_namespace *copy_ima_ns(bool copy, struct user_namespace *user_ns,
-+				  struct ima_namespace *old_ns);
-+
-+void free_ima_ns(struct kref *kref);
-+
-+static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
-+{
-+	if (ns)
-+		kref_get(&ns->kref);
-+	return ns;
-+}
-+
-+static inline void put_ima_ns(struct ima_namespace *ns)
-+{
-+	if (ns)
-+		kref_put(&ns->kref, free_ima_ns);
-+}
-+
-+#else
-+
-+static inline struct ima_namespace *copy_ima_ns(bool copy,
-+						struct user_namespace *user_ns,
-+						struct ima_namespace *old_ns)
-+{
-+	return old_ns;
-+}
-+
-+static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
-+{
-+	return ns;
-+}
-+
-+static inline void put_ima_ns(struct ima_namespace *ns)
-+{
-+}
-+
-+#endif /* CONFIG_IMA_NS */
- #endif /* _LINUX_IMA_H */
-diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
-index 2ae1b1a4d84d..9d49f0a0cc97 100644
---- a/include/linux/nsproxy.h
-+++ b/include/linux/nsproxy.h
-@@ -10,6 +10,7 @@ struct uts_namespace;
- struct ipc_namespace;
- struct pid_namespace;
- struct cgroup_namespace;
-+struct ima_namespace;
- struct fs_struct;
- 
- /*
-@@ -36,6 +37,7 @@ struct nsproxy {
- 	struct pid_namespace *pid_ns_for_children;
- 	struct net 	     *net_ns;
- 	struct cgroup_namespace *cgroup_ns;
-+	struct ima_namespace *ima_ns;
- };
- extern struct nsproxy init_nsproxy;
- 
-diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-index d31cb6215905..5be4411ecccc 100644
---- a/include/linux/proc_ns.h
-+++ b/include/linux/proc_ns.h
-@@ -32,6 +32,7 @@ extern const struct proc_ns_operations pidns_for_children_operations;
- extern const struct proc_ns_operations userns_operations;
- extern const struct proc_ns_operations mntns_operations;
- extern const struct proc_ns_operations cgroupns_operations;
-+extern const struct proc_ns_operations imans_operations;
- 
- /*
-  * We always define these enumerators
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b161ef8a902e..8a1f1b60959d 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -53,6 +53,7 @@ struct sighand_struct;
- struct signal_struct;
- struct task_delay_info;
- struct task_group;
-+struct ima_namespace;
- 
- /*
-  * Task state bitmask. NOTE! These bits are also
-@@ -1100,6 +1101,11 @@ struct task_struct {
- 	void				*security;
- #endif
- 
-+#ifdef CONFIG_IMA_NS
-+	/* child process will spawn a new IMA namespace */
-+	bool                            ima_ns_for_child;
-+#endif
-+
- 	/*
- 	 * New fields for task_struct should be added above here, so that
- 	 * they are included in the randomized portion of task_struct.
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index d6b74b91096b..d6def79eb0d1 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -49,6 +49,7 @@ enum ucount_type {
- 	UCOUNT_INOTIFY_INSTANCES,
- 	UCOUNT_INOTIFY_WATCHES,
- #endif
-+	UCOUNT_IMA_NAMESPACES,
- 	UCOUNT_COUNTS,
- };
- 
-diff --git a/init/Kconfig b/init/Kconfig
-index e37f4b2a6445..2ae532aa12a0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -932,6 +932,14 @@ config NET_NS
- 	  Allow user space to create what appear to be multiple instances
- 	  of the network stack.
- 
-+config IMA_NS
-+	bool "IMA namespace"
-+	depends on IMA
-+	default n
-+	help
-+	  Allow the creation of IMA namespaces. Namespaced IMA data
-+          enables having IMA features work separately in each IMA namespace.
-+
- endif # NAMESPACES
- 
- config SCHED_AUTOGROUP
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e5d9d405ae4e..a0715ccf897e 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -91,6 +91,7 @@
- #include <linux/kcov.h>
- #include <linux/livepatch.h>
- #include <linux/thread_info.h>
-+#include <linux/ima.h>
- 
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
-@@ -834,6 +835,10 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	tsk->fail_nth = 0;
- #endif
- 
-+#ifdef CONFIG_IMA_NS
-+	orig->ima_ns_for_child = false;
-+#endif
-+
- 	return tsk;
- 
- free_stack:
-diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-index f6c5d330059a..495f4a561d2a 100644
---- a/kernel/nsproxy.c
-+++ b/kernel/nsproxy.c
-@@ -27,6 +27,7 @@
- #include <linux/syscalls.h>
- #include <linux/cgroup.h>
- #include <linux/perf_event.h>
-+#include <linux/ima.h>
- 
- static struct kmem_cache *nsproxy_cachep;
- 
-@@ -44,6 +45,9 @@ struct nsproxy init_nsproxy = {
- #ifdef CONFIG_CGROUPS
- 	.cgroup_ns		= &init_cgroup_ns,
- #endif
-+#ifdef CONFIG_IMA_NS
-+	.ima_ns			= &init_ima_ns,
-+#endif
- };
- 
- static inline struct nsproxy *create_nsproxy(void)
-@@ -67,6 +71,7 @@ static struct nsproxy *create_new_namespaces(unsigned long flags,
- {
- 	struct nsproxy *new_nsp;
- 	int err;
-+	bool copy_ima = false;
- 
- 	new_nsp = create_nsproxy();
- 	if (!new_nsp)
-@@ -110,8 +115,21 @@ static struct nsproxy *create_new_namespaces(unsigned long flags,
- 		goto out_net;
- 	}
- 
-+#ifdef CONFIG_IMA_NS
-+	copy_ima = tsk->ima_ns_for_child;
-+	tsk->ima_ns_for_child = false;
-+#endif
-+	new_nsp->ima_ns = copy_ima_ns(copy_ima, user_ns,
-+				      tsk->nsproxy->ima_ns);
-+	if (IS_ERR(new_nsp->ima_ns)) {
-+		err = PTR_ERR(new_nsp->ima_ns);
-+		goto out_ima;
-+	}
-+
- 	return new_nsp;
- 
-+out_ima:
-+	put_net(new_nsp->net_ns);
- out_net:
- 	put_cgroup_ns(new_nsp->cgroup_ns);
- out_cgroup:
-@@ -143,7 +161,11 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
- 
- 	if (likely(!(flags & (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC |
- 			      CLONE_NEWPID | CLONE_NEWNET |
--			      CLONE_NEWCGROUP)))) {
-+			      CLONE_NEWCGROUP)))
-+#ifdef CONFIG_IMA_NS
-+	    && likely(!tsk->ima_ns_for_child)
-+#endif
-+	) {
- 		get_nsproxy(old_ns);
- 		return 0;
- 	}
-@@ -182,6 +204,7 @@ void free_nsproxy(struct nsproxy *ns)
- 		put_pid_ns(ns->pid_ns_for_children);
- 	put_cgroup_ns(ns->cgroup_ns);
- 	put_net(ns->net_ns);
-+	put_ima_ns(ns->ima_ns);
- 	kmem_cache_free(nsproxy_cachep, ns);
- }
- 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index b4eeee03934f..bdd02e2e36cf 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -79,6 +79,7 @@ static struct ctl_table user_table[] = {
- 	UCOUNT_ENTRY("max_inotify_instances"),
- 	UCOUNT_ENTRY("max_inotify_watches"),
- #endif
-+	UCOUNT_ENTRY("max_ima_namespaces"),
- 	{ }
- };
- #endif /* CONFIG_SYSCTL */
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index d921dc4f9eb0..cc60f726e651 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -7,7 +7,8 @@
- obj-$(CONFIG_IMA) += ima.o
- 
- ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
--	 ima_policy.o ima_template.o ima_template_lib.o
-+	 ima_policy.o ima_template.o ima_template_lib.o ima_init_ima_ns.o
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
-+ima-$(CONFIG_IMA_NS) += ima_ns.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
- obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..f999328e5b49 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -24,6 +24,7 @@
- #include <linux/hash.h>
- #include <linux/tpm.h>
- #include <linux/audit.h>
-+#include <linux/ima.h>
- #include <crypto/hash_info.h>
- 
- #include "../integrity.h"
-@@ -291,6 +292,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
- 
- #endif /* CONFIG_IMA_APPRAISE */
- 
-+int ima_ns_init(void);
-+struct ima_namespace;
-+int ima_init_namespace(struct ima_namespace *ns);
-+
- /* LSM based policy rules require audit */
- #ifdef CONFIG_IMA_LSM_RULES
- 
-@@ -313,6 +318,33 @@ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
- }
- #endif /* CONFIG_IMA_LSM_RULES */
- 
-+static inline struct ima_namespace *to_ima_ns(struct ns_common *ns)
-+{
-+	return container_of(ns, struct ima_namespace, ns);
-+}
-+
-+#ifdef CONFIG_IMA_NS
-+
-+extern const struct proc_ns_operations imans_operations;
-+
-+struct ima_namespace *copy_ima(struct user_namespace *user_ns,
-+			       struct ima_namespace *old_ns);
-+
-+
-+static inline struct ima_namespace *get_current_ns(void)
-+{
-+	return current->nsproxy->ima_ns;
-+}
-+
-+#else
-+
-+static inline struct ima_namespace *get_current_ns(void)
-+{
-+	return &init_ima_ns;
-+}
-+
-+#endif /* CONFIG_IMA_NS */
-+
- #ifdef	CONFIG_IMA_READ_POLICY
- #define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR)
- #else
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index fa540c0469da..9ebf97e29344 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -361,6 +361,9 @@ static struct dentry *ascii_runtime_measurements;
- static struct dentry *runtime_measurements_count;
- static struct dentry *violations;
- static struct dentry *ima_policy;
-+#ifdef CONFIG_IMA_NS
-+static struct dentry *unshare;
-+#endif
- 
- enum ima_fs_flags {
- 	IMA_FS_BUSY,
-@@ -446,6 +449,47 @@ static const struct file_operations ima_measure_policy_ops = {
- 	.llseek = generic_file_llseek,
- };
- 
-+#ifdef CONFIG_IMA_NS
-+static int ima_open_unshare(struct inode *inode, struct file *filp)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+	return 0;
-+}
-+
-+static ssize_t ima_write_unshare(struct file *file, const char __user *buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	ssize_t length;
-+	char *page;
-+	bool set;
-+
-+	if (count >= PAGE_SIZE)
-+		return -ENOMEM;
-+
-+	page = memdup_user_nul(buf, count);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+
-+	length = -EINVAL;
-+	if (kstrtobool(page, &set))
-+		goto out;
-+
-+	current->ima_ns_for_child = set;
-+
-+	length = count;
-+out:
-+	kfree(page);
-+
-+	return length;
-+}
-+
-+static const struct file_operations ima_unshare_ops = {
-+	.open = ima_open_unshare,
-+	.write = ima_write_unshare,
-+};
-+#endif
-+
- int __init ima_fs_init(void)
- {
- 	ima_dir = securityfs_create_dir("ima", NULL);
-@@ -485,6 +529,14 @@ int __init ima_fs_init(void)
- 	if (IS_ERR(ima_policy))
- 		goto out;
- 
-+#ifdef CONFIG_IMA_NS
-+	unshare = securityfs_create_file("unshare", 0200,
-+					 ima_dir, NULL,
-+					 &ima_unshare_ops);
-+	if (IS_ERR(unshare))
-+		goto out;
-+#endif
-+
- 	return 0;
- out:
- 	securityfs_remove(violations);
-@@ -493,5 +545,8 @@ int __init ima_fs_init(void)
- 	securityfs_remove(binary_runtime_measurements);
- 	securityfs_remove(ima_dir);
- 	securityfs_remove(ima_policy);
-+#ifdef CONFIG_IMA_NS
-+	securityfs_remove(unshare);
-+#endif
- 	return -1;
- }
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 29b72cd2502e..091e5fdee5fc 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -137,5 +137,9 @@ int __init ima_init(void)
- 
- 	ima_init_policy();
- 
-+	rc = ima_ns_init();
-+	if (rc != 0)
-+		return rc;
-+
- 	return ima_fs_init();
- }
-diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
-new file mode 100644
-index 000000000000..0bd6c418b8e3
---- /dev/null
-+++ b/security/integrity/ima/ima_init_ima_ns.c
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (C) 2016-2018 IBM Corporation
-+ * Author:
-+ *   Yuqiong Sun <suny@us.ibm.com>
-+ *   Stefan Berger <stefanb@linux.vnet.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, version 2 of the License.
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/user_namespace.h>
-+#include <linux/proc_ns.h>
-+#include <linux/ima.h>
-+
-+#include "ima.h"
-+
-+int ima_init_namespace(struct ima_namespace *ns)
-+{
-+#ifdef CONFIG_IMA_NS
-+	ns->ns.ops = &imans_operations;
-+	return ns_alloc_inum(&ns->ns);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+int __init ima_ns_init(void)
-+{
-+	return ima_init_namespace(&init_ima_ns);
-+}
-+
-+struct ima_namespace init_ima_ns = {
-+	.kref = KREF_INIT(1),
-+	.user_ns = &init_user_ns,
-+	.ucounts = NULL,
-+	.parent = NULL,
-+};
-+EXPORT_SYMBOL(init_ima_ns);
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-new file mode 100644
-index 000000000000..8e37d7ac5d34
---- /dev/null
-+++ b/security/integrity/ima/ima_ns.c
-@@ -0,0 +1,162 @@
-+/*
-+ * Copyright (C) 2016-2018 IBM Corporation
-+ * Author:
-+ *  Yuqiong Sun <suny@us.ibm.com>
-+ *  Stefan Berger <stefanb@linux.vnet.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, version 2 of the License.
-+ */
-+
-+#include <linux/user_namespace.h>
-+#include <linux/proc_ns.h>
-+#include <linux/kref.h>
-+#include <linux/slab.h>
-+#include <linux/ima.h>
-+
-+#include "ima.h"
-+
-+static struct ucounts *inc_ima_namespaces(struct user_namespace *ns)
-+{
-+	return inc_ucount(ns, current_euid(), UCOUNT_IMA_NAMESPACES);
-+}
-+
-+static void dec_ima_namespaces(struct ucounts *ucounts)
-+{
-+	return dec_ucount(ucounts, UCOUNT_IMA_NAMESPACES);
-+}
-+
-+/**
-+ * Clone a new ns copying an original ima namespace, setting refcount to 1
-+ *
-+ * @user_ns: user namespace that current task runs in
-+ * @old_ns: old ima namespace to clone
-+ * Return ERR_PTR(-ENOMEM) on error (failure to kmalloc), new ns otherwise
-+ */
-+static struct ima_namespace *create_ima_ns(struct user_namespace *user_ns,
-+					   struct ima_namespace *old_ns)
-+{
-+	struct ima_namespace *ns;
-+	struct ucounts *ucounts;
-+	int err;
-+
-+	err = -ENOSPC;
-+	ucounts = inc_ima_namespaces(user_ns);
-+	if (!ucounts)
-+		goto fail;
-+
-+	err = -ENOMEM;
-+	ns = kmalloc(sizeof(*ns), GFP_KERNEL);
-+	if (!ns)
-+		goto fail_dec;
-+
-+	err = ima_init_namespace(ns);
-+	if (err)
-+		goto fail_free;
-+
-+	kref_init(&ns->kref);
-+	ns->ns.ops = &imans_operations;
-+	ns->parent = get_ima_ns(old_ns);
-+	ns->user_ns = get_user_ns(user_ns);
-+	ns->ucounts = ucounts;
-+
-+	return ns;
-+
-+fail_free:
-+	kfree(ns);
-+fail_dec:
-+	dec_ima_namespaces(ucounts);
-+fail:
-+	return ERR_PTR(err);
-+}
-+
-+/**
-+ * Copy task's ima namespace, or clone it if flags specifies CLONE_NEWNS.
-+ *
-+ * @bool: whether to copy or just get a reference to it
-+ * @user_ns: user namespace that current task runs in
-+ * @old_ns: old ima namespace to clone
-+ */
-+
-+struct ima_namespace *copy_ima_ns(bool copy,
-+				  struct user_namespace *user_ns,
-+				  struct ima_namespace *old_ns)
-+{
-+	struct ima_namespace *new_ns;
-+
-+	get_ima_ns(old_ns);
-+	if (!copy)
-+		return old_ns;
-+
-+	new_ns = create_ima_ns(user_ns, old_ns);
-+	put_ima_ns(old_ns);
-+
-+	return new_ns;
-+}
-+
-+static void destroy_ima_ns(struct ima_namespace *ns)
-+{
-+	put_ima_ns(ns->parent);
-+	put_user_ns(ns->user_ns);
-+	ns_free_inum(&ns->ns);
-+	dec_ima_namespaces(ns->ucounts);
-+	kfree(ns);
-+}
-+
-+void free_ima_ns(struct kref *kref)
-+{
-+	struct ima_namespace *ns;
-+
-+	ns = container_of(kref, struct ima_namespace, kref);
-+
-+	destroy_ima_ns(ns);
-+}
-+
-+static struct ns_common *imans_get(struct task_struct *task)
-+{
-+	struct ima_namespace *ns = NULL;
-+	struct nsproxy *nsproxy;
-+
-+	task_lock(task);
-+	nsproxy = task->nsproxy;
-+	if (nsproxy) {
-+		ns = nsproxy->ima_ns;
-+		get_ima_ns(ns);
-+	}
-+	task_unlock(task);
-+
-+	return ns ? &ns->ns : NULL;
-+}
-+
-+static void imans_put(struct ns_common *ns)
-+{
-+	put_ima_ns(to_ima_ns(ns));
-+}
-+
-+static int imans_install(struct nsproxy *nsproxy, struct ns_common *new)
-+{
-+	struct ima_namespace *ns = to_ima_ns(new);
-+
-+	if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN) ||
-+	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	put_ima_ns(nsproxy->ima_ns);
-+	nsproxy->ima_ns = get_ima_ns(ns);
-+
-+	return 0;
-+}
-+
-+static struct user_namespace *imans_owner(struct ns_common *ns)
-+{
-+	return to_ima_ns(ns)->user_ns;
-+}
-+
-+const struct proc_ns_operations imans_operations = {
-+	.name = "ima",
-+	.get = imans_get,
-+	.put = imans_put,
-+	.install = imans_install,
-+	.owner = imans_owner,
-+};
+----------------------------------------------------------------
+Alexey Kodanev (3):
+     selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()
+     selinux: fix address family in bind() and connect() to match address/port
+     selinux: correctly handle sa_family cases in selinux_sctp_bind_connect()
+
+security/selinux/hooks.c | 50 +++++++++++++++++++++++++++---------------------
+1 file changed, 28 insertions(+), 22 deletions(-)
+
 -- 
-2.14.3
-
+paul moore
+www.paul-moore.com
