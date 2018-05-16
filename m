@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2328400-1526572733-2-18256256961561133038
+X-Cyrus-Session-Id: sloti22d1t05-1084986-1526513663-2-3161630240977785181
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,22 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526572732; b=Ct45Q6dxyIChlyjpazIJ2YOGYzEEXugjUrY4IAKalL9mT2AFbm
-    d/tkA86/h338dkuMWcGHML0Tf9LlUsmNxW+KRi+fOv5peDVSWmPHRNoNaDp1W9eC
-    ZE13vOb3iDnCvr0xQIEgJSLZfLAkqzUdjDL2GdOEL978xdrXrJuwFBDe0Z8EfXQX
-    aM6cNjO9xjDC1oBDbvLNb9JhWeRL8ACd072BZJEuhp+8/NNT/YjN/+gA5nP7NkXi
-    A9fM5RhMnMtza1Av/AS40F/rF+8PnlNptxl0JBZ5zXapGgRVNaTzySVOkYu2sME+
-    Bt0rQo3ll6RRacXo/J3zA7InVHn6dh8vUn+g==
+    1526513663; b=KB0HaqkYM6umcQOJPYhZ0nI23EuH7ppr2lXkiaMuG3Ejr38U4H
+    zfrtj5GfuOXyL+h4aDCyGAtow24S/udjvdBJZ1cvs253RKSXpCneh3vkfSUEWDib
+    c9/OpiyWQueEGz0/zOrms/Bwty+dKz2EmSX6HL+9driNzU8zdSlMs0+dQAmz2ozP
+    orblVj07tBIFAQvA4meJgmOBHbJMFFDTanKNqEuwAc4OYSr+Ci3th7MIwZhZ9RSH
+    LyAQGs5+xd5EVk8UJmeyq5zUU9/0mp/9/eTaXyOffs4F/ba3MA9iXl1jSob8yeM5
+    9AT5zDa/mr73Xs91AImoRCRDAlsRSNd95KQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526572732; bh=eA9XC4GL9QyE/JjcjSeskYtUDMfA17
-    SuRQnmyHfab6I=; b=AWQ2lnoZ+rzyiWM60mBmDqvgQBh+pqVgRGU7U2uh2kZTnA
-    H0Ha98InDL+OOqj3Ed5Qaqrl4Gcd59o4Yptlf4CgRHs6Z6d5sO7gVRNvhzGI0BZY
-    05vh2GttFG7CADq0K6/KMFBc2luMHFEqjbFU5dCb6iux+fawoQoRNQ9g/OsB43zv
-    o9KGFs02Krxkx21cJAptN62iE/DHvEasU4OmANNmWkoxCZywJ/7P4UMcOb3MArfA
-    EI41YmxhZ03mr9zZVK9PIh+BW11YFchbVKA9jRuQ+Fr2HTrLg4Sl8gJosoKS4mzm
-    DdYv+72wdWhzZOm8gFcKCXJpALj4BQ4yTAZFtKcA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526513663; bh=
+    qi563sCPL5Gqbe7rtw5JgQQMp2mZkMu2cvUaPYTWOks=; b=InRl1+VTZes/YOdk
+    CRRLNiTfn1m1ovIas4Ri5M3C6Utf5fAT1WLEJGvSipLpRS67UirbTwMzfA1W66YF
+    /fBC4OcDo5gOPx6GDdL5+S3qIOj3pQVpsp85LXgpxVFEyuYIFx489XC4ZpiszhDe
+    CjKPP6Rre9UkZ2OdxV9C/Ks6xkyHga+nXOBMG594ysWXsZcgoQK7R2FquOXQ+EpT
+    7cuySyvtNzXI1x3YpBOgJNZy9QbcSUGrZwP/OWDcPj2r+nlfRLKiWml60bRnumbI
+    EqwuzIurTUiH1xlw/uqh6G3t2nWfBk+Wict5n245mKqqmk9PNWJF07VXfzAeblk6
+    yukBKA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,8 +41,8 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
@@ -54,38 +55,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIo9wHPHwAUOrK+f3MLnw0nKXZnYMP91QL8kx9jYj8CopGebJi1Df2qYNA2nImMi4uKExxdhWd54oQo6xp6+K2Ir5N1eY3zrRhdYDWDnAoFcuyBdHHvW
-    Ew2axHCAkjNezklQXtz932RH8ATUh7R6EEerNBFYPhX3rEMtEksT5MWxuRrd3n/kW++h6m4CSfN19VdxP1xH1WUmYq5v2nSRvQwBpT+Ge0GWTHB8/GZEbR7f
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJVzkUizICbc/DTi4apy5hKMZOx+P4HaL+tBsslcT1F+I0zOZ4UxMwcg2vPcghlYHNIb2LRw4S73APOddAiHCj3eD90mHmYQDfoGAidN/enb5b5Fcf18
+    xnC2Dh4I8H7rgfzqn3Y87PEDFxTQLzSOcvB2T5dYv0v4mWvsrjyhs4soB7ep333gZRdhcXah5YUcJ/7aPMxsPtcdM5bQjqNlreS1amH+us02K4DTgxyewO6l
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=LpQP-O61AAAA:8
-    a=MvuuwTCpAAAA:8 a=Z4Rwk6OoAAAA:8 a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8
-    a=oGMlB6cnAAAA:8 a=7CQSdrXTAAAA:8 a=tA7aZXjiAAAA:8 a=VwQbUJbxAAAA:8
-    a=makQc_6JeJeb0pz4v7kA:9 a=K3Kd6E5QBK2T_F5b:21 a=8FtZ8bfDZIf1VPYJ:21
-    a=pioyyrs4ZptJ924tMmac:22 a=dVHiktpip_riXrfdqayU:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=kIIFJ0VLUOy1gFZzwZHL:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=MvuuwTCpAAAA:8 a=makQc_6JeJeb0pz4v7kA:9
+    a=1WTHo_SXNcDlSQWG:21 a=7p8vbkwTPS6x6ma9:21 a=pioyyrs4ZptJ924tMmac:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=dVHiktpip_riXrfdqayU:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeEQP6u (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 11:58:50 -0400
-Received: from g9t5008.houston.hpe.com ([15.241.48.72]:48352 "EHLO
-        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeEQP6u (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 11:58:50 -0400
+        id S1752139AbeEPXd1 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 19:33:27 -0400
+Received: from g4t3425.houston.hpe.com ([15.241.140.78]:43823 "EHLO
+        g4t3425.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeEPXdZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 16 May 2018 19:33:25 -0400
 From: Toshi Kani <toshi.kani@hpe.com>
 To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, will.deacon@arm.com
+        mingo@redhat.com, hpa@zytor.com
 Cc: cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Joerg Roedel <joro@8bytes.org>, stable@vger.kernel.org
-Subject: [PATCH v3-UPADATE 2/3] ioremap: Update pgtable free interfaces with addr
-Date: Thu, 17 May 2018 09:57:34 -0600
-Message-Id: <20180517155734.1700-1-toshi.kani@hpe.com>
+        Toshi Kani <toshi.kani@hpe.com>, stable@vger.kernel.org
+Subject: [PATCH v3 2/3] ioremap: Update pgtable free interfaces with addr
+Date: Wed, 16 May 2018 17:32:06 -0600
+Message-Id: <20180516233207.1580-3-toshi.kani@hpe.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180516233207.1580-1-toshi.kani@hpe.com>
+References: <20180516233207.1580-1-toshi.kani@hpe.com>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -94,40 +93,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Chintan Pandya <cpandya@codeaurora.org>
 
-The following kernel panic was observed on ARM64 platform due to a stale
-TLB entry.
+This patch ("mm/vmalloc: Add interfaces to free unmapped
+page table") adds following 2 interfaces to free the page
+table in case we implement huge mapping.
 
- 1. ioremap with 4K size, a valid pte page table is set.
- 2. iounmap it, its pte entry is set to 0.
- 3. ioremap the same address with 2M size, update its pmd entry with
-    a new value.
- 4. CPU may hit an exception because the old pmd entry is still in TLB,
-    which leads to a kernel panic.
+pud_free_pmd_page() and pmd_free_pte_page()
 
-Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
-table") has addressed this panic by falling to pte mappings in the above
-case on ARM64.
+Some architectures (like arm64) needs to do proper TLB
+maintanance after updating pagetable entry even in map.
+Why ? Read this,
+https://patchwork.kernel.org/patch/10134581/
 
-To support pmd mappings in all cases, TLB purge needs to be performed
-in this case on ARM64.
+Pass 'addr' in these interfaces so that proper TLB ops
+can be performed.
 
-Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
-so that TLB purge can be added later in seprate patches.
-
-[toshi@hpe.com: merge changes, rewrite patch description]
+[toshi@hpe.com: merge changes]
 Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
 Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
 Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Joerg Roedel <joro@8bytes.org>
 Cc: <stable@vger.kernel.org>
----
-v3-UPDATE - Rewrite patch description
 ---
  arch/arm64/mm/mmu.c           |    4 ++--
  arch/x86/mm/pgtable.c         |   12 +++++++-----
