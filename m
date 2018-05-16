@@ -1,115 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeEPIm3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:42:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:57139 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751530AbeEPIm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:42:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="56333330"
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
- <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
- <F6BF3B97-F955-4644-A033-4D20CA7F1922@amacapital.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <15a49a1c-01de-b904-a98b-ecced01b8ddb@linux.intel.com>
-Date: Wed, 16 May 2018 11:42:18 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1751524AbeEPIoS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:44:18 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:28031 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751728AbeEPIoO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 04:44:14 -0400
+Subject: Re: [RESEND PATCH v5 0/6] Add support for PWM input capture on STM32
+To: Lee Jones <lee.jones@linaro.org>
+CC: <alexandre.torgue@st.com>, <thierry.reding@gmail.com>,
+        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mcoquelin.stm32@gmail.com>, <benjamin.gaignard@st.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+References: <1526456161-27865-1-git-send-email-fabrice.gasnier@st.com>
+ <20180516080635.GE5130@dell>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <c48acc96-1eca-9adc-abb7-131921305ee8@st.com>
+Date: Wed, 16 May 2018 10:43:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <F6BF3B97-F955-4644-A033-4D20CA7F1922@amacapital.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180516080635.GE5130@dell>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 15.05.2018 19:30, Andy Lutomirski wrote:
+On 05/16/2018 10:06 AM, Lee Jones wrote:
+> On Wed, 16 May 2018, Fabrice Gasnier wrote:
 > 
->> On May 15, 2018, at 1:08 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+>> This series adds support for capture to stm32-pwm driver.
+>> Capture is based on DMAs.
+>> - First two patches add support for requesting DMAs to MFD core
+>> - Next three patches add support for capture to stm32-pwm driver
+>> - This has been tested on stm32429i-eval board.
 >>
+>> ---
+>> Changes in v5:
+>> - update patch 2 (mfd: stm32-timers: add support for dmas)
+>>   move stm32_timers_dma struct to header file,
+>>   fix warning on dma_mapping_error().
 >>
->> Hi Andy,
+>> Changes in v4:
+>> - Lee's comments on patch 2 (mfd: stm32-timers: add support for dmas)
+>>   Add kerneldoc header, better format comments.
 >>
->>> On 09.05.2018 17:54, Peter Zijlstra wrote:
->>>> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
->>>>
->>>> Store user space frame-pointer value (BP register) into Perf trace 
->>>> on a sample for a process so the value becomes available when 
->>>> unwinding call stacks for functions gaining event samples.
->>>>
->>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->>>> ---
->>>> arch/x86/kernel/perf_regs.c | 8 +++++++-
->>>> 1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
->>>> index e47b2dbbdef3..8d68658eff7f 100644
->>>> --- a/arch/x86/kernel/perf_regs.c
->>>> +++ b/arch/x86/kernel/perf_regs.c
->>>> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->>>
->>>
->>>>     * Most system calls don't save these registers, don't report them.
->>>
->>> ^^^ that worries me and is the reason for the '-1's below. However I
->>> think with all the PTI rework this might no longer be true.
->>>
->>> The Changelog needs to state that user_regs->bp is in fact valid and
->>> ideally point to the commits that makes it so. Also this patch should
->>> update that comment.
->>>
->>> Cc Andy who keeps better track of all that than me.
+>> Changes in v3:
+>> - Dropped 2 precusor patches applied by Thierry in pwm tree:
+>>   "pwm: stm32: fix, remove unused struct device"
+>>   "pwm: stm32: protect common prescaler for all channels"
+>> - Note: this series applies on top on pwm tree
+>> - Implements Lee's comments on MFD part: rework stm32_timers_dma struct,
+>>   exported routine prototype now use generic device struct, more
+>>   various comments (see patch 2 changelog).
 >>
->> Are there any thoughts so far? Feedback on the matter above is highly appreciated.
+>> Resend v2:
+>> - Add collected Acks
+>>
+>> Changes in v2:
+>> - Abstract DMA handling from child driver: move it to MFD core
+>> - Rework pwm capture routines to adopt this change
+>> - Comment on optional dma support, beautify DMAs probe
+>>
+>> Fabrice Gasnier (6):
+>>   dt-bindings: mfd: stm32-timers: add support for dmas
+>>   mfd: stm32-timers: add support for dmas
+>>   pwm: stm32: add capture support
+>>   pwm: stm32: improve capture by tuning counter prescaler
+>>   pwm: stm32: use input prescaler to improve period capture
+>>   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
 > 
-> Sorry, I missed this. Can you forward the original patch?  I don’t have it.
+> Applied patches 1-5.
 
-Store user space frame-pointer value (BP register) into Perf trace 
-on a sample for a process so the value becomes available when 
-unwinding call stacks for functions gaining event samples.
+Many thanks Lee !
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- arch/x86/kernel/perf_regs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Maybe I missed something, but just in case...
+In your pull request ("[GIT PULL] Immutable branch between MFD and PWM
+due for the v4.18 merge window") I only see 4 patches:
+Fabrice Gasnier (4):
+      mfd: stm32-timers: Add support for DMAs
+      pwm: stm32: Add capture support
+      pwm: stm32: Improve capture by tuning counter prescaler
+      pwm: stm32: Use input prescaler to improve period capture
 
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index e47b2dbbdef3..8d68658eff7f 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
- 	 * Most system calls don't save these registers, don't report them.
- 	 */
- 	regs_user_copy->bx = -1;
--	regs_user_copy->bp = -1;
-+	/*
-+	 * Store user space frame-pointer value on sample
-+	 * to facilitate stack unwinding for cases when
-+	 * user space executable code has such support
-+	 * enabled at compile time;
-+	 */
-+	regs_user_copy->bp = user_regs->bp;
- 	regs_user_copy->r12 = -1;
- 	regs_user_copy->r13 = -1;
- 	regs_user_copy->r14 = -1;
+I can't see patch 1 ("dt-bindings: mfd: stm32-timers: add support for dmas")
+Is it applied on another tree ?
 
-> These days, system calls should save all registers, but I’m not entirely sure I want to promise that they’ll continue to do so forever.
+Best Regards,
+Fabrice
+
+> 
+>>  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
+>>  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
+>>  drivers/mfd/stm32-timers.c                         | 201 +++++++++++++++-
+>>  drivers/pwm/pwm-stm32.c                            | 257 +++++++++++++++++++++
+>>  include/linux/mfd/stm32-timers.h                   |  58 +++++
+>>  5 files changed, 537 insertions(+), 2 deletions(-)
+>>
 > 
