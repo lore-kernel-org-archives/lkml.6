@@ -1,66 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeEPVKF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:10:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59932 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752226AbeEPVKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:10:03 -0400
-Date: Wed, 16 May 2018 23:10:01 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/4] rtc: ds1307: add frequency_test_enable sysfs
- attribute to check tick on m41txx
-Message-ID: <20180516211001.GC24496@piout.net>
-References: <20180516103251.74707-1-giulio.benetti@micronovasrl.com>
- <20180516103251.74707-4-giulio.benetti@micronovasrl.com>
- <CAHp75VdC74jW+Vox2ogDVzG17Z3kD0Vg-1du4SeK30WajT7N-Q@mail.gmail.com>
- <836407b4-8c51-5efa-8e29-f487bbcb528d@micronovasrl.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <836407b4-8c51-5efa-8e29-f487bbcb528d@micronovasrl.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752385AbeEPVK3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:10:29 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:55366 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751880AbeEPVIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 17:08:53 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.shevchenko@gmail.com,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v6 2/4] rtc: ds1307: support m41t11 variant
+Date: Wed, 16 May 2018 23:08:40 +0200
+Message-Id: <20180516210842.5874-2-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180516210842.5874-1-giulio.benetti@micronovasrl.com>
+References: <20180516210842.5874-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/05/2018 23:02:16+0200, Giulio Benetti wrote:
-> > > +static ssize_t frequency_test_enable_show(struct device *dev,
-> > > +                                         struct device_attribute *attr,
-> > > +                                         char *buf)
-> > > +{
-> > 
-> > > +       int freq_test_en = 0;
-> > 
-> > > +       if (ctrl_reg & M41TXX_BIT_FT)
-> > > +               freq_test_en = true;
-> > > +       else
-> > > +               freq_test_en = false;
-> > > +
-> > > +       return sprintf(buf, "%d\n", freq_test_en);
-> > 
-> > So, is it boolean or integer? This code makes it confusing a lot.
-> 
-> It is a boolean, so now I've updated with this:
-> 
-> if (ctrl_reg & M41TXX_BIT_FT)
-> 	return scnprintf(buf, PAGE_SIZE, "on\n");
-> else
-> 	return scnprintf(buf, PAGE_SIZE, "off\n");
-> 
+The m41t11 variant is very similar to the already supported m41t00 and
+m41t0, but it has also 56 bytes of NVRAM.
 
-No, it has to be consistent with what you write.
+Add it to driver taking into account NVRAM section.
 
-Here, you'd write 0 or 1 in the file and read off or on...
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+ .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
+ drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
-
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+index d28d6e7f6ae8..ce6469c1a516 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 	"maxim,ds3231",
+ 	"st,m41t0",
+ 	"st,m41t00",
++	"st,m41t11",
+ 	"microchip,mcp7940x",
+ 	"microchip,mcp7941x",
+ 	"pericom,pt7c4338",
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index 32aadcbc377f..0ab0c166da83 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -44,6 +44,7 @@ enum ds_type {
+ 	ds_3231,
+ 	m41t0,
+ 	m41t00,
++	m41t11,
+ 	mcp794xx,
+ 	rx_8025,
+ 	rx_8130,
+@@ -226,6 +227,11 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t11] = {
++		/* this is battery backed SRAM */
++		.nvram_offset	= 8,
++		.nvram_size	= 56,
++	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+ 		/* this is battery backed SRAM */
+@@ -248,6 +254,7 @@ static const struct i2c_device_id ds1307_id[] = {
+ 	{ "ds3231", ds_3231 },
+ 	{ "m41t0", m41t0 },
+ 	{ "m41t00", m41t00 },
++	{ "m41t11", m41t11 },
+ 	{ "mcp7940x", mcp794xx },
+ 	{ "mcp7941x", mcp794xx },
+ 	{ "pt7c4338", ds_1307 },
+@@ -304,6 +311,10 @@ static const struct of_device_id ds1307_of_match[] = {
+ 		.compatible = "st,m41t00",
+ 		.data = (void *)m41t00
+ 	},
++	{
++		.compatible = "st,m41t11",
++		.data = (void *)m41t11
++	},
+ 	{
+ 		.compatible = "microchip,mcp7940x",
+ 		.data = (void *)mcp794xx
+@@ -346,6 +357,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
+ 	{ .id = "DS3231", .driver_data = ds_3231 },
+ 	{ .id = "M41T0", .driver_data = m41t0 },
+ 	{ .id = "M41T00", .driver_data = m41t00 },
++	{ .id = "M41T11", .driver_data = m41t11 },
+ 	{ .id = "MCP7940X", .driver_data = mcp794xx },
+ 	{ .id = "MCP7941X", .driver_data = mcp794xx },
+ 	{ .id = "PT7C4338", .driver_data = ds_1307 },
+@@ -1574,6 +1586,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1307:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/* clock halted?  turn it on, so clock can tick. */
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+@@ -1639,6 +1652,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1340:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/*
+ 		 * NOTE: ignores century bits; fix before deploying
+ 		 * systems that will run through year 2100.
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
