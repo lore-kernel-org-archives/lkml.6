@@ -1,190 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751859AbeEPFBR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:01:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40824 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750992AbeEPFBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:01:16 -0400
-Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: wexu@redhat.com, jfreimann@redhat.com
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <20180425051550.24342-5-tiwei.bie@intel.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <915efeaa-4e47-9004-a722-54b0c40ebcbb@redhat.com>
-Date: Wed, 16 May 2018 13:01:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751490AbeEPFFU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:05:20 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750775AbeEPFFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 01:05:18 -0400
+Date: Wed, 16 May 2018 10:35:08 +0530
+From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To: Michael Neuling <mikey@neuling.org>
+Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] powerpc: Enable ASYM_SMT on interleaved big-core
+ systems
+Reply-To: ego@linux.vnet.ibm.com
+References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com>
+ <1526268127.30369.21.camel@neuling.org>
 MIME-Version: 1.0
-In-Reply-To: <20180425051550.24342-5-tiwei.bie@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526268127.30369.21.camel@neuling.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18051605-0036-0000-0000-000002F5897E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009032; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032974; UDB=6.00528138; IPR=6.00812105;
+ MB=3.00021139; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 05:05:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051605-0037-0000-0000-0000445A0276
+Message-Id: <20180516050508.GB14826@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160050
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 14, 2018 at 01:22:07PM +1000, Michael Neuling wrote:
+> On Fri, 2018-05-11 at 16:47 +0530, Gautham R. Shenoy wrote:
+> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+> > 
+> > Each of the SMT4 cores forming a fused-core are more or less
+> > independent units. Thus when multiple tasks are scheduled to run on
+> > the fused core, we get the best performance when the tasks are spread
+> > across the pair of SMT4 cores.
+> > 
+> > Since the threads in the pair of SMT4 cores of an interleaved big-core
+> > are numbered {0,2,4,6} and {1,3,5,7} respectively, enable ASYM_SMT on
+> > such interleaved big-cores that will bias the load-balancing of tasks
+> > on smaller numbered threads, which will automatically result in
+> > spreading the tasks uniformly across the associated pair of SMT4
+> > cores.
+> > 
+> > Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> > ---
+> >  arch/powerpc/kernel/smp.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> > index 9ca7148..0153f01 100644
+> > --- a/arch/powerpc/kernel/smp.c
+> > +++ b/arch/powerpc/kernel/smp.c
+> > @@ -1082,7 +1082,7 @@ static int powerpc_smt_flags(void)
+> >  {
+> >  	int flags = SD_SHARE_CPUCAPACITY | SD_SHARE_PKG_RESOURCES;
+> >  
+> > -	if (cpu_has_feature(CPU_FTR_ASYM_SMT)) {
+> > +	if (cpu_has_feature(CPU_FTR_ASYM_SMT) || has_interleaved_big_core) {
+> 
+> Shouldn't we just set CPU_FTR_ASYM_SMT and leave this code
+unchanged?
 
+Yes, that would have the same effect. I refrained from doing that
+since I thought CPU_FTR_ASYM_SMT has the "lower numbered threads
+expedite thread-folding" connotation from the POWER7 generation.
 
-On 2018年04月25日 13:15, Tiwei Bie wrote:
-> This commit introduces the event idx support in packed
-> ring. This feature is temporarily disabled, because the
-> implementation in this patch may not work as expected,
-> and some further discussions on the implementation are
-> needed, e.g. do we have to check the wrap counter when
-> checking whether a kick is needed?
->
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> ---
->   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
->   1 file changed, 49 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 0181e93897be..b1039c2985b9 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
->   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> -	u16 flags;
-> +	u16 new, old, off_wrap, flags;
->   	bool needs_kick;
->   	u32 snapshot;
->   
-> @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   	 * suppressions. */
->   	virtio_mb(vq->weak_barriers);
->   
-> +	old = vq->next_avail_idx - vq->num_added;
-> +	new = vq->next_avail_idx;
-> +	vq->num_added = 0;
-> +
->   	snapshot = *(u32 *)vq->vring_packed.device;
-> +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
->   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
->   
->   #ifdef DEBUG
-> @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
->   	vq->last_add_time_valid = false;
->   #endif
->   
-> -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> +	if (flags == VRING_EVENT_F_DESC)
-> +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
-> +	else
-> +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
->   	END_USE(vq);
->   	return needs_kick;
->   }
-> @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
->   	if (vq->last_used_idx >= vq->vring_packed.num)
->   		vq->last_used_idx -= vq->vring_packed.num;
->   
-> +	/* If we expect an interrupt for the next entry, tell host
-> +	 * by writing event index and flush out the write before
-> +	 * the read in the next get_buf call. */
-> +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-> +		virtio_store_mb(vq->weak_barriers,
-> +				&vq->vring_packed.driver->off_wrap,
-> +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-> +						(vq->wrap_counter << 15)));
-> +
->   #ifdef DEBUG
->   	vq->last_add_time_valid = false;
->   #endif
-> @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
->   
->   	/* We optimistically turn back on interrupts, then check if there was
->   	 * more to do. */
-> +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> +	 * either clear the flags bit or point the event index at the next
-> +	 * entry. Always update the event index to keep code simple. */
-> +
-> +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> +			vq->last_used_idx | (vq->wrap_counter << 15));
+If it is ok to overload CPU_FTR_ASYM_SMT, we can do what you suggest
+and have all the changes in setup-common.c
 
-
-Using vq->wrap_counter seems not correct, what we need is the warp 
-counter for the last_used_idx not next_avail_idx.
-
-And I think there's even no need to bother with event idx here, how 
-about just set VRING_EVENT_F_ENABLE?
-
->   
->   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
->   		virtio_wmb(vq->weak_barriers);
-> -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> +						     VRING_EVENT_F_ENABLE;
->   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
->   							vq->event_flags_shadow);
->   	}
-> @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
->   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
-> +	u16 bufs, used_idx, wrap_counter;
->   
->   	START_USE(vq);
->   
->   	/* We optimistically turn back on interrupts, then check if there was
->   	 * more to do. */
-> +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> +	 * either clear the flags bit or point the event index at the next
-> +	 * entry. Always update the event index to keep code simple. */
-> +
-> +	/* TODO: tune this threshold */
-> +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
-
-bufs could be more than vq->num here, is this intended?
-
-> +
-> +	used_idx = vq->last_used_idx + bufs;
-> +	wrap_counter = vq->wrap_counter;
-> +
-> +	if (used_idx >= vq->vring_packed.num) {
-> +		used_idx -= vq->vring_packed.num;
-> +		wrap_counter ^= 1;
-
-When used_idx is greater or equal vq->num, there's no need to flip 
-warp_counter bit since it should match next_avail_idx.
-
-And we need also care about the case when next_avail wraps but used_idx 
-not. so we probaly need:
-
-else if (vq->next_avail_idx < used_idx) {
-     wrap_counter ^= 1;
-}
-
-I think maybe it's time to add some sample codes in the spec to avoid 
-duplicating the efforts(bugs).
-
-Thanks
-> +	}
-> +
-> +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> +			used_idx | (wrap_counter << 15));
->   
->   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
->   		virtio_wmb(vq->weak_barriers);
-> -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> +						     VRING_EVENT_F_ENABLE;
->   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
->   							vq->event_flags_shadow);
->   	}
-> @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
->   		switch (i) {
->   		case VIRTIO_RING_F_INDIRECT_DESC:
->   			break;
-> +#if 0
->   		case VIRTIO_RING_F_EVENT_IDX:
->   			break;
-> +#endif
->   		case VIRTIO_F_VERSION_1:
->   			break;
->   		case VIRTIO_F_IOMMU_PLATFORM:
+--
+Thanks and Regards
+gautham.
