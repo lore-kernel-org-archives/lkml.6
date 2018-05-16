@@ -1,111 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeEPOFy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:05:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50606 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752205AbeEPOFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:05:51 -0400
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
- <20180516123909.GB986@debian>
- <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
- <20180516134550.GB4171@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
-Date: Wed, 16 May 2018 22:05:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752710AbeEPOGM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752205AbeEPOGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 10:06:10 -0400
+Date: Wed, 16 May 2018 10:06:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2 13/14] tracing/selftest: Add selftests to test
+ trace_marker histogram triggers
+Message-ID: <20180516100606.0ecf2e56@gandalf.local.home>
+In-Reply-To: <20180516220716.60174e9edd8d9f970fcd37e1@kernel.org>
+References: <20180514205845.017925650@goodmis.org>
+        <20180514205959.230719465@goodmis.org>
+        <20180516220716.60174e9edd8d9f970fcd37e1@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180516134550.GB4171@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 16 May 2018 22:07:16 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc  
+> 
+> But this test actually kicks histogram, maybe
+> trigger-trace-marker-hist.tc will be better, since we may need to add
+> a simpler testcase just for checking whether trace-marker works with
+> some actions (e.g. enable/disable other events).
 
-On 2018年05月16日 21:45, Tiwei Bie wrote:
-> On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
->> On 2018年05月16日 20:39, Tiwei Bie wrote:
->>> On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
->>>> On 2018年05月16日 16:37, Tiwei Bie wrote:
->>> [...]
->>>>>     struct vring_virtqueue {
->>>>> @@ -116,6 +117,9 @@ struct vring_virtqueue {
->>>>>     			/* Last written value to driver->flags in
->>>>>     			 * guest byte order. */
->>>>>     			u16 event_flags_shadow;
->>>>> +
->>>>> +			/* ID allocation. */
->>>>> +			struct idr buffer_id;
->>>> I'm not sure idr is fit for the performance critical case here. Need to
->>>> measure its performance impact, especially if we have few unused slots.
->>> I'm also not sure.. But fortunately, it should be quite easy
->>> to replace it with something else without changing other code.
->>> If it will really hurt the performance, I'll change it.
->> We may want to do some benchmarking/profiling to see.
-> Yeah!
->
->>>>>     		};
->>>>>     	};
->>> [...]
->>>>> +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
->>>>> +			      unsigned int id, void **ctx)
->>>>> +{
->>>>> +	struct vring_packed_desc *desc;
->>>>> +	unsigned int i, j;
->>>>> +
->>>>> +	/* Clear data ptr. */
->>>>> +	vq->desc_state[id].data = NULL;
->>>>> +
->>>>> +	i = head;
->>>>> +
->>>>> +	for (j = 0; j < vq->desc_state[id].num; j++) {
->>>>> +		desc = &vq->vring_packed.desc[i];
->>>>> +		vring_unmap_one_packed(vq, desc);
->>>> As mentioned in previous discussion, this probably won't work for the case
->>>> of out of order completion since it depends on the information in the
->>>> descriptor ring. We probably need to extend ctx to record such information.
->>> Above code doesn't depend on the information in the descriptor
->>> ring. The vq->desc_state[] is the extended ctx.
->>>
->>> Best regards,
->>> Tiwei Bie
->> Yes, but desc is a pointer to descriptor ring I think so
->> vring_unmap_one_packed() still depends on the content of descriptor ring?
->>
-> I got your point now. I think it makes sense to reserve
-> the bits of the addr field. Driver shouldn't try to get
-> addrs from the descriptors when cleanup the descriptors
-> no matter whether we support out-of-order or not.
+OK, will update that file. Thanks for reviewing.
 
-Maybe I was wrong, but I remember spec mentioned something like this.
-
->
-> But combining it with the out-of-order support, it will
-> mean that the driver still needs to maintain a desc/ctx
-> list that is very similar to the desc ring in the split
-> ring. I'm not quite sure whether it's something we want.
-> If it is true, I'll do it. So do you think we also want
-> to maintain such a desc/ctx list for packed ring?
-
-To make it work for OOO backends I think we need something like this 
-(hardware NIC drivers are usually have something like this).
-
-Not for the patch, but it looks like having a OUT_OF_ORDER feature bit 
-is much more simpler to be started with.
-
-Thanks
-
->
-> Best regards,
-> Tiwei Bie
+-- Steve
