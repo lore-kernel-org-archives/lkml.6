@@ -1,62 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeEPFvk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:51:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52029 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751389AbeEPFvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:51:38 -0400
-From: Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH] Makefile: disable PIE before testing asm goto
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andreas Faerber <afaerber@suse.com>
-Message-Id: <20180516055136.6F4EAA095A@unicorn.suse.cz>
-Date: Wed, 16 May 2018 07:51:36 +0200 (CEST)
+        id S1752564AbeEPFvt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:51:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752245AbeEPFvq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 01:51:46 -0400
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
+        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH v4 0/2] tpm: improving granularity in poll sleep times
+Date: Wed, 16 May 2018 01:51:23 -0400
+X-Mailer: git-send-email 2.13.3
+X-TM-AS-GCONF: 00
+x-cbid: 18051605-0044-0000-0000-00000552E910
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051605-0045-0000-0000-0000289453BA
+Message-Id: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160059
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit e501ce957a78 ("x86: Force asm-goto"), aarch64 build on
-distributions which enable PIE by default (e.g. openSUSE Tumbleweed) does
-not detect support for asm goto correctly. The problem is that ARM specific
-part of scripts/gcc-goto.sh fails with PIE even with recent gcc versions.
-Moving the asm goto detection up in Makefile put it before the place where
-we disable PIE. As a result, kernel is built without jump label support.
+The existing TPM polling code sleeps in each loop iteration for time in
+msecs ranging from 1 msecs to 5 msecs. However, many of the TPM commands
+complete much faster, resulting in unnecessary delays.
 
-Move the lines disabling PIE before the asm goto test to make it work.
+This set of patches identifies such iterations and optimizes the sleep
+time. The first patch replaces TPM_POLL_SLEEP with TPM_TIMEOUT_POLL and
+moves it from tpm_tis_core.c to tpm.h as an enum with value 1 msecs. The
+second patch further reduces the TPM poll sleep time in get_burstcount()
+and wait_for_tpm_stat() in tpm_tis_core.c by calling usleep_range()
+directly.
 
-Fixes: e501ce957a78 ("x86: Force asm-goto")
-Reported-by: Andreas Faerber <afaerber@suse.com>
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+The change is only in the polling time, and the maximum timeout is still
+maintained the same. Thus, it should not affect the overall existing
+behavior.
 
-diff --git a/Makefile b/Makefile
-index ba3106b36597..5532a15c4781 100644
---- a/Makefile
-+++ b/Makefile
-@@ -500,6 +500,9 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
- RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
- export RETPOLINE_CFLAGS
- 
-+KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
-+KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
-+
- # check for 'asm goto'
- ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
-   CC_HAVE_ASM_GOTO := 1
-@@ -621,8 +624,6 @@ endif # $(dot-config)
- # Defaults to vmlinux, but the arch makefile usually adds further targets
- all: vmlinux
- 
--KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
--KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
- CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
- export CFLAGS_GCOV CFLAGS_KCOV
- 
+Changelog:
+
+v4:
+tpm: reduce poll sleep time in tpm_transmit()
+* added Reviewed-by, Tested-by and Ack-by
+
+tpm: reduce polling time to usecs for even finer granularity
+* included Jarkko's feedback
+* added Ack-by
+
+v3:
+
+tpm: reduce poll sleep time in tpm_transmit()
+* added testing platform information
+* updated patch description for more clarity on reasoning
+
+tpm: reduce polling time to usecs for even finer granularity
+* added testing platform information
+* added Jarkko's and Mimi's Reviewed-by
+
+v2:
+
+tpm: reduce poll sleep time in tpm_transmit()
+* merged previously defined two patches into this.
+* updated patch description as per Jarkko's feedback
+
+tpm: reduce polling time to usecs for even finer granularity
+* directly use usleep_range with finer granularity less than 1msec
+
+Nayna Jain (2):
+  tpm: reduce poll sleep time in tpm_transmit()
+  tpm: reduce polling time to usecs for even finer granularity
+
+ drivers/char/tpm/tpm-interface.c |  2 +-
+ drivers/char/tpm/tpm.h           |  5 ++++-
+ drivers/char/tpm/tpm_tis_core.c  | 11 +++--------
+ 3 files changed, 8 insertions(+), 10 deletions(-)
+
 -- 
-2.16.3
+2.13.3
