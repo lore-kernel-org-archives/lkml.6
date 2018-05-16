@@ -1,98 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752490AbeEPJQC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:16:02 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45913 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeEPJQA (ORCPT
+        id S1752520AbeEPJSY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:18:24 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:55908 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbeEPJSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:16:00 -0400
-X-Google-Smtp-Source: AB8JxZqA55hlbHCtH7USFq9YL/u6FzgCjmrj8Rj8rrbvpaxbaC/WvQiv/sZFjPifFtbuoPqQ3dMd/g==
-Date: Wed, 16 May 2018 18:11:53 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH v2 14/14] tracing/selftest: Add test to test hist trigger
- between kernel event and trace_marker
-Message-ID: <20180516091153.GC30309@danjae.aot.lge.com>
-References: <20180514205845.017925650@goodmis.org>
- <20180514205959.393826165@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180514205959.393826165@goodmis.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 16 May 2018 05:18:05 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>, netdev@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] net: 8390: ne: Fix accidentally removed RBTX4927 support
+Date: Wed, 16 May 2018 11:18:01 +0200
+Message-Id: <1526462281-20772-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:58:59PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Add a test that tests a trigger that is initiated by a kernel event
-> (sched_waking) and compared to a write to the trace_marker.
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  .../trigger/trigger-trace-marker-synthetic.tc | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> index 8e7a043da7fb..d8cfc36f228b 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
-> @@ -31,6 +31,11 @@ if [ ! -d events/ftrace/print ]; then
->      exit_unsupported
->  fi
->  
-> +if [ ! -d events/sched/sched_waking ]; then
-> +    echo "event sched_waking is not supported"
-> +    exit_unsupported
-> +fi
-> +
->  if [ ! -f events/ftrace/print/trigger ]; then
->      echo "event trigger is not supported"
->      exit_unsupported
-> @@ -63,4 +68,21 @@ grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
->  
->  do_reset
->  
-> +echo "Test histogram kernel event to trace_marker latency histogram trigger"
-> +
-> +echo 'latency u64 lat' > synthetic_events
-> +echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
-> +echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(ftrace.print).latency($lat)' > events/ftrace/print/trigger
+The configuration settings for RBTX4927 were accidentally removed,
+leading to a silently broken network interface.
 
-Shouldn't it be "onmatch(sched.sched_waking)" ?
+Re-add the missing settings to fix this.
 
-Thanks,
-Namhyung
+Fixes: 8eb97ff5a4ec941d ("net: 8390: remove m32r specific bits")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Bisected between v4.9-rc2 (doh) and v4.17-rc5.
 
+Note to myself: I should do more boot testing on RBTX4927.
+Fortunately I caught it before it ends up in a point release ;-)
+---
+ drivers/net/ethernet/8390/ne.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> +echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
-> +sleep 1
-> +echo "hello" > trace_marker
-> +
-> +grep 'hitcount: *1$' events/ftrace/print/hist > /dev/null || \
-> +    fail "hist trigger did not trigger correct times on trace_marker"
-> +
-> +grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
-> +    fail "hist trigger did not trigger "
-> +
-> +do_reset
-> +
->  exit 0
-> -- 
-> 2.17.0
-> 
-> 
+diff --git a/drivers/net/ethernet/8390/ne.c b/drivers/net/ethernet/8390/ne.c
+index ac99d089ac7266c3..1c97e39b478e9f89 100644
+--- a/drivers/net/ethernet/8390/ne.c
++++ b/drivers/net/ethernet/8390/ne.c
+@@ -164,7 +164,9 @@ bad_clone_list[] __initdata = {
+ #define NESM_START_PG	0x40	/* First page of TX buffer */
+ #define NESM_STOP_PG	0x80	/* Last page +1 of RX ring */
+ 
+-#if defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
++#if defined(CONFIG_MACH_TX49XX)
++#  define DCR_VAL 0x48		/* 8-bit mode */
++#elif defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
+ #  define DCR_VAL (MACH_IS_ATARI ? 0x48 : 0x49)
+ #else
+ #  define DCR_VAL 0x49
+-- 
+2.7.4
