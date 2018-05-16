@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751438AbeEPXKX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:10:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:4149 "EHLO mga01.intel.com"
+        id S1751664AbeEPXLA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:11:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:44081 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751013AbeEPXKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:10:22 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,408,1520924400";
-   d="scan'208";a="59269551"
-Date: Wed, 16 May 2018 17:12:21 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>, bhelgaas@google.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        Dongdong Liu <liudongdong3@huawei.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: DPC: Clear AER status bits before disabling port
- containment
-Message-ID: <20180516231220.GA21659@localhost.localdomain>
-References: <20180516213306.27027-1-mr.nuke.me@gmail.com>
- <605540c0-b6c5-89a2-9d50-12a3005d9f88@codeaurora.org>
+        id S1751013AbeEPXK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:10:58 -0400
+Date: Thu, 17 May 2018 09:10:52 +1000
+From: Paul Mackerras <paulus@ozlabs.org>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Shile Zhang <shile.zhang@nokia.com>
+Subject: Re: [PATCH] Revert "powerpc/64: Fix checksum folding in csum_add()"
+Message-ID: <20180516231052.GA24778@fergus.ozlabs.ibm.com>
+References: <20180410063437.217D2653BC@po15720vm.idsi0.si.c-s.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <605540c0-b6c5-89a2-9d50-12a3005d9f88@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180410063437.217D2653BC@po15720vm.idsi0.si.c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 06:44:22PM -0400, Sinan Kaya wrote:
-> On 5/16/2018 5:33 PM, Alexandru Gagniuc wrote:
-> > AER status bits are sticky, and they survive system resets. Downstream
-> > devices are usually taken care of after re-enumerating the downstream
-> > busses, as the AER bits are cleared during probe().
-> > 
-> > However, nothing clears the bits of the port which contained the
-> > error. These sticky bits may leave some BIOSes to think that something
-> > bad happened, and print ominous messages on next boot. To prevent this,
-> > tidy up the AER status bits before releasing containment.
-> > 
-> > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> > ---
-> >  drivers/pci/pcie/dpc.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> > index 8c57d607e603..bf82d6936556 100644
-> > --- a/drivers/pci/pcie/dpc.c
-> > +++ b/drivers/pci/pcie/dpc.c
-> > @@ -112,6 +112,10 @@ static void dpc_work(struct work_struct *work)
-> >  		dpc->rp_pio_status = 0;
-> >  	}
-> >  
-> > +	/* DPC event made a mess of our AER status bits. Clean them up. */
-> > +	pci_cleanup_aer_error_status_regs(pdev);
-> > +	/* TODO: Should we also use aer_print_error to log the event? */
-> > +
-> >  	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
-> >  		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
-> >  
-> > 
+On Tue, Apr 10, 2018 at 08:34:37AM +0200, Christophe Leroy wrote:
+> This reverts commit 6ad966d7303b70165228dba1ee8da1a05c10eefe.
 > 
-> I think Keith has a patch to fix this. It was under review at some point.
+> That commit was pointless, because csum_add() sums two 32 bits
+> values, so the sum is 0x1fffffffe at the maximum.
+> And then when adding upper part (1) and lower part (0xfffffffe),
+> the result is 0xffffffff which doesn't carry.
+> Any lower value will not carry either.
+> 
+> And behind the fact that this commit is useless, it also kills the
+> whole purpose of having an arch specific inline csum_add()
+> because the resulting code gets even worse than what is obtained
+> with the generic implementation of csum_add()
+> 
+> 0000000000000240 <.csum_add>:
+>  240:	38 00 ff ff 	li      r0,-1
+>  244:	7c 84 1a 14 	add     r4,r4,r3
+>  248:	78 00 00 20 	clrldi  r0,r0,32
+>  24c:	78 89 00 22 	rldicl  r9,r4,32,32
+>  250:	7c 80 00 38 	and     r0,r4,r0
+>  254:	7c 09 02 14 	add     r0,r9,r0
+>  258:	78 09 00 22 	rldicl  r9,r0,32,32
+>  25c:	7c 00 4a 14 	add     r0,r0,r9
+>  260:	78 03 00 20 	clrldi  r3,r0,32
+>  264:	4e 80 00 20 	blr
+> 
+> In comparison, the generic implementation of csum_add() gives:
+> 
+> 0000000000000290 <.csum_add>:
+>  290:	7c 63 22 14 	add     r3,r3,r4
+>  294:	7f 83 20 40 	cmplw   cr7,r3,r4
+>  298:	7c 10 10 26 	mfocrf  r0,1
+>  29c:	54 00 ef fe 	rlwinm  r0,r0,29,31,31
+>  2a0:	7c 60 1a 14 	add     r3,r0,r3
+>  2a4:	78 63 00 20 	clrldi  r3,r3,32
+>  2a8:	4e 80 00 20 	blr
+> 
+> And the reverted implementation for PPC64 gives:
+> 
+> 0000000000000240 <.csum_add>:
+>  240:	7c 84 1a 14 	add     r4,r4,r3
+>  244:	78 80 00 22 	rldicl  r0,r4,32,32
+>  248:	7c 80 22 14 	add     r4,r0,r4
+>  24c:	78 83 00 20 	clrldi  r3,r4,32
+>  250:	4e 80 00 20 	blr
+> 
+> Fixes: 6ad966d7303b7 ("powerpc/64: Fix checksum folding in csum_add()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Right, I do intend to following up on this, but I've had some trouble
-finding time the last few weeks. Sorry about that, things will clear up
-for me shortly.
+Seems I was right first time... :)
+
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
