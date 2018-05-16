@@ -1,274 +1,309 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeEPMuk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:50:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38830 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752563AbeEPMuh (ORCPT
+        id S1752722AbeEPMur (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:50:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56696 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752654AbeEPMuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:50:37 -0400
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
- mdev framework
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180516124240.42dcd426.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 16 May 2018 08:48:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180516124240.42dcd426.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051612-0004-0000-0000-00001418A617
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01033129; UDB=6.00528230; IPR=6.00812260;
- MB=3.00021144; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 12:49:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051612-0005-0000-0000-000087360798
-Message-Id: <e66a3d32-953d-2082-83f1-be84d8a5422a@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160131
+        Wed, 16 May 2018 08:50:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7F21609D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V6 02/12] ARM: dts: ipq4019: Add a few peripheral nodes
+Date: Wed, 16 May 2018 18:19:54 +0530
+Message-Id: <1526475004-10341-3-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
+References: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 06:42 AM, Cornelia Huck wrote:
-> On Mon,  7 May 2018 11:11:44 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> Registers the matrix device created by the VFIO AP device
->> driver with the VFIO mediated device framework.
->> Registering the matrix device will create the sysfs
->> structures needed to create mediated matrix devices
->> each of which will be used to configure the AP matrix
->> for a guest and connect it to the VFIO AP device driver.
->>
->> Registering the matrix device with the VFIO mediated device
->> framework will create the following sysfs structures:
->>
->> /sys/devices/vfio_ap
->> ... [matrix]
->> ...... [mdev_supported_types]
->> ......... [vfio_ap-passthrough]
->> ............ create
->>
->> To create a mediated device for the AP matrix device, write a UUID
->> to the create file:
->>
->> 	uuidgen > create
->>
->> A symbolic link to the mediated device's directory will be created in the
->> devices subdirectory named after the generated $uuid:
->>
->> /sys/devices/vfio_ap
->> ... [matrix]
->> ...... [mdev_supported_types]
->> ......... [vfio_ap-passthrough]
->> ............ [devices]
->> ............... [$uuid]
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   MAINTAINERS                           |    1 +
->>   drivers/s390/crypto/Makefile          |    2 +-
->>   drivers/s390/crypto/vfio_ap_drv.c     |    9 +++
->>   drivers/s390/crypto/vfio_ap_ops.c     |  106 +++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |   17 +++++
->>   5 files changed, 134 insertions(+), 1 deletions(-)
->>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
->
->> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
->> new file mode 100644
->> index 0000000..d7d36fb
->> --- /dev/null
->> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->> @@ -0,0 +1,106 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Adjunct processor matrix VFIO device driver callbacks.
->> + *
->> + * Copyright IBM Corp. 2017
-> Should be '2018' (also in some other files in this series; please
-> double check.)
+Now with the driver updates for some peripherals being there,
+add i2c, spi, pcie, bam, qpic-nand, scm nodes to enhance the available
+peripheral support.
 
-Gee, I thought I got all of these fixed. I must have a gremlin in my
-laptop.
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi |   2 +-
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 156 ++++++++++++++++++++++++--
+ 2 files changed, 146 insertions(+), 12 deletions(-)
 
->
->> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> + *
->> + */
->> +#include <linux/string.h>
->> +#include <linux/vfio.h>
->> +#include <linux/device.h>
->> +#include <linux/list.h>
->> +#include <linux/ctype.h>
->> +
->> +#include "vfio_ap_private.h"
->> +
->> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
->> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
->> +
->> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
->> +{
->> +	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->> +
->> +	ap_matrix->available_instances--;
-> Shouldn't the code check whether available_instances is actually > 0?
-
-It is my understanding that once the available_instances hits zero, the 
-mdev
-framework will not allow any more mediated devices to be created, so the
-value should always be greater than zero when this function is invoked.
-
-I did an experiment to verify my understanding. I initialized the 
-available_instances
-to 1. I was able to create 2 mediated devices. It seems that the 
-framework refuses to
-create a mediated device only after the available_instances sysfs 
-attribute is a negative
-number, so I have two choices: Initialize available_instances to one 
-less than desires;
-add the check you suggested. I think I'll go with the latter.
-
->
->> +
->> +	return 0;
->> +}
->> +
->> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->> +{
->> +	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
->> +
->> +	ap_matrix->available_instances++;
->> +
->> +	return 0;
->> +}
->> +
->> +static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
->> +{
->> +	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
->> +}
->> +
->> +MDEV_TYPE_ATTR_RO(name);
->> +
->> +static ssize_t available_instances_show(struct kobject *kobj,
->> +					struct device *dev, char *buf)
->> +{
->> +	struct ap_matrix *ap_matrix;
->> +
->> +	ap_matrix = to_ap_matrix(dev);
-> Move this with the declaration?
->
->> +
->> +	return sprintf(buf, "%d\n", ap_matrix->available_instances);
->> +}
->> +
->> +MDEV_TYPE_ATTR_RO(available_instances);
->> +
->> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
->> +			       char *buf)
->> +{
->> +	return sprintf(buf, "%s\n", VFIO_DEVICE_API_AP_STRING);
->> +}
->> +
->> +MDEV_TYPE_ATTR_RO(device_api);
->> +
->> +static struct attribute *vfio_ap_mdev_type_attrs[] = {
->> +	&mdev_type_attr_name.attr,
->> +	&mdev_type_attr_device_api.attr,
->> +	&mdev_type_attr_available_instances.attr,
->> +	NULL,
->> +};
->> +
->> +static struct attribute_group vfio_ap_mdev_hwvirt_type_group = {
->> +	.name = VFOP_AP_MDEV_TYPE_HWVIRT,
->> +	.attrs = vfio_ap_mdev_type_attrs,
->> +};
->> +
->> +static struct attribute_group *vfio_ap_mdev_type_groups[] = {
->> +	&vfio_ap_mdev_hwvirt_type_group,
->> +	NULL,
->> +};
->> +
->> +static const struct mdev_parent_ops vfio_ap_matrix_ops = {
->> +	.owner			= THIS_MODULE,
->> +	.supported_type_groups	= vfio_ap_mdev_type_groups,
->> +	.create			= vfio_ap_mdev_create,
->> +	.remove			= vfio_ap_mdev_remove,
->> +};
->> +
->> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
->> +{
->> +	int ret;
->> +
->> +	ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
->> +
->> +	return 0;
->> +}
->> +
->> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
->> +{
->> +	ap_matrix->available_instances--;
->> +	mdev_unregister_device(&ap_matrix->device);
->> +}
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
->> index cf23675..afd8dbc 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -10,14 +10,31 @@
->>   #define _VFIO_AP_PRIVATE_H_
->>   
->>   #include <linux/types.h>
->> +#include <linux/device.h>
->> +#include <linux/mdev.h>
->>   
->>   #include "ap_bus.h"
->>   
->>   #define VFIO_AP_MODULE_NAME "vfio_ap"
->>   #define VFIO_AP_DRV_NAME "vfio_ap"
->> +/**
->> + * There must be one mediated matrix device per guest. If every APQN is assigned
-> One, or at most one? Or one for every guest using ap devices?
->
->> + * to a guest, then the maximum number of guests with a unique APQN assigned
->> + * would be 255 adapters x 255 domains = 72351 guests.
->> + */
->> +#define AP_MATRIX_MAX_AVAILABLE_INSTANCES 72351
->>   
->>   struct ap_matrix {
->>   	struct device device;
->> +	int available_instances;
->>   };
->>   
->> +static inline struct ap_matrix *to_ap_matrix(struct device *dev)
->> +{
->> +	return container_of(dev, struct ap_matrix, device);
->> +}
->> +
->> +extern int vfio_ap_mdev_register(struct ap_matrix *ap_matrix);
->> +extern void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix);
->> +
->>   #endif /* _VFIO_AP_PRIVATE_H_ */
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+index ef8d8c8..418f9a0 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+@@ -69,7 +69,7 @@
+ 			status = "ok";
+ 		};
+ 
+-		spi_0: spi@78b5000 {
++		spi@78b5000 {
+ 			pinctrl-0 = <&spi_0_pins>;
+ 			pinctrl-names = "default";
+ 			status = "ok";
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index ea9202a..1541e18 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -24,8 +24,10 @@
+ 	interrupt-parent = <&intc>;
+ 
+ 	aliases {
+-		spi0 = &spi_0;
+-		i2c0 = &i2c_0;
++		spi0 = &blsp1_spi1;
++		spi1 = &blsp1_spi2;
++		i2c0 = &blsp1_i2c3;
++		i2c1 = &blsp1_i2c4;
+ 	};
+ 
+ 	cpus {
+@@ -104,6 +106,12 @@
+ 		};
+ 	};
+ 
++	firmware {
++		scm {
++			compatible = "qcom,scm-ipq4019";
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <1 2 0xf08>,
+@@ -149,13 +157,13 @@
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+-			interrupts = <0 208 0>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		blsp_dma: dma@7884000 {
+ 			compatible = "qcom,bam-v1.7.0";
+ 			reg = <0x07884000 0x23000>;
+-			interrupts = <GIC_SPI 238 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
+ 			clock-names = "bam_clk";
+ 			#dma-cells = <1>;
+@@ -163,7 +171,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		spi_0: spi@78b5000 {
++		blsp1_spi1: spi@78b5000 { /* BLSP1 QUP1 */
+ 			compatible = "qcom,spi-qup-v2.2.1";
+ 			reg = <0x78b5000 0x600>;
+ 			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+@@ -172,10 +180,26 @@
+ 			clock-names = "core", "iface";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			dmas = <&blsp_dma 5>, <&blsp_dma 4>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		blsp1_spi2: spi@78b6000 { /* BLSP1 QUP2 */
++			compatible = "qcom,spi-qup-v2.2.1";
++			reg = <0x78b6000 0x600>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_QUP2_SPI_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			dmas = <&blsp_dma 7>, <&blsp_dma 6>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+-		i2c_0: i2c@78b7000 {
++		blsp1_i2c3: i2c@78b7000 { /* BLSP1 QUP3 */
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0x78b7000 0x600>;
+ 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+@@ -184,14 +208,29 @@
+ 			clock-names = "iface", "core";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
++		blsp1_i2c4: i2c@78b8000 { /* BLSP1 QUP4 */
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x78b8000 0x600>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
++				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
++			clock-names = "iface", "core";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			dmas = <&blsp_dma 11>, <&blsp_dma 10>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
+ 
+ 		cryptobam: dma@8e04000 {
+ 			compatible = "qcom,bam-v1.7.0";
+ 			reg = <0x08e04000 0x20000>;
+-			interrupts = <GIC_SPI 207 0>;
++			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_CRYPTO_AHB_CLK>;
+ 			clock-names = "bam_clk";
+ 			#dma-cells = <1>;
+@@ -259,7 +298,7 @@
+ 		blsp1_uart1: serial@78af000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x78af000 0x200>;
+-			interrupts = <0 107 0>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
+ 				<&gcc GCC_BLSP1_AHB_CLK>;
+@@ -271,7 +310,7 @@
+ 		serial@78b0000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x78b0000 0x200>;
+-			interrupts = <0 108 0>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
+ 				<&gcc GCC_BLSP1_AHB_CLK>;
+@@ -293,6 +332,101 @@
+ 			reg = <0x4ab000 0x4>;
+ 		};
+ 
++		pcie0: pci@40000000 {
++			compatible = "qcom,pcie-ipq4019", "snps,dw-pcie";
++			reg =  <0x40000000 0xf1d
++				0x40000f20 0xa8
++				0x80000 0x2000
++				0x40100000 0x1000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
++				  0x82000000 0 0x48000000 0x48000000 0 0x10000000>;
++
++			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++			clocks = <&gcc GCC_PCIE_AHB_CLK>,
++				 <&gcc GCC_PCIE_AXI_M_CLK>,
++				 <&gcc GCC_PCIE_AXI_S_CLK>;
++			clock-names = "aux",
++				      "master_bus",
++				      "slave_bus";
++
++			resets = <&gcc PCIE_AXI_M_ARES>,
++				 <&gcc PCIE_AXI_S_ARES>,
++				 <&gcc PCIE_PIPE_ARES>,
++				 <&gcc PCIE_AXI_M_VMIDMT_ARES>,
++				 <&gcc PCIE_AXI_S_XPU_ARES>,
++				 <&gcc PCIE_PARF_XPU_ARES>,
++				 <&gcc PCIE_PHY_ARES>,
++				 <&gcc PCIE_AXI_M_STICKY_ARES>,
++				 <&gcc PCIE_PIPE_STICKY_ARES>,
++				 <&gcc PCIE_PWR_ARES>,
++				 <&gcc PCIE_AHB_ARES>,
++				 <&gcc PCIE_PHY_AHB_ARES>;
++			reset-names = "axi_m",
++				      "axi_s",
++				      "pipe",
++				      "axi_m_vmid",
++				      "axi_s_xpu",
++				      "parf",
++				      "phy",
++				      "axi_m_sticky",
++				      "pipe_sticky",
++				      "pwr",
++				      "ahb",
++				      "phy_ahb";
++
++			status = "disabled";
++		};
++
++		qpic_bam: dma@7984000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x7984000 0x1a000>;
++			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_QPIC_CLK>;
++			clock-names = "bam_clk";
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++			status = "disabled";
++		};
++
++		nand: qpic-nand@79b0000 {
++			compatible = "qcom,ipq4019-nand";
++			reg = <0x79b0000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&gcc GCC_QPIC_CLK>,
++				 <&gcc GCC_QPIC_AHB_CLK>;
++			clock-names = "core", "aon";
++
++			dmas = <&qpic_bam 0>,
++			       <&qpic_bam 1>,
++			       <&qpic_bam 2>;
++			dma-names = "tx", "rx", "cmd";
++			status = "disabled";
++
++			nand@0 {
++				reg = <0>;
++
++				nand-ecc-strength = <4>;
++				nand-ecc-step-size = <512>;
++				nand-bus-width = <8>;
++			};
++		};
++
+ 		wifi0: wifi@a000000 {
+ 			compatible = "qcom,ipq4019-wifi";
+ 			reg = <0xa000000 0x200000>;
+@@ -326,7 +460,7 @@
+ 				     <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 47 IRQ_TYPE_EDGE_RISING>,
+-				     <GIC_SPI 168 IRQ_TYPE_NONE>;
++				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
+ 					   "msi4",  "msi5",  "msi6",  "msi7",
+ 					   "msi8",  "msi9", "msi10", "msi11",
+@@ -368,7 +502,7 @@
+ 				     <GIC_SPI 61 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 62 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 63 IRQ_TYPE_EDGE_RISING>,
+-				     <GIC_SPI 169 IRQ_TYPE_NONE>;
++				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
+ 					   "msi4",  "msi5",  "msi6",  "msi7",
+ 					   "msi8",  "msi9", "msi10", "msi11",
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
