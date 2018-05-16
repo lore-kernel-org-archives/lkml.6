@@ -1,271 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752454AbeEPLJB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:09:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:46408 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751857AbeEPLI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:08:59 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
-References: <20180514144304.10484-1-punit.agrawal@arm.com>
-        <20180514144304.10484-5-punit.agrawal@arm.com>
-        <574c197f-378c-ca14-676b-c81e92585b4f@arm.com>
-Date: Wed, 16 May 2018 12:08:57 +0100
-In-Reply-To: <574c197f-378c-ca14-676b-c81e92585b4f@arm.com> (Suzuki
-        K. Poulose's message of "Tue, 15 May 2018 23:19:21 +0100")
-Message-ID: <87wow326ye.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752425AbeEPLO4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:14:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751664AbeEPLOz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:14:55 -0400
+Subject: Re: [PATCH v5 02/13] KVM: s390: refactor crypto initialization
+To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-3-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <67656726-4d9b-44e1-1e2b-ab11de83f513@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 16 May 2018 07:14:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <67656726-4d9b-44e1-1e2b-ab11de83f513@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051611-0008-0000-0000-000009CAB038
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01033097; UDB=6.00528211; IPR=6.00812229;
+ MB=3.00021143; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 11:14:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051611-0009-0000-0000-0000474CF665
+Message-Id: <6835f3b9-c660-fe7c-5583-8706cc1fa732@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160115
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suzuki K Poulose <suzuki.poulose@arm.com> writes:
-
-> On 05/14/2018 03:43 PM, Punit Agrawal wrote:
->> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
->> handling to add support for PUD hugepages.
+On 05/16/2018 04:51 AM, Pierre Morel wrote:
+> On 07/05/2018 17:11, Tony Krowiak wrote:
+>> This patch refactors the code that initializes the crypto
+>> configuration for a guest. The crypto configuration is contained in
+>> a crypto control block (CRYCB) which is a satellite control block to
+>> our main hardware virtualization control block. The CRYCB is
+>> attached to the main virtualization control block via a CRYCB
+>> designation (CRYCBD) designation field containing the address of
+>> the CRYCB as well as its format.
 >>
->> Addition of pud hugepage support enables additional hugepage
->> sizes (e.g., 1G with 4K granule) which can be useful on cores that
->> support mapping larger block sizes in the TLB entries.
+>> Prior to the introduction of AP device virtualization, there was
+>> no need to provide access to or specify the format of the CRYCB for
+>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>> on the host system. With the introduction of AP device virtualization,
+>> the CRYCB and its format must be made accessible to the guest
+>> regardless of the presence of the MSAX3 facility as long as the
+>> AP instructions are installed on the host.
 >>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 >> ---
->>   arch/arm/include/asm/kvm_mmu.h         | 19 ++++++++++++
->>   arch/arm64/include/asm/kvm_mmu.h       | 15 ++++++++++
->>   arch/arm64/include/asm/pgtable-hwdef.h |  4 +++
->>   arch/arm64/include/asm/pgtable.h       |  2 ++
->>   virt/kvm/arm/mmu.c                     | 40 ++++++++++++++++++++++++--
->>   5 files changed, 77 insertions(+), 3 deletions(-)
+>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>   arch/s390/kvm/kvm-s390.c         |   64 
+>> ++++++++++++++++++++++++++-----------
+>>   2 files changed, 46 insertions(+), 19 deletions(-)
 >>
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index 224c22c0a69c..155916dbdd7e 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
->>     #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
->>   #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
->> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
->>     #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
->> +/* No support for pud hugepages */
->> +#define kvm_pud_mkhuge(pud)	(pud)
->>     /*
->>    * The following kvm_*pud*() functionas are provided strictly to allow
->> @@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->>   	return false;
+>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>> b/arch/s390/include/asm/kvm_host.h
+>> index 81cdb6b..5393c4d 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -255,6 +255,7 @@ struct kvm_s390_sie_block {
+>>       __u8    reservede4[4];        /* 0x00e4 */
+>>       __u64    tecmc;            /* 0x00e8 */
+>>       __u8    reservedf0[12];        /* 0x00f0 */
+>> +#define CRYCB_FORMAT_MASK 0x00000003
+>>   #define CRYCB_FORMAT1 0x00000001
+>>   #define CRYCB_FORMAT2 0x00000003
+>>       __u32    crycbd;            /* 0x00fc */
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 1f50de7..99779a6 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -1875,14 +1875,35 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>>       return r;
 >>   }
->>   +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
->> +{
->> +	BUG();
->> +}
->> +
->> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
->> +{
->> +	BUG();
->> +	return pud;
->> +}
->> +
->> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
->> +{
->> +	BUG();
->> +	return pud;
->> +}
->>     static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
->>   {
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index f440cf216a23..f49a68fcbf26 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
->>     #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
->>   #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
->> +#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
->>     #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
->>   #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
->> +#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
->>     #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
->> +#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
->>     static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->>   {
->> @@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
->>   	return pmd;
->>   }
->>   +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
->> +{
->> +	pud_val(pud) |= PUD_S2_RDWR;
->> +	return pud;
->> +}
->> +
->>   static inline pte_t kvm_s2pte_mkexec(pte_t pte)
->>   {
->>   	pte_val(pte) &= ~PTE_S2_XN;
->> @@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
->>   	return pmd;
->>   }
->>   +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
->> +{
->> +	pud_val(pud) &= ~PUD_S2_XN;
->> +	return pud;
->> +}
->> +
->>   static inline void kvm_set_s2pte_readonly(pte_t *ptep)
->>   {
->>   	pteval_t old_pteval, pteval;
->> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
->> index fd208eac9f2a..e327665e94d1 100644
->> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->> @@ -193,6 +193,10 @@
->>   #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->>   #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->>   +#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /*
->> HAP[2:1] */
->> +#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
->> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
->> +
->>   /*
->>    * Memory Attribute override for Stage-2 (MemAttr[3:0])
->>    */
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index 7c4c8f318ba9..31ea9fda07e3 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
->>     #define pud_write(pud)		pte_write(pud_pte(pud))
->>   +#define pud_mkhuge(pud)		(__pud(pud_val(pud) &
->> ~PUD_TABLE_BIT))
->> +
->>   #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
->>   #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
->>   #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 671d3c0825f2..b0931fa2d64e 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->>   	return 0;
->>   }
->>   +static int stage2_set_pud_huge(struct kvm *kvm, struct
->> kvm_mmu_memory_cache *cache,
->> +			       phys_addr_t addr, const pud_t *new_pud)
->> +{
->> +	pud_t *pud, old_pud;
->> +
->> +	pud = stage2_get_pud(kvm, cache, addr);
->> +	VM_BUG_ON(!pud);
->> +
->> +	old_pud = *pud;
->> +	if (pud_present(old_pud)) {
->> +		pud_clear(pud);
->> +		kvm_tlb_flush_vmid_ipa(kvm, addr);
->> +	} else {
->> +		get_page(virt_to_page(pud));
->> +	}
->> +
->> +	kvm_set_pud(pud, *new_pud);
->> +	return 0;
->> +}
->> +
->>   static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
->>   {
->>   	pmd_t *pmdp;
->> @@ -1467,9 +1487,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   	}
->>     	vma_pagesize = vma_kernel_pagesize(vma);
->> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
->> +	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
->> +	    !logging_active) {
->> +		struct hstate *h = hstate_vma(vma);
->> +
->>   		hugetlb = true;
->> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->> +		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
->>   	} else {
->>   		/*
->>   		 * Pages belonging to memslots that don't have the same
->> @@ -1555,7 +1578,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   	if (exec_fault)
->>   		invalidate_icache_guest_page(pfn, vma_pagesize);
->>   -	if (vma_pagesize == PMD_SIZE) {
->> +	if (vma_pagesize == PUD_SIZE) {
->> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
->> +
->> +		new_pud = kvm_pud_mkhuge(new_pud);
->> +		if (writable)
->> +			new_pud = kvm_s2pud_mkwrite(new_pud);
->> +
->> +		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
->> +			new_pud = kvm_s2pud_mkexec(new_pud);
->> +
->> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
->> +	} else if (vma_pagesize == PMD_SIZE) {
->>   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
->>     		new_pmd = kvm_pmd_mkhuge(new_pmd);
 >>
+>> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>> +/*
+>> + * The format of the crypto control block (CRYCB) is specified in 
+>> the 3 low
+>> + * order bits of the CRYCB designation (CRYCBD) field as follows:
+>> + * Format 0: Neither the message security assist extension 3 (MSAX3) 
+>> nor the
+>> + *             AP extended addressing (APXA) facility are installed.
+>> + * Format 1: The APXA facility is not installed but the MSAX3 
+>> facility is.
+>> + * Format 2: Both the APXA and MSAX3 facilities are installed
+>> + */
+>> +static void kvm_s390_format_crycb(struct kvm *kvm)
+>>   {
+>> -    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>> kvm->arch.crypto.crycb;
+>> +    /* Clear the CRYCB format bits - i.e., set format 0 by default */
+>> +    kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
+>> +
+>> +    /* Check whether MSAX3 is installed */
+>> +    if (!test_kvm_facility(kvm, 76))
+>> +        return;
+>>
+>>       if (kvm_ap_apxa_installed())
+>>           kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>>       else
+>>           kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>> +
+>> +    /* Enable AES/DEA protected key functions by default */
+>> +    kvm->arch.crypto.aes_kw = 1;
+>> +    kvm->arch.crypto.dea_kw = 1;
+>> + get_random_bytes(kvm->arch.crypto.crycb->aes_wrapping_key_mask,
+>> + sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+>> + get_random_bytes(kvm->arch.crypto.crycb->dea_wrapping_key_mask,
+>> + sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>   }
+>>
+>>   static u64 kvm_s390_get_initial_cpuid(void)
+>> @@ -1896,19 +1917,17 @@ static u64 kvm_s390_get_initial_cpuid(void)
+>>
+>>   static void kvm_s390_crypto_init(struct kvm *kvm)
+>>   {
+>> -    if (!test_kvm_facility(kvm, 76))
+>> +    /*
+>> +     * If neither the AP instructions nor the message security assist
+>> +     * extension 3 (MSAX3) are installed, there is no need to 
+>> initialize a
+>> +     * crypto control block (CRYCB) for the guest.
+>> +     */
+>> +    if (!kvm_ap_instructions_available() && !test_kvm_facility(kvm, 
+>> 76))
+>>           return;
+>>
+>>       kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>> -    kvm_s390_set_crycb_format(kvm);
 >
 >
-> Punit,
+> For my point of view the all patch can be reduced to putting this
+> call (kvm_s390_set_crycb_format(kvm);) before testing for facility 76.
 >
-> Sorry for the late notice. I was looking deeply in to the stage2 table
-> code to rework the same for dynamic IPA and thus found this.
->
-> I am wondering if these changes are sufficient enough to add the PUD
-> hugepage support. There are lots places where we simply get the
-> stage2_pmd of a given address and then go about doing something at the
-> PMD level or drill down to PTE if the PMD is not huge. (e.g
-> stage2_is_exec, handle_access_fault etc). We simply do a pmd_offset()
-> on a PUD entry, without even checking if the PUD is huge or not.
+> (and setting the format correctly in kvm_s390_set_crycb_format(kvm))
 
-Having stared at the relevant code, I agree that more bits in the stage2
-mmu logic needs to be made huge PUD aware.
-
-I've been running guests with huge PUD on hardware and didn't hit any
-issues. But this seems to be due to the affected code running only in
-certain scenarios such as when save-restoring and possibly under memory
-pressure.
-
-I'll make sure to add this to my testing for the next version.
-
->
-> With the PUD huge support, I think we need to go a level up in all
-> these cases and drill down from PUD level, down to the PMD level and
-> then further down, depending on whether we have huge page support at
-> either of these levels.
-
->From a quick check I've identified the following functions (in addition
-to stage2_is_exec and handle_access_fault) which need to looked into -
-
-* stage2_get_pmd
-* stage2_set_pte
-* kvm_age_hva_handler
-* kvm_test_age_hva_handler
-
-I'll address PUD huegpage awareness throughout stage2 in the next
-version.
-
-Thanks,
-Punit
-
+I don't see what that buys us; it will just be reshuffling of the logic.
+The idea here is that all of the code related to formatting the CRYCB for
+use by the guest is contained in the kvm_s390_format_crycb(kvm) function.
+We don't need a CRYCB, however, if the AP instructions are not installed
+and the MSAX3 facility is not installed, so why even call
+kvm_s390_format_crycb(kvm) in that case?
 
 >
 >
-> Cheers
-> Suzuki
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+>
+>> -
+>> -    /* Enable AES/DEA protected key functions by default */
+>> -    kvm->arch.crypto.aes_kw = 1;
+>> -    kvm->arch.crypto.dea_kw = 1;
+>> - get_random_bytes(kvm->arch.crypto.crycb->aes_wrapping_key_mask,
+>> - sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+>> - get_random_bytes(kvm->arch.crypto.crycb->dea_wrapping_key_mask,
+>> - sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>> +    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>> kvm->arch.crypto.crycb;
+>> +    kvm_s390_format_crycb(kvm);
+>>   }
+>>
+>>   static void sca_dispose(struct kvm *kvm)
+>> @@ -2430,17 +2449,24 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu 
+>> *vcpu)
+>>
+>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>>   {
+>> -    if (!test_kvm_facility(vcpu->kvm, 76))
+>> +    /*
+>> +     * If a crypto control block designation (CRYCBD) has not been
+>> +     * initialized
+>> +     */
+>> +    if (vcpu->kvm->arch.crypto.crycbd == 0)
+>>           return;
+>>
+>> -    vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
+>> +    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>
+>> -    if (vcpu->kvm->arch.crypto.aes_kw)
+>> -        vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>> -    if (vcpu->kvm->arch.crypto.dea_kw)
+>> -        vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>> +    /* If MSAX3 is installed, set up protected key support */
+>> +    if (test_kvm_facility(vcpu->kvm, 76)) {
+>> +        vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
+>>
+>> -    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>> +        if (vcpu->kvm->arch.crypto.aes_kw)
+>> +            vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>> +        if (vcpu->kvm->arch.crypto.dea_kw)
+>> +            vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>> +    }
+>>   }
+>>
+>>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+>
+>
