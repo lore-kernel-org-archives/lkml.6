@@ -1,57 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752417AbeEPMX1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:23:27 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34939 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbeEPMXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:23:24 -0400
-X-Google-Smtp-Source: AB8JxZo8I/5pDdTa1BFESm1/5pf11tcaRkXxlsqE9mIy6kIJV1Zp+wA25bhXCNzW5C/80kJ1wIFuSUDVgaZiwzE/oQ8=
+        id S1752411AbeEPMZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:25:57 -0400
+Received: from mga11.intel.com ([192.55.52.93]:62149 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751151AbeEPMZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:25:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="229056167"
+Date: Wed, 16 May 2018 20:26:21 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v4 5/5] virtio_ring: enable packed ring
+Message-ID: <20180516122621.GA986@debian>
+References: <20180516083737.26504-1-tiwei.bie@intel.com>
+ <20180516083737.26504-6-tiwei.bie@intel.com>
+ <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
+ <20180516102159.GA11467@debian>
+ <dc6f6d01-7ca5-5264-6a58-1d5327da08cb@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503225537.20748-3-digetx@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com> <20180503225537.20748-3-digetx@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 14:23:23 +0200
-Message-ID: <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dc6f6d01-7ca5-5264-6a58-1d5327da08cb@cogentembedded.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 12:55 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
+On Wed, May 16, 2018 at 02:42:53PM +0300, Sergei Shtylyov wrote:
+> On 05/16/2018 01:21 PM, Tiwei Bie wrote:
+> 
+> >>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> >>> ---
+> >>>   drivers/virtio/virtio_ring.c | 2 ++
+> >>>   1 file changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> >>> index de3839f3621a..b158692263b0 100644
+> >>> --- a/drivers/virtio/virtio_ring.c
+> >>> +++ b/drivers/virtio/virtio_ring.c
+> >>> @@ -1940,6 +1940,8 @@ void vring_transport_features(struct virtio_device *vdev)
+> >>>   			break;
+> >>>   		case VIRTIO_F_IOMMU_PLATFORM:
+> >>>   			break;
+> >>> +		case VIRTIO_F_RING_PACKED:
+> >>> +			break;
+> >>
+> >>    Why not just add this *case* under the previous *case*?
+> > 
+> > Do you mean fallthrough? Something like:
+> > 
+> > 		case VIRTIO_F_IOMMU_PLATFORM:
+> > 		case VIRTIO_F_RING_PACKED:
+> > 			break;
+> 
+>    Yes, exactly. :-)
 
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->
-> v2: This patch is factored out from the v1 clk/DT series so that it could be
->     applied separately.
+Using fallthrough in this case will make the code more
+compact. I like such coding style. But unfortunately,
+it's not consistent with the existing code. :(
 
-Patch applied unless Stephen W protests.
-Please include swarren on future patches to this driver.
+The whole function will become something like this:
 
-Yours,
-Linus Walleij
+void vring_transport_features(struct virtio_device *vdev)
+{
+	unsigned int i;
+
+	for (i = VIRTIO_TRANSPORT_F_START; i < VIRTIO_TRANSPORT_F_END; i++) {
+		switch (i) {
+		case VIRTIO_RING_F_INDIRECT_DESC:
+			break;
+		case VIRTIO_RING_F_EVENT_IDX:
+			break;
+		case VIRTIO_F_VERSION_1:
+			break;
+		case VIRTIO_F_IOMMU_PLATFORM:
+		case VIRTIO_F_RING_PACKED:
+			break;
+		default:
+			/* We don't understand this bit. */
+			__virtio_clear_bit(vdev, i);
+		}
+	}
+}
+
+Best regards,
+Tiwei Bie
+
+> 
+> > Best regards,
+> > Tiwei Bie
+> 
+> [...]
+> 
+> MBR, Sergei
+> 
