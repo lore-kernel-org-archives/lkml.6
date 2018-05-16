@@ -1,92 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeEPPKI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:10:08 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37200 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbeEPPKD (ORCPT
+        id S1751379AbeEPPMG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:12:06 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33437 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeEPPME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:10:03 -0400
-Date: Wed, 16 May 2018 08:08:29 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 14/14] mm: turn on vm_fault_t type checking
-Message-ID: <20180516150829.GA4904@magnolia>
-References: <20180516054348.15950-1-hch@lst.de>
- <20180516054348.15950-15-hch@lst.de>
+        Wed, 16 May 2018 11:12:04 -0400
+X-Google-Smtp-Source: AB8JxZoIAgdHNWa2aHBN9HWhKCma1aUSu1ihYbfg8mudds3DVnCKbMVBxfyoOGYqtcajEh3L1xfdVA==
+Date: Wed, 16 May 2018 09:12:01 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
+Cc: Hal Rosenstock <hal@dev.mellanox.co.il>,
+        Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
+ check eligibility of the pkeys
+Message-ID: <20180516151201.GA25661@ziepe.ca>
+References: <20180509093020.24503-3-Haakon.Bugge@oracle.com>
+ <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
+ <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
+ <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
+ <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
+ <20180514210200.GN21531@ziepe.ca>
+ <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
+ <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
+ <20180515190424.GL5615@ziepe.ca>
+ <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180516054348.15950-15-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=860
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805160153
+In-Reply-To: <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:43:48AM +0200, Christoph Hellwig wrote:
-> Switch vm_fault_t to point to an unsigned int with __bіtwise annotations.
-> This both catches any old ->fault or ->page_mkwrite instance with plain
-> compiler type checking, as well as finding more intricate problems with
-> sparse.
+On Wed, May 16, 2018 at 08:47:21AM +0200, Håkon Bugge wrote:
+
+> > This is not a difficult issue.
+> > 
+> > If the GMP is properly tagged with the right PKey then it will never
+> > be delivered to the VM if the VM does not have the PKey in the
+> > table.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+> Not quite right. For the shared port model, a GMP will (most
+> probably) be accepted by the physical port, due to:
 
-<ULTRASNIP>
+Sure, but I am talking about the VM's 'virtual port'.
 
-For the iomap and xfs parts,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> So, if the GMP is destined to VM1, which is a limited member, but we
+> have another VM2 which is a full member of the same partition, the
+> GMP will pass the HCA’s PKey check.
 
-That said...
+Sure.
 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 54f1e05ecf3e..da2b77a19911 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -22,7 +22,8 @@
->  #endif
->  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
->  
-> -typedef int vm_fault_t;
-> +typedef unsigned __bitwise vm_fault_t;
-> +
->  
->  struct address_space;
->  struct mem_cgroup;
-> @@ -619,7 +620,7 @@ struct vm_special_mapping {
->  	 * If non-NULL, then this is called to resolve page faults
->  	 * on the special mapping.  If used, .pages is not checked.
->  	 */
-> -	int (*fault)(const struct vm_special_mapping *sm,
-> +	vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+> > It is up to the hypervisor to block GMPs that have Pkeys not in
+> > the virtual PKey table of the VF.
+> 
+> The packet is received by the HCA and stripped from IB headers, in
+> particular the BTH. How can the "hypervisor" block it when its
+> doesn’t have access to the GMP’s BTH.PKey?
 
-Uh, we're changing function signatures /and/ redefinining vm_fault_t?
-All in the same 90K patch?
+This is wrong too, in Linux the WC's for GMP packets include the pkey
+index that was used to RX the packet. This is a Linux extension
+matching the one on the sending side.
 
-I /was/ expecting a series of "convert XXXXX and all callers/users"
-patches followed by a trivial one to switch the definition, not a giant
-pile of change.  FWIW I don't mind so much if you make a patch
-containing a change for some super-common primitive and a hojillion
-little diff hunks tree-wide, but only one logical change at a time for a
-big patch, please...
+The hypervisor *must* block these GMPs, it is a hard requirement of
+the pkey security model for VMs.
 
-I quite prefer seeing the whole series from start to finish all packaged
-up in one series, but wow this was overwhelming. :/
+AFAIK the Mellanox drivers do this right - do you know differently?
 
---D
+> > The only time you could need a new REJ code is if the GMP is using a
+> > PKey different from the REQ - which is a pretty goofy thing to do
+> > considering this VM case.
+>
+> Its goofy. In the CX-3 shared port model, the BTH.PKey is the
+> default one and the REQ.PKey is the full one even if the sending
+> VM’s port only is a limited member. This patch series fixes the last
+> issue.
 
-<ULTRASNIP>
+Again, this is wrong, the BTH.Pkey and REQ.Pkey should be the same -
+please fix that first before trying to change anything else.
+
+> > Remember the SM doesn't know what Pkeys are in the VM, so it is
+> > basically impossible for the REQ side to reliably select two different
+> > pkeys and know that they will bothmake it to the VM.
+> 
+> The active side should use the "authentic" PKey in the REQ
+> message. That is the one that would be used in BTH.PKey when
+> communication has been established. This is implemented by this
+> patch series.
+> 
+> Not sure what you mean by "reliably select two different pkeys". The
+> CM REQ message contains one PKey.
+
+If BTH.Pkey != REQ.PKey then the requestor side has to obviously
+select two PKeys, which is basically impossible.
+
+The VM should not be part of the default partition, for instance.
+
+> See above, not sure how that could be implemented. And if it is
+> solved by the HCA trapping the GMP due to the PKey check, it doesn’t
+> help me, as the purpose of the series is to avoid (excessive) PKey
+> traps sent to the SM.
+
+It might not help you, but is shows this fix for the pkey trap issue
+is wrong. You must fix the pkey traps on the sending side, not on the
+responder side..
+
+> > If I recall there were bugs here in mlx drivers, where the driver
+> > sent with the wrong Pkey. I think this has actually been fixed
+> > now, so please check the upstream kernel to be sure the Pkey is
+> > not what it is supposed to be.
+> 
+> Let me get back to you with some ibdumps here.
+
+Upstream kernel (eg 4.16) and newish Mellanox firmware please.
+
+And it would be fantastic if you could ID why this is happening, AFAIK
+it should be OK in the kernel.
+
+Jason
