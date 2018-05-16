@@ -1,23 +1,23 @@
 Return-Path: <flo@geekplace.eu>
-X-Google-Smtp-Source: AB8JxZqLZ6dsIghz+y07M/u+e2re0bZA9701RXcSsExCUg+bIKJwHM8muTTc7UFqNKEJYfjKgiu3
-ARC-Seal: i=1; a=rsa-sha256; t=1526392275; cv=none;
+X-Google-Smtp-Source: AB8JxZrPzk9dG9ZRSro63xJohT0kiLTIi0ryfOrVyAnU5HMMGT2ojsEbM7NvT05V49ZVr5T/7Gzc
+ARC-Seal: i=1; a=rsa-sha256; t=1526472329; cv=none;
         d=google.com; s=arc-20160816;
-        b=H6X0875KJzhqRkJam1OnfhcZnzLdQkwLebM5rmbg1EGnu384UQGHXF1SQAdLlOOfgb
-         sjiQVrkCoM2hCXugbq/hygc9yj7XMptAQExBt3nZ1SgAgISwvqw1gFuFyqKCuNQQK+Uo
-         g2FeErCYN6GgePBYuvMppn5RA5qgOV6LV56AMvxRD5KUA/xPjBLD30fb2pJqWTqtiCQc
-         38R5dMOk4ZV82DPooDt37vtDkZg6eM3Db7nD77v3xXzz25LlSp+3HDy2chCMBnhoRcC2
-         xb5ObyWpnXUfSFdqR1clxizjmKe7sjJx4SmeiEfpVm22vyKxpOSxppoTTpO9I19PPwco
-         UnPQ==
+        b=KSDdImaJAutgSb0nXvgiDBDB3kM522QnSKOzCsw2OgoLppfGgFPMEJ4HfdgLJNU+PA
+         QP0iv06QvRVe78fsqIgWCJYwB1CbAqPYDQ/tgzdIljXeBVrDeh1tBxoLkVxB4zIk1kws
+         2vQoXdo5KjxFuTOF+sxcTaQnLL0e1Cz1/R4HRx7Sqt13/uCebH3GHCu4AmDJgMH3EyRf
+         ORznIFTGARvpylilptU6vcVJt1jg+5jaQC0VeVZvXiTSzELSkVIoE0Bh7YIPl6tL02bV
+         ejfwoMgcSeXwNi49D1h44KV0BG1itwQQLzUHl+2DwdhaXbxitBOKmYahVHkEY944YaJG
+         8Q+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=0yQ31fe6oOrjdQX8UugxKzmqtDIv18g8MuOZ9nWYOdQ=;
-        b=YAwwCbSKQKUfWXLUu6u4Q+om572lpkUf+A55MRcQS5l7Mkj28cab0gRuoWOfEzvbsI
-         dQ0khYZwKPfq/EQnEVafGkSQcMUrDrUqhxG8yRp5JKGEo9poYtAieNum+N8sL+5gd9rV
-         KWczxNZW3s86pV01wtGCdWEfNOP72jJHz2QeGKOPWDkfkRpxk6IzUF4H0GMutZ54/2nA
-         sDCLjLjUH8H8nfdKhny+AEQDOXbgPNW0Q+/4TrJdYPkS6s/AxDWVYKa2n6FugsIAz4qv
-         2VFsH/i5kbuEupS0jz11NXiamCImLzvOd597rJ5rF9MGY5nFFUftoGWnjsk6wjJsJowH
-         ning==
+        bh=k/1kmH/LuSTv/Z293DXOQwLWsrIIn+0dCTChTV7O98I=;
+        b=Fwui5J20m4gZ9u37SXqKPXZSENpZYqYcx8eUon7kuv//X5M7DuIX97Qnc6RoBoOqcH
+         H7N8XwgXrOAi7rpvpQbkNaBafoZhRhJoEusxKUCTFliBxctCjYLpCRSvQQLPZ+Mxkk3f
+         wnF5w1L7El6elg0vO5+RX2O0W1Yec2BeoYRKwdU67qyqCpOK8L9nJ+GxmBpEleT+FuwZ
+         ane+54nVfw6P6JnQ1Pf/JjPI4lomY6f0oJ51GwCNXqi+gzEsprlflI0l2ivpmyBe6ALr
+         ml+R27JnNLZjxv+QyaGcjndr/07hQcsFNt15Tn1WfUeKRp36JQY1ahSOdy4m9/7QEbCt
+         iNxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of flo@geekplace.eu designates 2a03:4000:6:3a8::1 as permitted sender) smtp.mailfrom=flo@geekplace.eu
 Authentication-Results: mx.google.com;
@@ -26,35 +26,37 @@ From: Florian Schmaus <flo@geekplace.eu>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Florian Schmaus <flo@geekplace.eu>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] return EINVAL error instead of BUG_ON()
-Date: Tue, 15 May 2018 15:51:11 +0200
-Message-Id: <20180515135114.31939-1-flo@geekplace.eu>
+Subject: [PATCH v4 0/3] return EINVAL error instead of BUG_ON()
+Date: Wed, 16 May 2018 14:05:24 +0200
+Message-Id: <20180516120527.29403-1-flo@geekplace.eu>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180504132357.31771-1-flo@geekplace.eu>
-References: <20180504132357.31771-1-flo@geekplace.eu>
+In-Reply-To: <20180515135114.31939-1-flo@geekplace.eu>
+References: <20180515135114.31939-1-flo@geekplace.eu>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600538306192171209?=
-X-GMAIL-MSGID: =?utf-8?q?1600538306192171209?=
+X-GMAIL-MSGID: =?utf-8?q?1600622249539022912?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 This patch series makes driver_register() emit an error message and
-return a failure code instead of triggering a BUG_ON()
+return a failure code instead of triggering a BUG_ON().
 
-I tried to make the error message more descriptive compared to v2 by
-including the error of the failed bus registration in [3/3]. I'd be
-happy to include some more context if you have further suggestions.
-
+The first patch will now print out the name of the faulty driver *and*
+the name of the involved bus. The second patch records the error code
+if bus_register() fails. The third and final patch of the series
+extends the first patch so that the recorded error code is also print
+out if non-zero. Otherwhise, if drv->bus->p is NULL but the error code
+is zero, then probably bus_register() was never called before.
 
 Florian Schmaus (3):
   driver-core: return EINVAL error instead of BUG_ON()
   driver-core: record error on bus registration
   driver-core: print bus registration error value
 
- drivers/base/bus.c     | 2 ++
- drivers/base/driver.c  | 7 ++++++-
- include/linux/device.h | 1 +
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/base/bus.c     |  2 ++
+ drivers/base/driver.c  | 14 +++++++++++++-
+ include/linux/device.h |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
 -- 
 2.16.1
