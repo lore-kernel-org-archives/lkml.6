@@ -1,68 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeEPICH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:02:07 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:63818 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751319AbeEPICE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:02:04 -0400
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
- compiled by default
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <gabriel.fernandez@st.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
- <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
- <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
- <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
- <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
- <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <503ec7d8-e493-3458-e974-5fab5649aaf8@st.com>
-Date: Wed, 16 May 2018 10:01:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_04:,,
- signatures=0
+        id S1752518AbeEPICg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:02:36 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29720 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752573AbeEPIBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 04:01:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="39721054"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 2/2] x86/boot/compressed/64: Fix moving page table out of trampoline memory
+Date: Wed, 16 May 2018 11:01:29 +0300
+Message-Id: <20180516080131.27913-3-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180516080131.27913-1-kirill.shutemov@linux.intel.com>
+References: <20180516080131.27913-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+cleanup_trampoline() relocates the top-level page table out of
+trampoline memory. We use 'top_pgtable' as our new top-level page table.
 
+But if the 'top_pgtable' would be referenced from C in a usual way,
+the address of the table will be calculated relative to RIP.
+After kernel gets relocated, the address will be in the middle of
+decompression buffer and the page table may get overwritten.
+This leads to a crash.
 
-On 05/16/2018 09:57 AM, Stephen Boyd wrote:
-> Quoting Alexandre Torgue (2018-05-16 00:34:21)
->>>>
->>>> Sorry I don't understand. Clock driver is mandatory to boot each
->>>> platform and depends on machine type. Do you see a use case where we
->>>> could need to disable the clock driver? (it would impose to change
->>>> devicetree to use fixed clocks and to have a booloader which configures
->>>> all PLL and clocks).
->>>
->>> No. My understanding of the patch that introduced the options was to
->>> allow the user to disable these drivers if they wanted to. I'm just
->>> reiterating the spirit of that patch. That must be wrong?
->>>
->> Actually initial patch is a mistake. You can't boot STM32 platform
->> without clock driver. This patch fixes that, and offers the possibility
->> to not build the clock driver of the machine which are not used
->> (currently all machine are selected but to reduce memory footprint you
->> could disable not used machine in defconfig).
-> 
-> Ok I stuck the patch into clk-fixes. Will send off to Linus tomorrow or the
-> next day.
-> 
-Thanks Stephen
+We calculate the address of other page tables relative to the relocation
+address. It makes them safe. We should do the same for 'top_pgtable'.
+
+Calculate the address of 'top_pgtable' in assembly and pass down to
+cleanup_trampoline().
+
+Move the page table to .pgtable section where the rest of page tables
+are. The section is @nobits so we save 4k in kernel image.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fixes: e9d0e6330eb8 ("x86/boot/compressed/64: Prepare new top-level page table for trampoline")
+---
+ arch/x86/boot/compressed/head_64.S    | 11 +++++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 14 +++-----------
+ 2 files changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index d17af6a4bfc9..8169e8b7a4dc 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -389,10 +389,14 @@ trampoline_return:
+ 	/*
+ 	 * cleanup_trampoline() would restore trampoline memory.
+ 	 *
++	 * RDI is address of the page table to use instead of page table
++	 * in trampoline memory (if required).
++	 *
+ 	 * RSI holds real mode data and needs to be preserved across
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	leaq	top_pgtable(%rbx), %rdi
+ 	call	cleanup_trampoline
+ 	popq	%rsi
+ 
+@@ -691,3 +695,10 @@ boot_stack_end:
+ 	.balign 4096
+ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
++
++/*
++ * The page table is going to be used instead of page table in the trampoline
++ * memory.
++ */
++top_pgtable:
++	.fill PAGE_SIZE, 1, 0
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 32af1cbcd903..a362fa0b849c 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -22,14 +22,6 @@ struct paging_config {
+ /* Buffer to preserve trampoline memory */
+ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+ 
+-/*
+- * The page table is going to be used instead of page table in the trampoline
+- * memory.
+- *
+- * It must not be in BSS as BSS is cleared after cleanup_trampoline().
+- */
+-static char top_pgtable[PAGE_SIZE] __aligned(PAGE_SIZE) __section(.data);
+-
+ /*
+  * Trampoline address will be printed by extract_kernel() for debugging
+  * purposes.
+@@ -134,7 +126,7 @@ struct paging_config paging_prepare(void)
+ 	return paging_config;
+ }
+ 
+-void cleanup_trampoline(void)
++void cleanup_trampoline(void *pgtable)
+ {
+ 	void *trampoline_pgtable;
+ 
+@@ -145,8 +137,8 @@ void cleanup_trampoline(void)
+ 	 * if it's there.
+ 	 */
+ 	if ((void *)__native_read_cr3() == trampoline_pgtable) {
+-		memcpy(top_pgtable, trampoline_pgtable, PAGE_SIZE);
+-		native_write_cr3((unsigned long)top_pgtable);
++		memcpy(pgtable, trampoline_pgtable, PAGE_SIZE);
++		native_write_cr3((unsigned long)pgtable);
+ 	}
+ 
+ 	/* Restore trampoline memory */
+-- 
+2.17.0
