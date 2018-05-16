@@ -1,96 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeEPGCY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 02:02:24 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:47648 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbeEPGCX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 02:02:23 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w4G62JsN023268
-X-Nifty-SrcIP: [209.85.217.170]
-X-Google-Smtp-Source: AB8JxZq7PiPZTW/0pnPyD5thDWQNj1uORadLBBatwd18eGvF3seVfPBMeOfXTbGaLZc8YB5rvKcWV1kFX0yupo4VICg=
+        id S1752389AbeEPGDA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 02:03:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:45666 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751489AbeEPGC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 02:02:58 -0400
+Date: Wed, 16 May 2018 08:07:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+Message-ID: <20180516060722.GA24855@lst.de>
+References: <20180515225124.20428-1-bart.vanassche@wdc.com> <20180515225124.20428-5-bart.vanassche@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515155038.7387bf2c@canb.auug.org.au>
-References: <20180515155038.7387bf2c@canb.auug.org.au>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 16 May 2018 15:01:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
-Message-ID: <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515225124.20428-5-bart.vanassche@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen,
+> +config ARCH_HAVE_CMPXCHG64
+> +	bool
 
+64-bit architectures must support this as long is 64-bits wide.
 
-2018-05-15 14:50 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
->
-> After merging the kbuild tree, today's linux-next build (x86_64
-> modules_install) failed like this:
->
-> Usage: scripts/depmod.sh /sbin/depmod <kernelrelease> <symbolprefix>
-> Makefile:1314: recipe for target '_modinst_post' failed
->
-> Caused by commit
->
->   ea7ad9856a2c ("depmod.sh: remove symbol prefix support")
->
-> I added the following fix for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 15 May 2018 15:47:33 +1000
-> Subject: [PATCH] depmod.sh: fix syntax check and uage message
->
-> fixes: ea7ad9856a2c ("depmod.sh: remove symbol prefix support")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
+So this should have a
 
+	default y if 64BIT
 
-Thanks for catching this.
-
-How should I handle your fix-up?
-
-May I squash into the original one if you ack to do it,
-or is it better to keep it as a separate patch?
-
-
-
-
->  scripts/depmod.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/depmod.sh b/scripts/depmod.sh
-> index 421d1aa01304..1a6f85e0e6e1 100755
-> --- a/scripts/depmod.sh
-> +++ b/scripts/depmod.sh
-> @@ -3,8 +3,8 @@
->  #
->  # A depmod wrapper used by the toplevel Makefile
->
-> -if test $# -ne 3; then
-> -       echo "Usage: $0 /sbin/depmod <kernelrelease> <symbolprefix>" >&2
-> +if test $# -ne 2; then
-> +       echo "Usage: $0 /sbin/depmod <kernelrelease>" >&2
->         exit 1
->  fi
->  DEPMOD=$1
-> --
-> 2.17.0
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+which also means you only need to explicitly select in on 32-bit
+architectures that support 64-bit cmpxchg.
