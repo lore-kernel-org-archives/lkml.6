@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeEPVEy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:04:54 -0400
-Received: from gofer.mess.org ([88.97.38.141]:59695 "EHLO gofer.mess.org"
+        id S1752188AbeEPVFV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:05:21 -0400
+Received: from gofer.mess.org ([88.97.38.141]:59369 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751375AbeEPVEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:04:45 -0400
+        id S1751367AbeEPVEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 17:04:44 -0400
 From: Sean Young <sean@mess.org>
 To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
@@ -14,9 +14,9 @@ To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Matthias Reichl <hias@horus.com>,
         Devin Heitmueller <dheitmueller@kernellabs.com>,
         Y Song <ys114321@gmail.com>
-Subject: [PATCH v3 2/2] bpf: add selftest for rawir_event type program
-Date: Wed, 16 May 2018 22:04:41 +0100
-Message-Id: <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
+Subject: [PATCH v3 1/2] media: rc: introduce BPF_PROG_RAWIR_EVENT
+Date: Wed, 16 May 2018 22:04:40 +0100
+Message-Id: <92785c791057185fa5691f78cecfa4beae7fc336.1526504511.git.sean@mess.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1526504511.git.sean@mess.org>
 References: <cover.1526504511.git.sean@mess.org>
@@ -26,39 +26,637 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is simple test over rc-loopback.
+Add support for BPF_PROG_RAWIR_EVENT. This type of BPF program can call
+rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
+that the last key should be repeated.
+
+The bpf program can be attached to using the bpf(BPF_PROG_ATTACH) syscall;
+the target_fd must be the /dev/lircN device.
 
 Signed-off-by: Sean Young <sean@mess.org>
 ---
- tools/bpf/bpftool/prog.c                      |   1 +
- tools/include/uapi/linux/bpf.h                |  57 +++++++-
- tools/lib/bpf/libbpf.c                        |   1 +
- tools/testing/selftests/bpf/Makefile          |   8 +-
- tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
- tools/testing/selftests/bpf/test_rawir.sh     |  37 +++++
- .../selftests/bpf/test_rawir_event_kern.c     |  26 ++++
- .../selftests/bpf/test_rawir_event_user.c     | 130 ++++++++++++++++++
- 8 files changed, 261 insertions(+), 5 deletions(-)
- create mode 100755 tools/testing/selftests/bpf/test_rawir.sh
- create mode 100644 tools/testing/selftests/bpf/test_rawir_event_kern.c
- create mode 100644 tools/testing/selftests/bpf/test_rawir_event_user.c
+ drivers/media/rc/Kconfig           |  13 ++
+ drivers/media/rc/Makefile          |   1 +
+ drivers/media/rc/bpf-rawir-event.c | 363 +++++++++++++++++++++++++++++
+ drivers/media/rc/lirc_dev.c        |  24 ++
+ drivers/media/rc/rc-core-priv.h    |  24 ++
+ drivers/media/rc/rc-ir-raw.c       |  14 +-
+ include/linux/bpf_rcdev.h          |  30 +++
+ include/linux/bpf_types.h          |   3 +
+ include/uapi/linux/bpf.h           |  55 ++++-
+ kernel/bpf/syscall.c               |   7 +
+ 10 files changed, 531 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/media/rc/bpf-rawir-event.c
+ create mode 100644 include/linux/bpf_rcdev.h
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 9bdfdf2d3fbe..8889a4ee8577 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -71,6 +71,7 @@ static const char * const prog_type_name[] = {
- 	[BPF_PROG_TYPE_SK_MSG]		= "sk_msg",
- 	[BPF_PROG_TYPE_RAW_TRACEPOINT]	= "raw_tracepoint",
- 	[BPF_PROG_TYPE_CGROUP_SOCK_ADDR] = "cgroup_sock_addr",
-+	[BPF_PROG_TYPE_RAWIR_EVENT]	= "rawir_event",
+diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+index eb2c3b6eca7f..2172d65b0213 100644
+--- a/drivers/media/rc/Kconfig
++++ b/drivers/media/rc/Kconfig
+@@ -25,6 +25,19 @@ config LIRC
+ 	   passes raw IR to and from userspace, which is needed for
+ 	   IR transmitting (aka "blasting") and for the lirc daemon.
+ 
++config BPF_RAWIR_EVENT
++	bool "Support for eBPF programs attached to lirc devices"
++	depends on BPF_SYSCALL
++	depends on RC_CORE=y
++	depends on LIRC
++	help
++	   Allow attaching eBPF programs to a lirc device using the bpf(2)
++	   syscall command BPF_PROG_ATTACH. This is supported for raw IR
++	   receivers.
++
++	   These eBPF programs can be used to decode IR into scancodes, for
++	   IR protocols not supported by the kernel decoders.
++
+ menuconfig RC_DECODERS
+ 	bool "Remote controller decoders"
+ 	depends on RC_CORE
+diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
+index 2e1c87066f6c..74907823bef8 100644
+--- a/drivers/media/rc/Makefile
++++ b/drivers/media/rc/Makefile
+@@ -5,6 +5,7 @@ obj-y += keymaps/
+ obj-$(CONFIG_RC_CORE) += rc-core.o
+ rc-core-y := rc-main.o rc-ir-raw.o
+ rc-core-$(CONFIG_LIRC) += lirc_dev.o
++rc-core-$(CONFIG_BPF_RAWIR_EVENT) += bpf-rawir-event.o
+ obj-$(CONFIG_IR_NEC_DECODER) += ir-nec-decoder.o
+ obj-$(CONFIG_IR_RC5_DECODER) += ir-rc5-decoder.o
+ obj-$(CONFIG_IR_RC6_DECODER) += ir-rc6-decoder.o
+diff --git a/drivers/media/rc/bpf-rawir-event.c b/drivers/media/rc/bpf-rawir-event.c
+new file mode 100644
+index 000000000000..7cb48b8d87b5
+--- /dev/null
++++ b/drivers/media/rc/bpf-rawir-event.c
+@@ -0,0 +1,363 @@
++// SPDX-License-Identifier: GPL-2.0
++// bpf-rawir-event.c - handles bpf
++//
++// Copyright (C) 2018 Sean Young <sean@mess.org>
++
++#include <linux/bpf.h>
++#include <linux/filter.h>
++#include <linux/bpf_rcdev.h>
++#include "rc-core-priv.h"
++
++/*
++ * BPF interface for raw IR
++ */
++const struct bpf_prog_ops rawir_event_prog_ops = {
++};
++
++BPF_CALL_1(bpf_rc_repeat, struct bpf_rawir_event*, event)
++{
++	struct ir_raw_event_ctrl *ctrl;
++
++	ctrl = container_of(event, struct ir_raw_event_ctrl, bpf_rawir_event);
++
++	rc_repeat(ctrl->dev);
++
++	return 0;
++}
++
++static const struct bpf_func_proto rc_repeat_proto = {
++	.func	   = bpf_rc_repeat,
++	.gpl_only  = true, /* rc_repeat is EXPORT_SYMBOL_GPL */
++	.ret_type  = RET_INTEGER,
++	.arg1_type = ARG_PTR_TO_CTX,
++};
++
++BPF_CALL_4(bpf_rc_keydown, struct bpf_rawir_event*, event, u32, protocol,
++	   u32, scancode, u32, toggle)
++{
++	struct ir_raw_event_ctrl *ctrl;
++
++	ctrl = container_of(event, struct ir_raw_event_ctrl, bpf_rawir_event);
++
++	rc_keydown(ctrl->dev, protocol, scancode, toggle != 0);
++
++	return 0;
++}
++
++static const struct bpf_func_proto rc_keydown_proto = {
++	.func	   = bpf_rc_keydown,
++	.gpl_only  = true, /* rc_keydown is EXPORT_SYMBOL_GPL */
++	.ret_type  = RET_INTEGER,
++	.arg1_type = ARG_PTR_TO_CTX,
++	.arg2_type = ARG_ANYTHING,
++	.arg3_type = ARG_ANYTHING,
++	.arg4_type = ARG_ANYTHING,
++};
++
++static const struct bpf_func_proto *
++rawir_event_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++{
++	switch (func_id) {
++	case BPF_FUNC_rc_repeat:
++		return &rc_repeat_proto;
++	case BPF_FUNC_rc_keydown:
++		return &rc_keydown_proto;
++	case BPF_FUNC_map_lookup_elem:
++		return &bpf_map_lookup_elem_proto;
++	case BPF_FUNC_map_update_elem:
++		return &bpf_map_update_elem_proto;
++	case BPF_FUNC_map_delete_elem:
++		return &bpf_map_delete_elem_proto;
++	case BPF_FUNC_ktime_get_ns:
++		return &bpf_ktime_get_ns_proto;
++	case BPF_FUNC_tail_call:
++		return &bpf_tail_call_proto;
++	case BPF_FUNC_get_prandom_u32:
++		return &bpf_get_prandom_u32_proto;
++	case BPF_FUNC_trace_printk:
++		if (capable(CAP_SYS_ADMIN))
++			return bpf_get_trace_printk_proto();
++		/* fall through */
++	default:
++		return NULL;
++	}
++}
++
++static bool rawir_event_is_valid_access(int off, int size,
++					enum bpf_access_type type,
++					const struct bpf_prog *prog,
++					struct bpf_insn_access_aux *info)
++{
++	/* struct bpf_rawir_event has two u32 fields */
++	if (type == BPF_WRITE)
++		return false;
++
++	if (size != sizeof(__u32))
++		return false;
++
++	if (!(off == offsetof(struct bpf_rawir_event, duration) ||
++	      off == offsetof(struct bpf_rawir_event, type)))
++		return false;
++
++	return true;
++}
++
++const struct bpf_verifier_ops rawir_event_verifier_ops = {
++	.get_func_proto  = rawir_event_func_proto,
++	.is_valid_access = rawir_event_is_valid_access
++};
++
++#define BPF_MAX_PROGS 64
++
++static int rc_dev_bpf_attach(struct rc_dev *rcdev, struct bpf_prog *prog)
++{
++	struct ir_raw_event_ctrl *raw;
++	struct bpf_prog_list *pl;
++	int ret, size;
++
++	if (rcdev->driver_type != RC_DRIVER_IR_RAW)
++		return -EINVAL;
++
++	ret = mutex_lock_interruptible(&ir_raw_handler_lock);
++	if (ret)
++		return ret;
++
++	raw = rcdev->raw;
++	if (!raw) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	size = 0;
++	list_for_each_entry(pl, &raw->progs, node) {
++		if (pl->prog == prog) {
++			ret = -EEXIST;
++			goto out;
++		}
++
++		size++;
++	}
++
++	if (size >= BPF_MAX_PROGS) {
++		ret = -E2BIG;
++		goto out;
++	}
++
++	pl = kmalloc(sizeof(*pl), GFP_KERNEL);
++	if (!pl) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	pl->prog = prog;
++	list_add(&pl->node, &raw->progs);
++out:
++	mutex_unlock(&ir_raw_handler_lock);
++	return ret;
++}
++
++static int rc_dev_bpf_detach(struct rc_dev *rcdev, struct bpf_prog *prog)
++{
++	struct ir_raw_event_ctrl *raw;
++	struct bpf_prog_list *pl, *tmp;
++	int ret;
++
++	if (rcdev->driver_type != RC_DRIVER_IR_RAW)
++		return -EINVAL;
++
++	ret = mutex_lock_interruptible(&ir_raw_handler_lock);
++	if (ret)
++		return ret;
++
++	raw = rcdev->raw;
++	if (!raw) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	ret = -ENOENT;
++
++	list_for_each_entry_safe(pl, tmp, &raw->progs, node) {
++		if (pl->prog == prog) {
++			list_del(&pl->node);
++			kfree(pl);
++			bpf_prog_put(prog);
++			ret = 0;
++			goto out;
++		}
++	}
++out:
++	mutex_unlock(&ir_raw_handler_lock);
++	return ret;
++}
++
++void rc_dev_bpf_init(struct rc_dev *rcdev)
++{
++	INIT_LIST_HEAD(&rcdev->raw->progs);
++}
++
++void rc_dev_bpf_run(struct rc_dev *rcdev, struct ir_raw_event ev)
++{
++	struct ir_raw_event_ctrl *raw = rcdev->raw;
++	struct bpf_prog_list *pl;
++
++	if (list_empty(&raw->progs))
++		return;
++
++	if (unlikely(ev.carrier_report)) {
++		raw->bpf_rawir_event.carrier = ev.carrier;
++		raw->bpf_rawir_event.type = BPF_RAWIR_EVENT_CARRIER;
++	} else {
++		raw->bpf_rawir_event.duration = ev.duration;
++
++		if (ev.pulse)
++			raw->bpf_rawir_event.type = BPF_RAWIR_EVENT_PULSE;
++		else if (ev.timeout)
++			raw->bpf_rawir_event.type = BPF_RAWIR_EVENT_TIMEOUT;
++		else if (ev.reset)
++			raw->bpf_rawir_event.type = BPF_RAWIR_EVENT_RESET;
++		else
++			raw->bpf_rawir_event.type = BPF_RAWIR_EVENT_SPACE;
++	}
++
++	list_for_each_entry(pl, &raw->progs, node)
++		BPF_PROG_RUN(pl->prog, &raw->bpf_rawir_event);
++}
++
++void rc_dev_bpf_free(struct rc_dev *rcdev)
++{
++	struct bpf_prog_list *pl, *tmp;
++
++	list_for_each_entry_safe(pl, tmp, &rcdev->raw->progs, node) {
++		list_del(&pl->node);
++		bpf_prog_put(pl->prog);
++		kfree(pl);
++	}
++}
++
++int rc_dev_prog_attach(const union bpf_attr *attr)
++{
++	struct bpf_prog *prog;
++	struct rc_dev *rcdev;
++	int ret;
++
++	if (attr->attach_flags)
++		return -EINVAL;
++
++	prog = bpf_prog_get_type(attr->attach_bpf_fd,
++				 BPF_PROG_TYPE_RAWIR_EVENT);
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
++
++	rcdev = rc_dev_get_from_fd(attr->target_fd);
++	if (IS_ERR(rcdev)) {
++		bpf_prog_put(prog);
++		return PTR_ERR(rcdev);
++	}
++
++	ret = rc_dev_bpf_attach(rcdev, prog);
++	if (ret)
++		bpf_prog_put(prog);
++
++	put_device(&rcdev->dev);
++
++	return ret;
++}
++
++int rc_dev_prog_detach(const union bpf_attr *attr)
++{
++	struct bpf_prog *prog;
++	struct rc_dev *rcdev;
++	int ret;
++
++	if (attr->attach_flags)
++		return -EINVAL;
++
++	prog = bpf_prog_get_type(attr->attach_bpf_fd,
++				 BPF_PROG_TYPE_RAWIR_EVENT);
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
++
++	rcdev = rc_dev_get_from_fd(attr->target_fd);
++	if (IS_ERR(rcdev)) {
++		bpf_prog_put(prog);
++		return PTR_ERR(rcdev);
++	}
++
++	ret = rc_dev_bpf_detach(rcdev, prog);
++
++	bpf_prog_put(prog);
++	put_device(&rcdev->dev);
++
++	return ret;
++}
++
++int rc_dev_prog_query(const union bpf_attr *attr, union bpf_attr __user *uattr)
++{
++	__u32 __user *prog_ids = u64_to_user_ptr(attr->query.prog_ids);
++	struct ir_raw_event_ctrl *raw;
++	struct bpf_prog_list *pl;
++	struct rc_dev *rcdev;
++	u32 cnt, flags = 0, *ids, i;
++	int ret;
++
++	if (attr->query.query_flags)
++		return -EINVAL;
++
++	rcdev = rc_dev_get_from_fd(attr->query.target_fd);
++	if (IS_ERR(rcdev))
++		return PTR_ERR(rcdev);
++
++	if (rcdev->driver_type != RC_DRIVER_IR_RAW) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = mutex_lock_interruptible(&ir_raw_handler_lock);
++	if (ret)
++		goto out;
++
++	raw = rcdev->raw;
++	if (!raw) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	cnt = 0;
++	list_for_each_entry(pl, &raw->progs, node)
++		cnt++;
++
++	if (copy_to_user(&uattr->query.prog_cnt, &cnt, sizeof(cnt))) {
++		ret = -EFAULT;
++		goto out;
++	}
++	if (copy_to_user(&uattr->query.attach_flags, &flags, sizeof(flags))) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	if (attr->query.prog_cnt != 0 && prog_ids && cnt) {
++		if (attr->query.prog_cnt < cnt)
++			cnt = attr->query.prog_cnt;
++
++		ids = kmalloc_array(cnt, sizeof(u32), GFP_KERNEL);
++		if (!ids) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		i = 0;
++		list_for_each_entry(pl, &raw->progs, node) {
++			ids[i++] = pl->prog->aux->id;
++			if (i == cnt)
++				break;
++		}
++
++		ret = copy_to_user(prog_ids, ids, cnt * sizeof(u32));
++	}
++out:
++	mutex_unlock(&ir_raw_handler_lock);
++	put_device(&rcdev->dev);
++
++	return ret;
++}
+diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+index 24e9fbb80e81..193540ded626 100644
+--- a/drivers/media/rc/lirc_dev.c
++++ b/drivers/media/rc/lirc_dev.c
+@@ -20,6 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/device.h>
++#include <linux/file.h>
+ #include <linux/idr.h>
+ #include <linux/poll.h>
+ #include <linux/sched.h>
+@@ -816,4 +817,27 @@ void __exit lirc_dev_exit(void)
+ 	unregister_chrdev_region(lirc_base_dev, RC_DEV_MAX);
+ }
+ 
++struct rc_dev *rc_dev_get_from_fd(int fd)
++{
++	struct fd f = fdget(fd);
++	struct lirc_fh *fh;
++	struct rc_dev *dev;
++
++	if (!f.file)
++		return ERR_PTR(-EBADF);
++
++	if (f.file->f_op != &lirc_fops) {
++		fdput(f);
++		return ERR_PTR(-EINVAL);
++	}
++
++	fh = f.file->private_data;
++	dev = fh->rc;
++
++	get_device(&dev->dev);
++	fdput(f);
++
++	return dev;
++}
++
+ MODULE_ALIAS("lirc_dev");
+diff --git a/drivers/media/rc/rc-core-priv.h b/drivers/media/rc/rc-core-priv.h
+index e0e6a17460f6..148db73cfa0c 100644
+--- a/drivers/media/rc/rc-core-priv.h
++++ b/drivers/media/rc/rc-core-priv.h
+@@ -13,6 +13,7 @@
+ #define	MAX_IR_EVENT_SIZE	512
+ 
+ #include <linux/slab.h>
++#include <uapi/linux/bpf.h>
+ #include <media/rc-core.h>
+ 
+ /**
+@@ -57,6 +58,11 @@ struct ir_raw_event_ctrl {
+ 	/* raw decoder state follows */
+ 	struct ir_raw_event prev_ev;
+ 	struct ir_raw_event this_ev;
++
++#ifdef CONFIG_BPF_RAWIR_EVENT
++	struct bpf_rawir_event		bpf_rawir_event;
++	struct list_head		progs;
++#endif
+ 	struct nec_dec {
+ 		int state;
+ 		unsigned count;
+@@ -126,6 +132,9 @@ struct ir_raw_event_ctrl {
+ 	} imon;
  };
  
- static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 1205d86a7a29..243e141e8a5b 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
++/* Mutex for locking raw IR processing and handler change */
++extern struct mutex ir_raw_handler_lock;
++
+ /* macros for IR decoders */
+ static inline bool geq_margin(unsigned d1, unsigned d2, unsigned margin)
+ {
+@@ -288,6 +297,7 @@ void ir_lirc_raw_event(struct rc_dev *dev, struct ir_raw_event ev);
+ void ir_lirc_scancode_event(struct rc_dev *dev, struct lirc_scancode *lsc);
+ int ir_lirc_register(struct rc_dev *dev);
+ void ir_lirc_unregister(struct rc_dev *dev);
++struct rc_dev *rc_dev_get_from_fd(int fd);
+ #else
+ static inline int lirc_dev_init(void) { return 0; }
+ static inline void lirc_dev_exit(void) {}
+@@ -299,4 +309,18 @@ static inline int ir_lirc_register(struct rc_dev *dev) { return 0; }
+ static inline void ir_lirc_unregister(struct rc_dev *dev) { }
+ #endif
+ 
++/*
++ * bpf interface
++ */
++#ifdef CONFIG_BPF_RAWIR_EVENT
++void rc_dev_bpf_init(struct rc_dev *dev);
++void rc_dev_bpf_free(struct rc_dev *dev);
++void rc_dev_bpf_run(struct rc_dev *dev, struct ir_raw_event ev);
++#else
++static inline void rc_dev_bpf_init(struct rc_dev *dev) { }
++static inline void rc_dev_bpf_free(struct rc_dev *dev) { }
++static inline void rc_dev_bpf_run(struct rc_dev *dev, struct ir_raw_event ev)
++{ }
++#endif
++
+ #endif /* _RC_CORE_PRIV */
+diff --git a/drivers/media/rc/rc-ir-raw.c b/drivers/media/rc/rc-ir-raw.c
+index 374f83105a23..e68cdd4fbf5d 100644
+--- a/drivers/media/rc/rc-ir-raw.c
++++ b/drivers/media/rc/rc-ir-raw.c
+@@ -14,7 +14,7 @@
+ static LIST_HEAD(ir_raw_client_list);
+ 
+ /* Used to handle IR raw handler extensions */
+-static DEFINE_MUTEX(ir_raw_handler_lock);
++DEFINE_MUTEX(ir_raw_handler_lock);
+ static LIST_HEAD(ir_raw_handler_list);
+ static atomic64_t available_protocols = ATOMIC64_INIT(0);
+ 
+@@ -32,6 +32,7 @@ static int ir_raw_event_thread(void *data)
+ 				    handler->protocols || !handler->protocols)
+ 					handler->decode(raw->dev, ev);
+ 			ir_lirc_raw_event(raw->dev, ev);
++			rc_dev_bpf_run(raw->dev, ev);
+ 			raw->prev_ev = ev;
+ 		}
+ 		mutex_unlock(&ir_raw_handler_lock);
+@@ -572,6 +573,7 @@ int ir_raw_event_prepare(struct rc_dev *dev)
+ 	spin_lock_init(&dev->raw->edge_spinlock);
+ 	timer_setup(&dev->raw->edge_handle, ir_raw_edge_handle, 0);
+ 	INIT_KFIFO(dev->raw->kfifo);
++	rc_dev_bpf_init(dev);
+ 
+ 	return 0;
+ }
+@@ -621,9 +623,17 @@ void ir_raw_event_unregister(struct rc_dev *dev)
+ 	list_for_each_entry(handler, &ir_raw_handler_list, list)
+ 		if (handler->raw_unregister)
+ 			handler->raw_unregister(dev);
+-	mutex_unlock(&ir_raw_handler_lock);
++
++	rc_dev_bpf_free(dev);
+ 
+ 	ir_raw_event_free(dev);
++
++	/*
++	 * A user can be calling bpf(BPF_PROG_{QUERY|ATTACH|DETACH}), so
++	 * ensure that the raw member is null on unlock; this is how
++	 * "device gone" is checked.
++	 */
++	mutex_unlock(&ir_raw_handler_lock);
+ }
+ 
+ /*
+diff --git a/include/linux/bpf_rcdev.h b/include/linux/bpf_rcdev.h
+new file mode 100644
+index 000000000000..17a30f30436a
+--- /dev/null
++++ b/include/linux/bpf_rcdev.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _BPF_RCDEV_H
++#define _BPF_RCDEV_H
++
++#include <linux/bpf.h>
++#include <uapi/linux/bpf.h>
++
++#ifdef CONFIG_BPF_RAWIR_EVENT
++int rc_dev_prog_attach(const union bpf_attr *attr);
++int rc_dev_prog_detach(const union bpf_attr *attr);
++int rc_dev_prog_query(const union bpf_attr *attr, union bpf_attr __user *uattr);
++#else
++static inline int rc_dev_prog_attach(const union bpf_attr *attr)
++{
++	return -EINVAL;
++}
++
++static inline int rc_dev_prog_detach(const union bpf_attr *attr)
++{
++	return -EINVAL;
++}
++
++static inline int rc_dev_prog_query(const union bpf_attr *attr,
++				    union bpf_attr __user *uattr)
++{
++	return -EINVAL;
++}
++#endif
++
++#endif /* _BPF_RCDEV_H */
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index b67f8793de0d..e2b1b12474d4 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -25,6 +25,9 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_RAW_TRACEPOINT, raw_tracepoint)
+ #ifdef CONFIG_CGROUP_BPF
+ BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_DEVICE, cg_dev)
+ #endif
++#ifdef CONFIG_BPF_RAWIR_EVENT
++BPF_PROG_TYPE(BPF_PROG_TYPE_RAWIR_EVENT, rawir_event)
++#endif
+ 
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index d94d333a8225..243e141e8a5b 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
 @@ -141,6 +141,7 @@ enum bpf_prog_type {
  	BPF_PROG_TYPE_SK_MSG,
  	BPF_PROG_TYPE_RAW_TRACEPOINT,
@@ -75,22 +673,6 @@ index 1205d86a7a29..243e141e8a5b 100644
  	__MAX_BPF_ATTACH_TYPE
  };
  
-@@ -1829,7 +1831,6 @@ union bpf_attr {
-  * 	Return
-  * 		0 on success, or a negative error in case of failure.
-  *
-- *
-  * int bpf_fib_lookup(void *ctx, struct bpf_fib_lookup *params, int plen, u32 flags)
-  *	Description
-  *		Do FIB lookup in kernel tables using parameters in *params*.
-@@ -1856,6 +1857,7 @@ union bpf_attr {
-  *             Egress device index on success, 0 if packet needs to continue
-  *             up the stack for further processing or a negative error in case
-  *             of failure.
-+ *
-  * int bpf_sock_hash_update(struct bpf_sock_ops_kern *skops, struct bpf_map *map, void *key, u64 flags)
-  *	Description
-  *		Add an entry to, or update a sockhash *map* referencing sockets.
 @@ -1902,6 +1904,35 @@ union bpf_attr {
   *		egress otherwise). This is the only flag supported for now.
   *	Return
@@ -165,278 +747,44 @@ index 1205d86a7a29..243e141e8a5b 100644
  /* user accessible mirror of in-kernel sk_buff.
   * new fields can only be added to the end of this structure
   */
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index df54c4c9e48a..372269e9053d 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1455,6 +1455,7 @@ static bool bpf_prog_type__needs_kver(enum bpf_prog_type type)
- 	case BPF_PROG_TYPE_CGROUP_DEVICE:
- 	case BPF_PROG_TYPE_SK_MSG:
- 	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-+	case BPF_PROG_TYPE_RAWIR_EVENT:
- 		return false;
- 	case BPF_PROG_TYPE_UNSPEC:
- 	case BPF_PROG_TYPE_KPROBE:
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 1eb0fa2aba92..b84e36d05d34 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -24,7 +24,7 @@ urandom_read: urandom_read.c
- # Order correspond to 'make run_tests' order
- TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
- 	test_align test_verifier_log test_dev_cgroup test_tcpbpf_user \
--	test_sock test_btf test_sockmap
-+	test_sock test_btf test_sockmap test_rawir_event_user
- 
- TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test_obj_id.o \
- 	test_pkt_md_access.o test_xdp_redirect.o test_xdp_meta.o sockmap_parse_prog.o     \
-@@ -33,7 +33,8 @@ TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test
- 	sample_map_ret0.o test_tcpbpf_kern.o test_stacktrace_build_id.o \
- 	sockmap_tcp_msg_prog.o connect4_prog.o connect6_prog.o test_adjust_tail.o \
- 	test_btf_haskv.o test_btf_nokv.o test_sockmap_kern.o test_tunnel_kern.o \
--	test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o
-+	test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o \
-+	test_rawir_event_kern.o
- 
- # Order correspond to 'make run_tests' order
- TEST_PROGS := test_kmod.sh \
-@@ -42,7 +43,8 @@ TEST_PROGS := test_kmod.sh \
- 	test_xdp_meta.sh \
- 	test_offload.py \
- 	test_sock_addr.sh \
--	test_tunnel.sh
-+	test_tunnel.sh \
-+	test_rawir.sh
- 
- # Compile but not part of 'make run_tests'
- TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr
-diff --git a/tools/testing/selftests/bpf/bpf_helpers.h b/tools/testing/selftests/bpf/bpf_helpers.h
-index 8f143dfb3700..26d89b7f9841 100644
---- a/tools/testing/selftests/bpf/bpf_helpers.h
-+++ b/tools/testing/selftests/bpf/bpf_helpers.h
-@@ -114,6 +114,12 @@ static int (*bpf_get_stack)(void *ctx, void *buf, int size, int flags) =
- static int (*bpf_fib_lookup)(void *ctx, struct bpf_fib_lookup *params,
- 			     int plen, __u32 flags) =
- 	(void *) BPF_FUNC_fib_lookup;
-+static int (*bpf_rc_repeat)(void *ctx) =
-+	(void *) BPF_FUNC_rc_repeat;
-+static int (*bpf_rc_keydown)(void *ctx, unsigned int protocol,
-+			     unsigned int scancode, unsigned int toggle) =
-+	(void *) BPF_FUNC_rc_keydown;
-+
- 
- /* llvm builtin functions that eBPF C program may use to
-  * emit BPF_LD_ABS and BPF_LD_IND instructions
-diff --git a/tools/testing/selftests/bpf/test_rawir.sh b/tools/testing/selftests/bpf/test_rawir.sh
-new file mode 100755
-index 000000000000..0aa77b043ee1
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_rawir.sh
-@@ -0,0 +1,37 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Test bpf_rawir_event over rc-loopback. Steps for the test:
-+#
-+# 1. Find the /dev/lircN device for rc-loopback
-+# 2. Attach bpf_rawir_event program which decodes some IR.
-+# 3. Send some IR to the same IR device; since it is loopback, this will
-+#    end up in the bpf program
-+# 4. bpf program should decode IR and report keycode
-+# 5. We can read keycode from same /dev/lirc device
-+
-+GREEN='\033[0;92m'
-+RED='\033[0;31m'
-+NC='\033[0m' # No Color
-+
-+modprobe rc-loopback
-+
-+for i in /sys/class/rc/rc*
-+do
-+	if grep -q DRV_NAME=rc-loopback $i/uevent
-+	then
-+		LIRCDEV=$(grep DEVNAME= $i/lirc*/uevent | sed sQDEVNAME=Q/dev/Q)
-+	fi
-+done
-+
-+if [ -n $LIRCDEV ];
-+then
-+	TYPE=rawir_event
-+	./test_rawir_event_user $LIRCDEV
-+	ret=$?
-+	if [ $ret -ne 0 ]; then
-+		echo -e ${RED}"FAIL: $TYPE"${NC}
-+	else
-+		echo -e ${GREEN}"PASS: $TYPE"${NC}
-+	fi
-+fi
-diff --git a/tools/testing/selftests/bpf/test_rawir_event_kern.c b/tools/testing/selftests/bpf/test_rawir_event_kern.c
-new file mode 100644
-index 000000000000..33ba5d30af62
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_rawir_event_kern.c
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// test ir decoder
-+//
-+// Copyright (C) 2018 Sean Young <sean@mess.org>
-+
-+#include <linux/bpf.h>
-+#include "bpf_helpers.h"
-+
-+SEC("rawir_event")
-+int bpf_decoder(struct bpf_rawir_event *e)
-+{
-+	if (e->type == BPF_RAWIR_EVENT_PULSE) {
-+		/*
-+		 * The lirc interface is microseconds, but here we receive
-+		 * nanoseconds.
-+		 */
-+		int microseconds = e->duration / 1000;
-+
-+		if (microseconds & 0x10000)
-+			bpf_rc_keydown(e, 0x40, microseconds & 0xffff, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/test_rawir_event_user.c b/tools/testing/selftests/bpf/test_rawir_event_user.c
-new file mode 100644
-index 000000000000..c3d7f2c68033
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_rawir_event_user.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// test ir decoder
-+//
-+// Copyright (C) 2018 Sean Young <sean@mess.org>
-+
-+#include <linux/bpf.h>
-+#include <linux/lirc.h>
-+#include <assert.h>
-+#include <errno.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdbool.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <poll.h>
-+#include <libgen.h>
-+#include <sys/resource.h>
-+#include <sys/types.h>
-+#include <sys/ioctl.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+
-+#include "bpf_util.h"
-+#include <bpf/bpf.h>
-+#include <bpf/libbpf.h>
-+
-+int main(int argc, char **argv)
-+{
-+	struct bpf_object *obj;
-+	int ret, lircfd, progfd, mode;
-+	int testir = 0x1dead;
-+	u32 prog_ids[10], prog_flags[10], prog_cnt;
-+
-+	if (argc != 2) {
-+		printf("Usage: %s /dev/lircN\n", argv[0]);
-+		return 2;
-+	}
-+
-+	ret = bpf_prog_load("test_rawir_event_kern.o",
-+			    BPF_PROG_TYPE_RAWIR_EVENT, &obj, &progfd);
-+	if (ret) {
-+		printf("Failed to load bpf program\n");
-+		return 1;
-+	}
-+
-+	lircfd = open(argv[1], O_RDWR | O_NONBLOCK);
-+	if (lircfd == -1) {
-+		printf("failed to open lirc device %s: %m\n", argv[1]);
-+		return 1;
-+	}
-+
-+	/* Let's try detach it before it was ever attached */
-+	ret = bpf_prog_detach2(progfd, lircfd, BPF_RAWIR_EVENT);
-+	if (ret != -1 || errno != ENOENT) {
-+		printf("bpf_prog_detach2 not attached should fail: %m\n");
-+		return 1;
-+	}
-+
-+	mode = LIRC_MODE_SCANCODE;
-+	if (ioctl(lircfd, LIRC_SET_REC_MODE, &mode)) {
-+		printf("failed to set rec mode: %m\n");
-+		return 1;
-+	}
-+
-+	prog_cnt = 10;
-+	ret = bpf_prog_query(lircfd, BPF_RAWIR_EVENT, 0, prog_flags, prog_ids,
-+			     &prog_cnt);
-+	if (ret) {
-+		printf("Failed to query bpf programs on lirc device: %m\n");
-+		return 1;
-+	}
-+
-+	if (prog_cnt != 0) {
-+		printf("Expected nothing to be attached\n");
-+		return 1;
-+	}
-+
-+	ret = bpf_prog_attach(progfd, lircfd, BPF_RAWIR_EVENT, 0);
-+	if (ret) {
-+		printf("Failed to attach bpf to lirc device: %m\n");
-+		return 1;
-+	}
-+
-+	/* Write raw IR */
-+	ret = write(lircfd, &testir, sizeof(testir));
-+	if (ret != sizeof(testir)) {
-+		printf("Failed to send test IR message: %m\n");
-+		return 1;
-+	}
-+
-+	struct pollfd pfd = { .fd = lircfd, .events = POLLIN };
-+	struct lirc_scancode lsc;
-+
-+	poll(&pfd, 1, 100);
-+
-+	/* Read decoded IR */
-+	ret = read(lircfd, &lsc, sizeof(lsc));
-+	if (ret != sizeof(lsc)) {
-+		printf("Failed to read decoded IR: %m\n");
-+		return 1;
-+	}
-+
-+	if (lsc.scancode != 0xdead || lsc.rc_proto != 64) {
-+		printf("Incorrect scancode decoded\n");
-+		return 1;
-+	}
-+
-+	prog_cnt = 10;
-+	ret = bpf_prog_query(lircfd, BPF_RAWIR_EVENT, 0, prog_flags, prog_ids,
-+			     &prog_cnt);
-+	if (ret) {
-+		printf("Failed to query bpf programs on lirc device: %m\n");
-+		return 1;
-+	}
-+
-+	if (prog_cnt != 1) {
-+		printf("Expected one program to be attached\n");
-+		return 1;
-+	}
-+
-+	/* Let's try detaching it now it is actually attached */
-+	ret = bpf_prog_detach2(progfd, lircfd, BPF_RAWIR_EVENT);
-+	if (ret) {
-+		printf("bpf_prog_detach2: returned %m\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index e2aeb5e89f44..75c089f407c8 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -11,6 +11,7 @@
+  */
+ #include <linux/bpf.h>
+ #include <linux/bpf_trace.h>
++#include <linux/bpf_rcdev.h>
+ #include <linux/btf.h>
+ #include <linux/syscalls.h>
+ #include <linux/slab.h>
+@@ -1567,6 +1568,8 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+ 	case BPF_SK_SKB_STREAM_PARSER:
+ 	case BPF_SK_SKB_STREAM_VERDICT:
+ 		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, true);
++	case BPF_RAWIR_EVENT:
++		return rc_dev_prog_attach(attr);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -1637,6 +1640,8 @@ static int bpf_prog_detach(const union bpf_attr *attr)
+ 	case BPF_SK_SKB_STREAM_PARSER:
+ 	case BPF_SK_SKB_STREAM_VERDICT:
+ 		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, false);
++	case BPF_RAWIR_EVENT:
++		return rc_dev_prog_detach(attr);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -1684,6 +1689,8 @@ static int bpf_prog_query(const union bpf_attr *attr,
+ 	case BPF_CGROUP_SOCK_OPS:
+ 	case BPF_CGROUP_DEVICE:
+ 		break;
++	case BPF_RAWIR_EVENT:
++		return rc_dev_prog_query(attr, uattr);
+ 	default:
+ 		return -EINVAL;
+ 	}
 -- 
 2.17.0
