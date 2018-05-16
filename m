@@ -1,82 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeEPL3Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:29:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752101AbeEPL3X (ORCPT
+        id S1752661AbeEPL3e (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:29:34 -0400
+Received: from mail-vk0-f46.google.com ([209.85.213.46]:34303 "EHLO
+        mail-vk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeEPL3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:29:23 -0400
-Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 16 May 2018 07:29:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 16 May 2018 07:29:31 -0400
+X-Google-Smtp-Source: AB8JxZr2LJ7nxAgV4zU9wVyZUJBrr6WXCQrSR2PrQg+GUFak8rYCBNoA2/o/f7Et/h/IFN2o88Mq+DMs08cMCi3CUoc=
 MIME-Version: 1.0
-In-Reply-To: <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051611-0020-0000-0000-00000DF18139
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01033102; UDB=6.00528215; IPR=6.00812233;
- MB=3.00021143; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 11:29:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051611-0021-0000-0000-00006166B947
-Message-Id: <25e6c874-231f-b50b-0389-d76bf44bb40f@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160117
+In-Reply-To: <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+ <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 May 2018 13:29:30 +0200
+X-Google-Sender-Auth: fYfQMn1WMjVw5gNHTpjdqu5m0GU
+Message-ID: <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 04:21 AM, Pierre Morel wrote:
-> On 07/05/2018 17:11, Tony Krowiak wrote:
->> Introduces a new AP device driver. This device driver
->> is built on the VFIO mediated device framework. The framework
->> provides sysfs interfaces that facilitate passthrough
->> access by guests to devices installed on the linux host.
-> ...snip...
->> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
->> +{
->
-> You should take care of the ap devices when they are added or removed
-> from the matrix.
-> I suggest you add a remove callback to avoid unbinding a queue while
-> it is assigned to a guest.
+Hi Linus,
 
-That makes sense, will do.
+On Wed, May 16, 2018 at 1:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, May 16, 2018 at 9:16 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Commit
+>>>
+>>>   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
+>>>
+>>> is missing a Signed-off-by from its comitter.
+>>
+>> Sorry, I forgot to add it.
+>>
+>> Linus, as the merge of sh-pfc is your top commit, shall I fix it up
+>> and send a new
+>> pull request?
+>> Please let me know how to proceed. Thanks!
+>
+> If it's just missing your SoB I can add it with your permission
+> I guess? That is less trouble.
 
->
->
->> +    return 0;
->> +}
->> +
->> +static void vfio_ap_matrix_dev_release(struct device *dev)
->> +{
->> +    struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
->> +
->> +    kfree(ap_matrix);
->> +}
-> ...snip...
->
+You have my permission.
+But I'm afraid that won't help, as then you'll become the committer with your
+SoB missing...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
