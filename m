@@ -1,93 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeEPPRE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:17:04 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41629 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbeEPPRB (ORCPT
+        id S1751273AbeEPPTc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:19:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37341 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbeEPPTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:17:01 -0400
-X-Google-Smtp-Source: AB8JxZr9pysaYuhKB2DzxU3fmo641MHzre0S59z+b7s6oddkMAco77DrJUlDT5NCDUyjyc/oDPhimX5ChU6En/ak/Vk=
+        Wed, 16 May 2018 11:19:30 -0400
+X-Google-Smtp-Source: AB8JxZp3cI/FbuM+mEq7cHsre2T1+zpI2snMKt0a2iNCbqYjgHWBWRo4zZP3+CAMiU4860FaSIpNRQ==
+Date: Wed, 16 May 2018 17:19:25 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, bp@suse.de,
+        lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net,
+        x86@kernel.org, linux-pm@vger.kernel.org, viresh.kumar@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180516151925.GO28366@localhost.localdomain>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
-References: <0000000000009b212b056ae6dbad@google.com> <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
- <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp> <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 16 May 2018 17:16:40 +0200
-Message-ID: <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
-Subject: Re: INFO: task hung in blk_queue_enter
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com"
-        <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@i-love.sakura.ne.jp>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "alan.christopher.jenkins@gmail.com"
-        <alan.christopher.jenkins@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "martin@lichtvoll.de" <martin@lichtvoll.de>,
-        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
-        "hare@suse.com" <hare@suse.com>,
-        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 4:56 PM, Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
-> On Wed, 2018-05-16 at 22:05 +0900, Tetsuo Handa wrote:
->> One ore more threads are waiting for q->mq_freeze_depth to become 0. But the
->> thread who incremented q->mq_freeze_depth at blk_freeze_queue_start(q) from
->> blk_freeze_queue() is waiting at blk_mq_freeze_queue_wait(). Therefore,
->> atomic_read(&q->mq_freeze_depth) == 0 condition for wait_event() in
->> blk_queue_enter() will never be satisfied. But what does that wait_event()
->> want to do? Isn't "start freezing" a sort of blk_queue_dying(q) == true?
->> Since percpu_ref_tryget_live(&q->q_usage_counter) failed and the queue is
->> about to be frozen, shouldn't we treat atomic_read(&q->mq_freeze_depth) != 0
->> as if blk_queue_dying(q) == true? That is, something like below:
->>
->> diff --git a/block/blk-core.c b/block/blk-core.c
->> index 85909b4..59e2496 100644
->> --- a/block/blk-core.c
->> +++ b/block/blk-core.c
->> @@ -951,10 +951,10 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
->>               smp_rmb();
->>
->>               wait_event(q->mq_freeze_wq,
->> -                        (atomic_read(&q->mq_freeze_depth) == 0 &&
->> -                         (preempt || !blk_queue_preempt_only(q))) ||
->> +                        atomic_read(&q->mq_freeze_depth) ||
->> +                        (preempt || !blk_queue_preempt_only(q)) ||
->>                          blk_queue_dying(q));
->> -             if (blk_queue_dying(q))
->> +             if (atomic_read(&q->mq_freeze_depth) || blk_queue_dying(q))
->>                       return -ENODEV;
->>       }
->>  }
->
-> That change looks wrong to me.
+On 15/05/18 21:49, Srinivas Pandruvada wrote:
+> intel_pstate has two operating modes: active and passive. In "active"
+> mode, the in-built scaling governor is used and in "passive" mode,
+> the driver can be used with any governor like "schedutil". In "active"
+> mode the utilization values from schedutil is not used and there is
+> a requirement from high performance computing use cases, not to read
+> any APERF/MPERF MSRs. In this case no need to use CPU cycles for
+> frequency invariant accounting by reading APERF/MPERF MSRs.
+> With this change frequency invariant account is only enabled in
+> "passive" mode.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+> [Note: The tick will be enabled later in the series when hwp dynamic
+> boost is enabled]
+> 
+>  drivers/cpufreq/intel_pstate.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index 17e566af..f686bbe 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -2040,6 +2040,8 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
+>  {
+>  	int ret;
+>  
+> +	x86_arch_scale_freq_tick_disable();
+> +
+>  	memset(&global, 0, sizeof(global));
+>  	global.max_perf_pct = 100;
+>  
+> @@ -2052,6 +2054,9 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
+>  
+>  	global.min_perf_pct = min_perf_pct_min();
+>  
+> +	if (driver == &intel_cpufreq)
+> +		x86_arch_scale_freq_tick_enable();
 
-Hi Bart,
+This will unconditionally trigger the reading/calculation at each tick
+even though information is not actually consumed (e.g., running
+performance or any other governor), right? Do we want that?
 
-Why does it look wrong to you?
+Anyway, FWIW I started testing this on a E5-2609 v3 and I'm not seeing
+hackbench regressions so far (running with schedutil governor).
 
-> Additionally, I think that you are looking in
-> the wrong direction. Since blk_mq_freeze_queue_wait() and blk_queue_enter()
-> work fine for all block drivers except the loop driver I think that you should
-> have a closer look at how the loop driver uses this block layer functionality.
->
-> Thanks,
->
-> Bart.
->
->
->
+Best,
+
+- Juri
