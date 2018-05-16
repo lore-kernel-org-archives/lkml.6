@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752697AbeEPIjz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:39:55 -0400
-Received: from mga03.intel.com ([134.134.136.65]:30628 "EHLO mga03.intel.com"
+        id S1752734AbeEPIkU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:40:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:30622 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752449AbeEPIhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:37:41 -0400
+        id S1752278AbeEPIhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 04:37:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="41347781"
+   d="scan'208";a="41347762"
 From: Tiwei Bie <tiwei.bie@intel.com>
 To: mst@redhat.com, jasowang@redhat.com,
         virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc: wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com
-Subject: [RFC v4 4/5] virtio_ring: add event idx support in packed ring
-Date: Wed, 16 May 2018 16:37:36 +0800
-Message-Id: <20180516083737.26504-5-tiwei.bie@intel.com>
+Subject: [RFC v4 1/5] virtio: add packed ring definitions
+Date: Wed, 16 May 2018 16:37:33 +0800
+Message-Id: <20180516083737.26504-2-tiwei.bie@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516083737.26504-1-tiwei.bie@intel.com>
 References: <20180516083737.26504-1-tiwei.bie@intel.com>
@@ -26,169 +26,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit introduces the event idx support in
-packed ring.
-
 Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 ---
- drivers/virtio/virtio_ring.c | 75 +++++++++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 5 deletions(-)
+ include/uapi/linux/virtio_config.h | 12 +++++++++-
+ include/uapi/linux/virtio_ring.h   | 36 ++++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index c6c5deb0e3ae..de3839f3621a 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -1006,7 +1006,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
- static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
--	u16 flags;
-+	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
- 	bool needs_kick;
- 	u32 snapshot;
+diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+index 308e2096291f..a6e392325e3a 100644
+--- a/include/uapi/linux/virtio_config.h
++++ b/include/uapi/linux/virtio_config.h
+@@ -49,7 +49,7 @@
+  * transport being used (eg. virtio_ring), the rest are per-device feature
+  * bits. */
+ #define VIRTIO_TRANSPORT_F_START	28
+-#define VIRTIO_TRANSPORT_F_END		34
++#define VIRTIO_TRANSPORT_F_END		36
  
-@@ -1015,9 +1015,19 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
- 	 * suppressions. */
- 	virtio_mb(vq->weak_barriers);
- 
-+	old = vq->next_avail_idx - vq->num_added;
-+	new = vq->next_avail_idx;
-+	vq->num_added = 0;
+ #ifndef VIRTIO_CONFIG_NO_LEGACY
+ /* Do we get callbacks when the ring is completely used, even if we've
+@@ -71,4 +71,14 @@
+  * this is for compatibility with legacy systems.
+  */
+ #define VIRTIO_F_IOMMU_PLATFORM		33
 +
- 	snapshot = *(u32 *)vq->vring_packed.device;
-+	off_wrap = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot & 0xffff));
- 	flags = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot >> 16)) & 0x3;
- 
-+	wrap_counter = off_wrap >> 15;
-+	event_idx = off_wrap & ~(1<<15);
-+	if (wrap_counter != vq->wrap_counter)
-+		event_idx -= vq->vring_packed.num;
++/* This feature indicates support for the packed virtqueue layout. */
++#define VIRTIO_F_RING_PACKED		34
 +
- #ifdef DEBUG
- 	if (vq->last_add_time_valid) {
- 		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
-@@ -1026,7 +1036,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
- 	vq->last_add_time_valid = false;
- #endif
++/*
++ * This feature indicates that all buffers are used by the device
++ * in the same order in which they have been made available.
++ */
++#define VIRTIO_F_IN_ORDER		35
++
+ #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+index 6d5d5faa989b..3932cb80c347 100644
+--- a/include/uapi/linux/virtio_ring.h
++++ b/include/uapi/linux/virtio_ring.h
+@@ -44,6 +44,9 @@
+ /* This means the buffer contains a list of buffer descriptors. */
+ #define VRING_DESC_F_INDIRECT	4
  
--	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-+	if (flags == VRING_EVENT_F_DESC)
-+		needs_kick = vring_need_event(event_idx, new, old);
-+	else
-+		needs_kick = (flags != VRING_EVENT_F_DISABLE);
- 	END_USE(vq);
- 	return needs_kick;
++#define VRING_DESC_F_AVAIL(b)	((b) << 7)
++#define VRING_DESC_F_USED(b)	((b) << 15)
++
+ /* The Host uses this in used->flags to advise the Guest: don't kick me when
+  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
+  * will still kick if it's out of buffers. */
+@@ -53,6 +56,10 @@
+  * optimization.  */
+ #define VRING_AVAIL_F_NO_INTERRUPT	1
+ 
++#define VRING_EVENT_F_ENABLE	0x0
++#define VRING_EVENT_F_DISABLE	0x1
++#define VRING_EVENT_F_DESC	0x2
++
+ /* We support indirect buffer descriptors */
+ #define VIRTIO_RING_F_INDIRECT_DESC	28
+ 
+@@ -171,4 +178,33 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
+ 	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
  }
-@@ -1098,7 +1111,7 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
- 					  void **ctx)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
--	u16 last_used, id;
-+	u16 wrap_counter, last_used, id;
- 	void *ret;
  
- 	START_USE(vq);
-@@ -1138,6 +1151,19 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
- 	ret = vq->desc_state[id].data;
- 	detach_buf_packed(vq, last_used, id, ctx);
- 
-+	wrap_counter = vq->wrap_counter;
-+	if (vq->last_used_idx > vq->next_avail_idx)
-+		wrap_counter ^= 1;
++struct vring_packed_desc_event {
++	/* __virtio16 off  : 15; // Descriptor Event Offset
++	 * __virtio16 wrap : 1;  // Descriptor Event Wrap Counter */
++	__virtio16 off_wrap;
++	/* __virtio16 flags : 2; // Descriptor Event Flags */
++	__virtio16 flags;
++};
 +
-+	/* If we expect an interrupt for the next entry, tell host
-+	 * by writing event index and flush out the write before
-+	 * the read in the next get_buf call. */
-+	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-+		virtio_store_mb(vq->weak_barriers,
-+				&vq->vring_packed.driver->off_wrap,
-+				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-+						(wrap_counter << 15)));
++struct vring_packed_desc {
++	/* Buffer Address. */
++	__virtio64 addr;
++	/* Buffer Length. */
++	__virtio32 len;
++	/* Buffer ID. */
++	__virtio16 id;
++	/* The flags depending on descriptor type. */
++	__virtio16 flags;
++};
 +
- #ifdef DEBUG
- 	vq->last_add_time_valid = false;
- #endif
-@@ -1160,15 +1186,27 @@ static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
- static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
-+	u16 wrap_counter;
- 
- 	START_USE(vq);
- 
- 	/* We optimistically turn back on interrupts, then check if there was
- 	 * more to do. */
-+	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-+	 * either clear the flags bit or point the event index at the next
-+	 * entry. Always update the event index to keep code simple. */
++struct vring_packed {
++	unsigned int num;
 +
-+	wrap_counter = vq->wrap_counter;
-+	if (vq->last_used_idx > vq->next_avail_idx)
-+		wrap_counter ^= 1;
++	struct vring_packed_desc *desc;
 +
-+	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-+			vq->last_used_idx | (wrap_counter << 15));
- 
- 	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
- 		virtio_wmb(vq->weak_barriers);
--		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-+		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-+						     VRING_EVENT_F_ENABLE;
- 		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
- 							vq->event_flags_shadow);
- 	}
-@@ -1194,15 +1232,40 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
- static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
-+	u16 bufs, used_idx, wrap_counter;
- 
- 	START_USE(vq);
- 
- 	/* We optimistically turn back on interrupts, then check if there was
- 	 * more to do. */
-+	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-+	 * either clear the flags bit or point the event index at the next
-+	 * entry. Always update the event index to keep code simple. */
++	struct vring_packed_desc_event *driver;
 +
-+	/* TODO: tune this threshold */
-+	if (vq->next_avail_idx < vq->last_used_idx)
-+		bufs = (vq->vring_packed.num + vq->next_avail_idx -
-+				vq->last_used_idx) * 3 / 4;
-+	else
-+		bufs = (vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
++	struct vring_packed_desc_event *device;
++};
 +
-+	wrap_counter = vq->wrap_counter;
-+	if (vq->last_used_idx > vq->next_avail_idx)
-+		wrap_counter ^= 1;
-+
-+	used_idx = vq->last_used_idx + bufs;
-+	if (used_idx >= vq->vring_packed.num) {
-+		used_idx -= vq->vring_packed.num;
-+		wrap_counter ^= 1;
-+	}
-+
-+	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-+			used_idx | (wrap_counter << 15));
- 
- 	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
- 		virtio_wmb(vq->weak_barriers);
--		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-+		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-+						     VRING_EVENT_F_ENABLE;
- 		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
- 							vq->event_flags_shadow);
- 	}
-@@ -1869,8 +1932,10 @@ void vring_transport_features(struct virtio_device *vdev)
- 		switch (i) {
- 		case VIRTIO_RING_F_INDIRECT_DESC:
- 			break;
-+#if 0
- 		case VIRTIO_RING_F_EVENT_IDX:
- 			break;
-+#endif
- 		case VIRTIO_F_VERSION_1:
- 			break;
- 		case VIRTIO_F_IOMMU_PLATFORM:
+ #endif /* _UAPI_LINUX_VIRTIO_RING_H */
 -- 
 2.17.0
