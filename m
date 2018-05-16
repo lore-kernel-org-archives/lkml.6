@@ -1,90 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752265AbeEPANR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 20:13:17 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39598 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbeEPANP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 20:13:15 -0400
-X-Google-Smtp-Source: AB8JxZrcJQ7kFJKpzMHEtvBx7wSbIJcujUSuyNbA+m+FMrX/THNMmDwJtHtBTB+A5tJW+aqHWJXe2A==
-Date: Tue, 15 May 2018 14:13:11 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH] scripts/tags.sh: don't rely on parsing `ls` for
- $ALLSOURCE_ARCHS generation
-Message-ID: <20180516001311.ng6wyxdjqty5ef5j@gmail.com>
+        id S1752226AbeEPAbr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 20:31:47 -0400
+Received: from vern.gendns.com ([206.190.152.46]:59223 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751309AbeEPAbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 20:31:45 -0400
+Subject: =?UTF-8?Q?Re:_[PATCH_v10_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: Adam Ford <aford173@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180509172606.29387-1-david@lechnology.com>
+ <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
+ <CAMRc=MdO0EtzDHp3RF4ym3umWM_KfhvpWHV2+Y3270ygKz9iGw@mail.gmail.com>
+ <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <09e0edb3-70a1-a99f-7b06-05832c9aade1@lechnology.com>
+Date: Tue, 15 May 2018 19:31:41 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q74megjw7qc7hkty"
-Content-Disposition: inline
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/15/18 5:44 PM, Adam Ford wrote:
+> On Tue, May 15, 2018 at 4:25 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> 2018-05-14 2:40 GMT+02:00 Adam Ford <aford173@gmail.com>:
+>>> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
+>>>> This series converts mach-davinci to use the common clock framework.
+>>>>
+>>>> The series works like this, the first 3 patches fix some issues with the clock
+>>>> drivers that have already been accepted into the mainline kernel.
+>>>>
+>>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>>>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>>>> around the legacy clocks so that we can switch easily between the old and the
+>>>> new.
+>>>>
+>>>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>>> of the old clock code.
+>>>>
+>>>> The final four patches add device tree clock support to the one SoC that
+>>>> supports it.
+>>>>
+>>>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+>>>> board file).
+>>>>
+>>>
+>>> I am not sure if I did something wrong, but I attempted to build and I
+>>> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
+>>> however the legacy board file boot was OK.
+>>>
+>>> make davinci_all_defconfig ARCH=arm
+>>> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
+>>>
+>>> 3140416 bytes read in 1464 ms (2 MiB/s)
+>>> 20353 bytes read in 15 ms (1.3 MiB/s)
+>>> ## Flattened Device Tree blob at c0600000
+>>>     Booting using the fdt blob at 0xc0600000
+>>>     Loading Device Tree to c7e57000, end c7e5ef80 ... OK
+>>>
+>>> Starting kernel ...
+>>>
+>>> Uncompressing Linux... done, booting the kernel.
+>>>
+>>> (and hang)
+>>>
+>>> If you have some suggestions, I am try them as I get time.
+>>>
+>>> adam
+>>>
+>>
+>> Runs fine on da850-lcdk and dm365-evm. I'll test the da850-evm
+>> tomorrow when I'll have access to it.
+> 
+> I set the bootargs to: bootargs=console=ttyS2,115200n8
+> clk_ignore_unused root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
 
---q74megjw7qc7hkty
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It looks like you forgot earlyprintk in your bootargs.
 
-Parsing `ls` is fragile at best and _will_ fail when $tree
-contains spaces. Replace this with a glob-generated string
-and directly assign it to $ALLSOURCE_ARCHS; use a subshell
-so `cd` doesn't affect the current working directory.
-
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 78e546ff689c2d5f40..b84acf8889fe836c60 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -29,14 +29,11 @@ fi
- ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
-=20
- # Find all available archs
- find_all_archs()
- {
--	ALLSOURCE_ARCHS=3D""
--	for arch in `ls ${tree}arch`; do
--		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
--	done
-+	ALLSOURCE_ARCHS=3D"$( (cd "${tree}arch/" && echo *) )"
- }
-=20
- # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
- if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
- 	ALLSOURCE_ARCHS=3D${SRCARCH}
---=20
-2.17.0.rc1.35.g90bbd502d54fe92035.dirty
-
-
---q74megjw7qc7hkty
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr7d5cACgkQruvLfWhy
-VBm98BAAyFAeYjq+392LpgL8kvor1VJRF2MD4wl/lzJBPLhz85QtAQkuFoOAjGDI
-gdLKd0MC5OYgQq+wS2GLdyMp7qOoPfZdG+nKz5D/NepIgjK4ePzuQ07YIFuo/L9Z
-gW+LhHWQ3D0WmLw5i365GGI/e3jgs+apmU7dVfRurF0DoVj4a9KP61SFNtlWsZOL
-E3+SoqICWyuuy/oIOZNXnbbDsapV8IbVsi51jrUWNNZdfevkYFyBG6YLvHyQ0WgU
-agwUlMwgKKA0yuBDCGNX6BUHUBwzSpA/0AMmebIqRMBpIdgVFk5oPeYH24iISSA7
-6wqeohte2XufoLEQ0pq+2BH3bcV2YthBXUhaeGNP0etklUb3hHDKQW1etNSzwJSN
-p8GMdtV6jXCXuZtSKBYkjD6oJiY9hHPPCiysxoH7tdcmioqQzvWogU8+WMZ/nG/Y
-drC0Odm0CPiXprYPftaYsq4acmhHq5dF0+NlU76XcqKmaSRruCQ6yXqoCSA0M+45
-AQV5CT/09Z0RWTwheNOMZDxTyIqO6FCXHsBQW82h4OI/IE6d8edOs2wO+6yEdj6z
-GFW05V06skx6dspQO9ElKqkyVzbSt3YUb9na5cYwOiYltzw80avsTPASFpCwdVAJ
-Usy4otEJhIXw0NYKW/cauIu4HsSk9UxFyDWMu3xNVF7KqaM+mXg=
-=qrGg
------END PGP SIGNATURE-----
-
---q74megjw7qc7hkty--
+> 
+> I enabled DEBUG_LL and EARLY_PRINTK, yet when it loads, I only get:
+> 
+> ## Flattened Device Tree blob at c0600000
+>     Booting using the fdt blob at 0xc0600000
+>     Loading Device Tree to c7e57000, end c7e5ef35 ... OK
+> 
+> Starting kernel ...
+> 
+> Uncompressing Linux... done, booting the kernel.
+> 
+> 
+> I am doing this at my home, so I don't have a debugger for the
+> DA850-EVM.  I am using a SOM that is an AM1808, but I vaguely remember
+> something about enabling a DSP clock somewhere, but I cannot seem to
+> find the e-mail.  I know its counter intuitive that we'd need to
+> enable a clock that runs the DSP since it doesn't exist on the AM1808,
+> but I would have thought the clk_ignore_unused would have worked
+> around that issue.
+> 
+> If someone else has a DA850-EVM or suggestions, I'm willing to try
+> them as I have time.
+> 
+> adam
+>>
+>> Bart
