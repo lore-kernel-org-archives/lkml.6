@@ -1,132 +1,400 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752095AbeEPBHR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 21:07:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751309AbeEPBHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 21:07:15 -0400
-X-Google-Smtp-Source: AB8JxZqoh2mtfQfaswUxOTpEigyPj6omRQ+TyqDcAVqM4ZUxLlnk0gwRI8FmYPWaRQUHMwc/+t2sSr5TVE5+V6uSpPg=
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdsDWb0Ve29_d=30nc1F0aVhTrG74GX=sv0iB5WycWwLw@mail.gmail.com>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-11-brgl@bgdev.pl>
- <CAL_JsqJw8UXktcLK8ADUfo1P+1un+omJ31sGcq7GFbNwJMsHKg@mail.gmail.com> <CAMRc=MdsDWb0Ve29_d=30nc1F0aVhTrG74GX=sv0iB5WycWwLw@mail.gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 15 May 2018 20:06:52 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK0o_xRLhkZPjpM2NN5_hm_3-XLGzymgD1ae1DZCUFtkQ@mail.gmail.com>
-Message-ID: <CAL_JsqK0o_xRLhkZPjpM2NN5_hm_3-XLGzymgD1ae1DZCUFtkQ@mail.gmail.com>
-Subject: Re: [PATCH 10/12] platform/early: implement support for early
- platform drivers
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES"
-        <linux-arch@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752419AbeEPBLH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 21:11:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52722 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752351AbeEPBLE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 21:11:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1154B60790
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=hpuranik@codeaurora.org
+From: Hemanth Puranik <hpuranik@codeaurora.org>
+To: netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Timur Tabi <timur@codeaurora.org>,
+        Hemanth Puranik <hpuranik@codeaurora.org>
+Subject: [PATCH] net: qcom/emac: Encapsulate sgmii ops under one structure
+Date: Wed, 16 May 2018 06:40:53 +0530
+Message-Id: <1526433053-16308-1-git-send-email-hpuranik@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 9:06 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-05-14 15:37 GMT+02:00 Rob Herring <robh+dt@kernel.org>:
->> On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> This introduces the core part of support for early platform drivers
->>> and devices.
->>>
->>
->> It looks like most of your prep patches are to separate the alloc and
->> init of platform devices because you are essentially making early
->> devices/drivers a sub-class. Maybe you could avoid doing that and
->> simplify things a bit. Comments below based on doing that...
->>
->
-> My aim was to change as little as possible for everybody else while
-> fixing our problem. These changes are already controversial enough
-> without risky reusing of existing fields in common structures. I was
-> just afraid that there are too many intricacies for it to be safe.
+This patch introduces ops structure for sgmii, This by ensures that
+we do not need dummy functions in case of emulation platforms.
 
-I don't think those intricacies would go away just by having separate
-fields. Perhaps it would make things fail more explicitly. After all,
-I think it needs to be a very atomic operation when a device is
-switched.
+Signed-off-by: Hemanth Puranik <hpuranik@codeaurora.org>
+---
+ drivers/net/ethernet/qualcomm/emac/emac-mac.c   |   5 +-
+ drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 128 ++++++++++++++----------
+ drivers/net/ethernet/qualcomm/emac/emac-sgmii.h |  32 +++---
+ drivers/net/ethernet/qualcomm/emac/emac.c       |   9 +-
+ 4 files changed, 103 insertions(+), 71 deletions(-)
 
->>> +/**
->>> + * struct early_platform_driver
->>> + *
->>> + * @pdrv: real platform driver associated with this early platform driver
->>> + * @list: list head for the list of early platform drivers
->>> + * @early_probe: early probe callback
->>> + */
->>> +struct early_platform_driver {
->>> +       struct platform_driver pdrv;
->>> +       struct list_head list;
->>
->> Couldn't you use an existing list in driver_private until you move
->> over to the normal bus infra.
->>
->
-> This is something that the previous implementation did. It was quite
-> unreadable, so I decided to go with a separate list.
->
->>> +       int (*early_probe)(struct platform_device *);
->>
->> Just add this to platform_driver.
->>
->
-> This would extend the structure for everybody else while there'll be
-> very few such devices and not all systems would even require it.
->
->>> +};
->>> +
->>> +/**
->>> + * struct early_platform_device
->>> + *
->>> + * @pdev: real platform device associated with this early platform device
->>> + * @list: list head for the list of early platform devices
->>> + * @deferred: true if this device's early probe was deferred
->>> + * @deferred_drv: early platform driver with which this device was matched
->>> + */
->>> +struct early_platform_device {
->>> +       struct platform_device pdev;
->>> +       struct list_head list;
->>
->> Use a list in device_private?
->>
->>> +       bool deferred;
->>> +       struct early_platform_driver *deferred_drv;
->>
->> Can't you use the existing deferred probe list?
->>
->
-> I thought about it, but I was afraid there could be some timing issues
-> with that and decided against it. The early deferral also doesn't work
-> in a workque, but is synchronous instead.
-
-I didn't mean use the wq, but just the list fields. You'd still have
-the early list and normal list with different list heads. If you ever
-had a device wanting to be on both lists at the same time, then you've
-got major problems.
-
-Rob
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac-mac.c b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
+index d5a32b7..092718a 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac-mac.c
++++ b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
+@@ -920,14 +920,13 @@ static void emac_mac_rx_descs_refill(struct emac_adapter *adpt,
+ static void emac_adjust_link(struct net_device *netdev)
+ {
+ 	struct emac_adapter *adpt = netdev_priv(netdev);
+-	struct emac_sgmii *sgmii = &adpt->phy;
+ 	struct phy_device *phydev = netdev->phydev;
+ 
+ 	if (phydev->link) {
+ 		emac_mac_start(adpt);
+-		sgmii->link_up(adpt);
++		emac_sgmii_link_change(adpt, true);
+ 	} else {
+-		sgmii->link_down(adpt);
++		emac_sgmii_link_change(adpt, false);
+ 		emac_mac_stop(adpt);
+ 	}
+ 
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
+index e8ab512..562420b 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
++++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
+@@ -53,6 +53,46 @@
+ 
+ #define SERDES_START_WAIT_TIMES			100
+ 
++int emac_sgmii_init(struct emac_adapter *adpt)
++{
++	if (!(adpt->phy.sgmii_ops && adpt->phy.sgmii_ops->init))
++		return 0;
++
++	return adpt->phy.sgmii_ops->init(adpt);
++}
++
++int emac_sgmii_open(struct emac_adapter *adpt)
++{
++	if (!(adpt->phy.sgmii_ops && adpt->phy.sgmii_ops->open))
++		return 0;
++
++	return adpt->phy.sgmii_ops->open(adpt);
++}
++
++void emac_sgmii_close(struct emac_adapter *adpt)
++{
++	if (!(adpt->phy.sgmii_ops && adpt->phy.sgmii_ops->close))
++		return;
++
++	adpt->phy.sgmii_ops->close(adpt);
++}
++
++int emac_sgmii_link_change(struct emac_adapter *adpt, bool link_state)
++{
++	if (!(adpt->phy.sgmii_ops && adpt->phy.sgmii_ops->link_change))
++		return 0;
++
++	return adpt->phy.sgmii_ops->link_change(adpt, link_state);
++}
++
++void emac_sgmii_reset(struct emac_adapter *adpt)
++{
++	if (!(adpt->phy.sgmii_ops && adpt->phy.sgmii_ops->reset))
++		return;
++
++	adpt->phy.sgmii_ops->reset(adpt);
++}
++
+ /* Initialize the SGMII link between the internal and external PHYs. */
+ static void emac_sgmii_link_init(struct emac_adapter *adpt)
+ {
+@@ -163,21 +203,21 @@ static void emac_sgmii_reset_prepare(struct emac_adapter *adpt)
+ 	msleep(50);
+ }
+ 
+-void emac_sgmii_reset(struct emac_adapter *adpt)
++static void emac_sgmii_common_reset(struct emac_adapter *adpt)
+ {
+ 	int ret;
+ 
+ 	emac_sgmii_reset_prepare(adpt);
+ 	emac_sgmii_link_init(adpt);
+ 
+-	ret = adpt->phy.initialize(adpt);
++	ret = emac_sgmii_init(adpt);
+ 	if (ret)
+ 		netdev_err(adpt->netdev,
+ 			   "could not reinitialize internal PHY (error=%i)\n",
+ 			   ret);
+ }
+ 
+-static int emac_sgmii_open(struct emac_adapter *adpt)
++static int emac_sgmii_common_open(struct emac_adapter *adpt)
+ {
+ 	struct emac_sgmii *sgmii = &adpt->phy;
+ 	int ret;
+@@ -201,43 +241,53 @@ static int emac_sgmii_open(struct emac_adapter *adpt)
+ 	return 0;
+ }
+ 
+-static int emac_sgmii_close(struct emac_adapter *adpt)
++static void emac_sgmii_common_close(struct emac_adapter *adpt)
+ {
+ 	struct emac_sgmii *sgmii = &adpt->phy;
+ 
+ 	/* Make sure interrupts are disabled */
+ 	writel(0, sgmii->base + EMAC_SGMII_PHY_INTERRUPT_MASK);
+ 	free_irq(sgmii->irq, adpt);
+-
+-	return 0;
+ }
+ 
+ /* The error interrupts are only valid after the link is up */
+-static int emac_sgmii_link_up(struct emac_adapter *adpt)
++static int emac_sgmii_common_link_change(struct emac_adapter *adpt, bool linkup)
+ {
+ 	struct emac_sgmii *sgmii = &adpt->phy;
+ 	int ret;
+ 
+-	/* Clear and enable interrupts */
+-	ret = emac_sgmii_irq_clear(adpt, 0xff);
+-	if (ret)
+-		return ret;
++	if (linkup) {
++		/* Clear and enable interrupts */
++		ret = emac_sgmii_irq_clear(adpt, 0xff);
++		if (ret)
++			return ret;
+ 
+-	writel(SGMII_ISR_MASK, sgmii->base + EMAC_SGMII_PHY_INTERRUPT_MASK);
++		writel(SGMII_ISR_MASK,
++		       sgmii->base + EMAC_SGMII_PHY_INTERRUPT_MASK);
++	} else {
++		/* Disable interrupts */
++		writel(0, sgmii->base + EMAC_SGMII_PHY_INTERRUPT_MASK);
++		synchronize_irq(sgmii->irq);
++	}
+ 
+ 	return 0;
+ }
+ 
+-static int emac_sgmii_link_down(struct emac_adapter *adpt)
+-{
+-	struct emac_sgmii *sgmii = &adpt->phy;
+-
+-	/* Disable interrupts */
+-	writel(0, sgmii->base + EMAC_SGMII_PHY_INTERRUPT_MASK);
+-	synchronize_irq(sgmii->irq);
++static struct sgmii_ops qdf2432_ops = {
++	.init = emac_sgmii_init_qdf2432,
++	.open = emac_sgmii_common_open,
++	.close = emac_sgmii_common_close,
++	.link_change = emac_sgmii_common_link_change,
++	.reset = emac_sgmii_common_reset,
++};
+ 
+-	return 0;
+-}
++static struct sgmii_ops qdf2400_ops = {
++	.init = emac_sgmii_init_qdf2400,
++	.open = emac_sgmii_common_open,
++	.close = emac_sgmii_common_close,
++	.link_change = emac_sgmii_common_link_change,
++	.reset = emac_sgmii_common_reset,
++};
+ 
+ static int emac_sgmii_acpi_match(struct device *dev, void *data)
+ {
+@@ -249,7 +299,7 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
+ 		{}
+ 	};
+ 	const struct acpi_device_id *id = acpi_match_device(match_table, dev);
+-	emac_sgmii_function *initialize = data;
++	struct sgmii_ops **ops = data;
+ 
+ 	if (id) {
+ 		acpi_handle handle = ACPI_HANDLE(dev);
+@@ -270,10 +320,10 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
+ 
+ 		switch (hrv) {
+ 		case 1:
+-			*initialize = emac_sgmii_init_qdf2432;
++			*ops = &qdf2432_ops;
+ 			return 1;
+ 		case 2:
+-			*initialize = emac_sgmii_init_qdf2400;
++			*ops = &qdf2400_ops;
+ 			return 1;
+ 		}
+ 	}
+@@ -294,14 +344,6 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
+ 	{}
+ };
+ 
+-/* Dummy function for systems without an internal PHY. This avoids having
+- * to check for NULL pointers before calling the functions.
+- */
+-static int emac_sgmii_dummy(struct emac_adapter *adpt)
+-{
+-	return 0;
+-}
+-
+ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
+ {
+ 	struct platform_device *sgmii_pdev = NULL;
+@@ -312,22 +354,11 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
+ 	if (has_acpi_companion(&pdev->dev)) {
+ 		struct device *dev;
+ 
+-		dev = device_find_child(&pdev->dev, &phy->initialize,
++		dev = device_find_child(&pdev->dev, &phy->sgmii_ops,
+ 					emac_sgmii_acpi_match);
+ 
+ 		if (!dev) {
+ 			dev_warn(&pdev->dev, "cannot find internal phy node\n");
+-			/* There is typically no internal PHY on emulation
+-			 * systems, so if we can't find the node, assume
+-			 * we are on an emulation system and stub-out
+-			 * support for the internal PHY.  These systems only
+-			 * use ACPI.
+-			 */
+-			phy->open = emac_sgmii_dummy;
+-			phy->close = emac_sgmii_dummy;
+-			phy->link_up = emac_sgmii_dummy;
+-			phy->link_down = emac_sgmii_dummy;
+-
+ 			return 0;
+ 		}
+ 
+@@ -355,14 +386,9 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
+ 			goto error_put_device;
+ 		}
+ 
+-		phy->initialize = (emac_sgmii_function)match->data;
++		phy->sgmii_ops->init = match->data;
+ 	}
+ 
+-	phy->open = emac_sgmii_open;
+-	phy->close = emac_sgmii_close;
+-	phy->link_up = emac_sgmii_link_up;
+-	phy->link_down = emac_sgmii_link_down;
+-
+ 	/* Base address is the first address */
+ 	res = platform_get_resource(sgmii_pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+@@ -386,7 +412,7 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
+ 		}
+ 	}
+ 
+-	ret = phy->initialize(adpt);
++	ret = emac_sgmii_init(adpt);
+ 	if (ret)
+ 		goto error;
+ 
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.h b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.h
+index e7c0c3b..31ba21e 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.h
++++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.h
+@@ -16,36 +16,44 @@
+ struct emac_adapter;
+ struct platform_device;
+ 
+-typedef int (*emac_sgmii_function)(struct emac_adapter *adpt);
++/** emac_sgmii - internal emac phy
++ * @init initialization function
++ * @open called when the driver is opened
++ * @close called when the driver is closed
++ * @link_change called when the link state changes
++ */
++struct sgmii_ops {
++	int (*init)(struct emac_adapter *adpt);
++	int (*open)(struct emac_adapter *adpt);
++	void (*close)(struct emac_adapter *adpt);
++	int (*link_change)(struct emac_adapter *adpt, bool link_state);
++	void (*reset)(struct emac_adapter *adpt);
++};
+ 
+ /** emac_sgmii - internal emac phy
+  * @base base address
+  * @digital per-lane digital block
+  * @irq the interrupt number
+  * @decode_error_count reference count of consecutive decode errors
+- * @initialize initialization function
+- * @open called when the driver is opened
+- * @close called when the driver is closed
+- * @link_up called when the link comes up
+- * @link_down called when the link comes down
++ * @sgmii_ops sgmii ops
+  */
+ struct emac_sgmii {
+ 	void __iomem		*base;
+ 	void __iomem		*digital;
+ 	unsigned int		irq;
+ 	atomic_t		decode_error_count;
+-	emac_sgmii_function	initialize;
+-	emac_sgmii_function	open;
+-	emac_sgmii_function	close;
+-	emac_sgmii_function	link_up;
+-	emac_sgmii_function	link_down;
++	struct	sgmii_ops	*sgmii_ops;
+ };
+ 
+ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt);
+-void emac_sgmii_reset(struct emac_adapter *adpt);
+ 
+ int emac_sgmii_init_fsm9900(struct emac_adapter *adpt);
+ int emac_sgmii_init_qdf2432(struct emac_adapter *adpt);
+ int emac_sgmii_init_qdf2400(struct emac_adapter *adpt);
+ 
++int emac_sgmii_init(struct emac_adapter *adpt);
++int emac_sgmii_open(struct emac_adapter *adpt);
++void emac_sgmii_close(struct emac_adapter *adpt);
++int emac_sgmii_link_change(struct emac_adapter *adpt, bool link_state);
++void emac_sgmii_reset(struct emac_adapter *adpt);
+ #endif
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac.c b/drivers/net/ethernet/qualcomm/emac/emac.c
+index 13235ba..2a0cbc5 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac.c
++++ b/drivers/net/ethernet/qualcomm/emac/emac.c
+@@ -253,7 +253,7 @@ static int emac_open(struct net_device *netdev)
+ 		return ret;
+ 	}
+ 
+-	ret = adpt->phy.open(adpt);
++	ret = emac_sgmii_open(adpt);
+ 	if (ret) {
+ 		emac_mac_rx_tx_rings_free_all(adpt);
+ 		free_irq(irq->irq, irq);
+@@ -264,7 +264,7 @@ static int emac_open(struct net_device *netdev)
+ 	if (ret) {
+ 		emac_mac_rx_tx_rings_free_all(adpt);
+ 		free_irq(irq->irq, irq);
+-		adpt->phy.close(adpt);
++		emac_sgmii_close(adpt);
+ 		return ret;
+ 	}
+ 
+@@ -278,7 +278,7 @@ static int emac_close(struct net_device *netdev)
+ 
+ 	mutex_lock(&adpt->reset_lock);
+ 
+-	adpt->phy.close(adpt);
++	emac_sgmii_close(adpt);
+ 	emac_mac_down(adpt);
+ 	emac_mac_rx_tx_rings_free_all(adpt);
+ 
+@@ -761,11 +761,10 @@ static void emac_shutdown(struct platform_device *pdev)
+ {
+ 	struct net_device *netdev = dev_get_drvdata(&pdev->dev);
+ 	struct emac_adapter *adpt = netdev_priv(netdev);
+-	struct emac_sgmii *sgmii = &adpt->phy;
+ 
+ 	if (netdev->flags & IFF_UP) {
+ 		/* Closing the SGMII turns off its interrupts */
+-		sgmii->close(adpt);
++		emac_sgmii_close(adpt);
+ 
+ 		/* Resetting the MAC turns off all DMA and its interrupts */
+ 		emac_mac_reset(adpt);
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
