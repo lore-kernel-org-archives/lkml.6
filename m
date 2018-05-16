@@ -1,127 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeEPPMG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:12:06 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33437 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeEPPME (ORCPT
+        id S1752020AbeEPPOS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:14:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:45698 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeEPPOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:12:04 -0400
-X-Google-Smtp-Source: AB8JxZoIAgdHNWa2aHBN9HWhKCma1aUSu1ihYbfg8mudds3DVnCKbMVBxfyoOGYqtcajEh3L1xfdVA==
-Date: Wed, 16 May 2018 09:12:01 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc: Hal Rosenstock <hal@dev.mellanox.co.il>,
-        Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-Message-ID: <20180516151201.GA25661@ziepe.ca>
-References: <20180509093020.24503-3-Haakon.Bugge@oracle.com>
- <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
- <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
- <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
- <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
- <20180514210200.GN21531@ziepe.ca>
- <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
- <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
- <20180515190424.GL5615@ziepe.ca>
- <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 16 May 2018 11:14:16 -0400
+X-Google-Smtp-Source: AB8JxZr/KKlvJgZfkF1w1piVNnp0ZrmRTm2ohMwR8fzC5lDlfUacWFmV7kSONc6mt280kK6Os8oG5Q==
+Message-ID: <1526483653.2897.62.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+Date: Wed, 16 May 2018 17:14:13 +0200
+In-Reply-To: <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+         <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:47:21AM +0200, Håkon Bugge wrote:
-
-> > This is not a difficult issue.
+On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-05-16 01:50:40)
+> > Replace every license notices in drivers/clk/meson by SPDX license
+> > identifiers, as described in license-rules.rst
 > > 
-> > If the GMP is properly tagged with the right PKey then it will never
-> > be delivered to the VM if the VM does not have the PKey in the
-> > table.
+> > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
 > 
-> Not quite right. For the shared port model, a GMP will (most
-> probably) be accepted by the physical port, due to:
-
-Sure, but I am talking about the VM's 'virtual port'.
-
-> So, if the GMP is destined to VM1, which is a limited member, but we
-> have another VM2 which is a full member of the same partition, the
-> GMP will pass the HCA’s PKey check.
-
-Sure.
-
-> > It is up to the hypervisor to block GMPs that have Pkeys not in
-> > the virtual PKey table of the VF.
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > 
-> The packet is received by the HCA and stripped from IB headers, in
-> particular the BTH. How can the "hypervisor" block it when its
-> doesn’t have access to the GMP’s BTH.PKey?
+> I take it this will come through a PR? Otherwise I can apply it to
+> clk-meson branch.
 
-This is wrong too, in Linux the WC's for GMP packets include the pkey
-index that was used to RX the packet. This is a Linux extension
-matching the one on the sending side.
-
-The hypervisor *must* block these GMPs, it is a hard requirement of
-the pkey security model for VMs.
-
-AFAIK the Mellanox drivers do this right - do you know differently?
-
-> > The only time you could need a new REJ code is if the GMP is using a
-> > PKey different from the REQ - which is a pretty goofy thing to do
-> > considering this VM case.
->
-> Its goofy. In the CX-3 shared port model, the BTH.PKey is the
-> default one and the REQ.PKey is the full one even if the sending
-> VM’s port only is a limited member. This patch series fixes the last
-> issue.
-
-Again, this is wrong, the BTH.Pkey and REQ.Pkey should be the same -
-please fix that first before trying to change anything else.
-
-> > Remember the SM doesn't know what Pkeys are in the VM, so it is
-> > basically impossible for the REQ side to reliably select two different
-> > pkeys and know that they will bothmake it to the VM.
-> 
-> The active side should use the "authentic" PKey in the REQ
-> message. That is the one that would be used in BTH.PKey when
-> communication has been established. This is implemented by this
-> patch series.
-> 
-> Not sure what you mean by "reliably select two different pkeys". The
-> CM REQ message contains one PKey.
-
-If BTH.Pkey != REQ.PKey then the requestor side has to obviously
-select two PKeys, which is basically impossible.
-
-The VM should not be part of the default partition, for instance.
-
-> See above, not sure how that could be implemented. And if it is
-> solved by the HCA trapping the GMP due to the PKey check, it doesn’t
-> help me, as the purpose of the series is to avoid (excessive) PKey
-> traps sent to the SM.
-
-It might not help you, but is shows this fix for the pkey trap issue
-is wrong. You must fix the pkey traps on the sending side, not on the
-responder side..
-
-> > If I recall there were bugs here in mlx drivers, where the driver
-> > sent with the wrong Pkey. I think this has actually been fixed
-> > now, so please check the upstream kernel to be sure the Pkey is
-> > not what it is supposed to be.
-> 
-> Let me get back to you with some ibdumps here.
-
-Upstream kernel (eg 4.16) and newish Mellanox firmware please.
-
-And it would be fantastic if you could ID why this is happening, AFAIK
-it should be OK in the kernel.
-
-Jason
+We may have a few other patches coming this week. I was planning on making
+another PR sometime next week, if this is OK with you.
