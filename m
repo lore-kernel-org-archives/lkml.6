@@ -1,11 +1,11 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-654-1526463874-3-4752846567302598836
+X-Cyrus-Session-Id: sloti22d1t05-62429-1526463976-2-6950920702059703259
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -13,27 +13,27 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526463873; b=OrJ0oDVlIsnq3Tg/B2QFfmW4jF3F8yZdgdOp6pT0Ka0UEN9olN
-    +Lgr3SjI+eiTJXICn/pCbmoLHH3cj5/ynW7zZ+ihXOZQ9qZfKyfRp4AgJpu/Se0Z
-    MvTvzzNEQ8uDDBRBtn6+07NJqKngtJgLYGNZJBnT9pXtrCrYjD+lxYbifUa3HPKA
-    R686gq8CqNzigrfc8bKUWdzfdMq9EhxQ3atINZFN62Yvof/3Myr/ygl2kHAfsFpU
-    dfb05xzkylTgQmLw2eb/U8iTB5YoQ5lGfjebuqr59Ll/0PieotOa3cxy6uwzWU0U
-    yYOqLEOwuVSBoWiq+16x5MkSBaKgdZcesWjQ==
+    1526463975; b=Kc0wveCiKaAQZbQncmdJesy9NE+2obEpIZ7HAMwDVF5RIcORq6
+    P+ouGYlRXgMnlrg3td/j5AbNAkM8BBxC7c81SigOGpHrvVjrGA4z599OVnV+fJ8A
+    ymy5OtFEHXsf2V4Sz+YADZ5kS4XT3rQvkzcGNsfdat+7oykaY/f3lnRLr4kvKx3x
+    aX2Z/ZW8SpD+L4J+uPctW1Ezy81uuzOEZqtdTY1BICMiv3UdDEK6uX4dy8eBEhXr
+    JAWFLZ09OSxc5S3rETb1s4rX0+biOCBLWuhHadjkTkKMpOJAd56KEJaWyAoGRbNV
+    GfxPFl/JVut1JhMb+yNcWZr8baFC6MchiSPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526463873; bh=AMSd8
-    7E5d6ma+0w52CSsRP4PUGFD1JDtpqdlDNrO3CU=; b=dVIXgRGcGl47f2B590vkR
-    a2k1ixQxsULyhUJVOZvIKUBM9thxd1lfQeG+qV06IAu7xd0DsfssraUdgUhC+DJ3
-    SGQLZp0yQKQs7nM6+dcfQ3KdfSxbQVkTe8T6hABpXOUipm4gI0vsUax/T0QwXqUu
-    n8Vmd4bJ+waeJMMhfP766c23S6dvd6i12Rifki5VRbLshGU/yKcFwONydIirKG/w
-    7bmL6GqDCVi1huM/c8lfUylPePNf2zqyyyJ1kXhlt8grtr7hTE0AUZJOB9YmwCZz
-    C9BFyEkbo5O5GSWqmjyorZNsHtWpEya2Wd6XzCRk9V0vrHS97yT8OTv9jP6C2saQ
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526463975; bh=AhG2E
+    Lml9eQvI71OUYTm1BkEaJatShjY0LrZ/JZbBM4=; b=WqxgYl93E9R4ozilEtRZN
+    xE7kWC54ma+NXMPR3Vu5xAo6itGUKAaocxpwdRD+yMlfzrButGb76ewxPrV0T7GV
+    pRObaKwdYxJ/n9GtMYI1ovYxjI2L9UGOeNHGSFMprjw8fmCNoEaCoMt6Fx0B/iZv
+    jhsGSIZrGFg9HD0VKJlT9Ixs9hsbfl4yi7t+9mglxYK2q1E7FCSW3KsWblKbzIP4
+    nrVeZF+AgGKHavRVbMGvuHiNihyiaQcAZgrFQWBxb8Lf8/vOtKsSL5P/8gY83Zpz
+    xoVoLOYpQnTT8jXkhZUwLbkWaPDkho5M3swljLEmJho8x5P9P0Zotv++UhYalbbM
     A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=PwjGMvm2
+    header.d=infradead.org header.i=@infradead.org header.b=EH4M09Gv
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -50,10 +50,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=PwjGMvm2
+      header.d=infradead.org header.i=@infradead.org header.b=EH4M09Gv
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -71,24 +71,25 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM2v24upELycAgG3n3LqtuwOCLssAxy8McntILJbfguZMYoEt29+tphpa99oXh8R9k9zIO1O0GMU9kj5yDGRuICSkeIZB4/1HyXBU0VyPJyMX1stQNQ/
-    b8PjCtvfwGWdahpAo3Ppqv5Mb/Y/v8X9rYbe6E3EjK3hT0+1Y6FmSbied2hP/jHYnG1P4nuUmksRjJqsZalupEPNncstaS9XfXwRSMZUMkjJEGfY61SdSmnO
-    O41DCFfROQULHCCTscrAug==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+X-CM-Envelope: MS4wfPz+nPO//e4MV3wIuvqvkux/m4CrlGKl/N86gGutcWi1gvyw7pH+rmDoZIR4hDhpzF/W4DULWZ0+HU0VzULtENkZWKVuzpkLgNJkQUG7Uuc8Ct1Kvsaa
+    0K3jowjn2ctIBWGie7NVoU06b51uqNxuVjQbRAq0o17rrDLOsQ/2ozOly3hQG3SJEZ8HAwTVzMcbapxyJ5EX83eawqVsjTOq0qoqS1HSq/abztPNnVX9wgh3
+    /Knhji6EnvWenkKIK04pfA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
     a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8
-    a=w2cMSxZChwwtV2GeLk8A:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=88F98xHFbi003eYDy_sA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: simplify procfs code for seq_file instances V3
-Date: Wed, 16 May 2018 11:43:04 +0200
-Message-Id: <20180516094346.20506-1-hch@lst.de>
+Subject: [PATCH 28/42] drbd: switch to proc_create_single
+Date: Wed, 16 May 2018 11:43:32 +0200
+Message-Id: <20180516094346.20506-29-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180516094346.20506-1-hch@lst.de>
+References: <20180516094346.20506-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-BeenThere: driverdev-devel@linuxdriverproject.org
@@ -119,36 +120,103 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We currently have hundreds of proc files that implement plain, read-only
-seq_file based interfaces.  This series consolidates them using new
-procfs helpers that take the seq_operations or simple show callback
-directly.
+And stop messing with try_module_get on THIS_MODULE, which doesn't make
+any sense here.
 
-A git tree is available at:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/block/drbd/drbd_int.h  |  2 +-
+ drivers/block/drbd/drbd_main.c |  3 ++-
+ drivers/block/drbd/drbd_proc.c | 34 +---------------------------------
+ 3 files changed, 4 insertions(+), 35 deletions(-)
 
-    git://git.infradead.org/users/hch/misc.git proc_create.3
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index 06ecee1b528e..461ddec04e7c 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -1643,7 +1643,7 @@ void drbd_bump_write_ordering(struct drbd_resource *resource, struct drbd_backin
+ 
+ /* drbd_proc.c */
+ extern struct proc_dir_entry *drbd_proc;
+-extern const struct file_operations drbd_proc_fops;
++int drbd_seq_show(struct seq_file *seq, void *v);
+ 
+ /* drbd_actlog.c */
+ extern bool drbd_al_begin_io_prepare(struct drbd_device *device, struct drbd_interval *i);
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 185f1ef00a7c..c2d154faac02 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -3010,7 +3010,8 @@ static int __init drbd_init(void)
+ 		goto fail;
+ 
+ 	err = -ENOMEM;
+-	drbd_proc = proc_create_data("drbd", S_IFREG | S_IRUGO , NULL, &drbd_proc_fops, NULL);
++	drbd_proc = proc_create_single("drbd", S_IFREG | S_IRUGO , NULL,
++			drbd_seq_show);
+ 	if (!drbd_proc)	{
+ 		pr_err("unable to register proc file\n");
+ 		goto fail;
+diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+index 582caeb0de86..74ef29247bb5 100644
+--- a/drivers/block/drbd/drbd_proc.c
++++ b/drivers/block/drbd/drbd_proc.c
+@@ -33,18 +33,7 @@
+ #include <linux/drbd.h>
+ #include "drbd_int.h"
+ 
+-static int drbd_proc_open(struct inode *inode, struct file *file);
+-static int drbd_proc_release(struct inode *inode, struct file *file);
+-
+-
+ struct proc_dir_entry *drbd_proc;
+-const struct file_operations drbd_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= drbd_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= drbd_proc_release,
+-};
+ 
+ static void seq_printf_with_thousands_grouping(struct seq_file *seq, long v)
+ {
+@@ -235,7 +224,7 @@ static void drbd_syncer_progress(struct drbd_device *device, struct seq_file *se
+ 	}
+ }
+ 
+-static int drbd_seq_show(struct seq_file *seq, void *v)
++int drbd_seq_show(struct seq_file *seq, void *v)
+ {
+ 	int i, prev_i = -1;
+ 	const char *sn;
+@@ -345,24 +334,3 @@ static int drbd_seq_show(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int drbd_proc_open(struct inode *inode, struct file *file)
+-{
+-	int err;
+-
+-	if (try_module_get(THIS_MODULE)) {
+-		err = single_open(file, drbd_seq_show, NULL);
+-		if (err)
+-			module_put(THIS_MODULE);
+-		return err;
+-	}
+-	return -ENODEV;
+-}
+-
+-static int drbd_proc_release(struct inode *inode, struct file *file)
+-{
+-	module_put(THIS_MODULE);
+-	return single_release(inode, file);
+-}
+-
+-/* PROC FS stuff end */
+-- 
+2.17.0
 
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/proc_create.3
-
-Changes since V2:
- - use unsigned int for state_size everywhere
- - move state_size around in proc_dir_entry to use a struct packing hole
- - update SIZEOF_PDE_INLINE_NAME
- - added a new proc_pid_ns helper
- - improved a few changelogs
- - added back a nubus comment
- - minor typo fix
- - collected various ACKs
-
-Changes since V1:
- - open code proc_create_data to avoid setting not fully initialized
-   entries live
- - use unsigned int for state_size
- - dropped the s390/cio/blacklist hunk as it has a write method
- - dropped the IPMI patch given that IPMI proc support is scheduled for
-   removal.
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
