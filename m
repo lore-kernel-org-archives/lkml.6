@@ -1,83 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeEPNLj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:11:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40204 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbeEPNLh (ORCPT
+        id S1752575AbeEPNMA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:12:00 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35232 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752205AbeEPNLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:11:37 -0400
-Date: Wed, 16 May 2018 16:11:08 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180516131108.xcvsw6m4qrmqgykh@mwanda>
-References: <20180423152455.363d285c@vento.lan>
- <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
- <20180423161742.66f939ba@vento.lan>
- <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
- <20180426204241.03a42996@vento.lan>
- <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
- <20180515085953.65bfa107@vento.lan>
- <20180515141655.idzuh2jfdkuu5grs@mwanda>
- <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
- <20180515160033.156f119c@vento.lan>
+        Wed, 16 May 2018 09:11:54 -0400
+X-Google-Smtp-Source: AB8JxZqkrt2mC9hwdsP381ychQLGgym/opPD+O2stjv4NXjXSCbAlgnXGAIGs7wYPesLFjGMTC8noqDwEiUOzmuih/k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515160033.156f119c@vento.lan>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805160135
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Date: Wed, 16 May 2018 16:11:52 +0300
+X-Google-Sender-Auth: qErOgxdUe_NAl82mY9jNw8mUV-k
+Message-ID: <CAHLCerOL1R=8jaHT-dKx3xwXVOZhCZMjZwqWYeQtYQsnUZ-NbQ@mail.gmail.com>
+Subject: Re: [PATCH v7 00/14] CPU scaling support for msm8996
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, nm@ti.com, lgirdwood@gmail.com,
+        broonie@kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, catalin.marinas@arm.com,
+        will.deacon@arm.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 04:00:33PM -0300, Mauro Carvalho Chehab wrote:
-> Yeah, that's the same I'm getting from media upstream.
-> 
-> > drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
-> > warn: potential spectre issue 'pin->error_inj_args'
-> 
-> This one seems a false positive, as the index var is u8 and the
-> array has 256 elements, as the userspace input from 'op' is 
-> initialized with:
-> 
-> 	u8 v;
-> 	u32 op;
-> 
-> 	if (!kstrtou8(token, 0, &v))
-> 		op = v;
-> 
+On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
+> [v7]
+>  * Addressed comments from Viresh about resourses deallocation
+>    and DT compatible
 
-It's hard to silence this because Smatch stores the current user
-controlled range list, not what it was initially.  I wrote all this code
-to detect bounds checking errors, so there wasn't any need to save the
-range list before the bounds check.  Since "op" is a u32, I can't even
-go by the type of the index....
+Hi Ilia,
 
-> > drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
-> > warn: potential spectre issue 'ca->slot_info' (local cap)
-> 
-> This one seems a real issue to me. Sent a patch for it.
-> 
-> > drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
-> > potential spectre issue 'p->ule_next_hdr'
-> 
-> I failed to see what's wrong here, or if this is exploited. 
+Thanks for working on this series. Here a few comments regarding the
+series as a whole.
 
-Oh...  Huh.  This is a bug in smatch.  That line looks like:
+- The series could use a better cover letter describing how the
+various patches are grouped. e.g. 1-7 are clock related and probably
+will get merged through the clk maintainers tree. The regulator bits
+might get merged through the regulator maintainer tree and so forth.
+If there are any dependencies, please outline those as well so
+maintainers can decide how best to merge this.
+- Please describe what features this series adds - just frequency
+scaling or more. Please describe in more detail what the dependency on
+the SAW regulator changes is.
+- Please get rid of the GPL boiler plate since you already have the
+SPDX tags. See comments on patch 1 for what I'm referring to.
+- You also mention that ACD is not implemented in the earlier patches
+and then there is a patch that seems to add ACD related features
+(7/14).
 
-	p->ule_sndu_type = ntohs(*(__be16 *)(p->ule_next_hdr + ((p->ule_dbit ? 2 : 3) * ETH_ALEN)));
+A few other comments follow across the individual patches.
 
-Smatch see the ntohs() and marks everything inside it as untrusted
-network data.  I'll fix this.
+Regards,
+Amit
 
-regards,
-dan carpenter
+> [v6]
+>  * Addressed comments from Viresh about:
+>  ** Comments style
+>  ** Kconfig bool instead of tristate
+>  ** DT and documentation style
+>  ** Resourses deallocation on an error
+>  ** Typos
+>
+> [v5]
+>  * Rebased
+>  * Addressed comments from Bjorn about SPDX style,
+>    functions and parameters naming
+>  * Addressed comments from Viresh DT properties and style, comments style,
+>    resourses deallocation, documentation placement
+>  * Addressed comments from Sricharan about unnessesary include
+>  * Addressed comments from Nicolas
+>  * Addressed comments from Rob about the commit messages and acks
+>  * Addressed comments from Mark
+>
+> [v4]
+>  * Adressed all comments from Stephen
+>  * Added CPU regulator support
+>  * Added qcom-cpufreq-kryo driver
+>
+> [v3]
+>  * Rebased on top of the latest PLL driver changes
+>  * Addressed comment from Rob Herring for bindings
+>
+> [v2]
+>  * Addressed comments from Rob Herring for bindings
+>  * Addressed comments from Mark Rutland for memory barrier
+>  * Addressed comments from Julien Thierry for clock reenabling condition
+>  * Tuned the HW configuration for clock frequencies below 600MHz
+>
+> Clocks:
+> This series adds support for the CPU clocks on msm8996 devices.
+> The driver uses the existing PLL drivers and is required to control
+> the CPU frequency scaling on the MSM8996.
+>
+> Regulators:
+> Added SAW regulator support to the SPMI regulator driver. The SAW regulators
+> will be controlled through special CPU registers instead of direct
+> SPMI accesses.
+>
+> Cpufreq:
+> The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+> The driver reads eFuse information and chooses the required OPP subset
+> by passing the OPP supported-hw parameter.
+>
+> A previous post of RFC can be found here:
+> https://patchwork.kernel.org/patch/10398455/
+>
+> Ilia Lin (11):
+>   soc: qcom: Separate kryo l2 accessors from PMU driver
+>   clk: qcom: Add CPU clock driver for msm8996
+>   clk: qcom: Add DT bindings for CPU clock driver for msm8996
+>   clk: qcom: Add ACD path to CPU clock driver for msm8996
+>   dt: qcom: Add opp and thermal to the msm8996
+>   regulator: qcom_spmi: Add support for SAW
+>   dt-bindings: qcom_spmi: Add support for SAW documentation
+>   dt: qcom: Add SAW regulator for 8x96 CPUs
+>   cpufreq: Add Kryo CPU scaling driver
+>   dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+>   dt: qcom: Add qcom-cpufreq-kryo driver configuration
+>
+> Rajendra Nayak (3):
+>   clk: qcom: Make clk_alpha_pll_configure available to modules
+>   clk: qcom: cpu-8996: Add support to switch to alternate PLL
+>   clk: qcom: cpu-8996: Add support to switch below 600Mhz
+>
+>  .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+>  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+>  .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi              | 651 +++++++++++++++++++-
+>  drivers/clk/clk-fixed-factor.c                     |   2 +-
+>  drivers/clk/qcom/Kconfig                           |   9 +
+>  drivers/clk/qcom/Makefile                          |   1 +
+>  drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+>  drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+>  drivers/clk/qcom/clk-cpu-8996.c                    | 519 ++++++++++++++++
+>  drivers/cpufreq/Kconfig.arm                        |  11 +
+>  drivers/cpufreq/Makefile                           |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+>  drivers/cpufreq/qcom-cpufreq-kryo.c                | 150 +++++
+>  drivers/perf/Kconfig                               |   1 +
+>  drivers/perf/qcom_l2_pmu.c                         |  90 +--
+>  drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
+>  drivers/soc/qcom/Kconfig                           |   3 +
+>  drivers/soc/qcom/Makefile                          |   1 +
+>  drivers/soc/qcom/kryo-l2-accessors.c               |  65 ++
+>  include/soc/qcom/kryo-l2-accessors.h               |  21 +
+>  22 files changed, 2332 insertions(+), 80 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+>  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+>  create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+>  create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+>  create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+>
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
