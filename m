@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752348AbeEPX6b (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:58:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
+        id S1752400AbeEPX7A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:59:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751786AbeEPX6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:58:30 -0400
+        id S1752026AbeEPX67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:58:59 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
@@ -17,9 +17,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH -tip v3 3/7] x86: kprobes: Remove jprobe implementation
-Date: Thu, 17 May 2018 08:58:05 +0900
-Message-Id: <152651508564.25583.15078673780465986976.stgit@devbox>
+Subject: [PATCH -tip v3 4/7] kprobes: Ignore break_handler
+Date: Thu, 17 May 2018 08:58:35 +0900
+Message-Id: <152651511510.25583.17622383189254834099.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152651499561.25583.14488389770693278906.stgit@devbox>
 References: <152651499561.25583.14488389770693278906.stgit@devbox>
@@ -31,124 +31,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove arch dependent setjump/longjump functions
-and unused fields in kprobe_ctlblk for jprobes.
+Ignore break_handler related code because it was only
+used by jprobe and jprobe is removed.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/x86/include/asm/kprobes.h |    3 -
- arch/x86/kernel/kprobes/core.c |   87 ----------------------------------------
- 2 files changed, 90 deletions(-)
+ Documentation/kprobes.txt |    2 +-
+ kernel/kprobes.c          |   39 +++++----------------------------------
+ 2 files changed, 6 insertions(+), 35 deletions(-)
 
-diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
-index 367d99cff426..06782c2efa04 100644
---- a/arch/x86/include/asm/kprobes.h
-+++ b/arch/x86/include/asm/kprobes.h
-@@ -111,9 +111,6 @@ struct kprobe_ctlblk {
- 	unsigned long kprobe_status;
- 	unsigned long kprobe_old_flags;
- 	unsigned long kprobe_saved_flags;
--	unsigned long *jprobe_saved_sp;
--	struct pt_regs jprobe_saved_regs;
--	kprobe_opcode_t jprobes_stack[MAX_STACK_SIZE];
- 	struct prev_kprobe prev_kprobe;
- };
+diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
+index 5ae80baf3921..907a3017c0f2 100644
+--- a/Documentation/kprobes.txt
++++ b/Documentation/kprobes.txt
+@@ -262,7 +262,7 @@ is optimized, that modification is ignored.  Thus, if you want to
+ tweak the kernel's execution path, you need to suppress optimization,
+ using one of the following techniques:
  
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 6f4d42377fe5..7d4b8e870635 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -1083,93 +1083,6 @@ int kprobe_exceptions_notify(struct notifier_block *self, unsigned long val,
+-- Specify an empty function for the kprobe's post_handler or break_handler.
++- Specify an empty function for the kprobe's post_handler.
+ 
+ or
+ 
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 69de130595f7..536ab451e96d 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -627,8 +627,8 @@ static void optimize_kprobe(struct kprobe *p)
+ 	    (kprobe_disabled(p) || kprobes_all_disarmed))
+ 		return;
+ 
+-	/* Both of break_handler and post_handler are not supported. */
+-	if (p->break_handler || p->post_handler)
++	/* kprobes with post_handler can not be optimized */
++	if (p->post_handler)
+ 		return;
+ 
+ 	op = container_of(p, struct optimized_kprobe, kp);
+@@ -1116,20 +1116,6 @@ static int aggr_fault_handler(struct kprobe *p, struct pt_regs *regs,
  }
- NOKPROBE_SYMBOL(kprobe_exceptions_notify);
+ NOKPROBE_SYMBOL(aggr_fault_handler);
  
--int setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+-static int aggr_break_handler(struct kprobe *p, struct pt_regs *regs)
 -{
--	struct jprobe *jp = container_of(p, struct jprobe, kp);
--	unsigned long addr;
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-	struct kprobe *cur = __this_cpu_read(kprobe_instance);
+-	int ret = 0;
 -
--	kcb->jprobe_saved_regs = *regs;
--	kcb->jprobe_saved_sp = stack_addr(regs);
--	addr = (unsigned long)(kcb->jprobe_saved_sp);
--
--	/*
--	 * As Linus pointed out, gcc assumes that the callee
--	 * owns the argument space and could overwrite it, e.g.
--	 * tailcall optimization. So, to be absolutely safe
--	 * we also save and restore enough stack bytes to cover
--	 * the argument area.
--	 * Use __memcpy() to avoid KASAN stack out-of-bounds reports as we copy
--	 * raw stack chunk with redzones:
--	 */
--	__memcpy(kcb->jprobes_stack, (kprobe_opcode_t *)addr, MIN_STACK_SIZE(addr));
--	regs->ip = (unsigned long)(jp->entry);
--
--	/*
--	 * jprobes use jprobe_return() which skips the normal return
--	 * path of the function, and this messes up the accounting of the
--	 * function graph tracer to get messed up.
--	 *
--	 * Pause function graph tracing while performing the jprobe function.
--	 */
--	pause_graph_tracing();
--	return 1;
--}
--NOKPROBE_SYMBOL(setjmp_pre_handler);
--
--void jprobe_return(void)
--{
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--
--	/* Unpoison stack redzones in the frames we are going to jump over. */
--	kasan_unpoison_stack_above_sp_to(kcb->jprobe_saved_sp);
--
--	asm volatile (
--#ifdef CONFIG_X86_64
--			"       xchg   %%rbx,%%rsp	\n"
--#else
--			"       xchgl   %%ebx,%%esp	\n"
--#endif
--			"       int3			\n"
--			"       .globl jprobe_return_end\n"
--			"       jprobe_return_end:	\n"
--			"       nop			\n"::"b"
--			(kcb->jprobe_saved_sp):"memory");
--}
--NOKPROBE_SYMBOL(jprobe_return);
--NOKPROBE_SYMBOL(jprobe_return_end);
--
--int longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
--{
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--	u8 *addr = (u8 *) (regs->ip - 1);
--	struct jprobe *jp = container_of(p, struct jprobe, kp);
--	void *saved_sp = kcb->jprobe_saved_sp;
--
--	if ((addr > (u8 *) jprobe_return) &&
--	    (addr < (u8 *) jprobe_return_end)) {
--		if (stack_addr(regs) != saved_sp) {
--			struct pt_regs *saved_regs = &kcb->jprobe_saved_regs;
--			printk(KERN_ERR
--			       "current sp %p does not match saved sp %p\n",
--			       stack_addr(regs), saved_sp);
--			printk(KERN_ERR "Saved registers for jprobe %p\n", jp);
--			show_regs(saved_regs);
--			printk(KERN_ERR "Current registers\n");
--			show_regs(regs);
--			BUG();
--		}
--		/* It's OK to start function graph tracing again */
--		unpause_graph_tracing();
--		*regs = kcb->jprobe_saved_regs;
--		__memcpy(saved_sp, kcb->jprobes_stack, MIN_STACK_SIZE(saved_sp));
--		preempt_enable_no_resched();
--		return 1;
+-	if (cur && cur->break_handler) {
+-		if (cur->break_handler(cur, regs))
+-			ret = 1;
 -	}
--	return 0;
+-	reset_kprobe_instance();
+-	return ret;
 -}
--NOKPROBE_SYMBOL(longjmp_break_handler);
+-NOKPROBE_SYMBOL(aggr_break_handler);
 -
- bool arch_within_kprobe_blacklist(unsigned long addr)
+ /* Walks the list and increments nmissed count for multiprobe case */
+ void kprobes_inc_nmissed_count(struct kprobe *p)
  {
- 	bool is_in_entry_trampoline_section = false;
+@@ -1270,24 +1256,15 @@ static void cleanup_rp_inst(struct kretprobe *rp)
+ }
+ NOKPROBE_SYMBOL(cleanup_rp_inst);
+ 
+-/*
+-* Add the new probe to ap->list. Fail if this is the
+-* second break_handler at the address
+-*/
++/* Add the new probe to ap->list */
+ static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
+ {
+ 	BUG_ON(kprobe_gone(ap) || kprobe_gone(p));
+ 
+-	if (p->break_handler || p->post_handler)
++	if (p->post_handler)
+ 		unoptimize_kprobe(ap, true);	/* Fall back to normal kprobe */
+ 
+-	if (p->break_handler) {
+-		if (ap->break_handler)
+-			return -EEXIST;
+-		list_add_tail_rcu(&p->list, &ap->list);
+-		ap->break_handler = aggr_break_handler;
+-	} else
+-		list_add_rcu(&p->list, &ap->list);
++	list_add_rcu(&p->list, &ap->list);
+ 	if (p->post_handler && !ap->post_handler)
+ 		ap->post_handler = aggr_post_handler;
+ 
+@@ -1310,8 +1287,6 @@ static void init_aggr_kprobe(struct kprobe *ap, struct kprobe *p)
+ 	/* We don't care the kprobe which has gone. */
+ 	if (p->post_handler && !kprobe_gone(p))
+ 		ap->post_handler = aggr_post_handler;
+-	if (p->break_handler && !kprobe_gone(p))
+-		ap->break_handler = aggr_break_handler;
+ 
+ 	INIT_LIST_HEAD(&ap->list);
+ 	INIT_HLIST_NODE(&ap->hlist);
+@@ -1706,8 +1681,6 @@ static int __unregister_kprobe_top(struct kprobe *p)
+ 		goto disarmed;
+ 	else {
+ 		/* If disabling probe has special handlers, update aggrprobe */
+-		if (p->break_handler && !kprobe_gone(p))
+-			ap->break_handler = NULL;
+ 		if (p->post_handler && !kprobe_gone(p)) {
+ 			list_for_each_entry_rcu(list_p, &ap->list, list) {
+ 				if ((list_p != p) && (list_p->post_handler))
+@@ -1911,7 +1884,6 @@ int register_kretprobe(struct kretprobe *rp)
+ 	rp->kp.pre_handler = pre_handler_kretprobe;
+ 	rp->kp.post_handler = NULL;
+ 	rp->kp.fault_handler = NULL;
+-	rp->kp.break_handler = NULL;
+ 
+ 	/* Pre-allocate memory for max kretprobe instances */
+ 	if (rp->maxactive <= 0) {
+@@ -2034,7 +2006,6 @@ static void kill_kprobe(struct kprobe *p)
+ 		list_for_each_entry_rcu(kp, &p->list, list)
+ 			kp->flags |= KPROBE_FLAG_GONE;
+ 		p->post_handler = NULL;
+-		p->break_handler = NULL;
+ 		kill_optimized_kprobe(p);
+ 	}
+ 	/*
