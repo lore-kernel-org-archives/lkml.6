@@ -1,136 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751467AbeEPUOv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:14:51 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:59629 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeEPUOt (ORCPT
+        id S1751698AbeEPUUp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:20:45 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34831 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeEPUUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:14:49 -0400
-Subject: Re: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180515154352.20263-1-dmurphy@ti.com>
- <98319f30-2abe-158c-1b51-33d1df80e185@gmail.com>
- <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
- <03934462-13ef-59c0-aa27-01a003bf7baa@gmail.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <407885c7-9aa5-83e4-2895-c53e1df272ee@ti.com>
-Date: Wed, 16 May 2018 15:14:28 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <03934462-13ef-59c0-aa27-01a003bf7baa@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 16 May 2018 16:20:44 -0400
+X-Google-Smtp-Source: AB8JxZrBh3hJ+LNs/tuuMIM4T/DFvYWDFppCdHfEMOEDxdxhIz1uEZn4e3QrBTkbjIszQbN8avYdAg==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] mm: save two stranding bit in gfp_mask
+Date: Wed, 16 May 2018 13:20:23 -0700
+Message-Id: <20180516202023.167627-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 03:10 PM, Jacek Anaszewski wrote:
-> Dan,
-> 
-> On 05/15/2018 11:29 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 05/15/2018 04:13 PM, Jacek Anaszewski wrote:
->>> Hi Dan,
->>>
->>> Thanks for the update.
->>>
->>> On 05/15/2018 05:43 PM, Dan Murphy wrote:
->>>> Introduce the device tree bindings for the lm3601x
->>>> family of LED torch, flash and IR drivers.
->>>>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>> ---
->>>>
->>>> v6 - Removed multiple led child nodes, fixed example to display micro ranges
->>>> for corresponding child nodes and added led-sources to define the current driver -
->>>> https://patchwork.kernel.org/patch/10392121/
->>>>
->>>> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
->>>> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
->>>> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
->>>> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
->>>> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
->>>>
->>>>    .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
->>>>    1 file changed, 47 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->>>> new file mode 100644
->>>> index 000000000000..27930a89e9a5
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->>>> @@ -0,0 +1,47 @@
->>>> +* Texas Instruments - lm3601x Single-LED Flash Driver
->>>> +
->>>> +The LM3601X are ultra-small LED flash drivers that
->>>> +provide a high level of adjustability.
->>>> +
->>>> +Required properties:
->>>> +    - compatible : Can be one of the following
->>>> +        "ti,lm36010"
->>>> +        "ti,lm36011"
->>>> +    - reg : I2C slave address
->>>> +    - #address-cells : 1
->>>> +    - #size-cells : 0
->>>> +
->>>> +Required child properties:
->>>> +    - reg : 0
->>>> +    - led-sources:    0 - Indicates a IR mode
->>>> +            1 - Indicates a Torch (white LED) mode
->>>
->>> You don't need led-sources at all. Please use reg as in
->>> the previous version. led-sources is useful for describing
->>> more complex arrangements. Here reg will do.
->>
->> OK.  Thought we would keep consistent with the max IC.
->>
->>>
->>>> +
->>>> +Required properties for flash LED child nodes:
->>>> +    See Documentation/devicetree/bindings/leds/common.txt
->>>> +    - flash-max-microamp : Range from 11mA -> 1.5A
->>>> +    - flash-max-timeout-us : Range from 40ms -> 1600ms
->>>> +    - led-max-microamp : Range from 2.4mA -> 376mA
->>>
->>> Please give also a step in the format like below
->>> (taken from max77693):
->>>
->>>      Valid values: 62500 - 1000000, step by 62500 (rounded down)
->>
->> I would do this but the step is not linear.  The step is 40ms from 40 -> 400.
->> after that the step goes to 200ms from 400->1600.
->>
->> same with the current ranges.
-> 
-> If you're going to apply Andy's formula in the driver, then you can
-> present it also here. Anyway, please avoid using non-standard "->"
-> symbol in favor of "to" if you're using "from".
-> 
+___GFP_COLD and ___GFP_OTHER_NODE were removed but their bits were
+stranded. Slide existing gfp masks to make those two bits available.
 
-OK I will.  I have not decided if I am going to apply the formula or not.
-I am still trying to process all the comments and determine what is preference and
-what is beneficial.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ include/linux/gfp.h | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-
-> Or even better I propose to list allowed values - there are not
-> so many of them.
-> 
-
-I will figure that out based on what I do with the driver.  Been busy doing internal work today
-
-Dan
-
-
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 1a4582b44d32..8edf72d32411 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -16,31 +16,31 @@ struct vm_area_struct;
+  */
+ 
+ /* Plain integer GFP bitmasks. Do not use this directly. */
+-#define ___GFP_DMA		0x01u
+-#define ___GFP_HIGHMEM		0x02u
+-#define ___GFP_DMA32		0x04u
+-#define ___GFP_MOVABLE		0x08u
++#define ___GFP_DMA		0x1u
++#define ___GFP_HIGHMEM		0x2u
++#define ___GFP_DMA32		0x4u
++#define ___GFP_MOVABLE		0x8u
+ #define ___GFP_RECLAIMABLE	0x10u
+ #define ___GFP_HIGH		0x20u
+ #define ___GFP_IO		0x40u
+ #define ___GFP_FS		0x80u
+-#define ___GFP_NOWARN		0x200u
+-#define ___GFP_RETRY_MAYFAIL	0x400u
+-#define ___GFP_NOFAIL		0x800u
+-#define ___GFP_NORETRY		0x1000u
+-#define ___GFP_MEMALLOC		0x2000u
+-#define ___GFP_COMP		0x4000u
+-#define ___GFP_ZERO		0x8000u
+-#define ___GFP_NOMEMALLOC	0x10000u
+-#define ___GFP_HARDWALL		0x20000u
+-#define ___GFP_THISNODE		0x40000u
+-#define ___GFP_ATOMIC		0x80000u
+-#define ___GFP_ACCOUNT		0x100000u
+-#define ___GFP_DIRECT_RECLAIM	0x400000u
+-#define ___GFP_WRITE		0x800000u
+-#define ___GFP_KSWAPD_RECLAIM	0x1000000u
++#define ___GFP_NOWARN		0x100u
++#define ___GFP_RETRY_MAYFAIL	0x200u
++#define ___GFP_NOFAIL		0x400u
++#define ___GFP_NORETRY		0x800u
++#define ___GFP_MEMALLOC		0x1000u
++#define ___GFP_COMP		0x2000u
++#define ___GFP_ZERO		0x4000u
++#define ___GFP_NOMEMALLOC	0x8000u
++#define ___GFP_HARDWALL		0x10000u
++#define ___GFP_THISNODE		0x20000u
++#define ___GFP_ATOMIC		0x40000u
++#define ___GFP_ACCOUNT		0x80000u
++#define ___GFP_DIRECT_RECLAIM	0x100000u
++#define ___GFP_WRITE		0x200000u
++#define ___GFP_KSWAPD_RECLAIM	0x400000u
+ #ifdef CONFIG_LOCKDEP
+-#define ___GFP_NOLOCKDEP	0x2000000u
++#define ___GFP_NOLOCKDEP	0x800000u
+ #else
+ #define ___GFP_NOLOCKDEP	0
+ #endif
+@@ -205,7 +205,7 @@ struct vm_area_struct;
+ #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
+ 
+ /* Room for N __GFP_FOO bits */
+-#define __GFP_BITS_SHIFT (25 + IS_ENABLED(CONFIG_LOCKDEP))
++#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
+ #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
+ 
+ /*
 -- 
-------------------
-Dan Murphy
+2.17.0.441.gb46fe60e1d-goog
