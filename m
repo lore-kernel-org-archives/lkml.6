@@ -1,104 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeEPMOW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:14:22 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51141 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbeEPMOS (ORCPT
+        id S1752629AbeEPMMy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:12:54 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45133 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752574AbeEPMMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:14:18 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        "Wang, Wendy" <wendy.wang@intel.com>
-Subject: [PATCH 1/2] ACPICA: Introduce acpi_dispatch_gpe()
-Date: Wed, 16 May 2018 14:12:03 +0200
-Message-ID: <1877957.ohNgiH8Sko@aspire.rjw.lan>
-In-Reply-To: <2406722.gU2bUHd7bl@aspire.rjw.lan>
-References: <2406722.gU2bUHd7bl@aspire.rjw.lan>
+        Wed, 16 May 2018 08:12:50 -0400
+X-Google-Smtp-Source: AB8JxZp5AvJ7ikCuFSI6WmR+8hUBNU9HAprR5c4qwDp5EI0Y574VtVISRbI//AtKAsBnINPq2OHcu9KsX3IEInH42p8=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CADvbK_ffAG5GC-UBX+615P9nz43aBHsy3s0rH3NYs+FhHEwT9w@mail.gmail.com>
+References: <0000000000008149ec056c4e4289@google.com> <CADvbK_dj5nLyzZGUmqfiZuoEwDjNxTy_e-VXsEGrWYoGP4m6PA@mail.gmail.com>
+ <CACT4Y+YD7KebCZujCW90iSNxPn5GJ2pg=1f7nARA9tphrY_1JQ@mail.gmail.com> <CADvbK_ffAG5GC-UBX+615P9nz43aBHsy3s0rH3NYs+FhHEwT9w@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 16 May 2018 14:12:29 +0200
+Message-ID: <CACT4Y+aG0CdZOe8+Y5+OWsghV2o36UpgAXFE4cCm-Mmv6Cq0oA@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sctp_packet_transmit
+To: Xin Long <lucien.xin@gmail.com>
+Cc: syzbot <syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com>,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, May 16, 2018 at 1:02 PM, Xin Long <lucien.xin@gmail.com> wrote:
+>>> <syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com> wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    961423f9fcbc Merge branch 'sctp-Introduce-sctp_flush_ctx'
+>>>> git tree:       net-next
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1366aea7800000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=51fb0a6913f757db
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=ff0b569fb5111dcd1a36
+>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>> Reported-by: syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com
+>>>>
+>>>> INFO: rcu_sched self-detected stall on CPU
+>>>>         0-....: (1 GPs behind) idle=dae/1/4611686018427387908
+>>>> softirq=93090/93091 fqs=30902
+>>>>          (t=125000 jiffies g=51107 c=51106 q=972)
+>>>> NMI backtrace for cpu 0
+>>>> CPU: 0 PID: 24668 Comm: syz-executor6 Not tainted 4.17.0-rc4+ #44
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>>> Google 01/01/2011
+>>>> Call Trace:
+>>>>  <IRQ>
+>>>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>>>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>>>>  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+>>>>  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+>>>>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>>>>  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+>>>>  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+>>>>  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+>>>>  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+>>>>  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+>>>>  rcu_pending kernel/rcu/tree.c:3401 [inline]
+>>>>  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+>>>>  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+>>>>  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+>>>>  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+>>>>  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+>>>>  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+>>>>  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+>>>>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+>>>>  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+>>>>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+>>>> RIP: 0010:sctp_v6_xmit+0x259/0x6b0 net/sctp/ipv6.c:219
+>>>> RSP: 0018:ffff8801dae068e8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+>>>> RAX: 0000000000000007 RBX: ffff8801bb7ec800 RCX: ffffffff86f1b345
+>>>> RDX: 0000000000000000 RSI: ffffffff86f1b381 RDI: ffff8801b73d97c4
+>>>> RBP: ffff8801dae06988 R08: ffff88019505c300 R09: ffffed003b5c46c2
+>>>> R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff88011fd57300
+>>>> R13: ffff8801bb7ecec8 R14: 0000000000000029 R15: 0000000000000002
+>>>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:642
+>>>>  sctp_outq_flush_transports net/sctp/outqueue.c:1164 [inline]
+>>>>  sctp_outq_flush+0x5f5/0x3430 net/sctp/outqueue.c:1212
+>>>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+>>>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+>>>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+>>>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+>>>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+>>> Shocks, this timer event again. Can we try to minimize the repo.syz and
+>>> get a short script, not neccessary to reproduce the issue 100%. we need
+>>> to know what it was doing when this happened.
+>>>
+>>> Thanks.
+>>
+>> It's possible to reply the whole log from console output following
+>> these instructions:
+>> https://github.com/google/syzkaller/blob/master/docs/executing_syzkaller_programs.md
+> Thanks, it's running now.
+> Usually how long will it take to finish running this 5000-line log?
 
-Introduce acpi_dispatch_gpe() as a wrapper around acpi_ev_detect_gpe()
-for checking if the given GPE (as represented by a GPE device handle
-and a GPE number) is currently active and dispatching it (if that's
-the case) outside of interrupt context.
+If you run with -repeat=0 then it will run infinitely repeating the
+log again and again. If you see:
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/acpica/evgpe.c   |    6 ++++++
- drivers/acpi/acpica/evxfgpe.c |   22 ++++++++++++++++++++++
- include/acpi/acpixf.h         |    1 +
- 3 files changed, 29 insertions(+)
+parsed 1000 programs
+...
+executed 5000 programs
 
-Index: linux-pm/drivers/acpi/acpica/evgpe.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/evgpe.c
-+++ linux-pm/drivers/acpi/acpica/evgpe.c
-@@ -634,6 +634,12 @@ acpi_ev_detect_gpe(struct acpi_namespace
- 
- 	flags = acpi_os_acquire_lock(acpi_gbl_gpe_lock);
- 
-+	if (!gpe_event_info) {
-+		gpe_event_info = acpi_ev_get_gpe_event_info(gpe_device, gpe_number);
-+		if (!gpe_event_info)
-+			goto error_exit;
-+	}
-+
- 	/* Get the info block for the entire GPE register */
- 
- 	gpe_register_info = gpe_event_info->register_info;
-Index: linux-pm/drivers/acpi/acpica/evxfgpe.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/evxfgpe.c
-+++ linux-pm/drivers/acpi/acpica/evxfgpe.c
-@@ -639,6 +639,28 @@ ACPI_EXPORT_SYMBOL(acpi_get_gpe_status)
- 
- /*******************************************************************************
-  *
-+ * FUNCTION:    acpi_gispatch_gpe
-+ *
-+ * PARAMETERS:  gpe_device          - Parent GPE Device. NULL for GPE0/GPE1
-+ *              gpe_number          - GPE level within the GPE block
-+ *
-+ * RETURN:      None
-+ *
-+ * DESCRIPTION: Detect and dispatch a General Purpose Event to either a function
-+ *              (e.g. EC) or method (e.g. _Lxx/_Exx) handler.
-+ *
-+ ******************************************************************************/
-+void acpi_dispatch_gpe(acpi_handle gpe_device, u32 gpe_number)
-+{
-+	ACPI_FUNCTION_TRACE(acpi_dispatch_gpe);
-+
-+	acpi_ev_detect_gpe(gpe_device, NULL, gpe_number);
-+}
-+
-+ACPI_EXPORT_SYMBOL(acpi_dispatch_gpe)
-+
-+/*******************************************************************************
-+ *
-  * FUNCTION:    acpi_finish_gpe
-  *
-  * PARAMETERS:  gpe_device          - Namespace node for the GPE Block
-Index: linux-pm/include/acpi/acpixf.h
-===================================================================
---- linux-pm.orig/include/acpi/acpixf.h
-+++ linux-pm/include/acpi/acpixf.h
-@@ -753,6 +753,7 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_sta
- 						     u32 gpe_number,
- 						     acpi_event_status
- 						     *event_status))
-+void acpi_dispatch_gpe(acpi_handle gpe_device, u32 gpe_number);
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_disable_all_gpes(void))
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_runtime_gpes(void))
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_wakeup_gpes(void))
+then it looped 5 times already. You can run with -repeat=10.
+
+syzbot has tried replaying the log, but for some reason it wasn't able
+to reproduce the crash (maybe accumulated state, or maybe it crashed
+in a different way). You can also try logs from other sctp hangs.
