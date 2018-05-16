@@ -1,99 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751596AbeEPRn5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:43:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36100 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeEPRnz (ORCPT
+        id S1751367AbeEPRrg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:47:36 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42379 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750799AbeEPRre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:43:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 126756055C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm@lists.infradead.org,
-        tsoni@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org,
-        robh@kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v7 0/2] SDM845 System Cache Driver
-Date: Wed, 16 May 2018 10:43:41 -0700
-Message-Id: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 16 May 2018 13:47:34 -0400
+X-Google-Smtp-Source: AB8JxZrJXK2gU0nmkn+anLwjdgJrMd1DWtWE8P8+f4uC3+SQQGEKoc5CqZOxfrghtBKFNK2T//4lSg==
+Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
+ configuration
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180514144029.16019-1-andr2000@gmail.com>
+ <20180514144029.16019-2-andr2000@gmail.com> <20180516171528.GD21971@dtor-ws>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
+Date: Wed, 16 May 2018 20:47:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180516171528.GD21971@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series implements system cache or LLCC(Last Level Cache Controller)
-driver for SDM845 SOC. The purpose of the driver is to partition the
-system cache and program the settings such as priortiy, lines to probe
-while doing a look up in the system cache, low power related settings etc.
-The partitions are called cache slices. Each cache slice is associated
-with size and SCID(System Cache ID). The driver also provides API for
-clients to query the cache slice details,activate and deactivate them.
+On 05/16/2018 08:15 PM, Dmitry Torokhov wrote:
+> Hi Oleksandr,
+>
+> On Mon, May 14, 2018 at 05:40:29PM +0300, Oleksandr Andrushchenko wrote:
+>> @@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
+>>   	if (!info->page)
+>>   		goto error_nomem;
+>>   
+>> -	/* Set input abs params to match backend screen res */
+>> -	abs = xenbus_read_unsigned(dev->otherend,
+>> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
+>> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
+>> -						  XENKBD_FIELD_WIDTH,
+>> -						  ptr_size[KPARAM_X]);
+>> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
+>> -						  XENKBD_FIELD_HEIGHT,
+>> -						  ptr_size[KPARAM_Y]);
+>> -	if (abs) {
+>> -		ret = xenbus_write(XBT_NIL, dev->nodename,
+>> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
+>> -		if (ret) {
+>> -			pr_warn("xenkbd: can't request abs-pointer\n");
+>> -			abs = 0;
+>> -		}
+>> -	}
+>> +	/*
+>> +	 * The below are reverse logic, e.g. if the feature is set, then
+>> +	 * do not expose the corresponding virtual device.
+>> +	 */
+>> +	with_kbd = !xenbus_read_unsigned(dev->nodename,
+>> +					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
+>>   
+>> -	touch = xenbus_read_unsigned(dev->nodename,
+>> -				     XENKBD_FIELD_FEAT_MTOUCH, 0);
+>> -	if (touch) {
+>> +	with_ptr = !xenbus_read_unsigned(dev->nodename,
+>> +					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
+>> +
+>> +	/* Direct logic: if set, then create multi-touch device. */
+>> +	with_mtouch = xenbus_read_unsigned(dev->nodename,
+>> +					   XENKBD_FIELD_FEAT_MTOUCH, 0);
+>> +	if (with_mtouch) {
+>>   		ret = xenbus_write(XBT_NIL, dev->nodename,
+>>   				   XENKBD_FIELD_REQ_MTOUCH, "1");
+>>   		if (ret) {
+>>   			pr_warn("xenkbd: can't request multi-touch");
+>> -			touch = 0;
+>> +			with_mtouch = 0;
+>>   		}
+>>   	}
+> Does it make sense to still end up calling xenkbd_connect_backend() when
+> all interfaces (keyboard, pointer, and multitouch) are disabled? Should
+> we do:
+>
+> 	if (!(with_kbd || || with_ptr || with_mtouch))
+> 		return -ENXIO;
+>
+> ?
+It does make sense. Then we probably need to move all xenbus_read_unsigned
+calls to the very beginning of the .probe, so no memory allocations are made
+which will be useless if we return -ENXIO, e.g. something like
 
-The driver can be broadly classified into:
-* SOC specific driver: llcc-sdm845.c: Cache partitioning and cache slice
-properties for usecases on sdm845 that need to use system cache.
+static int xenkbd_probe(struct xenbus_device *dev,
+                   const struct xenbus_device_id *id)
+{
+     int ret, i;
+     bool with_mtouch, with_kbd, with_ptr;
+     struct xenkbd_info *info;
+     struct input_dev *kbd, *ptr, *mtouch;
 
-* API : llcc-slice.c: Exports APIs to clients to query cache slice details,
-activate and deactivate cache slices.
+<read with_mtouch, with_kbd, with_ptr here>
 
-Changes since v6:
-* Remove the max-slices property from DT.
-* Make client's slice_ids as macros.
-* Unlock mutex while returning from function in case of error.
+if (!(with_kbd | with_ptr | with_mtouch))
+         return -ENXIO;
 
-Changes since v5:
-* Remove client information from DT.
-* Make the llcc driver data as global.
-* Check return value of llcc_update_act_ctrl function
-* Change error returned from -EFAULT to -EINVAL
-
-Changes since v4:
-* Remove null pointer checks as per comments.
-* Remove extra blank lines.
-
-Changes since v3:
-* Use the regmap_read_poll_timeout function
-* Check for regmap read/write errors.
-* Remove memory barrier after regmap write
-* Derive memory bank offsets using stride macro variable
-* Remove debug statements from code
-* Remove the qcom_llcc_remove function
-* Use if IS_ENABLED in place of ifdef for built-in module
-* Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL
-* Remove unnecessary free functions
-* Change the variable names as per review comments
-
-Changes since v2:
-* Corrected the Makefile to fix compilation.
-
-Changes since v1:
-* Added Makefile and Kconfig.
-
-Changes since v0:
-* Removed the syscon and simple-mfd approach
-* Updated the device tree nodes to mention LLCC as a single HW block
-* Moved llcc bank offsets from device tree and handled the offset
-  in the driver.
-
-ckadabi@codeaurora.org (2):
-  dt-bindings: Documentation for qcom, llcc
-  drivers: soc: Add LLCC driver
-
- .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  26 ++
- drivers/soc/qcom/Kconfig                           |  17 ++
- drivers/soc/qcom/Makefile                          |   2 +
- drivers/soc/qcom/llcc-sdm845.c                     | 106 +++++++
- drivers/soc/qcom/llcc-slice.c                      | 337 +++++++++++++++++++++
- include/linux/soc/qcom/llcc-qcom.h                 | 180 +++++++++++
- 6 files changed, 668 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
- create mode 100644 drivers/soc/qcom/llcc-sdm845.c
- create mode 100644 drivers/soc/qcom/llcc-slice.c
- create mode 100644 include/linux/soc/qcom/llcc-qcom.h
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Does the above looks ok?
+> Thanks.
+>
+Thank you,
+Oleksandr
