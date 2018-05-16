@@ -1,85 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752599AbeEPLpM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:45:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45210 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751844AbeEPLpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:45:10 -0400
-Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 16 May 2018 07:45:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <9ee148c9-1d3b-860a-32d8-8a1584628233@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051611-0028-0000-0000-000009A08C9E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01033107; UDB=6.00528218; IPR=6.00812239;
- MB=3.00021143; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 11:45:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051611-0029-0000-0000-00003AD97985
-Message-Id: <ea3904e7-0c7e-c8d4-556f-fc18edfe6709@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160120
+        id S1752387AbeEPLsk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:48:40 -0400
+Received: from olimex.com ([184.105.72.32]:35676 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751844AbeEPLsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:48:38 -0400
+From: Stefan Mavrodiev <stefan@olimex.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-kernel@vger.kernel.org (open list),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support)
+Cc: linux-sunxi@googlegroups.com, Stefan Mavrodiev <stefan@olimex.com>
+Subject: [PATCH 1/1] ARM:dts:sunxi: Add Olimex A20-SOM-EVB-eMMC board
+Date: Wed, 16 May 2018 14:38:08 +0300
+Message-Id: <1526470689-6275-1-git-send-email-stefan@olimex.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 04:21 AM, Pierre Morel wrote:
-> On 07/05/2018 17:11, Tony Krowiak wrote:
->> Introduces a new AP device driver. This device driver
->> is built on the VFIO mediated device framework. The framework
->> provides sysfs interfaces that facilitate passthrough
->> access by guests to devices installed on the linux host.
-> ...snip...
->> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
->> +{
->
-> You should take care of the ap devices when they are added or removed
-> from the matrix.
-> I suggest you add a remove callback to avoid unbinding a queue while
-> it is assigned to a guest.
+With the new rev.E of A20-SOM-EVB, there is option for 16GB eMMC.
+Currently used card is KLMAG2GEND, wired to MMC2 slot.
 
-This is not possible without a change to the AP bus. The remove callback
-returns void, so there is no way to indicate to the AP bus not to remove
-the queue device. I'll talk to Harald about this.
+Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+---
+ arch/arm/boot/dts/Makefile                         |  1 +
+ .../arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts | 37 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
 
-
->
->
->> +    return 0;
->> +}
->> +
->> +static void vfio_ap_matrix_dev_release(struct device *dev)
->> +{
->> +    struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
->> +
->> +    kfree(ap_matrix);
->> +}
-> ...snip...
->
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 1db91ec..7f1ee65 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -959,6 +959,7 @@ dtb-$(CONFIG_MACH_SUN7I) += \
+ 	sun7i-a20-m3.dtb \
+ 	sun7i-a20-mk808c.dtb \
+ 	sun7i-a20-olimex-som-evb.dtb \
++	sun7i-a20-olimex-som-evb-emmc.dtb \
+ 	sun7i-a20-olimex-som204-evb.dtb \
+ 	sun7i-a20-olimex-som204-evb-emmc.dtb \
+ 	sun7i-a20-olinuxino-lime.dtb \
+diff --git a/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
+new file mode 100644
+index 0000000..81ebc97
+--- /dev/null
++++ b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Device Tree Source for A20-Olimex-SOM-EVB-eMMC Board
++ *
++ * Copyright (C) 2018 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ */
++
++/dts-v1/;
++#include "sun7i-a20-olimex-som-evb.dts"
++
++/ {
++
++	model = "Olimex A20-Olimex-SOM-EVB-eMMC";
++	compatible = "olimex,a20-olimex-som-evb-emmc", "allwinner,sun7i-a20";
++
++	mmc2_pwrseq: mmc2_pwrseq {
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&pio 2 18 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_pins_a>;
++	vmmc-supply = <&reg_vcc3v3>;
++	mmc-pwrseq = <&mmc2_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	emmc: emmc@0 {
++		reg = <0>;
++		compatible = "mmc-card";
++		broken-hpi;
++	};
++};
+-- 
+2.7.4
