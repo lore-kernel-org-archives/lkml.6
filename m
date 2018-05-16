@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeEPFp7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:45:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58206 "EHLO
+        id S1752661AbeEPFoz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:44:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58022 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbeEPFo5 (ORCPT
+        with ESMTP id S1752613AbeEPFou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:44:57 -0400
+        Wed, 16 May 2018 01:44:50 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: Souptick Joarder <jrdr.linux@gmail.com>,
         Matthew Wilcox <willy@infradead.org>
@@ -17,9 +17,9 @@ Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-mtd@lists.infradead.org, dri-devel@lists.freedesktop.org,
         lustre-devel@lists.lustre.org, linux-arm-kernel@lists.infradead.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 12/14] lustre: separate errno from VM_FAULT_* values
-Date: Wed, 16 May 2018 07:43:46 +0200
-Message-Id: <20180516054348.15950-13-hch@lst.de>
+Subject: [PATCH 09/14] ubifs: separate errno from VM_FAULT_* values
+Date: Wed, 16 May 2018 07:43:43 +0200
+Message-Id: <20180516054348.15950-10-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516054348.15950-1-hch@lst.de>
 References: <20180516054348.15950-1-hch@lst.de>
@@ -30,118 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- .../staging/lustre/lustre/llite/llite_mmap.c  | 37 +++++++------------
- .../lustre/lustre/llite/vvp_internal.h        |  2 +-
- 2 files changed, 14 insertions(+), 25 deletions(-)
+ fs/ubifs/file.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/llite_mmap.c b/drivers/staging/lustre/lustre/llite/llite_mmap.c
-index 214b07554e62..061d98871959 100644
---- a/drivers/staging/lustre/lustre/llite/llite_mmap.c
-+++ b/drivers/staging/lustre/lustre/llite/llite_mmap.c
-@@ -231,23 +231,18 @@ static int ll_page_mkwrite0(struct vm_area_struct *vma, struct page *vmpage,
- 	return result;
- }
- 
--static inline int to_fault_error(int result)
-+static inline vm_fault_t to_fault_error(int result)
- {
- 	switch (result) {
- 	case 0:
--		result = VM_FAULT_LOCKED;
--		break;
-+		return VM_FAULT_LOCKED;
- 	case -EFAULT:
--		result = VM_FAULT_NOPAGE;
--		break;
-+		return VM_FAULT_NOPAGE;
- 	case -ENOMEM:
--		result = VM_FAULT_OOM;
--		break;
-+		return VM_FAULT_OOM;
- 	default:
--		result = VM_FAULT_SIGBUS;
--		break;
-+		return VM_FAULT_SIGBUS;
- 	}
--	return result;
- }
- 
- /**
-@@ -261,7 +256,7 @@ static inline int to_fault_error(int result)
-  * \retval VM_FAULT_ERROR on general error
-  * \retval NOPAGE_OOM not have memory for allocate new page
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 1acb2ff505e6..7c1a2e1c3de5 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1513,7 +1513,7 @@ static int ubifs_releasepage(struct page *page, gfp_t unused_gfp_flags)
+  * mmap()d file has taken write protection fault and is being made writable.
+  * UBIFS must ensure page is budgeted for.
   */
--static int ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
-+static vm_fault_t ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
+-static int ubifs_vm_page_mkwrite(struct vm_fault *vmf)
++static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
  {
- 	struct lu_env	   *env;
- 	struct cl_io	    *io;
-@@ -269,7 +264,7 @@ static int ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
- 	struct page	     *vmpage;
- 	unsigned long	    ra_flags;
- 	int		      result = 0;
--	int		      fault_ret = 0;
-+	vm_fault_t	      fault_ret = 0;
- 	u16 refcheck;
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+@@ -1521,6 +1521,7 @@ static int ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	struct timespec now = current_time(inode);
+ 	struct ubifs_budget_req req = { .new_page = 1 };
+ 	int err, update_time;
++	vm_fault_t ret = 0;
  
- 	env = cl_env_get(&refcheck);
-@@ -323,7 +318,7 @@ static int ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
- 	return fault_ret;
+ 	dbg_gen("ino %lu, pg %lu, i_size %lld",	inode->i_ino, page->index,
+ 		i_size_read(inode));
+@@ -1601,8 +1602,8 @@ static int ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	unlock_page(page);
+ 	ubifs_release_budget(c, &req);
+ 	if (err)
+-		err = VM_FAULT_SIGBUS;
+-	return err;
++		ret = VM_FAULT_SIGBUS;
++	return ret;
  }
  
--static int ll_fault(struct vm_fault *vmf)
-+static vm_fault_t ll_fault(struct vm_fault *vmf)
- {
- 	int count = 0;
- 	bool printed = false;
-@@ -364,7 +359,7 @@ static int ll_fault(struct vm_fault *vmf)
- 	return result;
- }
- 
--static int ll_page_mkwrite(struct vm_fault *vmf)
-+static vm_fault_t ll_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	int count = 0;
-@@ -390,22 +385,16 @@ static int ll_page_mkwrite(struct vm_fault *vmf)
- 	switch (result) {
- 	case 0:
- 		LASSERT(PageLocked(vmf->page));
--		result = VM_FAULT_LOCKED;
--		break;
-+		return VM_FAULT_LOCKED;
- 	case -ENODATA:
- 	case -EAGAIN:
- 	case -EFAULT:
--		result = VM_FAULT_NOPAGE;
--		break;
-+		return VM_FAULT_NOPAGE;
- 	case -ENOMEM:
--		result = VM_FAULT_OOM;
--		break;
-+		return VM_FAULT_OOM;
- 	default:
--		result = VM_FAULT_SIGBUS;
--		break;
-+		return VM_FAULT_SIGBUS;
- 	}
--
--	return result;
- }
- 
- /**
-diff --git a/drivers/staging/lustre/lustre/llite/vvp_internal.h b/drivers/staging/lustre/lustre/llite/vvp_internal.h
-index 7d3abb43584a..c194966a3d82 100644
---- a/drivers/staging/lustre/lustre/llite/vvp_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/vvp_internal.h
-@@ -83,7 +83,7 @@ struct vvp_io {
- 			/**
- 			 * fault API used bitflags for return code.
- 			 */
--			unsigned int    ft_flags;
-+			vm_fault_t    ft_flags;
- 			/**
- 			 * check that flags are from filemap_fault
- 			 */
+ static const struct vm_operations_struct ubifs_file_vm_ops = {
 -- 
 2.17.0
