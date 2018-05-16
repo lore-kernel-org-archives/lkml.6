@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeEPLxi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:53:38 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40327 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbeEPLxg (ORCPT
+        id S1752483AbeEPLzU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:55:20 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51146 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752060AbeEPLzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:53:36 -0400
-X-Google-Smtp-Source: AB8JxZqXmwMts7iFO9ISLEoi2VuvlYXRCk2TYxb2CellG8AoqqxaTxhgbCCWAOGOZ29d4/X5mZpVdrotJNzInOLSb4U=
+        Wed, 16 May 2018 07:55:16 -0400
+X-Google-Smtp-Source: AB8JxZpjgjQLF7XC9HSbqzDgtbZb5rwUXrflYmoP1suN/jNDjO3V+dUXC1aC4VFVj62EGyZZkjDj/MyOSQFjmFPgMQE=
 MIME-Version: 1.0
-In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com>
+In-Reply-To: <de4bade4236415f62088d68cd5fcd6fb7b67e020.1524933096.git.hns@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com> <de4bade4236415f62088d68cd5fcd6fb7b67e020.1524933096.git.hns@goldelico.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 13:53:34 +0200
-Message-ID: <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+Date: Wed, 16 May 2018 13:55:15 +0200
+Message-ID: <CACRpkdbShT-1Nbwg40yCRPbDq2v6Br2eerTX9Zx_=nXT9xcVjw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] DTS: Bindings: pca953x add an optional vcc-supply property
 To: "H. Nikolaus Schaller" <hns@goldelico.com>
 Cc: Kumar Gala <galak@codeaurora.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -36,13 +36,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-> V5:
-> * fix wrong split up between patches 1/7and 2/7.
+> Hardware can have a switchable Vcc supply, so let's add it to
+> the bindings (the current Linux driver code already supports it).
+>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-I applied patches 1, 2, 3 so we get some movement on the patch
-set and not too much for you to rebase.
-
-It's fine to just resend the rest next time.
+Patch applied.
 
 Yours,
 Linus Walleij
