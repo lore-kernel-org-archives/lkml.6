@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751038AbeEPRBn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:01:43 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:20529 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750772AbeEPRBk (ORCPT
+        id S1752009AbeEPRDi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:03:38 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40750 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750835AbeEPRDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:01:40 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij05fypFHKw=="
-X-RZG-CLASS-ID: mo00
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: galak@codeaurora.org, andy.shevchenko@gmail.com,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v6 2/3] gpio: pca953x: define masks for addressing common and extended registers
-Date: Wed, 16 May 2018 19:01:25 +0200
-Message-Id: <314df7f911fda8f5584cc4384a26074848a2673b.1526490085.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com>
-In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com>
+        Wed, 16 May 2018 13:03:35 -0400
+X-Google-Smtp-Source: AB8JxZpLnYJTeU+6rCbsWFdPCpsNxtmLhUsePmUxIFjyR59KPPmhl/Q/NU5Q/8uXkfayn5oTfYwcnw==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm@lists.infradead.org,
+        tsoni@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org,
+        robh@kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
+ <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
+Message-ID: <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
+Date: Wed, 16 May 2018 10:03:33 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GH3h3O020736
 
-These mask bits are to be used to map the extended register
-addreseses (which are defined for an unsupported 8-bit pcal chip)
-to 16 and 24 bit chips (pcal6524).
+Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
+> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+> new file mode 100644
+> index 0000000..a586a17
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+> @@ -0,0 +1,32 @@
+> +== Introduction==
+> +
+> +LLCC (Last Level Cache Controller) provides last level of cache memory in SOC,
+> +that can be shared by multiple clients. Clients here are different cores in the
+> +SOC, the idea is to minimize the local caches at the clients and migrate to
+> +common pool of memory. Cache memory is divided into partitions called slices
+> +which are assigned to clients. Clients can query the slice details, activate
+> +and deactivate them.
+> +
+> +Properties:
+> +- compatible:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: must be "qcom,sdm845-llcc"
+> +
+> +- reg:
+> +       Usage: required
+> +       Value Type: <prop-encoded-array>
+> +       Definition: Start address and the range of the LLCC registers.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Start address and size?
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 2b667166e855..c0eb679e60d4 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -56,6 +56,10 @@
- #define PCAL6524_DEBOUNCE	0x2d
- 
- #define PCA_GPIO_MASK		0x00FF
-+
-+#define PCAL_GPIO_MASK		GENMASK(4, 0)
-+#define PCAL_PINCTRL_MASK	(~PCAL_GPIO_MASK)
-+
- #define PCA_INT			0x0100
- #define PCA_PCAL		0x0200
- #define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
--- 
-2.12.2
+> +
+> +- max-slices:
+> +       usage: required
+> +       Value Type: <u32>
+> +       Definition: Number of cache slices supported by hardware
+> +
+> +Example:
+> +
+> +       llcc: qcom,llcc@1100000 {
+
+cache-controller@1100000 ?
+
+> +               compatible = "qcom,sdm845-llcc";
+> +               reg = <0x1100000 0x250000>;
+> +               max-slices = <32>;
+> +       };
+> -- 
