@@ -1,79 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEPWrB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:47:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57524 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeEPWrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 18:47:00 -0400
-Date: Thu, 17 May 2018 00:46:41 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Johannes Hirte <johannes.hirte@datenkhaos.de>,
-        "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
- block
-Message-ID: <20180516224641.GA31929@pd.tnic>
-References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
- <20180201184813.82253-3-Yazen.Ghannam@amd.com>
- <20180414004230.GA2033@probook>
- <20180416115624.GA1543@probook>
- <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
- <20180515093953.GA1746@probook>
+        id S1752183AbeEPWr0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:47:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43940 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbeEPWrY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 18:47:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F9D160209
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH] regulator: core: Allow for regulators that can't be read
+ at bootup
+To: Douglas Anderson <dianders@chromium.org>, broonie@kernel.org
+Cc: mka@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+References: <20180515220717.254950-1-dianders@chromium.org>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <4547e1cb-a39c-decd-9384-4e2c6d28f64d@codeaurora.org>
+Date: Wed, 16 May 2018 15:47:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
+In-Reply-To: <20180515220717.254950-1-dianders@chromium.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180515093953.GA1746@probook>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:39:54AM +0200, Johannes Hirte wrote:
-> The out-of-bound access happens in get_block_address:
-> 
-> 	if (bankp && bankp->blocks) {
-> 		struct threshold_block *blockp blockp = &bankp->blocks[block];
-> 
-> with block=1. This doesn't exists. I don't even find any array here.
-> There is a linked list, created in allocate_threshold_blocks. On my
-> system I get 17 lists with one element each.
+On 05/15/2018 03:07 PM, Douglas Anderson wrote:
+> As discussed in the patches to try to support the RPMh regulators [1],
+> the fact that regulators are write-only means that its driver's
+> get_voltage_sel() should return an error code if it's called before
+> any calls to set_voltage_sel().  This causes problems in
+> machine_constraints_voltage() when trying to apply the constraints.
 
-Yes, what a mess this is. ;-\
+This problem specifically arises in the latest RPMh regulator patch [1] if
+regulator-min-microvolt and regulator-max-microvolt are specified for a
+VRM managed RPMh regulator device but the qcom,regulator-initial-microvolt
+property is not provided.  Therefore, listing
+qcom,regulator-initial-microvolt is a way to avoid regulator registration
+issues.
 
-There's no such thing as ->blocks[block] array. We assign simply the
-threshold_block to it in allocate_threshold_blocks:
 
-	per_cpu(threshold_banks, cpu)[bank]->blocks = b;
+> In this patch I propose the error code -ENOTRECOVERABLE.  In errno.h
+> this error is described as "State not recoverable".
 
-And I can't say the design of this thing is really friendly but it is
-still no excuse that I missed that during review. Grrr.
+I'm fine with this constant.  Hopefully Mark is as well.
 
-So, Yazen, what really needs to happen here is to iterate the
-bank->blocks->miscj list to find the block you're looking for and return
-its address, the opposite to this here:
 
-        if (per_cpu(threshold_banks, cpu)[bank]->blocks) {
-                list_add(&b->miscj,
-                         &per_cpu(threshold_banks, cpu)[bank]->blocks->miscj);
-        } else {
-                per_cpu(threshold_banks, cpu)[bank]->blocks = b;
-        }
+> If this patch is accepted then we'll need to update the latest RPMh
+> regulator patch to return it.  The current patch returns -EINVAL which
+> means that the regulator always fails.
 
-and don't forget to look at ->blocks itself.
+I'll make this modification if needed.
 
-And then you need to make sure that searching for block addresses still
-works when resuming from suspend so that you can avoid the RDMSR IPIs.
+Take care,
+David
 
-Ok?
+[1] https://lkml.org/lkml/2018/5/11/703
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
