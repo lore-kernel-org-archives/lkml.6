@@ -1,88 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751596AbeEPTyD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 15:54:03 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32780 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEPTyC (ORCPT
+        id S1751228AbeEPT5n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 15:57:43 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:20420 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750778AbeEPT5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 15:54:02 -0400
-X-Google-Smtp-Source: AB8JxZp4WtxvDd9yS4BSQlL10X1hxoIgQQMQ16F/qoGFwySTlStquIBPM7pBDHJU8Cfj422MU44BWg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Mathieu Malaterre <malat@debian.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/debug: Move print_rt_rq and print_dl_rq declarations to kernel/sched/sched.h
-Date: Wed, 16 May 2018 21:53:47 +0200
-Message-Id: <20180516195348.30426-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 16 May 2018 15:57:41 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WivdN1GDmY"
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v6 2/3] gpio: pca953x: define masks for addressing common and extended registers
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CAHp75VcadghXsqu66NmrfbEPpgqusEUuzSkrE8PSJjAV0avntQ@mail.gmail.com>
+Date: Wed, 16 May 2018 21:57:36 +0200
+Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Message-Id: <3E4522A9-A649-4D01-AE2A-57B9C8ED8851@goldelico.com>
+References: <cover.1526490085.git.hns@goldelico.com> <314df7f911fda8f5584cc4384a26074848a2673b.1526490085.git.hns@goldelico.com> <CAHp75VcadghXsqu66NmrfbEPpgqusEUuzSkrE8PSJjAV0avntQ@mail.gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GJvo4n000973
 
-In commit 6b55c9654fcc ("sched/debug: Move print_cfs_rq() declaration to
-kernel/sched/sched.h"), ‘print_cfs_rq’ prototype was added to
-<kernel/sched/sched.h> right next to prototypes for ‘print_cfs_stats’,
-‘print_rt_stats’ and ‘print_dl_stats’. Update this previous commit
-and also move related prototypes: ‘print_rt_rq’ and ‘print_dl_rq’.
-Remove existing extern declarations now that they not needed anymore.
 
-Silence the following gcc warning, triggered at W=1:
+> Am 16.05.2018 um 21:50 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
+> 
+> On Wed, May 16, 2018 at 8:01 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>> These mask bits are to be used to map the extended register
+>> addreseses (which are defined for an unsupported 8-bit pcal chip)
+>> to 16 and 24 bit chips (pcal6524).
+>> 
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>> drivers/gpio/gpio-pca953x.c | 4 ++++
+>> 1 file changed, 4 insertions(+)
+>> 
+>> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+>> index 2b667166e855..c0eb679e60d4 100644
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -56,6 +56,10 @@
+>> #define PCAL6524_DEBOUNCE      0x2d
+>> 
+>> #define PCA_GPIO_MASK          0x00FF
+>> +
+>> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
+>> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
+>> +
+> 
+> I give second thought about it, and think
+> either plain values, or second converted to its own explicit GENMASK
+> would be better.
+> 
+> (most confusing part to me is unknowness of the side of PINCTRL part
+> in the mask)
 
-  kernel/sched/debug.c:573:6: warning: no previous prototype for ‘print_rt_rq’ [-Wmissing-prototypes]
-  kernel/sched/debug.c:603:6: warning: no previous prototype for ‘print_dl_rq’ [-Wmissing-prototypes]
+I see.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- kernel/sched/deadline.c | 2 --
- kernel/sched/rt.c       | 2 --
- kernel/sched/sched.h    | 5 +++--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+Then, I'd also prefer plain values.
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 125703d9b25e..1356afd1eeb6 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2731,8 +2731,6 @@ bool dl_cpu_busy(unsigned int cpu)
- #endif
- 
- #ifdef CONFIG_SCHED_DEBUG
--extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
--
- void print_dl_stats(struct seq_file *m, int cpu)
- {
- 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 7aef6b4e885a..ef3c4e6f5345 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2701,8 +2701,6 @@ int sched_rr_handler(struct ctl_table *table, int write,
- }
- 
- #ifdef CONFIG_SCHED_DEBUG
--extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
--
- void print_rt_stats(struct seq_file *m, int cpu)
- {
- 	rt_rq_iter_t iter;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 15750c222ca2..1f0a4bc6a39d 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2025,8 +2025,9 @@ extern bool sched_debug_enabled;
- extern void print_cfs_stats(struct seq_file *m, int cpu);
- extern void print_rt_stats(struct seq_file *m, int cpu);
- extern void print_dl_stats(struct seq_file *m, int cpu);
--extern void
--print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-+extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-+extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-+extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
- #ifdef CONFIG_NUMA_BALANCING
- extern void
- show_numa_stats(struct task_struct *p, struct seq_file *m);
--- 
-2.11.0
+If ok, I can send a v7 tomorrow.
+
+BR,
+Nikolaus
