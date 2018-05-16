@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeEPNbg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:31:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752309AbeEPNbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:31:34 -0400
-Subject: Re: [RFC v4 4/5] virtio_ring: add event idx support in packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-5-tiwei.bie@intel.com>
- <64f5085b-4b62-d545-36e0-0951c11b29a8@redhat.com>
- <20180516125825.GA4171@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <cfaa4e06-1f00-fd6c-5b4c-60eaafa63445@redhat.com>
-Date: Wed, 16 May 2018 21:31:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180516125825.GA4171@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1752566AbeEPNce (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:32:34 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:31246 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeEPNcc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:32:32 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WivdN1GDmY"
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
+Date: Wed, 16 May 2018 15:32:19 +0200
+Cc: Kumar Gala <galak@codeaurora.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Message-Id: <6AA622D1-DA8C-4C58-8EAE-555989E69149@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com> <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GDWeOe005397
 
+Hi,
 
+> Am 16.05.2018 um 13:53 schrieb Linus Walleij <linus.walleij@linaro.org>:
+> 
+> On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> 
+>> V5:
+>> * fix wrong split up between patches 1/7and 2/7.
+> 
+> I applied patches 1, 2, 3 so we get some movement on the patch
+> set and not too much for you to rebase.
 
-On 2018年05月16日 20:58, Tiwei Bie wrote:
-> On Wed, May 16, 2018 at 08:17:21PM +0800, Jason Wang wrote:
->> On 2018年05月16日 16:37, Tiwei Bie wrote:
-> [...]
->>> @@ -1160,15 +1186,27 @@ static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
->>>    static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
->>>    {
->>>    	struct vring_virtqueue *vq = to_vvq(_vq);
->>> +	u16 wrap_counter;
->>>    	START_USE(vq);
->>>    	/* We optimistically turn back on interrupts, then check if there was
->>>    	 * more to do. */
->>> +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
->>> +	 * either clear the flags bit or point the event index at the next
->>> +	 * entry. Always update the event index to keep code simple. */
->>> +
->>> +	wrap_counter = vq->wrap_counter;
->>> +	if (vq->last_used_idx > vq->next_avail_idx)
->> Should this be ">=" consider rx refill may try to completely fill the ring?
-> It seems that there are two cases that last_used_idx
-> equals to next_avail_idx. The first one is that the
-> ring is empty. And the second one is that the ring
-> is full. Although in the first case, most probably,
-> the driver won't enable the interrupt.
->
-> Maybe I really should track the used_wrap_counter
-> instead of calculating it each time I need it.. I'll
-> give it a try..
->
+thanks!
 
-Right, good to know and this will match spec sample code.
+Well, I already had edited the commit messages for resending...
 
-Thanks
+> 
+> It's fine to just resend the rest next time.
+
+There is only one point open before resending:
+
+what is the preferred style to be used for PCAL_GPIO_MASK?
+
+* GENMASK(4, 0)
+* or 0x1f
+
+BR,
+Nikolaus
