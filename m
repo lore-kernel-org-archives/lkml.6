@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751228AbeEPRBp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:01:45 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:36062 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeEPRBk (ORCPT
+        id S1751457AbeEPRBs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:01:48 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:33342 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbeEPRBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:01:40 -0400
+        Wed, 16 May 2018 13:01:45 -0400
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij05fypFHKw=="
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,50 +19,63 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v6 1/3] gpio: pca953x: set the PCA_PCAL flag also when matching by DT
-Date: Wed, 16 May 2018 19:01:24 +0200
-Message-Id: <7c9ab1d702eb62755993321865d260fa54b90358.1526490085.git.hns@goldelico.com>
+Subject: [PATCH v6 0/3] pcal6524 extensions and fixes for pca953x driver
+Date: Wed, 16 May 2018 19:01:23 +0200
+Message-Id: <cover.1526490085.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
-In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com>
-In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_device_table is missing the PCA_PCAL flag so the
-pcal6524 would be operated in tca6424 compatibility mode which
-does not handle the new interrupt mask registers.
+V6:
+* added proper attribution to the formula used for fixing the
+  pcal6524 register address (changes commit message only)
+* add back missing first patch from V2 that defines the
+  PCA_LATCH_INT constant
+* removed patches already merged
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+2018-04-28 18:33:42: V5:
+* fix wrong split up between patches 1/7 and 2/7.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 7d37692d672e..2b667166e855 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -58,6 +58,7 @@
- #define PCA_GPIO_MASK		0x00FF
- #define PCA_INT			0x0100
- #define PCA_PCAL		0x0200
-+#define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
- #define PCA953X_TYPE		0x1000
- #define PCA957X_TYPE		0x2000
- #define PCA_TYPE_MASK		0xF000
-@@ -946,8 +947,8 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "nxp,pca9575", .data = OF_957X(16, PCA_INT), },
- 	{ .compatible = "nxp,pca9698", .data = OF_953X(40, 0), },
- 
--	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
--	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
-+	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_LATCH_INT), },
-+	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_LATCH_INT), },
- 
- 	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
- 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
+2018-04-26 19:35:07: V4:
+* introduced PCA_LATCH_INT constant to make of_table more
+  readable (suggested by Andy Shevchenko)
+* converted all register constants to hex in a separate
+  patch (suggested by Andy Shevchenko)
+* separated additional pcal953x and pcal6524 register
+  definitions into separate patches (suggested by Andy Shevchenko)
+* made special pcal6524 address adjustment more readable
+  (suggested by Andy Shevchenko)
+* moved gpio-controller and interrupt-controller to the
+  "required" section (reviewed by Rob Herring)
+
+2018-04-10 18:07:07: V3:
+* add Reported-by: and Reviewed-by:
+* fix wording for bindings description and example
+* convert all register offsets to hex
+* omit the LEVEL-IRQ RFC/hack commit
+
+2018-04-04 21:00:27: V2:
+* added PCA_PCAL flags if matched through of-table
+* fix address calculation for extended PCAL6524 registers
+* hack to map LEVEL_LOW to EDGE_FALLING to be able to
+  test in combination with ts3a227e driver
+* improve description of bindings for optional vcc-supply
+  and interrupt-controller;
+
+2018-03-10 09:32:53: no initial description
+
+H. Nikolaus Schaller (3):
+  gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+  gpio: pca953x: define masks for addressing common and extended
+    registers
+  gpio: pca953x: fix address calculation for pcal6524
+
+ drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
 -- 
 2.12.2
