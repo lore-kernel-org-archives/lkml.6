@@ -1,68 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752539AbeEPKob (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:44:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751524AbeEPKo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:44:28 -0400
-Date: Wed, 16 May 2018 06:44:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH v2 05/14] tracing: Do not show filter file for ftrace
- internal events
-Message-ID: <20180516064425.6cdd45e1@gandalf.local.home>
-In-Reply-To: <20180516091025.GB30309@danjae.aot.lge.com>
-References: <20180514205845.017925650@goodmis.org>
-        <20180514205958.061558690@goodmis.org>
-        <20180516091025.GB30309@danjae.aot.lge.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752611AbeEPKoz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:44:55 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54908 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752205AbeEPKow (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:44:52 -0400
+X-Google-Smtp-Source: AB8JxZroQhGi8tAcSpdnbNSR23VdXvBCt7I1eIHIPuZLkiZyrN8J+7QxVEWK6YmT8DYoPGaGiN7PUuXr0lRe8qexrHA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <0000000000008149ec056c4e4289@google.com>
+References: <0000000000008149ec056c4e4289@google.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Wed, 16 May 2018 18:44:51 +0800
+Message-ID: <CADvbK_dj5nLyzZGUmqfiZuoEwDjNxTy_e-VXsEGrWYoGP4m6PA@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sctp_packet_transmit
+To: syzbot <syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com>
+Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 18:10:25 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
+On Wed, May 16, 2018 at 4:11 PM, syzbot
+<syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    961423f9fcbc Merge branch 'sctp-Introduce-sctp_flush_ctx'
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1366aea7800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=51fb0a6913f757db
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ff0b569fb5111dcd1a36
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com
+>
+> INFO: rcu_sched self-detected stall on CPU
+>         0-....: (1 GPs behind) idle=dae/1/4611686018427387908
+> softirq=93090/93091 fqs=30902
+>          (t=125000 jiffies g=51107 c=51106 q=972)
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 24668 Comm: syz-executor6 Not tainted 4.17.0-rc4+ #44
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+>  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+>  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+>  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+>  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+>  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+>  rcu_pending kernel/rcu/tree.c:3401 [inline]
+>  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+>  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+>  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+>  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+>  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+>  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+>  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+>  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+> RIP: 0010:sctp_v6_xmit+0x259/0x6b0 net/sctp/ipv6.c:219
+> RSP: 0018:ffff8801dae068e8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> RAX: 0000000000000007 RBX: ffff8801bb7ec800 RCX: ffffffff86f1b345
+> RDX: 0000000000000000 RSI: ffffffff86f1b381 RDI: ffff8801b73d97c4
+> RBP: ffff8801dae06988 R08: ffff88019505c300 R09: ffffed003b5c46c2
+> R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff88011fd57300
+> R13: ffff8801bb7ecec8 R14: 0000000000000029 R15: 0000000000000002
+>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:642
+>  sctp_outq_flush_transports net/sctp/outqueue.c:1164 [inline]
+>  sctp_outq_flush+0x5f5/0x3430 net/sctp/outqueue.c:1212
+>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+Shocks, this timer event again. Can we try to minimize the repo.syz and
+get a short script, not neccessary to reproduce the issue 100%. we need
+to know what it was doing when this happened.
 
-  
-> >  	/*
-> >  	 * Only event directories that can be enabled should have
-> > -	 * triggers.
-> > +	 * triggers or filters.
-> >  	 */
-> > -	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE))
-> > +	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)) {
-> > +		trace_create_file("filter", 0644, file->dir, file,
-> > +				  &ftrace_event_filter_fops);
-> > +
-> >  		trace_create_file("trigger", 0644, file->dir, file,
-> >  				  &event_trigger_fops);
-> > +	}
-> >  
-> >  #ifdef CONFIG_HIST_TRIGGERS
-> >  	trace_create_file("hist", 0444, file->dir, file,  
-> 
-> What about moving the "hist" file as well since it's meaningless
-> without the trigger.
+Thanks.
 
-I thought about doing this too. But when I had to manually create the
-trigger file, I'll have to also manually create the hist file. As the
-hist file is read only and rather harmless, I figured I'd just leave it
-as is. The filter file is a command file and this patch wants to remove
-the confusion of writing into the file and having no effect.
-
--- Steve
+>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+>  expire_timers kernel/time/timer.c:1363 [inline]
+>  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+>  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+>  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+>  invoke_softirq kernel/softirq.c:365 [inline]
+>  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+>  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+>  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+>  </IRQ>
+> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
+> [inline]
+> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160
+> [inline]
+> RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0
+> kernel/locking/spinlock.c:184
+> RSP: 0018:ffff880196227328 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+> RAX: dffffc0000000000 RBX: 0000000000000286 RCX: 0000000000000000
+> RDX: 1ffffffff11a316d RSI: 0000000000000001 RDI: 0000000000000286
+> RBP: ffff880196227338 R08: ffffed003b5c4b81 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801dae25c00
+> R13: ffff8801dae25c80 R14: ffff880196227758 R15: ffff8801dae25c00
+>  unlock_hrtimer_base kernel/time/hrtimer.c:887 [inline]
+>  hrtimer_start_range_ns+0x692/0xd10 kernel/time/hrtimer.c:1118
+>  hrtimer_start_expires include/linux/hrtimer.h:412 [inline]
+>  futex_wait_queue_me+0x304/0x820 kernel/futex.c:2517
+>  futex_wait+0x450/0x9f0 kernel/futex.c:2645
+>  do_futex+0x336/0x27d0 kernel/futex.c:3527
+>  __do_sys_futex kernel/futex.c:3587 [inline]
+>  __se_sys_futex kernel/futex.c:3555 [inline]
+>  __x64_sys_futex+0x46a/0x680 kernel/futex.c:3555
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x455a09
+> RSP: 002b:0000000000a3e938 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: ffffffffffffffda RBX: 0000000000045a9b RCX: 0000000000455a09
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072becc
+> RBP: 000000000072becc R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000a3e940 R11: 0000000000000246 R12: 0000000000000019
+> R13: 0000000000000002 R14: 000000000072bea0 R15: 0000000000045a8f
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
