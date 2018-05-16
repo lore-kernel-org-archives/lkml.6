@@ -1,118 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeEPVOr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:14:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56618 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752059AbeEPVOp (ORCPT
+        id S1752420AbeEPVOz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:14:55 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40470 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751468AbeEPVOy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:14:45 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 16 May 2018 14:14:43 -0700
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Asutosh Das <asutoshd@codeaurora.org>
-Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] scsi: ufs: Add clock ungating to a separate
- workqueue
-In-Reply-To: <0bfae28dbfb4cf86e80435639b92c7f4023041dc.1525343531.git.asutoshd@codeaurora.org>
-References: <cover.1525343531.git.asutoshd@codeaurora.org>
- <0bfae28dbfb4cf86e80435639b92c7f4023041dc.1525343531.git.asutoshd@codeaurora.org>
-Message-ID: <9b3fe3b9f1bd2f7c36dcd840acf7848d@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 16 May 2018 17:14:54 -0400
+X-Google-Smtp-Source: AB8JxZpcets5304Fp5Cg4LY7hpyh03ypoDn3zZbTCheqxHyT9PsstcgHsqp/W63qZr1oV3U3Q56A8g==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH v2] mm: save two stranding bit in gfp_mask
+Date: Wed, 16 May 2018 14:14:39 -0700
+Message-Id: <20180516211439.177440-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-03 04:07, Asutosh Das wrote:
-> From: Vijay Viswanath <vviswana@codeaurora.org>
-> 
-> UFS driver can receive a request during memory reclaim by kswapd.
-> So when ufs driver puts the ungate work in queue, and if there are no
-> idle workers, kthreadd is invoked to create a new kworker. Since
-> kswapd task holds a mutex which kthreadd also needs, this can cause
-> a deadlock situation. So ungate work must be done in a separate
-> work queue with WQ_MEM_RECLAIM flag enabled.
-> Such a workqueue will have a rescue thread which will be called
-> when the above deadlock condition is possible.
-> 
-> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 11 ++++++++++-
->  drivers/scsi/ufs/ufshcd.h |  1 +
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 557d538..3be61b7 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -1483,7 +1483,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
->  		hba->clk_gating.state = REQ_CLKS_ON;
->  		trace_ufshcd_clk_gating(dev_name(hba->dev),
->  					hba->clk_gating.state);
-> -		schedule_work(&hba->clk_gating.ungate_work);
-> +		queue_work(hba->clk_gating.clk_gating_workq,
-> +			   &hba->clk_gating.ungate_work);
->  		/*
->  		 * fall through to check if we should wait for this
->  		 * work to be done or not.
-> @@ -1669,6 +1670,8 @@ static ssize_t
-> ufshcd_clkgate_enable_store(struct device *dev,
-> 
->  static void ufshcd_init_clk_gating(struct ufs_hba *hba)
->  {
-> +	char wq_name[sizeof("ufs_clk_gating_00")];
-> +
->  	if (!ufshcd_is_clkgating_allowed(hba))
->  		return;
-> 
-> @@ -1676,6 +1679,11 @@ static void ufshcd_init_clk_gating(struct 
-> ufs_hba *hba)
->  	INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
->  	INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
-> 
-> +	snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
-> +		 hba->host->host_no);
-> +	hba->clk_gating.clk_gating_workq = alloc_ordered_workqueue(wq_name,
-> +							   WQ_MEM_RECLAIM);
-> +
->  	hba->clk_gating.is_enabled = true;
-> 
->  	hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
-> @@ -1703,6 +1711,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba 
-> *hba)
->  	device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
->  	cancel_work_sync(&hba->clk_gating.ungate_work);
->  	cancel_delayed_work_sync(&hba->clk_gating.gate_work);
-> +	destroy_workqueue(hba->clk_gating.clk_gating_workq);
->  }
-> 
->  /* Must be called with host lock acquired */
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 76c31d5..2e6bdc0 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -361,6 +361,7 @@ struct ufs_clk_gating {
->  	struct device_attribute enable_attr;
->  	bool is_enabled;
->  	int active_reqs;
-> +	struct workqueue_struct *clk_gating_workq;
->  };
-> 
->  struct ufs_saved_pwr_info {
+___GFP_COLD and ___GFP_OTHER_NODE were removed but their bits were
+stranded. Fill the gaps by moving the existing gfp masks around.
 
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
+Changelog since v1:
+- Moved couple of gfp masks instead of sliding all.
 
+ include/linux/gfp.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 1a4582b44d32..036846fc00a6 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -24,6 +24,7 @@ struct vm_area_struct;
+ #define ___GFP_HIGH		0x20u
+ #define ___GFP_IO		0x40u
+ #define ___GFP_FS		0x80u
++#define ___GFP_WRITE		0x100u
+ #define ___GFP_NOWARN		0x200u
+ #define ___GFP_RETRY_MAYFAIL	0x400u
+ #define ___GFP_NOFAIL		0x800u
+@@ -36,11 +37,10 @@ struct vm_area_struct;
+ #define ___GFP_THISNODE		0x40000u
+ #define ___GFP_ATOMIC		0x80000u
+ #define ___GFP_ACCOUNT		0x100000u
+-#define ___GFP_DIRECT_RECLAIM	0x400000u
+-#define ___GFP_WRITE		0x800000u
+-#define ___GFP_KSWAPD_RECLAIM	0x1000000u
++#define ___GFP_DIRECT_RECLAIM	0x200000u
++#define ___GFP_KSWAPD_RECLAIM	0x400000u
+ #ifdef CONFIG_LOCKDEP
+-#define ___GFP_NOLOCKDEP	0x2000000u
++#define ___GFP_NOLOCKDEP	0x800000u
+ #else
+ #define ___GFP_NOLOCKDEP	0
+ #endif
+@@ -205,7 +205,7 @@ struct vm_area_struct;
+ #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
+ 
+ /* Room for N __GFP_FOO bits */
+-#define __GFP_BITS_SHIFT (25 + IS_ENABLED(CONFIG_LOCKDEP))
++#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
+ #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
+ 
+ /*
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0.441.gb46fe60e1d-goog
