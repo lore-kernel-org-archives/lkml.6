@@ -1,52 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751367AbeEPR1b (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:27:31 -0400
-Received: from verein.lst.de ([213.95.11.211]:48772 "EHLO newverein.lst.de"
+        id S1751620AbeEPR2I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:28:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:48777 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750846AbeEPR13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:27:29 -0400
-Date: Wed, 16 May 2018 19:31:58 +0200
-From: "hch@lst.de" <hch@lst.de>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "israelr@mellanox.com" <israelr@mellanox.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "sebott@linux.ibm.com" <sebott@linux.ibm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
-        "maxg@mellanox.com" <maxg@mellanox.com>,
-        "tj@kernel.org" <tj@kernel.org>
-Subject: Re: [PATCH v9 2/2] blk-mq: Rework blk-mq timeout handling again
-Message-ID: <20180516173158.GA6022@lst.de>
-References: <20180515225124.20428-1-bart.vanassche@wdc.com> <20180515225124.20428-6-bart.vanassche@wdc.com> <20180516125110.GA32078@lst.de> <8058d72fef475caffa78c962bc4220f5f8fa3dde.camel@wdc.com> <20180516162432.GA4398@lst.de> <bd17181940994eb459e84e4d5940b1af8a725ded.camel@wdc.com>
+        id S1751254AbeEPR2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 13:28:07 -0400
+Date: Wed, 16 May 2018 19:32:34 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: vm_fault_t conversion, for real
+Message-ID: <20180516173234.GB6022@lst.de>
+References: <20180516054348.15950-1-hch@lst.de> <20180516112347.GB20670@bombadil.infradead.org> <20180516130309.GB32454@lst.de> <20180516132256.GG20670@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd17181940994eb459e84e4d5940b1af8a725ded.camel@wdc.com>
+In-Reply-To: <20180516132256.GG20670@bombadil.infradead.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 04:47:54PM +0000, Bart Van Assche wrote:
-> I think your patch changes the order of changing the request state and
-> calling mod_timer(). In my patch the request state and the deadline are
-> updated first and mod_timer() is called afterwards. I think your patch
-> changes the order of these operations into the following:
-> (1) __blk_mq_start_request() sets the request deadline.
-> (2) __blk_mq_start_request() calls __blk_add_timer() which in turn calls
->     mod_timer().
-> (3) __blk_mq_start_request() changes the request state into MQ_RQ_IN_FLIGHT.
-> 
-> In the unlikely event of a significant delay between (2) and (3) it can
-> happen that the timer fires and examines and ignores the request because
-> its state differs from MQ_RQ_IN_FLIGHT. If the request for which this
-> happened times out its timeout will only be handled the next time
-> blk_mq_timeout_work() is called. Is this the behavior you intended?
+On Wed, May 16, 2018 at 06:22:56AM -0700, Matthew Wilcox wrote:
+> Perhaps you should try being less of an arsehole if you don't want to
+> get yelled at?  I don't mind when you're an arsehole towards me, but I
+> do mind when you're an arsehole towards newcomers.  How are we supposed
+> to attract and retain new maintainers when you're so rude?
 
-We can move the timer manipulation after the change easily I think.
-It would make sense to add comments explaining the ordering.
+*plonk*  The only one I'm seeing being extremely rude here is you.
