@@ -1,274 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeEPKGe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:06:34 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17799 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752869AbeEPKFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:51 -0400
-Message-Id: <c275de01c2c8d9710b7bf85711b27d1335501d40.1526464250.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
-References: <cover.1526464250.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 13/14] powerpc/mm: Use pte_fragment_alloc() on 8xx
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 16 May 2018 12:05:49 +0200 (CEST)
+        id S1753142AbeEPKGv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:06:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753164AbeEPKFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:47 -0400
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de
+Cc: x86@kernel.org, hpa@zytor.com, fanc.fnst@cn.fujitsu.com,
+        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
+        douly.fnst@cn.fujitsu.com, Baoquan He <bhe@redhat.com>
+Subject: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages handling
+Date: Wed, 16 May 2018 18:05:31 +0800
+Message-Id: <20180516100532.14083-2-bhe@redhat.com>
+In-Reply-To: <20180516100532.14083-1-bhe@redhat.com>
+References: <20180516100532.14083-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In 16k page size mode, the 8xx need only 4k for a page table.
+Functions parse_gb_huge_pages() and process_gb_huge_page() are introduced to
+handle conflict between KASLR and huge pages, will be used in the next patch.
 
-This patch makes use of the pte_fragment functions in order
-to avoid wasting memory space
+Function parse_gb_huge_pages() is used to parse kernel command-line to get
+how many 1GB huge pages have been specified. A static global variable
+'max_gb_huge_pages' is added to store the number.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+And process_gb_huge_page() is used to skip as many 1GB huge pages as possible
+from the passed in memory region according to the specified number.
+
+Signed-off-by: Baoquan He <bhe@redhat.com>
 ---
- arch/powerpc/include/asm/mmu-8xx.h           |  4 +++
- arch/powerpc/include/asm/nohash/32/pgalloc.h | 44 +++++++++++++++++++++++++++-
- arch/powerpc/include/asm/nohash/32/pgtable.h | 10 ++++++-
- arch/powerpc/mm/mmu_context_nohash.c         |  4 +++
- arch/powerpc/mm/pgtable.c                    | 10 ++++++-
- arch/powerpc/mm/pgtable_32.c                 | 12 ++++++++
- arch/powerpc/platforms/Kconfig.cputype       |  1 +
- 7 files changed, 82 insertions(+), 3 deletions(-)
+ arch/x86/boot/compressed/kaslr.c | 71 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/mmu-8xx.h b/arch/powerpc/include/asm/mmu-8xx.h
-index 193f53116c7a..4f4cb754afd8 100644
---- a/arch/powerpc/include/asm/mmu-8xx.h
-+++ b/arch/powerpc/include/asm/mmu-8xx.h
-@@ -190,6 +190,10 @@ typedef struct {
- 	struct slice_mask mask_8m;
- # endif
- #endif
-+#ifdef CONFIG_NEED_PTE_FRAG
-+	/* for 4K PTE fragment support */
-+	void *pte_frag;
-+#endif
- } mm_context_t;
- 
- #define PHYS_IMMR_BASE (mfspr(SPRN_IMMR) & 0xfff80000)
-diff --git a/arch/powerpc/include/asm/nohash/32/pgalloc.h b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-index 81c19d6460bd..d65b5f29008c 100644
---- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-@@ -69,11 +69,22 @@ static inline void pmd_populate_kernel_g(struct mm_struct *mm, pmd_t *pmdp,
- static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
- 				pgtable_t pte_page)
- {
-+#ifdef CONFIG_NEED_PTE_FRAG
-+	*pmdp = __pmd(__pa(pte_page) | _PMD_USER | _PMD_PRESENT);
-+#else
- 	*pmdp = __pmd((page_to_pfn(pte_page) << PAGE_SHIFT) | _PMD_USER |
- 		      _PMD_PRESENT);
-+#endif
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index a0a50b91ecef..13bd879cdc5d 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -215,6 +215,32 @@ static void mem_avoid_memmap(char *str)
+ 		memmap_too_large = true;
  }
  
-+#ifdef CONFIG_NEED_PTE_FRAG
-+static inline pgtable_t pmd_pgtable(pmd_t pmd)
-+{
-+	return (pgtable_t)pmd_page_vaddr(pmd);
-+}
-+#else
- #define pmd_pgtable(pmd) pmd_page(pmd)
-+#endif
- #else
- 
- static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
-@@ -95,6 +106,32 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
- 	((unlikely(pmd_none(*(pmd))) && __pte_alloc_kernel_g(pmd, address))? \
- 		NULL: pte_offset_kernel(pmd, address))
- 
-+#ifdef CONFIG_NEED_PTE_FRAG
-+extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
-+extern void pte_fragment_free(unsigned long *, int);
++/* Store the number of 1GB huge pages which user specified.*/
++static unsigned long max_gb_huge_pages;
 +
-+static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm,
-+					  unsigned long address)
++static int parse_gb_huge_pages(char *param, char* val)
 +{
-+	return (pte_t *)pte_fragment_alloc(mm, address, 1);
-+}
++	char *p;
++	u64 mem_size;
++	static bool gbpage_sz = false;
 +
-+static inline pgtable_t pte_alloc_one(struct mm_struct *mm,
-+				      unsigned long address)
-+{
-+	return (pgtable_t)pte_fragment_alloc(mm, address, 0);
-+}
-+
-+static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-+{
-+	pte_fragment_free((unsigned long *)pte, 1);
-+}
-+
-+static inline void pte_free(struct mm_struct *mm, pgtable_t ptepage)
-+{
-+	pte_fragment_free((unsigned long *)ptepage, 0);
-+}
-+#else
- extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long addr);
- extern pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long addr);
- 
-@@ -108,11 +145,12 @@ static inline void pte_free(struct mm_struct *mm, pgtable_t ptepage)
- 	pgtable_page_dtor(ptepage);
- 	__free_page(ptepage);
- }
-+#endif
- 
- static inline void pgtable_free(void *table, unsigned index_size)
- {
- 	if (!index_size) {
--		free_page((unsigned long)table);
-+		pte_free_kernel(NULL, table);
- 	} else {
- 		BUG_ON(index_size > MAX_PGTABLE_INDEX_SIZE);
- 		kmem_cache_free(PGT_CACHE(index_size), table);
-@@ -150,7 +188,11 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t table,
- 				  unsigned long address)
- {
- 	tlb_flush_pgtable(tlb, address);
-+#ifdef CONFIG_NEED_PTE_FRAG
-+	pgtable_free_tlb(tlb, table, 0);
-+#else
- 	pgtable_page_dtor(table);
- 	pgtable_free_tlb(tlb, page_address(table), 0);
-+#endif
- }
- #endif /* _ASM_POWERPC_PGALLOC_32_H */
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 5872d79360a9..ab5671e14fa1 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -20,6 +20,9 @@ extern int icache_44x_need_flush;
- 
- #if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
- #define PTE_INDEX_SIZE  (PTE_SHIFT - 2)
-+#define PTE_FRAG_NR		4
-+#define PTE_FRAG_SIZE_SHIFT	12
-+#define PTE_FRAG_SIZE		(1UL << PTE_FRAG_SIZE_SHIFT)
- #else
- #define PTE_INDEX_SIZE	PTE_SHIFT
- #endif
-@@ -319,7 +322,7 @@ static inline int pte_young(pte_t pte)
-  */
- #ifndef CONFIG_BOOKE
- #define pmd_page_vaddr(pmd)	\
--	((unsigned long) __va(pmd_val(pmd) & PAGE_MASK))
-+	((unsigned long) __va(pmd_val(pmd) & ~(PTE_TABLE_SIZE - 1)))
- #define pmd_page(pmd)		\
- 	pfn_to_page(pmd_val(pmd) >> PAGE_SHIFT)
- #else
-@@ -342,9 +345,14 @@ static inline int pte_young(pte_t pte)
- #define pte_offset_kernel(dir, addr)	\
- 	(pmd_bad(*(dir)) ? NULL : (pte_t *)pmd_page_vaddr(*(dir)) + \
- 				  pte_index(addr))
-+#ifdef CONFIG_NEED_PTE_FRAG
-+#define pte_offset_map(dir, addr)	pte_offset_kernel(dir, addr)
-+#define pte_unmap(pte)		do {} while (0)
-+#else
- #define pte_offset_map(dir, addr)		\
- 	((pte_t *) kmap_atomic(pmd_page(*(dir))) + pte_index(addr))
- #define pte_unmap(pte)		kunmap_atomic(pte)
-+#endif
- 
- /*
-  * Encode and decode a swap entry.
-diff --git a/arch/powerpc/mm/mmu_context_nohash.c b/arch/powerpc/mm/mmu_context_nohash.c
-index e09228a9ad00..8b0ab33673e5 100644
---- a/arch/powerpc/mm/mmu_context_nohash.c
-+++ b/arch/powerpc/mm/mmu_context_nohash.c
-@@ -390,6 +390,9 @@ int init_new_context(struct task_struct *t, struct mm_struct *mm)
- #endif
- 	mm->context.id = MMU_NO_CONTEXT;
- 	mm->context.active = 0;
-+#ifdef CONFIG_NEED_PTE_FRAG
-+	mm->context.pte_frag = NULL;
-+#endif
- 	return 0;
- }
- 
-@@ -418,6 +421,7 @@ void destroy_context(struct mm_struct *mm)
- 		nr_free_contexts++;
- 	}
- 	raw_spin_unlock_irqrestore(&context_lock, flags);
-+	destroy_pagetable_page(mm);
- }
- 
- #ifdef CONFIG_SMP
-diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index 2d34755ed727..96cc5aa73331 100644
---- a/arch/powerpc/mm/pgtable.c
-+++ b/arch/powerpc/mm/pgtable.c
-@@ -23,6 +23,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/gfp.h>
-+#include <linux/memblock.h>
- #include <linux/mm.h>
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
-@@ -320,10 +321,17 @@ static pte_t *__alloc_for_cache(struct mm_struct *mm, int kernel)
- 	return (pte_t *)ret;
- }
- 
--pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
-+__ref pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
- {
- 	pte_t *pte;
- 
-+	if (kernel && !slab_is_available()) {
-+		pte = __va(memblock_alloc(PTE_FRAG_SIZE, PTE_FRAG_SIZE));
-+		if (pte)
-+			memset(pte, 0, PTE_FRAG_SIZE);
-+
-+		return pte;
-+	}
- 	pte = get_from_cache(mm);
- 	if (pte)
- 		return pte;
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 3aa0c78db95d..5c8737cf2945 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -40,6 +40,17 @@
- 
- extern char etext[], _stext[], _sinittext[], _einittext[];
- 
-+#ifdef CONFIG_NEED_PTE_FRAG
-+void pte_fragment_free(unsigned long *table, int kernel)
-+{
-+	struct page *page = virt_to_page(table);
-+	if (put_page_testzero(page)) {
-+		if (!kernel)
-+			pgtable_page_dtor(page);
-+		free_unref_page(page);
++	if (!strcmp(param, "hugepagesz")) {
++		p = val;
++		mem_size = memparse(p, &p);
++		if (mem_size == PUD_SIZE) {
++			if (gbpage_sz)
++				warn("Repeadly set hugeTLB page size of 1G!\n");
++			gbpage_sz = true;
++		} else
++			gbpage_sz = false;
++	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
++		p = val;
++		max_gb_huge_pages = simple_strtoull(p, &p, 0);
++		debug_putaddr(max_gb_huge_pages);
 +	}
 +}
-+#else
- __ref pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long address)
++
++
+ static int handle_mem_memmap(void)
  {
- 	pte_t *pte;
-@@ -69,6 +80,7 @@ pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long address)
+ 	char *args = (char *)get_cmd_line_ptr();
+@@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
  	}
- 	return ptepage;
  }
-+#endif
  
- #ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
- int __pte_alloc_kernel_g(pmd_t *pmd, unsigned long address)
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 906f0ebd1e08..40cebb461bcb 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -340,6 +340,7 @@ config PPC_MM_SLICES
- config NEED_PTE_FRAG
- 	bool
- 	default y if PPC_BOOK3S_64 && PPC_64K_PAGES
-+	default y if PPC_8xx && PPC_16K_PAGES
- 	default n
- 
- config PPC_HAVE_PMU_SUPPORT
++/* Skip as many 1GB huge pages as possible in the passed region. */
++static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
++{
++	int i = 0;
++	unsigned long addr, size;
++	struct mem_vector tmp;
++
++	if (!max_gb_huge_pages) {
++		store_slot_info(region, image_size);
++		return;
++	}
++
++	addr = ALIGN(region->start, PUD_SIZE);
++	/* If Did we raise the address above the passed in memory entry? */
++	if (addr < region->start + region->size)
++		size = region->size - (addr - region->start);
++
++	/* Check how many 1GB huge pages can be filtered out*/
++	while (size > PUD_SIZE && max_gb_huge_pages) {
++		size -= PUD_SIZE;
++		max_gb_huge_pages--;
++		i++;
++	}
++
++	if (!i) {
++		store_slot_info(region, image_size);
++		return;
++	}
++
++	/* Process the remaining regions after filtering out. */
++
++	if (addr >= region->start + image_size) {
++		tmp.start = region->start;
++		tmp.size = addr - region->start;
++		store_slot_info(&tmp, image_size);
++	}
++
++	size  = region->size - (addr - region->start) - i * PUD_SIZE;
++        if (size >= image_size) {
++		tmp.start = addr + i*PUD_SIZE;
++		tmp.size = size;
++		store_slot_info(&tmp, image_size);
++        }
++}
++
+ static unsigned long slots_fetch_random(void)
+ {
+ 	unsigned long slot;
 -- 
-2.13.3
+2.13.6
