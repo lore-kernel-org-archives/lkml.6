@@ -1,282 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeEPJbV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:31:21 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37678 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751395AbeEPJbP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:31:15 -0400
-X-Google-Smtp-Source: AB8JxZrskyQc7sWDiW7E8jyiIh8074NDD32A7Av14DFAAs3nzi8H5jJq/rxMUroofVFkEM5UsaK7GA==
-Date: Wed, 16 May 2018 11:31:10 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Peter Rosin <peda@axentia.se>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Andrzej Hajda <a.hajda@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support"
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Jyri Sarha <jsarha@ti.com>
-Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the bridge
- supplier and consumer
-Message-ID: <20180516093110.GC3438@phenom.ffwll.local>
-Mail-Followup-To: Peter Rosin <peda@axentia.se>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS" <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Jyri Sarha <jsarha@ti.com>
-References: <20180504135212.26977-1-peda@axentia.se>
- <CGME20180504135432epcas3p368bb7541ca52bc8bc301dec794851214@epcas3p3.samsung.com>
- <20180504135212.26977-27-peda@axentia.se>
- <a723ad4a-8caa-4ff5-d39d-52db98a56d7b@samsung.com>
- <c25f81e0-5b7b-c605-5b58-0ecc88830124@axentia.se>
- <20180514162828.GE28661@phenom.ffwll.local>
- <73fa1ca3-28e4-96c5-1fc6-23e9c0cebb49@axentia.se>
- <CAKMK7uECSUo5k6uG3-y+yKQTGxB3FfGcwzMT+ZP5uux2SbpfUg@mail.gmail.com>
- <f8215ba1-4cdb-69b9-39ff-68feca3ec502@axentia.se>
+        id S1751786AbeEPJgB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:36:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49391 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751046AbeEPJf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:35:58 -0400
+Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
+To: Joonsoo Kim <js1304@gmail.com>, Mel Gorman <mgorman@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
+ <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
+ <20180504103322.2nbadmnehwdxxaso@suse.de>
+ <CAAmzW4PKZFbAS6UEYKP2BBAqgk0=yTMuJRMTz--_0YTj-SjKvw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ A3XDrKOXTZil3g8D
+Message-ID: <aa3452e1-db01-42ae-29eb-b23572e88969@suse.cz>
+Date: Wed, 16 May 2018 11:35:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8215ba1-4cdb-69b9-39ff-68feca3ec502@axentia.se>
-X-Operating-System: Linux phenom 4.15.0-3-amd64
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAAmzW4PKZFbAS6UEYKP2BBAqgk0=yTMuJRMTz--_0YTj-SjKvw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 01:09:59PM +0200, Peter Rosin wrote:
-> On 2018-05-15 12:22, Daniel Vetter wrote:
-> > On Mon, May 14, 2018 at 10:40 PM, Peter Rosin <peda@axentia.se> wrote:
-> >> On 2018-05-14 18:28, Daniel Vetter wrote:
-> >>> On Fri, May 11, 2018 at 09:37:47AM +0200, Peter Rosin wrote:
-> >>>> On 2018-05-10 10:10, Andrzej Hajda wrote:
-> >>>>> On 04.05.2018 15:52, Peter Rosin wrote:
-> >>>>>> If the bridge supplier is unbound, this will bring the bridge consumer
-> >>>>>> down along with the bridge. Thus, there will no longer linger any
-> >>>>>> dangling pointers from the bridge consumer (the drm_device) to some
-> >>>>>> non-existent bridge supplier.
-> >>>>>>
-> >>>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >>>>>> ---
-> >>>>>>  drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
-> >>>>>>  include/drm/drm_bridge.h     |  2 ++
-> >>>>>>  2 files changed, 20 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> >>>>>> index 78d186b6831b..0259f0a3ff27 100644
-> >>>>>> --- a/drivers/gpu/drm/drm_bridge.c
-> >>>>>> +++ b/drivers/gpu/drm/drm_bridge.c
-> >>>>>> @@ -26,6 +26,7 @@
-> >>>>>>  #include <linux/mutex.h>
-> >>>>>>
-> >>>>>>  #include <drm/drm_bridge.h>
-> >>>>>> +#include <drm/drm_device.h>
-> >>>>>>  #include <drm/drm_encoder.h>
-> >>>>>>
-> >>>>>>  #include "drm_crtc_internal.h"
-> >>>>>> @@ -127,12 +128,25 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
-> >>>>>>    if (bridge->dev)
-> >>>>>>            return -EBUSY;
-> >>>>>>
-> >>>>>> +  if (encoder->dev->dev != bridge->odev) {
-> >>>>>
-> >>>>> I wonder why device_link_add does not handle this case (self dependency)
-> >>>>> silently as noop, as it seems to be a correct behavior.
-> >>>>
-> >>>> It's kind-of a silly corner-case though, so perfectly understandable
-> >>>> that it isn't handled.
-> >>>>
-> >>>>>> +          bridge->link = device_link_add(encoder->dev->dev,
-> >>>>>> +                                         bridge->odev, 0);
-> >>>>>> +          if (!bridge->link) {
-> >>>>>> +                  dev_err(bridge->odev, "failed to link bridge to %s\n",
-> >>>>>> +                          dev_name(encoder->dev->dev));
-> >>>>>> +                  return -EINVAL;
-> >>>>>> +          }
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>>    bridge->dev = encoder->dev;
-> >>>>>>    bridge->encoder = encoder;
-> >>>>>>
-> >>>>>>    if (bridge->funcs->attach) {
-> >>>>>>            ret = bridge->funcs->attach(bridge);
-> >>>>>>            if (ret < 0) {
-> >>>>>> +                  if (bridge->link)
-> >>>>>> +                          device_link_del(bridge->link);
-> >>>>>> +                  bridge->link = NULL;
-> >>>>>>                    bridge->dev = NULL;
-> >>>>>>                    bridge->encoder = NULL;
-> >>>>>>                    return ret;
-> >>>>>> @@ -159,6 +173,10 @@ void drm_bridge_detach(struct drm_bridge *bridge)
-> >>>>>>    if (bridge->funcs->detach)
-> >>>>>>            bridge->funcs->detach(bridge);
-> >>>>>>
-> >>>>>> +  if (bridge->link)
-> >>>>>> +          device_link_del(bridge->link);
-> >>>>>> +  bridge->link = NULL;
-> >>>>>> +
-> >>>>>>    bridge->dev = NULL;
-> >>>>>>  }
-> >>>>>>
-> >>>>>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> >>>>>> index b656e505d11e..804189c63a4c 100644
-> >>>>>> --- a/include/drm/drm_bridge.h
-> >>>>>> +++ b/include/drm/drm_bridge.h
-> >>>>>> @@ -261,6 +261,7 @@ struct drm_bridge_timings {
-> >>>>>>   * @list: to keep track of all added bridges
-> >>>>>>   * @timings: the timing specification for the bridge, if any (may
-> >>>>>>   * be NULL)
-> >>>>>> + * @link: drm consumer <-> bridge supplier
-> >>>>>
-> >>>>> Nitpick: "<->" suggests symmetry, maybe "device link from drm consumer
-> >>>>> to the bridge" would be better.
-> >>>>
-> >>>> I meant "<->" to indicate that the link is bidirectional, not that the
-> >>>> relationship is in any way symmetric. I wasn't aware of any implication
-> >>>> of a symmetric relationship when using "<->", do you have a reference?
-> >>>> But I guess the different arrow notations in math are somewhat overloaded
-> >>>> and that someone at some point must have used "<->" to indicate a
-> >>>> symmetric relationship...
-> >>>
-> >>> Yeah I agree with Andrzej here, for me <-> implies a symmetric
-> >>> relationship. Spelling it out like Andrzej suggested sounds like the
-> >>> better idea.
-> >>> -Daniel
-> >>
-> >> Ok, I guess that means I have to do a v3 after all. Or can this
-> >> trivial documentation update be done by the committer? I hate to
-> >> spam everyone with another volley...
-> >>
-> >> Or perhaps I should squash patches 2-23 that are all rather similar
-> >> and mechanic? I separated them to allow for easier review from
-> >> individual driver maintainers, but that didn't seem to happen
-> >> anyway...
-> > 
-> > Do another volley of the full set, or in-reply-to to just replace the
-> > patch that needs to be respun (but some people don't like that).
-> > 
-> > When resending just make sure you're picking up all the acks/r-bs you
-> > have already.
+On 05/08/2018 03:00 AM, Joonsoo Kim wrote:
+>> classzone predates my involvement with Linux but I would be less concerneed
+>> about what the original intent was and instead ensure that classzone index
+>> is consistent, sane and potentially renamed while preserving the intent of
+>> "reserve pages in lower zones when an allocation request can use higher
+>> zones". While historically the critical intent was to preserve Normal and
+>> to a lesser extent DMA on 32-bit systems, there still should be some care
+>> of DMA32 so we should not lose that.
 > 
-> Right, I always try to do that. One Ack that I did not include in v2
-> was the one you had on v1 24/24 (i.e. this patch). The reason I did
-> not add your Ack for v2 even on the patch where it obviously applied
-> was that I didn't know if you'd barf on the odev name.
+> Agreed!
 > 
-> But it was (and still is) a bit unclear if that was on Ack on the
-> last patch only, or if it was for the whole series? I think it might
-> have been for the whole series, but I'm not sure and I hate to be a
-> presumptuous idiot...
+>> With the patch, the allocator looks like it would be fine as just
+>> reservations change. I think it's unlikely that CMA usage will result
+>> in lowmem starvation.  Compaction becomes a bit weird as classzone index
+>> has no special meaning versis highmem and I think it'll be very easy to
+>> forget.
 
-Ack on the overall concept, and I'm ok with odev too. But definitely get
-acks from relevant people (bridge/driver maintainers). In terms of
-patches, I'd say patch 1 + 24-26 have my
+I don't understand this point, what do you mean about highmem here? I've
+checked and compaction seems to use classzone_idx 1) to pass it to
+watermark checks as part of compaction suitability checks, i.e. the
+usual lowmem protection, and 2) to limit compaction of higher zones in
+kcompactd if the direct compactor can't use them anyway - seems this
+part has currently the same zone imbalance problem as reclaim.
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
--Daniel
-
+>> Similarly, vmscan can reclaim pages from remote nodes and zones
+>> that are higher than the original request. That is not likely to be a
+>> problem but it's a change in behaviour and easy to miss.
+>>
+>> Fundamentally, I find it extremely weird we now have two variables that are
+>> essentially the same thing. They should be collapsed into one variable,
+>> renamed and documented on what the index means for page allocator,
+>> compaction, vmscan and the special casing around CMA.
 > 
-> Cheers,
-> Peter
-> 
-> > -Daniel
-> >> Cheers,
-> >> Peter
-> >>
-> >>>
-> >>>>
-> >>>>> Anyway:
-> >>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>>
-> >>>> Thanks!
-> >>>>
-> >>>> Cheers,
-> >>>> Peter
-> >>>>
-> >>>>>  --
-> >>>>> Regards
-> >>>>> Andrzej
-> >>>>>
-> >>>>>>   * @funcs: control functions
-> >>>>>>   * @driver_private: pointer to the bridge driver's internal context
-> >>>>>>   */
-> >>>>>> @@ -271,6 +272,7 @@ struct drm_bridge {
-> >>>>>>    struct drm_bridge *next;
-> >>>>>>    struct list_head list;
-> >>>>>>    const struct drm_bridge_timings *timings;
-> >>>>>> +  struct device_link *link;
-> >>>>>>
-> >>>>>>    const struct drm_bridge_funcs *funcs;
-> >>>>>>    void *driver_private;
-> >>>>>
-> >>>>>
-> >>>>
-> >>>
-> >>
-> >> _______________________________________________
-> >> dri-devel mailing list
-> >> dri-devel@lists.freedesktop.org
-> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > 
-> > 
-> > 
-> 
+> Agreed!
+> I will update this patch to reflect your comment. If someone have an idea
+> on renaming this variable, please let me know.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Pehaps max_zone_idx? Seems a bit more clear than "high_zoneidx". And I
+have no idea what was actually meant by "class".
+
+> Thanks.
+> 
