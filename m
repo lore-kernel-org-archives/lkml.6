@@ -1,112 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeEPPf2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:35:28 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:50621 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeEPPfD (ORCPT
+        id S1751647AbeEPPhd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:37:33 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:55636 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750746AbeEPPhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:35:03 -0400
-X-Google-Smtp-Source: AB8JxZoWsBxe41TDHELiJ7oUvKIui3kXcdqx3yUAbPMt+E2HEUKCetTNwn6NBhABSi9o7GgDGDz47FWWii7pZDciuR4Ew3x6dbei
+        Wed, 16 May 2018 11:37:31 -0400
+X-IronPort-AV: E=Sophos;i="5.49,390,1520870400";
+   d="scan'208";a="78338203"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "dvyukov@google.com" <dvyukov@google.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>,
+        "alan.christopher.jenkins@gmail.com"
+        <alan.christopher.jenkins@gmail.com>,
+        "syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com"
+        <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
+        "penguin-kernel@i-love.sakura.ne.jp"
+        <penguin-kernel@i-love.sakura.ne.jp>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "martin@lichtvoll.de" <martin@lichtvoll.de>,
+        "hare@suse.com" <hare@suse.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Subject: Re: INFO: task hung in blk_queue_enter
+Thread-Topic: INFO: task hung in blk_queue_enter
+Thread-Index: AQHT3uN1vjf30+PzmEGU/VFOyUa326QwxqcAgAGolwCAAB8sAIAABZYAgAAFyQA=
+Date: Wed, 16 May 2018 15:37:24 +0000
+Message-ID: <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
+References: <0000000000009b212b056ae6dbad@google.com>
+         <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
+         <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+         <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+         <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0927;7:nGqN1YCSlM6WStDZ36WLZxiYtbIfL0bsdcEyjaqoqyhQAGF4IToKNwHea8P/9M5MKyCZiNvGDXAGz4+V7Bph2jl6qQOttPrAy2RjDFwBgLXVoljO0cDEmDioa58+tjSdgqQztaM5kaI3OyQIUwyw2KHrNeHCGLHhp4Kz15UPwfSp3KlN7uSce48vONc1zOBu17WeBuZzLgq0QwzMFpgKw2rTHXw5WGX+Chm+in0LJ4XcrB2uK9L0rZf3y8WvJP6R;20:2EmVy5GIskGL+RaTl9C/ezrluU3zj+0Ow1Ri2ZQgByuVb3cHIfZTAb00QrU2gXY81E6kcz0lvnHsYy/y+3+84gkws5HHojVUCwm0jR/2XJ8QSifzhR1OYAT4+OAPiNOvzI+DYF99qAv8BEmILUgD+0bSyd7Dm13/GG396c0YMHA=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0927;
+x-ms-traffictypediagnostic: MWHPR04MB0927:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0927E9ABFD42D4EE120D724998920@MWHPR04MB0927.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0927;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0927;
+x-forefront-prvs: 0674DC6DD3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(39380400002)(39860400002)(396003)(51444003)(189003)(199004)(377424004)(6436002)(446003)(6246003)(68736007)(6512007)(36756003)(7416002)(305945005)(7736002)(3660700001)(53936002)(97736004)(2351001)(66066001)(4326008)(11346002)(3280700002)(8676002)(2906002)(86362001)(99286004)(26005)(81166006)(14454004)(1730700003)(81156014)(2616005)(8936002)(186003)(118296001)(93886005)(476003)(486006)(6506007)(53546011)(478600001)(2501003)(106356001)(102836004)(54906003)(229853002)(5250100002)(39060400002)(316002)(25786009)(6916009)(59450400001)(5640700003)(76176011)(5660300001)(2900100001)(3846002)(72206003)(6486002)(105586002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0927;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: s1JUgUq23NDjCzVfY30X6JQHO36755Mm71dp0FPSeoJbFTjuetArdGoDRQlFYTJ9Hr2nWtzv1146gGXxGpQ1iYfjqnDJJUISb/iccnmbU0k3SLLATqUzVhS0aueGQwFQhWBdv5IrsOhnr7I65XlpwKVWSXnyc+kr3u1sl+tdNCgs2rl8yAtS+AszdeabAjDZ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <75B75C59F0955A40B067930C3A7573DD@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Date: Wed, 16 May 2018 08:35:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006764b4056c5476d9@google.com>
-Subject: kernel BUG at lib/string.c:LINE! (4)
-From: syzbot <syzbot+aac887f77319868646df@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-MS-Office365-Filtering-Correlation-Id: f6692df5-b71b-489f-e365-08d5bb42ec5f
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6692df5-b71b-489f-e365-08d5bb42ec5f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2018 15:37:24.8704
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0927
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GFZj0L013209
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GFbd99013249
 
-Hello,
+On Wed, 2018-05-16 at 17:16 +0200, Dmitry Vyukov wrote:
+> On Wed, May 16, 2018 at 4:56 PM, Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
+> > On Wed, 2018-05-16 at 22:05 +0900, Tetsuo Handa wrote:
+> > > diff --git a/block/blk-core.c b/block/blk-core.c
+> > > index 85909b4..59e2496 100644
+> > > --- a/block/blk-core.c
+> > > +++ b/block/blk-core.c
+> > > @@ -951,10 +951,10 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+> > >               smp_rmb();
+> > > 
+> > >               wait_event(q->mq_freeze_wq,
+> > > -                        (atomic_read(&q->mq_freeze_depth) == 0 &&
+> > > -                         (preempt || !blk_queue_preempt_only(q))) ||
+> > > +                        atomic_read(&q->mq_freeze_depth) ||
+> > > +                        (preempt || !blk_queue_preempt_only(q)) ||
+> > >                          blk_queue_dying(q));
+> > > -             if (blk_queue_dying(q))
+> > > +             if (atomic_read(&q->mq_freeze_depth) || blk_queue_dying(q))
+> > >                       return -ENODEV;
+> > >       }
+> > >  }
+> > 
+> > That change looks wrong to me.
+> 
+> Hi Bart,
+> 
+> Why does it look wrong to you?
 
-syzbot found the following crash on:
+Because that change conflicts with the purpose of queue freezing and also because
+that change would inject I/O errors in code paths that shouldn't inject I/O errors.
+Please have a look at e.g. generic_make_request(). From the start of that function:
 
-HEAD commit:    0b7d9978406f Merge branch 'Microsemi-Ocelot-Ethernet-switc..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e91017800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=aac887f77319868646df
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1665d637800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10517107800000
+	if (blk_queue_enter(q, flags) < 0) {
+		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
+			bio_wouldblock_error(bio);
+		else
+			bio_io_error(bio);
+		return ret;
+	}
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+aac887f77319868646df@syzkaller.appspotmail.com
+The above patch changes the behavior of blk_queue_enter() code from waiting while
+q->mq_freeze_depth != 0 into returning -ENODEV while the request queue is frozen.
+That will cause generic_make_request() to call bio_io_error(bio) while a request
+queue is frozen if REQ_NOWAIT has not been set, which is the default behavior. So
+any operation that freezes the queue temporarily, e.g. changing the queue depth,
+concurrently with I/O processing can cause I/O to fail with -ENODEV. As you
+probably know failure of write requests has very annoying consequences. It e.g.
+causes filesystems to go into read-only mode. That's why I think that the above
+change is completely wrong.
 
-IPVS: Unknown mcast interface: veth1_to�a����
-IPVS: Unknown mcast interface: veth1_to�a����
-IPVS: Unknown mcast interface: veth1_to�a����
-detected buffer overflow in strlen
-------------[ cut here ]------------
-kernel BUG at lib/string.c:1052!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 373 Comm: syz-executor936 Not tainted 4.17.0-rc4+ #45
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
-RSP: 0018:ffff8801c976f800 EFLAGS: 00010282
-RAX: 0000000000000022 RBX: 0000000000000040 RCX: 0000000000000000
-RDX: 0000000000000022 RSI: ffffffff8160f6f1 RDI: ffffed00392edef6
-RBP: ffff8801c976f800 R08: ffff8801cf4c62c0 R09: ffffed003b5e4fb0
-R10: ffffed003b5e4fb0 R11: ffff8801daf27d87 R12: ffff8801c976fa20
-R13: ffff8801c976fae4 R14: ffff8801c976fae0 R15: 000000000000048b
-FS:  00007fd99f75e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200001c0 CR3: 00000001d6843000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  strlen include/linux/string.h:270 [inline]
-  strlcpy include/linux/string.h:293 [inline]
-  do_ip_vs_set_ctl+0x31c/0x1d00 net/netfilter/ipvs/ip_vs_ctl.c:2388
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1253
-  udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2487
-  ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:917
-  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3057
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3046
-  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x447369
-RSP: 002b:00007fd99f75dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000006e39e4 RCX: 0000000000447369
-RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000018 R09: 0000000000000000
-R10: 00000000200001c0 R11: 0000000000000246 R12: 00000000006e39e0
-R13: 75a1ff93f0896195 R14: 6f745f3168746576 R15: 0000000000000001
-Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 d2 8f 48 fa eb  
-de 55 48 89 fe 48 c7 c7 60 65 64 88 48 89 e5 e8 91 dd f3 f9 <0f> 0b 90 90  
-90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
-RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801c976f800
----[ end trace 624046f2d9af7702 ]---
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Bart.
