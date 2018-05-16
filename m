@@ -1,83 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeEPHNn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:13:43 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38008 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPHNm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:13:42 -0400
-X-Google-Smtp-Source: AB8JxZoEuhkDAHWdfaQVXtn4P6daykRb/E/SF5xu2hEn48rvQpUKwIXYgdVQ3oEoiBYWMXCeeP7n/FzCsazjSYC40pw=
-MIME-Version: 1.0
-In-Reply-To: <20180515165304.GH12217@hirez.programming.kicks-ass.net>
-References: <20180510150553.28122-1-patrick.bellasi@arm.com>
- <20180510150553.28122-4-patrick.bellasi@arm.com> <20180513060443.GB64158@joelaf.mtv.corp.google.com>
- <20180513062538.GA116730@joelaf.mtv.corp.google.com> <20180514163206.GF30654@e110439-lin>
- <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
- <20180515145343.GJ30654@e110439-lin> <20180515165304.GH12217@hirez.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 16 May 2018 09:13:20 +0200
-Message-ID: <CAKfTPtCUbe+qE47byN_1ptc+A1Tvt_E4Y-5rZQmBsUhLiMGAqw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when required
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752289AbeEPHOt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:14:49 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:44974 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeEPHOs (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Wed, 16 May 2018 03:14:48 -0400
+Message-Id: <5AFBDA6302000078001C31AC@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Wed, 16 May 2018 01:14:43 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Nadav Amit" <namit@vmware.com>
+Cc: <keescook@chromium.org>, <nadav.amit@gmail.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>, <tglx@linutronix.de>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>, <mingo@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <hpa@zytor.com>
+Subject: Re: [RFC 5/8] x86: refcount: prevent gcc distortions
+References: <20180515141124.84254-1-namit@vmware.com>
+ <20180515141124.84254-15-namit@vmware.com>
+In-Reply-To: <20180515141124.84254-15-namit@vmware.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 May 2018 at 18:53, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, May 15, 2018 at 03:53:43PM +0100, Patrick Bellasi wrote:
->> On 15-May 12:19, Vincent Guittot wrote:
->> > On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
->
->> > Yes se becomes NULL only when you reach root domain
->
-> root group; domains are something else again ;-)
+>>> On 15.05.18 at 16:11, <namit@vmware.com> wrote:
+> --- a/arch/x86/include/asm/refcount.h
+> +++ b/arch/x86/include/asm/refcount.h
+> @@ -14,34 +14,43 @@
+>   * central refcount exception. The fixup address for the exception points
+>   * back to the regular execution flow in .text.
+>   */
+> -#define _REFCOUNT_EXCEPTION				\
+> -	".pushsection .text..refcount\n"		\
+> -	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+> -	"112:\t" ASM_UD2 "\n"				\
+> -	ASM_UNREACHABLE					\
+> -	".popsection\n"					\
+> -	"113:\n"					\
+> +
+> +asm ("\n"
+> +	".macro __REFCOUNT_EXCEPTION counter:vararg\n\t"
+> +	".pushsection .text..refcount\n"
+> +	"111:\tlea \\counter, %" _ASM_CX "\n"
+> +	"112:\t" ASM_UD2 "\n\t"
+> +	ASM_UNREACHABLE
+> +	".popsection\n\t"
+> +	"113:\n"
+>  	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+> +	".endm");
 
-yes good point :-)
+A few comments on assembly code formatting - while gas at present is
+relatively lax in this regard, I wouldn't exclude that there might be a
+more strict mode in the future, and that such a mode might eventually
+become the default. Furthermore these formatting aspects affect
+readability of the assembly produced, should anyone ever find a need
+to look at it (perhaps because of some breakage) - I certainly do every
+once in a while.
 
->
->> Thus, the scheduler knows that we are going to sleep: does is really
->> makes sense to send a notification in this case?
->
-> It might; esp. on these very slow changing machines.
->
->> What about adding a new explicit callback at the end of:
->>    update_blocked_averages() ?
->>
->> Something like:
->>
->> ---8<---
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index cb77407ba485..6eb0f31c656d 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -7740,6 +7740,9 @@ static void update_blocked_averages(int cpu)
->>         if (done)
->>                 rq->has_blocked_load = 0;
->>  #endif
->> +
->> +       cpufreq_update_util(rq, SCHED_CPUFREQ_IDLE);
->> +
->>         rq_unlock_irqrestore(rq, &rf);
->>  }
->> ---8<---
->>
->> Where we can also pass in a new SCHED_CPUFREQ_IDLE flag just to notify
->> schedutil that the CPU is currently IDLE?
->>
->> Could that work?
->
-> Simlarly you could add ENQUEUE/DEQUEUE flags I suppose. But let's do all
-> that later in separate patches and evaluate the impact separately, OK?
+Labels should be placed without any indentation (but of course there
+may be more than one on a line, in which case subsequent ones may
+of course be arbitrarily indented). Instructions and directives, otoh,
+should be placed with at least a single tab or space of indentation
+(unless preceded by a label, in which case the extra white space still
+helps readability).
+
+I'm also not sure about the purpose of the leading plain newline here.
+gcc annotates code resulting from inline assembly anyway iirc, so
+proper visual separation should already be available.
+
+If I was the maintainer of this code, I would also object to the
+mis-alignment your file scope asm()-s have ("asm (" is 5 characters,
+which doesn't equal a tab's width).
+
+Jan
