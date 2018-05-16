@@ -1,107 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeEPCuF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 22:50:05 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:56221 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752038AbeEPCuE (ORCPT
+        id S1752524AbeEPCu1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 22:50:27 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:8660 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeEPCuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 22:50:04 -0400
-X-Google-Smtp-Source: AB8JxZqVIpAOgauCgJexe0tvVHnan2aaxvlsmAEyoxSozBw2iTgZCs4DGmLeCQ/pUJgAoTECuoLQbH/ZX2zY8WchMPo=
+        Tue, 15 May 2018 22:50:25 -0400
+Subject: Re: [PATCH 0/3] irqchip: meson-gpio: add support for Meson-AXG SoCs
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20180408145700.23520-1-yixun.lan@amlogic.com>
+CC: <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <0c97c61b-c05b-21cf-c880-80cff04ed6f2@amlogic.com>
+Date: Wed, 16 May 2018 10:50:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <1523975611-15978-24-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-24-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Wed, 16 May 2018 10:50:02 +0800
-Message-ID: <CADAEsF-DbqdOWcbzjvOTbrounCQP5pLmAZBKByfG165bu82_pA@mail.gmail.com>
-Subject: Re: [PATCH v10 23/25] mm: add speculative page fault vmstats
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kirill@shutemov.name,
-        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, haren@linux.vnet.ibm.com,
-        khandual@linux.vnet.ibm.com, npiggin@gmail.com,
-        Balbir Singh <bsingharora@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180408145700.23520-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-17 22:33 GMT+08:00 Laurent Dufour <ldufour@linux.vnet.ibm.com>:
-> Add speculative_pgfault vmstat counter to count successful speculative page
-> fault handling.
->
-> Also fixing a minor typo in include/linux/vm_event_item.h.
->
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  include/linux/vm_event_item.h | 3 +++
->  mm/memory.c                   | 1 +
->  mm/vmstat.c                   | 5 ++++-
->  3 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-> index 5c7f010676a7..a240acc09684 100644
-> --- a/include/linux/vm_event_item.h
-> +++ b/include/linux/vm_event_item.h
-> @@ -111,6 +111,9 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
->                 SWAP_RA,
->                 SWAP_RA_HIT,
->  #endif
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +               SPECULATIVE_PGFAULT,
-> +#endif
->                 NR_VM_EVENT_ITEMS
->  };
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 425f07e0bf38..1cd5bc000643 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4508,6 +4508,7 @@ int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
->          * If there is no need to retry, don't return the vma to the caller.
->          */
->         if (ret != VM_FAULT_RETRY) {
-> +               count_vm_event(SPECULATIVE_PGFAULT);
->                 put_vma(vmf.vma);
->                 *vma = NULL;
->         }
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 536332e988b8..c6b49bfa8139 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1289,7 +1289,10 @@ const char * const vmstat_text[] = {
->         "swap_ra",
->         "swap_ra_hit",
->  #endif
-> -#endif /* CONFIG_VM_EVENTS_COUNTERS */
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +       "speculative_pgfault"
+Hi Marc (or anyone else)
 
-"speculative_pgfault",
-will be better. :)
+On 04/08/18 22:56, Yixun Lan wrote:
+>   This series try to add GPIO interrupt controller support for Meson-AXG SoCs.
+>   The first patch is a trivial typo fix, I can fold the first two patches
+> together if necessary.
+> 
+> Yixun Lan (3):
+>   dt-bindings: interrupt-controller: fix the double quotes
+>   dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
+>   irqchip/meson-gpio: add support for Meson-AXG SoCs
+> 
+>  .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 11 ++++++-----
+>  drivers/irqchip/irq-meson-gpio.c                              |  5 +++++
+>  2 files changed, 11 insertions(+), 5 deletions(-)
+> 
 
-> +#endif
-> +#endif /* CONFIG_VM_EVENT_COUNTERS */
->  };
->  #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA */
->
-> --
-> 2.7.4
->
+please consider this merely a ping..
+will you take this series, or is there anything holding this?
+
+thanks
+
+Yixun
