@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEPTu5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 15:50:57 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:46926 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeEPTuy (ORCPT
+        id S1751315AbeEPTxV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 15:53:21 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43018 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeEPTxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 15:50:54 -0400
-X-Google-Smtp-Source: AB8JxZrBz1g7K43ajBF1CdLr/PExSAJ8YD/HcEkE+58bpLV5jtZ36MWzMrnNn+Za92pkbhMZk8CBxl7xwZHUNH5jVBQ=
+        Wed, 16 May 2018 15:53:19 -0400
+X-Google-Smtp-Source: AB8JxZo/4FVIPrOL3ZkbXZ7M+Pxauz69tQPfVVR1Ga3MRfqFk1VJXrG8frVoLzBntrY90QikAisFOK/KY6VqcLDnR/U=
 MIME-Version: 1.0
-In-Reply-To: <314df7f911fda8f5584cc4384a26074848a2673b.1526490085.git.hns@goldelico.com>
-References: <cover.1526490085.git.hns@goldelico.com> <314df7f911fda8f5584cc4384a26074848a2673b.1526490085.git.hns@goldelico.com>
+In-Reply-To: <cover.1526490085.git.hns@goldelico.com>
+References: <cover.1526490085.git.hns@goldelico.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 May 2018 22:50:53 +0300
-Message-ID: <CAHp75VcadghXsqu66NmrfbEPpgqusEUuzSkrE8PSJjAV0avntQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] gpio: pca953x: define masks for addressing common
- and extended registers
+Date: Wed, 16 May 2018 22:53:18 +0300
+Message-ID: <CAHp75Vdm4q39hoXoodDQPwEdhi-C+jF7yaxHqHi41mrT0kXGnA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] pcal6524 extensions and fixes for pca953x driver
 To: "H. Nikolaus Schaller" <hns@goldelico.com>
 Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
         Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
@@ -34,40 +33,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, May 16, 2018 at 8:01 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> These mask bits are to be used to map the extended register
-> addreseses (which are defined for an unsupported 8-bit pcal chip)
-> to 16 and 24 bit chips (pcal6524).
+> V6:
+> * added proper attribution to the formula used for fixing the
+>   pcal6524 register address (changes commit message only)
+> * add back missing first patch from V2 that defines the
+>   PCA_LATCH_INT constant
+> * removed patches already merged
 >
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 4 ++++
->  1 file changed, 4 insertions(+)
+
+Thanks for an update.
+I think we still need to address the constant representation in patch 2.
+
+For the rest take my
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+> 2018-04-28 18:33:42: V5:
+> * fix wrong split up between patches 1/7 and 2/7.
 >
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 2b667166e855..c0eb679e60d4 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -56,6 +56,10 @@
->  #define PCAL6524_DEBOUNCE      0x2d
+> 2018-04-26 19:35:07: V4:
+> * introduced PCA_LATCH_INT constant to make of_table more
+>   readable (suggested by Andy Shevchenko)
+> * converted all register constants to hex in a separate
+>   patch (suggested by Andy Shevchenko)
+> * separated additional pcal953x and pcal6524 register
+>   definitions into separate patches (suggested by Andy Shevchenko)
+> * made special pcal6524 address adjustment more readable
+>   (suggested by Andy Shevchenko)
+> * moved gpio-controller and interrupt-controller to the
+>   "required" section (reviewed by Rob Herring)
 >
->  #define PCA_GPIO_MASK          0x00FF
-> +
-> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
-> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
-> +
-
-I give second thought about it, and think
-either plain values, or second converted to its own explicit GENMASK
-would be better.
-
-(most confusing part to me is unknowness of the side of PINCTRL part
-in the mask)
-
-
->  #define PCA_INT                        0x0100
->  #define PCA_PCAL               0x0200
->  #define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
+> 2018-04-10 18:07:07: V3:
+> * add Reported-by: and Reviewed-by:
+> * fix wording for bindings description and example
+> * convert all register offsets to hex
+> * omit the LEVEL-IRQ RFC/hack commit
+>
+> 2018-04-04 21:00:27: V2:
+> * added PCA_PCAL flags if matched through of-table
+> * fix address calculation for extended PCAL6524 registers
+> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
+>   test in combination with ts3a227e driver
+> * improve description of bindings for optional vcc-supply
+>   and interrupt-controller;
+>
+> 2018-03-10 09:32:53: no initial description
+>
+> H. Nikolaus Schaller (3):
+>   gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+>   gpio: pca953x: define masks for addressing common and extended
+>     registers
+>   gpio: pca953x: fix address calculation for pcal6524
+>
+>  drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
 > --
 > 2.12.2
 >
