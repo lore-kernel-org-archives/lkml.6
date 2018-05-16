@@ -1,31 +1,31 @@
 Return-Path: <sabin.rapan@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526495267; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526495258; cv=none;
         d=google.com; s=arc-20160816;
-        b=SWd//qxiN/IVpwIxrHoTB/XUxecCJYD3X2GCv8SCaTehAKOdTPBTKWodPAnVlbklq2
-         hreSSJvLAoGCzNWxV8RSsq+OO4qhRDIQ9CDtQNnK2x4e/gpvtmAnvtA+iZmEk5VTOqml
-         4EkSp1FsNvoMCO4tANeaaDHMUgWQ12AMtn6m++LH80ua6UcchDS9R7sZ/giixQAjvVyT
-         EpKHZG2Y2u63tfzgsL3nxQiwEeruCEaUWp2M107m0Vljh8Fa8noK0+5ko/ykIzYDiBX4
-         LblPiymIgjBTQbcQ/+C5u8ZIt2s8SXbYPS5kIdqSGn4kPgaER13Z8W4j6CQCCml8onKS
-         NtaA==
+        b=M+NRcPB4q/g5g/XIDL3CPuZsHtF6IGuxwzq1Q55k/jA3Y0HDJWBVpOinCqSDvG18L9
+         20lPp6gvEGfWcsj0uvxwYUV7VhbPdZhPyUjvm2gPl9HhlAS4ae920U53zvBY6NcV2Q8j
+         eZMOHsaub7i612F3zpSRWC3FUHBAcXsXSrhVb1Ps8VmiBMHSKToSeWvFWTODgqXcTVd6
+         fZ3lFjWIl7/Chk7w6Pc4Dixtwb4xwlfeNRQ9XXBOp1upIuQcbNiMMm/Cx/yHy3jIe/tW
+         7Gpail/RYjk7Nksw44JdRCo6BNbu8DdYpoNCWC1PkJTjv6SqPV9RAOKqYeitSEHfRa5l
+         /F+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=E/lQfvbpEXWkzo92o4NlP/ucu4GmPTYiH49NEEmSCH0=;
-        b=sGvFWT94nz/7HSeVWVI9kAbkV+7k8re3/d3a4ylHAoSDqrrf7ZnchKKT6Jd7frrt27
-         UCq+kwus/Y4OvqdbMvSzD6SbS6vM8mMOZAR29H8TSfXDznaiIMS3FnmIai3cRnQZpwK9
-         Ts7VL3Z4mG+iHNMYsSaiLaGHx/cPlPS8ecYfgZPn0Jbhp1Nrx7R1+pkTu7n9xOmzEuFo
-         HmP8pvKAeYpeT2cD8V036neHTWeJbbpHwl0h2Xg3CnA4k+OTwfCT14gotQEVcazz9gAi
-         7ZKkRIj3xbyNzGsPJTyauvBRxrGDupcUIRBt+Rko26Ws3rkxDw83uXIjDK2WAOG4wQWy
-         8sqw==
+        bh=iUZS/Ozdt4s6aS/Vf0nZpFWDc97QLoSiXKJPDI/tmP4=;
+        b=lEk/NbZKxIm6fg5X09ivIQSXVpcK1qAQkisFY/2fFAl1WCRW0YPyalA265+xbRcswN
+         zjcYN/2KB/t5/if9fBCfBSFlp/m+c/oNE1LrUzxwgAYW1DUa5oPg9ePV8qTNIxhPJ7rO
+         qMhjcXpDSUoRqT7IAyKpsGEQJX147BRdQHy/RzM4W6ktMrnReOVelVTR0cJ2hrIJjVNJ
+         kbhuIuVpcs5BydUTY97YRKNSrCj1oX9Cd4ivllLwVzaka9XvejFXmnzvVtHmHtpmjXQY
+         YLgHrlj2VtonEvHR7+UKkraEu6Ltmajz3NL3Gdqx0TzH9XH8PYdznn+Lj9+UnlOe+GN8
+         /P8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TB1Z1zZE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KV7K7dtA;
        spf=pass (google.com: domain of sabin.rapan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sabin.rapan@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TB1Z1zZE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KV7K7dtA;
        spf=pass (google.com: domain of sabin.rapan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sabin.rapan@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZrd68NtG2slHFxMqJ/FSVGW4rRXJ0vImYsA7SrPSy/VqZl6s81Rnu63TYFMikFiYtOCUCfQKQ==
+X-Google-Smtp-Source: AB8JxZq8UNoo8lbzRqMTFFiTCPHtr+Tn8ltJe0AWfj6iKNWHWMz/XhuhBDHKxZB7Q0DbxGYn4DI6Lw==
 From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 To: gregkh@linuxfoundation.org,
 	jsimmons@infradead.org,
@@ -35,35 +35,35 @@ To: gregkh@linuxfoundation.org,
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Subject: [PATCH 5/5] staging: lustre: Fix "from from"->"from"
-Date: Wed, 16 May 2018 20:27:43 +0200
-Message-Id: <20180516182743.5387-1-sabin.rapan@gmail.com>
+Subject: [PATCH 4/5] staging: lustre: Fix "Possible intergrate"->"Possibly integrate"
+Date: Wed, 16 May 2018 20:27:33 +0200
+Message-Id: <20180516182733.5337-1-sabin.rapan@gmail.com>
 X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600646301719167980?=
-X-GMAIL-MSGID: =?utf-8?q?1600646301719167980?=
+X-GMAIL-THRID: =?utf-8?q?1600646292625767216?=
+X-GMAIL-MSGID: =?utf-8?q?1600646292625767216?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Trivial fix to spelling mistake in README.txt
+Trivial fix to spelling mistake in TODO file.
 
 Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- drivers/staging/lustre/README.txt | 2 +-
+ drivers/staging/lustre/TODO | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/README.txt b/drivers/staging/lustre/README.txt
-index 0676243eea9e..783959240490 100644
---- a/drivers/staging/lustre/README.txt
-+++ b/drivers/staging/lustre/README.txt
-@@ -4,7 +4,7 @@ Lustre Parallel Filesystem Client
- The Lustre file system is an open-source, parallel file system
- that supports many requirements of leadership class HPC simulation
- environments.
--Born from from a research project at Carnegie Mellon University,
-+Born from a research project at Carnegie Mellon University,
- the Lustre file system is a widely-used option in HPC.
- The Lustre file system provides a POSIX compliant file system interface,
- can scale to thousands of clients, petabytes of storage and
+diff --git a/drivers/staging/lustre/TODO b/drivers/staging/lustre/TODO
+index 94446487748a..5332cdb19bfa 100644
+--- a/drivers/staging/lustre/TODO
++++ b/drivers/staging/lustre/TODO
+@@ -12,7 +12,7 @@ addressed:
+ * https://jira.hpdd.intel.com/browse/LU-9859
+ *
+ * Track all the cleanups and simplification of the libcfs module. Remove
+-* functions the kernel provides. Possible intergrate some of the functionality
++* functions the kernel provides. Possibly integrate some of the functionality
+ * into the kernel proper.
+ *
+ ******************************************************************************
 -- 
 2.17.0
