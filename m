@@ -1,182 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751033AbeEPOlw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:41:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36150 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750835AbeEPOlu (ORCPT
+        id S1751520AbeEPOmc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:42:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35988 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750778AbeEPOm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:41:50 -0400
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
- matrix
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
- <be2e8810-2a03-c67c-b1aa-41cf7c82980e@linux.ibm.com>
- <bf6191a9-ca0f-238c-d078-d6f0d6be1616@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Wed, 16 May 2018 16:41:41 +0200
+        Wed, 16 May 2018 10:42:29 -0400
+X-Google-Smtp-Source: AB8JxZoI+HM+GrYz2lJI0/HXqyz5K34aq2M2sEQlJBcTB5Uoo1fNM0VVikMp5+NPssaGffMpYk0Q5A==
+Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
+To: Radu Pirea <radu.pirea@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Zhiqiang.Hou@nxp.com, pp@emlix.com, richard@nod.at,
+        computersforpeace@gmail.com, dwmw2@infradead.org
+References: <20180504155404.5285-1-radu.pirea@microchip.com>
+ <20180504204013.254d90cf@bbrezillon>
+ <e2e23aa21b37754b0c84003e6d87c7cb7d5a17fe.camel@microchip.com>
+ <1db092c8-95fb-5747-f7b9-f6a215b1aa5b@gmail.com>
+ <a34429cf43124de623fcaa645d5d7a360c755867.camel@microchip.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <30ab9516-abc9-d2d5-79ea-266c682c5fa9@gmail.com>
+Date: Wed, 16 May 2018 15:47:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <bf6191a9-ca0f-238c-d078-d6f0d6be1616@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <a34429cf43124de623fcaa645d5d7a360c755867.camel@microchip.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051614-0012-0000-0000-000005D736FC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051614-0013-0000-0000-000019545C95
-Message-Id: <edf541b4-f3d6-95ac-46c8-32560c1d0b0c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160149
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/05/2018 16:29, Tony Krowiak wrote:
-> On 05/11/2018 12:08 PM, Halil Pasic wrote:
->>
->>
->> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
->>> Provides interfaces to manage the AP adapters, usage domains
->>> and control domains assigned to a KVM guest.
+On 05/16/2018 12:05 PM, Radu Pirea wrote:
+> On Wed, 2018-05-16 at 00:17 +0200, Marek Vasut wrote:
+>> On 05/15/2018 06:22 PM, Radu Pirea wrote:
+>>> On Fri, 2018-05-04 at 20:40 +0200, Boris Brezillon wrote:
+>>>> On Fri, 4 May 2018 18:54:04 +0300
+>>>> Radu Pirea <radu.pirea@microchip.com> wrote:
+>>>>
+>>>>> Added geometry description for Microchip 25LC256 memory.
+>>>>
+>>>> Same as for the dataflash stuff you posted a few weeks ago: I
+>>>> don't
+>>>> think this device belongs in the SPI NOR framework.
 >>>
->>> The guest's SIE state description has a satellite structure called the
->>> Crypto Control Block (CRYCB) containing three bitmask fields
->>> identifying the adapters, queues (domains) and control domains
->>> assigned to the KVM guest:
+>>> Hi Boris,
+>>>
+>>> 25lc256 memory is similar with mr25h256, the only difference is the
+>>> page size(64 vs 256). Because mr25h256 is already in SPI NOR
+>>> framework
+>>> I added here 25lc256.
 >>
->> [..]
+>> I think I must be reading the wrong datasheet, but can you show me
+>> how
+>> does it support things like READID opcode ?
 >>
->>> index 00bcfb0..98b53c7 100644
->>> --- a/arch/s390/kvm/kvm-ap.c
->>> +++ b/arch/s390/kvm/kvm-ap.c
->>> @@ -7,6 +7,7 @@
->>
->> [..]
->>
->>> +
->>> +/**
->>> + * kvm_ap_validate_queue_sharing
->>> + *
->>> + * Verifies that the APQNs derived from the cross product of the AP 
->>> adapter IDs
->>> + * and AP queue indexes comprising the AP matrix are not configured 
->>> for
->>> + * another guest. AP queue sharing is not allowed.
->>> + *
->>> + * @kvm: the KVM guest
->>> + * @matrix: the AP matrix
->>> + *
->>> + * Returns 0 if the APQNs are valid, otherwise; returns -EBUSY.
->>> + */
->>> +static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
->>> +                     struct kvm_ap_matrix *matrix)
->>> +{
->>> +    struct kvm *vm;
->>> +    unsigned long *apm, *aqm;
->>> +    unsigned long apid, apqi;
->>> +
->>> +
->>> +    /* No other VM may share an AP Queue with the input VM */
->>> +    list_for_each_entry(vm, &vm_list, vm_list) {
->>> +        if (kvm == vm)
->>> +            continue;
->>> +
->>> +        apm = kvm_ap_get_crycb_apm(vm);
->>> +        if (!bitmap_and(apm, apm, matrix->apm, matrix->apm_max + 1))
->>> +            continue;
->>> +
->>> +        aqm = kvm_ap_get_crycb_aqm(vm);
->>> +        if (!bitmap_and(aqm, aqm, matrix->aqm, matrix->aqm_max + 1))
->>> +            continue;
->>> +
->>> +        for_each_set_bit_inv(apid, apm, matrix->apm_max + 1)
->>> +            for_each_set_bit_inv(apqi, aqm, matrix->aqm_max + 1)
->>> +                kvm_ap_log_sharing_err(vm, apid, apqi);
->>> +
->>> +        return -EBUSY;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix 
->>> *matrix)
->>> +{
->>> +    int ret = 0;
->>> +
->>> +    mutex_lock(&kvm->lock);
->>
->> You seem to take only kvm->lock, vm_list however (used in
->> kvm_ap_validate_queue_sharing()) seems to be protected by
->> kvm_lock.
->>
->> Can you tell me why is this supposed to be safe?
->>
->> What is supposed to prevent an execution like
->> vm1: call kvm_ap_configure_matrix(m1)
->> vm2: call kvm_ap_configure_matrix(m2)
->> vm1: call kvm_ap_validate_queue_sharing(m1)
->> vm2: call kvm_ap_validate_queue_sharing(m2)
->> vm1: call kvm_ap_set_crycb_masks(m1)
->> vm2: call kvm_ap_set_crycb_masks(m2)
->>
->> where, let's say, m1 and m2 are equal in the sense that the
->> mask values are the same?
->
-> vm1 will get the kvm->lock first in your scenario when
-> kvm_ap_configure_matrix(m1) is invoked. Since the other
-> functions - i.e., kvm_ap_validate_queue_sharing(m1) and
-> kvm_ap_set_crycb_masks(m1) - are static and only called
-> from the kvm_ap_configure_matrix(m1), your scenario
-> can never happen because vm2 will not get the lock until
-> kvm_ap_configure_matrix(m1) has completed. I see your
-> point, however, and maybe I should also acquire the kvm_lock.
+> Hi Marek,
+> 
+> I read the datasheet for 25lc256 and for mr25h256 and none of them
+> supports READID. Is this required for a chip to be included in spi-nor
+> framework? I just followed the mr25h256 as an example. 
 
-AFAIU the locks you are talking about are KVM specific
-but the example from Halil use two different VM,
-i.e. two different locks are used and vm2 never wait for vw1.
+So I thought until you pointed out the MR25 devices.
 
->
->>
->>
->> Regards,
->> Halil
->>
->>> +
->>> +    ret = kvm_ap_validate_queue_sharing(kvm, matrix);
->>> +    if (ret)
->>> +        goto done;
->>> +
->>> +    kvm_ap_set_crycb_masks(kvm, matrix);
->>> +
->>> +done:
->>> +    mutex_unlock(&kvm->lock);
->>> +
->>> +    return ret;
->>> +}
->>> +EXPORT_SYMBOL(kvm_ap_configure_matrix);
->>> +
->
->
+Does the 25LC device need erase or not ? I think the MR25s didn't, but I
+might be wrong.
+
+Maybe the framework could support the 25LC afterall.
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Best regards,
+Marek Vasut
