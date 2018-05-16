@@ -1,70 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753509AbeEPKVg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:21:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:11739 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752449AbeEPKVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:21:34 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="56353691"
-Date: Wed, 16 May 2018 18:21:59 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v4 5/5] virtio_ring: enable packed ring
-Message-ID: <20180516102159.GA11467@debian>
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-6-tiwei.bie@intel.com>
- <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
+        id S1753357AbeEPKWb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:22:31 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:49558 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752999AbeEPKW2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:22:28 -0400
+Date: Wed, 16 May 2018 12:22:04 +0200
+From: Emil Goode <emil.fsw@goode.io>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] gpu: host1x: Fix compiler errors by converting to
+ dma_addr_t
+Message-ID: <20180516102204.stviarlxgrz3k2nh@lianli>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 01:15:48PM +0300, Sergei Shtylyov wrote:
-> On 5/16/2018 11:37 AM, Tiwei Bie wrote:
-> 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index de3839f3621a..b158692263b0 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -1940,6 +1940,8 @@ void vring_transport_features(struct virtio_device *vdev)
-> >   			break;
-> >   		case VIRTIO_F_IOMMU_PLATFORM:
-> >   			break;
-> > +		case VIRTIO_F_RING_PACKED:
-> > +			break;
-> 
->    Why not just add this *case* under the previous *case*?
+The compiler is complaining with the following errors:
 
-Do you mean fallthrough? Something like:
+drivers/gpu/host1x/cdma.c:94:48: error:
+	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
+	[-Werror=incompatible-pointer-types]
 
-		case VIRTIO_F_IOMMU_PLATFORM:
-		case VIRTIO_F_RING_PACKED:
-			break;
+drivers/gpu/host1x/cdma.c:113:48: error:
+	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
+	[-Werror=incompatible-pointer-types]
 
-Best regards,
-Tiwei Bie
+The expected pointer type of the third argument to dma_alloc_wc() is
+dma_addr_t but phys_addr_t is passed.
 
-> 
-> >    		default:
-> >   			/* We don't understand this bit. */
-> >   			__virtio_clear_bit(vdev, i);
-> 
-> MBR, Sergei
+Change the phys member of struct push_buffer to be dma_addr_t so that we
+pass the correct type to dma_alloc_wc().
+Also check pb->mapped for non-NULL in the destroy function as that is the
+right way of checking if dma_alloc_wc() was successful.
+
+Signed-off-by: Emil Goode <emil.fsw@goode.io>
+---
+v2: - Change the phys member type instead of adding casts.
+    - Check pb->mapped in the destroy function as 0 is a valid value
+      for dma_addr_t.
+
+ drivers/gpu/host1x/cdma.c | 2 +-
+ drivers/gpu/host1x/cdma.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index 28541b280739..02a0b61be18f 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -51,7 +51,7 @@ static void host1x_pushbuffer_destroy(struct push_buffer *pb)
+ 	struct host1x_cdma *cdma = pb_to_cdma(pb);
+ 	struct host1x *host1x = cdma_to_host1x(cdma);
+ 
+-	if (!pb->phys)
++	if (!pb->mapped)
+ 		return;
+ 
+ 	if (host1x->domain) {
+diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
+index 286d49386be9..446ee1a84969 100644
+--- a/drivers/gpu/host1x/cdma.h
++++ b/drivers/gpu/host1x/cdma.h
+@@ -44,7 +44,7 @@ struct host1x_job;
+ struct push_buffer {
+ 	void *mapped;			/* mapped pushbuffer memory */
+ 	dma_addr_t dma;			/* device address of pushbuffer */
+-	phys_addr_t phys;		/* physical address of pushbuffer */
++	dma_addr_t phys;		/* physical address of pushbuffer */
+ 	u32 fence;			/* index we've written */
+ 	u32 pos;			/* index to write to */
+ 	u32 size;
+-- 
+2.11.0
