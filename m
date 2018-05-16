@@ -1,143 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeEPUqr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:46:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49506 "EHLO mx2.suse.de"
+        id S1751481AbeEPUvS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:51:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:61802 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751013AbeEPUqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:46:46 -0400
-Date: Wed, 16 May 2018 22:46:44 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Shakeel Butt <shakeelb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: save two stranding bit in gfp_mask
-Message-ID: <20180516204644.GO12670@dhcp22.suse.cz>
-References: <20180516202023.167627-1-shakeelb@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516202023.167627-1-shakeelb@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751013AbeEPUvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 16:51:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,407,1520924400";
+   d="scan'208";a="56514839"
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        mgorman@techsingularity.net
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        juri.lelli@redhat.com, viresh.kumar@linaro.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [UPDATE][RFC/RFT][PATCH 07/10] cpufreq: intel_pstate: HWP boost performance on busy task migrate
+Date: Wed, 16 May 2018 13:51:11 -0700
+Message-Id: <20180516205111.22231-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-05-18 13:20:23, Shakeel Butt wrote:
-> ___GFP_COLD and ___GFP_OTHER_NODE were removed but their bits were
-> stranded. Slide existing gfp masks to make those two bits available.
+When a busy task migrates to a new CPU boost HWP prformance to max. This
+helps workloads on servers with per core P-states, which saturates all
+CPUs and then they migrate frequently. But changing limits has extra over
+head of issuing new HWP Request MSR, which takes 1000+
+cycles. So this change limits setting HWP Request MSR.
+Rate control in setting HWP Requests:
+- If the current performance is around P1, simply ignore.
+- Once set wait till hold time, till remove boost. While the boost
+ is on, another flags is notified, it will prolong boost.
+- The task migrates needs to have some utilzation which is more
+than threshold utilization, which will trigger P-state above minimum.
 
-Could you make the patch a bit smaller smaller? E.g.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+Update:
+While fixing checkpatch errors didn't realize that I got rid of useful
+line for setting migrate flags to false. So fixed that.
 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 1a4582b44d32..92c82ac8420f 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -24,6 +24,7 @@ struct vm_area_struct;
- #define ___GFP_HIGH		0x20u
- #define ___GFP_IO		0x40u
- #define ___GFP_FS		0x80u
-+#define ___GFP_WRITE		0x100u
- #define ___GFP_NOWARN		0x200u
- #define ___GFP_RETRY_MAYFAIL	0x400u
- #define ___GFP_NOFAIL		0x800u
-@@ -36,11 +37,10 @@ struct vm_area_struct;
- #define ___GFP_THISNODE		0x40000u
- #define ___GFP_ATOMIC		0x80000u
- #define ___GFP_ACCOUNT		0x100000u
--#define ___GFP_DIRECT_RECLAIM	0x400000u
--#define ___GFP_WRITE		0x800000u
--#define ___GFP_KSWAPD_RECLAIM	0x1000000u
-+#define ___GFP_DIRECT_RECLAIM	0x200000u
-+#define ___GFP_KSWAPD_RECLAIM	0x400000u
- #ifdef CONFIG_LOCKDEP
--#define ___GFP_NOLOCKDEP	0x2000000u
-+#define ___GFP_NOLOCKDEP	0x800000u
- #else
- #define ___GFP_NOLOCKDEP	0
- #endif
+ drivers/cpufreq/intel_pstate.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-
-Other than that I have no real objections. It is good to see how many
-bits we are using. So
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  include/linux/gfp.h | 42 +++++++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 1a4582b44d32..8edf72d32411 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -16,31 +16,31 @@ struct vm_area_struct;
->   */
->  
->  /* Plain integer GFP bitmasks. Do not use this directly. */
-> -#define ___GFP_DMA		0x01u
-> -#define ___GFP_HIGHMEM		0x02u
-> -#define ___GFP_DMA32		0x04u
-> -#define ___GFP_MOVABLE		0x08u
-> +#define ___GFP_DMA		0x1u
-> +#define ___GFP_HIGHMEM		0x2u
-> +#define ___GFP_DMA32		0x4u
-> +#define ___GFP_MOVABLE		0x8u
->  #define ___GFP_RECLAIMABLE	0x10u
->  #define ___GFP_HIGH		0x20u
->  #define ___GFP_IO		0x40u
->  #define ___GFP_FS		0x80u
-> -#define ___GFP_NOWARN		0x200u
-> -#define ___GFP_RETRY_MAYFAIL	0x400u
-> -#define ___GFP_NOFAIL		0x800u
-> -#define ___GFP_NORETRY		0x1000u
-> -#define ___GFP_MEMALLOC		0x2000u
-> -#define ___GFP_COMP		0x4000u
-> -#define ___GFP_ZERO		0x8000u
-> -#define ___GFP_NOMEMALLOC	0x10000u
-> -#define ___GFP_HARDWALL		0x20000u
-> -#define ___GFP_THISNODE		0x40000u
-> -#define ___GFP_ATOMIC		0x80000u
-> -#define ___GFP_ACCOUNT		0x100000u
-> -#define ___GFP_DIRECT_RECLAIM	0x400000u
-> -#define ___GFP_WRITE		0x800000u
-> -#define ___GFP_KSWAPD_RECLAIM	0x1000000u
-> +#define ___GFP_NOWARN		0x100u
-> +#define ___GFP_RETRY_MAYFAIL	0x200u
-> +#define ___GFP_NOFAIL		0x400u
-> +#define ___GFP_NORETRY		0x800u
-> +#define ___GFP_MEMALLOC		0x1000u
-> +#define ___GFP_COMP		0x2000u
-> +#define ___GFP_ZERO		0x4000u
-> +#define ___GFP_NOMEMALLOC	0x8000u
-> +#define ___GFP_HARDWALL		0x10000u
-> +#define ___GFP_THISNODE		0x20000u
-> +#define ___GFP_ATOMIC		0x40000u
-> +#define ___GFP_ACCOUNT		0x80000u
-> +#define ___GFP_DIRECT_RECLAIM	0x100000u
-> +#define ___GFP_WRITE		0x200000u
-> +#define ___GFP_KSWAPD_RECLAIM	0x400000u
->  #ifdef CONFIG_LOCKDEP
-> -#define ___GFP_NOLOCKDEP	0x2000000u
-> +#define ___GFP_NOLOCKDEP	0x800000u
->  #else
->  #define ___GFP_NOLOCKDEP	0
->  #endif
-> @@ -205,7 +205,7 @@ struct vm_area_struct;
->  #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
->  
->  /* Room for N __GFP_FOO bits */
-> -#define __GFP_BITS_SHIFT (25 + IS_ENABLED(CONFIG_LOCKDEP))
-> +#define __GFP_BITS_SHIFT (23 + IS_ENABLED(CONFIG_LOCKDEP))
->  #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
->  
->  /*
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index d418265539b3..57570149dde6 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -227,6 +227,7 @@ struct global_params {
+  *			defines callback and arguments
+  * @hwp_boost_active:	HWP performance is boosted on this CPU
+  * @last_io_update:	Last time when IO wake flag was set
++ * @migrate_hint:	Set when scheduler indicates thread migration
+  *
+  * This structure stores per CPU instance data for all CPUs.
+  */
+@@ -263,6 +264,7 @@ struct cpudata {
+ 	call_single_data_t csd;
+ 	bool hwp_boost_active;
+ 	u64 last_io_update;
++	bool migrate_hint;
+ };
+ 
+ static struct cpudata **all_cpu_data;
+@@ -1438,6 +1440,8 @@ static int hwp_boost_hold_time_ms = 3;
+ #define BOOST_PSTATE_THRESHOLD	(SCHED_CAPACITY_SCALE / 2)
+ static int hwp_boost_pstate_threshold = BOOST_PSTATE_THRESHOLD;
+ 
++static int hwp_boost_threshold_busy_pct;
++
+ static inline bool intel_pstate_check_boost_threhold(struct cpudata *cpu)
+ {
+ 	/*
+@@ -1450,12 +1454,32 @@ static inline bool intel_pstate_check_boost_threhold(struct cpudata *cpu)
+ 	return true;
+ }
+ 
++static inline int intel_pstate_get_sched_util(struct cpudata *cpu)
++{
++	unsigned long util_cfs, util_dl, max, util;
++
++	cpufreq_get_sched_util(cpu->cpu, &util_cfs, &util_dl, &max);
++	util = min(util_cfs + util_dl, max);
++	return util * 100 / max;
++}
++
+ static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
+ 						u64 time, unsigned int flags)
+ {
+ 	struct cpudata *cpu = container_of(data, struct cpudata, update_util);
+ 
+-	if (flags & SCHED_CPUFREQ_IOWAIT) {
++	if (flags & SCHED_CPUFREQ_MIGRATION) {
++		if (intel_pstate_check_boost_threhold(cpu))
++			cpu->migrate_hint = true;
++
++		cpu->last_update = time;
++		/*
++		 * The rq utilization data is not migrated yet to the new CPU
++		 * rq, so wait for call on local CPU to boost.
++		 */
++		if (smp_processor_id() != cpu->cpu)
++			return;
++	} else if (flags & SCHED_CPUFREQ_IOWAIT) {
+ 		/*
+ 		 * Set iowait_boost flag and update time. Since IO WAIT flag
+ 		 * is set all the time, we can't just conclude that there is
+@@ -1499,6 +1523,18 @@ static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
+ 			intel_pstate_hwp_boost_up(cpu);
+ 		else
+ 			smp_call_function_single_async(cpu->cpu, &cpu->csd);
++		return;
++	}
++
++	/* Ignore if the migrated thread has low utilization */
++	if (cpu->migrate_hint && smp_processor_id() == cpu->cpu) {
++		int util = intel_pstate_get_sched_util(cpu);
++
++		cpu->migrate_hint = false;
++		if (util >= hwp_boost_threshold_busy_pct) {
++			cpu->hwp_boost_active = true;
++			intel_pstate_hwp_boost_up(cpu);
++		}
+ 	}
+ }
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.13.6
