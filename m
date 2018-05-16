@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752282AbeEPXxD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:53:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57862 "EHLO mail.kernel.org"
+        id S1752422AbeEPXxf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:53:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751620AbeEPXuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:50:20 -0400
+        id S1751395AbeEPXuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:50:15 -0400
 From: Alan Tull <atull@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
         Alan Tull <atull@kernel.org>
-Subject: [PATCH 06/14] fpga: mgr: kernel-doc fixes
-Date: Wed, 16 May 2018 18:49:59 -0500
-Message-Id: <20180516235007.3951-7-atull@kernel.org>
+Subject: [PATCH 01/14] fpga: region: don't use drvdata in common fpga code
+Date: Wed, 16 May 2018 18:49:54 -0500
+Message-Id: <20180516235007.3951-2-atull@kernel.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180516235007.3951-1-atull@kernel.org>
 References: <20180516235007.3951-1-atull@kernel.org>
@@ -21,120 +21,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up the kernel-doc documentation in fpga-mgr.c and fix the
-following warnings when documentation is built:
+Changes to fpga_region_register function to not set drvdata.
 
-./drivers/fpga/fpga-mgr.c:252: warning: Function parameter or member
-'info' not described in 'fpga_mgr_buf_load'
-
-./drivers/fpga/fpga-mgr.c:252: warning: Excess function parameter
-'flags' description in 'fpga_mgr_buf_load'
+Setting drvdata is fine for DT based devices that will have one region
+per platform device.  However PCIe based devices may have multiple
+FPGA regions under one PCIe device.  Without these changes, the PCIe
+solution has to create an extra device for each child region to hold
+drvdata.
 
 Signed-off-by: Alan Tull <atull@kernel.org>
+Reported-by: Jiuyue Ma <majiuyue@huawei.com>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
- drivers/fpga/fpga-mgr.c | 38 +++++++++++++++++++++++++++++---------
- 1 file changed, 29 insertions(+), 9 deletions(-)
+ drivers/fpga/fpga-region.c    | 1 -
+ drivers/fpga/of-fpga-region.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index 151ac36..5fffeef 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -21,6 +21,12 @@
- static DEFINE_IDA(fpga_mgr_ida);
- static struct class *fpga_mgr_class;
+diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+index cb0603e..f634a8e 100644
+--- a/drivers/fpga/fpga-region.c
++++ b/drivers/fpga/fpga-region.c
+@@ -183,7 +183,6 @@ int fpga_region_register(struct device *dev, struct fpga_region *region)
+ 	region->dev.parent = dev;
+ 	region->dev.of_node = dev->of_node;
+ 	region->dev.id = id;
+-	dev_set_drvdata(dev, region);
  
-+/**
-+ * fpga_image_info_alloc - Allocate a FPGA image info struct
-+ * @dev: owning device
-+ *
-+ * Return: struct fpga_image_info or NULL
-+ */
- struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
- {
- 	struct fpga_image_info *info;
-@@ -39,6 +45,10 @@ struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(fpga_image_info_alloc);
+ 	ret = dev_set_name(&region->dev, "region%d", id);
+ 	if (ret)
+diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+index 119ff75..35e7e8c 100644
+--- a/drivers/fpga/of-fpga-region.c
++++ b/drivers/fpga/of-fpga-region.c
+@@ -438,6 +438,7 @@ static int of_fpga_region_probe(struct platform_device *pdev)
+ 		goto eprobe_mgr_put;
  
-+/**
-+ * fpga_image_info_free - Free a FPGA image info struct
-+ * @info: FPGA image info struct to free
-+ */
- void fpga_image_info_free(struct fpga_image_info *info)
- {
- 	struct device *dev;
-@@ -223,7 +233,7 @@ static int fpga_mgr_buf_load_mapped(struct fpga_manager *mgr,
- /**
-  * fpga_mgr_buf_load - load fpga from image in buffer
-  * @mgr:	fpga manager
-- * @flags:	flags setting fpga confuration modes
-+ * @info:	fpga image info
-  * @buf:	buffer contain fpga image
-  * @count:	byte count of buf
-  *
-@@ -332,6 +342,16 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
- 	return ret;
- }
+ 	of_platform_populate(np, fpga_region_of_match, NULL, &region->dev);
++	dev_set_drvdata(dev, region);
  
-+/**
-+ * fpga_mgr_load - load FPGA from scatter/gather table, buffer, or firmware
-+ * @mgr:	fpga manager
-+ * @info:	fpga image information.
-+ *
-+ * Load the FPGA from an image which is indicated in @info.  If successful, the
-+ * FPGA ends up in operating mode.
-+ *
-+ * Return: 0 on success, negative error code otherwise.
-+ */
- int fpga_mgr_load(struct fpga_manager *mgr, struct fpga_image_info *info)
- {
- 	if (info->sgt)
-@@ -418,11 +438,9 @@ static int fpga_mgr_dev_match(struct device *dev, const void *data)
- }
+ 	dev_info(dev, "FPGA Region probed\n");
  
- /**
-- * fpga_mgr_get - get a reference to a fpga mgr
-+ * fpga_mgr_get - Given a device, get a reference to a fpga mgr.
-  * @dev:	parent device that fpga mgr was registered with
-  *
-- * Given a device, get a reference to a fpga mgr.
-- *
-  * Return: fpga manager struct or IS_ERR() condition containing error code.
-  */
- struct fpga_manager *fpga_mgr_get(struct device *dev)
-@@ -442,10 +460,9 @@ static int fpga_mgr_of_node_match(struct device *dev, const void *data)
- }
- 
- /**
-- * of_fpga_mgr_get - get a reference to a fpga mgr
-- * @node:	device node
-+ * of_fpga_mgr_get - Given a device node, get a reference to a fpga mgr.
-  *
-- * Given a device node, get a reference to a fpga mgr.
-+ * @node:	device node
-  *
-  * Return: fpga manager struct or IS_ERR() condition containing error code.
-  */
-@@ -478,7 +495,10 @@ EXPORT_SYMBOL_GPL(fpga_mgr_put);
-  * @mgr:	fpga manager
-  *
-  * Given a pointer to FPGA Manager (from fpga_mgr_get() or
-- * of_fpga_mgr_put()) attempt to get the mutex.
-+ * of_fpga_mgr_put()) attempt to get the mutex. The user should call
-+ * fpga_mgr_lock() and verify that it returns 0 before attempting to
-+ * program the FPGA.  Likewise, the user should call fpga_mgr_unlock
-+ * when done programming the FPGA.
-  *
-  * Return: 0 for success or -EBUSY
-  */
-@@ -494,7 +514,7 @@ int fpga_mgr_lock(struct fpga_manager *mgr)
- EXPORT_SYMBOL_GPL(fpga_mgr_lock);
- 
- /**
-- * fpga_mgr_unlock - Unlock FPGA manager
-+ * fpga_mgr_unlock - Unlock FPGA manager after done programming
-  * @mgr:	fpga manager
-  */
- void fpga_mgr_unlock(struct fpga_manager *mgr)
 -- 
 2.7.4
