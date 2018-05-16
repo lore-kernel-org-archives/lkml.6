@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084986-1526513570-2-4777239615501118351
+X-Cyrus-Session-Id: sloti22d1t05-1084986-1526513689-2-2553924665429040662
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,23 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526513570; b=buQPaDBNmoaHABhDOPzZ5jXbxcwoUtf3HYJy8XzODNl3yYZ3hC
-    prVa8iPt5XtXevRaEv4jhRJ6Qn72Q2RKCLZgy6sjkqr7S/vGLgtbVZQNeIFEY0bY
-    WLNYIrSoqWLa/nlo5p0hi7DdzzWHYmdw/ApicS8ptASLLcJtNcNP1merHYnVfNi+
-    Ulojd3aNWNNRRnGmVC4Osl+Gnprk+FWfwbU/I4H4XS0mc23SfTRnzHGIpmy21yTk
-    qZwi4NGA5v6Wo+HS4IhayQDoFoy74D/OnAbadvM2rmG1gGvOjo/0klvKj1i3QfPM
-    GjYZzhwGeBDonnVlY5YryuOjY7vJ5TKoKyzA==
+    1526513689; b=NPAJzcV0d6e3I5N1xRm2ku5nLjtCw+f+IbhxhJ/v4ibLYK3hFn
+    6kY0xHg1gf1EC7DxKyUu5TUCBMbENzsOhkGELsxyS5np1sfSfmj2himXZM6vuP98
+    cvp0InYIcXSeBjTHYlSB/ZpgV6DNcwPb+ImcYz3xGvbtkmim0duRhJjVYKXqg0sW
+    kHiPegROqFoNvtcdouOWVHHGrvUTMNGLqmM9gtouv4SJYNGQrIwpkmY68OYc1b8s
+    qv1zRZz/YZyb9/+oaQPL28xrCr7NIlFdzfdUErlLibr2jAjfxNRkrFaDcxvrLL3Q
+    xjfun1ZvEh0w0BazlBIqz0cr4wREUh6JMsTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=message-id:subject:from:to:cc:date
     :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526513570;
-    bh=xCWbS07vN9OgwzniaO/qMf0mjM6bf4nkYuMhuimZYfE=; b=M7UtGZuTByoY
-    lkkDYKy0tCEZxsEok3vRgNmhvJ9WWTdXkSS97gnvS/tUpaJc6IUHMWWzILNV4QCQ
-    wkiYLvIfDeYL641+1fTX+lNQrxildY5eJFnUC/VkiRMFoXUD+ll4XZ7Vwg459WM0
-    YdH3nvS5tQA4gVTk/RU/Yj+4WCWwMzCNIktvoxhGJO39AJ9J+YSp6av/LaE6uZS+
-    QX5G6Z90m3iigdazhP9jjfH2R3N/lIogcJP0LqCxcIXJn1kIoR/BanvUiSRTG8Dk
-    60Om+EWili9RpgJB6GVfMfNLHjJRmrBG6l9AG1SPS/Qxyc4xoTPXb1qJ7aM4Zk83
-    kkMZchcWAw==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526513689;
+    bh=NRAuw9STdKTD3jYmApfr5OnOSoA0w0OXfJINKsSIgqk=; b=Azby560TUpAP
+    NHaEZo2xHaEz6VcTtjuNBC159X+j1TUPLTgkHXm1wfNj8paAeNfwwA8uEhvw/Rs2
+    tOa2CvnP/aqG5/ViBrVscaXmPmGKkHXvEwSiU06TzWMgYaycbFffXvytn3/CzXos
+    riEXYqTOCI0GVmMXGahPlzgzJsW9mOvWlqF/MY6ZnapI2CpeJntLGsCKwmpzamVA
+    CbnWY/haHSkfuo22WgIBjJGfUdiak74RLl3Sa5lucjq3p83tVlZTe/1CdwmHPVg2
+    Cec1Bic7X7KMC7KE/t3JWr4iLCSjZzYJAdahflLlMunasmFAAHDxDeDCmqgBLsXz
+    UVJDOdH2Jg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
@@ -61,22 +61,21 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBOBTgCZx8TgOwSXNSIaUtkzVz8H31kr63JSfS3IwR4kT4gYq15r8lS1izdGJwA42CIDeC4gLaYMueD0VLK55+G+6RtSBl77P1HX8H12fod9XtFNJ0ff
-    iqtoxuYdBlJrhfqGTjFJFXNjeCm0AWQvbfEUBc+a47NcWjy4xZ+Tejk+aZ3QhhVhcn+aYcQq7/VDDdD50JWxDBFjpuWj2/8+1cn19pPsV6ciotaNcxGRIa82
+X-CM-Envelope: MS4wfJQ9fy5p2BcSbZKVMb9SRaQKyVR9UkperhKjj7LhB7qeCaJCMNimkB04UqWqafmN8ecOWOU02CFcw4Ecmg4GjfI3gYHvd7IAZa0fJJGujM2TSQxFdI5r
+    7jyw6MWADwpwtBRagqCmkbwBVnA+ITRgWw48OCGvGEJOVqxrNeXJEgEZv61SCQ23POKmSeCRY9qzdyWt4IOSAVswT8LbFX/3tphRbXsBkvWEZsSRWixwE5Gw
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=rTDo_5_6WMYnJkmuBBkA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
-    a=QEXdDO2ut3YA:10
+    a=Hw7PWmS5VM4pKStVqn8A:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751225AbeEPXcs (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 16 May 2018 19:32:48 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52728 "EHLO
+        id S1751642AbeEPXes (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 19:34:48 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52805 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbeEPXcs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 16 May 2018 19:32:48 -0400
-Message-ID: <1526513565.9159.153.camel@codethink.co.uk>
+        with ESMTP id S1751150AbeEPXer (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 16 May 2018 19:34:47 -0400
+Message-ID: <1526513685.9159.155.camel@codethink.co.uk>
 Subject: Re: [PATCH 4.4 60/97] clk: mvebu: armada-38x: add support for
  1866MHz variants
 From: Ben Hutchings <ben.hutchings@codethink.co.uk>
@@ -86,56 +85,30 @@ To: Ralph Sennhauser <ralph.sennhauser@gmail.com>,
 Cc: stable@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>
-Date: Thu, 17 May 2018 00:32:45 +0100
-In-Reply-To: <20180422135308.591594256@linuxfoundation.org>
+Date: Thu, 17 May 2018 00:34:45 +0100
+In-Reply-To: <1526513565.9159.153.camel@codethink.co.uk>
 References: <20180422135304.577223025@linuxfoundation.org>
          <20180422135308.591594256@linuxfoundation.org>
+         <1526513565.9159.153.camel@codethink.co.uk>
 Organization: Codethink Ltd.
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-04-22 at 15:53 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> 
-> commit 9593f4f56cf5d1c443f66660a0c7f01de38f979d upstream.
-> 
-> The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to the
-> list of supported CPU frequencies. Also update multiplier and divisor
-> for the l2clk and ddrclk.
-> 
-> Noticed by the following warning:
-> [    0.000000] Selected CPU frequency (16) unsupported
-
-So the frequency selection field is read as 16...
-
+On Thu, 2018-05-17 at 00:32 +0100, Ben Hutchings wrote:
 [...]
-> --- a/drivers/clk/mvebu/armada-38x.c
-> +++ b/drivers/clk/mvebu/armada-38x.c
-> @@ -49,7 +49,8 @@ static const u32 armada_38x_cpu_frequenc
->  	0, 0, 0, 0,
->  	1066 * 1000 * 1000, 0, 0, 0,
->  	1332 * 1000 * 1000, 0, 0, 0,
-> -	1600 * 1000 * 1000,
-> +	1600 * 1000 * 1000, 0, 0, 0,
-> +	1866 * 1000 * 1000,
->  };
-[...]
+> ...but this only adds entries to the lookup table at indexes 9-12
+> inclusive.
+> 
+> It looks like this fixes the clock settings, but not the warning.
 
-...but this only adds entries to the lookup table at indexes 9-12
-inclusive.
-
-It looks like this fixes the clock settings, but not the warning.
+Sorry, I misread this, it's fine.
 
 Ben.
 
