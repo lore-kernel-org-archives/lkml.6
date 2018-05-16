@@ -1,260 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752407AbeEPXvJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752224AbeEPXu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:50:27 -0400
-From: Alan Tull <atull@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Alan Tull <atull@kernel.org>
-Subject: [PATCH 12/14] documentation: fpga: move fpga-region.txt to driver-api
-Date: Wed, 16 May 2018 18:50:05 -0500
-Message-Id: <20180516235007.3951-13-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180516235007.3951-1-atull@kernel.org>
-References: <20180516235007.3951-1-atull@kernel.org>
+        id S1752489AbeEPXvc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:51:32 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37318 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbeEPXv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:51:29 -0400
+X-Google-Smtp-Source: AB8JxZqmE4szU56qih9TssMWyMb+0vm9Oyg99+PufPlcgilvTT/QXvPNOHBrQsYlcpjqlVVBQzbPGA==
+Date: Wed, 16 May 2018 16:51:26 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Lin Huang <hl@rock-chips.com>
+Cc: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
+        dianders@chromium.org, linux-rockchip@lists.infradead.org,
+        heiko@sntech.de, daniel.vetter@intel.com, jani.nikula@linux.intel.com,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v4 4/4] drm/rockchip: support dp training outside dp
+ firmware
+Message-ID: <20180516235125.GB219198@rodete-desktop-imager.corp.google.com>
+References: <1526354560-23135-1-git-send-email-hl@rock-chips.com>
+ <1526354560-23135-4-git-send-email-hl@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526354560-23135-4-git-send-email-hl@rock-chips.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move Documentation/fpga/fpga-region.txt to
-driver-api/fpga/fpga-region.rst.  Including:
- - Add it to driver-api/fpga/index.rst
- - Formatting changes to build cleanly as ReST documentation
- - Some rewrites for better flow as a ReST doc such as moving
-   API reference to the end of the doc
- - Rewrite API reference section to refer to kernel-doc
-   documentation in fpga-region.c driver code
++ Kishon
 
-Signed-off-by: Alan Tull <atull@kernel.org>
----
- Documentation/driver-api/fpga/fpga-region.rst | 102 ++++++++++++++++++++++++++
- Documentation/driver-api/fpga/index.rst       |   1 +
- Documentation/fpga/fpga-region.txt            |  94 ------------------------
- 3 files changed, 103 insertions(+), 94 deletions(-)
- create mode 100644 Documentation/driver-api/fpga/fpga-region.rst
- delete mode 100644 Documentation/fpga/fpga-region.txt
+Hi,
 
-diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
-new file mode 100644
-index 0000000..f89e4a3
---- /dev/null
-+++ b/Documentation/driver-api/fpga/fpga-region.rst
-@@ -0,0 +1,102 @@
-+FPGA Region
-+===========
-+
-+Overview
-+--------
-+
-+This document is meant to be an brief overview of the FPGA region API usage.  A
-+more conceptual look at regions can be found in the Device Tree binding
-+document [#f1]_.
-+
-+For the purposes of this API document, let's just say that a region associates
-+an FPGA Manager and a bridge (or bridges) with a reprogrammable region of an
-+FPGA or the whole FPGA.  The API provides a way to register a region and to
-+program a region.
-+
-+Currently the only layer above fpga-region.c in the kernel is the Device Tree
-+support (of-fpga-region.c) described in [#f1]_.  The DT support layer uses regions
-+to program the FPGA and then DT to handle enumeration.  The common region code
-+is intended to be used by other schemes that have other ways of accomplishing
-+enumeration after programming.
-+
-+An fpga-region can be set up to know the following things:
-+
-+ * which FPGA manager to use to do the programming
-+
-+ * which bridges to disable before programming and enable afterwards.
-+
-+Additional info needed to program the FPGA image is passed in the struct
-+fpga_image_info including:
-+
-+ * pointers to the image as either a scatter-gather buffer, a contiguous
-+   buffer, or the name of firmware file
-+
-+ * flags indicating specifics such as whether the image if for partial
-+   reconfiguration.
-+
-+How to program a FPGA using a region
-+------------------------------------
-+
-+First, allocate the info struct::
-+
-+	info = fpga_image_info_alloc(dev);
-+	if (!info)
-+		return -ENOMEM;
-+
-+Set flags as needed, i.e.::
-+
-+	info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
-+
-+Point to your FPGA image, such as::
-+
-+	info->sgt = &sgt;
-+
-+Add info to region and do the programming::
-+
-+	region->info = info;
-+	ret = fpga_region_program_fpga(region);
-+
-+:c:func:`fpga_region_program_fpga()` operates on info passed in the
-+fpga_image_info (region->info).  This function will attempt to:
-+
-+ * lock the region's mutex
-+ * lock the region's FPGA manager
-+ * build a list of FPGA bridges if a method has been specified to do so
-+ * disable the bridges
-+ * program the FPGA
-+ * re-enable the bridges
-+ * release the locks
-+
-+Then you will want to enumerate whatever hardware has appeared in the FPGA.
-+
-+How to add a new FPGA region
-+----------------------------
-+
-+An example of usage can be seen in the probe function of [#f2]_.
-+
-+.. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
-+.. [#f2] ../../drivers/fpga/of-fpga-region.c
-+
-+API to program a FGPA
-+---------------------
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_program_fpga
-+
-+API to add a new FPGA region
-+----------------------------
-+
-+.. kernel-doc:: include/linux/fpga/fpga-region.h
-+   :functions: fpga_region
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_create
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_free
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_register
-+
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: fpga_region_unregister
-diff --git a/Documentation/driver-api/fpga/index.rst b/Documentation/driver-api/fpga/index.rst
-index 968bbbf..c51e5eb 100644
---- a/Documentation/driver-api/fpga/index.rst
-+++ b/Documentation/driver-api/fpga/index.rst
-@@ -10,3 +10,4 @@ FPGA Subsystem
-    intro
-    fpga-mgr
-    fpga-bridge
-+   fpga-region
-diff --git a/Documentation/fpga/fpga-region.txt b/Documentation/fpga/fpga-region.txt
-deleted file mode 100644
-index d38fa3b..0000000
---- a/Documentation/fpga/fpga-region.txt
-+++ /dev/null
-@@ -1,94 +0,0 @@
--FPGA Regions
--
--Alan Tull 2017
--
--CONTENTS
-- - Introduction
-- - The FPGA region API
-- - Usage example
--
--Introduction
--============
--
--This document is meant to be an brief overview of the FPGA region API usage.  A
--more conceptual look at regions can be found in [1].
--
--For the purposes of this API document, let's just say that a region associates
--an FPGA Manager and a bridge (or bridges) with a reprogrammable region of an
--FPGA or the whole FPGA.  The API provides a way to register a region and to
--program a region.
--
--Currently the only layer above fpga-region.c in the kernel is the Device Tree
--support (of-fpga-region.c) described in [1].  The DT support layer uses regions
--to program the FPGA and then DT to handle enumeration.  The common region code
--is intended to be used by other schemes that have other ways of accomplishing
--enumeration after programming.
--
--An fpga-region can be set up to know the following things:
--* which FPGA manager to use to do the programming
--* which bridges to disable before programming and enable afterwards.
--
--Additional info needed to program the FPGA image is passed in the struct
--fpga_image_info [2] including:
--* pointers to the image as either a scatter-gather buffer, a contiguous
--  buffer, or the name of firmware file
--* flags indicating specifics such as whether the image if for partial
--  reconfiguration.
--
--===================
--The FPGA region API
--===================
--
--To register or unregister a region:
-------------------------------------
--
--	int fpga_region_register(struct fpga_region *region);
--	int fpga_region_unregister(struct fpga_region *region);
--
--An example of usage can be seen in the probe function of [3]
--
--To program an FPGA:
---------------------
--	int fpga_region_program_fpga(struct fpga_region *region);
--
--This function operates on info passed in the fpga_image_info
--(region->info).
--
--This function will attempt to:
-- * lock the region's mutex
-- * lock the region's FPGA manager
-- * build a list of FPGA bridges if a method has been specified to do so
-- * disable the bridges
-- * program the FPGA
-- * re-enable the bridges
-- * release the locks
--
--=============
--Usage example
--=============
--
--First, allocate the info struct:
--
--	info = fpga_image_info_alloc(dev);
--	if (!info)
--		return -ENOMEM;
--
--Set flags as needed, i.e.
--
--	info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
--
--Point to your FPGA image, such as:
--
--	info->sgt = &sgt;
--
--Add info to region and do the programming:
--
--	region->info = info;
--	ret = fpga_region_program_fpga(region);
--
--Then enumerate whatever hardware has appeared in the FPGA.
--
----
--[1] ../devicetree/bindings/fpga/fpga-region.txt
--[2] ./fpga-mgr.txt
--[3] ../../drivers/fpga/of-fpga-region.c
--- 
-2.7.4
+On Tue, May 15, 2018 at 11:22:40AM +0800, Lin Huang wrote:
+> DP firmware uses fixed phy config values to do training, but some
+> boards need to adjust these values to fit for their unique hardware
+> design. So get phy config values from dts and use software link training
+> instead of relying on firmware, if software training fail, keep firmware
+> training as a fallback if sw training fails.
+> 
+> 
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> ---
+> Changes in v2:
+> - update patch following Enric suggest
+> Changes in v3:
+> - use variable fw_training instead sw_training_success
+> - base on DP SPCE, if training fail use lower link rate to retry training
+> Changes in v4:
+> - improve cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link() follow Sean suggest
+> 
+>  drivers/gpu/drm/rockchip/Makefile               |   3 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
+>  drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 420 ++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  31 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
+>  6 files changed, 505 insertions(+), 13 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+
+...
+
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-link-training.c b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> new file mode 100644
+> index 0000000..7efd070
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> @@ -0,0 +1,420 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Author: Chris Zhong <zyw@rock-chips.com>
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/phy/phy.h>
+> +#include <soc/rockchip/rockchip_phy_typec.h>
+> +
+> +#include "cdn-dp-core.h"
+> +#include "cdn-dp-reg.h"
+> +
+> +static void cdn_dp_set_signal_levels(struct cdn_dp_device *dp)
+> +{
+> +	struct cdn_dp_port *port = dp->port[dp->active_port];
+> +	struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
+
+This is still antithetical to the PHY framework; you're assuming that
+this is a particular type of PHY here.
+
+> +
+> +	int rate = drm_dp_bw_code_to_link_rate(dp->link.rate);
+> +	u8 swing = (dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) >>
+> +		   DP_TRAIN_VOLTAGE_SWING_SHIFT;
+> +	u8 pre_emphasis = (dp->train_set[0] & DP_TRAIN_PRE_EMPHASIS_MASK)
+> +			  >> DP_TRAIN_PRE_EMPHASIS_SHIFT;
+> +
+> +	tcphy->typec_phy_config(port->phy, rate, dp->link.num_lanes,
+> +				swing, pre_emphasis);
+
+Is this something generic that could be added as a new PHY API instead?
+
+> +}
+
+Brian
