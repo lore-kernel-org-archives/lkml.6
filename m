@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4128544-1526459394-2-14788327674087790025
+X-Cyrus-Session-Id: sloti22d1t05-4128544-1526459365-2-10851580637843493419
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,26 +12,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526459393; b=UPBcWcDFTW2nyZQ/6Q108XF42DeADglxnwPmWvak8c7KSpoc7M
-    5nXiJJiyJwPQhsbBPurAMf+Mdux549YQRakT0AdndczhO4vwyHIJzQxeTrWpBlo7
-    WuMNogiqDBGxwQd3eP3MOuOaO8I6i2bXrtqkVlvckvgMOpD2yBC5TrjXRL7/t6up
-    t/13gJce2O6kV5BOhRpbHG33L4BJIEVkrXsoPtdQxBO/ucPIU4Cuy8+bqQRGRQNN
-    XBTxjfKqLxaV7pSXgI8TOA5rQxeR8ni6grUwQCg3OMDsMkTw30mK7Ejg0Bx77bAu
-    k/I7BA4LRDADXQaR6PZPrAMETFc9ibXLJD3g==
+    1526459364; b=EpYroOA8Hx7AfQQrraLSgdBxFWMbeI5Fn+qxyO7XK4tOx/b/sD
+    wDdG5jHq/6bRby78ygLaXN6IfGb2zg46inCrWITZ78MEtQ9k59ySkNGT6yOpTHB7
+    Qqdfxs4pU+V7hdawndYofA9EGrQgDzrWNJ0YhQmHpZphHp+MUZukxmCihZ8WPFAu
+    I7ezGJGarxcOdRSN3+oS/MPNoktosvc1aflvZx7LX1DB+iiEyMaCG/8B276wqgj3
+    IaxdhrCRKKuc7TkSQR3rShbswnJRlJ242COG27FGyl58OnPyuJnA63swkDgxO5oS
+    X19A1TU5qI/gXFa5rCmRxG6Enq6uH5HtFhiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526459393; bh=SAaXfcJKb4QnocuSonDsnKi08+VboW
-    B+W01vj5iM+VY=; b=bMEpWu5g7WSEdtGjJuCEPzT1xkTC3d5w6kQsmbjy0YUJDf
-    KITjJJspHJ3ZQlGqOLbIbSxkjSEEZtMTm9+Clg/mJYI2EFGtw3YI89Esb1tzgK33
-    qjcTsCIMSQi5aGq7AjvBy+aI0KO7jUbq5n26xG61h8TWOgeB5BGZ05MICTygrVe/
-    c42cuyLp4v56JnjLRHfzBVcVhbrtlM8Q5zm83GrI1eGQc7noFIO8CJ38xvmiaXg9
-    Lu9V902KsnyDp4ePm1RCFvNaDNR5K8yE5jUlo9sVce0V2ll1s2ClVbrlnxKpZoCd
-    GYEkoLCiKQfqHaXIhThqiD1bBRtS8xg8QbWug81Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526459364; bh=rlFgupNcEOK5aSIYFg0LEIqsffVhmK
+    2x0v+mL6KNdvU=; b=RpNf5xEW2zPK+sp4NEB/QKf4KftBOfX7C731jxLsVy779Q
+    6t0iizwse9dPKHMMyByJ9T8vO78NxUofuOEpmbb1hvai4sMFalWQnyZwRRQPW4YV
+    zjJFEaq4lcFa0sa3Bb5zavcUzR7w1grGDhKNmK2K6uq0InGo5CUVuem1gKINeOwM
+    bcuYXhkbo9Hf8kjELGqojnVgXYghYlEf4BWxRvGB2qVV7sVdFWRYWIFLUtOH52Gj
+    s/OZ/YDlJIxdek1/+UlnmFnEUXayU2c/TTDGfJCsgU7y7HIb0aapJpd6andEdbBm
+    EO5U9NRk8lc49EOu9efpU6ZdRJdV+d4gktGbn1xA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
     header.d=caviumnetworks.onmicrosoft.com
-    header.i=@caviumnetworks.onmicrosoft.com header.b=MMStW5kQ x-bits=1024
+    header.i=@caviumnetworks.onmicrosoft.com header.b=lpAuZkZf x-bits=1024
     x-keytype=rsa x-algorithm=sha256 x-selector=selector1-cavium-com;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=caviumnetworks.com;
@@ -46,11 +46,11 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=caviumnetworks.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
       header.d=caviumnetworks.onmicrosoft.com
-      header.i=@caviumnetworks.onmicrosoft.com header.b=MMStW5kQ x-bits=1024
+      header.i=@caviumnetworks.onmicrosoft.com header.b=lpAuZkZf x-bits=1024
       x-keytype=rsa x-algorithm=sha256 x-selector=selector1-cavium-com;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=caviumnetworks.com;
@@ -66,24 +66,25 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPOWuMh0l/3KEa8tBQNmypnKYu+F/6W5yXZaD6jWo4KpPff1HAI/7K2dN7fe30oEFMeNjsa1KhpjTam+kiGqYIc7KsriIBpx0fofTwMwOFprOYSzJlea
-    UH+i60wOUbdhx8WD139jy2BHqSYflzJUvSLJkKqqJHV+7Ncoc87HvFDMFhmk4H479RsaOMIlUWH6vjFPqqqvPkcwobmmOE4KGA2UPl/cem/FrNBF0C07fiid
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfM2Ds+nDH5CJmhgWwADGm0QfH+HroBpJ0vgosUe8BIY/0JGCHpt9nuWZSVzEeKOMSM24R7GCYFoswTVmtr/puQP5VT9mlU6pVY8q8Mf50TBFXxmukhPI
+    CyMNd+NrRqB1UEVAOTj1MwQE8q7g0G942WPy4/uXWD7JR2By4YxJEnWkdls2OHOyVqeNHy8izaFrfY7MEKtkUpjiccWCZwEpj79akoxlEZumjyDejPaX2up4
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=osDrW2AON7y1HyiAeOL6jdcP5bE=:19
-    a=sFUR1tI3dlkA:10 a=P23N9hKgfBoA:10 a=8Vrhg9jcMeUA:10 a=VUJBJC2UJ8kA:10
-    a=ifRc6kEuNzAA:10 a=enOvQawGAAAA:8 a=VwQbUJbxAAAA:8 a=LQV_mRbyC_J601MwfJ0A:9
-    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=3Y7jEmdpTcse2tSp:21 a=x8gzFH9gYPwA:10
-    a=OuzhcWw_GC9nAYdNdRwA:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=sFUR1tI3dlkA:10 a=P23N9hKgfBoA:10 a=V_6QiwIxc6EA:10 a=VUJBJC2UJ8kA:10
+    a=ifRc6kEuNzAA:10 a=zAyngx5bAAAA:8 a=NXpJzYs8AAAA:8 a=enOvQawGAAAA:8
+    a=VwQbUJbxAAAA:8 a=DCRbcVUs93Vj27EFCzsA:9 a=x8gzFH9gYPwA:10
+    a=4LA4qAFo6bo561LpWNDU:22 a=cwV61pgf2j4Cq8VD9hE_:22 a=OuzhcWw_GC9nAYdNdRwA:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeEPIUb (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 16 May 2018 04:20:31 -0400
-Received: from mail-by2nam01on0042.outbound.protection.outlook.com ([104.47.34.42]:50976
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1752932AbeEPI25 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 04:28:57 -0400
+Received: from mail-cys01nam02on0068.outbound.protection.outlook.com ([104.47.37.68]:43392
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752831AbeEPIUW (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 16 May 2018 04:20:22 -0400
+        id S1751664AbeEPIVa (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 16 May 2018 04:21:30 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yuri.Norov@cavium.com;
 From: Yury Norov <ynorov@caviumnetworks.com>
@@ -119,10 +120,11 @@ Cc: Yury Norov <ynorov@caviumnetworks.com>,
         Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
         Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
         Steve Ellcey <sellcey@caviumnetworks.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>
-Subject: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T config option
-Date: Wed, 16 May 2018 11:18:49 +0300
-Message-Id: <20180516081910.10067-5-ynorov@caviumnetworks.com>
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Andrew Pinski <apinski@cavium.com>
+Subject: [PATCH 10/24] arm64: uapi: set __BITS_PER_LONG correctly for ILP32 and LP64
+Date: Wed, 16 May 2018 11:18:55 +0300
+Message-Id: <20180516081910.10067-11-ynorov@caviumnetworks.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516081910.10067-1-ynorov@caviumnetworks.com>
 References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
@@ -130,446 +132,96 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [176.59.36.13]
 X-ClientProxiedBy: VI1PR08CA0119.eurprd08.prod.outlook.com
- (2603:10a6:800:d4::21) To DM6PR07MB4378.namprd07.prod.outlook.com
- (2603:10b6:5:bf::20)
+ (2603:10a6:800:d4::21) To BN7PR07MB4371.namprd07.prod.outlook.com
+ (2603:10b6:406:b5::11)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM6PR07MB4378;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4378;3:r/sZWCcUkIcmJaLAS9U5sC4Y9GKkTMjIO7gN/3zJQHlixs7qHzRRCSTwKEu/LYdaCkLsrb9hW1VyCONqy2q5oIb2X+5n2GE2EPHmmvvdv6HB/U6DhHxUMYiYq2lt6EjHWrn/JVqSvzCiUSdt1HkHJXYdARHxJ6JBZDszQyQHboFXLhiCLi0BnwZjZtNQNXsEcH+MvufopP47lIXgN7IDfwk7F266skxVy9+2EF9AH9MmBxm7bxRJLZbxH3vMtK3V;25:Pet6YodaprB7iUr7dOym8JHLUwekpU+llTdRpawlYkMqvE0nRUZKH5thjXmdbpG03LxR6S9FiYPR8nFwl7yXWVRVq4mXU7jQVr3zIHTzRPAoOV6qdh/Tp4p4sCk8wrCo7YYrlg30g8wu7MYwu9eI0DUdPJV7qmYRfPrS02I5hoQsZeKzy7wDdvtKlzp0m7e3f8xfEEJK4lsUQY5yOYpnOIzvsfA+tsJJ+BooUEhtq1YJCuIdr+nbxrP5e6y4O+Z2e5eerT6ULLDWZ2anXSzesXuZ0WJb4oaVPjWD84a99NSC4D/QNCZb9ZfzyTGEnGtNWCBDQHm9/hOCRptE7/6emA==;31:SJnUE8+GBKvTudGUvYj4DpcF6gEriQWJOGiuDK08x/KaVUmgECJxvZzqHK6S6489CaG7XsXXA1FKi4sTBtbdYTvoty34cqOClvnoSeWDkzt9nvU+Mv5L3hl1/ouxxKODreSr1K4PapL4fhTia+sSqH23aBcmejpV51FHOnd8h4YDasw7NkISEpy+H8TmL0/CK6KSIPSBX/lFsLGqLAJ7YZG2/cOPwM3YWehAcJrHCf0=
-X-MS-TrafficTypeDiagnostic: DM6PR07MB4378:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4378;20:vQqkNnPaDXZT5UqiiMHN/WQsP9ed8dBfe3c0IJtpND+K7UPrbcPnvaIn60enA+DZBFfyODMQ8p3kxJoj58eiaEiKu45J/3ZfQlhWWZdKFi8cmatx2tZF1rcGFOWz2qb+aZ1ZYhgWFen81RZdgOlWm8k7Zui0vGWLwwBq5ATPRRzEgNTsBFqxPe+Tl4lRn0hgpUyC1oH6A+ZeutBFoKPpFwdfCLbdF6uL2rNBX1RCrqq55zQa14crK74ktC/ACqLpG2eRvBXh58fz2l56s3ku+PjpyOHRhmDnP7zGW1wSSfSd8Ld9Cb/T5ngq+51d9h+gQ03QTWAkdAjxbj7LiG8aQau/uWuAIX3cRIcZym942DwyU8hWlAueIRYThjo+MUNFsKj+DSVIidO47/WP0nZKnjmKl1KLpzW/lK7q56VvZMi7S88Tk2h381vd4AOup6dRvdzFogM/4PJib1YN/LP4df3rrpAEF65R517NsrK/C2y4/cTX+ZUpdMx9MveVWm9n5l41DTC7OQYa1k8G6wiUiFPX6HJp0la8VlK34k4nG3HFoIv/YNDq75e+7nmdrDLxp073G2Zfe9iDjSwxGHlZirWZzFOi+atz4Afdg7m2TBM=;4:usfHejypWpjh264RMHEMNQwJopM7oqY84kzyqdN/o6NRu7xkrwGZv5kHznssw5no+NjXecpSr4Myw/q0ZGqx+qNmuNFuxnpV0Gu7vkbuhVd9e3Psyr9wgI8H+Eb7XS35lEBkbft0XQr3agJfEdZvM0xTqVshpjhBnohWj0FxfsMXjJMRNb5JS0wJmUeVxzhWgS2+WTM5wDA1QYJQPS3WouTGli6qN2yrRWs6DvuJ9E+Dv0bgC7N6gu/8mO6wXilclLrKxbtZDSAkm4Y73Ha4fKwXcQfL59vXOQWFNAXup/xcF86i54yS2gMmoeyq+976
-X-Microsoft-Antispam-PRVS: <DM6PR07MB4378C4F5925CC68A8651DC44E3920@DM6PR07MB4378.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(5213294742642);
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB4371;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4371;3:oOWHiUfNonkPGQczf/XxQpmYIDyaQJutXmRHeHnO3rCJfkYBZvKDNQT7tuEF9skWAUGQGGkMJFqFVV+dRpoZ0N0T33dOMBLTcpbjnj1O9xkzVxQe/EuLRaFZFyNie2MgpltdXiHFCyGTefoxW329Ev403FihLuzGP1v6JGAxJ15ruhsZul+uQZiSCSBMtdM/9gJcRtVdTrr/8yXbHx/OxWi8QxM4/ZqIsSPDAd4brinjZLUAYIIEyXTG0TriE99t;25:gFIQvwwYuiu06sp6/tufMoapCyKSb4Qakq7WOlmRBa3LixmfA8vVQmKJGu2rs/Pgl43bzrtNQgYJHJMUT0epVxlD863vBc+4vDi8M55yIDUgjGoYI0x5K6Z1N3fHgXaBr5vimUW89EirTRTcMH8LFU5Xift1AUb2583LQKMpKAumdJppgTFaZBYaVvzEvz99nlTbX+4ciuKJqOS3WIminmzAqmOL8jj2rHj8KFeHLekUEU2XYG+wki2eRL+Bx2bsqSgu/cKGi9GoioBrbOACFHvPxQNW7+OSf2ehHsItM9hId5EDWAvJP8yDJ7nKwuWF9jit6uX0QxnevLhpga6LrA==;31:3lSZisl/n/00WhhEfDtEfaD/WH7ugeG8ll04UmbhWFqiHIdI68pTOHZuaGpIRcKDXhHgUYGnzKRf18mUzBWXlKryQOFqjgJr8XSjQRQgvGnF3NW8mzaZJdwyWFDi965s+fBX1ehunQm2ZpsX2/Q1KZcm8x9mrRjn0Ol88mAaOtZrihuQewB27wSFEJHJ+PzbwOdllKVRG6wqevS8W6FpnjBncGVFPeO9wbh5w7hjAFc=
+X-MS-TrafficTypeDiagnostic: BN7PR07MB4371:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4371;20:BqeCH444BL/w2hWVlDZzx+ZxjgiyFTps/eKnLgAt7fs+d1NCfXmxkDh90Wx3GcswFxBOY5Mz2InmtsOGoJEiyod/Yk/H6Ve/o5IOYyS2KHYIca9eAMOzVkYK63fK0B7n62s6mWkUY4ruUQcweLj26Hkev5ztxkmry2dLtVObWOGIlMYplNofMioPsObGb/v66G655mUkVw8cAEklG08jpgbGn3Ru2UeutgdaiN+RMjAML5r2AGiA1xF++X6Tuak/GI8AKpODQHCJ4sesL++zAnx+ZgIA+GLo9Sr5BuuurGtAmRmicHojZgQ26P7xa9QGSG0gyUyBhqaDM12yubZdEv5nfYpvSauQM/msdMQNwwdGcINAinSUUh+uhV2wmjsq6LFQzSUExVFhJzy4PvyDWyyzQjjdEk1gmy9GGwWw+q14VGBIZqIpnsrLEzmpfvi3cDtmkj/H5aa9A/PpBUugdHcBRX5kZslmCKQc7apSyicJQzTOguT/LiCX82qAEilZfdEwkI1taRAZaWRyir83QBFuYxzM+wRkrjaHBx3ZOH6Mr9GkMRKjig2KWneSDRhuXGpdCRBugF8l7UuvMykaIVTALcUv5H2chfSK2yMk9fw=;4:DWO9MTE5dWOYUNjz9dzdmitJ0AlKanV+sI14W1NfeaVZ3wYKj1Z1KjbWV7iZOmKqfR1Z+3ZWNsLf0SDcOM0Zlhy04BFqmugeAn1p0fdBD1Kkhx6pbyUepetENwM3khnROMOOyVQephU32q8i5H9zPqD/3MF6MI9VB2mGj/xtFSTPcbGQw0dokgOYiy15u/RWhQ5mJoSsdspJmdWia3UBzzF4NbTmQMWWT8s//8AK+YWrrIsGA6A3T9MlY8eHxJQMs77DJE3Z9e51YSDI63w8rQ==
+X-Microsoft-Antispam-PRVS: <BN7PR07MB43717AB414C6B8675B5B7EB4E3920@BN7PR07MB4371.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM6PR07MB4378;BCL:0;PCL:0;RULEID:;SRVR:DM6PR07MB4378;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:BN7PR07MB4371;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4371;
 X-Forefront-PRVS: 0674DC6DD3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(346002)(376002)(366004)(39860400002)(39380400002)(396003)(199004)(189003)(76506005)(42882007)(54906003)(478600001)(72206003)(4326008)(51416003)(25786009)(53936002)(52116002)(6496006)(476003)(2616005)(11346002)(446003)(956004)(316002)(486006)(106356001)(36756003)(7416002)(5660300001)(16586007)(105586002)(110136005)(305945005)(97736004)(6666003)(7406005)(8676002)(6486002)(81166006)(81156014)(68736007)(15760500003)(48376002)(50466002)(7736002)(8936002)(6116002)(50226002)(16526019)(66066001)(39060400002)(575784001)(47776003)(1076002)(186003)(59450400001)(76176011)(386003)(2906002)(3846002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4378;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4378;23:I/LmrQn5/EtLU7y7W0xBscDAdU9svulnKaOKM4bev?=
- =?us-ascii?Q?WpDFA+zbXM6pCIbwRvUem5VRLt9KyA6QJoZ4trBO78jUUGyBXh5PVbiNIb40?=
- =?us-ascii?Q?1+9uhciZEOii9U+xeP8K9F5SiRTawNcCPgII566vQy2n4GbnIf9nVgZuKehl?=
- =?us-ascii?Q?qCj2x22hiDPkz16+chbQhszBKxaPD531UetSjZRJm9uxbfPZGFTmH80cUkIj?=
- =?us-ascii?Q?oR3FsLdXSO1zD2KS1HJMQSQ7MJ6eVz7gr7RxCRoPAPIiWhzbrhGuqeh6l4JZ?=
- =?us-ascii?Q?QUAuZBPNAeKM2rAqezS0WfjbyyX7H2T7XrnX8T715JaRecArK5wtSKEEd20r?=
- =?us-ascii?Q?il2gUxdkmEMeOlqYsJdBfoIlVlvbVydpkzXyXIy2BU/4/LfU8usVJKh9L3m+?=
- =?us-ascii?Q?3ZE7BHZECljmqvwbkQakL7RPUNZtGVOeCk3ed8J+B2B3M/H+FWR42WrwRK3v?=
- =?us-ascii?Q?F+B9ivR8pWBT3wZTYR/4UNdMgVXE2AL5aWvmsGurXvrCHLzlEQJ4V3fxbyUg?=
- =?us-ascii?Q?nIn+1W3uhNOyue2ECbFnSwMKaFqNVbn+PKiCuWZxNUo35nkzYyhiugwEmUro?=
- =?us-ascii?Q?lZ9QrpKCWTB2JvqDucEAVxVmIaPlQEGEUWihAIr1ojfwWIMoJiC8VuF8u4rP?=
- =?us-ascii?Q?bQFTf9htQjljXEJKNgtIatT73dn5Fb9J5Zm3erZFT2NQI+40KrrPnY2ldJCq?=
- =?us-ascii?Q?QkBkjWInScNjrOa+uVnvdJgJEcDDqp8c77vTdnOwVTdpZhiQNxWN2ny94PLg?=
- =?us-ascii?Q?M2Xj/YcdIk1pMTWJyMblhkYcc8vRZgVWm6ujC8g+s7o1SUkC4XaHJVqNrYla?=
- =?us-ascii?Q?+grrBfTYSgjnlxuEo8Q/VN0nQUAw2mRGq5qfWpJorLzGy3B35yqxP93MPFac?=
- =?us-ascii?Q?vT3iARSHl6jzJPh1afNJ3r/3oNG+WxGu8V2HS1fmlRdMx3e45YAHdlU4t/gQ?=
- =?us-ascii?Q?s1SLSqOAca1kq+Xf37Zksb/ot0O12VElJXw6biAM5vEAK6mOaW5VzqpJLN8J?=
- =?us-ascii?Q?WyDYpqfBL9YVBExb4BwAcTbj4ckyPdQ+WG65xwtFQVI65DyOSSNvReghXo+N?=
- =?us-ascii?Q?nwD2aKrUMWGQPo9lfcbG2wWiYOahooxdh0tAfRN3YJdOlIGNthl+OUT2YUwN?=
- =?us-ascii?Q?Rxuzc1TCZ7+f2Eeu2ttjcms7dvaXp2vNca04uEPWmjlHEw02YJMYjfT6FSkn?=
- =?us-ascii?Q?JL9bcx2QChSMZw2qJ1m6p8xEvdQ4m7YBtUWbcCxISzCa8z5/8TvSOZLLFJAq?=
- =?us-ascii?Q?8MLvdgUgJmOckU57Vr99cO+2lUUB+EI6gOmnVE0D7yefzPtQSUH23KcfHFmT?=
- =?us-ascii?Q?mzwWj2klbUQ+NV1X61Wl09NpDZR3wOqPySUMuhump4EhN9DmG3za0RqVTiYA?=
- =?us-ascii?Q?s06nk5gGRn7L1Dq9Eq9CRrbVXes00omKKIFppY7XYN3ecp+?=
-X-Microsoft-Antispam-Message-Info: pX//i3zn5Y1fI2aJVs3G3+6F/IDKXCh+KgdTup8X+cZD5ZHk9SYPlj4Fx6GvSD9Kpy3qp3/fOtIMEgnq0Emg5DBid7T5GS5Z+VtcFu4fLJSND+Bi5GO0DQmaow/bmGE7o+ndJuUBVfyxjc2xoTJl6MwW9a4EIWLUJQx0OdqLPB+DTjyW3j16QVOKiRrF0f/x
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4378;6:Cgu+lq3nl110MFxE1zwkow7azIlF2Wq1RxbqvHApqJH3R+9EsuSulN0cudxaJ0cW4u9+kUDAWU+6SoTBSGCGxG5y1bPMK/+u39zBktji8Ty4QLwNCrHMg6Pn40pa1UnaXcQSM9cWT9EHr/UWrcPEzJzURUgRuk2h4UIoQAM7/fVm33jD0d+Xym0g6pCBDiAReosijQk6/KlT/GsHjyKaeyHkqUB6ER9RE0VNKcOsCDQ4DnfcvEr4kFjvZR2hJro1kmdqzWgACXdLAOPNMb1F+hLi4OtkemPsWX0SxEhJNEZms9qmNA2F02/j9dfPfW8d8xCbuy59Hz7ucfsFC+vDdBY04i5V+THCUxSgSjH2dW4BWOAV5hV3Bt8bqyHsHJM65XI1dEynufV70Cs879ifPTTqQrM6KqlQG9KdRIZfq9O2uJeDAj8kjMeU0m97r3fVCV4LYAAF8Ca6alHwcYHoAg==;5:sx/cmwVmxLJqgskI610MDnzgJUdh0mCRvjKmDOt9TZwWd273lO/k8ZrORq8txc4SZE9erUIMUnUQAwEy7UDdFXRZE8HmTsLJAb2cchR9CzACMA8M+rwBUMrp+XMTU0DLA3JDtroQuVt9kQkt5zvRl3V7U/C8z8DQ1xhC6/fFBmk=;24:RqRA2Jfj4x7RjRNdXBPuTb4QFLLMOcdvp7zxEHD1uk7sDiYbK0WJzNxZFIelFC//17wVeuc7oomyBiWG/HnwqpcbsdFlM3f65Hp3Zo776lo=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(376002)(346002)(39850400004)(366004)(396003)(39380400002)(199004)(189003)(956004)(2906002)(3846002)(2616005)(7406005)(42882007)(486006)(76176011)(446003)(6116002)(16586007)(16526019)(76506005)(386003)(50226002)(51416003)(476003)(305945005)(11346002)(59450400001)(7736002)(25786009)(7416002)(53936002)(4326008)(72206003)(6486002)(5660300001)(107886003)(316002)(6666003)(66066001)(39060400002)(52116002)(47776003)(48376002)(97736004)(81166006)(50466002)(81156014)(36756003)(54906003)(478600001)(106356001)(6496006)(186003)(68736007)(8676002)(8936002)(1076002)(105586002)(110136005)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4371;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR07MB4371;23:g7PLFBkr1mo2/RJQ2f28ewzW41rdGiznkdO/RZkRe?=
+ =?us-ascii?Q?BNNGbujWGolQkgS+iE1L/goo4ZqguyV8qlv2EOayAT1k062qnoZw6S9UJPrc?=
+ =?us-ascii?Q?fMJAO5EDgfathD39dYZeS1Ph31lJXobbKAvrNHh3qLtYig+UzPYqYF0OJiJd?=
+ =?us-ascii?Q?z+Au1nwsrVFxEXRcUfPe120AJ4wjcTFQYWggzXTycJUEGSZncTve7nouTswk?=
+ =?us-ascii?Q?c16zew0MZqyQ+zKj260s1Bg7T88b6W6Lge3F80Llo+9xUySMJxHaPvjBwJbn?=
+ =?us-ascii?Q?E8OWzA0rLev8mOLeIUBBaYkd+Ap69uEbt5X9HhoIkksKLaSx/LyRNqBKiPI0?=
+ =?us-ascii?Q?29OyFXVHm/SS0oIzes6x0kUd/MuX62zkT7yFYfJQgJKrmModbx+n9AmYfjS/?=
+ =?us-ascii?Q?60IeaP6FeHmCh+ek/kkFag23LnT6ccXvBy4dKX4XeDNV5jEC7hRwAntV3mCr?=
+ =?us-ascii?Q?d7zxXVQHuNLmeBsRcvQBn0qoaf57IAlG8qlLXlfORGLkLLlj+OhB0Q2+wWwH?=
+ =?us-ascii?Q?l3T3ERhMHpnWsxl84MYxYT18Xoa1dkOrkyDsU/6IfWZoXSjrCyzL8A9uO/3G?=
+ =?us-ascii?Q?kEBtvnRrD7d5ny94gZxL5RLH4q6DQKmWyrmCPA5DHzJEvPATplbOf5vxGRwt?=
+ =?us-ascii?Q?OvOmVg7o0M/SQw4o6rHUBkjkHL9TvvbfUX0oYVMtCqsm5pNi7bwzxZZlcFNM?=
+ =?us-ascii?Q?DlD8mAEDgFzr4Ln8W0vQkTVwXIC5eNSpyyxl6Qgp78PgE0J9KLW/7NhNSzEl?=
+ =?us-ascii?Q?oCMCFXcBn+RRH7Wvkg4DhzF5T0DjaV8TLGaauuypjhHdSdtLp65H5JKM4mfb?=
+ =?us-ascii?Q?zFdW6t9HG7Jf+IuCrPTgBeqlUzlzCSUVgjeM7x6mARQI0+Lbp+kJa/7LPALG?=
+ =?us-ascii?Q?9t/mjhRE9d/+K9MKcPyDUzKXJgMLXqXfwC5ol/iIUxw1iCOkUnkNNrGRdgme?=
+ =?us-ascii?Q?RI8xKB4gDY2ZhOw+8u6kwI36tistIDOSuWm+lruRZg+Dxd2GNvOWmxxbFVwV?=
+ =?us-ascii?Q?UCcDcLCfWNx09i1j60TZi9RPaJ9TZPball2Vbb/5/vZsL5Fj7z+dH+BQysq0?=
+ =?us-ascii?Q?EUL4Gk+Nh7hCaX0d0FzVgGCEexejlwGjefZZGanhYUyjIa9WBU0q1OzNHbCw?=
+ =?us-ascii?Q?wp0lWtUXahyb4SPxekW6E2ndnpPVgcA+/zA9j3fv5xv7qjphtgfQhdn53dEo?=
+ =?us-ascii?Q?QQndbvvqXr3U/wzvEaD+pl+vSnzOvItP3R0l9k/nrb7mafIWFklxdtjWDG6j?=
+ =?us-ascii?Q?Yez4msDAU3zdp26IKFAEN9F5LesoO92SYQZTMYyvcecJHnIG6JCawpGqCS/h?=
+ =?us-ascii?Q?6Cr6EV+fJ9Oa9Cx5/mD97mW/3uwaWfN0Q3K2HkdiAT0QuJRwYMYmWG/5nLWZ?=
+ =?us-ascii?Q?JEuwZOtx27536EFzUuGZQOYieo=3D?=
+X-Microsoft-Antispam-Message-Info: ZgAG43n6zgDPA+9X+H6w3aJHI0rHrvncdeOKVv9I3NK8+qsgOrQuTSIk4ATMpMOZpvJdH01QXAo2u7WLXCc9L/CSLLOfd0AH/9LGvZlGEZRziUaT2X9JCNKaeS/xnwlV6PKSMrbk7HtChFdBKTaDfZA28dkP581DSBHGwnr6qKp6OeuX0YDRCT/8HZbS2ujD
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4371;6:iEOaMXrF45AZiTJKAGXDKwL9yVPOBcvDXA+BSADjLwGDl1yK4dt0ha8xkRH10i1CPSkvEvtX7GdhA+/wgfxaFfbbdyq5T4iz2wkor+KrRdZK1uSGlNIZ7smkS+DUa0woTDbBohSDue7KjGuc8ZdRi6BgRSI9H3CvHatOx6MCYUB2p7beqyIl/yi0IuvmlyZByVlt0jzRGYY8Zr7XNhlHWjDf7hDWv6OQCdnBVZB7yZicpoRpD25CVh17BYpOs2UEI1rtv8DLJVgrw/QkF7pcXo169DrxXwdmCWcLV6X0RjDFynhmG28ZyDdqQ7b5J/aP9sR0/ZskCuNcyDV4ZWeemL+tdxrbrmh1B8g818qkvUPFum0JW59OoWDnsIKnWUYEbi6HYASjyvzSEhMjmI1u/KkiZwmiIeqabW5TmuxuudterESa++QN+W+vjZYW3DXuCf9YvBnMwrJ3xfotC2FV9Q==;5:MCmxN9U8LbU+5WDVHu46SkfZ+JY8yP/UZ/i+L24AL0JG/0gXovyQWYBIsPGdaKFhff4kZVKYbVZZ22kj1atohXj3csdXwnoGAyJ+3vY0UujoRoNi7a65ytnFb6/ewFiudLmfmJgG4vX7yj32mOR/lncYZSY8DFqy4F5PUql+Fwg=;24:0fTeOfe7ICL/eY97cr9e/b3zYUKUg+ZsBw+wxNeSD11JtLWxsKXdyqs3jwPQq1eAYe1gMz+ey27fH1N4rVm9ZgkS35gsp2zibAcFHdCQ+bY=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4378;7:ONCaCNnc4WVPajxI9D81FX2x+5ebHm14vrkWsF8HOOotwsyYQCY/k+TiW38EXti9VFVrWt+8TUs8THY6niwnjelbQcPoznaT6wWjk+14rZ2n0aoh1TfiSLBa6ASLDUl3C66GqB25uvsp0FtGU01y7/lCFJB/+o7ww+WwE6DpqcJkJexFyGeVfhTKPTrGWIDRURvGLA+XEZ0nBpss6153LR3VteDHZGTDNkYYiusT65iLCwt4jHXtASXpf/Giywxj
-X-MS-Office365-Filtering-Correlation-Id: c13ef3cf-2b35-4f7c-d785-08d5bb05dcf5
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4371;7:jsFyDXsL4citg7onCW7EE87BzIEoQW4ynndobHNoabYK0Ahk8A1rHe06uosAGqepJb7gxdP91hQZF30eGvGWI58RqS7jEWy9K5KcwytCvgrH1h414bXo8xSoq7RxhfvMMdaQZSgeONjMLXoMmqnlgFdSTUcCkJ3t7c1UpA6h0hkljUtusMRqsOCF07BbERrWJb6gAJ/tV4v0lztSLL1JClPhrCqQYpEy7lW4Yu9z6mefheJY6T1Hm9EBZzR7qspp
+X-MS-Office365-Filtering-Correlation-Id: 1f057e86-6c69-421f-1290-08d5bb06056f
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 08:20:19.2403 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c13ef3cf-2b35-4f7c-d785-08d5bb05dcf5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2018 08:21:27.3312 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f057e86-6c69-421f-1290-08d5bb06056f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4378
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4371
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-All new 32-bit architectures should have 64-bit userspace off_t type, but
-existing architectures has 32-bit ones.
+From: Andrew Pinski <apinski@cavium.com>
 
-To enforce the rule, new config option is added to arch/Kconfig that defaults
-ARCH_32BIT_OFF_T to be disabled for new 32-bit architectures. All existing
-32-bit architectures enable it explicitly.
+Define __BITS_PER_LONG depending on the ABI used (i.e. check whether
+__ILP32__ or __LP64__ is defined).  This is necessary for glibc to
+determine the appropriate type definitions for the system call interface.
 
-New option affects force_o_largefile() behaviour. Namely, if userspace
-off_t is 64-bits long, we have no reason to reject user to open big files.
-
-Note that even if architectures has only 64-bit off_t in the kernel
-(arc, c6x, h8300, hexagon, metag, nios2, openrisc, tile32 and unicore32),
-a libc may use 32-bit off_t, and therefore want to limit the file size
-to 4GB unless specified differently in the open flags.
-
+Signed-off-by: Andrew Pinski <apinski@cavium.com>
+Signed-off-by: Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
+Signed-off-by: Christoph Muellner <christoph.muellner@theobroma-systems.com>
 Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: David Daney <ddaney@caviumnetworks.com>
 ---
- arch/Kconfig            | 15 +++++++++++++++
- arch/arc/Kconfig        |  1 +
- arch/arm/Kconfig        |  1 +
- arch/blackfin/Kconfig   |  1 +
- arch/cris/Kconfig       |  1 +
- arch/frv/Kconfig        |  1 +
- arch/h8300/Kconfig      |  1 +
- arch/hexagon/Kconfig    |  1 +
- arch/m32r/Kconfig       |  1 +
- arch/m68k/Kconfig       |  1 +
- arch/metag/Kconfig      |  1 +
- arch/microblaze/Kconfig |  1 +
- arch/mips/Kconfig       |  1 +
- arch/mn10300/Kconfig    |  1 +
- arch/nios2/Kconfig      |  1 +
- arch/openrisc/Kconfig   |  1 +
- arch/parisc/Kconfig     |  1 +
- arch/powerpc/Kconfig    |  1 +
- arch/score/Kconfig      |  1 +
- arch/sh/Kconfig         |  1 +
- arch/sparc/Kconfig      |  1 +
- arch/tile/Kconfig       |  1 +
- arch/unicore32/Kconfig  |  1 +
- arch/x86/Kconfig        |  1 +
- arch/x86/um/Kconfig     |  1 +
- arch/xtensa/Kconfig     |  1 +
- include/linux/fcntl.h   |  2 +-
- 27 files changed, 41 insertions(+), 1 deletion(-)
+ arch/arm64/include/uapi/asm/bitsperlong.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 76c0b54443b1..ee079244dc3c 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -264,6 +264,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
- config ARCH_WANTS_DYNAMIC_TASK_STRUCT
- 	bool
+diff --git a/arch/arm64/include/uapi/asm/bitsperlong.h b/arch/arm64/include/uapi/asm/bitsperlong.h
+index 485d60bee26c..9a05a9659e76 100644
+--- a/arch/arm64/include/uapi/asm/bitsperlong.h
++++ b/arch/arm64/include/uapi/asm/bitsperlong.h
+@@ -17,7 +17,14 @@
+ #ifndef __ASM_BITSPERLONG_H
+ #define __ASM_BITSPERLONG_H
  
-+config ARCH_32BIT_OFF_T
-+	bool
-+	depends on !64BIT
-+	help
-+	  All new 32-bit architectures should have 64-bit off_t type on
-+	  userspace side which corresponds to the loff_t kernel type. This
-+	  is the requirement for modern ABIs. Some existing architectures
-+	  already have 32-bit off_t. This option is enabled for all such
-+	  architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
-+	  h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
-+	  nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
-+	  unicore32, x86_32 and xtensa. This is the complete list. Any
-+	  new 32-bit architecture should declare 64-bit off_t type on user
-+	  side and so should not enable this option.
-+
- config HAVE_REGS_AND_STACK_ACCESS_API
- 	bool
- 	help
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index d76bf4a83740..9b48c82a12f6 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -11,6 +11,7 @@ config ARC
- 	select ARC_TIMERS
- 	select ARCH_HAS_SG_CHAIN
- 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
-+	select ARCH_32BIT_OFF_T
- 	select BUILDTIME_EXTABLE_SORT
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d53575486..825a611a9d86 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -2,6 +2,7 @@
- config ARM
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_DISCARD_MEMBLOCK if !HAVE_ARCH_PFN_VALID && !KEXEC
- 	select ARCH_HAS_DEBUG_VIRTUAL if MMU
-diff --git a/arch/blackfin/Kconfig b/arch/blackfin/Kconfig
-index d9c2866ba618..5a99c1ccad67 100644
---- a/arch/blackfin/Kconfig
-+++ b/arch/blackfin/Kconfig
-@@ -13,6 +13,7 @@ config RWSEM_XCHGADD_ALGORITHM
+-#define __BITS_PER_LONG 64
++#if defined(__LP64__)
++/* Assuming __LP64__ will be defined for native ELF64's and not for ILP32. */
++#  define __BITS_PER_LONG 64
++#elif defined(__ILP32__)
++#  define __BITS_PER_LONG 32
++#else
++#  error "Neither LP64 nor ILP32: unsupported ABI in asm/bitsperlong.h"
++#endif
  
- config BLACKFIN
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_DYNAMIC_FTRACE
-diff --git a/arch/cris/Kconfig b/arch/cris/Kconfig
-index cd5a0865c97f..db7ea0a9e805 100644
---- a/arch/cris/Kconfig
-+++ b/arch/cris/Kconfig
-@@ -54,6 +54,7 @@ config LOCKDEP_SUPPORT
- config CRIS
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_IDE
- 	select GENERIC_ATOMIC64
- 	select HAVE_UID16
-diff --git a/arch/frv/Kconfig b/arch/frv/Kconfig
-index af369b05fed5..9dc671f8f4a6 100644
---- a/arch/frv/Kconfig
-+++ b/arch/frv/Kconfig
-@@ -2,6 +2,7 @@
- config FRV
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_IDE
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_PERF_EVENTS
-diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-index 091d6d04b5e5..6fc8a034ddb6 100644
---- a/arch/h8300/Kconfig
-+++ b/arch/h8300/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config H8300
-         def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select GENERIC_ATOMIC64
- 	select HAVE_UID16
- 	select VIRT_TO_BUS
-diff --git a/arch/hexagon/Kconfig b/arch/hexagon/Kconfig
-index 76d2f20d525e..f6e748178292 100644
---- a/arch/hexagon/Kconfig
-+++ b/arch/hexagon/Kconfig
-@@ -4,6 +4,7 @@ comment "Linux Kernel Configuration for Hexagon"
+ #include <asm-generic/bitsperlong.h>
  
- config HEXAGON
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_OPROFILE
- 	# Other pending projects/to-do items.
- 	# select HAVE_REGS_AND_STACK_ACCESS_API
-diff --git a/arch/m32r/Kconfig b/arch/m32r/Kconfig
-index dd84ee194579..8d9c2244b144 100644
---- a/arch/m32r/Kconfig
-+++ b/arch/m32r/Kconfig
-@@ -2,6 +2,7 @@
- config M32R
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_IDE
- 	select HAVE_OPROFILE
- 	select INIT_ALL_POSSIBLE
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 785612b576f7..8aafd39b5142 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -2,6 +2,7 @@
- config M68K
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select HAVE_IDE
-diff --git a/arch/metag/Kconfig b/arch/metag/Kconfig
-index c7b62a339539..8bc07fa5982d 100644
---- a/arch/metag/Kconfig
-+++ b/arch/metag/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config METAG
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select EMBEDDED
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index 3817a3e2146c..48270951c3aa 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -1,5 +1,6 @@
- config MICROBLAZE
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_HAS_GCOV_PROFILE_ALL
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 8128c3b68d6b..3eb048042004 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2,6 +2,7 @@
- config MIPS
- 	bool
- 	default y
-+	select ARCH_32BIT_OFF_T if !64BIT
- 	select ARCH_BINFMT_ELF_STATE
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_DISCARD_MEMBLOCK
-diff --git a/arch/mn10300/Kconfig b/arch/mn10300/Kconfig
-index e9d8d60bd28b..7840859b3f9f 100644
---- a/arch/mn10300/Kconfig
-+++ b/arch/mn10300/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config MN10300
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_EXIT_THREAD
- 	select HAVE_OPROFILE
- 	select HAVE_UID16
-diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
-index 3d4ec88f1db1..9b4a9cf4af3b 100644
---- a/arch/nios2/Kconfig
-+++ b/arch/nios2/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config NIOS2
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select TIMER_OF
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index 339df7324e9c..24c7c25064e5 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -6,6 +6,7 @@
- 
- config OPENRISC
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select IRQ_DOMAIN
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index 9792d8cf4f56..93f8cecbb741 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config PARISC
- 	def_bool y
-+	select ARCH_32BIT_OFF_T if !64BIT
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select HAVE_IDE
- 	select HAVE_OPROFILE
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 73ce5dd07642..4f38ce304b78 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -134,6 +134,7 @@ config PPC
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-+	select ARCH_32BIT_OFF_T if PPC32
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_DMA_SET_COHERENT_MASK
- 	select ARCH_HAS_ELF_RANDOMIZE
-diff --git a/arch/score/Kconfig b/arch/score/Kconfig
-index d881f99c9ddd..7371e5fb18b9 100644
---- a/arch/score/Kconfig
-+++ b/arch/score/Kconfig
-@@ -3,6 +3,7 @@ menu "Machine selection"
- 
- config SCORE
-        def_bool y
-+       select ARCH_32BIT_OFF_T
-        select GENERIC_IRQ_SHOW
-        select GENERIC_IOMAP
-        select GENERIC_ATOMIC64
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 97fe29316476..bbd75a7cbbc4 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -58,6 +58,7 @@ config SUPERH
- 
- config SUPERH32
- 	def_bool ARCH = "sh"
-+	select ARCH_32BIT_OFF_T
- 	select HAVE_KPROBES
- 	select HAVE_KRETPROBES
- 	select HAVE_IOREMAP_PROT if MMU && !X2TLB
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 8767e45f1b2b..3cc26d90ab82 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -47,6 +47,7 @@ config SPARC
- 
- config SPARC32
- 	def_bool !64BIT
-+	select ARCH_32BIT_OFF_T
- 	select GENERIC_ATOMIC64
- 	select CLZ_TAB
- 	select HAVE_UID16
-diff --git a/arch/tile/Kconfig b/arch/tile/Kconfig
-index ef9d403cbbe4..542bf49cdfcc 100644
---- a/arch/tile/Kconfig
-+++ b/arch/tile/Kconfig
-@@ -4,6 +4,7 @@
- 
- config TILE
- 	def_bool y
-+	select ARCH_32BIT_OFF_T if !64BIT
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_WANT_FRAME_POINTERS
-diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
-index 462e59a7ae78..34694eb7c790 100644
---- a/arch/unicore32/Kconfig
-+++ b/arch/unicore32/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config UNICORE32
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_MIGHT_HAVE_PC_SERIO
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 0fa71a78ec99..47c2f1eaa7ad 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -44,6 +44,7 @@ config X86
- 	select ACPI_LEGACY_TABLES_LOOKUP	if ACPI
- 	select ACPI_SYSTEM_POWER_STATES_SUPPORT	if ACPI
- 	select ANON_INODES
-+	select ARCH_32BIT_OFF_T			if X86_32
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_DISCARD_MEMBLOCK
- 	select ARCH_HAS_ACPI_TABLE_UPGRADE	if ACPI
-diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-index 13ed827c7c66..d1de823a8fe7 100644
---- a/arch/x86/um/Kconfig
-+++ b/arch/x86/um/Kconfig
-@@ -22,6 +22,7 @@ config 64BIT
- config X86_32
- 	def_bool !64BIT
- 	select HAVE_AOUT
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_WANT_IPC_PARSE_VERSION
- 	select MODULES_USE_ELF_REL
- 	select CLONE_BACKWARDS
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index c921e8bccdc8..20ebab4fbaf6 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -4,6 +4,7 @@ config ZONE_DMA
- 
- config XTENSA
- 	def_bool y
-+	select ARCH_32BIT_OFF_T
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_WANT_FRAME_POINTERS
- 	select ARCH_WANT_IPC_PARSE_VERSION
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 27dc7a60693e..d019df946cb2 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -12,7 +12,7 @@
- 	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
- 
- #ifndef force_o_largefile
--#define force_o_largefile() (BITS_PER_LONG != 32)
-+#define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
- #endif
- 
- #if BITS_PER_LONG == 32
 -- 
 2.17.0
 
