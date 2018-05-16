@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeEPP0d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbeEPP0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:26:32 -0400
-Date: Wed, 16 May 2018 11:26:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2 10/14] tracing: Document trace_marker triggers
-Message-ID: <20180516112628.7f6970e0@gandalf.local.home>
-In-Reply-To: <1526484147.11544.6.camel@tzanussi-mobl.amr.corp.intel.com>
-References: <20180514205845.017925650@goodmis.org>
-        <20180514205958.769987842@goodmis.org>
-        <1526334427.26800.15.camel@tzanussi-mobl.amr.corp.intel.com>
-        <20180516095534.676d7938@gandalf.local.home>
-        <1526484147.11544.6.camel@tzanussi-mobl.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752133AbeEPP1R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:27:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34722 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751217AbeEPP1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 11:27:16 -0400
+Date: Wed, 16 May 2018 17:27:13 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED
+ flag
+Message-ID: <20180516152712.GA29871@redhat.com>
+References: <1526420991-21213-1-git-send-email-longman@redhat.com>
+ <1526420991-21213-2-git-send-email-longman@redhat.com>
+ <20180516104829.GA24332@redhat.com>
+ <3481c82e-81b2-3a33-48a6-4b0d46c0bd71@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3481c82e-81b2-3a33-48a6-4b0d46c0bd71@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 10:22:27 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+On 05/16, Waiman Long wrote:
+>
+> On 05/16/2018 06:48 AM, Oleg Nesterov wrote:
+> > On 05/15, Waiman Long wrote:
+> >> There are use cases where a rwsem can be acquired by one task, but
+> >> released by another task. In thess cases, optimistic spinning may need
+> >> to be disabled.  One example will be the filesystem freeze/thaw code
+> > You do not read my emails ;)
+> >
+> > Let me repeat once again that in this particular case the writer will
+> > never spin because of owner == NULL. freeze_super() checks SB_UNFROZEN
+> > under sb->s_umount and only then calls sb_wait_write(). IOW, sb_wait_write()
+> > can only be called when this rwsem was already released by the previous
+> > writer.
+> >
+> > I am not arguing with this change, percpu_rwsem_release/acquire may have
+> > another user sometime, but the changelog is not accurate.
+>
+> I know the change may not be necessary in this particular case, but it
+> is a correctness issue.
 
-> Sure, but noticed in the new version you just posted, that this line is
-> still in there for your second example:
-> 
-> + # echo '!hist:keys=common_pid:vals=hitcount:lat=common_timestamp.usecs-$ts0:sort=hitcount:size=2048:clock=global:onmatch(sched.sched_switch).latency($lat) if buf == "end"' > events/ftrace/print/trigger
-> 
-> Did you intend that, or am I missing something?
+Really? I mean, performance-wise the unnecessary spinning is obviously bad,
+but why it is a correctness issue?
 
-No, I am. From my reply, you can see I skipped it. I totally missed
-that comment. I'll update that too.
+And how this differs from the case when down_write() is preempted right
+before rwsem_set_owner() ?
 
+> Optimistic spinning should be disabled when the
+> exact time delay between percpu_rwsem_release() and
+> percpu_rwsem_acquire() is indeterminate even though no one is supposed
+> to spin on the rwsem during that time.
+>
+> If we don't do that now, we may forget this issue when
 
-> 
-> Anyway, you have my
-> 
-> Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+See above, I never argued with this change. Just the changelog looks as if
+we already have this issue in freeze/thaw code, this is not true.
 
-Thanks!
-
--- Steve
+Oleg.
