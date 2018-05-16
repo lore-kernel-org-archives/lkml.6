@@ -1,88 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeEPRcl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:32:41 -0400
-Received: from mga03.intel.com ([134.134.136.65]:56911 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751430AbeEPRci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:32:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="41476023"
-Message-ID: <1526491957.61700.53.camel@linux.intel.com>
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 16 May 2018 10:32:37 -0700
-In-Reply-To: <CAJZ5v0gFJQK4FbLx=cOpefSAp2idknC5v7yFm41q+kytK05p_g@mail.gmail.com>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
-         <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
-         <20180516071640.GU12217@hirez.programming.kicks-ass.net>
-         <20180516072929.GN12235@hirez.programming.kicks-ass.net>
-         <CAJZ5v0gFJQK4FbLx=cOpefSAp2idknC5v7yFm41q+kytK05p_g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
+        id S1752026AbeEPRdR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:33:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbeEPRdP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 13:33:15 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 10:33:14 -0700
+From: rishabhb@codeaurora.org
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, evgreen@chromium.org, robh@kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
+In-Reply-To: <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
+References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
+ <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
+ <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
+Message-ID: <385198cbb91c4a36ad758997916ad271@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-16 at 11:07 +0200, Rafael J. Wysocki wrote:
-> On Wed, May 16, 2018 at 9:29 AM, Peter Zijlstra <peterz@infradead.org
-> > wrote:
-> > On Wed, May 16, 2018 at 09:16:40AM +0200, Peter Zijlstra wrote:
-> > > On Tue, May 15, 2018 at 09:49:03PM -0700, Srinivas Pandruvada
-> > > wrote:
-> > > > intel_pstate has two operating modes: active and passive. In
-> > > > "active"
-> > > > mode, the in-built scaling governor is used and in "passive"
-> > > > mode,
-> > > > the driver can be used with any governor like "schedutil". In
-> > > > "active"
-> > > > mode the utilization values from schedutil is not used and
-> > > > there is
-> > > > a requirement from high performance computing use cases, not to
-> > > > read
-> > > > any APERF/MPERF MSRs. In this case no need to use CPU cycles
-> > > > for
-> > > > frequency invariant accounting by reading APERF/MPERF MSRs.
-> > > > With this change frequency invariant account is only enabled in
-> > > > "passive" mode.
-> > > 
-> > > WTH is active/passive? Is passive when we select performance
-> > > governor?
-> > 
-> > Bah, I cannot read it seems. active is when we use the intel_pstate
-> > governor and passive is when we use schedutil and only use
-> > intel_pstate
-> > as a driver.
-> > 
-> > > Also; you have to explain why using APERF/MPERF is bad in that
-> > > case. Why
-> > > do they care if we read those MSRs during the tick?
-> > 
-> > That still stands.. this needs to be properly explained.
+On 2018-05-16 10:03, Stephen Boyd wrote:
+> Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
+>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt 
+>> b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>> new file mode 100644
+>> index 0000000..a586a17
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>> @@ -0,0 +1,32 @@
+>> +== Introduction==
+>> +
+>> +LLCC (Last Level Cache Controller) provides last level of cache 
+>> memory in SOC,
+>> +that can be shared by multiple clients. Clients here are different 
+>> cores in the
+>> +SOC, the idea is to minimize the local caches at the clients and 
+>> migrate to
+>> +common pool of memory. Cache memory is divided into partitions called 
+>> slices
+>> +which are assigned to clients. Clients can query the slice details, 
+>> activate
+>> +and deactivate them.
+>> +
+>> +Properties:
+>> +- compatible:
+>> +       Usage: required
+>> +       Value type: <string>
+>> +       Definition: must be "qcom,sdm845-llcc"
+>> +
+>> +- reg:
+>> +       Usage: required
+>> +       Value Type: <prop-encoded-array>
+>> +       Definition: Start address and the range of the LLCC registers.
 > 
-> I guess this is from the intel_pstate perspective only.
+> Start address and size?
 > 
-> The active mode is only used with HWP, so intel_pstate doesn't look
-> at
-> the utilization (in any form) in the passive mode today.
+Yes i'll change it to Start address and size of the register region.
+
+>> +
+>> +- max-slices:
+>> +       usage: required
+>> +       Value Type: <u32>
+>> +       Definition: Number of cache slices supported by hardware
+>> +
+>> +Example:
+>> +
+>> +       llcc: qcom,llcc@1100000 {
 > 
-> Still, there are other reasons for PELT to be scale-invariant, so ...
-Not sure about the use case in active mode other than dynamic HWP boost
-later in this series. If any, I can remove this patch.
+> cache-controller@1100000 ?
+> 
+We have tried to use consistent naming convention as in llcc_* 
+everywhere.
+Using cache-controller will mix and match the naming convention. Also in
+the documentation it is explained what llcc is and its full form.
+
+>> +               compatible = "qcom,sdm845-llcc";
+>> +               reg = <0x1100000 0x250000>;
+>> +               max-slices = <32>;
+>> +       };
+>> --
