@@ -1,93 +1,249 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeEPWTv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:19:51 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:33435 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeEPWTt (ORCPT
+        id S1752165AbeEPWWH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:22:07 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34070 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeEPWWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 18:19:49 -0400
-X-Google-Smtp-Source: AB8JxZq5POiAQFaQ64RduvKny/j5vAq0BmXRQZcKBkbgqfEHuMASMd0JfPMRvewLZyzg3k5QEy4KhNAjaoEGAUgJvlc=
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vd-cyR7zVofP7g+4Z1ouqawV+Rqp5s5BcDhpGiHheUgpg@mail.gmail.com>
-References: <20180515154352.20263-1-dmurphy@ti.com> <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
- <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com> <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
- <3a0f27b7-86a1-235c-0a96-5ec9c8feb6f0@ti.com> <CAHp75Vd-cyR7zVofP7g+4Z1ouqawV+Rqp5s5BcDhpGiHheUgpg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 17 May 2018 01:19:47 +0300
-Message-ID: <CAHp75VeP6Ui-Sw65T-cwGh9ADMEcEGOzf8C3aYCTK_seZjgqeg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 May 2018 18:22:01 -0400
+X-Google-Smtp-Source: AB8JxZq4lmI1bDICafkQrbSe7CSOaKABzb6mATSFS4XFi0QKAyTY76MYC5zCgtGu6BDr3hJZFhZHkg==
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To: grygorii.strashko@ti.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH] net: ethernet: ti: cpsw: disable mq feature for "AM33xx ES1.0" devices
+Date: Thu, 17 May 2018 01:21:45 +0300
+Message-Id: <20180516222145.26877-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 1:11 AM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, May 16, 2018 at 11:43 PM, Dan Murphy <dmurphy@ti.com> wrote:
->> On 05/15/2018 05:24 PM, Andy Shevchenko wrote:
->>> On Wed, May 16, 2018 at 1:08 AM, Dan Murphy <dmurphy@ti.com> wrote:
->>>> On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
+The early versions of am33xx devices, related to ES1.0 SoC revision
+have errata limiting mq support. That's the same errata as
+commit 7da1160002f1 ("drivers: net: cpsw: add am335x errata workarround for
+interrutps")
 
->>>>>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
->>>>>> +       { 40000, 0x00 },
->>>>>> +       { 80000, 0x01 },
->>>>>> +       { 120000, 0x02 },
->>>>>> +       { 160000, 0x03 },
->>>>>> +       { 200000, 0x04 },
->>>>>> +       { 240000, 0x05 },
->>>>>> +       { 280000, 0x06 },
->>>>>> +       { 320000, 0x07 },
->>>>>> +       { 360000, 0x08 },
->>>>>> +       { 400000, 0x09 },
->>>>>> +       { 600000, 0x0a },
->>>>>> +       { 800000, 0x0b },
->>>>>> +       { 1000000, 0x0c },
->>>>>> +       { 1200000, 0x0d },
->>>>>> +       { 1400000, 0x0e },
->>>>>> +       { 1600000, 0x0f },
+AM33xx Errata [1] Advisory 1.0.9
+http://www.ti.com/lit/er/sprz360f/sprz360f.pdf
 
->>> if (x < 9)
->>>  strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
->>> else
->>>  strobe_timeout = (x - 7) * 200 * MSECS_IN_SEC;
+After additional investigation were found that drivers w/a is
+propagated on all AM33xx SoCs and on DM814x. But the errata exists
+only for ES1.0 of AM33xx family, limiting mq support for revisions
+after ES1.0. So, disable mq support only for related SoCs and use
+separate polls for revisions allowing mq.
 
->>
->> Not sure if this will produce the register value I am looking for.  I have to run through the
->> algorithim.  The idea is to take in the timeout and get the reg value to program.
->>
->> If it yields the expected output, or with a modified equation, then I can pull it in.
->
-> So, you need a reversed calculus in this case.
->
-> u8 regval;
->
-> /* To make it in range... */
-> timeout = clamp_val(timeout, 40000, 1600000);
-> /* ...other possibility to issue an error */
->
-> if (timeout >= 400000)
->  regval = timeout / 200000 + 0x07;
-> else
->  regval = timeout / 40000 - 0x01;
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
 
-Forgot to mention that there are also three approaches (considering
-division here):
-- round up
-- round down
-- round to closest
+Based on net-next/master
 
->
-> In any case, please double check it gives a correct values.
+ drivers/net/ethernet/ti/cpsw.c | 109 ++++++++++++++++++---------------
+ 1 file changed, 60 insertions(+), 49 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 28d893b93d30..a7285dddfd29 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -36,6 +36,7 @@
+ #include <linux/of_device.h>
+ #include <linux/if_vlan.h>
+ #include <linux/kmemleak.h>
++#include <linux/sys_soc.h>
+ 
+ #include <linux/pinctrl/consumer.h>
+ 
+@@ -957,7 +958,7 @@ static irqreturn_t cpsw_rx_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int cpsw_tx_poll(struct napi_struct *napi_tx, int budget)
++static int cpsw_tx_mq_poll(struct napi_struct *napi_tx, int budget)
+ {
+ 	u32			ch_map;
+ 	int			num_tx, cur_budget, ch;
+@@ -984,7 +985,21 @@ static int cpsw_tx_poll(struct napi_struct *napi_tx, int budget)
+ 	if (num_tx < budget) {
+ 		napi_complete(napi_tx);
+ 		writel(0xff, &cpsw->wr_regs->tx_en);
+-		if (cpsw->quirk_irq && cpsw->tx_irq_disabled) {
++	}
++
++	return num_tx;
++}
++
++static int cpsw_tx_poll(struct napi_struct *napi_tx, int budget)
++{
++	struct cpsw_common *cpsw = napi_to_cpsw(napi_tx);
++	int num_tx;
++
++	num_tx = cpdma_chan_process(cpsw->txv[0].ch, budget);
++	if (num_tx < budget) {
++		napi_complete(napi_tx);
++		writel(0xff, &cpsw->wr_regs->tx_en);
++		if (cpsw->tx_irq_disabled) {
+ 			cpsw->tx_irq_disabled = false;
+ 			enable_irq(cpsw->irqs_table[1]);
+ 		}
+@@ -993,7 +1008,7 @@ static int cpsw_tx_poll(struct napi_struct *napi_tx, int budget)
+ 	return num_tx;
+ }
+ 
+-static int cpsw_rx_poll(struct napi_struct *napi_rx, int budget)
++static int cpsw_rx_mq_poll(struct napi_struct *napi_rx, int budget)
+ {
+ 	u32			ch_map;
+ 	int			num_rx, cur_budget, ch;
+@@ -1020,7 +1035,21 @@ static int cpsw_rx_poll(struct napi_struct *napi_rx, int budget)
+ 	if (num_rx < budget) {
+ 		napi_complete_done(napi_rx, num_rx);
+ 		writel(0xff, &cpsw->wr_regs->rx_en);
+-		if (cpsw->quirk_irq && cpsw->rx_irq_disabled) {
++	}
++
++	return num_rx;
++}
++
++static int cpsw_rx_poll(struct napi_struct *napi_rx, int budget)
++{
++	struct cpsw_common *cpsw = napi_to_cpsw(napi_rx);
++	int num_rx;
++
++	num_rx = cpdma_chan_process(cpsw->rxv[0].ch, budget);
++	if (num_rx < budget) {
++		napi_complete_done(napi_rx, num_rx);
++		writel(0xff, &cpsw->wr_regs->rx_en);
++		if (cpsw->rx_irq_disabled) {
+ 			cpsw->rx_irq_disabled = false;
+ 			enable_irq(cpsw->irqs_table[0]);
+ 		}
+@@ -2364,9 +2393,9 @@ static void cpsw_get_channels(struct net_device *ndev,
+ {
+ 	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
+ 
++	ch->max_rx = cpsw->quirk_irq ? 1 : CPSW_MAX_QUEUES;
++	ch->max_tx = cpsw->quirk_irq ? 1 : CPSW_MAX_QUEUES;
+ 	ch->max_combined = 0;
+-	ch->max_rx = CPSW_MAX_QUEUES;
+-	ch->max_tx = CPSW_MAX_QUEUES;
+ 	ch->max_other = 0;
+ 	ch->other_count = 0;
+ 	ch->rx_count = cpsw->rx_ch_num;
+@@ -2377,6 +2406,11 @@ static void cpsw_get_channels(struct net_device *ndev,
+ static int cpsw_check_ch_settings(struct cpsw_common *cpsw,
+ 				  struct ethtool_channels *ch)
+ {
++	if (cpsw->quirk_irq) {
++		dev_err(cpsw->dev, "Maximum one tx/rx queue is allowed");
++		return -EOPNOTSUPP;
++	}
++
+ 	if (ch->combined_count)
+ 		return -EINVAL;
+ 
+@@ -2917,44 +2951,20 @@ static int cpsw_probe_dual_emac(struct cpsw_priv *priv)
+ 	return ret;
+ }
+ 
+-#define CPSW_QUIRK_IRQ		BIT(0)
+-
+-static const struct platform_device_id cpsw_devtype[] = {
+-	{
+-		/* keep it for existing comaptibles */
+-		.name = "cpsw",
+-		.driver_data = CPSW_QUIRK_IRQ,
+-	}, {
+-		.name = "am335x-cpsw",
+-		.driver_data = CPSW_QUIRK_IRQ,
+-	}, {
+-		.name = "am4372-cpsw",
+-		.driver_data = 0,
+-	}, {
+-		.name = "dra7-cpsw",
+-		.driver_data = 0,
+-	}, {
+-		/* sentinel */
+-	}
+-};
+-MODULE_DEVICE_TABLE(platform, cpsw_devtype);
+-
+-enum ti_cpsw_type {
+-	CPSW = 0,
+-	AM335X_CPSW,
+-	AM4372_CPSW,
+-	DRA7_CPSW,
+-};
+-
+ static const struct of_device_id cpsw_of_mtable[] = {
+-	{ .compatible = "ti,cpsw", .data = &cpsw_devtype[CPSW], },
+-	{ .compatible = "ti,am335x-cpsw", .data = &cpsw_devtype[AM335X_CPSW], },
+-	{ .compatible = "ti,am4372-cpsw", .data = &cpsw_devtype[AM4372_CPSW], },
+-	{ .compatible = "ti,dra7-cpsw", .data = &cpsw_devtype[DRA7_CPSW], },
++	{ .compatible = "ti,cpsw"},
++	{ .compatible = "ti,am335x-cpsw"},
++	{ .compatible = "ti,am4372-cpsw"},
++	{ .compatible = "ti,dra7-cpsw"},
+ 	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, cpsw_of_mtable);
+ 
++static const struct soc_device_attribute cpsw_soc_devices[] = {
++	{ .family = "AM33xx", .revision = "ES1.0"},
++	{ /* sentinel */ }
++};
++
+ static int cpsw_probe(struct platform_device *pdev)
+ {
+ 	struct clk			*clk;
+@@ -2966,9 +2976,9 @@ static int cpsw_probe(struct platform_device *pdev)
+ 	void __iomem			*ss_regs;
+ 	void __iomem			*cpts_regs;
+ 	struct resource			*res, *ss_res;
+-	const struct of_device_id	*of_id;
+ 	struct gpio_descs		*mode;
+ 	u32 slave_offset, sliver_offset, slave_size;
++	const struct soc_device_attribute *soc;
+ 	struct cpsw_common		*cpsw;
+ 	int ret = 0, i;
+ 	int irq;
+@@ -3141,6 +3151,10 @@ static int cpsw_probe(struct platform_device *pdev)
+ 		goto clean_dt_ret;
+ 	}
+ 
++	soc = soc_device_match(cpsw_soc_devices);
++	if (soc)
++		cpsw->quirk_irq = 1;
++
+ 	cpsw->txv[0].ch = cpdma_chan_create(cpsw->dma, 0, cpsw_tx_handler, 0);
+ 	if (IS_ERR(cpsw->txv[0].ch)) {
+ 		dev_err(priv->dev, "error initializing tx dma channel\n");
+@@ -3180,19 +3194,16 @@ static int cpsw_probe(struct platform_device *pdev)
+ 		goto clean_dma_ret;
+ 	}
+ 
+-	of_id = of_match_device(cpsw_of_mtable, &pdev->dev);
+-	if (of_id) {
+-		pdev->id_entry = of_id->data;
+-		if (pdev->id_entry->driver_data)
+-			cpsw->quirk_irq = true;
+-	}
+-
+ 	ndev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_HW_VLAN_CTAG_RX;
+ 
+ 	ndev->netdev_ops = &cpsw_netdev_ops;
+ 	ndev->ethtool_ops = &cpsw_ethtool_ops;
+-	netif_napi_add(ndev, &cpsw->napi_rx, cpsw_rx_poll, CPSW_POLL_WEIGHT);
+-	netif_tx_napi_add(ndev, &cpsw->napi_tx, cpsw_tx_poll, CPSW_POLL_WEIGHT);
++	netif_napi_add(ndev, &cpsw->napi_rx,
++		       cpsw->quirk_irq ? cpsw_rx_poll : cpsw_rx_mq_poll,
++		       CPSW_POLL_WEIGHT);
++	netif_tx_napi_add(ndev, &cpsw->napi_tx,
++			  cpsw->quirk_irq ? cpsw_tx_poll : cpsw_tx_mq_poll,
++			  CPSW_POLL_WEIGHT);
+ 	cpsw_split_res(ndev);
+ 
+ 	/* register the network device */
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
