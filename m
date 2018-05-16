@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeEPMsM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:48:12 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23360 "EHLO mga14.intel.com"
+        id S1752636AbeEPMsd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:48:33 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33630 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751395AbeEPMsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:48:10 -0400
+        id S1751671AbeEPMsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:48:11 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
-   d="scan'208";a="42260611"
+X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
+   d="scan'208";a="54849658"
 Date: Wed, 16 May 2018 20:47:21 +0800
 From: kbuild test robot <lkp@intel.com>
 To: Matthew Wilcox <willy@infradead.org>
@@ -23,8 +23,8 @@ Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
         qla2xxx-upstream@qlogic.com,
         Kent Overstreet <kent.overstreet@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <mawilcox@microsoft.com>
-Subject: Re: [PATCH 1/2] Convert target drivers to use sbitmap
-Message-ID: <201805162035.EWoS94Oq%fengguang.wu@intel.com>
+Subject: [RFC PATCH] iscsit_wait_for_tag() can be static
+Message-ID: <20180516124721.GA27100@ivb43.lkp.intel.com>
 References: <20180515160043.27044-2-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -38,30 +38,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthew,
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.17-rc5 next-20180516]
-[cannot apply to target/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Matthew-Wilcox/Use-sbitmap-instead-of-percpu_ida/20180516-143658
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/target/iscsi/iscsi_target_util.c:150:5: sparse: symbol 'iscsit_wait_for_tag' was not declared. Should it be static?
-   drivers/target/iscsi/iscsi_target_util.c:1174:31: sparse: expression using sizeof(void)
-   drivers/target/iscsi/iscsi_target_util.c:1174:31: sparse: expression using sizeof(void)
-
-Please review and possibly fold the followup patch.
-
+Fixes: 5aff7a710f13 ("Convert target drivers to use sbitmap")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ iscsi_target_util.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/target/iscsi/iscsi_target_util.c b/drivers/target/iscsi/iscsi_target_util.c
+index 28bcffa..e147aef 100644
+--- a/drivers/target/iscsi/iscsi_target_util.c
++++ b/drivers/target/iscsi/iscsi_target_util.c
+@@ -147,7 +147,7 @@ void iscsit_free_r2ts_from_list(struct iscsi_cmd *cmd)
+ 	spin_unlock_bh(&cmd->r2t_lock);
+ }
+ 
+-int iscsit_wait_for_tag(struct se_session *se_sess, int state, int *cpup)
++static int iscsit_wait_for_tag(struct se_session *se_sess, int state, int *cpup)
+ {
+ 	int tag = -1;
+ 	DEFINE_WAIT(wait);
