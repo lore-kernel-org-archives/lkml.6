@@ -1,111 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753152AbeEPMyA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:54:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753149AbeEPMx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:53:56 -0400
-Date: Wed, 16 May 2018 21:53:50 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2 11/14] ftrace/selftest: Have the reset_trigger code
- be a bit more careful
-Message-Id: <20180516215350.4fb775e101bc6a122bfe3282@kernel.org>
-In-Reply-To: <20180514205958.915494639@goodmis.org>
-References: <20180514205845.017925650@goodmis.org>
-        <20180514205958.915494639@goodmis.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753171AbeEPMyb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:54:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59100 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeEPMvV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:51:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1852E60C54
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V6 09/12] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
+Date: Wed, 16 May 2018 18:20:01 +0530
+Message-Id: <1526475004-10341-10-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
+References: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 16:58:56 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ arch/arm/boot/dts/Makefile                      |  1 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts | 25 +++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> The trigger code is picky in how it can be disabled as there may be
-> dependencies between different events and synthetic events. Change the order
-> on how triggers are reset.
-> 
->  1) Reset triggers of all synthetic events first
->  2) Remove triggers with actions attached to them
->  3) Remove all other triggers
-> 
-> If this order isn't followed, then some triggers will not be reset, and an
-> error may happen because a trigger is busy.
-
-Ah, right!
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-I think this should go into stable tree too.
-
-Thank you!
-
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  .../testing/selftests/ftrace/test.d/functions | 21 ++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
-> index 2a4f16fc9819..8393b1c06027 100644
-> --- a/tools/testing/selftests/ftrace/test.d/functions
-> +++ b/tools/testing/selftests/ftrace/test.d/functions
-> @@ -15,14 +15,29 @@ reset_tracer() { # reset the current tracer
->      echo nop > current_tracer
->  }
->  
-> -reset_trigger() { # reset all current setting triggers
-> -    grep -v ^# events/*/*/trigger |
-> +reset_trigger_file() {
-> +    # remove action triggers first
-> +    grep -H ':on[^:]*(' $@ |
-> +    while read line; do
-> +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
-> +	file=`echo $line | cut -f1 -d:`
-> +	echo "!$cmd" >> $file
-> +    done
-> +    grep -Hv ^# $@ |
->      while read line; do
->          cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
-> -	echo "!$cmd" > `echo $line | cut -f1 -d:`
-> +	file=`echo $line | cut -f1 -d:`
-> +	echo "!$cmd" > $file
->      done
->  }
->  
-> +reset_trigger() { # reset all current setting triggers
-> +    if [ -d events/synthetic ]; then
-> +        reset_trigger_file events/synthetic/*/trigger
-> +    fi
-> +    reset_trigger_file events/*/*/trigger
-> +}
-> +
->  reset_events_filter() { # reset all current setting filters
->      grep -v ^none events/*/*/filter |
->      while read line; do
-> -- 
-> 2.17.0
-> 
-> 
-
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 596cce3..02b7f1d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -763,6 +763,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-ipq4019-ap.dk04.1-c1.dtb \
+ 	qcom-ipq4019-ap.dk04.1-c3.dtb \
+ 	qcom-ipq4019-ap.dk07.1-c1.dtb \
++	qcom-ipq4019-ap.dk07.1-c2.dtb \
+ 	qcom-ipq8064-ap148.dtb \
+ 	qcom-msm8660-surf.dtb \
+ 	qcom-msm8960-cdp.dtb \
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+new file mode 100644
+index 0000000..af7a902
+--- /dev/null
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include "qcom-ipq4019-ap.dk07.1.dtsi"
++
++/ {
++	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1-C2";
++	compatible = "qcom,ipq4019-ap-dk07.1-c2";
++
++	soc {
++		pinctrl@1000000 {
++			serial_1_pins: serial1-pinmux {
++				pins = "gpio8", "gpio9";
++				function = "blsp_uart1";
++				bias-disable;
++			};
++		};
++
++		serial@78b0000 {
++			pinctrl-0 = <&serial_1_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++	};
++};
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
