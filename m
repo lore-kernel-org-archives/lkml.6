@@ -1,101 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeEPSYF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:24:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56048 "EHLO
+        id S1751254AbeEPSaZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:30:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60460 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeEPSYC (ORCPT
+        with ESMTP id S1750759AbeEPSaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:24:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BE8360558
+        Wed, 16 May 2018 14:30:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD0F7601D4
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
+Subject: Re: [RFC PATCH] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
 To: linux-pci@vger.kernel.org, timur@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, Peter Jones <pjones@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org (open list:EFIFB FRAMEBUFFER DRIVER),
-        dri-devel@lists.freedesktop.org (open list:FRAMEBUFFER LAYER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH] efi/fb: Convert PCI bus address to resource if translated by the bridge
-Date: Wed, 16 May 2018 14:23:49 -0400
-Message-Id: <1526495029-25783-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1526495029-25783-1-git-send-email-okaya@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <dd4dfce5-7f7e-824c-999f-b31bbd683f72@codeaurora.org>
+Date: Wed, 16 May 2018 14:30:20 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1526495029-25783-1-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A host bridge is allowed to remap BAR addresses using _TRA attribute in
-_CRS windows.
+On 5/16/2018 2:23 PM, Sinan Kaya wrote:
+> +		if (win_start <= base && win_end >= base + win_size - 1) {
+> +			base += window->offset;
+> +			break;
+> +		}
 
-pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff window] (bus address [0x00100000-0x1fffffff])
-pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
+I should probably add window->offset!=0 to the if statement in order not to
+break non-translating case.
 
-When a VGA device is behind such a host bridge and the resource is
-translated efifb driver is trying to do ioremap against bus address
-rather than the resource address and is failing to probe.
+Any other comments?
 
-efifb driver is having difficulty locating the base address from BAR
-address when
-
-efifb: probing for efifb
-efifb: cannot reserve video memory at 0x1e000000
-efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
-efifb: mode is 800x600x32, linelength=3200, pages=1
-efifb: scrolling: redraw
-efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
-
-Use the host bridge offset information to convert bus address to
-resource address in the fixup.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/video/fbdev/efifb.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-index 46a4484..feef02b 100644
---- a/drivers/video/fbdev/efifb.c
-+++ b/drivers/video/fbdev/efifb.c
-@@ -428,6 +428,8 @@ static void efifb_fixup_resources(struct pci_dev *dev)
- {
- 	u64 base = screen_info.lfb_base;
- 	u64 size = screen_info.lfb_size;
-+	struct pci_host_bridge *bridge;
-+	struct resource_entry *window;
- 	int i;
- 
- 	if (efifb_pci_dev || screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
-@@ -439,6 +441,27 @@ static void efifb_fixup_resources(struct pci_dev *dev)
- 	if (!base)
- 		return;
- 
-+	bridge = pci_find_host_bridge(dev->bus);
-+	if (!bridge)
-+		return;
-+
-+	resource_list_for_each_entry(window, &bridge->windows) {
-+		phys_addr_t win_start;
-+		phys_addr_t win_end;
-+		size_t win_size;
-+
-+		if (resource_type(window->res) != IORESOURCE_MEM)
-+			continue;
-+
-+		win_start = window->res->start - window->offset;
-+		win_end = window->res->end - window->offset;
-+		win_size = window->res->end - window->res->start + 1;
-+		if (win_start <= base && win_end >= base + win_size - 1) {
-+			base += window->offset;
-+			break;
-+		}
-+	}
-+
- 	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
- 		struct resource *res = &dev->resource[i];
- 
 -- 
-2.7.4
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
