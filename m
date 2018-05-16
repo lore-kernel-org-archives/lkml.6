@@ -1,96 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeEPKVy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:21:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752701AbeEPKVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:21:25 -0400
-Date: Wed, 16 May 2018 12:21:16 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v5 01/13] KVM: s390: Interface to test whether APXA
- installed
-Message-ID: <20180516122116.4c3b10a1.cohuck@redhat.com>
-In-Reply-To: <1525705912-12815-2-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1525705912-12815-2-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1753509AbeEPKVg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:21:36 -0400
+Received: from mga09.intel.com ([134.134.136.24]:11739 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752449AbeEPKVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:21:34 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="56353691"
+Date: Wed, 16 May 2018 18:21:59 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v4 5/5] virtio_ring: enable packed ring
+Message-ID: <20180516102159.GA11467@debian>
+References: <20180516083737.26504-1-tiwei.bie@intel.com>
+ <20180516083737.26504-6-tiwei.bie@intel.com>
+ <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  7 May 2018 11:11:40 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> Relocates an existing static function that tests whether
-> the AP extended addressing facility (APXA) is installed on
-> the linux host. The primary reason for relocating this
-> function is because a new compilation unit (arch/s390/kvm/kvm-ap.c)
-> is being created to contain all of the interfaces and logic
-> for configuring an AP matrix for a KVM guest. Some of its
-> functions will also need to determine whether APXA is installed,
-> so, let's go ahead and relocate this static function as a
-> public interface in kvm-ap.c.
+On Wed, May 16, 2018 at 01:15:48PM +0300, Sergei Shtylyov wrote:
+> On 5/16/2018 11:37 AM, Tiwei Bie wrote:
 > 
-> Notes:
-> ----
-> 1. The interface to determine whether APXA is installed on the linux
->    host the information returned from the AP Query Configuration
->    Information (QCI) function. This function will not be available
->    if the AP instructions are not installed on the linux host, so a check
->    will be included to verify that.
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index de3839f3621a..b158692263b0 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -1940,6 +1940,8 @@ void vring_transport_features(struct virtio_device *vdev)
+> >   			break;
+> >   		case VIRTIO_F_IOMMU_PLATFORM:
+> >   			break;
+> > +		case VIRTIO_F_RING_PACKED:
+> > +			break;
 > 
-> 2. Currently, the AP bus interfaces accessing the AP instructions will
->    not be accessible if CONFIG_ZCRYPT=n, so the relevant code will be
->    temporarily contained in the new arch/s390/kvm/kvm-ap.c file until
->    the patch(es) to statically build the required AP bus interfaces are
->    available.
+>    Why not just add this *case* under the previous *case*?
 
-Any ETA for those interfaces? Would be nice if we could avoid
-introducing temporary interfaces (but I'm certainly not opposing this
-patch).
+Do you mean fallthrough? Something like:
+
+		case VIRTIO_F_IOMMU_PLATFORM:
+		case VIRTIO_F_RING_PACKED:
+			break;
+
+Best regards,
+Tiwei Bie
 
 > 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->  MAINTAINERS                    |    1 +
->  arch/s390/include/asm/kvm-ap.h |   60 +++++++++++++++++++++++++++++
->  arch/s390/kvm/Makefile         |    2 +-
->  arch/s390/kvm/kvm-ap.c         |   83 ++++++++++++++++++++++++++++++++++++++++
->  arch/s390/kvm/kvm-s390.c       |   42 +-------------------
->  5 files changed, 147 insertions(+), 41 deletions(-)
->  create mode 100644 arch/s390/include/asm/kvm-ap.h
->  create mode 100644 arch/s390/kvm/kvm-ap.c
+> >    		default:
+> >   			/* We don't understand this bit. */
+> >   			__virtio_clear_bit(vdev, i);
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index eab763f..224e97b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7792,6 +7792,7 @@ M:	Christian Borntraeger <borntraeger@de.ibm.com>
->  M:	Janosch Frank <frankja@linux.ibm.com>
->  R:	David Hildenbrand <david@redhat.com>
->  R:	Cornelia Huck <cohuck@redhat.com>
-> +R:	Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-
-Don't you want to drop the 'vnet' from your address, as the vnet-less
-form seems to be the one that will continue working from what I've
-heard?
-
->  L:	linux-s390@vger.kernel.org
->  W:	http://www.ibm.com/developerworks/linux/linux390/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git
-
-No objection against this patch, although I still hope it will not be
-needed :)
+> MBR, Sergei
