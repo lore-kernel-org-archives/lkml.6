@@ -1,81 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeEPD6J (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 23:58:09 -0400
-Received: from smtp-out-no.shaw.ca ([64.59.134.12]:59308 "EHLO
-        smtp-out-no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeEPD6I (ORCPT
+        id S1751303AbeEPEKO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 00:10:14 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37439 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeEPEKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 23:58:08 -0400
-X-Authority-Analysis: v=2.3 cv=GopsBH9C c=1 sm=1 tr=0
- a=IfKG9KDHjPrX0SZ8gMoyrg==:117 a=IfKG9KDHjPrX0SZ8gMoyrg==:17
- a=VUJBJC2UJ8kA:10 a=Q-fNiiVtAAAA:8 a=ZXcZxKTucvakvfwa_LUA:9
- a=Fp8MccfUoT0GBdDC_Lng:22
-From: Markus Mayer <code@mmayer.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-        Power Management List <linux-pm@vger.kernel.org>,
-        ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] cpufreq: brcmstb-avs-cpufreq: sort frequencies in ascending order
-Date: Tue, 15 May 2018 20:49:54 -0700
-Message-Id: <20180516034954.56475-1-code@mmayer.net>
-X-Mailer: git-send-email 2.17.0
-X-CMAE-Envelope: MS4wfG6fOW7KYdyKbEc2Hickmobu1EcrsiqBlHjAhFPBoNw6e+cswZFtzW3T8QI/OPdHIOTjQAEVfpyO4iXQdKQAY+hEwA7rlbsYttam+/es3nSFU2TFbtoJ
- 7EHrnJw4xC8awPCL2fYgBhcyJnJwamff6Hg4aiZ82UAaryrU3ae5NFy+4PJ+OboIEEdvecWoOMPLRpOQcNecQzpeIeEt21UcWXaagS5Pt4AqvDfz63rueVrr
- /Lo950FJ7m9atg2I0jLzS8QATD0Ri/q6GijEZmspijukBaOeS4kwe1oQJONV8y+FVXl+6XjgQURfI+DQVXuqrPqLv0or7C7LwgZrEwKdLSwO5MwA3R1PdJbY
- dkdqOvqGZ+f/IgADtJGUv+gJKnM8FWkP9PNR473QGCHh017uNUf4naYp1nNvhARmeQWKglvJvcHSjJil8lwUrG48pb9XlSuxPIknXGIckKJQkUolxpbdAJTY
- dSdnhG+aYVTDo+AVY6Ex0eS+dgpwlnFLsiyKKpqrVBI+EuGd8VIsTjc6gYI=
+        Wed, 16 May 2018 00:10:13 -0400
+X-Google-Smtp-Source: AB8JxZoQlhbm6ZQgT9qIia5EtTasCXtkkwIR0xFGeN223cmJXGX6sUbznV2Eo6GqhvvMzny3EUMBo/dtIbgN8Hglsuo=
+MIME-Version: 1.0
+In-Reply-To: <20180516025218.GA17352@bombadil.infradead.org>
+References: <20180507184622.GB12361@bombadil.infradead.org>
+ <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
+ <x49a7tbi8r3.fsf@segfault.boston.devel.redhat.com> <HK2PR03MB1684659175EB0A11E75E9B61929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180508030959.GB16338@bombadil.infradead.org> <HK2PR03MB16841CBB549F40F86BB8D35C92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180510162742.GA30442@bombadil.infradead.org> <HK2PR03MB1684B34F9D1DF18A8CDE18F292930@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180515162003.GA26489@bombadil.infradead.org> <HK2PR03MB1684F8D2724BB8AF1FCCF02A92920@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180516025218.GA17352@bombadil.infradead.org>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 15 May 2018 21:10:11 -0700
+Message-ID: <CAPcyv4gMZa0n8SX0UR4No6xMZ0-eRMda4BwCi2df16Jye_yrfg@mail.gmail.com>
+Subject: Re: [External] Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Huaisheng HS1 Ye <yehs1@lenovo.com>, Jeff Moyer <jmoyer@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        NingTing Cheng <chengnt@lenovo.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        Linux MM <linux-mm@kvack.org>, "colyli@suse.de" <colyli@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <alexander.levin@verizon.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>, Ocean HY1 He <hehy1@lenovo.com>,
+        Vishal Verma <vishal.l.verma@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Mayer <mmayer@broadcom.com>
+On Tue, May 15, 2018 at 7:52 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, May 16, 2018 at 02:05:05AM +0000, Huaisheng HS1 Ye wrote:
+>> > From: Matthew Wilcox [mailto:willy@infradead.org]
+>> > Sent: Wednesday, May 16, 2018 12:20 AM>
+>> > > > > > Then there's the problem of reconnecting the page cache (which is
+>> > > > > > pointed to by ephemeral data structures like inodes and dentries) to
+>> > > > > > the new inodes.
+>> > > > > Yes, it is not easy.
+>> > > >
+>> > > > Right ... and until we have that ability, there's no point in this patch.
+>> > > We are focusing to realize this ability.
+>> >
+>> > But is it the right approach?  So far we have (I think) two parallel
+>> > activities.  The first is for local storage, using DAX to store files
+>> > directly on the pmem.  The second is a physical block cache for network
+>> > filesystems (both NAS and SAN).  You seem to be wanting to supplant the
+>> > second effort, but I think it's much harder to reconnect the logical cache
+>> > (ie the page cache) than it is the physical cache (ie the block cache).
+>>
+>> Dear Matthew,
+>>
+>> Thanks for correcting my idea with cache line.
+>> But I have questions about that, assuming NVDIMM works with pmem mode, even we
+>> used it as physical block cache, like dm-cache, there is potential risk with
+>> this cache line issue, because NVDIMMs are bytes-address storage, right?
+>> If system crash happens, that means CPU doesn't have opportunity to flush all dirty
+>> data from cache lines to NVDIMM, during copying data pointed by bio_vec.bv_page to
+>> NVDIMM.
+>> I know there is btt which is used to guarantee sector atomic with block mode,
+>> but for pmem mode that will likely cause mix of new and old data in one page
+>> of NVDIMM.
+>> Correct me if anything wrong.
+>
+> Right, we do have BTT.  I'm not sure how it's being used with the block
+> cache ... but the principle is the same; write the new data to a new
+> page and then update the metadata to point to the new page.
+>
+>> Another question, if we used NVDIMMs as physical block cache for network filesystems,
+>> Does industry have existing implementation to bypass Page Cache similarly like DAX way,
+>> that is to say, directly storing data to NVDIMMs from userspace, rather than copying
+>> data from kernel space memory to NVDIMMs.
+>
+> The important part about DAX is that the kernel gets entirely out of the
+> way and userspace takes care of handling flushing and synchronisation.
+> I'm not sure how that works with the block cache; for a network
+> filesystem, the filesystem needs to be in charge of deciding when and
+> how to write the buffered data back to the storage.
+>
+> Dan, Vishal, perhaps you could jump in here; I'm not really sure where
+> this effort has got to.
 
-Most CPUfreq drivers (at least on ARM) seem to be sorting the available
-frequencies from lowest to highest. To match this behaviour, we reverse
-the sorting order in brcmstb-avs-cpufreq, so it is now also lowest to
-highest.
+Which effort? I think we're saying that there is no such thing as a
+DAX capable block cache and it is not clear one make sense.
 
-Signed-off-by: Markus Mayer <mmayer@broadcom.com>
----
- drivers/cpufreq/brcmstb-avs-cpufreq.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-index b07559b9ed99..7dac3205d3eb 100644
---- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
-+++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-@@ -403,7 +403,7 @@ brcm_avs_get_freq_table(struct device *dev, struct private_data *priv)
- {
- 	struct cpufreq_frequency_table *table;
- 	unsigned int pstate;
--	int i, ret;
-+	int p, i, ret;
- 
- 	/* Remember P-state for later */
- 	ret = brcm_avs_get_pstate(priv, &pstate);
-@@ -415,12 +415,13 @@ brcm_avs_get_freq_table(struct device *dev, struct private_data *priv)
- 	if (!table)
- 		return ERR_PTR(-ENOMEM);
- 
--	for (i = AVS_PSTATE_P0; i <= AVS_PSTATE_MAX; i++) {
--		ret = brcm_avs_set_pstate(priv, i);
-+	for (p = AVS_PSTATE_MAX, i = 0; p >= 0; p--, i++) {
-+		ret = brcm_avs_set_pstate(priv, p);
- 		if (ret)
- 			return ERR_PTR(ret);
- 		table[i].frequency = brcm_avs_get_frequency(priv->base);
--		table[i].driver_data = i;
-+		/* Store the corresponding P-state with each frequency */
-+		table[i].driver_data = p;
- 	}
- 	table[i].frequency = CPUFREQ_TABLE_END;
- 
--- 
-2.7.4
+We can certainly teach existing block caches some optimizations in the
+presence of pmem, and perhaps that is sufficient.
