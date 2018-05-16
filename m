@@ -1,120 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753427AbeEPKFq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:05:46 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:57486 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753135AbeEPKFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:41 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v4 2/4] rtc: ds1307: support m41t11 variant
-Date: Wed, 16 May 2018 12:05:24 +0200
-Message-Id: <20180516100526.73549-2-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
-References: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
+        id S1753448AbeEPKFs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:05:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:36105 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753248AbeEPKFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:38 -0400
+Message-Id: <fe81beb9d8a891e4645729d1d05fb2be9e6e2c20.1526464250.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
+References: <cover.1526464250.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 07/14] powerpc/8xx: set GUARDED attribute in the PMD
+ directly
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 16 May 2018 12:05:37 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The m41t11 variant is very similar to the already supported m41t00 and
-m41t0, but it has also 56 bytes of NVRAM.
+On the 8xx, the GUARDED attribute of the pages is managed in the
+L1 entry, therefore to avoid having to copy it into L1 entry
+at each TLB miss, we set it in the PMD.
 
-Add it to driver taking into account NVRAM section.
-
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
- drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h |  3 ++-
+ arch/powerpc/kernel/head_8xx.S               | 18 +++++++-----------
+ arch/powerpc/platforms/Kconfig.cputype       |  1 +
+ 3 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-index d28d6e7f6ae8..ce6469c1a516 100644
---- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-+++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-@@ -13,6 +13,7 @@ Required properties:
- 	"maxim,ds3231",
- 	"st,m41t0",
- 	"st,m41t00",
-+	"st,m41t11",
- 	"microchip,mcp7940x",
- 	"microchip,mcp7941x",
- 	"pericom,pt7c4338",
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index 32aadcbc377f..0ab0c166da83 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -44,6 +44,7 @@ enum ds_type {
- 	ds_3231,
- 	m41t0,
- 	m41t00,
-+	m41t11,
- 	mcp794xx,
- 	rx_8025,
- 	rx_8130,
-@@ -226,6 +227,11 @@ static const struct chip_desc chips[last_ds_type] = {
- 		.irq_handler = rx8130_irq,
- 		.rtc_ops = &rx8130_rtc_ops,
- 	},
-+	[m41t11] = {
-+		/* this is battery backed SRAM */
-+		.nvram_offset	= 8,
-+		.nvram_size	= 56,
-+	},
- 	[mcp794xx] = {
- 		.alarm		= 1,
- 		/* this is battery backed SRAM */
-@@ -248,6 +254,7 @@ static const struct i2c_device_id ds1307_id[] = {
- 	{ "ds3231", ds_3231 },
- 	{ "m41t0", m41t0 },
- 	{ "m41t00", m41t00 },
-+	{ "m41t11", m41t11 },
- 	{ "mcp7940x", mcp794xx },
- 	{ "mcp7941x", mcp794xx },
- 	{ "pt7c4338", ds_1307 },
-@@ -304,6 +311,10 @@ static const struct of_device_id ds1307_of_match[] = {
- 		.compatible = "st,m41t00",
- 		.data = (void *)m41t00
- 	},
-+	{
-+		.compatible = "st,m41t11",
-+		.data = (void *)m41t11
-+	},
- 	{
- 		.compatible = "microchip,mcp7940x",
- 		.data = (void *)mcp794xx
-@@ -346,6 +357,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
- 	{ .id = "DS3231", .driver_data = ds_3231 },
- 	{ .id = "M41T0", .driver_data = m41t0 },
- 	{ .id = "M41T00", .driver_data = m41t00 },
-+	{ .id = "M41T11", .driver_data = m41t11 },
- 	{ .id = "MCP7940X", .driver_data = mcp794xx },
- 	{ .id = "MCP7941X", .driver_data = mcp794xx },
- 	{ .id = "PT7C4338", .driver_data = ds_1307 },
-@@ -1574,6 +1586,7 @@ static int ds1307_probe(struct i2c_client *client,
- 	case ds_1307:
- 	case m41t0:
- 	case m41t00:
-+	case m41t11:
- 		/* clock halted?  turn it on, so clock can tick. */
- 		if (tmp & DS1307_BIT_CH) {
- 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
-@@ -1639,6 +1652,7 @@ static int ds1307_probe(struct i2c_client *client,
- 	case ds_1340:
- 	case m41t0:
- 	case m41t00:
-+	case m41t11:
- 		/*
- 		 * NOTE: ignores century bits; fix before deploying
- 		 * systems that will run through year 2100.
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+index f04cb46ae8a1..a9a2919251e0 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+@@ -47,10 +47,11 @@
+ #define _PAGE_RO	0x0600	/* Supervisor RO, User no access */
+ 
+ #define _PMD_PRESENT	0x0001
+-#define _PMD_BAD	0x0fd0
++#define _PMD_BAD	0x0fc0
+ #define _PMD_PAGE_MASK	0x000c
+ #define _PMD_PAGE_8M	0x000c
+ #define _PMD_PAGE_512K	0x0004
++#define _PMD_GUARDED	0x0010
+ #define _PMD_USER	0x0020	/* APG 1 */
+ 
+ /* Until my rework is finished, 8xx still needs atomic PTE updates */
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index c3b831bb8bad..85b017c67e11 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -345,6 +345,10 @@ _ENTRY(ITLBMiss_cmp)
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	mtcr	r11
++#endif
++	/* Load the MI_TWC with the attributes for this "segment." */
++	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
++#ifdef CONFIG_HUGETLB_PAGE
+ 	bt-	28, 10f		/* bit 28 = Large page (8M) */
+ 	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+ #endif
+@@ -354,8 +358,6 @@ _ENTRY(ITLBMiss_cmp)
+ #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
+ 	mtcr	r12
+ #endif
+-	/* Load the MI_TWC with the attributes for this "segment." */
+-	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
+ 
+ #ifdef CONFIG_SWAP
+ 	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
+@@ -457,6 +459,9 @@ _ENTRY(DTLBMiss_jmp)
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	mtcr	r11
++#endif
++	mtspr	SPRN_MD_TWC, r11
++#ifdef CONFIG_HUGETLB_PAGE
+ 	bt-	28, 10f		/* bit 28 = Large page (8M) */
+ 	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+ #endif
+@@ -465,15 +470,6 @@ _ENTRY(DTLBMiss_jmp)
+ 4:
+ 	mtcr	r12
+ 
+-	/* Insert the Guarded flag into the TWC from the Linux PTE.
+-	 * It is bit 27 of both the Linux PTE and the TWC (at least
+-	 * I got that right :-).  It will be better when we can put
+-	 * this into the Linux pgd/pmd and load it in the operation
+-	 * above.
+-	 */
+-	rlwimi	r11, r10, 0, _PAGE_GUARDED
+-	mtspr	SPRN_MD_TWC, r11
+-
+ 	/* Both _PAGE_ACCESSED and _PAGE_PRESENT has to be set.
+ 	 * We also need to know if the insn is a load/store, so:
+ 	 * Clear _PAGE_PRESENT and load that which will
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index ba6b4c86b637..8606fa253089 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -34,6 +34,7 @@ config PPC_8xx
+ 	bool "Freescale 8xx"
+ 	select FSL_SOC
+ 	select SYS_SUPPORTS_HUGETLBFS
++	select PPC_GUARDED_PAGE_IN_PMD
+ 
+ config 40x
+ 	bool "AMCC 40x"
 -- 
-2.17.0
+2.13.3
