@@ -1,58 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752506AbeEPLVe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:21:34 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39796 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751182AbeEPLVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:21:33 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <tklauser@distanz.ch>, <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: ethoc: Remove useless test before clk_disable_unprepare
-Date: Wed, 16 May 2018 19:18:22 +0800
-Message-ID: <20180516111822.26440-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1752590AbeEPLXv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:23:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56524 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeEPLXt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:23:49 -0400
+Date: Wed, 16 May 2018 04:23:47 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: vm_fault_t conversion, for real
+Message-ID: <20180516112347.GB20670@bombadil.infradead.org>
+References: <20180516054348.15950-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516054348.15950-1-hch@lst.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clk_disable_unprepare() already checks that the clock pointer is valid.
-No need to test it before calling it.
+On Wed, May 16, 2018 at 07:43:34AM +0200, Christoph Hellwig wrote:
+> this series tries to actually turn vm_fault_t into a type that can be
+> typechecked and checks the fallout instead of sprinkling random
+> annotations without context.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/ethoc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Yes, why should we have small tasks that newcomers can do when the mighty
+Christoph Hellwig can swoop in and take over from them?  Seriously,
+can't your talents find a better use than this?
 
-diff --git a/drivers/net/ethernet/ethoc.c b/drivers/net/ethernet/ethoc.c
-index 8bb0db9..00a5727 100644
---- a/drivers/net/ethernet/ethoc.c
-+++ b/drivers/net/ethernet/ethoc.c
-@@ -1246,8 +1246,7 @@ static int ethoc_probe(struct platform_device *pdev)
- 	mdiobus_unregister(priv->mdio);
- 	mdiobus_free(priv->mdio);
- free2:
--	if (priv->clk)
--		clk_disable_unprepare(priv->clk);
-+	clk_disable_unprepare(priv->clk);
- free:
- 	free_netdev(netdev);
- out:
-@@ -1271,8 +1270,7 @@ static int ethoc_remove(struct platform_device *pdev)
- 			mdiobus_unregister(priv->mdio);
- 			mdiobus_free(priv->mdio);
- 		}
--		if (priv->clk)
--			clk_disable_unprepare(priv->clk);
-+		clk_disable_unprepare(priv->clk);
- 		unregister_netdev(netdev);
- 		free_netdev(netdev);
- 	}
--- 
-2.7.0
+> The first one fixes a real bug in orangefs, the second and third fix
+> mismatched existing vm_fault_t annotations on the same function, the
+> fourth removes an unused export that was in the chain.  The remainder
+> until the last one do some not quite trivial conversions, and the last
+> one does the trivial mass annotation and flips vm_fault_t to a __bitwise
+> unsigned int - the unsigned means we also get plain compiler type
+> checking for the new ->fault signature even without sparse.
+
+Yes, that was (part of) the eventual goal.  Well done.  Would you like
+a biscuit?
