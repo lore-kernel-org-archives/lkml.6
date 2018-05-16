@@ -1,49 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeEPL7Q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:59:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52500 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbeEPL7P (ORCPT
+        id S1752414AbeEPMBB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:01:01 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36009 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEPMA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:59:15 -0400
-Date: Wed, 16 May 2018 13:59:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED
- flag
-Message-ID: <20180516115906.GF12217@hirez.programming.kicks-ass.net>
-References: <1526420991-21213-1-git-send-email-longman@redhat.com>
- <1526420991-21213-2-git-send-email-longman@redhat.com>
- <20180516104829.GA24332@redhat.com>
+        Wed, 16 May 2018 08:00:58 -0400
+X-Google-Smtp-Source: AB8JxZpy/EVfxfCkXHW2YOA4zyXZeoOkmlXgWIeeOkGAelCX7SbMnK7q3MOw1+1oJ4+95UsNWrI7uX9F1YaWxcG2f9w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516104829.GA24332@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1525135334-28506-2-git-send-email-matheus@castello.eng.br>
+References: <1525030092-3643-3-git-send-email-matheus@castello.eng.br>
+ <1525135334-28506-1-git-send-email-matheus@castello.eng.br> <1525135334-28506-2-git-send-email-matheus@castello.eng.br>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 May 2018 14:00:57 +0200
+Message-ID: <CACRpkdZL2_j93=+x_NM-5SzxxoHn6m4LYnfb-k9=5wQ-Oi6NVA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] pinctrl: bcm2835: Add support for generic pinctrl binding
+To: Matheus Castello <matheus@castello.eng.br>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:48:30PM +0200, Oleg Nesterov wrote:
-> > +static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
-> >  {
-> > -	return owner && owner != RWSEM_READER_OWNED;
-> > +	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
-> >  }
-> 
-> Perhaps you should add __attribute__(aligned) to struct rw_semaphore then...
-> 
-> I don't think it is really needed, but see the comment under struct address_space.
+On Tue, May 1, 2018 at 2:42 AM, Matheus Castello
+<matheus@castello.eng.br> wrote:
 
-Luckily we just dropped CRIS support, but yeah, who knows if some other
-dodgy arch also doesn't properly align things.
+> To keep driver up to date we add generic pinctrl binding support, which
+> covers the features used in this driver and has additional node properties
+> that this SoC has compatibility, so enabling future implementations of
+> these properties without the need to create new node properties in the
+> device trees.
+>
+> The logic of this change maintain the old brcm legacy binding support in
+> order to keep the ABI stable.
+>
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> Reviewed-by: Eric Anholt <eric@anholt.net>
 
->From a quick test, m68k is the only odd one, it seems to align pointers
-on 2 bytes.
+Patch applied with Stefan's ACK!
+
+Yours,
+Linus Walleij
