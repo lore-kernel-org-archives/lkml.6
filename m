@@ -1,83 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeEPQhh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 12:37:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:52843 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeEPQhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 12:37:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="41456176"
-Subject: Re: [PATCH 09/15] x86/split_lock: Explicitly enable or disable #AC
- for split locked accesses
-To: Fenghua Yu <fenghua.yu@intel.com>
-References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
- <1526323945-211107-10-git-send-email-fenghua.yu@intel.com>
- <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
- <20180515172908.GC244301@romley-ivt3.sc.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <3a9c6e05-66ba-3133-0696-edce57a52bc0@intel.com>
-Date: Wed, 16 May 2018 09:37:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1751328AbeEPQmo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 12:42:44 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33798 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750846AbeEPQmm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 12:42:42 -0400
+X-Google-Smtp-Source: AB8JxZqiAfu1OntfGM53Us1TOPTkkV36fBeW37HOgTpJ0hYGr45JfoBPRLBQSep8VfjU/2i6P3qGsw==
+Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
+ check eligibility of the pkeys
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?Q?H=c3=a5kon_Bugge?= <haakon.bugge@oracle.com>
+Cc: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20180509093020.24503-3-Haakon.Bugge@oracle.com>
+ <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
+ <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
+ <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
+ <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
+ <20180514210200.GN21531@ziepe.ca>
+ <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
+ <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
+ <20180515190424.GL5615@ziepe.ca>
+ <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
+ <20180516151201.GA25661@ziepe.ca>
+From: Hal Rosenstock <hal@dev.mellanox.co.il>
+Message-ID: <695ae613-931a-50ba-2b83-9d172e0ac2bc@dev.mellanox.co.il>
+Date: Wed, 16 May 2018 12:42:37 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180515172908.GC244301@romley-ivt3.sc.intel.com>
+In-Reply-To: <20180516151201.GA25661@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,28 +41,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 10:29 AM, Fenghua Yu wrote:
-> On Tue, May 15, 2018 at 09:15:16AM -0700, Dave Hansen wrote:
->> On 05/14/2018 11:52 AM, Fenghua Yu wrote:
->>> By default, we don't set or clear the bit 29 in TEST_CTL MSR 0x33 and
->>> the bit is inherited from BIOS/hardware setting.
->>>
->>> The kernel parameter "split_lock_ac=on/off" explicitly sets or clears
->>> the bit during boot time.
->>
->> The more I think about this...  Why do we need this at boot anyway?
->> Surely boot-time kernel code can't cause performance issues in the same
->> way that untrusted repeated userspace can.  Why don't we just let
->> userspace turn this on?
+On 5/16/2018 11:12 AM, Jason Gunthorpe wrote:
+> On Wed, May 16, 2018 at 08:47:21AM +0200, Håkon Bugge wrote:
 > 
-> Turning split lock earlier can captuer split lock performance issue
-> in the boot path. Actually we did find two split lock issues during
-> boot time by turning on the feature earlier (see patch 4 and 5).
+>>> This is not a difficult issue.
+>>>
+>>> If the GMP is properly tagged with the right PKey then it will never
+>>> be delivered to the VM if the VM does not have the PKey in the
+>>> table.
+>>
+>> Not quite right. For the shared port model, a GMP will (most
+>> probably) be accepted by the physical port, due to:
+> 
+> Sure, but I am talking about the VM's 'virtual port'.
+> 
+>> So, if the GMP is destined to VM1, which is a limited member, but we
+>> have another VM2 which is a full member of the same partition, the
+>> GMP will pass the HCA’s PKey check.
+> 
+> Sure.
+> 
+>>> It is up to the hypervisor to block GMPs that have Pkeys not in
+>>> the virtual PKey table of the VF.
+>>
+>> The packet is received by the HCA and stripped from IB headers, in
+>> particular the BTH. How can the "hypervisor" block it when its
+>> doesn’t have access to the GMP’s BTH.PKey?
+> 
+> This is wrong too, in Linux the WC's for GMP packets include the pkey
+> index that was used to RX the packet. This is a Linux extension
+> matching the one on the sending side.
+> 
+> The hypervisor *must* block these GMPs, it is a hard requirement of
+> the pkey security model for VMs.
 
-Yeah, but you're going to have a pretty hard time arguing that these are
-even close to the same class of issues that occur when all the CPUs are
-up and userspace is pounding the system with split locks.
+Aside from the pkey enforcement at the VF, there is also the issue of
+the pkey trap - if physical port model is followed for shared virtual
+ports, trap should be generated which could look confusing to SM as well
+as counting in some error counter (for physical port, it's either
+PortCounter:Port[Xmit Rcv]ConstraintErrors.
 
-It also seems like the kind of thing that deserves to be a debugging
-option, or Kconfig thing rather than a kernel command-line option that
-has to live forever.
+> AFAIK the Mellanox drivers do this right - do you know differently?
+> 
+>>> The only time you could need a new REJ code is if the GMP is using a
+>>> PKey different from the REQ - which is a pretty goofy thing to do
+>>> considering this VM case.
+>>
+>> Its goofy. In the CX-3 shared port model, the BTH.PKey is the
+>> default one and the REQ.PKey is the full one even if the sending
+>> VM’s port only is a limited member. This patch series fixes the last
+>> issue.
+> 
+> Again, this is wrong, the BTH.Pkey and REQ.Pkey should be the same -
+
+I do not believe there is anything in the spec that requires this. I
+agree it's the simplest use model though.
+
+> please fix that first before trying to change anything else.
+> 
+>>> Remember the SM doesn't know what Pkeys are in the VM, so it is
+>>> basically impossible for the REQ side to reliably select two different
+>>> pkeys and know that they will bothmake it to the VM.
+>>
+>> The active side should use the "authentic" PKey in the REQ
+>> message. That is the one that would be used in BTH.PKey when
+>> communication has been established. This is implemented by this
+>> patch series.
+>>
+>> Not sure what you mean by "reliably select two different pkeys". The
+>> CM REQ message contains one PKey.
+> 
+> If BTH.Pkey != REQ.PKey then the requestor side has to obviously
+> select two PKeys, which is basically impossible.
+> 
+> The VM should not be part of the default partition, for instance.
+
+I think that the VM is at least a limited member of the default partition.
+
+-- Hal
+
+>> See above, not sure how that could be implemented. And if it is
+>> solved by the HCA trapping the GMP due to the PKey check, it doesn’t
+>> help me, as the purpose of the series is to avoid (excessive) PKey
+>> traps sent to the SM.
+> 
+> It might not help you, but is shows this fix for the pkey trap issue
+> is wrong. You must fix the pkey traps on the sending side, not on the
+> responder side..
+> 
+>>> If I recall there were bugs here in mlx drivers, where the driver
+>>> sent with the wrong Pkey. I think this has actually been fixed
+>>> now, so please check the upstream kernel to be sure the Pkey is
+>>> not what it is supposed to be.
+>>
+>> Let me get back to you with some ibdumps here.
+> 
+> Upstream kernel (eg 4.16) and newish Mellanox firmware please.
+> 
+> And it would be fantastic if you could ID why this is happening, AFAIK
+> it should be OK in the kernel.
+> 
+> Jason
+> 
