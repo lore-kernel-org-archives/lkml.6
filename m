@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752811AbeEPHuf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:50:35 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54836 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751285AbeEPHub (ORCPT
+        id S1752757AbeEPHuG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:50:06 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38322 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752730AbeEPHuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:50:31 -0400
-X-Google-Smtp-Source: AB8JxZrf5C6pYNuOTccNuWl3cJPmhkpm3pfXcxfaGvWmkc8BSdc4naZ7pkSukWYUvyJCY3h/xHLRpQ==
-Date: Wed, 16 May 2018 09:50:29 +0200
+        Wed, 16 May 2018 03:50:03 -0400
+X-Google-Smtp-Source: AB8JxZrat3q3Nxj+ZmaVgw848ws4cDwBWlaqE/F+9w6pRpWOQVF/3HRvBmAuZv5aDKe/beeCbGP1rw==
+Date: Wed, 16 May 2018 09:50:00 +0200
 From: Jiri Pirko <jiri@resnulli.us>
 To: Vlad Buslov <vladbu@mellanox.com>
 Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
@@ -17,91 +17,120 @@ Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
         daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
         coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 09/14] net: sched: don't release reference on action
- overwrite
-Message-ID: <20180516075029.GD1972@nanopsycho>
+Subject: Re: [PATCH 10/14] net: sched: extend act API for lockless actions
+Message-ID: <20180516075000.GC1972@nanopsycho>
 References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-10-git-send-email-vladbu@mellanox.com>
- <20180516074332.GB1972@nanopsycho>
- <vbfd0xw11pn.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+ <1526308035-12484-11-git-send-email-vladbu@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <vbfd0xw11pn.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+In-Reply-To: <1526308035-12484-11-git-send-email-vladbu@mellanox.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, May 16, 2018 at 09:47:32AM CEST, vladbu@mellanox.com wrote:
+Mon, May 14, 2018 at 04:27:11PM CEST, vladbu@mellanox.com wrote:
+>Implement new action API function to atomically delete action with
+>specified index and to atomically insert unique action. These functions are
+>required to implement init and delete functions for specific actions that
+>do not rely on rtnl lock.
 >
->On Wed 16 May 2018 at 07:43, Jiri Pirko <jiri@resnulli.us> wrote:
->> Mon, May 14, 2018 at 04:27:10PM CEST, vladbu@mellanox.com wrote:
->>>Return from action init function with reference to action taken,
->>>even when overwriting existing action.
->>>
->>>Action init API initializes its fourth argument (pointer to pointer to
->>>tc action) to either existing action with same index or newly created
->>>action. In case of existing index(and bind argument is zero), init
->>>function returns without incrementing action reference counter. Caller
->>>of action init then proceeds working with action without actually
->>>holding reference to it. This means that action could be deleted
->>>concurrently. To prevent such scenario this patch changes action init
->>
->> Be imperative to the codebase in the patch description.
->>
->>
->>>behavior to always take reference to action before returning
->>>successfully.
->>
->> Where's the balance? Who does the release instead? I'm probably missing
->> something.
+>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>---
+> include/net/act_api.h |  2 ++
+> net/sched/act_api.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 47 insertions(+)
 >
->I've resplit these patches for V2 to always do take/release in same
->patch.
+>diff --git a/include/net/act_api.h b/include/net/act_api.h
+>index a8c8570..bce0cf1 100644
+>--- a/include/net/act_api.h
+>+++ b/include/net/act_api.h
+>@@ -153,7 +153,9 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+> 		   struct tc_action **a, const struct tc_action_ops *ops,
+> 		   int bind, bool cpustats);
+> void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a);
+>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a);
+> 
+>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index);
+> int __tcf_idr_release(struct tc_action *a, bool bind, bool strict);
+> 
+> static inline int tcf_idr_release(struct tc_action *a, bool bind)
+>diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+>index 2772276e..a5193dc 100644
+>--- a/net/sched/act_api.c
+>+++ b/net/sched/act_api.c
+>@@ -330,6 +330,41 @@ bool tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
+> }
+> EXPORT_SYMBOL(tcf_idr_check);
+> 
+>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index)
+>+{
+>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>+	struct tc_action *p;
+>+	int ret = 0;
+>+
+>+	spin_lock_bh(&idrinfo->lock);
 
-Good. Thanks.
+Why "_bh" is needed here?
 
->
->>
->>>
->>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>>---
->>> net/sched/act_bpf.c        |  8 ++++----
->>> net/sched/act_connmark.c   |  5 +++--
->>> net/sched/act_csum.c       |  8 ++++----
->>> net/sched/act_gact.c       |  5 +++--
->>> net/sched/act_ife.c        | 12 +++++-------
->>> net/sched/act_ipt.c        |  5 +++--
->>> net/sched/act_mirred.c     |  5 ++---
->>> net/sched/act_nat.c        |  5 +++--
->>> net/sched/act_pedit.c      |  5 +++--
->>> net/sched/act_police.c     |  8 +++-----
->>> net/sched/act_sample.c     |  8 +++-----
->>> net/sched/act_simple.c     |  5 +++--
->>> net/sched/act_skbedit.c    |  5 +++--
->>> net/sched/act_skbmod.c     |  8 +++-----
->>> net/sched/act_tunnel_key.c |  8 +++-----
->>> net/sched/act_vlan.c       |  8 +++-----
->>> 16 files changed, 51 insertions(+), 57 deletions(-)
->>>
->>>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
->>>index 5d95c43..5554bf7 100644
->>>--- a/net/sched/act_bpf.c
->>>+++ b/net/sched/act_bpf.c
->>>@@ -311,9 +311,10 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
->>> 		if (bind)
->>> 			return 0;
->>> 
->>>-		tcf_idr_release(*act, bind);
->>>-		if (!replace)
->>>+		if (!replace) {
->>>+			tcf_idr_release(*act, bind);
->>> 			return -EEXIST;
->>>+		}
->>> 	}
->>> 
->>> 	is_bpf = tb[TCA_ACT_BPF_OPS_LEN] && tb[TCA_ACT_BPF_OPS];
->>
->> [...]
+
+>+	p = idr_find(&idrinfo->action_idr, index);
+>+	if (!p) {
+>+		spin_unlock(&idrinfo->lock);
+>+		return -ENOENT;
+>+	}
+>+
+>+	if (!atomic_read(&p->tcfa_bindcnt)) {
+>+		if (refcount_dec_and_test(&p->tcfa_refcnt)) {
+>+			struct module *owner = p->ops->owner;
+>+
+>+			WARN_ON(p != idr_remove(&idrinfo->action_idr,
+>+						p->tcfa_index));
+>+			spin_unlock_bh(&idrinfo->lock);
+>+
+>+			tcf_action_cleanup(p);
+>+			module_put(owner);
+>+			return 0;
+>+		}
+>+		ret = 0;
+>+	} else {
+>+		ret = -EPERM;
+
+I wonder if "-EPERM" is the best error code for this...
+
+
+>+	}
+>+
+>+	spin_unlock_bh(&idrinfo->lock);
+>+	return ret;
+>+}
+>+EXPORT_SYMBOL(tcf_idr_find_delete);
+>+
+> int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+> 		   struct tc_action **a, const struct tc_action_ops *ops,
+> 		   int bind, bool cpustats)
+>@@ -407,6 +442,16 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
+> }
+> EXPORT_SYMBOL(tcf_idr_insert);
+> 
+>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a)
+>+{
+>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>+
+>+	spin_lock_bh(&idrinfo->lock);
+>+	WARN_ON(idr_replace(&idrinfo->action_idr, a, a->tcfa_index));
+
+Under which condition this WARN_ON is hit?
+
+
+>+	spin_unlock_bh(&idrinfo->lock);
+>+}
+>+EXPORT_SYMBOL(tcf_idr_insert_unique);
+>+
+> void tcf_idrinfo_destroy(const struct tc_action_ops *ops,
+> 			 struct tcf_idrinfo *idrinfo)
+> {
+>-- 
+>2.7.5
 >
