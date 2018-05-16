@@ -1,69 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752386AbeEPGji (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 02:39:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51633 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752226AbeEPGjf (ORCPT
+        id S1752530AbeEPGlA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 02:41:00 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33321 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751471AbeEPGk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 02:39:35 -0400
-X-Google-Smtp-Source: AB8JxZosYkiKCPE9IYUk1Ahw1qqEbeEoWZ8YfaRt4JzuNC48UTiRaV5l9xhFpKfV5DXYvmwsBQU+Lw==
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] ARM: dts: vf610-zii-dev: enable vf610 builtin temp sensor
-Date: Wed, 16 May 2018 09:39:21 +0300
-Message-Id: <20180516063921.10406-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 16 May 2018 02:40:58 -0400
+X-Google-Smtp-Source: AB8JxZqlf+JZzW2JuVxQJeWQ6ll5MsiCMghbcusg0IT51sfjfG5PaI98ccz0Q+Cmab2tIQav4NXdqw==
+Date: Wed, 16 May 2018 12:10:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, bp@suse.de,
+        lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net,
+        x86@kernel.org, linux-pm@vger.kernel.org, juri.lelli@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 06/10] cpufreq / sched: Add interface to get
+ utilization values
+Message-ID: <20180516064055.gbmemcxsv2qvx67g@vireshk-i7>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-7-srinivas.pandruvada@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516044911.28797-7-srinivas.pandruvada@linux.intel.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vybrid has single internal temperature sensor connected to both internal
-ADC modules.
+On 15-05-18, 21:49, Srinivas Pandruvada wrote:
+> Added cpufreq_get_sched_util() to get the CFS, DL and max utilization
+> values for a CPU. This is required for getting utilization values
+> for cpufreq drivers outside of kernel/sched folder.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  include/linux/sched/cpufreq.h |  2 ++
+>  kernel/sched/cpufreq.c        | 23 +++++++++++++++++++++++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+> index 5966744..a366600 100644
+> --- a/include/linux/sched/cpufreq.h
+> +++ b/include/linux/sched/cpufreq.h
+> @@ -20,6 +20,8 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+>                         void (*func)(struct update_util_data *data, u64 time,
+>  				    unsigned int flags));
+>  void cpufreq_remove_update_util_hook(int cpu);
+> +void cpufreq_get_sched_util(int cpu, unsigned long *util_cfs,
+> +			    unsigned long *util_dl, unsigned long *max);
+>  #endif /* CONFIG_CPU_FREQ */
+>  
+>  #endif /* _LINUX_SCHED_CPUFREQ_H */
+> diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
+> index 5e54cbc..36e2839 100644
+> --- a/kernel/sched/cpufreq.c
+> +++ b/kernel/sched/cpufreq.c
+> @@ -60,3 +60,26 @@ void cpufreq_remove_update_util_hook(int cpu)
+>  	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_remove_update_util_hook);
+> +
+> +/**
+> + * cpufreq_get_sched_util - Get utilization values.
+> + * @cpu: The targeted CPU.
+> + *
+> + * Get the CFS, DL and max utilization.
+> + * This function allows cpufreq driver outside the kernel/sched to access
+> + * utilization value for a CPUs run queue.
+> + */
+> +void cpufreq_get_sched_util(int cpu, unsigned long *util_cfs,
+> +			    unsigned long *util_dl, unsigned long *max)
+> +{
+> +#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
 
-vf610-zii-dev already has ADC0 enabled. Now, to get temperature sensor
-captured by iio_hwmon driver, need to configure iio_hwmon node to use
-that ADC.
+What will happen when schedutil is compiled in the kernel but ondemand
+is the one getting used currently ?
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- arch/arm/boot/dts/vf610-zii-dev.dtsi | 4 ++++
- arch/arm/boot/dts/vfxxx.dtsi         | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+> +	struct rq *rq = cpu_rq(cpu);
+> +
+> +	*max = arch_scale_cpu_capacity(NULL, cpu);
+> +	*util_cfs = cpu_util_cfs(rq);
+> +	*util_dl  = cpu_util_dl(rq);
+> +#else
+> +	*util_cfs = *util_dl = 1;
+> +#endif
+> +}
+> +EXPORT_SYMBOL_GPL(cpufreq_get_sched_util);
+> -- 
+> 2.9.5
 
-diff --git a/arch/arm/boot/dts/vf610-zii-dev.dtsi b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-index 4890b8a5aa44..5ae5abfe1d55 100644
---- a/arch/arm/boot/dts/vf610-zii-dev.dtsi
-+++ b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-@@ -222,6 +222,10 @@
- 	status = "okay";
- };
- 
-+&tempsensor {
-+	io-channels = <&adc0 16>;
-+};
-+
- &iomuxc {
- 	pinctrl_adc0_ad5: adc0ad5grp {
- 		fsl,pins = <
-diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
-index c3f09b737924..d392794d9c13 100644
---- a/arch/arm/boot/dts/vfxxx.dtsi
-+++ b/arch/arm/boot/dts/vfxxx.dtsi
-@@ -84,7 +84,7 @@
- 		mask = <0x1000>;
- 	};
- 
--	iio-hwmon {
-+	tempsensor: iio-hwmon {
- 		compatible = "iio-hwmon";
- 		io-channels = <&adc0 16>, <&adc1 16>;
- 	};
 -- 
-2.11.0
+viresh
