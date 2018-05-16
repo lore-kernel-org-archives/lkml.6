@@ -1,114 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753158AbeEPKJK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:09:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:45122 "EHLO foss.arm.com"
+        id S1753117AbeEPKJm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:09:42 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50598 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752832AbeEPKJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:09:08 -0400
-Subject: Re: [PATCH v9 07/11] arm64: kexec_file: add crash dump support
-From: James Morse <james.morse@arm.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-8-takahiro.akashi@linaro.org>
- <f8d8305d-42f5-e1e2-20c4-733cb38cbb8d@arm.com>
-Message-ID: <512cde7d-d84b-3623-cb09-a2d78acc11dc@arm.com>
-Date: Wed, 16 May 2018 11:06:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <f8d8305d-42f5-e1e2-20c4-733cb38cbb8d@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753030AbeEPKFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:34 -0400
+Message-Id: <18eab2668788f5e260c5ad19d9a103a1613a9122.1526464250.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
+References: <cover.1526464250.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 05/14] powerpc: use _ALIGN_DOWN macro for VMALLOC_BASE
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 16 May 2018 12:05:33 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akashi,
+Use _ALIGN_DOWN macro instead of open coding in define of VMALLOC_BASE
 
-On 15/05/18 18:11, James Morse wrote:
-> On 25/04/18 07:26, AKASHI Takahiro wrote:
->> Enabling crash dump (kdump) includes
->> * prepare contents of ELF header of a core dump file, /proc/vmcore,
->>   using crash_prepare_elf64_headers(), and
->> * add two device tree properties, "linux,usable-memory-range" and
->>   "linux,elfcorehdr", which represent repsectively a memory range
->>   to be used by crash dump kernel and the header's location
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/nohash/32/pgtable.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
->> index 37c0a9dc2e47..ec674f4d267c 100644
->> --- a/arch/arm64/kernel/machine_kexec_file.c
->> +++ b/arch/arm64/kernel/machine_kexec_file.c
-
->> +static struct crash_mem *get_crash_memory_ranges(void)
->> +{
->> +	unsigned int nr_ranges;
->> +	struct crash_mem *cmem;
->> +
->> +	nr_ranges = 1; /* for exclusion of crashkernel region */
->> +	walk_system_ram_res(0, -1, &nr_ranges, get_nr_ranges_callback);
->> +
->> +	cmem = vmalloc(sizeof(struct crash_mem) +
->> +			sizeof(struct crash_mem_range) * nr_ranges);
->> +	if (!cmem)
->> +		return NULL;
->> +
->> +	cmem->max_nr_ranges = nr_ranges;
->> +	cmem->nr_ranges = 0;
->> +	walk_system_ram_res(0, -1, cmem, add_mem_range_callback);
->> +
->> +	/* Exclude crashkernel region */
->> +	if (crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end)) {
->> +		vfree(cmem);
->> +		return NULL;
->> +	}
->> +
->> +	return cmem;
->> +}
-> 
-> Could this function be included in prepare_elf_headers() so that the alloc() and
-> free() occur together.
-> 
-> 
->> +static int prepare_elf_headers(void **addr, unsigned long *sz)
->> +{
->> +	struct crash_mem *cmem;
->> +	int ret = 0;
->> +
->> +	cmem = get_crash_memory_ranges();
->> +	if (!cmem)
->> +		return -ENOMEM;
->> +
->> +	ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
->> +
->> +	vfree(cmem);
-> 
->> +	return ret;
->> +}
-> 
-> All this is moving memory-range information from core-code's
-> walk_system_ram_res() into core-code's struct crash_mem, and excluding
-> crashk_res, which again is accessible to the core code.
-> 
-> It looks like this is duplicated in arch/x86 and arch/arm64 because arm64
-> doesn't have a second 'crashk_low_res' region, and always wants elf64, instead
-> of when IS_ENABLED(CONFIG_X86_64).
-
-Thinking about it some more: don't we want to walk memblock here, not
-walk_system_ram_res()? What we want is a list of not-nomap regions that the
-kernel may have been using, to form part of vmcore.
-walk_system_ram_res() is becoming a murkier list of maybe-nomap, maybe-reserved.
-
-I think we should walk the same list here as we do in patch 4.
-
-
-Thanks,
-
-James
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index db4e530dd5f3..810945afe677 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -110,9 +110,9 @@ extern int icache_44x_need_flush;
+  */
+ #define VMALLOC_OFFSET (0x1000000) /* 16M */
+ #ifdef PPC_PIN_SIZE
+-#define VMALLOC_BASE (((_ALIGN((long)high_memory, PPC_PIN_SIZE) + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
++#define VMALLOC_BASE _ALIGN_DOWN(_ALIGN((long)high_memory, PPC_PIN_SIZE) + VMALLOC_OFFSET, VMALLOC_OFFSET)
+ #else
+-#define VMALLOC_BASE ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
++#define VMALLOC_BASE _ALIGN_DOWN((long)high_memory + VMALLOC_OFFSET, VMALLOC_OFFSET)
+ #endif
+ #define VMALLOC_START	ioremap_bot
+ #define VMALLOC_END	IOREMAP_END
+-- 
+2.13.3
