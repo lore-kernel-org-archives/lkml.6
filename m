@@ -1,77 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeEPBNO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 21:13:14 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:32796 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751402AbeEPBNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 21:13:13 -0400
-X-Google-Smtp-Source: AB8JxZrhyu97iCIYxTblMNIi1BywbZToupPz0VbLj8lxzbT5jffZ/2j7B/xldNjcTV8/HFov0dorQJ+7KNCICdZaX08=
+        id S1752236AbeEPBT4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 21:19:56 -0400
+Received: from mail-he1eur01on0061.outbound.protection.outlook.com ([104.47.0.61]:10496
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751309AbeEPBTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 21:19:54 -0400
+From: Andy Duan <fugang.duan@nxp.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next 2/3] net: ethernet: freescale: Allow FEC with
+ COMPILE_TEST
+Thread-Topic: [PATCH net-next 2/3] net: ethernet: freescale: Allow FEC with
+ COMPILE_TEST
+Thread-Index: AQHT7KdPfyc1Ci3nOkqrfd6EJZgyRqQxjmHw
+Date: Wed, 16 May 2018 01:19:51 +0000
+Message-ID: <AM4PR0401MB22603C8701762CBCE1D2706AFF920@AM4PR0401MB2260.eurprd04.prod.outlook.com>
+References: <20180515234825.11240-1-f.fainelli@gmail.com>
+ <20180515234825.11240-3-f.fainelli@gmail.com>
+In-Reply-To: <20180515234825.11240-3-f.fainelli@gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fugang.duan@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0401MB2241;7:KRMpjnnGbuUko7axZSpC03JbncmEQE/oNYGy72rNuk4Y1i3mmI/Yo7eoNddx+1kMWD7IddKQWv2aUkE8fLbsC4OUQxWHZb+YVuUbWLvfjgXPjdOXy3LDDDHJqUhbnk6PZd6qn1/PZxboK/1HOSxi2yTQRBoo0kFzv1/YsL4pJzFPVYaej9UCmsNxSDfyklp9p6PCjcX6gWoJR51jW25tmJYJMKl50N7Ge9X/aAfbp+aFD6Hsr1174bUAMc8f3rf6
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB2241;
+x-ms-traffictypediagnostic: AM4PR0401MB2241:
+x-microsoft-antispam-prvs: <AM4PR0401MB224182445D28E9F0F100B1EEFF920@AM4PR0401MB2241.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM4PR0401MB2241;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB2241;
+x-forefront-prvs: 0674DC6DD3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(346002)(396003)(366004)(189003)(199004)(66066001)(14454004)(81166006)(81156014)(8936002)(476003)(106356001)(105586002)(6506007)(59450400001)(6116002)(76176011)(99286004)(8676002)(7696005)(102836004)(3846002)(55016002)(97736004)(2501003)(9686003)(446003)(5250100002)(486006)(11346002)(86362001)(53936002)(25786009)(2900100001)(74316002)(4326008)(39060400002)(5660300001)(229853002)(68736007)(3280700002)(186003)(26005)(316002)(305945005)(7736002)(6246003)(33656002)(2906002)(54906003)(110136005)(3660700001)(478600001)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB2241;H:AM4PR0401MB2260.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: zHfq2G/YnLPGZPZmoiPoOI/jdWxGYFQ5YgCUFPTyR6PMm/g1cSAkyvD2sQSDixg9XoP3KqowwL9o9IgNrVlYuUU4zEG14sCJTFpsNNe5d5iwarxjHsxvzHhgLfu2ImAiLZZEuQ9q12ibTfO046TaEJ9GK7BMyzRWJlXn2WtUvyfT7qqARA2EjkmPL/gWGZ87
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eT5aD0tjdTzTABo5a0aEtB52bZ7_-PCTF35Tikf8Q-vDg@mail.gmail.com>
-References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
- <1523943962-25415-3-git-send-email-wanpengli@tencent.com> <20180511154246.GH27459@char.us.oracle.com>
- <20180511154359.GC26700@char.us.oracle.com> <CALMp9eT5aD0tjdTzTABo5a0aEtB52bZ7_-PCTF35Tikf8Q-vDg@mail.gmail.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Wed, 16 May 2018 09:13:12 +0800
-Message-ID: <CANRm+CxnSyenkV5ORjWkgtSG0uKvh0-hLRtvS-HPsZ3=PbCGvA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] KVM: X86: Allow userspace to disable ioport intercept
-To: Jim Mattson <jmattson@google.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tim Shearer <tshearer@advaoptical.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Office365-Filtering-Correlation-Id: 7df31265-a76c-46af-3fd4-08d5bacb1f82
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7df31265-a76c-46af-3fd4-08d5bacb1f82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2018 01:19:51.1459
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB2241
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4G1DJDT007790
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4G1K1Ld007796
 
-2018-05-16 5:56 GMT+08:00 Jim Mattson <jmattson@google.com>:
-> I'd prefer to let the kvm module have the final say as to whether or
-> not to allow userspace to do this.
+From: Florian Fainelli <f.fainelli@gmail.com> Sent: 2018ƒÍ5‘¬16»’ 7:48
+> The Freescale FEC driver builds fine with COMPILE_TEST, so make that
+> possible.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-I have an IRC discussion with Paolo, it seems that he didn't like the
-original idea of the patchset.
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
 
-Regards,
-Wanpeng Li
-
->
-> On Fri, May 11, 2018 at 8:43 AM, Konrad Rzeszutek Wilk
-> <konrad.wilk@oracle.com> wrote:
->> On Fri, May 11, 2018 at 11:42:46AM -0400, Konrad Rzeszutek Wilk wrote:
->>> On Mon, Apr 16, 2018 at 10:46:01PM -0700, Wanpeng Li wrote:
->>> > From: Wanpeng Li <wanpengli@tencent.com>
->>> >
->>> > Allow to disable ioport intercept by userspace.
->>> >
->>> > Cc: Paolo Bonzini <pbonzini@redhat.com>
->>> > Cc: Radim Krƒçm√°≈ô <rkrcmar@redhat.com>
->>> > Cc: Tim Shearer <tshearer@advaoptical.com>
->>> > Cc: Liran Alon <liran.alon@oracle.com>
->>> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->>> > ---
->>> >  Documentation/virtual/kvm/api.txt | 11 +++++++++++
->>> >  arch/x86/include/asm/kvm_host.h   |  2 ++
->>> >  arch/x86/kvm/x86.c                |  5 +++++
->>> >  include/uapi/linux/kvm.h          |  1 +
->>> >  4 files changed, 19 insertions(+)
->>> >
->>> > diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->>> > index 1c7958b..3d0488e 100644
->>> > --- a/Documentation/virtual/kvm/api.txt
->>> > +++ b/Documentation/virtual/kvm/api.txt
->>> > @@ -4378,6 +4378,17 @@ all such vmexits.
->>> >
->>> >  Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits.
->>> >
->>> > +7.14 KVM_CAP_IOPORT_DISABLE_INTERCEPT
->>> > +
->>> > +Architectures: x86
->>
->> And to be exact: Intel only..
+> ---
+>  drivers/net/ethernet/freescale/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/freescale/Kconfig
+> b/drivers/net/ethernet/freescale/Kconfig
+> index 6e490fd2345d..a580a3dcbe59 100644
+> --- a/drivers/net/ethernet/freescale/Kconfig
+> +++ b/drivers/net/ethernet/freescale/Kconfig
+> @@ -22,7 +22,7 @@ if NET_VENDOR_FREESCALE  config FEC
+>  	tristate "FEC ethernet controller (of ColdFire and some i.MX CPUs)"
+>  	depends on (M523x || M527x || M5272 || M528x || M520x || M532x || \
+> -		   ARCH_MXC || SOC_IMX28)
+> +		   ARCH_MXC || SOC_IMX28 || COMPILE_TEST)
+>  	default ARCH_MXC || SOC_IMX28 if ARM
+>  	select PHYLIB
+>  	imply PTP_1588_CLOCK
+> --
+> 2.14.1
