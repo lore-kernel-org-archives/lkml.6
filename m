@@ -1,41 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeEPSxf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:53:35 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:44022 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeEPSxd (ORCPT
+        id S1751985AbeEPSxV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:53:21 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34095 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750846AbeEPSxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:53:33 -0400
-Date: Wed, 16 May 2018 14:53:32 -0400 (EDT)
-Message-Id: <20180516.145332.1546960873264.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiyou.wangcong@gmail.com, avagin@virtuozzo.com, mst@redhat.com
-Subject: Re: [PATCH net] tuntap: fix use after free during release
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526474373-16685-1-git-send-email-jasowang@redhat.com>
-References: <1526474373-16685-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 16 May 2018 14:53:17 -0400
+X-Google-Smtp-Source: AB8JxZqEaH8Pmok1dMngdNHSya0Tm5dbinLqYZnrddLYPfpLbf2qqgmLFGBkKvXteJTB/UkzXNIUUQ==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: fugang.duan@nxp.com, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v2 3/3] net: phy: Allow MDIO_MOXART and MDIO_SUN4I with COMPILE_TEST
+Date: Wed, 16 May 2018 11:52:58 -0700
+Message-Id: <20180516185258.20508-4-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180516185258.20508-1-f.fainelli@gmail.com>
+References: <20180516185258.20508-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 16 May 2018 20:39:33 +0800
+Those drivers build just fine with COMPILE_TEST, so make that possible.
 
-> After commit b196d88aba8a ("tun: fix use after free for ptr_ring") we
-> need clean up tx ring during release(). But unfortunately, it tries to
-> do the cleanup blindly after socket were destroyed which will lead
-> another use-after-free. Fix this by doing the cleanup before dropping
-> the last reference of the socket in __tun_detach().
-> 
-> Reported-by: Andrei Vagin <avagin@virtuozzo.com>
-> Acked-by: Andrei Vagin <avagin@virtuozzo.com>
-> Fixes: b196d88aba8a ("tun: fix use after free for ptr_ring")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/phy/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied and queued up for -stable.
+diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+index 0e2305ccc91f..343989f9f9d9 100644
+--- a/drivers/net/phy/Kconfig
++++ b/drivers/net/phy/Kconfig
+@@ -118,7 +118,7 @@ config MDIO_I2C
+ 
+ config MDIO_MOXART
+ 	tristate "MOXA ART MDIO interface support"
+-	depends on ARCH_MOXART
++	depends on ARCH_MOXART || COMPILE_TEST
+ 	help
+ 	  This driver supports the MDIO interface found in the network
+ 	  interface units of the MOXA ART SoC
+@@ -142,7 +142,7 @@ config MDIO_OCTEON
+ 
+ config MDIO_SUN4I
+ 	tristate "Allwinner sun4i MDIO interface support"
+-	depends on ARCH_SUNXI
++	depends on ARCH_SUNXI || COMPILE_TEST
+ 	help
+ 	  This driver supports the MDIO interface found in the network
+ 	  interface units of the Allwinner SoC that have an EMAC (A10,
+-- 
+2.14.1
