@@ -1,102 +1,65 @@
-Return-Path: <ben.hutchings@codethink.co.uk>
-X-Google-Smtp-Source: AB8JxZprcVwQE4UuTFNWQeGTYkiHfHc8v2syVd+bg3lr3edFmWm4iVZUlR/4d21WJ6UMPzkEInIP
-ARC-Seal: i=1; a=rsa-sha256; t=1526489633; cv=none;
+Return-Path: <richard@nod.at>
+X-Google-Smtp-Source: AB8JxZqn+krAhruX0MuAP7z3/4liAch80wi3jdBuSG9e9wWHFXD7wnKo7MeFR2hdWFDCS8KQIjWW
+ARC-Seal: i=1; a=rsa-sha256; t=1526492223; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z/VOQvLF4qTPOWuk8LyyEMUx7xkHhgN2f3O2LXd7yku/axZaon/6zMl7uvgs1Das3s
-         KnVFDLukl/TeYu1kYbo2oZTBeqvRhVsGoTiyXWIzk6gCfHYDYeJ2/zPAPyKy0a4qWlOq
-         NqVy0FTzygWkSRlgN96KxjONOzMBweKYlnyoUjXq3eZMmqYUfCZpywjm5/cixzz6hUQX
-         EDfIi8wXYiADufpNaQq7lqa8f+IZ4tvtl89KTQj4iPnIFL2iwbtMtexcghPu3sd0hcEP
-         chNNDMSoQ199x+CPR8m2v/R1/hRAiFL+eShhdAKWdv1sSX5ZYilQNeqLh3GGHX7gwU+m
-         TMlA==
+        b=j2CneS8FymzTdkYCqICH1M7LCH6zYyEAAd6MDYcLbS39uBvRh2yywQqTJ3ouZwSAet
+         HWkupC53L27sJXf9thGQjIzbeemmE3NdG2Gb+zaqTsZOEltzzj5kcZ0gSHFdPzF/E9Xi
+         WItg3Eo0kvexKANV2jVJfU/e1oDQ5vLdSMAip+rlZaiFRF4iVrtk+MKek3GmQyl42RLB
+         7VFAOKKmvXvU07+jXl/TK2B6SzmOC/wkOwXBw5OoDqUj5vNRuV6kmbjUPR3rHcP790nH
+         PiLGVCigfMwfJNPT3lWndMRN1l2tI5lY3BSA3rsjfgICzafmHwtQIHXTsXeiVQ8UGm1w
+         rBTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=fuBHjrE31bV7Vn6cRqGc2C9XKRiORjh+qToMEBoGmEU=;
-        b=MXX8G6up93CHn90jFmn1TnVqGo78nWQNdA4gHLK/QSrtI2LwlEyudvsEvd7YPNJz+1
-         13C7tCsvcpunv2iCy1z18OwSb4RRI2bSeNIWXx6s8q30f7sfNLQXkDa5SaM+T0+NHzeH
-         SIA9KRvBVevs2mLZEa8UIxLzhvxCwbl6kKUmGsHCnqcHLfNkySSXdoinbBLOYYZpa0Wb
-         dt63b0Q+wCBmWB8gJZbhT0b6xIgGGJGNR+1v/SHYs89Y4rg9Bw7gHMpbN8UxuGStL6xI
-         B/2xxxyh1p5gfNy/umD06W5kfOwjGpofiolj+05eYfIBc21DhQniQNZrPvmkAGcs3yeL
-         A+xg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=yBS51nUeNaW0rLKF4Tj9PheSYDjDLFvIk86Uhpd1gLo=;
+        b=V2bz6vQl+xWnlqiHZVzL3BLBNVnw5+n0mzxI/geLd5ycE8fBmrl0AHoafvemacUOGZ
+         dGS4qLlPDrb7kDATWV9BWiXDMiAs4i3VmuiUEI5cZ/KV9Atynj6ae1vaVNPjqyFohxnv
+         MHYOCfUh0JUmbxpf+3Bt6vSaLXei/38bAB5JPkoOikt9I5gteRcF31fhjBunmlNtvwSf
+         GBwkZqvEL3iwMd8cKAHxdO5v7pznrbOWqiiLpgvHo6S6ycIveYm9B4j9XciB8N/+cd6N
+         Uu689f7AqCeDkEgTiP6R3qPF5FX2r3niQ+poU0jNP7rbsB60dcKtyyG6nto4QIvruJIC
+         RvSg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+       spf=pass (google.com: domain of richard@nod.at designates 195.201.40.130 as permitted sender) smtp.mailfrom=richard@nod.at
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Message-ID: <1526489629.9159.147.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 23/97] ubi: fastmap: Dont flush fastmap work on
- detach
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Martin Townsend <mtownsend1973@gmail.com>, Richard Weinberger
-	 <richard@nod.at>
-Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  LKML <linux-kernel@vger.kernel.org>
-Date: Wed, 16 May 2018 17:53:49 +0100
-In-Reply-To: <20180422135306.338619311@linuxfoundation.org>
-References: <20180422135304.577223025@linuxfoundation.org>
-	 <20180422135306.338619311@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+       spf=pass (google.com: domain of richard@nod.at designates 195.201.40.130 as permitted sender) smtp.mailfrom=richard@nod.at
+From: Richard Weinberger <richard@nod.at>
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Martin Townsend <mtownsend1973@gmail.com>, stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4.4 23/97] ubi: fastmap: Dont flush fastmap work on detach
+Date: Wed, 16 May 2018 19:37:01 +0200
+Message-ID: <2235171.AyZ2c50PG7@blindfold>
+In-Reply-To: <1526489629.9159.147.camel@codethink.co.uk>
+References: <20180422135304.577223025@linuxfoundation.org> <20180422135306.338619311@linuxfoundation.org> <1526489629.9159.147.camel@codethink.co.uk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598454908575503165?=
-X-GMAIL-MSGID: =?utf-8?q?1600640393925538745?=
+X-GMAIL-MSGID: =?utf-8?q?1600643109857615638?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-04-22 at 15:53 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Richard Weinberger <richard@nod.at>
-> 
-> commit 29b7a6fa1ec07e8480b0d9caf635a4498a438bf4 upstream.
-> 
-> At this point UBI volumes have already been free()'ed and fastmap can no
-> longer access these data structures.
+Ben,
 
-I don't see how this change can fix a use-after-free.  If this function
-can be called with *ubi already freed, then the rest of the function
-body is also not safe to run.  But I don't think that is the case.
+Am Mittwoch, 16. Mai 2018, 18:53:49 CEST schrieb Ben Hutchings:
+> I don't see how this change can fix a use-after-free.  If this function
+> can be called with *ubi already freed, then the rest of the function
+> body is also not safe to run.  But I don't think that is the case.
 
-ubi->fm_work doesn't depend on any other structure (except a global
-workqueue, which won't go away).
+thanks a lot for digging into this!
+It is not about ubi (struct ubi_device) being free()'d, it is about
+ubi->volumes[].
 
-It seems to me that the bug is really a race condition, and removing
-the flush_work() makes it harder to hit that condition.  The proper fix
-would be to call flush_work() (or cancel_work_sync()) before the UBI
-volumes are freed.
+> ubi->fm_work doesn't depend on any other structure (except a global
+> workqueue, which won't go away).
+> 
+> It seems to me that the bug is really a race condition, and removing
+> the flush_work() makes it harder to hit that condition.  The proper fix
+> would be to call flush_work() (or cancel_work_sync()) before the UBI
+> volumes are freed.
 
-Ben.
+That's a very valid point.
+I think cancel_work_sync() is the right thing to do.
 
-> Reported-by: Martin Townsend <mtownsend1973@gmail.com>
-> Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  drivers/mtd/ubi/fastmap-wl.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> --- a/drivers/mtd/ubi/fastmap-wl.c
-> +++ b/drivers/mtd/ubi/fastmap-wl.c
-> @@ -360,7 +360,6 @@ static void ubi_fastmap_close(struct ubi
->  {
->  	int i;
->  
-> -	flush_work(&ubi->fm_work);
->  	return_unused_pool_pebs(ubi, &ubi->fm_pool);
->  	return_unused_pool_pebs(ubi, &ubi->fm_wl_pool);
->  
-> 
-> 
-> 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Thanks,
+//richard
