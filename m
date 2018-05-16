@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752828AbeEPFrl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 01:47:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58082 "EHLO
+        id S1752715AbeEPFs1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 01:48:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57756 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbeEPFox (ORCPT
+        with ESMTP id S1752524AbeEPFoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 01:44:53 -0400
+        Wed, 16 May 2018 01:44:39 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: Souptick Joarder <jrdr.linux@gmail.com>,
         Matthew Wilcox <willy@infradead.org>
@@ -17,9 +17,9 @@ Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-mtd@lists.infradead.org, dri-devel@lists.freedesktop.org,
         lustre-devel@lists.lustre.org, linux-arm-kernel@lists.infradead.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 10/14] vgem: separate errno from VM_FAULT_* values
-Date: Wed, 16 May 2018 07:43:44 +0200
-Message-Id: <20180516054348.15950-11-hch@lst.de>
+Subject: [PATCH 06/14] btrfs: separate errno from VM_FAULT_* values
+Date: Wed, 16 May 2018 07:43:40 +0200
+Message-Id: <20180516054348.15950-7-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516054348.15950-1-hch@lst.de>
 References: <20180516054348.15950-1-hch@lst.de>
@@ -28,89 +28,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And streamline the code in vgem_fault with early returns so that it is
-a little bit more readable.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 51 +++++++++++++++------------------
- 1 file changed, 23 insertions(+), 28 deletions(-)
+ fs/btrfs/ctree.h |  2 +-
+ fs/btrfs/inode.c | 19 ++++++++++---------
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 2524ff116f00..a261e0aab83a 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -61,12 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
- 	kfree(vgem_obj);
- }
- 
--static int vgem_gem_fault(struct vm_fault *vmf)
-+static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 1485cd130e2b..02a0de73c1d1 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3203,7 +3203,7 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
+ 			 size_t size, struct bio *bio,
+ 			 unsigned long bio_flags);
+ void btrfs_set_range_writeback(void *private_data, u64 start, u64 end);
+-int btrfs_page_mkwrite(struct vm_fault *vmf);
++vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf);
+ int btrfs_readpage(struct file *file, struct page *page);
+ void btrfs_evict_inode(struct inode *inode);
+ int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc);
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index ec9db248c499..f4f03f0f4556 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8824,7 +8824,7 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
+  * beyond EOF, then the page is guaranteed safe against truncation until we
+  * unlock the page.
+  */
+-int btrfs_page_mkwrite(struct vm_fault *vmf)
++vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
  {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_vgem_gem_object *obj = vma->vm_private_data;
- 	/* We don't use vmf->pgoff since that has the fake offset */
- 	unsigned long vaddr = vmf->address;
-+	struct page *page;
- 	int ret;
- 	loff_t num_pages;
- 	pgoff_t page_offset;
-@@ -85,35 +86,29 @@ static int vgem_gem_fault(struct vm_fault *vmf)
- 		ret = 0;
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+@@ -8836,7 +8836,8 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+ 	char *kaddr;
+ 	unsigned long zero_start;
+ 	loff_t size;
+-	int ret;
++	vm_fault_t ret;
++	int err;
+ 	int reserved = 0;
+ 	u64 reserved_space;
+ 	u64 page_start;
+@@ -8858,14 +8859,14 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+ 	 * end up waiting indefinitely to get a lock on the page currently
+ 	 * being processed by btrfs_page_mkwrite() function.
+ 	 */
+-	ret = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
++	err = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
+ 					   reserved_space);
+-	if (!ret) {
+-		ret = file_update_time(vmf->vma->vm_file);
++	if (!err) {
++		err = file_update_time(vmf->vma->vm_file);
+ 		reserved = 1;
  	}
- 	mutex_unlock(&obj->pages_lock);
 -	if (ret) {
--		struct page *page;
--
--		page = shmem_read_mapping_page(
--					file_inode(obj->base.filp)->i_mapping,
--					page_offset);
--		if (!IS_ERR(page)) {
--			vmf->page = page;
--			ret = 0;
--		} else switch (PTR_ERR(page)) {
--			case -ENOSPC:
--			case -ENOMEM:
--				ret = VM_FAULT_OOM;
--				break;
--			case -EBUSY:
--				ret = VM_FAULT_RETRY;
--				break;
--			case -EFAULT:
--			case -EINVAL:
--				ret = VM_FAULT_SIGBUS;
--				break;
--			default:
--				WARN_ON(PTR_ERR(page));
--				ret = VM_FAULT_SIGBUS;
--				break;
--		}
-+	if (!ret)
-+		return 0;
-+
-+	page = shmem_read_mapping_page(file_inode(obj->base.filp)->i_mapping,
-+			page_offset);
-+	if (!IS_ERR(page)) {
-+		vmf->page = page;
-+		return 0;
-+	}
+-		if (ret == -ENOMEM)
++	if (err) {
++		if (err == -ENOMEM)
+ 			ret = VM_FAULT_OOM;
+ 		else /* -ENOSPC, -EIO, etc */
+ 			ret = VM_FAULT_SIGBUS;
+@@ -8927,9 +8928,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+ 			  EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
+ 			  0, 0, &cached_state);
  
-+	switch (PTR_ERR(page)) {
-+	case -ENOSPC:
-+	case -ENOMEM:
-+		return VM_FAULT_OOM;
-+	case -EBUSY:
-+		return VM_FAULT_RETRY;
-+	case -EFAULT:
-+	case -EINVAL:
-+		return VM_FAULT_SIGBUS;
-+	default:
-+		WARN_ON(PTR_ERR(page));
-+		return VM_FAULT_SIGBUS;
- 	}
--	return ret;
- }
- 
- static const struct vm_operations_struct vgem_gem_vm_ops = {
+-	ret = btrfs_set_extent_delalloc(inode, page_start, end, 0,
++	err = btrfs_set_extent_delalloc(inode, page_start, end, 0,
+ 					&cached_state, 0);
+-	if (ret) {
++	if (err) {
+ 		unlock_extent_cached(io_tree, page_start, page_end,
+ 				     &cached_state);
+ 		ret = VM_FAULT_SIGBUS;
 -- 
 2.17.0
