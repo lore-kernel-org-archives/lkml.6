@@ -1,49 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751596AbeEPSxO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:53:14 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:35375 "EHLO
+        id S1752188AbeEPSyb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:54:31 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36639 "EHLO
         mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeEPSxL (ORCPT
+        with ESMTP id S1750786AbeEPSxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:53:11 -0400
-X-Google-Smtp-Source: AB8JxZp8vGaTRTXB70WwO8EYIn73Stk6wMQUmD1d+k5R41z3sP9TUhfn6MQ0b1Yb8nM4rqibveI5yA==
+        Wed, 16 May 2018 14:53:13 -0400
+X-Google-Smtp-Source: AB8JxZoA/v/jca2t1D7NiK0IgIVNkItNyeX1vaxJVGclvxvwRh3xgMH3tfUEm2IGL8Rv8PzqFFmuKw==
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: fugang.duan@nxp.com, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v2 0/3]  net: Allow more drivers with COMPILE_TEST
-Date: Wed, 16 May 2018 11:52:55 -0700
-Message-Id: <20180516185258.20508-1-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 1/3] net: ethernet: ti: Allow most drivers with COMPILE_TEST
+Date: Wed, 16 May 2018 11:52:56 -0700
+Message-Id: <20180516185258.20508-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180516185258.20508-1-f.fainelli@gmail.com>
+References: <20180516185258.20508-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Most of the TI drivers build just fine with COMPILE_TEST, cpmac (AR7) is
+the exception because it uses a header file from
+arch/mips/include/asm/mach-ar7/ar7.h.
 
-This patch series includes more drivers to be build tested with COMPILE_TEST
-enabled. This helps cover some of the issues I just ran into with missing
-a driver *sigh*.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/ti/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Changes in v2:
-
-- allow FEC to build outside of CONFIG_ARM/ARM64 by defining a layout of
-  registers, this is not meant to run, so this is not a real issue if we
-  are not matching the correct register layout
-
-Florian Fainelli (3):
-  net: ethernet: ti: Allow most drivers with COMPILE_TEST
-  net: ethernet: freescale: Allow FEC with COMPILE_TEST
-  net: phy: Allow MDIO_MOXART and MDIO_SUN4I with COMPILE_TEST
-
- drivers/net/ethernet/freescale/Kconfig    |  2 +-
- drivers/net/ethernet/freescale/fec.h      |  2 +-
- drivers/net/ethernet/freescale/fec_main.c |  2 +-
- drivers/net/ethernet/ti/Kconfig           | 14 +++++++-------
- drivers/net/phy/Kconfig                   |  4 ++--
- 5 files changed, 12 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+index 48a541eb0af2..1f8626999ac6 100644
+--- a/drivers/net/ethernet/ti/Kconfig
++++ b/drivers/net/ethernet/ti/Kconfig
+@@ -18,7 +18,7 @@ if NET_VENDOR_TI
+ 
+ config TI_DAVINCI_EMAC
+ 	tristate "TI DaVinci EMAC Support"
+-	depends on ARM && ( ARCH_DAVINCI || ARCH_OMAP3 )
++	depends on ARM && ( ARCH_DAVINCI || ARCH_OMAP3 ) || COMPILE_TEST
+ 	select TI_DAVINCI_MDIO
+ 	select TI_DAVINCI_CPDMA
+ 	select PHYLIB
+@@ -30,7 +30,7 @@ config TI_DAVINCI_EMAC
+ 
+ config TI_DAVINCI_MDIO
+ 	tristate "TI DaVinci MDIO Support"
+-	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || ARCH_KEYSTONE
++	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || ARCH_KEYSTONE || COMPILE_TEST
+ 	select PHYLIB
+ 	---help---
+ 	  This driver supports TI's DaVinci MDIO module.
+@@ -40,7 +40,7 @@ config TI_DAVINCI_MDIO
+ 
+ config TI_DAVINCI_CPDMA
+ 	tristate "TI DaVinci CPDMA Support"
+-	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS
++	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST
+ 	---help---
+ 	  This driver supports TI's DaVinci CPDMA dma engine.
+ 
+@@ -60,7 +60,7 @@ config TI_CPSW_ALE
+ 
+ config TI_CPSW
+ 	tristate "TI CPSW Switch Support"
+-	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS
++	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST
+ 	select TI_DAVINCI_CPDMA
+ 	select TI_DAVINCI_MDIO
+ 	select TI_CPSW_PHY_SEL
+@@ -75,7 +75,7 @@ config TI_CPSW
+ 
+ config TI_CPTS
+ 	bool "TI Common Platform Time Sync (CPTS) Support"
+-	depends on TI_CPSW || TI_KEYSTONE_NETCP
++	depends on TI_CPSW || TI_KEYSTONE_NETCP || COMPILE_TEST
+ 	depends on POSIX_TIMERS
+ 	---help---
+ 	  This driver supports the Common Platform Time Sync unit of
+@@ -95,8 +95,8 @@ config TI_KEYSTONE_NETCP
+ 	tristate "TI Keystone NETCP Core Support"
+ 	select TI_CPSW_ALE
+ 	select TI_DAVINCI_MDIO
+-	depends on OF
+-	depends on KEYSTONE_NAVIGATOR_DMA && KEYSTONE_NAVIGATOR_QMSS
++	depends on OF && KEYSTONE_NAVIGATOR_DMA && KEYSTONE_NAVIGATOR_QMSS || \
++		   COMPILE_TEST
+ 	---help---
+ 	  This driver supports TI's Keystone NETCP Core.
+ 
 -- 
 2.14.1
