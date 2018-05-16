@@ -1,115 +1,173 @@
-Return-Path: <mathieu.poirier@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526483576; cv=none;
+Return-Path: <ckeepax@opensource.cirrus.com>
+X-Google-Smtp-Source: AB8JxZoapPIEMBOkNOJ5U7Vmp5MmJCU6x+yxojvOMwr4h/cH9ObuFJH9VWxJL6BEzqt9m8su96+7
+ARC-Seal: i=1; a=rsa-sha256; t=1526461784; cv=none;
         d=google.com; s=arc-20160816;
-        b=MCwSdQEgR/M/IGVRjbDlV7Wsg5oe7SUd9cnZ4c7J6AsPktDezjmGMfdkLiEUn8FVuv
-         blkvHFOpYq/Qb7wFXry4Ru1obdOkpfc+5k+yLqtQYi41A2RDVFn0wgTtlD67SyWnG4dc
-         +phSBJKwdOFkbScpKpjmFBKJILKumseswviQBvRfrgKu2jKuBR5xDEOGnsw9M1YcETsZ
-         suQXh9NC6U8byraQVMi2i5Sn4ONj472N8vzh0xfpmFDwojw7ua0NEe+s1WcLXl1Tfq3+
-         IPLhioQKjt7p4FWE9nkgNrsMmTdTDhwcFBCid/V91AO0RIcMfQeOyr8rOcYD9bkyY56D
-         ywsg==
+        b=QqQmDLvAzMAqg0m01b+4aW/YHk7W7q4W0nvHPe044Ke1vwyI6nnwalUPopa4EZ2ebu
+         5z4E0GwpKKL2ehgFtmmujcDwFu/BCSV9dj5B967bdRslO8XYYeCbO8yHOCP1VehQSEts
+         EZ/FhCE4H1OhlhTjdJtm0h9BelqgmcdDQ0pNgvvhSUvPpRDPnLoQKGTUMCpT2DaA/ZSm
+         C+oH8AQatGoPUP2NwUn9o1BQYouV79QPEzTPlSxmhHnjTOnuzjfvQBp3W7L07w21kDXH
+         PZTZnd3XGcrZEwMHNDZXA6yj7wCEQyzSkcjpmheiz9am6UITFV0rnaZkNRTPhLWykD/S
+         5QXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=TFUWJ4JVXNBXG1/TG/4GxDmHGl4a+b7GMnf7cCN1wZQ=;
-        b=EbPSYcI18zS6VPR8+EBVIkxel2pjb75Z54IkSDo8BWpT2Ot/qBUAcWmct1/ZddDiK4
-         qB161ueZX9pGQZtTYbIKR0Rj5zTuglmA8dQDUhGxSQO93gwO+CHqn2ULWsngnuUqcn5K
-         8GtNZ3k0Xq7CXYFysKLQEX84+WB4Tl55TrjTB/9G2aNefGOJSPosBB709MGWrjqMJsxF
-         QBV6Q6yVSBXaUbfGF42VFV0ePOEcGzwMP9wVBRbxWUWj8sdsmAUCgdCnSgcXoCacNeQY
-         xV6Pz9YejEgxKuapxcWAAvM96iwi27RAm92EXfKZ5fJ1UhxPEZNo7r2F6UQRChezpUvU
-         d1Mw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=HLcLIKUjYdG/a6ILz1X3hDvE2OPb81bVkJ2ao4g8Sag=;
+        b=sY1cbWs90a+x2khM+8nMZVwb1Z2DpNVI8AhrGkybyQUxZFBk+JSCxdaeC1tV8pi7wi
+         9SPto61htb22IvKppshuKio7ECNcP3Vpz9O62+8HwZRiwQ+EOCcTOu8ke05PqjVWkAIG
+         fdVFcO3EbRW3/C0VUBSNsk1955WkguJS8RxJ2gI4Gfm1m50TSqhZvRQqlzVdWZ58lZD8
+         3pQ0akrjSVoHuu2zQ677ou9PuDdRQT2tTTLwOjbkCKc5Qhaea3SVShk/a/ZM1i6N3Oa1
+         cGCjJPzMfEJ+XztIIjVFS15z/eQgsvjxonMR7worrXTcJRMdnIA0bwxY35lYV1neUm51
+         viDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=X8CYXYNu;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=neutral (google.com: 67.231.149.25 is neither permitted nor denied by best guess record for domain of ckeepax@opensource.cirrus.com) smtp.mailfrom=ckeepax@opensource.cirrus.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=cirrus.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=X8CYXYNu;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZow3oot4aWSVHTmeyau42dVaXmJKh13ae29lKRTYo4TCw2H+2IF25JQ/As8kpOfOWg5aWvDkS7+jMv9JwuXZpw=
-MIME-Version: 1.0
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org> <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 16 May 2018 09:12:56 -0600
-Message-ID: <CANLsYkwXUGJ-DM4M48SXuy+31r6sC7_Q3fc9Rgue6wFdeMQv6g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+       spf=neutral (google.com: 67.231.149.25 is neither permitted nor denied by best guess record for domain of ckeepax@opensource.cirrus.com) smtp.mailfrom=ckeepax@opensource.cirrus.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=cirrus.com
+Authentication-Results: ppops.net;
+	spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Wed, 16 May 2018 10:09:15 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>,
-	Richard Weinberger <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Sean Paul <seanpaul@chromium.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley <tvboxspy@gmail.com>,
-	Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>,
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel@zh-kernel.org,
-	user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
-	linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
-	linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
-	devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
-	cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
-	linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+CC: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab
+	<mchehab@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Ananth N Mavinakayanahalli
+	<ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy
+	<anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Harry Wei <harryxiyou@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Michal Simek
+	<monstr@monstr.eu>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger
+	<richard@nod.at>,
+        Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner
+	<tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+	<hpa@zytor.com>,
+        <x86@kernel.org>, Chris Zankel <chris@zankel.net>,
+        "Max
+ Filippov" <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        David Howells
+	<dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, David Airlie
+	<airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Pali
+ =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Matias Bjorling
+	<mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet
+	<kent.overstreet@gmail.com>,
+        Malcolm Priestley <tvboxspy@gmail.com>,
+        Antoine
+ Jacquet <royale@zerezo.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney"
+	<paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan
+	<jiangshanlai@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
+        Paul Moore
+	<paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris
+	<eparis@parisplace.org>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri
+	<parri.andrea@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng
+	<boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave
+	<j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa
+	<akiyks@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa
+	<jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@zh-kernel.org>,
+        <user-mode-linux-devel@lists.sourceforge.net>,
+        <user-mode-linux-user@lists.sourceforge.net>,
+        <linux-xtensa@linux-xtensa.org>, <linux-block@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <patches@opensource.cirrus.com>, <linux-bcache@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <xen-devel@lists.xenproject.org>, <cgroups@vger.kernel.org>,
+        <selinux@tycho.nsa.gov>, <linux-security-module@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Message-ID: <20180516090915.GZ20410@imbe.wolfsonmicro.main>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+ <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=960 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1805160093
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599992730865491295?=
-X-GMAIL-MSGID: =?utf-8?q?1600634043261840543?=
+X-GMAIL-MSGID: =?utf-8?q?1600611192040871431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 9 May 2018 at 07:18, Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
+On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
 > As we move stuff around, some doc references are broken. Fix some of
 > them via this script:
->         ./scripts/documentation-file-ref-check --fix-rst
->
+> 	./scripts/documentation-file-ref-check --fix-rst
+> 
 > Manually checked if the produced result is valid, removing a few
 > false-positives.
->
+> 
 > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 > ---
+>  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
 
->
-> diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-> index 1d74ad0202b6..efbc832146e7 100644
-> --- a/Documentation/trace/coresight.txt
-> +++ b/Documentation/trace/coresight.txt
-> @@ -426,5 +426,5 @@ root@genericarmv8:~#
->  Details on how to use the generic STM API can be found here [2].
->
->  [1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
-> -[2]. Documentation/trace/stm.txt
-> +[2]. Documentation/trace/stm.rst
->  [3]. https://github.com/Linaro/perf-opencsd
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Thanks,
+Charles
