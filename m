@@ -1,197 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeEPH4u convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:56:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58397 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752022AbeEPH4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:56:48 -0400
-Date: Wed, 16 May 2018 09:56:46 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Chris Moore <moore@free.fr>
-Cc: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
- contents of ONFI parameter
-Message-ID: <20180516095646.5a4d77ed@bbrezillon>
-In-Reply-To: <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
-References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
-        <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
-        <20180515093429.34902670@bbrezillon>
-        <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752669AbeEPH5C (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:57:02 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36474 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752022AbeEPH5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:57:00 -0400
+X-Google-Smtp-Source: AB8JxZpSWmdbH7wDEHSy/3L+U4KIeQAB3e3J3gXOLB4tfsNTBXc44IeRwYhQvYryPy1vtml1wxxkOw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAMty3ZBSkrdV=SPqK5UoBTN8b+KLD9vsgDkx6DYLxEfb9_TazA@mail.gmail.com>
+References: <20180419093225.614-1-wens@csie.org> <20180419093225.614-5-wens@csie.org>
+ <CAMty3ZD7MbvX5eJ9U4QZRSPTXKD3Ps=hQF2hJSsF17YosXFmmg@mail.gmail.com>
+ <CAGb2v64CASge22O0CviNmgEV0CSFgipkKu86F-6hiaLChPh_EA@mail.gmail.com> <CAMty3ZBSkrdV=SPqK5UoBTN8b+KLD9vsgDkx6DYLxEfb9_TazA@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 16 May 2018 00:56:36 -0700
+X-Gmail-Original-Message-ID: <CAGb2v679hCrS3zjjb5oPkiODha2tnc0sGVSv2f92JBPf6N7+6A@mail.gmail.com>
+Message-ID: <CAGb2v679hCrS3zjjb5oPkiODha2tnc0sGVSv2f92JBPf6N7+6A@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/panel: simple: Add support for Banana Pi 7"
+ S070WV20-CT16 panel
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jonathan Liu <net147@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 09:32:57 +0200
-Chris Moore <moore@free.fr> wrote:
+On Wed, May 16, 2018 at 12:20 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> On Wed, May 16, 2018 at 12:12 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> On Mon, May 14, 2018 at 11:03 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>> On Thu, Apr 19, 2018 at 3:02 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>>>> This panel is marketed as Banana Pi 7" LCD display. On the back is
+>>>> a sticker denoting the model name S070WV20-CT16.
+>>>>
+>>>> This is a 7" 800x480 panel connected through a 24-bit RGB interface.
+>>>> However the panel only does 262k colors.
+>>>>
+>>>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>>>> ---
+>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  |  7 ++++++
+>>>>  drivers/gpu/drm/panel/panel-simple.c          | 25 +++++++++++++++++++
+>>>>  2 files changed, 32 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>> new file mode 100644
+>>>> index 000000000000..2ec35ce36e9a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>> @@ -0,0 +1,7 @@
+>>>> +Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: should be "bananapi,s070wv20-ct16"
+>>>> +
+>>>> +This binding is compatible with the simple-panel binding, which is specified
+>>>> +in simple-panel.txt in this directory.
+>>>> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+>>>> index cbf1ab404ee7..9bc037f74d6c 100644
+>>>> --- a/drivers/gpu/drm/panel/panel-simple.c
+>>>> +++ b/drivers/gpu/drm/panel/panel-simple.c
+>>>> @@ -745,6 +745,28 @@ static const struct panel_desc avic_tm070ddh03 = {
+>>>>         },
+>>>>  };
+>>>>
+>>>> +static const struct drm_display_mode bananapi_s070wv20_ct16_mode = {
+>>>> +       .clock = 30000,
+>>>> +       .hdisplay = 800,
+>>>> +       .hsync_start = 800 + 40,
+>>>> +       .hsync_end = 800 + 40 + 48,
+>>>> +       .htotal = 800 + 40 + 48 + 40,
+>>>> +       .vdisplay = 480,
+>>>> +       .vsync_start = 480 + 13,
+>>>> +       .vsync_end = 480 + 13 + 3,
+>>>> +       .vtotal = 480 + 13 + 3 + 29,
+>>>> +};
+>>>> +
+>>>> +static const struct panel_desc bananapi_s070wv20_ct16 = {
+>>>> +       .modes = &bananapi_s070wv20_ct16_mode,
+>>>> +       .num_modes = 1,
+>>>> +       .bpc = 6,
+>>>> +       .size = {
+>>>> +               .width = 154,
+>>>> +               .height = 86,
+>>>> +       },
+>>>> +};
+>>>
+>>> I think this parallel RGB interface right? I too have same display
+>>> with DSI I'm sure these setting will not useful right? do we need to
+>>> write separate panel driver for that?
+>>
+>> AFAIK the DSI model is an RGB panel with a MIPI DSI bridge on the
+>> connector board. The model I have is dual interface.
+>
+> Yes, this is what I have [1] where same strip can use for both RGB and
+> MIPI DSI. can bananapi,s070wv20-ct16 work for DSI interface as well?
 
-> Hi,
-> 
-> Le 15/05/2018 à 09:34, Boris Brezillon a écrit :
-> > On Tue, 15 May 2018 06:45:51 +0200
-> > Chris Moore <moore@free.fr> wrote:
-> >  
-> >> Hi,
-> >>
-> >> Le 13/05/2018 à 06:30, Wan, Jane (Nokia - US/Sunnyvale) a écrit :  
-> >>> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid CRC values, the bit-wise majority may be used to recover the contents of the parameter pages from the parameter page copies present.
-> >>>
-> >>> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> >>> ---
-> >>> v7: change debug print messages
-> >>> v6: support the cases that srcbufs are not contiguous
-> >>> v5: make the bit-wise majority functon generic
-> >>> v4: move the bit-wise majority code in a separate function
-> >>> v3: fix warning message detected by kbuild test robot
-> >>> v2: rebase the changes on top of v4.17-rc1
-> >>>    
-> >>> drivers/mtd/nand/raw/nand_base.c |   50 ++++++++++++++++++++++++++++++++++----
-> >>>    1 file changed, 45 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> >>> index 72f3a89..b43b784 100644
-> >>> --- a/drivers/mtd/nand/raw/nand_base.c
-> >>> +++ b/drivers/mtd/nand/raw/nand_base.c
-> >>> @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
-> >>>    }
-> >>>    
-> >>>    /*
-> >>> + * Recover data with bit-wise majority
-> >>> + */
-> >>> +static void nand_bit_wise_majority(const void **srcbufs,
-> >>> +				   unsigned int nsrcbufs,
-> >>> +				   void *dstbuf,
-> >>> +				   unsigned int bufsize)
-> >>> +{
-> >>> +	int i, j, k;
-> >>> +
-> >>> +	for (i = 0; i < bufsize; i++) {
-> >>> +		u8 cnt, val;
-> >>> +
-> >>> +		val = 0;
-> >>> +		for (j = 0; j < 8; j++) {
-> >>> +			cnt = 0;
-> >>> +			for (k = 0; k < nsrcbufs; k++) {
-> >>> +				const u8 *srcbuf = srcbufs[k];
-> >>> +
-> >>> +				if (srcbuf[i] & BIT(j))
-> >>> +					cnt++;
-> >>> +			}
-> >>> +			if (cnt > nsrcbufs / 2)
-> >>> +				val |= BIT(j);
-> >>> +		}
-> >>> +		((u8 *)dstbuf)[i] = val;
-> >>> +	}
-> >>> +}
-> >>> +
-> >>> +/*
-> >>>     * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
-> >>>     */
-> >>>    static int nand_flash_detect_onfi(struct nand_chip *chip)
-> >>> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
-> >>>    		return 0;
-> >>>    
-> >>>    	/* ONFI chip: allocate a buffer to hold its parameter page */
-> >>> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> >>> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> >>>    	if (!p)
-> >>>    		return -ENOMEM;
-> >>>    
-> >>> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
-> >>>    	}
-> >>>    
-> >>>    	for (i = 0; i < 3; i++) {
-> >>> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> >>> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
-> >>>    		if (ret) {
-> >>>    			ret = 0;
-> >>>    			goto free_onfi_param_page;
-> >>>    		}
-> >>>    
-> >>> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
-> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
-> >>>    				le16_to_cpu(p->crc)) {
-> >>> +			if (i)
-> >>> +				memcpy(p, &p[i], sizeof(*p));
-> >>>    			break;
-> >>>    		}
-> >>>    	}
-> >>>    
-> >>>    	if (i == 3) {
-> >>> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> >>> -		goto free_onfi_param_page;
-> >>> +		const void *srcbufs[3] = {p, p + 1, p + 2};
-> >>> +
-> >>> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
-> >>> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
-> >>> +				       sizeof(*p));
-> >>> +
-> >>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
-> >>> +				le16_to_cpu(p->crc)) {
-> >>> +			pr_err("ONFI parameter recovery failed, aborting\n");
-> >>> +			goto free_onfi_param_page;
-> >>> +		}
-> >>>    	}
-> >>>    
-> >>>    	/* Check version */  
-> >> This version is still hard coded for a three sample bitwise majority vote.
-> >> So why not use the method which I suggested previously for v2 and which
-> >> I repeat below?  
-> > Because I want the nand_bit_wise_majority() function to work with
-> > nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
-> > page, but NAND vendor can decide to put more). Also, if the X copies of
-> > the PARAM are corrupted (which is rather unlikely), that means we
-> > already spent quite a lot of time reading the different copies and
-> > calculating the CRC, so I think we don't care about perf optimizations
-> > when doing bit-wise majority.
-> >  
-> >> The three sample bitwise majority can be implemented without bit level
-> >> manipulation using the identity:
-> >> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
-> >> This can be factorized slightly to (a & (b | c)) | (b & c)
-> >> This enables the operation to be performed 8, 16, 32 or even 64 bits at
-> >> a time depending on the hardware.
-> >>
-> >> This method is not only faster and but also more compact.
-> >>  
-> 
-> I do understand that the ONFI specifications permit more than 3 copies.
-> However elsewhere the proposed code shows no intention of handling other 
-> cases.
-> The constant 3 is hard coded in the following lines extracted from the 
-> proposed code:
-> ...
-> +    p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> ...
->       for (i = 0; i < 3; i++) {
-> ...
->       if (i == 3) {
-> ...
-> +        const void *srcbufs[3] = {p, p + 1, p + 2};
-> 
-> Moreover the last of these is difficult to generalize.
+In theory yes. You can use RGB with Banana Pi M1+ and DSI with Banana Pi M3.
+However, DSI on A83T is not supported yet, and I don't intend to spend my
+time writing a driver for the MIPI DSI bridge on that panel. The bridge IC
+is the one on top of the DSI FPC connector.
 
-Not that much. We just have to allocate srcbufs dynamically and
-krealloc() everytime we want to add a new entry.
+ChenYu
 
-May I ask why you care that much about this optimization? As I said, if
-we really have to read all the copies to realize none of them is good,
-we already lost a lot of time, so having a "suboptimal but generic"
-version of the bit-wise majority shouldn't hurt that much.
+> [1] https://www.aliexpress.com/item/New-Arrival-Banana-Pro-Pi-7-inch-LCD-Display-Touch-Screen-Raspberry-Pi-Car-GPS-FreeShipping/32335608836.html
+>
+> Jagan.
