@@ -1,77 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeEPJuD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:50:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47858 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753280AbeEPJuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:50:00 -0400
-Subject: Re: [RFC][PATCH] KVM: APPLES can improve the performance of
- applications and virtualized systems by up to 49%
-To: Weiwei Jia <harrynjit@gmail.com>, linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org, xen-devel@lists.xenproject.org, dingxn@gmail.com,
-        jianchen.shan@gmail.com, Weiwei Jia <harryxiyou@gmail.com>
-References: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <395e16c4-f764-604f-f37e-d178ab753920@redhat.com>
-Date: Wed, 16 May 2018 11:49:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753422AbeEPJvE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:51:04 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36225 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753317AbeEPJu7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:50:59 -0400
+X-Google-Smtp-Source: AB8JxZrLqIh4Q2y9Hy7vnbFUFHt00huRqrYhkvEsXKafNup/AHjAwss3i7BEulioSSiE++SPkJrZcA==
+Date: Wed, 16 May 2018 11:50:57 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
+ unlocked actions
+Message-ID: <20180516095057.GG1972@nanopsycho>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-14-git-send-email-vladbu@mellanox.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526308035-12484-14-git-send-email-vladbu@mellanox.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.05.2018 10:27, Weiwei Jia wrote:
-> Dear all,
+Mon, May 14, 2018 at 04:27:14PM CEST, vladbu@mellanox.com wrote:
+>Substitute calls to action insert function with calls to action insert
+>unique function that warns if insertion overwrites index in idr.
+>
+>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>---
+> net/sched/act_bpf.c        | 2 +-
+> net/sched/act_connmark.c   | 2 +-
+> net/sched/act_csum.c       | 2 +-
+> net/sched/act_gact.c       | 2 +-
+> net/sched/act_ife.c        | 2 +-
+> net/sched/act_ipt.c        | 2 +-
+> net/sched/act_mirred.c     | 2 +-
+> net/sched/act_nat.c        | 2 +-
+> net/sched/act_pedit.c      | 2 +-
+> net/sched/act_police.c     | 2 +-
+> net/sched/act_sample.c     | 2 +-
+> net/sched/act_simple.c     | 2 +-
+> net/sched/act_skbedit.c    | 2 +-
+> net/sched/act_skbmod.c     | 2 +-
+> net/sched/act_tunnel_key.c | 2 +-
+> net/sched/act_vlan.c       | 2 +-
+> 16 files changed, 16 insertions(+), 16 deletions(-)
+>
+>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+>index 7e20fdc..0bf4ecf 100644
+>--- a/net/sched/act_bpf.c
+>+++ b/net/sched/act_bpf.c
+>@@ -354,7 +354,7 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
+> 	rcu_assign_pointer(prog->filter, cfg.filter);
 > 
-> Recently, we made a few improvements on effectively utilizing Pause
-> Loop Exiting (PLE) support for higher throughput on virtualized
-> systems. Basically, it solves two problems: 1) how to adjust
-> PLE_Window; 2) how to select virtual CPUs to schedule on VM_EXITs
-> caused by PLE. Our tests with standard benchmarks show that the
-> approach can improve performance by up to 49%. The approach shows
-> promising performance and is easy to implement. We think that it would
-> be wonderful if Linux/KVM and XEN can consider the approach.
-> 
-> We already have a prototype implementation based on KVM (Linux Kernel
-> 3.19.8). Our patch for Linux Kernel 3.19.8 and the paper describing
-> our idea are available in Github repository [1][2][3]. We are pleased
-> to revise our patch in order to merge it into Linux/KVM and XEN. We
-> hope that you can test and adopt our approach/techniques. We are
-> pleased to get some comments/suggestions on the approach and on how
-> the idea can be adopted/tested by Linux/KVM and XEN. Thank you.
-> 
+> 	if (res == ACT_P_CREATED) {
+>-		tcf_idr_insert(tn, *act);
+>+		tcf_idr_insert_unique(tn, *act);
 
-Hi,
+Seems to me that tcf_idr_insert() is unused after this patch. If that is
+the case, I think that you don't need to introduce
+tcf_idr_insert_unique() and just do what you need to do in
+tcf_idr_insert()
 
-Please port the patch to latest upstream and send it as a proper patch
-to this mailing list. (otherwise you won't get feedback on it WHP)
-
-If you want some initial comment if this makes sense at all in the
-context of KVM and can be implemented, you can send the patch itself as
-RFC (based on an older kernel version).
-
-Thanks!
-
-> [1] APPLES paper: https://github.com/sysmen/apples/tree/master/paper
-> [2] APPLES patch:
-> https://github.com/sysmen/apples/blob/master/patches/3.19.8-APPLES.patch
-> [3] APPLES patch README:
-> https://github.com/sysmen/apples/blob/master/patches/README.txt
-> 
-> Best Regards,
-> Sysmen Research Group
-> 
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+[...]
