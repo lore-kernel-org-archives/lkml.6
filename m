@@ -1,139 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752948AbeEPM6E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:58:04 -0400
-Received: from mga07.intel.com ([134.134.136.100]:30347 "EHLO mga07.intel.com"
+        id S1752933AbeEPM6R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:58:17 -0400
+Received: from mga11.intel.com ([192.55.52.93]:63320 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752414AbeEPM6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:58:00 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1752704AbeEPM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:58:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
-   d="scan'208";a="224698142"
-Date: Wed, 16 May 2018 20:58:25 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v4 4/5] virtio_ring: add event idx support in packed ring
-Message-ID: <20180516125825.GA4171@debian>
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-5-tiwei.bie@intel.com>
- <64f5085b-4b62-d545-36e0-0951c11b29a8@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="54851793"
+Message-ID: <171c11a999e2d9580d3783588d20b58e753c89ef.camel@linux.intel.com>
+Subject: Re: [PATCH v1 3/3] serial: 8250_port: Disable DMA operations for
+ kernel console
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 May 2018 15:58:10 +0300
+In-Reply-To: <20180516105553.h7e2buanqfxxya4e@linutronix.de>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+         <20180515183409.78046-4-andriy.shevchenko@linux.intel.com>
+         <20180516105553.h7e2buanqfxxya4e@linutronix.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <64f5085b-4b62-d545-36e0-0951c11b29a8@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:17:21PM +0800, Jason Wang wrote:
-> On 2018年05月16日 16:37, Tiwei Bie wrote:
-[...]
-> > @@ -1160,15 +1186,27 @@ static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
-> >   static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
-> >   {
-> >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 wrap_counter;
-> >   	START_USE(vq);
-> >   	/* We optimistically turn back on interrupts, then check if there was
-> >   	 * more to do. */
-> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > +	 * either clear the flags bit or point the event index at the next
-> > +	 * entry. Always update the event index to keep code simple. */
-> > +
-> > +	wrap_counter = vq->wrap_counter;
-> > +	if (vq->last_used_idx > vq->next_avail_idx)
+On Wed, 2018-05-16 at 12:55 +0200, Sebastian Andrzej Siewior wrote:
+> On 2018-05-15 21:34:09 [+0300], Andy Shevchenko wrote:
+
+Thanks for review, my answers below.
+
+> > It will be too tricky and error prone to allow DMA operations on
+> > kernel
+> > console.
 > 
-> Should this be ">=" consider rx refill may try to completely fill the ring?
+> Why is it tricky and error prone? I had it working…
 
-It seems that there are two cases that last_used_idx
-equals to next_avail_idx. The first one is that the
-ring is empty. And the second one is that the ring
-is full. Although in the first case, most probably,
-the driver won't enable the interrupt.
+On OMAP only? Had you tested this on let's say Intel Cherrytrail where
+DMA controller is a separate PCI device which needs to be handled
+separately from UART IP.
 
-Maybe I really should track the used_wrap_counter
-instead of calculating it each time I need it.. I'll
-give it a try..
+> But I don't mind dropping the DMA on the kernel console because I
+> doubt
+> that we lose something here by disabling it. I would even imagine that
+> it gets "simpler" (maybe what you tried to say by "error prone") to
+> print something in the NMI case by writing directly to the FIFO
+> register
+> instead setting up a DMA transfer and so on.
 
+"error prone" mostly refers to patch 2 commit message. Here it seems I
+need to put something like above to explain why DMA case tricky _as
+well_.
+
+> > Disable any kind of DMA operations in such case.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  drivers/tty/serial/8250/8250_port.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/tty/serial/8250/8250_port.c
+> > b/drivers/tty/serial/8250/8250_port.c
+> > index db97222a1bf4..9a4696ea728b 100644
+> > --- a/drivers/tty/serial/8250/8250_port.c
+> > +++ b/drivers/tty/serial/8250/8250_port.c
+> > @@ -2371,7 +2371,10 @@ int serial8250_do_startup(struct uart_port
+> > *port)
+> >  	 * Request DMA channels for both RX and TX.
+> >  	 */
+> >  	if (up->dma) {
+> > -		retval = serial8250_request_dma(up);
+> > +		if (uart_console(port))
+> > +			retval = -ENXIO;
+> > +		else
+> > +			retval = serial8250_request_dma(up);
+> >  		if (retval)
+> >  			pr_warn_ratelimited("ttyS%d - failed to
+> > request DMA\n",
+> >  					    serial_index(port));
 > 
-> > +		wrap_counter ^= 1;
-> > +
-> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +			vq->last_used_idx | (wrap_counter << 15));
-> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> >   		virtio_wmb(vq->weak_barriers);
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >   							vq->event_flags_shadow);
-> >   	}
-> > @@ -1194,15 +1232,40 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
-> >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
-> >   {
-> >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 bufs, used_idx, wrap_counter;
-> >   	START_USE(vq);
-> >   	/* We optimistically turn back on interrupts, then check if there was
-> >   	 * more to do. */
-> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > +	 * either clear the flags bit or point the event index at the next
-> > +	 * entry. Always update the event index to keep code simple. */
-> > +
-> > +	/* TODO: tune this threshold */
-> > +	if (vq->next_avail_idx < vq->last_used_idx)
-> > +		bufs = (vq->vring_packed.num + vq->next_avail_idx -
-> > +				vq->last_used_idx) * 3 / 4;
-> > +	else
-> > +		bufs = (vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
-> > +
-> > +	wrap_counter = vq->wrap_counter;
-> > +	if (vq->last_used_idx > vq->next_avail_idx)
-> > +		wrap_counter ^= 1;
-> > +
-> > +	used_idx = vq->last_used_idx + bufs;
-> > +	if (used_idx >= vq->vring_packed.num) {
-> > +		used_idx -= vq->vring_packed.num;
-> > +		wrap_counter ^= 1;
-> > +	}
-> 
-> Looks correct but maybe it's better to add some comments for such logic.
+> I would appreciate if you note that it is disabled on purpose and not
+> because something failed.
+> Other than those minor things I an board :)
 
-Make sense.
+Got it for v2.
 
 > 
-> > +
-> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +			used_idx | (wrap_counter << 15));
-> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> >   		virtio_wmb(vq->weak_barriers);
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >   							vq->event_flags_shadow);
-> >   	}
-> > @@ -1869,8 +1932,10 @@ void vring_transport_features(struct virtio_device *vdev)
-> >   		switch (i) {
-> >   		case VIRTIO_RING_F_INDIRECT_DESC:
-> >   			break;
-> > +#if 0
-> >   		case VIRTIO_RING_F_EVENT_IDX:
-> >   			break;
-> > +#endif
+> > -- 
+> > 2.17.0
 > 
-> Maybe it's time to remove this #if 0.
+> Sebastian
 
-Will do it.
-
-Thanks for the review!
-
-Best regards,
-Tiwei Bie
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
