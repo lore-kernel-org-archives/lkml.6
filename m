@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-654-1526464009-2-13007094943184892571
+X-Cyrus-Session-Id: sloti22d1t05-654-1526464004-2-2352145774467017067
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
@@ -13,27 +13,27 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464008; b=ONxriXkB2hukWr6gI7ChfLs45GAf/X0WrDQypjwQ/9/MwMpIhc
-    Vz6IItUuY5ICcHGUqxpL4PgpQcM56B3AWzbQXWuj67z4SRbgxwDMGCxi24li3Hh8
-    f1tE1OYmmWafZgFfNcfcgJ/F8e3UDRS0qHiLFJp/uQp6PxgnBOh7WEypDUZFPmlb
-    dl9I4GecBDOdUwZYc5zVoIEJUeaGAXz/bB+MHbNUAG4mNZ84Bilik1y9s0JNB48o
-    R73y4dbIB3KgpFNttrYdFAxm7cC76SEGJQ5tXMycQePCB6KFNbTuOubkmvf8estZ
-    U72c7GEkxa6uAGDs90J9itancXyBtae9QsYQ==
+    1526464004; b=VXQ/cBZF3umB6bOJmMsfKYrLwTvO9Vs+k+zVdopQpK5f8R7Z/x
+    LSyprYjJugQmq3vr3833fdgOdA5WQBmRUa+VauvL3Vf+0vPf0hfHeIUXX9hInYQt
+    kpOHj+x3+R53FGOpFyIJ6M4bAXsSplLejR4cuWA8+vCYN+wffyZsF1W3zv3CIqmq
+    RrezkFYoTw1Im1TLbdeD3vysCsCgWIVCAEvsmPOCYANu1BOQXxIT7G9H+yA2v4GH
+    DUweM3hDUsv85TBMhGJU38hVcZYi6qqbv/gEU3uYs5zNEmTXiIInlZcVX2GzEx5S
+    yFVaXakRnrpvwwMjSP6UH8FYeUsLoBitPHmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464008; bh=QGjIB
-    zZt+9nPRXGHzMPo0tYnjgQtBG9wiqGe7GaDjz0=; b=PuhOLPj6iK+R5LJc5ZgP+
-    GXe8OQ7qjOWWQbMzLBpw4yKMw4yw2pAAKZ41pEOFhuKvJ0l6lH5hYG3LxJ73OMIo
-    1SQlPuF3uJ3q1spW8zMzGwG0R4VmOlwMOvSJiVLsDCaN8KzSUIzveSFvG83fhIYp
-    sjsA8LW+VCLZFwkH8FAiRdHjqrWblu4Ith7oX8R7EuoWwcwNmMdKh2SsvuX8hzx0
-    WkMPFFQXfce3YWWeD47UUahkTY1nwL0lpAs1TqoGaITEhRaexPs3d1TpTx9elq/p
-    3F6N0+rEWixbXA3Vn8XzSxKMejnCzjrz/n0LoVep4egxueJnzGz6WwI3v9rhn2U0
-    w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464004; bh=NyiCL
+    J8CTnATpHBi6Heo9k9QkaWP4WMnZwDHKiKWyFc=; b=BQg/DXElRdemGE0KlWKIB
+    cCOqDC1cI7n6QcQLQiH41YEp9rMx3dDSFiVb1U4All7yNzB9NjEbpUaDJ1DXXz24
+    ZNXanjzHq5TeLf3nQE5F678n2yPwaxHiOCa8PkOgWT+7WPgJYR0C3sn3I+lEKxjn
+    tyfLgXEw6w4EyDGa2s2v8nk2TH3MERCckPfokp2k4zpiyEJmcdzja689d21H8hYD
+    2addcZGCc8knFnk8LZt0StN43rDmJLxROjtESGGswJh4Istw2WTNnm9brner4QBV
+    IwJqyXHMIjyxQ1cmgUgWXeNLFZK7UNMuGsc/TOMjo1+zI30wcd7kHHdgJ1y55kVP
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=dLWLPTqr
+    header.d=infradead.org header.i=@infradead.org header.b=ppxkhriO
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -49,10 +49,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=dLWLPTqr
+      header.d=infradead.org header.i=@infradead.org header.b=ppxkhriO
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -69,12 +69,12 @@ Authentication-Results: mx1.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBRa0izDjoTTFDO97Pkb8QDNANonBmRMC5LsztMM1U702I6EZXxdtn+CO7jVNmT66S+dKk1/QvT7O+9X5dBMsv1sHHPh8it+R0gOQjURhIHvDvpXShci
-    PpDpC1s4TA0Lm1sPVbuFed2QcgcFWDhtBlJA4GVH/UyvUcnpq9fanZlmB5yPOP5XrabrNOH/iFt/H05ujY9YqX6xxxx5huy5fjCh/dXmRNp3FN7KAYEHD3Qb
-    UxpUPSZSBkkiThPOz+KWLw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+X-CM-Envelope: MS4wfOSAXQVlQ6XYtkDDwJSb8GFjEO96uBYhmuNuJzpcOvcrRvHGw14SQLYUBfKEqiET86e3UbQhNgFF8NmxQRQyBcXD4bBuLUket4kk1CxntV4LLQRe0ztq
+    S+vh3DhQcg/zQ9aEu0rLNoukMG/ViRiGJw+F/VeBCk7K+K0xv5lGTYwmxMLuI4kdv4CuTTRA8T5AAAyVr0w6S6fsENz2eWrFLPRUJnOQuAxvzr4J12EEaY35
+    jGtZyF8UK7Gm0F9ktQwmlA==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=Wpy0-uDpMQgr-WdNMiwA:9
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=t6QSO1cpVmbLQ1TD7QsA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -82,9 +82,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 36/42] atm: simplify procfs code
-Date: Wed, 16 May 2018 11:43:40 +0200
-Message-Id: <20180516094346.20506-37-hch@lst.de>
+Subject: [PATCH 27/42] resource: switch to proc_create_seq_data
+Date: Wed, 16 May 2018 11:43:31 +0200
+Message-Id: <20180516094346.20506-28-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -118,108 +118,83 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use remove_proc_subtree to remove the whole subtree on cleanup, and
-unwind the registration loop into individual calls.  Switch to use
-proc_create_seq where applicable.
-
-Also don't bother handling proc_create* failures - the driver works
-perfectly fine without the proc files, and the cleanup will handle
-missing files gracefully.
+And use the root resource directly from the proc private data.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/atm/proc.c | 65 ++++++--------------------------------------------
- 1 file changed, 7 insertions(+), 58 deletions(-)
+ kernel/resource.c | 43 +++++--------------------------------------
+ 1 file changed, 5 insertions(+), 38 deletions(-)
 
-diff --git a/net/atm/proc.c b/net/atm/proc.c
-index 55410c00c7e2..f272b0f59d82 100644
---- a/net/atm/proc.c
-+++ b/net/atm/proc.c
-@@ -257,18 +257,6 @@ static const struct seq_operations atm_dev_seq_ops = {
- 	.show	= atm_dev_seq_show,
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 2af6c03858b9..b589dda910b3 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -87,7 +87,7 @@ enum { MAX_IORES_LEVEL = 5 };
+ static void *r_start(struct seq_file *m, loff_t *pos)
+ 	__acquires(resource_lock)
+ {
+-	struct resource *p = m->private;
++	struct resource *p = PDE_DATA(file_inode(m->file));
+ 	loff_t l = 0;
+ 	read_lock(&resource_lock);
+ 	for (p = p->child; p && l < *pos; p = r_next(m, p, &l))
+@@ -103,7 +103,7 @@ static void r_stop(struct seq_file *m, void *v)
+ 
+ static int r_show(struct seq_file *m, void *v)
+ {
+-	struct resource *root = m->private;
++	struct resource *root = PDE_DATA(file_inode(m->file));
+ 	struct resource *r = v, *p;
+ 	unsigned long long start, end;
+ 	int width = root->end < 0x10000 ? 4 : 8;
+@@ -135,44 +135,11 @@ static const struct seq_operations resource_op = {
+ 	.show	= r_show,
  };
  
--static int atm_dev_seq_open(struct inode *inode, struct file *file)
+-static int ioports_open(struct inode *inode, struct file *file)
 -{
--	return seq_open(file, &atm_dev_seq_ops);
+-	int res = seq_open(file, &resource_op);
+-	if (!res) {
+-		struct seq_file *m = file->private_data;
+-		m->private = &ioport_resource;
+-	}
+-	return res;
 -}
 -
--static const struct file_operations devices_seq_fops = {
--	.open		= atm_dev_seq_open,
+-static int iomem_open(struct inode *inode, struct file *file)
+-{
+-	int res = seq_open(file, &resource_op);
+-	if (!res) {
+-		struct seq_file *m = file->private_data;
+-		m->private = &iomem_resource;
+-	}
+-	return res;
+-}
+-
+-static const struct file_operations proc_ioports_operations = {
+-	.open		= ioports_open,
 -	.read		= seq_read,
 -	.llseek		= seq_lseek,
 -	.release	= seq_release,
 -};
 -
- static int pvc_seq_show(struct seq_file *seq, void *v)
- {
- 	static char atm_pvc_banner[] =
-@@ -440,58 +428,19 @@ void atm_proc_dev_deregister(struct atm_dev *dev)
- 	kfree(dev->proc_name);
- }
- 
--static struct atm_proc_entry {
--	char *name;
--	const struct file_operations *proc_fops;
--	struct proc_dir_entry *dirent;
--} atm_proc_ents[] = {
--	{ .name = "devices",	.proc_fops = &devices_seq_fops },
--	{ .name = "pvc",	.proc_fops = &pvc_seq_fops },
--	{ .name = "svc",	.proc_fops = &svc_seq_fops },
--	{ .name = "vc",		.proc_fops = &vcc_seq_fops },
--	{ .name = NULL,		.proc_fops = NULL }
+-static const struct file_operations proc_iomem_operations = {
+-	.open		= iomem_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
 -};
 -
--static void atm_proc_dirs_remove(void)
--{
--	static struct atm_proc_entry *e;
--
--	for (e = atm_proc_ents; e->name; e++) {
--		if (e->dirent)
--			remove_proc_entry(e->name, atm_proc_root);
--	}
--	remove_proc_entry("atm", init_net.proc_net);
--}
--
- int __init atm_proc_init(void)
+ static int __init ioresources_init(void)
  {
--	static struct atm_proc_entry *e;
--	int ret;
--
- 	atm_proc_root = proc_net_mkdir(&init_net, "atm", init_net.proc_net);
- 	if (!atm_proc_root)
--		goto err_out;
--	for (e = atm_proc_ents; e->name; e++) {
--		struct proc_dir_entry *dirent;
--
--		dirent = proc_create(e->name, 0444,
--				     atm_proc_root, e->proc_fops);
--		if (!dirent)
--			goto err_out_remove;
--		e->dirent = dirent;
--	}
--	ret = 0;
--out:
--	return ret;
--
--err_out_remove:
--	atm_proc_dirs_remove();
--err_out:
--	ret = -ENOMEM;
--	goto out;
-+		return -ENOMEM;
-+	proc_create_seq("devices", 0444, atm_proc_root, &atm_dev_seq_ops);
-+	proc_create("pvc", 0444, atm_proc_root, &pvc_seq_fops);
-+	proc_create("svc", 0444, atm_proc_root, &svc_seq_fops);
-+	proc_create("vc", 0444, atm_proc_root, &vcc_seq_fops);
-+	return 0;
+-	proc_create("ioports", 0, NULL, &proc_ioports_operations);
+-	proc_create("iomem", 0, NULL, &proc_iomem_operations);
++	proc_create_seq_data("ioports", 0, NULL, &resource_op,
++			&ioport_resource);
++	proc_create_seq_data("iomem", 0, NULL, &resource_op, &iomem_resource);
+ 	return 0;
  }
- 
- void atm_proc_exit(void)
- {
--	atm_proc_dirs_remove();
-+	remove_proc_subtree("atm", init_net.proc_net);
- }
+ __initcall(ioresources_init);
 -- 
 2.17.0
 
