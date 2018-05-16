@@ -1,91 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752448AbeEPHWR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:22:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44918 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752253AbeEPHWP (ORCPT
+        id S1751533AbeEPHYe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:24:34 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:60816 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbeEPHYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:22:15 -0400
-Date: Wed, 16 May 2018 09:22:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
-        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
-        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC/RFT] [PATCH 03/10] cpufreq: intel_pstate: Utility functions
- to boost HWP performance limits
-Message-ID: <20180516072202.GV12217@hirez.programming.kicks-ass.net>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
- <20180516044911.28797-4-srinivas.pandruvada@linux.intel.com>
+        Wed, 16 May 2018 03:24:33 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516044911.28797-4-srinivas.pandruvada@linux.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 09:24:31 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610-zii-dev: enable vf610 builtin temp sensor
+In-Reply-To: <20180516063921.10406-1-nikita.yoush@cogentembedded.com>
+References: <20180516063921.10406-1-nikita.yoush@cogentembedded.com>
+Message-ID: <682aea7dc714fea095f935d41c8fa270@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 09:49:04PM -0700, Srinivas Pandruvada wrote:
-> Setup necessary infrastructure to be able to boost HWP performance on a
-> remote CPU. First initialize data structure to be able to use
-> smp_call_function_single_async(). The boost up function simply set HWP
-> min to HWP max value and EPP to 0. The boost down function simply restores
-> to last cached HWP Request value.
+On 16.05.2018 08:39, Nikita Yushchenko wrote:
+> Vybrid has single internal temperature sensor connected to both internal
+> ADC modules.
 > 
-> To avoid reading HWP Request MSR during dynamic update, the HWP Request
-> MSR value is cached in the local memory. This caching is done whenever
-> HWP request MSR is modified during driver init on in setpolicy() callback
-> path.
+> vf610-zii-dev already has ADC0 enabled. Now, to get temperature sensor
+> captured by iio_hwmon driver, need to configure iio_hwmon node to use
+> that ADC.
 
-The patch does two independent things; best to split that.
+That seems sensible.
 
+Acked-by: Stefan Agner <stefan@agner.ch>
 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index f686bbe..dc7dfa9 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -221,6 +221,9 @@ struct global_params {
->   *			preference/bias
->   * @epp_saved:		Saved EPP/EPB during system suspend or CPU offline
->   *			operation
-> + * @hwp_req_cached:	Cached value of the last HWP request MSR
-
-That's simply not true given the code below.
-
-> @@ -763,6 +768,7 @@ static void intel_pstate_hwp_set(unsigned int cpu)
->  		intel_pstate_set_epb(cpu, epp);
->  	}
->  skip_epp:
-> +	cpu_data->hwp_req_cached = value;
->  	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
->  }
+> 
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> ---
+>  arch/arm/boot/dts/vf610-zii-dev.dtsi | 4 ++++
+>  arch/arm/boot/dts/vfxxx.dtsi         | 2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/vf610-zii-dev.dtsi
+> b/arch/arm/boot/dts/vf610-zii-dev.dtsi
+> index 4890b8a5aa44..5ae5abfe1d55 100644
+> --- a/arch/arm/boot/dts/vf610-zii-dev.dtsi
+> +++ b/arch/arm/boot/dts/vf610-zii-dev.dtsi
+> @@ -222,6 +222,10 @@
+>  	status = "okay";
+>  };
 >  
-> @@ -1381,6 +1387,39 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
->  	intel_pstate_set_min_pstate(cpu);
->  }
+> +&tempsensor {
+> +	io-channels = <&adc0 16>;
+> +};
+> +
+>  &iomuxc {
+>  	pinctrl_adc0_ad5: adc0ad5grp {
+>  		fsl,pins = <
+> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+> index c3f09b737924..d392794d9c13 100644
+> --- a/arch/arm/boot/dts/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+> @@ -84,7 +84,7 @@
+>  		mask = <0x1000>;
+>  	};
 >  
-> +
-> +static inline void intel_pstate_hwp_boost_up(struct cpudata *cpu)
-> +{
-> +	u64 hwp_req;
-> +	u8 max;
-> +
-> +	max = (u8) (cpu->hwp_req_cached >> 8);
-> +
-> +	hwp_req = cpu->hwp_req_cached & ~GENMASK_ULL(31, 24);
-> +	hwp_req = (hwp_req & ~GENMASK_ULL(7, 0)) | max;
-> +
-> +	wrmsrl(MSR_HWP_REQUEST, hwp_req);
-> +}
-> +
-> +static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
-> +{
-> +	wrmsrl(MSR_HWP_REQUEST, cpu->hwp_req_cached);
-> +}
-
-This is not a traditional msr shadow; that would be updated on every
-wrmsr. There is not a comment in sight explaining why this one is
-different.
+> -	iio-hwmon {
+> +	tempsensor: iio-hwmon {
+>  		compatible = "iio-hwmon";
+>  		io-channels = <&adc0 16>, <&adc1 16>;
+>  	};
