@@ -1,108 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751620AbeEPPJ7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:09:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51054 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeEPPJ6 (ORCPT
+        id S1752073AbeEPPKI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:10:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37200 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeEPPKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:09:58 -0400
-X-Google-Smtp-Source: AB8JxZreJWkD9v+8Ct5qbwc3T4Ndoqu317q1PBD2P4jzoKtx7wNMhBbAna92LblUCnDFrpDt5l19+Q==
-Reply-To: ahs3@redhat.com
-Subject: Re: [PATCH v3 2/3] ACPI: ensure acpi_parse_entries_array() does not
- access non-existent table data
-From: Al Stone <ahs3@redhat.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
-References: <20180501003907.4322-1-ahs3@redhat.com>
- <20180501003907.4322-3-ahs3@redhat.com>
- <CAJZ5v0j2qnB-CohTzdFzd1mgp0QAphxgTkXa9wVivh02JYnACA@mail.gmail.com>
- <04afae30-7012-ebb9-cd0e-3ec39bfd955c@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <944148ef-e8aa-72fc-069a-64ca793d1eeb@redhat.com>
-Date: Wed, 16 May 2018 09:09:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 16 May 2018 11:10:03 -0400
+Date: Wed, 16 May 2018 08:08:29 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 14/14] mm: turn on vm_fault_t type checking
+Message-ID: <20180516150829.GA4904@magnolia>
+References: <20180516054348.15950-1-hch@lst.de>
+ <20180516054348.15950-15-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <04afae30-7012-ebb9-cd0e-3ec39bfd955c@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180516054348.15950-15-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=860
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805160153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2018 03:53 PM, Al Stone wrote:
-> On 05/15/2018 11:19 AM, Rafael J. Wysocki wrote:
->> On Tue, May 1, 2018 at 2:39 AM, Al Stone <ahs3@redhat.com> wrote:
->>> For ACPI tables that have subtables, acpi_parse_entries_array() gets used
->>> to step through each of the subtables in memory.  The primary loop for this
->>> was checking that the beginning location of the subtable being examined
->>> plus the length of struct acpi_subtable_header was not beyond the end of
->>> the complete ACPI table; if it wasn't, the subtable could be examined, but
->>> if it was the loop would terminate as it should.
->>>
->>> In the middle of this subtable loop, a callback is used to examine the
->>> subtable in detail.
->>>
->>> Should the callback function try to examine elements of the subtable that
->>> are located past the subtable header, and the ACPI table containing this
->>> subtable has an incorrect length, it is possible to access either invalid
->>> or protected memory and cause a fault.  And, the length of struct
->>> acpi_subtable_header will always be smaller than the length of the actual
->>> subtable.
->>>
->>> To fix this, we make the main loop check that the beginning of the
->>> subtable being examined plus the actual length of the subtable does
->>> not go past the end of the enclosing ACPI table.  While this cannot
->>> protect us from malicious callback functions, it can prevent us from
->>> failing because of some poorly constructed ACPI tables.
->>>
->>> Found by inspection.  There is no functional change to existing code
->>> that is known to work when calling acpi_parse_entries_array().
->>>
->>> Signed-off-by: Al Stone <ahs3@redhat.com>
->>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>> Cc: Len Brown <lenb@kernel.org>
->>> ---
->>>  drivers/acpi/tables.c | 3 +--
->>>  1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
->>> index 4a3410aa6540..82c3e2c52dd9 100644
->>> --- a/drivers/acpi/tables.c
->>> +++ b/drivers/acpi/tables.c
->>> @@ -274,8 +274,7 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
->>>         entry = (struct acpi_subtable_header *)
->>>             ((unsigned long)table_header + table_size);
->>>
->>> -       while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) <
->>> -              table_end) {
->>> +       while ((unsigned long)entry + entry->length <= table_end) {
->>>                 if (max_entries && count >= max_entries)
->>>                         break;
->>>
->>> --
->>
->> This breaks the CPU enumeration on my Dell XPS13 9360 (possibly among
->> other things), so I'm dropping it.  I can send you acpidump output
->> from that machine if need be.
->>
->> Thanks,
->> Rafael
+On Wed, May 16, 2018 at 07:43:48AM +0200, Christoph Hellwig wrote:
+> Switch vm_fault_t to point to an unsigned int with __bіtwise annotations.
+> This both catches any old ->fault or ->page_mkwrite instance with plain
+> compiler type checking, as well as finding more intricate problems with
+> sparse.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-Let's just drop this completely -- but please do send the acpidump.  It's
-going to take me a while to figure why this innocuous little loop does not
-behave the way I expect it to.  I'll send a separate patch, if needed.
+<ULTRASNIP>
 
--- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+For the iomap and xfs parts,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+That said...
+
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 54f1e05ecf3e..da2b77a19911 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -22,7 +22,8 @@
+>  #endif
+>  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
+>  
+> -typedef int vm_fault_t;
+> +typedef unsigned __bitwise vm_fault_t;
+> +
+>  
+>  struct address_space;
+>  struct mem_cgroup;
+> @@ -619,7 +620,7 @@ struct vm_special_mapping {
+>  	 * If non-NULL, then this is called to resolve page faults
+>  	 * on the special mapping.  If used, .pages is not checked.
+>  	 */
+> -	int (*fault)(const struct vm_special_mapping *sm,
+> +	vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+
+Uh, we're changing function signatures /and/ redefinining vm_fault_t?
+All in the same 90K patch?
+
+I /was/ expecting a series of "convert XXXXX and all callers/users"
+patches followed by a trivial one to switch the definition, not a giant
+pile of change.  FWIW I don't mind so much if you make a patch
+containing a change for some super-common primitive and a hojillion
+little diff hunks tree-wide, but only one logical change at a time for a
+big patch, please...
+
+I quite prefer seeing the whole series from start to finish all packaged
+up in one series, but wow this was overwhelming. :/
+
+--D
+
+<ULTRASNIP>
