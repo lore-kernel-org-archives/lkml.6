@@ -1,84 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeEPIyk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:54:40 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:52112 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbeEPIyS (ORCPT
+        id S1752357AbeEPI4f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:56:35 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52582 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751844AbeEPI4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:54:18 -0400
-Date: Wed, 16 May 2018 10:54:14 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] ARM: dts: r8a7740: Add CEU0
-Message-ID: <20180516085409.5u4hnes2dsfwwf5u@verge.net.au>
-References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524767083-19862-3-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWSasm9PfurphB5wrgrhkO8v7YBpSZNnnC+mS_Vs4AJ5Q@mail.gmail.com>
+        Wed, 16 May 2018 04:56:31 -0400
+X-Google-Smtp-Source: AB8JxZpgCY0mvr3cie8hDU1o3XimayrXq7b3Os+swk3htwHERTSv9LfjTDvqGKeneUIppytEJuZ+rQ==
+Date: Wed, 16 May 2018 10:56:28 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 10/14] net: sched: extend act API for lockless actions
+Message-ID: <20180516085628.GE1972@nanopsycho>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-11-git-send-email-vladbu@mellanox.com>
+ <20180516075000.GC1972@nanopsycho>
+ <vbfbmdg10du.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWSasm9PfurphB5wrgrhkO8v7YBpSZNnnC+mS_Vs4AJ5Q@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <vbfbmdg10du.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 09:40:09AM +0200, Geert Uytterhoeven wrote:
-> Hi Jacopo,
-> 
-> On Thu, Apr 26, 2018 at 8:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > Describe CEU0 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
-> >
-> > Reported-by: Geert Uytterhoeven <geert@glider.be>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> 
-> Thanks for your patch!
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Minor question below.
-> 
-> > --- a/arch/arm/boot/dts/r8a7740.dtsi
-> > +++ b/arch/arm/boot/dts/r8a7740.dtsi
-> > @@ -67,6 +67,16 @@
-> >                 power-domains = <&pd_d4>;
-> >         };
-> >
-> > +       ceu0: ceu@fe910000 {
-> > +               reg = <0xfe910000 0x3000>;
-> > +               compatible = "renesas,r8a7740-ceu";
-> > +               interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-> > +               clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-> > +               clock-names = "ceu20";
-> 
-> Why the "clock-names" property? It's not mentioned in the DT bindings, and
-> may cause issues if the bindings are ever amended.
+Wed, May 16, 2018 at 10:16:13AM CEST, vladbu@mellanox.com wrote:
+>
+>On Wed 16 May 2018 at 07:50, Jiri Pirko <jiri@resnulli.us> wrote:
+>> Mon, May 14, 2018 at 04:27:11PM CEST, vladbu@mellanox.com wrote:
+>>>Implement new action API function to atomically delete action with
+>>>specified index and to atomically insert unique action. These functions are
+>>>required to implement init and delete functions for specific actions that
+>>>do not rely on rtnl lock.
+>>>
+>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>>>---
+>>> include/net/act_api.h |  2 ++
+>>> net/sched/act_api.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>>> 2 files changed, 47 insertions(+)
+>>>
+>>>diff --git a/include/net/act_api.h b/include/net/act_api.h
+>>>index a8c8570..bce0cf1 100644
+>>>--- a/include/net/act_api.h
+>>>+++ b/include/net/act_api.h
+>>>@@ -153,7 +153,9 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+>>> 		   struct tc_action **a, const struct tc_action_ops *ops,
+>>> 		   int bind, bool cpustats);
+>>> void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a);
+>>>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a);
+>>> 
+>>>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index);
+>>> int __tcf_idr_release(struct tc_action *a, bool bind, bool strict);
+>>> 
+>>> static inline int tcf_idr_release(struct tc_action *a, bool bind)
+>>>diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+>>>index 2772276e..a5193dc 100644
+>>>--- a/net/sched/act_api.c
+>>>+++ b/net/sched/act_api.c
+>>>@@ -330,6 +330,41 @@ bool tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
+>>> }
+>>> EXPORT_SYMBOL(tcf_idr_check);
+>>> 
+>>>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index)
+>>>+{
+>>>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>>>+	struct tc_action *p;
+>>>+	int ret = 0;
+>>>+
+>>>+	spin_lock_bh(&idrinfo->lock);
+>>
+>> Why "_bh" is needed here?
+>
+>Original idr remove function used _bh version so I used it here as well.
+>As I already replied to your previous question about idrinfo lock usage,
+>I don't see any particular reason for locking with _bh at this point.
+>I've contacted the author(Chris Mi) and he said that he just preserved
+>locking the same way as it was before he changed hash table to idr for
+>action lookup.
+>
+>You want me to do standalone patch that cleans up idrinfo locking?
 
-I have dropped that property for now.
+Yes please. You can send it separately, not as a part of this patchset.
 
-> 
-> > +               power-domains = <&pd_a4r>;
-> > +               status = "disabled";
-> > +       };
-> > +
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+
+
+>
+>>
+>>
+>>>+	p = idr_find(&idrinfo->action_idr, index);
+>>>+	if (!p) {
+>>>+		spin_unlock(&idrinfo->lock);
+>>>+		return -ENOENT;
+>>>+	}
+>>>+
+>>>+	if (!atomic_read(&p->tcfa_bindcnt)) {
+>>>+		if (refcount_dec_and_test(&p->tcfa_refcnt)) {
+>>>+			struct module *owner = p->ops->owner;
+>>>+
+>>>+			WARN_ON(p != idr_remove(&idrinfo->action_idr,
+>>>+						p->tcfa_index));
+>>>+			spin_unlock_bh(&idrinfo->lock);
+>>>+
+>>>+			tcf_action_cleanup(p);
+>>>+			module_put(owner);
+>>>+			return 0;
+>>>+		}
+>>>+		ret = 0;
+>>>+	} else {
+>>>+		ret = -EPERM;
+>>
+>> I wonder if "-EPERM" is the best error code for this...
+>
+>This is what original code returned so I decided to preserve
+>compatibility.
+
+Okay.
+
+
+>
+>>
+>>
+>>>+	}
+>>>+
+>>>+	spin_unlock_bh(&idrinfo->lock);
+>>>+	return ret;
+>>>+}
+>>>+EXPORT_SYMBOL(tcf_idr_find_delete);
+>>>+
+>>> int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+>>> 		   struct tc_action **a, const struct tc_action_ops *ops,
+>>> 		   int bind, bool cpustats)
+>>>@@ -407,6 +442,16 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
+>>> }
+>>> EXPORT_SYMBOL(tcf_idr_insert);
+>>> 
+>>>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a)
+>>>+{
+>>>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>>>+
+>>>+	spin_lock_bh(&idrinfo->lock);
+>>>+	WARN_ON(idr_replace(&idrinfo->action_idr, a, a->tcfa_index));
+>>
+>> Under which condition this WARN_ON is hit?
+>
+>When idr replace returns non-NULL pointer, which means that somehow
+>concurrent insertion of action with same index has happened and we are
+>leaking memory.
+
+Is that possible to happen? Meaning, can I as a user cause this by doing
+something in a wrong/unexpected way?
+
+
+>
+>By the way I'm still not sure if having this insert unique function is
+>warranted or I should just add WARN to regular idr insert. What is your
+>opinion on this?
+
+I have to check where you use this.
+
+
+>
+>>
+>>
+>>>+	spin_unlock_bh(&idrinfo->lock);
+>>>+}
+>>>+EXPORT_SYMBOL(tcf_idr_insert_unique);
+>>>+
+>>> void tcf_idrinfo_destroy(const struct tc_action_ops *ops,
+>>> 			 struct tcf_idrinfo *idrinfo)
+>>> {
+>>>-- 
+>>>2.7.5
+>>>
+>
