@@ -1,169 +1,474 @@
-Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-945659-1525275181-2-5540118728225446780
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-354822-1526480468-2-2003343201718922713
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.169.12', Host='mail.linuxfoundation.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525275180; b=mEtaJ/A0WXq3zk4uSuN8S54Wv9DnPOlj6Aowws8YTeAK665vVv
-    gUdsXob/VrcbioWyI0yBgswc+NX1UGJz7/4X8+/J54I4nfjfhBP3ZQiFBGJ4FNWi
-    ISuWRE7HiDmw9hE8uf39j8xNtn3CRPyC13QUV11ycnKm2T9UIKGbZgH/h2R2Hx5d
-    XGNNbTMffzAkAcZ7zrmJ0HodOFQ5YbLcGhmBMW1U+r6LTQSOo2u0pEVSXIyqI/DU
-    efBmFsjvSIhgQeQtnoUwEISlAw9LlIhZ+hnLuF1J2p6k/O9/fX8tPcbMNV+nfdT2
-    GCr48FFHaJPI/pZ0onc2t/AVnD5pJbbxY0tg==
+    1526480467; b=enRfJxOkatebWnYlzLDPRUrqmUI3fmC++XEIgUM834Sdj0dIpS
+    rS+tqYzNH8nDeHNn/k/izn27RV3rch5fe8ql7ju+xldC1qLnJVXaNd3poFJOFxc1
+    M583RWy/W8vHiJsdZfgCCy/cp1U2g5VXDxWZSLVHTzS399e0SiNcjSZZk0MGPxIm
+    Kf3hu/L3F5feOlkdudPCeJXwnQSllsyOKKbVLHlY/qJOa7uIRoJVyurXEQkP91Hu
+    ODuXuAbWoIqWuU8JmDtGDE1BMxWY84zlZIRB/Q3pAjhmM57eTURf039Fi5ZqWBZU
+    flfmK0/Rqg11VxYg/4YHx9gF8cpBNruAOYmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:to:cc:subject:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525275180; bh=a+bF5
-    NEmCgEmSBmLS16Ssf9bP6NTOWr/yv+9oO9BMPQ=; b=Q8/9ONGeTX7L4N8o47TBw
-    FOuNXBsxPs9SV+MimEYGNEuoGVF+96MmbYcUtJLa8eU2ETkaLJOt5QITzE9YmmWb
-    aPLcdtBwUiB6BZWuQg3INxyUxt4TI/GgVwZYBUzg8zbnQ7A1ntdy4VYdJb9xzcwK
-    of3kB7FoyaXWU52qDsT3NE+5IbzygK4F6veUZY57ELQhuPQ9Hh9vqZqVkvjJ55ty
-    aL23gqPiQFX2jvz2spLjRZQzGhmZyD8TijuCDNOiCnsHdtFFmO6vv41Wn8pJFoh9
-    0q97E8yMh2GHz5OQik+FkB/wGTJYY78Zou54ZIt96CqGKpUDocBrKoE43BSR63wj
-    A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=YcYoanBN x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
-    spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
-    smtp.helo=mail.linuxfoundation.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526480467; bh=mOxuGVoscup/eMmznL5NQixH08BU/R
+    olHmVSavl9ZBw=; b=G5uq5orgXstumhGiz0hj9MCXCDbcA78nky9pHZ6BlMtqmB
+    s/XoqjWjIw75ihxnLY3IkV0WKkKe1Ef76iCilDIBQZbxiWvbrg8RcTCVw82wDrJ6
+    vTsl+a8qDS3H2brSkgac9VUd2ks/RZAjPU+uoYmoz77dIL6rEr4QTeSfc/nyBwYp
+    ERK4cwAMuweL6KLGOBK5cnMn8OPO29V49AcV6byzP69IqySwOsE5/R6Cc8iCor53
+    nXPagVhJXWBH5QifgfD3vvJxhNRy/zNziOmD+WmHCRuk6fxN27FmScjkhFYYJj/m
+    YEYoNNlVBrTqG7nTF7spe0MkKFlIkFYs2Yy3a6QA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=lXdCt4EK;
-    x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
-    x-ptr-lookup=mail.linuxfoundation.org;
-    x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
-    smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-    smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=YcYoanBN x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
-    spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
-      smtp.helo=mail.linuxfoundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=lXdCt4EK;
-    x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
-      x-ptr-lookup=mail.linuxfoundation.org;
-    x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
-      smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-      smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOYiCxN5y3fApGnb23G5QoSNW9nQZQhXIHceVAnB9d5dkxcGyzOVC8ho+3ej4GST+rSc5LfiGCGBXhoEMSww38KUoqEbGYWXh9EHhfzwT3RRnilpKvPK
-    mSjrdXLkWV05JG3t5GUQ57czWmX3oZxbZIcNJg2oNGeZnkjYn65IFMhOZ6rbhw26Fv6Ww9X2ceZbV/ybId1fZ+d4pdbxzJgJSVh1jl4zfBR/WXFkqBDQDsDh
-    B/ChbhKE7yFLx3j7C4TpLQ==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
-    a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=tBb2bbeoAAAA:8
-    a=ag1SF4gXAAAA:8 a=uOzsrhemMssQ0ScqTuMA:9 a=CjuIK1q_8ugA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
+X-CM-Envelope: MS4wfBDJmtafjHaww+ScrhQ5fLQjsJqXk/Ntmu7F4BthbdEneRLYgeWTwU3ed/Kl3U0mwuSEC69fS/FKvQdjqecWV3cC6moE7vBCickC9gB/n9HjJ5UvgG3m
+    9IePdooKkGvHUDMXCHACBwE257MFNNPKRxtweKtc6K8FfirsP3OIotBWuu9C2cvJte1aDFLB5Yrn9cP75XyVunddmFoYo0hUbB/k3Ekx6rtHvRzUwa0H7hnM
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=7CQSdrXTAAAA:8
+    a=rWkr9Ua9AAAA:8 a=tOO0nKmCAAAA:8 a=pGLkceISAAAA:8 a=PHq6YzTAAAAA:8
+    a=QyXUC8HyAAAA:8 a=LQ17Lw9wAAAA:8 a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8
+    a=wMNdZWldAAAA:8 a=hGzw-44bAAAA:8 a=pFyQfRViAAAA:8 a=VnNF1IyMAAAA:8
+    a=hAG5_4vcAAAA:8 a=J1Y8HTJGAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8
+    a=F-1i3n2SAAAA:8 a=bApzTrsVcetbnw2BrzMA:9 a=yjdKvjokFrlU79sb:21
+    a=NmRtvmuCvDncZGQk:21 a=x8gzFH9gYPwA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=Qv-QrLrHZjTXZfLJ-zom:22 a=Gz67Kf0DkuxJ4rqyVRET:22 a=ZKzU8r6zoKMcqsNulkmm:22
+    a=j77vJcMW1SzrPxEKBuqB:22 a=S-HzPIwwDS8t1QcwSuWs:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=FUarYpL4UH3yWsho8X8J:22 a=HvKuF1_PTVFglORKqfwH:22 a=oJz5jJLG1JtSoe7EL652:22
+    a=8Bh8Pg2EFav9IBZ9i9Tn:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=NdAtdrkLVvyUPsUoGJp4:22
+    a=DkFbxxcXd2AJf-O9kuUr:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-X-Google-Smtp-Source: AB8JxZr+uNluorhf5UOvNsYrHJ6a4TcLA65+kWg0Dd0DKWXHfRfcV7RLd0nwJLl9lgTBVMJLKCcEaCIWZRWaViUkmt4=
-MIME-Version: 1.0
-In-Reply-To: <20180501163818.GD1468@sasha-vm>
-References: <20180501163818.GD1468@sasha-vm>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 May 2018 17:32:38 +0200
-X-Google-Sender-Auth: feKfOLjKYh0z9IeaM_OjQb1mTUk
-Message-ID: <CAMuHMdW7dzsfwBr3fAZADA9NK4osuHqMDvXvN+MrV4u098vbAw@mail.gmail.com>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID, FREEMAIL_FROM,
-	RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
-X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
-	smtp1.linux-foundation.org
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"w@1wt.eu" <w@1wt.eu>, "ksummit-discuss@lists.linuxfoundation.org"
-	<ksummit-discuss@lists.linuxfoundation.org>
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-X-BeenThere: ksummit-discuss@lists.linuxfoundation.org
-X-Mailman-Version: 2.1.12
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/ksummit-discuss>,
-	<mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/ksummit-discuss/>
-List-Post: <mailto:ksummit-discuss@lists.linuxfoundation.org>
-List-Help: <mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss>,
-	<mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: ksummit-discuss-bounces@lists.linuxfoundation.org
-Errors-To: ksummit-discuss-bounces@lists.linuxfoundation.org
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752493AbeEPOVF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 10:21:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49468 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752479AbeEPOVC (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 16 May 2018 10:21:02 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [RFC PATCH] UAPI: Document auxvec AT_* namespace policy and note reservations
+Date: Wed, 16 May 2018 15:20:47 +0100
+Message-Id: <1526480447-18185-1-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Sasha,
+There are constraints on defining AT_* auxvec tags that are not
+obvious to the casual maintainer of either the global
+<uapi/linux/auxvec.h> or the arch-specific headers.  This is likely
+to lead to mistakes.  (I certainly fell foul of it...)
 
-On Tue, May 1, 2018 at 6:38 PM, Sasha Levin
-<Alexander.Levin@microsoft.com> wrote:
-> Working on AUTOSEL, it became even more obvious to me how difficult it is for a
-> patch to get a proper review. Maintainers found it difficult to keep up with
-> the upstream work for their subsystem, and reviewing additional -stable patches
-> put even more load on them which some suggested would be more than what they
-> can handle.
+For the benefit of future maintainers, this patch collects the
+relevant information in one place, documenting how the namespace
+needs to be managed, and noting all the values currently in use.
 
-Thanks for your work!
+Maintaining a global list may result in some merge conflicts, but
+AT_* values are not added frequently.  I'm open to suggestions on
+the best approach.
 
->  - For some reason, the odds of a -rc commit to be targetted for -stable is
->    over 20%, while for merge window commits it's about 3%. I can't quite
-> explain why that happens, but this would suggest that -rc commits end up
-> hurting -stable pretty badly.
+I also assume that values 38 and 39 may have been used for
+historical purposes, such as an architecture that is no longer
+supported.  If they have definitely never been used for anything,
+they could be removed from the "reserved" list.
 
-Aren't more -rc commits targeted for -stable because they are bugfixes?
-Ideally, new features are supposed to be merged during the merge window,
-while -rc commits fix bugs.
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Michal Simek <monstr@monstr.eu>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <albert@sifive.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+---
+ arch/alpha/include/uapi/asm/auxvec.h      |  5 ++++
+ arch/arm/include/uapi/asm/auxvec.h        |  5 ++++
+ arch/arm64/include/uapi/asm/auxvec.h      |  5 ++++
+ arch/ia64/include/uapi/asm/auxvec.h       |  5 ++++
+ arch/microblaze/include/uapi/asm/auxvec.h |  4 ++++
+ arch/mips/include/uapi/asm/auxvec.h       |  5 ++++
+ arch/nds32/include/uapi/asm/auxvec.h      |  5 ++++
+ arch/powerpc/include/uapi/asm/auxvec.h    |  5 ++++
+ arch/riscv/include/uapi/asm/auxvec.h      |  5 ++++
+ arch/s390/include/uapi/asm/auxvec.h       |  5 ++++
+ arch/sh/include/uapi/asm/auxvec.h         |  5 ++++
+ arch/sparc/include/uapi/asm/auxvec.h      |  8 ++++---
+ arch/x86/include/uapi/asm/auxvec.h        |  5 ++++
+ arch/xtensa/include/uapi/asm/auxvec.h     |  5 ++++
+ include/uapi/linux/auxvec.h               | 40 ++++++++++++++++++++++++++++---
+ 15 files changed, 106 insertions(+), 6 deletions(-)
 
-So they can be categorized like:
-  1. Plain -rc commits,
-  2. -rc commits fixing a bug:
-       a. in the same release cycle,
-       b. in a previous release.
-
-2a assumes the bug was backported to -stable, too, doesn't it?
-
-Do you have statistics for which categories are most buggy?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/alpha/include/uapi/asm/auxvec.h b/arch/alpha/include/uapi/asm/auxvec.h
+index 57cae87..9370d78 100644
+--- a/arch/alpha/include/uapi/asm/auxvec.h
++++ b/arch/alpha/include/uapi/asm/auxvec.h
+@@ -22,6 +22,11 @@
+ #define AT_L2_CACHESHAPE	36
+ #define AT_L3_CACHESHAPE	37
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 4 /* entries in ARCH_DLINFO */
+ 
+ #endif /* __ASM_ALPHA_AUXVEC_H */
+diff --git a/arch/arm/include/uapi/asm/auxvec.h b/arch/arm/include/uapi/asm/auxvec.h
+index 5c09da5..b5cfba2 100644
+--- a/arch/arm/include/uapi/asm/auxvec.h
++++ b/arch/arm/include/uapi/asm/auxvec.h
+@@ -5,4 +5,9 @@
+ /* VDSO location */
+ #define AT_SYSINFO_EHDR	33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #endif
+diff --git a/arch/arm64/include/uapi/asm/auxvec.h b/arch/arm64/include/uapi/asm/auxvec.h
+index ec0a86d..3da03fc 100644
+--- a/arch/arm64/include/uapi/asm/auxvec.h
++++ b/arch/arm64/include/uapi/asm/auxvec.h
+@@ -20,6 +20,11 @@
+ /* vDSO location */
+ #define AT_SYSINFO_EHDR	33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 1 /* entries in ARCH_DLINFO */
+ 
+ #endif
+diff --git a/arch/ia64/include/uapi/asm/auxvec.h b/arch/ia64/include/uapi/asm/auxvec.h
+index 09969a5..a81aec5 100644
+--- a/arch/ia64/include/uapi/asm/auxvec.h
++++ b/arch/ia64/include/uapi/asm/auxvec.h
+@@ -9,6 +9,11 @@
+ #define AT_SYSINFO	32
+ #define AT_SYSINFO_EHDR	33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 2 /* entries in ARCH_DLINFO */
+ 
+ #endif /* _ASM_IA64_AUXVEC_H */
+diff --git a/arch/microblaze/include/uapi/asm/auxvec.h b/arch/microblaze/include/uapi/asm/auxvec.h
+index 93dd07b..b08c6dc 100644
+--- a/arch/microblaze/include/uapi/asm/auxvec.h
++++ b/arch/microblaze/include/uapi/asm/auxvec.h
+@@ -1,2 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
+diff --git a/arch/mips/include/uapi/asm/auxvec.h b/arch/mips/include/uapi/asm/auxvec.h
+index 612c2c4..ee94899 100644
+--- a/arch/mips/include/uapi/asm/auxvec.h
++++ b/arch/mips/include/uapi/asm/auxvec.h
+@@ -15,6 +15,11 @@
+ /* Location of VDSO image. */
+ #define AT_SYSINFO_EHDR		33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 1 /* entries in ARCH_DLINFO */
+ 
+ #endif /* __ASM_AUXVEC_H */
+diff --git a/arch/nds32/include/uapi/asm/auxvec.h b/arch/nds32/include/uapi/asm/auxvec.h
+index 56043ce..0173da1 100644
+--- a/arch/nds32/include/uapi/asm/auxvec.h
++++ b/arch/nds32/include/uapi/asm/auxvec.h
+@@ -7,6 +7,11 @@
+ /* VDSO location */
+ #define AT_SYSINFO_EHDR	33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 1
+ 
+ #endif
+diff --git a/arch/powerpc/include/uapi/asm/auxvec.h b/arch/powerpc/include/uapi/asm/auxvec.h
+index 7af21dc..3da0713 100644
+--- a/arch/powerpc/include/uapi/asm/auxvec.h
++++ b/arch/powerpc/include/uapi/asm/auxvec.h
+@@ -48,6 +48,11 @@
+ #define AT_L3_CACHESIZE		46
+ #define AT_L3_CACHEGEOMETRY	47
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH	14 /* entries in ARCH_DLINFO */
+ 
+ #endif
+diff --git a/arch/riscv/include/uapi/asm/auxvec.h b/arch/riscv/include/uapi/asm/auxvec.h
+index 1376515..0dd7983 100644
+--- a/arch/riscv/include/uapi/asm/auxvec.h
++++ b/arch/riscv/include/uapi/asm/auxvec.h
+@@ -21,4 +21,9 @@
+ /* vDSO location */
+ #define AT_SYSINFO_EHDR 33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #endif /* _UAPI_ASM_RISCV_AUXVEC_H */
+diff --git a/arch/s390/include/uapi/asm/auxvec.h b/arch/s390/include/uapi/asm/auxvec.h
+index a056c46..c30090a 100644
+--- a/arch/s390/include/uapi/asm/auxvec.h
++++ b/arch/s390/include/uapi/asm/auxvec.h
+@@ -4,6 +4,11 @@
+ 
+ #define AT_SYSINFO_EHDR		33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 1 /* entries in ARCH_DLINFO */
+ 
+ #endif
+diff --git a/arch/sh/include/uapi/asm/auxvec.h b/arch/sh/include/uapi/asm/auxvec.h
+index 8eb47ed..e5b6ebc 100644
+--- a/arch/sh/include/uapi/asm/auxvec.h
++++ b/arch/sh/include/uapi/asm/auxvec.h
+@@ -34,6 +34,11 @@
+ #define AT_L1D_CACHESHAPE	35
+ #define AT_L2_CACHESHAPE	36
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH 5 /* entries in ARCH_DLINFO */
+ 
+ #endif /* __ASM_SH_AUXVEC_H */
+diff --git a/arch/sparc/include/uapi/asm/auxvec.h b/arch/sparc/include/uapi/asm/auxvec.h
+index ab8780f..76aba18 100644
+--- a/arch/sparc/include/uapi/asm/auxvec.h
++++ b/arch/sparc/include/uapi/asm/auxvec.h
+@@ -3,13 +3,15 @@
+ 
+ #define AT_SYSINFO_EHDR		33
+ 
+-/* Avoid overlap with other AT_* values since they are consolidated in
+- * glibc and any overlaps can cause problems
+- */
+ #define AT_ADI_BLKSZ	48
+ #define AT_ADI_NBITS	49
+ #define AT_ADI_UEONADI	50
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #define AT_VECTOR_SIZE_ARCH	4
+ 
+ #endif /* !(__ASMSPARC_AUXVEC_H) */
+diff --git a/arch/x86/include/uapi/asm/auxvec.h b/arch/x86/include/uapi/asm/auxvec.h
+index 580e3c5..700c0fc 100644
+--- a/arch/x86/include/uapi/asm/auxvec.h
++++ b/arch/x86/include/uapi/asm/auxvec.h
+@@ -10,6 +10,11 @@
+ #endif
+ #define AT_SYSINFO_EHDR		33
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ /* entries in ARCH_DLINFO: */
+ #if defined(CONFIG_IA32_EMULATION) || !defined(CONFIG_X86_64)
+ # define AT_VECTOR_SIZE_ARCH 2
+diff --git a/arch/xtensa/include/uapi/asm/auxvec.h b/arch/xtensa/include/uapi/asm/auxvec.h
+index 257dec7..995bbd8 100644
+--- a/arch/xtensa/include/uapi/asm/auxvec.h
++++ b/arch/xtensa/include/uapi/asm/auxvec.h
+@@ -1,4 +1,9 @@
+ #ifndef __XTENSA_AUXVEC_H
+ #define __XTENSA_AUXVEC_H
+ 
++/*
++ * Do not add new AT_* definitions here without coordinating with
++ * <uapi/linux/auxvec.h>
++ */
++
+ #endif
+diff --git a/include/uapi/linux/auxvec.h b/include/uapi/linux/auxvec.h
+index abe5f2b..c19c043 100644
+--- a/include/uapi/linux/auxvec.h
++++ b/include/uapi/linux/auxvec.h
+@@ -4,8 +4,19 @@
+ 
+ #include <asm/auxvec.h>
+ 
+-/* Symbolic values for the entries in the auxiliary table
+-   put on the initial stack */
++/*
++ * Symbolic values for the entries in the auxiliary table
++ * put on the initial stack.
++ *
++ * Values with definitions here are common to all architectures.
++ * Individual architectures may define additional values in their
++ * <uapi/asm/auxvec.h>.
++ *
++ * NOTE: Userspace may treat these numbers as a global namespace.
++ * Any per-architecture definition must not overlap with these or with
++ * any other architecture's definitions, unless it has identical name
++ * and number and compatible meaning.
++ */
+ #define AT_NULL   0	/* end of vector */
+ #define AT_IGNORE 1	/* entry should be ignored */
+ #define AT_EXECFD 2	/* file descriptor of program */
+@@ -24,7 +35,11 @@
+ #define AT_PLATFORM 15  /* string identifying CPU for optimizations */
+ #define AT_HWCAP  16    /* arch dependent hints at CPU capabilities */
+ #define AT_CLKTCK 17	/* frequency at which times() increments */
+-/* AT_* values 18 through 22 are reserved */
++/* 18 reserved for AT_FPUCW		(sh) */
++/* 19 reserved for AT_DCACHEBSIZE	(powerpc) */
++/* 20 reserved for AT_ICACHEBSIZE	(powerpc) */
++/* 21 reserved for AT_UCACHEBSIZE	(powerpc) */
++/* 22 reserved for AT_IGNOREPPC		(powerpc) */
+ #define AT_SECURE 23   /* secure mode boolean */
+ #define AT_BASE_PLATFORM 24	/* string identifying real platform, may
+ 				 * differ from AT_PLATFORM. */
+@@ -33,5 +48,24 @@
+ 
+ #define AT_EXECFN  31	/* filename of program */
+ 
++/* 32 reserved for AT_SYSINFO		(alpha ia64 um x86) */
++/* 33 reserved for AT_SYSINFO_EHDR	(various architectures) */
++/* 34 reserved for AT_L1I_CACHESHAPE	(alpha sh) */
++/* 35 reserved for AT_L1D_CACHESHAPE	(alpha sh) */
++/* 36 reserved for AT_L2_CACHESHAPE	(alpha sh) */
++/* 37 reserved for AT_L3_CACHESHAPE	(alpha) */
++/* 38 reserved, do not allocate */
++/* 39 reserved, do not allocate */
++/* 40 reserved for AT_L1I_CACHESIZE	(powerpc) */
++/* 41 reserved for AT_L1I_CACHEGEOMETRY	(powerpc) */
++/* 42 reserved for AT_L1D_CACHESIZE	(powerpc) */
++/* 43 reserved for AT_L1D_CACHEGEOMETRY	(powerpc) */
++/* 44 reserved for AT_L2_CACHESIZE	(powerpc) */
++/* 45 reserved for AT_L2_CACHEGEOMETRY	(powerpc) */
++/* 46 reserved for AT_L3_CACHESIZE	(powerpc) */
++/* 47 reserved for AT_L3_CACHEGEOMETRY	(powerpc) */
++/* 48 reserved for AT_ADI_BLKSZ		(sparc) */
++/* 49 reserved for AT_ADI_NBITS		(sparc) */
++/* 50 reserved for AT_ADI_UEONADI	(sparc) */
+ 
+ #endif /* _UAPI_LINUX_AUXVEC_H */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.1.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
-_______________________________________________
-Ksummit-discuss mailing list
-Ksummit-discuss@lists.linuxfoundation.org
-https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
