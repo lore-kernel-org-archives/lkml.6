@@ -1,90 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752585AbeEPNhL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:37:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44612 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752309AbeEPNhJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:37:09 -0400
-Date: Wed, 16 May 2018 10:36:56 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180516103656.208043d4@vento.lan>
-In-Reply-To: <20180516131108.xcvsw6m4qrmqgykh@mwanda>
-References: <20180423152455.363d285c@vento.lan>
-        <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
-        <20180423161742.66f939ba@vento.lan>
-        <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
-        <20180426204241.03a42996@vento.lan>
-        <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
-        <20180515085953.65bfa107@vento.lan>
-        <20180515141655.idzuh2jfdkuu5grs@mwanda>
-        <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
-        <20180515160033.156f119c@vento.lan>
-        <20180516131108.xcvsw6m4qrmqgykh@mwanda>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1752654AbeEPNin (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:38:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752245AbeEPNii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:38:38 -0400
+Message-Id: <20180516133836.518686476@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Wed, 16 May 2018 09:36:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>, tom.zanussi@linux.intel.com
+Subject: [PATCH RT 3/5] tracing: Restore proper field flag printing when displaying triggers
+References: <20180516133642.521479369@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0003-tracing-Restore-proper-field-flag-printing-when-disp.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 16 May 2018 16:11:08 +0300
-Dan Carpenter <dan.carpenter@oracle.com> escreveu:
+4.14.40-rt31-rc1 stable review patch.
+If anyone has any objections, please let me know.
 
-> On Tue, May 15, 2018 at 04:00:33PM -0300, Mauro Carvalho Chehab wrote:
-> > Yeah, that's the same I'm getting from media upstream.
-> >   
-> > > drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
-> > > warn: potential spectre issue 'pin->error_inj_args'  
-> > 
-> > This one seems a false positive, as the index var is u8 and the
-> > array has 256 elements, as the userspace input from 'op' is 
-> > initialized with:
-> > 
-> > 	u8 v;
-> > 	u32 op;
-> > 
-> > 	if (!kstrtou8(token, 0, &v))
-> > 		op = v;
-> >   
-> 
-> It's hard to silence this because Smatch stores the current user
-> controlled range list, not what it was initially.  I wrote all this code
-> to detect bounds checking errors, so there wasn't any need to save the
-> range list before the bounds check.  Since "op" is a u32, I can't even
-> go by the type of the index....
+------------------
 
-Yeah, I was thinking that is would be harder to clean this up on
-smatch. I proposed a patch to the ML that simplifies the logic,
-making easier for both humans and Smatch to better understand how
-the arrays are indexed.
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-> 
-> > > drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
-> > > warn: potential spectre issue 'ca->slot_info' (local cap)  
-> > 
-> > This one seems a real issue to me. Sent a patch for it.
-> >   
-> > > drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
-> > > potential spectre issue 'p->ule_next_hdr'  
-> > 
-> > I failed to see what's wrong here, or if this is exploited.   
-> 
-> Oh...  Huh.  This is a bug in smatch.  That line looks like:
-> 
-> 	p->ule_sndu_type = ntohs(*(__be16 *)(p->ule_next_hdr + ((p->ule_dbit ? 2 : 3) * ETH_ALEN)));
-> 
-> Smatch see the ntohs() and marks everything inside it as untrusted
-> network data.  I'll fix this.
+[ commit 608940dabe1bd2ce4c97524004ec86637cf80f2c ]
 
-Thanks!
+The flag-printing code used when displaying hist triggers somehow got
+dropped during refactoring of the inter-event patchset.  This restores
+it.
 
-Regards,
-Mauro
+Below are a couple examples - in the first case, .usecs wasn't being
+displayed properly for common_timestamps and the second illustrates
+the same for other flags such as .execname.
+
+Before:
+
+  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  hist:keys=common_pid:vals=hitcount,count:sort=count:size=2048 [active]
+
+  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  hist:keys=pid:vals=hitcount:ts0=common_timestamp:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
+
+After:
+
+  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  hist:keys=common_pid.execname:vals=hitcount,count:sort=count:size=2048 [active]
+
+  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
+
+Link: http://lkml.kernel.org/r/492bab42ff21806600af98a8ea901af10efbee0c.1524790601.git.tom.zanussi@linux.intel.com
+
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_hist.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 9dac8bae4f34..4745ed588607 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -4916,6 +4916,16 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
+ 		seq_printf(m, "%s", field_name);
+ 	} else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
+ 		seq_puts(m, "common_timestamp");
++
++	if (hist_field->flags) {
++		if (!(hist_field->flags & HIST_FIELD_FL_VAR_REF) &&
++		    !(hist_field->flags & HIST_FIELD_FL_EXPR)) {
++			const char *flags = get_hist_field_flags(hist_field);
++
++			if (flags)
++				seq_printf(m, ".%s", flags);
++		}
++	}
+ }
+ 
+ static int event_hist_trigger_print(struct seq_file *m,
+-- 
+2.17.0
