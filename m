@@ -1,173 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeEPMuy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:50:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57684 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752729AbeEPMuv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:50:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EC21160C66
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH V6 04/12] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-Date: Wed, 16 May 2018 18:19:56 +0530
-Message-Id: <1526475004-10341-5-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
-References: <1526475004-10341-1-git-send-email-sricharan@codeaurora.org>
+        id S1752881AbeEPM4U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:56:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751844AbeEPM4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:56:17 -0400
+Date: Wed, 16 May 2018 21:56:12 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] ftrace/selftest: Fix reset_trigger() to handle
+ triggers with filters
+Message-Id: <20180516215612.e86701c1da81e9b9982a3c9f@kernel.org>
+In-Reply-To: <20180514205959.080491350@goodmis.org>
+References: <20180514205845.017925650@goodmis.org>
+        <20180514205959.080491350@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the common parts for the dk04 boards.
+On Mon, 14 May 2018 16:58:57 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi | 111 ++++++++++++++++++++++++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi           |   2 +-
- 2 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> The reset_trigger() function breaks up the command by a space ' '. This is
+> useful to ignore the '[active]' word for triggers when removing them. But if
+> the trigger has a filter (ie. "if prio < 10") then the filter needs to be
+> attached to the line that is written into the trigger file to remove it. But
+> the truncation removes the filter and the triggers are not cleared properly.
+> 
+> Before, reset_trigger() did this:
+> 
+>  # echo 'hist:keys=common_pid if prev_prio < 10' > events/sched/sched_switch/trigger
+>  # echo 'hist:keys=common_pid if next_prio < 10' >> events/sched/sched_switch/trigger
+>  # cat events/sched/sched_switch/trigger
+> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
+> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+> 
+>  reset_trigger() {
+>    echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048' >> events/sched/sched_switch/trigger
+>  }
+> 
+>  # cat events/sched/sched_switch/trigger
+> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
+> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+> 
+> After, where it includes the filter:
+> 
+>  reset_trigger() {
+>    echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10' >> events/sched/sched_switch/trigger
+>  }
+> 
+>  # cat events/sched/sched_switch/trigger
+> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+> 
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
-new file mode 100644
-index 0000000..7c1eb19
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include "qcom-ipq4019.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1";
-+
-+	aliases {
-+		serial0 = &blsp1_uart1;
-+		serial1 = &blsp1_uart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>; /* 256MB */
-+	};
-+
-+	soc {
-+		pinctrl@1000000 {
-+			serial_0_pins: serial0-pinmux {
-+				pins = "gpio16", "gpio17";
-+				function = "blsp_uart0";
-+				bias-disable;
-+			};
-+
-+			serial_1_pins: serial1-pinmux {
-+				pins = "gpio8", "gpio9",
-+					"gpio10", "gpio11";
-+				function = "blsp_uart1";
-+				bias-disable;
-+			};
-+
-+			spi_0_pins: spi-0-pinmux {
-+				pinmux {
-+					function = "blsp_spi0";
-+					pins = "gpio13", "gpio14", "gpio15";
-+					bias-disable;
-+				};
-+				pinmux_cs {
-+					function = "gpio";
-+					pins = "gpio12";
-+					bias-disable;
-+					output-high;
-+				};
-+			};
-+
-+			i2c_0_pins: i2c-0-pinmux {
-+				pins = "gpio20", "gpio21";
-+				function = "blsp_i2c0";
-+				bias-disable;
-+			};
-+
-+			nand_pins: nand-pins {
-+				pins = "gpio53", "gpio55", "gpio56",
-+					"gpio57", "gpio58", "gpio59",
-+					"gpio60", "gpio62", "gpio63",
-+					"gpio64", "gpio65", "gpio66",
-+					"gpio67", "gpio68", "gpio69";
-+				function = "qpic";
-+			};
-+		};
-+
-+		serial@78af000 {
-+			pinctrl-0 = <&serial_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		serial@78b0000 {
-+			pinctrl-0 = <&serial_1_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		dma@7884000 {
-+			status = "ok";
-+		};
-+
-+		spi@78b5000 { /* BLSP1 QUP1 */
-+			pinctrl-0 = <&spi_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+			cs-gpios = <&tlmm 12 0>;
-+
-+			m25p80@0 {
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				reg = <0>;
-+				compatible = "n25q128a11";
-+				spi-max-frequency = <24000000>;
-+			};
-+		};
-+
-+		pci@40000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 38 0x1>;
-+		};
-+
-+		qpic-nand@79b0000 {
-+			pinctrl-0 = <&nand_pins>;
-+			pinctrl-names = "default";
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 2c4ad7d..815c912 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -307,7 +307,7 @@
- 			dma-names = "rx", "tx";
- 		};
- 
--		serial@78b0000 {
-+		blsp1_uart2: serial@78b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78b0000 0x200>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+This also looks good to me and needs to go into stable.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you,
+
+
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  tools/testing/selftests/ftrace/test.d/functions | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+> index 8393b1c06027..e4645d5e3126 100644
+> --- a/tools/testing/selftests/ftrace/test.d/functions
+> +++ b/tools/testing/selftests/ftrace/test.d/functions
+> @@ -19,13 +19,13 @@ reset_trigger_file() {
+>      # remove action triggers first
+>      grep -H ':on[^:]*(' $@ |
+>      while read line; do
+> -        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+> +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
+>  	file=`echo $line | cut -f1 -d:`
+>  	echo "!$cmd" >> $file
+>      done
+>      grep -Hv ^# $@ |
+>      while read line; do
+> -        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+> +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
+>  	file=`echo $line | cut -f1 -d:`
+>  	echo "!$cmd" > $file
+>      done
+> -- 
+> 2.17.0
+> 
+> 
+
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Masami Hiramatsu <mhiramat@kernel.org>
