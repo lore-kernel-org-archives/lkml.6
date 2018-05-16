@@ -1,183 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeEPHjS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:39:18 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35995 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751485AbeEPHjQ (ORCPT
+        id S1752604AbeEPHja (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:39:30 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33685 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751395AbeEPHj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:39:16 -0400
-X-Google-Smtp-Source: AB8JxZrMs+eW1Aws1/nz/E83ebj2vSkfrWA9qWMPM98uG9liIykdK5gUU4W8PiAO4tKO4XpS1Pt5EA==
-Date: Wed, 16 May 2018 09:39:11 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, boqun.feng@gmail.com, byungchul.park@lge.com,
-        nitzanc@mellanox.com, paul.gortmaker@windriver.com,
-        ynorov@caviumnetworks.com, sfr@canb.auug.org.au, npiggin@gmail.com
-Subject: Re: [GIT PULL rcu/next] RCU commits for 4.18
-Message-ID: <20180516073911.GA30897@gmail.com>
-References: <20180515181120.GA29614@linux.vnet.ibm.com>
+        Wed, 16 May 2018 03:39:28 -0400
+Subject: Re: [PATCH] MAINTAINERS: Add entry for STM32 timer and lptimer
+ drivers
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, <mcoquelin.stm32@gmail.com>,
+        <jic23@kernel.org>, <thierry.reding@gmail.com>, <lee.jones@linaro.org>
+CC: <vilhelm.gray@gmail.com>, <benjamin.gaignard@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <1526398399-31753-1-git-send-email-fabrice.gasnier@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c2539e10-81c1-d5e9-c284-14d5142e1a2a@st.com>
+Date: Wed, 16 May 2018 09:38:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515181120.GA29614@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1526398399-31753-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Fabrice
 
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+On 05/15/2018 05:33 PM, Fabrice Gasnier wrote:
+> Add an entry to make myself a maintainer of STM32 timer and lptimer
+> drivers.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>   MAINTAINERS | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4b65225..94d8e47 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13425,6 +13425,16 @@ T:	git git://linuxtv.org/media_tree.git
+>   S:	Maintained
+>   F:	drivers/media/usb/stk1160/
+>   
+> +STM32 TIMER/LPTIMER DRIVERS
+> +M:	Fabrice Gasnier <fabrice.gasnier@st.com>
+> +S:	Maintained
+> +F:	drivers/*/stm32-*timer*
+> +F:	drivers/pwm/pwm-stm32*
+> +F:	include/linux/*/stm32-*tim*
+> +F:	Documentation/ABI/testing/*timer-stm32
+> +F:	Documentation/devicetree/bindings/*/stm32-*timer
+> +F:	Documentation/devicetree/bindings/pwm/pwm-stm32*
+> +
+>   STMMAC ETHERNET DRIVER
+>   M:	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+>   M:	Alexandre Torgue <alexandre.torgue@st.com>
+> 
 
-> Hello, Ingo!
-> 
-> This pull request contains the following changes:
-> 
-> 1.	Updates to the handling of expedited grace periods, perhaps most
-> 	notably parallelizing their initialization.  Other changes
-> 	include fixes from Boqun Feng.
-> 
-> 	http://lkml.kernel.org/r/20180423022047.GA20189@linux.vnet.ibm.com
-> 
-> 2.	Miscellaneous fixes.  These include an nvme fix from Nitzan Carmi
-> 	that I am carrying because it depends on a new SRCU function
-> 	cleanup_srcu_struct_quiesced().  This branch also includes fixes
-> 	from Byungchul Park and Yury Norov.  Note that several patches
-> 	were deferred to the v4.19 merge window due to late location
-> 	of bugs and late determination of a need for restructuring.
-> 
-> 	http://lkml.kernel.org/r/20180423023150.GA21533@linux.vnet.ibm.com
-> 
-> 3.	Updates to reduce lock contention in the rcu_node combining tree.
-> 	These are in preparation for the consolidation of RCU-bh,
-> 	RCU-preempt, and RCU-sched into a single flavor, which was
-> 	requested by Linus Torvalds in response to a security flaw
-> 	whose root cause included confusion between the multiple flavors
-> 	of RCU.  There will be another series of contention-reduction
-> 	patches in the next merge window, hopefully accompanied by the
-> 	consolidation itself.
-> 
-> 	http://lkml.kernel.org/r/20180423030258.GA23370@linux.vnet.ibm.com
-> 
-> 4.	Torture-test updates that save their users some time and effort.
-> 
-> 	http://lkml.kernel.org/r/20180423031346.GA28371@linux.vnet.ibm.com
-> 
-> The nvme patch called out in #2 above has a conflict with a commit in
-> Linus's tree, which was reported by Stephen Rothwell in the course of
-> his -next testing.  He is carrying a resolution to this conflict as
-> reported on LKML here:
-> 
-> http://lkml.kernel.org/r/20180514134636.61831bcc@canb.auug.org.au
-> 
-> This resolution looks good to me.
-> 
-> All of these changes have been subjected to 0day Test Robot and -next
-> testing, and are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-> 
-> for you to fetch changes up to 22df7316ac71dc1ac57415349938737d2a229c59:
-> 
->   Merge branches 'exp.2018.05.15a', 'fixes.2018.05.15a', 'lock.2018.05.15a' and 'torture.2018.05.15a' into HEAD (2018-05-15 10:33:05 -0700)
-> 
-> This merge commit is quite recent, however, the changes are exactly
-> the same as the previous merge commit (434533a52e8d) dated April 30th.
-> The only difference is the addition of Nick Piggin's Tested-by to all
-> of the commit logs (thank you, Nick!).
-> 
-> ----------------------------------------------------------------
-> Boqun Feng (2):
->       rcu: exp: Fix "must hold exp_mutex" comments for QS reporting functions
->       rcu: exp: Protect all sync_rcu_preempt_exp_done() with rcu_node lock
-> 
-> Byungchul Park (3):
->       rcu: Inline rcu_preempt_do_callback() into its sole caller
->       rcu: Call wake_nocb_leader_defer() with 'FORCE' when nocb_q_count is high
->       rcu: Remove deprecated RCU debugfs tracing code
-> 
-> Nitzan Carmi (1):
->       nvme: Avoid flush dependency in delete controller flow
-> 
-> Paul E. McKenney (36):
->       rcu: Parallelize expedited grace-period initialization
->       rcu: Don't allocate rcu_nocb_mask if no one needs it
->       rcu: Rename cond_resched_rcu_qs() to cond_resched_tasks_rcu_qs()
->       softirq: Eliminate unused cond_resched_softirq() macro
->       rcu: Move __rcu_read_lock() and __rcu_read_unlock() to tree_plugin.h
->       rcu: Update rcu_bind_gp_kthread() header comment
->       srcu: Add cleanup_srcu_struct_quiesced()
->       rcu: Add leaf-node macros
->       rcu: Improve non-root rcu_cbs_completed() accuracy
->       rcu: Make rcu_start_future_gp()'s grace-period check more precise
->       rcu: Add accessor macros for the ->need_future_gp[] array
->       rcu: Make rcu_gp_kthread() check for early-boot activity
->       rcu: Make rcu_gp_cleanup() more accurately predict need for new GP
->       rcu: Avoid losing ->need_future_gp[] values due to GP start/end races
->       rcu: Make rcu_future_needs_gp() check all ->need_future_gps[] elements
->       rcu: Convert ->need_future_gp[] array to boolean
->       rcu: Make rcu_migrate_callbacks wake GP kthread when needed
->       rcu: Avoid __call_rcu_core() root rcu_node ->lock acquisition
->       rcu: Switch __rcu_process_callbacks() to rcu_accelerate_cbs()
->       rcu: Cleanup, don't put ->completed into an int
->       rcu: Clear request other than RCU_GP_FLAG_INIT at GP end
->       rcu: Inline rcu_start_gp_advanced() into rcu_start_future_gp()
->       rcu: Make rcu_start_future_gp() caller select grace period
->       rcu: Add funnel locking to rcu_start_this_gp()
->       rcu: Make rcu_start_this_gp() check for out-of-range requests
->       rcu: The rcu_gp_cleanup() function does not need cpu_needs_another_gp()
->       rcu: Simplify and inline cpu_needs_another_gp()
->       rcu: Drop early GP request check from rcu_gp_kthread()
->       rcu: Update list of rcu_future_grace_period() trace events
->       torture: Add a script to edit output from failed runs
->       torture: Fold parse-torture.sh into parse-console.sh
->       rcutorture: Print end-of-test state
->       rcutorture: Print end-of-test state in kvm.sh summary
->       rcutorture: Abbreviate kvm.sh summary lines
->       torture: Make kvm-find-errors.sh find build warnings
->       Merge branches 'exp.2018.05.15a', 'fixes.2018.05.15a', 'lock.2018.05.15a' and 'torture.2018.05.15a' into HEAD
-> 
-> Paul Gortmaker (1):
->       doc: Ensure whatisRCU.txt actually says what RCU is
-> 
-> Yury Norov (1):
->       rcu: Declare rcu_eqs_special_set() in public header
-> 
->  Documentation/RCU/whatisRCU.txt                    |   2 +
->  drivers/nvme/host/core.c                           |   2 +-
->  include/linux/rcupdate.h                           |   4 +-
->  include/linux/rcutree.h                            |   1 +
->  include/linux/sched.h                              |   8 -
->  include/linux/srcu.h                               |  36 ++-
->  include/trace/events/rcu.h                         |  13 +-
->  kernel/rcu/rcu.h                                   |  12 +-
->  kernel/rcu/rcu_segcblist.c                         |  18 --
->  kernel/rcu/rcu_segcblist.h                         |   2 -
->  kernel/rcu/rcuperf.c                               |   2 +-
->  kernel/rcu/rcutorture.c                            |  15 +-
->  kernel/rcu/srcutiny.c                              |   9 +-
->  kernel/rcu/srcutree.c                              |  30 +-
->  kernel/rcu/tree.c                                  | 355 ++++++++-------------
->  kernel/rcu/tree.h                                  |  36 ++-
->  kernel/rcu/tree_exp.h                              | 235 ++++++++------
->  kernel/rcu/tree_plugin.h                           |  98 +++---
->  kernel/rcu/update.c                                |  50 +--
->  kernel/sched/core.c                                |  14 -
->  kernel/softirq.c                                   |   3 +-
->  kernel/torture.c                                   |   2 +-
->  kernel/trace/trace_benchmark.c                     |   4 +-
->  .../selftests/rcutorture/bin/kvm-find-errors.sh    |  56 ++++
->  .../selftests/rcutorture/bin/kvm-recheck-rcu.sh    |  12 +-
->  .../selftests/rcutorture/bin/kvm-recheck.sh        |   4 -
->  .../selftests/rcutorture/bin/kvm-test-1-run.sh     |   1 -
->  .../selftests/rcutorture/bin/parse-console.sh      | 115 ++++++-
->  .../selftests/rcutorture/bin/parse-torture.sh      | 105 ------
->  29 files changed, 616 insertions(+), 628 deletions(-)
->  create mode 100755 tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh
->  delete mode 100755 tools/testing/selftests/rcutorture/bin/parse-torture.sh
-
-Pulled, thanks a lot Paul!
-
-	Ingo
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
