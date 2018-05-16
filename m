@@ -1,109 +1,84 @@
-Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZrM/UNcJj1NArdvZ7eFXyP4CyOk8hGDfHL1ZUNm1tCJZZUFSpfCVvDMoip8x2Ge2jMzTTBH
-ARC-Seal: i=1; a=rsa-sha256; t=1525978515; cv=none;
+Return-Path: <srinivas.kandagatla@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526489646; cv=none;
         d=google.com; s=arc-20160816;
-        b=HFN5xIaN1bBuCoMGAeNsJHs03mQtH1jGt423O0/4jaPJRWE1y/lGVXBOtAEyJHNaQ+
-         c8uk4xW3Uu6WSspK0OdCYYlMl7yoGXoN6LiO2xqWKOLph/1LWfJ0RzkTLgagBRNb7y8M
-         jUhBwhMRtRDGhetZEAQpxfYYTgtnRXGdqvpNsPPPGNs8CT6mYceB8Nb/l7hWjzSoP/Yn
-         TVWaL5xW4zmyiwU66H02euMb6vWT3MA84k0c8pxzv4ohDls1RSS/ovQmFoBI2Z4YRIbu
-         vc2kn4Z9r/0pwqn4DUyDYYMyiLiPyp+IexQvcZwKzjy4qBtQ3ivJemFFE/ABa101DkOE
-         wA5g==
+        b=U3iC3gmu5tp01LzCPg4An2elQcqK69cTxldVfxREXHyAF42OsuFDzGyecpSnd+S0Ye
+         IneZnUdAVy0lQKvBim4gQVPQWRgEMWcEjrW9XHZTlKQjad3CK4sxDpnxHHOZ0MJ/jfZP
+         P0f65e5x8X2k9PFJyeDtVgBVI4N49IZwCa/zhq2bQdiyx4+dDBl4wZ6wLzVFbaM6zwXq
+         BSiGC1Uvk9+XPNevWKRMbCjxWW7Id5TW4WpDNgfkxC1qR+ZMcnukkOeGMf42h5gaZR5I
+         qpUJ6wIypywtiyTtqleLrzoMA/e7usMDGowNNKYFiHedsa+MqOTT9fkxtUKI8IApae8P
+         WMfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=Ey4I0LBXWwGtnNiRrEmL5OiifRP1sHYRz5EdaSU7Y3c=;
-        b=CnbCLLHAa94Tj1NLZZYQPaGH3xJ1b9oUXGpBNgHSNKuND13qDjbAAtith4a+JggZQM
-         YOz//gIrQk44tOsR1BSa5w5n8Assu4QQM4KG3MYzET+LR7bX6Ikx4GcpnbvuMwsw8iNz
-         bmlpY+Qam0bzQwTl7Y3xD5F2Lpfwszw7PpBQEP0AH3y3V1Que6rhNqFwUJutaT4Log4A
-         WolXy3Y6+FHdhhAM0s29oF5d/3QqX/hscAEGROdcbS1TMNVWfpbpFLXtwCUF/2cCCQ7m
-         OagxyjN377cPdWkHuYl+A9q8qacI9utlEvdESbe0QszST6Et3uQ47p/hHItFOuwV62sk
-         Vc5Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=bbd7pRpbCv3kBoKpSA3J2EXTFT4MZER+aHIzo6dFXYg=;
+        b=Gt6Vt7ZyhIzdx9gQTLHRg0ecWxV0GUINNgKWgJoSndNmlKIxhv1vSBd3LOuH5Sx6bj
+         gnTHiBqqSVpzQ4wKXUkHse7hQV5tkcQXsRAaGbSIegV41pl89Jc8OyfcxxLYX3u64LAp
+         kV/jZLeq7AZKtti0D26iGzh+qn59NwzR3JoyQCJgF2SXaCauFyZrG0vRP8crIRTOkSEU
+         d8vGOONb5VanVExaHdnf7T/3G9/avzrvANDYAvb5wYNh+gp5XhE60CCBZbbcHMc4WC3F
+         aScGtYMiwqxhzv3oUJf3l0NN93/k9HMDoamWrDD+v/uzGjXk/UZFblKTV62NNtfSMD9W
+         Sn4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lldQ0M/P;
-       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=hNGMB0A6;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lldQ0M/P;
-       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: arnd@arndb.de
-Cc: gregkh@linuxfoundation.org,
-	willy@infradead.org,
-	geert@linux-m68k.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
+       dkim=pass header.i=@linaro.org header.s=google header.b=hNGMB0A6;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZpW9+8E79O54AUyQD2KfzwNehpqUGUeWMJp3ufdmJAnw4V3QglUXthFUThB5yr7NGveINq0pw==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: gregkh@linuxfoundation.org,
+	robh+dt@kernel.org
+Cc: kramasub@codeaurora.org,
+	sdharia@quicinc.com,
+	girishm@quicinc.com,
 	linux-kernel@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 2/2] mm: provide a fallback for PAGE_KERNEL_EXEC for architectures
-Date: Thu, 10 May 2018 11:55:07 -0700
-Message-Id: <20180510185507.2439-3-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180510185507.2439-1-mcgrof@kernel.org>
-References: <20180510185507.2439-1-mcgrof@kernel.org>
+	mark.rutland@arm.com,
+	bgoswami@codeaurora.org,
+	devicetree@vger.kernel.org,
+	broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/2] slimbus: Add QCOM SLIMBus NGD driver
+Date: Wed, 16 May 2018 17:51:16 +0100
+Message-Id: <20180516165118.16551-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600039619823069048?=
-X-GMAIL-MSGID: =?utf-8?q?1600104448291706193?=
+X-GMAIL-THRID: =?utf-8?q?1600640407051991291?=
+X-GMAIL-MSGID: =?utf-8?q?1600640407051991291?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some architectures just don't have PAGE_KERNEL_EXEC. The mm/nommu.c
-and mm/vmalloc.c code have been using PAGE_KERNEL as a fallback for
-years. Move this fallback to asm-generic.
+This patchset adds support to basic version of Qualcomm NGD SLIMBus
+controller driver found SoCs from B family.
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- include/asm-generic/pgtable.h | 4 ++++
- mm/nommu.c                    | 4 ----
- mm/vmalloc.c                  | 4 ----
- 3 files changed, 4 insertions(+), 8 deletions(-)
+This controller is light-weight SLIMBus controller driver responsible for
+communicating with slave HW directly over the bus using messaging
+interface, and communicating with master component residing on ADSP
+for bandwidth and data-channel management.
 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 4e310e543fc8..81371468ed5a 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1097,6 +1097,10 @@ static inline void init_espfix_bsp(void) { }
- # define PAGE_KERNEL_RO PAGE_KERNEL
- #endif
+Tested this patchset on DB820c with WCD9335 codec.
+I have pushed my working branch to [1] incase someone want to try.
  
-+#ifndef PAGE_KERNEL_EXEC
-+# define PAGE_KERNEL_EXEC PAGE_KERNEL
-+#endif
-+
- #endif /* !__ASSEMBLY__ */
- 
- #ifndef io_remap_pfn_range
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 13723736d38f..08ad4dcd281d 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -364,10 +364,6 @@ void *vzalloc_node(unsigned long size, int node)
- }
- EXPORT_SYMBOL(vzalloc_node);
- 
--#ifndef PAGE_KERNEL_EXEC
--# define PAGE_KERNEL_EXEC PAGE_KERNEL
--#endif
--
- /**
-  *	vmalloc_exec  -  allocate virtually contiguous, executable memory
-  *	@size:		allocation size
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ebff729cc956..89543d13e32a 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1920,10 +1920,6 @@ void *vzalloc_node(unsigned long size, int node)
- }
- EXPORT_SYMBOL(vzalloc_node);
- 
--#ifndef PAGE_KERNEL_EXEC
--# define PAGE_KERNEL_EXEC PAGE_KERNEL
--#endif
--
- /**
-  *	vmalloc_exec  -  allocate virtually contiguous, executable memory
-  *	@size:		allocation size
+
+Thanks,
+srini
+
+[1] https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=slimbus-ngd
+
+Srinivas Kandagatla (2):
+  slimbus: ngd: dt-bindings: Add slim ngd dt bindings
+  slimbus: ngd: Add qcom SLIMBus NGD driver
+
+ .../bindings/slimbus/slim-ngd-qcom-ctrl.txt        |   70 ++
+ drivers/slimbus/Kconfig                            |   10 +
+ drivers/slimbus/Makefile                           |    3 +
+ drivers/slimbus/qcom-ngd-ctrl.c                    | 1298 ++++++++++++++++++++
+ drivers/slimbus/slimbus.h                          |    8 +
+ 5 files changed, 1389 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
+ create mode 100644 drivers/slimbus/qcom-ngd-ctrl.c
+
 -- 
-2.17.0
+2.16.2
