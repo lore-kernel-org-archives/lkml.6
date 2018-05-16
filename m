@@ -1,152 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeEPJMf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:12:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46023 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751046AbeEPJMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:12:33 -0400
-Date: Wed, 16 May 2018 11:12:26 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Subject: Re: [PATCH -mm] mm, hugetlb: Pass fault address to no page handler
-Message-ID: <20180516091226.GM12670@dhcp22.suse.cz>
-References: <20180515005756.28942-1-ying.huang@intel.com>
+        id S1752253AbeEPJOg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:14:36 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45786 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750992AbeEPJOd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 05:14:33 -0400
+X-Google-Smtp-Source: AB8JxZrQYYWUyNlkrPCBLn99ymT4czlfFUjXIdrnp0YwOFAiHx8mnzZRRWhBhBceQRUjANPYg9wKyw==
+Date: Wed, 16 May 2018 18:10:25 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [PATCH v2 05/14] tracing: Do not show filter file for ftrace
+ internal events
+Message-ID: <20180516091025.GB30309@danjae.aot.lge.com>
+References: <20180514205845.017925650@goodmis.org>
+ <20180514205958.061558690@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180515005756.28942-1-ying.huang@intel.com>
+In-Reply-To: <20180514205958.061558690@goodmis.org>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-05-18 08:57:56, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
+On Mon, May 14, 2018 at 04:58:50PM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> This is to take better advantage of huge page clearing
-> optimization (c79b57e462b5d, "mm: hugetlb: clear target sub-page last
-> when clearing huge page").  Which will clear to access sub-page last
-> to avoid the cache lines of to access sub-page to be evicted when
-> clearing other sub-pages.  This needs to get the address of the
-> sub-page to access, that is, the fault address inside of the huge
-> page.  So the hugetlb no page fault handler is changed to pass that
-> information.  This will benefit workloads which don't access the begin
-> of the huge page after page fault.
+> The filter file in the ftrace internal events, like in
+> /sys/kernel/tracing/events/ftrace/function/filter is not attached to any
+> functionality. Do not create them as they are meaningless.
 > 
-> With this patch, the throughput increases ~28.1% in vm-scalability
-> anon-w-seq test case with 88 processes on a 2 socket Xeon E5 2699 v4
-> system (44 cores, 88 threads).  The test case creates 88 processes,
-> each process mmap a big anonymous memory area and writes to it from
-> the end to the begin.  For each process, other processes could be seen
-> as other workload which generates heavy cache pressure.  At the same
-> time, the cache miss rate reduced from ~36.3% to ~25.6%, the
-> IPC (instruction per cycle) increased from 0.3 to 0.37, and the time
-> spent in user space is reduced ~19.3%
-
-This paragraph is confusing as Mike mentioned already. It would be
-probably more helpful to see how was the test configured to use hugetlb
-pages and what is the end benefit.
-
-I do not have any real objection to the implementation so feel free to
-add
-Acked-by: Michal Hocko <mhocko@suse.com>
-I am just wondering what is the usecase driving this. Or is it just a
-generic optimization that always makes sense to do? Indicating that in
-the changelog would be helpful as well.
-
-Thanks!
-
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@fb.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> Cc: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> In the future, if an ftrace internal event gets filter functionality, then
+> it will need to create it directly.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
->  mm/hugetlb.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  kernel/trace/trace_events.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 129088710510..3de6326abf39 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3677,7 +3677,7 @@ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
->  
->  static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  			   struct address_space *mapping, pgoff_t idx,
-> -			   unsigned long address, pte_t *ptep, unsigned int flags)
-> +			   unsigned long faddress, pte_t *ptep, unsigned int flags)
->  {
->  	struct hstate *h = hstate_vma(vma);
->  	int ret = VM_FAULT_SIGBUS;
-> @@ -3686,6 +3686,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct page *page;
->  	pte_t new_pte;
->  	spinlock_t *ptl;
-> +	unsigned long address = faddress & huge_page_mask(h);
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index 5b647904a65b..14ff4ff3caab 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -2007,16 +2007,18 @@ event_create_dir(struct dentry *parent, struct trace_event_file *file)
+>  			return -1;
+>  		}
+>  	}
+> -	trace_create_file("filter", 0644, file->dir, file,
+> -			  &ftrace_event_filter_fops);
 >  
 >  	/*
->  	 * Currently, we are forced to kill the process in the event the
-> @@ -3749,7 +3750,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  				ret = VM_FAULT_SIGBUS;
->  			goto out;
->  		}
-> -		clear_huge_page(page, address, pages_per_huge_page(h));
-> +		clear_huge_page(page, faddress, pages_per_huge_page(h));
->  		__SetPageUptodate(page);
->  		set_page_huge_active(page);
+>  	 * Only event directories that can be enabled should have
+> -	 * triggers.
+> +	 * triggers or filters.
+>  	 */
+> -	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE))
+> +	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)) {
+> +		trace_create_file("filter", 0644, file->dir, file,
+> +				  &ftrace_event_filter_fops);
+> +
+>  		trace_create_file("trigger", 0644, file->dir, file,
+>  				  &event_trigger_fops);
+> +	}
 >  
-> @@ -3871,7 +3872,7 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
->  #endif
->  
->  int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
-> -			unsigned long address, unsigned int flags)
-> +			unsigned long faddress, unsigned int flags)
->  {
->  	pte_t *ptep, entry;
->  	spinlock_t *ptl;
-> @@ -3883,8 +3884,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct hstate *h = hstate_vma(vma);
->  	struct address_space *mapping;
->  	int need_wait_lock = 0;
-> -
-> -	address &= huge_page_mask(h);
-> +	unsigned long address = faddress & huge_page_mask(h);
->  
->  	ptep = huge_pte_offset(mm, address, huge_page_size(h));
->  	if (ptep) {
-> @@ -3914,7 +3914,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  
->  	entry = huge_ptep_get(ptep);
->  	if (huge_pte_none(entry)) {
-> -		ret = hugetlb_no_page(mm, vma, mapping, idx, address, ptep, flags);
-> +		ret = hugetlb_no_page(mm, vma, mapping, idx, faddress, ptep, flags);
->  		goto out_mutex;
->  	}
->  
-> -- 
-> 2.16.1
-> 
+>  #ifdef CONFIG_HIST_TRIGGERS
+>  	trace_create_file("hist", 0444, file->dir, file,
 
--- 
-Michal Hocko
-SUSE Labs
+What about moving the "hist" file as well since it's meaningless
+without the trigger.
+
+Thanks,
+Namhyung
