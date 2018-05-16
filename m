@@ -1,85 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeEPOLk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:11:40 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41507 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeEPOLh (ORCPT
+        id S1751389AbeEPONX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:13:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36627 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeEPONV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:11:37 -0400
-X-Google-Smtp-Source: AB8JxZo2cD3e6kUWBmv0tID2k3OL/KhbViIxv2I5kCj8Ghkh9VDGRWwn9ieoORNMC/8OlKzSevR+4g==
-Date: Wed, 16 May 2018 19:41:32 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Ilia Lin <ilialin@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        nm@ti.com, lgirdwood@gmail.com, broonie@kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
- <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
- <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
+        Wed, 16 May 2018 10:13:21 -0400
+X-Google-Smtp-Source: AB8JxZp8BhvBn5cIlD3f96KEsaRKa2C9uFaqXJELZ3pE8dCO2TotSet4LlTTRvDllxI3dQx3d2JQ8A==
+Date: Wed, 16 May 2018 16:13:19 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 12/14] net: sched: retry action check-insert on
+ concurrent modification
+Message-ID: <20180516141319.GO1972@nanopsycho>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-13-git-send-email-vladbu@mellanox.com>
+ <20180516095953.GI1972@nanopsycho>
+ <vbf4lj724th.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+ <20180516122600.GM1972@nanopsycho>
+ <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+ <20180516132135.GN1972@nanopsycho>
+ <vbfvabn1zic.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <vbfvabn1zic.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-05-18, 16:12, Amit Kucheria wrote:
-> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > +       if (0 > ret)
-> 
-> Any particular reason to prefer this over (ret < 0) that is generally
-> used? I've seen it used to avoid the == vs. = typos, but not for other
-> comparisons.
-> 
-> Suggest sticking to what is commonly used i.e. ret < 0.
-> 
-> > +               goto free_opp;
-> > +
-> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
-> 
-> Error check cpu_dev here?
-> 
-> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > +       if (0 > ret)
-> > +               goto free_opp;
+Wed, May 16, 2018 at 03:52:20PM CEST, vladbu@mellanox.com wrote:
+>
+>On Wed 16 May 2018 at 13:21, Jiri Pirko <jiri@resnulli.us> wrote:
+>> Wed, May 16, 2018 at 02:43:58PM CEST, vladbu@mellanox.com wrote:
+>>>
+>>>On Wed 16 May 2018 at 12:26, Jiri Pirko <jiri@resnulli.us> wrote:
+>>>> Wed, May 16, 2018 at 01:55:06PM CEST, vladbu@mellanox.com wrote:
+>>>>>
+>>>>>On Wed 16 May 2018 at 09:59, Jiri Pirko <jiri@resnulli.us> wrote:
+>>>>>> Mon, May 14, 2018 at 04:27:13PM CEST, vladbu@mellanox.com wrote:
+>>>>>>>Retry check-insert sequence in action init functions if action with same
+>>>>>>>index was inserted concurrently.
+>>>>>>>
+>>>>>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>>>>>>>---
+>>>>>>> net/sched/act_bpf.c        | 8 +++++++-
+>>>>>>> net/sched/act_connmark.c   | 8 +++++++-
+>>>>>>> net/sched/act_csum.c       | 8 +++++++-
+>>>>>>> net/sched/act_gact.c       | 8 +++++++-
+>>>>>>> net/sched/act_ife.c        | 8 +++++++-
+>>>>>>> net/sched/act_ipt.c        | 8 +++++++-
+>>>>>>> net/sched/act_mirred.c     | 8 +++++++-
+>>>>>>> net/sched/act_nat.c        | 8 +++++++-
+>>>>>>> net/sched/act_pedit.c      | 8 +++++++-
+>>>>>>> net/sched/act_police.c     | 9 ++++++++-
+>>>>>>> net/sched/act_sample.c     | 8 +++++++-
+>>>>>>> net/sched/act_simple.c     | 9 ++++++++-
+>>>>>>> net/sched/act_skbedit.c    | 8 +++++++-
+>>>>>>> net/sched/act_skbmod.c     | 8 +++++++-
+>>>>>>> net/sched/act_tunnel_key.c | 9 ++++++++-
+>>>>>>> net/sched/act_vlan.c       | 9 ++++++++-
+>>>>>>> 16 files changed, 116 insertions(+), 16 deletions(-)
+>>>>>>>
+>>>>>>>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+>>>>>>>index 5554bf7..7e20fdc 100644
+>>>>>>>--- a/net/sched/act_bpf.c
+>>>>>>>+++ b/net/sched/act_bpf.c
+>>>>>>>@@ -299,10 +299,16 @@ static int tcf_bpf_init(struct net *net, struct nlattr *nla,
+>>>>>>> 
+>>>>>>> 	parm = nla_data(tb[TCA_ACT_BPF_PARMS]);
+>>>>>>> 
+>>>>>>>+replay:
+>>>>>>> 	if (!tcf_idr_check(tn, parm->index, act, bind)) {
+>>>>>>> 		ret = tcf_idr_create(tn, parm->index, est, act,
+>>>>>>> 				     &act_bpf_ops, bind, true);
+>>>>>>>-		if (ret < 0)
+>>>>>>>+		/* Action with specified index was created concurrently.
+>>>>>>>+		 * Check again.
+>>>>>>>+		 */
+>>>>>>>+		if (parm->index && ret == -ENOSPC)
+>>>>>>>+			goto replay;
+>>>>>>>+		else if (ret)
+>>>>>>
+>>>>>> Hmm, looks like you are doing the same/very similar thing in every act
+>>>>>> code. I think it would make sense to introduce a helper function for
+>>>>>> this purpose.
+>>>>>
+>>>>>This code uses goto so it can't be easily refactored into standalone
+>>>>>function. Could you specify which part of this code you suggest to
+>>>>>extract?
+>>>>
+>>>> Hmm, looking at the code, I think that what would help is to have a
+>>>> helper that would atomically check if index exists and if not, it would
+>>>> allocate one. Something like:
+>>>>
+>>>>
+>>>> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
+>>>> 			struct tc_action **a, int bind)
+>>>> {
+>>>> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>>>> 	struct tc_action *p;
+>>>> 	int err;
+>>>>
+>>>> 	spin_lock(&idrinfo->lock);
+>>>> 	if (*index) {
+>>>> 		p = idr_find(&idrinfo->action_idr, *index);
+>>>> 		if (p) {
+>>>> 			if (bind)
+>>>> 	   			p->tcfa_bindcnt++;
+>>>> 			p->tcfa_refcnt++;
+>>>> 			*a = p;
+>>>> 			err = 0;
+>>>> 		} else {
+>>>> 			*a = NULL;
+>>>> 			err = idr_alloc_u32(idr, NULL, index,
+>>>> 					    *index, GFP_ATOMIC);
+>>>> 		}
+>>>> 	} else {
+>>>> 		*index = 1;
+>>>> 		*a = NULL;
+>>>> 		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
+>>>> 	}
+>>>> 	spin_unlock(&idrinfo->lock);
+>>>> 	return err;
+>>>> }
+>>>>
+>>>> The act code would just check if "a" is NULL and if so, it would call
+>>>> tcf_idr_create() with allocated index as arg.
+>>>
+>>>What about multiple actions that have arbitrary code between initial
+>>>check and idr allocation that is currently inside tcf_idr_create()?
+>>
+>> Why it would be a problem to have them after the allocation?
+>
+>Lets look at mirred for exmple:
+>	exists = tcf_idr_check(tn, parm->index, a, bind);
+>	if (exists && bind)
+>		return 0;
+>
+>	switch (parm->eaction) {
+>	case TCA_EGRESS_MIRROR:
+>	case TCA_EGRESS_REDIR:
+>	case TCA_INGRESS_REDIR:
+>	case TCA_INGRESS_MIRROR:
+>		break;
+>	default:
+>		if (exists)
+>			tcf_idr_release(*a, bind);
+>		NL_SET_ERR_MSG_MOD(extack, "Unknown mirred option");
+>		return -EINVAL;
+>	}
+>	if (parm->ifindex) {
+>		dev = __dev_get_by_index(net, parm->ifindex);
+>		if (dev == NULL) {
+>			if (exists)
+>				tcf_idr_release(*a, bind);
+>			return -ENODEV;
+>		}
+>		mac_header_xmit = dev_is_mac_header_xmit(dev);
+>	} else {
+>		dev = NULL;
+>	}
+>
+>	if (!exists) {
+>		if (!dev) {
+>			NL_SET_ERR_MSG_MOD(extack, "Specified device does not exist");
+>			return -EINVAL;
+>		}
+>		ret = tcf_idr_create(tn, parm->index, est, a,
+>				     &act_mirred_ops, bind, true);
+>		/* Action with specified index was created concurrently.
+>		 * Check again.
+>		 */
+>		if (parm->index && ret == -ENOSPC)
+>			goto replay;
+>		else if (ret)
+>			return ret;
+>
+>There are several returns and cleanup is only performed when action
+>exists. So all code like that will have to be audited to also remove
+>index from idr, otherwise idr handles leak on return.
 
-The goto here is wrong
+Yeah. You have to take care of the error path.
 
-> > +
-> > +
-> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
-> > +                                                             -1, NULL, 0));
-> > +
-> > +       if (0 == ret)
-> > +               return 0;
-> > +
-> > +free_opp:
-> > +       dev_pm_opp_put_supported_hw(opp_temp);
-> 
-> This is not needed because dev_pm_opp_set_supported_hw will free
-> memory in case of failure. This call in only needed in case of a
-> successful get.
 
-But this is still required for the case where platform device
-registration fails.
+>
+>>
+>> There is one issue though with my draft. tcf_idr_insert() function
+>> which actually assigns a "p" pointer to the idr index is called later on.
+>> Until that happens, the idr_find() would return NULL even if the index
+>> is actually allocated. We cannot assign "p" in tcf_idr_check_alloc()
+>> because it is allocated only later on in tcf_idr_create(). But that is
+>> resolvable by the following trick:
+>>
+>> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
+>> 			struct tc_action **a, int bind)
+>> {
+>> 	struct tcf_idrinfo *idrinfo = tn->idrinfo;
+>> 	struct tc_action *p;
+>> 	int err;
+>>
+>> again:
+>> 	spin_lock(&idrinfo->lock);
+>> 	if (*index) {
+>>  		p = idr_find(&idrinfo->action_idr, *index);
+>> 		if (IS_ERR(p)) {
+>> 			/* This means that another process allocated
+>> 			 * index but did not assign the pointer yet.
+>> 			 */
+>> 			spin_unlock(&idrinfo->lock);
+>> 			goto again;
+>> 		}
+>>  		if (p) {
+>>  			if (bind)
+>>  	   			p->tcfa_bindcnt++;
+>>  			p->tcfa_refcnt++;
+>>  			*a = p;
+>>  			err = 0;
+>>  		} else {
+>>  			*a = NULL;
+>>  			err = idr_alloc_u32(idr, NULL, index,
+>>  					    *index, GFP_ATOMIC);
+>> 			idr_replace(&idrinfo->action_idr,
+>> 				    ERR_PTR(-EBUSY), *index);
+>>  		}
+>>  	} else {
+>>  		*index = 1;
+>> 		*a = NULL;
+>>  		err = idr_alloc_u32(idr, NULL, index, UINT_MAX, GFP_ATOMIC);
+>> 		idr_replace(&idrinfo->action_idr, ERR_PTR(-EBUSY), *index);
+>>  	}
+>>  	spin_unlock(&idrinfo->lock);
+>>  	return err;
+>> }
+>>
+>
+>So users of action idr that might perform concurrent lookups are also
+>have to be changed to check for error pointers, that now can be inserted
+>into idr? Seems like a complex change...
 
--- 
-viresh
+You can just add a simple check into tcf_idr_lookup(). Where else?
+
+
+>
+>>
+>>
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>> [...]
+>>>>>
+>>>
+>
