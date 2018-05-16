@@ -1,207 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeEPRwt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:52:49 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:36067 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751980AbeEPRwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:52:46 -0400
-X-Google-Smtp-Source: AB8JxZrScEBImueyCEaLmpIZ/y41/5ZJVmbg5GqkaB5Yy+o14WZn0x+lUhpnYbY35uOf9KiCr6aB5Q==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: jic23@kernel.org
-Cc: benjamin.gaignard@st.com, fabrice.gasnier@st.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v6 9/9] iio: counter: Remove IIO counter subdirectory
-Date: Wed, 16 May 2018 13:52:39 -0400
-Message-Id: <4c335e0eebfbaf6e86f41e0f2864d76993d90b13.1526487615.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1526487615.git.vilhelm.gray@gmail.com>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+        id S1751984AbeEPRzP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:55:15 -0400
+Received: from mga07.intel.com ([134.134.136.100]:46060 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeEPRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 13:55:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
+   d="scan'208";a="199913834"
+Message-ID: <1526493313.61700.61.camel@linux.intel.com>
+Subject: Re: [RFC/RFT] [PATCH 05/10] cpufreq: intel_pstate: HWP boost
+ performance on IO Wake
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
+        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
+        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
+        linux-kernel@vger.kernel.org
+Date: Wed, 16 May 2018 10:55:13 -0700
+In-Reply-To: <20180516073701.GW12217@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+         <20180516044911.28797-6-srinivas.pandruvada@linux.intel.com>
+         <20180516073701.GW12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the IIO counter subdirectory which is now superceded
-by the Counter subsystem. Deprecation warnings are added to the
-documentation of the relevant IIO counter sysfs attributes.
+On Wed, 2018-05-16 at 09:37 +0200, Peter Zijlstra wrote:
+> On Tue, May 15, 2018 at 09:49:06PM -0700, Srinivas Pandruvada wrote:
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- Documentation/ABI/testing/sysfs-bus-iio          |  8 ++++++++
- .../ABI/testing/sysfs-bus-iio-counter-104-quad-8 | 16 ++++++++++++++++
- drivers/iio/Kconfig                              |  1 -
- drivers/iio/Makefile                             |  1 -
- drivers/iio/counter/Kconfig                      |  8 --------
- drivers/iio/counter/Makefile                     |  5 -----
- 6 files changed, 24 insertions(+), 15 deletions(-)
- delete mode 100644 drivers/iio/counter/Kconfig
- delete mode 100644 drivers/iio/counter/Makefile
+[...]
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 731146c3b138..6115d97b075e 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -1637,6 +1637,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_raw
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device counts from channel Y. For quadrature
- 		counters, multiplication by an available [Y]_scale results in
- 		the counts of a single quadrature signal phase from channel Y.
-@@ -1645,6 +1647,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_raw
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device index value from channel Y. This attribute
- 		provides an absolute positional reference (e.g. a pulse once per
- 		revolution) which may be used to home positional systems as
-@@ -1654,6 +1658,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_count_count_direction_available
- KernelVersion:	4.12
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		A list of possible counting directions which are:
- 		- "up"	: counter device is increasing.
- 		- "down": counter device is decreasing.
-@@ -1662,4 +1668,6 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_direction
- KernelVersion:	4.12
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Raw counter device counters direction for channel Y.
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8 b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-index 7fac2c268d9a..bac3d0d48b7b 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-counter-104-quad-8
-@@ -6,6 +6,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_index_synchronous_mode_available
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Discrete set of available values for the respective counter
- 		configuration are listed in this file.
- 
-@@ -13,6 +15,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_count_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Count mode for channel Y. Four count modes are available:
- 		normal, range limit, non-recycle, and modulo-n. The preset value
- 		for channel Y is used by the count mode where required.
-@@ -47,6 +51,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_noise_error
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Read-only attribute that indicates whether excessive noise is
- 		present at the channel Y count inputs in quadrature clock mode;
- 		irrelevant in non-quadrature clock mode.
-@@ -55,6 +61,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_preset
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		If the counter device supports preset registers, the preset
- 		count for channel Y is provided by this attribute.
- 
-@@ -62,6 +70,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_quadrature_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Configure channel Y counter for non-quadrature or quadrature
- 		clock mode. Selecting non-quadrature clock mode will disable
- 		synchronous load mode. In quadrature clock mode, the channel Y
-@@ -83,6 +93,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_countY_set_to_preset_on_index
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Whether to set channel Y counter with channel Y preset value
- 		when channel Y index input is active, or continuously count.
- 		Valid attribute values are boolean.
-@@ -91,6 +103,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_index_polarity
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Active level of channel Y index input; irrelevant in
- 		non-synchronous load mode.
- 
-@@ -98,6 +112,8 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_indexY_synchronous_mode
- KernelVersion:	4.10
- Contact:	linux-iio@vger.kernel.org
- Description:
-+		This interface is deprecated; please use the Counter subsystem.
-+
- 		Configure channel Y counter for non-synchronous or synchronous
- 		load mode. Synchronous load mode cannot be selected in
- 		non-quadrature clock mode.
-diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
-index d69e85a8bdc3..1152efad91a1 100644
---- a/drivers/iio/Kconfig
-+++ b/drivers/iio/Kconfig
-@@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
- source "drivers/iio/amplifiers/Kconfig"
- source "drivers/iio/chemical/Kconfig"
- source "drivers/iio/common/Kconfig"
--source "drivers/iio/counter/Kconfig"
- source "drivers/iio/dac/Kconfig"
- source "drivers/iio/dummy/Kconfig"
- source "drivers/iio/frequency/Kconfig"
-diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
-index d8cba9c229c0..7bdd31f1b88f 100644
---- a/drivers/iio/Makefile
-+++ b/drivers/iio/Makefile
-@@ -20,7 +20,6 @@ obj-y += amplifiers/
- obj-y += buffer/
- obj-y += chemical/
- obj-y += common/
--obj-y += counter/
- obj-y += dac/
- obj-y += dummy/
- obj-y += gyro/
-diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
-deleted file mode 100644
-index 95a7a0df6cac..000000000000
---- a/drivers/iio/counter/Kconfig
-+++ /dev/null
-@@ -1,8 +0,0 @@
--#
--# Counter devices
--#
--# When adding new entries keep the list in alphabetical order
--
--menu "Counters"
--
--endmenu
-diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
-deleted file mode 100644
-index 8fd3d954775a..000000000000
---- a/drivers/iio/counter/Makefile
-+++ /dev/null
-@@ -1,5 +0,0 @@
--#
--# Makefile for IIO counter devices
--#
--
--# When adding new entries keep the list in alphabetical order
--- 
-2.17.0
+> > 
+@@ -258,6 +261,8 @@ struct cpudata {
+> >  	s16 epp_saved;
+> >  	u64 hwp_req_cached;
+> >  	call_single_data_t csd;
+> > +	bool hwp_boost_active;
+> > +	u64 last_io_update;
+> 
+> This structure has abysmal layout; you should look at that.
+> Also, mandatory complaint about using _Bool in composites.
+> 
+I will take care about this in next version.
+
+[...]
+
+> > +/* Default: This will roughly around P1 on SKX */
+> > +#define BOOST_PSTATE_THRESHOLD	(SCHED_CAPACITY_SCALE / 2)
+> 
+> Yuck.. why the need to hardcode this? Can't you simply read the P1
+> value
+> for the part at hand?
+Done later in the series. So need to reorder.
+
+[..]
+> 
++	if (cpu->iowait_boost) {
+> > +		cpu->hwp_boost_active = true;
+> > +		if (smp_processor_id() == cpu->cpu)
+> > +			intel_pstate_hwp_boost_up(cpu);
+> > +		else
+> > +			smp_call_function_single_async(cpu->cpu,
+> > &cpu->csd);
+> > +	}
+> >  }
+> 
+> Hurmph, this looks like you're starting to duplicate the schedutil
+> iowait logic. Why didn't you copy the gradual boosting thing?
+I tried what we implemented in intel_pstate in legacy mode, which gave
+the best performance for servers (ramp up faster and slow ramp down).
+This caused regression on some workloads, as each time we can call
+HWP_REQUEST, we spend 1200+ cycles in issuing MSR. So keeping it at max
+for timeout. Even keeping at P1 didn't help in power numbers.
