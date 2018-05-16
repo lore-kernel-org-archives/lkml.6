@@ -1,64 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEPXca (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:32:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33978 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeEPXc2 (ORCPT
+        id S1752098AbeEPXdV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:33:21 -0400
+Received: from g4t3426.houston.hpe.com ([15.241.140.75]:4630 "EHLO
+        g4t3426.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751980AbeEPXdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:32:28 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 16 May 2018 16:32:27 -0700
-From: rishabhb@codeaurora.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, evgreen@chromium.org, robh@kernel.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
-In-Reply-To: <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
-References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
- <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
- <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
- <385198cbb91c4a36ad758997916ad271@codeaurora.org>
- <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
-Message-ID: <079348edcb511cefb9f4d76877d50cb7@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 16 May 2018 19:33:20 -0400
+From: Toshi Kani <toshi.kani@hpe.com>
+To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Cc: cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
+Date: Wed, 16 May 2018 17:32:04 -0600
+Message-Id: <20180516233207.1580-1-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-16 11:08, Stephen Boyd wrote:
-> Quoting rishabhb@codeaurora.org (2018-05-16 10:33:14)
->> On 2018-05-16 10:03, Stephen Boyd wrote:
->> > Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
->> 
->> >> +
->> >> +- max-slices:
->> >> +       usage: required
->> >> +       Value Type: <u32>
->> >> +       Definition: Number of cache slices supported by hardware
->> >> +
->> >> +Example:
->> >> +
->> >> +       llcc: qcom,llcc@1100000 {
->> >
->> > cache-controller@1100000 ?
->> >
->> We have tried to use consistent naming convention as in llcc_*
->> everywhere.
->> Using cache-controller will mix and match the naming convention. Also 
->> in
->> the documentation it is explained what llcc is and its full form.
->> 
-> 
-> DT prefers standard node names as opposed to vendor specific node 
-> names.
-> Isn't it a cache controller? I fail to see why this can't be done.
-Hi Stephen,
-The driver is vendor specific and also for uniformity purposes we 
-preferred
-to go with this name.
+This series fixes two issues in the x86 ioremap free page handlings
+for pud/pmd mappings.
+
+Patch 01 fixes BUG_ON on x86-PAE reported by Joerg.  It disables
+the free page handling on x86-PAE.
+
+Patch 02-03 fixes a possible issue with speculation which can cause
+stale page-directory cache.
+ - Patch 02 is from Chintan's v9 01/04 patch [1], which adds a new arg
+   'addr', with my merge change to patch 01.
+ - Patch 03 adds a TLB purge (INVLPG) to purge page-structure caches
+   that may be cached by speculation.  See the patch descriptions for
+   more detal.
+
+[1] https://patchwork.kernel.org/patch/10371015/
+
+v3:
+ - Fixed a build error in v2.
+
+v2:
+ - Reordered patch-set, so that patch 01 can be applied independently.
+ - Added a NULL pointer check for the page alloc in patch 03. 
+
+---
+Toshi Kani (2):
+  1/3 x86/mm: disable ioremap free page handling on x86-PAE
+  3/3 x86/mm: add TLB purge to free pmd/pte page interfaces
+
+Chintan Pandya (1):
+  2/3 ioremap: Update pgtable free interfaces with addr
+
+---
+ arch/arm64/mm/mmu.c           |  4 +--
+ arch/x86/mm/pgtable.c         | 59 +++++++++++++++++++++++++++++++++++++------
+ include/asm-generic/pgtable.h |  8 +++---
+ lib/ioremap.c                 |  4 +--
+ 4 files changed, 59 insertions(+), 16 deletions(-)
