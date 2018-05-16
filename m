@@ -1,84 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753018AbeEPMvy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:51:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752991AbeEPMvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:51:50 -0400
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
- <20180516123909.GB986@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
-Date: Wed, 16 May 2018 20:51:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753107AbeEPMwj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:52:39 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34524 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbeEPMwg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:52:36 -0400
+X-Google-Smtp-Source: AB8JxZpUGwDiPwNGJjlSgyI1ViuYeovNba5HCkmj0eyPv9KvK1OyB5XImYHhN9A1PO25t+y7wLT4wNR6nwQU+Yo9RjI=
 MIME-Version: 1.0
-In-Reply-To: <20180516123909.GB986@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180504235728.805-1-bjorn.andersson@linaro.org>
+References: <20180504235728.805-1-bjorn.andersson@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 May 2018 14:52:34 +0200
+Message-ID: <CACRpkdZebX=6_g2fV7=i=WveNN75KhGP4BJE5c_6qUP4-rEJMg@mail.gmail.com>
+Subject: Re: [RESEND PATCH] pinctrl: qcom: fix wrong pull status display for
+ no_keeper SoC
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GCqhVZ004976
 
+On Sat, May 5, 2018 at 1:57 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-
-On 2018年05月16日 20:39, Tiwei Bie wrote:
-> On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
->> On 2018年05月16日 16:37, Tiwei Bie wrote:
-> [...]
->>>    struct vring_virtqueue {
->>> @@ -116,6 +117,9 @@ struct vring_virtqueue {
->>>    			/* Last written value to driver->flags in
->>>    			 * guest byte order. */
->>>    			u16 event_flags_shadow;
->>> +
->>> +			/* ID allocation. */
->>> +			struct idr buffer_id;
->> I'm not sure idr is fit for the performance critical case here. Need to
->> measure its performance impact, especially if we have few unused slots.
-> I'm also not sure.. But fortunately, it should be quite easy
-> to replace it with something else without changing other code.
-> If it will really hurt the performance, I'll change it.
-
-We may want to do some benchmarking/profiling to see.
-
+> From: Clément Péron <peron.clem@gmail.com>
 >
->>>    		};
->>>    	};
-> [...]
->>> +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
->>> +			      unsigned int id, void **ctx)
->>> +{
->>> +	struct vring_packed_desc *desc;
->>> +	unsigned int i, j;
->>> +
->>> +	/* Clear data ptr. */
->>> +	vq->desc_state[id].data = NULL;
->>> +
->>> +	i = head;
->>> +
->>> +	for (j = 0; j < vq->desc_state[id].num; j++) {
->>> +		desc = &vq->vring_packed.desc[i];
->>> +		vring_unmap_one_packed(vq, desc);
->> As mentioned in previous discussion, this probably won't work for the case
->> of out of order completion since it depends on the information in the
->> descriptor ring. We probably need to extend ctx to record such information.
-> Above code doesn't depend on the information in the descriptor
-> ring. The vq->desc_state[] is the extended ctx.
+> DebugFS strings about pin pull status for no_keeper SoC are wrong
 >
-> Best regards,
-> Tiwei Bie
+> Fix this by adding a different string array for no_keeper SoC
+>
+> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>
+> Hi Linus,
+>
+> Forwarding this patch which was posted to linux-arm-msm@ only. LGTM, please apply.
 
-Yes, but desc is a pointer to descriptor ring I think so 
-vring_unmap_one_packed() still depends on the content of descriptor ring?
+Patch applied.
 
-Thanks
+Yours,
+Linus Walleij
