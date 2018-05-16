@@ -1,52 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeEPHcK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:32:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38000 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751213AbeEPHcJ (ORCPT
+        id S1752491AbeEPHcu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:32:50 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54476 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750992AbeEPHct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:32:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8851E6021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date: Wed, 16 May 2018 13:02:02 +0530
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: Fix deadlock in shutdown ioctl
-Message-ID: <20180516073202.GB6293@codeaurora.org>
-References: <1525958444-5579-1-git-send-email-stummala@codeaurora.org>
- <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
- <20180515075747.GA6293@codeaurora.org>
- <67bd2926-6851-0544-c24a-85dfa72aa70f@huawei.com>
+        Wed, 16 May 2018 03:32:49 -0400
+X-Google-Smtp-Source: AB8JxZqJkWSGF+iQp1C6wJHdc9pPAaJiFHsPF4v/shA9lRopmMsPHNPzaw/ejvWyYU3W3kUmzoQj9ozSY/2/0l63MxE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67bd2926-6851-0544-c24a-85dfa72aa70f@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180515231445.GA15921@ziepe.ca>
+References: <1525769416-14596-1-git-send-email-lidongchen@tencent.com> <20180515231445.GA15921@ziepe.ca>
+From: 858585 jemmy <jemmy858585@gmail.com>
+Date: Wed, 16 May 2018 15:32:48 +0800
+Message-ID: <CAOGPPbf-gQLd93mZ6pLCw4-QgcBqQOhDf33zj+3Rb2SEfk=VNw@mail.gmail.com>
+Subject: Re: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid
+ from ib_umem structure
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        Leon Romanovsky <leon@kernel.org>, artemyko@mellanox.com,
+        dan.j.williams@intel.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, adido@mellanox.com,
+        Gal Shachaf <galsha@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Lidong Chen <lidongchen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 02:48:42PM +0800, Chao Yu wrote:
-> > 
-> > Thanks, I thought about it too but then I checked that XFS shutdown ioctl is
-> > not taking any lock for this ioctl. Hence, I followed the same in F2FS.
-> > Do you know why XFS is not taking any lock? 
-> 
-> I don't know. :(
+On Wed, May 16, 2018 at 7:14 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Tue, May 08, 2018 at 04:50:16PM +0800, Lidong Chen wrote:
+>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+>> mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
+>>
+>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> ---
+>>  [v2]
+>>  - use ib_ucontext tgid instread of tgid in ib_umem structure
+>>
+>>  drivers/infiniband/core/umem.c | 7 +------
+>>  include/rdma/ib_umem.h         | 1 -
+>>  2 files changed, 1 insertion(+), 7 deletions(-)
+>
+> Applied to for-rc, thanks.
+>
+> It would be nice to send a cleanup to have all the users of tgid doing
+> this pattern
+>
+>         task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+>         if (!task)
+>                 goto out;
+>         mm = get_task_mm(task);
+>
+> To call some kind of common function like ib_get_mr_mm(), just to make
+> it really clear what is happening.
 
-No problem :)
+OK, I will submit a patch for this.
 
-> 
-> > Is it really needed in shutdown ioctl?
-> 
-> IMO, yes, we should keep freeze and remount be aware of the shutdown operation.
-
-Thanks for your inputs. I will send the updated patch set.
-
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+>
+> Jason
