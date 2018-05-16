@@ -1,106 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeEPHVC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:21:02 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33527 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750992AbeEPHU7 (ORCPT
+        id S1752448AbeEPHWR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:22:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44918 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752253AbeEPHWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:20:59 -0400
-X-Google-Smtp-Source: AB8JxZo8SBCbVaXYT5d0VTu5ZqdQri+1ggucyaK/iI70URy9t5+p2uSb8redrer6Pe9djF/85YUyUOne/KtWgsLBGuM=
+        Wed, 16 May 2018 03:22:15 -0400
+Date: Wed, 16 May 2018 09:22:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
+        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
+        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 03/10] cpufreq: intel_pstate: Utility functions
+ to boost HWP performance limits
+Message-ID: <20180516072202.GV12217@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-4-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64CASge22O0CviNmgEV0CSFgipkKu86F-6hiaLChPh_EA@mail.gmail.com>
-References: <20180419093225.614-1-wens@csie.org> <20180419093225.614-5-wens@csie.org>
- <CAMty3ZD7MbvX5eJ9U4QZRSPTXKD3Ps=hQF2hJSsF17YosXFmmg@mail.gmail.com> <CAGb2v64CASge22O0CviNmgEV0CSFgipkKu86F-6hiaLChPh_EA@mail.gmail.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Wed, 16 May 2018 12:50:58 +0530
-Message-ID: <CAMty3ZBSkrdV=SPqK5UoBTN8b+KLD9vsgDkx6DYLxEfb9_TazA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] drm/panel: simple: Add support for Banana Pi 7"
- S070WV20-CT16 panel
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jonathan Liu <net147@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516044911.28797-4-srinivas.pandruvada@linux.intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:12 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Mon, May 14, 2018 at 11:03 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
->> On Thu, Apr 19, 2018 at 3:02 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->>> This panel is marketed as Banana Pi 7" LCD display. On the back is
->>> a sticker denoting the model name S070WV20-CT16.
->>>
->>> This is a 7" 800x480 panel connected through a 24-bit RGB interface.
->>> However the panel only does 262k colors.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> ---
->>>  .../display/panel/bananapi,s070wv20-ct16.txt  |  7 ++++++
->>>  drivers/gpu/drm/panel/panel-simple.c          | 25 +++++++++++++++++++
->>>  2 files changed, 32 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>> new file mode 100644
->>> index 000000000000..2ec35ce36e9a
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>> @@ -0,0 +1,7 @@
->>> +Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
->>> +
->>> +Required properties:
->>> +- compatible: should be "bananapi,s070wv20-ct16"
->>> +
->>> +This binding is compatible with the simple-panel binding, which is specified
->>> +in simple-panel.txt in this directory.
->>> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
->>> index cbf1ab404ee7..9bc037f74d6c 100644
->>> --- a/drivers/gpu/drm/panel/panel-simple.c
->>> +++ b/drivers/gpu/drm/panel/panel-simple.c
->>> @@ -745,6 +745,28 @@ static const struct panel_desc avic_tm070ddh03 = {
->>>         },
->>>  };
->>>
->>> +static const struct drm_display_mode bananapi_s070wv20_ct16_mode = {
->>> +       .clock = 30000,
->>> +       .hdisplay = 800,
->>> +       .hsync_start = 800 + 40,
->>> +       .hsync_end = 800 + 40 + 48,
->>> +       .htotal = 800 + 40 + 48 + 40,
->>> +       .vdisplay = 480,
->>> +       .vsync_start = 480 + 13,
->>> +       .vsync_end = 480 + 13 + 3,
->>> +       .vtotal = 480 + 13 + 3 + 29,
->>> +};
->>> +
->>> +static const struct panel_desc bananapi_s070wv20_ct16 = {
->>> +       .modes = &bananapi_s070wv20_ct16_mode,
->>> +       .num_modes = 1,
->>> +       .bpc = 6,
->>> +       .size = {
->>> +               .width = 154,
->>> +               .height = 86,
->>> +       },
->>> +};
->>
->> I think this parallel RGB interface right? I too have same display
->> with DSI I'm sure these setting will not useful right? do we need to
->> write separate panel driver for that?
->
-> AFAIK the DSI model is an RGB panel with a MIPI DSI bridge on the
-> connector board. The model I have is dual interface.
+On Tue, May 15, 2018 at 09:49:04PM -0700, Srinivas Pandruvada wrote:
+> Setup necessary infrastructure to be able to boost HWP performance on a
+> remote CPU. First initialize data structure to be able to use
+> smp_call_function_single_async(). The boost up function simply set HWP
+> min to HWP max value and EPP to 0. The boost down function simply restores
+> to last cached HWP Request value.
+> 
+> To avoid reading HWP Request MSR during dynamic update, the HWP Request
+> MSR value is cached in the local memory. This caching is done whenever
+> HWP request MSR is modified during driver init on in setpolicy() callback
+> path.
 
-Yes, this is what I have [1] where same strip can use for both RGB and
-MIPI DSI. can bananapi,s070wv20-ct16 work for DSI interface as well?
+The patch does two independent things; best to split that.
 
-[1] https://www.aliexpress.com/item/New-Arrival-Banana-Pro-Pi-7-inch-LCD-Display-Touch-Screen-Raspberry-Pi-Car-GPS-FreeShipping/32335608836.html
 
-Jagan.
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index f686bbe..dc7dfa9 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -221,6 +221,9 @@ struct global_params {
+>   *			preference/bias
+>   * @epp_saved:		Saved EPP/EPB during system suspend or CPU offline
+>   *			operation
+> + * @hwp_req_cached:	Cached value of the last HWP request MSR
+
+That's simply not true given the code below.
+
+> @@ -763,6 +768,7 @@ static void intel_pstate_hwp_set(unsigned int cpu)
+>  		intel_pstate_set_epb(cpu, epp);
+>  	}
+>  skip_epp:
+> +	cpu_data->hwp_req_cached = value;
+>  	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
+>  }
+>  
+> @@ -1381,6 +1387,39 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
+>  	intel_pstate_set_min_pstate(cpu);
+>  }
+>  
+> +
+> +static inline void intel_pstate_hwp_boost_up(struct cpudata *cpu)
+> +{
+> +	u64 hwp_req;
+> +	u8 max;
+> +
+> +	max = (u8) (cpu->hwp_req_cached >> 8);
+> +
+> +	hwp_req = cpu->hwp_req_cached & ~GENMASK_ULL(31, 24);
+> +	hwp_req = (hwp_req & ~GENMASK_ULL(7, 0)) | max;
+> +
+> +	wrmsrl(MSR_HWP_REQUEST, hwp_req);
+> +}
+> +
+> +static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
+> +{
+> +	wrmsrl(MSR_HWP_REQUEST, cpu->hwp_req_cached);
+> +}
+
+This is not a traditional msr shadow; that would be updated on every
+wrmsr. There is not a comment in sight explaining why this one is
+different.
