@@ -1,324 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeEPMdQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:33:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52416 "EHLO mx1.redhat.com"
+        id S1752712AbeEPMe3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:34:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52386 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752610AbeEPMdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:33:12 -0400
+        id S1752544AbeEPMcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:32:51 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         jfreimann@redhat.com, wexu@redhat.com, tiwei.bie@intel.com
-Subject: [RFC V4 PATCH 8/8] vhost: event suppression for packed ring
-Date: Wed, 16 May 2018 20:32:21 +0800
-Message-Id: <1526473941-16199-9-git-send-email-jasowang@redhat.com>
+Subject: [RFC V4 PATCH 4/8] vhost_net: do not explicitly manipulate vhost_used_elem
+Date: Wed, 16 May 2018 20:32:17 +0800
+Message-Id: <1526473941-16199-5-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
 References: <1526473941-16199-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces basic support for event suppression aka driver
-and device area.
+Two helpers of setting/getting used len were introduced to avoid
+explicitly manipulating vhost_used_elem in zerocopy code. This will be
+used to hide used_elem internals and simplify packed ring
+implementation.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/vhost.c            | 168 ++++++++++++++++++++++++++++++++++++---
- drivers/vhost/vhost.h            |  10 ++-
- include/uapi/linux/virtio_ring.h |  19 +++++
- 3 files changed, 182 insertions(+), 15 deletions(-)
+ drivers/vhost/net.c   | 11 +++++------
+ drivers/vhost/vhost.c | 12 ++++++++++--
+ drivers/vhost/vhost.h |  5 +++++
+ 3 files changed, 20 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 3826f1f..30273ad 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -341,9 +341,10 @@ static void vhost_zerocopy_signal_used(struct vhost_net *net,
+ 	int j = 0;
+ 
+ 	for (i = nvq->done_idx; i != nvq->upend_idx; i = (i + 1) % UIO_MAXIOV) {
+-		if (vq->heads[i].elem.len == VHOST_DMA_FAILED_LEN)
++		if (vhost_get_used_len(vq, &vq->heads[i]) ==
++		    VHOST_DMA_FAILED_LEN)
+ 			vhost_net_tx_err(net);
+-		if (VHOST_DMA_IS_DONE(vq->heads[i].elem.len)) {
++		if (VHOST_DMA_IS_DONE(vhost_get_used_len(vq, &vq->heads[i]))) {
+ 			vq->heads[i].elem.len = VHOST_DMA_CLEAR_LEN;
+ 			++j;
+ 		} else
+@@ -542,10 +543,8 @@ static void handle_tx(struct vhost_net *net)
+ 			struct ubuf_info *ubuf;
+ 			ubuf = nvq->ubuf_info + nvq->upend_idx;
+ 
+-			vq->heads[nvq->upend_idx].elem.id =
+-				cpu_to_vhost32(vq, used.elem.id);
+-			vq->heads[nvq->upend_idx].elem.len =
+-				VHOST_DMA_IN_PROGRESS;
++			vhost_set_used_len(vq, &used, VHOST_DMA_IN_PROGRESS);
++			vq->heads[nvq->upend_idx] = used;
+ 			ubuf->callback = vhost_zerocopy_callback;
+ 			ubuf->ctx = nvq->ubufs;
+ 			ubuf->desc = nvq->upend_idx;
 diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index f2a0f5b..afdf4c1 100644
+index afd4119..2ef1859 100644
 --- a/drivers/vhost/vhost.c
 +++ b/drivers/vhost/vhost.c
-@@ -1108,10 +1108,15 @@ static int vq_access_ok_packed(struct vhost_virtqueue *vq, unsigned int num,
- 			       struct vring_used __user *used)
+@@ -2064,11 +2064,19 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ }
+ EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
+ 
+-static void vhost_set_used_len(struct vhost_virtqueue *vq,
+-			       struct vhost_used_elem *used, int len)
++void vhost_set_used_len(struct vhost_virtqueue *vq,
++			struct vhost_used_elem *used, int len)
  {
- 	struct vring_desc_packed *packed = (struct vring_desc_packed *)desc;
-+	struct vring_packed_desc_event *driver_event =
-+		(struct vring_packed_desc_event *)avail;
-+	struct vring_packed_desc_event *device_event =
-+		(struct vring_packed_desc_event *)used;
- 
--	/* FIXME: check device area and driver area */
- 	return access_ok(VERIFY_READ, packed, num * sizeof(*packed)) &&
--	       access_ok(VERIFY_WRITE, packed, num * sizeof(*packed));
-+	       access_ok(VERIFY_WRITE, packed, num * sizeof(*packed)) &&
-+	       access_ok(VERIFY_READ, driver_event, sizeof(*driver_event)) &&
-+	       access_ok(VERIFY_WRITE, device_event, sizeof(*device_event));
+ 	used->elem.len = cpu_to_vhost32(vq, len);
  }
- 
- static int vq_access_ok_split(struct vhost_virtqueue *vq, unsigned int num,
-@@ -1186,14 +1191,27 @@ static bool iotlb_access_ok(struct vhost_virtqueue *vq,
- 	return true;
- }
- 
--int vq_iotlb_prefetch(struct vhost_virtqueue *vq)
-+int vq_iotlb_prefetch_packed(struct vhost_virtqueue *vq)
++EXPORT_SYMBOL_GPL(vhost_set_used_len);
++
++int vhost_get_used_len(struct vhost_virtqueue *vq,
++		       struct vhost_used_elem *used)
 +{
-+	int num = vq->num;
-+
-+	return iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->desc,
-+			       num * sizeof(*vq->desc), VHOST_ADDR_DESC) &&
-+	       iotlb_access_ok(vq, VHOST_ACCESS_WO, (u64)(uintptr_t)vq->desc,
-+			       num * sizeof(*vq->desc), VHOST_ADDR_DESC) &&
-+	       iotlb_access_ok(vq, VHOST_ACCESS_RO,
-+			       (u64)(uintptr_t)vq->driver_event,
-+			       sizeof(*vq->driver_event), VHOST_ADDR_AVAIL) &&
-+	       iotlb_access_ok(vq, VHOST_ACCESS_WO,
-+			       (u64)(uintptr_t)vq->device_event,
-+			       sizeof(*vq->device_event), VHOST_ADDR_USED);
++	return vhost32_to_cpu(vq, used->elem.len);
 +}
-+
-+int vq_iotlb_prefetch_split(struct vhost_virtqueue *vq)
- {
- 	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
- 	unsigned int num = vq->num;
++EXPORT_SYMBOL_GPL(vhost_get_used_len);
  
--	if (!vq->iotlb)
--		return 1;
--
- 	return iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->desc,
- 			       num * sizeof(*vq->desc), VHOST_ADDR_DESC) &&
- 	       iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->avail,
-@@ -1205,6 +1223,17 @@ int vq_iotlb_prefetch(struct vhost_virtqueue *vq)
- 			       num * sizeof(*vq->used->ring) + s,
- 			       VHOST_ADDR_USED);
- }
-+
-+int vq_iotlb_prefetch(struct vhost_virtqueue *vq)
-+{
-+	if (!vq->iotlb)
-+		return 1;
-+
-+	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
-+		return vq_iotlb_prefetch_packed(vq);
-+	else
-+		return vq_iotlb_prefetch_split(vq);
-+}
- EXPORT_SYMBOL_GPL(vq_iotlb_prefetch);
- 
- /* Can we log writes? */
-@@ -1724,6 +1753,29 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- 	return 0;
- }
- 
-+static int vhost_update_device_flags(struct vhost_virtqueue *vq,
-+				     __virtio16 device_flags)
-+{
-+	void __user *flags;
-+
-+	if (vhost_put_user(vq, cpu_to_vhost16(vq, device_flags),
-+			   &vq->device_event->flags,
-+			   VHOST_ADDR_USED) < 0)
-+		return -EFAULT;
-+	if (unlikely(vq->log_used)) {
-+		/* Make sure the flag is seen before log. */
-+		smp_wmb();
-+		/* Log used flag write. */
-+		flags = &vq->device_event->flags;
-+		log_write(vq->log_base, vq->log_addr +
-+			  (flags - (void __user *)vq->device_event),
-+			  sizeof(vq->used->flags));
-+		if (vq->log_ctx)
-+			eventfd_signal(vq->log_ctx, 1);
-+	}
-+	return 0;
-+}
-+
- static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- {
- 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->avail_idx),
-@@ -2640,16 +2692,13 @@ int vhost_add_used_n(struct vhost_virtqueue *vq,
- }
- EXPORT_SYMBOL_GPL(vhost_add_used_n);
- 
--static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
-+static bool vhost_notify_split(struct vhost_dev *dev,
-+			       struct vhost_virtqueue *vq)
- {
- 	__u16 old, new;
- 	__virtio16 event;
- 	bool v;
- 
--	/* FIXME: check driver area */
--	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
--		return false;
--
- 	/* Flush out used index updates. This is paired
- 	 * with the barrier that the Guest executes when enabling
- 	 * interrupts. */
-@@ -2682,6 +2731,78 @@ static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
- 	return vring_need_event(vhost16_to_cpu(vq, event), new, old);
- }
- 
-+static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
-+					  __u16 off_wrap, __u16 new,
-+					  __u16 old)
-+{
-+    bool wrap = vq->used_wrap_counter;
-+    int off = off_wrap & ~(1 << 15);
-+
-+    if (new < old) {
-+	    new += vq->num;
-+	    wrap ^= 1;
-+    }
-+
-+    if (wrap != off_wrap >> 15)
-+	    off += vq->num;
-+
-+    return vring_need_event(off, new, old);
-+}
-+
-+static bool vhost_notify_packed(struct vhost_dev *dev,
-+				struct vhost_virtqueue *vq)
-+{
-+	__virtio16 event_off_wrap, event_flags;
-+	__u16 old, new, off_wrap;
-+	bool v;
-+
-+	/* Flush out used descriptors updates. This is paired
-+	 * with the barrier that the Guest executes when enabling
-+	 * interrupts.
-+	 */
-+	smp_mb();
-+
-+	if (vhost_get_avail(vq, event_flags,
-+			   &vq->driver_event->flags) < 0) {
-+		vq_err(vq, "Failed to get driver desc_event_flags");
-+		return true;
-+	}
-+
-+	if (event_flags == cpu_to_vhost16(vq, RING_EVENT_FLAGS_DISABLE))
-+		return false;
-+	else if (event_flags == cpu_to_vhost16(vq, RING_EVENT_FLAGS_ENABLE))
-+		return true;
-+
-+	/* Read desc event flags before event_off and event_wrap */
-+	smp_rmb();
-+
-+	if (vhost_get_avail(vq, event_off_wrap,
-+			    &vq->driver_event->off_warp) < 0) {
-+		vq_err(vq, "Failed to get driver desc_event_off/wrap");
-+		return true;
-+	}
-+
-+	off_wrap = vhost16_to_cpu(vq, event_off_wrap);
-+
-+	old = vq->signalled_used;
-+	v = vq->signalled_used_valid;
-+	new = vq->signalled_used = vq->last_used_idx;
-+	vq->signalled_used_valid = true;
-+
-+	if (unlikely(!v))
-+		return true;
-+
-+	return vhost_vring_packed_need_event(vq, off_wrap, new, old);
-+}
-+
-+static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
-+{
-+	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
-+		return vhost_notify_packed(dev, vq);
-+	else
-+		return vhost_notify_split(dev, vq);
-+}
-+
- /* This actually signals the guest, using eventfd. */
- void vhost_signal(struct vhost_dev *dev, struct vhost_virtqueue *vq)
- {
-@@ -2762,7 +2883,17 @@ static bool vhost_enable_notify_packed(struct vhost_dev *dev,
- 	__virtio16 flags;
- 	int ret;
- 
--	/* FIXME: disable notification through device area */
-+	if (!(vq->used_flags & VRING_USED_F_NO_NOTIFY))
-+		return false;
-+	vq->used_flags &= ~VRING_USED_F_NO_NOTIFY;
-+
-+	flags = cpu_to_vhost16(vq, RING_EVENT_FLAGS_ENABLE);
-+	ret = vhost_update_device_flags(vq, flags);
-+	if (ret) {
-+		vq_err(vq, "Failed to enable notification at %p: %d\n",
-+		       &vq->device_event->flags, ret);
-+		return false;
-+	}
- 
- 	/* They could have slipped one in as we were doing that: make
- 	 * sure it's written, then check again. */
-@@ -2828,7 +2959,18 @@ EXPORT_SYMBOL_GPL(vhost_enable_notify);
- static void vhost_disable_notify_packed(struct vhost_dev *dev,
- 					struct vhost_virtqueue *vq)
- {
--	/* FIXME: disable notification through device area */
-+	__virtio16 flags;
-+	int r;
-+
-+	if (vq->used_flags & VRING_USED_F_NO_NOTIFY)
-+		return;
-+	vq->used_flags |= VRING_USED_F_NO_NOTIFY;
-+
-+	flags = cpu_to_vhost16(vq, RING_EVENT_FLAGS_DISABLE);
-+	r = vhost_update_device_flags(vq, flags);
-+	if (r)
-+		vq_err(vq, "Failed to enable notification at %p: %d\n",
-+		       &vq->device_event->flags, r);
- }
- 
- static void vhost_disable_notify_split(struct vhost_dev *dev,
+ /* This is a multi-buffer version of vhost_get_desc, that works if
+  *	vq has read descriptors only.
 diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 286b470..0750659 100644
+index 8dea44b..604821b 100644
 --- a/drivers/vhost/vhost.h
 +++ b/drivers/vhost/vhost.h
-@@ -96,8 +96,14 @@ struct vhost_virtqueue {
- 		struct vring_desc __user *desc;
- 		struct vring_desc_packed __user *desc_packed;
- 	};
--	struct vring_avail __user *avail;
--	struct vring_used __user *used;
-+	union {
-+		struct vring_avail __user *avail;
-+		struct vring_packed_desc_event __user *driver_event;
-+	};
-+	union {
-+		struct vring_used __user *used;
-+		struct vring_packed_desc_event __user *device_event;
-+	};
- 	const struct vhost_umem_node *meta_iotlb[VHOST_NUM_ADDRS];
- 	struct file *kick;
- 	struct eventfd_ctx *call_ctx;
-diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-index e297580..b3f4b2c 100644
---- a/include/uapi/linux/virtio_ring.h
-+++ b/include/uapi/linux/virtio_ring.h
-@@ -75,6 +75,25 @@ struct vring_desc_packed {
- 	__virtio16 flags;
- };
+@@ -198,6 +198,11 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 		   unsigned *log_num,
+ 		   unsigned int quota,
+ 		   s16 *count);
++void vhost_set_used_len(struct vhost_virtqueue *vq,
++			struct vhost_used_elem *used,
++			int len);
++int vhost_get_used_len(struct vhost_virtqueue *vq,
++		       struct vhost_used_elem *used);
+ void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
  
-+/* Enable events */
-+#define RING_EVENT_FLAGS_ENABLE 0x0
-+/* Disable events */
-+#define RING_EVENT_FLAGS_DISABLE 0x1
-+/*
-+ * Enable events for a specific descriptor
-+ * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-+ * Only valid if VIRTIO_F_RING_EVENT_IDX has been negotiated.
-+ */
-+#define RING_EVENT_FLAGS_DESC 0x2
-+/* The value 0x3 is reserved */
-+
-+struct vring_packed_desc_event {
-+	/* Descriptor Ring Change Event Offset and Wrap Counter */
-+	__virtio16 off_warp;
-+	/* Descriptor Ring Change Event Flags */
-+	__virtio16 flags;
-+};
-+
- /* Virtio ring descriptors: 16 bytes.  These can chain together via "next". */
- struct vring_desc {
- 	/* Address (guest-physical). */
+ int vhost_vq_init_access(struct vhost_virtqueue *);
 -- 
 2.7.4
