@@ -1,67 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeEPH0G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:26:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:56903 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751332AbeEPH0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:26:05 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 16 May 2018 17:26:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Message-ID: <20180516172601.03188b22@canb.auug.org.au>
-In-Reply-To: <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
-References: <20180515155038.7387bf2c@canb.auug.org.au>
-        <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
+        id S1751595AbeEPH36 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:29:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35174 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbeEPH35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:29:57 -0400
+Date: Wed, 16 May 2018 09:29:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
+        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
+        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180516072929.GN12235@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+ <20180516071640.GU12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NCfuoTAPXRkf9v+T2kpLIVN"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516071640.GU12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NCfuoTAPXRkf9v+T2kpLIVN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 16, 2018 at 09:16:40AM +0200, Peter Zijlstra wrote:
+> On Tue, May 15, 2018 at 09:49:03PM -0700, Srinivas Pandruvada wrote:
+> > intel_pstate has two operating modes: active and passive. In "active"
+> > mode, the in-built scaling governor is used and in "passive" mode,
+> > the driver can be used with any governor like "schedutil". In "active"
+> > mode the utilization values from schedutil is not used and there is
+> > a requirement from high performance computing use cases, not to read
+> > any APERF/MPERF MSRs. In this case no need to use CPU cycles for
+> > frequency invariant accounting by reading APERF/MPERF MSRs.
+> > With this change frequency invariant account is only enabled in
+> > "passive" mode.
+> 
+> WTH is active/passive? Is passive when we select performance governor?
 
-Hi Masahiro,
+Bah, I cannot read it seems. active is when we use the intel_pstate
+governor and passive is when we use schedutil and only use intel_pstate
+as a driver.
 
-On Wed, 16 May 2018 15:01:38 +0900 Masahiro Yamada <yamada.masahiro@socione=
-xt.com> wrote:
->
-> How should I handle your fix-up?
->=20
-> May I squash into the original one if you ack to do it,
-> or is it better to keep it as a separate patch?
+> Also; you have to explain why using APERF/MPERF is bad in that case. Why
+> do they care if we read those MSRs during the tick?
 
-Either way is fine by me, but the former reduces the bisection gap.  So
-it depends on whether you want to rebase your tree or not.
-
-Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NCfuoTAPXRkf9v+T2kpLIVN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr73QkACgkQAVBC80lX
-0GzABwf/e/qRmPZqUY2UDk1i0wqlaZ7jpY83UhcvVJKKo3BmWTSvdjgyo7kvhNbv
-BgINZYx726O7cr2KjkNzvNyoMGBcTb3DPyHpa1fL2anC/E6zrVFqgOK+qitBLumb
-6kpqtDyJo1ebCBmeU71o5NIJIQ56AV68gerUVJDCtlKt7uzG8hHPd3H2VcxQ/m6g
-GXoVnwzqdaX4V3SXhWbM53MQfSy77Elu9yjX/0KmZAbF6Vd1uyRSWtH/enRKQpah
-5sA98mmxrA3fmpsxLYxL36PstcOi8HSWSWiZnqjHrw/Ia2iCpJv+nR/GymWCKPFy
-0V10vdczDJNihtDY9VLDZL1HkYMOWA==
-=ABeq
------END PGP SIGNATURE-----
-
---Sig_/NCfuoTAPXRkf9v+T2kpLIVN--
+That still stands.. this needs to be properly explained.
