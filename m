@@ -1,65 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751610AbeEPX2w (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:28:52 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38490 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeEPX2u (ORCPT
+        id S1751533AbeEPXca (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:32:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33978 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbeEPXc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:28:50 -0400
-X-Google-Smtp-Source: AB8JxZqPrSVvE8FzlNXBzBi/NZPvH9Pnfdr1YJe36jIk8I1gWxzKd2B+2Tng/nsurbWbwNYaK6melQ==
-Date: Wed, 16 May 2018 16:28:47 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Lin Huang <hl@rock-chips.com>
-Cc: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
-        dianders@chromium.org, linux-rockchip@lists.infradead.org,
-        heiko@sntech.de, daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] drm/rockchip: support dp training outside dp
- firmware
-Message-ID: <20180516232845.GA219198@rodete-desktop-imager.corp.google.com>
-References: <1526354560-23135-1-git-send-email-hl@rock-chips.com>
- <1526354560-23135-4-git-send-email-hl@rock-chips.com>
+        Wed, 16 May 2018 19:32:28 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526354560-23135-4-git-send-email-hl@rock-chips.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 16:32:27 -0700
+From: rishabhb@codeaurora.org
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, evgreen@chromium.org, robh@kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
+In-Reply-To: <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
+References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
+ <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
+ <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
+ <385198cbb91c4a36ad758997916ad271@codeaurora.org>
+ <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
+Message-ID: <079348edcb511cefb9f4d76877d50cb7@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:22:40AM +0800, Lin Huang wrote:
-> DP firmware uses fixed phy config values to do training, but some
-> boards need to adjust these values to fit for their unique hardware
-> design. So get phy config values from dts and use software link training
-> instead of relying on firmware, if software training fail, keep firmware
-> training as a fallback if sw training fails.
+On 2018-05-16 11:08, Stephen Boyd wrote:
+> Quoting rishabhb@codeaurora.org (2018-05-16 10:33:14)
+>> On 2018-05-16 10:03, Stephen Boyd wrote:
+>> > Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
+>> 
+>> >> +
+>> >> +- max-slices:
+>> >> +       usage: required
+>> >> +       Value Type: <u32>
+>> >> +       Definition: Number of cache slices supported by hardware
+>> >> +
+>> >> +Example:
+>> >> +
+>> >> +       llcc: qcom,llcc@1100000 {
+>> >
+>> > cache-controller@1100000 ?
+>> >
+>> We have tried to use consistent naming convention as in llcc_*
+>> everywhere.
+>> Using cache-controller will mix and match the naming convention. Also 
+>> in
+>> the documentation it is explained what llcc is and its full form.
+>> 
 > 
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
-> Changes in v2:
-> - update patch following Enric suggest
-> Changes in v3:
-> - use variable fw_training instead sw_training_success
-> - base on DP SPCE, if training fail use lower link rate to retry training
-> Changes in v4:
-> - improve cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link() follow Sean suggest
-> 
->  drivers/gpu/drm/rockchip/Makefile               |   3 +-
->  drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
->  drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
->  drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 420 ++++++++++++++++++++++++
->  drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  31 +-
->  drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
->  6 files changed, 505 insertions(+), 13 deletions(-)
->  create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-
-Please rerun checkpatch next time. You've got a bunch of whitespace
-issues in cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link().
-
-Brian
+> DT prefers standard node names as opposed to vendor specific node 
+> names.
+> Isn't it a cache controller? I fail to see why this can't be done.
+Hi Stephen,
+The driver is vendor specific and also for uniformity purposes we 
+preferred
+to go with this name.
