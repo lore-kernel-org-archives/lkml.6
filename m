@@ -1,159 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752312AbeEPHgr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:36:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56218 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751285AbeEPHgp (ORCPT
+        id S1752505AbeEPHjS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:39:18 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35995 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751485AbeEPHjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:36:45 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <lee.jones@linaro.org>, <alexandre.torgue@st.com>
-CC: <thierry.reding@gmail.com>, <benjamin.gaignard@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-Subject: [RESEND PATCH v5 5/6] pwm: stm32: use input prescaler to improve period capture
-Date: Wed, 16 May 2018 09:36:00 +0200
-Message-ID: <1526456161-27865-6-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526456161-27865-1-git-send-email-fabrice.gasnier@st.com>
-References: <1526456161-27865-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 16 May 2018 03:39:16 -0400
+X-Google-Smtp-Source: AB8JxZrMs+eW1Aws1/nz/E83ebj2vSkfrWA9qWMPM98uG9liIykdK5gUU4W8PiAO4tKO4XpS1Pt5EA==
+Date: Wed, 16 May 2018 09:39:11 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, boqun.feng@gmail.com, byungchul.park@lge.com,
+        nitzanc@mellanox.com, paul.gortmaker@windriver.com,
+        ynorov@caviumnetworks.com, sfr@canb.auug.org.au, npiggin@gmail.com
+Subject: Re: [GIT PULL rcu/next] RCU commits for 4.18
+Message-ID: <20180516073911.GA30897@gmail.com>
+References: <20180515181120.GA29614@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_03:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180515181120.GA29614@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using input prescaler, capture unit will trigger DMA once every
-configurable /2, /4 or /8 events (rising edge). This helps improve
-period (only) capture accuracy at high rates.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
----
-Changes in v2:
-- Adopt DMA read from MFD core.
----
- drivers/pwm/pwm-stm32.c          | 63 ++++++++++++++++++++++++++++++++++++++--
- include/linux/mfd/stm32-timers.h |  1 +
- 2 files changed, 62 insertions(+), 2 deletions(-)
+* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
 
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index 9a50acd..60bfc07 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -8,6 +8,7 @@
-  *             pwm-atmel.c from Bo Shen
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/mfd/stm32-timers.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -168,7 +169,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct stm32_pwm *priv = to_stm32_pwm_dev(chip);
- 	unsigned long long prd, div, dty;
- 	unsigned long rate;
--	unsigned int psc = 0, scale;
-+	unsigned int psc = 0, icpsc, scale;
- 	u32 raw_prd, raw_dty;
- 	int ret = 0;
- 
-@@ -222,6 +223,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
- 	/*
- 	 * Got a capture. Try to improve accuracy at high rates:
- 	 * - decrease counter clock prescaler, scale up to max rate.
-+	 * - use input prescaler, capture once every /2 /4 or /8 edges.
- 	 */
- 	if (raw_prd) {
- 		u32 max_arr = priv->max_arr - 0x1000; /* arbitrary margin */
-@@ -241,8 +243,65 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
- 			goto stop;
- 	}
- 
-+	/* Compute intermediate period not to exceed timeout at low rates */
- 	prd = (unsigned long long)raw_prd * (psc + 1) * NSEC_PER_SEC;
--	result->period = DIV_ROUND_UP_ULL(prd, rate);
-+	do_div(prd, rate);
-+
-+	for (icpsc = 0; icpsc < MAX_TIM_ICPSC ; icpsc++) {
-+		/* input prescaler: also keep arbitrary margin */
-+		if (raw_prd >= (priv->max_arr - 0x1000) >> (icpsc + 1))
-+			break;
-+		if (prd >= (tmo_ms * NSEC_PER_MSEC) >> (icpsc + 2))
-+			break;
-+	}
-+
-+	if (!icpsc)
-+		goto done;
-+
-+	/* Last chance to improve period accuracy, using input prescaler */
-+	regmap_update_bits(priv->regmap,
-+			   pwm->hwpwm < 2 ? TIM_CCMR1 : TIM_CCMR2,
-+			   TIM_CCMR_IC1PSC | TIM_CCMR_IC2PSC,
-+			   FIELD_PREP(TIM_CCMR_IC1PSC, icpsc) |
-+			   FIELD_PREP(TIM_CCMR_IC2PSC, icpsc));
-+
-+	ret = stm32_pwm_raw_capture(priv, pwm, tmo_ms, &raw_prd, &raw_dty);
-+	if (ret)
-+		goto stop;
-+
-+	if (raw_dty >= (raw_prd >> icpsc)) {
-+		/*
-+		 * We may fall here using input prescaler, when input
-+		 * capture starts on high side (before falling edge).
-+		 * Example with icpsc to capture on each 4 events:
-+		 *
-+		 *       start   1st capture                     2nd capture
-+		 *         v     v                               v
-+		 *         ___   _____   _____   _____   _____   ____
-+		 * TI1..4     |__|    |__|    |__|    |__|    |__|
-+		 *            v  v    .  .    .  .    .       v  v
-+		 * icpsc1/3:  .  0    .  1    .  2    .  3    .  0
-+		 * icpsc2/4:  0       1       2       3       0
-+		 *            v  v                            v  v
-+		 * CCR1/3  ......t0..............................t2
-+		 * CCR2/4  ..t1..............................t1'...
-+		 *               .                            .  .
-+		 * Capture0:     .<----------------------------->.
-+		 * Capture1:     .<-------------------------->.  .
-+		 *               .                            .  .
-+		 * Period:       .<------>                    .  .
-+		 * Low side:                                  .<>.
-+		 *
-+		 * Result:
-+		 * - Period = Capture0 / icpsc
-+		 * - Duty = Period - Low side = Period - (Capture0 - Capture1)
-+		 */
-+		raw_dty = (raw_prd >> icpsc) - (raw_prd - raw_dty);
-+	}
-+
-+done:
-+	prd = (unsigned long long)raw_prd * (psc + 1) * NSEC_PER_SEC;
-+	result->period = DIV_ROUND_UP_ULL(prd, rate << icpsc);
- 	dty = (unsigned long long)raw_dty * (psc + 1) * NSEC_PER_SEC;
- 	result->duty_cycle = DIV_ROUND_UP_ULL(dty, rate);
- stop:
-diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
-index d46f550..9da1d7e 100644
---- a/include/linux/mfd/stm32-timers.h
-+++ b/include/linux/mfd/stm32-timers.h
-@@ -82,6 +82,7 @@
- #define TIM_DCR_DBL	GENMASK(12, 8)	/* DMA burst len */
- 
- #define MAX_TIM_PSC		0xFFFF
-+#define MAX_TIM_ICPSC		0x3
- #define TIM_CR2_MMS_SHIFT	4
- #define TIM_CR2_MMS2_SHIFT	20
- #define TIM_SMCR_TS_SHIFT	4
--- 
-1.9.1
+> Hello, Ingo!
+> 
+> This pull request contains the following changes:
+> 
+> 1.	Updates to the handling of expedited grace periods, perhaps most
+> 	notably parallelizing their initialization.  Other changes
+> 	include fixes from Boqun Feng.
+> 
+> 	http://lkml.kernel.org/r/20180423022047.GA20189@linux.vnet.ibm.com
+> 
+> 2.	Miscellaneous fixes.  These include an nvme fix from Nitzan Carmi
+> 	that I am carrying because it depends on a new SRCU function
+> 	cleanup_srcu_struct_quiesced().  This branch also includes fixes
+> 	from Byungchul Park and Yury Norov.  Note that several patches
+> 	were deferred to the v4.19 merge window due to late location
+> 	of bugs and late determination of a need for restructuring.
+> 
+> 	http://lkml.kernel.org/r/20180423023150.GA21533@linux.vnet.ibm.com
+> 
+> 3.	Updates to reduce lock contention in the rcu_node combining tree.
+> 	These are in preparation for the consolidation of RCU-bh,
+> 	RCU-preempt, and RCU-sched into a single flavor, which was
+> 	requested by Linus Torvalds in response to a security flaw
+> 	whose root cause included confusion between the multiple flavors
+> 	of RCU.  There will be another series of contention-reduction
+> 	patches in the next merge window, hopefully accompanied by the
+> 	consolidation itself.
+> 
+> 	http://lkml.kernel.org/r/20180423030258.GA23370@linux.vnet.ibm.com
+> 
+> 4.	Torture-test updates that save their users some time and effort.
+> 
+> 	http://lkml.kernel.org/r/20180423031346.GA28371@linux.vnet.ibm.com
+> 
+> The nvme patch called out in #2 above has a conflict with a commit in
+> Linus's tree, which was reported by Stephen Rothwell in the course of
+> his -next testing.  He is carrying a resolution to this conflict as
+> reported on LKML here:
+> 
+> http://lkml.kernel.org/r/20180514134636.61831bcc@canb.auug.org.au
+> 
+> This resolution looks good to me.
+> 
+> All of these changes have been subjected to 0day Test Robot and -next
+> testing, and are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
+> 
+> for you to fetch changes up to 22df7316ac71dc1ac57415349938737d2a229c59:
+> 
+>   Merge branches 'exp.2018.05.15a', 'fixes.2018.05.15a', 'lock.2018.05.15a' and 'torture.2018.05.15a' into HEAD (2018-05-15 10:33:05 -0700)
+> 
+> This merge commit is quite recent, however, the changes are exactly
+> the same as the previous merge commit (434533a52e8d) dated April 30th.
+> The only difference is the addition of Nick Piggin's Tested-by to all
+> of the commit logs (thank you, Nick!).
+> 
+> ----------------------------------------------------------------
+> Boqun Feng (2):
+>       rcu: exp: Fix "must hold exp_mutex" comments for QS reporting functions
+>       rcu: exp: Protect all sync_rcu_preempt_exp_done() with rcu_node lock
+> 
+> Byungchul Park (3):
+>       rcu: Inline rcu_preempt_do_callback() into its sole caller
+>       rcu: Call wake_nocb_leader_defer() with 'FORCE' when nocb_q_count is high
+>       rcu: Remove deprecated RCU debugfs tracing code
+> 
+> Nitzan Carmi (1):
+>       nvme: Avoid flush dependency in delete controller flow
+> 
+> Paul E. McKenney (36):
+>       rcu: Parallelize expedited grace-period initialization
+>       rcu: Don't allocate rcu_nocb_mask if no one needs it
+>       rcu: Rename cond_resched_rcu_qs() to cond_resched_tasks_rcu_qs()
+>       softirq: Eliminate unused cond_resched_softirq() macro
+>       rcu: Move __rcu_read_lock() and __rcu_read_unlock() to tree_plugin.h
+>       rcu: Update rcu_bind_gp_kthread() header comment
+>       srcu: Add cleanup_srcu_struct_quiesced()
+>       rcu: Add leaf-node macros
+>       rcu: Improve non-root rcu_cbs_completed() accuracy
+>       rcu: Make rcu_start_future_gp()'s grace-period check more precise
+>       rcu: Add accessor macros for the ->need_future_gp[] array
+>       rcu: Make rcu_gp_kthread() check for early-boot activity
+>       rcu: Make rcu_gp_cleanup() more accurately predict need for new GP
+>       rcu: Avoid losing ->need_future_gp[] values due to GP start/end races
+>       rcu: Make rcu_future_needs_gp() check all ->need_future_gps[] elements
+>       rcu: Convert ->need_future_gp[] array to boolean
+>       rcu: Make rcu_migrate_callbacks wake GP kthread when needed
+>       rcu: Avoid __call_rcu_core() root rcu_node ->lock acquisition
+>       rcu: Switch __rcu_process_callbacks() to rcu_accelerate_cbs()
+>       rcu: Cleanup, don't put ->completed into an int
+>       rcu: Clear request other than RCU_GP_FLAG_INIT at GP end
+>       rcu: Inline rcu_start_gp_advanced() into rcu_start_future_gp()
+>       rcu: Make rcu_start_future_gp() caller select grace period
+>       rcu: Add funnel locking to rcu_start_this_gp()
+>       rcu: Make rcu_start_this_gp() check for out-of-range requests
+>       rcu: The rcu_gp_cleanup() function does not need cpu_needs_another_gp()
+>       rcu: Simplify and inline cpu_needs_another_gp()
+>       rcu: Drop early GP request check from rcu_gp_kthread()
+>       rcu: Update list of rcu_future_grace_period() trace events
+>       torture: Add a script to edit output from failed runs
+>       torture: Fold parse-torture.sh into parse-console.sh
+>       rcutorture: Print end-of-test state
+>       rcutorture: Print end-of-test state in kvm.sh summary
+>       rcutorture: Abbreviate kvm.sh summary lines
+>       torture: Make kvm-find-errors.sh find build warnings
+>       Merge branches 'exp.2018.05.15a', 'fixes.2018.05.15a', 'lock.2018.05.15a' and 'torture.2018.05.15a' into HEAD
+> 
+> Paul Gortmaker (1):
+>       doc: Ensure whatisRCU.txt actually says what RCU is
+> 
+> Yury Norov (1):
+>       rcu: Declare rcu_eqs_special_set() in public header
+> 
+>  Documentation/RCU/whatisRCU.txt                    |   2 +
+>  drivers/nvme/host/core.c                           |   2 +-
+>  include/linux/rcupdate.h                           |   4 +-
+>  include/linux/rcutree.h                            |   1 +
+>  include/linux/sched.h                              |   8 -
+>  include/linux/srcu.h                               |  36 ++-
+>  include/trace/events/rcu.h                         |  13 +-
+>  kernel/rcu/rcu.h                                   |  12 +-
+>  kernel/rcu/rcu_segcblist.c                         |  18 --
+>  kernel/rcu/rcu_segcblist.h                         |   2 -
+>  kernel/rcu/rcuperf.c                               |   2 +-
+>  kernel/rcu/rcutorture.c                            |  15 +-
+>  kernel/rcu/srcutiny.c                              |   9 +-
+>  kernel/rcu/srcutree.c                              |  30 +-
+>  kernel/rcu/tree.c                                  | 355 ++++++++-------------
+>  kernel/rcu/tree.h                                  |  36 ++-
+>  kernel/rcu/tree_exp.h                              | 235 ++++++++------
+>  kernel/rcu/tree_plugin.h                           |  98 +++---
+>  kernel/rcu/update.c                                |  50 +--
+>  kernel/sched/core.c                                |  14 -
+>  kernel/softirq.c                                   |   3 +-
+>  kernel/torture.c                                   |   2 +-
+>  kernel/trace/trace_benchmark.c                     |   4 +-
+>  .../selftests/rcutorture/bin/kvm-find-errors.sh    |  56 ++++
+>  .../selftests/rcutorture/bin/kvm-recheck-rcu.sh    |  12 +-
+>  .../selftests/rcutorture/bin/kvm-recheck.sh        |   4 -
+>  .../selftests/rcutorture/bin/kvm-test-1-run.sh     |   1 -
+>  .../selftests/rcutorture/bin/parse-console.sh      | 115 ++++++-
+>  .../selftests/rcutorture/bin/parse-torture.sh      | 105 ------
+>  29 files changed, 616 insertions(+), 628 deletions(-)
+>  create mode 100755 tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh
+>  delete mode 100755 tools/testing/selftests/rcutorture/bin/parse-torture.sh
+
+Pulled, thanks a lot Paul!
+
+	Ingo
