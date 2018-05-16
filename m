@@ -1,61 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752524AbeEPCu1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 22:50:27 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:8660 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbeEPCuZ (ORCPT
+        id S1752214AbeEPCwb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 22:52:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48074 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbeEPCw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 22:50:25 -0400
-Subject: Re: [PATCH 0/3] irqchip: meson-gpio: add support for Meson-AXG SoCs
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>
-References: <20180408145700.23520-1-yixun.lan@amlogic.com>
-CC: <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <0c97c61b-c05b-21cf-c880-80cff04ed6f2@amlogic.com>
-Date: Wed, 16 May 2018 10:50:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 15 May 2018 22:52:29 -0400
+Date: Tue, 15 May 2018 19:52:18 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Huaisheng HS1 Ye <yehs1@lenovo.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        NingTing Cheng <chengnt@lenovo.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        Linux MM <linux-mm@kvack.org>, "colyli@suse.de" <colyli@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <alexander.levin@verizon.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>, Ocean HY1 He <hehy1@lenovo.com>,
+        Vishal Verma <vishal.l.verma@intel.com>
+Subject: Re: [External]  Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM
+ (pmem) zone
+Message-ID: <20180516025218.GA17352@bombadil.infradead.org>
+References: <20180507184622.GB12361@bombadil.infradead.org>
+ <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
+ <x49a7tbi8r3.fsf@segfault.boston.devel.redhat.com>
+ <HK2PR03MB1684659175EB0A11E75E9B61929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180508030959.GB16338@bombadil.infradead.org>
+ <HK2PR03MB16841CBB549F40F86BB8D35C92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180510162742.GA30442@bombadil.infradead.org>
+ <HK2PR03MB1684B34F9D1DF18A8CDE18F292930@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180515162003.GA26489@bombadil.infradead.org>
+ <HK2PR03MB1684F8D2724BB8AF1FCCF02A92920@HK2PR03MB1684.apcprd03.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180408145700.23520-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR03MB1684F8D2724BB8AF1FCCF02A92920@HK2PR03MB1684.apcprd03.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc (or anyone else)
-
-On 04/08/18 22:56, Yixun Lan wrote:
->   This series try to add GPIO interrupt controller support for Meson-AXG SoCs.
->   The first patch is a trivial typo fix, I can fold the first two patches
-> together if necessary.
+On Wed, May 16, 2018 at 02:05:05AM +0000, Huaisheng HS1 Ye wrote:
+> > From: Matthew Wilcox [mailto:willy@infradead.org]
+> > Sent: Wednesday, May 16, 2018 12:20 AM> 
+> > > > > > Then there's the problem of reconnecting the page cache (which is
+> > > > > > pointed to by ephemeral data structures like inodes and dentries) to
+> > > > > > the new inodes.
+> > > > > Yes, it is not easy.
+> > > >
+> > > > Right ... and until we have that ability, there's no point in this patch.
+> > > We are focusing to realize this ability.
+> > 
+> > But is it the right approach?  So far we have (I think) two parallel
+> > activities.  The first is for local storage, using DAX to store files
+> > directly on the pmem.  The second is a physical block cache for network
+> > filesystems (both NAS and SAN).  You seem to be wanting to supplant the
+> > second effort, but I think it's much harder to reconnect the logical cache
+> > (ie the page cache) than it is the physical cache (ie the block cache).
 > 
-> Yixun Lan (3):
->   dt-bindings: interrupt-controller: fix the double quotes
->   dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
->   irqchip/meson-gpio: add support for Meson-AXG SoCs
+> Dear Matthew,
 > 
->  .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 11 ++++++-----
->  drivers/irqchip/irq-meson-gpio.c                              |  5 +++++
->  2 files changed, 11 insertions(+), 5 deletions(-)
-> 
+> Thanks for correcting my idea with cache line.
+> But I have questions about that, assuming NVDIMM works with pmem mode, even we
+> used it as physical block cache, like dm-cache, there is potential risk with
+> this cache line issue, because NVDIMMs are bytes-address storage, right?
+> If system crash happens, that means CPU doesn't have opportunity to flush all dirty
+> data from cache lines to NVDIMM, during copying data pointed by bio_vec.bv_page to
+> NVDIMM. 
+> I know there is btt which is used to guarantee sector atomic with block mode,
+> but for pmem mode that will likely cause mix of new and old data in one page
+> of NVDIMM.
+> Correct me if anything wrong.
 
-please consider this merely a ping..
-will you take this series, or is there anything holding this?
+Right, we do have BTT.  I'm not sure how it's being used with the block
+cache ... but the principle is the same; write the new data to a new
+page and then update the metadata to point to the new page.
 
-thanks
+> Another question, if we used NVDIMMs as physical block cache for network filesystems,
+> Does industry have existing implementation to bypass Page Cache similarly like DAX way,
+> that is to say, directly storing data to NVDIMMs from userspace, rather than copying
+> data from kernel space memory to NVDIMMs.
 
-Yixun
+The important part about DAX is that the kernel gets entirely out of the
+way and userspace takes care of handling flushing and synchronisation.
+I'm not sure how that works with the block cache; for a network
+filesystem, the filesystem needs to be in charge of deciding when and
+how to write the buffered data back to the storage.
+
+Dan, Vishal, perhaps you could jump in here; I'm not really sure where
+this effort has got to.
