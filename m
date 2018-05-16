@@ -1,81 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeEPDLF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 23:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752038AbeEPDLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 23:11:04 -0400
-Date: Wed, 16 May 2018 05:11:01 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 8/9] perf/breakpoint: Split breakpoint "check" and
- "commit"
-Message-ID: <20180516031059.GA2271@lerouge>
-References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
- <1525634395-23380-9-git-send-email-frederic@kernel.org>
- <20180509091703.GH12217@hirez.programming.kicks-ass.net>
+        id S1752383AbeEPDat (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 23:30:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51588 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752172AbeEPDas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 May 2018 23:30:48 -0400
+Date: Tue, 15 May 2018 22:30:44 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+        Peter Anvin <h.peter.anvin@intel.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>
+Subject: Re: [lkp-robot] [x86/asm] 51bad67ffb: int3:#[##]
+Message-ID: <20180516033044.odb74pdgcn5nacwb@treble>
+References: <20180515080033.GA7714@yexl-desktop>
+ <20180515210757.GA12225@avx2>
+ <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
+ <20180515214337.GA18021@avx2>
+ <20180515222211.ods5hzne46hozojq@treble>
+ <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com>
+ <20180515224354.zmygmsnlqj5lrdbo@treble>
+ <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com>
+ <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180509091703.GH12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 11:17:03AM +0200, Peter Zijlstra wrote:
-> On Sun, May 06, 2018 at 09:19:54PM +0200, Frederic Weisbecker wrote:
-> >  arch/arm/include/asm/hw_breakpoint.h     |  5 ++++-
-> >  arch/arm/kernel/hw_breakpoint.c          | 22 +++-------------------
-> >  arch/arm64/include/asm/hw_breakpoint.h   |  5 ++++-
-> >  arch/arm64/kernel/hw_breakpoint.c        | 22 +++-------------------
-> >  arch/powerpc/include/asm/hw_breakpoint.h |  5 ++++-
-> >  arch/powerpc/kernel/hw_breakpoint.c      | 22 +++-------------------
-> >  arch/sh/include/asm/hw_breakpoint.h      |  5 ++++-
-> >  arch/sh/kernel/hw_breakpoint.c           | 22 +++-------------------
-> >  arch/x86/include/asm/hw_breakpoint.h     |  5 ++++-
-> >  arch/x86/kernel/hw_breakpoint.c          | 23 +++--------------------
-> >  arch/xtensa/include/asm/hw_breakpoint.h  |  5 ++++-
-> >  arch/xtensa/kernel/hw_breakpoint.c       | 22 +++-------------------
-> 
-> Because of those ^,
-> 
-> >  kernel/events/hw_breakpoint.c            | 11 ++++++-----
-> 
-> would it not make sense to have a prelimenary patch doing something
-> like:
-> 
-> __weak int hw_breakpoint_arch_check(struct perf_event *bp)
-> {
-> 	return arch_validate_hwbkpt_settings(bp);
-> }
+On Tue, May 15, 2018 at 04:05:33PM -0700, Linus Torvalds wrote:
+> I wonder if there's some way to add a test for "ENTRY only works in a code
+> section"?
 
-So eventually I fear I can't do that, due to linking order.
+I suppose we could add a discardable annotation to the ENTRY macro and
+have objtool validate that it's in a text section.  I'm not sure whether
+it's worth it, but I could do it if you think it's a good idea.
 
-Say I convert x86 to implement hw_breakpoint_arch_check(), so I
-remove arch_validate_hwbkpt_settings(). On build time, the weak version
-is still compiled and can't find a declaration for arch_validate_hwbkpt_settings().
+Below is a tentative objtool patch which catches asm code falling
+through to INT3 padding, though objtool is 64-bit only so there won't be
+any 32-bit coverage.  It found zero hits on my config.  I'll clean it up
+and submit it tomorrow-ish.
 
-I tried to keep the declaration while the definition has been removed but
-it seems the weak version is linked first before it gets later replaced by
-the overriden arch version. So I get a build error.
-
-I could keep arch_validate_hwbkpt_settings() around on all archs and remove it in
-the end with the weak version but that would defeat the purpose of removing
-the mid-state in the current patch.
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 8344dd2f310a..3ed8cec6e765 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -285,11 +285,9 @@ ENTRY(early_idt_handler_array)
+ 	.endif
+ 	pushq $i		# 72(%rsp) Vector number
+ 	jmp early_idt_handler_common
+-	UNWIND_HINT_IRET_REGS
+ 	i = i + 1
+ 	.fill early_idt_handler_array + i*EARLY_IDT_HANDLER_SIZE - ., 1, 0xcc
+ 	.endr
+-	UNWIND_HINT_IRET_REGS offset=16
+ END(early_idt_handler_array)
+ 
+ early_idt_handler_common:
+diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
+index b0d7dc3d71b5..6eb058a8ac00 100644
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -33,7 +33,8 @@
+ #define INSN_STACK		8
+ #define INSN_BUG		9
+ #define INSN_NOP		10
+-#define INSN_OTHER		11
++#define INSN_PADDING		11
++#define INSN_OTHER		12
+ #define INSN_LAST		INSN_OTHER
+ 
+ enum op_dest_type {
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index 7e86a743f851..82b41bb93c02 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -421,7 +421,7 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 
+ 	case 0xcc:
+ 		/* int3: used for asm function padding by the __ALIGN macro */
+-		*type = INSN_NOP;
++		*type = INSN_PADDING;
+ 		break;
+ 
+ 	case 0xe3:
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index f4bbce838433..8a83a0d1693a 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1936,6 +1936,14 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 			}
+ 			return 0;
+ 
++		case INSN_PADDING:
++			if (!func) {
++				WARN_FUNC("code falls through to INT3 padding",
++					  insn->sec, insn->offset);
++				return 1;
++			}
++			break;
++
+ 		case INSN_STACK:
+ 			if (update_insn_state(insn, &state))
+ 				return 1;
+@@ -2032,7 +2040,8 @@ static bool ignore_unreachable_insn(struct instruction *insn)
+ {
+ 	int i;
+ 
+-	if (insn->ignore || insn->type == INSN_NOP)
++	if (insn->ignore || insn->type == INSN_NOP ||
++	    insn->type == INSN_PADDING)
+ 		return true;
+ 
+ 	/*
