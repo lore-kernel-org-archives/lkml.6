@@ -1,135 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeEPQhK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 12:37:10 -0400
-Received: from mail-sn1nam01on0041.outbound.protection.outlook.com ([104.47.32.41]:27392
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751307AbeEPQhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 12:37:08 -0400
-From: Nadav Amit <namit@vmware.com>
-To: Kees Cook <keescook@chromium.org>
-CC: LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Jan Beulich <JBeulich@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [RFC 5/8] x86: refcount: prevent gcc distortions
-Thread-Topic: [RFC 5/8] x86: refcount: prevent gcc distortions
-Thread-Index: AQHT7JNal4XNWp7ceUuT4zArssv9H6QyYvAAgAAsKIA=
-Date: Wed, 16 May 2018 16:37:06 +0000
-Message-ID: <BC3F1775-9EB8-4BA2-AADD-14080AF48E20@vmware.com>
-References: <20180515141124.84254-1-namit@vmware.com>
- <20180515141124.84254-6-namit@vmware.com>
- <CAGXu5j+wXoAaAFzmnU=VuYeHrGTyzBsEnCdeALYb=jXUaeeQ6g@mail.gmail.com>
-In-Reply-To: <CAGXu5j+wXoAaAFzmnU=VuYeHrGTyzBsEnCdeALYb=jXUaeeQ6g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN2PR05MB2784;7:bghgQORfxfsGCuVvWK+rRR1R4GZx+BqUUSaJpUWAZuMqABRjUvlyn/Ub+KGXVzjM1yvXN57R3Hx5YoeRTF5IKUoSRJFkG/UYDucsEef0lvFBrC+fLP2wLU4JOnnDNMo7H3A51QBXJyoa/WCrwWoiBdSsU6tSxv+yYdvRuFmsAcE/zhzpTl4yRhyFDUuX5SnV/xx2vHEASdIS6KFc90CtyONKHp8oof6vYmpyyICTezflelZdYdzTrvQ9+6JKSrXl;20:AxH4Haxra+E2RT/1v2ugtnt93Ze5pAP6gB/qT5ZEqs7ddch4ci10pe+zs7nuNpFF6g3PwLJ+agRDLaW2K9lFXI7wpVD3Ekh6h9Bz/Co9L7NEn+L8vCWv+0p2L1JkNAUyTSKHgSq7/NJzdjyPFcQ2W9MdeU5mKwVXDCbJgkXj3CA=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN2PR05MB2784;
-x-ms-traffictypediagnostic: SN2PR05MB2784:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com;
-x-microsoft-antispam-prvs: <SN2PR05MB2784C139939A165FFF815083D0920@SN2PR05MB2784.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:SN2PR05MB2784;BCL:0;PCL:0;RULEID:;SRVR:SN2PR05MB2784;
-x-forefront-prvs: 0674DC6DD3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(39380400002)(366004)(376002)(199004)(189003)(476003)(81156014)(82746002)(81166006)(486006)(33656002)(54906003)(6246003)(14454004)(26005)(8676002)(99286004)(86362001)(5250100002)(3660700001)(97736004)(25786009)(446003)(8936002)(2900100001)(105586002)(478600001)(11346002)(6916009)(2906002)(2616005)(186003)(106356001)(6512007)(3280700002)(5660300001)(53936002)(36756003)(7736002)(6436002)(4326008)(83716003)(305945005)(76176011)(68736007)(6506007)(102836004)(66066001)(3846002)(6486002)(53546011)(6116002)(316002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR05MB2784;H:SN2PR05MB2654.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: /iVteLfF2wrOw9fHpapHySrW4vO5Qso1FoOcSLBFFUclB7iaH4FDGjQOjJmrwNg8C3GhjH8105MBdj/lq6osQMn51erM9AJ978vdwVjh80vdwpC2FqD34U6zu0gJTcDIRi+6YUKdjX84q573u4lRIl29TGjjalVZ0WRpyGlky629FYPSWs4B1mTSNv1s5Ca/
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A7FBCAF9227B440B07B9140AA391CD5@namprd05.prod.outlook.com>
+        id S1752253AbeEPQhh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 12:37:37 -0400
+Received: from mga12.intel.com ([192.55.52.136]:52843 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeEPQhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 12:37:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
+   d="scan'208";a="41456176"
+Subject: Re: [PATCH 09/15] x86/split_lock: Explicitly enable or disable #AC
+ for split locked accesses
+To: Fenghua Yu <fenghua.yu@intel.com>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+ <1526323945-211107-10-git-send-email-fenghua.yu@intel.com>
+ <f462c3eb-88e4-829c-132a-e55eb6ef6f19@intel.com>
+ <20180515172908.GC244301@romley-ivt3.sc.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Alan Cox <alan@linux.intel.com>, x86 <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <3a9c6e05-66ba-3133-0696-edce57a52bc0@intel.com>
+Date: Wed, 16 May 2018 09:37:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 741c0f2c-b5bc-4d11-17eb-08d5bb4b4310
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 741c0f2c-b5bc-4d11-17eb-08d5bb4b4310
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2018 16:37:06.3171
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR05MB2784
+In-Reply-To: <20180515172908.GC244301@romley-ivt3.sc.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GGbHS6017139
 
-Kees Cook <keescook@chromium.org> wrote:
-
-> On Tue, May 15, 2018 at 7:11 AM, Nadav Amit <namit@vmware.com> wrote:
->> GCC considers the number of statements in inlined assembly blocks,
->> according to new-lines and semicolons, as an indication to the cost of
->> the block in time and space. This data is distorted by the kernel code,
->> which puts information in alternative sections. As a result, the
->> compiler may perform incorrect inlining and branch optimizations.
->> 
->> The solution is to set an assembly macro and call it from the inlined
->> assembly block. As a result GCC considers the inline assembly block as
->> a single instruction.
->> 
->> This patch allows to inline functions such as __get_seccomp_filter().
->> The effect of the patch is as follows on the kernel size:
->> 
->>   text    data     bss     dec     hex filename
->> 18146418 10064100 2936832 31147350 1db4556 ./vmlinux before
->> 18148228 10063968 2936832 31149028 1db4be4 ./vmlinux after (+1678)
->> 
->> Static text symbols:
->> Before: 39673
->> After:  39649   (-24)
->> 
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: x86@kernel.org
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Jan Beulich <JBeulich@suse.com>
->> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
->> 
->> Signed-off-by: Nadav Amit <namit@vmware.com>
->> ---
->> arch/x86/include/asm/refcount.h | 55 ++++++++++++++++++++-------------
->> 1 file changed, 33 insertions(+), 22 deletions(-)
->> 
->> diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
->> index 4cf11d88d3b3..a668c534206d 100644
->> --- a/arch/x86/include/asm/refcount.h
->> +++ b/arch/x86/include/asm/refcount.h
->> @@ -14,34 +14,43 @@
->>  * central refcount exception. The fixup address for the exception points
->>  * back to the regular execution flow in .text.
->>  */
->> -#define _REFCOUNT_EXCEPTION                            \
->> -       ".pushsection .text..refcount\n"                \
->> -       "111:\tlea %[counter], %%" _ASM_CX "\n"         \
->> -       "112:\t" ASM_UD2 "\n"                           \
->> -       ASM_UNREACHABLE                                 \
->> -       ".popsection\n"                                 \
->> -       "113:\n"                                        \
->> +
->> +asm ("\n"
->> +       ".macro __REFCOUNT_EXCEPTION counter:vararg\n\t"
+On 05/15/2018 10:29 AM, Fenghua Yu wrote:
+> On Tue, May 15, 2018 at 09:15:16AM -0700, Dave Hansen wrote:
+>> On 05/14/2018 11:52 AM, Fenghua Yu wrote:
+>>> By default, we don't set or clear the bit 29 in TEST_CTL MSR 0x33 and
+>>> the bit is inherited from BIOS/hardware setting.
+>>>
+>>> The kernel parameter "split_lock_ac=on/off" explicitly sets or clears
+>>> the bit during boot time.
+>>
+>> The more I think about this...  Why do we need this at boot anyway?
+>> Surely boot-time kernel code can't cause performance issues in the same
+>> way that untrusted repeated userspace can.  Why don't we just let
+>> userspace turn this on?
 > 
-> Why are these vararg?
+> Turning split lock earlier can captuer split lock performance issue
+> in the boot path. Actually we did find two split lock issues during
+> boot time by turning on the feature earlier (see patch 4 and 5).
 
-I don’t think it is needed here. I will fix it.
+Yeah, but you're going to have a pretty hard time arguing that these are
+even close to the same class of issues that occur when all the CPUs are
+up and userspace is pounding the system with split locks.
 
-> 
-> Also, I think for the whole series, these #define-a-macro cases need a
-> comment in the code. It's not obvious from looking at the code why
-> they've defined a macro instead of just leaving the asm as it was.
-
-Right. I will add them.
-
-> Beyond that, as long as there is no behavioral changes, I'm fine with
-> the changes.
-
-Thanks!
-
-Nadav
+It also seems like the kind of thing that deserves to be a debugging
+option, or Kconfig thing rather than a kernel command-line option that
+has to live forever.
