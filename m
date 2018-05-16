@@ -1,81 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeEPIJv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 04:09:51 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:46102 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeEPIJs (ORCPT
+        id S1752629AbeEPILB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:11:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57784 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752095AbeEPIK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:09:48 -0400
-X-Google-Smtp-Source: AB8JxZpNyykppowDh3pqwsFKI1rjTw0xtSfAidZyZSNyasabpHZZEuXdL5lSS/sJXHJSTmwSPQOBBS+jrMVV2PiqHlY=
+        Wed, 16 May 2018 04:10:59 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 10/13] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 16 May 2018 09:55:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180516165326.47e96000@canb.auug.org.au>
-References: <20180516165326.47e96000@canb.auug.org.au>
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Wed, 16 May 2018 11:09:16 +0300
-Message-ID: <CAFCwf119c0vsR8uxqHZu6h12tWhaW6mh9pDYqGPriC60s-+h6Q@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Felix Kuehling <Felix.Kuehling@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051608-0012-0000-0000-000005D7112C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051608-0013-0000-0000-0000195433CA
+Message-Id: <a6bba129-8a3c-a848-65aa-b67816bf2d25@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160083
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 9:53 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On 07/05/2018 17:11, Tony Krowiak wrote:
+> Provides a sysfs interface to view the AP matrix configured for the
+> mediated matrix device.
 >
-> After merging the drm tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> The relevant sysfs structures are:
 >
-> drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function 'init_user_pages':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:632:3: error: implicit declaration of function 'release_pages'; did you mean 'release_task'? [-Werror=implicit-function-declaration]
->    release_pages(mem->user_pages, bo->tbo.ttm->num_pages);
->    ^~~~~~~~~~~~~
->    release_task
+> /sys/devices/vfio_ap
+> ... [matrix]
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ...............[$uuid]
+> .................. matrix
 >
-> Caused by commit
+> To view the matrix configured for the mediated matrix device,
+> print the matrix file:
+
+This is the configured matrix, not the one used by the guest.
+Nothing in the patches protect against binding a queue and assigning
+a new AP when the guest runs.
+The card and queue will be showed by this entry.
+
+
 >
->   5ae0283e831a ("drm/amdgpu: Add userptr support for KFD")
+> 	cat matrix
 >
-> I have applied the following patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 16 May 2018 16:43:34 +1000
-> Subject: [PATCH] drm/amdgpu: include pagemap.h for release_pages()
->
-> Fixes: 5ae0283e831a ("drm/amdgpu: Add userptr support for KFD"
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Oded Gabbay <oded.gabbay@gmail.com>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 1 +
->  1 file changed, 1 insertion(+)
+>   drivers/s390/crypto/vfio_ap_ops.c |   31 +++++++++++++++++++++++++++++++
+>   1 files changed, 31 insertions(+), 0 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> index 72ab2b1ffe75..ff8fd75f7ca5 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> @@ -23,6 +23,7 @@
->  #define pr_fmt(fmt) "kfd2kgd: " fmt
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 755be1d..81e03b8 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -716,6 +716,36 @@ static ssize_t control_domains_show(struct device *dev,
+>   }
+>   DEVICE_ATTR_RO(control_domains);
 >
->  #include <linux/list.h>
-> +#include <linux/pagemap.h>
->  #include <linux/sched/mm.h>
->  #include <drm/drmP.h>
->  #include "amdgpu_object.h"
-> --
-> 2.17.0
+> +static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+> +			   char *buf)
+> +{
+> +	struct mdev_device *mdev = mdev_from_dev(dev);
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +	char *bufpos = buf;
+> +	unsigned long apid;
+> +	unsigned long apqi;
+> +	unsigned long napm = matrix_mdev->matrix.apm_max + 1;
+> +	unsigned long naqm = matrix_mdev->matrix.aqm_max + 1;
+> +	int nchars = 0;
+> +	int n;
+> +
+> +	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm) {
+> +		n = sprintf(bufpos, "%02lx\n", apid);
+> +		bufpos += n;
+> +		nchars += n;
+> +
+> +		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm) {
+> +			n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+> +			bufpos += n;
+> +			nchars += n;
+> +		}
+> +	}
+> +
+> +	return nchars;
+> +}
+> +DEVICE_ATTR_RO(matrix);
+> +
+> +
+>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>   	&dev_attr_assign_adapter.attr,
+>   	&dev_attr_unassign_adapter.attr,
+> @@ -724,6 +754,7 @@ static ssize_t control_domains_show(struct device *dev,
+>   	&dev_attr_assign_control_domain.attr,
+>   	&dev_attr_unassign_control_domain.attr,
+>   	&dev_attr_control_domains.attr,
+> +	&dev_attr_matrix.attr,
+>   	NULL,
+>   };
 >
-> --
-> Cheers,
-> Stephen Rothwell
 
-Thanks Stephen,
-
-I'll add it to amdkfd-next and send it to Dave with other fixes.
-
-Oded
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
