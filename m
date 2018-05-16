@@ -1,92 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEPHYe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:24:34 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:60816 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbeEPHYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:24:33 -0400
+        id S1752172AbeEPH0G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:26:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:56903 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751332AbeEPH0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:26:05 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 16 May 2018 17:26:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20180516172601.03188b22@canb.auug.org.au>
+In-Reply-To: <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
+References: <20180515155038.7387bf2c@canb.auug.org.au>
+        <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Wed, 16 May 2018 09:24:31 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
-Subject: Re: [PATCH] ARM: dts: vf610-zii-dev: enable vf610 builtin temp sensor
-In-Reply-To: <20180516063921.10406-1-nikita.yoush@cogentembedded.com>
-References: <20180516063921.10406-1-nikita.yoush@cogentembedded.com>
-Message-ID: <682aea7dc714fea095f935d41c8fa270@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NCfuoTAPXRkf9v+T2kpLIVN"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.05.2018 08:39, Nikita Yushchenko wrote:
-> Vybrid has single internal temperature sensor connected to both internal
-> ADC modules.
-> 
-> vf610-zii-dev already has ADC0 enabled. Now, to get temperature sensor
-> captured by iio_hwmon driver, need to configure iio_hwmon node to use
-> that ADC.
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That seems sensible.
+Hi Masahiro,
 
-Acked-by: Stefan Agner <stefan@agner.ch>
+On Wed, 16 May 2018 15:01:38 +0900 Masahiro Yamada <yamada.masahiro@socione=
+xt.com> wrote:
+>
+> How should I handle your fix-up?
+>=20
+> May I squash into the original one if you ack to do it,
+> or is it better to keep it as a separate patch?
 
-> 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
->  arch/arm/boot/dts/vf610-zii-dev.dtsi | 4 ++++
->  arch/arm/boot/dts/vfxxx.dtsi         | 2 +-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/vf610-zii-dev.dtsi
-> b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-> index 4890b8a5aa44..5ae5abfe1d55 100644
-> --- a/arch/arm/boot/dts/vf610-zii-dev.dtsi
-> +++ b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-> @@ -222,6 +222,10 @@
->  	status = "okay";
->  };
->  
-> +&tempsensor {
-> +	io-channels = <&adc0 16>;
-> +};
-> +
->  &iomuxc {
->  	pinctrl_adc0_ad5: adc0ad5grp {
->  		fsl,pins = <
-> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
-> index c3f09b737924..d392794d9c13 100644
-> --- a/arch/arm/boot/dts/vfxxx.dtsi
-> +++ b/arch/arm/boot/dts/vfxxx.dtsi
-> @@ -84,7 +84,7 @@
->  		mask = <0x1000>;
->  	};
->  
-> -	iio-hwmon {
-> +	tempsensor: iio-hwmon {
->  		compatible = "iio-hwmon";
->  		io-channels = <&adc0 16>, <&adc1 16>;
->  	};
+Either way is fine by me, but the former reduces the bisection gap.  So
+it depends on whether you want to rebase your tree or not.
+
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr73QkACgkQAVBC80lX
+0GzABwf/e/qRmPZqUY2UDk1i0wqlaZ7jpY83UhcvVJKKo3BmWTSvdjgyo7kvhNbv
+BgINZYx726O7cr2KjkNzvNyoMGBcTb3DPyHpa1fL2anC/E6zrVFqgOK+qitBLumb
+6kpqtDyJo1ebCBmeU71o5NIJIQ56AV68gerUVJDCtlKt7uzG8hHPd3H2VcxQ/m6g
+GXoVnwzqdaX4V3SXhWbM53MQfSy77Elu9yjX/0KmZAbF6Vd1uyRSWtH/enRKQpah
+5sA98mmxrA3fmpsxLYxL36PstcOi8HSWSWiZnqjHrw/Ia2iCpJv+nR/GymWCKPFy
+0V10vdczDJNihtDY9VLDZL1HkYMOWA==
+=ABeq
+-----END PGP SIGNATURE-----
+
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN--
