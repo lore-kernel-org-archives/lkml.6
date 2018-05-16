@@ -1,53 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751198AbeEPVIy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:08:54 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:55318 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751332AbeEPVIw (ORCPT
+        id S1752332AbeEPVJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:09:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751375AbeEPVJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:08:52 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v6 1/4] rtc: ds1307: fix data pointer to m41t0
-Date: Wed, 16 May 2018 23:08:39 +0200
-Message-Id: <20180516210842.5874-1-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 16 May 2018 17:09:53 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 16 May 2018 14:09:51 -0700
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Asutosh Das <asutoshd@codeaurora.org>
+Cc: cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Yaniv Gardi <ygardi@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] scsi: ufs: Allowing power mode change
+In-Reply-To: <75e5ea5901004ef95b37aed719686214910f6541.1525343531.git.asutoshd@codeaurora.org>
+References: <cover.1525343531.git.asutoshd@codeaurora.org>
+ <75e5ea5901004ef95b37aed719686214910f6541.1525343531.git.asutoshd@codeaurora.org>
+Message-ID: <33a5e196be45bfeb0bea49a446e8af98@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data field points to m41t00, instead it should point to m41t0.
-Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
-are equal.
+On 2018-05-03 04:07, Asutosh Das wrote:
+> From: Yaniv Gardi <ygardi@codeaurora.org>
+> 
+> Due to M-PHY issues, moving from HS to any other mode or gear or
+> even Hibern8 may cause some un-predicted behavior
+> of the device.
+> This patch adds provides a quirk to address that.
+> 
+> Signed-off-by: Yaniv Gardi <ygardi@codeaurora.org>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 8 +++++++-
+>  drivers/scsi/ufs/ufshcd.h | 7 +++++++
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 5bc9dc1..f3083fe 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -4162,9 +4162,15 @@ static int ufshcd_link_startup(struct ufs_hba 
+> *hba)
+>  			goto out;
+>  	} while (ret && retries--);
+> 
+> -	if (ret)
+> +	if (ret) {
+>  		/* failed to get the link up... retire */
+>  		goto out;
+> +	}
+> +
+> +	if (hba->quirks & UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE) {
+> +		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 0);
+> +		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 1);
+> +	}
+> 
+>  	if (link_startup_again) {
+>  		link_startup_again = false;
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index cbe46f6..bb4ecfb 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -591,6 +591,13 @@ struct ufs_hba {
+>  	 */
+>  	#define UFSHCD_QUIRK_PRDT_BYTE_GRAN			UFS_BIT(7)
+> 
+> +	/*
+> +	 * Needs to be enabled if moving from HS to any other gear/mode or 
+> even
+> +	 * hibern8 causes unpredicted behavior of device.
+> +	 * If this quirk is enabled, standard UFS driver will disable/enable
+> +	 * TX_LCC.
+> +	 */
+> +	#define UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE		UFS_BIT(8)
+>  	unsigned int quirks;	/* Deviations from standard UFSHCI spec. */
+> 
+>  	/* Device deviations from standard UFS device spec. */
 
-Point to right enum m41t0 instead of m41t00.
+This was probably needed in early generation of UFS devices (non 
+commercial) and may not be really needed now. I believe we can skip this 
+patch.
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/rtc/rtc-ds1307.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index a13e59edff53..32aadcbc377f 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -298,7 +298,7 @@ static const struct of_device_id ds1307_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,m41t0",
--		.data = (void *)m41t00
-+		.data = (void *)m41t0
- 	},
- 	{
- 		.compatible = "st,m41t00",
 -- 
-2.17.0
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
