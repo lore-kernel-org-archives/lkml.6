@@ -1,69 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-62429-1526464023-3-11789492770576234131
+X-Cyrus-Session-Id: sloti22d1t05-654-1526464016-2-4895185651965974907
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464022; b=eExDgDeDVpTH050d06epvAMaKnPb84K8CfzTypMmpATyI+3Us5
-    V/zHBsJ1/L5Pq1dnZSlrNmg/5NxpTdhopPYCIMsZwXvchs+cbyrXxXw4oLNbhxBo
-    MdlD8D2ar5PHv6UHBjArJiKahKwv4t+G3N0bs6y8ZKy/3YDsov2KODC8yl9Ff8tN
-    mM+ZZ6EAdL86V//5b1fijmYRpCFkLyhQpkpqqRHtcHrXoG34A5h+iM5Mxm+fS3LM
-    p5RCav0+myj/8XXBk/6m+sAVmCRx9dH0gOPVg0H/RU0UrmznR+fo9Kupy0hJlYp6
-    ozlUi2EDFuGh5LrXlqxZSG/dx637EgP+Qpsg==
+    1526464015; b=ew8CtJ5lZj/4k7BEkxhe6nJ8YWSPzzQz5Ib9duBawxt8EGSiIT
+    TvG1uc1m0Yvre2Ht1ahQu8tawzklCTlvdVzU5OSjlLngc5wEAaYSnp0nBS0CAFhE
+    AhL3jJ3OBv92zeNX0S0Kk0r1V4HCZxs7mPhy11C+jYj7YorOPWdu0xN2uM00ykqM
+    PdXyKLQwCGTNIzKVw6qZxv7AkABwA5lQTH5tlJ92i0t8GscMEFOHo3FqpDwsyRv3
+    SHpCWF92du96LUmESTcashU4JDLbnN28IatiQkVlQDatPfEIh6PRxkQduncyuz7P
+    dPu5dk6cjdof1Zq1uT51r4WoilRPiZlGm9Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464022; bh=d6dMJ
-    KDeVQlA2yKBaPnyZe/wPDpag34p4GI+AkufSvs=; b=PrnOgEOQOcIMU2UNTNWfS
-    CVYrozOwPyjSpBPraytaXg5G6FjTL4ozxfHPj/GZcgxhZYHR36o9HMq+TR7rIf0e
-    H0ah9FYDDY5s/5mwFBgcqAozqAXKCeuX9e7c/agycQ8tuTho2StMORlAvax08EFz
-    gDR4MpS97pZTWupxhOXrWR9U0wiPi29zE/j0gL9rYVvhxGe+0KKaLx/9jMgfXbjE
-    PwmaD/nsb5eulJ/W1dHqepWKDAeL2UwH4eB1mOZ254pKzKTmilaVAzq+b4XngKof
-    ZNGgpO/EJdNQ3qKRltkBkBDdEVeRqehuTmeIUXTHYt6dNo4eh+OHKS5XVnsoJfD5
-    A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464015; bh=gNUHM
+    EhryuWCsRcocQkxqpk+HAE7KPg5opsnx2RwWe0=; b=HOUj+7PeWXm1vXejxnd2y
+    NX29D6QYHw6If7ljgvdhDnh6HJIRLinzpToQQMXYZsaMfjWTAYgmY0xXZKJs275n
+    10045bkxsvLyPmi+RpZ09n4G3bQjRu4dur8GGj7pvvHtwri8FHyxBmZdCP0iGQET
+    OW51Io5/mQAXgUC84RgbFfFd21tYBuP/cWHmBvgdKDuPOWFN8x0NP7tM8EYISecj
+    FKqMcRd6fo9/J/bFTYOetjZFxzLy4TVQR2pqJdxB6bBWYQqgu2D0aCGBn78MLWK7
+    qTHqrJYZU8W3UASd7hlsz/4Aqt020K1Ou/+ifNGmBww5S7mDwWTDg2mx2QET25CQ
+    g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=hF2Ion7C
+    header.d=infradead.org header.i=@infradead.org header.b=R1Q8wUz2
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=lst.de header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=hF2Ion7C
+      header.d=infradead.org header.i=@infradead.org header.b=R1Q8wUz2
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=lst.de header.result=pass
       header_is_org_domain=yes;
@@ -71,23 +69,22 @@ Authentication-Results: mx3.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJUAkoniU0rcLQb88R17M1rl0nsq/og6sdBK/PBuMs26edUzLdOBKFmaqVI5C5/wOpNlU92Clv9mjG2A97kWizK8EkROQDqoVPNyFTXuFAR8ghc5fXOg
-    VevMwmcz3BGBffNGpqGHWiGM2h2geB4FbKqV/uqMALLfHAfYTGmXQjgr+v2ZSxUk8zimVhJYGQ/RjBlS5WBFShyYaDi2ohXypu/EVL8LsIC77R2vkwl3vuBb
-    j7hwd1JXJ3PYjdJlBFJEQg==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=PtDNVHqPAAAA:8 a=DDOyTI_5AAAA:8
-    a=YMBgog7T_lIm86Di9T4A:9 a=CjuIK1q_8ugA:10 a=BpimnaHY1jUKGyF_4-AF:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfAgfPxM0RWLu61zx+Yre3m8qEOrS//JTxNnCuP5Um9IOpiIoEVPKM2pCJkUx01A6bkBkdGI6oh/pz6LjmKNVm/8UeVTpR2xAPNx65lrzemnJMv47qS2J
+    4QV0CKCh6+mU2uf9nH+VvQpTL4a1erJdeDPyh8SzBR9aCfiuFPi4zJ0Yh4sl9sBc6LvfRSRLG1hpZ747iOno4en4Y6Tx/9zpwa+FJ46I+1VavxHaVX/D1wG/
+    QXifqCyWgICS+5Ucku1fzA==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=qHYdmk5srm4cNRxzpugA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 39/42] ide: remove ide_driver_proc_write
-Date: Wed, 16 May 2018 11:43:43 +0200
-Message-Id: <20180516094346.20506-40-hch@lst.de>
+Subject: [PATCH 30/42] bonding: switch to proc_create_seq_data
+Date: Wed, 16 May 2018 11:43:34 +0200
+Message-Id: <20180516094346.20506-31-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -121,78 +118,95 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The driver proc file hasn't been writeable for a long time, so this is
-just dead code.
+And use proc private data directly instead of doing a detour
+through seq->private.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- drivers/ide/ide-proc.c | 46 ------------------------------------------
- 1 file changed, 46 deletions(-)
+ drivers/net/bonding/bond_procfs.c | 36 ++++++-------------------------
+ 1 file changed, 6 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
-index 863db44c7916..b3b8b8822d6a 100644
---- a/drivers/ide/ide-proc.c
-+++ b/drivers/ide/ide-proc.c
-@@ -528,58 +528,12 @@ static int ide_driver_proc_open(struct inode *inode, struct file *file)
- 	return single_open(file, ide_driver_proc_show, PDE_DATA(inode));
- }
+diff --git a/drivers/net/bonding/bond_procfs.c b/drivers/net/bonding/bond_procfs.c
+index 01059f1a7bca..9f7d83e827c3 100644
+--- a/drivers/net/bonding/bond_procfs.c
++++ b/drivers/net/bonding/bond_procfs.c
+@@ -10,7 +10,7 @@
+ static void *bond_info_seq_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(RCU)
+ {
+-	struct bonding *bond = seq->private;
++	struct bonding *bond = PDE_DATA(file_inode(seq->file));
+ 	struct list_head *iter;
+ 	struct slave *slave;
+ 	loff_t off = 0;
+@@ -29,7 +29,7 @@ static void *bond_info_seq_start(struct seq_file *seq, loff_t *pos)
  
--static int ide_replace_subdriver(ide_drive_t *drive, const char *driver)
--{
--	struct device *dev = &drive->gendev;
--	int ret = 1;
--	int err;
--
--	device_release_driver(dev);
--	/* FIXME: device can still be in use by previous driver */
--	strlcpy(drive->driver_req, driver, sizeof(drive->driver_req));
--	err = device_attach(dev);
--	if (err < 0)
--		printk(KERN_WARNING "IDE: %s: device_attach error: %d\n",
--			__func__, err);
--	drive->driver_req[0] = 0;
--	if (dev->driver == NULL) {
--		err = device_attach(dev);
--		if (err < 0)
--			printk(KERN_WARNING
--				"IDE: %s: device_attach(2) error: %d\n",
--				__func__, err);
--	}
--	if (dev->driver && !strcmp(dev->driver->name, driver))
--		ret = 0;
--
--	return ret;
--}
--
--static ssize_t ide_driver_proc_write(struct file *file, const char __user *buffer,
--				     size_t count, loff_t *pos)
--{
--	ide_drive_t	*drive = PDE_DATA(file_inode(file));
--	char name[32];
--
--	if (!capable(CAP_SYS_ADMIN))
--		return -EACCES;
--	if (count > 31)
--		count = 31;
--	if (copy_from_user(name, buffer, count))
--		return -EFAULT;
--	name[count] = '\0';
--	if (ide_replace_subdriver(drive, name))
--		return -EINVAL;
--	return count;
--}
--
- static const struct file_operations ide_driver_proc_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= ide_driver_proc_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
- 	.release	= single_release,
--	.write		= ide_driver_proc_write,
+ static void *bond_info_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+-	struct bonding *bond = seq->private;
++	struct bonding *bond = PDE_DATA(file_inode(seq->file));
+ 	struct list_head *iter;
+ 	struct slave *slave;
+ 	bool found = false;
+@@ -56,7 +56,7 @@ static void bond_info_seq_stop(struct seq_file *seq, void *v)
+ 
+ static void bond_info_show_master(struct seq_file *seq)
+ {
+-	struct bonding *bond = seq->private;
++	struct bonding *bond = PDE_DATA(file_inode(seq->file));
+ 	const struct bond_opt_value *optval;
+ 	struct slave *curr, *primary;
+ 	int i;
+@@ -167,7 +167,7 @@ static void bond_info_show_master(struct seq_file *seq)
+ static void bond_info_show_slave(struct seq_file *seq,
+ 				 const struct slave *slave)
+ {
+-	struct bonding *bond = seq->private;
++	struct bonding *bond = PDE_DATA(file_inode(seq->file));
+ 
+ 	seq_printf(seq, "\nSlave Interface: %s\n", slave->dev->name);
+ 	seq_printf(seq, "MII Status: %s\n", bond_slave_link_status(slave->link));
+@@ -257,38 +257,14 @@ static const struct seq_operations bond_info_seq_ops = {
+ 	.show  = bond_info_seq_show,
  };
  
- static int ide_media_proc_show(struct seq_file *m, void *v)
+-static int bond_info_open(struct inode *inode, struct file *file)
+-{
+-	struct seq_file *seq;
+-	int res;
+-
+-	res = seq_open(file, &bond_info_seq_ops);
+-	if (!res) {
+-		/* recover the pointer buried in proc_dir_entry data */
+-		seq = file->private_data;
+-		seq->private = PDE_DATA(inode);
+-	}
+-
+-	return res;
+-}
+-
+-static const struct file_operations bond_info_fops = {
+-	.owner   = THIS_MODULE,
+-	.open    = bond_info_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = seq_release,
+-};
+-
+ void bond_create_proc_entry(struct bonding *bond)
+ {
+ 	struct net_device *bond_dev = bond->dev;
+ 	struct bond_net *bn = net_generic(dev_net(bond_dev), bond_net_id);
+ 
+ 	if (bn->proc_dir) {
+-		bond->proc_entry = proc_create_data(bond_dev->name,
+-						    0444, bn->proc_dir,
+-						    &bond_info_fops, bond);
++		bond->proc_entry = proc_create_seq_data(bond_dev->name, 0444,
++				bn->proc_dir, &bond_info_seq_ops, bond);
+ 		if (bond->proc_entry == NULL)
+ 			netdev_warn(bond_dev, "Cannot create /proc/net/%s/%s\n",
+ 				    DRV_NAME, bond_dev->name);
 -- 
 2.17.0
 
