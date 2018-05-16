@@ -1,219 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeEPKKj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:10:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36754 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752450AbeEPKF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:26 -0400
-Message-Id: <7b74b2fa1e528279f5d3b08584776a17fc3c32e4.1526464250.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
-References: <cover.1526464250.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 01/14] Revert "powerpc/8xx: Use L1 entry APG to handle
- _PAGE_ACCESSED for CONFIG_SWAP"
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 16 May 2018 12:05:25 +0200 (CEST)
+        id S1753153AbeEPKL3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:11:29 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36390 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752289AbeEPKLC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:11:02 -0400
+X-Google-Smtp-Source: AB8JxZrtj6C1jjjFJniXSTQeJCIz9TCqJgreo5yfmSpP8/6HdFM/h/G11K9XSNmSqQrZyIKSYZ7Yws4bxjDIcJlYkeE=
+MIME-Version: 1.0
+In-Reply-To: <465cf5c6-46be-2701-1c26-3e90f31f05e4@mellanox.com>
+References: <20180511192318.22342-1-qing.huang@oracle.com> <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
+ <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com> <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
+ <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com> <465cf5c6-46be-2701-1c26-3e90f31f05e4@mellanox.com>
+From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
+Date: Wed, 16 May 2018 12:10:20 +0200
+Message-ID: <CAJX1YtZBW4FB1m+D92tK7iiOpeKTYGybhBwv29iu_=hBV5nztA@mail.gmail.com>
+Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
+To: Tariq Toukan <tariqt@mellanox.com>
+Cc: Qing Huang <qing.huang@oracle.com>, davem@davemloft.net,
+        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GAC9Yr025704
 
-This reverts commit 4f94b2c7462d9720b2afa7e8e8d4c19446bb31ce.
+On Wed, May 16, 2018 at 9:04 AM, Tariq Toukan <tariqt@mellanox.com> wrote:
+>
+>
+> On 15/05/2018 9:53 PM, Qing Huang wrote:
+>>
+>>
+>>
+>> On 5/15/2018 2:19 AM, Tariq Toukan wrote:
+>>>
+>>>
+>>>
+>>> On 14/05/2018 7:41 PM, Qing Huang wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 5/13/2018 2:00 AM, Tariq Toukan wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 11/05/2018 10:23 PM, Qing Huang wrote:
+>>>>>>
+>>>>>> When a system is under memory presure (high usage with fragments),
+>>>>>> the original 256KB ICM chunk allocations will likely trigger kernel
+>>>>>> memory management to enter slow path doing memory compact/migration
+>>>>>> ops in order to complete high order memory allocations.
+>>>>>>
+>>>>>> When that happens, user processes calling uverb APIs may get stuck
+>>>>>> for more than 120s easily even though there are a lot of free pages
+>>>>>> in smaller chunks available in the system.
+>>>>>>
+>>>>>> Syslog:
+>>>>>> ...
+>>>>>> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+>>>>>> oracle_205573_e:205573 blocked for more than 120 seconds.
+>>>>>> ...
+>>>>>>
+>>>>>> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
+>>>>>>
+>>>>>> However in order to support smaller ICM chunk size, we need to fix
+>>>>>> another issue in large size kcalloc allocations.
+>>>>>>
+>>>>>> E.g.
+>>>>>> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
+>>>>>> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each
+>>>>>> mtt
+>>>>>> entry). So we need a 16MB allocation for a table->icm pointer array to
+>>>>>> hold 2M pointers which can easily cause kcalloc to fail.
+>>>>>>
+>>>>>> The solution is to use vzalloc to replace kcalloc. There is no need
+>>>>>> for contiguous memory pages for a driver meta data structure (no need
+>>>>>> of DMA ops).
+>>>>>>
+>>>>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+>>>>>> Acked-by: Daniel Jurgens <danielj@mellanox.com>
+>>>>>> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+>>>>>> ---
+>>>>>> v2 -> v1: adjusted chunk size to reflect different architectures.
+>>>>>>
+>>>>>>   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
+>>>>>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>>>> b/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>>>> index a822f7a..ccb62b8 100644
+>>>>>> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>>>> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+>>>>>> @@ -43,12 +43,12 @@
+>>>>>>   #include "fw.h"
+>>>>>>     /*
+>>>>>> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
+>>>>>> - * per chunk.
+>>>>>> + * We allocate in page size (default 4KB on many archs) chunks to
+>>>>>> avoid high
+>>>>>> + * order memory allocations in fragmented/high usage memory
+>>>>>> situation.
+>>>>>>    */
+>>>>>>   enum {
+>>>>>> -    MLX4_ICM_ALLOC_SIZE    = 1 << 18,
+>>>>>> -    MLX4_TABLE_CHUNK_SIZE    = 1 << 18
+>>>>>> +    MLX4_ICM_ALLOC_SIZE    = 1 << PAGE_SHIFT,
+>>>>>> +    MLX4_TABLE_CHUNK_SIZE    = 1 << PAGE_SHIFT
+>>>>>
+>>>>>
+>>>>> Which is actually PAGE_SIZE.
+>>>>
+>>>>
+>>>> Yes, we wanted to avoid high order memory allocations.
+>>>>
+>>>
+>>> Then please use PAGE_SIZE instead.
+>>
+>>
+>> PAGE_SIZE is usually defined as 1 << PAGE_SHIFT. So I think PAGE_SHIFT is
+>> actually more appropriate here.
+>>
+>
+> Definition of PAGE_SIZE varies among different archs.
+> It is not always as simple as 1 << PAGE_SHIFT.
+> It might be:
+> PAGE_SIZE (1UL << PAGE_SHIFT)
+> PAGE_SIZE (_AC(1, UL) << PAGE_SHIFT)
+> etc...
+>
+> Please replace 1 << PAGE_SHIFT with PAGE_SIZE.
+>
+>>
+>>>
+>>>>> Also, please add a comma at the end of the last entry.
+>>>>
+>>>>
+>>>> Hmm..., followed the existing code style and checkpatch.pl didn't
+>>>> complain about the comma.
+>>>>
+>>>
+>>> I am in favor of having a comma also after the last element, so that when
+>>> another enum element is added we do not modify this line again, which would
+>>> falsely affect git blame.
+>>>
+>>> I know it didn't exist before your patch, but once we're here, let's do
+>>> it.
+>>
+>>
+>> I'm okay either way. If adding an extra comma is preferred by many people,
+>> someone should update checkpatch.pl to enforce it. :)
+>>
+> I agree.
+> Until then, please use an extra comma in this patch.
+>
+>>>
+>>>>>
+>>>>>>   };
+>>>>>>     static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct
+>>>>>> mlx4_icm_chunk *chunk)
+>>>>>> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev,
+>>>>>> struct mlx4_icm_table *table,
+>>>>>>       obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
+>>>>>>       num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
+>>>>>>   -    table->icm      = kcalloc(num_icm, sizeof(*table->icm),
+>>>>>> GFP_KERNEL);
+>>>>>> +    table->icm      = vzalloc(num_icm * sizeof(*table->icm));
+>>>>>
+>>>>>
+>>>>> Why not kvzalloc ?
+>>>>
+>>>>
+>>>> I think table->icm pointer array doesn't really need physically
+>>>> contiguous memory. Sometimes high order
+>>>> memory allocation by kmalloc variants may trigger slow path and cause
+>>>> tasks to be blocked.
+>>>>
+>>>
+>>> This is control path so it is less latency-sensitive.
+>>> Let's not produce unnecessary degradation here, please call kvzalloc so
+>>> we maintain a similar behavior when contiguous memory is available, and a
+>>> fallback for resiliency.
+>>
+>>
+>> No sure what exactly degradation is caused by vzalloc here. I think it's
+>> better to keep physically contiguous pages
+>> to other requests which really need them. Besides slow path/mem compacting
+>> can be really expensive.
+>>
+>
+> Degradation is expected when you replace a contig memory with non-contig
+> memory, without any perf test.
+> We agree that when contig memory is not available, we should use non-contig
+> instead of simply failing, and for this you can call kvzalloc.
 
-That commit was buggy, as it used rlwinm instead of rlwimi.
-Instead of fixing that bug, we revert the previous commit in order to
-reduce the dependency between L1 entries and L2 entries
+The expected degradation would be little if the data is not very
+performance sensitive.
+I think vmalloc would be better in general case.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/mmu-8xx.h | 34 +++++-----------------------
- arch/powerpc/kernel/head_8xx.S     | 45 +++++++++++++++++++++++---------------
- arch/powerpc/mm/8xx_mmu.c          |  2 +-
- 3 files changed, 34 insertions(+), 47 deletions(-)
+Even if the server has hundreds of gigabyte memory, even 1MB
+contiguous memory is often rare.
+For example, I attached /proc/pagetypeinfo of my server running for 153 days.
+The largest contiguous memory is 2^7=512KB.
 
-diff --git a/arch/powerpc/include/asm/mmu-8xx.h b/arch/powerpc/include/asm/mmu-8xx.h
-index 4f547752ae79..193f53116c7a 100644
---- a/arch/powerpc/include/asm/mmu-8xx.h
-+++ b/arch/powerpc/include/asm/mmu-8xx.h
-@@ -34,20 +34,12 @@
-  * respectively NA for All or X for Supervisor and no access for User.
-  * Then we use the APG to say whether accesses are according to Page rules or
-  * "all Supervisor" rules (Access to all)
-- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
-- * When that bit is not set access is done iaw "all user"
-- * which means no access iaw page rules.
-- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
-- * 0x => No access => 11 (all accesses performed as user iaw page definition)
-- * 10 => No user => 01 (all accesses performed according to page definition)
-- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
-+ * Therefore, we define 2 APG groups. lsb is _PMD_USER
-+ * 0 => No user => 01 (all accesses performed according to page definition)
-+ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
-  * We define all 16 groups so that all other bits of APG can take any value
-  */
--#ifdef CONFIG_SWAP
--#define MI_APG_INIT	0xf4f4f4f4
--#else
- #define MI_APG_INIT	0x44444444
--#endif
- 
- /* The effective page number register.  When read, contains the information
-  * about the last instruction TLB miss.  When MI_RPN is written, bits in
-@@ -115,20 +107,12 @@
-  * Supervisor and no access for user and NA for ALL.
-  * Then we use the APG to say whether accesses are according to Page rules or
-  * "all Supervisor" rules (Access to all)
-- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
-- * When that bit is not set access is done iaw "all user"
-- * which means no access iaw page rules.
-- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
-- * 0x => No access => 11 (all accesses performed as user iaw page definition)
-- * 10 => No user => 01 (all accesses performed according to page definition)
-- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
-+ * Therefore, we define 2 APG groups. lsb is _PMD_USER
-+ * 0 => No user => 01 (all accesses performed according to page definition)
-+ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
-  * We define all 16 groups so that all other bits of APG can take any value
-  */
--#ifdef CONFIG_SWAP
--#define MD_APG_INIT	0xf4f4f4f4
--#else
- #define MD_APG_INIT	0x44444444
--#endif
- 
- /* The effective page number register.  When read, contains the information
-  * about the last instruction TLB miss.  When MD_RPN is written, bits in
-@@ -180,12 +164,6 @@
-  */
- #define SPRN_M_TW	799
- 
--/* APGs */
--#define M_APG0		0x00000000
--#define M_APG1		0x00000020
--#define M_APG2		0x00000040
--#define M_APG3		0x00000060
--
- #ifdef CONFIG_PPC_MM_SLICES
- #include <asm/nohash/32/slice.h>
- #define SLICE_ARRAY_SIZE	(1 << (32 - SLICE_LOW_SHIFT - 1))
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index d8670a37d70c..c3b831bb8bad 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -354,13 +354,14 @@ _ENTRY(ITLBMiss_cmp)
- #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
- 	mtcr	r12
- #endif
--
--#ifdef CONFIG_SWAP
--	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
--#endif
- 	/* Load the MI_TWC with the attributes for this "segment." */
- 	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
- 
-+#ifdef CONFIG_SWAP
-+	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
-+	and	r11, r11, r10
-+	rlwimi	r10, r11, 0, _PAGE_PRESENT
-+#endif
- 	li	r11, RPN_PATTERN | 0x200
- 	/* The Linux PTE won't go exactly into the MMU TLB.
- 	 * Software indicator bits 20 and 23 must be clear.
-@@ -471,14 +472,22 @@ _ENTRY(DTLBMiss_jmp)
- 	 * above.
- 	 */
- 	rlwimi	r11, r10, 0, _PAGE_GUARDED
--#ifdef CONFIG_SWAP
--	/* _PAGE_ACCESSED has to be set. We use second APG bit for that, 0
--	 * on that bit will represent a Non Access group
--	 */
--	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
--#endif
- 	mtspr	SPRN_MD_TWC, r11
- 
-+	/* Both _PAGE_ACCESSED and _PAGE_PRESENT has to be set.
-+	 * We also need to know if the insn is a load/store, so:
-+	 * Clear _PAGE_PRESENT and load that which will
-+	 * trap into DTLB Error with store bit set accordinly.
-+	 */
-+	/* PRESENT=0x1, ACCESSED=0x20
-+	 * r11 = ((r10 & PRESENT) & ((r10 & ACCESSED) >> 5));
-+	 * r10 = (r10 & ~PRESENT) | r11;
-+	 */
-+#ifdef CONFIG_SWAP
-+	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
-+	and	r11, r11, r10
-+	rlwimi	r10, r11, 0, _PAGE_PRESENT
-+#endif
- 	/* The Linux PTE won't go exactly into the MMU TLB.
- 	 * Software indicator bits 24, 25, 26, and 27 must be
- 	 * set.  All other Linux PTE bits control the behavior
-@@ -638,8 +647,8 @@ InstructionBreakpoint:
-  */
- DTLBMissIMMR:
- 	mtcr	r12
--	/* Set 512k byte guarded page and mark it valid and accessed */
--	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID | M_APG2
-+	/* Set 512k byte guarded page and mark it valid */
-+	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID
- 	mtspr	SPRN_MD_TWC, r10
- 	mfspr	r10, SPRN_IMMR			/* Get current IMMR */
- 	rlwinm	r10, r10, 0, 0xfff80000		/* Get 512 kbytes boundary */
-@@ -657,8 +666,8 @@ _ENTRY(dtlb_miss_exit_2)
- 
- DTLBMissLinear:
- 	mtcr	r12
--	/* Set 8M byte page and mark it valid and accessed */
--	li	r11, MD_PS8MEG | MD_SVALID | M_APG2
-+	/* Set 8M byte page and mark it valid */
-+	li	r11, MD_PS8MEG | MD_SVALID
- 	mtspr	SPRN_MD_TWC, r11
- 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
- 	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_PRIVILEGED | _PAGE_DIRTY | \
-@@ -676,8 +685,8 @@ _ENTRY(dtlb_miss_exit_3)
- #ifndef CONFIG_PIN_TLB_TEXT
- ITLBMissLinear:
- 	mtcr	r12
--	/* Set 8M byte page and mark it valid,accessed */
--	li	r11, MI_PS8MEG | MI_SVALID | M_APG2
-+	/* Set 8M byte page and mark it valid */
-+	li	r11, MI_PS8MEG | MI_SVALID
- 	mtspr	SPRN_MI_TWC, r11
- 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
- 	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_PRIVILEGED | _PAGE_DIRTY | \
-@@ -960,7 +969,7 @@ initial_mmu:
- 	ori	r8, r8, MI_EVALID	/* Mark it valid */
- 	mtspr	SPRN_MI_EPN, r8
- 	li	r8, MI_PS8MEG /* Set 8M byte page */
--	ori	r8, r8, MI_SVALID | M_APG2	/* Make it valid, APG 2 */
-+	ori	r8, r8, MI_SVALID	/* Make it valid */
- 	mtspr	SPRN_MI_TWC, r8
- 	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
- 	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
-@@ -987,7 +996,7 @@ initial_mmu:
- 	ori	r8, r8, MD_EVALID	/* Mark it valid */
- 	mtspr	SPRN_MD_EPN, r8
- 	li	r8, MD_PS512K | MD_GUARDED	/* Set 512k byte page */
--	ori	r8, r8, MD_SVALID | M_APG2	/* Make it valid and accessed */
-+	ori	r8, r8, MD_SVALID	/* Make it valid */
- 	mtspr	SPRN_MD_TWC, r8
- 	mr	r8, r9			/* Create paddr for TLB */
- 	ori	r8, r8, MI_BOOTINIT|0x2 /* Inhibit cache -- Cort */
-diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
-index cf77d755246d..5d53684c2ebd 100644
---- a/arch/powerpc/mm/8xx_mmu.c
-+++ b/arch/powerpc/mm/8xx_mmu.c
-@@ -79,7 +79,7 @@ void __init MMU_init_hw(void)
- 	for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
- 		mtspr(SPRN_MD_CTR, ctr | (i << 8));
- 		mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
--		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID | M_APG2);
-+		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
- 		mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
- 		addr += LARGE_PAGE_SIZE_8M;
- 		mem -= LARGE_PAGE_SIZE_8M;
+Node    0, zone   Normal, type    Unmovable   4499   9418   4817
+732    747    567     18      3      0      0      0
+Node    0, zone   Normal, type      Movable  38179  40839  10546
+1888    491     51      1      0      0      0      0
+Node    0, zone   Normal, type  Reclaimable    117     98   1279
+35     21     10      8      0      0      0      0
+Node    0, zone   Normal, type   HighAtomic      0      0      0
+0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type      Isolate      0      0      0
+0      0      0      0      0      0      0      0
+
+So I think vmalloc would be good if it is not very performance critical data.
+
+
+
 -- 
-2.13.3
+GIOH KIM
+Linux Kernel Entwickler
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Tel:       +49 176 2697 8962
+Fax:      +49 30 577 008 299
+Email:    gi-oh.kim@profitbricks.com
+URL:      https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
