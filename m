@@ -1,178 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753496AbeEPKIC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:08:02 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:57542 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753144AbeEPKFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:43 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v4 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
-Date: Wed, 16 May 2018 12:05:25 +0200
-Message-Id: <20180516100526.73549-3-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
-References: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
+        id S1752949AbeEPKIf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:08:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48418 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752808AbeEPKFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:41 -0400
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de
+Cc: x86@kernel.org, hpa@zytor.com, fanc.fnst@cn.fujitsu.com,
+        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
+        douly.fnst@cn.fujitsu.com, Baoquan He <bhe@redhat.com>
+Subject: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge pages when do physical randomization
+Date: Wed, 16 May 2018 18:05:30 +0800
+Message-Id: <20180516100532.14083-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-m41txx chips can hold a calibration value to get correct clock bias.
+This is a regression bug fix. Luiz's team reported that 1GB huge page
+allocation will get one less 1GB page randomly when KASLR is enabled. On
+their KVM guest with 4GB RAM, which only has one good 1GB huge page,
+they found the 1GB huge page allocation sometime failed with below
+kernel option adding.
 
-Add offset handling (ranging between -63ppm and 126ppm) via sysfs.
+  default_hugepagesz=1G hugepagesz=1G hugepages=1
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
-V3 => V4:
-* use ppm as offset input according to documentation instead of
-raw ic offset values.
-* use regmap_update_bits instead of regmap_write to update ic registers
-* sysfs_remove_group if devm_add_action_or_reset fails
-* rtc_device_unregister if ds1307_add_frequency_test fails on m41txx
-series
+This is because kernel may be randomized into those good 1GB huge pages.
 
- drivers/rtc/rtc-ds1307.c | 81 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+I ever thought to solve this by specifying available memory regions
+which kernel KASLR can be randomized into to avoid those good 1GB huge
+pages. Chao's patches can be used to fix it:
+https://lkml.org/lkml/2018/2/28/217
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index 0ab0c166da83..2797d01bfa1d 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -114,6 +114,20 @@ enum ds_type {
- #	define RX8025_BIT_VDET		0x40
- #	define RX8025_BIT_XST		0x20
- 
-+#define M41TXX_REG_CONTROL	0x07
-+#	define M41TXX_BIT_OUT		0x80
-+#	define M41TXX_BIT_FT		0x40
-+#	define M41TXX_BIT_CALIB_SIGN	0x20
-+#	define M41TXX_M_CALIBRATION	0x1f
-+
-+/* negative offset step is -2.034ppm */
-+#define M41TXX_NEG_OFFSET_STEP_PPM	2034
-+/* positive offset step is +4.068ppm */
-+#define M41TXX_POS_OFFSET_STEP_PPM	4068
-+/* Min and max values supported with 'offset' interface by M41TXX */
-+#define M41TXX_MIN_OFFSET	(((-31) * M41TXX_NEG_OFFSET_STEP_PPM) / 1000)
-+#define M41TXX_MAX_OFFSET	(((31) * M41TXX_POS_OFFSET_STEP_PPM) / 1000)
-+
- struct ds1307 {
- 	enum ds_type		type;
- 	unsigned long		flags;
-@@ -146,6 +160,9 @@ struct chip_desc {
- 
- static int ds1307_get_time(struct device *dev, struct rtc_time *t);
- static int ds1307_set_time(struct device *dev, struct rtc_time *t);
-+static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-+static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
-+static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
- static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
- static irqreturn_t rx8130_irq(int irq, void *dev_id);
- static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-@@ -155,6 +172,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
- static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
- static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
- static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
-+static int m41txx_rtc_read_offset(struct device *dev, long *offset);
-+static int m41txx_rtc_set_offset(struct device *dev, long offset);
- 
- static const struct rtc_class_ops rx8130_rtc_ops = {
- 	.read_time      = ds1307_get_time,
-@@ -172,6 +191,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
- 	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
- };
- 
-+static const struct rtc_class_ops m41txx_rtc_ops = {
-+	.read_time      = ds1307_get_time,
-+	.set_time       = ds1307_set_time,
-+	.read_alarm	= ds1337_read_alarm,
-+	.set_alarm	= ds1337_set_alarm,
-+	.alarm_irq_enable = ds1307_alarm_irq_enable,
-+	.read_offset	= m41txx_rtc_read_offset,
-+	.set_offset	= m41txx_rtc_set_offset,
-+};
-+
- static const struct chip_desc chips[last_ds_type] = {
- 	[ds_1307] = {
- 		.nvram_offset	= 8,
-@@ -227,10 +256,17 @@ static const struct chip_desc chips[last_ds_type] = {
- 		.irq_handler = rx8130_irq,
- 		.rtc_ops = &rx8130_rtc_ops,
- 	},
-+	[m41t0] = {
-+		.rtc_ops	= &m41txx_rtc_ops,
-+	},
-+	[m41t00] = {
-+		.rtc_ops	= &m41txx_rtc_ops,
-+	},
- 	[m41t11] = {
- 		/* this is battery backed SRAM */
- 		.nvram_offset	= 8,
- 		.nvram_size	= 56,
-+		.rtc_ops	= &m41txx_rtc_ops,
- 	},
- 	[mcp794xx] = {
- 		.alarm		= 1,
-@@ -972,6 +1008,51 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
- 				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
- }
- 
-+static int m41txx_rtc_read_offset(struct device *dev, long *offset)
-+{
-+	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-+	unsigned int ctrl_reg;
-+	u8 val;
-+
-+	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-+
-+	val = ctrl_reg & M41TXX_M_CALIBRATION;
-+
-+	/* check if positive */
-+	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
-+		*offset = (val * M41TXX_POS_OFFSET_STEP_PPM);
-+	else
-+		*offset = -(val * M41TXX_NEG_OFFSET_STEP_PPM);
-+
-+	*offset = DIV_ROUND_CLOSEST(*offset, 1000);
-+
-+	return 0;
-+}
-+
-+static int m41txx_rtc_set_offset(struct device *dev, long offset)
-+{
-+	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-+	unsigned int ctrl_reg;
-+
-+	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
-+		return -ERANGE;
-+
-+	offset *= 1000;
-+
-+	if (offset >= 0) {
-+		ctrl_reg = DIV_ROUND_CLOSEST(offset,
-+					     M41TXX_POS_OFFSET_STEP_PPM);
-+		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
-+	} else {
-+		ctrl_reg = DIV_ROUND_CLOSEST(abs(offset),
-+					     M41TXX_NEG_OFFSET_STEP_PPM);
-+	}
-+
-+	return regmap_update_bits(ds1307->regmap, M41TXX_REG_CONTROL,
-+				  M41TXX_M_CALIBRATION | M41TXX_BIT_CALIB_SIGN,
-+				  ctrl_reg);
-+}
-+
- /*----------------------------------------------------------------------*/
- 
- static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
+Later, Ingo suggested avoiding them in boot KASLR code.
+https://lkml.org/lkml/2018/3/12/312
+
+So I made this patchset to handle the conflict between 1GB huge pages
+allocation and KASLR. Any idea or suggestion about the handling,
+function naming is appreciated.
+
+Baoquan He (2):
+  x86/boot/KASLR: Add two functions for 1GB huge pages handling
+  x86/boot/KASLR: Skip specified number of 1GB huge pages when do
+    physical randomization
+
+ arch/x86/boot/compressed/kaslr.c | 84 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 79 insertions(+), 5 deletions(-)
+
 -- 
-2.17.0
+2.13.6
