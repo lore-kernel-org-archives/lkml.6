@@ -1,65 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeEPLEs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:04:48 -0400
-Received: from imap.netup.ru ([77.72.80.14]:37905 "EHLO imap.netup.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeEPLEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:04:45 -0400
-X-DKIM: OpenDKIM Filter v2.6.8 imap.netup.ru D99E4F820A7
-X-Google-Smtp-Source: AB8JxZp2PLzAV5wD1OYDiUzjKli6IQB8qmQ90CDUw83R/2m8OnXQ1m0Hl/iAzro8/H98Ip0PhT3PFZ2rbROQsis7WGA=
+        id S1752547AbeEPLHB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:07:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752186AbeEPLG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:06:59 -0400
+Date: Wed, 16 May 2018 13:06:56 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH V1 10/19] perf tools: Create maps for x86 PTI entry
+ trampolines
+Message-ID: <20180516110656.GB25591@krava>
+References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+ <1526388213-30696-11-git-send-email-adrian.hunter@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180516084111.28618-1-suzuki.katsuhiro@socionext.com>
-References: <20180516084111.28618-1-suzuki.katsuhiro@socionext.com>
-From: Abylay Ospan <aospan@netup.ru>
-Date: Wed, 16 May 2018 06:58:13 -0400
-X-Gmail-Original-Message-ID: <CAK3bHNW8=z2WH6xCijAP2XCX94iE5z-HwHRYNhbJwZvbOav10A@mail.gmail.com>
-Message-ID: <CAK3bHNW8=z2WH6xCijAP2XCX94iE5z-HwHRYNhbJwZvbOav10A@mail.gmail.com>
-Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526388213-30696-11-git-send-email-adrian.hunter@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-True.
-I'm curious but how did it worked before ...
-Which hardware (dvb adapter) are you using ?
+On Tue, May 15, 2018 at 03:43:24PM +0300, Adrian Hunter wrote:
 
-2018-05-16 4:41 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> This patch fixes tuning frequency of satellite to kHz. That as same
-> as terrestrial one.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
->  drivers/media/dvb-frontends/helene.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
-> index 04033f0c278b..0a4f312c4368 100644
-> --- a/drivers/media/dvb-frontends/helene.c
-> +++ b/drivers/media/dvb-frontends/helene.c
-> @@ -523,7 +523,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
->         enum helene_tv_system_t tv_system;
->         struct dtv_frontend_properties *p = &fe->dtv_property_cache;
->         struct helene_priv *priv = fe->tuner_priv;
-> -       int frequencykHz = p->frequency;
-> +       int frequencykHz = p->frequency / 1000;
->         uint32_t frequency4kHz = 0;
->         u32 symbol_rate = p->symbol_rate/1000;
->
-> --
-> 2.17.0
->
+SNIP
 
+> +int machine__create_extra_kernel_map(struct machine *machine,
+> +				     struct dso *kernel,
+> +				     struct extra_kernel_map *xm)
+>  {
+>  	struct kmap *kmap;
+>  	struct map *map;
+> @@ -923,9 +915,33 @@ static u64 find_entry_trampoline(struct dso *dso)
+>  int machine__map_x86_64_entry_trampolines(struct machine *machine,
+>  					  struct dso *kernel)
+>  {
+> -	u64 pgoff = find_entry_trampoline(kernel);
+> +	struct map_groups *kmaps = &machine->kmaps;
+> +	struct maps *maps = &kmaps->maps;
+>  	int nr_cpus_avail = 0, cpu;
+> +	bool found = false;
+> +	struct map *map;
+> +	u64 pgoff;
+> +
+> +	/*
+> +	 * In the vmlinux case, pgoff is a virtual address which must now be
+> +	 * mapped to a vmlinux offset.
+> +	 */
+> +	for (map = maps__first(maps); map; map = map__next(map)) {
+> +		struct kmap *kmap = __map__kmap(map);
+> +		struct map *dest_map;
+> +
+> +		if (!kmap || !is_entry_trampoline(kmap->name))
+> +			continue;
+> +
+> +		dest_map = map_groups__find(kmaps, map->pgoff);
+> +		if (dest_map != map)
+> +			map->pgoff = dest_map->map_ip(dest_map, map->pgoff);
+> +		found = true;
 
+hum, could you please explain/comment on above? the purpose of pgoff for these maps
 
--- 
-Abylay Ospan,
-NetUP Inc.
-http://www.netup.tv
+all the trampoline maps seems to have the same pgoff at the end..
+
+0 0x158 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000006000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x1b0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000032000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x208 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000005e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x260 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000008a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x2b8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00000b6000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x310 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00000e2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x368 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000010e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x3c0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000013a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x418 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000166000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x470 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000192000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x4c8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00001be000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x520 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00001ea000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x578 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000216000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x5d0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000242000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x628 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000026e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x680 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000029a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x6d8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00002c6000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x730 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00002f2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x788 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000031e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x7e0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000034a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x838 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000376000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x890 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003a2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x8e8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003ce000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+0 0x940 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003fa000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+
+thanks,
+jirka
