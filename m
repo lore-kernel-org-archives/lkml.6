@@ -1,111 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeEPWok (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:44:40 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:39178 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751153AbeEPWo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 18:44:26 -0400
-Date: Thu, 17 May 2018 01:43:36 +0300 (EEST)
-From: Julian Anastasov <ja@ssi.bg>
-To: syzbot <syzbot+aac887f77319868646df@syzkaller.appspotmail.com>
-cc: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Subject: Re: kernel BUG at lib/string.c:LINE! (4)
-In-Reply-To: <0000000000006764b4056c5476d9@google.com>
-Message-ID: <alpine.LFD.2.20.1805170141240.9640@ja.home.ssi.bg>
-References: <0000000000006764b4056c5476d9@google.com>
-User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751985AbeEPWqL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:46:11 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45915 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751290AbeEPWqJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 18:46:09 -0400
+X-Google-Smtp-Source: AB8JxZoavwNJWDD/tOIHEIEbpPglC12UtYkf7EB3FesH3Vxz3lYF1nuuv60dmk/PxsiF57mBvFWafw==
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
+Subject: [PATCH RFC] schedutil: Allow cpufreq requests to be made even when kthread kicked
+Date: Wed, 16 May 2018 15:45:18 -0700
+Message-Id: <20180516224518.109891-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently there is a chance of a schedutil cpufreq update request to be
+dropped if there is a pending update request. This pending request can
+be delayed if there is a scheduling delay of the irq_work and the wake
+up of the schedutil governor kthread.
 
-	Hello,
+A very bad scenario is when a schedutil request was already just made,
+such as to reduce the CPU frequency, then a newer request to increase
+CPU frequency (even sched deadline urgent frequency increase requests)
+can be dropped, even though the rate limits suggest that its Ok to
+process a request. This is because of the way the work_in_progress flag
+is used.
 
-On Wed, 16 May 2018, syzbot wrote:
+This patch improves the situation by allowing new requests to happen
+even though the old one is still being processed. Note that in this
+approach, if an irq_work was already issued, we just update next_freq
+and don't bother to queue another request so there's no extra work being
+done to make this happen.
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    0b7d9978406f Merge branch 'Microsemi-Ocelot-Ethernet-switc..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16e91017800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=aac887f77319868646df
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1665d637800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10517107800000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+aac887f77319868646df@syzkaller.appspotmail.com
-> 
-> IPVS: Unknown mcast interface: veth1_to???a????????????
-> IPVS: Unknown mcast interface: veth1_to???a????????????
-> IPVS: Unknown mcast interface: veth1_to???a????????????
-> detected buffer overflow in strlen
-> ------------[ cut here ]------------
-> kernel BUG at lib/string.c:1052!
-> invalid opcode: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->   (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 373 Comm: syz-executor936 Not tainted 4.17.0-rc4+ #45
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> 01/01/2011
-> RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
-> RSP: 0018:ffff8801c976f800 EFLAGS: 00010282
-> RAX: 0000000000000022 RBX: 0000000000000040 RCX: 0000000000000000
-> RDX: 0000000000000022 RSI: ffffffff8160f6f1 RDI: ffffed00392edef6
-> RBP: ffff8801c976f800 R08: ffff8801cf4c62c0 R09: ffffed003b5e4fb0
-> R10: ffffed003b5e4fb0 R11: ffff8801daf27d87 R12: ffff8801c976fa20
-> R13: ffff8801c976fae4 R14: ffff8801c976fae0 R15: 000000000000048b
-> FS:  00007fd99f75e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000200001c0 CR3: 00000001d6843000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> strlen include/linux/string.h:270 [inline]
-> strlcpy include/linux/string.h:293 [inline]
-> do_ip_vs_set_ctl+0x31c/0x1d00 net/netfilter/ipvs/ip_vs_ctl.c:2388
-> nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-> nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
-> ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1253
-> udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2487
-> ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:917
-> tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3057
-> sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3046
-> __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
-> __do_sys_setsockopt net/socket.c:1914 [inline]
-> __se_sys_setsockopt net/socket.c:1911 [inline]
-> __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-> do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x447369
-> RSP: 002b:00007fd99f75dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006e39e4 RCX: 0000000000447369
-> RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000018 R09: 0000000000000000
-> R10: 00000000200001c0 R11: 0000000000000246 R12: 00000000006e39e0
-> R13: 75a1ff93f0896195 R14: 6f745f3168746576 R15: 0000000000000001
-> Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 d2 8f 48 fa eb de
-> 55 48 89 fe 48 c7 c7 60 65 64 88 48 89 e5 e8 91 dd f3 f9 <0f> 0b 90 90 90 90
-> 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
-> RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801c976f800
-> ---[ end trace 624046f2d9af7702 ]---
+I had brought up this issue at the OSPM conference and Claudio had a
+discussion RFC with an alternate approach [1]. I prefer the approach as
+done in the patch below since it doesn't need any new flags and doesn't
+cause any other extra overhead.
 
-	Just to let you know that I tested a patch with
-the syzbot, will do more tests before submitting...
+[1] https://patchwork.kernel.org/patch/10384261/
 
-Regards
+CC: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Patrick Bellasi <patrick.bellasi@arm.com>
+CC: Juri Lelli <juri.lelli@redhat.com>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
+CC: Joel Fernandes <joelaf@google.com>
+CC: linux-pm@vger.kernel.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+Claudio,
+Could you also test this patch for your usecase?
 
---
-Julian Anastasov <ja@ssi.bg>
+ kernel/sched/cpufreq_schedutil.c | 36 +++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index e13df951aca7..a87fc281893d 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+ 	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+ 		return false;
+ 
+-	if (sg_policy->work_in_progress)
+-		return false;
+-
+ 	if (unlikely(sg_policy->need_freq_update)) {
+ 		sg_policy->need_freq_update = false;
+ 		/*
+@@ -129,8 +126,11 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+ 		policy->cur = next_freq;
+ 		trace_cpu_frequency(next_freq, smp_processor_id());
+ 	} else {
+-		sg_policy->work_in_progress = true;
+-		irq_work_queue(&sg_policy->irq_work);
++		/* Don't queue request if one was already queued */
++		if (!sg_policy->work_in_progress) {
++			sg_policy->work_in_progress = true;
++			irq_work_queue(&sg_policy->irq_work);
++		}
+ 	}
+ }
+ 
+@@ -291,6 +291,15 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 
+ 	ignore_dl_rate_limit(sg_cpu, sg_policy);
+ 
++	/*
++	 * For slow-switch systems, single policy requests can't run at the
++	 * moment if the governor thread is already processing a pending
++	 * frequency switch request, this can be fixed by acquiring update_lock
++	 * while updating next_freq and work_in_progress but we prefer not to.
++	 */
++	if (sg_policy->work_in_progress)
++		return;
++
+ 	if (!sugov_should_update_freq(sg_policy, time))
+ 		return;
+ 
+@@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+ static void sugov_work(struct kthread_work *work)
+ {
+ 	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
++	unsigned int freq;
++	unsigned long flags;
++
++	/*
++	 * Hold sg_policy->update_lock shortly to handle the case where:
++	 * incase sg_policy->next_freq is read here, and then updated by
++	 * sugov_update_shared just before work_in_progress is set to false
++	 * here, we may miss queueing the new update.
++	 */
++	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
++	freq = sg_policy->next_freq;
++	sg_policy->work_in_progress = false;
++	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
+ 	mutex_lock(&sg_policy->work_lock);
+-	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
++	__cpufreq_driver_target(sg_policy->policy, freq,
+ 				CPUFREQ_RELATION_L);
+ 	mutex_unlock(&sg_policy->work_lock);
+-
+-	sg_policy->work_in_progress = false;
+ }
+ 
+ static void sugov_irq_work(struct irq_work *irq_work)
+-- 
+2.17.0.441.gb46fe60e1d-goog
