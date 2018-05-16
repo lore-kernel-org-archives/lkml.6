@@ -1,183 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeEPI4f (ORCPT <rfc822;w@1wt.eu>);
+        id S1752490AbeEPI4l convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 04:56:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:2795 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752060AbeEPI4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 04:56:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52582 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeEPI4b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 04:56:31 -0400
-X-Google-Smtp-Source: AB8JxZpgCY0mvr3cie8hDU1o3XimayrXq7b3Os+swk3htwHERTSv9LfjTDvqGKeneUIppytEJuZ+rQ==
-Date: Wed, 16 May 2018 10:56:28 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 10/14] net: sched: extend act API for lockless actions
-Message-ID: <20180516085628.GE1972@nanopsycho>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-11-git-send-email-vladbu@mellanox.com>
- <20180516075000.GC1972@nanopsycho>
- <vbfbmdg10du.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="40327590"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>
+CC: David Woodhouse <dwmw2@infradead.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/9] iommu/vt-d: Improve PASID id and table management
+Thread-Topic: [PATCH v2 0/9] iommu/vt-d: Improve PASID id and table
+ management
+Thread-Index: AQHT40pROK2Y8BETlkSVAXp1B0vjRKQwYGqAgAEq8wCAAJRskA==
+Date: Wed, 16 May 2018 08:56:30 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19116ADF6@SHSMSX101.ccr.corp.intel.com>
+References: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
+ <20180515141101.GF18595@8bytes.org> <5AFBE53C.2070604@linux.intel.com>
+In-Reply-To: <5AFBE53C.2070604@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTI5NzNhZDctMTE1Yy00MmE4LTg1NjEtMDJhOWQyOTBhMWE1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IjB3VzlIRlV4VlwvYVI4dDY4dzB6U3BDVXdcL21Ca0dlNkM0RUE1QlUrQzVNVT0ifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vbfbmdg10du.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, May 16, 2018 at 10:16:13AM CEST, vladbu@mellanox.com wrote:
->
->On Wed 16 May 2018 at 07:50, Jiri Pirko <jiri@resnulli.us> wrote:
->> Mon, May 14, 2018 at 04:27:11PM CEST, vladbu@mellanox.com wrote:
->>>Implement new action API function to atomically delete action with
->>>specified index and to atomically insert unique action. These functions are
->>>required to implement init and delete functions for specific actions that
->>>do not rely on rtnl lock.
->>>
->>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
->>>---
->>> include/net/act_api.h |  2 ++
->>> net/sched/act_api.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
->>> 2 files changed, 47 insertions(+)
->>>
->>>diff --git a/include/net/act_api.h b/include/net/act_api.h
->>>index a8c8570..bce0cf1 100644
->>>--- a/include/net/act_api.h
->>>+++ b/include/net/act_api.h
->>>@@ -153,7 +153,9 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
->>> 		   struct tc_action **a, const struct tc_action_ops *ops,
->>> 		   int bind, bool cpustats);
->>> void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a);
->>>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a);
->>> 
->>>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index);
->>> int __tcf_idr_release(struct tc_action *a, bool bind, bool strict);
->>> 
->>> static inline int tcf_idr_release(struct tc_action *a, bool bind)
->>>diff --git a/net/sched/act_api.c b/net/sched/act_api.c
->>>index 2772276e..a5193dc 100644
->>>--- a/net/sched/act_api.c
->>>+++ b/net/sched/act_api.c
->>>@@ -330,6 +330,41 @@ bool tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
->>> }
->>> EXPORT_SYMBOL(tcf_idr_check);
->>> 
->>>+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index)
->>>+{
->>>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
->>>+	struct tc_action *p;
->>>+	int ret = 0;
->>>+
->>>+	spin_lock_bh(&idrinfo->lock);
->>
->> Why "_bh" is needed here?
->
->Original idr remove function used _bh version so I used it here as well.
->As I already replied to your previous question about idrinfo lock usage,
->I don't see any particular reason for locking with _bh at this point.
->I've contacted the author(Chris Mi) and he said that he just preserved
->locking the same way as it was before he changed hash table to idr for
->action lookup.
->
->You want me to do standalone patch that cleans up idrinfo locking?
+> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> Sent: Wednesday, May 16, 2018 4:01 PM
+> 
+> Hi Joerg,
+> 
+> Thank you for looking at my patches.
+> 
+> On 05/15/2018 10:11 PM, Joerg Roedel wrote:
+> > On Fri, May 04, 2018 at 09:41:15AM +0800, Lu Baolu wrote:
+> >> PATCH 4~9 implement per domain PASID table. Current per IOMMU
+> >> PASID table implementation is insecure in the cases where
+> >> multiple devices under one single IOMMU unit support PASID
+> >> feature. With per domain PASID table, we can achieve finer
+> >> protection and isolation granularity.
+> >
+> > Hold on, we hat discussions in the past about doing a system-wide pasid
+> > space, so that every mm_struct with devices attached gets the same pasid
+> > across all devices it is talking to. Reason was that some devices (will)
+> > require this to work correctly. This goes into the opposite direction,
+> > so I am a bit confused here. Please explain, is this not longer
+> > necessary?
+> 
+> You are right. System-wide pasid space is necessary, hence PATCH
+> 1~3 implement it. But PATCH 4~9 don't go into the opposite direction,
+> it's designed to address another potential issue.
 
-Yes please. You can send it separately, not as a part of this patchset.
+one thing you may want to highlight is, even with PATCH 4-9 it's
+still doing system-wide PASID space allocation. Just PASID table
+itself is kept per-device for isolation purpose as you described
+below, i.e. each device can access only those PASIDs which are
+allocated to itself while the allocation happens system-wide...
 
-
-
->
->>
->>
->>>+	p = idr_find(&idrinfo->action_idr, index);
->>>+	if (!p) {
->>>+		spin_unlock(&idrinfo->lock);
->>>+		return -ENOENT;
->>>+	}
->>>+
->>>+	if (!atomic_read(&p->tcfa_bindcnt)) {
->>>+		if (refcount_dec_and_test(&p->tcfa_refcnt)) {
->>>+			struct module *owner = p->ops->owner;
->>>+
->>>+			WARN_ON(p != idr_remove(&idrinfo->action_idr,
->>>+						p->tcfa_index));
->>>+			spin_unlock_bh(&idrinfo->lock);
->>>+
->>>+			tcf_action_cleanup(p);
->>>+			module_put(owner);
->>>+			return 0;
->>>+		}
->>>+		ret = 0;
->>>+	} else {
->>>+		ret = -EPERM;
->>
->> I wonder if "-EPERM" is the best error code for this...
->
->This is what original code returned so I decided to preserve
->compatibility.
-
-Okay.
-
-
->
->>
->>
->>>+	}
->>>+
->>>+	spin_unlock_bh(&idrinfo->lock);
->>>+	return ret;
->>>+}
->>>+EXPORT_SYMBOL(tcf_idr_find_delete);
->>>+
->>> int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
->>> 		   struct tc_action **a, const struct tc_action_ops *ops,
->>> 		   int bind, bool cpustats)
->>>@@ -407,6 +442,16 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
->>> }
->>> EXPORT_SYMBOL(tcf_idr_insert);
->>> 
->>>+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a)
->>>+{
->>>+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
->>>+
->>>+	spin_lock_bh(&idrinfo->lock);
->>>+	WARN_ON(idr_replace(&idrinfo->action_idr, a, a->tcfa_index));
->>
->> Under which condition this WARN_ON is hit?
->
->When idr replace returns non-NULL pointer, which means that somehow
->concurrent insertion of action with same index has happened and we are
->leaking memory.
-
-Is that possible to happen? Meaning, can I as a user cause this by doing
-something in a wrong/unexpected way?
-
-
->
->By the way I'm still not sure if having this insert unique function is
->warranted or I should just add WARN to regular idr insert. What is your
->opinion on this?
-
-I have to check where you use this.
-
-
->
->>
->>
->>>+	spin_unlock_bh(&idrinfo->lock);
->>>+}
->>>+EXPORT_SYMBOL(tcf_idr_insert_unique);
->>>+
->>> void tcf_idrinfo_destroy(const struct tc_action_ops *ops,
->>> 			 struct tcf_idrinfo *idrinfo)
->>> {
->>>-- 
->>>2.7.5
->>>
->
+> 
+> With system-wide pasid space, we can use a system-wide pasid table,
+> or just keep what we have now(per iommu unit pasid table). Both
+> system-wide and per iommu unitpasid table mean that two devices
+> might share a single pasid table. That will result in an issue.
+> 
+> For an example, device A is assigned to access the memory space of
+> process A, and device B is assigned to access the memory space of
+> process B. The dma remapping infrastructure looks like:
+> 
+>                                                      .------------------.
+>                              .----------------.      |                  |
+>                              |                |      |                  |
+>                              .----------------.      | Paging structure |
+>                              |     PASID X    |--|   |  for Process A   |
+>                              .----------------.  |   |                  |
+>                              |                |  --->'------------------'
+>      .----------------.      .----------------.
+>      |                |      |     PASID Y    |--|
+>      .----------------.      .----------------.  |
+>      | Dev_A context  |---|  |                |  |   .------------------.
+>      '----------------'   |  .----------------.  |   |                  |
+>      |                |   |  |                |  |   |                  |
+>      '----------------'   |  .----------------.  |   | Paging structure |
+>      | Dev_B context  |   -->|                |  |   |  for Process B   |
+>      '----------------'----->'----------------'  |   |                  |
+>      |                |         system-wide      v-->'------------------'
+>      .----------------.         pasid table
+>      |                |
+>      '----------------'
+>         Intel iommu
+>        context table
+> 
+> 
+> Since dev_A and dev_B share a pasid table, the side effect is that a flawed
+> dev_A might access the memory space of process B (with pasid y). Vice
+> versa,
+> a flawed dev_B might access memory space of process A (with pasid x).
+> 
+> What PATCH 4~9 do is to remove such possibility by assigning a pasid table
+> for each pci device. Hence, the remapping infrastructure looks like:
+> 
+> 
+>                                                     .------------------.
+>                                                     |                  |
+>                             .----------------.      |                  |
+>                             |                |      | Paging structure |
+>                             .----------------.      |  for Process A   |
+>                             |     PASID X    |      |                  |
+>                             .----------------.----->'------------------'
+>                             |                |
+>                             .----------------.
+>                             |                |
+>                             .----------------.
+>                             |                |
+>                             .----------------.
+>    .----------------.       |                |
+>    |                |       .----------------.
+>    .----------------.       |                |
+>    | Dev_A context  |------>'----------------'
+>    '----------------'          pasid table
+>    |                |          for Dev_A
+>    '----------------'
+>    | Dev_B context  |-->
+>    '----------------'  |    .----------------.
+>    |                |  |    |                |      .------------------.
+>    .----------------.  |    .----------------.      |                  |
+>    |                |  |    |                |      |                  |
+>    '----------------'  |    .----------------.      | Paging structure |
+>        Intel iommu     |    |                |      |  for Process B   |
+>       context table    |    .----------------.      |                  |
+>                        |    |     PASID Y    |----->'------------------'
+>                        |    .----------------.
+>                        |    |                |
+>                        |    .----------------.
+>                        |    |                |
+>                        |    .----------------.
+>                        v--->|                |
+>                             '----------------'
+>                                pasid table
+>                                for Dev_B
+> 
+> 
+> With this, dev_A has no means to access memory of process B and vice
+> versa.
+> 
+> Best regards,
+> Lu Baolu
