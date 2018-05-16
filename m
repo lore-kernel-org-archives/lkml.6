@@ -1,107 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751457AbeEPVbK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:31:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39582 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbeEPVbI (ORCPT
+        id S1751879AbeEPVdX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:33:23 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:38429 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbeEPVdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:31:08 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 16 May 2018 14:31:06 -0700
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, vinayak holikatti <vinholikatti@gmail.com>,
-        devicetree@vger.kernel.org,
-        Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: Re: [RFC PATCH V2] scsi: ufs: Add specific callback for setting DMA
- mask
-In-Reply-To: <CAGOxZ52yZ8Xqype7AVsH43DWOA2byh2kW3SGsfHyHtzqSH6QPw@mail.gmail.com>
-References: <CGME20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03@epcas1p4.samsung.com>
- <1520507013-2410-1-git-send-email-alim.akhtar@samsung.com>
- <CAGOxZ52yZ8Xqype7AVsH43DWOA2byh2kW3SGsfHyHtzqSH6QPw@mail.gmail.com>
-Message-ID: <1f7df8bfbc161243956233eac80f2cee@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 16 May 2018 17:33:21 -0400
+X-Google-Smtp-Source: AB8JxZpADwIXilGcUzr3wIEjs7qCgL289A8kAwe3kd/wqD0BzBSONZe0YsmIjR9Wb71w0lMgv0r7FA==
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: bhelgaas@google.com
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Keith Busch <keith.busch@intel.com>, Sinan Kaya <okaya@codeaurora.org>,
+        Dongdong Liu <liudongdong3@huawei.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: DPC: Clear AER status bits before disabling port containment
+Date: Wed, 16 May 2018 16:33:02 -0500
+Message-Id: <20180516213306.27027-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-15 21:31, Alim Akhtar wrote:
-> Ping !!!
-> 
-> On Thu, Mar 8, 2018 at 4:33 PM, Alim Akhtar <alim.akhtar@samsung.com> 
-> wrote:
->> Currently DMA mask for UFS HCI is set by reading CAP register's
->> [64AS] bit. Some HCI controller like Exynos support 36-bit bus 
->> address.
->> This works perfectly fine with DMA mask set as 64 in case there is no
->> IOMMU attached to HCI.
->> In case if HCI is behind an IOMMU, setting DMA mask as 64 bit won't
->> work as HCI has only 36bit addressing and SMMU has created mapping of
->> 64 bit and as the device truncates the address, its mapping will not
->> be found by iommu.
->> To resolve such issues, let the variant driver sets its own DMA mask.
->> 
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  drivers/scsi/ufs/ufshcd.c | 3 +++
->>  drivers/scsi/ufs/ufshcd.h | 2 ++
->>  2 files changed, 5 insertions(+)
->> 
->> I am not sure if there are other ways available to handle such cases.
->> The IOMMU I am talking about is arm-smmu and it DT binding does not
->> give much idea about handling such cases.
->> Have tested this patch with HCI controller with IOMMU attached.
->> 
->> Changes Since V1:
->>         - Fixed build issue as reported by Kbuild test robot.
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index a355d98..9a1374e 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -7781,6 +7781,9 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
->>   */
->>  static int ufshcd_set_dma_mask(struct ufs_hba *hba)
->>  {
->> +       if (hba->vops && hba->vops->set_dma_mask)
->> +               return hba->vops->set_dma_mask(hba);
->> +
->>         if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT) {
->>                 if (!dma_set_mask_and_coherent(hba->dev, 
->> DMA_BIT_MASK(64)))
->>                         return 0;
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index 1332e54..89c6dae 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -297,6 +297,7 @@ struct ufs_pwr_mode_info {
->>   * @resume: called during host controller PM callback
->>   * @dbg_register_dump: used to dump controller debug information
->>   * @phy_initialization: used to initialize phys
->> + * @set_dma_mask: used to set variant specific DMA mask
->>   */
->>  struct ufs_hba_variant_ops {
->>         const char *name;
->> @@ -325,6 +326,7 @@ struct ufs_hba_variant_ops {
->>         int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
->>         void    (*dbg_register_dump)(struct ufs_hba *hba);
->>         int     (*phy_initialization)(struct ufs_hba *);
->> +       int     (*set_dma_mask)(struct ufs_hba *hba);
->>  };
->> 
->>  /* clock gating state  */
->> --
->> 2.7.4
->> 
+AER status bits are sticky, and they survive system resets. Downstream
+devices are usually taken care of after re-enumerating the downstream
+busses, as the AER bits are cleared during probe().
 
-Looks reasonable to me, you may try posting non-RFC version.
+However, nothing clears the bits of the port which contained the
+error. These sticky bits may leave some BIOSes to think that something
+bad happened, and print ominous messages on next boot. To prevent this,
+tidy up the AER status bits before releasing containment.
 
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/pci/pcie/dpc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index 8c57d607e603..bf82d6936556 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -112,6 +112,10 @@ static void dpc_work(struct work_struct *work)
+ 		dpc->rp_pio_status = 0;
+ 	}
+ 
++	/* DPC event made a mess of our AER status bits. Clean them up. */
++	pci_cleanup_aer_error_status_regs(pdev);
++	/* TODO: Should we also use aer_print_error to log the event? */
++
+ 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+ 		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.3
