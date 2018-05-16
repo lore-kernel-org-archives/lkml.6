@@ -1,129 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753142AbeEPKGv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:06:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48442 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753164AbeEPKFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753012AbeEPKGu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:06:50 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:26441 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753135AbeEPKFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 06:05:47 -0400
-From: Baoquan He <bhe@redhat.com>
-To: linux-kernel@vger.kernel.org, mingo@kernel.org, lcapitulino@redhat.com,
-        keescook@chromium.org, tglx@linutronix.de
-Cc: x86@kernel.org, hpa@zytor.com, fanc.fnst@cn.fujitsu.com,
-        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
-        douly.fnst@cn.fujitsu.com, Baoquan He <bhe@redhat.com>
-Subject: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages handling
-Date: Wed, 16 May 2018 18:05:31 +0800
-Message-Id: <20180516100532.14083-2-bhe@redhat.com>
-In-Reply-To: <20180516100532.14083-1-bhe@redhat.com>
-References: <20180516100532.14083-1-bhe@redhat.com>
+Message-Id: <3e89614babdc552bac10303aa5d63808ef7665db.1526464250.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
+References: <cover.1526464250.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 11/14] powerpc/8xx: Free up SPRN_SPRG_SCRATCH2
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 16 May 2018 12:05:45 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Functions parse_gb_huge_pages() and process_gb_huge_page() are introduced to
-handle conflict between KASLR and huge pages, will be used in the next patch.
+We can now use SPRN_M_TW in the DAR Fixup code, freeing
+SPRN_SPRG_SCRATCH2
 
-Function parse_gb_huge_pages() is used to parse kernel command-line to get
-how many 1GB huge pages have been specified. A static global variable
-'max_gb_huge_pages' is added to store the number.
+Then SPRN_SPRG_SCRATCH2 may be used for something else in the future.
 
-And process_gb_huge_page() is used to skip as many 1GB huge pages as possible
-from the passed in memory region according to the specified number.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/x86/boot/compressed/kaslr.c | 71 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ arch/powerpc/kernel/head_8xx.S | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index a0a50b91ecef..13bd879cdc5d 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -215,6 +215,32 @@ static void mem_avoid_memmap(char *str)
- 		memmap_too_large = true;
- }
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 0c3cfaa4e6f3..f65bd6fd1572 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -624,7 +624,7 @@ InstructionBreakpoint:
+  /* define if you don't want to use self modifying code */
+ #define NO_SELF_MODIFYING_CODE
+ FixupDAR:/* Entry point for dcbx workaround. */
+-	mtspr	SPRN_SPRG_SCRATCH2, r10
++	mtspr	SPRN_M_TW, r10
+ 	/* fetch instruction from memory. */
+ 	mfspr	r10, SPRN_SRR0
+ 	mtspr	SPRN_MD_EPN, r10
+@@ -668,7 +668,7 @@ _ENTRY(FixupDAR_cmp)
+ 	beq+	142f
+ 	cmpwi	cr0, r10, 1964	/* Is icbi? */
+ 	beq+	142f
+-141:	mfspr	r10,SPRN_SPRG_SCRATCH2
++141:	mfspr	r10,SPRN_M_TW
+ 	b	DARFixed	/* Nope, go back to normal TLB processing */
  
-+/* Store the number of 1GB huge pages which user specified.*/
-+static unsigned long max_gb_huge_pages;
-+
-+static int parse_gb_huge_pages(char *param, char* val)
-+{
-+	char *p;
-+	u64 mem_size;
-+	static bool gbpage_sz = false;
-+
-+	if (!strcmp(param, "hugepagesz")) {
-+		p = val;
-+		mem_size = memparse(p, &p);
-+		if (mem_size == PUD_SIZE) {
-+			if (gbpage_sz)
-+				warn("Repeadly set hugeTLB page size of 1G!\n");
-+			gbpage_sz = true;
-+		} else
-+			gbpage_sz = false;
-+	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
-+		p = val;
-+		max_gb_huge_pages = simple_strtoull(p, &p, 0);
-+		debug_putaddr(max_gb_huge_pages);
-+	}
-+}
-+
-+
- static int handle_mem_memmap(void)
- {
- 	char *args = (char *)get_cmd_line_ptr();
-@@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
- 	}
- }
+ 200:
+@@ -703,7 +703,7 @@ modified_instr:
+ 	bne+	143f
+ 	subf	r10,r0,r10	/* r10=r10-r0, only if reg RA is r0 */
+ 143:	mtdar	r10		/* store faulting EA in DAR */
+-	mfspr	r10,SPRN_SPRG_SCRATCH2
++	mfspr	r10,SPRN_M_TW
+ 	b	DARFixed	/* Go back to normal TLB handling */
+ #else
+ 	mfctr	r10
+@@ -757,7 +757,7 @@ modified_instr:
+ 	mfdar	r11
+ 	mtctr	r11			/* restore ctr reg from DAR */
+ 	mtdar	r10			/* save fault EA to DAR */
+-	mfspr	r10,SPRN_SPRG_SCRATCH2
++	mfspr	r10,SPRN_M_TW
+ 	b	DARFixed		/* Go back to normal TLB handling */
  
-+/* Skip as many 1GB huge pages as possible in the passed region. */
-+static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
-+{
-+	int i = 0;
-+	unsigned long addr, size;
-+	struct mem_vector tmp;
-+
-+	if (!max_gb_huge_pages) {
-+		store_slot_info(region, image_size);
-+		return;
-+	}
-+
-+	addr = ALIGN(region->start, PUD_SIZE);
-+	/* If Did we raise the address above the passed in memory entry? */
-+	if (addr < region->start + region->size)
-+		size = region->size - (addr - region->start);
-+
-+	/* Check how many 1GB huge pages can be filtered out*/
-+	while (size > PUD_SIZE && max_gb_huge_pages) {
-+		size -= PUD_SIZE;
-+		max_gb_huge_pages--;
-+		i++;
-+	}
-+
-+	if (!i) {
-+		store_slot_info(region, image_size);
-+		return;
-+	}
-+
-+	/* Process the remaining regions after filtering out. */
-+
-+	if (addr >= region->start + image_size) {
-+		tmp.start = region->start;
-+		tmp.size = addr - region->start;
-+		store_slot_info(&tmp, image_size);
-+	}
-+
-+	size  = region->size - (addr - region->start) - i * PUD_SIZE;
-+        if (size >= image_size) {
-+		tmp.start = addr + i*PUD_SIZE;
-+		tmp.size = size;
-+		store_slot_info(&tmp, image_size);
-+        }
-+}
-+
- static unsigned long slots_fetch_random(void)
- {
- 	unsigned long slot;
+ 	/* special handling for r10,r11 since these are modified already */
 -- 
-2.13.6
+2.13.3
