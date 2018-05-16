@@ -1,67 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-654-1526464044-2-675218165921736806
+X-Cyrus-Session-Id: sloti22d1t05-654-1526464041-2-225271588440346128
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464043; b=cfnHg7vYJXI2O/NpG3pP/9W0GQ4jqyEJP9HR9hNP9XXxq5R7qy
-    fpFFNSSQ3fQL2K8YSigFlPvwlFhJOQhJ8H5u9dgeGLAFnCMmV92WxIk9uqj8ejjJ
-    bOmHxF4SWD+/+XvsYZUwYD/f+UO2Pb6XfG+Mb5kOFWlPEj0yM+yVZIJ2JMoc+fWo
-    rvMiot0SKXhL/+0JbuMJ3Rt3QbCf8ebBzGH+LJjdRVTOc1HjZiHSZUBgdO3PHS2i
-    0DtdXjIs74WfDFO36PgdRzdPFxOMEWoo1pbs9UOJlIzFOw2G8iKA5jMX8QdMIeHM
-    iq5Ikk/ZBqDBkOnHIWKJJcmjq5m1j5v7U74Q==
+    1526464040; b=YXybVHQnpfApOQXpOzHTH6KKm8NU/+h6WyHTWRZRCk1KAC6l2Z
+    u5H7rbR0QlevIJ/Zfe9vfIRUm9kasJy1GDl45KOBa7H9zCynoc8h0E3/xw35Lqs6
+    PxtnEZkIry7zGmKmX7ou17IvHcNf29Q5hAoQ928g7wewZIVaQMYlPEHo0czynLu8
+    hSSx6nD70yvROtRFwaVs+WOKYUaLhzgap/KwgC/og/bi4ckDUCbvkNJ3W95NXaGl
+    eDjXKCCyoxynstjYSlg7txyzkX2pJ/9T16u+FUigJehgeQ0h2MFYiug3s3+3BeY7
+    9tVbyCCJJ++8D69YosNmGaFXT+XkcY8htDZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464043; bh=miyba
-    K4QTHa55V/lHZl4oC0bjpEhNes4CNP0tM6JPu8=; b=UDKQJeF6xUVazxrcr3xFi
-    9LQKPlawdXE+Fq6ERaHLxXTlO/Q/+BR5NwhnSBsvGvoNiB+Oa0dpVOqbPf197EJj
-    3+r3c+Kw73jyzHVR+OQvjPflvRuVPYoc1xzDAMjMp8M47V1If1za1m6k1U1buggU
-    17Iv0VEdsvnHAdUA41Mg72/fe6Rx7p09AW3YD96u12O4cITMLMaUMxBG1fUdnmo3
-    Vh1auTiwNFTq06PdLxLbDVugETBj6PbnPYEYvopzqXuDn/Zx4jLbrdq3ElnYYh0N
-    CFOJ53wtLgyq3jxRB1Q0Soq8nd6/D1GL02TjGsr6kqZ6J+cImhMad7xGrcMSsaxw
-    Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464040; bh=UICY+
+    JWGYSkSKEo0fdTu86zeErcvHZGpMGiarak+1Hk=; b=nRfD88mTbJT5vaL9T9o2L
+    mqgKvib1+MidNf4eiETogbFhzzsmewldZcwiJgK+WG5bTSoHDuYK/hUBuOM5Bv2X
+    Wy0ZxyDhTePFdoaVwOdJht5iAWyy42BRtDHtpI5d5NAT88P2Grc7tjpl1Ajp9udf
+    XI46HEnSaV91rDR8Tgd9I1OomdyVe1v3dzRASuxqLbLwnXwzBqFSLMsFy/VReg7f
+    JM9B1U3q7jFh2FrFscz9oL49f1p81QWFORtB1AAzf7zRhtaUtDHLVJXSxl04kR55
+    SlKwK1G6MGvcEbkIXHKGqq96wZqh4yAAaDqnGojmRW5akpmcSUUl2A3Tsla+5EUW
+    A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=Mp2jz2go
+    header.d=infradead.org header.i=@infradead.org header.b=rPNoTs2T
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=lst.de header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=Mp2jz2go
+      header.d=infradead.org header.i=@infradead.org header.b=rPNoTs2T
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=lst.de header.result=pass
       header_is_org_domain=yes;
@@ -69,12 +69,12 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPtt7ISGCLE6FXoVJ9uckpGmYDw1lnPSYVHXqpZ/sA777aX6m1qXRWIFAN2/MHI4rsnbDdh1RS7Gw0/7MvofLzOL82LjnHR2pZnWFlQ93VLHk3jPicTM
-    umgk3cAvKPbmQ1eP4JAl4HgxvWXNH1fieyqpV1yrRU1UMI6YwYT0r8SQA+wZW10A+xKqnYhhv02zsv9ybc7kXKPbmg6IA0VRbKs2+ioamvVOiBqIx0e4ei0m
-    1s0u+9lDNUp2FmaHsAAXig==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=vhW0EZN9xUNxw50ONO8A:9
+X-CM-Envelope: MS4wfBhffOYEJPECrfBOIK7umzAp4SldPz3LbwWmz4aONE60uLHtTIhZdE2pn4DMtlA+/I+ULnE1Br1bnWpLX+7UvNdYxOJ73VbyZEONoCp/7JXJBf118nl7
+    zGq/VI6nqoY6XwvE/S7znOLDJF82QZDKoqr4w+HL0iPwD95bI0MMVnoEuxck2FfC4Jp+bSDXI7ZVYqBbA0OjAYV3X0+qZqa5IXvkCxQ1a7Z43SggvmZwt+oD
+    VsEoCzvS16Rpq3F2bx9vIQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=HNAarusrsSmAjpa1ALsA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -82,10 +82,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 42/42] proc: update SIZEOF_PDE_INLINE_NAME for the new pde
- fields
-Date: Wed, 16 May 2018 11:43:46 +0200
-Message-Id: <20180516094346.20506-43-hch@lst.de>
+Subject: [PATCH 35/42] bluetooth: switch to proc_create_seq_data
+Date: Wed, 16 May 2018 11:43:39 +0200
+Message-Id: <20180516094346.20506-36-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -119,30 +118,101 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This makes Alexey happy and Al groan.  Based on a patch from
-Alexey Dobriyan.
+And use proc private data directly instead of doing a detour
+through seq->private and private state.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/proc/internal.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bluetooth/af_bluetooth.c | 40 +++++-------------------------------
+ 1 file changed, 5 insertions(+), 35 deletions(-)
 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 84c68508a256..a318ae5b36b4 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -62,9 +62,9 @@ struct proc_dir_entry {
- 	umode_t mode;
- 	u8 namelen;
- #ifdef CONFIG_64BIT
--#define SIZEOF_PDE_INLINE_NAME	(192-139)
-+#define SIZEOF_PDE_INLINE_NAME	(192-155)
- #else
--#define SIZEOF_PDE_INLINE_NAME	(128-87)
-+#define SIZEOF_PDE_INLINE_NAME	(128-95)
- #endif
- 	char inline_name[SIZEOF_PDE_INLINE_NAME];
- } __randomize_layout;
+diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
+index 84d92a077834..3264e1873219 100644
+--- a/net/bluetooth/af_bluetooth.c
++++ b/net/bluetooth/af_bluetooth.c
+@@ -605,15 +605,10 @@ int bt_sock_wait_ready(struct sock *sk, unsigned long flags)
+ EXPORT_SYMBOL(bt_sock_wait_ready);
+ 
+ #ifdef CONFIG_PROC_FS
+-struct bt_seq_state {
+-	struct bt_sock_list *l;
+-};
+-
+ static void *bt_seq_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(seq->private->l->lock)
+ {
+-	struct bt_seq_state *s = seq->private;
+-	struct bt_sock_list *l = s->l;
++	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
+ 
+ 	read_lock(&l->lock);
+ 	return seq_hlist_start_head(&l->head, *pos);
+@@ -621,8 +616,7 @@ static void *bt_seq_start(struct seq_file *seq, loff_t *pos)
+ 
+ static void *bt_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+-	struct bt_seq_state *s = seq->private;
+-	struct bt_sock_list *l = s->l;
++	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
+ 
+ 	return seq_hlist_next(v, &l->head, pos);
+ }
+@@ -630,16 +624,14 @@ static void *bt_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ static void bt_seq_stop(struct seq_file *seq, void *v)
+ 	__releases(seq->private->l->lock)
+ {
+-	struct bt_seq_state *s = seq->private;
+-	struct bt_sock_list *l = s->l;
++	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
+ 
+ 	read_unlock(&l->lock);
+ }
+ 
+ static int bt_seq_show(struct seq_file *seq, void *v)
+ {
+-	struct bt_seq_state *s = seq->private;
+-	struct bt_sock_list *l = s->l;
++	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
+ 
+ 	if (v == SEQ_START_TOKEN) {
+ 		seq_puts(seq ,"sk               RefCnt Rmem   Wmem   User   Inode  Parent");
+@@ -681,35 +673,13 @@ static const struct seq_operations bt_seq_ops = {
+ 	.show  = bt_seq_show,
+ };
+ 
+-static int bt_seq_open(struct inode *inode, struct file *file)
+-{
+-	struct bt_sock_list *sk_list;
+-	struct bt_seq_state *s;
+-
+-	sk_list = PDE_DATA(inode);
+-	s = __seq_open_private(file, &bt_seq_ops,
+-			       sizeof(struct bt_seq_state));
+-	if (!s)
+-		return -ENOMEM;
+-
+-	s->l = sk_list;
+-	return 0;
+-}
+-
+-static const struct file_operations bt_fops = {
+-	.open = bt_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = seq_release_private
+-};
+-
+ int bt_procfs_init(struct net *net, const char *name,
+ 		   struct bt_sock_list *sk_list,
+ 		   int (* seq_show)(struct seq_file *, void *))
+ {
+ 	sk_list->custom_seq_show = seq_show;
+ 
+-	if (!proc_create_data(name, 0, net->proc_net, &bt_fops, sk_list))
++	if (!proc_create_seq_data(name, 0, net->proc_net, &bt_seq_ops, sk_list))
+ 		return -ENOMEM;
+ 	return 0;
+ }
 -- 
 2.17.0
 
