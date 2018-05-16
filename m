@@ -1,56 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeEPOkm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:40:42 -0400
-Received: from mga17.intel.com ([192.55.52.151]:38029 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750746AbeEPOkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:40:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="51345691"
-Date: Wed, 16 May 2018 08:42:40 -0600
-From: Keith Busch <keith.busch@linux.intel.com>
-To: Bharat Kumar Gogada <bharatku@xilinx.com>
-Cc: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>
-Subject: Re: INTMS/INTMC not being used in NVME interrupt handling
-Message-ID: <20180516144240.GA20223@localhost.localdomain>
-References: <BLUPR0201MB1505371050ED798BE025132BA5920@BLUPR0201MB1505.namprd02.prod.outlook.com>
+        id S1751033AbeEPOlw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:41:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750835AbeEPOlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 10:41:50 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
+ matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <be2e8810-2a03-c67c-b1aa-41cf7c82980e@linux.ibm.com>
+ <bf6191a9-ca0f-238c-d078-d6f0d6be1616@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 16 May 2018 16:41:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BLUPR0201MB1505371050ED798BE025132BA5920@BLUPR0201MB1505.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <bf6191a9-ca0f-238c-d078-d6f0d6be1616@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051614-0012-0000-0000-000005D736FC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051614-0013-0000-0000-000019545C95
+Message-Id: <edf541b4-f3d6-95ac-46c8-32560c1d0b0c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:35:15PM +0000, Bharat Kumar Gogada wrote:
-> Hi,
-> 
-> As per NVME specification: 
-> 7.5.1.1 Host Software Interrupt Handling
-> It is recommended that host software utilize the Interrupt Mask Set and Interrupt Mask Clear (INTMS/INTMC) 
-> registers to efficiently handle interrupts when configured to use pin based or MSI messages.
-> 
-> In kernel 4.14, drivers/nvme/host/pci.c function nvme_isr 
-> doesn't  use these registers. 
-> 
-> Any reason why these registers are not used in nvme interrupt handler ?
+On 16/05/2018 16:29, Tony Krowiak wrote:
+> On 05/11/2018 12:08 PM, Halil Pasic wrote:
+>>
+>>
+>> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
+>>> Provides interfaces to manage the AP adapters, usage domains
+>>> and control domains assigned to a KVM guest.
+>>>
+>>> The guest's SIE state description has a satellite structure called the
+>>> Crypto Control Block (CRYCB) containing three bitmask fields
+>>> identifying the adapters, queues (domains) and control domains
+>>> assigned to the KVM guest:
+>>
+>> [..]
+>>
+>>> index 00bcfb0..98b53c7 100644
+>>> --- a/arch/s390/kvm/kvm-ap.c
+>>> +++ b/arch/s390/kvm/kvm-ap.c
+>>> @@ -7,6 +7,7 @@
+>>
+>> [..]
+>>
+>>> +
+>>> +/**
+>>> + * kvm_ap_validate_queue_sharing
+>>> + *
+>>> + * Verifies that the APQNs derived from the cross product of the AP 
+>>> adapter IDs
+>>> + * and AP queue indexes comprising the AP matrix are not configured 
+>>> for
+>>> + * another guest. AP queue sharing is not allowed.
+>>> + *
+>>> + * @kvm: the KVM guest
+>>> + * @matrix: the AP matrix
+>>> + *
+>>> + * Returns 0 if the APQNs are valid, otherwise; returns -EBUSY.
+>>> + */
+>>> +static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
+>>> +                     struct kvm_ap_matrix *matrix)
+>>> +{
+>>> +    struct kvm *vm;
+>>> +    unsigned long *apm, *aqm;
+>>> +    unsigned long apid, apqi;
+>>> +
+>>> +
+>>> +    /* No other VM may share an AP Queue with the input VM */
+>>> +    list_for_each_entry(vm, &vm_list, vm_list) {
+>>> +        if (kvm == vm)
+>>> +            continue;
+>>> +
+>>> +        apm = kvm_ap_get_crycb_apm(vm);
+>>> +        if (!bitmap_and(apm, apm, matrix->apm, matrix->apm_max + 1))
+>>> +            continue;
+>>> +
+>>> +        aqm = kvm_ap_get_crycb_aqm(vm);
+>>> +        if (!bitmap_and(aqm, aqm, matrix->aqm, matrix->aqm_max + 1))
+>>> +            continue;
+>>> +
+>>> +        for_each_set_bit_inv(apid, apm, matrix->apm_max + 1)
+>>> +            for_each_set_bit_inv(apqi, aqm, matrix->aqm_max + 1)
+>>> +                kvm_ap_log_sharing_err(vm, apid, apqi);
+>>> +
+>>> +        return -EBUSY;
+>>> +    }
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix 
+>>> *matrix)
+>>> +{
+>>> +    int ret = 0;
+>>> +
+>>> +    mutex_lock(&kvm->lock);
+>>
+>> You seem to take only kvm->lock, vm_list however (used in
+>> kvm_ap_validate_queue_sharing()) seems to be protected by
+>> kvm_lock.
+>>
+>> Can you tell me why is this supposed to be safe?
+>>
+>> What is supposed to prevent an execution like
+>> vm1: call kvm_ap_configure_matrix(m1)
+>> vm2: call kvm_ap_configure_matrix(m2)
+>> vm1: call kvm_ap_validate_queue_sharing(m1)
+>> vm2: call kvm_ap_validate_queue_sharing(m2)
+>> vm1: call kvm_ap_set_crycb_masks(m1)
+>> vm2: call kvm_ap_set_crycb_masks(m2)
+>>
+>> where, let's say, m1 and m2 are equal in the sense that the
+>> mask values are the same?
+>
+> vm1 will get the kvm->lock first in your scenario when
+> kvm_ap_configure_matrix(m1) is invoked. Since the other
+> functions - i.e., kvm_ap_validate_queue_sharing(m1) and
+> kvm_ap_set_crycb_masks(m1) - are static and only called
+> from the kvm_ap_configure_matrix(m1), your scenario
+> can never happen because vm2 will not get the lock until
+> kvm_ap_configure_matrix(m1) has completed. I see your
+> point, however, and maybe I should also acquire the kvm_lock.
 
-I think you've answered your own question: we process completions in the
-interrupt context. The interrupt is already masked at the CPU level in
-this context, so there should be no reason to mask them at the device
-level.
- 
-> Why NVMe driver is not using any bottom half and processing all completion queues
-> in interrupt handler ?
+AFAIU the locks you are talking about are KVM specific
+but the example from Halil use two different VM,
+i.e. two different locks are used and vm2 never wait for vw1.
 
-Performance.
+>
+>>
+>>
+>> Regards,
+>> Halil
+>>
+>>> +
+>>> +    ret = kvm_ap_validate_queue_sharing(kvm, matrix);
+>>> +    if (ret)
+>>> +        goto done;
+>>> +
+>>> +    kvm_ap_set_crycb_masks(kvm, matrix);
+>>> +
+>>> +done:
+>>> +    mutex_unlock(&kvm->lock);
+>>> +
+>>> +    return ret;
+>>> +}
+>>> +EXPORT_SYMBOL(kvm_ap_configure_matrix);
+>>> +
+>
+>
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
