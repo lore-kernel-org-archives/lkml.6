@@ -1,69 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752508AbeEPLm6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:42:58 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:32965 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752331AbeEPLm4 (ORCPT
+        id S1752452AbeEPLok (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:44:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38060 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751662AbeEPLoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:42:56 -0400
-X-Google-Smtp-Source: AB8JxZq2BIwkAMzwanTYomOMqbnFLbVmQvlY7u3mcUHaozELhYc9H2TKhlx55tZ4kpUu7BFSVQHWEA==
-Subject: Re: [RFC v4 5/5] virtio_ring: enable packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-6-tiwei.bie@intel.com>
- <27dfb4e8-6d63-bf7d-0f97-ac51559f8040@cogentembedded.com>
- <20180516102159.GA11467@debian>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <dc6f6d01-7ca5-5264-6a58-1d5327da08cb@cogentembedded.com>
-Date: Wed, 16 May 2018 14:42:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 16 May 2018 07:44:38 -0400
+Date: Wed, 16 May 2018 14:42:54 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Paul Burton <paul.burton@mips.com>,
+        Colin King <colin.king@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>, linux-mips@linux-mips.org,
+        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error
+ return paths
+Message-ID: <20180516114254.wffddft537t45yfg@mwanda>
+References: <20180509134031.11611-1-colin.king@canonical.com>
+ <20180509140135.4dndt3baomtxups5@mwanda>
+ <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
+ <20180510065951.fiojonx5f776z5jm@mwanda>
+ <152640892003.34267.13202118557714072290@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180516102159.GA11467@debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152640892003.34267.13202118557714072290@swboyd.mtv.corp.google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805160119
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 01:21 PM, Tiwei Bie wrote:
-
->>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>> ---
->>>   drivers/virtio/virtio_ring.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->>> index de3839f3621a..b158692263b0 100644
->>> --- a/drivers/virtio/virtio_ring.c
->>> +++ b/drivers/virtio/virtio_ring.c
->>> @@ -1940,6 +1940,8 @@ void vring_transport_features(struct virtio_device *vdev)
->>>   			break;
->>>   		case VIRTIO_F_IOMMU_PLATFORM:
->>>   			break;
->>> +		case VIRTIO_F_RING_PACKED:
->>> +			break;
->>
->>    Why not just add this *case* under the previous *case*?
+On Tue, May 15, 2018 at 11:28:40AM -0700, Stephen Boyd wrote:
+> Quoting Dan Carpenter (2018-05-09 23:59:51)
+> > It would be nice to make things static check clean.  One idea would be
+> > that the static checker could ignore resource leaks in __init functions.
+> > 
 > 
-> Do you mean fallthrough? Something like:
-> 
-> 		case VIRTIO_F_IOMMU_PLATFORM:
-> 		case VIRTIO_F_RING_PACKED:
-> 			break;
+> Typically if the stuff is so important that it doesn't work without it
+> then we throw in a panic() or a BUG() call to indicate that all hope is
+> lost. Otherwise, I'm not sure what's wrong with adding in proper error
+> paths for clean recovery.
 
-   Yes, exactly. :-)
+In clk_boston_setup() then we'd have to put a ton of BUG()s in there to
+silence all the warnings.  Right now the static checkers only care about
+kmalloc() but in a year or two they'll be clever enough to care about
+everything leaked in this function.  I don't think adding BUG() calls
+is a good idea.
 
-> Best regards,
-> Tiwei Bie
+Plus, I have a private static checker warning for that.  When the BTRFS
+filesystem was merged 10 years ago it used to call BUG() all the time if
+allocations failed so I made a static checker warning to spot that
+anti-pattern...
 
-[...]
-
-MBR, Sergei
+regards,
+dan carpenter
