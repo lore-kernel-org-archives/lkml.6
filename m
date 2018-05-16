@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeEPPF3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48768 "EHLO mail.kernel.org"
+        id S1752414AbeEPPGO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:06:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751328AbeEPPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751290AbeEPPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 11:02:01 -0400
-Message-Id: <20180516150200.215654226@goodmis.org>
+Message-Id: <20180516150159.757510877@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 16 May 2018 11:00:19 -0400
+Date: Wed, 16 May 2018 11:00:16 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -22,80 +22,40 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v3 07/14] tracing: Have zero size length in filter logic be full string
+Subject: [PATCH v3 04/14] tracing: Add brackets in ftrace event dynamic arrays
 References: <20180516150012.135869655@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0007-tracing-Have-zero-size-length-in-filter-logic-be-ful.patch
+Content-Disposition: inline; filename=0004-tracing-Add-brackets-in-ftrace-event-dynamic-arrays.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-As strings in trace events may not have a nul terminating character, the
-filter string compares use the defined string length for the field for the
-compares.
-
-The trace_marker records data slightly different than do normal events. It's
-size is zero, meaning that the string is the rest of the array, and that the
-string also ends with '\0'.
-
-If the size is zero, assume that the string is nul terminated and read the
-string in question as is.
+The dynamic arrays defined for ftrace internal events, such as the buf field
+for trace_marker (ftrace/print) did not have brackets which makes the filter
+code not accept it as a string. This is not currently an issues because the
+filter code doesn't do anything for these events, but they will in the
+future, and this needs to be fixed for when it does.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_filter.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ kernel/trace/trace_export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 7d306b74230f..0171407d231f 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -750,31 +750,32 @@ static int filter_pred_none(struct filter_pred *pred, void *event)
-  *
-  * Note:
-  * - @str might not be NULL-terminated if it's of type DYN_STRING
-- *   or STATIC_STRING
-+ *   or STATIC_STRING, unless @len is zero.
-  */
+diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
+index 548e62eb5c46..d842f1eadfe5 100644
+--- a/kernel/trace/trace_export.c
++++ b/kernel/trace/trace_export.c
+@@ -117,7 +117,7 @@ static void __always_unused ____ftrace_check_##name(void)		\
  
- static int regex_match_full(char *str, struct regex *r, int len)
- {
--	if (strncmp(str, r->pattern, len) == 0)
--		return 1;
--	return 0;
-+	/* len of zero means str is dynamic and ends with '\0' */
-+	if (!len)
-+		return strcmp(str, r->pattern) == 0;
-+
-+	return strncmp(str, r->pattern, len) == 0;
- }
- 
- static int regex_match_front(char *str, struct regex *r, int len)
- {
--	if (len < r->len)
-+	if (len && len < r->len)
- 		return 0;
- 
--	if (strncmp(str, r->pattern, r->len) == 0)
--		return 1;
--	return 0;
-+	return strncmp(str, r->pattern, r->len) == 0;
- }
- 
- static int regex_match_middle(char *str, struct regex *r, int len)
- {
--	if (strnstr(str, r->pattern, len))
--		return 1;
--	return 0;
-+	if (!len)
-+		return strstr(str, r->pattern) != NULL;
-+
-+	return strnstr(str, r->pattern, len) != NULL;
- }
- 
- static int regex_match_end(char *str, struct regex *r, int len)
+ #undef __dynamic_array
+ #define __dynamic_array(type, item)					\
+-	ret = trace_define_field(event_call, #type, #item,		\
++	ret = trace_define_field(event_call, #type "[]", #item,  \
+ 				 offsetof(typeof(field), item),		\
+ 				 0, is_signed_type(type), filter_type);\
+ 	if (ret)							\
 -- 
 2.17.0
