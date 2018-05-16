@@ -1,116 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeEPKpy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:45:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752645AbeEPKpu (ORCPT
+        id S1752564AbeEPKro (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:47:44 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38465 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752101AbeEPKrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:45:50 -0400
-Subject: Re: [PATCH v5 01/13] KVM: s390: Interface to test whether APXA
- installed
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-2-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180516122116.4c3b10a1.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 16 May 2018 06:45:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 16 May 2018 06:47:41 -0400
+Date: Wed, 16 May 2018 12:47:35 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+Message-ID: <20180516104734.357oevogppu5bsg4@linutronix.de>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de>
+ <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180516122116.4c3b10a1.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051610-0028-0000-0000-000009A07BD5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009034; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01033088; UDB=6.00528206; IPR=6.00812219;
- MB=3.00021142; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-16 10:45:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051610-0029-0000-0000-00003AD94E9E
-Message-Id: <20e26cf4-84fe-b681-15e9-59bc113a3828@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805160109
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 06:21 AM, Cornelia Huck wrote:
-> On Mon,  7 May 2018 11:11:40 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> Relocates an existing static function that tests whether
->> the AP extended addressing facility (APXA) is installed on
->> the linux host. The primary reason for relocating this
->> function is because a new compilation unit (arch/s390/kvm/kvm-ap.c)
->> is being created to contain all of the interfaces and logic
->> for configuring an AP matrix for a KVM guest. Some of its
->> functions will also need to determine whether APXA is installed,
->> so, let's go ahead and relocate this static function as a
->> public interface in kvm-ap.c.
->>
->> Notes:
->> ----
->> 1. The interface to determine whether APXA is installed on the linux
->>     host the information returned from the AP Query Configuration
->>     Information (QCI) function. This function will not be available
->>     if the AP instructions are not installed on the linux host, so a check
->>     will be included to verify that.
->>
->> 2. Currently, the AP bus interfaces accessing the AP instructions will
->>     not be accessible if CONFIG_ZCRYPT=n, so the relevant code will be
->>     temporarily contained in the new arch/s390/kvm/kvm-ap.c file until
->>     the patch(es) to statically build the required AP bus interfaces are
->>     available.
-> Any ETA for those interfaces? Would be nice if we could avoid
-> introducing temporary interfaces (but I'm certainly not opposing this
-> patch).
+On 2018-05-16 13:17:36 [+0300], Andy Shevchenko wrote:
+> > The output is usually short so there
+> > shouldn't be much benefit from using it.
+> 
+> > I remember Tony wanted runtime-pm on the kernel console, too. And he
+> > told me explicit how to test it so that it works. Once the UART goes
+> > into PM (down), the whole IP block can go into power save mode. The
+> > board can be woken up by sending a character via the UART. The first few
+> > (incoming / read) characters are lost until the IP block is up again the
+> > frequency stable. This is known / expected.
+> 
+> Don't consider world the OMAP only. The things more complicated if we
+> go out of it. Which I tried to explain in the commit message of patch
+> 2.
 
-I'll check with the developer.
+I am not saying the world is OMAP only. I just tried to explain how any
+why it got there and its purpose. I haven't NACKed it. I would believe
+that with that information and Tony not defending his use case or
+possible change it somehow so it is not standing in your way, Greg would
+have enough information to go your way.
+But since I am on it. You have to enable runtime-PM for the UART. So
+what is the problem if you simply don't enable it for the UART which
+used as the kernel console?
+>From reading the description of #2, my understanding is that you are
+afraid that enabling the UART (bringing it from power-down mode) might
+take too long because it requires (or might require) an ACPI function
+call. This brings me again to: why bother and enable it in the first
+place? Because this might not work from NMI context.
 
->
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   MAINTAINERS                    |    1 +
->>   arch/s390/include/asm/kvm-ap.h |   60 +++++++++++++++++++++++++++++
->>   arch/s390/kvm/Makefile         |    2 +-
->>   arch/s390/kvm/kvm-ap.c         |   83 ++++++++++++++++++++++++++++++++++++++++
->>   arch/s390/kvm/kvm-s390.c       |   42 +-------------------
->>   5 files changed, 147 insertions(+), 41 deletions(-)
->>   create mode 100644 arch/s390/include/asm/kvm-ap.h
->>   create mode 100644 arch/s390/kvm/kvm-ap.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index eab763f..224e97b 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -7792,6 +7792,7 @@ M:	Christian Borntraeger <borntraeger@de.ibm.com>
->>   M:	Janosch Frank <frankja@linux.ibm.com>
->>   R:	David Hildenbrand <david@redhat.com>
->>   R:	Cornelia Huck <cohuck@redhat.com>
->> +R:	Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> Don't you want to drop the 'vnet' from your address, as the vnet-less
-> form seems to be the one that will continue working from what I've
-> heard?
->
->>   L:	linux-s390@vger.kernel.org
->>   W:	http://www.ibm.com/developerworks/linux/linux390/
->>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git
-> No objection against this patch, although I still hope it will not be
-> needed :)
->
+>From looking at #2. You remove put/get in console_write() and avoid
+runtime PM by pm_runtime_get_noresume() and need the extra hook on
+console exit. I wasn't aware that you can remove the console at runtime
+(and assumed you have to stick to what said in console= at bootime).
+Because if that is the case, you could simply strip UART_CAP_RPM and
+then there is no more runtime-PM for you. Or is it too simple and I
+miss something here?
+
+> > In order to achieve the same thing you would have to disable the kernel
+> > console on that UART. I leave this to Tony.
+> 
+> Precisely the point of the series.
+
+Sebastian
