@@ -1,70 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeEPEmg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 00:42:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56638 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751046AbeEPEmf (ORCPT
+        id S1752081AbeEPEoG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 00:44:06 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41868 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeEPEoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 00:42:35 -0400
-To: moderated for non-subscribers <alsa-devel@alsa-project.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] ASoC: codecs: fix pcm1789.c build errors
-Cc: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kbuild test robot <lkp@intel.com>
-Message-ID: <c99575a2-5172-b42e-dd18-6bc763fee361@infradead.org>
-Date: Tue, 15 May 2018 21:42:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 16 May 2018 00:44:04 -0400
+X-Google-Smtp-Source: AB8JxZp4/SmdW2ggXmeh9RSETWWlgBALDjqSOckIXeukSiWD4iMzUThM5i3490Y8t4Rrzf9CG79z5QBK1UzNpSYUHZ8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqt6zai16qZ--L9aAh0dtD9XTfu-vpUpO4CWgOHKavxH5AU1Q@mail.gmail.com>
+References: <20180425043413.GA21467@jordon-HP-15-Notebook-PC> <CAFqt6zai16qZ--L9aAh0dtD9XTfu-vpUpO4CWgOHKavxH5AU1Q@mail.gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Wed, 16 May 2018 10:14:02 +0530
+Message-ID: <CAFqt6zYLDsQ+LRPMJF+H-9hKt03HwGPaj1eaxPGMuu039a8j2g@mail.gmail.com>
+Subject: Re: [PATCH v2] ipc: Adding new return type vm_fault_t
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, manfred@colorfullife.com,
+        dave@stgolabs.net, ebiederm@xmission.com, linux@dominikbrodowski.net
+Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, May 10, 2018 at 7:34 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Wed, Apr 25, 2018 at 10:04 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> ---
+>> v2: Updated the change log
+>>
+>>  ipc/shm.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/ipc/shm.c b/ipc/shm.c
+>> index 4643865..2ba0cfc 100644
+>> --- a/ipc/shm.c
+>> +++ b/ipc/shm.c
+>> @@ -378,7 +378,7 @@ void exit_shm(struct task_struct *task)
+>>         up_write(&shm_ids(ns).rwsem);
+>>  }
+>>
+>> -static int shm_fault(struct vm_fault *vmf)
+>> +static vm_fault_t shm_fault(struct vm_fault *vmf)
+>>  {
+>>         struct file *file = vmf->vma->vm_file;
+>>         struct shm_file_data *sfd = shm_file_data(file);
+>> --
+>> 1.9.1
+>>
+>
+> Any comment for this patch ?
 
-Fix build errors in pcm1789.c.
-The source file needs to #include <linux/gpio/consumer.h> since it
-uses interfaces and macros that are provided by it.
-However, it does not need to #include <linux/gpio.h>, so drop it.
-
-Fixes these build errors:
-
-../sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
-../sound/soc/codecs/pcm1789.c:247:2: error: implicit declaration of function 'devm_gpiod_get_optional' [-Werror=implicit-function-declaration]
-  pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-../sound/soc/codecs/pcm1789.c:247:57: error: 'GPIOD_OUT_HIGH' undeclared (first use in this function)
-  pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-../sound/soc/codecs/pcm1789.c:251:2: error: implicit declaration of function 'gpiod_set_value_cansleep' [-Werror=implicit-function-declaration]
-  gpiod_set_value_cansleep(pcm1789->reset, 0);
-
-Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mylène Josserand <mylene.josserand@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org
----
- sound/soc/codecs/pcm1789.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-BTW, MODULE_AUTHOR() still uses @free-electrons.com.
-
---- lnx-417-rc4.orig/sound/soc/codecs/pcm1789.c
-+++ lnx-417-rc4/sound/soc/codecs/pcm1789.c
-@@ -3,7 +3,7 @@
- // Copyright (C) 2018 Bootlin
- // Mylène Josserand <mylene.josserand@bootlin.com>
- 
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/workqueue.h>
- 
+If no further comment, we would like to get this
+patch in queue for 4.18.
