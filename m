@@ -1,141 +1,133 @@
-Return-Path: <heikki.krogerus@linux.intel.com>
-X-Cyrus-Session-Id: sloti22d1t05-2184840-1526565498-2-8662560773668232207
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-526264-1526488777-2-5318632030085446743
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
+ in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='134.134.136.24', Host='mga09.intel.com', Country='US',
-  FromHeader='com', MailFrom='com'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: heikki.krogerus@linux.intel.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526565496; b=kJ8H9KRovOGPJ7xteghSqIUJzjkCN8VLD4pSsEX1Aw3v8qGfVD
-    z5iMvV6UCK3xhDcNqffkqBG1K9vL2pRLXRbNmRS/A0ikfQbndoiltk8h70vB6ROP
-    gQ/kh5HhTyp12V0EixKBNUaV4RFpbxVW7IQHR1UvK0pelhNbzA7uaJzPuPLgEP+o
-    NIXDmUWuH27TJk3ABF9F4he9LG81iuvqY4l2PqUBKsTVNrM2LPoG3xIGRqxkF7iP
-    HqNhHIOSY/zBKg/9lAcB6WPuttMTAH+xoXuXtWKTiRsHTUbTmQwT4eqlPlGYcInf
-    e1DVXJKtYyM1HSfkblbAXBD5rRaH5xm+9AJg==
+    1526488777; b=CPDMrNqQvO7jCTGut2Q2QcIbfkDZcCMF3aMsuRHPrsH+K5PnH2
+    c40VQtNDZnQWOqKgiMVdmvW8V6g/n5zkX9vg7sHaBpIc/0No+SF8qa1ev2sANJrm
+    G7mLbM3iXXL5eVMuU1YVRRLzlAQJDYeLT8HHMyRZuQFKEC/G0wx0898o4zcs971K
+    ybJobD7r8hUrANG4Al7eY+PWQNiJQskrUSAOu/rT8iW8juOY1tybXdrlFPHUPjcM
+    2Ol5SU53x9z743qmWn0pqlHw2sVXL4QdISIWNnIfe0J8M+MDqTuwMLYEmVXLy9A9
+    WUfRyCAaQZ2LTWMDqRSd/8FyItV4Me+ckRlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to; s=fm2; t=
-    1526565496; bh=jrudEtUFmshTdV+P0O2DVI/thzCVp0z0zvPRqolcoM0=; b=M
-    fgFtSuk6Dktaml28Qgd91dmuHDbHOb+nf2K4T2y4rU9IPIoDKBR6juxG0o4100yj
-    hAeherIGcVbIMejDgBkGbDdNOUGqzCVsPaoenmy1YkLBp0UdTSBRGum3Dt7txtgS
-    bJhoi/l3e2w4Dj4fVlDRMVUmmrgQrya9ASG3Q3CIb8gfON2wfQwn+RqqRFCEpcnq
-    wh6h1xJ9M2WMZX/UCDDtB7KqJdNjBwaFaSlWzDdqhAa3xo8TagyqlG8f6aa1i0AD
-    J0+EukKOswCUwZWGKEP0+W6vBtPm1DfcLm2wPeykHxlXkubQ3b1YGfelQZQ6q85r
-    7C0Gg1zBend2aH5QDAqlw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=134.134.136.24 (mga09.intel.com);
-    spf=none smtp.mailfrom=heikki.krogerus@linux.intel.com
-    smtp.helo=mga09.intel.com;
-    x-aligned-from=pass (Address match);
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526488777; bh=Jj3JAKv8pAWCdC9vk49jamMqRiysxk
+    SFml97MOqmjus=; b=BxrbeHx4xE+BJbPSdfsAfB81o40VQ8kqafp4o/5jn9Kl2y
+    nTs60Bvm2jbNaltQhwBMJ1gM7isRtgHCj2O3LHDnYiSpZRFCkZo9NYR9zqxKmAu/
+    5ZZ0eN+dOL19QMwPkqkmdgMn/aif4pKMrRvhHfZRWyPSLMVnEy8Xp4vCiWUp+YkO
+    mFHHkc70p0UYL7yI7p/nJXGaQDJENt1BTcjVABCDNypeCmE+uhNC4Mc9SfMBFvy7
+    LRZJXfBzMZRfEERnwTRB806ZKgZMemdbl6OgGAwrisYV0pl9foDrpWqSN0Mz92Tz
+    S6aGLAHPQfgLLhRFWcnQfu8SwV1UOPm3C4tgV23Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=messagingengine.com header.i=@messagingengine.com
+    header.b=T63/ubBI x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mga09.intel.com x-ptr-lookup=mga09.intel.com;
-    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass
-    smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=134.134.136.24 (mga09.intel.com);
-    spf=none smtp.mailfrom=heikki.krogerus@linux.intel.com
-      smtp.helo=mga09.intel.com;
-    x-aligned-from=pass (Address match);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=messagingengine.com header.i=@messagingengine.com
+      header.b=T63/ubBI x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mga09.intel.com x-ptr-lookup=mga09.intel.com;
-    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass
-      smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLxpCbM6baSZTCMYwnBeIzOlrr82gyumJmKiu6zivF0InSkIEjvsJFvJkYL8onxHtHZO78nYvhZJVHJSQU2MydDlnfaAtkgMPJz5FsuKZGmJ4crkkIJC
-    lXavwOLGP7fyeuDA8vJIBxJxrX31jFE/GuixwWe8vy/mlaHtXh1hYUyJIxiHeahbNkFkEtJlkcCHcOejyn2Qunul9n6SQVMomZQ=
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=NbiJzzs714t695yxpfMljw==:117
-    a=NbiJzzs714t695yxpfMljw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=iLNU1ar6AAAA:8 a=MdHgQ7hJP3j2gb_iERoA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfDtEKMDQzd/y8BT3xkRA3P/Lm4FKiKPYA5+M4jwyk1rm/e0neZLjtstW52edowQAT6mVDS+kqBE4Usj8RjsXzY6R/4B04Q0iIZplOUftpUiSNPQ4HK2M
+    AgyW8aD3HoVs2csXPqclQjPajH072V2fYULUtRD4UUkW4dc8P0EgYcGRzwCcmlcClrsVEIm2pBaRzl4efxvhHuREF4pgMwizx1vX2V2ExfNlehcTYmCDAO/H
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=iLNU1ar6AAAA:8 a=VwQbUJbxAAAA:8 a=zLoA9V-_IBI5EWoYkqoA:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,410,1520924400";
-   d="scan'208";a="56104192"
-Date: Thu, 17 May 2018 16:58:09 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750862AbeEPQjX (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 12:39:23 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39429 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750778AbeEPQjW (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 16 May 2018 12:39:22 -0400
+X-ME-Proxy: <xmx:uV78WsQYJQC5uW197PTXN76EDO15DhG_c4CEuikdbH0okGwUvneWYw>
+X-ME-Proxy: <xmx:uV78Wtticsy8wzzwk8C_5a51AgiSWDinmrOK4DaDxxneR8rMEx1dsw>
+X-ME-Proxy: <xmx:uV78WuaPX-FkVeK1mhluTB-BWiQ_H5Zz3Sm72HcZysyg5OAOSAPd1A>
+X-ME-Proxy: <xmx:uV78Wn_ypgIKivAd8crVyGtJ6m1oDR3x4rDogCsw0tuvTB7B-Ieh1g>
+X-ME-Proxy: <xmx:uV78Wqq36uKqPflGCysGV8OJp3VjAVVte2mv14KrHzXqG8BI0LJh3Q>
+X-ME-Proxy: <xmx:ul78WqnPxgSE5oEymeXBzeuHMv25XcuRxFSMO0fU6CQxtsdMOulM_Q>
+X-ME-Sender: <xms:uV78WpaVpmyEx1y_I2njAgNCYBvJndYLipBhffRbcFTXzbrric4-6g>
+Date: Wed, 16 May 2018 18:39:05 +0200
+From: Greg KH <greg@kroah.com>
 To: Mario.Limonciello@dell.com
-Cc: greg@kroah.com, pmenzel+linux-usb@molgen.mpg.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: heikki.krogerus@linux.intel.com, pmenzel+linux-usb@molgen.mpg.de,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: `ucsi_acpi: probe of USBC000:00 failed with error -12` on Dell
  XPS 13 9370
-Message-ID: <20180517135809.GG11469@kuha.fi.intel.com>
+Message-ID: <20180516163905.GE20425@kroah.com>
 References: <9365397f-7206-728e-ee76-146629bfd186@molgen.mpg.de>
  <20180515160047.GB26720@kroah.com>
  <69da4aa4-3d4b-0ffc-81ce-500713cd3743@molgen.mpg.de>
  <20180516080226.GC3536@kroah.com>
  <20180516115814.GB11469@kuha.fi.intel.com>
  <df6610738db046e9bd1db77d4346cfc3@ausx13mpc120.AMER.DELL.COM>
- <20180517085930.GD11469@kuha.fi.intel.com>
- <91a3c211cc8547ccb8eab844abd3b095@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91a3c211cc8547ccb8eab844abd3b095@ausx13mpc120.AMER.DELL.COM>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <df6610738db046e9bd1db77d4346cfc3@ausx13mpc120.AMER.DELL.COM>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Mario,
-
-On Thu, May 17, 2018 at 01:01:20PM +0000, Mario.Limonciello@dell.com wrote:
-> > > Heikki,
-> > >
-> > > I confirmed with internal team that UCSI is implemented on XPS 9370
-> > > and was confirmed to be working properly with Windows 10 RS2+.
-> > 
-> > Just to double check: "UCSI was confirmed working properly", so not
-> > "the Type-C ports were confirmed working properly"?
+On Wed, May 16, 2018 at 04:13:31PM +0000, Mario.Limonciello@dell.com wrote:
+> > > [1] When the power supply for the docking station is bigger than the
+> > >     laptop's power supply, you begin to wonder what is in that thing and
+> > >     stop using it after a while...
 > 
-> UCSI was confirmed working properly.  FWIW it's a certification requirement
-> in Windows.
+> Mostly to satisfy letting the docking station work with beefier machines and
+> still deliver power up to what USB PD will negotiate.
+> I think they can actually run with smaller power supplies but you will need
+> something "a little" bigger than regular system power supply to power the
+> dock and system both.
 
-OK, thank you for confirming that.
+Given the date of my docking station (2+ years old), I would be _amazed_
+if it could do USB PD.  But I should go try it, my existing Dell laptop
+doesn't support that, but I have an Acer here, along with some
+chromebooks that do.
 
-> > > The reason that _STA is responding on this device node now but wasn't
-> > > previously is it wasn't exposed in Linux until 4.16 when the Win 10 RS2
-> > > OSI string started to respond.
-> > 
-> > OK.
-> > 
-> > > Intel should internally have some XPS 9370 you can remotely access if
-> > > you would like to poke around ACPI tables some.
-> > 
-> > I will try get access to XPS 9370, but with the acpi tables, if
-> > somebody could just send me acpidump, that would be enough:
-> > 
-> >         % acpidump -o xps9370_acpi.dump
+I guess I need to go get the latest Dell laptop, "just to test" with :)
 
-I now have the XPS 9370 ACPI tables.
+thanks,
 
-
-Br,
-
--- 
-heikki
+greg k-h
