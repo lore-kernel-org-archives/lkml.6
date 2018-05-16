@@ -1,81 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752483AbeEPMir (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:38:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:29601 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752215AbeEPMio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:38:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
-   d="scan'208";a="224694269"
-Date: Wed, 16 May 2018 20:39:09 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-Message-ID: <20180516123909.GB986@debian>
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752537AbeEPMjl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:39:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35610 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752205AbeEPMjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:39:39 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: xiyou.wangcong@gmail.com, avagin@virtuozzo.com, mst@redhat.com,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net] tuntap: fix use after free during release
+Date: Wed, 16 May 2018 20:39:33 +0800
+Message-Id: <1526474373-16685-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
-> On 2018年05月16日 16:37, Tiwei Bie wrote:
-[...]
-> >   struct vring_virtqueue {
-> > @@ -116,6 +117,9 @@ struct vring_virtqueue {
-> >   			/* Last written value to driver->flags in
-> >   			 * guest byte order. */
-> >   			u16 event_flags_shadow;
-> > +
-> > +			/* ID allocation. */
-> > +			struct idr buffer_id;
-> 
-> I'm not sure idr is fit for the performance critical case here. Need to
-> measure its performance impact, especially if we have few unused slots.
+After commit b196d88aba8a ("tun: fix use after free for ptr_ring") we
+need clean up tx ring during release(). But unfortunately, it tries to
+do the cleanup blindly after socket were destroyed which will lead
+another use-after-free. Fix this by doing the cleanup before dropping
+the last reference of the socket in __tun_detach().
 
-I'm also not sure.. But fortunately, it should be quite easy
-to replace it with something else without changing other code.
-If it will really hurt the performance, I'll change it.
+Reported-by: Andrei Vagin <avagin@virtuozzo.com>
+Acked-by: Andrei Vagin <avagin@virtuozzo.com>
+Fixes: b196d88aba8a ("tun: fix use after free for ptr_ring")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/tun.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> >   		};
-> >   	};
-[...]
-> > +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
-> > +			      unsigned int id, void **ctx)
-> > +{
-> > +	struct vring_packed_desc *desc;
-> > +	unsigned int i, j;
-> > +
-> > +	/* Clear data ptr. */
-> > +	vq->desc_state[id].data = NULL;
-> > +
-> > +	i = head;
-> > +
-> > +	for (j = 0; j < vq->desc_state[id].num; j++) {
-> > +		desc = &vq->vring_packed.desc[i];
-> > +		vring_unmap_one_packed(vq, desc);
-> 
-> As mentioned in previous discussion, this probably won't work for the case
-> of out of order completion since it depends on the information in the
-> descriptor ring. We probably need to extend ctx to record such information.
-
-Above code doesn't depend on the information in the descriptor
-ring. The vq->desc_state[] is the extended ctx.
-
-Best regards,
-Tiwei Bie
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 9fbbb32..d45ac37 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -729,6 +729,7 @@ static void __tun_detach(struct tun_file *tfile, bool clean)
+ 		}
+ 		if (tun)
+ 			xdp_rxq_info_unreg(&tfile->xdp_rxq);
++		ptr_ring_cleanup(&tfile->tx_ring, tun_ptr_free);
+ 		sock_put(&tfile->sk);
+ 	}
+ }
+@@ -3245,7 +3246,6 @@ static int tun_chr_close(struct inode *inode, struct file *file)
+ 	struct tun_file *tfile = file->private_data;
+ 
+ 	tun_detach(tfile, true);
+-	ptr_ring_cleanup(&tfile->tx_ring, tun_ptr_free);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
