@@ -1,54 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751467AbeEPSBX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 14:01:23 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:33460 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeEPSBV (ORCPT
+        id S1751626AbeEPSBz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 14:01:55 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51599 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeEPSBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 14:01:21 -0400
-X-Google-Smtp-Source: AB8JxZpSAFa7E1FbwRCRxXxrDXdew0uEQ3F5MHw85slTNskBWtDK54yXq1hASrGfwCeGAnF4ndbJLw==
-Date: Wed, 16 May 2018 12:01:15 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Hal Rosenstock <hal@dev.mellanox.co.il>
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-Message-ID: <20180516180115.GF25661@ziepe.ca>
-References: <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
- <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
- <20180514210200.GN21531@ziepe.ca>
- <ab0e1318-8e1a-5822-5484-33e460095830@dev.mellanox.co.il>
- <E41BCEAA-0204-448D-8188-ACA03932B3AC@oracle.com>
- <20180515190424.GL5615@ziepe.ca>
- <3E15B62F-E705-43BD-8A72-9E74F784D40E@oracle.com>
- <20180516151201.GA25661@ziepe.ca>
- <695ae613-931a-50ba-2b83-9d172e0ac2bc@dev.mellanox.co.il>
- <151B2A36-28F0-4A88-8633-31AE7E55F848@oracle.com>
+        Wed, 16 May 2018 14:01:53 -0400
+Date: Wed, 16 May 2018 11:00:56 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org>
+Cc: namhyung@kernel.org, ak@linux.intel.com, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
+        jolsa@kernel.org, wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        kan.liang@linux.intel.com, dsahern@gmail.com, hpa@zytor.com
+Reply-To: ak@linux.intel.com, namhyung@kernel.org, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
+        jolsa@kernel.org, wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        kan.liang@linux.intel.com, dsahern@gmail.com, hpa@zytor.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tests parse-events: Add intel_pt parse test
+Git-Commit-ID: b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <151B2A36-28F0-4A88-8633-31AE7E55F848@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:46:10PM +0200, Håkon Bugge wrote:
+Commit-ID:  b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
+Gitweb:     https://git.kernel.org/tip/b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 11 May 2018 11:48:54 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 15 May 2018 10:31:59 -0300
 
->    OK. Lets take one example. The pkey table contains 0xFFFF, 0x8001,
->    0x0001.
-> 
->    The wce.pkey_index is 1 (i.e., pointing to 0x8001). Now, tell me, was
->    BTH.PKey 0x8001 (matches 0x8001) or was it 0x0001 (also matching
->    0x8001) ?
+perf tests parse-events: Add intel_pt parse test
 
-As far as the Linux core is concerned, it must have been 0x8001,
-because the only way the pkey_index feature works properly is if
-exact-match takes precedence over in-exact match.
+To avoid regressions such as the one fixed by 4a35a9027f64 ("Revert
+"perf pmu: Fix pmu events parsing rule""), where '-e intel_pt//u' got
+broken, with this new entry in this 'perf tests' subtest, we would have
+caught it before pushing upstream.
 
-Jason
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/parse-events.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 18b06444f230..6829dd416a99 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1309,6 +1309,14 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
+ 	return 0;
+ }
+ 
++static int test__intel_pt(struct perf_evlist *evlist)
++{
++	struct perf_evsel *evsel = perf_evlist__first(evlist);
++
++	TEST_ASSERT_VAL("wrong name setting", strcmp(evsel->name, "intel_pt//u") == 0);
++	return 0;
++}
++
+ static int count_tracepoints(void)
+ {
+ 	struct dirent *events_ent;
+@@ -1637,6 +1645,11 @@ static struct evlist_test test__events[] = {
+ 		.check = test__checkevent_config_cache,
+ 		.id    = 51,
+ 	},
++	{
++		.name  = "intel_pt//u",
++		.check = test__intel_pt,
++		.id    = 52,
++	},
+ };
+ 
+ static struct evlist_test test__events_pmu[] = {
