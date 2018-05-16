@@ -1,326 +1,207 @@
-Return-Path: <pmenzel@molgen.mpg.de>
-X-Cyrus-Session-Id: sloti22d1t05-226318-1526474153-2-17747522996085755895
+Return-Path: <Mario.Limonciello@dell.com>
+X-Cyrus-Session-Id: sloti22d1t05-394842-1526483019-2-17528867518495185137
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_LOW -0.7, SPF_PASS -0.001, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='141.14.17.11', Host='mx3.molgen.mpg.de', Country='DE', FromHeader='de',
-  MailFrom='de'
+X-Spam-source: IP='68.232.153.96', Host='esa7.dell-outbound.iphmx.com', Country='US',
+  FromHeader='com', MailFrom='com', XOriginatingCountry='UNK'
 X-Spam-charsets: plain='utf-8'
-X-Attached: smime.p7s
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: pmenzel@molgen.mpg.de
+X-Mail-from: Mario.Limonciello@dell.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526474152; b=Kl5ly57yjBGRYRHm6raZ8nNp3rvPj8Fss3uecwUZV80UvHzxu+
-    6nmjC35PTt705QV4+I0WQsvvsFPfgiiwSWVLgaa1ryjla0t8mJssSRQ2S++0ok8B
-    BGoNBgVaJzvxmdURBOIygt6grpwQ0QpQGivVNJLJkiAb8jh/+d6aMBXZpPZm6grA
-    gk2A4E9io0yxOYuxGZoS/5eKKkThs1h7T42Ei0kRYE36CyWo9+KbV49w8sulGuqu
-    JuNSqDCsGfPaFOyYBgnc0o6d8MMfml6y4j8XLBYfox9aUjgvfw/YG7VN6lFVU8Bo
-    1JxyILDaaOh1J8eQV7q4T3/pL6T96szBDdNw==
+    1526483018; b=R0GRnZwxIx/vyGOWbPsZbEacC3LpPk+ec6DedeNBXtjMRZmoZu
+    N97gGkVyK7e+szBKLAfrAcxli1N79Wh7dj0avHBxBsLKuI6zq9EAOg+TXQlqiYeJ
+    nW7gH9OSTeZBdD/AptOb3wgs9tTahBBmc7zsRAFUSZD8WH/BnZifTgcrbynB3VI+
+    VgFleKGNN2iHO+1u39xhQNumZLYVYyH7mfRCOlW7AcZVfe7zokNKpbsgA7b7khWa
+    JqVQG+rlR8+euXe1ga56Cyw3NWLQFLDx6jiFJUOPs3UYUg+WzZGaHOBMCA5Fnszx
+    WJSjJ1zQrcNoxhXPYHVPbTD+bkTm8qZxtO0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type; s=fm2; t=
-    1526474152; bh=RC/d5t6WAeDN8IsTH4b3RUB18ylFIS4/8h5+ofOEaK0=; b=m
-    H+Ys305RycOQsSlmopjV0V1EpCPlbcpd5g3JUQPFectoSIhVx+LHOi4NlPbTKYot
-    pcFJYx4P3hf9gQFItASHaldSnarzvWB4mSYZO80O9EezHWvJ3ffQBwoH0byf/QX+
-    /1N5Gyve7twqVsaZaZCndAIO7r/OAyJ8bmbKUAoLM5AAFnpw/e5ceXwKLeBe9/Fu
-    gV/IN1JHub8Wgld7eLEr8FLskM5NcJTLDqZ6BdR3QeCvM8pPFfXNBYdtq8GVNlmu
-    LJO6xYDz3piqt9PHdofPJGRe+BIHhruBgy9Ga+/Y5ahS26Yn008SRWcqgd8mpmq3
-    RBQn5nq7ipqn5qxFQLt5g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=molgen.mpg.de;
-    iprev=pass policy.iprev=141.14.17.11 (mx3.molgen.mpg.de);
-    spf=pass smtp.mailfrom=pmenzel@molgen.mpg.de
-    smtp.helo=mx1.molgen.mpg.de;
-    x-aligned-from=domain_pass (Domain match);
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=mx1.molgen.mpg.de x-ptr-lookup=mx3.molgen.mpg.de;
-    x-return-mx=pass smtp.domain=molgen.mpg.de smtp.result=pass
-    smtp_org.domain=mpg.de smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=molgen.mpg.de header.result=pass
-    header_org.domain=mpg.de header_org.result=pass
-    header_is_org_domain=no;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version; s=fm2; t=1526483018; bh=OxW2ps7fHW/PoZqnOse2Wuvf5
+    k62wRqdMtJKFue6dj8=; b=eVWCf2W/H8OnhOl+Rnl8T2l2lJ4j8GsVoXOu6TMoK
+    LOEP7XZe0+auDr9bgxlnyh2bYluIjOAchC9mQTEtZweuOpOqBHJgUjtvHfIb17Kl
+    YQdIDRvy6B9jArxsXW8JFypwW44i0GFbRoXgeBBo+GBT1JEW6ZbwRlNyrOncUOq0
+    SpI3v2+EplrRwmqFGA4UnTpu7YZ+16c7ftJ/u216VoagaWmaxgfweZxzY2N8o9sZ
+    u+GXG45RMDbAyNzwio9JDdGOPZFEH3snlAG9Er+GEvBSR6UJAJzPmy7Mza9xiXpe
+    MV7lrCBMJ5cPyiYi8yodMfI4Wq/ezxmmm9yYTazc5EaGA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com
+    header.b=RferKztb x-bits=1024 x-keytype=rsa x-algorithm=sha256
+    x-selector=smtpout;
+    dmarc=pass (p=none,d=none) header.from=dell.com;
+    iprev=pass policy.iprev=68.232.153.96 (esa7.dell-outbound.iphmx.com);
+    spf=pass smtp.mailfrom=Mario.Limonciello@dell.com
+    smtp.helo=esa7.dell-outbound.iphmx.com;
+    x-aligned-from=pass (Address match);
+    x-cm=promotion score=0;
+    x-ptr=pass x-ptr-helo=esa7.dell-outbound.iphmx.com
+    x-ptr-lookup=esa7.dell-outbound.iphmx.com;
+    x-return-mx=pass smtp.domain=dell.com smtp.result=pass
+    smtp_is_org_domain=yes header.domain=dell.com header.result=pass
+    header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=molgen.mpg.de;
-    iprev=pass policy.iprev=141.14.17.11 (mx3.molgen.mpg.de);
-    spf=pass smtp.mailfrom=pmenzel@molgen.mpg.de
-      smtp.helo=mx1.molgen.mpg.de;
-    x-aligned-from=domain_pass (Domain match);
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=mx1.molgen.mpg.de x-ptr-lookup=mx3.molgen.mpg.de;
-    x-return-mx=pass smtp.domain=molgen.mpg.de smtp.result=pass
-      smtp_org.domain=mpg.de smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=molgen.mpg.de header.result=pass
-      header_org.domain=mpg.de header_org.result=pass
-      header_is_org_domain=no;
+    dkim=pass (1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com
+      header.b=RferKztb x-bits=1024 x-keytype=rsa x-algorithm=sha256
+      x-selector=smtpout;
+    dmarc=pass (p=none,d=none) header.from=dell.com;
+    iprev=pass policy.iprev=68.232.153.96 (esa7.dell-outbound.iphmx.com);
+    spf=pass smtp.mailfrom=Mario.Limonciello@dell.com
+      smtp.helo=esa7.dell-outbound.iphmx.com;
+    x-aligned-from=pass (Address match);
+    x-cm=promotion score=0;
+    x-ptr=pass x-ptr-helo=esa7.dell-outbound.iphmx.com
+      x-ptr-lookup=esa7.dell-outbound.iphmx.com;
+    x-return-mx=pass smtp.domain=dell.com smtp.result=pass
+      smtp_is_org_domain=yes header.domain=dell.com header.result=pass
+      header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDPJYhV8Xj8bWy7i27aMs5FnI5sQFVSzqXR/88gUqhVPMElxDcP576y2fSHUHKOBM2zEv3UacfVDjGNzOwtusS4c54drrO1bZaFkLkgkHGfsH9uRDMCc
-    B9s8zTCr9KTD5/LkVH+1Rhi0W1jsa8UxobvJetitJFApLTCxiPSxft+2yIpe04llx2BtuBQ+HK6a8g==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=aSyPyy6zf0jPBkF6nXIC4g==:117
-    a=aSyPyy6zf0jPBkF6nXIC4g==:17 a=VUJBJC2UJ8kA:10 a=q0rX5H01Qin5IyBaTmIA:9
-    a=iLNU1ar6AAAA:8 a=LdSbmKOsAAAA:8 a=VCuJx4pkCzbZYSDBPt0A:9 a=QEXdDO2ut3YA:10
-    a=uhZEt4zlyJTvcZteQIkA:9 a=ZVk8-NSrHBgA:10 a=XVXkndj2wIAA:10
-    a=HErAIEcT1t9lkSvq_S40:22
+X-CM-Envelope: MS4wfKUsU3RLnnHr0dsdsYSkWE6M69UUanI6+MK3w/GsR9ZyJ3mhEMgxjf19FhMqGf/9+h7KBSkr+v1m8R064fp2YZwaQbPnOCq9533Ghic0JhMAfL4+CCWn
+    EjDriOsrwmO2LY7Vf67EaBSo71eyNAEI4DSC2X7cFD3jv2pYF84kWsZLWDW/unVY8sczW6Bdw5gcvMd5Gbt0pvyJ0wtcEX76ovI=
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 b=1 a=KnMD5mEbq5MDPFkSCEFksA==:117
+    a=KnMD5mEbq5MDPFkSCEFksA==:17 a=wCHvqnb4SGkA:10 a=IkcTkHD0fZMA:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=iLNU1ar6AAAA:8 a=LdSbmKOsAAAA:8
+    a=pqI2O50Xkh0B6iEWwBMA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=HErAIEcT1t9lkSvq_S40:22 cc=prm
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Subject: Re: `ucsi_acpi: probe of USBC000:00 failed with error -12` on Dell
+X-ME-CMCategory: promotion
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F6AABrWvZah8qZ6ERbGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQWDnsoCoNoiASMcIF5gQ9gklUUgSk7CyUJgQKDPAIagnAhNBg?=
+ =?us-ascii?q?BAgEBAQEBAQIBAQIQAQEBCgsJCCgjDII1Ig0ESykDLwEBAQEBAQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQEBARUCDSYjAhgBAQEDASMRRQUHBAIBCBEEAQEBAgIjAwICAkQBCAgCBAE?=
+ =?us-ascii?q?NBQiDGwKBdwgPqzyCHIhXgieBCYccghOBD4MLgUGBUAEBAhiBBQkcCCuCaYJUA?=
+ =?us-ascii?q?ocXGSyFWYp9BwKFZ26HdIE+g2SHUSuCAINIgVWCCoQSAYJ4gSUcggtwgxMJghc?=
+ =?us-ascii?q?OCYNFhRSFPm+ON4EtgRgBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2F6AABrWvZah8qZ6ERbGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?WDnsoCoNoiASMcIF5gQ9gklUUgSk7CyUJgQKDPAIagnAhNBgBAgEBAQEBAQIBA?=
+ =?us-ascii?q?QIQAQEBCgsJCCgjDII1Ig0ESykDLwEBAQEBAQEBAQEBAQEBAQEBAQEBARUCDSY?=
+ =?us-ascii?q?jAhgBAQEDASMRRQUHBAIBCBEEAQEBAgIjAwICAkQBCAgCBAENBQiDGwKBdwgPq?=
+ =?us-ascii?q?zyCHIhXgieBCYccghOBD4MLgUGBUAEBAhiBBQkcCCuCaYJUAocXGSyFWYp9BwK?=
+ =?us-ascii?q?FZ26HdIE+g2SHUSuCAINIgVWCCoQSAYJ4gSUcggtwgxMJghcOCYNFhRSFPm+ON?=
+ =?us-ascii?q?4EtgRgBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.189
+X-IronPort-AV: E=Sophos;i="5.49,390,1520917200";
+   d="scan'208";a="1153340490"
+X-DLP: DLP_GlobalPCIDSS
+To: <pmenzel+linux-usb@molgen.mpg.de>, <heikki.krogerus@linux.intel.com>
+CC: <greg@kroah.com>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: RE: `ucsi_acpi: probe of USBC000:00 failed with error -12` on Dell
  XPS 13 9370
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mario Limonciello <mario.limonciello@dell.com>
+Thread-Topic: `ucsi_acpi: probe of USBC000:00 failed with error -12` on Dell
+ XPS 13 9370
+Thread-Index: AQHT7FnacruSscNvFUKixxVl6UQN9aQxRuSAgAANFYCAAP+ZAIAAQeIAgAAKfwD//9M78A==
+Date: Wed, 16 May 2018 15:03:29 +0000
+Message-ID: <942026fe8caf4b46b8114b497b5f9f15@ausx13mpc120.AMER.DELL.COM>
 References: <9365397f-7206-728e-ee76-146629bfd186@molgen.mpg.de>
  <20180515160047.GB26720@kroah.com>
  <69da4aa4-3d4b-0ffc-81ce-500713cd3743@molgen.mpg.de>
  <20180516080226.GC3536@kroah.com> <20180516115814.GB11469@kuha.fi.intel.com>
-From: Paul Menzel <pmenzel+linux-usb@molgen.mpg.de>
-Message-ID: <73e6e77b-36e0-017a-18fb-36e45b0a17a1@molgen.mpg.de>
-Date: Wed, 16 May 2018 14:35:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ <73e6e77b-36e0-017a-18fb-36e45b0a17a1@molgen.mpg.de>
+In-Reply-To: <73e6e77b-36e0-017a-18fb-36e45b0a17a1@molgen.mpg.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20180516115814.GB11469@kuha.fi.intel.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090802040605080603060006"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a cryptographically signed message in MIME format.
-
---------------ms090802040605080603060006
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Dear Heikki,
-
-
-On 05/16/18 13:58, Heikki Krogerus wrote:
-
-> On Wed, May 16, 2018 at 10:02:26AM +0200, Greg KH wrote:
->> On Tue, May 15, 2018 at 06:47:37PM +0200, Paul Menzel wrote:
-
->>> On 05/15/18 18:00, Greg KH wrote:
->>>> On Tue, May 15, 2018 at 04:34:03PM +0200, Paul Menzel wrote:
->>>
->>>>> Linux 4.17-rc5 shows the error below on the Dell XPS 13 9370 with D=
-ebian
->>>>> Sid/unstable.
->>>>>
->>>>> ```
->>>>> [???]
->>>>> [    0.440240] usb: port power management may be unreliable
->>>>> [    0.441358] usbcore: registered new interface driver usb-storage=
-
->>>>> [    0.441367] usbcore: registered new interface driver usbserial_g=
-eneric
->>>>> [    0.441369] usbserial: USB Serial support registered for generic=
-
->>>>> [    0.441383] ioremap error for 0x3f799000-0x3f79a000, requested 0=
-x2, got
->>>>> 0x0
->>>>> [    0.441518] ucsi_acpi: probe of USBC000:00 failed with error -12=
-
->>>>> [???]
->>>>> ```
->>>>>
->>>>> 1.  Are the ioremap and ucsi_acpi error related or is a separate re=
-port
->>>>> needed?
->>>>
->>>> The ioremap error is what causes ucsi_acpi to fail the probe call (-=
-12
->>>> is "out of memory".)
->>>>
->>>>> 2.  Do you know the reason for the ucsi_acpi error?
->>>>
->>>> the call to ioremap failed.
->>>>
->>>> Does this device really have a working typec connector?
->>>
->>> Just to avoid misunderstandings, no device was connected to the lapto=
-p
->>> during my test.
->>>
->>> But, from other boots, the Dell docking station TB16 kind of works wi=
-th it,
->>> so I???d say the USB Type-C connector is working.
->>
->> Ok, good, this might just be the acpi tables not set up properly for
->> this type of connection.  Odd that the tables show it should work,
->> Heikki should know more about this.
->=20
-> The firmware probable has not implemented UCSI on this board. I think
-> Dell always supplies the ACPI device node for UCSI in their acpi
-> tables. The _STA method in that device node is then used to inform the
-> OS if the interface exists or not. The return value for _STA comes
-> probable from BIOS, so this is most likely a BIOS problem.
->=20
-> Please note that UCSI will only supply status information to the
-> operating system, so the USB Type-C ports will function normally even
-> without it. The ports are handled in firmware on these platforms.
->=20
-> Paul, do you have the latest BIOS?
-
-I had the latest firmware
-
- > DMI: Dell Inc. XPS 13 9370/0F6P3V, BIOS 1.2.1 02/21/2018
-
-until today, when 1.3.2 with the changes below was released [1].
-
-Mario, it=E2=80=99d be great, if the Dell firmware team could start testi=
-ng with=20
-Linux releases too to find such issues. Mario, could you please also=20
-check internally if the Dell firmware team is aware of the issues and=20
-can incorporate a fix. (I really wish the firmware would be free=20
-software, so that these issues could be fixed ourselves.)
-
-> Fixes & Enhancements
-> Fixes:
-> - Battery can't charge over 55%
-> - Incorrect Ctrl+Alt+Del log on message with HID Event filter driver
-> - Platform can't boot to the PXE boot environment in Legacy mode via DA=
-300
-> - Correct the flash utility string typo
-> - PCIE Card error shows in Support Assist Tool
-> - Fail 'PCR1 changed' msg prompt in CMD during running TPM PCR cycles i=
-n OS
-> - The PCI-to-PCI Bridge will lost while connecting to Dell Thunderbolt =
-Dock TB18
-> - Adjust fan speed
-> - Skips keys when typing fast
->=20
-> Enhancements:
-> - None
-
-It=E2=80=99ll take me up to some days to get my hands on the device again=
-=2E But=20
-the update should be easy enough thanks to Dell supporting fwupd with=20
-UEFI Capsule and uploading their updates to the Linux Vendor Firmware=20
-Service [2].
-
-
-Kind regards,
-
-Paul
-
-
-[1]=20
-http://www.dell.com/support/home/us/en/04/drivers/driversdetails?driverId=
-=3DVF23P
-[2] https://fwupd.org/
-
-
---------------ms090802040605080603060006
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODA1MTYxMjM1NDhaMC8GCSqGSIb3DQEJBDEiBCAtgVpBoqpUAZvWwd7x
-TZJAtFgQR2BRBxNbFb2Wr+8BxDBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBALAR
-yEcjW+0Rga6DkIVyNKNZ1s7wsv8MfYL6D2E7nYgMjytai/whMpLR12lCkCMZlQVoFpcELmU1
-87Q2AsBHWbZSrZadhrFpl+pGmtH9XR5Gc7A2Thsm4r2IcgGBTKWE9V3Na0mts0W+OuavTdru
-yJ/9Eeonb7n/o1dMIZOtBH/TXI/8Tir9SIfaItAZnNae3VFWl3FHrE9w4Fo/A7KS/o0Vop2q
-ZKvBJ+1c5Rr7VffUtqmkzy3I5qJKARR6PU2kObZ4MAZIx8qfh+TnN6vXvJLsyAP44BZsPTpZ
-14C3KCOH3d48oxOknM4sYkqNfpEnkhHOvK24ANo1mhKeTnMPpYgAAAAAAAA=
---------------ms090802040605080603060006--
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF1bCBNZW56ZWwgW21h
+aWx0bzpwbWVuemVsK2xpbnV4LXVzYkBtb2xnZW4ubXBnLmRlXQ0KPiBTZW50OiBXZWRuZXNkYXks
+IE1heSAxNiwgMjAxOCA3OjM2IEFNDQo+IFRvOiBIZWlra2kgS3JvZ2VydXMNCj4gQ2M6IEdyZWcg
+S0g7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7IExpbW9uY2llbGxvLA0KPiBNYXJpbw0KPiBTdWJqZWN0OiBSZTogYHVjc2lfYWNwaTogcHJv
+YmUgb2YgVVNCQzAwMDowMCBmYWlsZWQgd2l0aCBlcnJvciAtMTJgIG9uIERlbGwgWFBTIDEzDQo+
+IDkzNzANCj4gDQo+IERlYXIgSGVpa2tpLA0KPiANCj4gDQo+IE9uIDA1LzE2LzE4IDEzOjU4LCBI
+ZWlra2kgS3JvZ2VydXMgd3JvdGU6DQo+IA0KPiA+IE9uIFdlZCwgTWF5IDE2LCAyMDE4IGF0IDEw
+OjAyOjI2QU0gKzAyMDAsIEdyZWcgS0ggd3JvdGU6DQo+ID4+IE9uIFR1ZSwgTWF5IDE1LCAyMDE4
+IGF0IDA2OjQ3OjM3UE0gKzAyMDAsIFBhdWwgTWVuemVsIHdyb3RlOg0KPiANCj4gPj4+IE9uIDA1
+LzE1LzE4IDE4OjAwLCBHcmVnIEtIIHdyb3RlOg0KPiA+Pj4+IE9uIFR1ZSwgTWF5IDE1LCAyMDE4
+IGF0IDA0OjM0OjAzUE0gKzAyMDAsIFBhdWwgTWVuemVsIHdyb3RlOg0KPiA+Pj4NCj4gPj4+Pj4g
+TGludXggNC4xNy1yYzUgc2hvd3MgdGhlIGVycm9yIGJlbG93IG9uIHRoZSBEZWxsIFhQUyAxMyA5
+MzcwIHdpdGggRGViaWFuDQo+ID4+Pj4+IFNpZC91bnN0YWJsZS4NCj4gPj4+Pj4NCj4gPj4+Pj4g
+YGBgDQo+ID4+Pj4+IFs/Pz9dDQo+ID4+Pj4+IFsgICAgMC40NDAyNDBdIHVzYjogcG9ydCBwb3dl
+ciBtYW5hZ2VtZW50IG1heSBiZSB1bnJlbGlhYmxlDQo+ID4+Pj4+IFsgICAgMC40NDEzNThdIHVz
+YmNvcmU6IHJlZ2lzdGVyZWQgbmV3IGludGVyZmFjZSBkcml2ZXIgdXNiLXN0b3JhZ2UNCj4gPj4+
+Pj4gWyAgICAwLjQ0MTM2N10gdXNiY29yZTogcmVnaXN0ZXJlZCBuZXcgaW50ZXJmYWNlIGRyaXZl
+ciB1c2JzZXJpYWxfZ2VuZXJpYw0KPiA+Pj4+PiBbICAgIDAuNDQxMzY5XSB1c2JzZXJpYWw6IFVT
+QiBTZXJpYWwgc3VwcG9ydCByZWdpc3RlcmVkIGZvciBnZW5lcmljDQo+ID4+Pj4+IFsgICAgMC40
+NDEzODNdIGlvcmVtYXAgZXJyb3IgZm9yIDB4M2Y3OTkwMDAtMHgzZjc5YTAwMCwgcmVxdWVzdGVk
+IDB4MiwgZ290DQo+ID4+Pj4+IDB4MA0KPiA+Pj4+PiBbICAgIDAuNDQxNTE4XSB1Y3NpX2FjcGk6
+IHByb2JlIG9mIFVTQkMwMDA6MDAgZmFpbGVkIHdpdGggZXJyb3IgLTEyDQo+ID4+Pj4+IFs/Pz9d
+DQo+ID4+Pj4+IGBgYA0KPiA+Pj4+Pg0KPiA+Pj4+PiAxLiAgQXJlIHRoZSBpb3JlbWFwIGFuZCB1
+Y3NpX2FjcGkgZXJyb3IgcmVsYXRlZCBvciBpcyBhIHNlcGFyYXRlIHJlcG9ydA0KPiA+Pj4+PiBu
+ZWVkZWQ/DQo+ID4+Pj4NCj4gPj4+PiBUaGUgaW9yZW1hcCBlcnJvciBpcyB3aGF0IGNhdXNlcyB1
+Y3NpX2FjcGkgdG8gZmFpbCB0aGUgcHJvYmUgY2FsbCAoLTEyDQo+ID4+Pj4gaXMgIm91dCBvZiBt
+ZW1vcnkiLikNCj4gPj4+Pg0KPiA+Pj4+PiAyLiAgRG8geW91IGtub3cgdGhlIHJlYXNvbiBmb3Ig
+dGhlIHVjc2lfYWNwaSBlcnJvcj8NCj4gPj4+Pg0KPiA+Pj4+IHRoZSBjYWxsIHRvIGlvcmVtYXAg
+ZmFpbGVkLg0KPiA+Pj4+DQo+ID4+Pj4gRG9lcyB0aGlzIGRldmljZSByZWFsbHkgaGF2ZSBhIHdv
+cmtpbmcgdHlwZWMgY29ubmVjdG9yPw0KPiA+Pj4NCj4gPj4+IEp1c3QgdG8gYXZvaWQgbWlzdW5k
+ZXJzdGFuZGluZ3MsIG5vIGRldmljZSB3YXMgY29ubmVjdGVkIHRvIHRoZSBsYXB0b3ANCj4gPj4+
+IGR1cmluZyBteSB0ZXN0Lg0KPiA+Pj4NCj4gPj4+IEJ1dCwgZnJvbSBvdGhlciBib290cywgdGhl
+IERlbGwgZG9ja2luZyBzdGF0aW9uIFRCMTYga2luZCBvZiB3b3JrcyB3aXRoIGl0LA0KPiA+Pj4g
+c28gST8/P2Qgc2F5IHRoZSBVU0IgVHlwZS1DIGNvbm5lY3RvciBpcyB3b3JraW5nLg0KPiA+Pg0K
+PiA+PiBPaywgZ29vZCwgdGhpcyBtaWdodCBqdXN0IGJlIHRoZSBhY3BpIHRhYmxlcyBub3Qgc2V0
+IHVwIHByb3Blcmx5IGZvcg0KPiA+PiB0aGlzIHR5cGUgb2YgY29ubmVjdGlvbi4gIE9kZCB0aGF0
+IHRoZSB0YWJsZXMgc2hvdyBpdCBzaG91bGQgd29yaywNCj4gPj4gSGVpa2tpIHNob3VsZCBrbm93
+IG1vcmUgYWJvdXQgdGhpcy4NCj4gPg0KPiA+IFRoZSBmaXJtd2FyZSBwcm9iYWJsZSBoYXMgbm90
+IGltcGxlbWVudGVkIFVDU0kgb24gdGhpcyBib2FyZC4gSSB0aGluaw0KPiA+IERlbGwgYWx3YXlz
+IHN1cHBsaWVzIHRoZSBBQ1BJIGRldmljZSBub2RlIGZvciBVQ1NJIGluIHRoZWlyIGFjcGkNCj4g
+PiB0YWJsZXMuIFRoZSBfU1RBIG1ldGhvZCBpbiB0aGF0IGRldmljZSBub2RlIGlzIHRoZW4gdXNl
+ZCB0byBpbmZvcm0gdGhlDQo+ID4gT1MgaWYgdGhlIGludGVyZmFjZSBleGlzdHMgb3Igbm90LiBU
+aGUgcmV0dXJuIHZhbHVlIGZvciBfU1RBIGNvbWVzDQo+ID4gcHJvYmFibGUgZnJvbSBCSU9TLCBz
+byB0aGlzIGlzIG1vc3QgbGlrZWx5IGEgQklPUyBwcm9ibGVtLg0KPiA+DQo+ID4gUGxlYXNlIG5v
+dGUgdGhhdCBVQ1NJIHdpbGwgb25seSBzdXBwbHkgc3RhdHVzIGluZm9ybWF0aW9uIHRvIHRoZQ0K
+PiA+IG9wZXJhdGluZyBzeXN0ZW0sIHNvIHRoZSBVU0IgVHlwZS1DIHBvcnRzIHdpbGwgZnVuY3Rp
+b24gbm9ybWFsbHkgZXZlbg0KPiA+IHdpdGhvdXQgaXQuIFRoZSBwb3J0cyBhcmUgaGFuZGxlZCBp
+biBmaXJtd2FyZSBvbiB0aGVzZSBwbGF0Zm9ybXMuDQo+ID4NCj4gPiBQYXVsLCBkbyB5b3UgaGF2
+ZSB0aGUgbGF0ZXN0IEJJT1M/DQo+IA0KPiBJIGhhZCB0aGUgbGF0ZXN0IGZpcm13YXJlDQo+IA0K
+PiAgPiBETUk6IERlbGwgSW5jLiBYUFMgMTMgOTM3MC8wRjZQM1YsIEJJT1MgMS4yLjEgMDIvMjEv
+MjAxOA0KPiANCj4gdW50aWwgdG9kYXksIHdoZW4gMS4zLjIgd2l0aCB0aGUgY2hhbmdlcyBiZWxv
+dyB3YXMgcmVsZWFzZWQgWzFdLg0KPiANCj4gTWFyaW8sIGl04oCZZCBiZSBncmVhdCwgaWYgdGhl
+IERlbGwgZmlybXdhcmUgdGVhbSBjb3VsZCBzdGFydCB0ZXN0aW5nIHdpdGgNCj4gTGludXggcmVs
+ZWFzZXMgdG9vIHRvIGZpbmQgc3VjaCBpc3N1ZXMuIA0KDQpQYXVsLA0KDQpUaGUgdGVhbSB0aGF0
+IHN1c3RhaW5zIHBsYXRmb3JtcyBkb2VzIHBlcmZvcm0gTGludXggdGVzdGluZywgYnV0IGl0J3Mg
+bm90IA0KY2VudGVyZWQgYXJvdW5kIGxhdGVzdCB1cHN0cmVhbSBrZXJuZWwgYW5kIGl0J3MgYWxz
+byBmdW5jdGlvbmFsbHkgYmFzZWQgKG5vdA0KcmV2aWV3aW5nIGRtZXNnIGZvciBuZXcga2VybmVs
+IGVycm9ycykgc28gdGhlcmUgYXJlIGNoYW5nZXMgaW4gDQpleHBlY3RhdGlvbnMgKHZpZXdlZCBh
+cyByZWdyZXNzaW9ucykgYXMgeW91IGZpbmQgZnJvbSB0aW1lIHRvIHRpbWUuDQoNCj4gTWFyaW8s
+IGNvdWxkIHlvdSBwbGVhc2UgYWxzbw0KPiBjaGVjayBpbnRlcm5hbGx5IGlmIHRoZSBEZWxsIGZp
+cm13YXJlIHRlYW0gaXMgYXdhcmUgb2YgdGhlIGlzc3VlcyBhbmQNCj4gY2FuIGluY29ycG9yYXRl
+IGEgZml4LiANCg0KU3VyZSBJJ2xsIGlucXVpcmUgaW50ZXJuYWxseS4NCg0KPiA+IEZpeGVzICYg
+RW5oYW5jZW1lbnRzDQo+ID4gRml4ZXM6DQo+ID4gLSBCYXR0ZXJ5IGNhbid0IGNoYXJnZSBvdmVy
+IDU1JQ0KPiA+IC0gSW5jb3JyZWN0IEN0cmwrQWx0K0RlbCBsb2cgb24gbWVzc2FnZSB3aXRoIEhJ
+RCBFdmVudCBmaWx0ZXIgZHJpdmVyDQo+ID4gLSBQbGF0Zm9ybSBjYW4ndCBib290IHRvIHRoZSBQ
+WEUgYm9vdCBlbnZpcm9ubWVudCBpbiBMZWdhY3kgbW9kZSB2aWEgREEzMDANCj4gPiAtIENvcnJl
+Y3QgdGhlIGZsYXNoIHV0aWxpdHkgc3RyaW5nIHR5cG8NCj4gPiAtIFBDSUUgQ2FyZCBlcnJvciBz
+aG93cyBpbiBTdXBwb3J0IEFzc2lzdCBUb29sDQo+ID4gLSBGYWlsICdQQ1IxIGNoYW5nZWQnIG1z
+ZyBwcm9tcHQgaW4gQ01EIGR1cmluZyBydW5uaW5nIFRQTSBQQ1IgY3ljbGVzIGluIE9TDQo+ID4g
+LSBUaGUgUENJLXRvLVBDSSBCcmlkZ2Ugd2lsbCBsb3N0IHdoaWxlIGNvbm5lY3RpbmcgdG8gRGVs
+bCBUaHVuZGVyYm9sdCBEb2NrIFRCMTgNCj4gPiAtIEFkanVzdCBmYW4gc3BlZWQNCj4gPiAtIFNr
+aXBzIGtleXMgd2hlbiB0eXBpbmcgZmFzdA0KPiA+DQo+ID4gRW5oYW5jZW1lbnRzOg0KPiA+IC0g
+Tm9uZQ0KPiANCj4gSXTigJlsbCB0YWtlIG1lIHVwIHRvIHNvbWUgZGF5cyB0byBnZXQgbXkgaGFu
+ZHMgb24gdGhlIGRldmljZSBhZ2Fpbi4gQnV0DQo+IHRoZSB1cGRhdGUgc2hvdWxkIGJlIGVhc3kg
+ZW5vdWdoIHRoYW5rcyB0byBEZWxsIHN1cHBvcnRpbmcgZnd1cGQgd2l0aA0KPiBVRUZJIENhcHN1
+bGUgYW5kIHVwbG9hZGluZyB0aGVpciB1cGRhdGVzIHRvIHRoZSBMaW51eCBWZW5kb3IgRmlybXdh
+cmUNCj4gU2VydmljZSBbMl0uDQo+IA0KPiANCj4gS2luZCByZWdhcmRzLA0KPiANCj4gUGF1bA0K
+PiANCj4gDQo+IFsxXQ0KPiBodHRwOi8vd3d3LmRlbGwuY29tL3N1cHBvcnQvaG9tZS91cy9lbi8w
+NC9kcml2ZXJzL2RyaXZlcnNkZXRhaWxzP2RyaXZlcklkPVZGMjNQDQo+IFsyXSBodHRwczovL2Z3
+dXBkLm9yZy8NCg0K
