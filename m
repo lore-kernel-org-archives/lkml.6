@@ -1,58 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751481AbeEPUZD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:25:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:54416 "EHLO foss.arm.com"
+        id S1751649AbeEPUZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:25:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58669 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeEPUZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:25:00 -0400
-Date: Wed, 16 May 2018 15:24:58 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] coresight: documentation: update sysfs section
-Message-Id: <20180516152458.d392b0d1e09393da30e2aeb6@arm.com>
-In-Reply-To: <20180516131823.4b1a3ecb@lwn.net>
-References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
-        <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
-        <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
-        <20180516131823.4b1a3ecb@lwn.net>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751028AbeEPUZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 16:25:54 -0400
+Date: Wed, 16 May 2018 22:25:52 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] rtc: stm32: rework register management to prepare
+ other version of RTC
+Message-ID: <20180516202552.GA24496@piout.net>
+References: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
+ <1525880770-22263-2-git-send-email-amelie.delaunay@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525880770-22263-2-git-send-email-amelie.delaunay@st.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 May 2018 13:18:23 -0600
-Jonathan Corbet <corbet@lwn.net> wrote:
+Hi,
 
-> On Mon, 14 May 2018 12:19:59 -0500
-> Kim Phillips <kim.phillips@arm.com> wrote:
-> 
-> > - Align and show updated ls devices output from the TC2, based on
-> >   current driver
-> > 
-> > - Provide an example from an ETMv4 based system (Juno)
-> > 
-> > - Reflect changes to the way the RAM write pointer is accessed since
-> >   it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
-> >   management entries").
-> 
-> So I was going to apply this, but it's been pretty badly corrupted by
-> your mailer.  Could I ask you to retry, please?
+On 09/05/2018 17:46:08+0200, Amelie Delaunay wrote:
+>  static void stm32_rtc_wpr_unlock(struct stm32_rtc *rtc)
+>  {
+> -	writel_relaxed(RTC_WPR_1ST_KEY, rtc->base + STM32_RTC_WPR);
+> -	writel_relaxed(RTC_WPR_2ND_KEY, rtc->base + STM32_RTC_WPR);
+> +	struct stm32_rtc_registers regs = rtc->data->regs;
 
-I had sent a v3 that corrected the issue, in the same thread, here:
+regs should probably be a pointer to ensure that no copy is made. I've
+actually checked and it doesn't make a difference because gcc is smart
+enough to not make the copy.
 
-https://lkml.org/lkml/2018/5/14/1190
+> +
+> +	writel_relaxed(RTC_WPR_1ST_KEY, rtc->base + regs.wpr);
+> +	writel_relaxed(RTC_WPR_2ND_KEY, rtc->base + regs.wpr);
+>  }
+>  
 
-Mathieu acked that one.
+...
 
-Thanks,
+>  static irqreturn_t stm32_rtc_alarm_irq(int irq, void *dev_id)
+>  {
+>  	struct stm32_rtc *rtc = (struct stm32_rtc *)dev_id;
+> -	unsigned int isr, cr;
+> +	struct stm32_rtc_registers regs = rtc->data->regs;
+> +	struct stm32_rtc_events evts = rtc->data->events;
 
-Kim
+Ditto for evts.
+
+> +	unsigned int status, cr;
+>  
+>  	mutex_lock(&rtc->rtc_dev->ops_lock);
+>  
+> -	isr = readl_relaxed(rtc->base + STM32_RTC_ISR);
+> -	cr = readl_relaxed(rtc->base + STM32_RTC_CR);
+> +	status = readl_relaxed(rtc->base + regs.isr);
+> +	cr = readl_relaxed(rtc->base + regs.cr);
+>  
+> -	if ((isr & STM32_RTC_ISR_ALRAF) &&
+> +	if ((status & evts.alra) &&
+>  	    (cr & STM32_RTC_CR_ALRAIE)) {
+>  		/* Alarm A flag - Alarm interrupt */
+>  		dev_dbg(&rtc->rtc_dev->dev, "Alarm occurred\n");
+
+...
+
+> @@ -641,7 +710,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+>  
+>  	/*
+>  	 * After a system reset, RTC_ISR.INITS flag can be read to check if
+> -	 * the calendar has been initalized or not. INITS flag is reset by a
+> +	 * the calendar has been initialized or not. INITS flag is reset by a
+>  	 * power-on reset (no vbat, no power-supply). It is not reset if
+>  	 * rtc_ck parent clock has changed (so RTC prescalers need to be
+>  	 * changed). That's why we cannot rely on this flag to know if RTC
+> @@ -666,7 +735,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+>  			 "alarm won't be able to wake up the system");
+>  
+>  	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+> -			&stm32_rtc_ops, THIS_MODULE);
+> +						&stm32_rtc_ops, THIS_MODULE);
+>  	if (IS_ERR(rtc->rtc_dev)) {
+>  		ret = PTR_ERR(rtc->rtc_dev);
+>  		dev_err(&pdev->dev, "rtc device registration failed, err=%d\n",
+
+Those two changes should go into a separate cleanup patch.
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
