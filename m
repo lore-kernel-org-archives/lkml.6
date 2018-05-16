@@ -1,92 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeEPPf3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:35:29 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:57423 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752119AbeEPPfD (ORCPT
+        id S1752230AbeEPPf2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:35:28 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:50621 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752139AbeEPPfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 11:35:03 -0400
-X-Google-Smtp-Source: AB8JxZonNJqIo44sEnCXsPYe5YWt/na8tf6SYCJEMRQ9M+B/XcZ7OF0bmamBFt9dSQKA/tpDPv1qTwogN0UACt+KFWyiIc5Zk+LW
+X-Google-Smtp-Source: AB8JxZoWsBxe41TDHELiJ7oUvKIui3kXcdqx3yUAbPMt+E2HEUKCetTNwn6NBhABSi9o7GgDGDz47FWWii7pZDciuR4Ew3x6dbei
 MIME-Version: 1.0
-Date: Wed, 16 May 2018 08:35:02 -0700
+Date: Wed, 16 May 2018 08:35:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000631421056c5476ba@google.com>
-Subject: WARNING: kmalloc bug in map_get_next_key
-From: syzbot <syzbot+e4566d29080e7f3460ff@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000006764b4056c5476d9@google.com>
+Subject: kernel BUG at lib/string.c:LINE! (4)
+From: syzbot <syzbot+aac887f77319868646df@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        wensong@linux-vs.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4GFZj0L013209
 
 Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    c5c7d7f3c451 Merge branch 'bpf-sock-hashmap'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ec7877800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=10c4dc62055b68f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=e4566d29080e7f3460ff
+HEAD commit:    0b7d9978406f Merge branch 'Microsemi-Ocelot-Ethernet-switc..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e91017800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=aac887f77319868646df
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12c35417800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178c97f7800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1665d637800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10517107800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e4566d29080e7f3460ff@syzkaller.appspotmail.com
+Reported-by: syzbot+aac887f77319868646df@syzkaller.appspotmail.com
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-WARNING: CPU: 0 PID: 4499 at mm/slab_common.c:996 kmalloc_slab+0x56/0x70  
-mm/slab_common.c:996
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 4499 Comm: syz-executor050 Not tainted 4.17.0-rc3+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:kmalloc_slab+0x56/0x70 mm/slab_common.c:996
-RSP: 0018:ffff8801d907fc58 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8801aeecb280 RCX: ffffffff8185ebd7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffe1
-RBP: ffff8801d907fc58 R08: ffff8801adb5e1c0 R09: ffffed0035a84700
-R10: ffffed0035a84700 R11: ffff8801ad423803 R12: ffff8801aeecb280
-R13: 00000000fffffff4 R14: ffff8801ad891a00 R15: 00000000014200c0
-  __do_kmalloc mm/slab.c:3713 [inline]
-  __kmalloc+0x25/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:517 [inline]
-  map_get_next_key+0x24a/0x640 kernel/bpf/syscall.c:858
-  __do_sys_bpf kernel/bpf/syscall.c:2131 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2096 [inline]
-  __x64_sys_bpf+0x354/0x4f0 kernel/bpf/syscall.c:2096
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fd89
-RSP: 002b:00007ffd6aab4668 EFLAGS: 00000213 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd89
-RDX: 0000000000000007 RSI: 0000000020000040 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016b0
-R13: 0000000000401740 R14: 0000000000000000 R15: 0000000000000000
+IPVS: Unknown mcast interface: veth1_to�a����
+IPVS: Unknown mcast interface: veth1_to�a����
+IPVS: Unknown mcast interface: veth1_to�a����
+detected buffer overflow in strlen
+------------[ cut here ]------------
+kernel BUG at lib/string.c:1052!
+invalid opcode: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Modules linked in:
+CPU: 1 PID: 373 Comm: syz-executor936 Not tainted 4.17.0-rc4+ #45
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
+RSP: 0018:ffff8801c976f800 EFLAGS: 00010282
+RAX: 0000000000000022 RBX: 0000000000000040 RCX: 0000000000000000
+RDX: 0000000000000022 RSI: ffffffff8160f6f1 RDI: ffffed00392edef6
+RBP: ffff8801c976f800 R08: ffff8801cf4c62c0 R09: ffffed003b5e4fb0
+R10: ffffed003b5e4fb0 R11: ffff8801daf27d87 R12: ffff8801c976fa20
+R13: ffff8801c976fae4 R14: ffff8801c976fae0 R15: 000000000000048b
+FS:  00007fd99f75e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200001c0 CR3: 00000001d6843000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  strlen include/linux/string.h:270 [inline]
+  strlcpy include/linux/string.h:293 [inline]
+  do_ip_vs_set_ctl+0x31c/0x1d00 net/netfilter/ipvs/ip_vs_ctl.c:2388
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
+  ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1253
+  udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2487
+  ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:917
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3057
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3046
+  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+  __do_sys_setsockopt net/socket.c:1914 [inline]
+  __se_sys_setsockopt net/socket.c:1911 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447369
+RSP: 002b:00007fd99f75dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00000000006e39e4 RCX: 0000000000447369
+RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000018 R09: 0000000000000000
+R10: 00000000200001c0 R11: 0000000000000246 R12: 00000000006e39e0
+R13: 75a1ff93f0896195 R14: 6f745f3168746576 R15: 0000000000000001
+Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 d2 8f 48 fa eb  
+de 55 48 89 fe 48 c7 c7 60 65 64 88 48 89 e5 e8 91 dd f3 f9 <0f> 0b 90 90  
+90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
+RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801c976f800
+---[ end trace 624046f2d9af7702 ]---
 
 
 ---
