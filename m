@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752597AbeEPL4V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:56:21 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51211 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752154AbeEPL4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:56:18 -0400
-X-Google-Smtp-Source: AB8JxZpQ2gY5hgrRXWsAO4Wu/5RMIIdF4l6EMFjJuq07bJK5viQRYJj85gRIvfvSvJLpBJ928OG798UGHNaBdcmecKs=
-MIME-Version: 1.0
-In-Reply-To: <23c048310088d42c99c3c20a83795c97d1b8f1cc.1524933096.git.hns@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com> <23c048310088d42c99c3c20a83795c97d1b8f1cc.1524933096.git.hns@goldelico.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 13:56:16 +0200
-Message-ID: <CACRpkdbmLD2=Ghp=zxrgDuY9GeEqQCsHW8ycO3+mK1Bd8gLHsA@mail.gmail.com>
-Subject: Re: [PATCH v5 7/7] DTS: Bindings: pca953x: add example how to use
- interrupt-controller and gpio-controller
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1752666AbeEPL4z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:56:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752643AbeEPL4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:56:50 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak81 V3 1/3] audit: use new audit_context access funciton for seccomp_actions_logged
+Date: Wed, 16 May 2018 07:55:45 -0400
+Message-Id: <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+In-Reply-To: <cover.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com>
+In-Reply-To: <cover.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+On the rebase of the following commit on the new seccomp actions_logged
+function, one audit_context access was missed.
 
-> It is not completely obvious that these are required and
-> how to use them. So we provide a tested example.
->
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+commit cdfb6b341f0f2409aba24b84f3b4b2bba50be5c5
+("audit: use inline function to get audit context")
 
-Patch applied.
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ kernel/auditsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index cbab0da..f3d3dc6 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2497,7 +2497,7 @@ void audit_seccomp_actions_logged(const char *names, const char *old_names,
+ 	if (!audit_enabled)
+ 		return;
+ 
+-	ab = audit_log_start(current->audit_context, GFP_KERNEL,
++	ab = audit_log_start(audit_context(), GFP_KERNEL,
+ 			     AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return;
+-- 
+1.8.3.1
