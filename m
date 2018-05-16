@@ -1,86 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeEPJOg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:14:36 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45786 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750992AbeEPJOd (ORCPT
+        id S1752407AbeEPJPN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:15:13 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33109 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeEPJPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:14:33 -0400
-X-Google-Smtp-Source: AB8JxZrQYYWUyNlkrPCBLn99ymT4czlfFUjXIdrnp0YwOFAiHx8mnzZRRWhBhBceQRUjANPYg9wKyw==
-Date: Wed, 16 May 2018 18:10:25 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Yann Ylavic <ylavic.dev@gmail.com>, linux-rt-users@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH v2 05/14] tracing: Do not show filter file for ftrace
- internal events
-Message-ID: <20180516091025.GB30309@danjae.aot.lge.com>
-References: <20180514205845.017925650@goodmis.org>
- <20180514205958.061558690@goodmis.org>
+        Wed, 16 May 2018 05:15:11 -0400
+X-Google-Smtp-Source: AB8JxZqo+7BCn3tY25lV+ifdWQ28/6kqiIm57I6Rmwg9Uf16yzP2d6mZXywlcOSP/V6C4kO71zT6E49Kntp/dsravl0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180514205958.061558690@goodmis.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180516072202.GV12217@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-4-srinivas.pandruvada@linux.intel.com> <20180516072202.GV12217@hirez.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 May 2018 11:15:09 +0200
+X-Google-Sender-Auth: voSa1Q1eTZ7msLEEpHdtJ79oU5U
+Message-ID: <CAJZ5v0iaRFO5GWRZAHVWWVMmF8FQps1CowpE5r6zj_tFO7W+jg@mail.gmail.com>
+Subject: Re: [RFC/RFT] [PATCH 03/10] cpufreq: intel_pstate: Utility functions
+ to boost HWP performance limits
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:58:50PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> The filter file in the ftrace internal events, like in
-> /sys/kernel/tracing/events/ftrace/function/filter is not attached to any
-> functionality. Do not create them as they are meaningless.
-> 
-> In the future, if an ftrace internal event gets filter functionality, then
-> it will need to create it directly.
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_events.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 5b647904a65b..14ff4ff3caab 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -2007,16 +2007,18 @@ event_create_dir(struct dentry *parent, struct trace_event_file *file)
->  			return -1;
->  		}
->  	}
-> -	trace_create_file("filter", 0644, file->dir, file,
-> -			  &ftrace_event_filter_fops);
->  
->  	/*
->  	 * Only event directories that can be enabled should have
-> -	 * triggers.
-> +	 * triggers or filters.
->  	 */
-> -	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE))
-> +	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)) {
-> +		trace_create_file("filter", 0644, file->dir, file,
-> +				  &ftrace_event_filter_fops);
-> +
->  		trace_create_file("trigger", 0644, file->dir, file,
->  				  &event_trigger_fops);
-> +	}
->  
->  #ifdef CONFIG_HIST_TRIGGERS
->  	trace_create_file("hist", 0444, file->dir, file,
+On Wed, May 16, 2018 at 9:22 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, May 15, 2018 at 09:49:04PM -0700, Srinivas Pandruvada wrote:
+>> Setup necessary infrastructure to be able to boost HWP performance on a
+>> remote CPU. First initialize data structure to be able to use
+>> smp_call_function_single_async(). The boost up function simply set HWP
+>> min to HWP max value and EPP to 0. The boost down function simply restores
+>> to last cached HWP Request value.
+>>
+>> To avoid reading HWP Request MSR during dynamic update, the HWP Request
+>> MSR value is cached in the local memory. This caching is done whenever
+>> HWP request MSR is modified during driver init on in setpolicy() callback
+>> path.
+>
+> The patch does two independent things; best to split that.
+>
+>
+>> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+>> index f686bbe..dc7dfa9 100644
+>> --- a/drivers/cpufreq/intel_pstate.c
+>> +++ b/drivers/cpufreq/intel_pstate.c
+>> @@ -221,6 +221,9 @@ struct global_params {
+>>   *                   preference/bias
+>>   * @epp_saved:               Saved EPP/EPB during system suspend or CPU offline
+>>   *                   operation
+>> + * @hwp_req_cached:  Cached value of the last HWP request MSR
+>
+> That's simply not true given the code below.
 
-What about moving the "hist" file as well since it's meaningless
-without the trigger.
+It looks like the last "not boosted EPP" value.
 
-Thanks,
-Namhyung
+>> @@ -763,6 +768,7 @@ static void intel_pstate_hwp_set(unsigned int cpu)
+>>               intel_pstate_set_epb(cpu, epp);
+>>       }
+>>  skip_epp:
+>> +     cpu_data->hwp_req_cached = value;
+>>       wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
+>>  }
+>>
+>> @@ -1381,6 +1387,39 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
+>>       intel_pstate_set_min_pstate(cpu);
+>>  }
+>>
+>> +
+>> +static inline void intel_pstate_hwp_boost_up(struct cpudata *cpu)
+>> +{
+>> +     u64 hwp_req;
+>> +     u8 max;
+>> +
+>> +     max = (u8) (cpu->hwp_req_cached >> 8);
+>> +
+>> +     hwp_req = cpu->hwp_req_cached & ~GENMASK_ULL(31, 24);
+>> +     hwp_req = (hwp_req & ~GENMASK_ULL(7, 0)) | max;
+>> +
+>> +     wrmsrl(MSR_HWP_REQUEST, hwp_req);
+>> +}
+>> +
+>> +static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
+>> +{
+>> +     wrmsrl(MSR_HWP_REQUEST, cpu->hwp_req_cached);
+>> +}
+>
+> This is not a traditional msr shadow; that would be updated on every
+> wrmsr. There is not a comment in sight explaining why this one is
+> different.
+
+So if the "cached" thing is the last "not boosted EPP", that's why it
+is not updated here.
