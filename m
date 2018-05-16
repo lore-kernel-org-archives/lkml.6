@@ -1,97 +1,101 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3468281-1526428612-5-1812445768362236313
+X-Cyrus-Session-Id: sloti22d1t05-811314-1526502034-2-16949975473746834071
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: cc='UTF-8', plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526428612; b=EXW+4fmgJipKfSEb0htBfkYdoyAwqdO026RSeFgCbQF/S3hYlS
-    8pQ+8kr4u6wosL8krVoe+5D0Jz1OA8ywV3M9ajycvBK07C1W8TjAof65qPwuOBpk
-    +Vlw/EjBVMftNamMcEe5enCnSrEosOKD8AdhvoFyPTif1SDoiW39c7y+dLA6z64b
-    44JhjtWKCC7HG5o0213A/5CdllETLxSFn5IDoYm6/t3RyYUh8QScCApmTI3uaeCU
-    OzJvVl2/9NyU94Gfpq5PkVwY+sgXhmiGxWwcgI91n/ZXoDJ7+cJl3VfVtKzo/qmR
-    GvXcG6xSSJcBl4gC3AUWhCeYvrhFN7Y+LAOA==
+    1526502033; b=QyeLwjBS43YdDssfi/UDdANPbyGTinfAKwpK+HILouakeclCs4
+    Zr9m4pJfCEa611Hpb7bK6LnunOftPHYshpzx8sVtpJ9qixNss70iloc0sNdlDMre
+    X/D8aq/ej6LqlOUqVahTrrzIvDL43pJz9BdMJJC6modIaLlcP6DDmX4ncrV88+LO
+    p74wijRg/RpZwOPzsG6DtlPOb8FuPKRDIDkExXlULqBlc0qRT/FqNR7ZD54crqUE
+    c91LmSi0PS7zttkUSoXGNLML1bNmOYQBo4rq+m+QiPY5nMOSXFWPf75KS6CTsnpv
+    uk2Ee4GkG6Yg/jAsFwZ+LKyGFGW5N7UBZOKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526428612; bh=
-    m41lL8I3lliqAfvY4EscaxJqoL3QUpoWJRPLTzuxenQ=; b=KEZwNKZYtjOOwHt6
-    xKWT40WS0nBnHyUEkzHtK7z43hYxQxReI/Om0aTRicJIASE+ydnh2D77Fx2geuB1
-    wTRwD4H9Vdol+s4aQy8ajGfOm/V2DU11csTcgSGPYgmjHZhx1E6ppSs0JJhDNYKV
-    EaugBmV1O+Rdujq+mK4AoWDOXYe7TJ9pcQhsht0G4c7VTBo7VeD3sF4Y4AhRhPNx
-    45oYFjBDlUnsmtZ/CBTy9SvlTCv47xjEiZJ87xBMyaZze5Ntx2949h4P6lrsLaTu
-    YGrhTTnWYvoE0iyEjcamGkDH0XnzgmlJpqxKNOr2T8UtDMD4ySGLtTsolBbzIWQl
-    lTj81Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526502033;
+    bh=cNT14H8AHJLXAGOYn1ACRWsh5AGbwD2PLZfHQHGYMpQ=; b=R4ksWqtnDnoU
+    gjglcelbd9C0uBUlOsKNDos9PKnOlERoHDREL/A5O/37mIDfjyuSXwlLa+JQhVFF
+    wZv03q9YgPZ+X5YTLTUZuIpLPDmfyh9ULPFkBl3ZLAWtAPmubbumJK3NTBc0lsyv
+    YT3FCyND93QRjC36AbFqdyiUM/t/ZcfMgEyN+/DgDNqveRxA4u7nzxDdc7yJpNl7
+    C6zRobebEwkbEJTVxK+AYZHSutURHubVpjMd69Rh0yS9HhsI4LSOs43hLksb+tg+
+    2IhfCm65NveC5AUmtWM4tDfmOcN5htq26uPoFSDxtghf/7nT7XmMyvYS0JqZUh1f
+    kv/qBBrEJQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=J84Ohlky x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    header.d=cogentembedded-com.20150623.gappssmtp.com
+    header.i=@cogentembedded-com.20150623.gappssmtp.com header.b=h6XBXcBS
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=cogentembedded.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=oIz2LswL;
+    header.d=1e100.net header.i=@1e100.net header.b=aDbdkgbX;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    header.domain=cogentembedded.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=J84Ohlky x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+      header.d=cogentembedded-com.20150623.gappssmtp.com
+      header.i=@cogentembedded-com.20150623.gappssmtp.com header.b=h6XBXcBS
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=cogentembedded.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=oIz2LswL;
+      header.d=1e100.net header.i=@1e100.net header.b=aDbdkgbX;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+      header.domain=cogentembedded.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOLrPou4dDDW2pwGHxsnSo8URUIE3KwJuKhAlqIpXMmA0kBwolvaZanH2L+8xnnGsdmKixw9RBwYP8JRhe+3r3THwA6nioDxcnGmjrw4IUigXhpKZJOE
-    YCZMqC/BxaKiz33qZ5zs/nskjRmnn3diRWAixkJ32+bKATvsCE5/hB4D/QqV2sOAqH56MwQQJg7JR4v0euEyWrD6uTZaUf9t8rMEN/9a8v+7j46r5pkWl3O/
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=P79jb94FTlEA:10
-    a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=Sf4q5VWL3pcBOtrP99cA:9
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfBfY7xJzsh578tDGaTnITFFrbKPEBvnC2fQqpUaTFnJFgrXEnpno+qm12+JIR4YFa5L8iZVhI0jARsLzOwaJDwJWv4xSqc+061LxCZGO7mfZQpj5yeX/
+    fSK0WVUhiGYn8u103rQIKXDeu5ybwCICF/RxOMhM6bKRGLApVWQIgDrzb7kOK9JsPK89XY2bX/XD4gORTkSG7bOPDOc/P7SLLYuKCWO0KvXcQPgrSoSXtoYu
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=pGLkceISAAAA:8 a=AMTvMMonAAAA:8 a=VwQbUJbxAAAA:8 a=oo5O5SFQ64zgib0ELXAA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=p5oU-coMHzOM5oT1KbOf:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeEOX4k (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 19:56:40 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45596 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751309AbeEOX4g (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 15 May 2018 19:56:36 -0400
-X-Google-Smtp-Source: AB8JxZqndMZoTGCQ1AseGCKy/54NUMCmYqKUcE0rYqEhXXZjCtq1PuD9QqPbB6lnvYax7rKuVSs9Zw==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        id S1751315AbeEPUUK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 16 May 2018 16:20:10 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38083 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751150AbeEPUUI (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 16 May 2018 16:20:08 -0400
+X-Google-Smtp-Source: AB8JxZpuBXKL+2+uKr5L7CAr36/V1xv5q2ZWTjDO4AtF6nYj5zgUvoJg5Zb6O+VhZiUihD19daEuNg==
+Subject: Re: [PATCH net-next v2 2/2] drivers: net: Remove device_node checks
+ with of_mdiobus_register()
+To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
         "David S. Miller" <davem@davemloft.net>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Fugang Duan <fugang.duan@nxp.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Jose Abreu <joabreu@synopsys.com>,
@@ -105,260 +109,137 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Simon Horman <horms+renesas@verge.net.au>,
         Maxim Uvarov <muvarov@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-renesas-soc@vger.kernel.org (open list:RENESAS ETHERNET DRIVERS),
-        linux-omap@vger.kernel.org (open list:TI ETHERNET SWITCH DRIVER (CPSW)),
-        linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE)
-Subject: [PATCH net-next v2 2/2] drivers: net: Remove device_node checks with of_mdiobus_register()
-Date: Tue, 15 May 2018 16:56:19 -0700
-Message-Id: <20180515235619.27773-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180515235619.27773-1-f.fainelli@gmail.com>
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:RENESAS ETHERNET DRIVERS"
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)"
+        <linux-omap@vger.kernel.org>,
+        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE"
+        <devicetree@vger.kernel.org>
 References: <20180515235619.27773-1-f.fainelli@gmail.com>
+ <20180515235619.27773-3-f.fainelli@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <72171a45-3c50-6550-9798-d13df72628ea@cogentembedded.com>
+Date: Wed, 16 May 2018 23:20:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180515235619.27773-3-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-A number of drivers have the following pattern:
+Hello!
 
-if (np)
-	of_mdiobus_register()
-else
-	mdiobus_register()
+On 05/16/2018 02:56 AM, Florian Fainelli wrote:
 
-which the implementation of of_mdiobus_register() now takes care of.
-Remove that pattern in drivers that strictly adhere to it.
+> A number of drivers have the following pattern:
+> 
+> if (np)
+> 	of_mdiobus_register()
+> else
+> 	mdiobus_register()
+> 
+> which the implementation of of_mdiobus_register() now takes care of.
+> Remove that pattern in drivers that strictly adhere to it.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+[...]
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/dsa/bcm_sf2.c                         |  8 ++------
- drivers/net/dsa/mv88e6xxx/chip.c                  |  5 +----
- drivers/net/ethernet/cadence/macb_main.c          | 12 +++---------
- drivers/net/ethernet/freescale/fec_main.c         |  8 ++------
- drivers/net/ethernet/marvell/mvmdio.c             |  5 +----
- drivers/net/ethernet/renesas/sh_eth.c             | 11 +++--------
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |  5 +----
- drivers/net/ethernet/ti/davinci_mdio.c            |  8 +++-----
- drivers/net/phy/mdio-gpio.c                       |  6 +-----
- drivers/net/phy/mdio-mscc-miim.c                  |  6 +-----
- drivers/net/usb/lan78xx.c                         |  7 ++-----
- 11 files changed, 20 insertions(+), 61 deletions(-)
+> diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+> index ac621f44237a..02e8982519ce 100644
+> --- a/drivers/net/dsa/bcm_sf2.c
+> +++ b/drivers/net/dsa/bcm_sf2.c
+> @@ -450,12 +450,8 @@ static int bcm_sf2_mdio_register(struct dsa_switch *ds)
+>  	priv->slave_mii_bus->parent = ds->dev->parent;
+>  	priv->slave_mii_bus->phy_mask = ~priv->indir_phy_mask;
+>  
+> -	if (dn)
+> -		err = of_mdiobus_register(priv->slave_mii_bus, dn);
+> -	else
+> -		err = mdiobus_register(priv->slave_mii_bus);
+> -
+> -	if (err)
+> +	err = of_mdiobus_register(priv->slave_mii_bus, dn);
+> +	if (err && dn)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index ac621f44237a..02e8982519ce 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -450,12 +450,8 @@ static int bcm_sf2_mdio_register(struct dsa_switch *ds)
- 	priv->slave_mii_bus->parent = ds->dev->parent;
- 	priv->slave_mii_bus->phy_mask = ~priv->indir_phy_mask;
- 
--	if (dn)
--		err = of_mdiobus_register(priv->slave_mii_bus, dn);
--	else
--		err = mdiobus_register(priv->slave_mii_bus);
--
--	if (err)
-+	err = of_mdiobus_register(priv->slave_mii_bus, dn);
-+	if (err && dn)
- 		of_node_put(dn);
- 
- 	return err;
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index b23c11d9f4b2..2bb3f03ee1cb 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -2454,10 +2454,7 @@ static int mv88e6xxx_mdio_register(struct mv88e6xxx_chip *chip,
- 			return err;
- 	}
- 
--	if (np)
--		err = of_mdiobus_register(bus, np);
--	else
--		err = mdiobus_register(bus);
-+	err = of_mdiobus_register(bus, np);
- 	if (err) {
- 		dev_err(chip->dev, "Cannot register MDIO bus (%d)\n", err);
- 		mv88e6xxx_g2_irq_mdio_free(chip, bus);
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index b4c9268100bb..3e93df5d4e3b 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -591,16 +591,10 @@ static int macb_mii_init(struct macb *bp)
- 	dev_set_drvdata(&bp->dev->dev, bp->mii_bus);
- 
- 	np = bp->pdev->dev.of_node;
-+	if (pdata)
-+		bp->mii_bus->phy_mask = pdata->phy_mask;
- 
--	if (np) {
--		err = of_mdiobus_register(bp->mii_bus, np);
--	} else {
--		if (pdata)
--			bp->mii_bus->phy_mask = pdata->phy_mask;
--
--		err = mdiobus_register(bp->mii_bus);
--	}
--
-+	err = of_mdiobus_register(bp->mii_bus, np);
- 	if (err)
- 		goto err_out_free_mdiobus;
- 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index d4604bc8eb5b..f3e43db0d6cb 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -2052,13 +2052,9 @@ static int fec_enet_mii_init(struct platform_device *pdev)
- 	fep->mii_bus->parent = &pdev->dev;
- 
- 	node = of_get_child_by_name(pdev->dev.of_node, "mdio");
--	if (node) {
--		err = of_mdiobus_register(fep->mii_bus, node);
-+	err = of_mdiobus_register(fep->mii_bus, node);
-+	if (node)
- 		of_node_put(node);
--	} else {
--		err = mdiobus_register(fep->mii_bus);
--	}
--
- 	if (err)
- 		goto err_out_free_mdiobus;
- 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index 0495487f7b42..c5dac6bd2be4 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -348,10 +348,7 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 		goto out_mdio;
- 	}
- 
--	if (pdev->dev.of_node)
--		ret = of_mdiobus_register(bus, pdev->dev.of_node);
--	else
--		ret = mdiobus_register(bus);
-+	ret = of_mdiobus_register(bus, pdev->dev.of_node);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Cannot register MDIO bus (%d)\n", ret);
- 		goto out_mdio;
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 5970d9e5ddf1..8dd41e08a6c6 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3025,15 +3025,10 @@ static int sh_mdio_init(struct sh_eth_private *mdp,
- 		 pdev->name, pdev->id);
- 
- 	/* register MDIO bus */
--	if (dev->of_node) {
--		ret = of_mdiobus_register(mdp->mii_bus, dev->of_node);
--	} else {
--		if (pd->phy_irq > 0)
--			mdp->mii_bus->irq[pd->phy] = pd->phy_irq;
--
--		ret = mdiobus_register(mdp->mii_bus);
--	}
-+	if (pd->phy_irq > 0)
-+		mdp->mii_bus->irq[pd->phy] = pd->phy_irq;
- 
-+	ret = of_mdiobus_register(mdp->mii_bus, dev->of_node);
- 	if (ret)
- 		goto out_free_bus;
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index f5f37bfa1d58..5df1a608e566 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -233,10 +233,7 @@ int stmmac_mdio_register(struct net_device *ndev)
- 	new_bus->phy_mask = mdio_bus_data->phy_mask;
- 	new_bus->parent = priv->device;
- 
--	if (mdio_node)
--		err = of_mdiobus_register(new_bus, mdio_node);
--	else
--		err = mdiobus_register(new_bus);
-+	err = of_mdiobus_register(new_bus, mdio_node);
- 	if (err != 0) {
- 		dev_err(dev, "Cannot register the MDIO bus\n");
- 		goto bus_register_fail;
-diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
-index 98a1c97fb95e..8ac72831af05 100644
---- a/drivers/net/ethernet/ti/davinci_mdio.c
-+++ b/drivers/net/ethernet/ti/davinci_mdio.c
-@@ -429,12 +429,10 @@ static int davinci_mdio_probe(struct platform_device *pdev)
- 	 * defined to support backward compatibility with DTs which assume that
- 	 * Davinci MDIO will always scan the bus for PHYs detection.
- 	 */
--	if (dev->of_node && of_get_child_count(dev->of_node)) {
-+	if (dev->of_node && of_get_child_count(dev->of_node))
- 		data->skip_scan = true;
--		ret = of_mdiobus_register(data->bus, dev->of_node);
--	} else {
--		ret = mdiobus_register(data->bus);
--	}
-+
-+	ret = of_mdiobus_register(data->bus, dev->of_node);
- 	if (ret)
- 		goto bail_out;
- 
-diff --git a/drivers/net/phy/mdio-gpio.c b/drivers/net/phy/mdio-gpio.c
-index b501221819e1..4e4c8daf44c3 100644
---- a/drivers/net/phy/mdio-gpio.c
-+++ b/drivers/net/phy/mdio-gpio.c
-@@ -179,11 +179,7 @@ static int mdio_gpio_probe(struct platform_device *pdev)
- 	if (!new_bus)
- 		return -ENODEV;
- 
--	if (pdev->dev.of_node)
--		ret = of_mdiobus_register(new_bus, pdev->dev.of_node);
--	else
--		ret = mdiobus_register(new_bus);
--
-+	ret = of_mdiobus_register(new_bus, pdev->dev.of_node);
- 	if (ret)
- 		mdio_gpio_bus_deinit(&pdev->dev);
- 
-diff --git a/drivers/net/phy/mdio-mscc-miim.c b/drivers/net/phy/mdio-mscc-miim.c
-index 8c689ccfdbca..badbc99bedd3 100644
---- a/drivers/net/phy/mdio-mscc-miim.c
-+++ b/drivers/net/phy/mdio-mscc-miim.c
-@@ -151,11 +151,7 @@ static int mscc_miim_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	if (pdev->dev.of_node)
--		ret = of_mdiobus_register(bus, pdev->dev.of_node);
--	else
--		ret = mdiobus_register(bus);
--
-+	ret = of_mdiobus_register(bus, pdev->dev.of_node);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Cannot register MDIO bus (%d)\n", ret);
- 		return ret;
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 91761436709a..8dff87ec6d99 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1843,12 +1843,9 @@ static int lan78xx_mdio_init(struct lan78xx_net *dev)
- 	}
- 
- 	node = of_get_child_by_name(dev->udev->dev.of_node, "mdio");
--	if (node) {
--		ret = of_mdiobus_register(dev->mdiobus, node);
-+	ret = of_mdiobus_register(dev->mdiobus, node);
-+	if (node)
- 		of_node_put(node);
--	} else {
--		ret = mdiobus_register(dev->mdiobus);
--	}
- 	if (ret) {
- 		netdev_err(dev->net, "can't register MDIO bus\n");
- 		goto exit1;
--- 
-2.14.1
+   of_node_put() checks for NULL.
 
+>  		of_node_put(dn);
+>  
+>  	return err;
+[...]
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+> index d4604bc8eb5b..f3e43db0d6cb 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -2052,13 +2052,9 @@ static int fec_enet_mii_init(struct platform_device *pdev)
+>  	fep->mii_bus->parent = &pdev->dev;
+>  
+>  	node = of_get_child_by_name(pdev->dev.of_node, "mdio");
+> -	if (node) {
+> -		err = of_mdiobus_register(fep->mii_bus, node);
+> +	err = of_mdiobus_register(fep->mii_bus, node);
+> +	if (node)
+>  		of_node_put(node);
+
+   Same comment here.
+
+[...]
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index 5970d9e5ddf1..8dd41e08a6c6 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -3025,15 +3025,10 @@ static int sh_mdio_init(struct sh_eth_private *mdp,
+>  		 pdev->name, pdev->id);
+>  
+>  	/* register MDIO bus */
+> -	if (dev->of_node) {
+> -		ret = of_mdiobus_register(mdp->mii_bus, dev->of_node);
+> -	} else {
+> -		if (pd->phy_irq > 0)
+> -			mdp->mii_bus->irq[pd->phy] = pd->phy_irq;
+> -
+> -		ret = mdiobus_register(mdp->mii_bus);
+> -	}
+> +	if (pd->phy_irq > 0)
+> +		mdp->mii_bus->irq[pd->phy] = pd->phy_irq;
+>  
+> +	ret = of_mdiobus_register(mdp->mii_bus, dev->of_node);
+>  	if (ret)
+>  		goto out_free_bus;
+>  
+
+   This part is:
+
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+[...]
+> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+> index 91761436709a..8dff87ec6d99 100644
+> --- a/drivers/net/usb/lan78xx.c
+> +++ b/drivers/net/usb/lan78xx.c
+> @@ -1843,12 +1843,9 @@ static int lan78xx_mdio_init(struct lan78xx_net *dev)
+>  	}
+>  
+>  	node = of_get_child_by_name(dev->udev->dev.of_node, "mdio");
+> -	if (node) {
+> -		ret = of_mdiobus_register(dev->mdiobus, node);
+> +	ret = of_mdiobus_register(dev->mdiobus, node);
+> +	if (node)
+>  		of_node_put(node);
+
+   of_node_put() checks for NULL, again...
+
+MBR, Sergei
