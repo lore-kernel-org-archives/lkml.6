@@ -1,212 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeEPPX5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:23:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57546 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752038AbeEPPXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:23:53 -0400
-Subject: [PATCH v2] vfio/mdev: Check globally for duplicate devices
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kwankhede@nvidia.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, cohuck@redhat.com
-Date: Wed, 16 May 2018 09:23:43 -0600
-Message-ID: <20180516152228.12123.34883.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752282AbeEPPYg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:24:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46788 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750772AbeEPPVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 11:21:39 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/8] x86/hyperv: fix typo in 'HV_GENERIC_SET_SPARCE_4K' definition
+Date: Wed, 16 May 2018 17:21:25 +0200
+Message-Id: <20180516152131.30689-3-vkuznets@redhat.com>
+In-Reply-To: <20180516152131.30689-1-vkuznets@redhat.com>
+References: <20180516152131.30689-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we create an mdev device, we check for duplicates against the
-parent device and return -EEXIST if found, but the mdev device
-namespace is global since we'll link all devices from the bus.  We do
-catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-with it comes a kernel warning and stack trace for trying to create
-duplicate sysfs links, which makes it an undesirable response.
+It should really be HV_GENERIC_SET_SPARSE_4K.
 
-Therefore we should really be looking for duplicates across all mdev
-parent devices, or as implemented here, against our mdev device list.
-
-Notably, mdev_parent.lock really only seems to be serializing device
-creation and removal per parent.  I'm not sure if this is necessary,
-mdev vendor drivers could easily provide this serialization if it
-is required, but a side-effect of holding the mdev_list_lock to
-protect the namespace is actually greater serialization across the
-create and remove paths, so mdev_parent.lock is removed.  If we can
-show that vendor drivers handle the create/remove paths themselves,
-perhaps we can refine the locking granularity.
-
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
+ arch/x86/hyperv/mmu.c              | 2 +-
+ arch/x86/include/asm/hyperv-tlfs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-v2: Remove unnecessary ret init per Cornelia's review
-
- drivers/vfio/mdev/mdev_core.c    |   77 +++++++++-----------------------------
- drivers/vfio/mdev/mdev_private.h |    1 
- 2 files changed, 19 insertions(+), 59 deletions(-)
-
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index 126991046eb7..aaab3ef93e1c 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *mdev)
- }
- EXPORT_SYMBOL(mdev_uuid);
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index 528a1f34df96..6cd3a08bb449 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -219,7 +219,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 	flush->hv_vp_set.valid_bank_mask = 0;
  
--static int _find_mdev_device(struct device *dev, void *data)
--{
--	struct mdev_device *mdev;
--
--	if (!dev_is_mdev(dev))
--		return 0;
--
--	mdev = to_mdev_device(dev);
--
--	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
--		return 1;
--
--	return 0;
--}
--
--static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
--{
--	struct device *dev;
--
--	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
--	if (dev) {
--		put_device(dev);
--		return true;
--	}
--
--	return false;
--}
--
- /* Should be called holding parent_list_lock */
- static struct mdev_parent *__find_parent_device(struct device *dev)
- {
-@@ -221,7 +193,6 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+ 	if (!cpumask_equal(cpus, cpu_present_mask)) {
+-		flush->hv_vp_set.format = HV_GENERIC_SET_SPARCE_4K;
++		flush->hv_vp_set.format = HV_GENERIC_SET_SPARSE_4K;
+ 		nr_bank = cpumask_to_vp_set(flush, cpus);
  	}
  
- 	kref_init(&parent->ref);
--	mutex_init(&parent->lock);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 3d4ce3935a62..c69891e721b6 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -363,7 +363,7 @@ struct hv_tsc_emulation_status {
+ #define HV_FLUSH_USE_EXTENDED_RANGE_FORMAT	BIT(3)
  
- 	parent->dev = dev;
- 	parent->ops = ops;
-@@ -304,7 +275,7 @@ static void mdev_device_release(struct device *dev)
- int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- {
- 	int ret;
--	struct mdev_device *mdev;
-+	struct mdev_device *mdev, *tmp;
- 	struct mdev_parent *parent;
- 	struct mdev_type *type = to_mdev_type(kobj);
+ enum HV_GENERIC_SET_FORMAT {
+-	HV_GENERIC_SET_SPARCE_4K,
++	HV_GENERIC_SET_SPARSE_4K,
+ 	HV_GENERIC_SET_ALL,
+ };
  
-@@ -312,12 +283,14 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	if (!parent)
- 		return -EINVAL;
- 
--	mutex_lock(&parent->lock);
-+	mutex_lock(&mdev_list_lock);
- 
- 	/* Check for duplicate */
--	if (mdev_device_exist(parent, uuid)) {
--		ret = -EEXIST;
--		goto create_err;
-+	list_for_each_entry(tmp, &mdev_list, next) {
-+		if (!uuid_le_cmp(tmp->uuid, uuid)) {
-+			ret = -EEXIST;
-+			goto create_err;
-+		}
- 	}
- 
- 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-@@ -354,9 +327,6 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	mdev->type_kobj = kobj;
- 	dev_dbg(&mdev->dev, "MDEV: created\n");
- 
--	mutex_unlock(&parent->lock);
--
--	mutex_lock(&mdev_list_lock);
- 	list_add(&mdev->next, &mdev_list);
- 	mutex_unlock(&mdev_list_lock);
- 
-@@ -366,7 +336,7 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	device_unregister(&mdev->dev);
- 
- create_err:
--	mutex_unlock(&parent->lock);
-+	mutex_unlock(&mdev_list_lock);
- 	mdev_put_parent(parent);
- 	return ret;
- }
-@@ -382,6 +352,7 @@ int mdev_device_remove(struct device *dev, bool force_remove)
- 	mdev = to_mdev_device(dev);
- 
- 	mutex_lock(&mdev_list_lock);
-+
- 	list_for_each_entry(tmp, &mdev_list, next) {
- 		if (tmp == mdev) {
- 			found = true;
-@@ -389,35 +360,25 @@ int mdev_device_remove(struct device *dev, bool force_remove)
- 		}
- 	}
- 
--	if (found)
--		list_del(&mdev->next);
--
--	mutex_unlock(&mdev_list_lock);
--
--	if (!found)
--		return -ENODEV;
-+	if (!found) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
- 
- 	type = to_mdev_type(mdev->type_kobj);
- 	parent = mdev->parent;
--	mutex_lock(&parent->lock);
- 
- 	ret = mdev_device_remove_ops(mdev, force_remove);
--	if (ret) {
--		mutex_unlock(&parent->lock);
--
--		mutex_lock(&mdev_list_lock);
--		list_add(&mdev->next, &mdev_list);
--		mutex_unlock(&mdev_list_lock);
--
--		return ret;
--	}
-+	if (ret)
-+		goto out;
- 
-+	list_del(&mdev->next);
- 	mdev_remove_sysfs_files(dev, type);
- 	device_unregister(dev);
--	mutex_unlock(&parent->lock);
- 	mdev_put_parent(parent);
--
--	return 0;
-+out:
-+	mutex_unlock(&mdev_list_lock);
-+	return ret;
- }
- 
- static int __init mdev_init(void)
-diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
-index a9cefd70a705..85bb268c91be 100644
---- a/drivers/vfio/mdev/mdev_private.h
-+++ b/drivers/vfio/mdev/mdev_private.h
-@@ -20,7 +20,6 @@ struct mdev_parent {
- 	struct device *dev;
- 	const struct mdev_parent_ops *ops;
- 	struct kref ref;
--	struct mutex lock;
- 	struct list_head next;
- 	struct kset *mdev_types_kset;
- 	struct list_head type_list;
+-- 
+2.14.3
