@@ -1,101 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeEPP6Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:58:24 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42691 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750746AbeEPP6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:58:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="41443907"
-Message-ID: <1526486302.61700.23.camel@linux.intel.com>
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, bp@suse.de,
-        lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net,
-        x86@kernel.org, linux-pm@vger.kernel.org, viresh.kumar@linaro.org,
+        id S1752038AbeEPQAO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 12:00:14 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:41608 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750746AbeEPQAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 12:00:13 -0400
+Date: Wed, 16 May 2018 12:00:11 -0400 (EDT)
+Message-Id: <20180516.120011.1436307390065240981.davem@davemloft.net>
+To: liuqifa@huawei.com
+Cc: dsahern@gmail.com, maheshb@google.com, weiyongjun1@huawei.com,
+        maowenan@huawei.com, dingtianhong@huawei.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date: Wed, 16 May 2018 08:58:22 -0700
-In-Reply-To: <20180516151925.GO28366@localhost.localdomain>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
-         <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
-         <20180516151925.GO28366@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Subject: Re: [PATCH v3] ipvlan: call netdevice notifier when master mac
+ address changed
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180514113809.10196-1-liuqifa@huawei.com>
+References: <20180514113809.10196-1-liuqifa@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-16 at 17:19 +0200, Juri Lelli wrote:
-> On 15/05/18 21:49, Srinivas Pandruvada wrote:
-> > intel_pstate has two operating modes: active and passive. In
-> > "active"
-> > mode, the in-built scaling governor is used and in "passive" mode,
-> > the driver can be used with any governor like "schedutil". In
-> > "active"
-> > mode the utilization values from schedutil is not used and there is
-> > a requirement from high performance computing use cases, not to
-> > read
-> > any APERF/MPERF MSRs. In this case no need to use CPU cycles for
-> > frequency invariant accounting by reading APERF/MPERF MSRs.
-> > With this change frequency invariant account is only enabled in
-> > "passive" mode.
-> > 
-> > Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel
-> > .com>
-> > ---
-> > [Note: The tick will be enabled later in the series when hwp
-> > dynamic
-> > boost is enabled]
-> > 
-> >  drivers/cpufreq/intel_pstate.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/intel_pstate.c
-> > b/drivers/cpufreq/intel_pstate.c
-> > index 17e566af..f686bbe 100644
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -2040,6 +2040,8 @@ static int
-> > intel_pstate_register_driver(struct cpufreq_driver *driver)
-> >  {
-> >  	int ret;
-> >  
-> > +	x86_arch_scale_freq_tick_disable();
-> > +
-> >  	memset(&global, 0, sizeof(global));
-> >  	global.max_perf_pct = 100;
-> >  
-> > @@ -2052,6 +2054,9 @@ static int
-> > intel_pstate_register_driver(struct cpufreq_driver *driver)
-> >  
-> >  	global.min_perf_pct = min_perf_pct_min();
-> >  
-> > +	if (driver == &intel_cpufreq)
-> > +		x86_arch_scale_freq_tick_enable();
-> 
-> This will unconditionally trigger the reading/calculation at each
-> tick
-> even though information is not actually consumed (e.g., running
-> performance or any other governor), right? Do we want that?
-Good point. I should call x86_arch_scale_freq_tick_disable() in
-performance mode switch for active mode.
+From: <liuqifa@huawei.com>
+Date: Mon, 14 May 2018 19:38:09 +0800
 
-Thanks,
-Srinivas
+> From: Keefe Liu <liuqifa@huawei.com>
+> 
+> When master device's mac has been changed, the commit
+> 32c10bbfe914 ("ipvlan: always use the current L2 addr of the
+> master") makes the IPVlan devices's mac changed also, but it
+> doesn't do related works such as flush the IPVlan devices's
+> arp table.
+> 
+> Signed-off-by: Keefe Liu <liuqifa@huawei.com>
 
-> 
-> Anyway, FWIW I started testing this on a E5-2609 v3 and I'm not
-> seeing
-> hackbench regressions so far (running with schedutil governor).
-> 
-> Best,
-> 
-> - Juri
+Applied and queued up for -stable, thanks.
