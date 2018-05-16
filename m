@@ -1,34 +1,31 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3036136-1525999937-2-11477583430149528210
+X-Cyrus-Session-Id: sloti22d1t05-139798-1526471810-2-13828482555946055814
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525999936; b=MD9ZWrN7uBPY87cxAcS9wZp/cIsgfVjMMvSl5SYBn+LJ4ZZGlh
-    VTNVSAa+y3Q9Ubma7tzF8diNaXflh9FOHEQ2AjLD8iecC+LAqnaqbAHlidIvzLZ8
-    ihWqIZvuQhJUAArmDMqp5CEfB/yid0UfckoecsJcownK4760wKlmrXeof+iKbf1h
-    TJFqyStkuurazbvPb1H7npjpeyct3qxqctiC658+RMv570+Kv8U65Garw94A2Dzg
-    BgHeB5zOhNLWcuQB6sXoiEgUYgNsuxNf7n9N0eqLMq5yMp0rbJwKdj8gT3rGf3lz
-    bS/4rxKKGUHI1fpEtiD3EaLGjRx/AgPpgLxw==
+    1526471809; b=ZOwYU7bjdt416uzS1N3onofRCbSRb+LBDG/WRO5EL8pUYNqu/M
+    MTxKR2VzRe8rNCdTou4jv92vRw5qU0hSf/MKwldwb14CM6gjvhfTZf9h+K2QYwHw
+    3Yr9k/urT3kbkbva4Uwq2XPQ3MjFC5bOSYNQA/dQGyoU0xyy05uRQbWC3k2zcnSu
+    F0Yi97JQTIaqMuX6zNiaZFLu4pn4sxcW72TH9UUcSgMRqy/5KNkIb2xhQWlF0LyS
+    8njCEY7vVTvG/HlNzvblFrztUZSH3aOWeuMtqAqMnDK4sIsgumfEyX28vCN8hNYU
+    Gf4zG4sQTeKYcOUuJy0Kqk3b1Y517haMR3qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525999936;
-    bh=BCMW1dC7nHoPzOSVs8sEHlimde269+JvMxtH6PwEtf8=; b=Fx9zpxIPrdBS
-    i8Ej1pCzTN3rkv8ZIU3upr4DXbHOABYobBQ80hDkNgshv1hM9Sz1dnvNay9ITJJm
-    HjWEC6nhkNpS984kPfBkJVywrUcK195PTdrN7fi6TqPi+cl9Jm850Vgv6ThRE8on
-    YwenQhP0iTwhRtEOMtZepoodnioepyB9RgFKrikiTKQT9hN8ERnGUIyLxW56YKXM
-    3C9qFw4QD6PFpjPMZz5Rz4J4RuGkHWDgHaPuWb5NUYIAt2zWQHyI+qnGndWXRe2g
-    4FjXOX1NLpw8tLMjS/4CYRjnoIraSPIReZ5nMWWbGkfODAVoVM2ZdVoUfa75YxK8
-    iRbwzSdmhg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=yahoo.com header.i=@yahoo.com header.b=TWsnCL9o x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526471809; bh=aYQbB4LFbrPHBhcVcgWTrzpBTzOZ0Q
+    zgDpviqcZ76yQ=; b=Y8d3TKLw06L/7RkUSzLFEeMUs5ujAmDRWQmh9l7PBG7vwL
+    03DmKsAuvIx70fNEdw8liDMoIJFiXkTpyftNjGkHXK1rInRl5wrK6qVFNshty9+t
+    yFB5GvApye4AzNhtA5T4w2OrHPd+BHunvUINK2nW9Mj2YYFNrK2dusTb+GYCg/Z1
+    nwmFcBXDZuVG73WH7QAQqQyslIQXgdsfX0mzHTAegj3Q2J3Vakui8d0aT1/3GlDd
+    fHS+YLQskHOhX1q1lA3VYw4qppdHkFx9KVbYyUmau9pS9UBtFLuKLgWERp4x+HUE
+    yuHHUu97BZTCvfHdfp6jF1lMfrGS6B1LYLImVtbw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -37,15 +34,12 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=schaufler-ca.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
-Authentication-Results: mx2.messagingengine.com;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=yahoo.com header.i=@yahoo.com header.b=TWsnCL9o x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -54,316 +48,90 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=schaufler-ca.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCIZwxLuZ51beeXBmUIRCrtfKh6xplhb3vdjONxyKxUpf9hbg+lWNjZKfUUL70swni4fAEBgndznZYanS10oTkIzRDjHDoew2p1WrRIncKLN0RllTAqL
-    YMyUwf5frMHApmyrO1uLlkQN++DWxK/jC+hqzfKI3TUnLKYPZaniTfXOX69Enkp+IKw3J7E3gUflTBU5QB7wuRtW6KoyBYopuekg/CjAN+vxg0z/it3sGAue
-    m4KSp8lg5EJ3wmJ9s2bNCA==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=5HJ6KZJP-kkA:10
-    a=VUJBJC2UJ8kA:10 a=C4VXK9JAEBMA:10 a=3NGxsLzzGfgA:10 a=ZZnuYtJkoWoA:10
-    a=vpqfxihKAAAA:8 a=VwQbUJbxAAAA:8 a=MZNBoltz7WuhaXrRCeAA:9
-    a=kRMdSnlh8_HmuNGM:21 a=67mzmXWfAsqD8vV6:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AULIiLoY-XQsE5F6gcqX:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfMNaZ/7jixeHHtplrmVAiHtwO3PuY0ZKrf+SZcvakFgJpiHXDT/blXhCEt8cTF4jsn0lpLq1ok9Fa1axV4ak6pgzjXbOak2F96qJU0LxLOx7y0O/PYi2
+    HJlzdHNytYSIHVbw/1bpZtvKsikbvMvWgCUORu6ljKqASZMBeyMfH96vh/JiWGh5OmVZLl42/eF2MXyJ/h3/p14sgmDxbg0EJd0mnwHTAoruOhwhmWKldGdT
+    LAQT2Ovyz4dISzCRQ5gGJA==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=egLj49zmsfWz6hTPycUA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeEKAwO (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 10 May 2018 20:52:14 -0400
-Received: from sonic306-28.consmr.mail.ne1.yahoo.com ([66.163.189.90]:42106
-        "EHLO sonic306-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750830AbeEKAwN (ORCPT
+        id S1752309AbeEPL4s (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 16 May 2018 07:56:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752146AbeEPL4r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 May 2018 20:52:13 -0400
-X-YMail-OSG: Uu6GVy4VM1limrMcw0dVa.NMjc.j5oLqFZ09yp6E3EBe957y1M33wbB6.g0HptN
- z8Qqsa65tCFopGDp58pDUEfSYz1RlhpTL8s2PoeSc6JMmeqbcFJLHxmtbHbw_Fnvc7B1jg4J4JaC
- AK7zzMyJ98BVefjEnu.7xPqRw2LSyVWx5Loq0AYTVIUvklNAWoXn4D2cmvqGCUecjLlY.DIpPTro
- OrS8pK.f5hiiLp0lsLv.Rg1JxoDLJfFpGLMA7KPHEAmNbvKExDmFFGA04yrAjvQiiWX_MlJTxSoe
- sQt0we_ROpvkKTpIT8FP8nnS_4QUWBzDET2q7Iu1Szlz99Npe3skvdMKN.5b.ctbtqlZBBZj.IXb
- zd02HnOIDSNUsXCeAA_ljPGw.WcEpQyr1koYdjyDtheNSg6W2px9vIId6OBilyFT2UX9s6.k38PZ
- JihlvEJd4CqGDG6zaDFrSMriU.5XuHhFuVmftLW57v2Upk6Glkc_RJIbhiuDZVOrRVRzUSPl.lYC
- MQXaexM01i2NOzGtdiY.pOokNkmmkITRl7aoh3AX0WNzW8tP1OwDlt0WHzm4nocL43zVJYpO4Skz
- EkiOlKArYl9HVy93F2d7qoyaK2F9T38MCvl7qnp4ENDjcpFUaNMeqeEE8wZ2UnvVX
-Subject: [PATCH 01/23] procfs: add smack subdir to attrs
-To: LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <fcc51e4a-b0dc-bbd2-d98a-52b0835bbe31@schaufler-ca.com>
-Date: Thu, 10 May 2018 17:52:06 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 16 May 2018 07:56:47 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak81 V3 0/3] audit: group task params
+Date: Wed, 16 May 2018 07:55:44 -0400
+Message-Id: <cover.1526430313.git.rgb@redhat.com>
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Thu, 10 May 2018 13:26:52 -0700
-Subject: [PATCH 01/23] procfs: add smack subdir to attrs
+Group the audit parameters for each task into one structure.
+In particular, remove the loginuid and sessionid values and the audit
+context pointer from the task structure, replacing them with an audit
+task information structure to contain them.  Use access functions to
+access audit values.
 
-Back in 2007 I made what turned out to be a rather serious
-mistake in the implementation of the Smack security module.
-The SELinux module used an interface in /proc to manipulate
-the security context on processes. Rather than use a similar
-interface, I used the same interface. The AppArmor team did
-likewise. Now /proc/.../attr/current will tell you the
-security "context" of the process, but it will be different
-depending on the security module you're using.
+Use dynamic allocation of the audit task information structure employing
+kmem_cache.  Static allocation has the limitation that future audit task
+information structure changes would cause a visible change to the rest
+of the kernel, whereas dynamic allocation would mostly hide any future
+changes.
 
-This patch provides a subdirectory in /proc/.../attr for
-Smack. Smack user space can use the "current" file in
-this subdirectory and never have to worry about getting
-SELinux attributes by mistake. Programs that use the
-old interface will continue to work (or fail, as the case
-may be) as before.
+Passes audit-testsuite.
 
-The original implementation is by Kees Cook.
+Changelog:
+v3
+- drop patches 2, 3, 4 already merged.
+- fix for previous v2 patch 3 (seccomp get audit_context)
+- dynamic audit_task_info allocation from kmem_cache
+- fix assignment in if statement v2 patch 1 (normalize loginuid read)
+- fix a number of merge conflicts/checkpatch
+v2
+- p2/5: add audit header to init/init_task.c to quiet kbuildbot
+- audit_signal_info(): fetch loginuid once
+- remove task_struct from audit_context() param list
+- remove extra task_struct local vars
+- do nothing on request to set audit context when audit is disabled
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- Documentation/admin-guide/LSM/index.rst | 13 +++++--
- fs/proc/base.c                          | 63 ++++++++++++++++++++++++++++-----
- fs/proc/internal.h                      |  1 +
- include/linux/security.h                | 15 +++++---
- security/security.c                     | 24 ++++++++++---
- 5 files changed, 95 insertions(+), 21 deletions(-)
+Richard Guy Briggs (3):
+  audit: use new audit_context access funciton for
+    seccomp_actions_logged
+  audit: normalize loginuid read access
+  audit: collect audit task parameters
 
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index c980dfe9abf1..9842e21afd4a 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
- specific changes to system operation when these tweaks are not available
- in the core functionality of Linux itself.
- 
--Without a specific LSM built into the kernel, the default LSM will be the
--Linux capabilities system. Most LSMs choose to extend the capabilities
--system, building their checks on top of the defined capability hooks.
-+The Linux capabilities modules will always be included. This may be
-+followed by any number of "minor" modules and at most one "major" module.
- For more details on capabilities, see ``capabilities(7)`` in the Linux
- man-pages project.
- 
-@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
- be first, followed by any "minor" modules (e.g. Yama) and then
- the one "major" module (e.g. SELinux) if there is one configured.
- 
-+Process attributes associated with "major" security modules should
-+be accessed and maintained using the special files in ``/proc/.../attr``.
-+A security module may maintain a module specific subdirectory there,
-+named after the module. ``/proc/.../attr/smack`` is provided by the Smack
-+security module and contains all its special files. The files directly
-+in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
-+subdirectories.
-+
- .. toctree::
-    :maxdepth: 1
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 1b2ede6abcdf..fa1681a0b75e 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -140,9 +140,13 @@ struct pid_entry {
- #define REG(NAME, MODE, fops)				\
- 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
- #define ONE(NAME, MODE, show)				\
--	NOD(NAME, (S_IFREG|(MODE)), 			\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
-+#define ATTR(LSM, NAME, MODE)				\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
-+		NULL, &proc_pid_attr_operations,	\
-+		{ .lsm = LSM })
- 
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2536,7 +2540,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
- 				      (char*)file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2582,7 +2586,8 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (length < 0)
- 		goto out_free;
- 
--	length = security_setprocattr(file->f_path.dentry->d_name.name,
-+	length = security_setprocattr(PROC_I(inode)->op.lsm,
-+				      file->f_path.dentry->d_name.name,
- 				      page, count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
- out_free:
-@@ -2599,13 +2604,53 @@ static const struct file_operations proc_pid_attr_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+#define LSM_DIR_OPS(LSM) \
-+static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
-+			     struct dir_context *ctx) \
-+{ \
-+	return proc_pident_readdir(filp, ctx, \
-+				   LSM##_attr_dir_stuff, \
-+				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct file_operations proc_##LSM##_attr_dir_ops = { \
-+	.read		= generic_read_dir, \
-+	.iterate	= proc_##LSM##_attr_dir_iterate, \
-+	.llseek		= default_llseek, \
-+}; \
-+\
-+static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
-+				struct dentry *dentry, unsigned int flags) \
-+{ \
-+	return proc_pident_lookup(dir, dentry, \
-+				  LSM##_attr_dir_stuff, \
-+				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
-+	.lookup		= proc_##LSM##_attr_dir_lookup, \
-+	.getattr	= pid_getattr, \
-+	.setattr	= proc_setattr, \
-+}
-+
-+#ifdef CONFIG_SECURITY_SMACK
-+static const struct pid_entry smack_attr_dir_stuff[] = {
-+	ATTR("smack", "current",	0666),
-+};
-+LSM_DIR_OPS(smack);
-+#endif
-+
- static const struct pid_entry attr_dir_stuff[] = {
--	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
--	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+	ATTR(NULL, "current",		0666),
-+	ATTR(NULL, "prev",		0444),
-+	ATTR(NULL, "exec",		0666),
-+	ATTR(NULL, "fscreate",		0666),
-+	ATTR(NULL, "keycreate",		0666),
-+	ATTR(NULL, "sockcreate",	0666),
-+#ifdef CONFIG_SECURITY_SMACK
-+	DIR("smack",			0555,
-+	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 0f1692e63cb6..e3a655a788a7 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -72,6 +72,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
-+	const char *lsm;
- };
- 
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ecb06e1357dd..9afe7a509030 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -368,8 +368,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
- int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, char *name, char **value);
--int security_setprocattr(const char *name, void *value, size_t size);
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+			 char **value);
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1113,15 +1115,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
- 	return 0;
- }
- 
--static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-+static inline void security_d_instantiate(struct dentry *dentry,
-+					  struct inode *inode)
- { }
- 
--static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
-+static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+				       char *name, char **value)
- {
- 	return -EINVAL;
- }
- 
--static inline int security_setprocattr(char *name, void *value, size_t size)
-+static inline int security_setprocattr(const char *lsm, char *name,
-+				       void *value, size_t size)
- {
- 	return -EINVAL;
- }
-diff --git a/security/security.c b/security/security.c
-index 7bc2fde023a7..3d3c746fd517 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1267,14 +1267,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
- 
--int security_getprocattr(struct task_struct *p, char *name, char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+				char **value)
- {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.getprocattr(p, name, value);
-+	}
-+	return -EINVAL;
- }
- 
--int security_setprocattr(const char *name, void *value, size_t size)
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size)
- {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.setprocattr(name, value, size);
-+	}
-+	return -EINVAL;
- }
- 
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ include/linux/audit.h | 34 ++++++++++++++++-------
+ include/linux/sched.h |  5 +---
+ init/init_task.c      |  3 +-
+ init/main.c           |  2 ++
+ kernel/auditsc.c      | 77 ++++++++++++++++++++++++++++++++++++++-------------
+ kernel/fork.c         |  2 +-
+ 6 files changed, 87 insertions(+), 36 deletions(-)
+
 -- 
-2.14.3
-
+1.8.3.1
 
