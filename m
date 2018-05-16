@@ -1,140 +1,147 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-354822-1526479424-2-154225295146440380
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526479423; b=IwffCvYP/O+WRlxGnQUOVnARx44o1FfMm0jgTSrUaQ5OkE2aQP
-    O3WvawnTtVis7MYq698ym+tcyIJZ7deIJV9IAIjf1RJvZAmJRcHAOEHBwckFnhUQ
-    cKzqaX6xRpyWdNVA85v4qEKxPI9HDlNriCs63jdDilxDPXqx5lMlLKvfs2O9536I
-    nO47mPTiJu9jX1JycS/M8b/AqVe099ATW0f7xv4MO9ef6x8k4UdwaAJLcl1Fl8bS
-    +yCQogjTXL+tYA+c2xAi7wbJhbEC/g9DvxbuhCCFyEPFqj/LUFQEqNMokzwMIVWD
-    LILtREVFAIMLbP3U7FRJhCVcX17SMmeVYRaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526479423;
-    bh=kVDASPetBnNz8ZoPrsf0nOPog1CkgTOHzHY3W758Xw8=; b=i1coLnWHHNCa
-    B0jVUXLvIeaoJboFqKmJrB0hYb4ltULtRKoB0cihnIsFiNBzq9Or8Wqu7dJJ+Gn2
-    AC0o7o+f6ROJ9rLWMRpBkWgkVO8+nmoPkod/f0DjpEn9jHscXnVUYkoHzvFEdJQd
-    c//7ynkjErQRpx5f4ShgwLHAO7VklNrYnWssKG4nCo3cDBKJieZAHlPe/Yge19DK
-    UnoQqA1B9QxRKiatjGLG18tAxJPmxbIpk84zEjD7rX9Pv74CTDwVXKRE5Sv8meya
-    ECukmWEdBzKv3JeR8H7vLoz2YPP+kQS0Fh4cAhzbJzg+oQcczLB2Sfr6pE77H2px
-    jCCA9rUb2g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJxwDmS51ao48/M0ND+FAoN8BwnFuppsiBpH4ku6PXnRN+glJuO/bbkTJXPFwZPj+uYqB96ux33KLjaostNlNpENbTDLW3posccy8jh5Tr6vasVnMI10
-    vOZzt9jcPNRribsDpwcztZTbV5wEczGas/59NSwsROD5ivfFxOMeBYawik8FHwoOZr8jiTFcWXFpSzJSodNAnZ8OYUDA8D8Bh0ItLDGfDsQZnmUU6ozKB8ZY
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=04LmZrBiSd2vAaYIvw4A:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeEPOD3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 16 May 2018 10:03:29 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:53626 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeEPOD3 (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 16 May 2018 10:03:29 -0400
-Subject: Re: [PATCH] usbip: usbip_host: fix bad unlock balance during
- stub_probe()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: valentina.manea.m@gmail.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180515235723.30845-1-shuah@kernel.org>
- <20180516054909.GB29964@kroah.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <0fd916b1-ff46-a755-5198-06899f8211f6@kernel.org>
-Date: Wed, 16 May 2018 08:03:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <jonathanh@nvidia.com>
+X-Google-Smtp-Source: AB8JxZoWRV6FtxQ1MuIP5Db+ZHkUKgpg0hyI6SYxLTH93Dt/RHG0na3Yqf8ss9C4/ZBxbp5iDLcN
+ARC-Seal: i=1; a=rsa-sha256; t=1526478546; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SC7dBZ6xrqDF5vUKtXQAkxPy9noPQSK9M692keLjaA1+Jgwgc8w1d2T40fDpULvCfT
+         1UdwdVRu3Ab15hvm/0gr9ZJ3Et4jfBqnHBHqHgg0mCwXAfDCGLsqtGWzjyFqnTWm/3KR
+         aTwNvKYJ859Tq4XwWPICjcV6uOsEEvBfZO17dB4sCUKngpOELG8GPOYXbtlx/EaFqhIp
+         JMFXV6//rxX9LhX1dMDjfx4cV0oaIIpnsDKFaTZSAocR2c6b8fIjW44NyuMWJTarfvXG
+         r/h3HIhdFC/SdPT+n8DdOvXIjXXhcSQEadyyLNCY1DY62AnTTGk3S3HlS+5PCe0txtR/
+         5/gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=OHFx5hX/RUCKr+1irjylNXLAGCVY6TXHSs7cTwNsX+M=;
+        b=fSpG1wVZDdEeYrks/t6DM0cnG9zzoRufmkEQmRsUGR7OaR+K0lUwgIxmfgjbEUGGip
+         QeX7quMJzMWqE70aAENzj5wSXU3Jp4L4G7biGADOjQb0xB4hcqa5wy1yqiKddUzk1zk+
+         RcEw0ljb68P/xImTVau/nBafPqN29wyr4RqKAjueK4lqk7yGk6b+5rLjtc82or2JCmAr
+         sbBtrxPHeKYG21C8gJciBzzanWXp3USxNJuwbOafg8qjh6aUSHbSMetl0wCZkEDluZ7Y
+         bQn5FP0taqsgYoLAy0+U3XijX/BPdHLu2F7pgAcG50ZmS1WRMnM/mzCrsehvXBm6+Udm
+         yTkg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate101.nvidia.com on Wed, 16 May 2018 06:49:05 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V3 1/3] usb: xhci: tegra: Prepare for adding runtime PM support
+Date: Wed, 16 May 2018 14:48:53 +0100
+Message-ID: <1526478535-23760-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20180516054909.GB29964@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600628768824002131?=
+X-GMAIL-MSGID: =?utf-8?q?1600628768824002131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/15/2018 11:49 PM, Greg KH wrote:
-> On Tue, May 15, 2018 at 05:57:23PM -0600, Shuah Khan (Samsung OSG) wrote:
->> stub_probe() calls put_busid_priv() in an error path when device isn't
->> found in the busid_table. Fix it by making put_busid_priv() safe to be
->> called with null struct bus_id_priv pointer.
->>
->> This problem happens when "usbip bind" is run without loading usbip_host
->> driver and then running modprobe. The first failed bind attempt unbinds
->> the device from the original driver and when usbip_host is modprobed,
->> stub_probe() runs and doesn't find the device in its busid table and calls
->> put_busid_priv(0 with null bus_id_priv pointer.
->>
->> usbip-host 3-10.2: 3-10.2 is not in match_busid table...  skip!
->>
->> [  367.359679] =====================================
->> [  367.359681] WARNING: bad unlock balance detected!
->> [  367.359683] 4.17.0-rc4+ #5 Not tainted
->> [  367.359685] -------------------------------------
->> [  367.359688] modprobe/2768 is trying to release lock (
->> [  367.359689]
->> ==================================================================
->> [  367.359696] BUG: KASAN: null-ptr-deref in
->> print_unlock_imbalance_bug+0x99/0x110
->> [  367.359699] Read of size 8 at addr 0000000000000058 by task
->> modprobe/2768
-> 
-> Minor nit, no need to line-wrap this.
-> 
->> [  367.359705] CPU: 4 PID: 2768 Comm: modprobe Not tainted 4.17.0-rc4+ #5
->>
->> Fixes: 22076557b07c ("usbip: usbip_host: fix NULL-ptr deref and
->> use-after-free errors") in usb-linus
-> 
-> Nor this, and the extra blank line isn't needed here either.  I'll fix
-> it up by hand when I queue this up later today, thanks.
-> 
+When adding runtime PM support to the Tegra XHCI driver, it is desirable
+to move the function calls to enable the clocks, regulators and PHY from
+the tegra_xusb_probe into the runtime PM handlers. Currently, the
+clocks, regulators and PHY are all enabled before we call
+usb_create_hcd() in tegra_xusb_probe(), however, we cannot call
+pm_runtime_get_sync() at this point because the platform device data is
+not yet initialised. Fortunately, the function usb_create_hcd() can be
+called before we enable the clocks, regulators and PHY and so prepare
+for adding runtime PM support, by moving the call to usb_create_hcd()
+before we enable the hardware.
 
-Thanks. I will keep that in mind the next time.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
 
-thanks,
--- Shuah
+Changes since V2:
+- Add Thierry's ACK
 
+Changes since V1:
+- None
+
+ drivers/usb/host/xhci-tegra.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 2c076ea80522..02b0b24faa58 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1054,10 +1054,23 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
++				    dev_name(&pdev->dev));
++	if (!tegra->hcd) {
++		err = -ENOMEM;
++		goto put_padctl;
++	}
++
++	/*
++	 * This must happen after usb_create_hcd(), because usb_create_hcd()
++	 * will overwrite the drvdata of the device with the hcd it creates.
++	 */
++	platform_set_drvdata(pdev, tegra);
++
+ 	err = tegra_xusb_clk_enable(tegra);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+-		goto put_padctl;
++		goto put_usb2;
+ 	}
+ 
+ 	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+@@ -1080,19 +1093,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		goto disable_phy;
+ 	}
+ 
+-	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
+-				    dev_name(&pdev->dev));
+-	if (!tegra->hcd) {
+-		err = -ENOMEM;
+-		goto disable_phy;
+-	}
+-
+-	/*
+-	 * This must happen after usb_create_hcd(), because usb_create_hcd()
+-	 * will overwrite the drvdata of the device with the hcd it creates.
+-	 */
+-	platform_set_drvdata(pdev, tegra);
+-
+ 	tegra->hcd->regs = tegra->regs;
+ 	tegra->hcd->rsrc_start = regs->start;
+ 	tegra->hcd->rsrc_len = resource_size(regs);
+@@ -1100,7 +1100,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto put_usb2;
++		goto disable_phy;
+ 	}
+ 
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1155,14 +1155,14 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-put_usb2:
+-	usb_put_hcd(tegra->hcd);
+ disable_phy:
+ 	tegra_xusb_phy_disable(tegra);
+ disable_regulator:
+ 	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ disable_clk:
+ 	tegra_xusb_clk_disable(tegra);
++put_usb2:
++	usb_put_hcd(tegra->hcd);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 	return err;
+-- 
+2.7.4
