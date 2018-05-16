@@ -1,65 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeEPOUj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 10:20:39 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:56319 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeEPOUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 10:20:36 -0400
-X-Google-Smtp-Source: AB8JxZo4IUSj+xQb4NuEP5Zv5OrmK6jKoYBBtd7ebjXw/axyLg3yv7te+BCiL4jySofsqD9fiDcKhJ2f22EMoSUocQY=
+        id S1752410AbeEPOUw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 10:20:52 -0400
+Received: from mga11.intel.com ([192.55.52.93]:2969 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751395AbeEPOUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 10:20:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
+   d="scan'208";a="55745477"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Colin King <colin.king@canonical.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] drm/i915/dp: fix spelling mistakes: "seqeuncer" and "seqeuencer"
+In-Reply-To: <87bmdp3y7o.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180509101606.17483-1-colin.king@canonical.com> <87bmdp3y7o.fsf@intel.com>
+Date: Wed, 16 May 2018 17:23:24 +0300
+Message-ID: <871seb1xyb.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop> <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 16:20:35 +0200
-Message-ID: <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl bindings
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
-
-> Indeed, stmfx has other functions than GPIO. But, after comments done
-> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
-> child drivers into a single PINCTRL/GPIO driver because of the following
-> reasons:
-> - Other stmfx functions (IDD measurement and TouchScreen controller) are
-> not used on any of the boards using an stmfx and supported by Linux, so
-> no way to test these functions, and no need to maintain them while they
-> are not being used.
-> - But, in the case a new board will use more than GPIO function on
-> stmfx, the actual implementation allow to easily extract common init
-> part of stmfx and put it in an MFD driver.
+On Wed, 09 May 2018, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Wed, 09 May 2018, Colin King <colin.king@canonical.com> wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Trivial fix to spelling mistakes in WARN warning message text and
+>> in comments:
+>>
+>> "seqeuncer", "seqeuencer" -> "sequencer"
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >
-> So I could remove gpio sub-node and put its contents in stmfx node and
-> keep single PINCTRL/GPIO driver for the time being.
-> Please advise,
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+>
+> (Waiting for the CI runs before merging.)
 
-I would normally advice to use the right modeling from the start, create
-the MFD driver and spawn the devices from there. It is confusing
-if the layout of the driver(s) doesn't really match the layout of the
-hardware.
+And pushed to dinq, thanks for the patch.
 
-I understand that it is a pain to write new MFD drivers to get your
-things going and it would be "nice to get this working really quick
-now" but in my experience it is better to do it right from the start.
+BR,
+Jani.
 
-Yours,
-Linus Walleij
+>
+>> ---
+>>
+>> V2: Also fix seqeuencer in comments
+>>
+>> ---
+>>  drivers/gpu/drm/i915/intel_dp.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+>> index dde92e4af5d3..2cc58596ff5a 100644
+>> --- a/drivers/gpu/drm/i915/intel_dp.c
+>> +++ b/drivers/gpu/drm/i915/intel_dp.c
+>> @@ -513,7 +513,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+>>  	uint32_t DP;
+>>  
+>>  	if (WARN(I915_READ(intel_dp->output_reg) & DP_PORT_EN,
+>> -		 "skipping pipe %c power seqeuncer kick due to port %c being active\n",
+>> +		 "skipping pipe %c power sequencer kick due to port %c being active\n",
+>>  		 pipe_name(pipe), port_name(intel_dig_port->base.port)))
+>>  		return;
+>>  
+>> @@ -554,7 +554,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+>>  	/*
+>>  	 * Similar magic as in intel_dp_enable_port().
+>>  	 * We _must_ do this port enable + disable trick
+>> -	 * to make this power seqeuencer lock onto the port.
+>> +	 * to make this power sequencer lock onto the port.
+>>  	 * Otherwise even VDD force bit won't work.
+>>  	 */
+>>  	I915_WRITE(intel_dp->output_reg, DP);
+>> @@ -3066,11 +3066,11 @@ static void vlv_detach_power_sequencer(struct intel_dp *intel_dp)
+>>  	edp_panel_vdd_off_sync(intel_dp);
+>>  
+>>  	/*
+>> -	 * VLV seems to get confused when multiple power seqeuencers
+>> +	 * VLV seems to get confused when multiple power sequencers
+>>  	 * have the same port selected (even if only one has power/vdd
+>>  	 * enabled). The failure manifests as vlv_wait_port_ready() failing
+>>  	 * CHV on the other hand doesn't seem to mind having the same port
+>> -	 * selected in multiple power seqeuencers, but let's clear the
+>> +	 * selected in multiple power sequencers, but let's clear the
+>>  	 * port select always when logically disconnecting a power sequencer
+>>  	 * from a port.
+>>  	 */
+>> @@ -5698,7 +5698,7 @@ intel_dp_init_panel_power_sequencer_registers(struct intel_dp *intel_dp,
+>>  
+>>  	/*
+>>  	 * On some VLV machines the BIOS can leave the VDD
+>> -	 * enabled even on power seqeuencers which aren't
+>> +	 * enabled even on power sequencers which aren't
+>>  	 * hooked up to any port. This would mess up the
+>>  	 * power domain tracking the first time we pick
+>>  	 * one of these power sequencers for use since
+>> @@ -5706,7 +5706,7 @@ intel_dp_init_panel_power_sequencer_registers(struct intel_dp *intel_dp,
+>>  	 * already on and therefore wouldn't grab the power
+>>  	 * domain reference. Disable VDD first to avoid this.
+>>  	 * This also avoids spuriously turning the VDD on as
+>> -	 * soon as the new power seqeuencer gets initialized.
+>> +	 * soon as the new power sequencer gets initialized.
+>>  	 */
+>>  	if (force_disable_vdd) {
+>>  		u32 pp = ironlake_get_pp_control(intel_dp);
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
