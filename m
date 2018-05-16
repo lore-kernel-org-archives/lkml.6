@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeEPX7A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:59:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59326 "EHLO mail.kernel.org"
+        id S1752408AbeEPX7a (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:59:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752026AbeEPX67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:58:59 -0400
+        id S1752191AbeEPX73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:59:29 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
@@ -17,9 +17,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH -tip v3 4/7] kprobes: Ignore break_handler
-Date: Thu, 17 May 2018 08:58:35 +0900
-Message-Id: <152651511510.25583.17622383189254834099.stgit@devbox>
+Subject: [PATCH -tip v3 5/7] x86: kprobes: Ignore break_handler
+Date: Thu, 17 May 2018 08:59:04 +0900
+Message-Id: <152651514451.25583.15475048007255467863.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152651499561.25583.14488389770693278906.stgit@devbox>
 References: <152651499561.25583.14488389770693278906.stgit@devbox>
@@ -31,123 +31,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ignore break_handler related code because it was only
-used by jprobe and jprobe is removed.
+Remove break_handler related code since that was used
+only for jprobe and jprobe is removed now.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Documentation/kprobes.txt |    2 +-
- kernel/kprobes.c          |   39 +++++----------------------------------
- 2 files changed, 6 insertions(+), 35 deletions(-)
+ arch/x86/kernel/kprobes/common.h |   10 ----------
+ arch/x86/kernel/kprobes/core.c   |   13 ++-----------
+ arch/x86/kernel/kprobes/ftrace.c |   16 ++--------------
+ 3 files changed, 4 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 5ae80baf3921..907a3017c0f2 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -262,7 +262,7 @@ is optimized, that modification is ignored.  Thus, if you want to
- tweak the kernel's execution path, you need to suppress optimization,
- using one of the following techniques:
- 
--- Specify an empty function for the kprobe's post_handler or break_handler.
-+- Specify an empty function for the kprobe's post_handler.
- 
- or
- 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 69de130595f7..536ab451e96d 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -627,8 +627,8 @@ static void optimize_kprobe(struct kprobe *p)
- 	    (kprobe_disabled(p) || kprobes_all_disarmed))
- 		return;
- 
--	/* Both of break_handler and post_handler are not supported. */
--	if (p->break_handler || p->post_handler)
-+	/* kprobes with post_handler can not be optimized */
-+	if (p->post_handler)
- 		return;
- 
- 	op = container_of(p, struct optimized_kprobe, kp);
-@@ -1116,20 +1116,6 @@ static int aggr_fault_handler(struct kprobe *p, struct pt_regs *regs,
+diff --git a/arch/x86/kernel/kprobes/common.h b/arch/x86/kernel/kprobes/common.h
+index ae38dccf0c8f..2b949f4fd4d8 100644
+--- a/arch/x86/kernel/kprobes/common.h
++++ b/arch/x86/kernel/kprobes/common.h
+@@ -105,14 +105,4 @@ static inline unsigned long __recover_optprobed_insn(kprobe_opcode_t *buf, unsig
  }
- NOKPROBE_SYMBOL(aggr_fault_handler);
+ #endif
  
--static int aggr_break_handler(struct kprobe *p, struct pt_regs *regs)
+-#ifdef CONFIG_KPROBES_ON_FTRACE
+-extern int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-			   struct kprobe_ctlblk *kcb);
+-#else
+-static inline int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-				  struct kprobe_ctlblk *kcb)
 -{
--	struct kprobe *cur = __this_cpu_read(kprobe_instance);
--	int ret = 0;
--
--	if (cur && cur->break_handler) {
--		if (cur->break_handler(cur, regs))
--			ret = 1;
--	}
--	reset_kprobe_instance();
--	return ret;
+-	return 0;
 -}
--NOKPROBE_SYMBOL(aggr_break_handler);
--
- /* Walks the list and increments nmissed count for multiprobe case */
- void kprobes_inc_nmissed_count(struct kprobe *p)
+-#endif
+ #endif
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 7d4b8e870635..4badf22bb11f 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -690,10 +690,8 @@ int kprobe_int3_handler(struct pt_regs *regs)
+ 			/*
+ 			 * If we have no pre-handler or it returned 0, we
+ 			 * continue with normal processing.  If we have a
+-			 * pre-handler and it returned non-zero, it prepped
+-			 * for calling the break_handler below on re-entry
+-			 * for jprobe processing, so get out doing nothing
+-			 * more here.
++			 * pre-handler and it returned non-zero, it modified
++			 * regs->ip so no singlestep is needed.
+ 			 */
+ 			if (!p->pre_handler || !p->pre_handler(p, regs))
+ 				setup_singlestep(p, regs, kcb, 0);
+@@ -712,13 +710,6 @@ int kprobe_int3_handler(struct pt_regs *regs)
+ 		regs->ip = (unsigned long)addr;
+ 		preempt_enable_no_resched();
+ 		return 1;
+-	} else if (kprobe_running()) {
+-		p = __this_cpu_read(current_kprobe);
+-		if (p->break_handler && p->break_handler(p, regs)) {
+-			if (!skip_singlestep(p, regs, kcb))
+-				setup_singlestep(p, regs, kcb, 0);
+-			return 1;
+-		}
+ 	} /* else: not a kprobe fault; let the kernel handle it */
+ 
+ 	preempt_enable_no_resched();
+diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
+index 8dc0161cec8f..c8696f2a583f 100644
+--- a/arch/x86/kernel/kprobes/ftrace.c
++++ b/arch/x86/kernel/kprobes/ftrace.c
+@@ -26,7 +26,7 @@
+ #include "common.h"
+ 
+ static nokprobe_inline
+-void __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
++void skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+ 		      struct kprobe_ctlblk *kcb, unsigned long orig_ip)
  {
-@@ -1270,24 +1256,15 @@ static void cleanup_rp_inst(struct kretprobe *rp)
- }
- NOKPROBE_SYMBOL(cleanup_rp_inst);
- 
--/*
--* Add the new probe to ap->list. Fail if this is the
--* second break_handler at the address
--*/
-+/* Add the new probe to ap->list */
- static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
- {
- 	BUG_ON(kprobe_gone(ap) || kprobe_gone(p));
- 
--	if (p->break_handler || p->post_handler)
-+	if (p->post_handler)
- 		unoptimize_kprobe(ap, true);	/* Fall back to normal kprobe */
- 
--	if (p->break_handler) {
--		if (ap->break_handler)
--			return -EEXIST;
--		list_add_tail_rcu(&p->list, &ap->list);
--		ap->break_handler = aggr_break_handler;
--	} else
--		list_add_rcu(&p->list, &ap->list);
-+	list_add_rcu(&p->list, &ap->list);
- 	if (p->post_handler && !ap->post_handler)
- 		ap->post_handler = aggr_post_handler;
- 
-@@ -1310,8 +1287,6 @@ static void init_aggr_kprobe(struct kprobe *ap, struct kprobe *p)
- 	/* We don't care the kprobe which has gone. */
- 	if (p->post_handler && !kprobe_gone(p))
- 		ap->post_handler = aggr_post_handler;
--	if (p->break_handler && !kprobe_gone(p))
--		ap->break_handler = aggr_break_handler;
- 
- 	INIT_LIST_HEAD(&ap->list);
- 	INIT_HLIST_NODE(&ap->hlist);
-@@ -1706,8 +1681,6 @@ static int __unregister_kprobe_top(struct kprobe *p)
- 		goto disarmed;
- 	else {
- 		/* If disabling probe has special handlers, update aggrprobe */
--		if (p->break_handler && !kprobe_gone(p))
--			ap->break_handler = NULL;
- 		if (p->post_handler && !kprobe_gone(p)) {
- 			list_for_each_entry_rcu(list_p, &ap->list, list) {
- 				if ((list_p != p) && (list_p->post_handler))
-@@ -1911,7 +1884,6 @@ int register_kretprobe(struct kretprobe *rp)
- 	rp->kp.pre_handler = pre_handler_kretprobe;
- 	rp->kp.post_handler = NULL;
- 	rp->kp.fault_handler = NULL;
--	rp->kp.break_handler = NULL;
- 
- 	/* Pre-allocate memory for max kretprobe instances */
- 	if (rp->maxactive <= 0) {
-@@ -2034,7 +2006,6 @@ static void kill_kprobe(struct kprobe *p)
- 		list_for_each_entry_rcu(kp, &p->list, list)
- 			kp->flags |= KPROBE_FLAG_GONE;
- 		p->post_handler = NULL;
--		p->break_handler = NULL;
- 		kill_optimized_kprobe(p);
- 	}
  	/*
+@@ -43,18 +43,6 @@ void __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+ 		regs->ip = orig_ip;
+ }
+ 
+-int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-		    struct kprobe_ctlblk *kcb)
+-{
+-	if (kprobe_ftrace(p)) {
+-		__skip_singlestep(p, regs, kcb, 0);
+-		preempt_enable_no_resched();
+-		return 1;
+-	}
+-	return 0;
+-}
+-NOKPROBE_SYMBOL(skip_singlestep);
+-
+ /* Ftrace callback handler for kprobes -- called under preepmt disabed */
+ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 			   struct ftrace_ops *ops, struct pt_regs *regs)
+@@ -80,7 +68,7 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 		__this_cpu_write(current_kprobe, p);
+ 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+ 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
+-			__skip_singlestep(p, regs, kcb, orig_ip);
++			skip_singlestep(p, regs, kcb, orig_ip);
+ 			preempt_enable_no_resched();
+ 		}
+ 		/*
