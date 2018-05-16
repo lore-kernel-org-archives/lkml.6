@@ -1,112 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeEPW5k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:57:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:46885 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751332AbeEPW5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 18:57:38 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 17 May 2018 08:57:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simon Horman <horms@verge.net.au>, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: linux-next: manual merge of the renesas tree with the mvebu tree
-Message-ID: <20180517085728.680dd1bd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wspZCVMZBK1pehs9ntEVrs5"; protocol="application/pgp-signature"
+        id S1751671AbeEPW5j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:57:39 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36423 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeEPW5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 18:57:37 -0400
+X-Google-Smtp-Source: AB8JxZpT9gPE3XhT3LDj3cVGjr7TawXMu/KrHxH5ORMAsbBO4awkQycS9De3p3MNTGqDulbYvzYFlg==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] PM / devfreq: Init user limits from OPP limits, not viceversa
+Date: Wed, 16 May 2018 15:57:09 -0700
+Message-Id: <20180516225709.153138-1-mka@chromium.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/wspZCVMZBK1pehs9ntEVrs5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
+the devfreq device") introduced the initialization of the user
+limits min/max_freq from the lowest/highest available OPPs. Later
+commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
+frequency") added scaling_min/max_freq, which actually represent
+the frequencies of the lowest/highest available OPP. scaling_min/
+max_freq are initialized with the values from min/max_freq, which
+is totally correct in the context, but a bit awkward to read.
 
-Hi all,
+Swap the initialization and assign scaling_min/max_freq with the
+OPP freqs and then the user limts min/max_freq with scaling_min/
+max_freq.
 
-Today's linux-next merge of the renesas tree got a conflict in:
+Needless to say that this change is a NOP, intended to improve
+readability.
 
-  arch/arm/configs/multi_v7_defconfig
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+Additional context: I'm considering to introduce the concept of
+a devfreq policy, which would probably move min/max_freq inside
+of a struct policy, this would make the initialization even
+more awkward to read. If this moves forward I might also propose
+to rename scaling_min/max_freq to something like min/max_opp_freq
+to avoid confusion with the frequencies in the policy (cpufreq uses
+scaling_min/max_freq for the sysfs attributes of the policy
+limits).
 
-between commit:
+ drivers/devfreq/devfreq.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-  873edb2930ef ("ARM: multi_v7_defconfig: Update with current configuration=
-")
-
-from the mvebu tree and commits:
-
-  57eec170e954 ("ARM: multi_v7_defconfig: Disable CONFIG_FB_SH_MOBILE_MERAM=
-")
-  eedd7902366b ("ARM: multi_v7_defconfig: Enable RENESAS_WDT")
-
-from the renesas tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm/configs/multi_v7_defconfig
-index 8bcf3be58047,374a40945b0f..000000000000
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -463,23 -489,20 +464,24 @@@ CONFIG_XILINX_WATCHDOG=3D
-  CONFIG_ARM_SP805_WATCHDOG=3Dy
-  CONFIG_AT91SAM9X_WATCHDOG=3Dy
-  CONFIG_SAMA5D4_WATCHDOG=3Dy
- +CONFIG_DW_WATCHDOG=3Dy
- +CONFIG_DAVINCI_WATCHDOG=3Dm
-  CONFIG_ORION_WATCHDOG=3Dy
-  CONFIG_RN5T618_WATCHDOG=3Dy
- -CONFIG_ST_LPC_WATCHDOG=3Dy
-  CONFIG_SUNXI_WATCHDOG=3Dy
-  CONFIG_IMX2_WDT=3Dy
- +CONFIG_ST_LPC_WATCHDOG=3Dy
-  CONFIG_TEGRA_WATCHDOG=3Dm
-  CONFIG_MESON_WATCHDOG=3Dy
- -CONFIG_DW_WATCHDOG=3Dy
-  CONFIG_DIGICOLOR_WATCHDOG=3Dy
-+ CONFIG_RENESAS_WDT=3Dm
- -CONFIG_BCM2835_WDT=3Dy
-  CONFIG_BCM47XX_WDT=3Dy
- -CONFIG_BCM7038_WDT=3Dm
- +CONFIG_BCM2835_WDT=3Dy
-  CONFIG_BCM_KONA_WDT=3Dy
- +CONFIG_BCM7038_WDT=3Dm
- +CONFIG_BCMA_HOST_SOC=3Dy
- +CONFIG_BCMA_DRIVER_GMAC_CMN=3Dy
- +CONFIG_BCMA_DRIVER_GPIO=3Dy
-  CONFIG_MFD_ACT8945A=3Dy
-  CONFIG_MFD_AS3711=3Dy
-  CONFIG_MFD_AS3722=3Dy
-
---Sig_/wspZCVMZBK1pehs9ntEVrs5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr8t1gACgkQAVBC80lX
-0Gw7uggAgZFIj8Uu1wcbJYYfQIQbTafhhW7KLFqfmvqWaFkzX54PtlASNxq92QY0
-M31bVDct2r8OCZ03I0VsYtpaDMpbpphq4rZiwJnA3qpZPMz9JPCD80bwJaKfGPDF
-9G084MpComkDKZptNtDnhsNQJRBGp9b5Uaf1Y0GD2un/OmllsMoo6Yg6nsxiKFfh
-2+uJ+PCYH2LuLfpPOWgjzdzGB6xeiaECByzDC/YBauhUc/acG/Jr/N9Vo1T6ba8v
-1EBunbfSs8BGPxEen+neCBGuDfN5FWZWF0Y2SUPkcJLdS3R/3xzoWjiCLxKAMqIW
-/z1snNUNQbbJ2LhOsAjgGhzY57sLIQ==
-=vaWe
------END PGP SIGNATURE-----
-
---Sig_/wspZCVMZBK1pehs9ntEVrs5--
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fe2af6aa88fc..0057ef5b0a98 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 		mutex_lock(&devfreq->lock);
+ 	}
+ 
+-	devfreq->min_freq = find_available_min_freq(devfreq);
+-	if (!devfreq->min_freq) {
++	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
++	if (!devfreq->scaling_min_freq) {
+ 		mutex_unlock(&devfreq->lock);
+ 		err = -EINVAL;
+ 		goto err_dev;
+ 	}
+-	devfreq->scaling_min_freq = devfreq->min_freq;
++	devfreq->min_freq = devfreq->scaling_min_freq;
+ 
+-	devfreq->max_freq = find_available_max_freq(devfreq);
+-	if (!devfreq->max_freq) {
++	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
++	if (!devfreq->scaling_max_freq) {
+ 		mutex_unlock(&devfreq->lock);
+ 		err = -EINVAL;
+ 		goto err_dev;
+ 	}
+-	devfreq->scaling_max_freq = devfreq->max_freq;
++	devfreq->max_freq = devfreq->scaling_max_freq;
+ 
+ 	dev_set_name(&devfreq->dev, "devfreq%d",
+ 				atomic_inc_return(&devfreq_no));
+-- 
+2.17.0.441.gb46fe60e1d-goog
