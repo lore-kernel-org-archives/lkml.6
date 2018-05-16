@@ -1,113 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752881AbeEPM4U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 08:56:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751844AbeEPM4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 08:56:17 -0400
-Date: Wed, 16 May 2018 21:56:12 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2 12/14] ftrace/selftest: Fix reset_trigger() to handle
- triggers with filters
-Message-Id: <20180516215612.e86701c1da81e9b9982a3c9f@kernel.org>
-In-Reply-To: <20180514205959.080491350@goodmis.org>
-References: <20180514205845.017925650@goodmis.org>
-        <20180514205959.080491350@goodmis.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752974AbeEPM4f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 08:56:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42124 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752563AbeEPMup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 08:50:45 -0400
+Date: Wed, 16 May 2018 14:50:42 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH V1 00/19] perf tools and x86 PTI entry trampolines
+Message-ID: <20180516125042.GA507@krava>
+References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 16:58:57 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, May 15, 2018 at 03:43:14PM +0300, Adrian Hunter wrote:
 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> The reset_trigger() function breaks up the command by a space ' '. This is
-> useful to ignore the '[active]' word for triggers when removing them. But if
-> the trigger has a filter (ie. "if prio < 10") then the filter needs to be
-> attached to the line that is written into the trigger file to remove it. But
-> the truncation removes the filter and the triggers are not cleared properly.
-> 
-> Before, reset_trigger() did this:
-> 
->  # echo 'hist:keys=common_pid if prev_prio < 10' > events/sched/sched_switch/trigger
->  # echo 'hist:keys=common_pid if next_prio < 10' >> events/sched/sched_switch/trigger
->  # cat events/sched/sched_switch/trigger
-> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
-> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
-> 
->  reset_trigger() {
->    echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048' >> events/sched/sched_switch/trigger
->  }
-> 
->  # cat events/sched/sched_switch/trigger
-> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
-> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
-> 
-> After, where it includes the filter:
-> 
->  reset_trigger() {
->    echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10' >> events/sched/sched_switch/trigger
->  }
-> 
->  # cat events/sched/sched_switch/trigger
-> hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
-> 
+SNIP
 
-This also looks good to me and needs to go into stable.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you,
-
-
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  tools/testing/selftests/ftrace/test.d/functions | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
-> index 8393b1c06027..e4645d5e3126 100644
-> --- a/tools/testing/selftests/ftrace/test.d/functions
-> +++ b/tools/testing/selftests/ftrace/test.d/functions
-> @@ -19,13 +19,13 @@ reset_trigger_file() {
->      # remove action triggers first
->      grep -H ':on[^:]*(' $@ |
->      while read line; do
-> -        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
-> +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
->  	file=`echo $line | cut -f1 -d:`
->  	echo "!$cmd" >> $file
->      done
->      grep -Hv ^# $@ |
->      while read line; do
-> -        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
-> +        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
->  	file=`echo $line | cut -f1 -d:`
->  	echo "!$cmd" > $file
->      done
-> -- 
-> 2.17.0
+>  # Overhead  Command    Shared Object     Symbol
+>  # ........  .........  ................  ..................................
+>  #
+>     41.91%  uname_x_n  [kernel.vmlinux]  [k] syscall_return_via_sysret
+>     24.70%  uname_x_n  [kernel.vmlinux]  [k] entry_SYSCALL_64_trampoline
+>     19.22%  uname_x_n  [kernel.vmlinux]  [k] copy_user_enhanced_fast_string
+>      4.09%  uname_x_n  libc-2.19.so      [.] __GI___uname
+>      3.08%  uname_x_n  [kernel.vmlinux]  [k] do_syscall_64
+>      2.32%  uname_x_n  [kernel.vmlinux]  [k] down_read
+>      2.27%  uname_x_n  ld-2.19.so        [.] _dl_start
+>      1.25%  uname_x_n  [kernel.vmlinux]  [k] up_read
+>      0.99%  uname_x_n  [kernel.vmlinux]  [k] entry_SYSCALL_64
+>      0.16%  uname_x_n  [kernel.vmlinux]  [k] flush_signal_handlers
+>      0.01%  perf       [kernel.vmlinux]  [k] native_sched_clock
+>      0.00%  perf       [kernel.vmlinux]  [k] native_write_msr
 > 
 > 
+> Adrian Hunter (17):
+>       kallsyms: Simplify update_iter_mod()
+>       x86: kcore: Give entry trampolines all the same offset in kcore
+>       perf tools: Use the _stest symbol to identify the kernel map when loading kcore
+>       perf tools: Fix kernel_start for PTI on x86
+>       perf tools: Workaround missing maps for x86 PTI entry trampolines
+>       perf tools: Fix map_groups__split_kallsyms() for entry trampoline symbols
+>       perf tools: Allow for extra kernel maps
+>       perf tools: Create maps for x86 PTI entry trampolines
+>       perf tools: Synthesize and process mmap events for x86 PTI entry trampolines
 
+the perf tools patches look good to me:
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+    Acked-and-tested-by: Jiri Olsa <jolsa@kernel.org>
+
+jirka
+
+>       perf buildid-cache: kcore_copy: Keep phdr data in a list
+>       perf buildid-cache: kcore_copy: Keep a count of phdrs
+>       perf buildid-cache: kcore_copy: Calculate offset from phnum
+>       perf buildid-cache: kcore_copy: Layout sections
+>       perf buildid-cache: kcore_copy: Iterate phdrs
+>       perf buildid-cache: kcore_copy: Get rid of kernel_map
+>       perf buildid-cache: kcore_copy: Copy x86 PTI entry trampoline sections
+>       perf buildid-cache: kcore_copy: Amend the offset of sections that remap kernel text
