@@ -1,151 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeEPKoz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:44:55 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54908 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752205AbeEPKow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:44:52 -0400
-X-Google-Smtp-Source: AB8JxZroQhGi8tAcSpdnbNSR23VdXvBCt7I1eIHIPuZLkiZyrN8J+7QxVEWK6YmT8DYoPGaGiN7PUuXr0lRe8qexrHA=
+        id S1752640AbeEPKpp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:45:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45888 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752450AbeEPKpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:45:42 -0400
+Date: Wed, 16 May 2018 11:45:37 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
+ required
+Message-ID: <20180516104537.GL30654@e110439-lin>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-4-patrick.bellasi@arm.com>
+ <20180513060443.GB64158@joelaf.mtv.corp.google.com>
+ <20180513062538.GA116730@joelaf.mtv.corp.google.com>
+ <20180514163206.GF30654@e110439-lin>
+ <CAKfTPtCrUOJ=RGqrXMTc0_JFHzRjtpydoKmVNGT8KVz19QQ1vA@mail.gmail.com>
+ <20180515145343.GJ30654@e110439-lin>
+ <CAKfTPtAieHNLeeobgRqoB=h4N_BakgbkaiP5g9PDuZAD-tt+ag@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <0000000000008149ec056c4e4289@google.com>
-References: <0000000000008149ec056c4e4289@google.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Wed, 16 May 2018 18:44:51 +0800
-Message-ID: <CADvbK_dj5nLyzZGUmqfiZuoEwDjNxTy_e-VXsEGrWYoGP4m6PA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sctp_packet_transmit
-To: syzbot <syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com>
-Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtAieHNLeeobgRqoB=h4N_BakgbkaiP5g9PDuZAD-tt+ag@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 4:11 PM, syzbot
-<syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    961423f9fcbc Merge branch 'sctp-Introduce-sctp_flush_ctx'
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1366aea7800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=51fb0a6913f757db
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ff0b569fb5111dcd1a36
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+ff0b569fb5111dcd1a36@syzkaller.appspotmail.com
->
-> INFO: rcu_sched self-detected stall on CPU
->         0-....: (1 GPs behind) idle=dae/1/4611686018427387908
-> softirq=93090/93091 fqs=30902
->          (t=125000 jiffies g=51107 c=51106 q=972)
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 24668 Comm: syz-executor6 Not tainted 4.17.0-rc4+ #44
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
->  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
->  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
->  __rcu_pending kernel/rcu/tree.c:3356 [inline]
->  rcu_pending kernel/rcu/tree.c:3401 [inline]
->  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
->  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
->  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
->  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
->  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
->  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
->  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-> RIP: 0010:sctp_v6_xmit+0x259/0x6b0 net/sctp/ipv6.c:219
-> RSP: 0018:ffff8801dae068e8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000000007 RBX: ffff8801bb7ec800 RCX: ffffffff86f1b345
-> RDX: 0000000000000000 RSI: ffffffff86f1b381 RDI: ffff8801b73d97c4
-> RBP: ffff8801dae06988 R08: ffff88019505c300 R09: ffffed003b5c46c2
-> R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff88011fd57300
-> R13: ffff8801bb7ecec8 R14: 0000000000000029 R15: 0000000000000002
->  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:642
->  sctp_outq_flush_transports net/sctp/outqueue.c:1164 [inline]
->  sctp_outq_flush+0x5f5/0x3430 net/sctp/outqueue.c:1212
->  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
-Shocks, this timer event again. Can we try to minimize the repo.syz and
-get a short script, not neccessary to reproduce the issue 100%. we need
-to know what it was doing when this happened.
+On 16-May 09:12, Vincent Guittot wrote:
+> On 15 May 2018 at 16:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > On 15-May 12:19, Vincent Guittot wrote:
+> >> On 14 May 2018 at 18:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> >> > On 12-May 23:25, Joel Fernandes wrote:
+> >> >> On Sat, May 12, 2018 at 11:04:43PM -0700, Joel Fernandes wrote:
+> >> >> > On Thu, May 10, 2018 at 04:05:53PM +0100, Patrick Bellasi wrote:
+> >
+> > [...]
+> >
+> >> >> > One question about this change. In enqueue, throttle and unthrottle - you are
+> >> >> > conditionally calling cpufreq_update_util incase the task was
+> >> >> > visible/not-visible in the hierarchy.
+> >> >> >
+> >> >> > But in dequeue you're unconditionally calling it. Seems a bit inconsistent.
+> >> >> > Is this because of util_est or something? Could you add a comment here
+> >> >> > explaining why this is so?
+> >> >>
+> >> >> The big question I have is incase se != NULL, then its still visible at the
+> >> >> root RQ level.
+> >> >
+> >> > My understanding it that you get !se at dequeue time when we are
+> >> > dequeuing a task from a throttled RQ. Isn't it?
+> >>
+> >> Yes se becomes NULL only when you reach root domain
+> >
+> > Right, my point was mainly what I'm saing below: a task removed from a
+> > "throttled" cfs_rq is _already_ not visible from the root cfs_rq since
+> > it has been de-accounted at throttle_cfs_rq() time.
+> >
+> > [...]
+> >
+> >> > At dequeue time instead, since we certainly removed some estimated
+> >> > utilization, then I unconditionally updated schedutil.
+> >> >
+> >> > HOWEVER, I was not considering these two things:
+> >> >
+> >> > 1. for a task going to sleep, we still have its blocked utilization
+> >> >    accounted in the cfs_rq utilization.
+> >>
+> >> It might be still interesting to reduce the frequency because the
+> >> blocked utilization can be lower than its estimated utilization.
+> >
+> > Good point, this is the case of a task which, in its last activation,
+> > executed for less time then its previous estimated utilization.
+> >
+> > However, it could also very well be the opposite, a task which
+> > executed more then its past activation. In this case a schedutil
+> > update could trigger a frequency increase.
+> > Thus, the scheduler knows that we are going to sleep: does is really
+> > makes sense to send a notification in this case?
+> 
+> Why do you say that we are going to sleep ? a task that does to sleep
+> doesn't mean that cpu is going to sleep as well
 
-Thanks.
+Yes, sure... that was just an example of a single task running on that
+CPU. If this is not the last task, we will still have a tick in the
+next (e.g.) 4ms... which will give us a better reading for all the
+classes in any case.
 
->  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
->  expire_timers kernel/time/timer.c:1363 [inline]
->  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
->  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
->  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->  invoke_softirq kernel/softirq.c:365 [inline]
->  irq_exit+0x1d1/0x200 kernel/softirq.c:405
->  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
->  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
->  </IRQ>
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
-> [inline]
-> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160
-> [inline]
-> RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0
-> kernel/locking/spinlock.c:184
-> RSP: 0018:ffff880196227328 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: dffffc0000000000 RBX: 0000000000000286 RCX: 0000000000000000
-> RDX: 1ffffffff11a316d RSI: 0000000000000001 RDI: 0000000000000286
-> RBP: ffff880196227338 R08: ffffed003b5c4b81 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801dae25c00
-> R13: ffff8801dae25c80 R14: ffff880196227758 R15: ffff8801dae25c00
->  unlock_hrtimer_base kernel/time/hrtimer.c:887 [inline]
->  hrtimer_start_range_ns+0x692/0xd10 kernel/time/hrtimer.c:1118
->  hrtimer_start_expires include/linux/hrtimer.h:412 [inline]
->  futex_wait_queue_me+0x304/0x820 kernel/futex.c:2517
->  futex_wait+0x450/0x9f0 kernel/futex.c:2645
->  do_futex+0x336/0x27d0 kernel/futex.c:3527
->  __do_sys_futex kernel/futex.c:3587 [inline]
->  __se_sys_futex kernel/futex.c:3555 [inline]
->  __x64_sys_futex+0x46a/0x680 kernel/futex.c:3555
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x455a09
-> RSP: 002b:0000000000a3e938 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: ffffffffffffffda RBX: 0000000000045a9b RCX: 0000000000455a09
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072becc
-> RBP: 000000000072becc R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000a3e940 R11: 0000000000000246 R12: 0000000000000019
-> R13: 0000000000000002 R14: 000000000072bea0 R15: 0000000000045a8f
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+> > To me that's not a policy to choose when it makes sense to change the
+> > frequency, but just the proper definition of when it makes sense to
+> > send a notification.
+> >
+> > IMHO we should better consider not only (and blindly) the utilization
+> > changes but also what the scheduler knows about the status of a task.
+> > Thus: if the utilization change while a task is running, it's worth to
+> > send a notification. While, when a task is done on a CPU and that CPU
+> > is likely going to be idle, then maybe we should skip the
+> > notification.
+> 
+> I don't think so. Depending of the c-state, the power consumption can
+> be impacted and in addition we will have to do the frequency change at
+> wake up
+
+Idle energy impacts more on shallow idle states, but that means that
+(likely) we are also going to sleep for a short amount of time... and
+the we will have a wakeup->enqueue where frequency will be updated
+(eventually).
+
+It seems that a frequency drop at IDLE enter is something which could
+be really beneficial only if the blocked utilization is way smaller
+then the estimated one. Thus, the idea to send a schedutil
+notification with an explicit SCHED_CPUFREQ_IDLE flag could help in
+supporting a proper decision policy from the schedutil side.
+
+[...]
+
+> > That was not my thinking. What I wanted to say is just that we should
+> > send notification when it makes really sense, because we have the most
+> > valuable information to pass.
+> >
+> > Thus, notifying schedutil when we update the RQ utilization is a bit
+> > of a greedy approach with respect to the information the scheduler has.
+> >
+> > In the migration example above:
+> > - first we update the RQ utilization
+> > - then we actually remove from the RQ the utilization of the migrated
+> >   task
+> > If we notify schedutil at the first step we are more likely to pass an
+> > already outdated information, since from the scheduler standpoint we
+> > know that we are going to reduce the CPU utilization quite soon.
+> > Thus, would it not be better to defer the notification at detach time?
+> 
+> better or not I would say that this depends of the platform, the cost
+> of changing the frequency, how many OPP there are and the gap between
+> these OPP ...
+
+Yes, that decision can be supported by the additional hint provided by
+the new flag.
+
+> > After all that's the original goal of this patch
+> >
+> >> I agree that some scheduling events give higher chances of a
+> >> sustainable utilization level and we should favor these events when
+> >> the frequency change is costly but I'm not sure that we should remove
+> >> all other opportunity to udjust the frequency to the current
+> >> utilization level when the cost is low or negligible.
+> >
+> > Maybe we can try to run hackbench to quantify the overhead we add with
+> > useless schedutil updates. However, my main concerns is that if we
+> > want a proper decoupling between the scheduler and schedutil, then we
+> > also have to ensure that we callback for updates only when it really
+> > makes sense.
+> >
+> > Otherwise, the risk is that the schedutil policy will take decisions
+> > based on wrong assumptions like: ok, let's increase the OPP (since I
+> > can now and it's cheap) without knowing that the CPU is instead going
+> > to be almost empty or even IDLE.
+> >
+> >> Can't we classify the utilization events into some kind of major and
+> >> minor changes ?
+> >
+> > Doesn't a classification itself looks more like a policy?
+> >
+> > Maybe we can consider it, but still I think we should be able to find
+> > when the scheduler has the most accurate and updated information about
+> > the tasks actually RUNNABLE on a CPU and at that point send a
+> > notification to schedutil.
+> >
+> > IMO there are few small events when the utilization could have big
+> > changes: and these are wakeups (because of util_est) and migrations.
+> 
+> This 2 events looks very few
+> 
+> > For all the rest, the tick should be a good enough update rate,
+> > considering also that, even at 250Hz, in 4ms PELT never build up more
+> > then ~8%.
+> 
+> And at 100HZ which is default for arm32, it's almost 20%
+
+Sure, 250Hz is the default for arm64, but still... 8-20% change is the
+worst case where you have to ramp-up from 0: a task which toggle
+between being small and big, which sounds also more likely to be a
+theoretical case. Is there any other case?
+
+Otherwise, for pretty much periodic tasks, util_est will give you the
+right utilization for each activation. While new tasks always start
+with a fraction of the spare utilization, isn't it?
+
+Thus the tick seems to be "mainly" a fallback mechanism to follow the
+utilization increase for tasks changing their behaviors.
+
+Moreover, if your task is running for 10ms, on an Android system,
+where usually you have 16ms periods, then it's a pretty big one (~60%)
+and thus your utilization increase even slower: in 10ms you can build
+up only 8% utilization.
+
+All that to say that, excluding few corner cases, likely a tick based
+update should be frequent enough... and I'm not factoring in here all
+the approximation we have in PELT regarding the proper evaluation of
+how big a task is... having more frequent updates to me it seems
+over-engineering the solution thus introducing overheads without
+clear benefits.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
