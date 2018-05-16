@@ -1,158 +1,92 @@
-Return-Path: <linux+gregkh=linuxfoundation.org@armlinux.org.uk>
-X-Google-Smtp-Source: AB8JxZpwHz9JZb8efv8SkhmmqM9nvGlvkCeTO7F+SxY0aDS+raPMMfRZ+aEW84RHhzE4tZZsp8yQ
-ARC-Seal: i=1; a=rsa-sha256; t=1526391738; cv=none;
+Return-Path: <ulf.hansson@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526461027; cv=none;
         d=google.com; s=arc-20160816;
-        b=bkZfB+tJMbgCSSTFUdqRnozGkadwMvgpxmg8ZmRLFrXt/3beU568dkzRNpzP11A5IG
-         KA2W5MY/a/XvtFq9WeWHnVnDpoiIhh3u8Vlj0d1iW9d2RNAHW6IyPmQZAPP9i+nrblfK
-         pmErd0vz2ZPBnIRl7lhhJqeaJjvW+Pe3TMaQH326TY1vggUa6+j43xa9e3HFCOAHThR3
-         LbmpvpB7X6PEfcNXQ8e/bq7W2qQdQYMhbsRiiNilCOSC5Q0FKbBYtmGfViwtoX+hjNC3
-         bzY3fs5Axfg8jvOHqSG9Z+e0o5ucBNacyl4WK8FLaP/9PulMcK/Rh2UdD60wLNt+Eyn3
-         N6uQ==
+        b=VL3Xy0YAV5mVN/2Ctp0kwL8OLmNcJspgUElNSvV/V4SxglZLYcJfzsHnwfJHfEsiDt
+         8QtsmI7NafB4rBZElzr2dyMZ+D/9Tv8n2O/iRVzEaf3jHF4fAmBKJogJ1BpUmZrRXlZi
+         OMVHHNesFqLgLRpp8tdHa4EnTJUYAFN3iXFftbcsr1Sq+WOhcsWkJVhnya28j0GkHiXM
+         6CbIWqKQn1BSMWJRwygw22AicZmhz1SYG/+gQhbafa6Bi/eR9+RrD/oQFk7NKqWbB9NN
+         sZ/XhBS6JEcseGgUP9e1I0Sw6h3SwEK49taHSo/zIHM7HAwaHsMXLk8wQX+OcQtK/3Lx
+         eX9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:user-agent:in-reply-to:content-disposition:mime-version
-         :references:message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=QJhMVymbQTlB46wK54wC4bG5pUIkcRi06zZuWfkhE1g=;
-        b=ZMSUWbY74tSBr4niVbDr8rBECyRV1biiEar2FpmC2xtB8Qq562FHf6aFCfHzRW+51y
-         zbIWgoPXLmHJ9cQ5NN3eaXujM+g+SMwrj30OKT8EBcnyaQv7y9ZrsYTSCaUfMwimReNe
-         x8BeGU4BzLllVRsOcZ9qgALHs2efwgAgyJ1BnkCRtqomRni2kc77w2FcK73Fep/5Y4d0
-         hrG10zFKghtAkFjYhxwdoVroS8FCx3nXtCbHITZxBDuqslE/lPdY8ayt/VWhmAcxfYJb
-         rRu3yT5aRG9DfNsP1QqjemscozGw7MOSFB5VyA22bvqlst12VtPGJnfAUHt8wAZ/g6LO
-         DuJw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=iB89V2PEaH5EFP05PDi1KadEsqPBb9ENpiyO9YUItDU=;
+        b=MHqw7OZMfVRGXIjybL+Azl77CNRHrMrpcCoBRq2ptBQU0TC4vkZ6lVUH3XgcsrKQ9V
+         qYUDmyDwdgqviON/nT/2aat5lFjRAjqgYyTXzimasGLttmpFnvwL2DGAavV3tschnff7
+         pg7RGjmLt370vqj+jgjaV64yjmwiBMqTTH21wuR17VMxO7FX9w3oLQ4YFCSR1OnNN0a2
+         XQFwTsdG6p+azkh7gBLV6XP7rX2pK1GPZhjRP1fXywL4k9Dl9sIJm2zCLZs9l22I+5jJ
+         f6npixSwbDrFUyFzcJWa8LkWtJYdzLAbjYVZbFOUtamVonoMLsU90Zgj8K7xy6uO+9Od
+         kdSA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=qVkgV8W1;
-       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
+       dkim=pass header.i=@linaro.org header.s=google header.b=FmBo/Jd+;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=qVkgV8W1;
-       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
-Date: Tue, 15 May 2018 14:41:45 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kim Phillips <kim.phillips@arm.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
+       dkim=pass header.i=@linaro.org header.s=google header.b=FmBo/Jd+;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZrxxVMCKIZU9dNVBZHVWPQnVvCmuAfdTXa4w2sEfoabtqNXmB/GmdBRfYhMk4jYwm0yLVmSM9fGYFbrpHjBd1M=
+MIME-Version: 1.0
+In-Reply-To: <20180515134144.GF16141@n2100.armlinux.org.uk>
+References: <20180508140628.f30774c70c4c481bff3f8000@arm.com>
+ <CAPDyKFqagt5zhz-8hLSXOqofv-nBqg4i-EVjA=UV3Jfi4zktKg@mail.gmail.com> <20180515134144.GF16141@n2100.armlinux.org.uk>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 16 May 2018 10:57:06 +0200
+Message-ID: <CAPDyKFp-CRiUJq-kS5GqguncaEJE7wBsTHy_orQO_rmS-xzgBA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] amba: Export amba_bustype
+To: Russell King - ARM Linux <linux@armlinux.org.uk>, Kim Phillips <kim.phillips@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Gargi Sharma <gs051095@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kirill Tkhai <ktkhai@virtuozzo.com>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	David Howells <dhowells@redhat.com>, Eric Auger <eric.auger@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Gargi Sharma <gs051095@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>, Oleg Nesterov <oleg@redhat.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>, Rik van Riel <riel@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>, Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
 	Linux ARM <linux-arm-kernel@lists.infradead.org>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] amba: Export amba_bustype
-Message-ID: <20180515134144.GF16141@n2100.armlinux.org.uk>
-References: <20180508140628.f30774c70c4c481bff3f8000@arm.com>
- <CAPDyKFqagt5zhz-8hLSXOqofv-nBqg4i-EVjA=UV3Jfi4zktKg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqagt5zhz-8hLSXOqofv-nBqg4i-EVjA=UV3Jfi4zktKg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599923962072715113?=
-X-GMAIL-MSGID: =?utf-8?q?1600537743260441922?=
+X-GMAIL-MSGID: =?utf-8?q?1600610397713452282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 08:59:02AM +0200, Ulf Hansson wrote:
-> On 8 May 2018 at 21:06, Kim Phillips <kim.phillips@arm.com> wrote:
-> > This patch is provided in the context of allowing the Coresight driver
-> > subsystem to be loaded as modules.  Coresight uses amba_bus in its call
-> > to bus_find_device() in of_coresight_get_endpoint_device() when
-> > searching for a configurable endpoint device.  This patch allows
-> > Coresight to reference amba_bustype when built as a module.
-> 
-> Sounds like you are fixing a bug, don't your want this to go for
-> stable and then also add a fixes tag?
+On 15 May 2018 at 15:41, Russell King - ARM Linux <linux@armlinux.org.uk> wrote:
+> On Tue, May 15, 2018 at 08:59:02AM +0200, Ulf Hansson wrote:
+>> On 8 May 2018 at 21:06, Kim Phillips <kim.phillips@arm.com> wrote:
+>> > This patch is provided in the context of allowing the Coresight driver
+>> > subsystem to be loaded as modules.  Coresight uses amba_bus in its call
+>> > to bus_find_device() in of_coresight_get_endpoint_device() when
+>> > searching for a configurable endpoint device.  This patch allows
+>> > Coresight to reference amba_bustype when built as a module.
+>>
+>> Sounds like you are fixing a bug, don't your want this to go for
+>> stable and then also add a fixes tag?
+>
+> What bug is this fixing exactly that would qualify it for stable
+> backporting?
 
-What bug is this fixing exactly that would qualify it for stable
-backporting?
+That was my question, as when reading the changelog of $subject patch,
+this isn't clear to me.
 
-The lack of an export is never a bug unless there is some existing
-user which requires it.  This is not the case here.
+>
+> The lack of an export is never a bug unless there is some existing
+> user which requires it.  This is not the case here.
+>
+> What Kim is doing in his new patch series is making Coresight - which
+> is currently only available as either disabled or built-in - possible
+> to be loaded as a module.  This is a new feature, and in the process
+> of creating this new feature, Kim needs a symbol that wasn't previously
+> needed to be exported.
 
-What Kim is doing in his new patch series is making Coresight - which
-is currently only available as either disabled or built-in - possible
-to be loaded as a module.  This is a new feature, and in the process
-of creating this new feature, Kim needs a symbol that wasn't previously
-needed to be exported.
+Thanks for clarifying, I did not review the entire series. The change
+make perfect sense, no objections - and of course I agree it's not a
+bug fix.
 
-I think it would be hard to argue that Coresight not being available
-as a module is a bug worthy of backporting to older kernels.
+[...]
 
-Therefore, it is not a bug, and it certainly does not qualify for
-backporting to stable trees:
-
- - It must be obviously correct and tested.
-
-Probably.
-
- - It cannot be bigger than 100 lines, with context.
-
-Is.
-
- - It must fix only one thing.
-
-Does.
-
- - It must fix a real bug that bothers people (not a, "This could be a
-   problem..." type thing).
-
-Nope.
-
- - It must fix a problem that causes a build error (but not for things
-   marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
-   security issue, or some "oh, that's not good" issue.  In short, something
-   critical.
-
-Nope, not in any stable tree.
-
- - Serious issues as reported by a user of a distribution kernel may also
-   be considered if they fix a notable performance or interactivity issue.
-   As these fixes are not as obvious and have a higher risk of a subtle
-   regression they should only be submitted by a distribution kernel
-   maintainer and include an addendum linking to a bugzilla entry if it
-   exists and additional information on the user-visible impact.
-
-Hasn't been.
-
- - New device IDs and quirks are also accepted.
-
-Is not that.
-
- - No "theoretical race condition" issues, unless an explanation of how the
-   race can be exploited is also provided.
-
-Is not that.
-
- - It cannot contain any "trivial" fixes in it (spelling changes,
-   whitespace cleanups, etc).
-
-Doesn't (so okay.)
-
- - It must follow the
-   :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-   rules.
-
-Does.
-
- - It or an equivalent fix must already exist in Linus' tree (upstream).
-
-Eventually.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Kind regards
+Uffe
