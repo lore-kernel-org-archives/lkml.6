@@ -1,47 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751319AbeEPRaT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:30:19 -0400
-Received: from verein.lst.de ([213.95.11.211]:48802 "EHLO newverein.lst.de"
+        id S1751467AbeEPRcb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:32:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750806AbeEPRaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:30:17 -0400
-Date: Wed, 16 May 2018 19:34:45 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 14/14] mm: turn on vm_fault_t type checking
-Message-ID: <20180516173445.GA6088@lst.de>
-References: <20180516054348.15950-1-hch@lst.de> <20180516054348.15950-15-hch@lst.de> <20180516150829.GA4904@magnolia>
+        id S1750806AbeEPRca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 13:32:30 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516150829.GA4904@magnolia>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+To: Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526483653.2897.62.camel@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+ <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+ <1526483653.2897.62.camel@baylibre.com>
+Message-ID: <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+Date: Wed, 16 May 2018 10:32:28 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GHWaVZ022229
 
-On Wed, May 16, 2018 at 08:08:29AM -0700, Darrick J. Wong wrote:
-> Uh, we're changing function signatures /and/ redefinining vm_fault_t?
-> All in the same 90K patch?
+Quoting Jerome Brunet (2018-05-16 08:14:13)
+> On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
+> > Quoting Jerome Brunet (2018-05-16 01:50:40)
+> > > Replace every license notices in drivers/clk/meson by SPDX license
+> > > identifiers, as described in license-rules.rst
+> > > 
+> > > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > ---
+> > 
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > 
+> > I take it this will come through a PR? Otherwise I can apply it to
+> > clk-meson branch.
 > 
-> I /was/ expecting a series of "convert XXXXX and all callers/users"
-> patches followed by a trivial one to switch the definition, not a giant
-> pile of change.  FWIW I don't mind so much if you make a patch
-> containing a change for some super-common primitive and a hojillion
-> little diff hunks tree-wide, but only one logical change at a time for a
-> big patch, please...
+> We may have a few other patches coming this week. I was planning on making
+> another PR sometime next week, if this is OK with you.
 > 
-> I quite prefer seeing the whole series from start to finish all packaged
-> up in one series, but wow this was overwhelming. :/
 
-Another vote to split the change of the typedef, ok I get the message..
+Sounds fine. Thanks.
