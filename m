@@ -1,56 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751879AbeEPVdX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 17:33:23 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:38429 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbeEPVdV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 17:33:21 -0400
-X-Google-Smtp-Source: AB8JxZpADwIXilGcUzr3wIEjs7qCgL289A8kAwe3kd/wqD0BzBSONZe0YsmIjR9Wb71w0lMgv0r7FA==
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Keith Busch <keith.busch@intel.com>, Sinan Kaya <okaya@codeaurora.org>,
-        Dongdong Liu <liudongdong3@huawei.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: DPC: Clear AER status bits before disabling port containment
-Date: Wed, 16 May 2018 16:33:02 -0500
-Message-Id: <20180516213306.27027-1-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        id S1751977AbeEPVd6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 17:33:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55078 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750953AbeEPVd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 17:33:57 -0400
+Date: Wed, 16 May 2018 16:33:55 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>
+Subject: Re: [PATCH 01/11] perf tests parse-events: Add intel_pt parse test
+Message-Id: <20180516163355.d8e4c669ad29d416e9ffb13e@arm.com>
+In-Reply-To: <20180516144908.22212-2-acme@kernel.org>
+References: <20180516144908.22212-1-acme@kernel.org>
+        <20180516144908.22212-2-acme@kernel.org>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AER status bits are sticky, and they survive system resets. Downstream
-devices are usually taken care of after re-enumerating the downstream
-busses, as the AER bits are cleared during probe().
+On Wed, 16 May 2018 11:48:58 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-However, nothing clears the bits of the port which contained the
-error. These sticky bits may leave some BIOSes to think that something
-bad happened, and print ominous messages on next boot. To prevent this,
-tidy up the AER status bits before releasing containment.
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> To avoid regressions such as the one fixed by 4a35a9027f64 ("Revert
+> "perf pmu: Fix pmu events parsing rule""), where '-e intel_pt//u' got
+> broken, with this new entry in this 'perf tests' subtest, we would have
+> caught it before pushing upstream.
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: David Ahern <dsahern@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Wang Nan <wangnan0@huawei.com>
+> Link: https://lkml.kernel.org/n/tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- drivers/pci/pcie/dpc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This causes a SEGV on Arm, and an Intel box without Intel-PT h/w:
 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 8c57d607e603..bf82d6936556 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -112,6 +112,10 @@ static void dpc_work(struct work_struct *work)
- 		dpc->rp_pio_status = 0;
- 	}
- 
-+	/* DPC event made a mess of our AER status bits. Clean them up. */
-+	pci_cleanup_aer_error_status_regs(pdev);
-+	/* TODO: Should we also use aer_print_error to log the event? */
-+
- 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
- 		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
- 
--- 
-2.14.3
+(gdb) run test -F -v 6
+Starting program: /home/kimphi01/git/linux-perf-acme/tools/perf/perf test -F -v 6
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+ 6: Parse event definition strings             :
+--- start ---
+running test 0 'syscalls:sys_enter_openat'
+Using CPUID GenuineIntel-6-3C
+<SNIP>
+running test 51 'L1-dcache-misses/name=cachepmu/'
+running test 52 'intel_pt//u'
+
+Program received signal SIGSEGV, Segmentation fault.
+__GI___vasprintf_chk (result_ptr=0x8, flags=1, format=<optimized out>, args=args@entry=0x7fffffffbf30)
+    at vasprintf_chk.c:88
+88	vasprintf_chk.c: No such file or directory.
+(gdb) bt
+#0  __GI___vasprintf_chk (result_ptr=0x8, flags=1, format=<optimized out>, args=args@entry=0x7fffffffbf30)
+    at vasprintf_chk.c:88
+#1  0x00007ffff6456e6f in __asprintf_chk (result_ptr=result_ptr@entry=0x8, flags=flags@entry=1, 
+    format=format@entry=0x555555992e80 "Cannot find PMU `%s'. Missing kernel support?") at asprintf_chk.c:32
+#2  0x0000555555766836 in asprintf (__fmt=0x555555992e80 "Cannot find PMU `%s'. Missing kernel support?", __ptr=0x8)
+    at /usr/include/x86_64-linux-gnu/bits/stdio2.h:178
+#3  parse_events_add_pmu (parse_state=parse_state@entry=0x7fffffffdda0, list=list@entry=0x555555e137d0, 
+    name=0x5555563e84e0 "intel_pt", head_config=0x0, auto_merge_stats=auto_merge_stats@entry=false, 
+    use_alias=use_alias@entry=false) at util/parse-events.c:1236
+#4  0x00005555557aaaae in parse_events_parse (_parse_state=_parse_state@entry=0x7fffffffdda0, scanner=0x555555d38c40)
+    at util/parse-events.y:235
+#5  0x0000555555761ccf in parse_events__scanner (start_token=258, parse_state=0x7fffffffdda0, str=<optimized out>)
+    at util/parse-events.c:1796
+#6  parse_events (evlist=evlist@entry=0x555555d381f0, str=<optimized out>, err=err@entry=0x0)
+    at util/parse-events.c:1836
+#7  0x000055555571eb65 in test_event (e=0x555555bf4f80 <test.events+1248>, e=0x555555bf4f80 <test.events+1248>)
+    at tests/parse-events.c:1695
+#8  test_events (events=0x555555bf4aa0 <test.events>, cnt=53) at tests/parse-events.c:1717
+#9  test__parse_events (test=<optimized out>, subtest=<optimized out>) at tests/parse-events.c:1837
+#10 0x0000555555716a11 in run_test (subtest=-1, test=0x555555bfca78 <generic_tests+280>) at tests/builtin-test.c:348
+#11 test_and_print (t=t@entry=0x555555bfca78 <generic_tests+280>, force_skip=force_skip@entry=false, 
+    subtest=subtest@entry=-1) at tests/builtin-test.c:378
+#12 0x0000555555717e2f in __cmd_test (skiplist=0x0, argv=0x7fffffffe5c0, argc=1) at tests/builtin-test.c:570
+#13 cmd_test (argc=1, argv=0x7fffffffe5c0) at tests/builtin-test.c:709
+#14 0x0000555555738b41 in run_builtin (p=0x555555bfd848 <commands+552>, argc=4, argv=0x7fffffffe5c0) at perf.c:303
+#15 0x0000555555738e3e in handle_internal_command (argc=4, argv=0x7fffffffe5c0) at perf.c:355
+#16 0x00005555556b3901 in run_argv (argcp=<synthetic pointer>, argv=<synthetic pointer>) at perf.c:399
+#17 main (argc=<optimized out>, argv=0x7fffffffe5c0) at perf.c:543
+(gdb) 
+
+Thanks,
+
+Kim
