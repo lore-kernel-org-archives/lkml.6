@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeEPNMT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:12:19 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:38096 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbeEPNMP (ORCPT
+        id S1752662AbeEPNMd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:12:33 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:42873 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752525AbeEPNM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:12:15 -0400
-X-Google-Smtp-Source: AB8JxZqtKBVzZaKVF7E8viUSSoMXMt6goGQj7zJNJ8e+RMDkW+9fAidFq7TiNUsM8T/4mteeaSCRJCsN7wR2e7gnryw=
+        Wed, 16 May 2018 09:12:29 -0400
+X-Google-Smtp-Source: AB8JxZp/SrUOU+mxQXOZA0xNWkhoaXP4HgiclIVrUAMj2eEoFTEuph/x82eW/hnNxN3EPf3baRB4yW3Pxa0wP8OAVSY=
 MIME-Version: 1.0
-In-Reply-To: <1526375616-16904-2-git-send-email-ilialin@codeaurora.org>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-2-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526375616-16904-14-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-14-git-send-email-ilialin@codeaurora.org>
 From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Wed, 16 May 2018 16:12:13 +0300
-X-Google-Sender-Auth: 9VOxVVVsmrwMp_12bPwWJcn4OCE
-Message-ID: <CAHLCerPDmagNFGdQCP7gKbGBZ5EJ=i7xemV8SFGq1ji+jHSQ2g@mail.gmail.com>
-Subject: Re: [PATCH v7 01/14] soc: qcom: Separate kryo l2 accessors from PMU driver
+Date: Wed, 16 May 2018 16:12:27 +0300
+X-Google-Sender-Auth: _yXxTM_y2fvatDkcQvpitrXndQo
+Message-ID: <CAHLCerMivA_3sJUAg8syyiP=63SFkZoTb7rPLhG0m2BX39QLOg@mail.gmail.com>
+Subject: Re: [PATCH v7 13/14] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
 To: Ilia Lin <ilialin@codeaurora.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
         Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -36,369 +36,718 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
-> The driver provides kernel level API for other drivers
-> to access the MSM8996 L2 cache registers.
-> Separating the L2 access code from the PMU driver and
-> making it public to allow other drivers use it.
-> The accesses must be separated with a single spinlock,
-> maintained in this driver.
+> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> that have KRYO processors, the CPU ferequencies subset and voltage value
+
+s/ferequencies/frequency
+
+> of each OPP varies based on the silicon variant in use.
+> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 >
+> This change adds documentation.
+
+Change this to actually document the extension of the op-v2 binding
+with a list of compatible HW.
+
 > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/perf/Kconfig                 |  1 +
->  drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
->  drivers/soc/qcom/Kconfig             |  3 ++
->  drivers/soc/qcom/Makefile            |  1 +
->  drivers/soc/qcom/kryo-l2-accessors.c | 65 ++++++++++++++++++++++++++
->  include/soc/qcom/kryo-l2-accessors.h | 21 +++++++++
->  6 files changed, 115 insertions(+), 66 deletions(-)
->  create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
->  create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+>  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+>  1 file changed, 680 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
 >
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 28bb5a0..561252a 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -69,6 +69,7 @@ config HISI_PMU
->  config QCOM_L2_PMU
->         bool "Qualcomm Technologies L2-cache PMU"
->         depends on ARCH_QCOM && ARM64 && ACPI
-> +       select QCOM_KRYO_L2_ACCESSORS
->           help
->           Provides support for the L2 cache performance monitor unit (PMU)
->           in Qualcomm Technologies processors.
-> diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-> index 842135c..cc31f51 100644
-> --- a/drivers/perf/qcom_l2_pmu.c
-> +++ b/drivers/perf/qcom_l2_pmu.c
-> @@ -31,6 +31,7 @@
->  #include <asm/barrier.h>
->  #include <asm/local64.h>
->  #include <asm/sysreg.h>
-> +#include <soc/qcom/kryo-l2-accessors.h>
->
->  #define MAX_L2_CTRS             9
->
-> @@ -87,8 +88,6 @@
->  #define L2_COUNTER_RELOAD       BIT_ULL(31)
->  #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
->
-> -#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-> -#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
->
->  #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
->
-> @@ -107,48 +106,7 @@
->  #define L2_EVENT_STREX                     0x421
->  #define L2_EVENT_CLREX                     0x422
->
-> -static DEFINE_RAW_SPINLOCK(l2_access_lock);
->
-> -/**
-> - * set_l2_indirect_reg: write value to an L2 register
-> - * @reg: Address of L2 register.
-> - * @value: Value to be written to register.
-> - *
-> - * Use architecturally required barriers for ordering between system register
-> - * accesses
-> - */
-> -static void set_l2_indirect_reg(u64 reg, u64 val)
-> -{
-> -       unsigned long flags;
-> -
-> -       raw_spin_lock_irqsave(&l2_access_lock, flags);
-> -       write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> -       isb();
-> -       write_sysreg_s(val, L2CPUSRDR_EL1);
-> -       isb();
-> -       raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-> -}
-> -
-> -/**
-> - * get_l2_indirect_reg: read an L2 register value
-> - * @reg: Address of L2 register.
-> - *
-> - * Use architecturally required barriers for ordering between system register
-> - * accesses
-> - */
-> -static u64 get_l2_indirect_reg(u64 reg)
-> -{
-> -       u64 val;
-> -       unsigned long flags;
-> -
-> -       raw_spin_lock_irqsave(&l2_access_lock, flags);
-> -       write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> -       isb();
-> -       val = read_sysreg_s(L2CPUSRDR_EL1);
-> -       raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-> -
-> -       return val;
-> -}
->
->  struct cluster_pmu;
->
-> @@ -219,28 +177,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
->  static void cluster_pmu_reset(void)
->  {
->         /* Reset all counters */
-> -       set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
-> -       set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
-> -       set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
-> -       set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
-> +       kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
-> +       kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
-> +       kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
-> +       kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
->  }
->
->  static inline void cluster_pmu_enable(void)
->  {
-> -       set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
-> +       kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
->  }
->
->  static inline void cluster_pmu_disable(void)
->  {
-> -       set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
-> +       kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
->  }
->
->  static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
->  {
->         if (idx == l2_cycle_ctr_idx)
-> -               set_l2_indirect_reg(L2PMCCNTR, value);
-> +               kryo_l2_set_indirect_reg(L2PMCCNTR, value);
->         else
-> -               set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
-> +               kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
->  }
->
->  static inline u64 cluster_pmu_counter_get_value(u32 idx)
-> @@ -248,46 +206,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
->         u64 value;
->
->         if (idx == l2_cycle_ctr_idx)
-> -               value = get_l2_indirect_reg(L2PMCCNTR);
-> +               value = kryo_l2_get_indirect_reg(L2PMCCNTR);
->         else
-> -               value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
-> +               value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
->
->         return value;
->  }
->
->  static inline void cluster_pmu_counter_enable(u32 idx)
->  {
-> -       set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
-> +       kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
->  }
->
->  static inline void cluster_pmu_counter_disable(u32 idx)
->  {
-> -       set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
-> +       kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
->  }
->
->  static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
->  {
-> -       set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
-> +       kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
->  }
->
->  static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
->  {
-> -       set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
-> +       kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
->  }
->
->  static inline void cluster_pmu_set_evccntcr(u32 val)
->  {
-> -       set_l2_indirect_reg(L2PMCCNTCR, val);
-> +       kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
->  }
->
->  static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
->  {
-> -       set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
-> +       kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
->  }
->
->  static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
->  {
-> -       set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
-> +       kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
->  }
->
->  static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
-> @@ -303,11 +261,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
->
->         spin_lock_irqsave(&cluster->pmu_lock, flags);
->
-> -       resr_val = get_l2_indirect_reg(L2PMRESR);
-> +       resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
->         resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
->         resr_val |= field;
->         resr_val |= L2PMRESR_EN;
-> -       set_l2_indirect_reg(L2PMRESR, resr_val);
-> +       kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
->
->         spin_unlock_irqrestore(&cluster->pmu_lock, flags);
->  }
-> @@ -323,14 +281,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
->                    L2PMXEVFILTER_ORGFILTER_IDINDEP |
->                    L2PMXEVFILTER_ORGFILTER_ALL;
->
-> -       set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
-> +       kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
->  }
->
->  static inline u32 cluster_pmu_getreset_ovsr(void)
->  {
-> -       u32 result = get_l2_indirect_reg(L2PMOVSSET);
-> +       u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
->
-> -       set_l2_indirect_reg(L2PMOVSCLR, result);
-> +       kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
->         return result;
->  }
->
-> @@ -783,7 +741,7 @@ static int get_num_counters(void)
->  {
->         int val;
->
-> -       val = get_l2_indirect_reg(L2PMCR);
-> +       val = kryo_l2_get_indirect_reg(L2PMCR);
->
->         /*
->          * Read number of counters from L2PMCR and add 1
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 7093fe7..0567dff 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -39,6 +39,9 @@ config QCOM_GSBI
->            functions for connecting the underlying serial UART, SPI, and I2C
->            devices to the output pins.
->
-> +config QCOM_KRYO_L2_ACCESSORS
-> +       bool
-> +
->  config QCOM_MDT_LOADER
->         tristate
->         select QCOM_SCM
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index cbf414c..e4d3f5a 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -14,3 +14,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
->  obj-$(CONFIG_QCOM_SMP2P)       += smp2p.o
->  obj-$(CONFIG_QCOM_SMSM)        += smsm.o
->  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-> +obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=        kryo-l2-accessors.o
-> diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
+> diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
 > new file mode 100644
-> index 0000000..d35a860
+> index 0000000..c2127b9
 > --- /dev/null
-> +++ b/drivers/soc/qcom/kryo-l2-accessors.c
-> @@ -0,0 +1,65 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+> +++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> @@ -0,0 +1,680 @@
+> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+> +===================================
 > +
-
-Get rid of the GPL boilerplate i.e. everything after the Copyright
-line. You only need the SPDX line at the top.
-
-> +#include <linux/spinlock.h>
-> +#include <asm/sysreg.h>
-> +#include <soc/qcom/kryo-l2-accessors.h>
+> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> +that have KRYO processors, the CPU ferequencies subset and voltage value
+> +of each OPP varies based on the silicon variant in use.
+> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> +defines the voltage and frequency value based on the msm-id in SMEM
+> +and speedbin blown in the efuse combination.
+> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> +to provide the OPP framework with required information (existing HW bitmap).
+> +This is used to determine the voltage and frequency value for each OPP of
+> +operating-points-v2 table when it is parsed by the OPP framework.
 > +
-> +#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-> +#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
+> +Required properties:
+> +--------------------
+> +In 'cpus' nodes:
+> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
 > +
-> +static DEFINE_RAW_SPINLOCK(l2_access_lock);
+> +In 'operating-points-v2' table:
+> +- compatible: Should be
+> +       - 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+> +               efuse registers that has information about the
+> +               speedbin that is used to select the right frequency/voltage
+> +               value pair.
+> +               Please refer the for nvmem-cells
+> +               bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
+> +               and also examples below.
 > +
-> +/**
-> + * kryo_l2_set_indirect_reg() - write value to an L2 register
-> + * @reg: Address of L2 register.
-> + * @value: Value to be written to register.
-> + *
-> + * Use architecturally required barriers for ordering between system register
-> + * accesses, and system registers with respect to device memory
-> + */
-> +void kryo_l2_set_indirect_reg(u64 reg, u64 val)
-> +{
-> +       unsigned long flags;
+> +In every OPP node:
+> +- opp-supported-hw: A single 32 bit bitmap value, representing compatible HW.
+> +                   Bitmap:
+> +                       0:      MSM8996 V3, speedbin 0
+> +                       1:      MSM8996 V3, speedbin 1
+> +                       2:      MSM8996 V3, speedbin 2
+> +                       3:      unused
+> +                       4:      MSM8996 SG, speedbin 0
+> +                       5:      MSM8996 SG, speedbin 1
+> +                       6:      MSM8996 SG, speedbin 2
+> +                       7-31:   unused
 > +
-> +       raw_spin_lock_irqsave(&l2_access_lock, flags);
-> +       write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> +       isb();
-> +       write_sysreg_s(val, L2CPUSRDR_EL1);
-> +       isb();
-> +       raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-> +}
-> +EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
+> +Example 1:
+> +---------
 > +
-> +/**
-> + * kryo_l2_get_indirect_reg() - read an L2 register value
-> + * @reg: Address of L2 register.
-> + *
-> + * Use architecturally required barriers for ordering between system register
-> + * accesses, and system registers with respect to device memory
-> + */
-> +u64 kryo_l2_get_indirect_reg(u64 reg)
-> +{
-> +       u64 val;
-> +       unsigned long flags;
+> +       cpus {
+> +               #address-cells = <2>;
+> +               #size-cells = <0>;
 > +
-> +       raw_spin_lock_irqsave(&l2_access_lock, flags);
-> +       write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> +       isb();
-> +       val = read_sysreg_s(L2CPUSRDR_EL1);
-> +       raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+> +               CPU0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo";
+> +                       reg = <0x0 0x0>;
+> +                       enable-method = "psci";
+> +                       clocks = <&kryocc 0>;
+> +                       cpu-supply = <&pm8994_s11_saw>;
+> +                       operating-points-v2 = <&cluster0_opp>;
+> +                       #cooling-cells = <2>;
+> +                       next-level-cache = <&L2_0>;
+> +                       L2_0: l2-cache {
+> +                             compatible = "cache";
+> +                             cache-level = <2>;
+> +                       };
+> +               };
 > +
-> +       return val;
-> +}
-> +EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
-> diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-> new file mode 100644
-> index 0000000..0840e87
-> --- /dev/null
-> +++ b/include/soc/qcom/kryo-l2-accessors.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-
-Get rid of the GPL boilerplate i.e. everything after the Copyright
-line. You only need the SPDX line at the top.
-
-> +#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-> +#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
+> +               CPU1: cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo";
+> +                       reg = <0x0 0x1>;
+> +                       enable-method = "psci";
+> +                       clocks = <&kryocc 0>;
+> +                       cpu-supply = <&pm8994_s11_saw>;
+> +                       operating-points-v2 = <&cluster0_opp>;
+> +                       #cooling-cells = <2>;
+> +                       next-level-cache = <&L2_0>;
+> +               };
 > +
-> +void kryo_l2_set_indirect_reg(u64 reg, u64 val);
-> +u64 kryo_l2_get_indirect_reg(u64 reg);
+> +               CPU2: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo";
+> +                       reg = <0x0 0x100>;
+> +                       enable-method = "psci";
+> +                       clocks = <&kryocc 1>;
+> +                       cpu-supply = <&pm8994_s11_saw>;
+> +                       operating-points-v2 = <&cluster1_opp>;
+> +                       #cooling-cells = <2>;
+> +                       next-level-cache = <&L2_1>;
+> +                       L2_1: l2-cache {
+> +                             compatible = "cache";
+> +                             cache-level = <2>;
+> +                       };
+> +               };
 > +
-> +#endif
+> +               CPU3: cpu@101 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo";
+> +                       reg = <0x0 0x101>;
+> +                       enable-method = "psci";
+> +                       clocks = <&kryocc 1>;
+> +                       cpu-supply = <&pm8994_s11_saw>;
+> +                       operating-points-v2 = <&cluster1_opp>;
+> +                       #cooling-cells = <2>;
+> +                       next-level-cache = <&L2_1>;
+> +               };
+> +
+> +               cpu-map {
+> +                       cluster0 {
+> +                               core0 {
+> +                                       cpu = <&CPU0>;
+> +                               };
+> +
+> +                               core1 {
+> +                                       cpu = <&CPU1>;
+> +                               };
+> +                       };
+> +
+> +                       cluster1 {
+> +                               core0 {
+> +                                       cpu = <&CPU2>;
+> +                               };
+> +
+> +                               core1 {
+> +                                       cpu = <&CPU3>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       cluster0_opp: opp_table0 {
+> +               compatible = "operating-points-v2-kryo-cpu";
+> +               nvmem-cells = <&speedbin_efuse>;
+> +               opp-shared;
+> +
+> +               opp-307200000 {
+> +                       opp-hz = /bits/ 64 <307200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x77>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-384000000 {
+> +                       opp-hz = /bits/ 64 <384000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-422400000 {
+> +                       opp-hz = /bits/ 64 <422400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-460800000 {
+> +                       opp-hz = /bits/ 64 <460800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-480000000 {
+> +                       opp-hz = /bits/ 64 <480000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-537600000 {
+> +                       opp-hz = /bits/ 64 <537600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-556800000 {
+> +                       opp-hz = /bits/ 64 <556800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-614400000 {
+> +                       opp-hz = /bits/ 64 <614400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-652800000 {
+> +                       opp-hz = /bits/ 64 <652800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-691200000 {
+> +                       opp-hz = /bits/ 64 <691200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-729600000 {
+> +                       opp-hz = /bits/ 64 <729600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-768000000 {
+> +                       opp-hz = /bits/ 64 <768000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-844800000 {
+> +                       opp-hz = /bits/ 64 <844800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x77>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-902400000 {
+> +                       opp-hz = /bits/ 64 <902400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-960000000 {
+> +                       opp-hz = /bits/ 64 <960000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-979200000 {
+> +                       opp-hz = /bits/ 64 <979200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1036800000 {
+> +                       opp-hz = /bits/ 64 <1036800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1056000000 {
+> +                       opp-hz = /bits/ 64 <1056000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1113600000 {
+> +                       opp-hz = /bits/ 64 <1113600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1132800000 {
+> +                       opp-hz = /bits/ 64 <1132800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1190400000 {
+> +                       opp-hz = /bits/ 64 <1190400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1209600000 {
+> +                       opp-hz = /bits/ 64 <1209600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1228800000 {
+> +                       opp-hz = /bits/ 64 <1228800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1286400000 {
+> +                       opp-hz = /bits/ 64 <1286400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1324800000 {
+> +                       opp-hz = /bits/ 64 <1324800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x5>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1363200000 {
+> +                       opp-hz = /bits/ 64 <1363200000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x72>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1401600000 {
+> +                       opp-hz = /bits/ 64 <1401600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x5>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1440000000 {
+> +                       opp-hz = /bits/ 64 <1440000000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1478400000 {
+> +                       opp-hz = /bits/ 64 <1478400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x1>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1497600000 {
+> +                       opp-hz = /bits/ 64 <1497600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x4>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1516800000 {
+> +                       opp-hz = /bits/ 64 <1516800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1593600000 {
+> +                       opp-hz = /bits/ 64 <1593600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x71>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1996800000 {
+> +                       opp-hz = /bits/ 64 <1996800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x20>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2188800000 {
+> +                       opp-hz = /bits/ 64 <2188800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x10>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +       };
+> +
+> +       cluster1_opp: opp_table1 {
+> +               compatible = "operating-points-v2-kryo-cpu";
+> +               nvmem-cells = <&speedbin_efuse>;
+> +               opp-shared;
+> +
+> +               opp-307200000 {
+> +                       opp-hz = /bits/ 64 <307200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x77>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-384000000 {
+> +                       opp-hz = /bits/ 64 <384000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-403200000 {
+> +                       opp-hz = /bits/ 64 <403200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-460800000 {
+> +                       opp-hz = /bits/ 64 <460800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-480000000 {
+> +                       opp-hz = /bits/ 64 <480000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-537600000 {
+> +                       opp-hz = /bits/ 64 <537600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-556800000 {
+> +                       opp-hz = /bits/ 64 <556800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-614400000 {
+> +                       opp-hz = /bits/ 64 <614400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-652800000 {
+> +                       opp-hz = /bits/ 64 <652800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-691200000 {
+> +                       opp-hz = /bits/ 64 <691200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-729600000 {
+> +                       opp-hz = /bits/ 64 <729600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-748800000 {
+> +                       opp-hz = /bits/ 64 <748800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-806400000 {
+> +                       opp-hz = /bits/ 64 <806400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-825600000 {
+> +                       opp-hz = /bits/ 64 <825600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-883200000 {
+> +                       opp-hz = /bits/ 64 <883200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-902400000 {
+> +                       opp-hz = /bits/ 64 <902400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-940800000 {
+> +                       opp-hz = /bits/ 64 <940800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-979200000 {
+> +                       opp-hz = /bits/ 64 <979200000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1036800000 {
+> +                       opp-hz = /bits/ 64 <1036800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1056000000 {
+> +                       opp-hz = /bits/ 64 <1056000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1113600000 {
+> +                       opp-hz = /bits/ 64 <1113600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1132800000 {
+> +                       opp-hz = /bits/ 64 <1132800000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1190400000 {
+> +                       opp-hz = /bits/ 64 <1190400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1209600000 {
+> +                       opp-hz = /bits/ 64 <1209600000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1248000000 {
+> +                       opp-hz = /bits/ 64 <1248000000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1286400000 {
+> +                       opp-hz = /bits/ 64 <1286400000>;
+> +                       opp-microvolt = <905000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1324800000 {
+> +                       opp-hz = /bits/ 64 <1324800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1363200000 {
+> +                       opp-hz = /bits/ 64 <1363200000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1401600000 {
+> +                       opp-hz = /bits/ 64 <1401600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1440000000 {
+> +                       opp-hz = /bits/ 64 <1440000000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1478400000 {
+> +                       opp-hz = /bits/ 64 <1478400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1516800000 {
+> +                       opp-hz = /bits/ 64 <1516800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1555200000 {
+> +                       opp-hz = /bits/ 64 <1555200000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1593600000 {
+> +                       opp-hz = /bits/ 64 <1593600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1632000000 {
+> +                       opp-hz = /bits/ 64 <1632000000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1670400000 {
+> +                       opp-hz = /bits/ 64 <1670400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1708800000 {
+> +                       opp-hz = /bits/ 64 <1708800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1747200000 {
+> +                       opp-hz = /bits/ 64 <1747200000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x70>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1785600000 {
+> +                       opp-hz = /bits/ 64 <1785600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x7>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1804800000 {
+> +                       opp-hz = /bits/ 64 <1804800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x6>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1824000000 {
+> +                       opp-hz = /bits/ 64 <1824000000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x71>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1900800000 {
+> +                       opp-hz = /bits/ 64 <1900800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x74>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1920000000 {
+> +                       opp-hz = /bits/ 64 <1920000000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x1>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1977600000 {
+> +                       opp-hz = /bits/ 64 <1977600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x30>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-1996800000 {
+> +                       opp-hz = /bits/ 64 <1996800000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x1>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2054400000 {
+> +                       opp-hz = /bits/ 64 <2054400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x30>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2073600000 {
+> +                       opp-hz = /bits/ 64 <2073600000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x1>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2150400000 {
+> +                       opp-hz = /bits/ 64 <2150400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x31>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2246400000 {
+> +                       opp-hz = /bits/ 64 <2246400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x10>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp-2342400000 {
+> +                       opp-hz = /bits/ 64 <2342400000>;
+> +                       opp-microvolt = <1140000 905000 1140000>;
+> +                       opp-supported-hw = <0x10>;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +       };
+> +
+> +....
+> +
+> +reserved-memory {
+> +       #address-cells = <2>;
+> +       #size-cells = <2>;
+> +       ranges;
+> +....
+> +       smem_mem: smem-mem@86000000 {
+> +               reg = <0x0 0x86000000 0x0 0x200000>;
+> +               no-map;
+> +       };
+> +....
+> +};
+> +
+> +smem {
+> +       compatible = "qcom,smem";
+> +       memory-region = <&smem_mem>;
+> +       hwlocks = <&tcsr_mutex 3>;
+> +};
+> +
+> +soc {
+> +....
+> +       qfprom: qfprom@74000 {
+> +               compatible = "qcom,qfprom";
+> +               reg = <0x00074000 0x8ff>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ....
+> +               speedbin_efuse: speedbin@133 {
+> +                       reg = <0x133 0x1>;
+> +                       bits = <5 3>;
+> +               };
+> +       };
+> +};
 > --
 > 1.9.1
 >
