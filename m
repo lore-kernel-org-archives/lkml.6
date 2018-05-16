@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752215AbeEPPVy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 11:21:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58224 "EHLO mx1.redhat.com"
+        id S1752272AbeEPPWR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 11:22:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58218 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752022AbeEPPVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 11:21:51 -0400
+        id S1752148AbeEPPVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 11:21:49 -0400
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -17,67 +17,217 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/8] KVM: x86: hyperv: declare KVM_CAP_HYPERV_TLBFLUSH capability
-Date: Wed, 16 May 2018 17:21:31 +0200
-Message-Id: <20180516152131.30689-9-vkuznets@redhat.com>
+Subject: [PATCH v4 7/8] KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE}_EX implementation
+Date: Wed, 16 May 2018 17:21:30 +0200
+Message-Id: <20180516152131.30689-8-vkuznets@redhat.com>
 In-Reply-To: <20180516152131.30689-1-vkuznets@redhat.com>
 References: <20180516152131.30689-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need a new capability to indicate support for the newly added
-HvFlushVirtualAddress{List,Space}{,Ex} hypercalls. Upon seeing this
-capability, userspace is supposed to announce PV TLB flush features
-by setting the appropriate CPUID bits (if needed).
+Implement HvFlushVirtualAddress{List,Space}Ex hypercalls in the same way
+we've implemented non-EX counterparts.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- Documentation/virtual/kvm/api.txt | 9 +++++++++
- arch/x86/kvm/x86.c                | 1 +
- include/uapi/linux/kvm.h          | 1 +
- 3 files changed, 11 insertions(+)
+ arch/x86/kvm/hyperv.c | 110 ++++++++++++++++++++++++++++++++++++++++++++------
+ arch/x86/kvm/trace.h  |  27 +++++++++++++
+ 2 files changed, 125 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 758bf403a169..c563da4244da 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4603,3 +4603,12 @@ Architectures: s390
- This capability indicates that kvm will implement the interfaces to handle
- reset, migration and nested KVM for branch prediction blocking. The stfle
- facility 82 should not be provided to the guest without this capability.
-+
-+8.14 KVM_CAP_HYPERV_TLBFLUSH
-+
-+Architectures: x86
-+
-+This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
-+hypercalls:
-+HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
-+HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 87e480521550..d523b124656a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2874,6 +2874,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_HYPERV_SYNIC2:
- 	case KVM_CAP_HYPERV_VP_INDEX:
- 	case KVM_CAP_HYPERV_EVENTFD:
-+	case KVM_CAP_HYPERV_TLBFLUSH:
- 	case KVM_CAP_PCI_SEGMENT:
- 	case KVM_CAP_DEBUGREGS:
- 	case KVM_CAP_X86_ROBUST_SINGLESTEP:
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b02c41e53d56..b252ceb3965c 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -948,6 +948,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_S390_BPB 152
- #define KVM_CAP_GET_MSR_FEATURES 153
- #define KVM_CAP_HYPERV_EVENTFD 154
-+#define KVM_CAP_HYPERV_TLBFLUSH 155
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 0d916606519d..b298391f0f93 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1242,31 +1242,102 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+ 		return kvm_hv_get_msr(vcpu, msr, pdata);
+ }
  
- #ifdef KVM_CAP_IRQ_ROUTING
++static __always_inline int get_sparse_bank_no(u64 valid_bank_mask, int bank_no)
++{
++	int i = 0, j;
++
++	if (!(valid_bank_mask & BIT_ULL(bank_no)))
++		return -1;
++
++	for (j = 0; j < bank_no; j++)
++		if (valid_bank_mask & BIT_ULL(j))
++			i++;
++
++	return i;
++}
++
+ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+-			    u16 rep_cnt)
++			    u16 rep_cnt, bool ex)
+ {
+ 	struct kvm *kvm = current_vcpu->kvm;
+ 	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
++	struct hv_tlb_flush_ex flush_ex;
+ 	struct hv_tlb_flush flush;
+ 	struct kvm_vcpu *vcpu;
+ 	unsigned long vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)] = {0};
+-	int i;
++	unsigned long valid_bank_mask;
++	u64 sparse_banks[64];
++	int sparse_banks_len, i;
++	bool all_cpus;
  
+-	if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
+-		return HV_STATUS_INVALID_HYPERCALL_INPUT;
++	if (!ex) {
++		if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
++			return HV_STATUS_INVALID_HYPERCALL_INPUT;
+ 
+-	trace_kvm_hv_flush_tlb(flush.processor_mask, flush.address_space,
+-			       flush.flags);
++		trace_kvm_hv_flush_tlb(flush.processor_mask,
++				       flush.address_space, flush.flags);
++
++		sparse_banks[0] = flush.processor_mask;
++		all_cpus = flush.flags & HV_FLUSH_ALL_PROCESSORS;
++	} else {
++		if (unlikely(kvm_read_guest(kvm, ingpa, &flush_ex,
++					    sizeof(flush_ex))))
++			return HV_STATUS_INVALID_HYPERCALL_INPUT;
++
++		trace_kvm_hv_flush_tlb_ex(flush_ex.hv_vp_set.valid_bank_mask,
++					  flush_ex.hv_vp_set.format,
++					  flush_ex.address_space,
++					  flush_ex.flags);
++
++		valid_bank_mask = flush_ex.hv_vp_set.valid_bank_mask;
++		all_cpus = flush_ex.hv_vp_set.format !=
++			HV_GENERIC_SET_SPARSE_4K;
++
++		sparse_banks_len = bitmap_weight(&valid_bank_mask, 64) *
++			sizeof(sparse_banks[0]);
++
++		if (!sparse_banks_len && !all_cpus)
++			goto ret_success;
++
++		if (!all_cpus &&
++		    kvm_read_guest(kvm,
++				   ingpa + offsetof(struct hv_tlb_flush_ex,
++						    hv_vp_set.bank_contents),
++				   sparse_banks,
++				   sparse_banks_len))
++			return HV_STATUS_INVALID_HYPERCALL_INPUT;
++	}
+ 
+ 	cpumask_clear(&hv_current->tlb_lush);
+ 
+ 	kvm_for_each_vcpu(i, vcpu, kvm) {
+ 		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++		int bank = hv->vp_index / 64, sbank = 0;
++
++		if (!all_cpus) {
++			/* Banks >64 can't be represented */
++			if (bank >= 64)
++				continue;
++
++			/* Non-ex hypercalls can only address first 64 vCPUs */
++			if (!ex && bank)
++				continue;
++
++			if (ex) {
++				/*
++				 * Check is the bank of this vCPU is in sparse
++				 * set and get the sparse bank number.
++				 */
++				sbank = get_sparse_bank_no(valid_bank_mask,
++							   bank);
++
++				if (sbank < 0)
++					continue;
++			}
+ 
+-		if (!(flush.flags & HV_FLUSH_ALL_PROCESSORS) &&
+-		    (hv->vp_index >= 64 ||
+-		    !(flush.processor_mask & BIT_ULL(hv->vp_index))))
+-			continue;
++			if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
++				continue;
++		}
+ 
+ 		/*
+ 		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
+@@ -1280,6 +1351,7 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+ 				    KVM_REQ_TLB_FLUSH | KVM_REQUEST_NO_WAKEUP,
+ 				    vcpu_bitmap, &hv_current->tlb_lush);
+ 
++ret_success:
+ 	/* We always do full TLB flush, set rep_done = rep_cnt. */
+ 	return (u64)HV_STATUS_SUCCESS |
+ 		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
+@@ -1427,14 +1499,28 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ 			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
+ 			break;
+ 		}
+-		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt);
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, false);
+ 		break;
+ 	case HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE:
+ 		if (unlikely(fast || rep)) {
+ 			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
+ 			break;
+ 		}
+-		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt);
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, false);
++		break;
++	case HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST_EX:
++		if (unlikely(fast || !rep_cnt || rep_idx)) {
++			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
++			break;
++		}
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, true);
++		break;
++	case HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE_EX:
++		if (unlikely(fast || rep)) {
++			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
++			break;
++		}
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, true);
+ 		break;
+ 	default:
+ 		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index 47a4fd758743..0f997683404f 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -1391,6 +1391,33 @@ TRACE_EVENT(kvm_hv_flush_tlb,
+ 		  __entry->processor_mask, __entry->address_space,
+ 		  __entry->flags)
+ );
++
++/*
++ * Tracepoint for kvm_hv_flush_tlb_ex.
++ */
++TRACE_EVENT(kvm_hv_flush_tlb_ex,
++	TP_PROTO(u64 valid_bank_mask, u64 format, u64 address_space, u64 flags),
++	TP_ARGS(valid_bank_mask, format, address_space, flags),
++
++	TP_STRUCT__entry(
++		__field(u64, valid_bank_mask)
++		__field(u64, format)
++		__field(u64, address_space)
++		__field(u64, flags)
++	),
++
++	TP_fast_assign(
++		__entry->valid_bank_mask = valid_bank_mask;
++		__entry->format = format;
++		__entry->address_space = address_space;
++		__entry->flags = flags;
++	),
++
++	TP_printk("valid_bank_mask 0x%llx format 0x%llx "
++		  "address_space 0x%llx flags 0x%llx",
++		  __entry->valid_bank_mask, __entry->format,
++		  __entry->address_space, __entry->flags)
++);
+ #endif /* _TRACE_KVM_H */
+ 
+ #undef TRACE_INCLUDE_PATH
 -- 
 2.14.3
