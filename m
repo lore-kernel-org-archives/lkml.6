@@ -1,69 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752080AbeEPRdm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:33:42 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:39378 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeEPRdk (ORCPT
+        id S1752130AbeEPReF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:34:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36692 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750924AbeEPReD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:33:40 -0400
-X-Google-Smtp-Source: AB8JxZoDeAbvSnh/8R+YZd0i3RfKLeQsQpPl2RIEJU/DOldz+YZh3loe8RX7Jo4/b36MTPNHpAyWHg==
-Subject: Re: INFO: task hung in blk_queue_enter
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzkaller-bugs@googlegroups.com
-Cc: syzbot <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
-        linux-block@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, dvyukov@google.com,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Martin Steigerwald <martin@lichtvoll.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-References: <0000000000009b212b056ae6dbad@google.com>
- <343bbbf6-64eb-879e-d19e-96aebb037d47@I-love.SAKURA.ne.jp>
- <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
-From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <0609ee2b-fbb6-9122-918a-cc2172ee2cfa@gmail.com>
-Date: Wed, 16 May 2018 18:33:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+        Wed, 16 May 2018 13:34:03 -0400
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Cornelia Huck <cohuck@redhat.com>,
+        Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Cc: Halil Pasic <pasic@linux.ibm.com>,
+        "Jason J. Herne" <jjherne@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] s390: vfio-ccw: push down unsupported IDA check
+Date: Wed, 16 May 2018 19:33:42 +0200
+X-Mailer: git-send-email 2.16.3
+X-TM-AS-GCONF: 00
+x-cbid: 18051617-0044-0000-0000-000005532965
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051617-0045-0000-0000-00002894990A
+Message-Id: <20180516173342.15174-1-pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-16_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805160172
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- > jbd2/sda1-8(PID=2271) is stuck waiting for journal commit operation.
- > I don't know how this thread is involved to this problem.
+There is at least one relevant guest OS that doesn't set the IDA flags in
+the ORB as we would like them, but never uses any IDA. So instead of
+saying -EOPNOTSUPP when observing an ORB, such that a channel program
+specified by it could be a not supported one, let us say -EOPNOTSUPP only
+if the channel program is a not supported one.
 
-It feels like it should be a necessary link in the chain. This is the 
-filesystem underneath the loop device. If that hangs, we would expect 
-the loop device to hang, but not vice versa.
+Of course, the real solution would be doing proper translation for all
+IDA. This is possible, but given the current code not straight forward.
 
-AIUI, you couldn't reproduce this hang on your own machine.
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
+---
+---
+ drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-Don't you think, your fuzzer has just found a nice exploit for reiserfs?
-
-Alan
-
-
-(It's interesting that you found this hang just after we fixed 
-block_queue_enter() to wait in D state instead of S state.[1]  I don't 
-know syszkaller, so I assume from this it only flagged this case up 
-because of the hung task warning. I.e. syzkaller didn't have its own 
-watchdog that would have failed the test anyway.
-
-[1] the commit that caused you to CC me. "block: do not use 
-interruptible wait anywhere"
-
-https://github.com/torvalds/linux/commit/1dc3039bc87ae7d19a990c3ee71cfd8a9068f428
-
-)
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index 2c7550797ec2..cb4bf0dfbacc 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -365,6 +365,9 @@ static void cp_unpin_free(struct channel_program *cp)
+  * This is the chain length not considering any TICs.
+  * You need to do a new round for each TIC target.
+  *
++ * The program is also validated for absence of not yet supported
++ * indirect data addressing scenarios.
++ *
+  * Returns: the length of the ccw chain or -errno.
+  */
+ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+@@ -391,6 +394,14 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+ 	do {
+ 		cnt++;
+ 
++		/*
++		 * As we don't want to fail direct addressing even if the
++		 * orb specified one of the unsupported formats, we defer
++		 * checking for IDAWs in unsupported formats to here.
++		 */
++		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
++			return -EOPNOTSUPP;
++
+ 		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+ 			break;
+ 
+@@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+ 	/*
+ 	 * XXX:
+ 	 * Only support prefetch enable mode now.
+-	 * Only support 64bit addressing idal.
+-	 * Only support 4k IDAW.
+ 	 */
+-	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
++	if (!orb->cmd.pfch)
+ 		return -EOPNOTSUPP;
+ 
+ 	INIT_LIST_HEAD(&cp->ccwchain_list);
+@@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+ 	ret = ccwchain_loop_tic(chain, cp);
+ 	if (ret)
+ 		cp_unpin_free(cp);
++	/* It is safe to force: if not set but idals used
++	 * ccwchain_calc_length returns an error.
++	 */
++	cp->orb.cmd.c64 = 1;
+ 
+ 	return ret;
+ }
+-- 
+2.16.3
