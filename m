@@ -1,72 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEPWo1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 18:44:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42680 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeEPWo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752172AbeEPWok (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 18:44:40 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:39178 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751153AbeEPWo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 May 2018 18:44:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F30360558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: DPC: Clear AER status bits before disabling port
- containment
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>, bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        Keith Busch <keith.busch@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180516213306.27027-1-mr.nuke.me@gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <605540c0-b6c5-89a2-9d50-12a3005d9f88@codeaurora.org>
-Date: Wed, 16 May 2018 18:44:22 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Date: Thu, 17 May 2018 01:43:36 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: syzbot <syzbot+aac887f77319868646df@syzkaller.appspotmail.com>
+cc: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        horms@verge.net.au, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        wensong@linux-vs.org
+Subject: Re: kernel BUG at lib/string.c:LINE! (4)
+In-Reply-To: <0000000000006764b4056c5476d9@google.com>
+Message-ID: <alpine.LFD.2.20.1805170141240.9640@ja.home.ssi.bg>
+References: <0000000000006764b4056c5476d9@google.com>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180516213306.27027-1-mr.nuke.me@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/16/2018 5:33 PM, Alexandru Gagniuc wrote:
-> AER status bits are sticky, and they survive system resets. Downstream
-> devices are usually taken care of after re-enumerating the downstream
-> busses, as the AER bits are cleared during probe().
-> 
-> However, nothing clears the bits of the port which contained the
-> error. These sticky bits may leave some BIOSes to think that something
-> bad happened, and print ominous messages on next boot. To prevent this,
-> tidy up the AER status bits before releasing containment.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/pci/pcie/dpc.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 8c57d607e603..bf82d6936556 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -112,6 +112,10 @@ static void dpc_work(struct work_struct *work)
->  		dpc->rp_pio_status = 0;
->  	}
->  
-> +	/* DPC event made a mess of our AER status bits. Clean them up. */
-> +	pci_cleanup_aer_error_status_regs(pdev);
-> +	/* TODO: Should we also use aer_print_error to log the event? */
-> +
->  	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
->  		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
->  
-> 
 
-I think Keith has a patch to fix this. It was under review at some point.
+	Hello,
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+On Wed, 16 May 2018, syzbot wrote:
+
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    0b7d9978406f Merge branch 'Microsemi-Ocelot-Ethernet-switc..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16e91017800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=aac887f77319868646df
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1665d637800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10517107800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+aac887f77319868646df@syzkaller.appspotmail.com
+> 
+> IPVS: Unknown mcast interface: veth1_to???a????????????
+> IPVS: Unknown mcast interface: veth1_to???a????????????
+> IPVS: Unknown mcast interface: veth1_to???a????????????
+> detected buffer overflow in strlen
+> ------------[ cut here ]------------
+> kernel BUG at lib/string.c:1052!
+> invalid opcode: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>   (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 373 Comm: syz-executor936 Not tainted 4.17.0-rc4+ #45
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> 01/01/2011
+> RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
+> RSP: 0018:ffff8801c976f800 EFLAGS: 00010282
+> RAX: 0000000000000022 RBX: 0000000000000040 RCX: 0000000000000000
+> RDX: 0000000000000022 RSI: ffffffff8160f6f1 RDI: ffffed00392edef6
+> RBP: ffff8801c976f800 R08: ffff8801cf4c62c0 R09: ffffed003b5e4fb0
+> R10: ffffed003b5e4fb0 R11: ffff8801daf27d87 R12: ffff8801c976fa20
+> R13: ffff8801c976fae4 R14: ffff8801c976fae0 R15: 000000000000048b
+> FS:  00007fd99f75e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000200001c0 CR3: 00000001d6843000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> strlen include/linux/string.h:270 [inline]
+> strlcpy include/linux/string.h:293 [inline]
+> do_ip_vs_set_ctl+0x31c/0x1d00 net/netfilter/ipvs/ip_vs_ctl.c:2388
+> nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+> nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
+> ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1253
+> udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2487
+> ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:917
+> tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3057
+> sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3046
+> __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+> __do_sys_setsockopt net/socket.c:1914 [inline]
+> __se_sys_setsockopt net/socket.c:1911 [inline]
+> __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+> do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+> entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x447369
+> RSP: 002b:00007fd99f75dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00000000006e39e4 RCX: 0000000000447369
+> RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 0000000000000018 R09: 0000000000000000
+> R10: 00000000200001c0 R11: 0000000000000246 R12: 00000000006e39e0
+> R13: 75a1ff93f0896195 R14: 6f745f3168746576 R15: 0000000000000001
+> Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 d2 8f 48 fa eb de
+> 55 48 89 fe 48 c7 c7 60 65 64 88 48 89 e5 e8 91 dd f3 f9 <0f> 0b 90 90 90 90
+> 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
+> RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801c976f800
+> ---[ end trace 624046f2d9af7702 ]---
+
+	Just to let you know that I tested a patch with
+the syzbot, will do more tests before submitting...
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
