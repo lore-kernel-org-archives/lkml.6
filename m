@@ -1,77 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeEPANA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 20:13:00 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33743 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbeEPAM6 (ORCPT
+        id S1752265AbeEPANR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 20:13:17 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39598 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751489AbeEPANP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 20:12:58 -0400
-X-Google-Smtp-Source: AB8JxZqbRd8EdR72LyUnhiJtJc0dc3SJwLnYAaGJSHI+oM++J359/wwJ5FIlCXAYBhJSp8ObEGRgAHMiTwCl1gDADw8=
+        Tue, 15 May 2018 20:13:15 -0400
+X-Google-Smtp-Source: AB8JxZrcJQ7kFJKpzMHEtvBx7wSbIJcujUSuyNbA+m+FMrX/THNMmDwJtHtBTB+A5tJW+aqHWJXe2A==
+Date: Tue, 15 May 2018 14:13:11 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH] scripts/tags.sh: don't rely on parsing `ls` for
+ $ALLSOURCE_ARCHS generation
+Message-ID: <20180516001311.ng6wyxdjqty5ef5j@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515222125.GA20160@ziepe.ca>
-References: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr> <20180515222125.GA20160@ziepe.ca>
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date: Tue, 15 May 2018 17:12:36 -0700
-Message-ID: <CALzJLG-Fzev4U3dUKSVb2pm=rknSGVoMW4mbbjTugdP+e13XKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] {net, IB}/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q74megjw7qc7hkty"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 3:21 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Sun, May 13, 2018 at 09:00:41AM +0200, Christophe JAILLET wrote:
->> When 'kvzalloc()' is used to allocate memory, 'kvfree()' must be used to
->> free it.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> v1 -> v2: More places to update have been added to the patch
->> ---
->>  drivers/infiniband/hw/mlx5/cq.c                            | 2 +-
->>  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
->>  drivers/net/ethernet/mellanox/mlx5/core/vport.c            | 6 +++---
->>  3 files changed, 5 insertions(+), 5 deletions(-)
->
-> I agree with Eric on the need for fixes lines in v3..
->
->> diff --git a/drivers/infiniband/hw/mlx5/cq.c b/drivers/infiniband/hw/mlx5/cq.c
->> index 77d257ec899b..6d52ea03574e 100644
->> --- a/drivers/infiniband/hw/mlx5/cq.c
->> +++ b/drivers/infiniband/hw/mlx5/cq.c
->> @@ -849,7 +849,7 @@ static int create_cq_user(struct mlx5_ib_dev *dev, struct ib_udata *udata,
->>       return 0;
->>
->>  err_cqb:
->> -     kfree(*cqb);
->> +     kvfree(*cqb);
->
-> For the infiniband part:
->
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
->
-> Since this is mostly ethernet, can it go through netdev? thanks
->
 
-for the mlx5 core parts:
+--q74megjw7qc7hkty
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Saeed Mahameed <saeedm@mellanox.com>
+Parsing `ls` is fragile at best and _will_ fail when $tree
+contains spaces. Replace this with a glob-generated string
+and directly assign it to $ALLSOURCE_ARCHS; use a subshell
+so `cd` doesn't affect the current working directory.
 
-Yes i will take v3 to mlx5-next branch.
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-> Jason
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 78e546ff689c2d5f40..b84acf8889fe836c60 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -29,14 +29,11 @@ fi
+ ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
+=20
+ # Find all available archs
+ find_all_archs()
+ {
+-	ALLSOURCE_ARCHS=3D""
+-	for arch in `ls ${tree}arch`; do
+-		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
+-	done
++	ALLSOURCE_ARCHS=3D"$( (cd "${tree}arch/" && echo *) )"
+ }
+=20
+ # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+ if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
+ 	ALLSOURCE_ARCHS=3D${SRCARCH}
+--=20
+2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+
+
+--q74megjw7qc7hkty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr7d5cACgkQruvLfWhy
+VBm98BAAyFAeYjq+392LpgL8kvor1VJRF2MD4wl/lzJBPLhz85QtAQkuFoOAjGDI
+gdLKd0MC5OYgQq+wS2GLdyMp7qOoPfZdG+nKz5D/NepIgjK4ePzuQ07YIFuo/L9Z
+gW+LhHWQ3D0WmLw5i365GGI/e3jgs+apmU7dVfRurF0DoVj4a9KP61SFNtlWsZOL
+E3+SoqICWyuuy/oIOZNXnbbDsapV8IbVsi51jrUWNNZdfevkYFyBG6YLvHyQ0WgU
+agwUlMwgKKA0yuBDCGNX6BUHUBwzSpA/0AMmebIqRMBpIdgVFk5oPeYH24iISSA7
+6wqeohte2XufoLEQ0pq+2BH3bcV2YthBXUhaeGNP0etklUb3hHDKQW1etNSzwJSN
+p8GMdtV6jXCXuZtSKBYkjD6oJiY9hHPPCiysxoH7tdcmioqQzvWogU8+WMZ/nG/Y
+drC0Odm0CPiXprYPftaYsq4acmhHq5dF0+NlU76XcqKmaSRruCQ6yXqoCSA0M+45
+AQV5CT/09Z0RWTwheNOMZDxTyIqO6FCXHsBQW82h4OI/IE6d8edOs2wO+6yEdj6z
+GFW05V06skx6dspQO9ElKqkyVzbSt3YUb9na5cYwOiYltzw80avsTPASFpCwdVAJ
+Usy4otEJhIXw0NYKW/cauIu4HsSk9UxFyDWMu3xNVF7KqaM+mXg=
+=qrGg
+-----END PGP SIGNATURE-----
+
+--q74megjw7qc7hkty--
