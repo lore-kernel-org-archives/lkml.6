@@ -1,147 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeEPUyx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 16:54:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42816 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeEPUyw (ORCPT
+        id S1751379AbeEPU6k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 16:58:40 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44783 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbeEPU6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 16:54:52 -0400
+        Wed, 16 May 2018 16:58:38 -0400
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Gregory Clement <gregory.clement@bootlin.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] pinctrl: mvebu: use correct MPP sel value for dev pins
+Thread-Topic: [PATCH] pinctrl: mvebu: use correct MPP sel value for dev pins
+Thread-Index: AQHT5aq9Nzq7OQNdhUGEkFPA3djjdw==
+Date: Wed, 16 May 2018 20:58:35 +0000
+Message-ID: <1ebc15b559d74ace9a1171548f79f978@svr-chch-ex1.atlnz.lc>
+References: <20180507022555.31645-1-chris.packham@alliedtelesis.co.nz>
+ <CACRpkdbAaMrHJ8TjJTtNyVtoOSRAEf2Z8gRthFH0ze4RyybBag@mail.gmail.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 16 May 2018 13:54:50 -0700
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: ufshcd: Remove VLA usage
-In-Reply-To: <20180502235809.GA13998@beast>
-References: <20180502235809.GA13998@beast>
-Message-ID: <fdc105dd5b8a8597fc9858b19d536450@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GKwjJ5004770
 
-On 2018-05-02 16:58, Kees Cook wrote:
-> On the quest to remove all VLAs from the kernel[1] this moves buffers
-> off the stack. In the second instance, this collapses two separately
-> allocated buffers into a single buffer, since they are used 
-> consecutively,
-> which saves 256 bytes (QUERY_DESC_MAX_SIZE + 1) of stack space.
+On 17/05/18 00:55, Linus Walleij wrote:
+> On Mon, May 7, 2018 at 4:25 AM, Chris Packham
+> <chris.packham@alliedtelesis.co.nz> wrote:
 > 
-> [1]
-> https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>> The "dev" function is selected with the value 0x4 not 0x01.
+>>
+>> Fixes: commit d7ae8f8dee7f ("pinctrl: mvebu: pinctrl driver for 98DX3236 SoC")
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 34 ++++++++++++++++++++++++++--------
->  1 file changed, 26 insertions(+), 8 deletions(-)
+> Patch applied.
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 00e79057f870..a271534362f6 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -5958,14 +5958,18 @@ static void ufshcd_init_icc_levels(struct 
-> ufs_hba *hba)
->  {
->  	int ret;
->  	int buff_len = hba->desc_size.pwr_desc;
-> -	u8 desc_buf[hba->desc_size.pwr_desc];
-> +	u8 *desc_buf;
-> +
-> +	desc_buf = kmalloc(buff_len, GFP_KERNEL);
-> +	if (!desc_buf)
-> +		return;
-> 
->  	ret = ufshcd_read_power_desc(hba, desc_buf, buff_len);
->  	if (ret) {
->  		dev_err(hba->dev,
->  			"%s: Failed reading power descriptor.len = %d ret = %d",
->  			__func__, buff_len, ret);
-> -		return;
-> +		goto out;
->  	}
-> 
->  	hba->init_prefetch_data.icc_level =
-> @@ -5983,6 +5987,8 @@ static void ufshcd_init_icc_levels(struct ufs_hba 
-> *hba)
->  			"%s: Failed configuring bActiveICCLevel = %d ret = %d",
->  			__func__, hba->init_prefetch_data.icc_level , ret);
-> 
-> +out:
-> +	kfree(desc_buf);
->  }
-> 
->  /**
-> @@ -6052,9 +6058,17 @@ static int ufs_get_device_desc(struct ufs_hba 
-> *hba,
->  			       struct ufs_dev_desc *dev_desc)
->  {
->  	int err;
-> +	size_t buff_len;
->  	u8 model_index;
-> -	u8 str_desc_buf[QUERY_DESC_MAX_SIZE + 1] = {0};
-> -	u8 desc_buf[hba->desc_size.dev_desc];
-> +	u8 *desc_buf;
-> +
-> +	buff_len = max_t(size_t, hba->desc_size.dev_desc,
-> +			 QUERY_DESC_MAX_SIZE + 1);
-> +	desc_buf = kmalloc(buff_len, GFP_KERNEL);
-> +	if (!desc_buf) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> 
->  	err = ufshcd_read_device_desc(hba, desc_buf, 
-> hba->desc_size.dev_desc);
->  	if (err) {
-> @@ -6072,7 +6086,10 @@ static int ufs_get_device_desc(struct ufs_hba 
-> *hba,
-> 
->  	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
-> 
-> -	err = ufshcd_read_string_desc(hba, model_index, str_desc_buf,
-> +	/* Zero-pad entire buffer for string termination. */
-> +	memset(desc_buf, 0, buff_len);
-> +
-> +	err = ufshcd_read_string_desc(hba, model_index, desc_buf,
->  				      QUERY_DESC_MAX_SIZE, true/*ASCII*/);
->  	if (err) {
->  		dev_err(hba->dev, "%s: Failed reading Product Name. err = %d\n",
-> @@ -6080,15 +6097,16 @@ static int ufs_get_device_desc(struct ufs_hba 
-> *hba,
->  		goto out;
->  	}
-> 
-> -	str_desc_buf[QUERY_DESC_MAX_SIZE] = '\0';
-> -	strlcpy(dev_desc->model, (str_desc_buf + QUERY_DESC_HDR_SIZE),
-> -		min_t(u8, str_desc_buf[QUERY_DESC_LENGTH_OFFSET],
-> +	desc_buf[QUERY_DESC_MAX_SIZE] = '\0';
-> +	strlcpy(dev_desc->model, (desc_buf + QUERY_DESC_HDR_SIZE),
-> +		min_t(u8, desc_buf[QUERY_DESC_LENGTH_OFFSET],
->  		      MAX_MODEL_LEN));
-> 
->  	/* Null terminate the model string */
->  	dev_desc->model[MAX_MODEL_LEN] = '\0';
-> 
->  out:
-> +	kfree(desc_buf);
->  	return err;
->  }
-> 
-> --
-> 2.17.0
+> Does it need to go into fixes? Stable?
 
+By "fixes" do you mean into 4.17? Yes please.
 
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Stable would be good. Although all the boards I'm aware of rely on the 
+pin configuration being done by the bootloader so I've not heard of 
+anyone experiencing problems.
