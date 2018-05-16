@@ -1,67 +1,69 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-62429-1526464004-2-17242029381780868312
+X-Cyrus-Session-Id: sloti22d1t05-654-1526464002-2-10659921312554876476
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roenca,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464004; b=hEGJetukonwxfHV7aXHwDHhHpVKJwpQAUojWILc/9ZQZ/YNvLc
-    O/icWCJO9q0qwQ/zLyFjN3Ds7YyANcjnKCh62AWesv1bC/DkPcEM2YSB9117rMTK
-    gGuv7C/dNpeggSDfXUf6J6Q/PgQygMRV3n26uSgyiYqP6FrzrfppRILgi5Gft6y5
-    ux80wFJOrroGU6+IhAr5jyy7q0hrcTuv/KI/gH+vNTT22xDZIHZn/HcVUXnDRvzC
-    xuV2SjBLo5+6clL7RWEMUxiGx83xjbZsKU5aW9v0DajMNznWblHSvKRcnB2FOFrk
-    Thtubnb67J01MCsatjS7zdjFOSv7/T6Fft/w==
+    1526464001; b=BMHDfaA0dg0s3xTpThKa2j98nEyBFVwuIWqco/lWJq7MveDhI4
+    JZqdmVTYJ3U371MfD+XzSnukLDkGr9nGYKnfMj95vBgrXEv82QbGZXr9shUFwBTo
+    hCNVB1eeNPGAMIZJDEIkoVzuPYC3YvZD6cPpWDojhR/zUpHTCMrGcH4jyhkNOxiN
+    VBRezTo/k2HBArXFLh6in8/0PfmvjxX6y+u9sMZcLwYemeInNddIaXsLbQpKqRFL
+    FUcYo1zcgvz9unhHM75DdGCXWJBVYD48DhB3nGWCNEq0NYr5AKAbyCnpKZ0qnKDu
+    5IuebrtOMmD6u5kpmUiIMRhAow1cN0eIUqmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464004; bh=gEv/D
-    X7blcCQedEq3A9TzmwmUcSN9D/7c3ANHzel2T0=; b=UWBrfjVE5wSiVzaLb6iTF
-    RZfDjRndSwGqR9DBzi9AxOdD7SIJVVG9m4S4Ftt9qpFO21qMAPAtgtLX2c4QyB7u
-    aLhg/oyL2rytHaYJu9WxvKea4qLCswB8ZS/9J0KLyz0fhPm1dWhei9sJovtCCqxM
-    4FUFtrpXDK/cgU06vX9KQTBQqhawavLwf3lxhA4ymHMyZ+B1nxhHiiwavuBJ9R+G
-    ZCmSJ+QvbighPpvV8Ri8FL8K6cJKabgqTBLxztef6uhnuksKr8zU6mlj+NauJ0/j
-    chvnPTjCwx0nYFZGh0GKQIbhGG9SBvTn1c4m7+oEbfO6fZEeaZFB8nvwhQ1ltCyG
-    g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526464001; bh=EnKEP
+    BOJrxyQ5Q/HZwvbSMaxcL/Z51KIgsSpN2c7xpI=; b=aZbjzKL1Yz1Jl9Nl+hQ0L
+    wmw+anw5Jj2V/Y/L9+zmkqzaFS3/pJKFYjET1Afm2KGAKNb6MC/RobmARl3a9Qv+
+    VOWzwtwvO8Jm91DgUhA7ayqeQL7EOBEd5tPWge9YUqukvx7AGWWvOL3Ekj/XJz/v
+    hoJojq5nr+d6tdPjN6wsSyTYUQSRNP627svrmfH0idkGMYfBA8sMUGpeCfah6iHS
+    sSqOj2epBqNdFHPrO06NqCgQH/s2hz4r46sZhXHoxKIS+cjRHHT5uYGD95gqnRib
+    X9h4tvCgoPQ1buTg2kYZYaYAPb+rj4a9bq+iM50J+041i5KbCPsl4Iqlyl9QBAaa
+    Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=RIzlItAp
+    header.d=infradead.org header.i=@infradead.org header.b=bkIfeJBa
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+    x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=lst.de header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=RIzlItAp
+      header.d=infradead.org header.i=@infradead.org header.b=bkIfeJBa
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+      smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+      x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=lst.de header.result=pass
       header_is_org_domain=yes;
@@ -69,12 +71,12 @@ Authentication-Results: mx5.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJU8+yeul3LZC4uGzP5NENH7miJZzsMXhnir+z4OMSzPReR3TIRunziyXwhyZcmiLADcqg4oKzXnQU8Tn7P4iT61fwrY0quLv8LMTKGfKHhM5EV9uyqt
-    uWD3Rf5neAmYPUhF8ZpHlCmqwa/7vW/njcaBK9J+MX8cD9jkXo+UEpkVdHev8Tlu134SStzOXm9uSuVv1MepjxFJH4+euRx7RZrxG5EOkNY+me/BLoxesD5n
-    gczxsjO2ndnNMwiPQWRqwg==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=rWzh_GOCPHhTbuqNOS8A:9
+X-CM-Envelope: MS4wfK//SjIVN6gi1z3CYVUxhxAWZ4Iv9/REZfFxb2Hw6wza0P4DE0GypDfYZwZCv4MwwL10GBr4aK+pfbYA1uq6YVmp9+rTf33GFbUZg/RPwkUVhecPGdSp
+    xFr7BAjY848n3y74iHRRJnYcX6WGvBN0z+YL7+hGPODg9PLPi2ddwzZ7QxovzpbzHFmPa78cEC79N+DInir4CgbjDOtNgVaG78W9FyPraWaCeBPHITnaYUDo
+    AxoWay7wwmmAgGYY9DMlxA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=TCsHB-DreQICuqE0vTcA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -82,9 +84,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 26/42] staging/rtl8192u: simplify procfs code
-Date: Wed, 16 May 2018 11:43:30 +0200
-Message-Id: <20180516094346.20506-27-hch@lst.de>
+Subject: [PATCH 34/42] netfilter/x_tables: switch to proc_create_seq_private
+Date: Wed, 16 May 2018 11:43:38 +0200
+Message-Id: <20180516094346.20506-35-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -118,101 +120,87 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Unwind the registration loop into individual calls.  Switch to use
-proc_create_single where applicable.
-
-Also don't bother handling proc_create* failures - the driver works
-perfectly fine without the proc files, and the cleanup will handle
-missing files gracefully.
+And remove proc boilerplate code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/staging/rtl8192u/r8192U_core.c | 67 ++++++--------------------
- 1 file changed, 14 insertions(+), 53 deletions(-)
+ net/netfilter/x_tables.c | 42 ++++++----------------------------------
+ 1 file changed, 6 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index d607c59761cf..7a0dbc0fa18e 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -646,64 +646,25 @@ static void rtl8192_proc_module_init(void)
- 	rtl8192_proc = proc_mkdir(RTL819xU_MODULE_NAME, init_net.proc_net);
- }
+diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+index 344dd01a5027..0e314f95a4a3 100644
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1648,22 +1648,6 @@ static const struct seq_operations xt_match_seq_ops = {
+ 	.show	= xt_match_seq_show,
+ };
  
--/*
-- * seq_file wrappers for procfile show routines.
-- */
--static int rtl8192_proc_open(struct inode *inode, struct file *file)
+-static int xt_match_open(struct inode *inode, struct file *file)
 -{
--	struct net_device *dev = proc_get_parent_data(inode);
--	int (*show)(struct seq_file *, void *) = PDE_DATA(inode);
--
--	return single_open(file, show, dev);
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_match_seq_ops, sizeof(*trav));
+-	if (!trav)
+-		return -ENOMEM;
+-	return 0;
 -}
 -
--static const struct file_operations rtl8192_proc_fops = {
--	.open		= rtl8192_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-static const struct file_operations xt_match_ops = {
+-	.open	 = xt_match_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
 -};
 -
--/*
-- * Table of proc files we need to create.
-- */
--struct rtl8192_proc_file {
--	char name[12];
--	int (*show)(struct seq_file *, void *);
--};
--
--static const struct rtl8192_proc_file rtl8192_proc_files[] = {
--	{ "stats-rx",	&proc_get_stats_rx },
--	{ "stats-tx",	&proc_get_stats_tx },
--	{ "stats-ap",	&proc_get_stats_ap },
--	{ "registers",	&proc_get_registers },
--	{ "" }
--};
--
- static void rtl8192_proc_init_one(struct net_device *dev)
+ static void *xt_target_seq_start(struct seq_file *seq, loff_t *pos)
  {
--	const struct rtl8192_proc_file *f;
- 	struct proc_dir_entry *dir;
+ 	return xt_mttg_seq_start(seq, pos, true);
+@@ -1698,22 +1682,6 @@ static const struct seq_operations xt_target_seq_ops = {
+ 	.show	= xt_target_seq_show,
+ };
  
--	if (rtl8192_proc) {
--		dir = proc_mkdir_data(dev->name, 0, rtl8192_proc, dev);
--		if (!dir) {
--			RT_TRACE(COMP_ERR,
--				 "Unable to initialize /proc/net/rtl8192/%s\n",
--				 dev->name);
--			return;
--		}
-+	if (!rtl8192_proc)
-+		return;
+-static int xt_target_open(struct inode *inode, struct file *file)
+-{
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_target_seq_ops, sizeof(*trav));
+-	if (!trav)
+-		return -ENOMEM;
+-	return 0;
+-}
+-
+-static const struct file_operations xt_target_ops = {
+-	.open	 = xt_target_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
+-};
+-
+ #define FORMAT_TABLES	"_tables_names"
+ #define	FORMAT_MATCHES	"_tables_matches"
+ #define FORMAT_TARGETS 	"_tables_targets"
+@@ -1787,8 +1755,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
  
--		for (f = rtl8192_proc_files; f->name[0]; f++) {
--			if (!proc_create_data(f->name, S_IFREG | S_IRUGO, dir,
--					      &rtl8192_proc_fops, f->show)) {
--				RT_TRACE(COMP_ERR,
--					 "Unable to initialize /proc/net/rtl8192/%s/%s\n",
--					 dev->name, f->name);
--				return;
--			}
--		}
--	}
-+	dir = proc_mkdir_data(dev->name, 0, rtl8192_proc, dev);
-+	if (!dir)
-+		return;
-+
-+	proc_create_single("stats-rx", S_IFREG | S_IRUGO, dir,
-+			proc_get_stats_rx);
-+	proc_create_single("stats-tx", S_IFREG | S_IRUGO, dir,
-+			proc_get_stats_tx);
-+	proc_create_single("stats-ap", S_IFREG | S_IRUGO, dir,
-+			proc_get_stats_ap);
-+	proc_create_single("registers", S_IFREG | S_IRUGO, dir,
-+			proc_get_registers);
- }
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_MATCHES, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_match_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			&xt_match_seq_ops, sizeof(struct nf_mttg_trav),
++			(void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_tables;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
+@@ -1796,8 +1765,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
  
- static void rtl8192_proc_remove_one(struct net_device *dev)
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_TARGETS, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_target_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			 &xt_target_seq_ops, sizeof(struct nf_mttg_trav),
++			 (void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_matches;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
 -- 
 2.17.0
 
