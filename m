@@ -1,28 +1,28 @@
 Return-Path: <giulio.benetti@micronovasrl.com>
-X-Google-Smtp-Source: AB8JxZoIRppbUKjY6YDa1qJgdEoeQuOfnWvEkXo7fzuZJf1i3onSZTUCohM17siuSWsBV2iPKNlz
-ARC-Seal: i=1; a=rsa-sha256; t=1526485441; cv=none;
+X-Google-Smtp-Source: AB8JxZqwL0H9YVqIcxeysywO61OK5pV9OgFTvxThpzioULF2/kUzK5SdZ4HF8Jw5J75hw1Yiwfk7
+ARC-Seal: i=1; a=rsa-sha256; t=1526481589; cv=none;
         d=google.com; s=arc-20160816;
-        b=OrMFhlIvRbsh1EU6sL3NLUUvzc6iRPNP7XIt8QH21ljEsXeViwzVxmIS3jahN4VJhM
-         2A4P9Z7BdsFRFsVagpXTxemeCl1VBBBBXlURGK6eXoOnfuVaM/AD5Yo2ibacSh2Ddl9w
-         K0EvQPBI2pPbNefDOaMRG3vNrG5mAnXG8H/6vl6FzR3OFiCST6JyRCnf8VEukWfx9XRd
-         0h3U2Xpbz4rBbyi2Pu8EbhLoa43zqgWmnw7WaelSHKp94+/klsV8RA05ld+18XbKEmMV
-         qzAG8EfCktG71L1qpL3hQh5Y2bmfL7FY/JLjT+XIeSFMvLqY3Z6cmdBGEn98D32/04tt
-         yowA==
+        b=JJUJHXErq5Mb0Jk47830t7vTmst3q13Z4J06fuY8dQ0+M4giWOI7SQLxcgHZWFofmS
+         Vwc4ZzmdMcIW8OSC56zq0AV5wsTki6W0PYhH/XB45MxZPCXeYSXZSlFG48ICfjsjsFbC
+         WHFnNLrD6auci0WoR5kEDZN0ML4bi0p/M5+q7xxjcaWdifDwB1ZVqb2rdoP9du7vR9s9
+         0u5ZhwxbsunNR1WDAITqhF51BQwOXzVFwGWwfEeBkotYXBVuuIfLSAg2BPiMGMXXFCi+
+         MlQwNoI15PZSuwBDKRXyQ4mee0LYAF6IKM/zNYtj0HtPUUDQFbxQ6oBF5uvbWzNjDPAV
+         TJng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=KiFg0fkB1t+Cm+cd0PA8qkXgMBSBLvaZ3xUgL+ihEqc=;
-        b=TDqQAeAv/Amh9H/gSzw/ecQkyd/tZGGP+11zrxu+mLCp4czsf1IJqQDUS46fANQ2BB
-         P1G75MiE2BUfF19Dgh9dlW7vjZ3UB6GEtrM2Xf4EAVsxZ5SJydok1gvgDZCEe9WPZE8B
-         Ft4rarZs+Gnd2/Fms+D/CxZCS8scJkCYTFoEbvWLn50fDL7h1XY8+k116Ti0LXAE3cHp
-         LUDUVrWZhcXpMZBtGu+dqhmY2xhKvdq5Dy6bUYin3k1SE/v93hFj+9+2fKEkoJTVMmNQ
-         cCEpWgbzF5kNNhfDx2hSnc72vmtj0bUxdoJwctnMA0qio6Kt88bsFxyQJQIBXPXstimX
-         uwrg==
+        bh=8Ix9FprIeGd7P3Wn9r7YcBwvNczwAu6mylcZogwa3bM=;
+        b=HUEwr5fL1fosCopGuSeYfm9wVL1Tzy45UgbiVmToj0pVduRiHnsA8uAaR/hEvwwCjf
+         NGh1CQAup70Vu3j21k9PhEn6Yq25antWsB1ANkPNeE05heXW1XpXv7Rg1ZcTiujN/Md8
+         +NxpwyB+ml7kR27uLLCPm3395VP5XrcNZL/1iycdQN9fmawywijGhXBKcvz8fh7R6Yqx
+         Zpbc/6WDajexHLXxPKOFxl+DQIR06EGF5O0yInZ6gBGEKcIwtObtHGtVx08Z+dEYldL1
+         0irdlKONOZgZhmr+ZDufhLvO1IPKS+4sds+BA98BdbJwYHXF6l6fhexW9r8kiUFRQR0b
+         koYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=fPAY1pZf;
+       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=GD94HV9u;
        spf=pass (google.com: domain of giulio.benetti@micronovasrl.com designates 212.103.203.10 as permitted sender) smtp.mailfrom=giulio.benetti@micronovasrl.com
 Authentication-Results: mx.google.com;
-       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=fPAY1pZf;
+       dkim=temperror (no key for signature) header.i=@micronovasrl.com header.s=dkim header.b=GD94HV9u;
        spf=pass (google.com: domain of giulio.benetti@micronovasrl.com designates 212.103.203.10 as permitted sender) smtp.mailfrom=giulio.benetti@micronovasrl.com
 Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
 	reason="pass (just generated, assumed good)" header.d=micronovasrl.com
@@ -35,27 +35,18 @@ Cc: pombredanne@nexb.com,
 	kstewart@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v2] tty: fix typo in ASYNCB_FOURPORT comment
-Date: Wed, 16 May 2018 17:43:54 +0200
-Message-Id: <20180516154354.93727-1-giulio.benetti@micronovasrl.com>
+Subject: [PATCH] tty: fix typo in ASYNCB_FOURPORT comment
+Date: Wed, 16 May 2018 16:39:31 +0200
+Message-Id: <20180516143931.89679-1-giulio.benetti@micronovasrl.com>
 X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600631959743697096?=
-X-GMAIL-MSGID: =?utf-8?q?1600635997907524129?=
+X-GMAIL-MSGID: =?utf-8?q?1600631959743697096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On #define ASYNCB_FOURPORT there's an ortography error on comment:
-"Set OU1, OUT2 per AST Fourport settings"
-
-Change it into:
-"Set OUT1, OUT2 per AST Fourport settings"
-
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
-V1 => V2:
-* add commit log
-
  include/uapi/linux/tty_flags.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
