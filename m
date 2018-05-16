@@ -1,57 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752520AbeEPJSY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 05:18:24 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:55908 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeEPJSF (ORCPT
+        id S1752442AbeEPJSV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 05:18:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36370 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751859AbeEPJRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 05:18:05 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>, netdev@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] net: 8390: ne: Fix accidentally removed RBTX4927 support
-Date: Wed, 16 May 2018 11:18:01 +0200
-Message-Id: <1526462281-20772-1-git-send-email-geert@linux-m68k.org>
+        Wed, 16 May 2018 05:17:54 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: shli@kernel.org
+Cc: robert.butera@oracle.com, linux-raid@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] md: zero the original position of sb for 0.90 and 1.0
+Date: Wed, 16 May 2018 17:18:39 +0800
+Message-Id: <1526462319-14222-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8894 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=631
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805160094
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The configuration settings for RBTX4927 were accidentally removed,
-leading to a silently broken network interface.
+For sb version 0.90 and 1.0 which locates after data, when we increase
+the spindle volume size and grow the raid arry size, the older sb which is
+different between spindles will be left there. Due to this left sb, the
+spindle volume cannot be grown with zero filled part with  --asume-clean.
+applications have to take some workarounds such as sync_min/max to avoid
+resync.
 
-Re-add the missing settings to fix this.
+It is easy and convevient for md to zero the older sb position after
+write sb to new position, so do it here.
 
-Fixes: 8eb97ff5a4ec941d ("net: 8390: remove m32r specific bits")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: robert.butera@oracle.com
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
-Bisected between v4.9-rc2 (doh) and v4.17-rc5.
+ drivers/md/md.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Note to myself: I should do more boot testing on RBTX4927.
-Fortunately I caught it before it ends up in a point release ;-)
----
- drivers/net/ethernet/8390/ne.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/8390/ne.c b/drivers/net/ethernet/8390/ne.c
-index ac99d089ac7266c3..1c97e39b478e9f89 100644
---- a/drivers/net/ethernet/8390/ne.c
-+++ b/drivers/net/ethernet/8390/ne.c
-@@ -164,7 +164,9 @@ bad_clone_list[] __initdata = {
- #define NESM_START_PG	0x40	/* First page of TX buffer */
- #define NESM_STOP_PG	0x80	/* Last page +1 of RX ring */
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index c208c01..a042add 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1020,6 +1020,23 @@ int md_check_no_bitmap(struct mddev *mddev)
+ }
+ EXPORT_SYMBOL(md_check_no_bitmap);
  
--#if defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
-+#if defined(CONFIG_MACH_TX49XX)
-+#  define DCR_VAL 0x48		/* 8-bit mode */
-+#elif defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
- #  define DCR_VAL (MACH_IS_ATARI ? 0x48 : 0x49)
- #else
- #  define DCR_VAL 0x49
++static void md_zero_original_sb_position(struct md_rdev *rdev, sector_t old_pos)
++{
++	struct page *zero_pg;
++
++	zero_pg = alloc_pages(GFP_KERNEL | __GFP_ZERO, 0);
++	if (!zero_pg) {
++		pr_warn("%s: failed to get page for zero original sb position",
++				mdname(rdev->mddev));
++		return;
++	}
++	md_super_write(rdev->mddev, rdev, old_pos, rdev->sb_size,
++		       zero_pg);
++	wait_event(rdev->mddev->sb_wait,
++			(atomic_read(&rdev->mddev->pending_writes) == 0));
++	__free_pages(zero_pg, 0);
++}
++
+ /*
+  * load_super for 0.90.0
+  */
+@@ -1394,6 +1411,8 @@ static void super_90_sync(struct mddev *mddev, struct md_rdev *rdev)
+ static unsigned long long
+ super_90_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
+ {
++	sector_t old_pos = rdev->sb_start;
++
+ 	if (num_sectors && num_sectors < rdev->mddev->dev_sectors)
+ 		return 0; /* component must fit device */
+ 	if (rdev->mddev->bitmap_info.offset)
+@@ -1411,6 +1430,8 @@ super_90_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
+ 		md_super_write(rdev->mddev, rdev, rdev->sb_start, rdev->sb_size,
+ 		       rdev->sb_page);
+ 	} while (md_super_wait(rdev->mddev) < 0);
++
++	md_zero_original_sb_position(rdev, old_pos);
+ 	return num_sectors;
+ }
+ 
+@@ -1953,6 +1974,8 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
+ {
+ 	struct mdp_superblock_1 *sb;
+ 	sector_t max_sectors;
++	sector_t old_pos = 0;
++
+ 	if (num_sectors && num_sectors < rdev->mddev->dev_sectors)
+ 		return 0; /* component must fit device */
+ 	if (rdev->data_offset != rdev->new_data_offset)
+@@ -1969,6 +1992,7 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
+ 	} else {
+ 		/* minor version 0; superblock after data */
+ 		sector_t sb_start;
++		old_pos = rdev->sb_start;
+ 		sb_start = (i_size_read(rdev->bdev->bd_inode) >> 9) - 8*2;
+ 		sb_start &= ~(sector_t)(4*2 - 1);
+ 		max_sectors = rdev->sectors + sb_start - rdev->sb_start;
+@@ -1984,6 +2008,9 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
+ 		md_super_write(rdev->mddev, rdev, rdev->sb_start, rdev->sb_size,
+ 			       rdev->sb_page);
+ 	} while (md_super_wait(rdev->mddev) < 0);
++
++	if (old_pos)
++		md_zero_original_sb_position(rdev, old_pos);
+ 	return num_sectors;
+ 
+ }
 -- 
 2.7.4
