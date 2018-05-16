@@ -1,50 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeEPLXv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:23:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56524 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752387AbeEPLXt (ORCPT
+        id S1752622AbeEPLYQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:24:16 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:36332 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752386AbeEPLYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:23:49 -0400
-Date: Wed, 16 May 2018 04:23:47 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lustre-devel@lists.lustre.org,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: vm_fault_t conversion, for real
-Message-ID: <20180516112347.GB20670@bombadil.infradead.org>
-References: <20180516054348.15950-1-hch@lst.de>
+        Wed, 16 May 2018 07:24:14 -0400
+X-Google-Smtp-Source: AB8JxZrHwBoZ6VkCpBVj3EudIvfHmN8CvOztvEOjCD/oV9SYhQdvcuOVVkgsjnZ8XjXGuZxE8h0HRfycVSuwD7No03w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516054348.15950-1-hch@lst.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 May 2018 13:24:13 +0200
+Message-ID: <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 07:43:34AM +0200, Christoph Hellwig wrote:
-> this series tries to actually turn vm_fault_t into a type that can be
-> typechecked and checks the fallout instead of sprinkling random
-> annotations without context.
+On Wed, May 16, 2018 at 9:16 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Commit
+>>
+>>   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
+>>
+>> is missing a Signed-off-by from its comitter.
+>
+> Sorry, I forgot to add it.
+>
+> Linus, as the merge of sh-pfc is your top commit, shall I fix it up
+> and send a new
+> pull request?
+> Please let me know how to proceed. Thanks!
 
-Yes, why should we have small tasks that newcomers can do when the mighty
-Christoph Hellwig can swoop in and take over from them?  Seriously,
-can't your talents find a better use than this?
+If it's just missing your SoB I can add it with your permission
+I guess? That is less trouble.
 
-> The first one fixes a real bug in orangefs, the second and third fix
-> mismatched existing vm_fault_t annotations on the same function, the
-> fourth removes an unused export that was in the chain.  The remainder
-> until the last one do some not quite trivial conversions, and the last
-> one does the trivial mass annotation and flips vm_fault_t to a __bitwise
-> unsigned int - the unsigned means we also get plain compiler type
-> checking for the new ->fault signature even without sparse.
-
-Yes, that was (part of) the eventual goal.  Well done.  Would you like
-a biscuit?
+Yours,
+Linus Walleij
