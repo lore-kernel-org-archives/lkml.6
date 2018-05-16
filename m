@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeEPXuw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:50:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57998 "EHLO mail.kernel.org"
+        id S1752430AbeEPXvK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:51:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752231AbeEPXu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:50:28 -0400
+        id S1752219AbeEPXu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:50:26 -0400
 From: Alan Tull <atull@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
         Alan Tull <atull@kernel.org>
-Subject: [PATCH 13/14] fpga: clarify that unregister functions also free
-Date: Wed, 16 May 2018 18:50:06 -0500
-Message-Id: <20180516235007.3951-14-atull@kernel.org>
+Subject: [PATCH 11/14] documentation: fpga: add bridge document to driver-api
+Date: Wed, 16 May 2018 18:50:04 -0500
+Message-Id: <20180516235007.3951-12-atull@kernel.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180516235007.3951-1-atull@kernel.org>
 References: <20180516235007.3951-1-atull@kernel.org>
@@ -21,57 +21,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following functions also free the struct.  Add that
-fact to the function documentation.
- - fpga_mgr_free
- - fpga_bridge_free
- - fpga_region_free
+Add a new document to driver-api/fpga that documents the
+fpga bridge API and add it to driver-api/fpga/index.rst
 
 Signed-off-by: Alan Tull <atull@kernel.org>
 ---
- drivers/fpga/fpga-bridge.c | 2 +-
- drivers/fpga/fpga-mgr.c    | 2 +-
- drivers/fpga/fpga-region.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ Documentation/driver-api/fpga/fpga-bridge.rst | 49 +++++++++++++++++++++++++++
+ Documentation/driver-api/fpga/index.rst       |  1 +
+ 2 files changed, 50 insertions(+)
+ create mode 100644 Documentation/driver-api/fpga/fpga-bridge.rst
 
-diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
-index 4b207a7..24b8f98 100644
---- a/drivers/fpga/fpga-bridge.c
-+++ b/drivers/fpga/fpga-bridge.c
-@@ -412,7 +412,7 @@ int fpga_bridge_register(struct fpga_bridge *bridge)
- EXPORT_SYMBOL_GPL(fpga_bridge_register);
+diff --git a/Documentation/driver-api/fpga/fpga-bridge.rst b/Documentation/driver-api/fpga/fpga-bridge.rst
+new file mode 100644
+index 0000000..2c2aaca
+--- /dev/null
++++ b/Documentation/driver-api/fpga/fpga-bridge.rst
+@@ -0,0 +1,49 @@
++FPGA Bridge
++===========
++
++API to implement a new FPGA bridge
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++.. kernel-doc:: include/linux/fpga/fpga-bridge.h
++   :functions: fpga_bridge
++
++.. kernel-doc:: include/linux/fpga/fpga-bridge.h
++   :functions: fpga_bridge_ops
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_create
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_free
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_register
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_unregister
++
++API to control an FPGA bridge
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++You probably won't need these directly.  FPGA regions should handle this.
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: of_fpga_bridge_get
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_get
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_put
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_get_to_list
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: of_fpga_bridge_get_to_list
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_enable
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_disable
+diff --git a/Documentation/driver-api/fpga/index.rst b/Documentation/driver-api/fpga/index.rst
+index 34b2075..968bbbf 100644
+--- a/Documentation/driver-api/fpga/index.rst
++++ b/Documentation/driver-api/fpga/index.rst
+@@ -9,3 +9,4 @@ FPGA Subsystem
  
- /**
-- * fpga_bridge_unregister - unregister a fpga bridge driver
-+ * fpga_bridge_unregister - unregister and free a fpga bridge
-  * @bridge:	FPGA bridge struct created by fpga_bridge_create
-  */
- void fpga_bridge_unregister(struct fpga_bridge *bridge)
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index 5fffeef..c1564cf 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -633,7 +633,7 @@ int fpga_mgr_register(struct fpga_manager *mgr)
- EXPORT_SYMBOL_GPL(fpga_mgr_register);
- 
- /**
-- * fpga_mgr_unregister - unregister a FPGA manager
-+ * fpga_mgr_unregister - unregister and free a FPGA manager
-  * @mgr:	fpga manager struct
-  */
- void fpga_mgr_unregister(struct fpga_manager *mgr)
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index 112fa3a..6d214d7 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -232,7 +232,7 @@ int fpga_region_register(struct fpga_region *region)
- EXPORT_SYMBOL_GPL(fpga_region_register);
- 
- /**
-- * fpga_region_unregister - unregister a FPGA region
-+ * fpga_region_unregister - unregister and free a FPGA region
-  * @region: FPGA region
-  */
- void fpga_region_unregister(struct fpga_region *region)
+    intro
+    fpga-mgr
++   fpga-bridge
 -- 
 2.7.4
