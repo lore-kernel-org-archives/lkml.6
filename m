@@ -1,103 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeEPLHB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 07:07:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33070 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752186AbeEPLG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 07:06:59 -0400
-Date: Wed, 16 May 2018 13:06:56 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH V1 10/19] perf tools: Create maps for x86 PTI entry
- trampolines
-Message-ID: <20180516110656.GB25591@krava>
-References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
- <1526388213-30696-11-git-send-email-adrian.hunter@intel.com>
+        id S1752454AbeEPLJB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 07:09:01 -0400
+Received: from foss.arm.com ([217.140.101.70]:46408 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751857AbeEPLI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 07:08:59 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+References: <20180514144304.10484-1-punit.agrawal@arm.com>
+        <20180514144304.10484-5-punit.agrawal@arm.com>
+        <574c197f-378c-ca14-676b-c81e92585b4f@arm.com>
+Date: Wed, 16 May 2018 12:08:57 +0100
+In-Reply-To: <574c197f-378c-ca14-676b-c81e92585b4f@arm.com> (Suzuki
+        K. Poulose's message of "Tue, 15 May 2018 23:19:21 +0100")
+Message-ID: <87wow326ye.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526388213-30696-11-git-send-email-adrian.hunter@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 03:43:24PM +0300, Adrian Hunter wrote:
+Suzuki K Poulose <suzuki.poulose@arm.com> writes:
 
-SNIP
+> On 05/14/2018 03:43 PM, Punit Agrawal wrote:
+>> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+>> handling to add support for PUD hugepages.
+>>
+>> Addition of pud hugepage support enables additional hugepage
+>> sizes (e.g., 1G with 4K granule) which can be useful on cores that
+>> support mapping larger block sizes in the TLB entries.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_mmu.h         | 19 ++++++++++++
+>>   arch/arm64/include/asm/kvm_mmu.h       | 15 ++++++++++
+>>   arch/arm64/include/asm/pgtable-hwdef.h |  4 +++
+>>   arch/arm64/include/asm/pgtable.h       |  2 ++
+>>   virt/kvm/arm/mmu.c                     | 40 ++++++++++++++++++++++++--
+>>   5 files changed, 77 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+>> index 224c22c0a69c..155916dbdd7e 100644
+>> --- a/arch/arm/include/asm/kvm_mmu.h
+>> +++ b/arch/arm/include/asm/kvm_mmu.h
+>> @@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
+>>     #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>>   #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+>> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+>>     #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+>> +/* No support for pud hugepages */
+>> +#define kvm_pud_mkhuge(pud)	(pud)
+>>     /*
+>>    * The following kvm_*pud*() functionas are provided strictly to allow
+>> @@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>>   	return false;
+>>   }
+>>   +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
+>> +{
+>> +	BUG();
+>> +}
+>> +
+>> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+>> +{
+>> +	BUG();
+>> +	return pud;
+>> +}
+>> +
+>> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+>> +{
+>> +	BUG();
+>> +	return pud;
+>> +}
+>>     static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+>>   {
+>> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+>> index f440cf216a23..f49a68fcbf26 100644
+>> --- a/arch/arm64/include/asm/kvm_mmu.h
+>> +++ b/arch/arm64/include/asm/kvm_mmu.h
+>> @@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
+>>     #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
+>>   #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
+>> +#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+>>     #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+>>   #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
+>> +#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+>>     #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
+>> +#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+>>     static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>>   {
+>> @@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+>>   	return pmd;
+>>   }
+>>   +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+>> +{
+>> +	pud_val(pud) |= PUD_S2_RDWR;
+>> +	return pud;
+>> +}
+>> +
+>>   static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+>>   {
+>>   	pte_val(pte) &= ~PTE_S2_XN;
+>> @@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+>>   	return pmd;
+>>   }
+>>   +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+>> +{
+>> +	pud_val(pud) &= ~PUD_S2_XN;
+>> +	return pud;
+>> +}
+>> +
+>>   static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+>>   {
+>>   	pteval_t old_pteval, pteval;
+>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+>> index fd208eac9f2a..e327665e94d1 100644
+>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+>> @@ -193,6 +193,10 @@
+>>   #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+>>   #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+>>   +#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /*
+>> HAP[2:1] */
+>> +#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
+>> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
+>> +
+>>   /*
+>>    * Memory Attribute override for Stage-2 (MemAttr[3:0])
+>>    */
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index 7c4c8f318ba9..31ea9fda07e3 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
+>>     #define pud_write(pud)		pte_write(pud_pte(pud))
+>>   +#define pud_mkhuge(pud)		(__pud(pud_val(pud) &
+>> ~PUD_TABLE_BIT))
+>> +
+>>   #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+>>   #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+>>   #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index 671d3c0825f2..b0931fa2d64e 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>>   	return 0;
+>>   }
+>>   +static int stage2_set_pud_huge(struct kvm *kvm, struct
+>> kvm_mmu_memory_cache *cache,
+>> +			       phys_addr_t addr, const pud_t *new_pud)
+>> +{
+>> +	pud_t *pud, old_pud;
+>> +
+>> +	pud = stage2_get_pud(kvm, cache, addr);
+>> +	VM_BUG_ON(!pud);
+>> +
+>> +	old_pud = *pud;
+>> +	if (pud_present(old_pud)) {
+>> +		pud_clear(pud);
+>> +		kvm_tlb_flush_vmid_ipa(kvm, addr);
+>> +	} else {
+>> +		get_page(virt_to_page(pud));
+>> +	}
+>> +
+>> +	kvm_set_pud(pud, *new_pud);
+>> +	return 0;
+>> +}
+>> +
+>>   static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+>>   {
+>>   	pmd_t *pmdp;
+>> @@ -1467,9 +1487,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>   	}
+>>     	vma_pagesize = vma_kernel_pagesize(vma);
+>> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>> +	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
+>> +	    !logging_active) {
+>> +		struct hstate *h = hstate_vma(vma);
+>> +
+>>   		hugetlb = true;
+>> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>> +		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+>>   	} else {
+>>   		/*
+>>   		 * Pages belonging to memslots that don't have the same
+>> @@ -1555,7 +1578,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>   	if (exec_fault)
+>>   		invalidate_icache_guest_page(pfn, vma_pagesize);
+>>   -	if (vma_pagesize == PMD_SIZE) {
+>> +	if (vma_pagesize == PUD_SIZE) {
+>> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+>> +
+>> +		new_pud = kvm_pud_mkhuge(new_pud);
+>> +		if (writable)
+>> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+>> +
+>> +		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
+>> +			new_pud = kvm_s2pud_mkexec(new_pud);
+>> +
+>> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+>> +	} else if (vma_pagesize == PMD_SIZE) {
+>>   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+>>     		new_pmd = kvm_pmd_mkhuge(new_pmd);
+>>
+>
+>
+> Punit,
+>
+> Sorry for the late notice. I was looking deeply in to the stage2 table
+> code to rework the same for dynamic IPA and thus found this.
+>
+> I am wondering if these changes are sufficient enough to add the PUD
+> hugepage support. There are lots places where we simply get the
+> stage2_pmd of a given address and then go about doing something at the
+> PMD level or drill down to PTE if the PMD is not huge. (e.g
+> stage2_is_exec, handle_access_fault etc). We simply do a pmd_offset()
+> on a PUD entry, without even checking if the PUD is huge or not.
 
-> +int machine__create_extra_kernel_map(struct machine *machine,
-> +				     struct dso *kernel,
-> +				     struct extra_kernel_map *xm)
->  {
->  	struct kmap *kmap;
->  	struct map *map;
-> @@ -923,9 +915,33 @@ static u64 find_entry_trampoline(struct dso *dso)
->  int machine__map_x86_64_entry_trampolines(struct machine *machine,
->  					  struct dso *kernel)
->  {
-> -	u64 pgoff = find_entry_trampoline(kernel);
-> +	struct map_groups *kmaps = &machine->kmaps;
-> +	struct maps *maps = &kmaps->maps;
->  	int nr_cpus_avail = 0, cpu;
-> +	bool found = false;
-> +	struct map *map;
-> +	u64 pgoff;
-> +
-> +	/*
-> +	 * In the vmlinux case, pgoff is a virtual address which must now be
-> +	 * mapped to a vmlinux offset.
-> +	 */
-> +	for (map = maps__first(maps); map; map = map__next(map)) {
-> +		struct kmap *kmap = __map__kmap(map);
-> +		struct map *dest_map;
-> +
-> +		if (!kmap || !is_entry_trampoline(kmap->name))
-> +			continue;
-> +
-> +		dest_map = map_groups__find(kmaps, map->pgoff);
-> +		if (dest_map != map)
-> +			map->pgoff = dest_map->map_ip(dest_map, map->pgoff);
-> +		found = true;
+Having stared at the relevant code, I agree that more bits in the stage2
+mmu logic needs to be made huge PUD aware.
 
-hum, could you please explain/comment on above? the purpose of pgoff for these maps
+I've been running guests with huge PUD on hardware and didn't hit any
+issues. But this seems to be due to the affected code running only in
+certain scenarios such as when save-restoring and possibly under memory
+pressure.
 
-all the trampoline maps seems to have the same pgoff at the end..
+I'll make sure to add this to my testing for the next version.
 
-0 0x158 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000006000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x1b0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000032000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x208 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000005e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x260 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000008a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x2b8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00000b6000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x310 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00000e2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x368 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000010e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x3c0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000013a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x418 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000166000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x470 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000192000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x4c8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00001be000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x520 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00001ea000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x578 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000216000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x5d0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000242000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x628 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000026e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x680 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000029a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x6d8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00002c6000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x730 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00002f2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x788 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000031e000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x7e0 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe000034a000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x838 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe0000376000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x890 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003a2000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x8e8 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003ce000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
-0 0x940 [0x58]: PERF_RECORD_MMAP -1/0: [0xfffffe00003fa000(0x1000) @ 0xffffffff8fc02000]: x __entry_SYSCALL_64_trampoline
+>
+> With the PUD huge support, I think we need to go a level up in all
+> these cases and drill down from PUD level, down to the PMD level and
+> then further down, depending on whether we have huge page support at
+> either of these levels.
 
-thanks,
-jirka
+>From a quick check I've identified the following functions (in addition
+to stage2_is_exec and handle_access_fault) which need to looked into -
+
+* stage2_get_pmd
+* stage2_set_pte
+* kvm_age_hva_handler
+* kvm_test_age_hva_handler
+
+I'll address PUD huegpage awareness throughout stage2 in the next
+version.
+
+Thanks,
+Punit
+
+
+>
+>
+> Cheers
+> Suzuki
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
