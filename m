@@ -1,315 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753277AbeEPKKH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:10:07 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16680 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752430AbeEPKFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:33 -0400
-Message-Id: <1ee6ce0977bcf1e84ac7f629c7947a7d26929d42.1526464250.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
-References: <cover.1526464250.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 04/14] powerpc: common ioremap functions.
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 16 May 2018 12:05:31 +0200 (CEST)
+        id S1753411AbeEPKL5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:11:57 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45353 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752597AbeEPKLy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:11:54 -0400
+X-Google-Smtp-Source: AB8JxZqcbiFjpTHfCxPZnt43JkjH4gtL5QS/TJ7uixDJBWN49iv1zhjmDd7dr3+6AlaNXEyJwYvi0g==
+Date: Wed, 16 May 2018 12:11:51 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 11/14] net: core: add new/replace rate estimator lock
+ parameter
+Message-ID: <20180516101151.GK1972@nanopsycho>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-12-git-send-email-vladbu@mellanox.com>
+ <20180516095416.GH1972@nanopsycho>
+ <vbf603n2a3q.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vbf603n2a3q.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__ioremap(), ioremap(), ioremap_wc() et ioremap_prot() are
-very similar between PPC32 and PPC64, they can easily be
-made common.
+Wed, May 16, 2018 at 12:00:57PM CEST, vladbu@mellanox.com wrote:
+>
+>On Wed 16 May 2018 at 09:54, Jiri Pirko <jiri@resnulli.us> wrote:
+>> Mon, May 14, 2018 at 04:27:12PM CEST, vladbu@mellanox.com wrote:
+>>>Extend rate estimator new and replace APIs with additional spinlock
+>>>parameter used by lockless actions to protect rate_est pointer from
+>>>concurrent modification.
+>>>
+>>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>>
+>> [...]
+>>
+>>
+>>> /**
+>>>  * gen_new_estimator - create a new rate estimator
+>>>  * @bstats: basic statistics
+>>>  * @cpu_bstats: bstats per cpu
+>>>  * @rate_est: rate estimator statistics
+>>>+ * @rate_est_lock: rate_est lock (might be NULL)
+>>
+>> I cannot find a place you actually use this new arg in this patchset.
+>> Did I miss it?
+>
+>It is used by specific action init function. However, that code was
+>moved to next patchset due to patchset size limit.
 
-_PAGE_WRITE equals to _PAGE_RW on PPC32
-_PAGE_RO and _PAGE_HWWRITE are 0 on PPC64
+Please move this patch too.
 
-iounmap() can also be made common by renaming the PPC32
-iounmap() as __iounmap() then __iounmap() can also
-be made common to PPC32 and PPC64.
-
-This patch also makes __ioremap_caller() common to PPC32 and PPC64
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/book3s/64/pgtable.h |   2 +
- arch/powerpc/include/asm/machdep.h           |   2 +-
- arch/powerpc/mm/ioremap.c                    | 190 ++++++---------------------
- 3 files changed, 46 insertions(+), 148 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 47b5ffc8715d..2bebdd8302cb 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -17,6 +17,8 @@
- #define _PAGE_NA		0
- #define _PAGE_RO		0
- #define _PAGE_USER		0
-+#define _PAGE_HWWRITE		0
-+#define _PAGE_COHERENT		0
- 
- #define _PAGE_EXEC		0x00001 /* execute permission */
- #define _PAGE_WRITE		0x00002 /* write access allowed */
-diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
-index ffe7c71e1132..84d99ed82d5d 100644
---- a/arch/powerpc/include/asm/machdep.h
-+++ b/arch/powerpc/include/asm/machdep.h
-@@ -33,11 +33,11 @@ struct pci_host_bridge;
- 
- struct machdep_calls {
- 	char		*name;
--#ifdef CONFIG_PPC64
- 	void __iomem *	(*ioremap)(phys_addr_t addr, unsigned long size,
- 				   unsigned long flags, void *caller);
- 	void		(*iounmap)(volatile void __iomem *token);
- 
-+#ifdef CONFIG_PPC64
- #ifdef CONFIG_PM
- 	void		(*iommu_save)(void);
- 	void		(*iommu_restore)(void);
-diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-index a498e3cade9e..a140feec2f8a 100644
---- a/arch/powerpc/mm/ioremap.c
-+++ b/arch/powerpc/mm/ioremap.c
-@@ -35,147 +35,6 @@ unsigned long ioremap_bot = IOREMAP_BASE;
- #endif
- EXPORT_SYMBOL(ioremap_bot);	/* aka VMALLOC_END */
- 
--#ifdef CONFIG_PPC32
--
--void __iomem *
--ioremap(phys_addr_t addr, unsigned long size)
--{
--	return __ioremap_caller(addr, size, _PAGE_NO_CACHE | _PAGE_GUARDED,
--				__builtin_return_address(0));
--}
--EXPORT_SYMBOL(ioremap);
--
--void __iomem *
--ioremap_wc(phys_addr_t addr, unsigned long size)
--{
--	return __ioremap_caller(addr, size, _PAGE_NO_CACHE,
--				__builtin_return_address(0));
--}
--EXPORT_SYMBOL(ioremap_wc);
--
--void __iomem *
--ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long flags)
--{
--	/* writeable implies dirty for kernel addresses */
--	if ((flags & (_PAGE_RW | _PAGE_RO)) != _PAGE_RO)
--		flags |= _PAGE_DIRTY | _PAGE_HWWRITE;
--
--	/* we don't want to let _PAGE_USER and _PAGE_EXEC leak out */
--	flags &= ~(_PAGE_USER | _PAGE_EXEC);
--	flags |= _PAGE_PRIVILEGED;
--
--	return __ioremap_caller(addr, size, flags, __builtin_return_address(0));
--}
--EXPORT_SYMBOL(ioremap_prot);
--
--void __iomem *
--__ioremap(phys_addr_t addr, unsigned long size, unsigned long flags)
--{
--	return __ioremap_caller(addr, size, flags, __builtin_return_address(0));
--}
--EXPORT_SYMBOL(__ioremap);
--
--void __iomem *
--__ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
--		 void *caller)
--{
--	unsigned long v, i;
--	phys_addr_t p;
--	int err;
--
--	/* Make sure we have the base flags */
--	if ((flags & _PAGE_PRESENT) == 0)
--		flags |= pgprot_val(PAGE_KERNEL);
--
--	/* Non-cacheable page cannot be coherent */
--	if (flags & _PAGE_NO_CACHE)
--		flags &= ~_PAGE_COHERENT;
--
--	/*
--	 * Choose an address to map it to.
--	 * Once the vmalloc system is running, we use it.
--	 * Before then, we use space going up from IOREMAP_BASE
--	 * (ioremap_bot records where we're up to).
--	 */
--	p = addr & PAGE_MASK;
--	size = PAGE_ALIGN(addr + size) - p;
--
--	/*
--	 * If the address lies within the first 16 MB, assume it's in ISA
--	 * memory space
--	 */
--	if (p < 16*1024*1024)
--		p += _ISA_MEM_BASE;
--
--#ifndef CONFIG_CRASH_DUMP
--	/*
--	 * Don't allow anybody to remap normal RAM that we're using.
--	 * mem_init() sets high_memory so only do the check after that.
--	 */
--	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
--	    page_is_ram(__phys_to_pfn(p))) {
--		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
--		       (unsigned long long)p, __builtin_return_address(0));
--		return NULL;
--	}
--#endif
--
--	if (size == 0)
--		return NULL;
--
--	/*
--	 * Is it already mapped?  Perhaps overlapped by a previous
--	 * mapping.
--	 */
--	v = p_block_mapped(p);
--	if (v)
--		goto out;
--
--	if (slab_is_available()) {
--		struct vm_struct *area;
--		area = get_vm_area_caller(size, VM_IOREMAP, caller);
--		if (area == 0)
--			return NULL;
--		area->phys_addr = p;
--		v = (unsigned long) area->addr;
--	} else {
--		v = ioremap_bot;
--		ioremap_bot += size;
--	}
--
--	/*
--	 * Should check if it is a candidate for a BAT mapping
--	 */
--
--	err = 0;
--	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
--		err = map_kernel_page(v+i, p+i, flags);
--	if (err) {
--		if (slab_is_available())
--			vunmap((void *)v);
--		return NULL;
--	}
--
--out:
--	return (void __iomem *) (v + ((unsigned long)addr & ~PAGE_MASK));
--}
--
--void iounmap(volatile void __iomem *addr)
--{
--	/*
--	 * If mapped by BATs then there is nothing to do.
--	 * Calling vfree() generates a benign warning.
--	 */
--	if (v_block_mapped((unsigned long)addr))
--		return;
--
--	if ((unsigned long) addr >= ioremap_bot)
--		vunmap((void *) (PAGE_MASK & (unsigned long)addr));
--}
--EXPORT_SYMBOL(iounmap);
--
--#else
--
- /**
-  * __ioremap_at - Low level function to establish the page tables
-  *                for an IO mapping
-@@ -189,6 +48,10 @@ void __iomem * __ioremap_at(phys_addr_t pa, void *ea, unsigned long size,
- 	if ((flags & _PAGE_PRESENT) == 0)
- 		flags |= pgprot_val(PAGE_KERNEL);
- 
-+	/* Non-cacheable page cannot be coherent */
-+	if (flags & _PAGE_NO_CACHE)
-+		flags &= ~_PAGE_COHERENT;
-+
- 	/* We don't support the 4K PFN hack with ioremap */
- 	if (flags & H_PAGE_4K_PFN)
- 		return NULL;
-@@ -241,6 +104,33 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
- 	if ((size == 0) || (paligned == 0))
- 		return NULL;
- 
-+	/*
-+	 * If the address lies within the first 16 MB, assume it's in ISA
-+	 * memory space
-+	 */
-+	if (IS_ENABLED(CONFIG_PPC32) && paligned < 16*1024*1024)
-+		paligned += _ISA_MEM_BASE;
-+
-+	/*
-+	 * Don't allow anybody to remap normal RAM that we're using.
-+	 * mem_init() sets high_memory so only do the check after that.
-+	 */
-+	if (!IS_ENABLED(CONFIG_CRASH_DUMP) &&
-+	    slab_is_available() && (paligned < virt_to_phys(high_memory)) &&
-+	    page_is_ram(__phys_to_pfn(paligned))) {
-+		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
-+		       (u64)paligned, __builtin_return_address(0));
-+		return NULL;
-+	}
-+
-+	/*
-+	 * Is it already mapped?  Perhaps overlapped by a previous
-+	 * mapping.
-+	 */
-+	ret = (void __iomem *)p_block_mapped(paligned);
-+	if (ret)
-+		goto out;
-+
- 	if (slab_is_available()) {
- 		struct vm_struct *area;
- 
-@@ -259,9 +149,9 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
- 		if (ret)
- 			ioremap_bot += size;
- 	}
--
-+out:
- 	if (ret)
--		ret += addr & ~PAGE_MASK;
-+		ret += (unsigned long)addr & ~PAGE_MASK;
- 	return ret;
- }
- 
-@@ -300,8 +190,8 @@ void __iomem * ioremap_prot(phys_addr_t addr, unsigned long size,
- 	void *caller = __builtin_return_address(0);
- 
- 	/* writeable implies dirty for kernel addresses */
--	if (flags & _PAGE_WRITE)
--		flags |= _PAGE_DIRTY;
-+	if ((flags & (_PAGE_WRITE | _PAGE_RO)) != _PAGE_RO)
-+		flags |= _PAGE_DIRTY | _PAGE_HWWRITE;
- 
- 	/* we don't want to let _PAGE_EXEC leak out */
- 	flags &= ~_PAGE_EXEC;
-@@ -330,6 +220,14 @@ void __iounmap(volatile void __iomem *token)
- 
- 	addr = (void *) ((unsigned long __force)
- 			 PCI_FIX_ADDR(token) & PAGE_MASK);
-+
-+	/*
-+	 * If mapped by BATs then there is nothing to do.
-+	 * Calling vfree() generates a benign warning.
-+	 */
-+	if (v_block_mapped((unsigned long)addr))
-+		return;
-+
- 	if ((unsigned long)addr < ioremap_bot) {
- 		printk(KERN_WARNING "Attempt to iounmap early bolted mapping"
- 		       " at 0x%p\n", addr);
-@@ -347,5 +245,3 @@ void iounmap(volatile void __iomem *token)
- 		__iounmap(token);
- }
- EXPORT_SYMBOL(iounmap);
--
--#endif
--- 
-2.13.3
+>
+>>
+>>
+>>>  * @stats_lock: statistics lock
+>>>  * @running: qdisc running seqcount
+>>>  * @opt: rate estimator configuration TLV
+>>
+>> [...]
+>
