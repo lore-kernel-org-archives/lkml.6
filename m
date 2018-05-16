@@ -1,190 +1,302 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeEPHdK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 03:33:10 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:57862 "EHLO smtp4-g21.free.fr"
+        id S1752588AbeEPHdY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 03:33:24 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20231 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeEPHdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 03:33:07 -0400
-Subject: Re: [PATCH v7] mtd: rawnand: use bit-wise majority to recover the
- contents of ONFI parameter
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <VI1PR07MB1615A02B23D992E84A3B333F819D0@VI1PR07MB1615.eurprd07.prod.outlook.com>
- <ce0c8d75-b02a-cad0-7198-ffbd503427ce@free.fr>
- <20180515093429.34902670@bbrezillon>
-From: Chris Moore <moore@free.fr>
-Message-ID: <ca076561-5b7c-b220-d499-eb2bcad3d1b4@free.fr>
-Date: Wed, 16 May 2018 09:32:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1751151AbeEPHdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 03:33:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,404,1520924400";
+   d="scan'208";a="199763221"
+Subject: Re: [PATCH V5 2/3] mmc: sdhci: Add support for O2 hardware tuning
+To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Xiaoguang Yu <xiaoguang.yu@bayhubtech.com>,
+        Shirley Her <shirley.her@bayhubtech.com>,
+        Yuxiang Wan <yuxiang.wan@bayhubtech.com>
+References: <20180420163812.9868-1-ernest.zhang@bayhubtech.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4d6d75ef-2e6a-e397-3148-7a9d8de7ad1f@intel.com>
+Date: Wed, 16 May 2018 10:32:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180515093429.34902670@bbrezillon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <20180420163812.9868-1-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/04/18 19:38, ernest.zhang wrote:
+> Add hardware tuning function instead of software tuning because O2/Bayhub
+> SD host controller support hardware tuning.
+> 
+> Changes in V5:
 
-Le 15/05/2018 à 09:34, Boris Brezillon a écrit :
-> On Tue, 15 May 2018 06:45:51 +0200
-> Chris Moore <moore@free.fr> wrote:
->
->> Hi,
->>
->> Le 13/05/2018 à 06:30, Wan, Jane (Nokia - US/Sunnyvale) a écrit :
->>> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid CRC values, the bit-wise majority may be used to recover the contents of the parameter pages from the parameter page copies present.
->>>
->>> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
->>> ---
->>> v7: change debug print messages
->>> v6: support the cases that srcbufs are not contiguous
->>> v5: make the bit-wise majority functon generic
->>> v4: move the bit-wise majority code in a separate function
->>> v3: fix warning message detected by kbuild test robot
->>> v2: rebase the changes on top of v4.17-rc1
->>>    
->>> drivers/mtd/nand/raw/nand_base.c |   50 ++++++++++++++++++++++++++++++++++----
->>>    1 file changed, 45 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
->>> index 72f3a89..b43b784 100644
->>> --- a/drivers/mtd/nand/raw/nand_base.c
->>> +++ b/drivers/mtd/nand/raw/nand_base.c
->>> @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
->>>    }
->>>    
->>>    /*
->>> + * Recover data with bit-wise majority
->>> + */
->>> +static void nand_bit_wise_majority(const void **srcbufs,
->>> +				   unsigned int nsrcbufs,
->>> +				   void *dstbuf,
->>> +				   unsigned int bufsize)
->>> +{
->>> +	int i, j, k;
->>> +
->>> +	for (i = 0; i < bufsize; i++) {
->>> +		u8 cnt, val;
->>> +
->>> +		val = 0;
->>> +		for (j = 0; j < 8; j++) {
->>> +			cnt = 0;
->>> +			for (k = 0; k < nsrcbufs; k++) {
->>> +				const u8 *srcbuf = srcbufs[k];
->>> +
->>> +				if (srcbuf[i] & BIT(j))
->>> +					cnt++;
->>> +			}
->>> +			if (cnt > nsrcbufs / 2)
->>> +				val |= BIT(j);
->>> +		}
->>> +		((u8 *)dstbuf)[i] = val;
->>> +	}
->>> +}
->>> +
->>> +/*
->>>     * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
->>>     */
->>>    static int nand_flash_detect_onfi(struct nand_chip *chip)
->>> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->>>    		return 0;
->>>    
->>>    	/* ONFI chip: allocate a buffer to hold its parameter page */
->>> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
->>> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
->>>    	if (!p)
->>>    		return -ENOMEM;
->>>    
->>> @@ -5113,21 +5142,32 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->>>    	}
->>>    
->>>    	for (i = 0; i < 3; i++) {
->>> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
->>> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
->>>    		if (ret) {
->>>    			ret = 0;
->>>    			goto free_onfi_param_page;
->>>    		}
->>>    
->>> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
->>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
->>>    				le16_to_cpu(p->crc)) {
->>> +			if (i)
->>> +				memcpy(p, &p[i], sizeof(*p));
->>>    			break;
->>>    		}
->>>    	}
->>>    
->>>    	if (i == 3) {
->>> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
->>> -		goto free_onfi_param_page;
->>> +		const void *srcbufs[3] = {p, p + 1, p + 2};
->>> +
->>> +		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it\n");
->>> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
->>> +				       sizeof(*p));
->>> +
->>> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
->>> +				le16_to_cpu(p->crc)) {
->>> +			pr_err("ONFI parameter recovery failed, aborting\n");
->>> +			goto free_onfi_param_page;
->>> +		}
->>>    	}
->>>    
->>>    	/* Check version */
->> This version is still hard coded for a three sample bitwise majority vote.
->> So why not use the method which I suggested previously for v2 and which
->> I repeat below?
-> Because I want the nand_bit_wise_majority() function to work with
-> nsrcbufs > 3 (the ONFI spec says there's at least 3 copy of the param
-> page, but NAND vendor can decide to put more). Also, if the X copies of
-> the PARAM are corrupted (which is rather unlikely), that means we
-> already spent quite a lot of time reading the different copies and
-> calculating the CRC, so I think we don't care about perf optimizations
-> when doing bit-wise majority.
->
->> The three sample bitwise majority can be implemented without bit level
->> manipulation using the identity:
->> majority3(a, b, c) = (a & b) | (a & c) | (b & c)
->> This can be factorized slightly to (a & (b | c)) | (b & c)
->> This enables the operation to be performed 8, 16, 32 or even 64 bits at
->> a time depending on the hardware.
->>
->> This method is not only faster and but also more compact.
->>
+The change log goes below the --- line or in a separate cover email.
 
-I do understand that the ONFI specifications permit more than 3 copies.
-However elsewhere the proposed code shows no intention of handling other 
-cases.
-The constant 3 is hard coded in the following lines extracted from the 
-proposed code:
-...
-+    p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-...
-      for (i = 0; i < 3; i++) {
-...
-      if (i == 3) {
-...
-+        const void *srcbufs[3] = {p, p + 1, p + 2};
+> 	In function sdhci_o2_send_tuning, mrq.data should set to NULL for
+> 	cmd.data has been set to NULL.
+> 
+> Changes in V4:
+> 	Patch V3 delete register SDHCI_TRANSFER_MODE write operation before
+> 	send hardware tuning command in function sdhci_o2_send_tuning. This
+> 	is a mistake. The write operation is essential for tuning command.
+> 	Add it back.
+> 
+> Changes in V3:
+> 	Rebase the patch on the mmc tree 'next' branch.
+> 
+> Changes in V2:
+> 	Modify code format, and delete unused code path.
+> 
+> Changes in V1:
+> 	Add many functions to execute hardware tuning for eMMC 1.8V HS200
+> 	mode, the hardware tuning procedure is based on O2/Bayhub hardware
+> 	tuning spec.
+> 
+> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 175 +++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c             |   5 +-
+>  2 files changed, 179 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index ba59db6a..96adaae 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -17,6 +17,9 @@
+>   */
+>  
+>  #include <linux/pci.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/delay.h>
+>  
+>  #include "sdhci.h"
+>  #include "sdhci-pci.h"
+> @@ -55,6 +58,176 @@
+>  
+>  #define O2_SD_VENDOR_SETTING	0x110
+>  #define O2_SD_VENDOR_SETTING2	0x1C8
+> +#define O2_SD_HW_TUNING_DISABLE	BIT(4)
+> +
+> +static void sdhci_o2_start_tuning(struct sdhci_host *host)
 
-Moreover the last of these is difficult to generalize.
+This is the same as sdhci_start_tuning() so please export and use that instead.
 
-Cheers,
-Chris
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl |= SDHCI_CTRL_EXEC_TUNING;
+> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+> +
+> +	/*
+> +	 * As per the Host Controller spec v3.00, tuning command
+> +	 * generates Buffer Read Ready interrupt, so enable that.
+> +	 *
+> +	 * Note: The spec clearly says that when tuning sequence
+> +	 * is being performed, the controller does not generate
+> +	 * interrupts other than Buffer Read Ready interrupt. But
+> +	 * to make sure we don't hit a controller bug, we _only_
+> +	 * enable Buffer Read Ready interrupt here.
+> +	 */
+> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_INT_ENABLE);
+> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_SIGNAL_ENABLE);
+> +}
+> +
+> +static void sdhci_o2_end_tuning(struct sdhci_host *host)
+
+This is the same as sdhci_end_tuning() so please export and use that instead.
+
+> +{
+> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +}
+> +
+> +static inline bool sdhci_data_line_cmd(struct mmc_command *cmd)
+> +{
+> +	return cmd->data || cmd->flags & MMC_RSP_BUSY;
+> +}
+> +
+> +static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+> +{
+> +	if (sdhci_data_line_cmd(mrq->cmd))
+> +		del_timer(&host->data_timer);
+> +	else
+> +		del_timer(&host->timer);
+> +}
+> +
+> +static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
+> +{
+> +	u16 reg;
+> +
+> +	/* enable hardware tuning */
+> +	reg = sdhci_readw(host, O2_SD_VENDOR_SETTING);
+> +	reg &= ~O2_SD_HW_TUNING_DISABLE;
+> +	sdhci_writew(host, reg, O2_SD_VENDOR_SETTING);
+> +}
+> +
+> +static int sdhci_o2_send_tuning(struct sdhci_host *host, u32 opcode)
+
+This is the same as sdhci_send_tuning() except for the cmd.flags.
+Please export sdhci_send_tuning() and use that instead.  If you really need
+different cmd.flags then add them as a parameter.
+
+> +{
+> +	struct mmc_command cmd = { };
+> +	struct mmc_request mrq = { };
+> +	unsigned long flags;
+> +	u32 b = host->sdma_boundary;
+> +
+> +	cmd.opcode = opcode;
+> +	cmd.flags = MMC_RSP_PRESENT | MMC_RSP_OPCODE | MMC_RSP_CRC;
+> +	cmd.mrq = &mrq;
+> +	cmd.data = NULL;
+> +	mrq.cmd = &cmd;
+> +	mrq.data = NULL;
+> +
+> +	spin_lock_irqsave(&host->lock, flags);
+> +
+> +	sdhci_writew(host, SDHCI_MAKE_BLKSZ(b, 64), SDHCI_BLOCK_SIZE);
+> +
+> +	/*
+> +	 * The tuning block is sent by the card to the host controller.
+> +	 * So we set the TRNS_READ bit in the Transfer Mode register.
+> +	 * This also takes care of setting DMA Enable and Multi Block
+> +	 * Select in the same register to 0.
+> +	 */
+> +	sdhci_writew(host, SDHCI_TRNS_READ, SDHCI_TRANSFER_MODE);
+> +
+> +	sdhci_send_command(host, &cmd);
+> +
+> +	host->cmd = NULL;
+> +
+> +	sdhci_del_timer(host, &mrq);
+> +
+> +	host->tuning_done = 0;
+> +
+> +	mmiowb();
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +
+> +	/* Wait for Buffer Read Ready interrupt */
+> +	wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
+> +			   msecs_to_jiffies(50));
+> +	return 0;
+> +}
+> +
+> +static void sdhci_o2_reset_tuning(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl &= ~SDHCI_CTRL_TUNED_CLK;
+> +	ctrl &= ~SDHCI_CTRL_EXEC_TUNING;
+> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+> +}
+> +
+> +static void __sdhci_o2_execute_tuning(struct sdhci_host *host, u32 opcode)
+> +{
+> +	int i;
+> +
+> +	sdhci_o2_send_tuning(host, MMC_SEND_TUNING_BLOCK_HS200);
+> +
+> +	for (i = 0; i < 150; i++) {
+> +		u16 ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +
+> +		if (!(ctrl & SDHCI_CTRL_EXEC_TUNING)) {
+> +			if (ctrl & SDHCI_CTRL_TUNED_CLK) {
+> +				host->tuning_done = true;
+> +				return;
+> +			}
+> +			pr_warn("%s: HW tuning failed !\n",
+> +				mmc_hostname(host->mmc));
+> +			break;
+> +		}
+> +
+> +		mdelay(1);
+> +	}
+> +
+> +	pr_info("%s: Tuning failed, falling back to fixed sampling clock\n",
+> +		mmc_hostname(host->mmc));
+> +	sdhci_o2_reset_tuning(host);
+> +}
+> +
+> +static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	int current_bus_width = 0;
+> +
+> +	/*
+> +	 * This handler only implements the eMMC tuning that is specific to
+> +	 * this controller.  Fall back to the standard method for other TIMING.
+> +	 */
+> +	if (host->timing != MMC_TIMING_MMC_HS200)
+> +		return sdhci_execute_tuning(mmc, opcode);
+> +
+> +	if (WARN_ON(opcode != MMC_SEND_TUNING_BLOCK_HS200))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * o2 sdhci host didn't support 8bit emmc tuning
+> +	 */
+> +	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
+> +		current_bus_width = mmc->ios.bus_width;
+> +		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
+> +	}
+> +
+> +	sdhci_o2_set_tuning_mode(host);
+> +
+> +	sdhci_o2_start_tuning(host);
+> +
+> +	__sdhci_o2_execute_tuning(host, opcode);
+> +
+> +	sdhci_o2_end_tuning(host);
+> +
+> +	if (current_bus_width == MMC_BUS_WIDTH_8)
+> +		sdhci_set_bus_width(host, current_bus_width);
+> +
+> +	host->flags &= ~SDHCI_HS400_TUNING;
+> +	return 0;
+> +}
+>  
+>  static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+>  {
+> @@ -215,6 +388,8 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  			}
+>  		}
+>  
+> +		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
+> +
+>  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
+>  			break;
+>  		/* set dll watch dog timer */
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 2ededa7..3bf6117 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -955,7 +955,10 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>  	if (data == NULL) {
+>  		if (host->quirks2 &
+>  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
+> -			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+> +			/* must not clear SDHCI_TRANSFER_MODE when tuning */
+> +			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) {
+> +				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+> +			}
+
+Unnecessary {}
+
+>  		} else {
+>  		/* clear Auto CMD settings for no data CMDs */
+>  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
+> 
