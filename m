@@ -1,238 +1,315 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753153AbeEPKL3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:11:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36390 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeEPKLC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:11:02 -0400
-X-Google-Smtp-Source: AB8JxZrtj6C1jjjFJniXSTQeJCIz9TCqJgreo5yfmSpP8/6HdFM/h/G11K9XSNmSqQrZyIKSYZ7Yws4bxjDIcJlYkeE=
-MIME-Version: 1.0
-In-Reply-To: <465cf5c6-46be-2701-1c26-3e90f31f05e4@mellanox.com>
-References: <20180511192318.22342-1-qing.huang@oracle.com> <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
- <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com> <1ded7d49-0ba2-3594-f840-74d7cf37a0eb@mellanox.com>
- <f4c5d8d3-1eea-8566-9921-a9dc48435f66@oracle.com> <465cf5c6-46be-2701-1c26-3e90f31f05e4@mellanox.com>
-From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Date: Wed, 16 May 2018 12:10:20 +0200
-Message-ID: <CAJX1YtZBW4FB1m+D92tK7iiOpeKTYGybhBwv29iu_=hBV5nztA@mail.gmail.com>
-Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
-To: Tariq Toukan <tariqt@mellanox.com>
-Cc: Qing Huang <qing.huang@oracle.com>, davem@davemloft.net,
-        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1753277AbeEPKKH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:10:07 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:16680 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752430AbeEPKFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:33 -0400
+Message-Id: <1ee6ce0977bcf1e84ac7f629c7947a7d26929d42.1526464250.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
+References: <cover.1526464250.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 04/14] powerpc: common ioremap functions.
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 16 May 2018 12:05:31 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4GAC9Yr025704
 
-On Wed, May 16, 2018 at 9:04 AM, Tariq Toukan <tariqt@mellanox.com> wrote:
->
->
-> On 15/05/2018 9:53 PM, Qing Huang wrote:
->>
->>
->>
->> On 5/15/2018 2:19 AM, Tariq Toukan wrote:
->>>
->>>
->>>
->>> On 14/05/2018 7:41 PM, Qing Huang wrote:
->>>>
->>>>
->>>>
->>>> On 5/13/2018 2:00 AM, Tariq Toukan wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 11/05/2018 10:23 PM, Qing Huang wrote:
->>>>>>
->>>>>> When a system is under memory presure (high usage with fragments),
->>>>>> the original 256KB ICM chunk allocations will likely trigger kernel
->>>>>> memory management to enter slow path doing memory compact/migration
->>>>>> ops in order to complete high order memory allocations.
->>>>>>
->>>>>> When that happens, user processes calling uverb APIs may get stuck
->>>>>> for more than 120s easily even though there are a lot of free pages
->>>>>> in smaller chunks available in the system.
->>>>>>
->>>>>> Syslog:
->>>>>> ...
->>>>>> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
->>>>>> oracle_205573_e:205573 blocked for more than 120 seconds.
->>>>>> ...
->>>>>>
->>>>>> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
->>>>>>
->>>>>> However in order to support smaller ICM chunk size, we need to fix
->>>>>> another issue in large size kcalloc allocations.
->>>>>>
->>>>>> E.g.
->>>>>> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
->>>>>> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each
->>>>>> mtt
->>>>>> entry). So we need a 16MB allocation for a table->icm pointer array to
->>>>>> hold 2M pointers which can easily cause kcalloc to fail.
->>>>>>
->>>>>> The solution is to use vzalloc to replace kcalloc. There is no need
->>>>>> for contiguous memory pages for a driver meta data structure (no need
->>>>>> of DMA ops).
->>>>>>
->>>>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->>>>>> Acked-by: Daniel Jurgens <danielj@mellanox.com>
->>>>>> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
->>>>>> ---
->>>>>> v2 -> v1: adjusted chunk size to reflect different architectures.
->>>>>>
->>>>>>   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
->>>>>>   1 file changed, 7 insertions(+), 7 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>>>> b/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>>>> index a822f7a..ccb62b8 100644
->>>>>> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>>>> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>>>> @@ -43,12 +43,12 @@
->>>>>>   #include "fw.h"
->>>>>>     /*
->>>>>> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
->>>>>> - * per chunk.
->>>>>> + * We allocate in page size (default 4KB on many archs) chunks to
->>>>>> avoid high
->>>>>> + * order memory allocations in fragmented/high usage memory
->>>>>> situation.
->>>>>>    */
->>>>>>   enum {
->>>>>> -    MLX4_ICM_ALLOC_SIZE    = 1 << 18,
->>>>>> -    MLX4_TABLE_CHUNK_SIZE    = 1 << 18
->>>>>> +    MLX4_ICM_ALLOC_SIZE    = 1 << PAGE_SHIFT,
->>>>>> +    MLX4_TABLE_CHUNK_SIZE    = 1 << PAGE_SHIFT
->>>>>
->>>>>
->>>>> Which is actually PAGE_SIZE.
->>>>
->>>>
->>>> Yes, we wanted to avoid high order memory allocations.
->>>>
->>>
->>> Then please use PAGE_SIZE instead.
->>
->>
->> PAGE_SIZE is usually defined as 1 << PAGE_SHIFT. So I think PAGE_SHIFT is
->> actually more appropriate here.
->>
->
-> Definition of PAGE_SIZE varies among different archs.
-> It is not always as simple as 1 << PAGE_SHIFT.
-> It might be:
-> PAGE_SIZE (1UL << PAGE_SHIFT)
-> PAGE_SIZE (_AC(1, UL) << PAGE_SHIFT)
-> etc...
->
-> Please replace 1 << PAGE_SHIFT with PAGE_SIZE.
->
->>
->>>
->>>>> Also, please add a comma at the end of the last entry.
->>>>
->>>>
->>>> Hmm..., followed the existing code style and checkpatch.pl didn't
->>>> complain about the comma.
->>>>
->>>
->>> I am in favor of having a comma also after the last element, so that when
->>> another enum element is added we do not modify this line again, which would
->>> falsely affect git blame.
->>>
->>> I know it didn't exist before your patch, but once we're here, let's do
->>> it.
->>
->>
->> I'm okay either way. If adding an extra comma is preferred by many people,
->> someone should update checkpatch.pl to enforce it. :)
->>
-> I agree.
-> Until then, please use an extra comma in this patch.
->
->>>
->>>>>
->>>>>>   };
->>>>>>     static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct
->>>>>> mlx4_icm_chunk *chunk)
->>>>>> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev,
->>>>>> struct mlx4_icm_table *table,
->>>>>>       obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
->>>>>>       num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
->>>>>>   -    table->icm      = kcalloc(num_icm, sizeof(*table->icm),
->>>>>> GFP_KERNEL);
->>>>>> +    table->icm      = vzalloc(num_icm * sizeof(*table->icm));
->>>>>
->>>>>
->>>>> Why not kvzalloc ?
->>>>
->>>>
->>>> I think table->icm pointer array doesn't really need physically
->>>> contiguous memory. Sometimes high order
->>>> memory allocation by kmalloc variants may trigger slow path and cause
->>>> tasks to be blocked.
->>>>
->>>
->>> This is control path so it is less latency-sensitive.
->>> Let's not produce unnecessary degradation here, please call kvzalloc so
->>> we maintain a similar behavior when contiguous memory is available, and a
->>> fallback for resiliency.
->>
->>
->> No sure what exactly degradation is caused by vzalloc here. I think it's
->> better to keep physically contiguous pages
->> to other requests which really need them. Besides slow path/mem compacting
->> can be really expensive.
->>
->
-> Degradation is expected when you replace a contig memory with non-contig
-> memory, without any perf test.
-> We agree that when contig memory is not available, we should use non-contig
-> instead of simply failing, and for this you can call kvzalloc.
+__ioremap(), ioremap(), ioremap_wc() et ioremap_prot() are
+very similar between PPC32 and PPC64, they can easily be
+made common.
 
-The expected degradation would be little if the data is not very
-performance sensitive.
-I think vmalloc would be better in general case.
+_PAGE_WRITE equals to _PAGE_RW on PPC32
+_PAGE_RO and _PAGE_HWWRITE are 0 on PPC64
 
-Even if the server has hundreds of gigabyte memory, even 1MB
-contiguous memory is often rare.
-For example, I attached /proc/pagetypeinfo of my server running for 153 days.
-The largest contiguous memory is 2^7=512KB.
+iounmap() can also be made common by renaming the PPC32
+iounmap() as __iounmap() then __iounmap() can also
+be made common to PPC32 and PPC64.
 
-Node    0, zone   Normal, type    Unmovable   4499   9418   4817
-732    747    567     18      3      0      0      0
-Node    0, zone   Normal, type      Movable  38179  40839  10546
-1888    491     51      1      0      0      0      0
-Node    0, zone   Normal, type  Reclaimable    117     98   1279
-35     21     10      8      0      0      0      0
-Node    0, zone   Normal, type   HighAtomic      0      0      0
-0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type      Isolate      0      0      0
-0      0      0      0      0      0      0      0
+This patch also makes __ioremap_caller() common to PPC32 and PPC64
 
-So I think vmalloc would be good if it is not very performance critical data.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/64/pgtable.h |   2 +
+ arch/powerpc/include/asm/machdep.h           |   2 +-
+ arch/powerpc/mm/ioremap.c                    | 190 ++++++---------------------
+ 3 files changed, 46 insertions(+), 148 deletions(-)
 
-
-
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index 47b5ffc8715d..2bebdd8302cb 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -17,6 +17,8 @@
+ #define _PAGE_NA		0
+ #define _PAGE_RO		0
+ #define _PAGE_USER		0
++#define _PAGE_HWWRITE		0
++#define _PAGE_COHERENT		0
+ 
+ #define _PAGE_EXEC		0x00001 /* execute permission */
+ #define _PAGE_WRITE		0x00002 /* write access allowed */
+diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
+index ffe7c71e1132..84d99ed82d5d 100644
+--- a/arch/powerpc/include/asm/machdep.h
++++ b/arch/powerpc/include/asm/machdep.h
+@@ -33,11 +33,11 @@ struct pci_host_bridge;
+ 
+ struct machdep_calls {
+ 	char		*name;
+-#ifdef CONFIG_PPC64
+ 	void __iomem *	(*ioremap)(phys_addr_t addr, unsigned long size,
+ 				   unsigned long flags, void *caller);
+ 	void		(*iounmap)(volatile void __iomem *token);
+ 
++#ifdef CONFIG_PPC64
+ #ifdef CONFIG_PM
+ 	void		(*iommu_save)(void);
+ 	void		(*iommu_restore)(void);
+diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+index a498e3cade9e..a140feec2f8a 100644
+--- a/arch/powerpc/mm/ioremap.c
++++ b/arch/powerpc/mm/ioremap.c
+@@ -35,147 +35,6 @@ unsigned long ioremap_bot = IOREMAP_BASE;
+ #endif
+ EXPORT_SYMBOL(ioremap_bot);	/* aka VMALLOC_END */
+ 
+-#ifdef CONFIG_PPC32
+-
+-void __iomem *
+-ioremap(phys_addr_t addr, unsigned long size)
+-{
+-	return __ioremap_caller(addr, size, _PAGE_NO_CACHE | _PAGE_GUARDED,
+-				__builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap);
+-
+-void __iomem *
+-ioremap_wc(phys_addr_t addr, unsigned long size)
+-{
+-	return __ioremap_caller(addr, size, _PAGE_NO_CACHE,
+-				__builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap_wc);
+-
+-void __iomem *
+-ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long flags)
+-{
+-	/* writeable implies dirty for kernel addresses */
+-	if ((flags & (_PAGE_RW | _PAGE_RO)) != _PAGE_RO)
+-		flags |= _PAGE_DIRTY | _PAGE_HWWRITE;
+-
+-	/* we don't want to let _PAGE_USER and _PAGE_EXEC leak out */
+-	flags &= ~(_PAGE_USER | _PAGE_EXEC);
+-	flags |= _PAGE_PRIVILEGED;
+-
+-	return __ioremap_caller(addr, size, flags, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap_prot);
+-
+-void __iomem *
+-__ioremap(phys_addr_t addr, unsigned long size, unsigned long flags)
+-{
+-	return __ioremap_caller(addr, size, flags, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(__ioremap);
+-
+-void __iomem *
+-__ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
+-		 void *caller)
+-{
+-	unsigned long v, i;
+-	phys_addr_t p;
+-	int err;
+-
+-	/* Make sure we have the base flags */
+-	if ((flags & _PAGE_PRESENT) == 0)
+-		flags |= pgprot_val(PAGE_KERNEL);
+-
+-	/* Non-cacheable page cannot be coherent */
+-	if (flags & _PAGE_NO_CACHE)
+-		flags &= ~_PAGE_COHERENT;
+-
+-	/*
+-	 * Choose an address to map it to.
+-	 * Once the vmalloc system is running, we use it.
+-	 * Before then, we use space going up from IOREMAP_BASE
+-	 * (ioremap_bot records where we're up to).
+-	 */
+-	p = addr & PAGE_MASK;
+-	size = PAGE_ALIGN(addr + size) - p;
+-
+-	/*
+-	 * If the address lies within the first 16 MB, assume it's in ISA
+-	 * memory space
+-	 */
+-	if (p < 16*1024*1024)
+-		p += _ISA_MEM_BASE;
+-
+-#ifndef CONFIG_CRASH_DUMP
+-	/*
+-	 * Don't allow anybody to remap normal RAM that we're using.
+-	 * mem_init() sets high_memory so only do the check after that.
+-	 */
+-	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+-	    page_is_ram(__phys_to_pfn(p))) {
+-		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+-		       (unsigned long long)p, __builtin_return_address(0));
+-		return NULL;
+-	}
+-#endif
+-
+-	if (size == 0)
+-		return NULL;
+-
+-	/*
+-	 * Is it already mapped?  Perhaps overlapped by a previous
+-	 * mapping.
+-	 */
+-	v = p_block_mapped(p);
+-	if (v)
+-		goto out;
+-
+-	if (slab_is_available()) {
+-		struct vm_struct *area;
+-		area = get_vm_area_caller(size, VM_IOREMAP, caller);
+-		if (area == 0)
+-			return NULL;
+-		area->phys_addr = p;
+-		v = (unsigned long) area->addr;
+-	} else {
+-		v = ioremap_bot;
+-		ioremap_bot += size;
+-	}
+-
+-	/*
+-	 * Should check if it is a candidate for a BAT mapping
+-	 */
+-
+-	err = 0;
+-	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
+-		err = map_kernel_page(v+i, p+i, flags);
+-	if (err) {
+-		if (slab_is_available())
+-			vunmap((void *)v);
+-		return NULL;
+-	}
+-
+-out:
+-	return (void __iomem *) (v + ((unsigned long)addr & ~PAGE_MASK));
+-}
+-
+-void iounmap(volatile void __iomem *addr)
+-{
+-	/*
+-	 * If mapped by BATs then there is nothing to do.
+-	 * Calling vfree() generates a benign warning.
+-	 */
+-	if (v_block_mapped((unsigned long)addr))
+-		return;
+-
+-	if ((unsigned long) addr >= ioremap_bot)
+-		vunmap((void *) (PAGE_MASK & (unsigned long)addr));
+-}
+-EXPORT_SYMBOL(iounmap);
+-
+-#else
+-
+ /**
+  * __ioremap_at - Low level function to establish the page tables
+  *                for an IO mapping
+@@ -189,6 +48,10 @@ void __iomem * __ioremap_at(phys_addr_t pa, void *ea, unsigned long size,
+ 	if ((flags & _PAGE_PRESENT) == 0)
+ 		flags |= pgprot_val(PAGE_KERNEL);
+ 
++	/* Non-cacheable page cannot be coherent */
++	if (flags & _PAGE_NO_CACHE)
++		flags &= ~_PAGE_COHERENT;
++
+ 	/* We don't support the 4K PFN hack with ioremap */
+ 	if (flags & H_PAGE_4K_PFN)
+ 		return NULL;
+@@ -241,6 +104,33 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+ 	if ((size == 0) || (paligned == 0))
+ 		return NULL;
+ 
++	/*
++	 * If the address lies within the first 16 MB, assume it's in ISA
++	 * memory space
++	 */
++	if (IS_ENABLED(CONFIG_PPC32) && paligned < 16*1024*1024)
++		paligned += _ISA_MEM_BASE;
++
++	/*
++	 * Don't allow anybody to remap normal RAM that we're using.
++	 * mem_init() sets high_memory so only do the check after that.
++	 */
++	if (!IS_ENABLED(CONFIG_CRASH_DUMP) &&
++	    slab_is_available() && (paligned < virt_to_phys(high_memory)) &&
++	    page_is_ram(__phys_to_pfn(paligned))) {
++		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
++		       (u64)paligned, __builtin_return_address(0));
++		return NULL;
++	}
++
++	/*
++	 * Is it already mapped?  Perhaps overlapped by a previous
++	 * mapping.
++	 */
++	ret = (void __iomem *)p_block_mapped(paligned);
++	if (ret)
++		goto out;
++
+ 	if (slab_is_available()) {
+ 		struct vm_struct *area;
+ 
+@@ -259,9 +149,9 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+ 		if (ret)
+ 			ioremap_bot += size;
+ 	}
+-
++out:
+ 	if (ret)
+-		ret += addr & ~PAGE_MASK;
++		ret += (unsigned long)addr & ~PAGE_MASK;
+ 	return ret;
+ }
+ 
+@@ -300,8 +190,8 @@ void __iomem * ioremap_prot(phys_addr_t addr, unsigned long size,
+ 	void *caller = __builtin_return_address(0);
+ 
+ 	/* writeable implies dirty for kernel addresses */
+-	if (flags & _PAGE_WRITE)
+-		flags |= _PAGE_DIRTY;
++	if ((flags & (_PAGE_WRITE | _PAGE_RO)) != _PAGE_RO)
++		flags |= _PAGE_DIRTY | _PAGE_HWWRITE;
+ 
+ 	/* we don't want to let _PAGE_EXEC leak out */
+ 	flags &= ~_PAGE_EXEC;
+@@ -330,6 +220,14 @@ void __iounmap(volatile void __iomem *token)
+ 
+ 	addr = (void *) ((unsigned long __force)
+ 			 PCI_FIX_ADDR(token) & PAGE_MASK);
++
++	/*
++	 * If mapped by BATs then there is nothing to do.
++	 * Calling vfree() generates a benign warning.
++	 */
++	if (v_block_mapped((unsigned long)addr))
++		return;
++
+ 	if ((unsigned long)addr < ioremap_bot) {
+ 		printk(KERN_WARNING "Attempt to iounmap early bolted mapping"
+ 		       " at 0x%p\n", addr);
+@@ -347,5 +245,3 @@ void iounmap(volatile void __iomem *token)
+ 		__iounmap(token);
+ }
+ EXPORT_SYMBOL(iounmap);
+-
+-#endif
 -- 
-GIOH KIM
-Linux Kernel Entwickler
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 176 2697 8962
-Fax:      +49 30 577 008 299
-Email:    gi-oh.kim@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+2.13.3
