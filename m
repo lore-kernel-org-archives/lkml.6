@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752688AbeEPKfA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:35:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35737 "EHLO
+        id S1752738AbeEPKfY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:35:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53397 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751046AbeEPKe6 (ORCPT
+        with ESMTP id S1751904AbeEPKfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:34:58 -0400
-Date: Wed, 16 May 2018 03:33:53 -0700
+        Wed, 16 May 2018 06:35:23 -0400
+Date: Wed, 16 May 2018 03:34:24 -0700
 From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-13a4db9d75ec5dbca4bd6229e149e061ef7a6bf0@git.kernel.org>
-Cc: akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        dvlasenk@redhat.com, toshi.kani@hp.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mcgrof@suse.com, bp@alien8.de, peterz@infradead.org,
-        tglx@linutronix.de, luto@kernel.org, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, brgerst@gmail.com, hpa@zytor.com
-Reply-To: luto@kernel.org, brgerst@gmail.com, jpoimboe@redhat.com,
-        hpa@zytor.com, torvalds@linux-foundation.org, toshi.kani@hp.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, dvlasenk@redhat.com,
-        tglx@linutronix.de, bp@alien8.de, mcgrof@suse.com, mingo@kernel.org,
-        peterz@infradead.org
-In-Reply-To: <20180515175759.89315-1-andriy.shevchenko@linux.intel.com>
-References: <20180515175759.89315-1-andriy.shevchenko@linux.intel.com>
+Message-ID: <tip-7f8ec5a4f01aa7d03e94a3d99d7b5f9c02d7fe5a@git.kernel.org>
+Cc: peterz@infradead.org, brgerst@gmail.com, linux-kernel@vger.kernel.org,
+        dvlasenk@redhat.com, mcgrof@suse.com, mingo@kernel.org,
+        tglx@linutronix.de, bp@alien8.de, jpoimboe@redhat.com,
+        andriy.shevchenko@linux.intel.com, torvalds@linux-foundation.org,
+        luto@kernel.org, toshi.kani@hp.com, hpa@zytor.com,
+        akpm@linux-foundation.org
+Reply-To: brgerst@gmail.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, mcgrof@suse.com, dvlasenk@redhat.com,
+        mingo@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        jpoimboe@redhat.com, andriy.shevchenko@linux.intel.com,
+        luto@kernel.org, torvalds@linux-foundation.org, toshi.kani@hp.com,
+        hpa@zytor.com, akpm@linux-foundation.org
+In-Reply-To: <20180515180535.89703-1-andriy.shevchenko@linux.intel.com>
+References: <20180515180535.89703-1-andriy.shevchenko@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mtrr: Convert to use match_string() helper
-Git-Commit-ID: 13a4db9d75ec5dbca4bd6229e149e061ef7a6bf0
+Subject: [tip:x86/mm] x86/mtrr: Convert to use strncpy_from_user() helper
+Git-Commit-ID: 7f8ec5a4f01aa7d03e94a3d99d7b5f9c02d7fe5a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,17 +39,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  13a4db9d75ec5dbca4bd6229e149e061ef7a6bf0
-Gitweb:     https://git.kernel.org/tip/13a4db9d75ec5dbca4bd6229e149e061ef7a6bf0
+Commit-ID:  7f8ec5a4f01aa7d03e94a3d99d7b5f9c02d7fe5a
+Gitweb:     https://git.kernel.org/tip/7f8ec5a4f01aa7d03e94a3d99d7b5f9c02d7fe5a
 Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Tue, 15 May 2018 20:57:59 +0300
+AuthorDate: Tue, 15 May 2018 21:05:35 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 16 May 2018 09:47:22 +0200
+CommitDate: Wed, 16 May 2018 09:47:23 +0200
 
-x86/mtrr: Convert to use match_string() helper
+x86/mtrr: Convert to use strncpy_from_user() helper
 
-The helper returns index of the matching string in an array.
-Replace the open coded array lookup with match_string().
+Replace the open coded string fetch from user-space with strncpy_from_user().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -63,41 +63,33 @@ Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Toshi Kani <toshi.kani@hp.com>
-Link: http://lkml.kernel.org/r/20180515175759.89315-1-andriy.shevchenko@linux.intel.com
+Link: http://lkml.kernel.org/r/20180515180535.89703-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/cpu/mtrr/if.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/kernel/cpu/mtrr/if.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
-index 558444b23923..42b4f2f3b557 100644
+index 42b4f2f3b557..c610f47373e4 100644
 --- a/arch/x86/kernel/cpu/mtrr/if.c
 +++ b/arch/x86/kernel/cpu/mtrr/if.c
-@@ -149,17 +149,16 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
- 		return -EINVAL;
- 	ptr = skip_spaces(ptr + 5);
+@@ -106,17 +106,9 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
  
--	for (i = 0; i < MTRR_NUM_TYPES; ++i) {
--		if (strcmp(ptr, mtrr_strings[i]))
--			continue;
--		base >>= PAGE_SHIFT;
--		size >>= PAGE_SHIFT;
--		err = mtrr_add_page((unsigned long)base, (unsigned long)size, i, true);
--		if (err < 0)
--			return err;
--		return len;
--	}
--	return -EINVAL;
-+	i = match_string(mtrr_strings, MTRR_NUM_TYPES, ptr);
-+	if (i < 0)
-+		return i;
-+
-+	base >>= PAGE_SHIFT;
-+	size >>= PAGE_SHIFT;
-+	err = mtrr_add_page((unsigned long)base, (unsigned long)size, i, true);
-+	if (err < 0)
-+		return err;
-+	return len;
- }
+ 	memset(line, 0, LINE_SIZE);
  
- static long
+-	length = len;
+-	length--;
+-
+-	if (length > LINE_SIZE - 1)
+-		length = LINE_SIZE - 1;
+-
++	length = strncpy_from_user(line, buf, LINE_SIZE - 1);
+ 	if (length < 0)
+-		return -EINVAL;
+-
+-	if (copy_from_user(line, buf, length))
+-		return -EFAULT;
++		return length;
+ 
+ 	linelen = strlen(line);
+ 	ptr = line + linelen - 1;
