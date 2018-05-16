@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeEPXxE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 19:53:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57846 "EHLO mail.kernel.org"
+        id S1752282AbeEPXxD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 19:53:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752073AbeEPXuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 19:50:19 -0400
+        id S1751620AbeEPXuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 19:50:20 -0400
 From: Alan Tull <atull@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
         Alan Tull <atull@kernel.org>
-Subject: [PATCH 05/14] fpga: use SPDX
-Date: Wed, 16 May 2018 18:49:58 -0500
-Message-Id: <20180516235007.3951-6-atull@kernel.org>
+Subject: [PATCH 06/14] fpga: mgr: kernel-doc fixes
+Date: Wed, 16 May 2018 18:49:59 -0500
+Message-Id: <20180516235007.3951-7-atull@kernel.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180516235007.3951-1-atull@kernel.org>
 References: <20180516235007.3951-1-atull@kernel.org>
@@ -21,386 +21,120 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace GPLv2 boilerplate with SPDX in FPGA code that came from me or
-from Altera.
+Clean up the kernel-doc documentation in fpga-mgr.c and fix the
+following warnings when documentation is built:
+
+./drivers/fpga/fpga-mgr.c:252: warning: Function parameter or member
+'info' not described in 'fpga_mgr_buf_load'
+
+./drivers/fpga/fpga-mgr.c:252: warning: Excess function parameter
+'flags' description in 'fpga_mgr_buf_load'
 
 Signed-off-by: Alan Tull <atull@kernel.org>
 ---
- drivers/fpga/altera-fpga2sdram.c       | 13 +------------
- drivers/fpga/altera-freeze-bridge.c    | 13 +------------
- drivers/fpga/altera-hps2fpga.c         | 13 +------------
- drivers/fpga/altera-pr-ip-core-plat.c  | 13 +------------
- drivers/fpga/altera-pr-ip-core.c       | 13 +------------
- drivers/fpga/fpga-bridge.c             | 13 +------------
- drivers/fpga/fpga-mgr.c                | 13 +------------
- drivers/fpga/fpga-region.c             | 14 +-------------
- drivers/fpga/of-fpga-region.c          | 14 +-------------
- drivers/fpga/socfpga-a10.c             | 14 +-------------
- drivers/fpga/socfpga.c                 | 13 +------------
- include/linux/fpga/altera-pr-ip-core.h | 13 +------------
- include/linux/fpga/fpga-mgr.h          | 13 +------------
- include/linux/fpga/fpga-region.h       |  2 ++
- 14 files changed, 15 insertions(+), 159 deletions(-)
+ drivers/fpga/fpga-mgr.c | 38 +++++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-index 5a29ab6..23660cc 100644
---- a/drivers/fpga/altera-fpga2sdram.c
-+++ b/drivers/fpga/altera-fpga2sdram.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA to SDRAM Bridge Driver for Altera SoCFPGA Devices
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation, All Rights Reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
-index fa4b693..ffd586c 100644
---- a/drivers/fpga/altera-freeze-bridge.c
-+++ b/drivers/fpga/altera-freeze-bridge.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Freeze Bridge Controller
-  *
-  *  Copyright (C) 2016 Altera Corporation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/delay.h>
- #include <linux/io.h>
-diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
-index e4d39f0..a974d3f 100644
---- a/drivers/fpga/altera-hps2fpga.c
-+++ b/drivers/fpga/altera-hps2fpga.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA to/from HPS Bridge Driver for Altera SoCFPGA Devices
-  *
-@@ -6,18 +7,6 @@
-  * Includes this patch from the mailing list:
-  *   fpga: altera-hps2fpga: fix HPS2FPGA bridge visibility to L3 masters
-  *   Signed-off-by: Anatolij Gustschin <agust@denx.de>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/fpga/altera-pr-ip-core-plat.c b/drivers/fpga/altera-pr-ip-core-plat.c
-index 8fb36b8..b293d83 100644
---- a/drivers/fpga/altera-pr-ip-core-plat.c
-+++ b/drivers/fpga/altera-pr-ip-core-plat.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/fpga/altera-pr-ip-core.h>
- #include <linux/module.h>
-diff --git a/drivers/fpga/altera-pr-ip-core.c b/drivers/fpga/altera-pr-ip-core.c
-index eea5217..65e0b6a 100644
---- a/drivers/fpga/altera-pr-ip-core.c
-+++ b/drivers/fpga/altera-pr-ip-core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/delay.h>
- #include <linux/fpga/altera-pr-ip-core.h>
-diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
-index 2db1573..164eb55 100644
---- a/drivers/fpga/fpga-bridge.c
-+++ b/drivers/fpga/fpga-bridge.c
-@@ -1,20 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Bridge Framework Driver
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation, All Rights Reserved.
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/idr.h>
 diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index 0a5181d..151ac36 100644
+index 151ac36..5fffeef 100644
 --- a/drivers/fpga/fpga-mgr.c
 +++ b/drivers/fpga/fpga-mgr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Core
-  *
-@@ -6,18 +7,6 @@
-  *
-  * With code from the mailing list:
-  * Copyright (C) 2013 Xilinx, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/firmware.h>
- #include <linux/fpga/fpga-mgr.h>
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index b3ba3e40..0878f62 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Region - Device Tree support for FPGA programming under Linux
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-index 9d681a1..35fabb8 100644
---- a/drivers/fpga/of-fpga-region.c
-+++ b/drivers/fpga/of-fpga-region.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Region - Device Tree support for FPGA programming under Linux
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-diff --git a/drivers/fpga/socfpga-a10.c b/drivers/fpga/socfpga-a10.c
-index dec3db5..be30c48 100644
---- a/drivers/fpga/socfpga-a10.c
-+++ b/drivers/fpga/socfpga-a10.c
-@@ -1,21 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Driver for Altera Arria10 SoCFPGA
-  *
-  * Copyright (C) 2015-2016 Altera Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/delay.h>
-diff --git a/drivers/fpga/socfpga.c b/drivers/fpga/socfpga.c
-index 51efaf9..959d71f 100644
---- a/drivers/fpga/socfpga.c
-+++ b/drivers/fpga/socfpga.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Driver for Altera SOCFPGA
-  *
-  *  Copyright (C) 2013-2015 Altera Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/completion.h>
- #include <linux/delay.h>
-diff --git a/include/linux/fpga/altera-pr-ip-core.h b/include/linux/fpga/altera-pr-ip-core.h
-index 3810a90..7d46647 100644
---- a/include/linux/fpga/altera-pr-ip-core.h
-+++ b/include/linux/fpga/altera-pr-ip-core.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+@@ -21,6 +21,12 @@
+ static DEFINE_IDA(fpga_mgr_ida);
+ static struct class *fpga_mgr_class;
  
- #ifndef _ALT_PR_IP_CORE_H
-diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index 1266c11..eec7c24 100644
---- a/include/linux/fpga/fpga-mgr.h
-+++ b/include/linux/fpga/fpga-mgr.h
-@@ -1,20 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * FPGA Framework
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #ifndef _LINUX_FPGA_MGR_H
- #define _LINUX_FPGA_MGR_H
-diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-index f2e215b..d7071cd 100644
---- a/include/linux/fpga/fpga-region.h
-+++ b/include/linux/fpga/fpga-region.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
- #ifndef _FPGA_REGION_H
- #define _FPGA_REGION_H
++/**
++ * fpga_image_info_alloc - Allocate a FPGA image info struct
++ * @dev: owning device
++ *
++ * Return: struct fpga_image_info or NULL
++ */
+ struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
+ {
+ 	struct fpga_image_info *info;
+@@ -39,6 +45,10 @@ struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(fpga_image_info_alloc);
  
++/**
++ * fpga_image_info_free - Free a FPGA image info struct
++ * @info: FPGA image info struct to free
++ */
+ void fpga_image_info_free(struct fpga_image_info *info)
+ {
+ 	struct device *dev;
+@@ -223,7 +233,7 @@ static int fpga_mgr_buf_load_mapped(struct fpga_manager *mgr,
+ /**
+  * fpga_mgr_buf_load - load fpga from image in buffer
+  * @mgr:	fpga manager
+- * @flags:	flags setting fpga confuration modes
++ * @info:	fpga image info
+  * @buf:	buffer contain fpga image
+  * @count:	byte count of buf
+  *
+@@ -332,6 +342,16 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
+ 	return ret;
+ }
+ 
++/**
++ * fpga_mgr_load - load FPGA from scatter/gather table, buffer, or firmware
++ * @mgr:	fpga manager
++ * @info:	fpga image information.
++ *
++ * Load the FPGA from an image which is indicated in @info.  If successful, the
++ * FPGA ends up in operating mode.
++ *
++ * Return: 0 on success, negative error code otherwise.
++ */
+ int fpga_mgr_load(struct fpga_manager *mgr, struct fpga_image_info *info)
+ {
+ 	if (info->sgt)
+@@ -418,11 +438,9 @@ static int fpga_mgr_dev_match(struct device *dev, const void *data)
+ }
+ 
+ /**
+- * fpga_mgr_get - get a reference to a fpga mgr
++ * fpga_mgr_get - Given a device, get a reference to a fpga mgr.
+  * @dev:	parent device that fpga mgr was registered with
+  *
+- * Given a device, get a reference to a fpga mgr.
+- *
+  * Return: fpga manager struct or IS_ERR() condition containing error code.
+  */
+ struct fpga_manager *fpga_mgr_get(struct device *dev)
+@@ -442,10 +460,9 @@ static int fpga_mgr_of_node_match(struct device *dev, const void *data)
+ }
+ 
+ /**
+- * of_fpga_mgr_get - get a reference to a fpga mgr
+- * @node:	device node
++ * of_fpga_mgr_get - Given a device node, get a reference to a fpga mgr.
+  *
+- * Given a device node, get a reference to a fpga mgr.
++ * @node:	device node
+  *
+  * Return: fpga manager struct or IS_ERR() condition containing error code.
+  */
+@@ -478,7 +495,10 @@ EXPORT_SYMBOL_GPL(fpga_mgr_put);
+  * @mgr:	fpga manager
+  *
+  * Given a pointer to FPGA Manager (from fpga_mgr_get() or
+- * of_fpga_mgr_put()) attempt to get the mutex.
++ * of_fpga_mgr_put()) attempt to get the mutex. The user should call
++ * fpga_mgr_lock() and verify that it returns 0 before attempting to
++ * program the FPGA.  Likewise, the user should call fpga_mgr_unlock
++ * when done programming the FPGA.
+  *
+  * Return: 0 for success or -EBUSY
+  */
+@@ -494,7 +514,7 @@ int fpga_mgr_lock(struct fpga_manager *mgr)
+ EXPORT_SYMBOL_GPL(fpga_mgr_lock);
+ 
+ /**
+- * fpga_mgr_unlock - Unlock FPGA manager
++ * fpga_mgr_unlock - Unlock FPGA manager after done programming
+  * @mgr:	fpga manager
+  */
+ void fpga_mgr_unlock(struct fpga_manager *mgr)
 -- 
 2.7.4
