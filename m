@@ -1,52 +1,299 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeEPKFi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:05:38 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:57430 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753135AbeEPKFf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:05:35 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v4 1/4] rtc: ds1307: fix data pointer to m41t0
-Date: Wed, 16 May 2018 12:05:23 +0200
-Message-Id: <20180516100526.73549-1-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753463AbeEPKFy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:05:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:16001 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753248AbeEPKFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 06:05:49 -0400
+Message-Id: <0c2eac830e9dbc814b3c16201fb4dce1d4499392.1526464250.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1526464250.git.christophe.leroy@c-s.fr>
+References: <cover.1526464250.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 12/14] powerpc/mm: Make pte_fragment_alloc() common to
+ PPC32 and PPC64
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 16 May 2018 12:05:47 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data field points to m41t00, instead it should point to m41t0.
-Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
-are equal.
+In order to allow the 8xx to handle pte_fragments, this patch
+makes it common to PPC32 and PPC64 by moving the related code
+to common files and by defining a new config item called
+CONFIG_NEED_PTE_FRAG
 
-Point to right enum m41t0 instead of m41t00.
-
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/rtc/rtc-ds1307.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/mmu_context.h | 28 ++++++++++++++
+ arch/powerpc/include/asm/page.h        |  2 +-
+ arch/powerpc/mm/mmu_context_book3s64.c | 28 --------------
+ arch/powerpc/mm/pgtable.c              | 67 ++++++++++++++++++++++++++++++++++
+ arch/powerpc/mm/pgtable_64.c           | 67 ----------------------------------
+ arch/powerpc/platforms/Kconfig.cputype |  5 +++
+ 6 files changed, 101 insertions(+), 96 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index a13e59edff53..32aadcbc377f 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -298,7 +298,7 @@ static const struct of_device_id ds1307_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,m41t0",
--		.data = (void *)m41t00
-+		.data = (void *)m41t0
- 	},
- 	{
- 		.compatible = "st,m41t00",
+diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
+index 1835ca1505d6..252988f7e219 100644
+--- a/arch/powerpc/include/asm/mmu_context.h
++++ b/arch/powerpc/include/asm/mmu_context.h
+@@ -262,5 +262,33 @@ static inline u64 pte_to_hpte_pkey_bits(u64 pteflags)
+ 
+ #endif /* CONFIG_PPC_MEM_KEYS */
+ 
++#ifdef CONFIG_NEED_PTE_FRAG
++static inline void destroy_pagetable_page(struct mm_struct *mm)
++{
++	int count;
++	void *pte_frag;
++	struct page *page;
++
++	pte_frag = mm->context.pte_frag;
++	if (!pte_frag)
++		return;
++
++	page = virt_to_page(pte_frag);
++	/* drop all the pending references */
++	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
++	/* We allow PTE_FRAG_NR fragments from a PTE page */
++	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
++		pgtable_page_dtor(page);
++		free_unref_page(page);
++	}
++}
++
++#else
++static inline void destroy_pagetable_page(struct mm_struct *mm)
++{
++	return;
++}
++#endif
++
+ #endif /* __KERNEL__ */
+ #endif /* __ASM_POWERPC_MMU_CONTEXT_H */
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index db7be0779d55..cd10564ff7df 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -344,7 +344,7 @@ struct vm_area_struct;
+  */
+ typedef pte_t *pgtable_t;
+ #else
+-#if defined(CONFIG_PPC_64K_PAGES) && defined(CONFIG_PPC64)
++#if defined(CONFIG_NEED_PTE_FRAG)
+ typedef pte_t *pgtable_t;
+ #else
+ typedef struct page *pgtable_t;
+diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
+index b75194dff64c..2f55a4e3c09a 100644
+--- a/arch/powerpc/mm/mmu_context_book3s64.c
++++ b/arch/powerpc/mm/mmu_context_book3s64.c
+@@ -192,34 +192,6 @@ static void destroy_contexts(mm_context_t *ctx)
+ 	spin_unlock(&mmu_context_lock);
+ }
+ 
+-#ifdef CONFIG_PPC_64K_PAGES
+-static void destroy_pagetable_page(struct mm_struct *mm)
+-{
+-	int count;
+-	void *pte_frag;
+-	struct page *page;
+-
+-	pte_frag = mm->context.pte_frag;
+-	if (!pte_frag)
+-		return;
+-
+-	page = virt_to_page(pte_frag);
+-	/* drop all the pending references */
+-	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
+-	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
+-		pgtable_page_dtor(page);
+-		free_unref_page(page);
+-	}
+-}
+-
+-#else
+-static inline void destroy_pagetable_page(struct mm_struct *mm)
+-{
+-	return;
+-}
+-#endif
+-
+ void destroy_context(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_SPAPR_TCE_IOMMU
+diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+index 9f361ae571e9..2d34755ed727 100644
+--- a/arch/powerpc/mm/pgtable.c
++++ b/arch/powerpc/mm/pgtable.c
+@@ -264,3 +264,70 @@ unsigned long vmalloc_to_phys(void *va)
+ 	return __pa(pfn_to_kaddr(pfn)) + offset_in_page(va);
+ }
+ EXPORT_SYMBOL_GPL(vmalloc_to_phys);
++
++#ifdef CONFIG_NEED_PTE_FRAG
++static pte_t *get_from_cache(struct mm_struct *mm)
++{
++	void *pte_frag, *ret;
++
++	spin_lock(&mm->page_table_lock);
++	ret = mm->context.pte_frag;
++	if (ret) {
++		pte_frag = ret + PTE_FRAG_SIZE;
++		/*
++		 * If we have taken up all the fragments mark PTE page NULL
++		 */
++		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
++			pte_frag = NULL;
++		mm->context.pte_frag = pte_frag;
++	}
++	spin_unlock(&mm->page_table_lock);
++	return (pte_t *)ret;
++}
++
++static pte_t *__alloc_for_cache(struct mm_struct *mm, int kernel)
++{
++	void *ret = NULL;
++	struct page *page;
++
++	if (!kernel) {
++		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
++		if (!page)
++			return NULL;
++		if (!pgtable_page_ctor(page)) {
++			__free_page(page);
++			return NULL;
++		}
++	} else {
++		page = alloc_page(PGALLOC_GFP);
++		if (!page)
++			return NULL;
++	}
++
++	ret = page_address(page);
++	spin_lock(&mm->page_table_lock);
++	/*
++	 * If we find pgtable_page set, we return
++	 * the allocated page with single fragement
++	 * count.
++	 */
++	if (likely(!mm->context.pte_frag)) {
++		set_page_count(page, PTE_FRAG_NR);
++		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
++	}
++	spin_unlock(&mm->page_table_lock);
++
++	return (pte_t *)ret;
++}
++
++pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
++{
++	pte_t *pte;
++
++	pte = get_from_cache(mm);
++	if (pte)
++		return pte;
++
++	return __alloc_for_cache(mm, kernel);
++}
++#endif
+diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
+index dd1102a246e4..1d8dc37d98a7 100644
+--- a/arch/powerpc/mm/pgtable_64.c
++++ b/arch/powerpc/mm/pgtable_64.c
+@@ -139,73 +139,6 @@ struct page *pmd_page(pmd_t pmd)
+ 	return virt_to_page(pmd_page_vaddr(pmd));
+ }
+ 
+-#ifdef CONFIG_PPC_64K_PAGES
+-static pte_t *get_from_cache(struct mm_struct *mm)
+-{
+-	void *pte_frag, *ret;
+-
+-	spin_lock(&mm->page_table_lock);
+-	ret = mm->context.pte_frag;
+-	if (ret) {
+-		pte_frag = ret + PTE_FRAG_SIZE;
+-		/*
+-		 * If we have taken up all the fragments mark PTE page NULL
+-		 */
+-		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
+-			pte_frag = NULL;
+-		mm->context.pte_frag = pte_frag;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-	return (pte_t *)ret;
+-}
+-
+-static pte_t *__alloc_for_cache(struct mm_struct *mm, int kernel)
+-{
+-	void *ret = NULL;
+-	struct page *page;
+-
+-	if (!kernel) {
+-		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
+-		if (!page)
+-			return NULL;
+-		if (!pgtable_page_ctor(page)) {
+-			__free_page(page);
+-			return NULL;
+-		}
+-	} else {
+-		page = alloc_page(PGALLOC_GFP);
+-		if (!page)
+-			return NULL;
+-	}
+-
+-	ret = page_address(page);
+-	spin_lock(&mm->page_table_lock);
+-	/*
+-	 * If we find pgtable_page set, we return
+-	 * the allocated page with single fragement
+-	 * count.
+-	 */
+-	if (likely(!mm->context.pte_frag)) {
+-		set_page_count(page, PTE_FRAG_NR);
+-		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-
+-	return (pte_t *)ret;
+-}
+-
+-pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
+-{
+-	pte_t *pte;
+-
+-	pte = get_from_cache(mm);
+-	if (pte)
+-		return pte;
+-
+-	return __alloc_for_cache(mm, kernel);
+-}
+-#endif /* CONFIG_PPC_64K_PAGES */
+-
+ void pte_fragment_free(unsigned long *table, int kernel)
+ {
+ 	struct page *page = virt_to_page(table);
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 8606fa253089..906f0ebd1e08 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -337,6 +337,11 @@ config PPC_MM_SLICES
+ 	default y if PPC_8xx && HUGETLB_PAGE
+ 	default n
+ 
++config NEED_PTE_FRAG
++	bool
++	default y if PPC_BOOK3S_64 && PPC_64K_PAGES
++	default n
++
+ config PPC_HAVE_PMU_SUPPORT
+        bool
+ 
 -- 
-2.17.0
+2.13.3
