@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeEPKhP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 06:37:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39827 "EHLO
+        id S1752482AbeEPKhn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 06:37:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37101 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751471AbeEPKhO (ORCPT
+        with ESMTP id S1751449AbeEPKhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 06:37:14 -0400
-Date: Wed, 16 May 2018 03:35:52 -0700
+        Wed, 16 May 2018 06:37:41 -0400
+Date: Wed, 16 May 2018 03:36:22 -0700
 From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d@git.kernel.org>
-Cc: hughd@google.com, eric.dumazet@gmail.com, hpa@zytor.com,
-        mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
-        peterz@infradead.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: hughd@google.com, hpa@zytor.com, eric.dumazet@gmail.com,
-        mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
-        peterz@infradead.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
-References: <20180516080131.27913-2-kirill.shutemov@linux.intel.com>
+Message-ID: <tip-589bb62be316401603453c7d2d3c60ad8b9c3cf3@git.kernel.org>
+Cc: peterz@infradead.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, hughd@google.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        kirill.shutemov@linux.intel.com, hpa@zytor.com, hughd@google.com
+In-Reply-To: <20180516080131.27913-3-kirill.shutemov@linux.intel.com>
+References: <20180516080131.27913-3-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/boot/compressed/64: Set up GOT for
- paging_prepare() and cleanup_trampoline()
-Git-Commit-ID: 5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
+Subject: [tip:x86/urgent] x86/boot/compressed/64: Fix moving page table out
+ of trampoline memory
+Git-Commit-ID: 589bb62be316401603453c7d2d3c60ad8b9c3cf3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,142 +34,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
-Gitweb:     https://git.kernel.org/tip/5c9b0b1c49881c680d4a56b9d9e03dfb3160fd4d
+Commit-ID:  589bb62be316401603453c7d2d3c60ad8b9c3cf3
+Gitweb:     https://git.kernel.org/tip/589bb62be316401603453c7d2d3c60ad8b9c3cf3
 Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Wed, 16 May 2018 11:01:28 +0300
+AuthorDate: Wed, 16 May 2018 11:01:29 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 16 May 2018 12:15:13 +0200
 
-x86/boot/compressed/64: Set up GOT for paging_prepare() and cleanup_trampoline()
+x86/boot/compressed/64: Fix moving page table out of trampoline memory
 
-Eric and Hugh have reported instant reboot due to my recent changes in
-decompression code.
+cleanup_trampoline() relocates the top-level page table out of
+trampoline memory. We use 'top_pgtable' as our new top-level page table.
 
-The root cause is that I didn't realize that we need to adjust GOT to be
-able to run C code that early.
+But if the 'top_pgtable' would be referenced from C in a usual way,
+the address of the table will be calculated relative to RIP.
+After kernel gets relocated, the address will be in the middle of
+decompression buffer and the page table may get overwritten.
+This leads to a crash.
 
-The problem is only visible with an older toolchain. Binutils >= 2.24 is
-able to eliminate GOT references by replacing them with RIP-relative
-address loads:
+We calculate the address of other page tables relative to the relocation
+address. It makes them safe. We should do the same for 'top_pgtable'.
 
-  https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=80d873266dec
+Calculate the address of 'top_pgtable' in assembly and pass down to
+cleanup_trampoline().
 
-We need to adjust GOT two times:
+Move the page table to .pgtable section where the rest of page tables
+are. The section is @nobits so we save 4k in kernel image.
 
- - before calling paging_prepare() using the initial load address
- - before calling C code from the relocated kernel
-
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: Hugh Dickins <hughd@google.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Hugh Dickins <hughd@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 194a9749c73d ("x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G")
-Link: http://lkml.kernel.org/r/20180516080131.27913-2-kirill.shutemov@linux.intel.com
+Fixes: e9d0e6330eb8 ("x86/boot/compressed/64: Prepare new top-level page table for trampoline")
+Link: http://lkml.kernel.org/r/20180516080131.27913-3-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/boot/compressed/head_64.S | 68 ++++++++++++++++++++++++++++++--------
- 1 file changed, 55 insertions(+), 13 deletions(-)
+ arch/x86/boot/compressed/head_64.S    | 11 +++++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 14 +++-----------
+ 2 files changed, 14 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fca012baba19..d17af6a4bfc9 100644
+index d17af6a4bfc9..8169e8b7a4dc 100644
 --- a/arch/x86/boot/compressed/head_64.S
 +++ b/arch/x86/boot/compressed/head_64.S
-@@ -305,6 +305,25 @@ ENTRY(startup_64)
- 	/* Set up the stack */
- 	leaq	boot_stack_end(%rbx), %rsp
- 
-+	/*
-+	 * paging_prepare() and cleanup_trampoline() below can have GOT
-+	 * references. Adjust the table with address we are running at.
-+	 *
-+	 * Zero RAX for adjust_got: the GOT was not adjusted before;
-+	 * there's no adjustment to undo.
-+	 */
-+	xorq	%rax, %rax
-+
-+	/*
-+	 * Calculate the address the binary is loaded at and use it as
-+	 * a GOT adjustment.
-+	 */
-+	call	1f
-+1:	popq	%rdi
-+	subq	$1b, %rdi
-+
-+	call	adjust_got
-+
+@@ -389,10 +389,14 @@ trampoline_return:
  	/*
- 	 * At this point we are in long mode with 4-level paging enabled,
- 	 * but we might want to enable 5-level paging or vice versa.
-@@ -381,6 +400,21 @@ trampoline_return:
- 	pushq	$0
- 	popfq
- 
-+	/*
-+	 * Previously we've adjusted the GOT with address the binary was
-+	 * loaded at. Now we need to re-adjust for relocation address.
+ 	 * cleanup_trampoline() would restore trampoline memory.
+ 	 *
++	 * RDI is address of the page table to use instead of page table
++	 * in trampoline memory (if required).
 +	 *
-+	 * Calculate the address the binary is loaded at, so that we can
-+	 * undo the previous GOT adjustment.
-+	 */
-+	call	1f
-+1:	popq	%rax
-+	subq	$1b, %rax
+ 	 * RSI holds real mode data and needs to be preserved across
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	leaq	top_pgtable(%rbx), %rdi
+ 	call	cleanup_trampoline
+ 	popq	%rsi
+ 
+@@ -691,3 +695,10 @@ boot_stack_end:
+ 	.balign 4096
+ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
 +
-+	/* The new adjustment is the relocation address */
-+	movq	%rbx, %rdi
-+	call	adjust_got
-+
- /*
-  * Copy the compressed kernel to the end of our buffer
-  * where decompression in place becomes safe.
-@@ -481,19 +515,6 @@ relocated:
- 	shrq	$3, %rcx
- 	rep	stosq
++/*
++ * The page table is going to be used instead of page table in the trampoline
++ * memory.
++ */
++top_pgtable:
++	.fill PAGE_SIZE, 1, 0
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 32af1cbcd903..a362fa0b849c 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -22,14 +22,6 @@ struct paging_config {
+ /* Buffer to preserve trampoline memory */
+ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
  
 -/*
-- * Adjust our own GOT
+- * The page table is going to be used instead of page table in the trampoline
+- * memory.
+- *
+- * It must not be in BSS as BSS is cleared after cleanup_trampoline().
 - */
--	leaq	_got(%rip), %rdx
--	leaq	_egot(%rip), %rcx
--1:
--	cmpq	%rcx, %rdx
--	jae	2f
--	addq	%rbx, (%rdx)
--	addq	$8, %rdx
--	jmp	1b
--2:
--	
+-static char top_pgtable[PAGE_SIZE] __aligned(PAGE_SIZE) __section(.data);
+-
  /*
-  * Do the extraction, and jump to the new kernel..
-  */
-@@ -512,6 +533,27 @@ relocated:
-  */
- 	jmp	*%rax
+  * Trampoline address will be printed by extract_kernel() for debugging
+  * purposes.
+@@ -134,7 +126,7 @@ out:
+ 	return paging_config;
+ }
  
-+/*
-+ * Adjust the global offset table
-+ *
-+ * RAX is the previous adjustment of the table to undo (use 0 if it's the
-+ * first time we touch GOT).
-+ * RDI is the new adjustment to apply.
-+ */
-+adjust_got:
-+	/* Walk through the GOT adding the address to the entries */
-+	leaq	_got(%rip), %rdx
-+	leaq	_egot(%rip), %rcx
-+1:
-+	cmpq	%rcx, %rdx
-+	jae	2f
-+	subq	%rax, (%rdx)	/* Undo previous adjustment */
-+	addq	%rdi, (%rdx)	/* Apply the new adjustment */
-+	addq	$8, %rdx
-+	jmp	1b
-+2:
-+	ret
-+
- 	.code32
- /*
-  * This is the 32-bit trampoline that will be copied over to low memory.
+-void cleanup_trampoline(void)
++void cleanup_trampoline(void *pgtable)
+ {
+ 	void *trampoline_pgtable;
+ 
+@@ -145,8 +137,8 @@ void cleanup_trampoline(void)
+ 	 * if it's there.
+ 	 */
+ 	if ((void *)__native_read_cr3() == trampoline_pgtable) {
+-		memcpy(top_pgtable, trampoline_pgtable, PAGE_SIZE);
+-		native_write_cr3((unsigned long)top_pgtable);
++		memcpy(pgtable, trampoline_pgtable, PAGE_SIZE);
++		native_write_cr3((unsigned long)pgtable);
+ 	}
+ 
+ 	/* Restore trampoline memory */
