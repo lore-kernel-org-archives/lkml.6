@@ -1,106 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeEPNp1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 09:45:27 -0400
-Received: from mga01.intel.com ([192.55.52.88]:36308 "EHLO mga01.intel.com"
+        id S1752567AbeEPNq4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 09:46:56 -0400
+Received: from mga09.intel.com ([134.134.136.24]:20582 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751395AbeEPNp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 09:45:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1752205AbeEPNqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 09:46:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,406,1520924400";
-   d="scan'208";a="56398290"
-Date: Wed, 16 May 2018 21:45:50 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-Message-ID: <20180516134550.GB4171@debian>
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
- <20180516123909.GB986@debian>
- <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
+X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
+   d="scan'208";a="199844293"
+Subject: Re: [PATCH V1 06/19] perf tools: Fix kernel_start for PTI on x86
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+References: <1526388213-30696-1-git-send-email-adrian.hunter@intel.com>
+ <1526388213-30696-7-git-send-email-adrian.hunter@intel.com>
+ <20180516130029.GA18538@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <56a4889f-6ea9-d7c6-3f1e-ea9738d314d0@intel.com>
+Date: Wed, 16 May 2018 16:45:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180516130029.GA18538@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
-> On 2018年05月16日 20:39, Tiwei Bie wrote:
-> > On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
-> > > On 2018年05月16日 16:37, Tiwei Bie wrote:
-> > [...]
-> > > >    struct vring_virtqueue {
-> > > > @@ -116,6 +117,9 @@ struct vring_virtqueue {
-> > > >    			/* Last written value to driver->flags in
-> > > >    			 * guest byte order. */
-> > > >    			u16 event_flags_shadow;
-> > > > +
-> > > > +			/* ID allocation. */
-> > > > +			struct idr buffer_id;
-> > > I'm not sure idr is fit for the performance critical case here. Need to
-> > > measure its performance impact, especially if we have few unused slots.
-> > I'm also not sure.. But fortunately, it should be quite easy
-> > to replace it with something else without changing other code.
-> > If it will really hurt the performance, I'll change it.
+On 16/05/18 16:00, Arnaldo Carvalho de Melo wrote:
+> Em Tue, May 15, 2018 at 03:43:20PM +0300, Adrian Hunter escreveu:
+>> On x86_64, PTI entry trampolines are less than the start of kernel text,
+>> but still above 2^63. So leave kernel_start = 1ULL << 63 for x86_64.
+>>
+>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>> ---
+>>  tools/perf/util/machine.c | 16 +++++++++++++++-
+>>  tools/perf/util/machine.h |  2 ++
+>>  2 files changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+>> index 72a351613d85..2f39a4d014de 100644
+>> --- a/tools/perf/util/machine.c
+>> +++ b/tools/perf/util/machine.c
+>> @@ -2296,6 +2296,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
+>>  	return 0;
+>>  }
+>>  
+>> +/*
+>> + * Compares the raw arch string. N.B. see instead perf_env__arch() if a
+>> + * normalized arch is needed.
+>> + */
+>> +bool machine__is(struct machine *machine, const char *arch)
+>> +{
+>> +	return machine && machine->env && !strcmp(machine->env->arch, arch);
+>> +}
+>> +
 > 
-> We may want to do some benchmarking/profiling to see.
-
-Yeah!
-
+> Broke 'perf top':
 > 
-> > 
-> > > >    		};
-> > > >    	};
-> > [...]
-> > > > +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
-> > > > +			      unsigned int id, void **ctx)
-> > > > +{
-> > > > +	struct vring_packed_desc *desc;
-> > > > +	unsigned int i, j;
-> > > > +
-> > > > +	/* Clear data ptr. */
-> > > > +	vq->desc_state[id].data = NULL;
-> > > > +
-> > > > +	i = head;
-> > > > +
-> > > > +	for (j = 0; j < vq->desc_state[id].num; j++) {
-> > > > +		desc = &vq->vring_packed.desc[i];
-> > > > +		vring_unmap_one_packed(vq, desc);
-> > > As mentioned in previous discussion, this probably won't work for the case
-> > > of out of order completion since it depends on the information in the
-> > > descriptor ring. We probably need to extend ctx to record such information.
-> > Above code doesn't depend on the information in the descriptor
-> > ring. The vq->desc_state[] is the extended ctx.
-> > 
-> > Best regards,
-> > Tiwei Bie
+> gdb perf
+> bt
+> bt
+> #0  __strcmp_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcmp-sse2-unaligned.S:31
+> #1  0x0000000000528b1e in machine__is (machine=0xc55548, arch=0x7d9058 "x86_64") at util/machine.c:2305
+> #2  0x0000000000528bbb in machine__get_kernel_start (machine=0xc55548) at util/machine.c:2329
+> #3  0x00000000004df894 in machine__kernel_start (machine=0xc55548) at util/machine.h:90
+> #4  0x00000000004df8e0 in machine__kernel_ip (machine=0xc55548, ip=140352692842292) at util/machine.h:96
+> #5  0x00000000004e3a9c in thread__find_map (thread=0x21f9de0, cpumode=2 '\002', addr=140352692842292, al=0x7fffffff8160)
+>     at util/event.c:1550
+> #6  0x00000000004e3c51 in machine__resolve (machine=0xc55548, al=0x7fffffff8160, sample=0x7fffffff8360) at util/event.c:1591
+> #7  0x000000000045a274 in perf_event__process_sample (tool=0x7fffffffa720, event=0x7fffea662878, evsel=0xc120e0, 
+>     sample=0x7fffffff8360, machine=0xc55548) at builtin-top.c:734
+> #8  0x000000000045a91c in perf_top__mmap_read_idx (top=0x7fffffffa720, idx=3) at builtin-top.c:872
+> #9  0x000000000045aa6b in perf_top__mmap_read (top=0x7fffffffa720) at builtin-top.c:898
+> #10 0x000000000045b460 in __cmd_top (top=0x7fffffffa720) at builtin-top.c:1167
+> #11 0x000000000045c973 in cmd_top (argc=0, argv=0x7fffffffe0e0) at builtin-top.c:1509
+> #12 0x00000000004ce403 in run_builtin (p=0xac5670 <commands+336>, argc=1, argv=0x7fffffffe0e0) at perf.c:303
+> #13 0x00000000004ce670 in handle_internal_command (argc=1, argv=0x7fffffffe0e0) at perf.c:355
+> #14 0x00000000004ce7c2 in run_argv (argcp=0x7fffffffdf3c, argv=0x7fffffffdf30) at perf.c:399
+> #15 0x00000000004ceb90 in main (argc=1, argv=0x7fffffffe0e0) at perf.c:543
+> (gdb) fr 1
+> #1  0x0000000000528b1e in machine__is (machine=0xc55548, arch=0x7d9058 "x86_64") at util/machine.c:2305
+> 2305		return machine && machine->env && !strcmp(machine->env->arch, arch);
+> (gdb) list
+> 2300	 * Compares the raw arch string. N.B. see instead perf_env__arch() if a
+> 2301	 * normalized arch is needed.
+> 2302	 */
+> 2303	bool machine__is(struct machine *machine, const char *arch)
+> 2304	{
+> 2305		return machine && machine->env && !strcmp(machine->env->arch, arch);
+> 2306	}
+> 2307	
+> 2308	int machine__get_kernel_start(struct machine *machine)
+> 2309	{
+> (gdb) p machine
+> $1 = (struct machine *) 0xc55548
+> (gdb) p machine->env
+> $2 = (struct perf_env *) 0xc06400 <perf_env>
+> (gdb) p machine-env->arch
+> No symbol "env" in current context.
+> (gdb) p machine->env->arch
+> $3 = 0x0
+> (gdb)
 > 
-> Yes, but desc is a pointer to descriptor ring I think so
-> vring_unmap_one_packed() still depends on the content of descriptor ring?
-> 
 
-I got your point now. I think it makes sense to reserve
-the bits of the addr field. Driver shouldn't try to get
-addrs from the descriptors when cleanup the descriptors
-no matter whether we support out-of-order or not.
-
-But combining it with the out-of-order support, it will
-mean that the driver still needs to maintain a desc/ctx
-list that is very similar to the desc ring in the split
-ring. I'm not quite sure whether it's something we want.
-If it is true, I'll do it. So do you think we also want
-to maintain such a desc/ctx list for packed ring?
-
-Best regards,
-Tiwei Bie
+If there is no perf_data then perf_session__new() uses perf_env but it seems
+perf_env.arch is not initialized.  Would it be OK to initialize
+perf_env.arch and perf_env.nr_cpus_avail?
