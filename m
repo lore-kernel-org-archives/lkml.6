@@ -1,69 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-654-1526464002-2-10659921312554876476
+X-Cyrus-Session-Id: sloti22d1t05-654-1526463997-2-13527659660786491221
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roenca,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526464001; b=BMHDfaA0dg0s3xTpThKa2j98nEyBFVwuIWqco/lWJq7MveDhI4
-    JZqdmVTYJ3U371MfD+XzSnukLDkGr9nGYKnfMj95vBgrXEv82QbGZXr9shUFwBTo
-    hCNVB1eeNPGAMIZJDEIkoVzuPYC3YvZD6cPpWDojhR/zUpHTCMrGcH4jyhkNOxiN
-    VBRezTo/k2HBArXFLh6in8/0PfmvjxX6y+u9sMZcLwYemeInNddIaXsLbQpKqRFL
-    FUcYo1zcgvz9unhHM75DdGCXWJBVYD48DhB3nGWCNEq0NYr5AKAbyCnpKZ0qnKDu
-    5IuebrtOMmD6u5kpmUiIMRhAow1cN0eIUqmw==
+    1526463996; b=gorP2m4a3AkoYxk6LllDPKFZOa2Kyi29BAzyz3FxdrXkuFKU8F
+    XkFgAWebDCTXvPaSiG/W9rgzKsV8Ibl/aYHCFtxvCyf52ksReagrcajBz0jhrw16
+    EkYdsqDUJ1r1owyF8usB9FG1xmBG9FmfZsXnNL1cmx8mcpp60nyFoNUqVtgUWll0
+    STQIXvbxf8CdVJSTxj7imFi2aIcTdbzQn3UsF4gRlaEDylI0jws6nHnOVB1ikZMs
+    BSDGGwqBJyfaBe7hsAKNyuiPXcP8BNBs67iFVs+uJe8N6W/Yfm8zidzt5i5Fds5R
+    9g965JxRmz5xe1G2kzhVnH5hGSaO+dOJSl1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526464001; bh=EnKEP
-    BOJrxyQ5Q/HZwvbSMaxcL/Z51KIgsSpN2c7xpI=; b=aZbjzKL1Yz1Jl9Nl+hQ0L
-    wmw+anw5Jj2V/Y/L9+zmkqzaFS3/pJKFYjET1Afm2KGAKNb6MC/RobmARl3a9Qv+
-    VOWzwtwvO8Jm91DgUhA7ayqeQL7EOBEd5tPWge9YUqukvx7AGWWvOL3Ekj/XJz/v
-    hoJojq5nr+d6tdPjN6wsSyTYUQSRNP627svrmfH0idkGMYfBA8sMUGpeCfah6iHS
-    sSqOj2epBqNdFHPrO06NqCgQH/s2hz4r46sZhXHoxKIS+cjRHHT5uYGD95gqnRib
-    X9h4tvCgoPQ1buTg2kYZYaYAPb+rj4a9bq+iM50J+041i5KbCPsl4Iqlyl9QBAaa
-    Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526463996; bh=8jcSK
+    xji4w5LCOLUM326mocz8+mNYQDqIgF16xtisGM=; b=J7dAnWQnQFgRn9oMlVXHR
+    ZrCvy6eLA4JZ4eUXaFHx3GhXTWtJC0ZNLX40QJ6/zkKJxftLdZSh3Rsp6UMZnZdj
+    Y+/jj5t0v5wu8etVAXgc4yQTXC3DJroOixzS1T1puRHAPAguj2t391a/qGiipp6X
+    jPpgjU2jgFFwCbgBK54LiA4Oxxlgbnc8araGZVPvioX7NqeOe4wTPSWGe4Z1VARk
+    B3ODE2jQwMRNveXzivUJbP0z/Kml2JmN3yqKCq+PryYXcI9h84C+3UL3rVonnqWz
+    o78BQj/97qD+w9bNnWq/pOtpuG+IitNnbpGXfg8Ja9jh7k5UCvpDY2r0ZkvHvgbU
+    w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=bkIfeJBa
+    header.d=infradead.org header.i=@infradead.org header.b=IE5rz4Er
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=lst.de header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=bkIfeJBa
+      header.d=infradead.org header.i=@infradead.org header.b=IE5rz4Er
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=lst.de header.result=pass
       header_is_org_domain=yes;
@@ -71,12 +69,12 @@ Authentication-Results: mx1.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK//SjIVN6gi1z3CYVUxhxAWZ4Iv9/REZfFxb2Hw6wza0P4DE0GypDfYZwZCv4MwwL10GBr4aK+pfbYA1uq6YVmp9+rTf33GFbUZg/RPwkUVhecPGdSp
-    xFr7BAjY848n3y74iHRRJnYcX6WGvBN0z+YL7+hGPODg9PLPi2ddwzZ7QxovzpbzHFmPa78cEC79N+DInir4CgbjDOtNgVaG78W9FyPraWaCeBPHITnaYUDo
-    AxoWay7wwmmAgGYY9DMlxA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=TCsHB-DreQICuqE0vTcA:9
+X-CM-Envelope: MS4wfFI5xw12gtjeBhTeNo/zxQFLkUtltJBeBxVnT2LmHvbo3QkqIoZCbRwspSsCsyIC2Z4G8mn/SiagWo38VBhq4Xqid55oCkm6Pc4u5WWoA+svsACnOdgU
+    YzSc3/RP54puzdK/erWYswz8865HgVtp1akI2CFQ0PIDfR2RyKwDh5212SFFte96gPGXWmnantZI2ii4IdMuZMb2SJyMGQDCOk7QBJqEQ49n3pu/lLjiDnr5
+    WnwAWGiGLTYprMNMD3mHJQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=nnAUT0DM3jf9yUwnRPkA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -84,9 +82,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 34/42] netfilter/x_tables: switch to proc_create_seq_private
-Date: Wed, 16 May 2018 11:43:38 +0200
-Message-Id: <20180516094346.20506-35-hch@lst.de>
+Subject: [PATCH 31/42] hostap: switch to proc_create_{seq,single}_data
+Date: Wed, 16 May 2018 11:43:35 +0200
+Message-Id: <20180516094346.20506-32-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180516094346.20506-1-hch@lst.de>
 References: <20180516094346.20506-1-hch@lst.de>
@@ -120,87 +118,477 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And remove proc boilerplate code.
+And use proc private data directly instead of doing a detour
+through seq->private.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/netfilter/x_tables.c | 42 ++++++----------------------------------
- 1 file changed, 6 insertions(+), 36 deletions(-)
+ .../net/wireless/intersil/hostap/hostap_ap.c  |  70 ++-------
+ .../net/wireless/intersil/hostap/hostap_hw.c  |  17 +--
+ .../wireless/intersil/hostap/hostap_proc.c    | 143 +++---------------
+ 3 files changed, 39 insertions(+), 191 deletions(-)
 
-diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-index 344dd01a5027..0e314f95a4a3 100644
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1648,22 +1648,6 @@ static const struct seq_operations xt_match_seq_ops = {
- 	.show	= xt_match_seq_show,
- };
- 
--static int xt_match_open(struct inode *inode, struct file *file)
--{
--	struct nf_mttg_trav *trav;
--	trav = __seq_open_private(file, &xt_match_seq_ops, sizeof(*trav));
--	if (!trav)
--		return -ENOMEM;
--	return 0;
--}
--
--static const struct file_operations xt_match_ops = {
--	.open	 = xt_match_open,
--	.read	 = seq_read,
--	.llseek	 = seq_lseek,
--	.release = seq_release_private,
--};
--
- static void *xt_target_seq_start(struct seq_file *seq, loff_t *pos)
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ap.c b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+index 4f76f81dd3af..d1884b8913e7 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ap.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+@@ -69,7 +69,7 @@ static void prism2_send_mgmt(struct net_device *dev,
+ #ifndef PRISM2_NO_PROCFS_DEBUG
+ static int ap_debug_proc_show(struct seq_file *m, void *v)
  {
- 	return xt_mttg_seq_start(seq, pos, true);
-@@ -1698,22 +1682,6 @@ static const struct seq_operations xt_target_seq_ops = {
- 	.show	= xt_target_seq_show,
- };
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
  
--static int xt_target_open(struct inode *inode, struct file *file)
+ 	seq_printf(m, "BridgedUnicastFrames=%u\n", ap->bridged_unicast);
+ 	seq_printf(m, "BridgedMulticastFrames=%u\n", ap->bridged_multicast);
+@@ -81,18 +81,6 @@ static int ap_debug_proc_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "tx_drop_nonassoc=%u\n", ap->tx_drop_nonassoc);
+ 	return 0;
+ }
+-
+-static int ap_debug_proc_open(struct inode *inode, struct file *file)
 -{
--	struct nf_mttg_trav *trav;
--	trav = __seq_open_private(file, &xt_target_seq_ops, sizeof(*trav));
--	if (!trav)
--		return -ENOMEM;
--	return 0;
+-	return single_open(file, ap_debug_proc_show, PDE_DATA(inode));
 -}
 -
--static const struct file_operations xt_target_ops = {
--	.open	 = xt_target_open,
--	.read	 = seq_read,
--	.llseek	 = seq_lseek,
--	.release = seq_release_private,
+-static const struct file_operations ap_debug_proc_fops = {
+-	.open		= ap_debug_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+ 
+ 
+@@ -333,7 +321,7 @@ void hostap_deauth_all_stas(struct net_device *dev, struct ap_data *ap,
+ 
+ static int ap_control_proc_show(struct seq_file *m, void *v)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	char *policy_txt;
+ 	struct mac_entry *entry;
+ 
+@@ -365,20 +353,20 @@ static int ap_control_proc_show(struct seq_file *m, void *v)
+ 
+ static void *ap_control_proc_start(struct seq_file *m, loff_t *_pos)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	spin_lock_bh(&ap->mac_restrictions.lock);
+ 	return seq_list_start_head(&ap->mac_restrictions.mac_list, *_pos);
+ }
+ 
+ static void *ap_control_proc_next(struct seq_file *m, void *v, loff_t *_pos)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	return seq_list_next(v, &ap->mac_restrictions.mac_list, _pos);
+ }
+ 
+ static void ap_control_proc_stop(struct seq_file *m, void *v)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	spin_unlock_bh(&ap->mac_restrictions.lock);
+ }
+ 
+@@ -389,24 +377,6 @@ static const struct seq_operations ap_control_proc_seqops = {
+ 	.show	= ap_control_proc_show,
+ };
+ 
+-static int ap_control_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &ap_control_proc_seqops);
+-	if (ret == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations ap_control_proc_fops = {
+-	.open		= ap_control_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
 -};
 -
- #define FORMAT_TABLES	"_tables_names"
- #define	FORMAT_MATCHES	"_tables_matches"
- #define FORMAT_TARGETS 	"_tables_targets"
-@@ -1787,8 +1755,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+-
+ int ap_control_add_mac(struct mac_restrictions *mac_restrictions, u8 *mac)
+ {
+ 	struct mac_entry *entry;
+@@ -585,20 +555,20 @@ static int prism2_ap_proc_show(struct seq_file *m, void *v)
  
- 	strlcpy(buf, xt_prefix[af], sizeof(buf));
- 	strlcat(buf, FORMAT_MATCHES, sizeof(buf));
--	proc = proc_create_data(buf, 0440, net->proc_net, &xt_match_ops,
--				(void *)(unsigned long)af);
-+	proc = proc_create_seq_private(buf, 0440, net->proc_net,
-+			&xt_match_seq_ops, sizeof(struct nf_mttg_trav),
-+			(void *)(unsigned long)af);
- 	if (!proc)
- 		goto out_remove_tables;
- 	if (uid_valid(root_uid) && gid_valid(root_gid))
-@@ -1796,8 +1765,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+ static void *prism2_ap_proc_start(struct seq_file *m, loff_t *_pos)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	spin_lock_bh(&ap->sta_table_lock);
+ 	return seq_list_start_head(&ap->sta_list, *_pos);
+ }
  
- 	strlcpy(buf, xt_prefix[af], sizeof(buf));
- 	strlcat(buf, FORMAT_TARGETS, sizeof(buf));
--	proc = proc_create_data(buf, 0440, net->proc_net, &xt_target_ops,
--				(void *)(unsigned long)af);
-+	proc = proc_create_seq_private(buf, 0440, net->proc_net,
-+			 &xt_target_seq_ops, sizeof(struct nf_mttg_trav),
-+			 (void *)(unsigned long)af);
- 	if (!proc)
- 		goto out_remove_matches;
- 	if (uid_valid(root_uid) && gid_valid(root_gid))
+ static void *prism2_ap_proc_next(struct seq_file *m, void *v, loff_t *_pos)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	return seq_list_next(v, &ap->sta_list, _pos);
+ }
+ 
+ static void prism2_ap_proc_stop(struct seq_file *m, void *v)
+ {
+-	struct ap_data *ap = m->private;
++	struct ap_data *ap = PDE_DATA(file_inode(m->file));
+ 	spin_unlock_bh(&ap->sta_table_lock);
+ }
+ 
+@@ -608,23 +578,6 @@ static const struct seq_operations prism2_ap_proc_seqops = {
+ 	.stop	= prism2_ap_proc_stop,
+ 	.show	= prism2_ap_proc_show,
+ };
+-
+-static int prism2_ap_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &prism2_ap_proc_seqops);
+-	if (ret == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations prism2_ap_proc_fops = {
+-	.open		= prism2_ap_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+ #endif /* PRISM2_NO_KERNEL_IEEE80211_MGMT */
+ 
+ 
+@@ -896,12 +849,13 @@ void hostap_init_ap_proc(local_info_t *local)
+ 		return;
+ 
+ #ifndef PRISM2_NO_PROCFS_DEBUG
+-	proc_create_data("ap_debug", 0, ap->proc, &ap_debug_proc_fops, ap);
++	proc_create_single_data("ap_debug", 0, ap->proc, ap_debug_proc_show, ap);
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+ 
+ #ifndef PRISM2_NO_KERNEL_IEEE80211_MGMT
+-	proc_create_data("ap_control", 0, ap->proc, &ap_control_proc_fops, ap);
+-	proc_create_data("ap", 0, ap->proc, &prism2_ap_proc_fops, ap);
++	proc_create_seq_data("ap_control", 0, ap->proc, &ap_control_proc_seqops,
++			ap);
++	proc_create_seq_data("ap", 0, ap->proc, &prism2_ap_proc_seqops, ap);
+ #endif /* PRISM2_NO_KERNEL_IEEE80211_MGMT */
+ 
+ }
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_hw.c b/drivers/net/wireless/intersil/hostap/hostap_hw.c
+index 5c4a17a18968..2720aa39f530 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_hw.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_hw.c
+@@ -2951,19 +2951,6 @@ static int prism2_registers_proc_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int prism2_registers_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, prism2_registers_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations prism2_registers_proc_fops = {
+-	.open		= prism2_registers_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+ 
+ 
+@@ -3279,8 +3266,8 @@ static int hostap_hw_ready(struct net_device *dev)
+ 		}
+ 		hostap_init_proc(local);
+ #ifndef PRISM2_NO_PROCFS_DEBUG
+-		proc_create_data("registers", 0, local->proc,
+-				 &prism2_registers_proc_fops, local);
++		proc_create_single_data("registers", 0, local->proc,
++				 prism2_registers_proc_show, local);
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+ 		hostap_init_ap_proc(local);
+ 		return 0;
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_proc.c b/drivers/net/wireless/intersil/hostap/hostap_proc.c
+index d234231bf532..5b33ccab9188 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_proc.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_proc.c
+@@ -43,18 +43,6 @@ static int prism2_debug_proc_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int prism2_debug_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, prism2_debug_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations prism2_debug_proc_fops = {
+-	.open		= prism2_debug_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+ 
+ 
+@@ -95,19 +83,6 @@ static int prism2_stats_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int prism2_stats_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, prism2_stats_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations prism2_stats_proc_fops = {
+-	.open		= prism2_stats_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-
+ static int prism2_wds_proc_show(struct seq_file *m, void *v)
+ {
+ 	struct list_head *ptr = v;
+@@ -122,20 +97,20 @@ static int prism2_wds_proc_show(struct seq_file *m, void *v)
+ 
+ static void *prism2_wds_proc_start(struct seq_file *m, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	read_lock_bh(&local->iface_lock);
+ 	return seq_list_start(&local->hostap_interfaces, *_pos);
+ }
+ 
+ static void *prism2_wds_proc_next(struct seq_file *m, void *v, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	return seq_list_next(v, &local->hostap_interfaces, _pos);
+ }
+ 
+ static void prism2_wds_proc_stop(struct seq_file *m, void *v)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	read_unlock_bh(&local->iface_lock);
+ }
+ 
+@@ -146,27 +121,9 @@ static const struct seq_operations prism2_wds_proc_seqops = {
+ 	.show	= prism2_wds_proc_show,
+ };
+ 
+-static int prism2_wds_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &prism2_wds_proc_seqops);
+-	if (ret == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations prism2_wds_proc_fops = {
+-	.open		= prism2_wds_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+-
+-
+ static int prism2_bss_list_proc_show(struct seq_file *m, void *v)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	struct list_head *ptr = v;
+ 	struct hostap_bss_info *bss;
+ 
+@@ -193,20 +150,20 @@ static int prism2_bss_list_proc_show(struct seq_file *m, void *v)
+ 
+ static void *prism2_bss_list_proc_start(struct seq_file *m, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	spin_lock_bh(&local->lock);
+ 	return seq_list_start_head(&local->bss_list, *_pos);
+ }
+ 
+ static void *prism2_bss_list_proc_next(struct seq_file *m, void *v, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	return seq_list_next(v, &local->bss_list, _pos);
+ }
+ 
+ static void prism2_bss_list_proc_stop(struct seq_file *m, void *v)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	spin_unlock_bh(&local->lock);
+ }
+ 
+@@ -217,24 +174,6 @@ static const struct seq_operations prism2_bss_list_proc_seqops = {
+ 	.show	= prism2_bss_list_proc_show,
+ };
+ 
+-static int prism2_bss_list_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &prism2_bss_list_proc_seqops);
+-	if (ret == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations prism2_bss_list_proc_fops = {
+-	.open		= prism2_bss_list_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+-
+-
+ static int prism2_crypt_proc_show(struct seq_file *m, void *v)
+ {
+ 	local_info_t *local = m->private;
+@@ -252,19 +191,6 @@ static int prism2_crypt_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int prism2_crypt_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, prism2_crypt_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations prism2_crypt_proc_fops = {
+-	.open		= prism2_crypt_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-
+ static ssize_t prism2_pda_proc_read(struct file *file, char __user *buf,
+ 				    size_t count, loff_t *_pos)
+ {
+@@ -342,7 +268,7 @@ static int prism2_io_debug_proc_read(char *page, char **start, off_t off,
+ #ifndef PRISM2_NO_STATION_MODES
+ static int prism2_scan_results_proc_show(struct seq_file *m, void *v)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	unsigned long entry;
+ 	int i, len;
+ 	struct hfa384x_hostscan_result *scanres;
+@@ -392,7 +318,7 @@ static int prism2_scan_results_proc_show(struct seq_file *m, void *v)
+ 
+ static void *prism2_scan_results_proc_start(struct seq_file *m, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	spin_lock_bh(&local->lock);
+ 
+ 	/* We have a header (pos 0) + N results to show (pos 1...N) */
+@@ -403,7 +329,7 @@ static void *prism2_scan_results_proc_start(struct seq_file *m, loff_t *_pos)
+ 
+ static void *prism2_scan_results_proc_next(struct seq_file *m, void *v, loff_t *_pos)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 
+ 	++*_pos;
+ 	if (*_pos > local->last_scan_results_count)
+@@ -413,7 +339,7 @@ static void *prism2_scan_results_proc_next(struct seq_file *m, void *v, loff_t *
+ 
+ static void prism2_scan_results_proc_stop(struct seq_file *m, void *v)
+ {
+-	local_info_t *local = m->private;
++	local_info_t *local = PDE_DATA(file_inode(m->file));
+ 	spin_unlock_bh(&local->lock);
+ }
+ 
+@@ -423,25 +349,6 @@ static const struct seq_operations prism2_scan_results_proc_seqops = {
+ 	.stop	= prism2_scan_results_proc_stop,
+ 	.show	= prism2_scan_results_proc_show,
+ };
+-
+-static int prism2_scan_results_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &prism2_scan_results_proc_seqops);
+-	if (ret == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations prism2_scan_results_proc_fops = {
+-	.open		= prism2_scan_results_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+-
+-
+ #endif /* PRISM2_NO_STATION_MODES */
+ 
+ 
+@@ -463,29 +370,29 @@ void hostap_init_proc(local_info_t *local)
+ 	}
+ 
+ #ifndef PRISM2_NO_PROCFS_DEBUG
+-	proc_create_data("debug", 0, local->proc,
+-			 &prism2_debug_proc_fops, local);
++	proc_create_single_data("debug", 0, local->proc,
++			prism2_debug_proc_show, local);
+ #endif /* PRISM2_NO_PROCFS_DEBUG */
+-	proc_create_data("stats", 0, local->proc,
+-			 &prism2_stats_proc_fops, local);
+-	proc_create_data("wds", 0, local->proc,
+-			 &prism2_wds_proc_fops, local);
++	proc_create_single_data("stats", 0, local->proc, prism2_stats_proc_show,
++			local);
++	proc_create_seq_data("wds", 0, local->proc,
++			&prism2_wds_proc_seqops, local);
+ 	proc_create_data("pda", 0, local->proc,
+ 			 &prism2_pda_proc_fops, local);
+ 	proc_create_data("aux_dump", 0, local->proc,
+ 			 local->func->read_aux_fops ?: &prism2_aux_dump_proc_fops,
+ 			 local);
+-	proc_create_data("bss_list", 0, local->proc,
+-			 &prism2_bss_list_proc_fops, local);
+-	proc_create_data("crypt", 0, local->proc,
+-			 &prism2_crypt_proc_fops, local);
++	proc_create_seq_data("bss_list", 0, local->proc,
++			&prism2_bss_list_proc_seqops, local);
++	proc_create_single_data("crypt", 0, local->proc, prism2_crypt_proc_show,
++		local);
+ #ifdef PRISM2_IO_DEBUG
+-	proc_create_data("io_debug", 0, local->proc,
+-			 &prism2_io_debug_proc_fops, local);
++	proc_create_single_data("io_debug", 0, local->proc,
++			prism2_debug_proc_show, local);
+ #endif /* PRISM2_IO_DEBUG */
+ #ifndef PRISM2_NO_STATION_MODES
+-	proc_create_data("scan_results", 0, local->proc,
+-			 &prism2_scan_results_proc_fops, local);
++	proc_create_seq_data("scan_results", 0, local->proc,
++			&prism2_scan_results_proc_seqops, local);
+ #endif /* PRISM2_NO_STATION_MODES */
+ }
+ 
 -- 
 2.17.0
 
