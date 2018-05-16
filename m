@@ -1,129 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeEOX46 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 15 May 2018 19:56:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34505 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751333AbeEOX44 (ORCPT
+        id S1752169AbeEPANA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 15 May 2018 20:13:00 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33743 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751489AbeEPAM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 May 2018 19:56:56 -0400
-X-Google-Smtp-Source: AB8JxZrlovkEhBRrcKWQKf3EQwoVuZpxdj5aCLMU/YR0Wuk2QQWEyLvl920EISybOFBG5ZIV5pgAU9H0wW8x5c4y3SQ=
+        Tue, 15 May 2018 20:12:58 -0400
+X-Google-Smtp-Source: AB8JxZqbRd8EdR72LyUnhiJtJc0dc3SJwLnYAaGJSHI+oM++J359/wwJ5FIlCXAYBhJSp8ObEGRgAHMiTwCl1gDADw8=
 MIME-Version: 1.0
-References: <20180515224559.199279-1-joel@joelfernandes.org> <20180515224559.199279-3-joel@joelfernandes.org>
-In-Reply-To: <20180515224559.199279-3-joel@joelfernandes.org>
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Date: Tue, 15 May 2018 16:56:43 -0700
-Message-ID: <CAEi0qN=DqhudAQ7mdwDPzJ9UX5PcxS9Srdi8=K64h7uv8yrxHQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/6] srcu: Add notrace variants of srcu_read_{lock,unlock}
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+In-Reply-To: <20180515222125.GA20160@ziepe.ca>
+References: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr> <20180515222125.GA20160@ziepe.ca>
+From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Date: Tue, 15 May 2018 17:12:36 -0700
+Message-ID: <CALzJLG-Fzev4U3dUKSVb2pm=rknSGVoMW4mbbjTugdP+e13XKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] {net, IB}/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Something is majorly messed up with my SMTP server. Only half of the patches
-in this series were sent out and the ones that did go out were random.
+On Tue, May 15, 2018 at 3:21 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Sun, May 13, 2018 at 09:00:41AM +0200, Christophe JAILLET wrote:
+>> When 'kvzalloc()' is used to allocate memory, 'kvfree()' must be used to
+>> free it.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> v1 -> v2: More places to update have been added to the patch
+>> ---
+>>  drivers/infiniband/hw/mlx5/cq.c                            | 2 +-
+>>  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
+>>  drivers/net/ethernet/mellanox/mlx5/core/vport.c            | 6 +++---
+>>  3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> I agree with Eric on the need for fixes lines in v3..
+>
+>> diff --git a/drivers/infiniband/hw/mlx5/cq.c b/drivers/infiniband/hw/mlx5/cq.c
+>> index 77d257ec899b..6d52ea03574e 100644
+>> --- a/drivers/infiniband/hw/mlx5/cq.c
+>> +++ b/drivers/infiniband/hw/mlx5/cq.c
+>> @@ -849,7 +849,7 @@ static int create_cq_user(struct mlx5_ib_dev *dev, struct ib_udata *udata,
+>>       return 0;
+>>
+>>  err_cqb:
+>> -     kfree(*cqb);
+>> +     kvfree(*cqb);
+>
+> For the infiniband part:
+>
+> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+>
+> Since this is mostly ethernet, can it go through netdev? thanks
+>
 
-I keeping getting this as replies for the one's that didn't go out:
-https://support.google.com/mail/answer/6596?visit_id=1-636620224226493206-2884214369&rd=1
+for the mlx5 core parts:
 
-And its intermittent too.. I am going to spend a bit of time to figure out
-why it happened so it doesn't happen again. Sorry about the noise.
+Acked-by: Saeed Mahameed <saeedm@mellanox.com>
 
-Sigh,
+Yes i will take v3 to mlx5-next branch.
 
-- Joel
-
-On Tue, May 15, 2018 at 3:47 PM Joel Fernandes (Google) <
-joel@joelfernandes.org> wrote:
-
-> From: Paul McKenney <paulmck@linux.vnet.ibm.com>
-
-> This is needed for a future tracepoint patch that uses srcu, and to make
-> sure it doesn't call into lockdep.
-
-> tracepoint code already calls notrace variants for rcu_read_lock_sched
-> so this patch does the same for srcu which will be used in a later
-> patch. Keeps it consistent with rcu-sched.
-
-> [Joel: Added commit message]
-
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Peter Zilstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Glexiner <tglx@linutronix.de>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Fenguang Wu <fengguang.wu@intel.com>
-> Cc: Baohong Liu <baohong.liu@intel.com>
-> Cc: Vedang Patel <vedang.patel@intel.com>
-> Cc: kernel-team@android.com
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Signed-off-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->   include/linux/srcu.h | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
-
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index 33c1c698df09..2ec618979b20 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-> @@ -161,6 +161,16 @@ static inline int srcu_read_lock(struct srcu_struct
-*sp) __acquires(sp)
->          return retval;
->   }
-
-> +/* Used by tracing, cannot be traced and cannot invoke lockdep. */
-> +static inline notrace int
-> +srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
-> +{
-> +       int retval;
-> +
-> +       retval = __srcu_read_lock(sp);
-> +       return retval;
-> +}
-> +
->   /**
->    * srcu_read_unlock - unregister a old reader from an SRCU-protected
-structure.
->    * @sp: srcu_struct in which to unregister the old reader.
-> @@ -175,6 +185,13 @@ static inline void srcu_read_unlock(struct
-srcu_struct *sp, int idx)
->          __srcu_read_unlock(sp, idx);
->   }
-
-> +/* Used by tracing, cannot be traced and cannot call lockdep. */
-> +static inline notrace void
-> +srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
-> +{
-> +       __srcu_read_unlock(sp, idx);
-> +}
-> +
->   /**
->    * smp_mb__after_srcu_read_unlock - ensure full ordering after
-srcu_read_unlock
->    *
+> Jason
 > --
-> 2.17.0.441.gb46fe60e1d-goog
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
