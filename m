@@ -1,80 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeEPRks (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 13:40:48 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:45868 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbeEPRkq (ORCPT
+        id S1751850AbeEPRn7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 13:43:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36186 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbeEPRn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 13:40:46 -0400
-X-Google-Smtp-Source: AB8JxZq4ECb/r7HKtspQL8hKkzAyC9vwpeWP8cBP8cgwhXEMGr/rJj1QAQN0JK3QzGDNvvVVxMCYyWumOw3eEni1x8k=
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com>
-References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
- <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
- <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com> <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 May 2018 19:40:43 +0200
-X-Google-Sender-Auth: ND_fXvnQa0TvtUkAal5qt2DgQ8k
-Message-ID: <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 May 2018 13:43:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9751660A00
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm@lists.infradead.org,
+        tsoni@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org,
+        robh@kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v7 1/2] dt-bindings: Documentation for qcom, llcc
+Date: Wed, 16 May 2018 10:43:42 -0700
+Message-Id: <1526492623-20527-2-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
+References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Documentation for last level cache controller device tree bindings,
+client bindings usage examples.
 
-On Wed, May 16, 2018 at 1:33 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 16, 2018 at 1:29 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, May 16, 2018 at 1:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Wed, May 16, 2018 at 9:16 AM, Geert Uytterhoeven
->>> <geert@linux-m68k.org> wrote:
->>>> On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>> Commit
->>>>>
->>>>>   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
->>>>>
->>>>> is missing a Signed-off-by from its comitter.
->>>>
->>>> Sorry, I forgot to add it.
->>>>
->>>> Linus, as the merge of sh-pfc is your top commit, shall I fix it up
->>>> and send a new
->>>> pull request?
->>>> Please let me know how to proceed. Thanks!
->>>
->>> If it's just missing your SoB I can add it with your permission
->>> I guess? That is less trouble.
->>
->> You have my permission.
->> But I'm afraid that won't help, as then you'll become the committer with your
->> SoB missing...
->
-> Bah I just sign them all off then. It's still quicker.
->
-> Done!
+Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
 
-Thanks! I'll be more careful next time.
-
-I guess I should base my next pull request on the new commit
-73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") in your
-tree, instead of on my previous pull request? Else there will be some
-conflicts (I checked: so far in one file only).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+new file mode 100644
+index 0000000..0ebbf0a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+@@ -0,0 +1,26 @@
++== Introduction==
++
++LLCC (Last Level Cache Controller) provides last level of cache memory in SOC,
++that can be shared by multiple clients. Clients here are different cores in the
++SOC, the idea is to minimize the local caches at the clients and migrate to
++common pool of memory. Cache memory is divided into partitions called slices
++which are assigned to clients. Clients can query the slice details, activate
++and deactivate them.
++
++Properties:
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be "qcom,sdm845-llcc"
++
++- reg:
++	Usage: required
++	Value Type: <prop-encoded-array>
++	Definition: Start address and the the size of the register region.
++
++Example:
++
++	qcom,llcc@1100000 {
++		compatible = "qcom,sdm845-llcc";
++		reg = <0x1100000 0x250000>;
++	};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
