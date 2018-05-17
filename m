@@ -1,100 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751695AbeEQLQG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:16:06 -0400
-Received: from mail-sn1nam02on0070.outbound.protection.outlook.com ([104.47.36.70]:44352
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751061AbeEQLQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:16:04 -0400
-From: Bharat Kumar Gogada <bharatku@xilinx.com>
-To: Keith Busch <keith.busch@linux.intel.com>
-CC: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>
-Subject: RE: INTMS/INTMC not being used in NVME interrupt handling
-Thread-Topic: INTMS/INTMC not being used in NVME interrupt handling
-Thread-Index: AdPtEUhAQBG4C/fdRa+bY9RvRvlVYgAEtuYAACoOvYA=
-Date: Thu, 17 May 2018 11:15:59 +0000
-Message-ID: <BLUPR0201MB1505BF5E68D05F25A53D3B96A5910@BLUPR0201MB1505.namprd02.prod.outlook.com>
-References: <BLUPR0201MB1505371050ED798BE025132BA5920@BLUPR0201MB1505.namprd02.prod.outlook.com>
- <20180516144240.GA20223@localhost.localdomain>
-In-Reply-To: <20180516144240.GA20223@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharatku@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BLUPR0201MB1763;7:n1Ojsxs0Pmzw5/hcDxsQXrW3droTAmkoyT33LP3DeOc4YuXOnLM1JppVpYcaEpmFMnznpzTfuuj5toetn6gHU1KRJa+ZVnu81wICU4/28QpPatoDLy19lrMsmvTIQ53f2lsIq9LT0Gt4HnJ0OxAWeD6ct0UdLjT9Kt4xXgOPzAKogmz9r4COqxm0WOe5AB8EVrwp0UMrVACVJ0fSNMq61LSduecUoPQzIdmcG/jDNxu89HNClxcCGG7sRTuG94Rc
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BLUPR0201MB1763;
-x-ms-traffictypediagnostic: BLUPR0201MB1763:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BLUPR0201MB17631BED7EC0CD5C016ADB44A5910@BLUPR0201MB1763.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BLUPR0201MB1763;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0201MB1763;
-x-forefront-prvs: 067553F396
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(396003)(39380400002)(189003)(199004)(81156014)(26005)(6436002)(81166006)(229853002)(68736007)(478600001)(97736004)(6506007)(8676002)(55236004)(6916009)(186003)(102836004)(33656002)(6246003)(25786009)(3660700001)(2900100001)(3280700002)(8936002)(55016002)(66066001)(446003)(11346002)(476003)(9686003)(3846002)(486006)(6116002)(316002)(54906003)(7696005)(7736002)(74316002)(106356001)(2906002)(86362001)(53936002)(105586002)(5250100002)(99286004)(76176011)(305945005)(14454004)(4326008)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0201MB1763;H:BLUPR0201MB1505.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: sIqgo+LhHtMP74MVenugo4a7AeMV3ifn6RHo1rXTgWaoQvcwZ2Eb1vytNUYYMzL0CA1AtJpRJLJrCwhXvdrTayoGMa8nLSmo7MWMGksFWIA0xXysIxLiBC5/BPnUzmqnx0S+rYrcyknyhxozgjiT0MpxEmJqIzNB/IMfj/vRDfSGZBrM+lNg9eh5KiC/+G5i
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: df0b162a-6146-4e82-5b0e-08d5bbe791d5
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df0b162a-6146-4e82-5b0e-08d5bbe791d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2018 11:15:59.8358
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0201MB1763
+        id S1751804AbeEQLT1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:19:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33602 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbeEQLTY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 07:19:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4031960881
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        rjw@rjwysocki.net, linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v8 00/15] CPU scaling support for msm8996
+Date: Thu, 17 May 2018 14:19:00 +0300
+Message-Id: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4HBGD5q003612
 
-> > Hi,
-> >
-> > As per NVME specification:
-> > 7.5.1.1 Host Software Interrupt Handling It is recommended that host
-> > software utilize the Interrupt Mask Set and Interrupt Mask Clear
-> > (INTMS/INTMC) registers to efficiently handle interrupts when configured
-> to use pin based or MSI messages.
-> >
-> > In kernel 4.14, drivers/nvme/host/pci.c function nvme_isr doesn't  use
-> > these registers.
-> >
-> > Any reason why these registers are not used in nvme interrupt handler ?
-> 
-> I think you've answered your own question: we process completions in the
-> interrupt context. The interrupt is already masked at the CPU level in this
-> context, so there should be no reason to mask them at the device level.
-> 
-> > Why NVMe driver is not using any bottom half and processing all
-> > completion queues in interrupt handler ?
-> 
-> Performance.
-Thanks keith. 
-Currently driver isn't setting any Coalesce count.  
-So the NVMe card will raise interrupt for every single completion queue ?
+[v8]
+ * Reordered the patch series into 4 groups
+ * Addressed comments from Amit about the comments and commit messages
+ * Addressed comments from Amit and Viresh about the resourses deallocation
 
-For legacy interrupt for each CQ 
-CQ-> ASSERT_INTA-> DOORBELL-> DEASSERT_INTA is this flow correct ?
+[v7]
+ * Addressed comments from Viresh about resourses deallocation
+   and DT compatible
 
-Is the following flow valid
-CQ1->ASSERT_INTA->CQ2/CQ3->Doorbell->DEASSERT_INTA ?
+[v6]
+ * Addressed comments from Viresh about:
+ ** Comments style
+ ** Kconfig bool instead of tristate
+ ** DT and documentation style
+ ** Resourses deallocation on an error
+ ** Typos
 
-When using legacy interrupts, if CQ1 is sent followed by ASSERT_INTA, can the EP send 
-another CQ2,CQ3.. before DEASSERT_INTA of CQ1 is generated?
+[v5]
+ * Rebased
+ * Addressed comments from Bjorn about SPDX style,
+   functions and parameters naming
+ * Addressed comments from Viresh DT properties and style, comments style,
+   resourses deallocation, documentation placement
+ * Addressed comments from Sricharan about unnessesary include
+ * Addressed comments from Nicolas
+ * Addressed comments from Rob about the commit messages and acks
+ * Addressed comments from Mark
 
-Regards,
-Bharat
+[v4]
+ * Adressed all comments from Stephen
+ * Added CPU regulator support
+ * Added qcom-cpufreq-kryo driver
+
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
+
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
+
+The series contains 4 groups of patches, which can be merged in the chain order,
+while each group depends on all the previous groups.
+(However, Only SOC, or SOC and Clocks, or SOC and Clocks and Cpufreq will work)  
+
+SOC (1/15):
+Extracts the kryo l2 accessors driver from the QCOM PMU driver
+
+Clocks (2/15-9/15):
+This series adds support for the CPU clocks on msm8996 devices.
+The driver uses the existing PLL drivers and is required to control
+the CPU frequency scaling on the MSM8996.
+
+Cpufreq (10/15-12/15):
+The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+The driver reads eFuse information and chooses the required OPP subset
+by passing the OPP supported-hw parameter.
+
+Regulators (13/15-15/15):
+Added SAW regulator support to the SPMI regulator driver. The SAW regulators
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+
+Ilia Lin (13):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: Use devm_ in the register fixed factor clock
+  clk: qcom: Add CPU clock driver for msm8996
+  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  dt: qcom: Add opp and thermal to the msm8996
+  cpufreq: Add Kryo CPU scaling driver
+  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+  regulator: qcom_spmi: Add support for SAW
+  dt-bindings: qcom_spmi: Document SAW support
+  dt: qcom: Add SAW regulator for 8x96 CPUs
+
+Rajendra Nayak (2):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+ .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 665 +++++++++++++++++++-
+ drivers/clk/clk-fixed-factor.c                     |   2 +-
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 510 ++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c                | 166 +++++
+ drivers/perf/Kconfig                               |   1 +
+ drivers/perf/qcom_l2_pmu.c                         |  90 +--
+ drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
+ drivers/soc/qcom/Kconfig                           |   3 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  56 ++
+ include/soc/qcom/kryo-l2-accessors.h               |  12 +
+ 22 files changed, 2324 insertions(+), 90 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
+-- 
+1.9.1
