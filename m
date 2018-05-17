@@ -1,32 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752722AbeEQQlt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:41:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53532 "EHLO
+        id S1752753AbeEQQl6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:41:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53794 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752715AbeEQQlq (ORCPT
+        with ESMTP id S1752348AbeEQQlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:41:46 -0400
+        Thu, 17 May 2018 12:41:55 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: arizona-ldo1: Look up a descriptor and pass to the core" to the regulator tree
-In-Reply-To: <20180514080640.12515-4-linus.walleij@linaro.org>
-Message-Id: <20180517164139.CF93144007E@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 17:41:39 +0100 (BST)
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, mka@chromium.org,
+        collinsd@codeaurora.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Allow for regulators that can't be read at bootup" to the regulator tree
+In-Reply-To: <20180515220717.254950-1-dianders@chromium.org>
+Message-Id: <20180517164149.A49E444007E@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 17:41:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: arizona-ldo1: Look up a descriptor and pass to the core
+   regulator: core: Allow for regulators that can't be read at bootup
 
 has been applied to the regulator tree at
 
@@ -51,157 +47,91 @@ to this mail.
 Thanks,
 Mark
 
->From e1739e86f0cb9c48e8745a610e6981a4e24cadad Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 14 May 2018 10:06:24 +0200
-Subject: [PATCH] regulator: arizona-ldo1: Look up a descriptor and pass to the
- core
+>From 84b3a7c9c6befe5ab4d49070fe7bcab2da22637e Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Tue, 15 May 2018 15:07:17 -0700
+Subject: [PATCH] regulator: core: Allow for regulators that can't be read at
+ bootup
 
-Instead of passing a global GPIO number, pass a descriptor looked
-up with the standard devm_gpiod_get_optional() call.
+Regulators attached via RPMh on Qualcomm sdm845 apparently are
+write-only.  Specifically you can send a request for a certain voltage
+but you can't read back to see what voltage you've requested.  What
+this means is that at bootup we have absolutely no idea what voltage
+we could be at.
 
-We have augmented the GPIO core to look up the regulator special
-GPIO "wlf,ldoena" in commit 6a537d48461d
-"gpio: of: Support regulator nonstandard GPIO properties".
+As discussed in the patches to try to support the RPMh regulators [1],
+the fact that regulators are write-only means that its driver's
+get_voltage_sel() should return an error code if it's called before
+any calls to set_voltage_sel().  This causes problems in
+machine_constraints_voltage() when trying to apply the constraints.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+A proposed fix was to come up with an error code that could be
+returned by get_voltage_sel() which would cause the regulator
+framework to simply try setting the voltage with the current
+constraints.
+
+In this patch I propose the error code -ENOTRECOVERABLE.  In errno.h
+this error is described as "State not recoverable".  Though the error
+code was originally intended "for robust mutexes", the description of
+the error code seems to apply here because we can't read the state of
+the regulator.  Also note that the only existing user of this error
+code in the regulator framework is tps65090-regulator.c which returns
+this error code from the enable() call (not get_voltage() or
+get_voltage_sel()), so there should be no existing regulators that
+might accidentally get the new behavior.  (Side note is that tps65090
+seems to interpret this error code to mean an error that you can't
+recover from rather than some data that can't be recovered).
+
+[1] https://patchwork.kernel.org/patch/10340897/
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410-module.c | 28 +++++++++++++++-----
- drivers/regulator/arizona-ldo1.c             | 19 +++++--------
- include/linux/regulator/arizona-ldo1.h       |  3 ---
- 3 files changed, 28 insertions(+), 22 deletions(-)
+ drivers/regulator/core.c         | 12 ++++++++++++
+ include/linux/regulator/driver.h |  7 +++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index f00988705408..5aa472892465 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
- #include <linux/spi/spi.h>
-+#include <linux/gpio/machine.h>
- 
- #include <linux/mfd/wm831x/irq.h>
- #include <linux/mfd/wm831x/gpio.h>
-@@ -206,9 +207,6 @@ static const struct i2c_board_info wm1277_devs[] = {
- };
- 
- static struct arizona_pdata wm5102_reva_pdata = {
--	.ldo1 = {
--		.ldoena = S3C64XX_GPN(7),
--	},
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
-@@ -237,10 +235,16 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
- 	},
- };
- 
--static struct arizona_pdata wm5102_pdata = {
--	.ldo1 = {
--		.ldoena = S3C64XX_GPN(7),
-+static struct gpiod_lookup_table wm5102_reva_gpiod_table = {
-+	.dev_id = "spi0.1", /* SPI device name */
-+	.table = {
-+		GPIO_LOOKUP("GPION", 7,
-+			    "wlf,ldoena", GPIO_ACTIVE_HIGH),
-+		{ },
- 	},
-+};
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index d4803460a557..fe314ff56772 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -886,6 +886,18 @@ static int machine_constraints_voltage(struct regulator_dev *rdev,
+ 	    rdev->constraints->min_uV && rdev->constraints->max_uV) {
+ 		int target_min, target_max;
+ 		int current_uV = _regulator_get_voltage(rdev);
 +
-+static struct arizona_pdata wm5102_pdata = {
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
-@@ -264,6 +268,15 @@ static struct spi_board_info wm5102_spi_devs[] = {
- 	},
- };
- 
-+static struct gpiod_lookup_table wm5102_gpiod_table = {
-+	.dev_id = "spi0.1", /* SPI device name */
-+	.table = {
-+		GPIO_LOOKUP("GPION", 7,
-+			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
++		if (current_uV == -ENOTRECOVERABLE) {
++			/* This regulator can't be read and must be initted */
++			rdev_info(rdev, "Setting %d-%duV\n",
++				  rdev->constraints->min_uV,
++				  rdev->constraints->max_uV);
++			_regulator_do_set_voltage(rdev,
++						  rdev->constraints->min_uV,
++						  rdev->constraints->max_uV);
++			current_uV = _regulator_get_voltage(rdev);
++		}
 +
- static struct spi_board_info wm5110_spi_devs[] = {
- 	[0] = {
- 		.modalias	= "wm5110",
-@@ -366,6 +379,9 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
- 					    rev == gf_mods[i].rev))
- 			break;
- 
-+	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
-+	gpiod_add_lookup_table(&wm5102_gpiod_table);
-+
- 	if (i < ARRAY_SIZE(gf_mods)) {
- 		dev_info(&i2c->dev, "%s revision %d\n",
- 			 gf_mods[i].name, rev + 1);
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index 96fddfff5dc4..f6d6a4ad9e8a 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -17,12 +17,11 @@
- #include <linux/bitops.h>
- #include <linux/err.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
--#include <linux/gpio.h>
- #include <linux/slab.h>
- 
- #include <linux/regulator/arizona-ldo1.h>
-@@ -198,16 +197,6 @@ static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
- 	struct device_node *init_node, *dcvdd_node;
- 	struct regulator_init_data *init_data;
- 
--	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
--	if (pdata->ldoena < 0) {
--		dev_warn(config->dev,
--			 "LDOENA GPIO property missing/malformed: %d\n",
--			 pdata->ldoena);
--		pdata->ldoena = 0;
--	} else {
--		config->ena_gpio_initialized = true;
--	}
--
- 	init_node = of_get_child_by_name(np, "ldo1");
- 	dcvdd_node = of_parse_phandle(np, "DCVDD-supply", 0);
- 
-@@ -264,7 +253,11 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
- 		}
- 	}
- 
--	config.ena_gpio = pdata->ldoena;
-+	/* We assume that high output = regulator off */
-+	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(config.ena_gpiod))
-+		return PTR_ERR(config.ena_gpiod);
- 
- 	if (pdata->init_data)
- 		config.init_data = pdata->init_data;
-diff --git a/include/linux/regulator/arizona-ldo1.h b/include/linux/regulator/arizona-ldo1.h
-index c685f1277c63..fe74ab9990e6 100644
---- a/include/linux/regulator/arizona-ldo1.h
-+++ b/include/linux/regulator/arizona-ldo1.h
-@@ -14,9 +14,6 @@
- struct regulator_init_data;
- 
- struct arizona_ldo1_pdata {
--	/** GPIO controlling LDOENA, if any */
--	int ldoena;
--
- 	/** Regulator configuration for LDO1 */
- 	const struct regulator_init_data *init_data;
- };
+ 		if (current_uV < 0) {
+ 			rdev_err(rdev,
+ 				 "failed to get the current voltage(%d)\n",
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 4fc96cb8e5d7..14e512ad6d4f 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -81,9 +81,12 @@ struct regulator_linear_range {
+  * @set_voltage_sel: Set the voltage for the regulator using the specified
+  *                   selector.
+  * @map_voltage: Convert a voltage into a selector
+- * @get_voltage: Return the currently configured voltage for the regulator.
++ * @get_voltage: Return the currently configured voltage for the regulator;
++ *                   return -ENOTRECOVERABLE if regulator can't be read at
++ *                   bootup and hasn't been set yet.
+  * @get_voltage_sel: Return the currently configured voltage selector for the
+- *                   regulator.
++ *                   regulator; return -ENOTRECOVERABLE if regulator can't
++ *                   be read at bootup and hasn't been set yet.
+  * @list_voltage: Return one of the supported voltages, in microvolts; zero
+  *	if the selector indicates a voltage that is unusable on this system;
+  *	or negative errno.  Selectors range from zero to one less than
 -- 
 2.17.0
