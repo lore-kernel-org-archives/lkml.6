@@ -1,50 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751995AbeEQWO5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 18:14:57 -0400
-Received: from muru.com ([72.249.23.125]:42978 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751543AbeEQWOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 18:14:54 -0400
-From: Tony Lindgren <tony@atomide.com>
-To: linux-omap@vger.kernel.org
-Cc: Dave Gerlach <d-gerlach@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] bus: ti-sysc: Fix optional clocks array access
-Date: Thu, 17 May 2018 15:14:40 -0700
-Message-Id: <20180517221440.91897-1-tony@atomide.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751804AbeEQWOv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 18:14:51 -0400
+Received: from goldorak.vjf.cnrs.fr ([193.49.17.116]:47362 "EHLO
+        smtp.vjf.cnrs.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbeEQWOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 18:14:49 -0400
+Message-ID: <c619a257898866203962e85d2660f6b3.squirrel@www.vjf.cnrs.fr>
+Date: Fri, 18 May 2018 00:14:47 +0200
+Subject: Proposal
+From: "Miss Zeliha Omer Faruk" <aouad@vjf.cnrs.fr>
+Reply-To: zelihaomerfarukk@yahoo.com
+User-Agent: SquirrelMail/1.4.22-5.el6
+MIME-Version: 1.0
+Content-Type: text/plain;charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+Importance: Normal
+To: undisclosed-recipients:;
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should be checking ddata->clocks[i] instead of clock_names[i]
-for the optional clocks. Currently this just happens to work for
-the typical case of one fck and one optional clock.
 
-Fixes: 09dfe5810762 ("bus: ti-sysc: Add handling for clkctrl opt clocks")
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -128,7 +128,7 @@ static int sysc_get_one_clock(struct sysc *ddata, const char *name)
- 
- 	if (index < 0) {
- 		for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
--			if (!clock_names[i]) {
-+			if (!ddata->clocks[i]) {
- 				index = i;
- 				break;
- 			}
--- 
-2.17.0
+
+Hello
+
+Greetings to you please i have a business proposal for you contact me
+for more detailes asap thanks.
+
+Best Regards,
+Miss.Zeliha ömer faruk
+Esentepe Mahallesi Büyükdere
+Caddesi Kristal Kule Binasi
+No:215
+Sisli - Istanbul, Turkey
