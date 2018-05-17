@@ -1,108 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeEQVFA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:05:00 -0400
-Received: from muru.com ([72.249.23.125]:42908 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751409AbeEQVE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:04:58 -0400
-Date: Thu, 17 May 2018 14:04:50 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-Message-ID: <20180517210450.GP98604@atomide.com>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
- <20180501152615.GB98604@atomide.com>
- <b4d95a08-82fd-9f39-53e7-977351788c88@ti.com>
- <20180515171459.GP98604@atomide.com>
- <20180515171808.GR98604@atomide.com>
- <20180515172324.GS98604@atomide.com>
- <b3456763-2f82-9a0b-d166-ddf7965fc162@ti.com>
+        id S1752061AbeEQVF6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:05:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34824 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEQVF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 17:05:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3839260209
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH] mm/dmapool: localize page allocations
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, timur@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <1526578581-7658-1-git-send-email-okaya@codeaurora.org>
+ <20180517181815.GC26718@bombadil.infradead.org>
+ <9844a638-bc4e-46bd-133e-0c82a3e9d6ea@codeaurora.org>
+ <20180517194612.GG26718@bombadil.infradead.org>
+ <d49e594a-c18a-160f-ca4c-91520ff3b293@codeaurora.org>
+ <20180517204103.GJ26718@bombadil.infradead.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <bbd1c867-7ca8-1364-cedb-39f52bb586d9@codeaurora.org>
+Date: Thu, 17 May 2018 17:05:53 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3456763-2f82-9a0b-d166-ddf7965fc162@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180517204103.GJ26718@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180517 08:14]:
-> On Tuesday 15 May 2018 10:53 PM, Tony Lindgren wrote:
-> > And I'm guessing the top level module with sysconfig related
-> > registers is named "adc" :)
-> > 
-> 
-> Yes. The MCAN clocks are controlled by the ADC_CLKCTRL register.
-> Please see TRM:
-> http://www.ti.com/general/docs/lit/getliterature.tsp?baseLiteratureNumber=spruie9&fileType=pdf
-> page: 1530
+On 5/17/2018 4:41 PM, Matthew Wilcox wrote:
+> Let's try a different example.  I have a four-socket system with one
+> NVMe device with lots of hardware queues.  Each CPU has its own queue
+> assigned to it.  If I allocate all the PRP metadata on the socket with
+> the NVMe device attached to it, I'm sending a lot of coherency traffic
+> in the direction of that socket, in addition to the actual data.  If the
+> PRP lists are allocated randomly on the various sockets, the traffic
+> is heading all over the fabric.  If the PRP lists are allocated on the
+> local socket, the only time those lists move off this node is when the
+> device requests them.
 
-Thanks that helps :) Looks like we have:
+So.., your reasoning is that you actually want to keep the memory as close
+as possible to the CPU rather than the device itself. CPU would do
+frequent updates the buffer until the point where it hands off the buffer
+to the hardware. Device would fetch the memory via coherency when it needs
+to consume the data but this would be a one time penalty.
 
-MCANSS_PID      rev             0
-MCANSS_CTRL     sysconfig       0x4
-MCANSS_STAT     sysstatus       0x8
+It sounds logical to me. I was always told that you want to keep buffers
+as close as possible to the device.
 
-With current Linux next, this should work with just ti-sysc if
-we added yet another sysconfig layout.. See
+Maybe, it makes sense for things that device needs frequent access like
+receive buffers.
 
-Documentation/devicetree/bindings/bus/ti-sysc.txt
+If the majority user is CPU, then the buffer needs to be kept closer to
+the CPU. 
 
-Looks like this is not quite "ti,sysc-omap4" as there are no
-ti,sysc-midle or ti,sysc-sidle, and sysstatus reset bit is
-inverted..
+dma_alloc_coherent() is generally used for receiver buffer allocation in
+network adapters in general. People allocate a chunk and then create a
+queue that hardware owns for dumping events and data.
 
-Anyways, I think the dts part should be similar to this with
-the new sysconfig added (untested):
+Since DMA pool is a generic API, we should maybe request where we want
+to keep the buffers closer to and allocate buffers from the appropriate
+NUMA node based on that.
 
-target-module@42c00000 {
-	compatible ="ti,sysc-yet-to-be-determined";
-	ti,hwmods = "mcan";
-	reg = <0x42c00000 4>,
-	      <0x42c00004 4>,
-	      <0x42c00008 4>;
-	reg-names = "rev", "sysc", "syss";
-	clocks = <&wkupaon_clkctrl CM_WKUPAON_ADC_CLKCTRL>;
-	clock-names = "fck";
-	ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET | SYSC_DRA7_ENAWAKEUP)>;
-	ti,syss-mask = <1>;
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges = <0 0x42c00000 0x2000>;
-
-	mcan@0 {
-		compatible = "bosch,m_can";
-		reg = <0x1a00 0x4000>,
-		      <0 0x18fc>;
-		reg-names = "m_can", "message_ram";
-		interrupt-parent = <&gic>;
-		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-		interrupt-names = "int0", "int1";
-		clocks = <&mcan_clk>, <&l3_iclk_div>;
-		clock-names = "cclk", "hclk";
-		bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
-	};
-};
-
-You'd have to add a new struct sysc_regbits to ti-sysc.c similar
-to sysc_regbits_omap4 for the .srst_shift = 0. Not sure if the same
-register layout is used for other modules, but might be worth checking
-the TRM. Also the clock node is missing for wkupaon_clkctrl from
-include/dt-bindings/clock/dra7.h.
-
-If the "message_ram" can operate independent of the driver,
-it could be a separate child node under the target-module.
-
-In the hwmod you still need the struct omap_hwmod for now,
-but clocks should no longer be needed there.
-
-Regards,
-
-Tony
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
