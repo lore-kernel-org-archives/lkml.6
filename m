@@ -1,109 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeEQOVU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:21:20 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:8726 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751481AbeEQOVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:21:18 -0400
-Subject: Re: [PATCH] powerpc/lib: Remove .balign inside string functions for
- PPC32
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20180517100413.856096F938@po14934vm.idsi0.si.c-s.fr>
- <20180517231938.4b1b8172@roar.ozlabs.ibm.com>
- <87wow2mm2b.fsf@concordia.ellerman.id.au>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <0e43fd45-67bf-273f-5591-eb01f2254bfc@c-s.fr>
-Date: Thu, 17 May 2018 16:21:17 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752265AbeEQOWf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:22:35 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4505 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751619AbeEQOWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:22:32 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 1/3] ARM: dts: stm32: add STM32 SPI support on stm32mp157c
+Date: Thu, 17 May 2018 16:21:42 +0200
+Message-ID: <1526566904-24514-2-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526566904-24514-1-git-send-email-amelie.delaunay@st.com>
+References: <1526566904-24514-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <87wow2mm2b.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds all STM32 SPI instances on stm32mp157c.
 
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 84 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-Le 17/05/2018 à 15:46, Michael Ellerman a écrit :
-> Nicholas Piggin <npiggin@gmail.com> writes:
-> 
->> On Thu, 17 May 2018 12:04:13 +0200 (CEST)
->> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>
->>> commit 87a156fb18fe1 ("Align hot loops of some string functions")
->>> degraded the performance of string functions by adding useless
->>> nops
->>>
->>> A simple benchmark on an 8xx calling 100000x a memchr() that
->>> matches the first byte runs in 41668 TB ticks before this patch
->>> and in 35986 TB ticks after this patch. So this gives an
->>> improvement of approx 10%
->>>
->>> Another benchmark doing the same with a memchr() matching the 128th
->>> byte runs in 1011365 TB ticks before this patch and 1005682 TB ticks
->>> after this patch, so regardless on the number of loops, removing
->>> those useless nops improves the test by 5683 TB ticks.
->>>
->>> Fixes: 87a156fb18fe1 ("Align hot loops of some string functions")
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>   Was sent already as part of a serie optimising string functions.
->>>   Resending on itself as it is independent of the other changes in the
->>> serie
->>>
->>>   arch/powerpc/lib/string.S | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
->>> index a787776822d8..a026d8fa8a99 100644
->>> --- a/arch/powerpc/lib/string.S
->>> +++ b/arch/powerpc/lib/string.S
->>> @@ -23,7 +23,9 @@ _GLOBAL(strncpy)
->>>   	mtctr	r5
->>>   	addi	r6,r3,-1
->>>   	addi	r4,r4,-1
->>> +#ifdef CONFIG_PPC64
->>>   	.balign 16
->>> +#endif
->>>   1:	lbzu	r0,1(r4)
->>>   	cmpwi	0,r0,0
->>>   	stbu	r0,1(r6)
->>
->> The ifdefs are a bit ugly, but you can't argue with the numbers. These
->> alignments should be IFETCH_ALIGN_BYTES, which is intended to optimise
->> the ifetch performance when you have such a loop (although there is
->> always a tradeoff for a single iteration).
->>
->> Would it make sense to define that for 32-bit as well, and you could use
->> it here instead of the ifdefs? Small CPUs could just use 0.
-> 
-> Can we do it with a macro in the header, eg. like:
-> 
-> #ifdef CONFIG_PPC64
-> #define IFETCH_BALIGN	.balign IFETCH_ALIGN_BYTES
-> #endif
-> 
-> ...
-> 
->    	addi	r4,r4,-1
->    	IFETCH_BALIGN
->    1:	lbzu	r0,1(r4)
-> 
-> 
-
-Why not just define IFETCH_ALIGN_SHIFT for PPC32 as well in asm/cache.h 
-?, then replace the .balign 16 by .balign IFETCH_ALIGN_BYTES (or .align 
-IFETCH_ALIGN_SHIFT) ?
-
-Christophe
-
-> cheers
-> 
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index b66f673..49ce7f0 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -311,6 +311,34 @@
+ 			};
+ 		};
+ 
++		spi2: spi@4000b000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x4000b000 0x400>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI2_K>;
++			resets = <&rcc SPI2_R>;
++			dmas = <&dmamux1 39 0x400 0x05>,
++			       <&dmamux1 40 0x400 0x05>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		spi3: spi@4000c000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x4000c000 0x400>;
++			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI3_K>;
++			resets = <&rcc SPI3_R>;
++			dmas = <&dmamux1 61 0x400 0x05>,
++			       <&dmamux1 62 0x400 0x05>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
+ 		usart2: serial@4000e000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x4000e000 0x400>;
+@@ -494,6 +522,34 @@
+ 			status = "disabled";
+ 		};
+ 
++		spi1: spi@44004000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x44004000 0x400>;
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI1_K>;
++			resets = <&rcc SPI1_R>;
++			dmas = <&dmamux1 37 0x400 0x05>,
++			       <&dmamux1 38 0x400 0x05>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		spi4: spi@44005000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x44005000 0x400>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI4_K>;
++			resets = <&rcc SPI4_R>;
++			dmas = <&dmamux1 83 0x400 0x05>,
++			       <&dmamux1 84 0x400 0x05>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
+ 		timers15: timer@44006000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -556,6 +612,20 @@
+ 			};
+ 		};
+ 
++		spi5: spi@44009000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x44009000 0x400>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI5_K>;
++			resets = <&rcc SPI5_R>;
++			dmas = <&dmamux1 85 0x400 0x05>,
++			       <&dmamux1 86 0x400 0x05>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
+ 		dma1: dma@48000000 {
+ 			compatible = "st,stm32-dma";
+ 			reg = <0x48000000 0x400>;
+@@ -805,6 +875,20 @@
+ 			status = "disabled";
+ 		};
+ 
++		spi6: spi@5c001000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32h7-spi";
++			reg = <0x5c001000 0x400>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&rcc SPI6_K>;
++			resets = <&rcc SPI6_R>;
++			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0 0>,
++			       <&mdma1 35 0x0 0x40002 0x0 0x0 0>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
+ 		i2c4: i2c@5c002000 {
+ 			compatible = "st,stm32f7-i2c";
+ 			reg = <0x5c002000 0x400>;
+-- 
+2.7.4
