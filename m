@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752522AbeEQHnV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:21 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:57577 "EHLO
+        id S1752501AbeEQHnS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:43:18 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:18258 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752442AbeEQHnQ (ORCPT
+        with ESMTP id S1752414AbeEQHnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 03:43:16 -0400
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="17447184"
-X-IronPort-AV: E=McAfee;i="5900,7806,8890"; a="195745873"
+   d="scan'208";a="17447176"
+X-IronPort-AV: E=McAfee;i="5900,7806,8890"; a="195745865"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -19,150 +19,147 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
         linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
         Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
         Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 5/9] PCI/portdrv: Add generic pcie_port_find_service()
-Date: Thu, 17 May 2018 03:43:07 -0400
-Message-Id: <1526542991-5291-6-git-send-email-poza@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v17 0/9] Address error and recovery for AER and DPC
+Date: Thu, 17 May 2018 03:43:02 -0400
+Message-Id: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
-References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add generic pcie_port_find_service() routine.
+This patch set brings in error handling support for DPC
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+The current implementation of AER and error message broadcasting to the
+EP driver is tightly coupled and limited to AER service driver.
+It is important to factor out broadcasting and other link handling
+callbacks. So that not only when AER gets triggered, but also when DPC get
+triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
 
-diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
-index 4fa1ee4..fdfc474 100644
---- a/drivers/pci/pcie/aer/aerdrv_core.c
-+++ b/drivers/pci/pcie/aer/aerdrv_core.c
-@@ -228,32 +228,6 @@ static bool find_source_device(struct pci_dev *parent,
- 	return true;
- }
- 
--static int find_aer_service_iter(struct device *device, void *data)
--{
--	struct pcie_port_service_driver *service_driver, **drv;
--
--	drv = (struct pcie_port_service_driver **) data;
--
--	if (device->bus == &pcie_port_bus_type && device->driver) {
--		service_driver = to_service_driver(device->driver);
--		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
--			*drv = service_driver;
--			return 1;
--		}
--	}
--
--	return 0;
--}
--
--struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
--{
--	struct pcie_port_service_driver *drv = NULL;
--
--	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
--
--	return drv;
--}
--
- /**
-  * handle_error_source - handle logging error into an event log
-  * @aerdev: pointer to pcie_device data structure of the root port
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 307120b..a1668e9 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -194,10 +194,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
- 		udev = dev->bus->self;
- 	}
- 
--#if IS_ENABLED(CONFIG_PCIEAER)
- 	/* Use the aer driver of the component firstly */
--	driver = find_aer_service(udev);
--#endif
-+	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
- 
- 	if (driver && driver->reset_link) {
- 		status = driver->reset_link(udev);
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index 47c9824..ba6c963 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -112,5 +112,6 @@ static inline bool pcie_pme_no_msi(void) { return false; }
- static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
- #endif /* !CONFIG_PCIE_PME */
- 
--struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
-+struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
-+							u32 service);
- #endif /* _PORTDRV_H_ */
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index c9c0663..e5bbf08 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -18,6 +18,10 @@
- 
- #include "../pci.h"
- #include "portdrv.h"
-+struct portdrv_service_data {
-+	struct pcie_port_service_driver *drv;
-+	u32 service;
-+};
- 
- /**
-  * release_pcie_device - free PCI Express port service device structure
-@@ -398,6 +402,46 @@ static int remove_iter(struct device *dev, void *data)
- 	return 0;
- }
- 
-+static int find_service_iter(struct device *device, void *data)
-+{
-+	struct pcie_port_service_driver *service_driver;
-+	struct portdrv_service_data *pdrvs;
-+	u32 service;
-+
-+	pdrvs = (struct portdrv_service_data *) data;
-+	service = pdrvs->service;
-+
-+	if (device->bus == &pcie_port_bus_type && device->driver) {
-+		service_driver = to_service_driver(device->driver);
-+		if (service_driver->service == service) {
-+			pdrvs->drv = service_driver;
-+			return 1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+/**
-+ * pcie_port_find_service - find the service driver
-+ * @dev: PCI Express port the service is associated with
-+ * @service: Service to find
-+ *
-+ * Find PCI Express port service driver associated with given service
-+ */
-+struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
-+							u32 service)
-+{
-+	struct pcie_port_service_driver *drv;
-+	struct portdrv_service_data pdrvs;
-+
-+	pdrvs.drv = NULL;
-+	pdrvs.service = service;
-+	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
-+
-+	drv = pdrvs.drv;
-+	return drv;
-+}
-+
- /**
-  * pcie_port_device_remove - unregister PCI Express port service devices
-  * @dev: PCI Express port the service devices to unregister are associated with
+The goal of the patch-set is:
+DPC should handle the error handling and recovery similar to AER, because 
+finally both are attempting recovery in some or the other way,
+and for that error handling and recovery framework has to be loosely
+coupled.
+
+It achieves uniformity and transparency to the error handling agents such
+as AER, DPC, with respect to recovery and error handling.
+
+So, this patch-set tries to unify lot of things between error agents and
+make them behave in a well defined way. (be it error (FATAL, NON_FATAL)
+handling or recovery).
+
+The FATAL error handling is handled with remove/reset_link/re-enumerate
+sequence while the NON_FATAL follows the default path.
+Documentation/PCI/pci-error-recovery.txt talks more on that.
+
+Changes since v16:
+    Bjorn's comments addressed
+    > remove call pci_walk_bus(dev->subordinate, report_resume, &result_data)
+    > pci_cleanup_aer_uncorrect_error_status(dev); happens only if service is AER
+    > aer_error_resume does not handle ERR_FATAL clearing anymore
+Changes since v15:
+    Bjorn's comments addressed
+    > minor comments fixed
+    > made FATAL sequence aligned to existing one, as far as clearing status are concerned.
+    > pcie_do_fatal_recovery and pcie_do_nonfatal_recovery functions made to modularize
+    > pcie_do_fatal_recovery now takes service as an argument
+Changes since v14:
+    Bjorn's comments addressed
+    > simplified the patch set, and moved AER_FATAL handling in the beginning.
+    > rebase the code to 4.17-rc1.
+Changes since v13:
+    Bjorn's comments addressed
+    > handke FATAL errors with remove devices followed by re-enumeration.
+    > changes in AER and DPC along with required Documentation.
+Changes since v12:
+    Bjorn's and Keith's Comments addressed.
+    > Made DPC and AER error handling identical <aligned err.c>
+    > hanldled cases for hotplug enabled system differently.
+Changes since v11:
+    Bjorn's comments addressed.
+    > rename pcie-err.c to err.c
+    > removed EXPORT_SYMBOL
+    > made generic find_serivce function in port driver.
+    > removed mutex patch as no need to have mutex in pcie_do_recovery
+    > brough in DPC_FATAL in aer.h
+    > so now all the error codes (AER and DPC) are unified in aer.h
+Changes since v10:
+    Christoph Hellwig's, David Laight's and Randy Dunlap's
+    comments addressed.
+        > renamed pci_do_recovery to pcie_do_recovery
+        > removed inner braces in conditional statements.
+        > restrctured the code in pci_wait_for_link
+        > EXPORT_SYMBOL_GPL
+Changes since v9:
+    Sinan's comments addressed.
+        > bool active = true; unnecessary variable removed.
+Changes since v8:
+    Fixed Kbuild errors.
+Changes since v7:
+    Rebased the code on pci master
+        > https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
+Changes since v6:
+    Sinan's and Stefan's comments implemented.
+        > reordered patch 6 and 7
+        > cleaned up
+Changes since v5:
+    Sinan's and Keith's comments incorporated.
+        > made separate patch for mutex
+        > unified error repotting codes into driver/pci/pci.h
+        > got rid of wait link active/inactive and
+          made generic function in driver/pci/pci.c
+Changes since v4:
+    Bjorn's comments incorporated.
+        > Renamed only do_recovery.
+        > moved the things more locally to drivers/pci/pci.h
+Changes since v3:
+    Bjorn's comments incorporated.
+        > Made separate patch renaming generic pci_err.c
+        > Introduce pci_err.h to contain all the error types and recovery
+        > removed all the dependencies on pci.h
+Changes since v2:
+    Based on feedback from Keith:
+    "
+    When DPC is triggered due to receipt of an uncorrectable error Message,
+    the Requester ID from the Message is recorded in the DPC Error
+    Source ID register and that Message is discarded and not forwarded Upstream.
+    "
+    Removed the patch where AER checks if DPC service is active
+Changes since v1:
+    Kbuild errors fixed:
+        > pci_find_dpc_dev made static
+        > ras_event.h updated
+        > pci_find_aer_service call with CONFIG check
+        > pci_find_dpc_service call with CONFIG check
+
+Oza Pawandeep (9):
+  PCI: Unify wait for link active into generic PCI
+  pci-error-recovery: Add AER_FATAL handling
+  PCI/AER: Handle ERRR_FATAL with removal and re-enumeration of devices
+  PCI/AER: Rename error recovery to generic PCI naming
+  PCI/AER: Factor out error reporting from AER
+  PCI/PORTDRV: Implement generic find service
+  PCI/PORTDRV: Implement generic find device
+  PCI/DPC: Unify and plumb error handling into DPC
+  PCI/DPC: Disable ERR_NONFATAL and enable ERR_FATAL for DPC
+
+ Documentation/PCI/pci-error-recovery.txt |  35 ++-
+ drivers/pci/hotplug/pciehp_hpc.c         |  20 +-
+ drivers/pci/pci.c                        |  29 +++
+ drivers/pci/pci.h                        |   4 +
+ drivers/pci/pcie/Makefile                |   2 +-
+ drivers/pci/pcie/aer/aerdrv.c            |   2 +
+ drivers/pci/pcie/aer/aerdrv.h            |  30 ---
+ drivers/pci/pcie/aer/aerdrv_core.c       | 317 +-------------------------
+ drivers/pci/pcie/dpc.c                   |  58 +++--
+ drivers/pci/pcie/err.c                   | 374 +++++++++++++++++++++++++++++++
+ drivers/pci/pcie/portdrv.h               |   4 +
+ drivers/pci/pcie/portdrv_core.c          |  67 ++++++
+ include/linux/aer.h                      |   1 +
+ include/uapi/linux/pci_regs.h            |   1 +
+ 14 files changed, 540 insertions(+), 404 deletions(-)
+ create mode 100644 drivers/pci/pcie/err.c
+
 -- 
 2.7.4
