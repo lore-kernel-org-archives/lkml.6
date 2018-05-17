@@ -1,172 +1,122 @@
-Return-Path: <nayna@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZrARZdLAHn6CMXvgPsjzCGJYQCeU2CJMrpVr6THZmpn293GBzg42payOEZOo1HoujHFH8yT
-ARC-Seal: i=1; a=rsa-sha256; t=1526625063; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UfjSvKknH6KkWBdwXda8r7i3YBeOJ3gzaM0Vxlo/6A1IFreSpBkqRgukpZ5btUDoxW
-         y1cCsYEcICN6kcOmpvUgZf+MWe1i5SuBB8mW2AKp2Rrd0YuwTJJDaRdlc/XAgmf6Ye9U
-         /qc+8/Olhj8G0J2PJMjmqh9iRudhtZWxJJFnzb7DSn+LN3UcTd8h+vSUGkbK+/BkaEg7
-         5fuWB0F8JV1zd7Tkx3N8oPDIBecksDLZdspNMYxFhXvmQ85pShg5UHvLgcb/mYOaedJ0
-         XnvI3XmhlBG6nO2PzEy49HKU2RNGqruJqKXS164vFOmdGRwUBt9g9ZahBxSr4vCoxme0
-         fUyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-language:content-transfer-encoding:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=4Zxtni2/aC0w2aV1DzUpV4XYz+3vAB4+5bE79cmDD48=;
-        b=U/8XRUYjKy7oryUOWNIuXVZMHw9H/dlLg3Er54l8hqoCiJ2iBobjwus0J26ipy+qKj
-         iZ8Amtr6retm9e313spA9zTpAazeWBQeKZ6xsVOxdQyot2bQDLkVVq2OskQX5wx5xaA6
-         DfjaQ3Q958yb8W5rh4ypfARqBMChGzqK5ujnUg3aDyS6H7DqFxTdxgqyPLjmgkLDNeeQ
-         fb0ZaApZnUD6smPy76HdWMC5aMyUX3O4GcpDS4ceKGKVAh41RvrHvbaseyXTum6/pX6a
-         efSf3CigUFxLh2t5gfbW+z9lTFtBmZfcq8Vx/hbyxfKLRjH1zfbOTofqqDcZbosANR3f
-         RNCA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of nayna@linux.vnet.ibm.com) smtp.mailfrom=nayna@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of nayna@linux.vnet.ibm.com) smtp.mailfrom=nayna@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2342767-1526573218-2-1592146898898544782
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526573217; b=ECKMMO35ErVp9f82GvEk0DgvsGV86K6D4nOQLgmJY3Ucd096HN
+    MTzM0tibzNNs3JNfiGbTbWXH7L+rzK0gtUZwhCeJGZ41wgeV3BjVrqVRwnFdWSQM
+    P7b/UJdy6FdlgsnRwDXdH7VA7G08MDLVdW+QPo7s0dz/79n0/h4k/+EErT2yPoDq
+    pFCMg6H9ZWZOjfdLHYQPBWjqx+n5cO9VcFPS109ZiUDcSPLntwxPPAlQdTiEc+yX
+    EZo2rY52Kt+nga6BjtkjolHZdgkXhtJQzn5lN03+S/n4CP1UDYEAP7SCSByHPyft
+    0KrJF8yN1bUaOmR/NCcE30SyEYBDVmB1UupQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1526573217;
+    bh=fP/tCPlxtVM1J0+vhRzeU9BDQTFUzga9LQAK4GCLFB4=; b=X8oGGPio+FX9
+    zrOJ6Fg3reXn9Lh1L6FWzpdYcpUS+yNA16fWJDItJ3xrIGywJQkGs7XhnToQQEd/
+    2MwWUR5V4QWyf5/MWPnO/3ia64ozeOIlfFX+Gv8jgyvVGAdPMSl2ys79Nj8uXq3b
+    GZjrcXoMeDjs9m0lrkwGXuLu/42kUL/xXMgwUiVEjq3o3O/udqin2K1l53LDioFx
+    t/2Zt6uCdmUWJ6J0RMOO4wZYNSEPoC7d9/ZDHcoyOsS3lnkop38ODmjR/1cmcxNK
+    z+gqg4gvnK34l1YhiILhiG5EYvu4Qg7cNGSWVjNrHkb5uZlMxccCy6HwiAQM0cYP
+    oIAt2jdlnw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJkwA3H8RvDvlE03+s8sb2HAG+S58hnzU5XSnQNwV5U7YQgy4hI2Dw9KfIeGV05d7IuyPrqCdnK5SWRcq1IyGkMuVaNeeK/RCsRO9Obo7AxkcUei/3nu
+    bfxuvf4ttadN18w9lkLPAwCf02/O/W83thhp1diET9XIGL4e2Pku3xF5KBR4UmzSNIDmFooViLpZdmKEAY/N5xeKv8EI/zbWaUEZXFcdvnLvfslYeYHxW/Jj
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=i3X5FwGiAAAA:8 a=g_ZqDOrz4KH440Ian7AA:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=mmqRlSCDY2ywfjPLJ4af:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752171AbeEQQGw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 12:06:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:25379 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751916AbeEQQGv (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 17 May 2018 12:06:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,411,1520924400";
+   d="scan'208";a="50074354"
+Date: Fri, 18 May 2018 00:06:41 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: kbuild-all@01.org, Felipe Balbi <felipe.balbi@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
- <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Fri, 18 May 2018 11:59:03 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [linux-next:master 7522/8111] drivers/usb/dwc3/drd.c:443:19: sparse:
+ symbol 'dwc3_get_extcon' was not declared. Should it be static?
+Message-ID: <201805180059.3X1bJsDZ%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051806-8235-0000-0000-00000D85CB05
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009044; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01033962; UDB=6.00528730; IPR=6.00813091;
- MB=3.00021176; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-18 06:30:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051806-8236-0000-0000-0000410472CA
-Message-Id: <ec8f1102-e096-e39e-b6a7-4d335401c088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=9 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805180072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596002370872973909?=
-X-GMAIL-MSGID: =?utf-8?q?1600782402059321571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   fbbe3b8c2c9c5f84caf668703c26154cb4fbb9d1
+commit: 5f0b74e54890c354d6ac0124ea7a96adf22845d0 [7522/8111] USB: dwc3: get extcon device by OF graph bindings
+reproduce:
+        # apt-get install sparse
+        git checkout 5f0b74e54890c354d6ac0124ea7a96adf22845d0
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-On 03/26/2018 05:44 PM, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-> entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-> prints an error message.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+sparse warnings: (new ones prefixed by >>)
 
-Reviewed-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-Tested-by: Nayna Jain<nayna@linux.vnet.ibm.com>
+>> drivers/usb/dwc3/drd.c:443:19: sparse: symbol 'dwc3_get_extcon' was not declared. Should it be static?
 
-> ---
->   drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
->   1 file changed, 12 insertions(+), 32 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 96c77c8e7f40..7665661d9230 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -27,10 +27,6 @@ enum tpm2_session_attributes {
->   	TPM2_SA_CONTINUE_SESSION	= BIT(0),
->   };
->
-> -struct tpm2_startup_in {
-> -	__be16	startup_type;
-> -} __packed;
-> -
->   struct tpm2_get_tpm_pt_in {
->   	__be32	cap_id;
->   	__be32	property_id;
-> @@ -55,7 +51,6 @@ struct tpm2_get_random_out {
->   } __packed;
->
->   union tpm2_cmd_params {
-> -	struct	tpm2_startup_in		startup_in;
->   	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
->   	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
->   	struct	tpm2_get_random_in	getrandom_in;
-> @@ -412,11 +407,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
->   	int rc;
->
->   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
-> -	if (rc) {
-> -		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
-> -			 handle);
-> +	if (rc)
->   		return;
-> -	}
->
->   	tpm_buf_append_u32(&buf, handle);
->
-> @@ -762,40 +754,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
->   }
->   EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
->
-> -#define TPM2_SHUTDOWN_IN_SIZE \
-> -	(sizeof(struct tpm_input_header) + \
-> -	 sizeof(struct tpm2_startup_in))
-> -
-> -static const struct tpm_input_header tpm2_shutdown_header = {
-> -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> -	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
-> -	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
-> -};
-> -
->   /**
->    * tpm2_shutdown() - send shutdown command to the TPM chip
->    *
-> + * In places where shutdown command is sent there's no much we can do except
-> + * print the error code on a system failure.
-> + *
->    * @chip:		TPM chip to use.
->    * @shutdown_type:	shutdown type. The value is either
->    *			TPM_SU_CLEAR or TPM_SU_STATE.
->    */
->   void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
->   {
-> -	struct tpm2_cmd cmd;
-> +	struct tpm_buf buf;
->   	int rc;
->
-> -	cmd.header.in = tpm2_shutdown_header;
-> -	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
-> -			      "stopping the TPM");
-> -
-> -	/* In places where shutdown command is sent there's no much we can do
-> -	 * except print the error code on a system failure.
-> -	 */
-> -	if (rc < 0 && rc != -EPIPE)
-> -		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
-> -			 rc);
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-> +	if (rc)
-> +		return;
-> +	tpm_buf_append_u16(&buf, shutdown_type);
-> +	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-> +			 "stopping the TPM");
-> +	tpm_buf_destroy(&buf);
->   }
->
->   /*
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
