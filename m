@@ -1,122 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeEQGWL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:22:11 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:25143 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752175AbeEQGTU (ORCPT
+        id S1752447AbeEQGXS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:23:18 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:37707 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEQGXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:19:20 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbUJ002841
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 21/31] kconfig: show compiler version text in the top comment
-Date: Thu, 17 May 2018 15:17:00 +0900
-Message-Id: <1526537830-22606-22-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 17 May 2018 02:23:16 -0400
+Subject: Re: [PATCH] PCI: Clean up resource allocation in
+ devm_of_pci_get_host_bridge_resources()
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1526375226.git.jan.kiszka@siemens.com>
+ <3aeb2ed038cbce8fe744b614dc19d414555a7e8f.1526375226.git.jan.kiszka@siemens.com>
+ <CAHp75VeUbjobse6uLeM4h_xXRUw+YUQUN+EOye67AJy77a5euQ@mail.gmail.com>
+ <CAHp75VeM7_8+9QJjOypXaiBhpWP4B5KACdUQ-p3frbS3jPh=OQ@mail.gmail.com>
+ <f35b2972-aa40-5397-facb-765cafe7c315@siemens.com>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        <linux-pci@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <97f42f4a-071a-4335-ca65-a0f26adc1b89@mentor.com>
+Date: Thu, 17 May 2018 09:23:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <f35b2972-aa40-5397-facb-765cafe7c315@siemens.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel configuration phase is now tightly coupled with the compiler
-in use.  It will be nice to show the compiler information in Kconfig.
+On 05/16/2018 03:31 PM, Jan Kiszka wrote:
+> Instead of first allocating and then freeing memory for struct resource
+> in case we cannot parse a PCI resource from the device tree, work
+> against a local struct and kmemdup it when we decide to go with it.
+> 
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  drivers/pci/of.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index b06585a1da75..fc0f906c5c25 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -266,7 +266,7 @@ int devm_of_pci_get_host_bridge_resources(struct device *dev,
+>  			struct list_head *resources, resource_size_t *io_base)
+>  {
+>  	struct device_node *dev_node = dev->of_node;
+> -	struct resource *res;
+> +	struct resource *res, tmp_res;
+>  	struct resource *bus_range;
+>  	struct of_pci_range range;
+>  	struct of_pci_range_parser parser;
+> @@ -320,18 +320,16 @@ int devm_of_pci_get_host_bridge_resources(struct device *dev,
+>  		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
+>  			continue;
+>  
+> -		res = devm_kzalloc(dev, sizeof(struct resource), GFP_KERNEL);
+> +		err = of_pci_range_to_resource(&range, dev_node, &tmp_res);
+> +		if (err)
+> +			continue;
+> +
+> +		res = devm_kmemdup(dev, &tmp_res, sizeof(tmp_res), GFP_KERNEL);
 
-The compiler information will be displayed like this:
+The change looks okay, apparently probable garbage in tmp_res.desc has no impact.
 
-  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- config
-  scripts/kconfig/conf  --oldaskconfig Kconfig
-  *
-  * Linux/arm64 4.16.0-rc1 Kernel Configuration
-  *
-  *
-  * Compiler: aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011
-  *
-  *
-  * General setup
-  *
-  Compile also drivers which will not load (COMPILE_TEST) [N/y/?]
+Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-If you use GUI methods such as menuconfig, it will be displayed in the
-top menu.
-
-This is simply implemented by using the 'comment' statement.  So, it
-will be saved into the .config file as well.
-
-This commit has a very important meaning.  If the compiler is upgraded,
-Kconfig must be re-run since different compilers have different sets
-of supported options.
-
-All referenced environments are written to include/config/auto.conf.cmd
-so that any environment change triggers syncconfig, and prompt the user
-to input new values if needed.
-
-With this commit, something like follows will be added to
-include/config/auto.conf.cmd
-
-  ifneq "$(CC_VERSION_TEXT)" "aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011"
-  include/config/auto.conf: FORCE
-  endif
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
-
-Changes in v4:
-  - Add comment to arch/x86/um/Kconfig as well
-
-Changes in v3: None
-Changes in v2: None
-
- Kconfig             | 2 ++
- Makefile            | 2 ++
- arch/x86/um/Kconfig | 2 ++
- 3 files changed, 6 insertions(+)
-
-diff --git a/Kconfig b/Kconfig
-index 4af1b42..5b55d87 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -5,4 +5,6 @@
- #
- mainmenu "Linux/$(ARCH) $(KERNELVERSION) Kernel Configuration"
- 
-+comment "Compiler: $(CC_VERSION_TEXT)"
-+
- source "arch/$(SRCARCH)/Kconfig"
-diff --git a/Makefile b/Makefile
-index 01b2211..7529825 100644
---- a/Makefile
-+++ b/Makefile
-@@ -442,6 +442,8 @@ export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
- export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
- export KBUILD_ARFLAGS
- 
-+export CC_VERSION_TEXT := $(shell $(CC) --version | head -n 1)
-+
- # When compiling out-of-tree modules, put MODVERDIR in the module
- # tree rather than in the kernel tree. The kernel tree might
- # even be read-only.
-diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-index 6a15c4d..a992f8e 100644
---- a/arch/x86/um/Kconfig
-+++ b/arch/x86/um/Kconfig
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- mainmenu "User Mode Linux/$(SUBARCH) $(KERNELVERSION) Kernel Configuration"
- 
-+comment "Compiler: $(CC_VERSION_TEXT)"
-+
- source "arch/um/Kconfig.common"
- 
- menu "UML-specific options"
--- 
-2.7.4
+--
+With best wishes,
+Vladimir
