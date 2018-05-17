@@ -1,126 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeEQHpa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:45:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752348AbeEQHpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:45:24 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 3/3] ARM: dts: tegra: Work safely with 256 MB Colibri-T20 modules
-Date: Thu, 17 May 2018 09:45:03 +0200
-Message-Id: <1526543103-21668-3-git-send-email-krzk@kernel.org>
+        id S1752450AbeEQHnQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:43:16 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:57577 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752393AbeEQHnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:43:15 -0400
+X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
+   d="scan'208";a="17447178"
+X-IronPort-AV: E=McAfee;i="5900,7806,8890"; a="195745864"
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Subject: [PATCH v17 1/9] PCI: Add generic pcie_wait_for_link() interface
+Date: Thu, 17 May 2018 03:43:03 -0400
+Message-Id: <1526542991-5291-2-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526543103-21668-1-git-send-email-krzk@kernel.org>
-References: <1526543103-21668-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
+References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-(with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-expecting the bootloader to do the fixup of /memory node.  However in
-case it does not happen, let's stay on safe side by limiting the memory
-to 256 MB for both versions of Colibri-T20.
+Clients such as hotplug and Downstream Port Containment (DPC) both need to
+wait until a link becomes active or inactive.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Add a generic pcie_wait_link_active() interface and use it instead of
+duplicating the code.
 
----
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-RFT:
-Not tested on 512 MB module as I have only the 256 MB one.
-
-Changes since v4:
-1. Drop the 512 suffix from file names (suggested by Stefan).
-
-Changes since v3:
-1. Reduce the memory in existing DTSI instead of creating a new one
-   (suggested by Marcel).
-
-Changes since v2:
-1. Do not add new compatible but use everywhere existing
-   "toradex,colibri_t20-512" (suggested by Rob).
-
-Changes since v1:
-1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
-   my bootloader uses mem= argument).
----
- arch/arm/boot/dts/Makefile                                       | 2 +-
- .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi}  | 9 +++++++--
- arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris.dts}     | 4 ++--
- 3 files changed, 10 insertions(+), 5 deletions(-)
- rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (98%)
- rename arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris.dts} (95%)
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index ec2024ea8b1e..837f8274b3ee 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1030,7 +1030,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
- 	tango4-vantage-1172.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
- 	tegra20-harmony.dtb \
--	tegra20-iris-512.dtb \
-+	tegra20-iris.dtb \
- 	tegra20-medcom-wide.dtb \
- 	tegra20-paz00.dtb \
- 	tegra20-plutux.dtb \
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-similarity index 98%
-rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
-rename to arch/arm/boot/dts/tegra20-colibri.dtsi
-index 305efb275b48..b9387c540450 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -2,7 +2,7 @@
- #include "tegra20.dtsi"
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8..e0c2b8e 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
+ 	return ret;
+ }
  
- / {
--	model = "Toradex Colibri T20 512MB";
-+	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+-static void __pcie_wait_link_active(struct controller *ctrl, bool active)
+-{
+-	int timeout = 1000;
+-
+-	if (pciehp_check_link_active(ctrl) == active)
+-		return;
+-	while (timeout > 0) {
+-		msleep(10);
+-		timeout -= 10;
+-		if (pciehp_check_link_active(ctrl) == active)
+-			return;
+-	}
+-	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
+-			active ? "set" : "cleared");
+-}
+-
+ static void pcie_wait_link_active(struct controller *ctrl)
+ {
+-	__pcie_wait_link_active(ctrl, true);
++	struct pci_dev *pdev = ctrl_dev(ctrl);
++
++	pcie_wait_for_link(pdev, true);
+ }
  
- 	aliases {
-@@ -12,7 +12,12 @@
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e597655..764bf64 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4138,6 +4138,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
  
- 	memory@0 {
- 		device_type = "memory";
--		reg = <0x00000000 0x20000000>;
-+		/*
-+		 * Set memory to 256 MB to be safe as this could be used on
-+		 * 256 or 512 MB module. It is expected from bootloader
-+		 * to fix this up for 512 MB version.
-+		 */
-+		reg = <0x00000000 0x10000000>;
- 	};
+ 	return pci_dev_wait(dev, "PM D3->D0", PCIE_RESET_READY_POLL_MS);
+ }
++/**
++ * pcie_wait_for_link - Wait until link is active or inactive
++ * @pdev: Bridge device
++ * @active: waiting for active or inactive?
++ *
++ * Use this to wait till link becomes active or inactive.
++ */
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
++{
++	int timeout = 1000;
++	bool ret;
++	u16 lnk_status;
++
++	for (;;) {
++		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++		if (ret == active)
++			return true;
++		if (timeout <= 0)
++			break;
++		msleep(10);
++		timeout -= 10;
++	}
++
++	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
++		 active ? "set" : "cleared");
++
++	return false;
++}
  
- 	host1x@50000000 {
-diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris.dts
-similarity index 95%
-rename from arch/arm/boot/dts/tegra20-iris-512.dts
-rename to arch/arm/boot/dts/tegra20-iris.dts
-index 40126388946d..57f16c0e9917 100644
---- a/arch/arm/boot/dts/tegra20-iris-512.dts
-+++ b/arch/arm/boot/dts/tegra20-iris.dts
-@@ -1,10 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
+ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 023f7cf..cec9d8c 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -353,6 +353,7 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
  
--#include "tegra20-colibri-512.dtsi"
-+#include "tegra20-colibri.dtsi"
+ void pci_enable_acs(struct pci_dev *dev);
  
- / {
--	model = "Toradex Colibri T20 512MB on Iris";
-+	model = "Toradex Colibri T20 256/512 MB on Iris";
- 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
+ #ifdef CONFIG_PCIEASPM
+ void pcie_aspm_init_link_state(struct pci_dev *pdev);
+ void pcie_aspm_exit_link_state(struct pci_dev *pdev);
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index 8c57d60..80ec384 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -68,19 +68,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
  
- 	aliases {
+ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ {
+-	unsigned long timeout = jiffies + HZ;
+ 	struct pci_dev *pdev = dpc->dev->port;
+-	struct device *dev = &dpc->dev->device;
+-	u16 lnk_status;
+ 
+-	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+-					!time_after(jiffies, timeout)) {
+-		msleep(10);
+-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	}
+-	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+-		dev_warn(dev, "Link state not disabled for DPC event\n");
++	pcie_wait_for_link(pdev, false);
+ }
+ 
+ static void dpc_work(struct work_struct *work)
 -- 
 2.7.4
