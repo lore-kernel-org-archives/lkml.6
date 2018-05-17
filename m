@@ -1,124 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752365AbeEQQVd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39704 "EHLO mail.kernel.org"
+        id S1752030AbeEQQXr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752026AbeEQQVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:21:30 -0400
-Date: Thu, 17 May 2018 09:21:28 -0700
-From: Shaohua Li <shli@kernel.org>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: robert.butera@oracle.com, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] md: zero the original position of sb for 0.90 and 1.0
-Message-ID: <20180517162128.74fd5scca2yo3nep@kernel.org>
-References: <1526462319-14222-1-git-send-email-jianchao.w.wang@oracle.com>
+        id S1751280AbeEQQXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 12:23:44 -0400
+X-Google-Smtp-Source: AB8JxZobk1e9Zry5SsWSEjRSp3R/noASUKfM3gSxqJRHJYHXdoprrWkGm0P0TRAPxQtm2RrZ972lckKkEOH+9zng5CE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526462319-14222-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <ccdbbfb2833d274b6bfa234aada57e68d9793dd5.1526487615.git.vilhelm.gray@gmail.com>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com> <ccdbbfb2833d274b6bfa234aada57e68d9793dd5.1526487615.git.vilhelm.gray@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 17 May 2018 11:23:22 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
+Subject: Re: [PATCH v6 6/9] dt-bindings: counter: Document stm32 quadrature encoder
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>, linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 05:18:39PM +0800, Jianchao Wang wrote:
-> For sb version 0.90 and 1.0 which locates after data, when we increase
-> the spindle volume size and grow the raid arry size, the older sb which is
-> different between spindles will be left there. Due to this left sb, the
-> spindle volume cannot be grown with zero filled part with  --asume-clean.
-> applications have to take some workarounds such as sync_min/max to avoid
-> resync.
-> 
-> It is easy and convevient for md to zero the older sb position after
-> write sb to new position, so do it here.
+On Wed, May 16, 2018 at 12:51 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
->From the description, this looks easy to do in userspace, eg, you can zero the
-super before increase the spindle volume. Convenience isn't a reason we should
-put these code into kernel space.
+v6? Where's v1-v5?
 
-Thanks,
-Shaohua 
-> Cc: robert.butera@oracle.com
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Add bindings for STM32 Timer quadrature encoder.
+> It is a sub-node of STM32 Timer which implement the
+> counter part of the hardware.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 > ---
->  drivers/md/md.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index c208c01..a042add 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -1020,6 +1020,23 @@ int md_check_no_bitmap(struct mddev *mddev)
->  }
->  EXPORT_SYMBOL(md_check_no_bitmap);
->  
-> +static void md_zero_original_sb_position(struct md_rdev *rdev, sector_t old_pos)
-> +{
-> +	struct page *zero_pg;
+>  .../bindings/counter/stm32-timer-cnt.txt      | 26 +++++++++++++++++++
+>  .../devicetree/bindings/mfd/stm32-timers.txt  |  7 +++++
+>  2 files changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+>
+> diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+> new file mode 100644
+> index 000000000000..377728128bef
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+> @@ -0,0 +1,26 @@
+> +STMicroelectronics STM32 Timer quadrature encoder
 > +
-> +	zero_pg = alloc_pages(GFP_KERNEL | __GFP_ZERO, 0);
-> +	if (!zero_pg) {
-> +		pr_warn("%s: failed to get page for zero original sb position",
-> +				mdname(rdev->mddev));
-> +		return;
-> +	}
-> +	md_super_write(rdev->mddev, rdev, old_pos, rdev->sb_size,
-> +		       zero_pg);
-> +	wait_event(rdev->mddev->sb_wait,
-> +			(atomic_read(&rdev->mddev->pending_writes) == 0));
-> +	__free_pages(zero_pg, 0);
-> +}
+> +STM32 Timer provides quadrature encoder counter mode to detect
+
+'mode' does not sound like a sub-block of the timers block.
+
+> +angular position and direction of rotary elements,
+> +from IN1 and IN2 input signals.
 > +
->  /*
->   * load_super for 0.90.0
->   */
-> @@ -1394,6 +1411,8 @@ static void super_90_sync(struct mddev *mddev, struct md_rdev *rdev)
->  static unsigned long long
->  super_90_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
->  {
-> +	sector_t old_pos = rdev->sb_start;
+> +Must be a sub-node of an STM32 Timer device tree node.
+> +See ../mfd/stm32-timers.txt for details about the parent node.
 > +
->  	if (num_sectors && num_sectors < rdev->mddev->dev_sectors)
->  		return 0; /* component must fit device */
->  	if (rdev->mddev->bitmap_info.offset)
-> @@ -1411,6 +1430,8 @@ super_90_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
->  		md_super_write(rdev->mddev, rdev, rdev->sb_start, rdev->sb_size,
->  		       rdev->sb_page);
->  	} while (md_super_wait(rdev->mddev) < 0);
+> +Required properties:
+> +- compatible:          Must be "st,stm32-timer-counter".
+> +- pinctrl-names:       Set to "default".
+> +- pinctrl-0:           List of phandles pointing to pin configuration nodes,
+> +                       to set IN1/IN2 pins in mode of operation for Low-Power
+> +                       Timer input on external pin.
 > +
-> +	md_zero_original_sb_position(rdev, old_pos);
->  	return num_sectors;
->  }
->  
-> @@ -1953,6 +1974,8 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
->  {
->  	struct mdp_superblock_1 *sb;
->  	sector_t max_sectors;
-> +	sector_t old_pos = 0;
-> +
->  	if (num_sectors && num_sectors < rdev->mddev->dev_sectors)
->  		return 0; /* component must fit device */
->  	if (rdev->data_offset != rdev->new_data_offset)
-> @@ -1969,6 +1992,7 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
->  	} else {
->  		/* minor version 0; superblock after data */
->  		sector_t sb_start;
-> +		old_pos = rdev->sb_start;
->  		sb_start = (i_size_read(rdev->bdev->bd_inode) >> 9) - 8*2;
->  		sb_start &= ~(sector_t)(4*2 - 1);
->  		max_sectors = rdev->sectors + sb_start - rdev->sb_start;
-> @@ -1984,6 +2008,9 @@ super_1_rdev_size_change(struct md_rdev *rdev, sector_t num_sectors)
->  		md_super_write(rdev->mddev, rdev, rdev->sb_start, rdev->sb_size,
->  			       rdev->sb_page);
->  	} while (md_super_wait(rdev->mddev) < 0);
-> +
-> +	if (old_pos)
-> +		md_zero_original_sb_position(rdev, old_pos);
->  	return num_sectors;
->  
->  }
-> -- 
-> 2.7.4
-> 
+> +Example:
+> +       timers@40010000  {
+> +               compatible = "st,stm32-timers";
+> +               ...
+> +               counter {
+> +                       compatible = "st,stm32-timer-counter";
+
+Is there only 1? How is the counter addressed?
+
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&tim1_in_pins>;
+> +               };
+> +       };
