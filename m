@@ -1,67 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752610AbeEQPsk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:48:40 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23111 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752552AbeEQPsE (ORCPT
+        id S1752499AbeEQPuJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:50:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48914 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752398AbeEQPuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:48:04 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 1/2] ARM: dts: stm32: add USB OTG HS support for stm32mp157c SoC
-Date: Thu, 17 May 2018 17:47:31 +0200
-Message-ID: <1526572052-17155-2-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
-References: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 17 May 2018 11:50:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A5F16055C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Thu, 17 May 2018 09:50:01 -0600
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Vikash Garodia <vgarodia@codeaurora.org>
+Cc: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com
+Subject: Re: [PATCH 1/4] soc: qcom: mdt_loader: Add check to make scm calls
+Message-ID: <20180517155000.GH4995@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Vikash Garodia <vgarodia@codeaurora.org>,
+        hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+ <1526556740-25494-2-git-send-email-vgarodia@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526556740-25494-2-git-send-email-vgarodia@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for USB OTG HS on STM32MP157C SoC.
-USB OTG HS controller is based on DWC2 controller.
+On Thu, May 17, 2018 at 05:02:17PM +0530, Vikash Garodia wrote:
+> In order to invoke scm calls, ensure that the platform
+> has the required support to invoke the scm calls in
+> secure world.
+> 
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/soc/qcom/mdt_loader.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 17b314d..db55d53 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -121,10 +121,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>  	if (!fw_name)
+>  		return -ENOMEM;
+>  
+> -	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+> -	if (ret) {
+> -		dev_err(dev, "invalid firmware metadata\n");
+> -		goto out;
+> +	if (qcom_scm_is_available()) {
+> +		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+> +		if (ret) {
+> +			dev_err(dev, "invalid firmware metadata\n");
+> +			goto out;
+> +		}
+>  	}
+>
+>  	for (i = 0; i < ehdr->e_phnum; i++) {
+> @@ -144,10 +146,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>  	}
+>  
+>  	if (relocate) {
+> -		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+> -		if (ret) {
+> -			dev_err(dev, "unable to setup relocation\n");
+> -			goto out;
+> +		if (qcom_scm_is_available()) {
+> +			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
+> +							max_addr - min_addr);
+> +			if (ret) {
+> +				dev_err(dev, "unable to setup relocation\n");
+> +				goto out;
+> +			}
+>  		}
+>  
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+As far as I can tell you can make it all the way through the function with
+'ret' uninitialized if qcom_scm_is_available() returns false which is a bug, but
+I'm confused why you would even bother loading the firmware even if you didn't
+have SCM.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index b66f673..6c3815f 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -600,6 +600,21 @@
- 			clocks = <&rcc DMAMUX>;
- 		};
- 
-+		usbotg_hs: usb-otg@49000000 {
-+			compatible = "snps,dwc2";
-+			reg = <0x49000000 0x10000>;
-+			clocks = <&rcc USBO_K>;
-+			clock-names = "otg";
-+			resets = <&rcc USBO_R>;
-+			reset-names = "dwc2";
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			g-rx-fifo-size = <256>;
-+			g-np-tx-fifo-size = <32>;
-+			g-tx-fifo-size = <128 128 64 64 64 64 32 32>;
-+			dr_mode = "otg";
-+			status = "disabled";
-+		};
-+
- 		rcc: rcc@50000000 {
- 			compatible = "st,stm32mp1-rcc", "syscon";
- 			reg = <0x50000000 0x1000>;
+Jordan
+
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
