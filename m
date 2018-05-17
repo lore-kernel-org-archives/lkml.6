@@ -1,94 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeEQBNa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 21:13:30 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39234 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbeEQBNQ (ORCPT
+        id S1752168AbeEQBOV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 21:14:21 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.234]:20596 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752014AbeEQBOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 21:13:16 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-References: <1526392247-25512-1-git-send-email-linux@roeck-us.net>
-Date: Wed, 16 May 2018 20:13:10 -0500
-In-Reply-To: <1526392247-25512-1-git-send-email-linux@roeck-us.net> (Guenter
-        Roeck's message of "Tue, 15 May 2018 06:50:47 -0700")
-Message-ID: <87k1s3jd95.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 16 May 2018 21:14:19 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+ <20180423161742.66f939ba@vento.lan>
+ <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+ <20180426204241.03a42996@vento.lan>
+ <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+ <20180515085953.65bfa107@vento.lan> <20180515141655.idzuh2jfdkuu5grs@mwanda>
+ <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
+ <20180515193936.m25kzyeknsk2bo2c@mwanda>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
+Date: Wed, 16 May 2018 20:14:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fJ7Tm-0000B8-G1;;;mid=<87k1s3jd95.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19kcZIzeD/4OcMXj+PT8Qy42j9/8VCBv0k=
-X-SA-Exim-Connect-IP: 97.90.247.198
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-        *      [score: 0.3966]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Guenter Roeck <linux@roeck-us.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 175 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.3 (1.9%), b_tie_ro: 2.3 (1.3%), parse: 0.96 (0.5%),
-        extract_message_metadata: 17 (9.8%), get_uri_detail_list: 1.45 (0.8%),
-        tests_pri_-1000: 7 (4.2%), tests_pri_-950: 1.17 (0.7%), tests_pri_-900: 0.96
-        (0.5%), tests_pri_-400: 17 (9.7%), check_bayes: 16 (9.2%), b_tokenize: 5
-        (3.0%), b_tok_get_all: 5 (3.0%), b_comp_prob: 1.56 (0.9%), b_tok_touch_all:
-        2.2 (1.3%), b_finish: 0.59 (0.3%), tests_pri_0: 119 (67.8%),
-        check_dkim_signature: 0.48 (0.3%), check_dkim_adsp: 2.4 (1.4%),
-        tests_pri_500: 6 (3.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH -next] signal/mips: Report FPE_FLTUNK for undiagnosed floating point exceptions
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20180515193936.m25kzyeknsk2bo2c@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fJ7Uo-0036Yi-E5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:34798
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guenter Roeck <linux@roeck-us.net> writes:
 
-> Most mips builds fail with
->
-> arch/mips/kernel/traps.c: In function ‘force_fcr31_sig’:
-> arch/mips/kernel/traps.c:732:2: error:
-> 	‘si_code’ may be used uninitialized in this function
->
-> Fix the problem by initializing si_code with FPE_FLTUNK (undiagnosed
-> floating point exception).
->
-> Fixes: f43a54a0d916 ("signal/mips: Use force_sig_fault where appropriate")
-> Cc: linux-mips@linux-mips.org
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Applied.  Thank you.
+On 05/15/2018 02:39 PM, Dan Carpenter wrote:
+>> Dan,
+>>
+>> These are all the Spectre media issues I see smatch is reporting in
+>> linux-next-20180515:
+>>
+>> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line()
+>> warn: potential spectre issue 'pin->error_inj_args'
+>> drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() warn:
+>> potential spectre issue 'ca->slot_info' (local cap)
+>> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn:
+>> potential spectre issue 'p->ule_next_hdr'
+>>
+>> I pulled the latest changes from the smatch repository and compiled it.
+>>
+>> I'm running smatch v0.5.0-4459-g2f66d40 now. Is this the latest version?
+>>
+>> I wonder if there is anything I might be missing.
+>>
+> 
+> You'd need to rebuild the db (possibly twice but definitely once).
+> 
 
-Eric
+Hi Dan,
 
-> ---
-> Feel free to merge into the patch introducing the problem.
->
->  arch/mips/kernel/traps.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
-> index 66ec4b0b484d..d67fa74622ee 100644
-> --- a/arch/mips/kernel/traps.c
-> +++ b/arch/mips/kernel/traps.c
-> @@ -716,7 +716,7 @@ asmlinkage void do_ov(struct pt_regs *regs)
->  void force_fcr31_sig(unsigned long fcr31, void __user *fault_addr,
->  		     struct task_struct *tsk)
->  {
-> -	int si_code;
-> +	int si_code = FPE_FLTUNK;
->  
->  	if (fcr31 & FPU_CSR_INV_X)
->  		si_code = FPE_FLTINV;
+After rebuilding the db (once), these are all the Spectre media warnings 
+I get:
+
+drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
+potential spectre issue 'ddbs'
+drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
+potential spectre issue 'pdev->port'
+drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
+potential spectre issue 'idev->input'
+drivers/media/dvb-core/dvb_ca_en50221.c:1400 
+dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
+'ca->slot_info' (local cap)
+drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
+warn: potential spectre issue 'ca->slot_info' (local cap)
+drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
+potential spectre issue 'p->ule_next_hdr'
+drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
+spectre issue 'dvbnet->device' (local cap)
+drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
+warn: potential spectre issue 'pin->error_inj_args'
+
+I just want to double check if you are getting the same output. In case 
+you are getting the same, then what Mauro commented about these issues:
+
+https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
+
+being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
+to be correct.
+
+Thanks
+--
+Gustavo
