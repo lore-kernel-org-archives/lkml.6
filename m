@@ -1,134 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751698AbeEQRq1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:46:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:39362 "EHLO foss.arm.com"
+        id S1752080AbeEQRwd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:52:33 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7977 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751231AbeEQRq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:46:26 -0400
-Date: Thu, 17 May 2018 18:46:19 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Xiaowei Song <songxiaowei@hisilicon.com>
-Cc: wangbinghui@hisilicon.com, bhelgaas@google.com, xuwei5@huawei.com,
-        robh+dt@kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dimitrysh@google.com,
-        andy.shevchenko@gmail.com, guodong.xu@linaro.org,
-        suzhuangluan@hisilicon.com, kongfei@hisilicon.com,
-        chenyao11@huawei.com
-Subject: Re: [PATCH v4] PCI: kirin: Add MSI support
-Message-ID: <20180517174619.GA4056@e107981-ln.cambridge.arm.com>
-References: <20180516012159.44081-1-songxiaowei@hisilicon.com>
- <20180516012159.44081-2-songxiaowei@hisilicon.com>
+        id S1751396AbeEQRwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 13:52:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,411,1520924400";
+   d="scan'208";a="200253320"
+Subject: Re: [PATCH V2 03/20] x86: Add entry trampolines to kcore
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
+ <1526548928-20790-4-git-send-email-adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <9fb55ad9-a69f-bcc3-9e57-d90df5257726@linux.intel.com>
+Date: Thu, 17 May 2018 10:52:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516012159.44081-2-songxiaowei@hisilicon.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1526548928-20790-4-git-send-email-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 09:21:59AM +0800, Xiaowei Song wrote:
-> From: Yao Chen <chenyao11@huawei.com>
+On 05/17/2018 02:21 AM, Adrian Hunter wrote:
+> From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 > 
-> Add support for MSI.
-> 
-> Signed-off-by: Yao Chen <chenyao11@huawei.com>
-> Cc: Xiaowei Song <songxiaowei@hisilicon.com>
-> ---
->  drivers/pci/dwc/pcie-kirin.c | 51 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
-> index d2970a0..00ca4e5 100644
-> --- a/drivers/pci/dwc/pcie-kirin.c
-> +++ b/drivers/pci/dwc/pcie-kirin.c
-> @@ -426,9 +426,28 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
->  	return 0;
->  }
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+
+For the benefit of the poor souls looking at this code in the decades to
+come, could you please take a few minutes to write a couple of sentences
+about why this is being done?
+
+> diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+> index d1da5cf4b2de..fb1fbc8538fa 100644
+> --- a/arch/x86/mm/cpu_entry_area.c
+> +++ b/arch/x86/mm/cpu_entry_area.c
+> @@ -3,6 +3,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/percpu.h>
+>  #include <linux/kallsyms.h>
+> +#include <linux/kcore.h>
 >  
-> +static irqreturn_t kirin_pcie_msi_irq_handler(int irq, void *arg)
-> +{
-> +	struct pcie_port *pp = arg;
-> +
-> +	return dw_handle_msi_irq(pp);
-> +}
-
-You do not need an IRQ handler, the IRQ is handled already in the
-dwc driver following Gustavo's rework.
-
-https://patchwork.ozlabs.org/patch/882017/
-
-> +static void kirin_pcie_msi_init(struct pcie_port *pp)
-> +{
-> +	dw_pcie_msi_init(pp);
-> +}
-> +
-> +static void kirin_pcie_enable_interrupts(struct pcie_port *pp)
-> +{
-> +	if (IS_ENABLED(CONFIG_PCI_MSI))
-> +		kirin_pcie_msi_init(pp);
-> +}
-
-Why do you need two functons ?
-
-> +
->  static int kirin_pcie_host_init(struct pcie_port *pp)
->  {
->  	kirin_pcie_establish_link(pp);
-> +	kirin_pcie_enable_interrupts(pp);
+>  #include <asm/cpu_entry_area.h>
+>  #include <asm/pgtable.h>
+> @@ -14,6 +15,7 @@
+>  #ifdef CONFIG_X86_64
+>  static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
+>  	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
+> +static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
+>  #endif
 >  
->  	return 0;
->  }
-> @@ -445,9 +464,41 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
->  	.host_init = kirin_pcie_host_init,
->  };
+>  struct cpu_entry_area *get_cpu_entry_area(int cpu)
+> @@ -147,6 +149,9 @@ static void __init setup_cpu_entry_area(int cpu)
 >  
-> +static int kirin_pcie_add_msi(struct dw_pcie *pci,
-> +				struct platform_device *pdev)
-> +{
-> +	int ret = 0;
-> +
-> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> +		ret = platform_get_irq(pdev, 0);
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev, "failed to get MSI IRQ (%d)\n",
-> +				pci->pp.msi_irq);
-> +			return ret;
-> +		}
-> +
-> +		pci->pp.msi_irq = ret;
-> +
-> +		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
-> +					   kirin_pcie_msi_irq_handler,
-> +					   IRQF_SHARED | IRQF_NO_THREAD,
-> +					   "kirin_pcie_msi", &pci->pp);
-> +		if (ret)
-> +			dev_err(&pdev->dev, "failed to request MSI IRQ %d\n",
-> +				pci->pp.msi_irq);
+>  	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
+>  		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
+> +	kclist_add(&per_cpu(kcore_entry_trampoline, cpu),
+> +		   &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE,
+> +		   KCORE_TEXT);
+>  #endif
 
-This is wrong. If msi_irq is set, the dwc driver will handle the MSI and
-you must not request the IRQ in the platform driver, see above for
-the link to Gustavo's work.
+Any reason not to add a comment like:
 
-Lorenzo
-
-> +	}
-> +	return ret;
-> +}
-> +
->  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
->  				      struct platform_device *pdev)
->  {
-> +	int ret;
-> +
-> +	ret = kirin_pcie_add_msi(pci, pdev);
-> +	if (ret)
-> +		return ret;
-> +
->  	pci->pp.ops = &kirin_pcie_host_ops;
->  
->  	return dw_pcie_host_init(&pci->pp);
-> -- 
-> 2.7.3
-> 
+/*
+ * The cpu_entry_area alias addresses are not in the kernel binary
+ * so they do not show up in /proc/kcore normally.  This adds entries
+ * for them manually.
+ */
