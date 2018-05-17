@@ -1,91 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752542AbeEQPrl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752385AbeEQPrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:47:39 -0400
-From: Jeff Layton <jlayton@kernel.org>
-To: viro@zeniv.linux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] vfs: remove iterate_supers_type
-Date: Thu, 17 May 2018 11:47:37 -0400
-Message-Id: <20180517154737.18877-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        id S1752588AbeEQPsG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:48:06 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18448 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752547AbeEQPsC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 11:48:02 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 2/2] ARM: dts: stm32: enable USB OTG HS on stm32mp157c-ev1
+Date: Thu, 17 May 2018 17:47:32 +0200
+Message-ID: <1526572052-17155-3-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
+References: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+This patch enables USB OTG HS on stm32mp157c-ev1 in Peripheral mode.
 
-Nothing calls this.
-
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 ---
- fs/super.c         | 36 ------------------------------------
- include/linux/fs.h |  2 --
- 2 files changed, 38 deletions(-)
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/super.c b/fs/super.c
-index 30b7490bd049..456276033e59 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -631,42 +631,6 @@ void iterate_supers(void (*f)(struct super_block *, int), int arg)
- 	spin_unlock(&sb_lock);
- }
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index 9382d80..5a0b77e 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -103,6 +103,13 @@
+ 	};
+ };
  
--/**
-- *	iterate_supers_type - call function for superblocks of given type
-- *	@type: fs type
-- *	@f: function to call
-- *	@arg: argument to pass to it
-- *
-- *	Scans the superblock list and calls given function, passing it
-- *	locked superblock and given argument.
-- */
--void iterate_supers_type(struct file_system_type *type,
--	void (*f)(struct super_block *, void *), void *arg)
--{
--	struct super_block *sb, *p = NULL;
--
--	spin_lock(&sb_lock);
--	hlist_for_each_entry(sb, &type->fs_supers, s_instances) {
--		sb->s_count++;
--		spin_unlock(&sb_lock);
--
--		down_read(&sb->s_umount);
--		if (sb->s_root && (sb->s_flags & SB_BORN))
--			f(sb, arg);
--		up_read(&sb->s_umount);
--
--		spin_lock(&sb_lock);
--		if (p)
--			__put_super(p);
--		p = sb;
--	}
--	if (p)
--		__put_super(p);
--	spin_unlock(&sb_lock);
--}
--
--EXPORT_SYMBOL(iterate_supers_type);
--
- static struct super_block *__get_super(struct block_device *bdev, bool excl)
- {
- 	struct super_block *sb;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7107d291d853..c4761eba3b44 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3116,8 +3116,6 @@ extern struct super_block *get_active_super(struct block_device *bdev);
- extern void drop_super(struct super_block *sb);
- extern void drop_super_exclusive(struct super_block *sb);
- extern void iterate_supers(void (*)(struct super_block *, int), int);
--extern void iterate_supers_type(struct file_system_type *,
--			        void (*)(struct super_block *, void *), void *);
- 
- extern int dcache_dir_open(struct inode *, struct file *);
- extern int dcache_dir_close(struct inode *, struct file *);
++&usbotg_hs {
++	dr_mode = "peripheral";
++	phys = <&usbphyc_port1 0>;
++	phy-names = "usb2-phy";
++	status = "okay";
++};
++
+ &usbphyc {
+ 	status = "okay";
+ };
 -- 
-2.17.0
+2.7.4
