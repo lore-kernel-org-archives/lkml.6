@@ -1,62 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeEQWyO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 18:54:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41596 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbeEQWyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 18:54:13 -0400
-Date: Thu, 17 May 2018 17:54:10 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <linux-perf-users@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>
-Subject: Re: [PATCH 01/11] perf tests parse-events: Add intel_pt parse test
-Message-Id: <20180517175410.d23409d805581923bc456ec2@arm.com>
-In-Reply-To: <20180517205811.GE12497@krava>
-References: <20180516144908.22212-1-acme@kernel.org>
-        <20180516144908.22212-2-acme@kernel.org>
-        <20180516163355.d8e4c669ad29d416e9ffb13e@arm.com>
-        <20180517201553.GB25467@kernel.org>
-        <20180517205811.GE12497@krava>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752083AbeEQXAw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:00:52 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39328 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeEQXAt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 19:00:49 -0400
+X-Google-Smtp-Source: AB8JxZpxeH+V5ls4y1p1rdgivBPq2tak2oTNh/gXuV+VHuD5M/4j0FOhfbnvkzzCfwea1Der64lHZCs10z1K933YFlc=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com> <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 17 May 2018 19:00:46 -0400
+Message-ID: <CAHC9VhR0Y6ZO80XrRF45QD30Gi1TK49-JTSTY0wThWZ1nrGarA@mail.gmail.com>
+Subject: Re: [PATCH ghak81 V3 1/3] audit: use new audit_context access
+ funciton for seccomp_actions_logged
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018 22:58:11 +0200
-Jiri Olsa <jolsa@redhat.com> wrote:
+On Wed, May 16, 2018 at 7:55 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On the rebase of the following commit on the new seccomp actions_logged
+> function, one audit_context access was missed.
+>
+> commit cdfb6b341f0f2409aba24b84f3b4b2bba50be5c5
+> ("audit: use inline function to get audit context")
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Thu, May 17, 2018 at 05:15:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> > So parse_state->error == NULL, Jiri, ideas?
-> 
-> yep, we don't use it in tests.. and when trying intel_pt on
-> system without that pmu, the parse_events_add_pmu fails
-> and store the error to NULL.. we should check on that err pointer
-> 
-> wrt to the test itself, how about we add callback
-> to check if the test is valid before we run it,
-> something like below
-> jirka
+Merged into audit/next, thanks for the follow-up.
 
-That diff makes this test pass again on x86 without an intel_pt, and
-on Arm32/64 (the intel_pt test gets skipped on those machines):
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index cbab0da..f3d3dc6 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2497,7 +2497,7 @@ void audit_seccomp_actions_logged(const char *names, const char *old_names,
+>         if (!audit_enabled)
+>                 return;
+>
+> -       ab = audit_log_start(current->audit_context, GFP_KERNEL,
+> +       ab = audit_log_start(audit_context(), GFP_KERNEL,
+>                              AUDIT_CONFIG_CHANGE);
+>         if (unlikely(!ab))
+>                 return;
+> --
+> 1.8.3.1
 
-Tested-by: Kim Phillips <kim.phillips@arm.com>
-
-Thanks,
-
-Kim
+-- 
+paul moore
+www.paul-moore.com
