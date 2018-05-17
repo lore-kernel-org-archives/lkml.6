@@ -1,124 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752560AbeEQQgU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:36:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36128 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752470AbeEQQgR (ORCPT
+        id S1751907AbeEQQgg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:36:36 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42126 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeEQQgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:36:17 -0400
-Subject: Re: [PATCH v11 01/26] mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>, akpm@linux-foundation.org,
-        mhocko@kernel.org, peterz@infradead.org, kirill@shutemov.name,
-        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, khandual@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        sergey.senozhatsky.work@gmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        vinayak menon <vinayakm.list@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
-        paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1526555193-7242-2-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2cb8256d-5822-d94d-b0e6-c46f21d84852@infradead.org>
-Date: Thu, 17 May 2018 09:36:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 12:36:33 -0400
+X-Google-Smtp-Source: AB8JxZpTOXX6H/uUWYru4Kx1V4027EIS4CVtpXfBCcdp0CRUuys2q4X8KjMV7jQ+/+itObN7eXRlmuiXX4UYlwUcxb0=
 MIME-Version: 1.0
-In-Reply-To: <1526555193-7242-2-git-send-email-ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180517134820.GI98604@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de> <20180517134820.GI98604@atomide.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 17 May 2018 19:36:30 +0300
+Message-ID: <CAHp75Veb+zBfh=44qmMevvrfCSRYhfUMJUMArsDBtgM-F_FknQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, May 17, 2018 at 4:48 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Sebastian Andrzej Siewior <bigeasy@linutronix.de> [180516 10:49]:
+>> On 2018-05-16 13:17:36 [+0300], Andy Shevchenko wrote:
+>> > > The output is usually short so there
+>> > > shouldn't be much benefit from using it.
+>> >
+>> > > I remember Tony wanted runtime-pm on the kernel console, too. And he
+>> > > told me explicit how to test it so that it works. Once the UART goes
+>> > > into PM (down), the whole IP block can go into power save mode. The
+>> > > board can be woken up by sending a character via the UART. The first few
+>> > > (incoming / read) characters are lost until the IP block is up again the
+>> > > frequency stable. This is known / expected.
+>> >
+>> > Don't consider world the OMAP only. The things more complicated if we
+>> > go out of it. Which I tried to explain in the commit message of patch
+>> > 2.
+>>
+>> I am not saying the world is OMAP only. I just tried to explain how any
+>> why it got there and its purpose. I haven't NACKed it. I would believe
+>> that with that information and Tony not defending his use case or
+>> possible change it somehow so it is not standing in your way, Greg would
+>> have enough information to go your way.
+>
+> The idea breaking PM seems silly to me considering that we've had
+> it working for years already.
 
-On 05/17/2018 04:06 AM, Laurent Dufour wrote:
-> This configuration variable will be used to build the code needed to
-> handle speculative page fault.
-> 
-> By default it is turned off, and activated depending on architecture
-> support, ARCH_HAS_PTE_SPECIAL, SMP and MMU.
-> 
-> The architecture support is needed since the speculative page fault handler
-> is called from the architecture's page faulting code, and some code has to
-> be added there to handle the speculative handler.
-> 
-> The dependency on ARCH_HAS_PTE_SPECIAL is required because vm_normal_page()
-> does processing that is not compatible with the speculative handling in the
-> case ARCH_HAS_PTE_SPECIAL is not set.
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Suggested-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  mm/Kconfig | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 1d0888c5b97a..a38796276113 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -761,3 +761,25 @@ config GUP_BENCHMARK
->  
->  config ARCH_HAS_PTE_SPECIAL
->  	bool
-> +
-> +config ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-> +       def_bool n
-> +
-> +config SPECULATIVE_PAGE_FAULT
-> +       bool "Speculative page faults"
-> +       default y
-> +       depends on ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-> +       depends on ARCH_HAS_PTE_SPECIAL && MMU && SMP
-> +       help
-> +         Try to handle user space page faults without holding the mmap_sem.
-> +
-> +	 This should allow better concurrency for massively threaded process
-
-	                                                             processes
-
-> +	 since the page fault handler will not wait for other threads memory
-
-	                                                      thread's
-
-> +	 layout change to be done, assuming that this change is done in another
-> +	 part of the process's memory space. This type of page fault is named
-> +	 speculative page fault.
-> +
-> +	 If the speculative page fault fails because of a concurrency is
-
-	                                     because a concurrency is
-
-> +	 detected or because underlying PMD or PTE tables are not yet
-> +	 allocating, it is failing its processing and a classic page fault
-
-	 allocated, the speculative page fault fails and a classic page fault
-
-> +	 is then tried.
-
-
-Also, all of the help text (below the "help" line) should be indented by
-1 tab + 2 spaces (in coding-style.rst).
-
+Same question  / note. World is much more complex than just being OMAP.
 
 -- 
-~Randy
+With Best Regards,
+Andy Shevchenko
