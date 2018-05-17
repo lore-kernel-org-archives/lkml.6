@@ -1,49 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752593AbeEQPsX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:48:23 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:49998 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeEQPsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:48:19 -0400
-To: dmeyer@gigaio.com, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
-        allenbh@gmail.com, linux-kernel@vger.kernel.org
-References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
- <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a0997fec-ba06-0d1d-a43d-fcc1600484f5@deltatee.com>
-Date: Thu, 17 May 2018 09:48:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752610AbeEQPsk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:48:40 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23111 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752552AbeEQPsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 11:48:04 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 1/2] ARM: dts: stm32: add USB OTG HS support for stm32mp157c SoC
+Date: Thu, 17 May 2018 17:47:31 +0200
+Message-ID: <1526572052-17155-2-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
+References: <1526572052-17155-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, bhelgaas@google.com, linux-ntb@googlegroups.com, linux-pci@vger.kernel.org, kurt.schwemmer@microsemi.com, dmeyer@gigaio.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
- with IOMMU On
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your hard work on this Doug!
+This patch adds support for USB OTG HS on STM32MP157C SoC.
+USB OTG HS controller is based on DWC2 controller.
 
-On 17/05/18 06:00 AM, dmeyer@gigaio.com wrote:
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-> +	if (pci_enable_device(pdev)) {
-> +		dev_err(&pdev->dev, "Cannot enable Switchtec device\n");
-> +		return;
-> +	}
-
-I suspect we should probably cass pci_disable_device() before leaving
-this function so it's in the same state we started. Just like we unmap
-the mmio.
-
-Logan
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index b66f673..6c3815f 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -600,6 +600,21 @@
+ 			clocks = <&rcc DMAMUX>;
+ 		};
+ 
++		usbotg_hs: usb-otg@49000000 {
++			compatible = "snps,dwc2";
++			reg = <0x49000000 0x10000>;
++			clocks = <&rcc USBO_K>;
++			clock-names = "otg";
++			resets = <&rcc USBO_R>;
++			reset-names = "dwc2";
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			g-rx-fifo-size = <256>;
++			g-np-tx-fifo-size = <32>;
++			g-tx-fifo-size = <128 128 64 64 64 64 32 32>;
++			dr_mode = "otg";
++			status = "disabled";
++		};
++
+ 		rcc: rcc@50000000 {
+ 			compatible = "st,stm32mp1-rcc", "syscon";
+ 			reg = <0x50000000 0x1000>;
+-- 
+2.7.4
