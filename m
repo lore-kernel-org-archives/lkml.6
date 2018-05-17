@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeEQHnb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:31 -0400
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:18837 "EHLO
+        id S1752608AbeEQHns (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:43:48 -0400
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:18821 "EHLO
         wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbeEQHnY (ORCPT
+        with ESMTP id S1752552AbeEQHnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 03:43:24 -0400
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="340813096"
-X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="87448696"
+   d="scan'208";a="340813093"
+X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="87448695"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -21,9 +21,9 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
         Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>,
         Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 7/9] PCI/DPC: Disable ERR_NONFATAL handling by DPC
-Date: Thu, 17 May 2018 03:43:09 -0400
-Message-Id: <1526542991-5291-8-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v17 9/9] PCI/DPC: Use the generic pcie_do_fatal_recovery() path
+Date: Thu, 17 May 2018 03:43:11 -0400
+Message-Id: <1526542991-5291-10-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
@@ -31,62 +31,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCIe ERR_NONFATAL errors mean a particular transaction is unreliable but
-the Link is otherwise fully functional (PCIe r4.0, sec 6.2.2).
+Our goal is to handle ERR_FATAL errors similarly, whether they are reported
+via AER or via DPC.  A previous commit changed AER so it handles ERR_FATAL
+by calling driver .remove() methods and resetting the Link.  DPC already
+does that (although the Link reset is done automatically by hardware and
+happens before we call the driver .remove() methods).
 
-The AER driver handles these by logging the error details and calling
-driver-supplied pci_error_handlers callbacks.  It does not reset downstream
-devices, does not remove them from the PCI subsystem, does not re-enumerate
-them, and does not call their driver .remove() or .probe() methods.
+Restructure the DPC code so it calls the same pcie_do_fatal_recovery()
+interface used by AER.  This makes it clearer that we want to use the same
+path.
 
-But DPC driver previously enabled DPC on ERR_NONFATAL, so if the hardware
-supports DPC, these errors caused a Link reset (performed automatically by
-the hardware), followed by the DPC driver removing affected devices (which
-calls their .remove() methods), bringing the Link back up, and
-re-enumerating (which calls driver .probe() methods).
-
-Disable ERR_NONFATAL DPC triggering so these errors will only be handled by
-AER.  This means drivers won't have to deal with different usage of their
-pci_error_handlers callbacks and .probe() and .remove() methods based on
-whether the platform has DPC support.
+Implement the .reset_link() method used by pcie_do_fatal_recovery().  For
+DPC, the actual reset is done automatically by hardware, so we really only
+have to wait for the Link to be inactive, then release the Port from DPC.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-[bhelgaas: changelog]
+[bhelgaas: changelog, DPC_FATAL is not a bitfield, can be sequential]
 Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 
 diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 80ec384..361903f 100644
+index 361903f..6064041 100644
 --- a/drivers/pci/pcie/dpc.c
 +++ b/drivers/pci/pcie/dpc.c
-@@ -260,7 +260,7 @@ static int dpc_probe(struct pcie_device *dev)
- 		}
- 	}
- 
--	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN;
-+	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN;
- 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
- 
- 	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
-@@ -278,7 +278,7 @@ static void dpc_remove(struct pcie_device *dev)
- 	u16 ctl;
- 
- 	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
--	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
-+	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
- 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+@@ -73,29 +73,30 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ 	pcie_wait_for_link(pdev, false);
  }
  
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 103ba79..5182e0d 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -981,6 +981,7 @@
- #define  PCI_EXP_DPC_CAP_DL_ACTIVE	0x1000	/* ERR_COR signal on DL_Active supported */
+-static void dpc_work(struct work_struct *work)
++static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
+ {
+-	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
+-	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
+-	struct pci_bus *parent = pdev->subordinate;
+-	u16 cap = dpc->cap_pos, ctl;
+-
+-	pci_lock_rescan_remove();
+-	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
+-					 bus_list) {
+-		pci_dev_get(dev);
+-		pci_dev_set_disconnected(dev, NULL);
+-		if (pci_has_subordinate(dev))
+-			pci_walk_bus(dev->subordinate,
+-				     pci_dev_set_disconnected, NULL);
+-		pci_stop_and_remove_bus_device(dev);
+-		pci_dev_put(dev);
+-	}
+-	pci_unlock_rescan_remove();
+-
++	struct dpc_dev *dpc;
++	struct pcie_device *pciedev;
++	struct device *devdpc;
++	u16 cap, ctl;
++
++	/*
++	 * DPC disables the Link automatically in hardware, so it has
++	 * already been reset by the time we get here.
++	 */
++	devdpc = pcie_port_find_device(pdev, PCIE_PORT_SERVICE_DPC);
++	pciedev = to_pcie_device(devdpc);
++	dpc = get_service_data(pciedev);
++	cap = dpc->cap_pos;
++
++	/*
++	 * Wait until the Link is inactive, then clear DPC Trigger Status
++	 * to allow the Port to leave DPC.
++	 */
+ 	dpc_wait_link_inactive(dpc);
++
+ 	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
+-		return;
++		return PCI_ERS_RESULT_DISCONNECT;
+ 	if (dpc->rp_extensions && dpc->rp_pio_status) {
+ 		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
+ 				       dpc->rp_pio_status);
+@@ -108,6 +109,17 @@ static void dpc_work(struct work_struct *work)
+ 	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+ 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+ 			      ctl | PCI_EXP_DPC_CTL_INT_EN);
++
++	return PCI_ERS_RESULT_RECOVERED;
++}
++
++static void dpc_work(struct work_struct *work)
++{
++	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
++	struct pci_dev *pdev = dpc->dev->port;
++
++	/* We configure DPC so it only triggers on ERR_FATAL */
++	pcie_do_fatal_recovery(pdev, PCIE_PORT_SERVICE_DPC);
+ }
  
- #define PCI_EXP_DPC_CTL			6	/* DPC control */
-+#define  PCI_EXP_DPC_CTL_EN_FATAL 	0x0001	/* Enable trigger on ERR_FATAL message */
- #define  PCI_EXP_DPC_CTL_EN_NONFATAL 	0x0002	/* Enable trigger on ERR_NONFATAL message */
- #define  PCI_EXP_DPC_CTL_INT_EN 	0x0008	/* DPC Interrupt Enable */
+ static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
+@@ -288,6 +300,7 @@ static struct pcie_port_service_driver dpcdriver = {
+ 	.service	= PCIE_PORT_SERVICE_DPC,
+ 	.probe		= dpc_probe,
+ 	.remove		= dpc_remove,
++	.reset_link	= dpc_reset_link,
+ };
+ 
+ static int __init dpc_service_init(void)
+diff --git a/include/linux/aer.h b/include/linux/aer.h
+index 8f87bbe..514bffa 100644
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@ -14,6 +14,7 @@
+ #define AER_NONFATAL			0
+ #define AER_FATAL			1
+ #define AER_CORRECTABLE			2
++#define DPC_FATAL			3
+ 
+ struct pci_dev;
  
 -- 
 2.7.4
