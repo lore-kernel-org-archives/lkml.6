@@ -1,67 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752821AbeEQQoy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:44:54 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:32873 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752455AbeEQQoi (ORCPT
+        id S1752863AbeEQQpA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:45:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58866 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752455AbeEQQoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:44:38 -0400
-X-Google-Smtp-Source: AB8JxZpqK99VRTycvpBWHtvDCm25wUrKrfyZyGj/GRiIZvFK6NTX/bLvKFgPGOgb5o4CmOVJ5A4t7RkxykM4xMUeEH8=
+        Thu, 17 May 2018 12:44:54 -0400
+Date: Thu, 17 May 2018 13:33:02 +0900
+From: Mark Brown <broonie@kernel.org>
+To: James Kelly <jamespeterkelly@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: regmap: Skip clk_put for attached clocks when
+ freeing context
+Message-ID: <20180517043302.GB20254@sirena.org.uk>
+References: <20180515005958.46971-1-jamespeterkelly@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180517131727.29263-1-eric@anholt.net>
-References: <20180517131727.29263-1-eric@anholt.net>
-From: Peter Robinson <pbrobinson@gmail.com>
-Date: Thu, 17 May 2018 17:44:36 +0100
-Message-ID: <CALeDE9MCox38f9w5wrWtvefNCZoWSRHAqcec0Xi0qdZidHKHQw@mail.gmail.com>
-Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+Content-Disposition: inline
+In-Reply-To: <20180515005958.46971-1-jamespeterkelly@gmail.com>
+X-Cookie: Are you a turtle?
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 2:17 PM, Eric Anholt <eric@anholt.net> wrote:
-> The a53 and a7 counters seem to match up, so we advertise a7 so that
-> arm32 can probe.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
 
-We've carried the same/equiv patch in Fedora for a while with no issues.
+--4bRzO86E/ozDv8r1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Peter
+On Tue, May 15, 2018 at 10:59:58AM +1000, James Kelly wrote:
+> Capability to attach an existing clk to a MMIO regmap was
+> introduced in 4.17rc1.
 
-> ---
->  arch/arm/boot/dts/bcm2837.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/bcm2837.dtsi b/arch/arm/boot/dts/bcm2837.dtsi
-> index 7704bb029605..1f5e5c782835 100644
-> --- a/arch/arm/boot/dts/bcm2837.dtsi
-> +++ b/arch/arm/boot/dts/bcm2837.dtsi
-> @@ -17,6 +17,12 @@
->                 };
->         };
->
-> +       arm-pmu {
-> +               compatible = "arm,cortex-a53-pmu", "arm,cortex-a7-pmu";
-> +               interrupt-parent = <&local_intc>;
-> +               interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
->         timer {
->                 compatible = "arm,armv7-timer";
->                 interrupt-parent = <&local_intc>;
-> --
-> 2.17.0
->
->
-> _______________________________________________
-> linux-rpi-kernel mailing list
-> linux-rpi-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
+
+--4bRzO86E/ozDv8r1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr9Bf0ACgkQJNaLcl1U
+h9CjJwf8Dqns7kJKFgX/rMPWk0GMWhs+bOU6ZyCZrYVTX3+O+oEpQl8auPkhynCa
+n7AgeqcsMdXe44FElQqZYfBQcmWSiyj3jBfLewxbNY1hBS3J0JKnDkDVNQSVohHT
+l7aXdsRKyzLlLYIvhiM2wrlT7sFfngCrgAfmF/lcqh7NLNMKcDjCNI4SJs3pxFcC
+h+oL99LYtkYIyWzcc1ZQMK05F61FxNhfM1SWqkJyBQdubzwBBBaYIkYVEuIRlBZv
+QM9aBf1mmfYsYVbmOtdWS64TTaw4flNHvkV4Fbs2iBld5kdxynvmF/C5QCHDODz4
+EnVjwbaJ2q/jujtjqNp606brsaF3Kg==
+=uIra
+-----END PGP SIGNATURE-----
+
+--4bRzO86E/ozDv8r1--
