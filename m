@@ -1,104 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeEQKPF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:15:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:45311 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751457AbeEQKPD (ORCPT
+        id S1752095AbeEQKPl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:15:41 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:59003 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeEQKPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:15:03 -0400
-X-Google-Smtp-Source: AB8JxZqzqqbgnhhQDRqW1TYlzwLHQ7wnstg59s1+IIOib0fEkEsXVuzvWMnD+Go2XxxWFK9GPpwHL/rjMhFxtxW7SaVQM/UTrzHf
+        Thu, 17 May 2018 06:15:39 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] acpi: add missing prototype for =?UTF-8?B?4oCYYXJjaF9wb3N0X2FjcGlfc3Vic3lzX2luaXTigJk=?=
+Date: Thu, 17 May 2018 12:15:04 +0200
+Message-ID: <1741093.hO3EZQahsV@aspire.rjw.lan>
+In-Reply-To: <20180505203603.4071-1-malat@debian.org>
+References: <20180505203603.4071-1-malat@debian.org>
 MIME-Version: 1.0
-Date: Thu, 17 May 2018 03:15:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d2d1fe056c641bd7@google.com>
-Subject: general protection fault in n_tty_flush_buffer
-From: syzbot <syzbot+083228748980909eb453@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Saturday, May 5, 2018 10:36:03 PM CEST Mathieu Malaterre wrote:
+> In commit e7ff3a47630d ("x86/amd: Check for the C1E bug post ACPI subsystem
+> init") a new function ‘arch_post_acpi_subsys_init’ was introduced. This
+> weak function can potentially be overridden on a per arch basis, introduce
+> the prototype for clarity.
+> 
+> Silence the following gcc warning (W=1):
+> 
+>   init/main.c:484:20: warning: no previous prototype for ‘arch_post_acpi_subsys_init’ [-Wmissing-prototypes]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  include/linux/acpi.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 15bfb15c2fa5..cb4d7b6b085c 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -578,6 +578,7 @@ int acpi_match_platform_list(const struct acpi_platform_list *plat);
+>  
+>  extern void acpi_early_init(void);
+>  extern void acpi_subsystem_init(void);
+> +extern void arch_post_acpi_subsys_init(void);
+>  
+>  extern int acpi_nvs_register(__u64 start, __u64 size);
+>  
+> 
 
-syzbot found the following crash on:
-
-HEAD commit:    e6506eb24187 Merge tag 'trace-v4.17-rc4-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1295d637800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=083228748980909eb453
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1340a7c7800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b25e37800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+083228748980909eb453@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4530 Comm: syz-executor147 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:reset_buffer_flags drivers/tty/n_tty.c:318 [inline]
-RIP: 0010:n_tty_flush_buffer+0x64/0x320 drivers/tty/n_tty.c:358
-RSP: 0018:ffff8801c60f77a0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 000000000000044c RSI: ffff8801ae012ef8 RDI: 0000000000002260
-RBP: ffff8801c60f77b8 R08: 0000000000007ad5 R09: 0000000000000002
-R10: ffff8801ae012f48 R11: ffff8801ae0126c0 R12: ffff8801d96321c0
-R13: ffff8801d96323f8 R14: 0000000000000000 R15: ffff8801c60f7808
-FS:  00007f53b10c8700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f53b10a6e78 CR3: 00000001ac8cf000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  set_termios+0x390/0x7d0 drivers/tty/tty_ioctl.c:404
-  tty_mode_ioctl+0x265/0xb50 drivers/tty/tty_ioctl.c:745
-  n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
-  n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
-  tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445c19
-RSP: 002b:00007f53b10c7da8 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445c19
-RDX: 0000000020000000 RSI: 0000000000005404 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 00000000006dac20
-R13: 6d74702f7665642f R14: 00007f53b10c89c0 R15: 0000000000000007
-Code: 03 80 3c 02 00 0f 85 b1 02 00 00 49 8b 9c 24 70 05 00 00 48 b8 00 00  
-00 00 00 fc ff df 48 8d bb 60 22 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-0f 85 9b 02 00 00 48 b8 00 00 00 00 00 fc ff df 48
-RIP: reset_buffer_flags drivers/tty/n_tty.c:318 [inline] RSP:  
-ffff8801c60f77a0
-RIP: n_tty_flush_buffer+0x64/0x320 drivers/tty/n_tty.c:358 RSP:  
-ffff8801c60f77a0
----[ end trace 75cd8a017cb978de ]---
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Applied, thanks!
