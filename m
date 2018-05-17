@@ -1,121 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeEQNkG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:40:06 -0400
-Received: from gate.crashing.org ([63.228.1.57]:54001 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751494AbeEQNkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:40:05 -0400
-Message-ID: <9b9d6fbf928d4d8e239cb7e3c82d5ac1e3d59973.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers
- save/restore in asm
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Paul Mackerras <paulus@samba.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu, 17 May 2018 23:39:38 +1000
-In-Reply-To: <87zi0ymqj6.fsf@concordia.ellerman.id.au>
-References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr>
-         <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr>
-         <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+        id S1752180AbeEQNlR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:41:17 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43098 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeEQNlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:41:13 -0400
+X-Google-Smtp-Source: AB8JxZppIdb7chTUzIf3h2Ds0flY4IhZiapCqdg6UNdywOR9d1S7Hk7TnD5gMbfP7oH9vx88mO7IYiXn9zM7u5/BzEo=
+MIME-Version: 1.0
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
+ <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com> <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 17 May 2018 16:41:11 +0300
+Message-ID: <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-17 at 22:10 +1000, Michael Ellerman wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> > arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
-> > in order to use multiple word instructions in functions entry/exit
-> 
-> True, though that could be a lot simpler because the MULTIPLEWORD value
-> is only used for PPC32, which is always big endian. I'll send a patch
-> for that.
+On Thu, May 17, 2018 at 4:35 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
+>
+> On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> However, even with your clock patch, the signature checking fails for me,
+>>> on both R-Car H3 ES1.0 and ES2.0.
+>>> Does this need changes to the ARM Trusted Firmware, to allow Linux to
+>>> access the public SCEG module?
+>>
+>> Well, this is actually something different. If you look you will
+>> notice that my patch was part of a 3 part patch series,
+>> the first of which disabled this test.
+>
+> Sorry, I had completely forgotten about the first patch from the series.
+> With that applied, it continues:
+>
+>         ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
+> 0x00000000, Driver version 4.0
+>         ccree e6601000.crypto: Cache params previous: 0x00000777
+>         ccree e6601000.crypto: Cache params current: 0x00000000
+> (expect: 0x00000000)
+>         alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
+>         alg: No test for authenc(xcbc(aes),cbc(aes))
+> (authenc-xcbc-aes-cbc-aes-ccree)
+>         alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
+> (authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
+>         ccree e6601000.crypto: ARM ccree device initialized
+>
+> Is HW version 0x00000000 expected?
 
-There have been known cases of 4xx LE ports though none ever made it
-upstream ...
+It's related to the problem with reading the wrong register I've
+mentioned before.
 
-> > The patch does the same for the asm parts, for consistency
-> > 
-> > On processors like the 8xx on which insn fetching is pretty slow,
-> > this speeds up registers save/restore
-> 
-> OK. I've always heard that they should be avoided, but that's coming
-> from 64-bit land.
-> 
-> I guess we've been enabling this for all 32-bit targets for ever so it
-> must be a reasonable option.
-> 
-> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> > ---
-> >  v2: Swapped both patches in the serie to reduce number of impacted
-> >      lines and added the same modification in ppc_save_regs()
-> > 
-> >  arch/powerpc/include/asm/ppc_asm.h  |  5 +++++
-> >  arch/powerpc/kernel/misc.S          | 10 ++++++++++
-> >  arch/powerpc/kernel/ppc_save_regs.S |  4 ++++
-> >  3 files changed, 19 insertions(+)
-> > 
-> > diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-> > index 13f7f4c0e1ea..4bb765d0b758 100644
-> > --- a/arch/powerpc/include/asm/ppc_asm.h
-> > +++ b/arch/powerpc/include/asm/ppc_asm.h
-> > @@ -80,11 +80,16 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
-> >  #else
-> >  #define SAVE_GPR(n, base)	stw	n,GPR0+4*(n)(base)
-> >  #define REST_GPR(n, base)	lwz	n,GPR0+4*(n)(base)
-> > +#ifdef CONFIG_CPU_BIG_ENDIAN
-> > +#define SAVE_NVGPRS(base)	stmw	13, GPR0+4*13(base)
-> > +#define REST_NVGPRS(base)	lmw	13, GPR0+4*13(base)
-> > +#else
-> >  #define SAVE_NVGPRS(base)	SAVE_GPR(13, base); SAVE_8GPRS(14, base); \
-> >  				SAVE_10GPRS(22, base)
-> >  #define REST_NVGPRS(base)	REST_GPR(13, base); REST_8GPRS(14, base); \
-> >  				REST_10GPRS(22, base)
-> 
-> There is no 32-bit little endian, so this is basically dead code now.
-> 
-> Maybe there'll be a 32-bit LE port one day, but if so we can put the
-> code back then.
-> 
-> So I'll just drop the else case.
-> 
-> >  #endif
-> > +#endif
-> >  
-> >  #define SAVE_2GPRS(n, base)	SAVE_GPR(n, base); SAVE_GPR(n+1, base)
-> >  #define SAVE_4GPRS(n, base)	SAVE_2GPRS(n, base); SAVE_2GPRS(n+2, base)
-> > diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
-> > index 746ee0320ad4..a316d90a5c26 100644
-> > --- a/arch/powerpc/kernel/misc.S
-> > +++ b/arch/powerpc/kernel/misc.S
-> > @@ -49,6 +49,10 @@ _GLOBAL(setjmp)
-> >  	PPC_STL	r0,0(r3)
-> >  	PPC_STL	r1,SZL(r3)
-> >  	PPC_STL	r2,2*SZL(r3)
-> > +#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
-> 
-> And this could just be:
-> 
-> #ifdef CONFIG_PPC32
-> 
-> > +	mfcr	r12
-> > +	stmw	r12, 3*SZL(r3)
-> > +#else
-> >  	mfcr	r0
-> >  	PPC_STL	r0,3*SZL(r3)
-> >  	PPC_STL	r13,4*SZL(r3)
-> > @@ -70,10 +74,15 @@ _GLOBAL(setjmp)
-> >  	PPC_STL	r29,20*SZL(r3)
-> >  	PPC_STL	r30,21*SZL(r3)
-> >  	PPC_STL	r31,22*SZL(r3)
-> > +#endif
-> 
-> It's a pity to end up with this basically split in half by ifdefs for
-> 32/64-bit, but maybe we can clean that up later.
-> 
-> cheers
+>
+>> If you take all the 3 patches, it will work.
+>
+> is there an easy way to test proper operation?
+
+The lines of the form "  alg: No test for cts1(cbc(aes))
+(cts1-cbc-aes-ccree)" indicates
+you have the Crypto API testmgr enable (or rather not disabled would
+be more accurate) so every
+cryptographic algorithm except those specified in these messages was
+tested with test
+vectors from crypto/testmgr.c upon registration. If you don't seen
+failure warnings, it works.
+
+You can also check /proc/crypto for all the algorithm with ccree
+listed as their driver and check
+that their test passed.
+
+
+> I enabled CONFIG_CRYPT_TEST, and did insmod tcrypt.ko, but I mostly see
+> "Failed to load transform" messages.
+>
+
+tcrypt.ko is a rather crude developer tool. It has hard coded lists of
+test for different algorithms that does
+not take into account if some crypto algs are enagled in the build or
+not. It's more of a stress test.
+
+
+Gilad
+
+
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
