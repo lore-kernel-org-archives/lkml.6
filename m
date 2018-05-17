@@ -1,61 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeEQNl0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:41:26 -0400
-Received: from sauhun.de ([88.99.104.3]:51324 "EHLO pokefinder.org"
+        id S1752155AbeEQNoh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:44:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38370 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750779AbeEQNlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:41:25 -0400
-Date: Thu, 17 May 2018 15:41:23 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: synquacer: fix fence-post error in retry loop
-Message-ID: <20180517134122.odweeppckmpckk4r@ninjato>
-References: <20180509194726.29166-1-peda@axentia.se>
+        id S1752030AbeEQNoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:44:34 -0400
+Date: Thu, 17 May 2018 15:44:15 +0200
+From: Borislav Petkov <bp@suse.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
+ block
+Message-ID: <20180517134415.GC27738@pd.tnic>
+References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+ <20180201184813.82253-3-Yazen.Ghannam@amd.com>
+ <20180414004230.GA2033@probook>
+ <20180416115624.GA1543@probook>
+ <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180515093953.GA1746@probook>
+ <20180516224641.GA31929@pd.tnic>
+ <20180517064930.GA26421@probook>
+ <20180517104124.GA25595@pd.tnic>
+ <CY4PR12MB1557AB31F5F9D1ECBDAC2DA6F8910@CY4PR12MB1557.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lq7fi7y74l36e4nv"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180509194726.29166-1-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CY4PR12MB1557AB31F5F9D1ECBDAC2DA6F8910@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 17, 2018 at 01:04:19PM +0000, Ghannam, Yazen wrote:
+> Yes, you're right. I thought using the existing data structures would work, but it
+> seems I messed up the implementation.
 
---lq7fi7y74l36e4nv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not only that - your idea wouldn't fly because the per-CPU stuff you
+were using gets torn down when the CPU goes offline so you can't use
+them on resume because they're not there yet.
 
-On Wed, May 09, 2018 at 09:47:26PM +0200, Peter Rosin wrote:
-> There is a difference between attempts and retries.
->=20
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Banks 15 and 16 should have an address for block 1 also. Do you have PFEH
+> enabled on your system? That would cause MISC0 to be RAZ so we won't
+> get the MISC1 address. I'll try it myself also and let you know.
 
-Applied to for-next, thanks!
+I check PFEH is enabled how?
 
+> I think this good for now. We'll probably need to change it in the
+> future, but maybe we can clean up all the thresholding blocks code and
+> make it simpler when we do change it.
 
---lq7fi7y74l36e4nv
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok.
 
------BEGIN PGP SIGNATURE-----
+> This hunk could go above the !block. Though maybe the macro is lighter than the
+> array lookup. It'll work either way, but I'm just thinking out loud.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9hoIACgkQFA3kzBSg
-KbZKOg//ZFmZcvLw/s44MmWQzjwxXeRqTdI2nBX6oIP2ROL9XoCr1BQyiTO9l7WF
-qVrujmaiBsKm9Hr0adbrP9dvurmbukcJSUL51gFSheSgtsYtS9PhwkEB8PCecRjE
-cu9lFnqUFQ09F03kG3LNKVckhX52PqgmsDU5tk4NT9QAqoyTJ0ff5ZPb83QTmt8Q
-rpaGe2ri8fZhHSBpCJvsbHQrMkG9WiTvRveDcftOg+9XYUs9POTiscQ82gssQqSA
-HQBMjFhM9TI/+JvCpzDk81WtZhOyFH50NfEuHnKlpPa4iJWCq742LIrIOPAjKReR
-Tp3HsROAtVgPtBU88r27ajbmGL70cgU96TJ5sIF5LPdahWh2EdzlJYkYxiXlu3nu
-4B44YI+tK2jn0BgWRpdddPZttNnpz+gpPfsDSNRqVTVbTQm2a3LCt8FtJxpc/vSu
-4lXn93KR4qHbiiqOLQUd7q3y2XPTQEALKXF799a5Lv6QjvHFuSKXwKSr9bOSgZyz
-g0UA8OuQgdiOBgrgLuTdEkBf0A3+J/Np9JNhoTmutl+kKrflFe7eCUpGyIw2elqK
-HVZxQY0I4JkkhbJ6cmgsceQwKnaCRp1rULsv3bkOkCt13+eDjaiFVAlqZ2d3Kq1s
-fCMI0nqvlF7lfHck/JM21d06934xTkbXx4ppZAGY6QXHnxjJR7o=
-=TnWa
------END PGP SIGNATURE-----
+Yeah, it doesn't matter in that case.
 
---lq7fi7y74l36e4nv--
+> Since we're caching the values during init, we can drop all the
+> *_on_cpu() calls. What do you think?
+
+Well, if they're all the same on all CPUs, sure. That's your call.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
