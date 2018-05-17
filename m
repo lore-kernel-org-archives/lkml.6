@@ -1,101 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeEQQ1a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:27:30 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39113 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeEQQ12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:27:28 -0400
-X-Google-Smtp-Source: AB8JxZqNWfPkdxw2TG+esfRmt3YVpwoK/+RJIwBAcGhTDCuc9U5nHuxeMI1ByyWqMUSiJHRRSzzqIw==
+        id S1752260AbeEQQ14 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752026AbeEQQ1z (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 12:27:55 -0400
+Date: Thu, 17 May 2018 13:27:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf annotate: Support multiple events without group
+Message-ID: <20180517162750.GB18538@kernel.org>
+References: <1525960762-19520-1-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-References: <20180501234721.187135-1-evgreen@chromium.org> <07fc9a48-a84c-b754-0d00-6f61f39e5f86@intel.com>
-In-Reply-To: <07fc9a48-a84c-b754-0d00-6f61f39e5f86@intel.com>
-From: Evan Green <evgreen@chromium.org>
-Date: Thu, 17 May 2018 09:26:48 -0700
-X-Gmail-Original-Message-ID: <CAE=gft5=nmKndCrKposh6bQa=3Oh62ZxfmmRUOK4cPLzfy7xSQ@mail.gmail.com>
-Message-ID: <CAE=gft5=nmKndCrKposh6bQa=3Oh62ZxfmmRUOK4cPLzfy7xSQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] mmc: sdhci: Don't get card-detect without preemption
-To: adrian.hunter@intel.com
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1525960762-19520-1-git-send-email-yao.jin@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 2:52 AM Adrian Hunter <adrian.hunter@intel.com>
-wrote:
+Em Thu, May 10, 2018 at 09:59:22PM +0800, Jin Yao escreveu:
+> See example,
+> 
+> perf record -e cycles,branches ./div
+> perf annotate main --stdio or
+> perf annotate main --stdio2 or
+> perf annotate main
+> 
+> The "perf annotate" should show both cycles and branches on the
+> left side, but actually it only shows one event cycles.
+> 
+> It works with events group like:
+> perf record -e "{cycles,branches}" ./div
+> 
+> It should work too even without group.
 
-> On 02/05/18 02:47, Evan Green wrote:
-> > For a controller with SDHCI_QUIRK_NO_CARD_NO_RESET, there are several
-> > conditions where sdhci_do_reset is called under a spinlock with
-interrupts
-> > disabled. The card detect is often a GPIO, which might sleep. Avoid
-> > asking for the card detect status if interrupts are disabled to prevent
-> > a warning like the following:
-> >
-> > [    2.480199] Call trace:
-> > [    2.480218] [<ffffff800808a698>] dump_backtrace+0x0/0x228
-> > [    2.480224] [<ffffff800808a8e0>] show_stack+0x20/0x28
-> > [    2.480235] [<ffffff80088a0214>] dump_stack+0x90/0xb0
-> > [    2.480245] [<ffffff80080d7aa8>] ___might_sleep+0x110/0x128
-> > [    2.480248] [<ffffff80080d7b38>] __might_sleep+0x78/0x88
-> > [    2.480260] [<ffffff80083cdd28>]
-gpiod_get_raw_value_cansleep+0x2c/0xc4
-> > [    2.480269] [<ffffff80086a93a8>] mmc_gpio_get_cd+0x3c/0x68
-> > [    2.480275] [<ffffff80086b008c>] sdhci_get_cd+0x20/0x98
-> > [    2.480280] [<ffffff80086b081c>] sdhci_do_reset+0x50/0x88
-> > [    2.480283] [<ffffff80086b4640>] sdhci_tasklet_finish+0x1a8/0x270
-> > [    2.480292] [<ffffff80080b29d4>] tasklet_action+0x90/0xf4
-> > [    2.480296] [<ffffff80080813b8>] __do_softirq+0x1c8/0x360
-> > [    2.480300] [<ffffff80080b2408>] irq_exit+0x88/0xd0
-> >
-> > ---
-> >
-> > I discovered this warning while trying to bring up SD, somewhat
-unsuccessfully,
-> > on a new device, and hit this error path.
-> >
-> > This change is not ideal as it only makes a best effort to adhere to
-the quirk,
-> > but may in some cases end up resetting the controller with no card
-present.
-> >
-> > Another option I considered was trying to call sdhci_do_reset within
-only
-> > sleepable contexts. I actually got as far as converting the tasklet to a
-> > work queue, and deferring the reset to the end of the function in
-> > sdhci_request_done. But 1) I'm not sure if that deferral was actually
-safe,
-> > and 2) we call sdhci_do_reset from under the lock in several other
-places,
-> > such as sdhci_card_event and sdhci_cqe_disable.
-> >
-> > Finally, I also considered calling the non-_maysleep gpio functions in
-> > mmc_gpio_get_cd. I assume this is not workable as someone somewhere has
-put
-> > a card detect off of a PMIC or GPIO expander.
-> >
-> > Any advice?
+Humm, I think that this should be done the way it is for perf report,
+i.e. you select the group output by using --group, no?
 
-> The SDHCI_QUIRK_NO_CARD_NO_RESET quirk was designed for host controllers
-> that use the present state register.  I have to assume that users of GPIO
-> card detect get away with using the quirk because:
->          a) their GPIO does not sleep, and
->          b) they don't enable the debugging that produces the "might sleep"
->          warning
+Jiri, isn't that how it is done in 'perf report' for non-explicit
+groups?
 
-> If you know your device's card detect GPIO does not sleep, then you can
-look
-> at making a non-sleep version of mmc_gpio_get_cd().
-
-> Another possibility is to look at using mmc_gpio_set_cd_isr() to keep
-track
-> of whether the card has been removed.  Also try to use sdhci_ops->reset()
-> rather than SDHCI_QUIRK_NO_CARD_NO_RESET.
-
-
-Thanks Adrian for the guidance. I'll explore this a bit and see what shakes
-out.
--Evan
+- Arnaldo
+ 
+> This patch uses 'symbol_conf.nr_events > 1' to check if it's the
+> multiple events case.
+> 
+> With this patch,
+> 
+> perf record -e cycles,branches ./div
+> perf annotate main --stdio2
+> 
+>   ......
+>                            for (i = 0; i < 2000000000; i++) {
+>                                    flag = compute_flag();
+>   4.85   5.83  38:   xor    %eax,%eax
+>   0.01   0.01      → callq  compute_flag
+> 
+>                                    count++;
+>   4.44   2.27        mov    count,%edx
+>   0.00   0.00        add    $0x1,%edx
+>   ......
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/util/annotate.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 5d74a30..ca8d4b1 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -1054,6 +1054,8 @@ annotation_line__new(struct annotate_args *args, size_t privsize)
+>  
+>  	if (perf_evsel__is_group_event(evsel))
+>  		nr = evsel->nr_members;
+> +	else if (symbol_conf.nr_events > nr)
+> +		nr = symbol_conf.nr_events;
+>  
+>  	size += sizeof(al->samples[0]) * nr;
+>  
+> @@ -1326,6 +1328,8 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+>  
+>  		if (perf_evsel__is_group_event(evsel))
+>  			width *= evsel->nr_members;
+> +		else if (symbol_conf.nr_events > 1)
+> +			width *= symbol_conf.nr_events;
+>  
+>  		if (!*al->line)
+>  			printf(" %*s:\n", width, " ");
+> @@ -1967,6 +1971,8 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+>  
+>  	if (perf_evsel__is_group_event(evsel))
+>  		width *= evsel->nr_members;
+> +	else if (symbol_conf.nr_events > 1)
+> +		width *= symbol_conf.nr_events;
+>  
+>  	graph_dotted_len = printf(" %-*.*s|	Source code & Disassembly of %s for %s (%" PRIu64 " samples)\n",
+>  				  width, width, symbol_conf.show_total_period ? "Period" :
+> @@ -2578,6 +2584,8 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
+>  
+>  	if (perf_evsel__is_group_event(evsel))
+>  		nr_pcnt = evsel->nr_members;
+> +	else if (symbol_conf.nr_events > nr_pcnt)
+> +		nr_pcnt = symbol_conf.nr_events;
+>  
+>  	err = symbol__annotate(sym, map, evsel, 0, parch);
+>  	if (err)
+> -- 
+> 2.7.4
