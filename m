@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeEQX2q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:28:46 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:57881 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751543AbeEQX2l (ORCPT
+        id S1752232AbeEQX2p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:28:45 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:31398 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751293AbeEQX2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 19:28:41 -0400
+        Thu, 17 May 2018 19:28:40 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Juergen Gross <jgross@suse.com>, Alok Kataria <akataria@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        <virtualization@lists.linux-foundation.org>
-Subject: [PATCH 4/6] x86: prevent inline distortion by paravirt ops
-Date: Thu, 17 May 2018 09:14:00 -0700
-Message-ID: <20180517161402.78089-5-namit@vmware.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 2/6] x86: bug: prevent gcc distortions
+Date: Thu, 17 May 2018 09:13:58 -0700
+Message-ID: <20180517161402.78089-3-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180517161402.78089-1-namit@vmware.com>
 References: <20180517161402.78089-1-namit@vmware.com>
@@ -32,138 +32,108 @@ the block in time and space. This data is distorted by the kernel code,
 which puts information in alternative sections. As a result, the
 compiler may perform incorrect inlining and branch optimizations.
 
-The solution is to set an assembly macro and call it from the inlined
+The solution is to set an assembly macro and call it from the inlinedv
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-The effect of the patch is a more aggressive inlining, which also
-causes a size increase of kernel.
+This patch increases the kernel size:
 
    text	   data	    bss	    dec	    hex	filename
-18131468 10068488 2936832 31136788 1db1c14 ./vmlinux before
-18146418 10064100 2936832 31147350 1db4556 ./vmlinux after (+10562)
+18126824 10067268 2936832 31130924 1db052c ./vmlinux before
+18127205 10068388 2936832 31132425 1db0b09 ./vmlinux after (+1501)
 
-Static text symbols:
-Before:	39788
-After:	39673	(-115)
+But enables more aggressive inlining (and probably branch decisions).
+The number of static text symbols in vmlinux is lower.
 
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Alok Kataria <akataria@vmware.com>
+Before:	40015
+After:	39860	(-155)
+
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: virtualization@lists.linux-foundation.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 63 +++++++++++++++++----------
- 1 file changed, 39 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/bug.h | 56 +++++++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..ea62204c2ee6 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -346,20 +346,45 @@ extern struct pv_lock_ops pv_lock_ops;
- /*
-  * Generate some code, and mark it as patchable by the
-  * apply_paravirt() alternate instruction patcher.
-+ *
-+ * This generates an indirect call based on the operation type number.
-+ * The type number, computed in PARAVIRT_PATCH, is derived from the
-+ * offset into the paravirt_patch_template structure, and can therefore be
-+ * freely converted back into a structure offset.
-+ *
-+ * The paravirtual alternative logic and data are encapsulated within an
-+ * assembly macro, which is then called on each use. This hack is necessary to
-+ * prevent GCC from considering the inline assembly blocks as costly in time and
-+ * space, which can prevent function inlining and lead to other bad compilation
-+ * decisions. GCC computes inline assembly cost according to the number of
-+ * perceived number of assembly instruction, based on the number of new-lines
-+ * and semicolons in the assembly block. The macro will eventually be compiled
-+ * into a single instruction (and some data). This scheme allows GCC to better
-+ * understand the inline asm cost.
-  */
--#define _paravirt_alt(insn_string, type, clobber)	\
--	"771:\n\t" insn_string "\n" "772:\n"		\
--	".pushsection .parainstructions,\"a\"\n"	\
--	_ASM_ALIGN "\n"					\
--	_ASM_PTR " 771b\n"				\
--	"  .byte " type "\n"				\
--	"  .byte 772b-771b\n"				\
--	"  .short " clobber "\n"			\
--	".popsection\n"
-+asm(".macro __paravirt_alt type:req clobber:req pv_opptr:req\n"
-+    "771:\n\t"
-+    ANNOTATE_RETPOLINE_SAFE "\n\t"
-+    "call *\\pv_opptr\n"
-+    "772:\n\t"
-+    ".pushsection .parainstructions,\"a\"\n\t"
-+    _ASM_ALIGN "\n\t"
-+    _ASM_PTR " 771b\n\t"
-+    ".byte \\type\n\t"
-+    ".byte 772b-771b\n\t"
-+    ".short \\clobber\n\t"
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..1167e4822a34 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -30,33 +30,51 @@
+ 
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ 
+-#define _BUG_FLAGS(ins, flags)						\
++/*
++ * Saving the bug data is encapsulated within an assembly macro, which is then
++ * called on each use. This hack is necessary to prevent GCC from considering
++ * the inline assembly blocks as costly in time and space, which can prevent
++ * function inlining and lead to other bad compilation decisions. GCC computes
++ * inline assembly cost according to the number of perceived number of assembly
++ * instruction, based on the number of new-lines and semicolons in the assembly
++ * block. The macro will eventually be compiled into a single instruction (and
++ * some data). This scheme allows GCC to better understand the inline asm cost.
++ */
++asm(".macro __BUG_FLAGS ins:req file:req line:req flags:req size:req\n"
++    "1:\t \\ins\n\t"
++    ".pushsection __bug_table,\"aw\"\n"
++    "2:\t "__BUG_REL(1b)		"\t# bug_entry::bug_addr\n\t"
++    __BUG_REL(\\file)			"\t# bug_entry::file\n\t"
++    ".word \\line"			"\t# bug_entry::line\n\t"
++    ".word \\flags"			"\t# bug_entry::flags\n\t"
++    ".org 2b+\\size\n\t"
 +    ".popsection\n\t"
 +    ".endm");
 +
-+#define _paravirt_alt(type, clobber, pv_opptr)				\
-+	"__paravirt_alt type=" __stringify(type)			\
-+	" clobber=" __stringify(clobber)				\
-+	" pv_opptr=" __stringify(pv_opptr) "\n\t"
++#define _BUG_FLAGS(ins, flags)                                          \
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection"					\
+-		     : : "i" (__FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
++	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1 %c2 %c3"		\
++		     : : "i" (__FILE__), "i" (__LINE__),                \
++			 "i" (flags),                                   \
+ 			 "i" (sizeof(struct bug_entry)));		\
+ } while (0)
  
- /* Generate patchable code, with the default asm parameters. */
--#define paravirt_alt(insn_string)					\
--	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
-+#define paravirt_alt							\
-+	_paravirt_alt("%c[paravirt_typenum]", "%c[paravirt_clobber]",	\
-+		      "%c[paravirt_opptr]")
+ #else /* !CONFIG_DEBUG_BUGVERBOSE */
  
- /* Simple instruction patching code. */
- #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
-@@ -387,16 +412,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
++asm(".macro __BUG_FLAGS ins:req flags:req size:req\n"
++    "1:\t\\ins\n\t"
++    ".pushsection __bug_table,\"aw\"\n"
++    "2:\t" __BUG_REL(1b)		"\t# bug_entry::bug_addr\n\t"
++    ".word \\flags"			"\t# bug_entry::flags\n\t"
++    ".org 2b+\\size\n\t"
++    ".popsection\n\t"
++    ".endm");
++
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection"					\
+-		     : : "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
++	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1"			\
++		    : : "i" (flags),					\
++			"i" (sizeof(struct bug_entry)));		\
+ } while (0)
  
- int paravirt_disable_iospace(void);
- 
--/*
-- * This generates an indirect call based on the operation type number.
-- * The type number, computed in PARAVIRT_PATCH, is derived from the
-- * offset into the paravirt_patch_template structure, and can therefore be
-- * freely converted back into a structure offset.
-- */
--#define PARAVIRT_CALL					\
--	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
--
- /*
-  * These macros are intended to wrap calls through one of the paravirt
-  * ops structs, so that they can be later identified and patched at
-@@ -534,7 +549,7 @@ int paravirt_disable_iospace(void);
- 		/* since this condition will never hold */		\
- 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -544,7 +559,7 @@ int paravirt_disable_iospace(void);
- 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
- 		} else {						\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -571,7 +586,7 @@ int paravirt_disable_iospace(void);
- 		PVOP_VCALL_ARGS;					\
- 		PVOP_TEST_NULL(op);					\
- 		asm volatile(pre					\
--			     paravirt_alt(PARAVIRT_CALL)		\
-+			     paravirt_alt				\
- 			     post					\
- 			     : call_clbr, ASM_CALL_CONSTRAINT		\
- 			     : paravirt_type(op),			\
+ #endif /* CONFIG_DEBUG_BUGVERBOSE */
 -- 
 2.17.0
