@@ -1,95 +1,107 @@
 Return-Path: <zohar@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZqTz5Wm5A950kbm7y5LkqMTwE7J/mKmHMu8PVsaw3c3F8785pyyMO96wsRT7Ph2aD9gJF5V
-ARC-Seal: i=1; a=rsa-sha256; t=1526657398; cv=none;
+X-Google-Smtp-Source: AB8JxZoAmlTfjmiCxTyu8+vfkUKjkPKzCwfjkENaZVcmQhJSwtUerT0xvs5uh1isc7AsUS03q3DY
+ARC-Seal: i=1; a=rsa-sha256; t=1526568602; cv=none;
         d=google.com; s=arc-20160816;
-        b=R5utE8koQ7v5Ujzw2TOcJQPO1gNmlLrybe1JiZPzpVZuIW7/QSlvNbnY3HBX0JSqoq
-         mQo1xahyOo2U1MKLKILgL43aAVRIwEVmJYWa9IHFeWYUSRur1FJYA7zeISdpJo3YsZw8
-         vIK9Dygy+gtGLKpWGuewYA/D9uKcX2MUiesZwoAHCf2yluGKvg308vJ+yyTehN0vQfNt
-         nIH/x8dKyOUf5TlpYtFbZPV6KXouJU4xYjjbEtR9n/CgBcPpHbh2BOWtqnCkqechsKm7
-         9ncvuwcGnBDFn0sHu0M+D2wweZIt+2RWytSwOZIyhWNsS8tk5xJL/udDt9eagN/668bs
-         NmLA==
+        b=Epz74VIpVhoLqH9CevOMJm0qF0/+WvRyOazBuudJhiv/tM5ax5GzsSk+/O5F2B6b8J
+         0Uci90Sh98ClUfbmF4IdDNPKQarBRJbyklwZFejC8yLFkRcresuzX63n+Kbi/Gz+2Dqy
+         7QUol1Y64IeBqMaSKvidce5t4WnH/zH95qsdwaCj/DUABcVN7IvM0FGxer2EkZ3qA5Zs
+         BmzOobxIca7gQ7DCnWJ04V5jhsc2EuRT4Mv4ey0Di++HfWP35E+okCIHuN2odrifzK+t
+         JQPd1KK7io0K/YsiASYKv4uEGWVKSVcMnrbvMUl13Y6jIZYAECINBxFz+l4N7mJNO/Lz
+         cByA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:mime-version:references
-         :in-reply-to:date:cc:to:from:subject:arc-authentication-results;
-        bh=8LD6LVm2quMqLLCYvmSiZPKmIyVfVQgEH4DpUt/eALg=;
-        b=n1pfzH+w68MN01VQK1wcRfgcltGrs6PLd/JHczJlSm1iHdTzT2fnPNtQulayT/Q5c7
-         vxrAUUpQNwIg+p1trzIYA54rdDiOVSRvUj3mdmBjcn2qg4YZ3HH7wFG+hTdVXsTzwbqS
-         geeG84/VaGg8662IPGQXQ5eh2qQbXmWUgJJHnofetwUosuuPuiOFz6Dh/biMum1HcAUc
-         k2gZbQcwt2TSmv/u6gDPO8yPxRhkTTNVCMk7pYL9Pk1wtpUvbNYd7/4pLWUYXFOc64tq
-         MigTrPZTN/sdBGCNMSwTOsVzI+btvAKuX94xbD4Sy1Ihe1o3YIuKVC8OiUTmrLJ14346
-         M63g==
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=mLUxgtHp3GVlK/7SoqUs7p2KCRZPui/uXdiesPhz+/0=;
+        b=aupP/SlbGoZz+vA28t6AT0s2Ihol6Eop7Qy91gr6tUZW2Jeo5WyCd4ROcfFCCHROuv
+         vwbNyC+wZH1NoLsQEtvXClfsUC87FzUcCV6jMttgizE90aaanQmwBuqBSvYUDsnx8UUU
+         1zC7qWlUCS5ca07oXS9LSFMqTljnL/37E0IfkblHuOrFsXTIGb9d7cMq0Qc2jGRM2zTn
+         hgRKke3lnc3lCq374fxLePYpHL/sR2EoPcIE3RQbdDXAPS+MuJLG5o+T4MAbaCW4KfpR
+         q0d6b+MX3iDNtcZE5kaXdRaA1L2XkS2KTYhl4eH+XkFqIFdikypT5IZ/JJoEdU9rHwp7
+         As0g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
        spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob()
- wrapper
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman"
-	 <ebiederm@xmission.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R
- . Rodriguez" <mcgrof@kernel.org>, kexec@lists.infradead.org,
-        Andres
- Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Stephen Smalley <sds@tycho.nsa.gov>
-Date: Fri, 18 May 2018 11:29:36 -0400
-In-Reply-To: <cb7f7401-ce7e-f4b5-2daa-62eaa78492ca@schaufler-ca.com>
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH v2 9/9] ima: based on policy prevent loading firmware (pre-allocated buffer)
+Date: Thu, 17 May 2018 10:48:50 -0400
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-	 <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
-	 <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
-	 <87y3ghhbws.fsf@xmission.com>
-	 <1526643050.3632.127.camel@linux.vnet.ibm.com>
-	 <cb7f7401-ce7e-f4b5-2daa-62eaa78492ca@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18051815-0008-0000-0000-000004F7F77C
+x-cbid: 18051714-0012-0000-0000-000005D7A706
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051815-0009-0000-0000-00001E8C75AC
-Message-Id: <1526657376.3404.15.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_06:,,
+x-cbparentid: 18051714-0013-0000-0000-00001954D35F
+Message-Id: <1526568530-9144-10-git-send-email-zohar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805180170
+ definitions=main-1805170137
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600723179870285580?=
-X-GMAIL-MSGID: =?utf-8?q?1600816308167994194?=
+X-GMAIL-THRID: =?utf-8?q?1600723199422453169?=
+X-GMAIL-MSGID: =?utf-8?q?1600723199422453169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-05-18 at 07:58 -0700, Casey Schaufler wrote:
-> On 5/18/2018 4:30 AM, Mimi Zohar wrote:
+Question: can the device access the pre-allocated buffer at any time?
 
-> > Having to define a separate LSM hook for each of the original, non
-> > kernel_read_file(), buffer based method callers, kind of makes sense,
-> > as the callers themselves are specific, but is it really necessary?
-> > Could we define a new, generic LSM hook named
-> > security_kernel_buffer_data() for this purpose?
-> 
-> If there are two disparate behaviors wrapped into kernel_read_file()
-> Eric (bless him) is right. It should be broken into two hooks. I think
-> that if we look (too) carefully we'll find other places where hooks
-> should get broken up, or combined*. My question is just how important
-> is it that this gets changed?
+By allowing devices to request firmware be loaded directly into a
+pre-allocated buffer, will this allow the device access to the firmware
+before the kernel has verified the firmware signature?
 
-Other than the LSM call in copy_module_from_user(), this patch set is
-adding the LSM call in kexec_load() and firmware_fallback_sysfs().
+Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
+qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
 
-Eric, the question remains whether we need distinct LSM hooks in each
-of these places or can we have a single, generic LSM hook named
-security_kernel_buffer_data()?
+With an IMA policy requiring signed firmware, this patch would prevent
+loading firmware into a pre-allocated buffer.
 
-Mimi
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
+---
+ security/integrity/ima/ima_main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 29d1a929af5c..6224468845e6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -452,6 +452,15 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		return 0;
+ 	}
+ 
++	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
++			return -EACCES;
++		}
++		return 0;
++	}
++
+ 	if (read_id == READING_FIRMWARE_FALLBACK_SYSFS) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+ 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+-- 
+2.7.5
