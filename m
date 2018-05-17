@@ -1,217 +1,141 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2641703-1526587936-2-16992693935187194651
+X-Cyrus-Session-Id: sloti22d1t05-2607644-1526585632-2-2658725695980922355
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526587935; b=HTbxD1KR2RoRkCLdndRaF/n997GSYivAGub4xN44EUkszyaygk
-    YpALezW1dHyr2ZVXCA+Hm+8L3MBWeljGTlVXFWmqqQM2mWqsW/+lhIk48GT86UHd
-    1JwImdPrOtDkAG8PmXqD5kSvAaYyI/YqN28KNAjlY6Ed4IHgbU5/eL7nEo69uzPU
-    CQLSZQUlc1zChgUAQxk2Yf/CPtTwaDr4tarUE+tJlw5dScTzt2U73/P4Ut/rVT9i
-    oYEueUbMAANRCnezpOL98qdkLkZDnRq/QcPRYThVHGcIuSGvg7eAxZvf6s2tleJU
-    y4cFsEzQ1DrnhbJSgiU4nFPhEv6+CddG30eg==
+    1526585632; b=Gr+BrRP3+cBfLnLeU7U3bckul219qHLwxILaytF/X7JOwqW9RH
+    FzgPSqQbYpwNOuAohWW//SSFwxn3UaZ3xNaTMv2l9aEpd/mNz1K+wYUXe8POSSC+
+    ZT7ekRMG5JuHuBfDdSCvWuNJcPdsXhAhrgenLgKdA864VBWInXlwJIJ5t6Iy62zC
+    JkZ6IWskKb5cxJ8Fuc3UGUmY3Qmm7TCcQpcz8MAlmhXJEfjwR5Al103GTDS+12XL
+    PtbFGYkgOpVwM9TkkMWeLrV+623OCRnSBD/T9SkMn+56+96IkNSI5DBkewzhy0Jh
+    UL8LKnKoIEiH88gzz9kJNSags9ubHXkQ4nyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1526587935; bh=wNpoc5xfuHh
-    WhrI6VW7ECrs2C+L0URQrenUlSrKdW9Q=; b=SEFhe/Z6FVtw/0PG9DxrZMFPzvi
-    1nivPVYrz0hDP2pZOoP85JrgoA9iywH2RysOWIL4iEKJVCuWshATfDblkoU/8p8h
-    RiLuZ48iY0nBNPDz3LFtsHrL0yfOaY517JBEMfdfaPhPAoG2V3E895oG5Wjderzz
-    zqx1blJuKUp3vlXMLC4icdWu/os0GnQCwxHYpK9cwOuLF/chSP3Vx8DmkBF07kAy
-    RwhRbrWL+FfZFJdNgGeWRS0eZ75srTH0BnvQZz4KjpegzDW+1AVvo3wsJt2r4ylb
-    zfNC8+vXhtMDhZH7JCK9TwvQKfX5mLEG3IyQS0bBst9157TPIh8Ex57gj3g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-    header.i=@linaro.org header.b=RtCtN247 x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    messagingengine.com; h=from:subject:to:cc:message-id:date
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1526585632; bh=uRrXjKNlDGJt93HiKjpfWpkfR3RYtS
+    dw2xcsDk7ZMjU=; b=ld5elgEOIbTsY17fnLPpMztsVYtXHyGenedHBLog/zD/1w
+    mlal23lJOU05XnhO358oZ+Ln0urIPJffX+BbrkkwYWXZDd7O38oI+cNdEID4C7ZG
+    TmoiIPuULwmL4dh1GBlhI5oT9Q8/Wt3By7ces5CbvWq0RB83EHGxtAbQ9zPR27I4
+    Cf1uLO3vz6I8RO9u2dAkUdPzH3KmfzxmCIrMZK3jvsF3KP6My8Yi0spoYlHH5N5U
+    hUCkjKUHEoXbUmT+QliVwRouLhaX5gGSiBEuca1ytiBAxxqqdSH+9JX7oIzjBYPV
+    Cab8izVSws1CkjfXXg26v5cuuBq9fPu345sxgZvQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
+    header.i=@oracle.com header.b=ooj+h3Vf x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=rcapZCVZ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-      header.i=@linaro.org header.b=RtCtN247 x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
+      header.i=@oracle.com header.b=ooj+h3Vf x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=rcapZCVZ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJnEPwMgq3XSSOsVm1oOKMzb/V9CWuprzNl/q3BxVuph1ku+Y2fUFx9C2hZOAdasCOs3uXbaUPGPuhrNHUl+ZN3X0c8fvihmnx6OXdVINgW+gL1b5e6i
-    K8GgkJXrbF4CxWmMcpNq2Ew6WqYRtnRRnokMxtqLDaYLdVEfNeuj31HJn+T7qwUr6FualIPbqa2nLQy1HdavkQ5NOdxdZllUGHgPt+6T1EIHexfZdRVRzDqY
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=oWUkm7qxZtmG1Q6IZ3QA:9 a=wPNLvfGTeEIA:10
+X-CM-Envelope: MS4wfMv5RmkIsR5oaSQi+ox2jFtZF3fmUo3AWrxaIdIhzNfKRRNlEWNn9JcNECRW5yfCeIt6e9M3ww9sMyGk2GhmTiN+pImjgW9/GbpEBYUIX4CQAMzZp6BN
+    Rp9R/YZVFN9DJpucPMr9kZs/2bqU4bWgvd4Trs2pRHU22sJtz7EvXW+s4HCQXBXzS9hWDiJidLouBMepqNOekO0NasvceD59W8cIq3Zkb2w86X2fDqZy9vG3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=_1eiS0DOzhJj2cjQq14A:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751543AbeEQUMM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 16:12:12 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37580 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeEQUML (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 16:12:11 -0400
-X-Google-Smtp-Source: AB8JxZr1+5HBeUD5vQKJeSkDIt5Z7ondh6GvSjz4DpqjQt0ECVNjIdTXbx5rnMHyHrKeJdCklcQL7A==
-Date: Thu, 17 May 2018 22:12:07 +0200
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
-        patrick.bellasi@arm.com, viresh.kumar@linaro.org,
-        tglx@linutronix.de, efault@gmx.de, juri.lelli@redhat.com,
-        "# v4 . 16+" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] sched/rt: fix call to cpufreq_update_util
-Message-ID: <20180517201207.GA478@linaro.org>
-References: <1526541403-16380-1-git-send-email-vincent.guittot@linaro.org>
- <20180517090530.GO12217@hirez.programming.kicks-ass.net>
- <20180517093206.GP12235@hirez.programming.kicks-ass.net>
+        id S1751293AbeEQTde (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 15:33:34 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44676 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeEQTdc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 15:33:32 -0400
+From: Joe Jin <joe.jin@oracle.com>
+Subject: [PATCH] xen-swiotlb: fix the check condition for
+ xen_swiotlb_free_coherent
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Cc: ASHISH_B_SRIVASTAVA <ashish.b.srivastava@oracle.com>,
+        stable@vger.kernel.org
+Message-ID: <b787f389-6db9-c42e-eb7c-5b5810390da1@oracle.com>
+Date: Thu, 17 May 2018 12:33:28 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180517093206.GP12235@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805170182
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Le Thursday 17 May 2018 à 11:32:06 (+0200), Peter Zijlstra a écrit :
-> On Thu, May 17, 2018 at 11:05:30AM +0200, Peter Zijlstra wrote:
-> > Hurm.. I think this is also wrong. See how dequeue_rt_stack() is also
-> > called from the enqueue path. Also, nothing calls cpufreq_update_util()
-> > on the throttle path now.
+When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
+but Dom Heap is increased by the same size. Tracing raidconfig we found
+that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
+to apply memory. If the memory allocated by Dom0 is not in the DMA area,
+it will exchange memory with Xen to meet the requiment. Later drivers
+call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
+the check condition (dev_addr + size - 1 <= dma_mask) is always false,
+it prevents calling xen_destroy_contiguous_region() to return the memory
+to the Xen DMA heap.
 
-Yes I missed the point that rt_entities were dequeued then re-enqueued when
-a task was either enqueued or dequeued.
+This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
+coherent alloc/dealloc check before swizzling the MFNs.".
 
-That's also means that enqueue_top_rt_rq() is always called when a task is
-enqueued or dequeued and also when groups are throttled or unthrottled
-In fact, the only point where it's not called, is when root rt_rq is
-throttled. So I have prepared the patch below which call cpufreq_update util
-in enqueue_top_rt_rq() and also when we throttle the root rt_rq.
-According to the tests I have done , it seems to work for enqueue/dequeue and
-throttle/unthrottle use cases.
-
-I have re-used your rt_rq_is_runnable() which takes into account rt_queued
-
+Signed-off-by: Joe Jin <joe.jin@oracle.com>
+Tested-by: John Sobecki <john.sobecki@oracle.com> 
+Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: stable@vger.kernel.org
 ---
- kernel/sched/cpufreq_schedutil.c |  2 +-
- kernel/sched/rt.c                | 16 ++++++++++------
- kernel/sched/sched.h             |  5 +++++
- 3 files changed, 16 insertions(+), 7 deletions(-)
+ drivers/xen/swiotlb-xen.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index e13df95..1751f96 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -185,7 +185,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
- 	unsigned long util;
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index e1c60899fdbc..a6f9ba85dc4b 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -351,7 +351,7 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+ 	 * physical address */
+ 	phys = xen_bus_to_phys(dev_addr);
  
--	if (rq->rt.rt_nr_running) {
-+	if (rt_rq_is_runnable(&rq->rt)) {
- 		util = sg_cpu->max;
- 	} else {
- 		util = sg_cpu->util_dl;
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 7aef6b4..d6b9517 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -508,8 +508,11 @@ static void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+-	if (((dev_addr + size - 1 > dma_mask)) ||
++	if (((dev_addr + size - 1 <= dma_mask)) ||
+ 	    range_straddles_page_boundary(phys, size))
+ 		xen_destroy_contiguous_region(phys, order);
  
- 	rt_se = rt_rq->tg->rt_se[cpu];
- 
--	if (!rt_se)
-+	if (!rt_se) {
- 		dequeue_top_rt_rq(rt_rq);
-+		/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
-+		cpufreq_update_util(rq_of_rt_rq(rt_rq), 0);
-+	}
- 	else if (on_rt_rq(rt_se))
- 		dequeue_rt_entity(rt_se, 0);
- }
-@@ -1001,8 +1004,6 @@ dequeue_top_rt_rq(struct rt_rq *rt_rq)
- 	sub_nr_running(rq, rt_rq->rt_nr_running);
- 	rt_rq->rt_queued = 0;
- 
--	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
--	cpufreq_update_util(rq, 0);
- }
- 
- static void
-@@ -1014,11 +1015,14 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
- 
- 	if (rt_rq->rt_queued)
- 		return;
--	if (rt_rq_throttled(rt_rq) || !rt_rq->rt_nr_running)
-+
-+	if (rt_rq_throttled(rt_rq))
- 		return;
- 
--	add_nr_running(rq, rt_rq->rt_nr_running);
--	rt_rq->rt_queued = 1;
-+	if (rt_rq->rt_nr_running) {
-+		add_nr_running(rq, rt_rq->rt_nr_running);
-+		rt_rq->rt_queued = 1;
-+	}
- 
- 	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
- 	cpufreq_update_util(rq, 0);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c9895d3..bbebcfe 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -609,6 +609,11 @@ struct rt_rq {
- #endif
- };
- 
-+static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
-+{
-+	return rt_rq->rt_queued && rt_rq->rt_nr_running;
-+}
-+
- /* Deadline class' related fields in a runqueue */
- struct dl_rq {
- 	/* runqueue is an rbtree, ordered by deadline */
 -- 
-2.7.4
-
-
-
-
-
-> > 
-> > And talking about throttle; I think we wanted to check rt_queued in that
-> > case.
-> 
-> Bah, clearly you also want to update on unthrottle.. but I think there's
-> more buggered wrt throtteling.
+2.14.3 (Apple Git-98)
