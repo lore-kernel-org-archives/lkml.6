@@ -1,49 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeEQOvC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:51:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36778 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752627AbeEQOu7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:50:59 -0400
-Subject: Re: [PATCH V2] nvme-rdma: fix double free in nvme_rdma_free_queue
-To: Max Gurtovoy <maxg@mellanox.com>, keith.busch@intel.com, axboe@fb.com,
-        hch@lst.de, sagi@grimberg.me
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <1525945328-1908-1-git-send-email-jianchao.w.wang@oracle.com>
- <c32eef8a-ae1e-ce7e-ee39-eee60192e517@mellanox.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <fcfa5a80-83db-c5bf-a46d-c53629a3c9db@oracle.com>
-Date: Thu, 17 May 2018 22:50:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <c32eef8a-ae1e-ce7e-ee39-eee60192e517@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8895 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=784
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170137
+        id S1752668AbeEQOwV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:52:21 -0400
+Received: from mga11.intel.com ([192.55.52.93]:8473 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752348AbeEQOwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:52:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,411,1520924400";
+   d="scan'208";a="225053291"
+Message-ID: <1526568739.11765.2.camel@linux.intel.com>
+Subject: Re: [UPDATE][RFC/RFT][PATCH 07/10] cpufreq: intel_pstate: HWP boost
+ performance on busy task migrate
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        juri.lelli@redhat.com, viresh.kumar@linaro.org
+Date: Thu, 17 May 2018 07:52:19 -0700
+In-Reply-To: <20180517082353.GN12217@hirez.programming.kicks-ass.net>
+References: <20180516205111.22231-1-srinivas.pandruvada@linux.intel.com>
+         <20180517082353.GN12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-2.fc25) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Max
-
-Thanks for kindly review and suggestion for this.
-
-On 05/16/2018 08:18 PM, Max Gurtovoy wrote:
-> I don't know exactly what Christoph meant but IMO the best place to allocate it is in nvme_rdma_alloc_queue just before calling
+On Thu, 2018-05-17 at 10:23 +0200, Peter Zijlstra wrote:
+> On Wed, May 16, 2018 at 01:51:11PM -0700, Srinivas Pandruvada wrote:
+> > @@ -263,6 +264,7 @@ struct cpudata {
+> >  	call_single_data_t csd;
+> >  	bool hwp_boost_active;
+> >  	u64 last_io_update;
+> > +	bool migrate_hint;
+> >  };
 > 
-> "set_bit(NVME_RDMA_Q_ALLOCATED, &queue->flags);"
-> 
-> then you will never get to double free since we clear the NVME_RDMA_Q_ALLOCATED bit in the beginning of nvme_rdma_free_queue.
-
-Yes, I will investigate the whether there is some special reason for async_event_sqe is not allocated in nvme_rdma_alloc_queue next.
-
-Thanks
-Jianchao
+> You want to look at that structure layout...
+Yes, I will.
