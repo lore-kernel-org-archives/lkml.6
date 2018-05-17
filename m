@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752188AbeEQFvw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:51:52 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44231 "EHLO
+        id S1752168AbeEQFvu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:51:50 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52137 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbeEQFum (ORCPT
+        with ESMTP id S1751319AbeEQFum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 01:50:42 -0400
 From: Oleksij Rempel <o.rempel@pengutronix.de>
@@ -21,12 +21,10 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Stephen Boyd <sboyd@codeaurora.org>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v7 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Thu, 17 May 2018 07:50:10 +0200
-Message-Id: <20180517055014.6607-3-o.rempel@pengutronix.de>
+Subject: [PATCH v7 0/6] provide power off support for iMX6 with external PMIC
+Date: Thu, 17 May 2018 07:50:08 +0200
+Message-Id: <20180517055014.6607-1-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
 X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -35,65 +33,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+2018.05.17:
+update patches to version v7
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
 
-This patch implements step 4. of this sequence.
+This patch series is providing power off support for Freescale/NXP iMX6 based
+boards with external power management integrated circuit (PMIC).
+As a first step the PMIC is configured to turn off the system if the
+standby pin is asserted. On second step we assert the standby pin.
+For this reason we need to use pm_power_off_prepare.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Usage of stnadby pin for power off is described in official iMX6
+documentation.
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 017539dd712b..2f5c643f62fb 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -601,6 +601,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_stby_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	imx6q_suspend_finish(0);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_stby_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_stby_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -617,6 +639,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_stby_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
+2018.03.05:
+As this patch set touches multiple subsystems I think it would make
+sense for Shawn Guo to take the all patch set.
+The only part which didn't receive an ACK is regulator stuff. So I would
+hope that Mark Brown can ACK it.
+
+Kind regards,
+Oleksij Rempel
+
+2017.12.06:
+Adding Linus. Probably there is no maintainer for this patch set.
+No changes are made, tested on v4.15-rc1.
+
+2017.10.27:
+Last version of this patch set was send at 20 Jun 2017, this is a rebase against
+kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
+please point me.
+
+changes:
+v7:
+ - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
+ - call imx6q_suspend_finish() directly without cpu_suspend()
+
+v6:
+ - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+ - fix "MPIC_STBY_REQ" typo in the comment.
+
+v5:
+ - remove useless includes from pm-imx6.c patch
+ - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
+   patch
+
+v4:
+ - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
+   patch
+ - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+   patch
+
+v3:
+ - set pm_power_off_prepare = NULL on .remove.
+ - documentation and spelling fixes.
+ - use %pf instead of lookup_symbol_name.
+
+Oleksij Rempel (6):
+  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+    property
+  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+    is set
+  kernel/reboot.c: export pm_power_off_prepare
+  regulator: pfuze100: add fsl,pmic-stby-poweroff property
+  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+  ARM: dts: imx6: RIoTboard provide standby on power off option
+
+ .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
+ .../bindings/regulator/pfuze100.txt           |  7 ++
+ arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
+ arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
+ drivers/regulator/pfuze100-regulator.c        | 92 +++++++++++++++++++
+ kernel/reboot.c                               |  1 +
+ 6 files changed, 138 insertions(+)
+
 -- 
 2.17.0
