@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751715AbeEQLck (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:32:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59126 "EHLO
+        id S1752014AbeEQLc7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:32:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60322 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeEQLci (ORCPT
+        with ESMTP id S1751396AbeEQLc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:32:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9AF160881
+        Thu, 17 May 2018 07:32:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 732E960881
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From: Vikash Garodia <vgarodia@codeaurora.org>
@@ -16,45 +16,64 @@ To: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         acourbot@google.com, Vikash Garodia <vgarodia@codeaurora.org>
-Subject: [PATCH 0/4] Venus updates - PIL 
-Date: Thu, 17 May 2018 17:02:16 +0530
-Message-Id: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH 1/4] soc: qcom: mdt_loader: Add check to make scm calls
+Date: Thu, 17 May 2018 17:02:17 +0530
+Message-Id: <1526556740-25494-2-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+In order to invoke scm calls, ensure that the platform
+has the required support to invoke the scm calls in
+secure world.
 
-The patch set mainly adds PIL functionality in video driver. 
-There are boards with qcom video hardware but does not have
-trustzone. For such boards, the PIL added now will load the
-video firmware and reset the ARM9.
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+---
+ drivers/soc/qcom/mdt_loader.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-The patch set is based on top of recent venus updates v2 patches
-posted by Stanimir Varbanov.
-
-Comments are welcome!
-
-regards,
-Vikash
-
-Vikash Garodia (4):
-  soc: qcom: mdt_loader: Add check to make scm calls
-  media: venus: add a routine to reset ARM9
-  venus: add check to make scm calls
-  media: venus: add PIL support
-
- .../devicetree/bindings/media/qcom,venus.txt       |   8 +-
- drivers/media/platform/qcom/venus/core.c           |  67 +++++++-
- drivers/media/platform/qcom/venus/core.h           |   6 +
- drivers/media/platform/qcom/venus/firmware.c       | 189 ++++++++++++++++++---
- drivers/media/platform/qcom/venus/firmware.h       |  11 +-
- drivers/media/platform/qcom/venus/hfi_venus.c      |  26 ++-
- drivers/media/platform/qcom/venus/hfi_venus_io.h   |   5 +
- drivers/soc/qcom/mdt_loader.c                      |  21 ++-
- 8 files changed, 281 insertions(+), 52 deletions(-)
-
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 17b314d..db55d53 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -121,10 +121,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw_name)
+ 		return -ENOMEM;
+ 
+-	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+-	if (ret) {
+-		dev_err(dev, "invalid firmware metadata\n");
+-		goto out;
++	if (qcom_scm_is_available()) {
++		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
++		if (ret) {
++			dev_err(dev, "invalid firmware metadata\n");
++			goto out;
++		}
+ 	}
+ 
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+@@ -144,10 +146,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	}
+ 
+ 	if (relocate) {
+-		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+-		if (ret) {
+-			dev_err(dev, "unable to setup relocation\n");
+-			goto out;
++		if (qcom_scm_is_available()) {
++			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
++							max_addr - min_addr);
++			if (ret) {
++				dev_err(dev, "unable to setup relocation\n");
++				goto out;
++			}
+ 		}
+ 
+ 		/*
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
