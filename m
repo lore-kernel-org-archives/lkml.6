@@ -1,448 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEQKOM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:14:12 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41581 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeEQKOK (ORCPT
+        id S1751985AbeEQKOn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:14:43 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39380 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751734AbeEQKOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:14:10 -0400
-X-Google-Smtp-Source: AB8JxZohzG21dN0HDqDqbBLaKnudLyVocl2h+BE8BRX2v7ESnkAZN4sbXg+OLLXqwr46ugO8m+BoUA==
-Date: Thu, 17 May 2018 15:44:05 +0530
+        Thu, 17 May 2018 06:14:41 -0400
+X-Google-Smtp-Source: AB8JxZq/+hhlknolBNvoe8mV1TzehLMTln9p5epiubB9j4P7jFe22KtT5Kv4eQ/fcYiQhBGWsTycAA==
+Date: Thu, 17 May 2018 15:44:38 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>
+To: Taniya Das <tdas@codeaurora.org>, robh@kernel.org
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
         amit.kucheria@linaro.org
-Subject: Re: [v0 2/2] cpufreq: qcom-fw: Add support for QCOM cpufreq FW driver
-Message-ID: <20180517101405.23oxyqpmpjhauflx@vireshk-i7>
+Subject: Re: [v0 1/2] dt-bindings: clock: Introduce QCOM CPUFREQ FW bindings
+Message-ID: <20180517101438.du7xihojuhjxq77l@vireshk-i7>
 References: <1526549401-25666-1-git-send-email-tdas@codeaurora.org>
- <1526549401-25666-3-git-send-email-tdas@codeaurora.org>
+ <1526549401-25666-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526549401-25666-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1526549401-25666-2-git-send-email-tdas@codeaurora.org>
 User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++ Rob.
+
 On 17-05-18, 15:00, Taniya Das wrote:
-> The CPUfreq FW present in some QCOM chipsets offloads the steps necessary
-> for hanging the frequency of CPUs. The driver implements the cpufreq driver
-> interface for this firmware.
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which are
+> controlled by firmware.
 > 
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  drivers/cpufreq/Kconfig.arm       |   9 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-fw.c | 318 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 328 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-fw.c
+>  .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 68 ++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 96b35b8..a50aa6e 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -301,3 +301,12 @@ config ARM_PXA2xx_CPUFREQ
->  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
-> 
->  	  If in doubt, say N.
-> +
-> +config ARM_QCOM_CPUFREQ_FW
-> +	tristate "QCOM CPUFreq FW driver"
-> +	help
-> +	 Support for the CPUFreq FW driver.
-> +	 The CPUfreq FW preset in some QCOM chipsets offloads the steps
-> +	 necessary for changing the frequency of CPUs. The driver
-> +	 implements the cpufreq driver interface for this firmware.
-> +	 Say Y if you want to support CPUFreq FW.
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 8d24ade..a3edbce 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
->  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_FW)	+= qcom-cpufreq-fw.o
-> 
-> 
->  ##################################################################################
-> diff --git a/drivers/cpufreq/qcom-cpufreq-fw.c b/drivers/cpufreq/qcom-cpufreq-fw.c
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
 > new file mode 100644
-> index 0000000..67996d5
+> index 0000000..bc912f4
 > --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-fw.c
-> @@ -0,0 +1,318 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> @@ -0,0 +1,68 @@
+> +Qualcomm Technologies, Inc. CPUFREQ Bindings
 > +
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
+> +CPUFREQ FW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
+> +SoCs to manage frequency in hardware. It is capable of controlling frequency
+> +for multiple clusters.
 > +
-> +#define INIT_RATE			300000000UL
-> +#define XO_RATE				19200000UL
-> +#define LUT_MAX_ENTRIES			40U
-> +#define CORE_COUNT_VAL(val)		((val & GENMASK(18, 16)) >> 16)
-> +#define LUT_ROW_SIZE			32
+> +Properties:
+> +- compatible
+> +	Usage:		required
+> +	Value type:	<string>
+> +	Definition:	must be "qcom,cpufreq-fw".
 > +
-> +struct cpufreq_qcom {
-> +	struct cpufreq_frequency_table *table;
-> +	struct device *dev;
-> +	void __iomem *perf_base;
-> +	void __iomem *lut_base;
-> +	cpumask_t related_cpus;
-> +	unsigned int max_cores;
-> +};
+> +Note that #address-cells, #size-cells, and ranges shall be present to ensure
+> +the cpufreq can address a freq-domain registers.
 > +
-> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> +A freq-domain sub-node would be defined for the cpus with the following
+> +properties:
 > +
-> +static int
-> +qcom_cpufreq_fw_target_index(struct cpufreq_policy *policy, unsigned int index)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
+> +- compatible:
+> +	Usage:		required
+> +	Value type:	<string>
+> +	Definition:	must be "cpufreq".
 > +
-> +	if (index >= LUT_MAX_ENTRIES) {
-> +		dev_err(c->dev,
-> +		"Passing an index (%u) that's greater than max (%d)\n",
-
-Alignment issues here. Run checkpatch --strict.
-
-> +					index, LUT_MAX_ENTRIES - 1);
-> +		return -EINVAL;
-> +	}
+> +- reg
+> +	Usage:		required
+> +	Value type:	<prop-encoded-array>
+> +	Definition:	Addresses and sizes for the memory of the perf_base
+> +			, lut_base and en_base.
+> +- reg-names
+> +	Usage:		required
+> +	Value type:	<stringlist>
+> +	Definition:	Address names. Must be "perf_base", "lut_base",
+> +			"en_base".
+> +			Must be specified in the same order as the
+> +			corresponding addresses are specified in the reg
+> +			property.
 > +
-> +	writel_relaxed(index, c->perf_base);
+> +- qcom,cpulist
+> +	Usage:		required
+> +	Value type:	<phandles of CPU>
+> +	Definition:	List of related cpu handles which are under a cluster.
 > +
-> +	/* Make sure the write goes through before proceeding */
-> +	mb();
-> +	return 0;
-> +}
+> +Example:
+> +	qcom,cpufreq-fw {
+> +		compatible = "qcom,cpufreq-fw";
 > +
-> +static unsigned int qcom_cpufreq_fw_get(unsigned int cpu)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	unsigned int index;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
 > +
-> +	c = qcom_freq_domain_map[cpu];
-> +	if (!c)
-> +		return -ENODEV;
+> +		freq-domain-0 {
+> +			compatible = "cpufreq";
+> +			reg = <0x17d43920 0x4>,
+> +			     <0x17d43110 0x500>,
+> +			     <0x17d41000 0x4>;
+> +			reg-names = "perf_base", "lut_base", "en_base";
+> +			qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3>;
+> +		};
 > +
-> +	index = readl_relaxed(c->perf_base);
-> +	index = min(index, LUT_MAX_ENTRIES - 1);
-> +
-> +	return c->table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_fw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	int ret;
-> +
-> +	c = qcom_freq_domain_map[policy->cpu];
-> +	if (!c) {
-> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cpumask_copy(policy->cpus, &c->related_cpus);
-> +
-> +	policy->table = c->table;
-> +	policy->driver_data = c;
-> +
-> +	return ret;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_fw_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	&cpufreq_freq_attr_scaling_boost_freqs,
-> +	NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_fw_driver = {
-> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.target_index	= qcom_cpufreq_fw_target_index,
-> +	.get		= qcom_cpufreq_fw_get,
-> +	.init		= qcom_cpufreq_fw_cpu_init,
-> +	.name		= "qcom-cpufreq-fw",
-> +	.attr		= qcom_cpufreq_fw_attr,
-> +	.boost_enabled	= true,
-> +};
-> +
-> +static int qcom_read_lut(struct platform_device *pdev,
-> +			struct cpufreq_qcom *c)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	u32 data, src, lval, i, core_count, prev_cc = 0;
-> +
-> +	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-> +				sizeof(*c->table), GFP_KERNEL);
-> +	if (!c->table)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-> +		data = readl_relaxed(c->lut_base + i * LUT_ROW_SIZE);
-> +		src = ((data & GENMASK(31, 30)) >> 30);
-> +		lval = (data & GENMASK(7, 0));
-> +		core_count = CORE_COUNT_VAL(data);
-
-Why do you need this here ? And why do below in case this doesn't
-match max-cores count ?
-
-> +
-> +		if (!src)
-> +			c->table[i].frequency = INIT_RATE / 1000;
-> +		else
-> +			c->table[i].frequency = XO_RATE * lval / 1000;
-> +
-> +		c->table[i].driver_data = c->table[i].frequency;
-> +
-> +		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-> +				i, c->table[i].frequency, core_count);
-> +
-> +		if (core_count != c->max_cores)
-> +			c->table[i].frequency = CPUFREQ_ENTRY_INVALID;
-> +
-> +		/*
-> +		 * Two of the same frequencies with the same core counts means
-> +		 * end of table.
-> +		 */
-> +		if (i > 0 && c->table[i - 1].driver_data ==
-> +					c->table[i].driver_data
-> +					&& prev_cc == core_count) {
-> +			struct cpufreq_frequency_table *prev = &c->table[i - 1];
-> +
-> +			if (prev->frequency == CPUFREQ_ENTRY_INVALID) {
-> +				prev->flags = CPUFREQ_BOOST_FREQ;
-> +				prev->frequency = prev->driver_data;
-> +			}
-> +
-> +			break;
-> +		}
-> +		prev_cc = core_count;
-> +	}
-> +	c->table[i].frequency = CPUFREQ_TABLE_END;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_get_related_cpus(struct device_node *np, struct cpumask *m)
-> +{
-> +	struct device_node *dev_phandle;
-> +	struct device *cpu_dev;
-> +	int cpu, i = 0, ret = -ENOENT;
-> +
-> +	dev_phandle = of_parse_phandle(np, "qcom,cpulist", i++);
-
-TBH, I am not a great fan of the CPU phandle list you have created
-here. Lets see what Rob has to say on this.
-
-> +	while (dev_phandle) {
-> +		for_each_possible_cpu(cpu) {
-> +			cpu_dev = get_cpu_device(cpu);
-> +			if (cpu_dev && cpu_dev->of_node == dev_phandle) {
-> +				cpumask_set_cpu(cpu, m);
-> +				ret = 0;
-
-Maybe just remove this line ...
-
-> +				break;
-> +			}
-> +		}
-> +		dev_phandle = of_parse_phandle(np, "qcom,cpulist", i++);
-> +	}
-> +
-> +	return ret;
-
-and check for empty cpumask for an error here.
-
-> +}
-> +
-> +static int qcom_cpu_resources_init(struct platform_device *pdev,
-> +						struct device_node *np)
-
-You may want to align these properly. Try running checkpatch with
---strict option.
-
-> +{
-> +	struct cpufreq_qcom *c;
-> +	struct resource res;
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *en_base;
-> +	int cpu, index = 0, ret;
-
-Why initialize index here ?
-
-> +
-> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-
-Check for a valid 'c' here ?
-
-> +
-> +	res = platform_get_resource_byname(dev, IORESOURCE_MEM, "en_base");
-
-You are assigning a pointer to a structure here :(
-
-> +	if (!res) {
-> +		dev_err(dev, "Enable base not defined for %s\n", np->name);
-> +		return ret;
-> +	}
-> +
-> +	en_base = devm_ioremap(dev, res->start, resource_size(res));
-
-You don't get a build error for doing res->start here ? Looks like you
-sent a driver upstream which doesn't even build.
-
-> +	if (!en_base) {
-> +		dev_err(dev, "Unable to map %s en-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* FW should be enabled state to proceed */
-> +	if (!(readl_relaxed(en_base) & 0x1)) {
-> +		dev_err(dev, "%s firmware not enabled\n", np->name);
-> +		return -ENODEV;
-> +	}
-> +
-> +	devm_iounmap(&pdev->dev, en_base);
-> +
-> +	index = of_property_match_string(np, "reg-names", "perf_base");
-> +	if (index < 0)
-> +		return index;
-> +
-> +	if (of_address_to_resource(np, index, &res))
-> +		return -ENOMEM;
-> +
-> +	c->perf_base = devm_ioremap(dev, res.start, resource_size(&res));
-> +	if (!c->perf_base) {
-> +		dev_err(dev, "Unable to map %s perf-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	index = of_property_match_string(np, "reg-names", "lut_base");
-> +	if (index < 0)
-> +		return index;
-> +
-> +	if (of_address_to_resource(np, index, &res))
-> +		return -ENOMEM;
-> +
-> +	c->lut_base = devm_ioremap(dev, res.start, resource_size(&res));
-> +	if (!c->lut_base) {
-> +		dev_err(dev, "Unable to map %s lut-base\n", np->name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = qcom_get_related_cpus(np, &c->related_cpus);
-> +	if (ret) {
-> +		dev_err(dev, "%s failed to get core phandles\n", np->name);
-> +		return ret;
-> +	}
-> +
-> +	c->max_cores = cpumask_weight(&c->related_cpus);
-> +
-> +	ret = qcom_read_lut(pdev, c);
-> +	if (ret) {
-> +		dev_err(dev, "%s failed to read LUT\n", np->name);
-> +		return ret;
-> +	}
-> +
-> +	for_each_cpu(cpu, &c->related_cpus)
-> +		qcom_freq_domain_map[cpu] = c;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_resources_init(struct platform_device *pdev)
-> +{
-> +	struct device_node *np;
-> +	int ret = -ENODEV;
-> +
-> +	for_each_available_child_of_node(pdev->dev.of_node, np) {
-> +		if (of_device_is_compatible(np, "cpufreq")) {
-> +			ret = qcom_cpu_resources_init(pdev, np);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return ret;
-
-Don't initialize ret to -ENODEV, rather return -ENODEV directly here.
-That makes it more readable.
-
-> +}
-> +
-> +static int qcom_cpufreq_fw_driver_probe(struct platform_device *pdev)
-> +{
-> +	int rc = 0;
-
-Don't need to initialize to 0 here.
-
-> +
-> +	/* Get the bases of cpufreq for domains */
-> +	rc = qcom_resources_init(pdev);
-> +	if (rc) {
-> +		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
-> +		return rc;
-> +	}
-> +
-> +	rc = cpufreq_register_driver(&cpufreq_qcom_fw_driver);
-> +	if (rc) {
-> +		dev_err(&pdev->dev, "CPUFreq FW driver failed to register\n");
-> +		return rc;
-> +	}
-> +
-> +	dev_info(&pdev->dev, "QCOM CPUFreq FW driver inited\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id match_table[] = {
-> +	{ .compatible = "qcom,cpufreq-fw" },
-> +	{}
-> +};
-> +
-> +static struct platform_driver qcom_cpufreq_fw_driver = {
-> +	.probe = qcom_cpufreq_fw_driver_probe,
-> +	.driver = {
-> +		.name = "qcom-cpufreq-fw",
-> +		.of_match_table = match_table,
-> +		.owner = THIS_MODULE,
-> +	},
-> +};
-> +
-> +static int __init qcom_cpufreq_fw_init(void)
-> +{
-> +	return platform_driver_register(&qcom_cpufreq_fw_driver);
-> +}
-> +subsys_initcall(qcom_cpufreq_fw_init);
-
-Why this for a driver which can be built as a module ? You really want
-it to be built as a module ?
-
-> +
-> +static void __exit qcom_cpufreq_fw_exit(void)
-> +{
-> +	platform_driver_unregister(&qcom_cpufreq_fw_driver);
-> +}
-
-But you don't unregister the cpufreq driver ?
-
-> +module_exit(qcom_cpufreq_fw_exit);
-> +
-> +MODULE_DESCRIPTION("QCOM CPU Frequency FW");
-> +MODULE_LICENSE("GPL v2");
+> +		freq-domain-1 {
+> +			compatible = "cpufreq";
+> +			reg = <0x17d46120 0x4>,
+> +			    <0x17d45910 0x500>,
+> +			    <0x17d45800 0x4>;
+> +			reg-names = "perf_base", "lut_base", "en_base";
+> +			qcom,cpulist = <&CPU4 &CPU5 &CPU6 &CPU7>;
+> +		};
+> +	};
 > --
 > Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 > of the Code Aurora Forum, hosted by the  Linux Foundation.
