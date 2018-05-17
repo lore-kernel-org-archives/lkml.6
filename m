@@ -1,34 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeEQRNB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:13:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44562 "EHLO
+        id S1752271AbeEQRNL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:13:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44828 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751231AbeEQRNA (ORCPT
+        with ESMTP id S1752174AbeEQRNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:13:00 -0400
+        Thu, 17 May 2018 13:13:09 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>, agross@codeaurora.org,
-        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "soc: qcom: apr: fix invalid msg_type check" to the asoc tree
-In-Reply-To: <20180517160353.27561-1-srinivas.kandagatla@linaro.org>
-Message-Id: <20180517171249.8B9FB44007C@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 18:12:49 +0100 (BST)
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, Linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops" to the regulator tree
+In-Reply-To: <1526542042-28485-2-git-send-email-Anson.Huang@nxp.com>
+Message-Id: <20180517171302.B3F1E44007C@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 18:13:02 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   soc: qcom: apr: fix invalid msg_type check
+   regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -49,36 +47,35 @@ to this mail.
 Thanks,
 Mark
 
->From e744619d056e6ec5cd9db38e55511a22dc463f89 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 17 May 2018 17:03:53 +0100
-Subject: [PATCH] soc: qcom: apr: fix invalid msg_type check
+>From 0b01fd3d40fe6402e5fa3b491ef23109feb1aaa5 Mon Sep 17 00:00:00 2001
+From: Anson Huang <Anson.Huang@nxp.com>
+Date: Thu, 17 May 2018 15:27:22 +0800
+Subject: [PATCH] regulator: pfuze100: add .is_enable() for
+ pfuze100_swb_regulator_ops
 
-Removed invalid msg_type check.
-This also fixes below static checker warning:
-apr.c:95:35: warning: comparison is always true due to limited range of
- data type [-Wtype-limits]
-warn: always true condition '(msg_type != 69864) => (0-u16max != 69864)'
+If is_enabled() is not defined, regulator core will assume
+this regulator is already enabled, then it can NOT be really
+enabled after disabled.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Based on Li Jun's patch from the NXP kernel tree.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/soc/qcom/apr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/pfuze100-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 97f3622da535..57af8a537332 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -92,7 +92,7 @@ static int apr_callback(struct rpmsg_device *rpdev, void *buf,
- 	}
- 
- 	msg_type = APR_HDR_FIELD_MT(hdr->hdr_field);
--	if (msg_type >= APR_MSG_TYPE_MAX && msg_type != APR_BASIC_RSP_RESULT) {
-+	if (msg_type >= APR_MSG_TYPE_MAX) {
- 		dev_err(apr->dev, "APR: Wrong message type: %d\n", msg_type);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 053eb1ecf18d..677a070eeb1c 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -168,6 +168,7 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
+ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_table,
+ 	.map_voltage = regulator_map_voltage_ascend,
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
 -- 
 2.17.0
