@@ -1,129 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751438AbeEQGBI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:01:08 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:29184 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750801AbeEQGBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:01:06 -0400
-Subject: Re: [PATCH 1/5] random: fix crng_ready() test
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
-References: <20180413013046.404-1-tytso@mit.edu>
- <1699469.KmO53oa8XU@tauon.chronox.de> <20180413125313.GA2633@thunk.org>
- <4393662.RPWnPK42dp@tauon.chronox.de> <20180413170037.GA28721@thunk.org>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <84e0c16c-2b48-69e5-4ca4-2ca3bce15dc9@c-s.fr>
-Date: Thu, 17 May 2018 08:01:04 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751715AbeEQGCZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:02:25 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34484 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750865AbeEQGCY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 02:02:24 -0400
+X-Google-Smtp-Source: AB8JxZouBnhCcDZzrCdWAuBMnXdH1Q1FI2mzQ0fT9Da1x0rFBS+c7b6PM4yRycBOjsGalq9NgTkPWFhfVz/uG5nolF0=
 MIME-Version: 1.0
-In-Reply-To: <20180413170037.GA28721@thunk.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517051447.GS13271@vkoul-mobl>
+References: <08819489e52add194fecf2b4b234fff9deecdb4c.1526043689.git.baolin.wang@linaro.org>
+ <85413038c111c58747194dd5736834be9adb0f20.1526043689.git.baolin.wang@linaro.org>
+ <20180517051447.GS13271@vkoul-mobl>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 17 May 2018 14:02:22 +0800
+Message-ID: <CAMz4kuKtfwRfm4zcSYFrr=FHQzQSBYUD2ZSYuzgJ41sjPyBUmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
+To: Vinod <vkoul@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vinod,
 
+On 17 May 2018 at 13:14, Vinod <vkoul@kernel.org> wrote:
+> On 11-05-18, 21:06, Baolin Wang wrote:
+>> +struct sprd_dma_config {
+>> +     struct dma_slave_config cfg;
+>> +     u32 block_len;
+>> +     u32 transcation_len;
+>
+> /s/transcation/transaction
 
-Le 13/04/2018 à 19:00, Theodore Y. Ts'o a écrit :
-> On Fri, Apr 13, 2018 at 03:05:01PM +0200, Stephan Mueller wrote:
->>
->> What I would like to point out that more and more folks change to
->> getrandom(2). As this call will now unblock much later in the boot cycle,
->> these systems see a significant departure from the current system behavior.
->>
->> E.g. an sshd using getrandom(2) would be ready shortly after the boot finishes
->> as of now. Now it can be a matter minutes before it responds. Thus, is such
->> change in the kernel behavior something for stable?
-> 
-> It will have some change on the kernel behavior, but not as much as
-> you might think.  That's because in older kernels, we were *already*
-> blocking until crng_init > 2 --- if the getrandom(2) call happened
-> while crng_init was in state 0.
-> 
-> Even before this patch series, we didn't wake up a process blocked on
-> crng_init_wait until crng_init state 2 is reached:
-> 
-> static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
-> {
-> 	...
-> 	if (crng == &primary_crng && crng_init < 2) {
-> 		invalidate_batched_entropy();
-> 		crng_init = 2;
-> 		process_random_ready_list();
-> 		wake_up_interruptible(&crng_init_wait);
-> 		pr_notice("random: crng init done\n");
-> 	}
-> }
-> 
-> This is the reason why there are reports like this: "Boot delayed for
-> about 90 seconds until 'random: crng init done'"[1]
-> 
-> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1685794
-> 
-> 
-> So we have the problem already.  There will be more cases of this
-> after this patch series is applied, true.  But what we have already is
-> an inconsistent state where if you call getrandom(2) while the kernel
-> is in crng_init state 0, you will block until crng_init state 2, but
-> if you are in crng_init state 1, you will assume the CRNG is fully
-> initialized.
-> 
-> Given the documentation of how getrandom(2) works what its documented
-> guarantees are, I think it does justify making its behavior both more
-> consistent with itself, and more consistent what the security
-> guarantees we have promised people.
-> 
-> I was a little worried that on VM's this could end up causing things
-> to block for a long time, but an experiment on a GCE VM shows that
-> isn't a problem:
-> 
-> [    0.000000] Linux version 4.16.0-rc3-ext4-00009-gf6b302ebca85 (tytso@cwcc) (gcc version 7.3.0 (Debian 7.3.0-15)) #16 SMP Thu Apr 12 16:57:17 EDT 2018
-> [    1.282220] random: fast init done
-> [    3.987092] random: crng init done
-> [    4.376787] EXT4-fs (sda1): re-mounted. Opts: (null)
-> 
-> There are some desktops where the "crng_init done" report doesn't
-> happen until 45-90 seconds into the boot.  I don't think I've seen
-> reports where it takes _minutes_ however.  Can you give me some
-> examples of such cases?
+OK.
 
+>
+> now in code I see block_len and this filled by len which is sg_dma_len()?
+> So why two varibales when you are using only one.
 
-On a powerpc embedded board which has an mpc8xx processor running at 
-133Mhz, I now get the startup done in more than 7 minutes instead of 30 
-seconds. This is due to the webserver blocking on read on /dev/random 
-until we get 'random: crng init done':
+Like I explained before, we have transaction transfer, block transfer
+and fragment transfer, and we should set the length for each transfer.
+In future, we we will use these two variables in cyclic mode, but for
+prep_sg, we just make them equal to
 
-[    0.000000] Linux version 4.17.0-rc4-00415-gd2f75d40072d 
-(root@localhost) (gcc version 5.4.0 (GCC)) #203 PREEMPT Wed May 16 
-16:32:02 CEST 2018
-[    0.295453] random: get_random_u32 called from 
-bucket_table_alloc+0x84/0x1bc with crng_init=0
-[    1.030472] device: 'random': device_add
-[    1.031279] device: 'urandom': device_add
-[    1.420069] device: 'hw_random': device_add
-[    2.156853] random: fast init done
-[  462.007776] random: crng init done
+>
+> Second, you are storing parameters programmed thru _prep call into
+> _dma_config. That is not correct.
+>
+> We use these to store channel parameters and NOT transaction parameters which
+> would differ with each txn. No wonder you can only support only 1 txn :)
 
-This has become really critical, is there anything that can be done ?
+Fine, we can remove block_len/transcation_len from 'struct
+sprd_dma_config'. Any other issues for the 'struct sprd_dma_config'?
 
-Christophe
+>
+> Lastly, if these are same values why not use src/dstn_max_burst?
 
-> 
-> 					- Ted
-> 
-> P.S.  Of course, in a VM environment, if the host supports virtio-rng,
-> the boot delay problem is completely not an issue.  You just have to
-> enable virtio-rng in the guest kernel, which I believe is already the
-> case for most distro kernels.
-> 
-> BTW, for KVM, it's fairly simple to set it the host-side support for
-> virtio-rng.  Just add to the kvm command-line options:
-> 
->      -object rng-random,filename=/dev/urandom,id=rng0 \
-> 	-device virtio-rng-pci,rng=rng0
-> 
+The fragment length will be filled by src/dstn_max_burst,so we can not
+use it again.
+
+>
+>> +static enum sprd_dma_datawidth
+>> +sprd_dma_get_datawidth(enum dma_slave_buswidth buswidth)
+>> +{
+>> +     switch (buswidth) {
+>> +     case DMA_SLAVE_BUSWIDTH_1_BYTE:
+>> +     case DMA_SLAVE_BUSWIDTH_2_BYTES:
+>> +     case DMA_SLAVE_BUSWIDTH_4_BYTES:
+>> +     case DMA_SLAVE_BUSWIDTH_8_BYTES:
+>> +             return ffs(buswidth) - 1;
+>> +     default:
+>> +             return SPRD_DMA_DATAWIDTH_4_BYTES;
+>
+> Does default make sense, should we error out?
+
+Not one error, maybe we can give some warning information.
+
+>
+>> +static u32 sprd_dma_get_step(enum dma_slave_buswidth buswidth)
+>> +{
+>> +     switch (buswidth) {
+>> +     case DMA_SLAVE_BUSWIDTH_1_BYTE:
+>> +     case DMA_SLAVE_BUSWIDTH_2_BYTES:
+>> +     case DMA_SLAVE_BUSWIDTH_4_BYTES:
+>> +     case DMA_SLAVE_BUSWIDTH_8_BYTES:
+>> +             return buswidth;
+>> +
+>> +     default:
+>> +             return SPRD_DMA_DWORD_STEP;
+>
+> Does default make sense, should we error out?
+
+Ditto.
+
+>
+>> +static int sprd_dma_config(struct dma_chan *chan, struct sprd_dma_desc *sdesc,
+>> +                        dma_addr_t src, dma_addr_t dst,
+>> +                        struct sprd_dma_config *slave_cfg)
+>> +{
+>> +     struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
+>> +     struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+>> +     struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
+>> +     u32 fix_mode = 0, fix_en = 0, wrap_en = 0, wrap_mode = 0;
+>> +     u32 src_datawidth, dst_datawidth, temp;
+>> +
+>> +     if (slave_cfg->cfg.slave_id)
+>> +             schan->dev_id = slave_cfg->cfg.slave_id;
+>> +
+>> +     hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
+>> +
+>> +     temp = slave_cfg->wrap_ptr & SPRD_DMA_LOW_ADDR_MASK;
+>> +     temp |= (src >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
+>> +     hw->wrap_ptr = temp;
+>> +
+>> +     temp = slave_cfg->wrap_to & SPRD_DMA_LOW_ADDR_MASK;
+>> +     temp |= (dst >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
+>> +     hw->wrap_to = temp;
+>> +
+>> +     hw->src_addr = src & SPRD_DMA_LOW_ADDR_MASK;
+>> +     hw->des_addr = dst & SPRD_DMA_LOW_ADDR_MASK;
+>> +
+>> +     if ((slave_cfg->src_step != 0 && slave_cfg->dst_step != 0)
+>> +         || (slave_cfg->src_step | slave_cfg->dst_step) == 0) {
+>
+> this check doesnt seem right to me, what are you trying here?
+
+This is SPRD DMA internal feature: address-fix transfer. If the src
+step and dst step both are 0 or both are not 0, that means we can not
+enable the fix mode.
+If one is 0 and another one is not, we can enable the fix mode.
+
+>
+>> +             fix_en = 0;
+>> +     } else {
+>> +             fix_en = 1;
+>> +             if (slave_cfg->src_step)
+>> +                     fix_mode = 1;
+>> +             else
+>> +                     fix_mode = 0;
+>> +     }
+>> +
+>> +     if (slave_cfg->wrap_ptr && slave_cfg->wrap_to) {
+>> +             wrap_en = 1;
+>> +             if (slave_cfg->wrap_to == src) {
+>> +                     wrap_mode = 0;
+>> +             } else if (slave_cfg->wrap_to == dst) {
+>> +                     wrap_mode = 1;
+>> +             } else {
+>> +                     dev_err(sdev->dma_dev.dev, "invalid wrap mode\n");
+>> +                     return -EINVAL;
+>> +             }
+>> +     }
+>> +
+>> +     hw->intc = slave_cfg->int_mode | SPRD_DMA_CFG_ERR_INT_EN;
+>> +
+>> +     src_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.src_addr_width);
+>> +     dst_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.dst_addr_width);
+>> +
+>> +     temp = src_datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET;
+>> +     temp |= dst_datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET;
+>> +     temp |= slave_cfg->req_mode << SPRD_DMA_REQ_MODE_OFFSET;
+>> +     temp |= wrap_mode << SPRD_DMA_WRAP_SEL_OFFSET;
+>> +     temp |= wrap_en << SPRD_DMA_WRAP_EN_OFFSET;
+>> +     temp |= fix_mode << SPRD_DMA_FIX_SEL_OFFSET;
+>> +     temp |= fix_en << SPRD_DMA_FIX_EN_OFFSET;
+>> +     temp |= slave_cfg->cfg.src_maxburst & SPRD_DMA_FRG_LEN_MASK;
+>> +     hw->frg_len = temp;
+>> +
+>> +     hw->blk_len = slave_cfg->block_len & SPRD_DMA_BLK_LEN_MASK;
+>> +     hw->trsc_len = slave_cfg->transcation_len & SPRD_DMA_TRSC_LEN_MASK;
+>> +
+>> +     temp = (slave_cfg->dst_step & SPRD_DMA_TRSF_STEP_MASK) <<
+>> +             SPRD_DMA_DEST_TRSF_STEP_OFFSET;
+>> +     temp |= (slave_cfg->src_step & SPRD_DMA_TRSF_STEP_MASK) <<
+>> +             SPRD_DMA_SRC_TRSF_STEP_OFFSET;
+>> +     hw->trsf_step = temp;
+>> +
+>> +     hw->frg_step = 0;
+>> +     hw->src_blk_step = 0;
+>> +     hw->des_blk_step = 0;
+>> +     return 0;
+>> +}
+>> +static struct dma_async_tx_descriptor *
+>> +sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+>> +                    unsigned int sglen, enum dma_transfer_direction dir,
+>> +                    unsigned long flags, void *context)
+>> +{
+>> +     struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+>> +     struct sprd_dma_config *slave_cfg = &schan->slave_cfg;
+>> +     u32 src_step = 0, dst_step = 0, len = 0;
+>> +     dma_addr_t src = 0, dst = 0;
+>> +     struct sprd_dma_desc *sdesc;
+>> +     struct scatterlist *sg;
+>> +     int ret, i;
+>> +
+>> +     /* TODO: now we only support one sg for each DMA configuration. */
+>> +     if (!is_slave_direction(dir) || sglen > 1)
+>> +             return NULL;
+>> +
+>> +     sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
+>> +     if (!sdesc)
+>> +             return NULL;
+>> +
+>> +     for_each_sg(sgl, sg, sglen, i) {
+>> +             len = sg_dma_len(sg);
+>> +
+>> +             if (dir == DMA_MEM_TO_DEV) {
+>> +                     src = sg_dma_address(sg);
+>> +                     dst = slave_cfg->cfg.dst_addr;
+>> +                     src_step = sprd_dma_get_step(slave_cfg->cfg.src_addr_width);
+>> +                     dst_step = SPRD_DMA_NONE_STEP;
+>> +             } else {
+>> +                     src = slave_cfg->cfg.src_addr;
+>> +                     dst = sg_dma_address(sg);
+>> +                     src_step = SPRD_DMA_NONE_STEP;
+>> +                     dst_step = sprd_dma_get_step(slave_cfg->cfg.dst_addr_width);
+>> +             }
+>> +     }
+>> +
+>> +     sprd_dma_fill_config(slave_cfg, src_step, dst_step, len, flags);
+>> +
+>> +     ret = sprd_dma_config(chan, sdesc, src, dst, slave_cfg);
+>> +     if (ret) {
+>> +             kfree(sdesc);
+>> +             return NULL;
+>> +     }
+>
+> Am more intrigued here, the above call fills you config struct but you do not
+> use it.. so what is the use of that.
+
+I did not get you here. We have passed the slave_cfg to
+sprd_dma_config() to configure DMA hardware channel. Thanks.
+
+-- 
+Baolin.wang
+Best Regards
