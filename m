@@ -1,130 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeEQKuD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:50:03 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:6258 "EHLO pegase1.c-s.fr"
+        id S1752177AbeEQKu1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:50:27 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:27694 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752060AbeEQKuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:50:00 -0400
-Message-Id: <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
+        id S1751844AbeEQKty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:49:54 -0400
+Message-Id: <404fbea1966e65b3d6d8f33856f6ff4c6486cce6.1526553552.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1526553552.git.christophe.leroy@c-s.fr>
 References: <cover.1526553552.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 5/5] powerpc/lib: inline memcmp() for small constant sizes
+Subject: [PATCH v2 2/5] powerpc/lib: optimise 32 bits __clear_user()
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu, 17 May 2018 12:49:58 +0200 (CEST)
+Date: Thu, 17 May 2018 12:49:52 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In my 8xx configuration, I get 208 calls to memcmp()
-Within those 208 calls, about half of them have constant sizes,
-46 have a size of 8, 17 have a size of 16, only a few have a
-size over 16. Other fixed sizes are mostly 4, 6 and 10.
+Rewrite clear_user() on the same principle as memset(0), making use
+of dcbz to clear complete cache lines.
 
-This patch inlines calls to memcmp() when size
-is constant and lower than or equal to 16
+This code is a copy/paste of memset(), with some modifications
+in order to retrieve remaining number of bytes to be cleared,
+as it needs to be returned in case of error.
 
-In my 8xx configuration, this reduces the number of calls
-to memcmp() from 208 to 123
+On a MPC885, throughput is almost doubled:
 
-The following table shows the number of TB timeticks to perform
-a constant size memcmp() before and after the patch depending on
-the size
+Before:
+~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 18.990779 seconds, 52.7MB/s
 
-	Before	After	Improvement
-01:	 7577	 5682	25%
-02:	41668	 5682	86%
-03:	51137	13258	74%
-04:	45455	 5682	87%
-05:	58713	13258	77%
-06:	58712	13258	77%
-07:	68183	20834	70%
-08:	56819	15153	73%
-09:	70077	28411	60%
-10:	70077	28411	60%
-11:	79546	35986	55%
-12:	68182	28411	58%
-13:	81440	35986	55%
-14:	81440	39774	51%
-15:	94697	43562	54%
-16:	79546	37881	52%
+After:
+~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 9.611468 seconds, 104.0MB/s
+
+On a MPC8321, throughput is multiplied by 2.12:
+
+Before:
+root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 6.844352 seconds, 146.1MB/s
+
+After:
+root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
+1048576000 bytes (1000.0MB) copied, 3.218854 seconds, 310.7MB/s
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/string.h | 46 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/powerpc/lib/string_32.S | 85 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 60 insertions(+), 25 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
-index 35f1aaad9b50..80cf0f9605dd 100644
---- a/arch/powerpc/include/asm/string.h
-+++ b/arch/powerpc/include/asm/string.h
-@@ -4,6 +4,8 @@
+diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+index ab8c4f5f31b6..2c11c2019b69 100644
+--- a/arch/powerpc/lib/string_32.S
++++ b/arch/powerpc/lib/string_32.S
+@@ -13,6 +13,7 @@
+ #include <asm/errno.h>
+ #include <asm/ppc_asm.h>
+ #include <asm/export.h>
++#include <asm/cache.h>
  
- #ifdef __KERNEL__
+ 	.text
  
-+#include <linux/kernel.h>
-+
- #define __HAVE_ARCH_STRNCPY
- #define __HAVE_ARCH_STRNCMP
- #define __HAVE_ARCH_MEMSET
-@@ -51,10 +53,54 @@ static inline int strncmp(const char *p, const char *q, __kernel_size_t size)
- 	return __strncmp(p, q, size);
- }
+@@ -31,44 +32,78 @@ _GLOBAL(memcmp)
+ 	blr
+ EXPORT_SYMBOL(memcmp)
  
-+static inline int __memcmp1(const void *p, const void *q, int off)
-+{
-+	return *(u8*)(p + off) - *(u8*)(q + off);
-+}
++CACHELINE_BYTES = L1_CACHE_BYTES
++LG_CACHELINE_BYTES = L1_CACHE_SHIFT
++CACHELINE_MASK = (L1_CACHE_BYTES-1)
 +
-+static inline int __memcmp2(const void *p, const void *q, int off)
-+{
-+	return be16_to_cpu(*(u16*)(p + off)) - be16_to_cpu(*(u16*)(q + off));
-+}
+ _GLOBAL(__clear_user)
+-	addi	r6,r3,-4
+-	li	r3,0
+-	li	r5,0
+-	cmplwi	0,r4,4
++/*
++ * Use dcbz on the complete cache lines in the destination
++ * to set them to zero.  This requires that the destination
++ * area is cacheable.
++ */
++	cmplwi	cr0, r4, 4
++	mr	r10, r3
++	li	r3, 0
+ 	blt	7f
+-	/* clear a single word */
+-11:	stwu	r5,4(r6)
 +
-+static inline int __memcmp4(const void *p, const void *q, int off)
-+{
-+	return be32_to_cpu(*(u32*)(p + off)) - be32_to_cpu(*(u32*)(q + off));
-+}
++11:	stw	r3, 0(r10)
+ 	beqlr
+-	/* clear word sized chunks */
+-	andi.	r0,r6,3
+-	add	r4,r0,r4
+-	subf	r6,r0,r6
+-	srwi	r0,r4,2
+-	andi.	r4,r4,3
++	andi.	r0, r10, 3
++	add	r11, r0, r4
++	subf	r6, r0, r10
 +
-+static inline int __memcmp8(const void *p, const void *q, int off)
-+{
-+	s64 tmp = be64_to_cpu(*(u64*)(p + off)) - be64_to_cpu(*(u64*)(q + off));
-+	return tmp >> 32 ? : (int)tmp;
-+}
++	clrlwi	r7, r6, 32 - LG_CACHELINE_BYTES
++	add	r8, r7, r11
++	srwi	r9, r8, LG_CACHELINE_BYTES
++	addic.	r9, r9, -1	/* total number of complete cachelines */
++	ble	2f
++	xori	r0, r7, CACHELINE_MASK & ~3
++	srwi.	r0, r0, 2
++	beq	3f
++	mtctr	r0
++4:	stwu	r3, 4(r6)
++	bdnz	4b
++3:	mtctr	r9
++	li	r7, 4
++10:	dcbz	r7, r6
++	addi	r6, r6, CACHELINE_BYTES
++	bdnz	10b
++	clrlwi	r11, r8, 32 - LG_CACHELINE_BYTES
++	addi	r11, r11, 4
 +
-+static inline int __memcmp_cst(const void *p,const void *q,__kernel_size_t size)
-+{
-+	if (size == 1)
-+		return __memcmp1(p, q, 0);
-+	if (size == 2)
-+		return __memcmp2(p, q, 0);
-+	if (size == 3)
-+		return __memcmp2(p, q, 0) ? : __memcmp1(p, q, 2);
-+	if (size == 4)
-+		return __memcmp4(p, q, 0);
-+	if (size == 5)
-+		return __memcmp4(p, q, 0) ? : __memcmp1(p, q, 4);
-+	if (size == 6)
-+		return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4);
-+	if (size == 7)
-+		return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4) ? : __memcmp1(p, q, 6);
-+	return __memcmp8(p, q, 0);
-+}
++2:	srwi	r0 ,r11 ,2
+ 	mtctr	r0
+-	bdz	7f
+-1:	stwu	r5,4(r6)
++	bdz	6f
++1:	stwu	r3, 4(r6)
+ 	bdnz	1b
+-	/* clear byte sized chunks */
+-7:	cmpwi	0,r4,0
++6:	andi.	r11, r11, 3
+ 	beqlr
+-	mtctr	r4
+-	addi	r6,r6,3
+-8:	stbu	r5,1(r6)
++	mtctr	r11
++	addi	r6, r6, 3
++8:	stbu	r3, 1(r6)
+ 	bdnz	8b
+ 	blr
+-90:	mr	r3,r4
 +
- static inline int memcmp(const void *p,const void *q,__kernel_size_t size)
- {
- 	if (unlikely(!size))
- 		return 0;
-+	if (__builtin_constant_p(size) && size <= 8)
-+		return __memcmp_cst(p, q, size);
-+	if (__builtin_constant_p(size) && size <= 16)
-+		return __memcmp8(p, q, 0) ? : __memcmp_cst(p + 8, q + 8, size - 8);
- 	return __memcmp(p, q, size);
- }
++7:	cmpwi	cr0, r4, 0
++	beqlr
++	mtctr	r4
++	addi	r6, r10, -1
++9:	stbu	r3, 1(r6)
++	bdnz	9b
+ 	blr
+-91:	mfctr	r3
+-	slwi	r3,r3,2
+-	add	r3,r3,r4
++
++90:	mr	r3, r4
+ 	blr
+-92:	mfctr	r3
++91:	add	r3, r10, r4
++	subf	r3, r6, r3
+ 	blr
  
+ 	EX_TABLE(11b, 90b)
++	EX_TABLE(4b, 91b)
++	EX_TABLE(10b, 91b)
+ 	EX_TABLE(1b, 91b)
+-	EX_TABLE(8b, 92b)
++	EX_TABLE(8b, 91b)
++	EX_TABLE(9b, 91b)
+ 
+ EXPORT_SYMBOL(__clear_user)
 -- 
 2.13.3
