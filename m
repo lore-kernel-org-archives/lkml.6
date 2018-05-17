@@ -1,85 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeEQRIV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:08:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57175 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeEQRIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:08:20 -0400
-Date: Thu, 17 May 2018 19:08:16 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Tony Lindgren <tony@atomide.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Minchan Kim <minchan@kernel.org>, Rik van Riel <riel@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "mm/cma: manage the memory of the CMA area by
- using the ZONE_MOVABLE"
-Message-ID: <20180517170816.GW12670@dhcp22.suse.cz>
-References: <20180517125959.8095-1-ville.syrjala@linux.intel.com>
- <20180517132109.GU12670@dhcp22.suse.cz>
- <20180517133629.GH23723@intel.com>
- <20180517135832.GI23723@intel.com>
- <20180517164947.GV12670@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180517164947.GV12670@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752266AbeEQRJh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:09:37 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:53440 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751640AbeEQRJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 13:09:31 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v2 4/7] PCI: dwc: Rework MSI callbacks handler
+Date: Thu, 17 May 2018 18:09:20 +0100
+Message-Id: <9558d4fcd6f888599e3b70133f1f242c7a6664ee.1526576613.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-05-18 18:49:47, Michal Hocko wrote:
-> On Thu 17-05-18 16:58:32, Ville Syrjälä wrote:
-> > On Thu, May 17, 2018 at 04:36:29PM +0300, Ville Syrjälä wrote:
-> > > On Thu, May 17, 2018 at 03:21:09PM +0200, Michal Hocko wrote:
-> > > > On Thu 17-05-18 15:59:59, Ville Syrjala wrote:
-> > > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > > 
-> > > > > This reverts commit bad8c6c0b1144694ecb0bc5629ede9b8b578b86e.
-> > > > > 
-> > > > > Make x86 with HIGHMEM=y and CMA=y boot again.
-> > > > 
-> > > > Is there any bug report with some more details? It is much more
-> > > > preferable to fix the issue rather than to revert the whole thing
-> > > > right away.
-> > > 
-> > > The machine I have in front of me right now didn't give me anything.
-> > > Black screen, and netconsole was silent. No serial port on this
-> > > machine unfortunately.
-> > 
-> > Booted on another machine with serial:
-> 
-> Could you provide your .config please?
-> 
-> [...]
-> > [    0.000000] cma: Reserved 4 MiB at 0x0000000037000000
-> [...]
-> > [    0.000000] BUG: Bad page state in process swapper  pfn:377fe
-> > [    0.000000] page:f53effc0 count:0 mapcount:-127 mapping:00000000 index:0x0
-> 
-> OK, so this looks the be the source of the problem. -128 would be a
-> buddy page but I do not see anything that would set the counter to -127
-> and the real map count updates shouldn't really happen that early.
-> 
-> Maybe CONFIG_DEBUG_VM and CONFIG_DEBUG_HIGHMEM will tell us more.
+Remove duplicate defines located on pcie-designware.h file already
+available on /include/uapi/linux/pci-regs.h file.
 
-Looking closer, I _think_ that the bug is in set_highmem_pages_init->is_highmem
-and zone_movable_is_highmem might force CMA pages in the zone movable to
-be initialized as highmem. And that sounds supicious to me. Joonsoo?
+Add pci_epc_set_msi() maximum 32 interrupts validation.
+
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+
+ drivers/pci/dwc/pcie-designware-ep.c | 49 ++++++++++++++++++++++++------------
+ drivers/pci/dwc/pcie-designware.h    | 11 --------
+ drivers/pci/endpoint/pci-epc-core.c  |  3 ++-
+ 3 files changed, 35 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index e5f2377..a4baa0d 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+ 
+ static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
+ {
+-	int val;
+ 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	u32 val, reg;
++
++	if (!ep->msi_cap)
++		return 0;
+ 
+-	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+-	if (!(val & MSI_CAP_MSI_EN_MASK))
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	val = dw_pcie_readw_dbi(pci, reg);
++	if (!(val & PCI_MSI_FLAGS_ENABLE))
+ 		return -EINVAL;
+ 
+-	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
++	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
++
+ 	return val;
+ }
+ 
+-static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
++static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ {
+-	int val;
+ 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	u32 val, reg;
+ 
+-	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+-	val &= ~MSI_CAP_MMC_MASK;
+-	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
++	if (!ep->msi_cap)
++		return 0;
++
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	val = dw_pcie_readw_dbi(pci, reg);
++	val &= ~PCI_MSI_FLAGS_QMASK;
++	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
+ 	dw_pcie_dbi_ro_wr_en(pci);
+-	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
++	dw_pcie_writew_dbi(pci, reg, val);
+ 	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+ 	return 0;
+@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 	struct pci_epc *epc = ep->epc;
+ 	u16 msg_ctrl, msg_data;
+-	u32 msg_addr_lower, msg_addr_upper;
++	u32 msg_addr_lower, msg_addr_upper, reg;
+ 	u64 msg_addr;
+ 	bool has_upper;
+ 	int ret;
+ 
++	if (!ep->msi_cap)
++		return 0;
++
+ 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
+-	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
+ 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
+-	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
++	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
++	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
+ 	if (has_upper) {
+-		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
+-		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
++		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
++		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
++		reg = ep->msi_cap + PCI_MSI_DATA_64;
++		msg_data = dw_pcie_readw_dbi(pci, reg);
+ 	} else {
+ 		msg_addr_upper = 0;
+-		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
++		reg = ep->msi_cap + PCI_MSI_DATA_32;
++		msg_data = dw_pcie_readw_dbi(pci, reg);
+ 	}
+ 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+ 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+index b22c5bb..a0ab12f 100644
+--- a/drivers/pci/dwc/pcie-designware.h
++++ b/drivers/pci/dwc/pcie-designware.h
+@@ -96,17 +96,6 @@
+ #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
+ 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
+ 
+-#define MSI_MESSAGE_CONTROL		0x52
+-#define MSI_CAP_MMC_SHIFT		1
+-#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
+-#define MSI_CAP_MME_SHIFT		4
+-#define MSI_CAP_MSI_EN_MASK		0x1
+-#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
+-#define MSI_MESSAGE_ADDR_L32		0x54
+-#define MSI_MESSAGE_ADDR_U32		0x58
+-#define MSI_MESSAGE_DATA_32		0x58
+-#define MSI_MESSAGE_DATA_64		0x5C
+-
+ #define MAX_MSI_IRQS			256
+ #define MAX_MSI_IRQS_PER_CTRL		32
+ #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index a23aa75..b18a8b07 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ 	u8 encode_int;
+ 	unsigned long flags;
+ 
+-	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts > 32)
+ 		return -EINVAL;
+ 
+ 	if (!epc->ops->set_msi)
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
