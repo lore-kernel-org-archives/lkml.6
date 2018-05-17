@@ -1,80 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeEQAf0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:35:26 -0400
-Received: from outprodmail01.cc.columbia.edu ([128.59.72.39]:60533 "EHLO
-        outprodmail01.cc.columbia.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751013AbeEQAfY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:35:24 -0400
-X-Google-Smtp-Source: AB8JxZqj49WNm3LLIwnQ8253qF7yWwbxwcB+cJP7cmw2IIV2lT92oBMdx/vwz5FS/lz918jJtpnRM4XR4fhvWvJLuMY=
+        id S1751850AbeEQAjn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 20:39:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:36827 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751013AbeEQAjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 20:39:41 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 17 May 2018 10:39:32 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: build warning after merge of the vfs tree
+Message-ID: <20180517103932.3d7014d1@canb.auug.org.au>
 MIME-Version: 1.0
-From: Shankara Pailoor <sp3485@columbia.edu>
-Date: Wed, 16 May 2018 17:03:10 -0700
-Message-ID: <CAASgV=vREJBXWQFfWc6Q=EORhsUqsUghe9bB=ToTqvkTMB5CJQ@mail.gmail.com>
-Subject: general protection fault in klist_iter_exit
-To: lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-No-Spam-Score: Local
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hMiEqv1IeAmIv/pC_idrwj/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I am fuzzing Linux 4.17-rc4 with Syzkaller and found the below crash.
-I don't have a reproducer but this crash happened twice.
+Hi Al,
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN PTI
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 36 Comm: kworker/0:1 Not tainted 4.17.0-rc4+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 01/01/2011
-Workqueue: events netlink_sock_destruct_work
-RIP: 0010:klist_iter_exit+0x26/0x90 lib/klist.c:314
-RSP: 0018:ffff880103f57c30 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8490f6d5
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000000
-RBP: ffff880103f57c48 R08: fffffbfff0c133d9 R09: 0000000000000001
-R10: ffff880103f57c78 R11: ffffffff86099ec7 R12: 0000000000000008
-R13: ffffffff854a2ba0 R14: 0000000000000000 R15: ffff880103ec9400
-FS:  0000000000000000(0000) GS:ffff880104e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002031d000 CR3: 0000000005a22003 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- class_dev_iter_exit+0x15/0x20 drivers/base/class.c:323
- nfc_device_iter_exit net/nfc/nfc.h:133 [inline]
- nfc_genl_dump_devices_done+0x34/0x50 net/nfc/netlink.c:666
- genl_lock_done+0x89/0xd0 net/netlink/genetlink.c:493
- netlink_sock_destruct+0x98/0x2a0 net/netlink/af_netlink.c:397
- __sk_destruct+0x53/0x5e0 net/core/sock.c:1566
- sk_destruct+0x47/0x80 net/core/sock.c:1601
- __sk_free+0xf1/0x2b0 net/core/sock.c:1612
- sk_free+0x2a/0x40 net/core/sock.c:1623
- netlink_sock_destruct_work+0x19/0x20 net/netlink/af_netlink.c:419
- process_one_work+0x827/0x1550 kernel/workqueue.c:2145
- worker_thread+0xd2/0xcc0 kernel/workqueue.c:2279
- kthread+0x33c/0x400 kernel/kthread.c:238
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Code: 5d c3 0f 1f 00 55 48 89 e5 41 55 41 54 53 48 89 fb 4c 8d 63 08
-e8 4b 62 cf fc 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80>
-3c 02 00 75 43 4c 8b 6b 08 4d 85 ed 74 2e e8 26 62 cf fc 31
-RIP: klist_iter_exit+0x26/0x90 lib/klist.c:314 RSP: ffff880103f57c30
----[ end trace 69831a3bb9e34eca ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-Regards,
-Shankara
+drivers/isdn/gigaset/capi.c:2344:14: warning: 'gigaset_procinfo' defined bu=
+t not used [-Wunused-function]
+ static char *gigaset_procinfo(struct capi_ctr *ctr)
+              ^~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  2cd1f0ddbb56 ("isdn: replace ->proc_fops with ->proc_show")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr8z0QACgkQAVBC80lX
+0GzjNQf+OQNY5dsyKGqqVazQZJhTgbKu9hfiEeNASyXx+p9C05o/6DKCpHY9l2xV
+EiuoTbQwMwEE6R9zQgsk/ocsh4uuoDNYiEC2MKS8yV5L/GBuIKIHHKXuRmpMu7wT
+7c7LIDNCpIx2UZYRHYfU8E2I/ZeoCwSm7ai/B57tBdmTyPv7C3PfotJptXCob+ra
+uB0J80qHOSv6HX/w/cvpnctwi/J81vrjELXjpaYHneKfciVwR1mVBljt6Od6P+so
+6MyQVEBIFd32AFM8Td3k2YkLwm+Oz396zdw9IXmc9X0dckucXSsrR1MGrMzrc+TL
+hUx4tH6bU8HOeuVLMLyJ7WaqtKp0AA==
+=XU5q
+-----END PGP SIGNATURE-----
+
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/--
