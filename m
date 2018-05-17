@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeEQPA1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:00:27 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44999 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751898AbeEQPAZ (ORCPT
+        id S1752401AbeEQPAx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:00:53 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51732 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbeEQPAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:00:25 -0400
-X-Google-Smtp-Source: AB8JxZop9BmLkHyE9IjINQA/jjlE0jsBwVlkAYh2BUZvc02fyj+ImF+vJySinMZ43mFyROOVmdTQnA==
-Date: Thu, 17 May 2018 09:00:19 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xavier.huwei@tom.com, lijun_nudt@163.com
-Subject: Re: [PATCH rdma-next 1/5] RDMA/hns: Implement the
- disassociate_ucontext API
-Message-ID: <20180517150019.GB10842@ziepe.ca>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-2-git-send-email-xavier.huwei@huawei.com>
+        Thu, 17 May 2018 11:00:51 -0400
+X-Google-Smtp-Source: AB8JxZpRHuMb/wC/1jcnSKgT+twN8Lya3CkjP+JBEw+/CR6yupMLqaFz4FaOpIaeVnDweYXZfWbizhz7sZsZGTLCipY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526544173-106587-2-git-send-email-xavier.huwei@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180517145512.cmr3twodfyz7lzon@redhat.com>
+References: <1526563343-28721-1-git-send-email-okaya@codeaurora.org> <20180517145512.cmr3twodfyz7lzon@redhat.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 17 May 2018 17:00:49 +0200
+Message-ID: <CAKv+Gu-q-=nQCYut0B=Kfv_YeJOQ4ik9rWnTB5ZYwT08U+=rHA@mail.gmail.com>
+Subject: Re: [PATCH] efi/fb: Convert PCI bus address to resource if translated
+ by the bridge
+To: Peter Jones <pjones@redhat.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 04:02:49PM +0800, Wei Hu (Xavier) wrote:
-> This patch Implements the IB core disassociate_ucontext API.
-> 
-> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
->  drivers/infiniband/hw/hns/hns_roce_main.c | 36 +++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> index 96fb6a9..7fafe9d 100644
-> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> @@ -33,6 +33,9 @@
->  #include <linux/acpi.h>
->  #include <linux/of_platform.h>
->  #include <linux/module.h>
-> +#include <linux/sched.h>
-> +#include <linux/sched/mm.h>
-> +#include <linux/sched/task.h>
->  #include <rdma/ib_addr.h>
->  #include <rdma/ib_smi.h>
->  #include <rdma/ib_user_verbs.h>
-> @@ -422,6 +425,38 @@ static int hns_roce_port_immutable(struct ib_device *ib_dev, u8 port_num,
->  	return 0;
->  }
->  
-> +static void hns_roce_disassociate_ucontext(struct ib_ucontext *ibcontext)
-> +{
-> +	struct task_struct *process;
-> +	struct mm_struct   *mm;
-> +
-> +	process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
-> +	if (!process)
-> +		return;
-> +
-> +	mm = get_task_mm(process);
-> +	if (!mm) {
-> +		pr_info("no mm, disassociate ucontext is pending task termination\n");
-> +		while (1) {
-> +			put_task_struct(process);
-> +			usleep_range(1000, 2000);
-> +			process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
-> +			if (!process || process->state == TASK_DEAD) {
-> +				pr_info("disassociate ucontext done, task was terminated\n");
-> +				/* if task was dead, need to release the task
-> +				 * struct.
-> +				 */
-> +				if (process)
-> +					put_task_struct(process);
-> +				return;
-> +			}
-> +		}
-> +	}
+On 17 May 2018 at 16:55, Peter Jones <pjones@redhat.com> wrote:
+> On Thu, May 17, 2018 at 09:22:23AM -0400, Sinan Kaya wrote:
+>> A host bridge is allowed to remap BAR addresses using _TRA attribute in
+>> _CRS windows.
+>>
+>> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff window] (bus address [0x00100000-0x1fffffff])
+>> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
+>>
+>> When a VGA device is behind such a host bridge and the resource is
+>> translated efifb driver is trying to do ioremap against bus address
+>> rather than the resource address and is failing to probe.
+>>
+>> efifb driver is having difficulty locating the base address from BAR
+>> address when
+>>
+>> efifb: probing for efifb
+>> efifb: cannot reserve video memory at 0x1e000000
+>> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
+>> efifb: mode is 800x600x32, linelength=3200, pages=1
+>> efifb: scrolling: redraw
+>> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
+>>
+>> Use the host bridge offset information to convert bus address to
+>> resource address in the fixup.
+>>
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>
+> Looks reasonable to me - Ard, do you want to take this up through the
+> EFI tree?
+>
 
-I don't want to see this boilerplate code copied into every
-driver. Hoist it into the core code, have the disassociate driver callback
-accept a mm_struct parameter, and refactor the other drivers using this.
+Sure
 
-> +	mmput(mm);
-> +	put_task_struct(process);
-> +}
+> Signed-off-by: Peter Jones <pjones@redhat.com>
+>
 
-This can't be right, disassociate requires the driver to replace all
-the mmaps it make to user space with the 0 page, I see hns does use
-mmaps, so it must zap them here.
+I'll take that as a reviewed-by, thanks.
 
-Jason
+>> ---
+>>  drivers/video/fbdev/efifb.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+>> index 46a4484..ea68d5c 100644
+>> --- a/drivers/video/fbdev/efifb.c
+>> +++ b/drivers/video/fbdev/efifb.c
+>> @@ -428,6 +428,8 @@ static void efifb_fixup_resources(struct pci_dev *dev)
+>>  {
+>>       u64 base = screen_info.lfb_base;
+>>       u64 size = screen_info.lfb_size;
+>> +     struct pci_bus_region region;
+>> +     struct resource res;
+>>       int i;
+>>
+>>       if (efifb_pci_dev || screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
+>> @@ -439,6 +441,14 @@ static void efifb_fixup_resources(struct pci_dev *dev)
+>>       if (!base)
+>>               return;
+>>
+>> +     region.start = base;
+>> +     region.end = base + size - 1;
+>> +     res.start = 0;
+>> +     res.flags = IORESOURCE_MEM;
+>> +     pcibios_bus_to_resource(dev->bus, &res, &region);
+>> +     if (res.start)
+>> +             base = res.start;
+>> +
+>>       for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
+>>               struct resource *res = &dev->resource[i];
+>>
+>> --
+>> 2.7.4
+>>
+>
+> --
+>   Peter
