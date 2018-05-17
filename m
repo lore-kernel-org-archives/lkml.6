@@ -1,62 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeEQKHW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:07:22 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59152 "EHLO
+        id S1752181AbeEQKHo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:07:44 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59180 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751395AbeEQKHU (ORCPT
+        with ESMTP id S1751395AbeEQKHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:07:20 -0400
-Date: Thu, 17 May 2018 20:07:13 +1000
+        Thu, 17 May 2018 06:07:43 -0400
+Date: Thu, 17 May 2018 20:07:36 +1000
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
-Message-Id: <cc9b01d2b0e12938fe0e9581dd9d650ad3c4159c.1526551115.git.fthain@telegraphics.com.au>
+Message-Id: <4b31f5239449af31f1d5f9ba312813fd38a5ee0a.1526551115.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 1/2] m68k: Set default dma mask for platform devices
+Subject: [PATCH 2/2] Revert "m68k: set dma and coherent masks for platform FEC
+ ethernets"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids a WARNING splat when loading the macsonic or macmace driver.
-Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask").
+This reverts commit f61e64310b75733d782e930d1fb404b84699eed6.
 
-This implementation of arch_setup_pdev_archdata() differs from the
-powerpc one, in that this one avoids clobbering a device dma mask
-which has already been initialized.
+Initializing the coherent dma mask for a m68k platform device
+with DMA_BIT_MASK(32) is no longer necessary because
+arch_setup_pdev_archdata() now does so by default.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Greg Ungerer <gerg@linux-m68k.org>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- arch/m68k/kernel/dma.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/m68k/coldfire/device.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-index c01b9b8f97bf..463572c4943f 100644
---- a/arch/m68k/kernel/dma.c
-+++ b/arch/m68k/kernel/dma.c
-@@ -9,6 +9,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
-+#include <linux/platform_device.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-@@ -165,3 +166,12 @@ const struct dma_map_ops m68k_dma_ops = {
- 	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
+diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+index 908d58347790..84938fdbbada 100644
+--- a/arch/m68k/coldfire/device.c
++++ b/arch/m68k/coldfire/device.c
+@@ -135,11 +135,7 @@ static struct platform_device mcf_fec0 = {
+ 	.id			= 0,
+ 	.num_resources		= ARRAY_SIZE(mcf_fec0_resources),
+ 	.resource		= mcf_fec0_resources,
+-	.dev = {
+-		.dma_mask		= &mcf_fec0.dev.coherent_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-		.platform_data		= FEC_PDATA,
+-	}
++	.dev.platform_data	= FEC_PDATA,
  };
- EXPORT_SYMBOL(m68k_dma_ops);
-+
-+void arch_setup_pdev_archdata(struct platform_device *pdev)
-+{
-+	if (pdev->dev.coherent_dma_mask == DMA_MASK_NONE &&
-+	    pdev->dev.dma_mask == NULL) {
-+		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-+	}
-+}
+ 
+ #ifdef MCFFEC_BASE1
+@@ -171,11 +167,7 @@ static struct platform_device mcf_fec1 = {
+ 	.id			= 1,
+ 	.num_resources		= ARRAY_SIZE(mcf_fec1_resources),
+ 	.resource		= mcf_fec1_resources,
+-	.dev = {
+-		.dma_mask		= &mcf_fec1.dev.coherent_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-		.platform_data		= FEC_PDATA,
+-	}
++	.dev.platform_data	= FEC_PDATA,
+ };
+ #endif /* MCFFEC_BASE1 */
+ #endif /* CONFIG_FEC */
 -- 
 2.16.1
