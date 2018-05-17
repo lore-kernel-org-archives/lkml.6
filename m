@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeEQLHO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:07:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57830 "EHLO
+        id S1752508AbeEQLLf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:11:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53118 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751986AbeEQLHJ (ORCPT
+        by vger.kernel.org with ESMTP id S1751664AbeEQLHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:07:09 -0400
+        Thu, 17 May 2018 07:07:13 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -31,20 +31,20 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
         paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v11 09/26] mm: VMA sequence count
-Date: Thu, 17 May 2018 13:06:16 +0200
+Subject: [PATCH v11 11/26] mm: protect mremap() against SPF hanlder
+Date: Thu, 17 May 2018 13:06:18 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051711-0012-0000-0000-000005D790D9
+x-cbid: 18051711-0012-0000-0000-000005D790DC
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051711-0013-0000-0000-00001954BBC7
-Message-Id: <1526555193-7242-10-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18051711-0013-0000-0000-00001954BBCA
+Message-Id: <1526555193-7242-12-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1805170100
@@ -52,207 +52,246 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+If a thread is remapping an area while another one is faulting on the
+destination area, the SPF handler may fetch the vma from the RB tree before
+the pte has been moved by the other thread. This means that the moved ptes
+will overwrite those create by the page fault handler leading to page
+leaked.
 
-Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
-counts such that we can easily test if a VMA is changed.
+	CPU 1				CPU2
+	enter mremap()
+	unmap the dest area
+	copy_vma()			Enter speculative page fault handler
+	   >> at this time the dest area is present in the RB tree
+					fetch the vma matching dest area
+					create a pte as the VMA matched
+					Exit the SPF handler
+					<data written in the new page>
+	move_ptes()
+	  > it is assumed that the dest area is empty,
+ 	  > the move ptes overwrite the page mapped by the CPU2.
 
-The calls to vm_write_begin/end() in unmap_page_range() are
-used to detect when a VMA is being unmap and thus that new page fault
-should not be satisfied for this VMA. If the seqcount hasn't changed when
-the page table are locked, this means we are safe to satisfy the page
-fault.
+To prevent that, when the VMA matching the dest area is extended or created
+by copy_vma(), it should be marked as non available to the SPF handler.
+The usual way to so is to rely on vm_write_begin()/end().
+This is already in __vma_adjust() called by copy_vma() (through
+vma_merge()). But __vma_adjust() is calling vm_write_end() before returning
+which create a window for another thread.
+This patch adds a new parameter to vma_merge() which is passed down to
+vma_adjust().
+The assumption is that copy_vma() is returning a vma which should be
+released by calling vm_raw_write_end() by the callee once the ptes have
+been moved.
 
-The flip side is that we cannot distinguish between a vma_adjust() and
-the unmap_page_range() -- where with the former we could have
-re-checked the vma bounds against the address.
-
-The VMA's sequence counter is also used to detect change to various VMA's
-fields used during the page fault handling, such as:
- - vm_start, vm_end
- - vm_pgoff
- - vm_flags, vm_page_prot
- - anon_vma
- - vm_policy
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-[Port to 4.12 kernel]
-[Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
-[Introduce vm_write_* inline function depending on
- CONFIG_SPECULATIVE_PAGE_FAULT]
-[Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
- using vm_raw_write* functions]
-[Fix a lock dependency warning in mmap_region() when entering the error
- path]
-[move sequence initialisation INIT_VMA()]
-[Review the patch description about unmap_page_range()]
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h       | 44 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mm_types.h |  3 +++
- mm/memory.c              |  2 ++
- mm/mmap.c                | 31 +++++++++++++++++++++++++++++++
- 4 files changed, 80 insertions(+)
+ include/linux/mm.h | 24 +++++++++++++++++++-----
+ mm/mmap.c          | 53 +++++++++++++++++++++++++++++++++++++++++------------
+ mm/mremap.c        | 13 +++++++++++++
+ 3 files changed, 73 insertions(+), 17 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 35ecb983ff36..18acfdeee759 100644
+index 18acfdeee759..3f8b2ce0ef7c 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1306,6 +1306,9 @@ struct zap_details {
- static inline void INIT_VMA(struct vm_area_struct *vma)
- {
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	seqcount_init(&vma->vm_sequence);
-+#endif
- }
+@@ -2253,18 +2253,32 @@ void anon_vma_interval_tree_verify(struct anon_vma_chain *node);
  
- struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
-@@ -1428,6 +1431,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
- 	unmap_mapping_range(mapping, holebegin, holelen, 0);
- }
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+static inline void vm_write_begin(struct vm_area_struct *vma)
-+{
-+	write_seqcount_begin(&vma->vm_sequence);
-+}
-+static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-+					 int subclass)
-+{
-+	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
-+}
-+static inline void vm_write_end(struct vm_area_struct *vma)
-+{
-+	write_seqcount_end(&vma->vm_sequence);
-+}
-+static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-+{
-+	raw_write_seqcount_begin(&vma->vm_sequence);
-+}
-+static inline void vm_raw_write_end(struct vm_area_struct *vma)
-+{
-+	raw_write_seqcount_end(&vma->vm_sequence);
-+}
-+#else
-+static inline void vm_write_begin(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-+					 int subclass)
-+{
-+}
-+static inline void vm_write_end(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-+{
-+}
-+static inline void vm_raw_write_end(struct vm_area_struct *vma)
-+{
-+}
-+#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+ /* mmap.c */
+ extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin);
 +
- extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
- 		void *buf, int len, unsigned int gup_flags);
- extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 54f1e05ecf3e..fb5962308183 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -335,6 +335,9 @@ struct vm_area_struct {
- 	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
- #endif
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	seqcount_t vm_sequence;
-+#endif
- } __randomize_layout;
- 
- struct core_thread {
-diff --git a/mm/memory.c b/mm/memory.c
-index 75163c145c76..551a1916da5d 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1499,6 +1499,7 @@ void unmap_page_range(struct mmu_gather *tlb,
- 	unsigned long next;
- 
- 	BUG_ON(addr >= end);
-+	vm_write_begin(vma);
- 	tlb_start_vma(tlb, vma);
- 	pgd = pgd_offset(vma->vm_mm, addr);
- 	do {
-@@ -1508,6 +1509,7 @@ void unmap_page_range(struct mmu_gather *tlb,
- 		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
- 	} while (pgd++, addr = next, addr != end);
- 	tlb_end_vma(tlb, vma);
-+	vm_write_end(vma);
+ extern int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+ 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert,
+-	struct vm_area_struct *expand);
++	struct vm_area_struct *expand, bool keep_locked);
++
+ static inline int vma_adjust(struct vm_area_struct *vma, unsigned long start,
+ 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert)
+ {
+-	return __vma_adjust(vma, start, end, pgoff, insert, NULL);
++	return __vma_adjust(vma, start, end, pgoff, insert, NULL, false);
  }
- 
- 
+-extern struct vm_area_struct *vma_merge(struct mm_struct *,
++
++extern struct vm_area_struct *__vma_merge(struct mm_struct *mm,
++	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
++	unsigned long vm_flags, struct anon_vma *anon, struct file *file,
++	pgoff_t pgoff, struct mempolicy *mpol,
++	struct vm_userfaultfd_ctx uff, bool keep_locked);
++
++static inline struct vm_area_struct *vma_merge(struct mm_struct *mm,
+ 	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
+-	unsigned long vm_flags, struct anon_vma *, struct file *, pgoff_t,
+-	struct mempolicy *, struct vm_userfaultfd_ctx);
++	unsigned long vm_flags, struct anon_vma *anon, struct file *file,
++	pgoff_t off, struct mempolicy *pol, struct vm_userfaultfd_ctx uff)
++{
++	return __vma_merge(mm, prev, addr, end, vm_flags, anon, file, off,
++			   pol, uff, false);
++}
++
+ extern struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *);
+ extern int __split_vma(struct mm_struct *, struct vm_area_struct *,
+ 	unsigned long addr, int new_below);
 diff --git a/mm/mmap.c b/mm/mmap.c
-index ceb1c2c1b46b..eeafd0bc8b36 100644
+index add13b4e1d8d..2450860e3f8e 100644
 --- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -701,6 +701,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	long adjust_next = 0;
- 	int remove_next = 0;
+@@ -689,7 +689,7 @@ static inline void __vma_unlink_prev(struct mm_struct *mm,
+  */
+ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+ 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert,
+-	struct vm_area_struct *expand)
++	struct vm_area_struct *expand, bool keep_locked)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct vm_area_struct *next = vma->vm_next, *orig_vma = vma;
+@@ -805,8 +805,12 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
  
-+	/*
-+	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
-+	 *
-+	 * Locked is complaining about a theoretical lock dependency, involving
-+	 * 3 locks:
-+	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
-+	 *
-+	 * Here are the major path leading to this dependency :
-+	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
-+	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
-+	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
-+	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
-+	 *
-+	 * So there is no way to solve this easily, especially because in
-+	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
-+	 * VMAs are not yet known.
-+	 * However, the way the vm_seq is used is guarantying that we will
-+	 * never block on it since we just check for its value and never wait
-+	 * for it to move, see vma_has_changed() and handle_speculative_fault().
-+	 */
-+	vm_raw_write_begin(vma);
-+	if (next)
-+		vm_raw_write_begin(next);
-+
- 	if (next && !insert) {
- 		struct vm_area_struct *exporter = NULL, *importer = NULL;
+ 			importer->anon_vma = exporter->anon_vma;
+ 			error = anon_vma_clone(importer, exporter);
+-			if (error)
++			if (error) {
++				if (next && next != vma)
++					vm_raw_write_end(next);
++				vm_raw_write_end(vma);
+ 				return error;
++			}
+ 		}
+ 	}
+ again:
+@@ -1001,7 +1005,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
  
-@@ -911,6 +935,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 			anon_vma_merge(vma, next);
- 		mm->map_count--;
- 		mpol_put(vma_policy(next));
-+		vm_raw_write_end(next);
- 		kmem_cache_free(vm_area_cachep, next);
- 		/*
- 		 * In mprotect's case 6 (see comments on vma_merge),
-@@ -925,6 +950,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 			 * "vma->vm_next" gap must be updated.
- 			 */
- 			next = vma->vm_next;
-+			if (next)
-+				vm_raw_write_begin(next);
- 		} else {
- 			/*
- 			 * For the scope of the comment "next" and
-@@ -971,6 +998,10 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	if (insert && file)
- 		uprobe_mmap(insert);
+ 	if (next && next != vma)
+ 		vm_raw_write_end(next);
+-	vm_raw_write_end(vma);
++	if (!keep_locked)
++		vm_raw_write_end(vma);
  
-+	if (next && next != vma)
-+		vm_raw_write_end(next);
-+	vm_raw_write_end(vma);
-+
  	validate_mm(mm);
  
- 	return 0;
+@@ -1137,12 +1142,13 @@ can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
+  * parameter) may establish ptes with the wrong permissions of NNNN
+  * instead of the right permissions of XXXX.
+  */
+-struct vm_area_struct *vma_merge(struct mm_struct *mm,
++struct vm_area_struct *__vma_merge(struct mm_struct *mm,
+ 			struct vm_area_struct *prev, unsigned long addr,
+ 			unsigned long end, unsigned long vm_flags,
+ 			struct anon_vma *anon_vma, struct file *file,
+ 			pgoff_t pgoff, struct mempolicy *policy,
+-			struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
++			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
++			bool keep_locked)
+ {
+ 	pgoff_t pglen = (end - addr) >> PAGE_SHIFT;
+ 	struct vm_area_struct *area, *next;
+@@ -1190,10 +1196,11 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
+ 							/* cases 1, 6 */
+ 			err = __vma_adjust(prev, prev->vm_start,
+ 					 next->vm_end, prev->vm_pgoff, NULL,
+-					 prev);
++					 prev, keep_locked);
+ 		} else					/* cases 2, 5, 7 */
+ 			err = __vma_adjust(prev, prev->vm_start,
+-					 end, prev->vm_pgoff, NULL, prev);
++					   end, prev->vm_pgoff, NULL, prev,
++					   keep_locked);
+ 		if (err)
+ 			return NULL;
+ 		khugepaged_enter_vma_merge(prev, vm_flags);
+@@ -1210,10 +1217,12 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
+ 					     vm_userfaultfd_ctx)) {
+ 		if (prev && addr < prev->vm_end)	/* case 4 */
+ 			err = __vma_adjust(prev, prev->vm_start,
+-					 addr, prev->vm_pgoff, NULL, next);
++					 addr, prev->vm_pgoff, NULL, next,
++					 keep_locked);
+ 		else {					/* cases 3, 8 */
+ 			err = __vma_adjust(area, addr, next->vm_end,
+-					 next->vm_pgoff - pglen, NULL, next);
++					 next->vm_pgoff - pglen, NULL, next,
++					 keep_locked);
+ 			/*
+ 			 * In case 3 area is already equal to next and
+ 			 * this is a noop, but in case 8 "area" has
+@@ -3184,9 +3193,20 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 
+ 	if (find_vma_links(mm, addr, addr + len, &prev, &rb_link, &rb_parent))
+ 		return NULL;	/* should never get here */
+-	new_vma = vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
+-			    vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
+-			    vma->vm_userfaultfd_ctx);
++
++	/* There is 3 cases to manage here in
++	 *     AAAA            AAAA              AAAA              AAAA
++	 * PPPP....      PPPP......NNNN      PPPP....NNNN      PP........NN
++	 * PPPPPPPP(A)   PPPP..NNNNNNNN(B)   PPPPPPPPPPPP(1)       NULL
++	 *                                   PPPPPPPPNNNN(2)
++	 *                                   PPPPNNNNNNNN(3)
++	 *
++	 * new_vma == prev in case A,1,2
++	 * new_vma == next in case B,3
++	 */
++	new_vma = __vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
++			      vma->anon_vma, vma->vm_file, pgoff,
++			      vma_policy(vma), vma->vm_userfaultfd_ctx, true);
+ 	if (new_vma) {
+ 		/*
+ 		 * Source vma may have been merged into new_vma
+@@ -3226,6 +3246,15 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 			get_file(new_vma->vm_file);
+ 		if (new_vma->vm_ops && new_vma->vm_ops->open)
+ 			new_vma->vm_ops->open(new_vma);
++		/*
++		 * As the VMA is linked right now, it may be hit by the
++		 * speculative page fault handler. But we don't want it to
++		 * to start mapping page in this area until the caller has
++		 * potentially move the pte from the moved VMA. To prevent
++		 * that we protect it right now, and let the caller unprotect
++		 * it once the move is done.
++		 */
++		vm_raw_write_begin(new_vma);
+ 		vma_link(mm, new_vma, prev, rb_link, rb_parent);
+ 		*need_rmap_locks = false;
+ 	}
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..8ed1a1d6eaed 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -302,6 +302,14 @@ static unsigned long move_vma(struct vm_area_struct *vma,
+ 	if (!new_vma)
+ 		return -ENOMEM;
+ 
++	/* new_vma is returned protected by copy_vma, to prevent speculative
++	 * page fault to be done in the destination area before we move the pte.
++	 * Now, we must also protect the source VMA since we don't want pages
++	 * to be mapped in our back while we are copying the PTEs.
++	 */
++	if (vma != new_vma)
++		vm_raw_write_begin(vma);
++
+ 	moved_len = move_page_tables(vma, old_addr, new_vma, new_addr, old_len,
+ 				     need_rmap_locks);
+ 	if (moved_len < old_len) {
+@@ -318,6 +326,8 @@ static unsigned long move_vma(struct vm_area_struct *vma,
+ 		 */
+ 		move_page_tables(new_vma, new_addr, vma, old_addr, moved_len,
+ 				 true);
++		if (vma != new_vma)
++			vm_raw_write_end(vma);
+ 		vma = new_vma;
+ 		old_len = new_len;
+ 		old_addr = new_addr;
+@@ -326,7 +336,10 @@ static unsigned long move_vma(struct vm_area_struct *vma,
+ 		mremap_userfaultfd_prep(new_vma, uf);
+ 		arch_remap(mm, old_addr, old_addr + old_len,
+ 			   new_addr, new_addr + new_len);
++		if (vma != new_vma)
++			vm_raw_write_end(vma);
+ 	}
++	vm_raw_write_end(new_vma);
+ 
+ 	/* Conceal VM_ACCOUNT so old reservation is not undone */
+ 	if (vm_flags & VM_ACCOUNT) {
 -- 
 2.7.4
