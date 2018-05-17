@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeEQHnZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:25 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:59609 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752455AbeEQHnQ (ORCPT
+        id S1752584AbeEQHnb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:43:31 -0400
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:18837 "EHLO
+        wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752558AbeEQHnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:43:16 -0400
+        Thu, 17 May 2018 03:43:24 -0400
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="17713698"
+   d="scan'208";a="340813096"
+X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="87448696"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -20,9 +21,9 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
         Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>,
         Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 6/9] PCI/portdrv: Add generic pcie_port_find_device()
-Date: Thu, 17 May 2018 03:43:08 -0400
-Message-Id: <1526542991-5291-7-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v17 7/9] PCI/DPC: Disable ERR_NONFATAL handling by DPC
+Date: Thu, 17 May 2018 03:43:09 -0400
+Message-Id: <1526542991-5291-8-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
@@ -30,70 +31,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add generic pcie_port_find_device() routine.
+PCIe ERR_NONFATAL errors mean a particular transaction is unreliable but
+the Link is otherwise fully functional (PCIe r4.0, sec 6.2.2).
+
+The AER driver handles these by logging the error details and calling
+driver-supplied pci_error_handlers callbacks.  It does not reset downstream
+devices, does not remove them from the PCI subsystem, does not re-enumerate
+them, and does not call their driver .remove() or .probe() methods.
+
+But DPC driver previously enabled DPC on ERR_NONFATAL, so if the hardware
+supports DPC, these errors caused a Link reset (performed automatically by
+the hardware), followed by the DPC driver removing affected devices (which
+calls their .remove() methods), bringing the Link back up, and
+re-enumerating (which calls driver .probe() methods).
+
+Disable ERR_NONFATAL DPC triggering so these errors will only be handled by
+AER.  This means drivers won't have to deal with different usage of their
+pci_error_handlers callbacks and .probe() and .remove() methods based on
+whether the platform has DPC support.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+[bhelgaas: changelog]
 Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index ba6c963..896608a 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -114,4 +114,6 @@ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
- 
- struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
- 							u32 service);
-+struct device *pcie_port_find_device(struct pci_dev *dev,
-+				     u32 service);
- #endif /* _PORTDRV_H_ */
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index e5bbf08..a5b3b3a 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -20,6 +20,7 @@
- #include "portdrv.h"
- struct portdrv_service_data {
- 	struct pcie_port_service_driver *drv;
-+	struct device *dev;
- 	u32 service;
- };
- 
-@@ -415,6 +416,7 @@ static int find_service_iter(struct device *device, void *data)
- 		service_driver = to_service_driver(device->driver);
- 		if (service_driver->service == service) {
- 			pdrvs->drv = service_driver;
-+			pdrvs->dev = device;
- 			return 1;
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index 80ec384..361903f 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -260,7 +260,7 @@ static int dpc_probe(struct pcie_device *dev)
  		}
  	}
-@@ -443,6 +445,27 @@ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+ 
+-	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN;
++	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN;
+ 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+ 
+ 	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
+@@ -278,7 +278,7 @@ static void dpc_remove(struct pcie_device *dev)
+ 	u16 ctl;
+ 
+ 	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+-	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
++	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
+ 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
  }
  
- /**
-+ * pcie_port_find_device - find the struct device
-+ * @dev: PCI Express port the service is associated with
-+ * @service: For the service to find
-+ *
-+ * Find the struct device associated with given service on a pci_dev
-+ */
-+struct device *pcie_port_find_device(struct pci_dev *dev,
-+				      u32 service)
-+{
-+	struct device *device;
-+	struct portdrv_service_data pdrvs;
-+
-+	pdrvs.dev = NULL;
-+	pdrvs.service = service;
-+	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
-+
-+	device = pdrvs.dev;
-+	return device;
-+}
-+
-+/**
-  * pcie_port_device_remove - unregister PCI Express port service devices
-  * @dev: PCI Express port the service devices to unregister are associated with
-  *
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 103ba79..5182e0d 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -981,6 +981,7 @@
+ #define  PCI_EXP_DPC_CAP_DL_ACTIVE	0x1000	/* ERR_COR signal on DL_Active supported */
+ 
+ #define PCI_EXP_DPC_CTL			6	/* DPC control */
++#define  PCI_EXP_DPC_CTL_EN_FATAL 	0x0001	/* Enable trigger on ERR_FATAL message */
+ #define  PCI_EXP_DPC_CTL_EN_NONFATAL 	0x0002	/* Enable trigger on ERR_NONFATAL message */
+ #define  PCI_EXP_DPC_CTL_INT_EN 	0x0008	/* DPC Interrupt Enable */
+ 
 -- 
 2.7.4
