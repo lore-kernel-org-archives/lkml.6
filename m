@@ -1,81 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeEQTD6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 15:03:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33207 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbeEQTD4 (ORCPT
+        id S1752128AbeEQTK1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 15:10:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58150 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbeEQTKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 15:03:56 -0400
-Date: Thu, 17 May 2018 12:03:46 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-fed71f7d98795ed0fa1d431910787f0f4a68324f@git.kernel.org>
-Cc: hpa@zytor.com, rick@microway.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Reply-To: rick@microway.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org
-In-Reply-To: <alpine.DEB.2.21.1805171418210.1947@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1805171418210.1947@nanos.tec.linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/apic/x2apic: Initialize cluster ID properly
-Git-Commit-ID: fed71f7d98795ed0fa1d431910787f0f4a68324f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 17 May 2018 15:10:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FFCC601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5AFDD39E.6040203@codeaurora.org>
+Date: Thu, 17 May 2018 12:10:22 -0700
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+To: Joel Fernandes <joel@joelfernandes.org>
+CC: Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
+ related_cpus unnecessarily"
+References: <20180508073340.13114-1-dietmar.eggemann@arm.com> <20180508082242.bre6sjfvefhz6xc3@vireshk-i7> <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com> <20180508094237.GA3752@e108498-lin.cambridge.arm.com> <20180513051933.GA64158@joelaf.mtv.corp.google.com>
+In-Reply-To: <20180513051933.GA64158@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fed71f7d98795ed0fa1d431910787f0f4a68324f
-Gitweb:     https://git.kernel.org/tip/fed71f7d98795ed0fa1d431910787f0f4a68324f
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 17 May 2018 14:36:39 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 17 May 2018 21:00:12 +0200
+On 05/12/2018 10:19 PM, Joel Fernandes wrote:
+> On Tue, May 08, 2018 at 10:42:37AM +0100, Quentin Perret wrote:
+>> On Tuesday 08 May 2018 at 11:09:57 (+0200), Dietmar Eggemann wrote:
+>>> On 05/08/2018 10:22 AM, Viresh Kumar wrote:
+>>>> On 08-05-18, 08:33, Dietmar Eggemann wrote:
+>>>>> This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+>>>>>
+>>>>> Lifting the restriction that the sugov kthread is bound to the
+>>>>> policy->related_cpus for a system with a slow switching cpufreq driver,
+>>>>> which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
+>>>>> only not beneficial it also harms Enery-Aware Scheduling (EAS) on
+>>>>> systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+>>>>>
+>>>>> The sugov kthread which does the update for the little cpus could
+>>>>> potentially run on a big cpu. It could prevent that the big cluster goes
+>>>>> into deeper idle states although all the tasks are running on the little
+>>>>> cluster.
+>>>>
+>>>> I think the original patch did the right thing, but that doesn't suit
+>>>> everybody as you explained.
+>>>>
+>>>> I wouldn't really revert the patch but fix my platform's cpufreq
+>>>> driver to set dvfs_possible_from_any_cpu = false, so that other
+>>>> platforms can still benefit from the original commit.
+>>>
+>>> This would make sure that the kthreads are bound to the correct set of cpus
+>>> for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
+>>> scpi-cpufreq) but it will also change the logic (e.g.
+>>> sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
+>>>
+>>> I'm still struggling to understand when a driver/platform should set
+>>> dvfs_possible_from_any_cpu to true and what the actual benefit would be.
+>>
+>> I assume it might be beneficial to have the kthread moving around freely
+>> in some cases, but since it is a SCHED_DEADLINE task now it can't really
+>> migrate anywhere anyway. So I'm not sure either if this commits still makes
+>> sense now. Or is there another use case for this ?
+>
+> The usecase I guess is, as Dietmar was saying, that it makes sense for
+> kthread to update its own cluster and not disturb other clusters or random
+> CPUs. I agree with this point.
 
-x86/apic/x2apic: Initialize cluster ID properly
+I agree with Viresh. Also, why exactly did we make it deadline instead 
+of RT? Was RT not getting scheduled quick enough? Is it because Android 
+creates a lot of RT threads?
 
-Rick bisected a regression on large systems which use the x2apic cluster
-mode for interrupt delivery to the commit wich reworked the cluster
-management.
+-Saravana
 
-The problem is caused by a missing initialization of the clusterid field
-in the shared cluster data structures. So all structures end up with
-cluster ID 0 which only allows sharing between all CPUs which belong to
-cluster 0. All other CPUs with a cluster ID > 0 cannot share the data
-structure because they cannot find existing data with their cluster
-ID. This causes malfunction with IPIs because IPIs are sent to the wrong
-cluster and the caller waits for ever that the target CPU handles the IPI.
 
-Add the missing initialization when a upcoming CPU is the first in a
-cluster so that the later booting CPUs can find the data and share it for
-proper operation.
-
-Fixes: 023a611748fd ("x86/apic/x2apic: Simplify cluster management")
-Reported-by: Rick Warner <rick@microway.com>
-Bisected-by: Rick Warner <rick@microway.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Rick Warner <rick@microway.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1805171418210.1947@nanos.tec.linutronix.de
----
- arch/x86/kernel/apic/x2apic_cluster.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kernel/apic/x2apic_cluster.c b/arch/x86/kernel/apic/x2apic_cluster.c
-index 8b04234e010b..7685444a106b 100644
---- a/arch/x86/kernel/apic/x2apic_cluster.c
-+++ b/arch/x86/kernel/apic/x2apic_cluster.c
-@@ -116,6 +116,7 @@ static void init_x2apic_ldr(void)
- 			goto update;
- 	}
- 	cmsk = cluster_hotplug_mask;
-+	cmsk->clusterid = cluster;
- 	cluster_hotplug_mask = NULL;
- update:
- 	this_cpu_write(cluster_masks, cmsk);
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
