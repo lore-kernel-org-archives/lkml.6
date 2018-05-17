@@ -1,60 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeEQQhZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:37:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45802 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbeEQQhX (ORCPT
+        id S1752485AbeEQQjD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:39:03 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39082 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752348AbeEQQjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:37:23 -0400
-Date: Thu, 17 May 2018 16:09:12 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Sergey Suloev <ssuloev@orpaltech.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] spi: sun6i: restrict transfer length in PIO-mode
-Message-ID: <20180517070912.GR20254@sirena.org.uk>
-References: <20180330125047.13936-1-ssuloev@orpaltech.com>
- <20180330125047.13936-4-ssuloev@orpaltech.com>
+        Thu, 17 May 2018 12:39:01 -0400
+X-Google-Smtp-Source: AB8JxZoWA83MTYAXJfYOWkIGglETs2dN32TImq4VY2Js6LeAyVJ1DDchzXyLUsezVt/qwxJAuMdVUFlvi6N/QRoO6v0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MRBOAUz+O/XNC2GI"
-Content-Disposition: inline
-In-Reply-To: <20180330125047.13936-4-ssuloev@orpaltech.com>
-X-Cookie: Are you a turtle?
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180517135621.GJ98604@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+ <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+ <20180516100842.xuma7b3e727w7bpz@linutronix.de> <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+ <20180516104734.357oevogppu5bsg4@linutronix.de> <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
+ <20180517135621.GJ98604@atomide.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 17 May 2018 19:38:59 +0300
+Message-ID: <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+To: Tony Lindgren <tony@atomide.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 17, 2018 at 4:56 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180516 13:12]:
+>> On Wed, 2018-05-16 at 12:47 +0200, Sebastian Andrzej Siewior wrote:
+>> > But since I am on it. You have to enable runtime-PM for the UART. So
+>> > what is the problem if you simply don't enable it for the UART which
+>> > used as the kernel console?
+>>
+>> How do I know at the ->probe() time that device in question is going to
+>> be kernel console? Maybe I missed simple way of it.
+>
+> Hmm parse the kernel cmdline maybe? :)
+>
+> BTW, kernel already has earlycon doing exactly what you're trying to do.
 
---MRBOAUz+O/XNC2GI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm sorry, I didn't follow. What exactly earlycon does?
 
-On Fri, Mar 30, 2018 at 03:50:44PM +0300, Sergey Suloev wrote:
+The problem is in 8250 driver. The issue with runtime PM used in atomic context.
+So, I can, of course just remove callbacks from the console ->write().
+Though it will prevent to use kernel console anyway.
 
-> There is no need to handle 3/4 empty/full interrupts as
-> the maximum supported transfer length in PIO mode is
-> 128 bytes for sun6i- and 64 bytes for sun8i-family SoCs.
-
-Surely the whole point of the 3/4 full interrupts is to allow the FIFO
-to be refilled and enable longer transfers?
-
---MRBOAUz+O/XNC2GI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr9KpcACgkQJNaLcl1U
-h9BZ0wf+JI/HcuJMj+LF7KzjOoqtzCRJXO9FYEHZkH0CnNmqn+gkuQ8DQLUCwfLA
-5HOAJRNGNxMcVimYvBbHcGFBHQyDV7H+off76GRudzi2SbNON8Xx+18X7zd9fOQ+
-ThPZLID67VWfC144rQD3pWHHhF3tiS9p/kARvV4DhoxhUwrBAi5VbKlM7LCAJMv2
-gRkX/UX5LQKpouF+sQI1005Cc0PSCOF/sEfmvQ+zly/N+1jftROzxOnbDBvQLKZM
-IKoLThJuyGNUhOeZ+2IlyAydsaFGrX0PBMIc2/1YAiuG0vrmyWlpP+tzs4yOtT4n
-cvuieMNyLRwpLAkCBXwz13RbVQJPRw==
-=KOpR
------END PGP SIGNATURE-----
-
---MRBOAUz+O/XNC2GI--
+-- 
+With Best Regards,
+Andy Shevchenko
