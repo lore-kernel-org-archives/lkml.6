@@ -1,62 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752385AbeEQNqZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:46:25 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:53651 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752352AbeEQNqW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:46:22 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w4HDkAXV018389
-X-Nifty-SrcIP: [209.85.217.181]
-X-Google-Smtp-Source: AB8JxZqqh1/B7lQm4hVn6YJroRo+7lHhdJUaVsfcMGSo2SiWGPZ2KoN9I92rVeNGZc+h43XXoyIxRuhJYLGytUXR408=
+        id S1752417AbeEQNq4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:46:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:56343 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751642AbeEQNqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:46:55 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/lib: Remove .balign inside string functions for PPC32
+In-Reply-To: <20180517231938.4b1b8172@roar.ozlabs.ibm.com>
+References: <20180517100413.856096F938@po14934vm.idsi0.si.c-s.fr> <20180517231938.4b1b8172@roar.ozlabs.ibm.com>
+Date: Thu, 17 May 2018 23:46:52 +1000
+Message-ID: <87wow2mm2b.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180516172601.03188b22@canb.auug.org.au>
-References: <20180515155038.7387bf2c@canb.auug.org.au> <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
- <20180516172601.03188b22@canb.auug.org.au>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 17 May 2018 22:45:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLOynDva0M4LkmubTY1492G_7uabREwiUEUh_rRkkruA@mail.gmail.com>
-Message-ID: <CAK7LNATLOynDva0M4LkmubTY1492G_7uabREwiUEUh_rRkkruA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen,
+Nicholas Piggin <npiggin@gmail.com> writes:
 
-2018-05-16 16:26 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
+> On Thu, 17 May 2018 12:04:13 +0200 (CEST)
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 >
-> On Wed, 16 May 2018 15:01:38 +0900 Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->>
->> How should I handle your fix-up?
->>
->> May I squash into the original one if you ack to do it,
->> or is it better to keep it as a separate patch?
+>> commit 87a156fb18fe1 ("Align hot loops of some string functions")
+>> degraded the performance of string functions by adding useless
+>> nops
+>> 
+>> A simple benchmark on an 8xx calling 100000x a memchr() that
+>> matches the first byte runs in 41668 TB ticks before this patch
+>> and in 35986 TB ticks after this patch. So this gives an
+>> improvement of approx 10%
+>> 
+>> Another benchmark doing the same with a memchr() matching the 128th
+>> byte runs in 1011365 TB ticks before this patch and 1005682 TB ticks
+>> after this patch, so regardless on the number of loops, removing
+>> those useless nops improves the test by 5683 TB ticks.
+>> 
+>> Fixes: 87a156fb18fe1 ("Align hot loops of some string functions")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>  Was sent already as part of a serie optimising string functions.
+>>  Resending on itself as it is independent of the other changes in the
+>> serie
+>> 
+>>  arch/powerpc/lib/string.S | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>> 
+>> diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+>> index a787776822d8..a026d8fa8a99 100644
+>> --- a/arch/powerpc/lib/string.S
+>> +++ b/arch/powerpc/lib/string.S
+>> @@ -23,7 +23,9 @@ _GLOBAL(strncpy)
+>>  	mtctr	r5
+>>  	addi	r6,r3,-1
+>>  	addi	r4,r4,-1
+>> +#ifdef CONFIG_PPC64
+>>  	.balign 16
+>> +#endif
+>>  1:	lbzu	r0,1(r4)
+>>  	cmpwi	0,r0,0
+>>  	stbu	r0,1(r6)
 >
-> Either way is fine by me, but the former reduces the bisection gap.  So
-> it depends on whether you want to rebase your tree or not.
+> The ifdefs are a bit ugly, but you can't argue with the numbers. These
+> alignments should be IFETCH_ALIGN_BYTES, which is intended to optimise
+> the ifetch performance when you have such a loop (although there is
+> always a tradeoff for a single iteration).
 >
-> Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
->
+> Would it make sense to define that for 32-bit as well, and you could use
+> it here instead of the ifdefs? Small CPUs could just use 0.
 
-Thanks!  Squashed now.
+Can we do it with a macro in the header, eg. like:
+
+#ifdef CONFIG_PPC64
+#define IFETCH_BALIGN	.balign IFETCH_ALIGN_BYTES
+#endif
+
+...
+
+  	addi	r4,r4,-1
+  	IFETCH_BALIGN
+  1:	lbzu	r0,1(r4)
 
 
-
-
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+cheers
