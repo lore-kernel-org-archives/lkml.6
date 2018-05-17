@@ -1,85 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeEQNiK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:38:10 -0400
-Received: from sauhun.de ([88.99.104.3]:51290 "EHLO pokefinder.org"
+        id S1751843AbeEQNkG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:40:06 -0400
+Received: from gate.crashing.org ([63.228.1.57]:54001 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750938AbeEQNiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:38:09 -0400
-Date: Thu, 17 May 2018 15:38:07 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>,
-        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] i2c: core-smbus: fix a potential missing-check bug
-Message-ID: <20180517133807.dmlf7rlpavmls6cg@ninjato>
-References: <1525525341-10046-1-git-send-email-wang6495@umn.edu>
- <20180510111658.sxf3mvye5q6ihxa7@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vvt4nisdeyjjnky4"
-Content-Disposition: inline
-In-Reply-To: <20180510111658.sxf3mvye5q6ihxa7@ninjato>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751494AbeEQNkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:40:05 -0400
+Message-ID: <9b9d6fbf928d4d8e239cb7e3c82d5ac1e3d59973.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers
+ save/restore in asm
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Paul Mackerras <paulus@samba.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 17 May 2018 23:39:38 +1000
+In-Reply-To: <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr>
+         <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr>
+         <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-05-17 at 22:10 +1000, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> > arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
+> > in order to use multiple word instructions in functions entry/exit
+> 
+> True, though that could be a lot simpler because the MULTIPLEWORD value
+> is only used for PPC32, which is always big endian. I'll send a patch
+> for that.
 
---vvt4nisdeyjjnky4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There have been known cases of 4xx LE ports though none ever made it
+upstream ...
 
-On Thu, May 10, 2018 at 01:16:59PM +0200, Wolfram Sang wrote:
-> On Sat, May 05, 2018 at 08:02:21AM -0500, Wenwen Wang wrote:
-> > In i2c_smbus_xfer_emulated(), the function i2c_transfer() is invoked to
-> > transfer i2c messages. The number of actual transferred messages is
-> > returned and saved to 'status'. If 'status' is negative, that means an
-> > error occurred during the transfer process. In that case, the value of
-> > 'status' is an error code to indicate the reason of the transfer failur=
-e.
-> > In most cases, i2c_transfer() can transfer 'num' messages with no error.
-> > And so 'status' =3D=3D 'num'. However, due to unexpected errors, it is =
-probable
-> > that only partial messages are transferred by i2c_transfer(). As a resu=
-lt,
-> > 'status' !=3D 'num'. This special case is not checked after the invocat=
-ion of
-> > i2c_transfer() and can potentially lead to unexpected issues in the
-> > following execution since it is expected that 'status' =3D=3D 'num'.
-> >=20
-> > This patch checks the return value of i2c_transfer() and returns an err=
-or
-> > code -EIO if the number of actual transferred messages 'status' is not
-> > equal to 'num'.
-> >=20
-> > Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->=20
-> Applied to for-current, thanks!
-
-Reconsidered and applied to for-next, thanks!
-
-
---vvt4nisdeyjjnky4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9hboACgkQFA3kzBSg
-KbYi4g/9GkQOcONR0sLn2iA40fe80fR0lb8WO6fQD4LSskofEiVyuRNgOHzNPg8R
-DnAbinrpUjuq1GWFlNZyivbiTQFs7ku9oMbt0XcJ0ZmxvgHNJmAUObj+WpkW2mJ+
-oCeJbRKdG3uVuvBtuULe7gbRKwIgdVVWt2hxnXX6X56i/8qZGpJo9v7J0zD/JsRd
-zfjBpn0mndG3Mpw/lEOnhnteUduG30h4OtlBTqwTqzaIxfIFBY2ja1P78dbfSotX
-sju3EC71m4qmqQoKn9vtquk5QLyCFDXYNDSg46DJ3chfWKges/Ip7iFA5j2BiSAC
-Em4uOW4yBBF/0OXcdg5w3dSsmdCdkhVRJOsCXsMYmh5cQS1zDasUWRD+/kZX/ve7
-AphPlCOWW6G6OcY5ACaeCzMXcTnEEi1MIaWlOyWa7xnAq+fSdYWESGivQZzF3FYd
-F9AZMF+/gg3URbY59NLxXbdXPhZb41OjjRLnt3OOW0FuAWLSUqyeYPIK81rlNfny
-n+4igX4ikdq7AgpIoq6NgXRfMYP6RFMgg5idg/bGcb0sp8z/ya1eYIJbblLGLnr6
-xzkUtbBYxysLgVUxTcTWJPDOntcTY8G8i+KlS/RjWuJ5yHZBDmYumzP0J5qmjCS/
-D70rCqy7rok88MuORmVhaS3UcMRENGK5A5pkwHlATsRNhzuSZzk=
-=fN6z
------END PGP SIGNATURE-----
-
---vvt4nisdeyjjnky4--
+> > The patch does the same for the asm parts, for consistency
+> > 
+> > On processors like the 8xx on which insn fetching is pretty slow,
+> > this speeds up registers save/restore
+> 
+> OK. I've always heard that they should be avoided, but that's coming
+> from 64-bit land.
+> 
+> I guess we've been enabling this for all 32-bit targets for ever so it
+> must be a reasonable option.
+> 
+> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> > ---
+> >  v2: Swapped both patches in the serie to reduce number of impacted
+> >      lines and added the same modification in ppc_save_regs()
+> > 
+> >  arch/powerpc/include/asm/ppc_asm.h  |  5 +++++
+> >  arch/powerpc/kernel/misc.S          | 10 ++++++++++
+> >  arch/powerpc/kernel/ppc_save_regs.S |  4 ++++
+> >  3 files changed, 19 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
+> > index 13f7f4c0e1ea..4bb765d0b758 100644
+> > --- a/arch/powerpc/include/asm/ppc_asm.h
+> > +++ b/arch/powerpc/include/asm/ppc_asm.h
+> > @@ -80,11 +80,16 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
+> >  #else
+> >  #define SAVE_GPR(n, base)	stw	n,GPR0+4*(n)(base)
+> >  #define REST_GPR(n, base)	lwz	n,GPR0+4*(n)(base)
+> > +#ifdef CONFIG_CPU_BIG_ENDIAN
+> > +#define SAVE_NVGPRS(base)	stmw	13, GPR0+4*13(base)
+> > +#define REST_NVGPRS(base)	lmw	13, GPR0+4*13(base)
+> > +#else
+> >  #define SAVE_NVGPRS(base)	SAVE_GPR(13, base); SAVE_8GPRS(14, base); \
+> >  				SAVE_10GPRS(22, base)
+> >  #define REST_NVGPRS(base)	REST_GPR(13, base); REST_8GPRS(14, base); \
+> >  				REST_10GPRS(22, base)
+> 
+> There is no 32-bit little endian, so this is basically dead code now.
+> 
+> Maybe there'll be a 32-bit LE port one day, but if so we can put the
+> code back then.
+> 
+> So I'll just drop the else case.
+> 
+> >  #endif
+> > +#endif
+> >  
+> >  #define SAVE_2GPRS(n, base)	SAVE_GPR(n, base); SAVE_GPR(n+1, base)
+> >  #define SAVE_4GPRS(n, base)	SAVE_2GPRS(n, base); SAVE_2GPRS(n+2, base)
+> > diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
+> > index 746ee0320ad4..a316d90a5c26 100644
+> > --- a/arch/powerpc/kernel/misc.S
+> > +++ b/arch/powerpc/kernel/misc.S
+> > @@ -49,6 +49,10 @@ _GLOBAL(setjmp)
+> >  	PPC_STL	r0,0(r3)
+> >  	PPC_STL	r1,SZL(r3)
+> >  	PPC_STL	r2,2*SZL(r3)
+> > +#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
+> 
+> And this could just be:
+> 
+> #ifdef CONFIG_PPC32
+> 
+> > +	mfcr	r12
+> > +	stmw	r12, 3*SZL(r3)
+> > +#else
+> >  	mfcr	r0
+> >  	PPC_STL	r0,3*SZL(r3)
+> >  	PPC_STL	r13,4*SZL(r3)
+> > @@ -70,10 +74,15 @@ _GLOBAL(setjmp)
+> >  	PPC_STL	r29,20*SZL(r3)
+> >  	PPC_STL	r30,21*SZL(r3)
+> >  	PPC_STL	r31,22*SZL(r3)
+> > +#endif
+> 
+> It's a pity to end up with this basically split in half by ifdefs for
+> 32/64-bit, but maybe we can clean that up later.
+> 
+> cheers
