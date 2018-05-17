@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeEQVbk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:31:40 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:39357 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQVbi (ORCPT
+        id S1751967AbeEQVds (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:33:48 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:46362 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEQVdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:31:38 -0400
-X-Google-Smtp-Source: AB8JxZoFDsQAw0uADBgnf/WRt0lyt36YP3WOPB7uo7Ox9PcFy1hgl54GDu8/0A5nDzgSyRGEFw3Ffw==
-Date: Fri, 18 May 2018 00:31:35 +0300
+        Thu, 17 May 2018 17:33:47 -0400
+X-Google-Smtp-Source: AB8JxZoKk8NOSyFJAv5hs6NbA1Oj6npL+onGZzEGwrEHN2zj2DabBBP0koahWCjsE7alrMDNvERCxw==
+Date: Fri, 18 May 2018 00:33:43 +0300
 From: Alexey Dobriyan <adobriyan@gmail.com>
 To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: x86@kernel, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] x86: verify_cpu: use XOR for CPUID.EAX=0
-Message-ID: <20180517213135.GB4047@avx2>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] x86: verify_cpu: restore flags later
+Message-ID: <20180517213343.GC4047@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -22,22 +22,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MOV eax, imm32 is 5 bytes. XOR eax, eax is 2 bytes.
+	popf
+	xor	eax, eax
+
+formally doesn't restore flags because XOR clobber flags.
+
+Do POPF as last instruction and rearrange the other case for symmetry.
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- arch/x86/kernel/verify_cpu.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/verify_cpu.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/verify_cpu.S
 +++ b/arch/x86/kernel/verify_cpu.S
-@@ -51,7 +51,7 @@ ENTRY(verify_cpu)
- 	jz	.Lverify_cpu_no_longmode	# cpu has no cpuid
- #endif
+@@ -132,11 +132,11 @@ ENTRY(verify_cpu)
+ 	jmp	.Lverify_cpu_sse_test	# try again
  
--	movl	$0x0,%eax		# See if cpuid 1 is implemented
-+	xor	%eax, %eax		# See if cpuid 1 is implemented
- 	cpuid
- 	cmpl	$0x1,%eax
- 	jb	.Lverify_cpu_no_longmode	# no cpuid 1
+ .Lverify_cpu_no_longmode:
+-	popf				# Restore caller passed flags
+ 	movl $1,%eax
++	popf				# Restore caller passed flags
+ 	ret
+ .Lverify_cpu_sse_ok:
+-	popf				# Restore caller passed flags
+ 	xorl %eax, %eax
++	popf				# Restore caller passed flags
+ 	ret
+ ENDPROC(verify_cpu)
