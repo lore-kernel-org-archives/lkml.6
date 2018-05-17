@@ -1,120 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeEQNlR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:41:17 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43098 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbeEQNlN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:41:13 -0400
-X-Google-Smtp-Source: AB8JxZppIdb7chTUzIf3h2Ds0flY4IhZiapCqdg6UNdywOR9d1S7Hk7TnD5gMbfP7oH9vx88mO7IYiXn9zM7u5/BzEo=
+        id S1752195AbeEQNl0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:41:26 -0400
+Received: from sauhun.de ([88.99.104.3]:51324 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeEQNlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:41:25 -0400
+Date: Thu, 17 May 2018 15:41:23 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: synquacer: fix fence-post error in retry loop
+Message-ID: <20180517134122.odweeppckmpckk4r@ninjato>
+References: <20180509194726.29166-1-peda@axentia.se>
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
- <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com> <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 17 May 2018 16:41:11 +0300
-Message-ID: <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lq7fi7y74l36e4nv"
+Content-Disposition: inline
+In-Reply-To: <20180509194726.29166-1-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 4:35 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Gilad,
->
-> On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> However, even with your clock patch, the signature checking fails for me,
->>> on both R-Car H3 ES1.0 and ES2.0.
->>> Does this need changes to the ARM Trusted Firmware, to allow Linux to
->>> access the public SCEG module?
->>
->> Well, this is actually something different. If you look you will
->> notice that my patch was part of a 3 part patch series,
->> the first of which disabled this test.
->
-> Sorry, I had completely forgotten about the first patch from the series.
-> With that applied, it continues:
->
->         ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
-> 0x00000000, Driver version 4.0
->         ccree e6601000.crypto: Cache params previous: 0x00000777
->         ccree e6601000.crypto: Cache params current: 0x00000000
-> (expect: 0x00000000)
->         alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
->         alg: No test for authenc(xcbc(aes),cbc(aes))
-> (authenc-xcbc-aes-cbc-aes-ccree)
->         alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
-> (authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
->         ccree e6601000.crypto: ARM ccree device initialized
->
-> Is HW version 0x00000000 expected?
 
-It's related to the problem with reading the wrong register I've
-mentioned before.
+--lq7fi7y74l36e4nv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->> If you take all the 3 patches, it will work.
->
-> is there an easy way to test proper operation?
+On Wed, May 09, 2018 at 09:47:26PM +0200, Peter Rosin wrote:
+> There is a difference between attempts and retries.
+>=20
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-The lines of the form "  alg: No test for cts1(cbc(aes))
-(cts1-cbc-aes-ccree)" indicates
-you have the Crypto API testmgr enable (or rather not disabled would
-be more accurate) so every
-cryptographic algorithm except those specified in these messages was
-tested with test
-vectors from crypto/testmgr.c upon registration. If you don't seen
-failure warnings, it works.
-
-You can also check /proc/crypto for all the algorithm with ccree
-listed as their driver and check
-that their test passed.
+Applied to for-next, thanks!
 
 
-> I enabled CONFIG_CRYPT_TEST, and did insmod tcrypt.ko, but I mostly see
-> "Failed to load transform" messages.
->
+--lq7fi7y74l36e4nv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-tcrypt.ko is a rather crude developer tool. It has hard coded lists of
-test for different algorithms that does
-not take into account if some crypto algs are enagled in the build or
-not. It's more of a stress test.
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9hoIACgkQFA3kzBSg
+KbZKOg//ZFmZcvLw/s44MmWQzjwxXeRqTdI2nBX6oIP2ROL9XoCr1BQyiTO9l7WF
+qVrujmaiBsKm9Hr0adbrP9dvurmbukcJSUL51gFSheSgtsYtS9PhwkEB8PCecRjE
+cu9lFnqUFQ09F03kG3LNKVckhX52PqgmsDU5tk4NT9QAqoyTJ0ff5ZPb83QTmt8Q
+rpaGe2ri8fZhHSBpCJvsbHQrMkG9WiTvRveDcftOg+9XYUs9POTiscQ82gssQqSA
+HQBMjFhM9TI/+JvCpzDk81WtZhOyFH50NfEuHnKlpPa4iJWCq742LIrIOPAjKReR
+Tp3HsROAtVgPtBU88r27ajbmGL70cgU96TJ5sIF5LPdahWh2EdzlJYkYxiXlu3nu
+4B44YI+tK2jn0BgWRpdddPZttNnpz+gpPfsDSNRqVTVbTQm2a3LCt8FtJxpc/vSu
+4lXn93KR4qHbiiqOLQUd7q3y2XPTQEALKXF799a5Lv6QjvHFuSKXwKSr9bOSgZyz
+g0UA8OuQgdiOBgrgLuTdEkBf0A3+J/Np9JNhoTmutl+kKrflFe7eCUpGyIw2elqK
+HVZxQY0I4JkkhbJ6cmgsceQwKnaCRp1rULsv3bkOkCt13+eDjaiFVAlqZ2d3Kq1s
+fCMI0nqvlF7lfHck/JM21d06934xTkbXx4ppZAGY6QXHnxjJR7o=
+=TnWa
+-----END PGP SIGNATURE-----
 
-Gilad
-
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+--lq7fi7y74l36e4nv--
