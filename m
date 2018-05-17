@@ -1,73 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEQGLQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:11:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750825AbeEQGLP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:11:15 -0400
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-To: rkuo@codeaurora.org, linux@roeck-us.net, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org, hannes@cmpxchg.org
-Cc: linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [RFC] hexagon: Drop the unused variable zero_page_mask
-Date: Thu, 17 May 2018 11:41:05 +0530
-X-Mailer: git-send-email 2.9.3
-X-TM-AS-GCONF: 00
-x-cbid: 18051706-0008-0000-0000-000004F75AD5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051706-0009-0000-0000-00001E8BCD75
-Message-Id: <20180517061105.30447-1-khandual@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805170055
+        id S1751879AbeEQGLq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:11:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751396AbeEQGLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 02:11:44 -0400
+Date: Thu, 17 May 2018 11:41:35 +0530
+From: Vinod <vkoul@kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
+Message-ID: <20180517061135.GV13271@vkoul-mobl>
+References: <08819489e52add194fecf2b4b234fff9deecdb4c.1526043689.git.baolin.wang@linaro.org>
+ <85413038c111c58747194dd5736834be9adb0f20.1526043689.git.baolin.wang@linaro.org>
+ <20180517051447.GS13271@vkoul-mobl>
+ <CAMz4kuKtfwRfm4zcSYFrr=FHQzQSBYUD2ZSYuzgJ41sjPyBUmQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMz4kuKtfwRfm4zcSYFrr=FHQzQSBYUD2ZSYuzgJ41sjPyBUmQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hexagon arch does not seem to have subscribed to _HAVE_COLOR_ZERO_PAGE
-framework. Hence zero_page_mask variable is not needed.
+On 17-05-18, 14:02, Baolin Wang wrote:
+> Hi Vinod,
+> 
+> On 17 May 2018 at 13:14, Vinod <vkoul@kernel.org> wrote:
+> > On 11-05-18, 21:06, Baolin Wang wrote:
+> >> +struct sprd_dma_config {
+> >> +     struct dma_slave_config cfg;
+> >> +     u32 block_len;
+> >> +     u32 transcation_len;
+> >
+> > /s/transcation/transaction
+> 
+> OK.
+> 
+> >
+> > now in code I see block_len and this filled by len which is sg_dma_len()?
+> > So why two varibales when you are using only one.
+> 
+> Like I explained before, we have transaction transfer, block transfer
+> and fragment transfer, and we should set the length for each transfer.
+> In future, we we will use these two variables in cyclic mode, but for
+> prep_sg, we just make them equal to
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
----
-I will have to request some one with hexagon system to compile and
-test this patch. Dont have access to hardware.
+Please add them when you have use for it. Sorry linux kernel is not a place for
+dumping future use work
 
- arch/hexagon/include/asm/pgtable.h | 1 -
- arch/hexagon/mm/init.c             | 3 ---
- 2 files changed, 4 deletions(-)
+> 
+> >
+> > Second, you are storing parameters programmed thru _prep call into
+> > _dma_config. That is not correct.
+> >
+> > We use these to store channel parameters and NOT transaction parameters which
+> > would differ with each txn. No wonder you can only support only 1 txn :)
+> 
+> Fine, we can remove block_len/transcation_len from 'struct
+> sprd_dma_config'. Any other issues for the 'struct sprd_dma_config'?
 
-diff --git a/arch/hexagon/include/asm/pgtable.h b/arch/hexagon/include/asm/pgtable.h
-index aef02f7ca8aa..65125d0b02dd 100644
---- a/arch/hexagon/include/asm/pgtable.h
-+++ b/arch/hexagon/include/asm/pgtable.h
-@@ -30,7 +30,6 @@
- 
- /* A handy thing to have if one has the RAM. Declared in head.S */
- extern unsigned long empty_zero_page;
--extern unsigned long zero_page_mask;
- 
- /*
-  * The PTE model described here is that of the Hexagon Virtual Machine,
-diff --git a/arch/hexagon/mm/init.c b/arch/hexagon/mm/init.c
-index 192584d5ac2f..1495d45e472d 100644
---- a/arch/hexagon/mm/init.c
-+++ b/arch/hexagon/mm/init.c
-@@ -39,9 +39,6 @@ unsigned long __phys_offset;	/*  physical kernel offset >> 12  */
- /*  Set as variable to limit PMD copies  */
- int max_kernel_seg = 0x303;
- 
--/*  think this should be (page_size-1) the way it's used...*/
--unsigned long zero_page_mask;
--
- /*  indicate pfn's of high memory  */
- unsigned long highstart_pfn, highend_pfn;
- 
+Yes see the comments on prep_
+
+> 
+> >
+> > Lastly, if these are same values why not use src/dstn_max_burst?
+> 
+> The fragment length will be filled by src/dstn_max_burst,so we can not
+> use it again.
+> 
+> >
+> >> +static enum sprd_dma_datawidth
+> >> +sprd_dma_get_datawidth(enum dma_slave_buswidth buswidth)
+> >> +{
+> >> +     switch (buswidth) {
+> >> +     case DMA_SLAVE_BUSWIDTH_1_BYTE:
+> >> +     case DMA_SLAVE_BUSWIDTH_2_BYTES:
+> >> +     case DMA_SLAVE_BUSWIDTH_4_BYTES:
+> >> +     case DMA_SLAVE_BUSWIDTH_8_BYTES:
+> >> +             return ffs(buswidth) - 1;
+> >> +     default:
+> >> +             return SPRD_DMA_DATAWIDTH_4_BYTES;
+> >
+> > Does default make sense, should we error out?
+> 
+> Not one error, maybe we can give some warning information.
+
+well client programmed a wrong value, so I expect this to error out.
+
+> 
+> >
+> >> +static u32 sprd_dma_get_step(enum dma_slave_buswidth buswidth)
+> >> +{
+> >> +     switch (buswidth) {
+> >> +     case DMA_SLAVE_BUSWIDTH_1_BYTE:
+> >> +     case DMA_SLAVE_BUSWIDTH_2_BYTES:
+> >> +     case DMA_SLAVE_BUSWIDTH_4_BYTES:
+> >> +     case DMA_SLAVE_BUSWIDTH_8_BYTES:
+> >> +             return buswidth;
+> >> +
+> >> +     default:
+> >> +             return SPRD_DMA_DWORD_STEP;
+> >
+> > Does default make sense, should we error out?
+> 
+> Ditto.
+> 
+> >
+> >> +static int sprd_dma_config(struct dma_chan *chan, struct sprd_dma_desc *sdesc,
+> >> +                        dma_addr_t src, dma_addr_t dst,
+> >> +                        struct sprd_dma_config *slave_cfg)
+> >> +{
+> >> +     struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
+> >> +     struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+> >> +     struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
+> >> +     u32 fix_mode = 0, fix_en = 0, wrap_en = 0, wrap_mode = 0;
+> >> +     u32 src_datawidth, dst_datawidth, temp;
+> >> +
+> >> +     if (slave_cfg->cfg.slave_id)
+> >> +             schan->dev_id = slave_cfg->cfg.slave_id;
+> >> +
+> >> +     hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
+> >> +
+> >> +     temp = slave_cfg->wrap_ptr & SPRD_DMA_LOW_ADDR_MASK;
+> >> +     temp |= (src >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
+> >> +     hw->wrap_ptr = temp;
+> >> +
+> >> +     temp = slave_cfg->wrap_to & SPRD_DMA_LOW_ADDR_MASK;
+> >> +     temp |= (dst >> SPRD_DMA_HIGH_ADDR_OFFSET) & SPRD_DMA_HIGH_ADDR_MASK;
+> >> +     hw->wrap_to = temp;
+> >> +
+> >> +     hw->src_addr = src & SPRD_DMA_LOW_ADDR_MASK;
+> >> +     hw->des_addr = dst & SPRD_DMA_LOW_ADDR_MASK;
+> >> +
+> >> +     if ((slave_cfg->src_step != 0 && slave_cfg->dst_step != 0)
+> >> +         || (slave_cfg->src_step | slave_cfg->dst_step) == 0) {
+> >
+> > this check doesnt seem right to me, what are you trying here?
+> 
+> This is SPRD DMA internal feature: address-fix transfer. If the src
+> step and dst step both are 0 or both are not 0, that means we can not
+> enable the fix mode.
+> If one is 0 and another one is not, we can enable the fix mode.
+
+A comment here would help explain this :)
+
+> 
+> >
+> >> +             fix_en = 0;
+> >> +     } else {
+> >> +             fix_en = 1;
+> >> +             if (slave_cfg->src_step)
+> >> +                     fix_mode = 1;
+> >> +             else
+> >> +                     fix_mode = 0;
+> >> +     }
+> >> +
+> >> +     if (slave_cfg->wrap_ptr && slave_cfg->wrap_to) {
+> >> +             wrap_en = 1;
+> >> +             if (slave_cfg->wrap_to == src) {
+> >> +                     wrap_mode = 0;
+> >> +             } else if (slave_cfg->wrap_to == dst) {
+> >> +                     wrap_mode = 1;
+> >> +             } else {
+> >> +                     dev_err(sdev->dma_dev.dev, "invalid wrap mode\n");
+> >> +                     return -EINVAL;
+> >> +             }
+> >> +     }
+> >> +
+> >> +     hw->intc = slave_cfg->int_mode | SPRD_DMA_CFG_ERR_INT_EN;
+> >> +
+> >> +     src_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.src_addr_width);
+> >> +     dst_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.dst_addr_width);
+> >> +
+> >> +     temp = src_datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET;
+> >> +     temp |= dst_datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET;
+> >> +     temp |= slave_cfg->req_mode << SPRD_DMA_REQ_MODE_OFFSET;
+> >> +     temp |= wrap_mode << SPRD_DMA_WRAP_SEL_OFFSET;
+> >> +     temp |= wrap_en << SPRD_DMA_WRAP_EN_OFFSET;
+> >> +     temp |= fix_mode << SPRD_DMA_FIX_SEL_OFFSET;
+> >> +     temp |= fix_en << SPRD_DMA_FIX_EN_OFFSET;
+> >> +     temp |= slave_cfg->cfg.src_maxburst & SPRD_DMA_FRG_LEN_MASK;
+> >> +     hw->frg_len = temp;
+> >> +
+> >> +     hw->blk_len = slave_cfg->block_len & SPRD_DMA_BLK_LEN_MASK;
+> >> +     hw->trsc_len = slave_cfg->transcation_len & SPRD_DMA_TRSC_LEN_MASK;
+> >> +
+> >> +     temp = (slave_cfg->dst_step & SPRD_DMA_TRSF_STEP_MASK) <<
+> >> +             SPRD_DMA_DEST_TRSF_STEP_OFFSET;
+> >> +     temp |= (slave_cfg->src_step & SPRD_DMA_TRSF_STEP_MASK) <<
+> >> +             SPRD_DMA_SRC_TRSF_STEP_OFFSET;
+> >> +     hw->trsf_step = temp;
+> >> +
+> >> +     hw->frg_step = 0;
+> >> +     hw->src_blk_step = 0;
+> >> +     hw->des_blk_step = 0;
+> >> +     return 0;
+> >> +}
+> >> +static struct dma_async_tx_descriptor *
+> >> +sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+> >> +                    unsigned int sglen, enum dma_transfer_direction dir,
+> >> +                    unsigned long flags, void *context)
+> >> +{
+> >> +     struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+> >> +     struct sprd_dma_config *slave_cfg = &schan->slave_cfg;
+> >> +     u32 src_step = 0, dst_step = 0, len = 0;
+> >> +     dma_addr_t src = 0, dst = 0;
+> >> +     struct sprd_dma_desc *sdesc;
+> >> +     struct scatterlist *sg;
+> >> +     int ret, i;
+> >> +
+> >> +     /* TODO: now we only support one sg for each DMA configuration. */
+> >> +     if (!is_slave_direction(dir) || sglen > 1)
+> >> +             return NULL;
+> >> +
+> >> +     sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
+> >> +     if (!sdesc)
+> >> +             return NULL;
+> >> +
+> >> +     for_each_sg(sgl, sg, sglen, i) {
+> >> +             len = sg_dma_len(sg);
+> >> +
+> >> +             if (dir == DMA_MEM_TO_DEV) {
+> >> +                     src = sg_dma_address(sg);
+> >> +                     dst = slave_cfg->cfg.dst_addr;
+> >> +                     src_step = sprd_dma_get_step(slave_cfg->cfg.src_addr_width);
+> >> +                     dst_step = SPRD_DMA_NONE_STEP;
+> >> +             } else {
+> >> +                     src = slave_cfg->cfg.src_addr;
+> >> +                     dst = sg_dma_address(sg);
+> >> +                     src_step = SPRD_DMA_NONE_STEP;
+> >> +                     dst_step = sprd_dma_get_step(slave_cfg->cfg.dst_addr_width);
+> >> +             }
+> >> +     }
+> >> +
+> >> +     sprd_dma_fill_config(slave_cfg, src_step, dst_step, len, flags);
+> >> +
+> >> +     ret = sprd_dma_config(chan, sdesc, src, dst, slave_cfg);
+> >> +     if (ret) {
+> >> +             kfree(sdesc);
+> >> +             return NULL;
+> >> +     }
+> >
+> > Am more intrigued here, the above call fills you config struct but you do not
+> > use it.. so what is the use of that.
+> 
+> I did not get you here. We have passed the slave_cfg to
+> sprd_dma_config() to configure DMA hardware channel. Thanks.
+
+But you are not using that... So why bother configuring!
+
+Again this is a channel specific data structure and not transaction specific.
+The values should go into descriptor and not something which is channel specific
+
 -- 
-2.11.0
+~Vinod
