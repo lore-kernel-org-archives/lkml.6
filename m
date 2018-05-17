@@ -1,204 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeEQN23 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:28:29 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:44739 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbeEQN22 (ORCPT
+        id S1752009AbeEQNb5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:31:57 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39511 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeEQNbz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:28:28 -0400
-X-Google-Smtp-Source: AB8JxZobE42sm2QI7ucF3+12Knn3npDmRgioScOCQE/qkOtlWkI+7clS+5SNbb97Oy+CFsUPGM7vBZwoKDHhat54GP4=
+        Thu, 17 May 2018 09:31:55 -0400
+X-Google-Smtp-Source: AB8JxZoRSH1SwOQK6Tc9lwZk2ePoOWHBRduFbODcn2UynpV6w0zhbMCG61Q1vBIkayhyvtn4lph2sA==
+Date: Thu, 17 May 2018 14:31:51 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] misc: kgdbts: silence array underflow warning
+Message-ID: <20180517133151.tzdkkomabejupex7@holly.lan>
+References: <20180517122229.GA7655@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
-References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
- <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
- <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
- <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
- <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
- <1526303498.3494.11.camel@pengutronix.de> <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
-From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Thu, 17 May 2018 18:58:26 +0530
-Message-ID: <CAOuPNLiaAc16BoMQ=EiqWiyMs14MP4YPOTUf42XbUs2xNYzUUg@mail.gmail.com>
-Subject: Re: Delivery Status Notification (Failure)
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517122229.GA7655@mwanda>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 7:58 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
->
-> On Mon, May 14, 2018 at 6:41 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> > Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
-> >> Hi,
-> >>
-> >> Is there any work around possible to set IRQ affinity for some GPIO
-> >> interrupt ?
-> >> How to avoid CPU0 to receive the current GPIO interrupt ?
-> >> How do we assign GPIO interrupts to any CPU other than CPU0 ?
-> >> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
-> >> that GPIO interrupt can be served by another CPU ?
-> >>
-> >> Need your inputs to decide whether it is still possible to set
-> >> affinity for GPIO interrupt, or its impossible ?
-> >
-> > This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
-> > line per GPIO bank, so it is not possible to change affinity of a
-> > single GPIO interrupt to another CPU.
->
-> OK. Thanks for your confirmation.
->
-> > Best we could do is change the
-> > affinity of the whole bank,
->
+On Thu, May 17, 2018 at 03:22:29PM +0300, Dan Carpenter wrote:
+> Smatch distrusts simple_strtol().  I don't know the code well enough
+> to say if the distrust is justified here, but it seems harmless to
+> silence the warning.
 
-Hi,
-
-I found that the driver is responsible for setting GPIO bank in i.MX7:
-https://elixir.bootlin.com/linux/v4.2/source/drivers/gpio/gpio-mxc.c
-
-However I still dont know how to set the cpumask for one of the GPIO Bank.
-
->From this link, it seems it is possible to set affinity for a GPIO IRQ.
-https://community.nxp.com/thread/303144
-
-But when I try it form my GPIO138 (GPIO5_IO10) it did not help.
-
-So, as you said, I wanted to change affinity for the whole GPIO bank and try it.
-Please give me some pointers.
-
-Thanks
+What warning does this fix? I'd prefer to have it in the description.
 
 
-> OK. How can we do this on the fly from my driver code.
-> If you have any reference please let me know.
-> This is required only for experimental purpose to prove the point to be mgmt.
-> My idea is, from the driver, change the affinity of the whole bank.
-> So, the GPIO interrupt can be delivered on to this specific CPU bank.
-> Once I am done, I will revert back to the old bank.
-> Please give me some hint on how to do this from my kernel module....
->
->
-> > but given the limited usefulness of
-> > something like that, nobody bothered to implement such a thing.
-> >
-> > Regards,
-> > Lucas
-> >
-> >>
-> >>
-> >> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
-> >> wrote:
-> >> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
-> >> > e> wrote:
-> >> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
-> >> > > ARM Linux:
-> >> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
-> >> > > > > Hi,
-> >> > > > >
-> >> > > > > I need one help.
-> >> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
-> >> > > > >
-> >> > > > > Let's say I am interested in GPIO number: 21
-> >> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
-> >> > > > > so I
-> >> > > > > tried the below steps:
-> >> > > > > root@10:~# echo 21 > /sys/class/gpio/export
-> >> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
-> >> > > > > root@10:~# cat /proc/interrupts | grep 21
-> >> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
-> >> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
-> >> > > > > in
-> >> > > > > root@10:~# cat /proc/irq/47/smp_affinity
-> >> > > > > 3
-> >> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
-> >> > > > > -bash: echo: write error: Input/output error
-> >> > > > >
-> >> > > > > But I get input/output error.
-> >> > > > > When I debug further, found that irq_can_set_affinity is
-> >> > > > > returning 0:
-> >> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
-> >> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
-> >> > > > > [    0.000000] write_irq_affinity: FAIL
-> >> > > > >
-> >> > > > > I also tried first setting /proc/irq/default_smp_affinity to
-> >> > > > > 2 (from 3).
-> >> > > > > This change is working, but the smp_affinity setting for the
-> >> > > > > new IRQ
-> >> > > > > is not working.
-> >> > > > >
-> >> > > > > When I try to set smp_affinity for mmc0, then it works.
-> >> > > > > # cat /proc/interrupts | grep mmc
-> >> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
-> >> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
-> >> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
-> >> > > > >
-> >> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
-> >> > > > > root@10:~#
-> >> > > > >
-> >> > > > >
-> >> > > > > So, I wanted to know what are the conditions for which
-> >> > > > > setting
-> >> > > > > smp_affinity for an IRQ will work ?
-> >> > > > >
-> >> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
-> >> > > > > IRQ ?
-> >> > > > > Whether, irq_set_affinity_hint() will work in this case ?
-> >> > > >
-> >> > > > IRQ affinity is only supported where interrupts are _directly_
-> >> > > > wired to
-> >> > > > the GIC.  It's the GIC which does the interrupt steering to the
-> >> > > > CPU
-> >> > > > cores.
-> >> > > >
-> >> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
-> >> > > > have no
-> >> > > > ability to be directed independently to other CPUs - the only
-> >> > > > possible
-> >> > > > way to change the mapping is to move _all_ interrupts on that
-> >> > > > controller,
-> >> > > > and any downstream chained interrupts at GIC level.
-> >> > > >
-> >> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
-> >> > > > is no way
-> >> > > > for the interrupt controller itself to change the affinity of
-> >> > > > the input
-> >> > > > interrupt.
-> >> > >
-> >> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
-> >> > > mapping
-> >> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
-> >> > > thus be
-> >> > > handled by forwarding the request to the GIC by
-> >> > > irq_chip_set_affinity_parent().
-> >> > >
-> >> > > As this is handled correctly in the upstream kernel since the
-> >> > > first
-> >> > > commit introducing support for the GPCv2, it seems the issue is
-> >> > > only
-> >> > > present in some downstream kernel.
-> >> > >
-> >> >
-> >> > OK. Thanks so much for your reply.
-> >> >
-> >> > I saw some of the drivers using irq_set_affinity_hint() to force
-> >> > the
-> >> > IRQ affinity to a particular CPU.
-> >> > This is the sample:
-> >> > {
-> >> > cpumask_clear(mask);
-> >> > cpumask_set_cpu(cpu, mask);
-> >> > irq_set_affinity_hint(irq, mask);
-> >> > }
-> >> >
-> >> > Whether this logic will work for a particular GPIO pin ?
-> >> >
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+> index 6193270e7b3d..e0508acaedaa 100644
+> --- a/drivers/misc/kgdbts.c
+> +++ b/drivers/misc/kgdbts.c
+> @@ -400,13 +400,15 @@ static void skip_back_repeat_test(char *arg)
+>  	int go_back = simple_strtol(arg, NULL, 10);
+
+If go_back is out of range then this is a serious error in the test
+plans found in the module. Something simple and clear such as
+BUG_ON(go_back <= 0 || go_back > ts.idx) is probably sufficient.
 
 
->
-> >> >
-> >> > > Regards,
-> >> > > Lucas
+>  	repeat_test--;
+> -	if (repeat_test <= 0) {
+> +	if (repeat_test <= 0 || go_back < 0) {
+
+The BUG_ON() will mess things up because whatever breakpoints
+the test is using are still enabled.
+
+If you really want to recover cleanly then perhaps:
+
++	if (repeat_test <= 0 || WARN_ON(go_back < 0 || go_back > ts.idx)) {
+
+
+>  		ts.idx++;
+>  	} else {
+>  		if (repeat_test % 100 == 0)
+>  			v1printk("kgdbts:RUN ... %d remaining\n", repeat_test);
+>  
+>  		ts.idx -= go_back;
+> +		if (ts.idx < 0)
+> +			ts.idx = 0;
+
+Not sure about this. If we know the opcodes are bad then re-executing
+them doesn't seem like a good idea (hence covering it in the WARN_ON
+branch above).
+
+
+Daniel.
