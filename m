@@ -1,89 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeEQTNx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 15:13:53 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38684 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeEQTNv (ORCPT
+        id S1752349AbeEQTPl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 15:15:41 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47828 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752245AbeEQTPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 15:13:51 -0400
-X-Google-Smtp-Source: AB8JxZo8qeg+6Uk/EbbkTfyhAhhHdKhjhYGfbP7bqKidZTpW2PhcjPQhR2STQzMtAV65t8aab3d78g==
-Date: Thu, 17 May 2018 12:13:50 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-Message-ID: <20180517191350.GB5281@joelaf.mtv.corp.google.com>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
- <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
- <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
- <20180508094237.GA3752@e108498-lin.cambridge.arm.com>
- <20180513051933.GA64158@joelaf.mtv.corp.google.com>
- <5AFDD39E.6040203@codeaurora.org>
+        Thu, 17 May 2018 15:15:17 -0400
+Date: Thu, 17 May 2018 21:14:53 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Joe Perches <joe@perches.com>
+cc: Borislav Petkov <bp@alien8.de>, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging
+ prefixes
+In-Reply-To: <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.1805172114240.1698@nanos.tec.linutronix.de>
+References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>  <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>  <20180517182659.GB27807@pd.tnic> <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5AFDD39E.6040203@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 12:10:22PM -0700, Saravana Kannan wrote:
-> On 05/12/2018 10:19 PM, Joel Fernandes wrote:
-> > On Tue, May 08, 2018 at 10:42:37AM +0100, Quentin Perret wrote:
-> > > On Tuesday 08 May 2018 at 11:09:57 (+0200), Dietmar Eggemann wrote:
-> > > > On 05/08/2018 10:22 AM, Viresh Kumar wrote:
-> > > > > On 08-05-18, 08:33, Dietmar Eggemann wrote:
-> > > > > > This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
-> > > > > > 
-> > > > > > Lifting the restriction that the sugov kthread is bound to the
-> > > > > > policy->related_cpus for a system with a slow switching cpufreq driver,
-> > > > > > which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
-> > > > > > only not beneficial it also harms Enery-Aware Scheduling (EAS) on
-> > > > > > systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
-> > > > > > 
-> > > > > > The sugov kthread which does the update for the little cpus could
-> > > > > > potentially run on a big cpu. It could prevent that the big cluster goes
-> > > > > > into deeper idle states although all the tasks are running on the little
-> > > > > > cluster.
-> > > > > 
-> > > > > I think the original patch did the right thing, but that doesn't suit
-> > > > > everybody as you explained.
-> > > > > 
-> > > > > I wouldn't really revert the patch but fix my platform's cpufreq
-> > > > > driver to set dvfs_possible_from_any_cpu = false, so that other
-> > > > > platforms can still benefit from the original commit.
-> > > > 
-> > > > This would make sure that the kthreads are bound to the correct set of cpus
-> > > > for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
-> > > > scpi-cpufreq) but it will also change the logic (e.g.
-> > > > sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
-> > > > 
-> > > > I'm still struggling to understand when a driver/platform should set
-> > > > dvfs_possible_from_any_cpu to true and what the actual benefit would be.
+On Thu, 17 May 2018, Joe Perches wrote:
+> On Thu, 2018-05-17 at 20:27 +0200, Borislav Petkov wrote:
+> > On Sun, May 13, 2018 at 12:27:45PM -0700, tip-bot for Joe Perches wrote:
+> > > Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
+> > > Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
+> > > Author:     Joe Perches <joe@perches.com>
+> > > AuthorDate: Thu, 10 May 2018 08:45:30 -0700
+> > > Committer:  Thomas Gleixner <tglx@linutronix.de>
+> > > CommitDate: Sun, 13 May 2018 21:25:18 +0200
 > > > 
-> > > I assume it might be beneficial to have the kthread moving around freely
-> > > in some cases, but since it is a SCHED_DEADLINE task now it can't really
-> > > migrate anywhere anyway. So I'm not sure either if this commits still makes
-> > > sense now. Or is there another use case for this ?
+> > > x86: Remove pr_fmt duplicate logging prefixes
+> > > 
+> > > Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
+> > > added some duplicate prefixes.
+> > > 
+> > > Remove the duplicate prefixes.
+> []
+> > Maybe I'm missing something but this dropped the prefixes now
+> > completely:
 > > 
-> > The usecase I guess is, as Dietmar was saying, that it makes sense for
-> > kthread to update its own cluster and not disturb other clusters or random
-> > CPUs. I agree with this point.
+> > -e820: BIOS-provided physical RAM map:
+> > +BIOS-provided physical RAM map:
+> > 
+> > -e820: last_pfn = 0x43f000 max_arch_pfn = 0x400000000
+> > +last_pfn = 0x43f000 max_arch_pfn = 0x400000000
+> > 
+> > -e820: last_pfn = 0x9d000 max_arch_pfn = 0x400000000
+> > +last_pfn = 0x9d000 max_arch_pfn = 0x400000000
+> > 
+> > ...
+> > 
+> > I don't think that was the intention.
 > 
-> I agree with Viresh. Also, why exactly did we make it deadline instead of
-> RT? Was RT not getting scheduled quick enough? Is it because Android creates
-> a lot of RT threads?
+> Hi Borislav
+> 
+> It wasn't and isn't the intention.
+> 
+> This is a patch _series_, and all of the patches
+> from 4-18 depend on patch 3 which converts the
+> generic define in include/linux/printk.h
+> 
+> from
+> 	#define pr_fmt(fmt) fmt
+> to
+> 	#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> 
+> Perhaps a better option, which could be done in
+> a v2 of the series, is to add a temporary
+> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> to each file modified in patches 4-18 and then
+> allow the follow-on script described in the 0/18
+> cover letter to remove those #defines
 
-Because deadline also needs to change frequency and depends on it ;)
+Yes, I think thats the right thing todo.
 
-- Joel
+Thanks,
+
+	tglx
