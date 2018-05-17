@@ -1,85 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeEQOfA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:35:00 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:18340 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEQOe6 (ORCPT
+        id S1752458AbeEQOfH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:35:07 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37814 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752398AbeEQOfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:34:58 -0400
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-From: Dan Murphy <dmurphy@ti.com>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-References: <20180515154352.20263-1-dmurphy@ti.com>
- <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
- <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
- <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
- <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
- <52380a68-9e33-f52a-134d-5d4a928b5383@ti.com>
- <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
-Message-ID: <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
-Date: Thu, 17 May 2018 09:34:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 17 May 2018 10:35:04 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [RFC] mm, THP: Map read-only text segments using large THP pages
+From: William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20180517075740.GA31969@dhcp22.suse.cz>
+Date: Thu, 17 May 2018 08:34:56 -0600
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        linux-fsdevel@vger.kernel.org
+Message-Id: <59D5F452-4710-4CE9-9072-E587551D4862@oracle.com>
+References: <5BB682E1-DD52-4AA9-83E9-DEF091E0C709@oracle.com>
+ <20180517075740.GA31969@dhcp22.suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+X-Mailer: Apple Mail (2.3445.8.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8895 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805170134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4HEZBWF015246
 
-Jacek
 
-On 05/16/2018 04:17 PM, Dan Murphy wrote:
-<snip>
 
->>>>
->>>>
->>>>>>> +               if (!ret)
->>>>>>
->>>>>> if (ret) sounds more natural. And better just to split
->>>>>>
->>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>>>> +                               "%s:%s", led->led_node->name, name);
->>>>>>> +               else
->>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>>>> +                               "%s:torch", led->led_node->name);
->>>>>>
->>>>>> const char *tmp;
->>>>>>
->>>>>> ret = device_property_read_...(&tmp);
->>>>>> if (ret)
->>>>>>   tmp = ...
->>>>>> sprintf(...);
->>>
->>> We're no longer taking devicename section of a LED class device name
->>> from DT, so it will look differently anyway.
->>>
+> On May 17, 2018, at 1:57 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> [CCing Kirill and fs-devel]
+> 
+> On Mon 14-05-18 07:12:13, William Kucharski wrote:
+>> One of the downsides of THP as currently implemented is that it only supports
+>> large page mappings for anonymous pages.
+> 
+> There is a support for shmem merged already. ext4 was next on the plan
+> AFAIR but I haven't seen any patches and Kirill was busy with other
+> stuff IIRC.
 
-So in adding the device_property code I think we again are reaching the LED label issue.
-In ARM with DT we would take the parent device node name and append it to the label
-if the optional label property was not available.  In migrating to the device_property
-APIs we don't or can't depend on that parent node anymore.
+I couldn't find anything that would specifically map text pages with large pages,
+so perhaps this could be integrated with that or I may have simply missed changes
+that would ultimately provide that functionality.
 
-So for the case where the label property does not exist should we use a hard coded name
-or should we try to use the name from a device_id table.
+> 
+>> I embarked upon this prototype on the theory that it would be advantageous to 
+>> be able to map large ranges of read-only text pages using THP as well.
+> 
+> Can the fs really support THP only for read mappings? What if those
+> pages are to be shared in a writable mapping as well? In other words
+> can this all work without a full THP support for a particular fs?
 
-This is how we did this for the leds-lp8860 driver.  If the label did not exist we used the
-i2c_device_id table and pulled the string from there.
+The integration with the page cache would indeed require filesystem support.
 
-Thoughts?
+The end result I'd like to see is full R/W support for large THP pages; I
+thought the RO text mapping proof of concept worthwhile to see what kind of
+results we might see and what the thoughts of the community were.
 
-<snip>
+Thanks for the feedback.
 
--- 
-------------------
-Dan Murphy
+  -- Bill
