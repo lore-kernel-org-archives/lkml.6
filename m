@@ -1,79 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeEQOXh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:23:37 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:48237 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752404AbeEQOXf (ORCPT
+        id S1752461AbeEQOXs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:23:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60768 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752408AbeEQOXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:23:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w4HENLbF003773
-X-Nifty-SrcIP: [209.85.213.47]
-X-Google-Smtp-Source: AB8JxZqGJZiEuYD0UJfMepPAo8m6/GydSP/ZDQ0d+hx/I25mfytHAwcm8sREch8v2a52OJ3anbDI9gPQr6XmWjtGMzs=
+        Thu, 17 May 2018 10:23:36 -0400
+Date: Thu, 17 May 2018 16:23:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+Message-ID: <20180517142322.GU12217@hirez.programming.kicks-ass.net>
+References: <1525351221.9956.4.camel@gmx.de>
+ <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+ <1525354359.5576.1.camel@gmx.de>
+ <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+ <1525357015.5577.2.camel@gmx.de>
+ <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+ <20180503161231.GI26088@linux.vnet.ibm.com>
+ <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+ <1526358626.19125.0.camel@gmx.de>
+ <20180517140345.GI3803@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180517175156.4c4246f6@roar.ozlabs.ibm.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com> <20180517175156.4c4246f6@roar.ozlabs.ibm.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 17 May 2018 23:22:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZaQK6xojz7GHEb1+-aHckJnR=tA=HJXiQaJ3AwypM-g@mail.gmail.com>
-Message-ID: <CAK7LNARZaQK6xojz7GHEb1+-aHckJnR=tA=HJXiQaJ3AwypM-g@mail.gmail.com>
-Subject: Re: [PATCH v4 00/31] kconfig: move compiler capability tests to Kconfig
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517140345.GI3803@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-17 16:51 GMT+09:00 Nicholas Piggin <npiggin@gmail.com>:
-> On Thu, 17 May 2018 15:16:39 +0900
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->
->> [Introduction]
->>
->> The motivation of this work is to move the compiler option tests to
->> Kconfig from Makefile.  A number of kernel features require the
->> compiler support.  Enabling such features blindly in Kconfig ends up
->> with a lot of nasty build-time testing in Makefiles.  If a chosen
->> feature turns out unsupported by the compiler, what the build system
->> can do is either to disable it (silently!) or to forcibly break the
->> build, despite Kconfig has let the user to enable it.  By moving the
->> compiler capability tests to Kconfig, Kconfig entries will be visible
->> only when they are available.
->>
->> [Major Changes in V4]
->
-> Do you have a git tree for v4? I can test it with the powerpc patches.
->
-> The new scripting capability in kconfig has allowed us to already
-> improve the config process on powerpc:
->
-> https://marc.info/?l=linuxppc-embedded&m=152648110727868&w=2
->
-> I'm sure there's more clever things we can do with it but I haven't
-> had time to think about it yet. One thing that comes to mind is that
-> It might be nice to show the option as disabled, then the user could
-> upgrade their compiler to get the options they want.
->
-> Anyway v3 worked fine for me, the documentation is really nice, I
-> could implement the above patch without any problem despite being a
-> kbuild dummy. Thanks for the series, ack from me.
+On Thu, May 17, 2018 at 07:03:45AM -0700, Paul E. McKenney wrote:
+> On Tue, May 15, 2018 at 06:30:26AM +0200, Mike Galbraith wrote:
+> I have not queued it, but given Peter's Signed-off-by and your Tested-by
+> I would be happy to do so.
 
+And a Changelog of course :-)
 
-For easier review and test,
-I pushed v4 to the following branch:
+---
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: rcu/x86: Provide early rcu_cpu_starting() callback
 
+The x86/mtrr code does horrific things because hardware. It uses
+stop_machine_from_inactive_cpu(), which does a wakeup (of the stopper
+thread on another CPU), which uses RCU, all before the CPU is onlined.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-kconfig-shell-v4
+RCU complains about this, because wakeups use RCU and RCU does
+(rightfully) not consider offline CPUs for grace-periods.
 
+Fix this by initializing RCU way early in the MTRR case.
 
--- 
-Best Regards
-Masahiro Yamada
+Tested-by: Mike Galbraith <efault@gmx.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+
+> > > diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+> > > index 7468de429087..07360523c3ce 100644
+> > > --- a/arch/x86/kernel/cpu/mtrr/main.c
+> > > +++ b/arch/x86/kernel/cpu/mtrr/main.c
+> > > @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
+> > >  
+> > >  	if (!use_intel() || mtrr_aps_delayed_init)
+> > >  		return;
+> > > +
+> > > +	rcu_cpu_starting(smp_processor_id());
+> > > +
+> > >  	/*
+> > >  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
+> > >  	 * changed, but this routine will be called in cpu boot time,
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 2a734692a581..4dab46950fdb 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static DEFINE_PER_CPU(int, rcu_cpu_started);
+> > > +
+> > >  /*
+> > >   * Mark the specified CPU as being online so that subsequent grace periods
+> > >   * (both expedited and normal) will wait on it.  Note that this means that
+> > > @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
+> > >  	struct rcu_node *rnp;
+> > >  	struct rcu_state *rsp;
+> > >  
+> > > +	if (per_cpu(rcu_cpu_started, cpu))
+> > > +		return;
+> > > +
+> > > +	per_cpu(rcu_cpu_started, cpu) = 1;
+> > > +
+> > >  	for_each_rcu_flavor(rsp) {
+> > >  		rdp = per_cpu_ptr(rsp->rda, cpu);
+> > >  		rnp = rdp->mynode;
+> > > @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
+> > >  	preempt_enable();
+> > >  	for_each_rcu_flavor(rsp)
+> > >  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
+> > > +
+> > > +	per_cpu(rcu_cpu_started, cpu) = 0;
+> > >  }
+> > >  
+> > >  /* Migrate the dead CPU's callbacks to the current CPU. */
+> > 
+> 
