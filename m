@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeEQTRF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 15:17:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeEQTRD (ORCPT
+        id S1751914AbeEQTTg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 15:19:36 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46466 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbeEQTTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 15:17:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B92B6055C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-Message-ID: <5AFDD52D.2000201@codeaurora.org>
-Date: Thu, 17 May 2018 12:17:01 -0700
-From: Saravana Kannan <skannan@codeaurora.org>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
-MIME-Version: 1.0
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: Taniya Das <tdas@codeaurora.org>, robh@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
-        amit.kucheria@linaro.org
-Subject: Re: [v0 1/2] dt-bindings: clock: Introduce QCOM CPUFREQ FW bindings
-References: <1526549401-25666-1-git-send-email-tdas@codeaurora.org> <1526549401-25666-2-git-send-email-tdas@codeaurora.org> <20180517101438.du7xihojuhjxq77l@vireshk-i7>
-In-Reply-To: <20180517101438.du7xihojuhjxq77l@vireshk-i7>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 17 May 2018 15:19:34 -0400
+X-Google-Smtp-Source: AB8JxZp+jQdZ33kguSkrw4L1R2SdJxBCjKDva3uTJfVLhihWxSUcP6Hbd8GCjyNOloQIhC/Af6dCqQ==
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Chris Healy <cphealy@gmail.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Marco Franchi <marcofrk@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] ARM: dts: imx51-zii-rdu1: add rave-sp subdevices
+Date: Thu, 17 May 2018 22:19:23 +0300
+Message-Id: <20180517191923.16212-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 03:14 AM, Viresh Kumar wrote:
-> + Rob.
->
-> On 17-05-18, 15:00, Taniya Das wrote:
->> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
->> SoCs. This is required for managing the cpu frequency transitions which are
->> controlled by firmware.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 68 ++++++++++++++++++++++
->>   1 file changed, 68 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+This adds rave-sp powerbutton and backlight devices to RDU1 device tree.
 
-Isn't the prefix wrong? Shouldn't it be dt-bindings: cpufreq:?
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ arch/arm/boot/dts/imx51-zii-rdu1.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
--Saravana
-
-
+diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+index 0c99ac04ad08..98cc107098e0 100644
+--- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
++++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+@@ -581,6 +581,14 @@
+ 		watchdog {
+ 			compatible = "zii,rave-sp-watchdog";
+ 		};
++
++		backlight {
++			compatible = "zii,rave-sp-backlight";
++		};
++
++		pwrbutton {
++			compatible = "zii,rave-sp-pwrbutton";
++		};
+ 	};
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
