@@ -1,132 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeEQU4t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:56:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752060AbeEQUz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:55:58 -0400
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize isolated_cpus
-Date: Thu, 17 May 2018 16:55:43 -0400
-Message-Id: <1526590545-3350-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1526590545-3350-1-git-send-email-longman@redhat.com>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+        id S1752461AbeEQU5B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 16:57:01 -0400
+Received: from imap.thunk.org ([74.207.234.97]:46502 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752177AbeEQU47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 16:56:59 -0400
+Date: Thu, 17 May 2018 16:56:55 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/5] random: fix crng_ready() test
+Message-ID: <20180517205655.GC15263@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+References: <20180413013046.404-1-tytso@mit.edu>
+ <1699469.KmO53oa8XU@tauon.chronox.de>
+ <20180413125313.GA2633@thunk.org>
+ <4393662.RPWnPK42dp@tauon.chronox.de>
+ <20180413170037.GA28721@thunk.org>
+ <84e0c16c-2b48-69e5-4ca4-2ca3bce15dc9@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84e0c16c-2b48-69e5-4ca4-2ca3bce15dc9@c-s.fr>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generate_sched_domains() function and the hotplug code are modified
-to make them use the newly introduced isolated_cpus mask for schedule
-domains generation.
+On Thu, May 17, 2018 at 08:01:04AM +0200, Christophe LEROY wrote:
+> 
+> On a powerpc embedded board which has an mpc8xx processor running at 133Mhz,
+> I now get the startup done in more than 7 minutes instead of 30 seconds.
+> This is due to the webserver blocking on read on /dev/random until we get
+> 'random: crng init done':
+> 
+> [    0.000000] Linux version 4.17.0-rc4-00415-gd2f75d40072d (root@localhost)
+> (gcc version 5.4.0 (GCC)) #203 PREEMPT Wed May 16 16:32:02 CEST 2018
+> [    0.295453] random: get_random_u32 called from
+> bucket_table_alloc+0x84/0x1bc with crng_init=0
+> [    1.030472] device: 'random': device_add
+> [    1.031279] device: 'urandom': device_add
+> [    1.420069] device: 'hw_random': device_add
+> [    2.156853] random: fast init done
+> [  462.007776] random: crng init done
+> 
+> This has become really critical, is there anything that can be done ?
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 33 +++++++++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 4 deletions(-)
+Figure out why the webserver needs to read /dev/random and is it for a
+security critical purpose?
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 368e1b7..0e75f83 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	int ndoms = 0;		/* number of sched domains in result */
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
-+	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 
- 	doms = NULL;
- 	dattr = NULL;
- 	csa = NULL;
- 
- 	/* Special case for the 99% of systems with one, full, sched domain */
--	if (is_sched_load_balance(&top_cpuset)) {
-+	if (root_load_balance && !top_cpuset.isolation_count) {
- 		ndoms = 1;
- 		doms = alloc_sched_domains(ndoms);
- 		if (!doms)
-@@ -701,6 +702,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	csn = 0;
- 
- 	rcu_read_lock();
-+	if (root_load_balance)
-+		csa[csn++] = &top_cpuset;
- 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
- 		if (cp == &top_cpuset)
- 			continue;
-@@ -711,6 +714,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 		 * parent's cpus, so just skip them, and then we call
- 		 * update_domain_attr_tree() to calc relax_domain_level of
- 		 * the corresponding sched domain.
-+		 *
-+		 * If root is load-balancing, we can skip @cp if it
-+		 * is a subset of the root's effective_cpus.
- 		 */
- 		if (!cpumask_empty(cp->cpus_allowed) &&
- 		    !(is_sched_load_balance(cp) &&
-@@ -718,11 +724,16 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 					 housekeeping_cpumask(HK_FLAG_DOMAIN))))
- 			continue;
- 
-+		if (root_load_balance &&
-+		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
-+			continue;
-+
- 		if (is_sched_load_balance(cp))
- 			csa[csn++] = cp;
- 
--		/* skip @cp's subtree */
--		pos_css = css_rightmost_descendant(pos_css);
-+		/* skip @cp's subtree if not a scheduling domain */
-+		if (!is_sched_domain(cp))
-+			pos_css = css_rightmost_descendant(pos_css);
- 	}
- 	rcu_read_unlock();
- 
-@@ -849,7 +860,12 @@ static void rebuild_sched_domains_locked(void)
- 	 * passing doms with offlined cpu to partition_sched_domains().
- 	 * Anyways, hotplug work item will rebuild sched domains.
- 	 */
--	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+	if (!top_cpuset.isolation_count &&
-+	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+		goto out;
-+
-+	if (top_cpuset.isolation_count &&
-+	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
- 		goto out;
- 
- 	/* Generate domain masks and attrs */
-@@ -2624,6 +2640,11 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 	cpumask_copy(&new_cpus, cpu_active_mask);
- 	new_mems = node_states[N_MEMORY];
- 
-+	/*
-+	 * If isolated_cpus is populated, it is likely that the check below
-+	 * will produce a false positive on cpus_updated when the cpu list
-+	 * isn't changed. It is extra work, but it is better to be safe.
-+	 */
- 	cpus_updated = !cpumask_equal(top_cpuset.effective_cpus, &new_cpus);
- 	mems_updated = !nodes_equal(top_cpuset.effective_mems, new_mems);
- 
-@@ -2632,6 +2653,10 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 		spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
-+
-+		if (top_cpuset.isolation_count)
-+			cpumask_andnot(&new_cpus, &new_cpus,
-+					top_cpuset.isolated_cpus);
- 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
- 		spin_unlock_irq(&callback_lock);
- 		/* we don't mess with cpumasks of tasks in top_cpuset */
--- 
-1.8.3.1
+A kernel patch which makes the kernel do a "lalalalala I'm secure"
+when it really isn't secure is a simple "solution", but would it
+really make you happy?
+
+
+						- Ted
