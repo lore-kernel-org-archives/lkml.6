@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeEQGTK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:19:10 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:24362 "EHLO
+        id S1752244AbeEQGTX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:19:23 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:24996 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750825AbeEQGS4 (ORCPT
+        with ESMTP id S1751379AbeEQGTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:18:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbU3002841
+        Thu, 17 May 2018 02:19:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbUE002841
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -17,9 +17,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
         Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 05/31] kconfig: remove string expansion for mainmenu after yyparse()
-Date: Thu, 17 May 2018 15:16:44 +0900
-Message-Id: <1526537830-22606-6-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 16/31] kconfig: add 'if' built-in function
+Date: Thu, 17 May 2018 15:16:55 +0900
+Message-Id: <1526537830-22606-17-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
@@ -27,80 +27,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that environments are expanded in the lexer, conf_parse() does
-not need to expand them explicitly.
+The 'if' function is invoked in the form:
 
-The hack introduced by commit 0724a7c32a54 ("kconfig: Don't leak
-main menus during parsing") can go away.
+  $(if,condition,then-part,else-part)
+
+The behavior is slightly different from that of Make.
+
+In Make, the condition is true if the expansion contains any characters
+(even space).  That is why we sometimes need $(strip ...) in the
+condition part.
+
+I thought it was a nasty part in Make, so I changed it for Kconfig;
+the condition is true if the expansion contains any characters except
+whitespaces.
+
+Unlike the other functions, the parameters passed to 'if' are lazily
+expanded.  The then-part is expanded only when the condition true,
+and the else-part when false.  If the parameters were evaluated
+before passed to the 'if' function, $(if,$(cond),$(error,...))
+would terminate the parsing regardless of $(cond).
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
 
-Changes in v4: None
+Changes in v4:
+ - Newly added
+
 Changes in v3: None
-Changes in v2:
-  - Simplify the patch.  Just remove the text expansion.
+Changes in v2: None
 
- scripts/kconfig/zconf.y | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ scripts/kconfig/preprocess.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index 3a4a0fa..22e318c 100644
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -109,7 +109,7 @@ static struct menu *current_menu, *current_entry;
- %%
- input: nl start | start;
+diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
+index 591bcf7..88844a7 100644
+--- a/scripts/kconfig/preprocess.c
++++ b/scripts/kconfig/preprocess.c
+@@ -111,6 +111,32 @@ static char *do_error(int argc, char *argv[], int old_argc, char *old_argv[])
+ 	return NULL;
+ }
  
--start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
-+start: mainmenu_stmt stmt_list | stmt_list;
- 
- /* mainmenu entry */
- 
-@@ -118,19 +118,6 @@ mainmenu_stmt: T_MAINMENU prompt nl
- 	menu_add_prompt(P_MENU, $2, NULL);
- };
- 
--/* Default main menu, if there's no mainmenu entry */
--
--no_mainmenu_stmt: /* empty */
--{
--	/*
--	 * Hack: Keep the main menu title on the heap so we can safely free it
--	 * later regardless of whether it comes from the 'prompt' in
--	 * mainmenu_stmt or here
--	 */
--	menu_add_prompt(P_MENU, xstrdup("Linux Kernel Configuration"), NULL);
--};
--
--
- stmt_list:
- 	  /* empty */
- 	| stmt_list common_stmt
-@@ -528,7 +515,6 @@ word_opt: /* empty */			{ $$ = NULL; }
- 
- void conf_parse(const char *name)
++static char *do_if(int argc, char *argv[], int old_argc, char *old_argv[])
++{
++	char *cond, *p, *res;
++	const char *sel;
++
++	cond = expand_string_with_args(argv[0], old_argc, old_argv);
++	p = cond;
++
++	/* condition is true if any character except whitespaces is contained */
++	while (*p == ' ' || *p == '\t')
++		p++;
++
++	if (*p)
++		sel = argv[1];
++	else if (argc >= 3)
++		sel = argv[2];
++	else
++		sel = "";
++
++	res = expand_string_with_args(sel, old_argc, old_argv);
++
++	free(cond);
++
++	return res;
++}
++
+ static char *do_info(int argc, char *argv[], int old_argc, char *old_argv[])
  {
--	const char *tmp;
- 	struct symbol *sym;
- 	int i;
- 
-@@ -544,10 +530,10 @@ void conf_parse(const char *name)
- 	if (!modules_sym)
- 		modules_sym = sym_find( "n" );
- 
--	tmp = rootmenu.prompt->text;
--	rootmenu.prompt->text = _(rootmenu.prompt->text);
--	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
--	free((char*)tmp);
-+	if (!menu_has_prompt(&rootmenu)) {
-+		current_entry = &rootmenu;
-+		menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
-+	}
- 
- 	menu_finalize(&rootmenu);
- 	for_all_symbols(i, sym) {
+ 	printf("%s\n", argv[0]);
+@@ -168,6 +194,7 @@ static char *do_warning(int argc, char *argv[], int old_argc, char *old_argv[])
+ static const struct function function_table[] = {
+ 	/* Name		MIN	MAX	EXP?	Function */
+ 	{ "error",	1,	1,	true,	do_error },
++	{ "if",		2,	3,	false,	do_if },
+ 	{ "info",	1,	1,	true,	do_info },
+ 	{ "shell",	1,	1,	true,	do_shell },
+ 	{ "warning",	1,	1,	true,	do_warning },
 -- 
 2.7.4
