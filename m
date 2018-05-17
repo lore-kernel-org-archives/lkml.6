@@ -1,148 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751698AbeEQBIE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 21:08:04 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:19015 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751259AbeEQBIB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 21:08:01 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180517010759epoutp03b5203d7a0b6c233ee3ae2c197a78cb9c~vSTJzLZYu1266412664epoutp03Q
-X-AuditID: b6c32a45-8f3ff70000001020-59-5afcd5ed11f4
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFCD5EC.5080200@samsung.com>
-Date: Thu, 17 May 2018 10:07:56 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] PM / devfreq: Init user limits from OPP limits, not
- viceversa
-In-reply-to: <20180516225709.153138-1-mka@chromium.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmme7bq3+iDHbckLTY9PE9q8XZZQfZ
-        LM42vWG3uLxrDpvF594jjBafNzxmtLjduILNgd1jdsNFFo++LasYPT5vkgtgjkq1yUhNTEkt
-        UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAFarqRQlphTChQKSCwu
-        VtK3synKLy1JVcjILy6xVYo2NDTSMzQw1zMyAtLGsVZGpkAlCakZH0/dYCp4IV5x5Fp5A+NN
-        4S5GTg4JAROJV7fOMYPYQgI7GCXuP9TvYuQCsr8zSjz/9ZMJpujRkveMEIndjBL3+j8ygiR4
-        BQQlfky+x9LFyMHBLCAvceRSNkiYWUBTYuvu9ewQ9XcZJV6cPcAKUa8l8X3FPDCbRUBVYvfB
-        X2Cb2YDi+1/cYAOx+QUUJa7+eAw2X1QgQmLn/G/sIPNFBOokVnypB5nJLNDPKLGxcRHYHGGB
-        EIn+bw/BDuUUMJdYs/kR2GIJgQNsEhc79jKCNEsIuEgcvWkB8YywxKvjW9ghbGmJZ6s2MkLU
-        tzNKtO+dxwzhTGGUOHf9HtT7xhLPFnYxQbzGJ9Fx+C87xFBeiY42IYgSD4kXU/dClTtKPJ3Q
-        xALxfRejxKGWX+wTGOVmIQXYLESAzUIKsAWMzKsYxVILinPTU4uNCgz1ihNzi0vz0vWS83M3
-        MYJTm5brDsYZ53wOMQpwMCrx8ArY/YkSYk0sK67MPcQowcGsJMIr1A0U4k1JrKxKLcqPLyrN
-        SS0+xGgKDO+JzFKiyfnAtJtXEm9oamRsbGxham5pbGCpJM67RulrlJBAemJJanZqakFqEUwf
-        EwenVAPjraIudn8T+8kyTBuuTz1dtS2k72Rxe3Yeu6P93UiTTS7+j18W/VRe4+X+ZZv+30k6
-        p18XGxqeLy6KVRNNbKqNSgo1MdLk2rHP/Hy+qtr8HZW+yzRqfCMfBO/7Va06bbtL4YM7aq3n
-        5L7ufH3X8epU97cZSrt7ClsWT96ZHPXC84PEAsutdc5KLMUZiYZazEXFiQDp96eSgwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jAd23V/9EGaw7x2ax6eN7Vouzyw6y
-        WZxtesNucXnXHDaLz71HGC0+b3jMaHG7cQWbA7vH7IaLLB59W1YxenzeJBfAHMVlk5Kak1mW
-        WqRvl8CV8fHUDaaCF+IVR66VNzDeFO5i5OSQEDCReLTkPWMXIxeHkMBORom2G5+ZQRK8AoIS
-        PybfY+li5OBgFpCXOHIpGyTMLKAuMWneImaI+vuMEi8+zoCq15L4vmIeK4jNIqAqsfvgL7A4
-        G1B8/4sbbCA2v4CixNUfjxlBZooKREh0n6gEmSMi0MAo0fhqNhuIwywwkVHi6qp7YIOEBUIk
-        Nn+EOEhIoIdRonVJGIjNKWAusWbzI/YJjAKzkNw6C+HWWUhuXcDIvIpRMrWgODc9t9iowCgv
-        tVyvODG3uDQvXS85P3cTIzCstx3W6t/B+HhJ/CFGAQ5GJR5eAbs/UUKsiWXFlbmHGCU4mJVE
-        eIW6gUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+fOPRQoJpCeWpGanphakFsFkmTg4pRoYdwiE
-        iu0ynRmvseLt5a0eGuuYZp4NnOXQPumMIpv954c9WZV31i7ayPfW8n+E/7wnzhxOb4x9jn/a
-        vfy+wP2Jgn4bE0LfX/TNMHtzxrtnSuCbhadDPdN9O36LdP8WZvy7Xq3DaUfl9luPP9lJr2V+
-        Wf1r0uZCd9mmCEeeKQc+dIddSmLrmy3GosRSnJFoqMVcVJwIADuZNt9nAgAA
-X-CMS-MailID: 20180517010757epcas2p30c01d2ac5e4a4a72fccec0f06a4e13a1
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c
-X-RootMTR: 20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c
-References: <CGME20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c@epcas5p1.samsung.com>
-        <20180516225709.153138-1-mka@chromium.org>
+        id S1752020AbeEQBNR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 21:13:17 -0400
+Received: from mga06.intel.com ([134.134.136.31]:39011 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751290AbeEQBNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 21:13:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,408,1520924400";
+   d="scan'208";a="59295943"
+Subject: Re: [PATCH v2 0/9] iommu/vt-d: Improve PASID id and table management
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>
+References: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
+ <20180515141101.GF18595@8bytes.org> <5AFBE53C.2070604@linux.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19116ADF6@SHSMSX101.ccr.corp.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5AFCD724.6020604@linux.intel.com>
+Date: Thu, 17 May 2018 09:13:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19116ADF6@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 2018년 05월 17일 07:57, Matthias Kaehlcke wrote:
-> Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
-> the devfreq device") introduced the initialization of the user
-> limits min/max_freq from the lowest/highest available OPPs. Later
-> commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
-> frequency") added scaling_min/max_freq, which actually represent
-> the frequencies of the lowest/highest available OPP. scaling_min/
-> max_freq are initialized with the values from min/max_freq, which
-> is totally correct in the context, but a bit awkward to read.
-> 
-> Swap the initialization and assign scaling_min/max_freq with the
-> OPP freqs and then the user limts min/max_freq with scaling_min/
-> max_freq.
-> 
-> Needless to say that this change is a NOP, intended to improve
-> readability.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Additional context: I'm considering to introduce the concept of
-> a devfreq policy, which would probably move min/max_freq inside
-> of a struct policy, this would make the initialization even
-> more awkward to read. If this moves forward I might also propose
-> to rename scaling_min/max_freq to something like min/max_opp_freq
-> to avoid confusion with the frequencies in the policy (cpufreq uses
-> scaling_min/max_freq for the sysfs attributes of the policy
-> limits).
-> 
->  drivers/devfreq/devfreq.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index fe2af6aa88fc..0057ef5b0a98 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  		mutex_lock(&devfreq->lock);
->  	}
->  
-> -	devfreq->min_freq = find_available_min_freq(devfreq);
-> -	if (!devfreq->min_freq) {
-> +	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
-> +	if (!devfreq->scaling_min_freq) {
->  		mutex_unlock(&devfreq->lock);
->  		err = -EINVAL;
->  		goto err_dev;
->  	}
-> -	devfreq->scaling_min_freq = devfreq->min_freq;
-> +	devfreq->min_freq = devfreq->scaling_min_freq;
->  
-> -	devfreq->max_freq = find_available_max_freq(devfreq);
-> -	if (!devfreq->max_freq) {
-> +	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
-> +	if (!devfreq->scaling_max_freq) {
->  		mutex_unlock(&devfreq->lock);
->  		err = -EINVAL;
->  		goto err_dev;
->  	}
-> -	devfreq->scaling_max_freq = devfreq->max_freq;
-> +	devfreq->max_freq = devfreq->scaling_max_freq;
->  
->  	dev_set_name(&devfreq->dev, "devfreq%d",
->  				atomic_inc_return(&devfreq_no));
-> 
+On 05/16/2018 04:56 PM, Tian, Kevin wrote:
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Wednesday, May 16, 2018 4:01 PM
+>>
+>> Hi Joerg,
+>>
+>> Thank you for looking at my patches.
+>>
+>> On 05/15/2018 10:11 PM, Joerg Roedel wrote:
+>>> On Fri, May 04, 2018 at 09:41:15AM +0800, Lu Baolu wrote:
+>>>> PATCH 4~9 implement per domain PASID table. Current per IOMMU
+>>>> PASID table implementation is insecure in the cases where
+>>>> multiple devices under one single IOMMU unit support PASID
+>>>> feature. With per domain PASID table, we can achieve finer
+>>>> protection and isolation granularity.
+>>> Hold on, we hat discussions in the past about doing a system-wide pasid
+>>> space, so that every mm_struct with devices attached gets the same pasid
+>>> across all devices it is talking to. Reason was that some devices (will)
+>>> require this to work correctly. This goes into the opposite direction,
+>>> so I am a bit confused here. Please explain, is this not longer
+>>> necessary?
+>> You are right. System-wide pasid space is necessary, hence PATCH
+>> 1~3 implement it. But PATCH 4~9 don't go into the opposite direction,
+>> it's designed to address another potential issue.
+> one thing you may want to highlight is, even with PATCH 4-9 it's
+> still doing system-wide PASID space allocation. Just PASID table
+> itself is kept per-device for isolation purpose as you described
+> below, i.e. each device can access only those PASIDs which are
+> allocated to itself while the allocation happens system-wide...
 
-This patch just clean-up codes related to min/max_freq and scaling_min/max_freq.
-It seems be good.
+Yes, exactly.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Best regards,
+Lu Baolu
 
-But, I don't want to change the name from 'scaling_min/max_freq'
-to 'min/max_opp_freq'. You can check the meaning of variables
-in comment of struct devfreq.
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>
+>> With system-wide pasid space, we can use a system-wide pasid table,
+>> or just keep what we have now(per iommu unit pasid table). Both
+>> system-wide and per iommu unitpasid table mean that two devices
+>> might share a single pasid table. That will result in an issue.
+>>
+>> For an example, device A is assigned to access the memory space of
+>> process A, and device B is assigned to access the memory space of
+>> process B. The dma remapping infrastructure looks like:
+>>
+>>                                                      .------------------.
+>>                              .----------------.      |                  |
+>>                              |                |      |                  |
+>>                              .----------------.      | Paging structure |
+>>                              |     PASID X    |--|   |  for Process A   |
+>>                              .----------------.  |   |                  |
+>>                              |                |  --->'------------------'
+>>      .----------------.      .----------------.
+>>      |                |      |     PASID Y    |--|
+>>      .----------------.      .----------------.  |
+>>      | Dev_A context  |---|  |                |  |   .------------------.
+>>      '----------------'   |  .----------------.  |   |                  |
+>>      |                |   |  |                |  |   |                  |
+>>      '----------------'   |  .----------------.  |   | Paging structure |
+>>      | Dev_B context  |   -->|                |  |   |  for Process B   |
+>>      '----------------'----->'----------------'  |   |                  |
+>>      |                |         system-wide      v-->'------------------'
+>>      .----------------.         pasid table
+>>      |                |
+>>      '----------------'
+>>         Intel iommu
+>>        context table
+>>
+>>
+>> Since dev_A and dev_B share a pasid table, the side effect is that a flawed
+>> dev_A might access the memory space of process B (with pasid y). Vice
+>> versa,
+>> a flawed dev_B might access memory space of process A (with pasid x).
+>>
+>> What PATCH 4~9 do is to remove such possibility by assigning a pasid table
+>> for each pci device. Hence, the remapping infrastructure looks like:
+>>
+>>
+>>                                                     .------------------.
+>>                                                     |                  |
+>>                             .----------------.      |                  |
+>>                             |                |      | Paging structure |
+>>                             .----------------.      |  for Process A   |
+>>                             |     PASID X    |      |                  |
+>>                             .----------------.----->'------------------'
+>>                             |                |
+>>                             .----------------.
+>>                             |                |
+>>                             .----------------.
+>>                             |                |
+>>                             .----------------.
+>>    .----------------.       |                |
+>>    |                |       .----------------.
+>>    .----------------.       |                |
+>>    | Dev_A context  |------>'----------------'
+>>    '----------------'          pasid table
+>>    |                |          for Dev_A
+>>    '----------------'
+>>    | Dev_B context  |-->
+>>    '----------------'  |    .----------------.
+>>    |                |  |    |                |      .------------------.
+>>    .----------------.  |    .----------------.      |                  |
+>>    |                |  |    |                |      |                  |
+>>    '----------------'  |    .----------------.      | Paging structure |
+>>        Intel iommu     |    |                |      |  for Process B   |
+>>       context table    |    .----------------.      |                  |
+>>                        |    |     PASID Y    |----->'------------------'
+>>                        |    .----------------.
+>>                        |    |                |
+>>                        |    .----------------.
+>>                        |    |                |
+>>                        |    .----------------.
+>>                        v--->|                |
+>>                             '----------------'
+>>                                pasid table
+>>                                for Dev_B
+>>
+>>
+>> With this, dev_A has no means to access memory of process B and vice
+>> versa.
+>>
+>> Best regards,
+>> Lu Baolu
