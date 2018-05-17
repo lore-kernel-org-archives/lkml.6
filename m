@@ -1,91 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751322AbeEQGQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:16:26 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40949 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeEQGQY (ORCPT
+        id S1751977AbeEQGS5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:18:57 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:24174 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750891AbeEQGSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:16:24 -0400
-X-Google-Smtp-Source: AB8JxZq9xe64eqmdsD+Wn9T0pG7VgIYuzVXBo8UGh4stkfDw4rdzP3a7nmaidEPDOO8Jz0o70C20mfC6AoYUFnmAgrs=
-MIME-Version: 1.0
-In-Reply-To: <316ca15c-86f2-f052-c307-ba12eea7b579@rock-chips.com>
-References: <20180516192022.23541-1-malat@debian.org> <316ca15c-86f2-f052-c307-ba12eea7b579@rock-chips.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Thu, 17 May 2018 08:16:03 +0200
-X-Google-Sender-Auth: fvgCWwcnSINDrBuftXqQAJjxWzA
-Message-ID: <CA+7wUszzfp8u+PwRzOUj3MNNEdCpZYCUoFgGp3GwT8c9nyurpg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: block: propagate correct returned value in mmc_rpmb_ioctl
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 May 2018 02:18:51 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbTw002841
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v4 00/31] kconfig: move compiler capability tests to Kconfig
+Date: Thu, 17 May 2018 15:16:39 +0900
+Message-Id: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4H6GXmi016279
-
-On Thu, May 17, 2018 at 4:45 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->
-> On 2018/5/17 3:20, Mathieu Malaterre wrote:
->>
->> In commit 97548575bef3 ("mmc: block: Convert RPMB to a character device")
->> a
->> new function `mmc_rpmb_ioctl` was added. The final return is simply
->> returning a value of `0` instead of propagating the correct return code.
->>
->> Discovered during a compilation with W=1, silence the following gcc
->> warning
->>
->>    drivers/mmc/core/block.c:2470:6: warning: variable ‘ret’ set but not
->> used [-Wunused-but-set-variable]
->>
->
-> Good catch! But hey, which gcc are you using now? Mine, gcc-linaro-
-> 6.3.1-2017.05-x86_64_aarch64-linux-gnu, with W=1 doesn't warn about
-> this.
-
-$ powerpc-linux-gnu-gcc --version
-powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
-Copyright (C) 2016 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-This is the default powerpc cross compiler on Debian stable (no
-change). Config is simply a ppc32 (with some minor customization).
 
 
-> And it's worth backporting to stable.
+[Introduction]
 
-I am not familiar with the process, do I need to submit a v2 to add the line:
+The motivation of this work is to move the compiler option tests to
+Kconfig from Makefile.  A number of kernel features require the
+compiler support.  Enabling such features blindly in Kconfig ends up
+with a lot of nasty build-time testing in Makefiles.  If a chosen
+feature turns out unsupported by the compiler, what the build system
+can do is either to disable it (silently!) or to forcibly break the
+build, despite Kconfig has let the user to enable it.  By moving the
+compiler capability tests to Kconfig, Kconfig entries will be visible
+only when they are available.
 
-Cc: <stable@vger.kernel.org> # v4.15+
+[Major Changes in V4]
 
-?
+ - In V4, I slightly change the syntax of a function call.
+   I chose grammatical consistency and simplicity.
+   Anyway, Kconfig is deviating from Make behavior already.
 
-> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
->
->
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->> ---
->>   drivers/mmc/core/block.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
->> index 9e923cd1d80e..38a7586b00cc 100644
->> --- a/drivers/mmc/core/block.c
->> +++ b/drivers/mmc/core/block.c
->> @@ -2485,7 +2485,7 @@ static long mmc_rpmb_ioctl(struct file *filp,
->> unsigned int cmd,
->>                 break;
->>         }
->>   -     return 0;
->> +       return ret;
->>   }
->>     #ifdef CONFIG_COMPAT
->>
->
+   In v3, a function call looked like this:
+
+      $(func-name arg1,arg2,arg3)
+
+   In v4, a function is invoked like follows:
+
+      $(func-name,arg1,arg2,arg3)
+
+   The difference is that the function name and the first argument
+   are separated by a comma.
+
+ - V3 supported single-letter variable like $X.
+   V4 dropped it because we do not need multiple ways to do the
+   same thing.
+   You must always enclose a variable name like $(X).
+
+ - Support lazy argument expansion.  This is necessary for implementing
+   'if', 'and', 'or' functions as in Make.
+
+ - Add more built-in functions:
+   'if', 'error', 'filename', 'lineno'
+
+ - Error out if a recursive variable references itself eventually.
+   For example,  X = $(X)
+   ends up with a circular expansion.  It must be terminated
+   since the expansion would continue eternally.
+
+ - Update Documentation and unit-tests, accordingly.
+
+[Major Changes in V3]
+
+This version looks more like Make.
+
+  - Use = operator instead of 'macro' keyword
+    to define a user-defined function.
+
+  - 'Recursively expanded variable' is implemented as a side-effect.
+     A variable is a function with zero argument.
+
+  - Support simply expanded variable which is defined by := operator
+
+  - Support += operator.
+    Probably, this feature will be useful to accumulate compiler flags.
+    At least, Clang needs some prerequisite flags such as triplet
+    to test other compiler flags.
+
+  - Support $(info ...) and $(warning ...) built-in functions,
+    which were useful while I was debugging this.
+
+  - Add documentation
+
+  - Add unit tests
+
+  - Collect helpers to scripts/Kconfig.include
+
+[Old Versions]
+
+V3:  https://lkml.org/lkml/2018/4/13/37
+V2:  https://lkml.org/lkml/2018/2/16/610
+V1:  https://lkml.org/lkml/2018/2/16/610
+RFC: https://lkml.org/lkml/2018/2/8/429
+
+
+
+Masahiro Yamada (31):
+  kbuild: remove kbuild cache
+  kbuild: remove CONFIG_CROSS_COMPILE support
+  kconfig: reference environment variables directly and remove 'option
+    env='
+  kconfig: remove string expansion in file_lookup()
+  kconfig: remove string expansion for mainmenu after yyparse()
+  kconfig: remove sym_expand_string_value()
+  kconfig: add built-in function support
+  kconfig: add 'shell' built-in function
+  kconfig: replace $(UNAME_RELEASE) with function call
+  kconfig: begin PARAM state only when seeing a command keyword
+  kconfig: support user-defined function and recursively expanded
+    variable
+  kconfig: support simply expanded variable
+  kconfig: support append assignment operator
+  kconfig: expand lefthand side of assignment statement
+  kconfig: add 'info', 'warning', and 'error' built-in functions
+  kconfig: add 'if' built-in function
+  kconfig: add 'filename' and 'lineno' built-in variables
+  kconfig: error out if a recursive variable references itself
+  Documentation: kconfig: document a new Kconfig macro language
+  kconfig: test: add Kconfig macro language tests
+  kconfig: show compiler version text in the top comment
+  kconfig: add basic helper macros to scripts/Kconfig.include
+  stack-protector: test compiler capability in Kconfig and drop AUTO
+    mode
+  kconfig: add CC_IS_GCC and GCC_VERSION
+  kconfig: add CC_IS_CLANG and CLANG_VERSION
+  gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
+  kcov: test compiler capability in Kconfig and correct dependency
+  gcc-plugins: move GCC version check for PowerPC to Kconfig
+  gcc-plugins: test plugin support in Kconfig and clean up Makefile
+  gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+  arm64: move GCC version check for ARCH_SUPPORTS_INT128 to Kconfig
+
+ Documentation/kbuild/kconfig-language.txt          |   8 -
+ Documentation/kbuild/kconfig-macro-language.txt    | 252 ++++++++
+ Kconfig                                            |  10 +-
+ MAINTAINERS                                        |   3 +-
+ Makefile                                           | 105 +---
+ arch/Kconfig                                       |  49 +-
+ arch/arm64/Kconfig                                 |   1 +
+ arch/arm64/Makefile                                |   6 -
+ arch/powerpc/Kconfig                               |   2 +-
+ arch/sh/Kconfig                                    |   4 +-
+ arch/sparc/Kconfig                                 |   4 +-
+ arch/um/Kconfig.common                             |   4 -
+ arch/x86/Kconfig                                   |  15 +-
+ arch/x86/um/Kconfig                                |  10 +-
+ init/Kconfig                                       |  40 +-
+ kernel/gcov/Kconfig                                |  17 +-
+ kernel/gcov/Makefile                               |   2 -
+ lib/Kconfig.debug                                  |  11 +-
+ scripts/Kbuild.include                             | 101 +---
+ scripts/Kconfig.include                            |  27 +
+ scripts/Makefile.gcc-plugins                       |  91 +--
+ scripts/Makefile.kcov                              |  10 +-
+ scripts/clang-version.sh                           |  18 +-
+ scripts/gcc-plugins/Makefile                       |   1 +
+ scripts/gcc-x86_32-has-stack-protector.sh          |   7 +-
+ scripts/gcc-x86_64-has-stack-protector.sh          |   5 -
+ scripts/kconfig/confdata.c                         |  33 +-
+ scripts/kconfig/kconf_id.c                         |   1 -
+ scripts/kconfig/lkc.h                              |   4 -
+ scripts/kconfig/lkc_proto.h                        |  15 +-
+ scripts/kconfig/menu.c                             |   3 -
+ scripts/kconfig/preprocess.c                       | 651 +++++++++++++++++++++
+ scripts/kconfig/symbol.c                           | 109 ----
+ .../kconfig/tests/preprocess/builtin_func/Kconfig  |  29 +
+ .../tests/preprocess/builtin_func/__init__.py      |   8 +
+ .../tests/preprocess/builtin_func/expected_stderr  |   7 +
+ .../tests/preprocess/builtin_func/expected_stdout  |   1 +
+ .../tests/preprocess/circular_expansion/Kconfig    |   3 +
+ .../preprocess/circular_expansion/__init__.py      |  10 +
+ .../preprocess/circular_expansion/expected_stderr  |   1 +
+ scripts/kconfig/tests/preprocess/escape/Kconfig    |  21 +
+ .../kconfig/tests/preprocess/escape/__init__.py    |   7 +
+ .../tests/preprocess/escape/expected_stderr        |   5 +
+ scripts/kconfig/tests/preprocess/variable/Kconfig  |  48 ++
+ .../kconfig/tests/preprocess/variable/__init__.py  |   7 +
+ .../tests/preprocess/variable/expected_stderr      |   9 +
+ scripts/kconfig/util.c                             |  22 +-
+ scripts/kconfig/zconf.l                            |  95 ++-
+ scripts/kconfig/zconf.y                            |  46 +-
+ 49 files changed, 1366 insertions(+), 572 deletions(-)
+ create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
+ create mode 100644 scripts/Kconfig.include
+ create mode 100644 scripts/kconfig/preprocess.c
+ create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/Kconfig
+ create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/__init__.py
+ create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stderr
+ create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stdout
+ create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/Kconfig
+ create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/__init__.py
+ create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/expected_stderr
+ create mode 100644 scripts/kconfig/tests/preprocess/escape/Kconfig
+ create mode 100644 scripts/kconfig/tests/preprocess/escape/__init__.py
+ create mode 100644 scripts/kconfig/tests/preprocess/escape/expected_stderr
+ create mode 100644 scripts/kconfig/tests/preprocess/variable/Kconfig
+ create mode 100644 scripts/kconfig/tests/preprocess/variable/__init__.py
+ create mode 100644 scripts/kconfig/tests/preprocess/variable/expected_stderr
+
+-- 
+2.7.4
