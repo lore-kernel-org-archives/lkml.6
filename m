@@ -1,167 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeEQLm2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:42:28 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:46824 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751438AbeEQLm0 (ORCPT
+        id S1751985AbeEQLnc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:43:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49012 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeEQLna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:42:26 -0400
+        Thu, 17 May 2018 07:43:30 -0400
+Date: Thu, 17 May 2018 08:43:24 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180517084324.3242c257@vento.lan>
+In-Reply-To: <20180517083440.14e6b975@vento.lan>
+References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+        <20180423152455.363d285c@vento.lan>
+        <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+        <20180423161742.66f939ba@vento.lan>
+        <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+        <20180426204241.03a42996@vento.lan>
+        <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+        <20180515085953.65bfa107@vento.lan>
+        <20180515141655.idzuh2jfdkuu5grs@mwanda>
+        <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
+        <20180515193936.m25kzyeknsk2bo2c@mwanda>
+        <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
+        <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
+        <20180517083440.14e6b975@vento.lan>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date: Thu, 17 May 2018 13:42:24 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v5 3/3] ARM: dts: tegra: Work safely with 256 MB
- Colibri-T20 modules
-In-Reply-To: <1526543103-21668-3-git-send-email-krzk@kernel.org>
-References: <1526543103-21668-1-git-send-email-krzk@kernel.org>
- <1526543103-21668-3-git-send-email-krzk@kernel.org>
-Message-ID: <83b0a1b34963639421caf6580236b450@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.05.2018 09:45, Krzysztof Kozlowski wrote:
-> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-> (with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-> expecting the bootloader to do the fixup of /memory node.  However in
-> case it does not happen, let's stay on safe side by limiting the memory
-> to 256 MB for both versions of Colibri-T20.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> RFT:
-> Not tested on 512 MB module as I have only the 256 MB one.
-> 
-> Changes since v4:
-> 1. Drop the 512 suffix from file names (suggested by Stefan).
-> 
-> Changes since v3:
-> 1. Reduce the memory in existing DTSI instead of creating a new one
->    (suggested by Marcel).
-> 
-> Changes since v2:
-> 1. Do not add new compatible but use everywhere existing
->    "toradex,colibri_t20-512" (suggested by Rob).
-> 
-> Changes since v1:
-> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
->    my bootloader uses mem= argument).
-> ---
->  arch/arm/boot/dts/Makefile                                       | 2 +-
->  .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi}  | 9 +++++++--
->  arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris.dts}     | 4 ++--
+Em Thu, 17 May 2018 08:34:40 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
 
-Almost.
-
-Since we rename anyway, I would add the module name here too. The
-hardware actually consists of the Tegra 2 SoC on a Colibri Module,
-sitting in a Iris board.
-
-So:
-
-arch/arm/boot/dts/tegra20-colibri-iris.dts
-
-This would align with the other modules we have upstream, e.g.:
-
-arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-
---
-Stefan
-
->  3 files changed, 10 insertions(+), 5 deletions(-)
->  rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi =>
-> tegra20-colibri.dtsi} (98%)
->  rename arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris.dts} (95%)
+> Em Thu, 17 May 2018 05:36:03 -0500
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
 > 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index ec2024ea8b1e..837f8274b3ee 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -1030,7 +1030,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
->  	tango4-vantage-1172.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
->  	tegra20-harmony.dtb \
-> -	tegra20-iris-512.dtb \
-> +	tegra20-iris.dtb \
->  	tegra20-medcom-wide.dtb \
->  	tegra20-paz00.dtb \
->  	tegra20-plutux.dtb \
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> b/arch/arm/boot/dts/tegra20-colibri.dtsi
-> similarity index 98%
-> rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> rename to arch/arm/boot/dts/tegra20-colibri.dtsi
-> index 305efb275b48..b9387c540450 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-> @@ -2,7 +2,7 @@
->  #include "tegra20.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB";
-> +	model = "Toradex Colibri T20 256/512 MB";
->  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
-> @@ -12,7 +12,12 @@
->  
->  	memory@0 {
->  		device_type = "memory";
-> -		reg = <0x00000000 0x20000000>;
-> +		/*
-> +		 * Set memory to 256 MB to be safe as this could be used on
-> +		 * 256 or 512 MB module. It is expected from bootloader
-> +		 * to fix this up for 512 MB version.
-> +		 */
-> +		reg = <0x00000000 0x10000000>;
->  	};
->  
->  	host1x@50000000 {
-> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
-> b/arch/arm/boot/dts/tegra20-iris.dts
-> similarity index 95%
-> rename from arch/arm/boot/dts/tegra20-iris-512.dts
-> rename to arch/arm/boot/dts/tegra20-iris.dts
-> index 40126388946d..57f16c0e9917 100644
-> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
-> +++ b/arch/arm/boot/dts/tegra20-iris.dts
-> @@ -1,10 +1,10 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /dts-v1/;
->  
-> -#include "tegra20-colibri-512.dtsi"
-> +#include "tegra20-colibri.dtsi"
->  
->  / {
-> -	model = "Toradex Colibri T20 512MB on Iris";
-> +	model = "Toradex Colibri T20 256/512 MB on Iris";
->  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
->  
->  	aliases {
+> > 
+> > 
+> > On 05/16/2018 08:14 PM, Gustavo A. R. Silva wrote:
+> > > 
+> > > 
+> > > On 05/15/2018 02:39 PM, Dan Carpenter wrote:
+> 
+> > >> You'd need to rebuild the db (possibly twice but definitely once).
+> 
+> How? Here, I just pull from your git tree and do a "make". At most,
+> make clean; make.
+
+Never mind. Found it using grep. I'm running this:
+
+	make allyesconfig
+	/devel/smatch/smatch_scripts/build_kernel_data.sh
+	/devel/smatch/smatch_scripts/build_kernel_data.sh
+
+
+> 
+> > >>
+> > > 
+> > > Hi Dan,
+> > > 
+> > > After rebuilding the db (once), these are all the Spectre media warnings 
+> > > I get:
+> > > 
+> > > drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
+> > > potential spectre issue 'ddbs'
+> > > drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
+> > > potential spectre issue 'pdev->port'
+> > > drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
+> > > potential spectre issue 'idev->input'
+> > > drivers/media/dvb-core/dvb_ca_en50221.c:1400 
+> > > dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
+> > > 'ca->slot_info' (local cap)
+> > > drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
+> > > warn: potential spectre issue 'ca->slot_info' (local cap)
+> > > drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
+> > > potential spectre issue 'p->ule_next_hdr'
+> > > drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
+> > > spectre issue 'dvbnet->device' (local cap)
+> > > drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
+> > > warn: potential spectre issue 'pin->error_inj_args'
+> > > 
+> > > I just want to double check if you are getting the same output. In case 
+> > > you are getting the same, then what Mauro commented about these issues:
+> > > 
+> > > https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
+> > > 
+> > > being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
+> > > to be correct.
+> > > 
+> > 
+> > Interesting, I've rebuild the db twice and now I get a total of 75 
+> > Spectre warnings in drivers/media
+> 
+> That makes more sense to me, as the same pattern is used by almost all
+> VIDIOC_ENUM_foo ioctls.
+> 
+> Thanks,
+> Mauro
+
+
+
+Thanks,
+Mauro
