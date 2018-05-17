@@ -1,65 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeEQMNt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:13:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43050 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeEQMNr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:13:47 -0400
-Date: Thu, 17 May 2018 09:13:40 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180517091340.7d8c62b2@vento.lan>
-In-Reply-To: <20180517084324.3242c257@vento.lan>
-References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
-        <20180423152455.363d285c@vento.lan>
-        <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
-        <20180423161742.66f939ba@vento.lan>
-        <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
-        <20180426204241.03a42996@vento.lan>
-        <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
-        <20180515085953.65bfa107@vento.lan>
-        <20180515141655.idzuh2jfdkuu5grs@mwanda>
-        <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
-        <20180515193936.m25kzyeknsk2bo2c@mwanda>
-        <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
-        <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
-        <20180517083440.14e6b975@vento.lan>
-        <20180517084324.3242c257@vento.lan>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1751734AbeEQMSE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:18:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58449 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751047AbeEQMSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 08:18:02 -0400
+Date: Thu, 17 May 2018 14:17:59 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] ima: Fix pr_fmt() redefinition
+Message-ID: <20180517121759.r6tqw3mj43morfwu@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20180517104702.24689-1-pvorel@suse.cz>
+ <1526558695.3306.11.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526558695.3306.11.camel@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 17 May 2018 08:43:24 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
+Hi Mimi,
 
-> > > > On 05/15/2018 02:39 PM, Dan Carpenter wrote:  
-> >   
-> > > >> You'd need to rebuild the db (possibly twice but definitely once).  
-> > 
-> > How? Here, I just pull from your git tree and do a "make". At most,
-> > make clean; make.  
-> 
-> Never mind. Found it using grep. I'm running this:
-> 
-> 	make allyesconfig
-> 	/devel/smatch/smatch_scripts/build_kernel_data.sh
-> 	/devel/smatch/smatch_scripts/build_kernel_data.sh
+> On Thu, 2018-05-17 at 12:47 +0200, Petr Vorel wrote:
+> > Previous definition was too late and caused problems in powerpc allyesconfig:
+> > security/integrity/ima/ima_kexec.c:18:0: warning: "pr_fmt" redefined
+> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-It seems that something is broken... getting this error/warning:
+> > In file included from include/linux/kernel.h:14:0,
+> >                  from include/asm-generic/bug.h:18,
+> >                  from arch/powerpc/include/asm/bug.h:128,
+> >                  from include/linux/bug.h:5,
+> >                  from include/linux/seq_file.h:7,
+> >                  from security/integrity/ima/ima_kexec.c:13:
+> > include/linux/printk.h:288:0: note: this is the location of the previous definition
+> >  #define pr_fmt(fmt) fmt
 
-DBD::SQLite::db do failed: unrecognized token: "'end + strlen("
-" at /devel/smatch/smatch_scripts/../smatch_data/db/fill_db_sql.pl line 32, <WARNS> line 2938054.
+> > Fixes: 3dea0d93d257 ("ima: Unify logging")
+
+> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+> As the original patch hasn't been upstreamed yet, I'll squash this fix
+> with the original patch.
+Make sense, thanks!
+
+> thanks!
+
+> Mimi
 
 
-Thanks,
-Mauro
+Kind regards,
+Petr
