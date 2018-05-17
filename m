@@ -1,212 +1,390 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752236AbeEQU6T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:58:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750938AbeEQU6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:58:17 -0400
-Date: Thu, 17 May 2018 22:58:11 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Kim Phillips <kim.phillips@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>
-Subject: Re: [PATCH 01/11] perf tests parse-events: Add intel_pt parse test
-Message-ID: <20180517205811.GE12497@krava>
-References: <20180516144908.22212-1-acme@kernel.org>
- <20180516144908.22212-2-acme@kernel.org>
- <20180516163355.d8e4c669ad29d416e9ffb13e@arm.com>
- <20180517201553.GB25467@kernel.org>
+        id S1752112AbeEQVBo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:01:44 -0400
+Received: from gofer.mess.org ([88.97.38.141]:50891 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751017AbeEQVBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 17:01:43 -0400
+Date: Thu, 17 May 2018 22:01:40 +0100
+From: Sean Young <sean@mess.org>
+To: Y Song <ys114321@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>
+Subject: Re: [PATCH v3 2/2] bpf: add selftest for rawir_event type program
+Message-ID: <20180517210140.ck225yuckq6onheb@gofer.mess.org>
+References: <cover.1526504511.git.sean@mess.org>
+ <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
+ <CAH3MdRUhrBzHXKgcu1htSHTqeKVWnci+ADrTriCqjXLHUezB+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180517201553.GB25467@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH3MdRUhrBzHXKgcu1htSHTqeKVWnci+ADrTriCqjXLHUezB+w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 05:15:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, May 16, 2018 at 04:33:55PM -0500, Kim Phillips escreveu:
-> > On Wed, 16 May 2018 11:48:58 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > 
-> > > To avoid regressions such as the one fixed by 4a35a9027f64 ("Revert
-> > > "perf pmu: Fix pmu events parsing rule""), where '-e intel_pt//u' got
-> > > broken, with this new entry in this 'perf tests' subtest, we would have
-> > > caught it before pushing upstream.
-> > > 
-> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > > Cc: Andi Kleen <ak@linux.intel.com>
-> > > Cc: David Ahern <dsahern@gmail.com>
-> > > Cc: Jiri Olsa <jolsa@kernel.org>
-> > > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Wang Nan <wangnan0@huawei.com>
-> > > Link: https://lkml.kernel.org/n/tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > ---
-> > 
-> > This causes a SEGV on Arm, and an Intel box without Intel-PT h/w:
-> > 
-> > (gdb) run test -F -v 6
-> > Starting program: /home/kimphi01/git/linux-perf-acme/tools/perf/perf test -F -v 6
-> > [Thread debugging using libthread_db enabled]
-> > Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-> >  6: Parse event definition strings             :
-> > --- start ---
-> > running test 0 'syscalls:sys_enter_openat'
-> > Using CPUID GenuineIntel-6-3C
-> > <SNIP>
-> > running test 51 'L1-dcache-misses/name=cachepmu/'
-> > running test 52 'intel_pt//u'
-> > 
-> > Program received signal SIGSEGV, Segmentation fault.
-> > __GI___vasprintf_chk (result_ptr=0x8, flags=1, format=<optimized out>, args=args@entry=0x7fffffffbf30)
-> >     at vasprintf_chk.c:88
-> > 88	vasprintf_chk.c: No such file or directory.
-> > (gdb) bt
-> > #0  __GI___vasprintf_chk (result_ptr=0x8, flags=1, format=<optimized out>, args=args@entry=0x7fffffffbf30)
-> >     at vasprintf_chk.c:88
-> > #1  0x00007ffff6456e6f in __asprintf_chk (result_ptr=result_ptr@entry=0x8, flags=flags@entry=1, 
-> >     format=format@entry=0x555555992e80 "Cannot find PMU `%s'. Missing kernel support?") at asprintf_chk.c:32
-> > #2  0x0000555555766836 in asprintf (__fmt=0x555555992e80 "Cannot find PMU `%s'. Missing kernel support?", __ptr=0x8)
-> >     at /usr/include/x86_64-linux-gnu/bits/stdio2.h:178
-> > #3  parse_events_add_pmu (parse_state=parse_state@entry=0x7fffffffdda0, list=list@entry=0x555555e137d0, 
-> >     name=0x5555563e84e0 "intel_pt", head_config=0x0, auto_merge_stats=auto_merge_stats@entry=false, 
-> >     use_alias=use_alias@entry=false) at util/parse-events.c:1236
+On Thu, May 17, 2018 at 10:17:59AM -0700, Y Song wrote:
+> On Wed, May 16, 2018 at 2:04 PM, Sean Young <sean@mess.org> wrote:
+> > This is simple test over rc-loopback.
+> >
+> > Signed-off-by: Sean Young <sean@mess.org>
+> > ---
+> >  tools/bpf/bpftool/prog.c                      |   1 +
+> >  tools/include/uapi/linux/bpf.h                |  57 +++++++-
+> >  tools/lib/bpf/libbpf.c                        |   1 +
+> >  tools/testing/selftests/bpf/Makefile          |   8 +-
+> >  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
+> >  tools/testing/selftests/bpf/test_rawir.sh     |  37 +++++
+> >  .../selftests/bpf/test_rawir_event_kern.c     |  26 ++++
+> >  .../selftests/bpf/test_rawir_event_user.c     | 130 ++++++++++++++++++
+> >  8 files changed, 261 insertions(+), 5 deletions(-)
+> >  create mode 100755 tools/testing/selftests/bpf/test_rawir.sh
+> >  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_kern.c
+> >  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_user.c
 > 
+> Could you copy include/uapi/linux/lirc.h file to tools directory as well.
+> Otherwise, I will get the following compilation error:
 > 
-> Humm:
-> 
->         struct parse_events_error *err = parse_state->error;
-> 
->         pmu = perf_pmu__find(name);
->         if (!pmu) {
->                 if (asprintf(&err->str,
->                                 "Cannot find PMU `%s'. Missing kernel support?",
->                                 name) < 0)
-> 
-> $ pahole -C parse_events_error ~/bin/perf
-> struct parse_events_error {
-> 	int                        idx;                  /*     0     4 */
-> 
-> 	/* XXX 4 bytes hole, try to pack */
-> 
-> 	char *                     str;                  /*     8     8 */
-> 	char *                     help;                 /*    16     8 */
-> 
-> 	/* size: 24, cachelines: 1, members: 3 */
-> 	/* sum members: 20, holes: 1, sum holes: 4 */
-> 	/* last cacheline: 24 bytes */
-> };
-> $
-> 
-> So parse_state->error == NULL, Jiri, ideas?
+> gcc -Wall -O2 -I../../../include/uapi -I../../../lib
+> -I../../../lib/bpf -I../../../../include/generated  -I../../../include
+>    test_rawir_event_user.c
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/libbpf.a -lcap
+> -lelf -lrt -lpthread -o
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/test_rawir_event_user
+> test_rawir_event_user.c: In function ‘main’:
+> test_rawir_event_user.c:60:15: error: ‘LIRC_MODE_SCANCODE’ undeclared
+> (first use in this function); did you mean ‘LIRC_MODE_LIRCCODE’?
+>         mode = LIRC_MODE_SCANCODE;
+>                ^~~~~~~~~~~~~~~~~~
+>                LIRC_MODE_LIRCCODE
+> test_rawir_event_user.c:60:15: note: each undeclared identifier is
+> reported only once for each function it appears in
+> test_rawir_event_user.c:93:29: error: storage size of ‘lsc’ isn’t known
+>         struct lirc_scancode lsc;
+>                              ^~~
+> test_rawir_event_user.c:93:29: warning: unused variable ‘lsc’
+> [-Wunused-variable]
 
-yep, we don't use it in tests.. and when trying intel_pt on
-system without that pmu, the parse_events_add_pmu fails
-and store the error to NULL.. we should check on that err pointer
+Ah, good catch. Thanks for testing this.
+> 
+> >
+> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> > index 9bdfdf2d3fbe..8889a4ee8577 100644
+> > --- a/tools/bpf/bpftool/prog.c
+> > +++ b/tools/bpf/bpftool/prog.c
+> > @@ -71,6 +71,7 @@ static const char * const prog_type_name[] = {
+> >         [BPF_PROG_TYPE_SK_MSG]          = "sk_msg",
+> >         [BPF_PROG_TYPE_RAW_TRACEPOINT]  = "raw_tracepoint",
+> >         [BPF_PROG_TYPE_CGROUP_SOCK_ADDR] = "cgroup_sock_addr",
+> > +       [BPF_PROG_TYPE_RAWIR_EVENT]     = "rawir_event",
+> >  };
+> >
+> >  static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
+> > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> > index 1205d86a7a29..243e141e8a5b 100644
+> > --- a/tools/include/uapi/linux/bpf.h
+> > +++ b/tools/include/uapi/linux/bpf.h
+> > @@ -141,6 +141,7 @@ enum bpf_prog_type {
+> >         BPF_PROG_TYPE_SK_MSG,
+> >         BPF_PROG_TYPE_RAW_TRACEPOINT,
+> >         BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
+> > +       BPF_PROG_TYPE_RAWIR_EVENT,
+> >  };
+> >
+> >  enum bpf_attach_type {
+> > @@ -158,6 +159,7 @@ enum bpf_attach_type {
+> >         BPF_CGROUP_INET6_CONNECT,
+> >         BPF_CGROUP_INET4_POST_BIND,
+> >         BPF_CGROUP_INET6_POST_BIND,
+> > +       BPF_RAWIR_EVENT,
+> >         __MAX_BPF_ATTACH_TYPE
+> >  };
+> >
+> > @@ -1829,7 +1831,6 @@ union bpf_attr {
+> >   *     Return
+> >   *             0 on success, or a negative error in case of failure.
+> >   *
+> > - *
+> >   * int bpf_fib_lookup(void *ctx, struct bpf_fib_lookup *params, int plen, u32 flags)
+> >   *     Description
+> >   *             Do FIB lookup in kernel tables using parameters in *params*.
+> > @@ -1856,6 +1857,7 @@ union bpf_attr {
+> >   *             Egress device index on success, 0 if packet needs to continue
+> >   *             up the stack for further processing or a negative error in case
+> >   *             of failure.
+> > + *
+> >   * int bpf_sock_hash_update(struct bpf_sock_ops_kern *skops, struct bpf_map *map, void *key, u64 flags)
+> >   *     Description
+> >   *             Add an entry to, or update a sockhash *map* referencing sockets.
+> > @@ -1902,6 +1904,35 @@ union bpf_attr {
+> >   *             egress otherwise). This is the only flag supported for now.
+> >   *     Return
+> >   *             **SK_PASS** on success, or **SK_DROP** on error.
+> > + *
+> > + * int bpf_rc_keydown(void *ctx, u32 protocol, u32 scancode, u32 toggle)
+> > + *     Description
+> > + *             Report decoded scancode with toggle value. For use in
+> > + *             BPF_PROG_TYPE_RAWIR_EVENT, to report a successfully
+> > + *             decoded scancode. This is will generate a keydown event,
+> > + *             and a keyup event once the scancode is no longer repeated.
+> > + *
+> > + *             *ctx* pointer to bpf_rawir_event, *protocol* is decoded
+> > + *             protocol (see RC_PROTO_* enum).
+> > + *
+> > + *             Some protocols include a toggle bit, in case the button
+> > + *             was released and pressed again between consecutive scancodes,
+> > + *             copy this bit into *toggle* if it exists, else set to 0.
+> > + *
+> > + *     Return
+> > + *             Always return 0 (for now)
+> > + *
+> > + * int bpf_rc_repeat(void *ctx)
+> > + *     Description
+> > + *             Repeat the last decoded scancode; some IR protocols like
+> > + *             NEC have a special IR message for repeat last button,
+> > + *             in case user is holding a button down; the scancode is
+> > + *             not repeated.
+> > + *
+> > + *             *ctx* pointer to bpf_rawir_event.
+> > + *
+> > + *     Return
+> > + *             Always return 0 (for now)
+> >   */
+> >  #define __BPF_FUNC_MAPPER(FN)          \
+> >         FN(unspec),                     \
+> > @@ -1976,7 +2007,9 @@ union bpf_attr {
+> >         FN(fib_lookup),                 \
+> >         FN(sock_hash_update),           \
+> >         FN(msg_redirect_hash),          \
+> > -       FN(sk_redirect_hash),
+> > +       FN(sk_redirect_hash),           \
+> > +       FN(rc_repeat),                  \
+> > +       FN(rc_keydown),
+> >
+> >  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+> >   * function eBPF program intends to call
+> > @@ -2043,6 +2076,26 @@ enum bpf_hdr_start_off {
+> >         BPF_HDR_START_NET,
+> >  };
+> >
+> > +/*
+> > + * user accessible mirror of in-kernel ir_raw_event
+> > + */
+> > +#define BPF_RAWIR_EVENT_SPACE          0
+> > +#define BPF_RAWIR_EVENT_PULSE          1
+> > +#define BPF_RAWIR_EVENT_TIMEOUT                2
+> > +#define BPF_RAWIR_EVENT_RESET          3
+> > +#define BPF_RAWIR_EVENT_CARRIER                4
+> > +#define BPF_RAWIR_EVENT_DUTY_CYCLE     5
+> > +
+> > +struct bpf_rawir_event {
+> > +       union {
+> > +               __u32   duration;
+> > +               __u32   carrier;
+> > +               __u32   duty_cycle;
+> > +       };
+> > +
+> > +       __u32   type;
+> > +};
+> > +
+> >  /* user accessible mirror of in-kernel sk_buff.
+> >   * new fields can only be added to the end of this structure
+> >   */
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index df54c4c9e48a..372269e9053d 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -1455,6 +1455,7 @@ static bool bpf_prog_type__needs_kver(enum bpf_prog_type type)
+> >         case BPF_PROG_TYPE_CGROUP_DEVICE:
+> >         case BPF_PROG_TYPE_SK_MSG:
+> >         case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
+> > +       case BPF_PROG_TYPE_RAWIR_EVENT:
+> >                 return false;
+> >         case BPF_PROG_TYPE_UNSPEC:
+> >         case BPF_PROG_TYPE_KPROBE:
+> > diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> > index 1eb0fa2aba92..b84e36d05d34 100644
+> > --- a/tools/testing/selftests/bpf/Makefile
+> > +++ b/tools/testing/selftests/bpf/Makefile
+> > @@ -24,7 +24,7 @@ urandom_read: urandom_read.c
+> >  # Order correspond to 'make run_tests' order
+> >  TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
+> >         test_align test_verifier_log test_dev_cgroup test_tcpbpf_user \
+> > -       test_sock test_btf test_sockmap
+> > +       test_sock test_btf test_sockmap test_rawir_event_user
+> >
+> >  TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test_obj_id.o \
+> >         test_pkt_md_access.o test_xdp_redirect.o test_xdp_meta.o sockmap_parse_prog.o     \
+> > @@ -33,7 +33,8 @@ TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test
+> >         sample_map_ret0.o test_tcpbpf_kern.o test_stacktrace_build_id.o \
+> >         sockmap_tcp_msg_prog.o connect4_prog.o connect6_prog.o test_adjust_tail.o \
+> >         test_btf_haskv.o test_btf_nokv.o test_sockmap_kern.o test_tunnel_kern.o \
+> > -       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o
+> > +       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o \
+> > +       test_rawir_event_kern.o
+> >
+> >  # Order correspond to 'make run_tests' order
+> >  TEST_PROGS := test_kmod.sh \
+> > @@ -42,7 +43,8 @@ TEST_PROGS := test_kmod.sh \
+> >         test_xdp_meta.sh \
+> >         test_offload.py \
+> >         test_sock_addr.sh \
+> > -       test_tunnel.sh
+> > +       test_tunnel.sh \
+> > +       test_rawir.sh
+> >
+> >  # Compile but not part of 'make run_tests'
+> >  TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr
+> > diff --git a/tools/testing/selftests/bpf/bpf_helpers.h b/tools/testing/selftests/bpf/bpf_helpers.h
+> > index 8f143dfb3700..26d89b7f9841 100644
+> > --- a/tools/testing/selftests/bpf/bpf_helpers.h
+> > +++ b/tools/testing/selftests/bpf/bpf_helpers.h
+> > @@ -114,6 +114,12 @@ static int (*bpf_get_stack)(void *ctx, void *buf, int size, int flags) =
+> >  static int (*bpf_fib_lookup)(void *ctx, struct bpf_fib_lookup *params,
+> >                              int plen, __u32 flags) =
+> >         (void *) BPF_FUNC_fib_lookup;
+> > +static int (*bpf_rc_repeat)(void *ctx) =
+> > +       (void *) BPF_FUNC_rc_repeat;
+> > +static int (*bpf_rc_keydown)(void *ctx, unsigned int protocol,
+> > +                            unsigned int scancode, unsigned int toggle) =
+> > +       (void *) BPF_FUNC_rc_keydown;
+> > +
+> >
+> >  /* llvm builtin functions that eBPF C program may use to
+> >   * emit BPF_LD_ABS and BPF_LD_IND instructions
+> > diff --git a/tools/testing/selftests/bpf/test_rawir.sh b/tools/testing/selftests/bpf/test_rawir.sh
+> > new file mode 100755
+> > index 000000000000..0aa77b043ee1
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/test_rawir.sh
+> > @@ -0,0 +1,37 @@
+> > +#!/bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +# Test bpf_rawir_event over rc-loopback. Steps for the test:
+> > +#
+> > +# 1. Find the /dev/lircN device for rc-loopback
+> > +# 2. Attach bpf_rawir_event program which decodes some IR.
+> > +# 3. Send some IR to the same IR device; since it is loopback, this will
+> > +#    end up in the bpf program
+> > +# 4. bpf program should decode IR and report keycode
+> > +# 5. We can read keycode from same /dev/lirc device
+> > +
+> > +GREEN='\033[0;92m'
+> > +RED='\033[0;31m'
+> > +NC='\033[0m' # No Color
+> > +
+> > +modprobe rc-loopback
+> > +
+> > +for i in /sys/class/rc/rc*
+> > +do
+> > +       if grep -q DRV_NAME=rc-loopback $i/uevent
+> > +       then
+> > +               LIRCDEV=$(grep DEVNAME= $i/lirc*/uevent | sed sQDEVNAME=Q/dev/Q)
+> > +       fi
+> > +done
+> > +
+> > +if [ -n $LIRCDEV ];
+> > +then
+> > +       TYPE=rawir_event
+> > +       ./test_rawir_event_user $LIRCDEV
+> > +       ret=$?
+> > +       if [ $ret -ne 0 ]; then
+> > +               echo -e ${RED}"FAIL: $TYPE"${NC}
+> > +       else
+> > +               echo -e ${GREEN}"PASS: $TYPE"${NC}
+> > +       fi
+> > +fi
+> > diff --git a/tools/testing/selftests/bpf/test_rawir_event_kern.c b/tools/testing/selftests/bpf/test_rawir_event_kern.c
+> > new file mode 100644
+> > index 000000000000..33ba5d30af62
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/test_rawir_event_kern.c
+> > @@ -0,0 +1,26 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// test ir decoder
+> > +//
+> > +// Copyright (C) 2018 Sean Young <sean@mess.org>
+> > +
+> > +#include <linux/bpf.h>
+> > +#include "bpf_helpers.h"
+> > +
+> > +SEC("rawir_event")
+> > +int bpf_decoder(struct bpf_rawir_event *e)
+> > +{
+> > +       if (e->type == BPF_RAWIR_EVENT_PULSE) {
+> > +               /*
+> > +                * The lirc interface is microseconds, but here we receive
+> > +                * nanoseconds.
+> > +                */
+> > +               int microseconds = e->duration / 1000;
+> > +
+> > +               if (microseconds & 0x10000)
+> > +                       bpf_rc_keydown(e, 0x40, microseconds & 0xffff, 0);
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +char _license[] SEC("license") = "GPL";
+> > diff --git a/tools/testing/selftests/bpf/test_rawir_event_user.c b/tools/testing/selftests/bpf/test_rawir_event_user.c
+> > new file mode 100644
+> > index 000000000000..c3d7f2c68033
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/test_rawir_event_user.c
+> > @@ -0,0 +1,130 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// test ir decoder
+> > +//
+> > +// Copyright (C) 2018 Sean Young <sean@mess.org>
+> > +
+> > +#include <linux/bpf.h>
+> > +#include <linux/lirc.h>
+> > +#include <assert.h>
+> > +#include <errno.h>
+> > +#include <signal.h>
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <stdbool.h>
+> > +#include <string.h>
+> > +#include <unistd.h>
+> > +#include <poll.h>
+> > +#include <libgen.h>
+> > +#include <sys/resource.h>
+> > +#include <sys/types.h>
+> > +#include <sys/ioctl.h>
+> > +#include <sys/stat.h>
+> > +#include <fcntl.h>
+> > +
+> > +#include "bpf_util.h"
+> > +#include <bpf/bpf.h>
+> > +#include <bpf/libbpf.h>
+> > +
+> > +int main(int argc, char **argv)
+> > +{
+> > +       struct bpf_object *obj;
+> > +       int ret, lircfd, progfd, mode;
+> > +       int testir = 0x1dead;
+> > +       u32 prog_ids[10], prog_flags[10], prog_cnt;
+> > +
+> > +       if (argc != 2) {
+> > +               printf("Usage: %s /dev/lircN\n", argv[0]);
+> 
+> Most people probably not really familiar with lircN device. It would be
+> good to provide more information about how to enable this, e.g.,
+>   CONFIG_RC_CORE=y
+>   CONFIG_BPF_RAWIR_EVENT=y
+>   CONFIG_RC_LOOPBACK=y
+>   ......
 
-wrt to the test itself, how about we add callback
-to check if the test is valid before we run it,
-something like below
-jirka
+Good point. I'll add some words explaining what is and how to make it work.
 
-
-
----
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 6829dd416a99..8efefead2c04 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1309,6 +1309,11 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
- 	return 0;
- }
- 
-+static bool test__intel_pt_valid(void)
-+{
-+	return !!perf_pmu__find("intel_pt");
-+}
-+
- static int test__intel_pt(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = perf_evlist__first(evlist);
-@@ -1374,6 +1379,7 @@ struct evlist_test {
- 	const char *name;
- 	__u32 type;
- 	const int id;
-+	bool (*valid)(void);
- 	int (*check)(struct perf_evlist *evlist);
- };
- 
-@@ -1647,6 +1653,7 @@ static struct evlist_test test__events[] = {
- 	},
- 	{
- 		.name  = "intel_pt//u",
-+		.valid = test__intel_pt_valid,
- 		.check = test__intel_pt,
- 		.id    = 52,
- 	},
-@@ -1685,17 +1692,23 @@ static struct terms_test test__terms[] = {
- 
- static int test_event(struct evlist_test *e)
- {
-+	struct parse_events_error err;
- 	struct perf_evlist *evlist;
- 	int ret;
- 
-+	if (e->valid && !e->valid()) {
-+		pr_debug("... SKIP");
-+		return 0;
-+	}
-+
- 	evlist = perf_evlist__new();
- 	if (evlist == NULL)
- 		return -ENOMEM;
- 
--	ret = parse_events(evlist, e->name, NULL);
-+	ret = parse_events(evlist, e->name, &err);
- 	if (ret) {
--		pr_debug("failed to parse event '%s', err %d\n",
--			 e->name, ret);
-+		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
-+			 e->name, ret, err.str);
- 	} else {
- 		ret = e->check(evlist);
- 	}
-@@ -1713,10 +1726,11 @@ static int test_events(struct evlist_test *events, unsigned cnt)
- 	for (i = 0; i < cnt; i++) {
- 		struct evlist_test *e = &events[i];
- 
--		pr_debug("running test %d '%s'\n", e->id, e->name);
-+		pr_debug("running test %d '%s'", e->id, e->name);
- 		ret1 = test_event(e);
- 		if (ret1)
- 			ret2 = ret1;
-+		pr_debug("\n");
- 	}
- 
- 	return ret2;
-@@ -1798,7 +1812,7 @@ static int test_pmu_events(void)
- 	}
- 
- 	while (!ret && (ent = readdir(dir))) {
--		struct evlist_test e;
-+		struct evlist_test e = { };
- 		char name[2 * NAME_MAX + 1 + 12 + 3];
- 
- 		/* Names containing . are special and cannot be used directly */
+Thanks
+Sean
