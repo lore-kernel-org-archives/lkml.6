@@ -1,89 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeEQTK1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 15:10:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58150 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbeEQTKZ (ORCPT
+        id S1752189AbeEQTM1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 15:12:27 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33118 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751664AbeEQTMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 15:10:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FFCC601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-Message-ID: <5AFDD39E.6040203@codeaurora.org>
-Date: Thu, 17 May 2018 12:10:22 -0700
-From: Saravana Kannan <skannan@codeaurora.org>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
-MIME-Version: 1.0
-To: Joel Fernandes <joel@joelfernandes.org>
-CC: Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com> <20180508082242.bre6sjfvefhz6xc3@vireshk-i7> <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com> <20180508094237.GA3752@e108498-lin.cambridge.arm.com> <20180513051933.GA64158@joelaf.mtv.corp.google.com>
-In-Reply-To: <20180513051933.GA64158@joelaf.mtv.corp.google.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+        Thu, 17 May 2018 15:12:25 -0400
+Date: Thu, 17 May 2018 15:12:23 -0400 (EDT)
+Message-Id: <20180517.151223.1480085511338001366.davem@davemloft.net>
+To: ivan.khoronzhuk@linaro.org
+Cc: grygorii.strashko@ti.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: ti: cpsw: disable mq feature for
+ "AM33xx ES1.0" devices
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180516222145.26877-1-ivan.khoronzhuk@linaro.org>
+References: <20180516222145.26877-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/12/2018 10:19 PM, Joel Fernandes wrote:
-> On Tue, May 08, 2018 at 10:42:37AM +0100, Quentin Perret wrote:
->> On Tuesday 08 May 2018 at 11:09:57 (+0200), Dietmar Eggemann wrote:
->>> On 05/08/2018 10:22 AM, Viresh Kumar wrote:
->>>> On 08-05-18, 08:33, Dietmar Eggemann wrote:
->>>>> This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
->>>>>
->>>>> Lifting the restriction that the sugov kthread is bound to the
->>>>> policy->related_cpus for a system with a slow switching cpufreq driver,
->>>>> which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
->>>>> only not beneficial it also harms Enery-Aware Scheduling (EAS) on
->>>>> systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
->>>>>
->>>>> The sugov kthread which does the update for the little cpus could
->>>>> potentially run on a big cpu. It could prevent that the big cluster goes
->>>>> into deeper idle states although all the tasks are running on the little
->>>>> cluster.
->>>>
->>>> I think the original patch did the right thing, but that doesn't suit
->>>> everybody as you explained.
->>>>
->>>> I wouldn't really revert the patch but fix my platform's cpufreq
->>>> driver to set dvfs_possible_from_any_cpu = false, so that other
->>>> platforms can still benefit from the original commit.
->>>
->>> This would make sure that the kthreads are bound to the correct set of cpus
->>> for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
->>> scpi-cpufreq) but it will also change the logic (e.g.
->>> sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
->>>
->>> I'm still struggling to understand when a driver/platform should set
->>> dvfs_possible_from_any_cpu to true and what the actual benefit would be.
->>
->> I assume it might be beneficial to have the kthread moving around freely
->> in some cases, but since it is a SCHED_DEADLINE task now it can't really
->> migrate anywhere anyway. So I'm not sure either if this commits still makes
->> sense now. Or is there another use case for this ?
->
-> The usecase I guess is, as Dietmar was saying, that it makes sense for
-> kthread to update its own cluster and not disturb other clusters or random
-> CPUs. I agree with this point.
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Date: Thu, 17 May 2018 01:21:45 +0300
 
-I agree with Viresh. Also, why exactly did we make it deadline instead 
-of RT? Was RT not getting scheduled quick enough? Is it because Android 
-creates a lot of RT threads?
+> The early versions of am33xx devices, related to ES1.0 SoC revision
+> have errata limiting mq support. That's the same errata as
+> commit 7da1160002f1 ("drivers: net: cpsw: add am335x errata workarround for
+> interrutps")
+> 
+> AM33xx Errata [1] Advisory 1.0.9
+> http://www.ti.com/lit/er/sprz360f/sprz360f.pdf
+> 
+> After additional investigation were found that drivers w/a is
+> propagated on all AM33xx SoCs and on DM814x. But the errata exists
+> only for ES1.0 of AM33xx family, limiting mq support for revisions
+> after ES1.0. So, disable mq support only for related SoCs and use
+> separate polls for revisions allowing mq.
+> 
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> ---
+> 
+> Based on net-next/master
 
--Saravana
-
-
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Patch applied to net-next, thank you.
