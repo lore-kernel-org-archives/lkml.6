@@ -1,259 +1,441 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeEQArC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:47:02 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:43271 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeEQAq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:46:56 -0400
-X-Google-Smtp-Source: AB8JxZon9Ys7ukRfvZa89l0Ldszryv0eR7U31wwNkXp08ELPc9U5FYpOIP/jfJQ9Ve6bFK1RB1yba7UjIHAswZ8KCMM=
+        id S1752129AbeEQArr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 20:47:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33344 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751375AbeEQArp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 20:47:45 -0400
+Subject: Re: [PATCH 2/2] support kdump when AMD secure memory encryption is
+ active
+To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
+Cc: kexec@lists.infradead.org, dyoung@redhat.com
+References: <20180515015133.4363-1-lijiang@redhat.com>
+ <20180515015133.4363-3-lijiang@redhat.com>
+ <96b6d169-de5c-7ca8-df87-3d316526733a@amd.com>
+From: lijiang <lijiang@redhat.com>
+Message-ID: <0eed2a27-262c-bd33-f389-415b5765b2eb@redhat.com>
+Date: Thu, 17 May 2018 08:47:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 16 May 2018 19:46:54 -0500
-Message-ID: <CAHCN7xL_QbHALJeBaJk9TyfBz5BUYeZHkYR6uyrxXDdnguKjtg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v10_00=2F27=5D_ARM=3A_davinci=3A_convert_to_commo?=
-        =?UTF-8?Q?n_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <96b6d169-de5c-7ca8-df87-3d316526733a@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
-> This series converts mach-davinci to use the common clock framework.
->
-> The series works like this, the first 3 patches fix some issues with the clock
-> drivers that have already been accepted into the mainline kernel.
->
-> Then, starting with "ARM: davinci: pass clock as parameter to
-> davinci_timer_init()", we get the mach code ready for the switch by adding the
-> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-> around the legacy clocks so that we can switch easily between the old and the
-> new.
->
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
->
-> The final four patches add device tree clock support to the one SoC that
-> supports it.
->
-> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
-> board file).
->
-I am find.  I don't know what I did wrong, but it's working fine.  If
-you want to add my 'tested-by' go ahead.
+在 2018年05月16日 04:18, Tom Lendacky 写道:
+> On 5/14/2018 8:51 PM, Lianbo Jiang wrote:
+>> When sme enabled on AMD server, we also need to support kdump. Because
+>> the memory is encrypted in the first kernel, we will remap the old memory
+>> encrypted to the second kernel(crash kernel), and sme is also enabled in
+>> the second kernel, otherwise the old memory encrypted can not be decrypted.
+>> Because simply changing the value of a C-bit on a page will not
+>> automatically encrypt the existing contents of a page, and any data in the
+>> page prior to the C-bit modification will become unintelligible. A page of
+>> memory that is marked encrypted will be automatically decrypted when read
+>> from DRAM and will be automatically encrypted when written to DRAM.
+>>
+>> For the kdump, it is necessary to distinguish whether the memory is
+>> encrypted. Furthermore, we should also know which part of the memory is
+>> encrypted or decrypted. We will appropriately remap the memory according
+>> to the specific situation in order to tell cpu how to deal with the data(
+>> encrypted or unencrypted). For example, when sme enabled, if the old memory
+>> is encrypted, we will remap the old memory in encrypted way, which will
+>> automatically decrypt the old memory encrypted when we read those data from
+>> the remapping address.
+>>
+>>  ----------------------------------------------
+>> | first-kernel | second-kernel | kdump support |
+>> |      (mem_encrypt=on|off)    |   (yes|no)    |
+>> |--------------+---------------+---------------|
+>> |     on       |     on        |     yes       |
+>> |     off      |     off       |     yes       |
+>> |     on       |     off       |     no        |
+>> |     off      |     on        |     no        |
+>> |______________|_______________|_______________|
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/x86/include/asm/dmi.h      | 14 +++++++++++++-
+>>  arch/x86/kernel/acpi/boot.c     |  8 ++++++++
+>>  arch/x86/kernel/crash_dump_64.c | 27 +++++++++++++++++++++++++++
+>>  drivers/acpi/tables.c           | 14 +++++++++++++-
+>>  drivers/iommu/amd_iommu_init.c  |  9 ++++++++-
+>>  fs/proc/vmcore.c                | 36 +++++++++++++++++++++++++++++++-----
+>>  include/linux/crash_dump.h      |  4 ++++
+>>  kernel/kexec_core.c             | 12 ++++++++++++
+>>  8 files changed, 116 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/dmi.h b/arch/x86/include/asm/dmi.h
+>> index 0ab2ab2..a5663b4 100644
+>> --- a/arch/x86/include/asm/dmi.h
+>> +++ b/arch/x86/include/asm/dmi.h
+>> @@ -7,6 +7,10 @@
+>>  
+>>  #include <asm/io.h>
+>>  #include <asm/setup.h>
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+> 
+> I don't think you need all of the #ifdef stuff throughout this
+> patch.  Everything should work just fine without it.
+> 
+>> +#include <linux/crash_dump.h>
+>> +#include <linux/mem_encrypt.h>
+>> +#endif
+>>  
+>>  static __always_inline __init void *dmi_alloc(unsigned len)
+>>  {
+>> @@ -14,7 +18,15 @@ static __always_inline __init void *dmi_alloc(unsigned len)
+>>  }
+>>  
+>>  /* Use early IO mappings for DMI because it's initialized early */
+>> -#define dmi_early_remap		early_memremap
+>> +static __always_inline __init void *dmi_early_remap(resource_size_t
+>> +					phys_addr, unsigned long size)
+>> +{
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+> 
+> Again, no need for the #ifdef here.  You should probably audit the
+> code for all of these and truly determine if they are really needed.
+> 
+>> +	if (sme_active() && is_kdump_kernel())
+> 
+> Use of sme_active() here is good since under SEV, this area will be
+> encrypted.
+> 
+>> +		return early_memremap_decrypted(phys_addr, size);
+>> +#endif
+>> +	return early_memremap(phys_addr, size);
+> 
+> Instead of doing this, maybe it makes more sense to put this logic
+> somewhere in the early_memremap() path.  Possibly smarten up the
+> early_memremap_pgprot_adjust() function with some kdump kernel
+> related logic.  Not sure it's possible, but would be nice since you
+> have this logic in a couple of places.
+> 
+>> +}
+>>  #define dmi_early_unmap		early_memunmap
+>>  #define dmi_remap(_x, _l)	memremap(_x, _l, MEMREMAP_WB)
+>>  #define dmi_unmap(_x)		memunmap(_x)
+>> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+>> index 3b20607..354ad66 100644
+>> --- a/arch/x86/kernel/acpi/boot.c
+>> +++ b/arch/x86/kernel/acpi/boot.c
+>> @@ -48,6 +48,10 @@
+>>  #include <asm/mpspec.h>
+>>  #include <asm/smp.h>
+>>  #include <asm/i8259.h>
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +#include <linux/crash_dump.h>
+>> +#include <linux/mem_encrypt.h>
+>> +#endif
+>>  
+>>  #include "sleep.h" /* To include x86_acpi_suspend_lowlevel */
+>>  static int __initdata acpi_force = 0;
+>> @@ -124,6 +128,10 @@ void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
+>>  	if (!phys || !size)
+>>  		return NULL;
+>>  
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +	if (sme_active() && is_kdump_kernel())
+>> +		return early_memremap_decrypted(phys, size);
+>> +#endif
+> 
+> Same as previous comment(s).
+> 
+>>  	return early_memremap(phys, size);
+>>  }
+>>  
+>> diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
+>> index 4f2e077..2ef67fc 100644
+>> --- a/arch/x86/kernel/crash_dump_64.c
+>> +++ b/arch/x86/kernel/crash_dump_64.c
+>> @@ -48,3 +48,30 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
+>>  	iounmap(vaddr);
+>>  	return csize;
+>>  }
+>> +
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
+>> +		size_t csize, unsigned long offset, int userbuf)
+>> +{
+>> +	void  *vaddr;
+>> +
+>> +	if (!csize)
+>> +		return 0;
+>> +
+>> +	vaddr = ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
+>> +	if (!vaddr)
+>> +		return -ENOMEM;
+>> +
+>> +	if (userbuf) {
+>> +		if (copy_to_user(buf, vaddr + offset, csize)) {
+>> +			iounmap(vaddr);
+>> +			return -EFAULT;
+>> +		}
+>> +	} else
+>> +		memcpy(buf, vaddr + offset, csize);
+>> +
+>> +	set_iounmap_nonlazy();
+>> +	iounmap(vaddr);
+>> +	return csize;
+>> +}
+>> +#endif
+> 
+> This seems exactly the same as copy_oldmem_page() with the difference
+> being the type of ioremap done.  Might be better to make the code
+> after the ioremap's a common piece of code that each of the copy_oldmem
+> functions would call.
+> 
+>> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+>> index 849c4fb..6da9b0c 100644
+>> --- a/drivers/acpi/tables.c
+>> +++ b/drivers/acpi/tables.c
+>> @@ -36,6 +36,10 @@
+>>  #include <linux/memblock.h>
+>>  #include <linux/initrd.h>
+>>  #include "internal.h"
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +#include <linux/crash_dump.h>
+>> +#include <linux/mem_encrypt.h>
+>> +#endif
+>>  
+>>  #ifdef CONFIG_ACPI_CUSTOM_DSDT
+>>  #include CONFIG_ACPI_CUSTOM_DSDT_FILE
+>> @@ -566,7 +570,15 @@ void __init acpi_table_upgrade(void)
+>>  			clen = size;
+>>  			if (clen > MAP_CHUNK_SIZE - slop)
+>>  				clen = MAP_CHUNK_SIZE - slop;
+>> -			dest_p = early_memremap(dest_addr & PAGE_MASK,
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +			if (sme_active() && is_kdump_kernel())
+>> +				dest_p = early_memremap_decrypted(
+>> +						dest_addr & PAGE_MASK,
+>> +						clen + slop);
+>> +			else
+>> +#endif
+>> +				dest_p = early_memremap(
+>> +						dest_addr & PAGE_MASK,
+> 
+> So if the dest_addr (based off of acpi_tables_addr) was added to the e820
+> map as an ACPI area (which it will be), then it would be mapped properly
+> (in both SME and SEV) without needing the if/then/else.
+> 
+>>  						clen + slop);
+>>  			memcpy(dest_p + slop, src_p, clen);
+>>  			early_memunmap(dest_p, clen + slop);
+>> diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+>> index 904c575..8ecbddb 100644
+>> --- a/drivers/iommu/amd_iommu_init.c
+>> +++ b/drivers/iommu/amd_iommu_init.c
+>> @@ -889,11 +889,18 @@ static bool copy_device_table(void)
+>>  	}
+>>  
+>>  	old_devtb_phys = entry & PAGE_MASK;
+>> +	if (sme_active() && is_kdump_kernel())
+> 
+> Use mem_encrypt_active() here to cover both SME and SEV.
+> 
+>> +		old_devtb_phys = __sme_clr(old_devtb_phys);
+>>  	if (old_devtb_phys >= 0x100000000ULL) {
+>>  		pr_err("The address of old device table is above 4G, not trustworthy!\n");
+>>  		return false;
+>>  	}
+>> -	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
+>> +	if (sme_active() && is_kdump_kernel())
+>> +		old_devtb = ioremap_encrypted(old_devtb_phys,
+>> +					dev_table_size);
+>> +	else
+>> +		old_devtb = memremap(old_devtb_phys,
+>> +					dev_table_size, MEMREMAP_WB);
+> 
+> What happens to the memremap here, does it fall back to the ioremap and
+> end up getting mapped decrypted?  It would be nice to do the right thing
+> under the covers of memremap.  Not sure what that would take, but it would
+> keep the code nice and clean.
+> 
+Thank you, Tom.
+For this issue, it will copy the old content of device table entries, that is to
+say, it will copy the device table from the first kernel to the second kernel in
+kdump mode and the content of device table is encrypted, the address includes the
+sme_me_mask. For the old memory encrypted, it is suitable to use ioremap_encrypted,
+the kdump kernel can not directly access the first kernel's memory.
 
-Tested-by: Adam Ford <aford173@gmail.com> #da850-evm, ethernet, spi
-flash, SD, UART
-
->
-> Changes:
->
-> v10 changes (also see individual patches for details):
-> - Reworked device tree bindings for DaVinci timer.
-> - Dropped helper functions to conditionally call devm_* versions of functions
-> - Fix some typos
-> - Fix some rebasing issues introduced in v9
->
-> v9 changes (also see individual patches for details):
-> - Rebased on linux-davnci/master (f5e3203bb775)
-> - Dropped drivers/clk patches that landed in v4.17
-> - New drivers/clk patches for early boot special case
-> - New patch for ti,davinci-timer device tree bindings
-> - Updated mach/davinci patches to register clocks in early boot when needed
->
-> v8 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master
-> - Dropped use of __init and __initconst attributes in clk drivers
-> - Add clkdev lookups for PLL SYSCLKs
-> - Fix genpd clock reference counting issue
-> - Fix PSC clock driver loading order issue
-> - Fix typo in device tree and add more power-domains properties
->
-> v7 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master (v4.16-rc)
-> - Convert clock drivers to platform devices
-> - New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
-> - Fix issues with lcdk and aemif clock lookups and power domains
-> - Fixed other minor issues brought up in v6 review
->
-> v6 changes (also see individual patches for details):
-> - All of the device tree bindings are changed
-> - All of the clock drivers are changed significantly
-> - Fixed issues brought up during review of v5
-> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
->   series and submitted separately
->
-> v5 changes:
-> - Basically, this is an entirely new series
-> - Patches are broken up into bite-sized pieces
-> - Converted PSC clock driver to use regmap
-> - Restored "force" flag for certain DA850 clocks
-> - Added device tree bindings
-> - Moved more of the clock init to drivers/clk
-> - Fixed frequency scaling (maybe*)
->
-> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
->   what they need to do to make this work, but I haven't figured out how to
->   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
->   sent separately after this series has landed.)
->
->
-> Dependencies:
->
-> There are still some outstanding fixes to get everything working correctly.
-> These are all just runtime dependencies and only needed for certain platforms.
->
-> - "drm/tilcdc: Fix setting clock divider for omap-l138"[1]
-> - "clk: davinci: pll-dm355: fix SYSCLKn parent names"[2]
-> - "remoteproc/davinci: common clock framework related fixes"[3]
->
-> [1]: https://patchwork.freedesktop.org/patch/210696/
-> [2]: https://lkml.org/lkml/2018/5/9/626
-> [3]: https://lkml.org/lkml/2018/5/2/201
->
-> You can find a working branch with everything included (plus a few extras, like
-> cpufreq-dt) in the "common-clk-v10" branch of https://github.com/dlech/ev3dev-kernel.git.
->
->
-> Testing/debugging for the uninitiated:
->
-> I only have one device to test with, which is based on da850, so I will
-> have to rely on others to do some testing here. Since we are dealing with
-> clocks, if something isn't working, you most likely won't see output on
-> the serial port. To figure out what is going on, you need to enable...
->
->         CONFIG_DEBUG_LL=y
->         CONFIG_EARLY_PRINTK=y
->
-> and add "earlyprintk clk_ignore_unused" to the kernel command line options.
-> You may need to select a different UART for this depending on your board. I
-> think UART1 is the default in the kernel configuration.
->
-> On da850 devices comment out the lines:
->
->         /* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
->         parent = clk_hw_get_parent_by_index(&mux->hw, 1);
->         if (parent)
->                 clk_set_parent(mux->hw.clk, parent->clk);
->         else
->                 dev_warn(dev, "Failed to find async3 parent clock\n");
->
-> in da8xx-cfgchip.c or, if using device tree, comment out the lines:
->
->         assigned-clocks = <&async3_clk>;
->         assigned-clock-parents = <&pll1_sysclk 2>;
->
-> in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
-> source will change during boot and cause garbled output after a point.
->
->
-> David Lechner (27):
->   clk: davinci: pll: allow dev == NULL
->   clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
->   clk: davinci: psc: allow for dev == NULL
->   ARM: davinci: pass clock as parameter to davinci_timer_init()
->   ARM: davinci: da830: add new clock init using common clock framework
->   ARM: davinci: da850: add new clock init using common clock framework
->   ARM: davinci: dm355: add new clock init using common clock framework
->   ARM: davinci: dm365: add new clock init using common clock framework
->   ARM: davinci: dm644x: add new clock init using common clock framework
->   ARM: davinci: dm646x: add new clock init using common clock framework
->   ARM: davinci: da8xx: add new USB PHY clock init using common clock
->     framework
->   ARM: davinci: da8xx: add new sata_refclk init using common clock
->     framework
->   ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
->   ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
->   ARM: davinci: switch to common clock framework
->   ARM: davinci: da830: Remove legacy clock init
->   ARM: davinci: da850: Remove legacy clock init
->   ARM: davinci: dm355: Remove legacy clock init
->   ARM: davinci: dm365: Remove legacy clock init
->   ARM: davinci: dm644x: Remove legacy clock init
->   ARM: davinci: dm646x: Remove legacy clock init
->   ARM: davinci: da8xx: Remove legacy USB and SATA clock init
->   ARM: davinci: remove legacy clocks
->   dt-bindings: timer: new bindings for TI DaVinci timer
->   ARM: davinci: add device tree support to timer
->   ARM: davinci: da8xx-dt: switch to device tree clocks
->   ARM: dts: da850: Add clocks
->
->  .../bindings/timer/ti,davinci-timer.txt       |  37 +
->  arch/arm/Kconfig                              |   5 +-
->  arch/arm/boot/dts/da850-enbw-cmc.dts          |   4 +
->  arch/arm/boot/dts/da850-evm.dts               |   4 +
->  arch/arm/boot/dts/da850-lcdk.dts              |   9 +
->  arch/arm/boot/dts/da850-lego-ev3.dts          |   4 +
->  arch/arm/boot/dts/da850.dtsi                  | 168 ++++
->  arch/arm/configs/davinci_all_defconfig        |   1 -
->  arch/arm/mach-davinci/Kconfig                 |  13 +-
->  arch/arm/mach-davinci/Makefile                |   4 +-
->  arch/arm/mach-davinci/board-da830-evm.c       |  12 +-
->  arch/arm/mach-davinci/board-da850-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm355-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm355-leopard.c   |   2 +
->  arch/arm/mach-davinci/board-dm365-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm644x-evm.c      |   2 +
->  arch/arm/mach-davinci/board-dm646x-evm.c      |   2 +
->  arch/arm/mach-davinci/board-mityomapl138.c    |   2 +
->  arch/arm/mach-davinci/board-neuros-osd2.c     |   2 +
->  arch/arm/mach-davinci/board-omapl138-hawk.c   |  11 +-
->  arch/arm/mach-davinci/board-sffsdr.c          |   2 +
->  arch/arm/mach-davinci/clock.c                 | 745 -----------------
->  arch/arm/mach-davinci/clock.h                 |  76 --
->  arch/arm/mach-davinci/common.c                |   3 -
->  arch/arm/mach-davinci/da830.c                 | 462 ++---------
->  arch/arm/mach-davinci/da850.c                 | 778 +++---------------
->  arch/arm/mach-davinci/da8xx-dt.c              |  66 --
->  arch/arm/mach-davinci/davinci.h               |   8 +
->  arch/arm/mach-davinci/devices-da8xx.c         |  43 +-
->  arch/arm/mach-davinci/devices.c               |   1 -
->  arch/arm/mach-davinci/dm355.c                 | 406 ++-------
->  arch/arm/mach-davinci/dm365.c                 | 485 +----------
->  arch/arm/mach-davinci/dm644x.c                | 344 +-------
->  arch/arm/mach-davinci/dm646x.c                | 372 +--------
->  arch/arm/mach-davinci/include/mach/clock.h    |   3 -
->  arch/arm/mach-davinci/include/mach/common.h   |  11 +-
->  arch/arm/mach-davinci/include/mach/da8xx.h    |   6 +-
->  arch/arm/mach-davinci/pm_domain.c             |   5 +
->  arch/arm/mach-davinci/psc.c                   | 137 ---
->  arch/arm/mach-davinci/psc.h                   |  12 -
->  arch/arm/mach-davinci/time.c                  |  39 +-
->  arch/arm/mach-davinci/usb-da8xx.c             | 242 +-----
->  drivers/clk/davinci/pll-da830.c               |   4 +-
->  drivers/clk/davinci/pll-da850.c               |  36 +-
->  drivers/clk/davinci/pll-dm355.c               |   8 +-
->  drivers/clk/davinci/pll-dm365.c               |   8 +-
->  drivers/clk/davinci/pll-dm644x.c              |   8 +-
->  drivers/clk/davinci/pll-dm646x.c              |   8 +-
->  drivers/clk/davinci/pll.c                     | 110 +--
->  drivers/clk/davinci/pll.h                     |  30 +-
->  drivers/clk/davinci/psc-dm355.c               |   2 +-
->  drivers/clk/davinci/psc-dm365.c               |   2 +-
->  drivers/clk/davinci/psc-dm644x.c              |   2 +-
->  drivers/clk/davinci/psc-dm646x.c              |   2 +-
->  drivers/clk/davinci/psc.c                     |  27 +-
->  include/linux/clk/davinci.h                   |  29 +
->  56 files changed, 860 insertions(+), 3950 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
->  delete mode 100644 arch/arm/mach-davinci/clock.c
->  delete mode 100644 arch/arm/mach-davinci/psc.c
->  create mode 100644 include/linux/clk/davinci.h
->
-> --
-> 2.17.0
->
+Lianbo
+>>  	if (!old_devtb)
+>>  		return false;
+>>  
+>> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+>> index a45f0af..316e2b0 100644
+>> --- a/fs/proc/vmcore.c
+>> +++ b/fs/proc/vmcore.c
+>> @@ -25,6 +25,10 @@
+>>  #include <linux/uaccess.h>
+>>  #include <asm/io.h>
+>>  #include "internal.h"
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +#include <linux/mem_encrypt.h>
+>> +#include <asm/pgtable.h>
+>> +#endif
+>>  
+>>  /* List representing chunks of contiguous memory areas and their offsets in
+>>   * vmcore file.
+>> @@ -86,7 +90,8 @@ static int pfn_is_ram(unsigned long pfn)
+>>  
+>>  /* Reads a page from the oldmem device from given offset. */
+>>  static ssize_t read_from_oldmem(char *buf, size_t count,
+>> -				u64 *ppos, int userbuf)
+>> +				u64 *ppos, int userbuf,
+>> +				bool encrypted)
+>>  {
+>>  	unsigned long pfn, offset;
+>>  	size_t nr_bytes;
+>> @@ -108,8 +113,15 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
+>>  		if (pfn_is_ram(pfn) == 0)
+>>  			memset(buf, 0, nr_bytes);
+>>  		else {
+>> -			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +			if (encrypted)
+>> +				tmp = copy_oldmem_page_encrypted(pfn, buf,
+>> +					       nr_bytes, offset, userbuf);
+>> +			else
+>> +#endif
+>> +				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+>>  						offset, userbuf);> +
+>>  			if (tmp < 0)
+>>  				return tmp;
+>>  		}
+>> @@ -143,7 +155,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
+>>   */
+>>  ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+>>  {
+>> -	return read_from_oldmem(buf, count, ppos, 0);
+>> +	return read_from_oldmem(buf, count, ppos, 0, false);
+> 
+> For SEV, this will likely be encrypted, so you can probably replace the
+> "false" with sev_active() so that under SME it is un-encrypted but under
+> SEV it is encrypted.  Where is the elfcorehdr stored?  I wonder if it
+> could be created as encrypted under SME and then you could actually remove
+> the encrypted parameter from read_from_oldmem() and always map encrypted.
+> If SME or SEV are active it will be mapped encrypted and if they aren't
+> then it is mapped normally.
+> 
+>>  }
+>>  
+>>  /*
+>> @@ -151,7 +163,11 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+>>   */
+>>  ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
+>>  {
+>> -	return read_from_oldmem(buf, count, ppos, 0);
+>> +	bool flag = false;
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +	flag = sme_active();
+>> +#endif
+>> +	return read_from_oldmem(buf, count, ppos, 0, flag);
+>>  }
+>>  
+>>  /*
+>> @@ -161,6 +177,10 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
+>>  				  unsigned long from, unsigned long pfn,
+>>  				  unsigned long size, pgprot_t prot)
+>>  {
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +	if (sme_active())
+> 
+> No need for the sme_active() check here, the encryption will be applied,
+> for both SME and SEV, if memory encryption is active, otherwise it won't.
+> 
+>> +		prot = __pgprot(pgprot_val(prot) | _PAGE_ENC);
+> 
+>   prot = pgprot_encrypted(prot);
+> 
+>> +#endif>  	return remap_pfn_range(vma, from, pfn, size, prot);
+>>  }
+>>  
+>> @@ -188,6 +208,11 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>>  	size_t tsz;
+>>  	u64 start;
+>>  	struct vmcore *m = NULL;
+>> +	bool sme_flag = false;
+>> +
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +	sme_flag = sme_active();> +#endif
+> 
+> Probably just want mem_encrypt_active() here to get both SME and SEV
+> cases mapped as encrypted.
+> 
+> Thanks,
+> Tom
+> 
+>>  
+>>  	if (buflen == 0 || *fpos >= vmcore_size)
+>>  		return 0;
+>> @@ -235,7 +260,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>>  					    m->offset + m->size - *fpos,
+>>  					    buflen);
+>>  			start = m->paddr + *fpos - m->offset;
+>> -			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
+>> +			tmp = read_from_oldmem(buffer, tsz, &start,
+>> +						userbuf, sme_flag);
+>>  			if (tmp < 0)
+>>  				return tmp;
+>>  			buflen -= tsz;
+>> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+>> index f7ac2aa..024ae9e 100644
+>> --- a/include/linux/crash_dump.h
+>> +++ b/include/linux/crash_dump.h
+>> @@ -25,6 +25,10 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
+>>  
+>>  extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
+>>  						unsigned long, int);
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +extern ssize_t copy_oldmem_page_encrypted(unsigned long, char *, size_t,
+>> +						unsigned long, int);
+>> +#endif
+>>  void vmcore_cleanup(void);
+>>  
+>>  /* Architecture code defines this if there are other possible ELF
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index 20fef1a..3c22a9b 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+>>  		}
+>>  	}
+>>  
+>> +	if (pages) {
+>> +		unsigned int count, i;
+>> +
+>> +		pages->mapping = NULL;
+>> +		set_page_private(pages, order);
+>> +		count = 1 << order;
+>> +		for (i = 0; i < count; i++)
+>> +			SetPageReserved(pages + i);
+>> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+>> +	}
+>>  	return pages;
+>>  }
+>>  
+>> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result  = -ENOMEM;
+>>  			goto out;
+>>  		}
+>> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>>  		ptr = kmap(page);
+>>  		ptr += maddr & ~PAGE_MASK;
+>>  		mchunk = min_t(size_t, mbytes,
+>> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result = copy_from_user(ptr, buf, uchunk);
+>>  		kexec_flush_icache_page(page);
+>>  		kunmap(page);
+>> +		arch_kexec_pre_free_pages(page_address(page), 1);
+>>  		if (result) {
+>>  			result = -EFAULT;
+>>  			goto out;
+>>
