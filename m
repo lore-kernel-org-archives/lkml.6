@@ -1,69 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeEQKFi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:05:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51348 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751619AbeEQKFc (ORCPT
+        id S1752136AbeEQKHW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:07:22 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59152 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeEQKHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:05:32 -0400
-Date: Thu, 17 May 2018 07:05:16 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jason Chen <jasonx.z.chen@intel.com>, Andy Yeh <andy.yeh@intel.com>,
-        Alan Chiang <alanx.chiang@intel.com>, Tomasz Figa <tfiga@chromium.org>,
-        Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the v4l-dvb
- tree
-Message-ID: <20180517070516.5d5dd34e@vento.lan>
-In-Reply-To: <20180517071720.rb6sdozr5bwy543e@paasikivi.fi.intel.com>
-References: <20180517073702.5497e72e@canb.auug.org.au>
-        <20180517071720.rb6sdozr5bwy543e@paasikivi.fi.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 17 May 2018 06:07:20 -0400
+Date: Thu, 17 May 2018 20:07:13 +1000
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
+Message-Id: <cc9b01d2b0e12938fe0e9581dd9d650ad3c4159c.1526551115.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH 1/2] m68k: Set default dma mask for platform devices
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 17 May 2018 10:17:20 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
+This avoids a WARNING splat when loading the macsonic or macmace driver.
+Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is no
+coherent_dma_mask").
 
-> On Thu, May 17, 2018 at 07:37:02AM +1000, Stephen Rothwell wrote:
-> > Hi Mauro,
-> > 
-> > Commit
-> > 
-> >   af76c93aa36d ("media: cadence: csi2rx: Fix csi2rx_start error handling")
-> > 
-> > is missing a Signed-off-by from its committer.  
-> 
-> Mauro's SoB line is indeed missing. I wonder what happened.
-> 
-> > 
-> > Commits
-> > 
-> >   c578c7710712 ("media: imx258: Add imx258 camera sensor driver")
-> >   3a8fdc1426c3 ("media: dw9807: Add dw9807 vcm driver")
-> >   2f9c1c88369f ("media: dt-bindings: Add bindings for Dongwoon DW9807 voice coil")
-> > 
-> > are missing a Signed-off-by from their author.  
-> 
-> Thanks for pointing this out. We'll be more careful going forward.
+This implementation of arch_setup_pdev_archdata() differs from the
+powerpc one, in that this one avoids clobbering a device dma mask
+which has already been initialized.
 
-In this specific case, we're adding two drivers without their
-author's SOBs. I'll roll-back my tree to a sane state (and, while
-there, add my SOB at the missing commit).
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ arch/m68k/kernel/dma.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Sakari,
-
-You'll need to resubmit those patches (and the dependent ones) once
-you get the author's SOBs.
-
-Thanks,
-Mauro
+diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
+index c01b9b8f97bf..463572c4943f 100644
+--- a/arch/m68k/kernel/dma.c
++++ b/arch/m68k/kernel/dma.c
+@@ -9,6 +9,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
++#include <linux/platform_device.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+@@ -165,3 +166,12 @@ const struct dma_map_ops m68k_dma_ops = {
+ 	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
+ };
+ EXPORT_SYMBOL(m68k_dma_ops);
++
++void arch_setup_pdev_archdata(struct platform_device *pdev)
++{
++	if (pdev->dev.coherent_dma_mask == DMA_MASK_NONE &&
++	    pdev->dev.dma_mask == NULL) {
++		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
++	}
++}
+-- 
+2.16.1
