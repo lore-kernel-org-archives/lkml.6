@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1427043-1526531785-2-15956671106018122642
+X-Cyrus-Session-Id: sloti22d1t05-1376423-1526531772-2-15112928792013989768
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526531784; b=SqvMEnq2xfE1h8wEw81AFt9PkZIUjWGqCdRy842+RL5w6NQKQh
-    uXec7sJrPWncK20OEMP+udNePI1K9udyc1OZ30cXHrBc8w6ee3QtAjHh8i5FnWFf
-    lduvGpfE2DrbP4VBD7KoYIyvsbALY6hgamLyzSdtwIyVuMgcrcK7QgWX+yL7DNqd
-    r0iQfmdUUrgpjVimvBRfjW8iJoJ8LSHhFLm2RSRuqUxU87mpw6MHnnAoVxQmRIpl
-    ThuZfjU2SK5XP2PkSGM91dLRRF0feSpVkhtAT7xAvC0kJDOVMYpyswJesinZUopt
-    TRp2KAaMNghwwMCwZaot1lVm/X7M13S/SIOg==
+    1526531772; b=d3WM7LTs2PhnrhHVlNouN5TO3stmGsV48KIFiNs0DQF+l6JyDF
+    urhx1XWa79z4jWYWmr8+12hW8cPEYobKeZVG15+u2Ge32YEJLwIPbD0UrItqF7fy
+    JtsMNEoU1R68KLv6vFg+9puFtT9R372pPRlEFOQZM3j68HORDe1TedcI58lMZBe9
+    AscF5VUHYZVP8G3RQMWSPoUAcRKmyluIQ6RU50LiBjGJgIfUO0rou5fqv1ftHXy5
+    RYWak3uPdyDKwOqCA9JaCapxxVfiX6tbD9StRU2EtAJ38ebBu+dZz6A5V1M9Nu3/
+    vdAgHn1aOVAnU4EGf7HlNFOezUPpoeZg9b5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526531784; bh=
-    hNVU+ZZIGeJ+3yRyLxfZ3oXSV9PQYx7h+3BW66H9ZMs=; b=RsARn8HMKWGPPVXO
-    XUuG/8NQgTRXhlXYUzsPXRRLBhcCEQDqE282WT8gXaxWbMwN36gl7v9V8ZW+2Aaq
-    BY1njTGhLOFycBJlmvGpoPT0CgAQj00+fHwOccdWQD35KdmdthDn1V5OCTnG2spJ
-    xLlkzgQ5izGwdb0BJpq4bXw/JddZem6lYKMd+gkGsBP+XP5L7u2iVoOPMPjPIZ1C
-    y9BR+AS1w7yMnY5bbajyhsq+FW76IrLHYR39C7t1lEoalklfIQjMkBl+IxSS6+hr
-    nzLFPwQ69LNJHZfqpnke+GyYRYtajZa9jX+BV3aSwNQYchtQSAnxvVNQQMGf9m5f
-    utq2iw==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526531772; bh=
+    /voFbP6mJW8vvbwSoOdnhR9mMWUgZuzAgS6EOBHoY+w=; b=Bbqe5uDd+29TZwSA
+    VaAgYLxv7ItsoVxROIV9MgvzHVng3WY/Xl/OwkszsU7QQ5yoJStIJYwWtBRP6l9w
+    BbSWMUc0ZXfjvCmOI/RyyRewc5YXwJzMARHoO4MsV9wH4PQ9MMFNkJDF77K8Oytt
+    GMVOnHqg11etIk6PZrLc+KGgj2FmuRHKa/6c0b3KMgN1+pEKkkH3Zgm0ui/pU+WA
+    ni6uOI5J4cNMWOZpRsJZEVrbH0ZqTta1mFBOEgrCZmBDRAUz9/hnq8+NJadyk+N0
+    MwJGF+zvhvsEpZMET2YeyeK/uYUPBwzuhosZXG03Y+J4/0HwMuYxBFhIdET7vy6Q
+    vAmw6g==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=Kxjs/fmd x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=RiC6hQQ9 x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=d5yqBmpe;
+    header.d=1e100.net header.i=@1e100.net header.b=eIZl9In1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -49,7 +49,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=Kxjs/fmd x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=RiC6hQQ9 x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -58,37 +58,37 @@ Authentication-Results: mx6.messagingengine.com;
     x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=d5yqBmpe;
+      header.d=1e100.net header.i=@1e100.net header.b=eIZl9In1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEazqa3ert6m2sH8tsgjGhzFJ0Cav5YZ8L9qCucHsjiOMSYUZtqT7UK8Fg0ihJopD/74b0G6AE4ep8B/M9TqQ93w07tRg1jP+uYfR+Sg9lYhJbZw0Lpi
-    0BOF7qbSkOqftVWioyn34iW5I72ufgptMV2ZJyjgNaCgkYGsLEW6qCEdJ6DZtg26ulKS6ekg4VbtMD9yjmID32fLORwRZBD0sPId4Ib+0hVBpdUsLKFZvKEU
+X-CM-Envelope: MS4wfPQ52ABjJ8SUn62dJnY/uNUWXCMXuy0myVJysB1y988LRr3nqP8Omujo94thp7ng687FpsJQdUQP4zWynrfBEi7HS9x1aANLmfxMFEZemDPDLThsu3CR
+    lC+NLVfzew82J/D6rravs6XEujR2244M9zrs6jl0EfdF+zBZJdz19jOPnZAo2y/MgkeFzlKvGR8bbmbCuvjaDlfVgM5e9RgELOQsPhBNb1C/HsLWx+QIsPmC
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=kWfNqJnFkcjbtjyxTZEA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8 a=1VKGSEjmpg4MURoCSicA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeEQEgL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 00:36:11 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:33699 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbeEQEfC (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 17 May 2018 00:35:02 -0400
-X-Google-Smtp-Source: AB8JxZqcc5buAjd5jqpkL0FbXKkXSvJiEXuf3hj6zuL/jyudW03ULaNucQT7Xg6wKlvFWum+ievcvg==
+        id S1751665AbeEQEfD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 00:35:03 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:45868 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeEQEe7 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 17 May 2018 00:34:59 -0400
+X-Google-Smtp-Source: AB8JxZr4Gc8WfriEY+4avXEbhE0AQa0velBEqTHOBy/YLPyBG0EDdN3saSQGuiJbRWdkiSsz+jbK8g==
 From: Tejun Heo <tj@kernel.org>
 To: torvalds@linux-foundation.org, jiangshanlai@gmail.com,
         akpm@linux-foundation.org
 Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         kernel-team@fb.com, csmall@enc.com.au, Tejun Heo <tj@kernel.org>
-Subject: [PATCH 2/6] workqueue: Replace pool->attach_mutex with global wq_pool_attach_mutex
-Date: Wed, 16 May 2018 21:34:44 -0700
-Message-Id: <20180517043448.3152269-3-tj@kernel.org>
+Subject: [PATCH 1/6] proc: Don't allow empty /proc/PID/cmdline for user tasks
+Date: Wed, 16 May 2018 21:34:43 -0700
+Message-Id: <20180517043448.3152269-2-tj@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180517043448.3152269-1-tj@kernel.org>
 References: <20180517043448.3152269-1-tj@kernel.org>
@@ -98,194 +98,115 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-To improve workqueue visibility, we want to be able to access
-workqueue information from worker tasks.  The per-pool attach mutex
-makes that difficult because there's no way of stabilizing task ->
-worker pool association without knowing the pool first.
+Kernel threads have empty /proc/PID/cmdline and some userland tools
+including ps(1) and older versions of systemd use this to detect
+kernel threads.  However, any userland program can emulate the
+behavior by making its argvs unavailable and trick the affected tools
+into thinking that the task is a kernel thread.  Linus's reproducer
+follows.
 
-Worker attach/detach is a slow path and there's no need for different
-pools to be able to perform them concurrently.  This patch replaces
-the per-pool attach_mutex with global wq_pool_attach_mutex to prepare
-for visibility improvement changes.
+  #include <sys/prctl.h>
+  #include <sys/mman.h>
+
+  int main(void)
+  {
+	  char empty[16384];
+	  unsigned long ptr;
+
+	  asm volatile("" :"=r" (ptr) : "0" (empty):"memory");
+	  ptr = (ptr+4095) & ~4095;
+	  munmap((void *)ptr, 32768);
+
+	  sleep(1000);
+	  return 0;
+  }
+
+Compiling the above program into nullcmdline and running it on an
+unpatche kernel shows the following behavior.
+
+  $ ./nullcmdline &
+  [1] 2382031
+  [devbig577 ~/tmp]$ hexdump -C /proc/2382031/comm
+  00000000  6e 75 6c 6c 63 6d 64 6c  69 6e 65 0a              |nullcmdline.|
+  0000000c
+  $ hexdump -C /proc/2382031/cmdline
+  $ ps 2382031
+      PID TTY      STAT   TIME COMMAND
+  2382031 pts/2    S      0:00 [nullcmdline]
+
+The empty cmdline makes ps(1) think that nullcmdline is a kernel
+thread and put brackets around its name (comm), which is mostly a
+nuisance but it's possible that this confusion can lead to more
+harmful confusions.
+
+This patch fixes the issue by making proc_pid_cmdline_read() never
+return empty string for user tasks.  If the result is empty for
+whatever reason, comm string is returned.  Even when the comm string
+is empty, it still returns the null termnation character.  On a
+patched kernel, running the same command as above gives us.
+
+  $ ./nullcmdline &
+  [1] 2317
+  [test ~]# hexdump -C /proc/2317/comm
+  00000000  6e 75 6c 6c 63 6d 64 6c  69 6e 65 0a              |nullcmdline.|
+  0000000c
+  $ hexdump -C /proc/2317/cmdline
+  00000000  6e 75 6c 6c 63 6d 64 6c  69 6e 65 00              |nullcmdline.|
+  0000000c
+  $ ps 2317
+    PID TTY      STAT   TIME COMMAND
+   2317 pts/0    S      0:00 nullcmdline
+
+Note that cmdline is a dup of comm and ps(1) is no longer confused.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- kernel/workqueue.c | 41 ++++++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+ fs/proc/base.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index ca7959b..91fe0a6 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -66,7 +66,7 @@ enum {
- 	 * be executing on any CPU.  The pool behaves as an unbound one.
- 	 *
- 	 * Note that DISASSOCIATED should be flipped only while holding
--	 * attach_mutex to avoid changing binding state while
-+	 * wq_pool_attach_mutex to avoid changing binding state while
- 	 * worker_attach_to_pool() is in progress.
- 	 */
- 	POOL_MANAGER_ACTIVE	= 1 << 0,	/* being managed */
-@@ -123,7 +123,7 @@ enum {
-  *    cpu or grabbing pool->lock is enough for read access.  If
-  *    POOL_DISASSOCIATED is set, it's identical to L.
-  *
-- * A: pool->attach_mutex protected.
-+ * A: wq_pool_attach_mutex protected.
-  *
-  * PL: wq_pool_mutex protected.
-  *
-@@ -166,7 +166,6 @@ struct worker_pool {
- 						/* L: hash of busy workers */
- 
- 	struct worker		*manager;	/* L: purely informational */
--	struct mutex		attach_mutex;	/* attach/detach exclusion */
- 	struct list_head	workers;	/* A: attached workers */
- 	struct completion	*detach_completion; /* all workers detached */
- 
-@@ -297,6 +296,7 @@ static bool wq_numa_enabled;		/* unbound NUMA affinity enabled */
- static struct workqueue_attrs *wq_update_unbound_numa_attrs_buf;
- 
- static DEFINE_MUTEX(wq_pool_mutex);	/* protects pools and workqueues list */
-+static DEFINE_MUTEX(wq_pool_attach_mutex); /* protects worker attach/detach */
- static DEFINE_SPINLOCK(wq_mayday_lock);	/* protects wq->maydays list */
- static DECLARE_WAIT_QUEUE_HEAD(wq_manager_wait); /* wait for manager to go away */
- 
-@@ -399,14 +399,14 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
-  * @worker: iteration cursor
-  * @pool: worker_pool to iterate workers of
-  *
-- * This must be called with @pool->attach_mutex.
-+ * This must be called with wq_pool_attach_mutex.
-  *
-  * The if/else clause exists only for the lockdep assertion and can be
-  * ignored.
-  */
- #define for_each_pool_worker(worker, pool)				\
- 	list_for_each_entry((worker), &(pool)->workers, node)		\
--		if (({ lockdep_assert_held(&pool->attach_mutex); false; })) { } \
-+		if (({ lockdep_assert_held(&wq_pool_attach_mutex); false; })) { } \
- 		else
- 
- /**
-@@ -1724,7 +1724,7 @@ static struct worker *alloc_worker(int node)
- static void worker_attach_to_pool(struct worker *worker,
- 				   struct worker_pool *pool)
- {
--	mutex_lock(&pool->attach_mutex);
-+	mutex_lock(&wq_pool_attach_mutex);
- 
- 	/*
- 	 * set_cpus_allowed_ptr() will fail if the cpumask doesn't have any
-@@ -1733,16 +1733,16 @@ static void worker_attach_to_pool(struct worker *worker,
- 	set_cpus_allowed_ptr(worker->task, pool->attrs->cpumask);
- 
- 	/*
--	 * The pool->attach_mutex ensures %POOL_DISASSOCIATED remains
--	 * stable across this function.  See the comments above the
--	 * flag definition for details.
-+	 * The wq_pool_attach_mutex ensures %POOL_DISASSOCIATED remains
-+	 * stable across this function.  See the comments above the flag
-+	 * definition for details.
- 	 */
- 	if (pool->flags & POOL_DISASSOCIATED)
- 		worker->flags |= WORKER_UNBOUND;
- 
- 	list_add_tail(&worker->node, &pool->workers);
- 
--	mutex_unlock(&pool->attach_mutex);
-+	mutex_unlock(&wq_pool_attach_mutex);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 1b2ede6..2eee4d7 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -224,9 +224,10 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
+ 	if (!tsk)
+ 		return -ESRCH;
+ 	mm = get_task_mm(tsk);
+-	put_task_struct(tsk);
+-	if (!mm)
+-		return 0;
++	if (!mm) {
++		rv = 0;
++		goto out_put_task;
++	}
+ 	/* Check if process spawned far enough to have cmdline. */
+ 	if (!mm->env_end) {
+ 		rv = 0;
+@@ -367,8 +368,23 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
+ 	free_page((unsigned long)page);
+ out_mmput:
+ 	mmput(mm);
++out_put_task:
++	/*
++	 * Some userland tools use empty cmdline to distinguish kthreads.
++	 * Avoid empty cmdline for user tasks by returning tsk->comm with
++	 * \0 termination when empty.
++	 */
++	if (*pos == 0 && rv == 0 && !(tsk->flags & PF_KTHREAD)) {
++		char tcomm[TASK_COMM_LEN];
++
++		get_task_comm(tcomm, tsk);
++		rv = min(strlen(tcomm) + 1, count);
++		if (copy_to_user(buf, tsk->comm, rv))
++			rv = -EFAULT;
++	}
+ 	if (rv > 0)
+ 		*pos += rv;
++	put_task_struct(tsk);
+ 	return rv;
  }
  
- /**
-@@ -1759,11 +1759,11 @@ static void worker_detach_from_pool(struct worker *worker,
- {
- 	struct completion *detach_completion = NULL;
- 
--	mutex_lock(&pool->attach_mutex);
-+	mutex_lock(&wq_pool_attach_mutex);
- 	list_del(&worker->node);
- 	if (list_empty(&pool->workers))
- 		detach_completion = pool->detach_completion;
--	mutex_unlock(&pool->attach_mutex);
-+	mutex_unlock(&wq_pool_attach_mutex);
- 
- 	/* clear leftover flags without pool->lock after it is detached */
- 	worker->flags &= ~(WORKER_UNBOUND | WORKER_REBOUND);
-@@ -3271,7 +3271,6 @@ static int init_worker_pool(struct worker_pool *pool)
- 
- 	timer_setup(&pool->mayday_timer, pool_mayday_timeout, 0);
- 
--	mutex_init(&pool->attach_mutex);
- 	INIT_LIST_HEAD(&pool->workers);
- 
- 	ida_init(&pool->worker_ida);
-@@ -3354,10 +3353,10 @@ static void put_unbound_pool(struct worker_pool *pool)
- 	WARN_ON(pool->nr_workers || pool->nr_idle);
- 	spin_unlock_irq(&pool->lock);
- 
--	mutex_lock(&pool->attach_mutex);
-+	mutex_lock(&wq_pool_attach_mutex);
- 	if (!list_empty(&pool->workers))
- 		pool->detach_completion = &detach_completion;
--	mutex_unlock(&pool->attach_mutex);
-+	mutex_unlock(&wq_pool_attach_mutex);
- 
- 	if (pool->detach_completion)
- 		wait_for_completion(pool->detach_completion);
-@@ -4600,7 +4599,7 @@ static void unbind_workers(int cpu)
- 	struct worker *worker;
- 
- 	for_each_cpu_worker_pool(pool, cpu) {
--		mutex_lock(&pool->attach_mutex);
-+		mutex_lock(&wq_pool_attach_mutex);
- 		spin_lock_irq(&pool->lock);
- 
- 		/*
-@@ -4616,7 +4615,7 @@ static void unbind_workers(int cpu)
- 		pool->flags |= POOL_DISASSOCIATED;
- 
- 		spin_unlock_irq(&pool->lock);
--		mutex_unlock(&pool->attach_mutex);
-+		mutex_unlock(&wq_pool_attach_mutex);
- 
- 		/*
- 		 * Call schedule() so that we cross rq->lock and thus can
-@@ -4657,7 +4656,7 @@ static void rebind_workers(struct worker_pool *pool)
- {
- 	struct worker *worker;
- 
--	lockdep_assert_held(&pool->attach_mutex);
-+	lockdep_assert_held(&wq_pool_attach_mutex);
- 
- 	/*
- 	 * Restore CPU affinity of all workers.  As all idle workers should
-@@ -4727,7 +4726,7 @@ static void restore_unbound_workers_cpumask(struct worker_pool *pool, int cpu)
- 	static cpumask_t cpumask;
- 	struct worker *worker;
- 
--	lockdep_assert_held(&pool->attach_mutex);
-+	lockdep_assert_held(&wq_pool_attach_mutex);
- 
- 	/* is @cpu allowed for @pool? */
- 	if (!cpumask_test_cpu(cpu, pool->attrs->cpumask))
-@@ -4762,14 +4761,14 @@ int workqueue_online_cpu(unsigned int cpu)
- 	mutex_lock(&wq_pool_mutex);
- 
- 	for_each_pool(pool, pi) {
--		mutex_lock(&pool->attach_mutex);
-+		mutex_lock(&wq_pool_attach_mutex);
- 
- 		if (pool->cpu == cpu)
- 			rebind_workers(pool);
- 		else if (pool->cpu < 0)
- 			restore_unbound_workers_cpumask(pool, cpu);
- 
--		mutex_unlock(&pool->attach_mutex);
-+		mutex_unlock(&wq_pool_attach_mutex);
- 	}
- 
- 	/* update NUMA affinity of unbound workqueues */
 -- 
 2.9.5
 
