@@ -1,41 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeEQK4R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:56:17 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:42233 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeEQK4P (ORCPT
+        id S1751815AbeEQK6n (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:58:43 -0400
+Received: from gateway36.websitewelcome.com ([192.185.185.36]:33659 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751274AbeEQK6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:56:15 -0400
-X-Google-Smtp-Source: AB8JxZqSeFWiH3oDPifNLSznWvpGS2nV/Yi8gnXP/rOzGT6fmP0C8Hu3AmdU5ReEAsHnMiRdQD5xWA==
-Subject: Re: [PATCH] dmaengine: qcom: bam_dma: fix some doc warnings.
-To: Vinod <vkoul@kernel.org>
-Cc: agross@codeaurora.org, dmaengine@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180517095916.11362-1-srinivas.kandagatla@linaro.org>
- <20180517105049.GZ13271@vkoul-mobl>
- <c3b63215-ed0f-93ee-69df-6b22053f0479@linaro.org>
- <20180517105517.GA13271@vkoul-mobl>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <6d0d7e0d-16eb-2f91-5ca7-9a7ab2196ee3@linaro.org>
-Date: Thu, 17 May 2018 11:56:13 +0100
+        Thu, 17 May 2018 06:58:42 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+ <20180423161742.66f939ba@vento.lan>
+ <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
+ <20180426204241.03a42996@vento.lan>
+ <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
+ <20180515085953.65bfa107@vento.lan> <20180515141655.idzuh2jfdkuu5grs@mwanda>
+ <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
+ <20180515193936.m25kzyeknsk2bo2c@mwanda>
+ <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
+Message-ID: <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
+Date: Thu, 17 May 2018 05:36:03 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180517105517.GA13271@vkoul-mobl>
+In-Reply-To: <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fJGGU-001Uzd-1Z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:37950
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 17/05/18 11:55, Vinod wrote:
->> let me know if you still want an empty line, I can respin.
-> Yeah that's why asked, I can edit while applying so no issues
-Thanks, that will work!
+On 05/16/2018 08:14 PM, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 05/15/2018 02:39 PM, Dan Carpenter wrote:
+>>> Dan,
+>>>
+>>> These are all the Spectre media issues I see smatch is reporting in
+>>> linux-next-20180515:
+>>>
+>>> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line()
+>>> warn: potential spectre issue 'pin->error_inj_args'
+>>> drivers/media/dvb-core/dvb_ca_en50221.c:1479 
+>>> dvb_ca_en50221_io_write() warn:
+>>> potential spectre issue 'ca->slot_info' (local cap)
+>>> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn:
+>>> potential spectre issue 'p->ule_next_hdr'
+>>>
+>>> I pulled the latest changes from the smatch repository and compiled it.
+>>>
+>>> I'm running smatch v0.5.0-4459-g2f66d40 now. Is this the latest version?
+>>>
+>>> I wonder if there is anything I might be missing.
+>>>
+>>
+>> You'd need to rebuild the db (possibly twice but definitely once).
+>>
+> 
+> Hi Dan,
+> 
+> After rebuilding the db (once), these are all the Spectre media warnings 
+> I get:
+> 
+> drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
+> potential spectre issue 'ddbs'
+> drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
+> potential spectre issue 'pdev->port'
+> drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
+> potential spectre issue 'idev->input'
+> drivers/media/dvb-core/dvb_ca_en50221.c:1400 
+> dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
+> 'ca->slot_info' (local cap)
+> drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
+> warn: potential spectre issue 'ca->slot_info' (local cap)
+> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
+> potential spectre issue 'p->ule_next_hdr'
+> drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
+> spectre issue 'dvbnet->device' (local cap)
+> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
+> warn: potential spectre issue 'pin->error_inj_args'
+> 
+> I just want to double check if you are getting the same output. In case 
+> you are getting the same, then what Mauro commented about these issues:
+> 
+> https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
+> 
+> being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
+> to be correct.
+> 
 
---srini
+Interesting, I've rebuild the db twice and now I get a total of 75 
+Spectre warnings in drivers/media
+
+--
+Gustavo
