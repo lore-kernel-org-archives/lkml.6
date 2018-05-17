@@ -1,180 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeEQX2I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:28:08 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:28962 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeEQX2G (ORCPT
+        id S1752260AbeEQX2q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:28:46 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:57881 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751543AbeEQX2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 19:28:06 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180517232803epoutp04d0abdd9d0f080442050cd49d6344814e~vklL9-a5n2864028640epoutp04e
-X-AuditID: b6c32a38-70fff7000000105c-ae-5afe0ffc5b52
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFE0FFB.6050408@samsung.com>
-Date: Fri, 18 May 2018 08:27:55 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] PM / devfreq: Fix handling of min/max_freq == 0
-In-reply-to: <20180517223255.211918-1-mka@chromium.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsWy7bCmge4f/n9RBsu+mlhs+vie1eLssoNs
-        Fmeb3rBbXN41h83ic+8RRovPGx4zWtxuXMHmwO4xu+Eii0ffllWMHp83yQUwR6XaZKQmpqQW
-        KaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gAtV1IoS8wpBQoFJBYX
-        K+nb2RTll5akKmTkF5fYKkUbGhrpGRqY6xkZAWnjWCsjU6CShNSM54+3MhWckak4Of0cYwPj
-        ErEuRk4OCQETib8bTrB2MXJxCAnsYJTY37GTHcL5zijx/PYRNpiqJU/ms0AkNjBKfHn7mxUk
-        wSsgKPFj8j2gBAcHs4C8xJFL2SBhZgFNia2710MNusso8bDhFAtEvZbEwv17wHpZBFQlvn1r
-        BrPZgOL7X9wAW8YvoChx9cdjRhBbVCBCYuf8b+wg80UE6iRWfKkHmcks0M8osbFxEVivsICL
-        xK477WDzOQXMJc43TwF7R0LgAJvEm8fzWCA+cJFYcPIWO4QtLPHq+BawoRIC0hKXjtpC1Lcz
-        SrTvnccM4UxhlDh3/R4TRIOxxLOFXUwQr/FJvPvawwrRzCvR0SYEUeIh8XTlH2YI21GiqXkl
-        G8T3XYwSnb9+sU1glJuFFGCzEAE2CynAFjAyr2IUSy0ozk1PLTYsMNErTswtLs1L10vOz93E
-        CE5vWhY7GPec8znEKMDBqMTD+2Li3ygh1sSy4srcQ4wSHMxKIrx+lUAh3pTEyqrUovz4otKc
-        1OJDjKbA8J7ILCWanA9MvXkl8YamRsbGxhYmhmamhoZK4rxzlL5GCQmkJ5akZqemFqQWwfQx
-        cXBKNTDub7MJ6Qk+eaLy2aJHTf9jUpfef9ET9H7Xj9Px2ptrQ10+ibWfyL+dcqLNVHeZ8LxC
-        y7PeW24dOe9xhfOazgl9U/n7M2IVy/yWCEdulebM65koKpoveSzTzvYor5DDy0/ed9kS1J0+
-        6kj8vTe9au2+F1dNBe7NerS3/5P2pzLLXRu/+vTmymUpsRRnJBpqMRcVJwIAPbMqW4UDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsVy+t9jQd3f/P+iDI4dVrLY9PE9q8XZZQfZ
-        LM42vWG3uLxrDpvF594jjBafNzxmtLjduILNgd1jdsNFFo++LasYPT5vkgtgjuKySUnNySxL
-        LdK3S+DKeP54K1PBGZmKk9PPMTYwLhHrYuTkkBAwkVjyZD5LFyMXh5DAOkaJY9PPsIAkeAUE
-        JX5Mvgdkc3AwC8hLHLmUDRJmFlCXmDRvETNE/X1GiTtNMPVaEgv372EFsVkEVCW+fWsGs9mA
-        4vtf3GADsfkFFCWu/njMCDJTVCBCovtEJcgcEYEGRonGV7PZQBxmgYmMEldX3QNrFhZwkdh1
-        px3quh5GiYXTD4Jt4xQwlzjfPIV1AqPALCTHzkI4dhaSYxcwMq9ilEwtKM5Nzy02KjDMSy3X
-        K07MLS7NS9dLzs/dxAgM7W2Htfp2MN5fEn+IUYCDUYmH98XEv1FCrIllxZW5hxglOJiVRHj9
-        KoFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeW/nHYsUEkhPLEnNTk0tSC2CyTJxcEo1MDJten3x
-        8IS0g8cmykSuaNS7eGjhxultRYKeqnN1nvzxP7fpxbOJNbMTdFO1le648LUyJuSd3Tttu8+p
-        KGPNxl0yFkIdh12K2qLl9rMz8+8+taD/eN1B69fPHxnl80lM+bPmlCL3kY9ZDBOXbZL8l97k
-        lf7tm4mW0aSlX7Zetfyz6VQ5M+8kbyElluKMREMt5qLiRACN/Gp+aQIAAA==
-X-CMS-MailID: 20180517232755epcas1p129a2405bfc2d5e9e01576bc1bd015a11
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180517223318epcas3p2c4bf4ef6d2c1c4b097df92c309adafa6
-X-RootMTR: 20180517223318epcas3p2c4bf4ef6d2c1c4b097df92c309adafa6
-References: <CGME20180517223318epcas3p2c4bf4ef6d2c1c4b097df92c309adafa6@epcas3p2.samsung.com>
-        <20180517223255.211918-1-mka@chromium.org>
+        Thu, 17 May 2018 19:28:41 -0400
+From: Nadav Amit <namit@vmware.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
+        Juergen Gross <jgross@suse.com>, Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH 4/6] x86: prevent inline distortion by paravirt ops
+Date: Thu, 17 May 2018 09:14:00 -0700
+Message-ID: <20180517161402.78089-5-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180517161402.78089-1-namit@vmware.com>
+References: <20180517161402.78089-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-Please resend the patch with related other patches.
-It is hard to check the dependency/sequence of your patches.
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
-On 2018년 05월 18일 07:32, Matthias Kaehlcke wrote:
-> Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
-> devfreq device") initializes df->min/max_freq with the min/max OPP when
-> the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
-> available min/max frequency") adds df->scaling_min/max_freq and the
-> following to the frequency adjustment code:
-> 
->   max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
-> 
-> With the current handling of min/max_freq this is incorrect:
-> 
-> Even though df->max_freq is now initialized to a value != 0 user space
-> can still set it to 0, in this case max_freq would be 0 instead of
-> df->scaling_max_freq as intended. In consequence the frequency adjustment
-> is not performed:
-> 
->   if (max_freq && freq > max_freq) {
-> 	freq = max_freq;
-> 
-> To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
-> when the user passes a value of 0. This also prevents df->max_freq from
-> being set below the min OPP when df->min_freq is 0, and similar for
-> min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
-> checks for this case can be removed.
-> 
-> Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  drivers/devfreq/devfreq.c | 30 ++++++++++++++++++------------
->  1 file changed, 18 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index fe2af6aa88fc..e007534297f7 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -283,11 +283,11 @@ int update_devfreq(struct devfreq *devfreq)
->  	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
->  	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
->  
-> -	if (min_freq && freq < min_freq) {
-> +	if (freq < min_freq) {
->  		freq = min_freq;
->  		flags &= ~DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use GLB */
->  	}
-> -	if (max_freq && freq > max_freq) {
-> +	if (freq > max_freq) {
->  		freq = max_freq;
->  		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
->  	}
-> @@ -1123,17 +1123,20 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
->  	struct devfreq *df = to_devfreq(dev);
->  	unsigned long value;
->  	int ret;
-> -	unsigned long max;
->  
->  	ret = sscanf(buf, "%lu", &value);
->  	if (ret != 1)
->  		return -EINVAL;
->  
->  	mutex_lock(&df->lock);
-> -	max = df->max_freq;
-> -	if (value && max && value > max) {
-> -		ret = -EINVAL;
-> -		goto unlock;
-> +
-> +	if (value) {
-> +		if (value > df->max_freq) {
-> +			ret = -EINVAL;
-> +			goto unlock;
-> +		}
-> +	} else {
-> +		value = df->profile->freq_table[df->profile->max_state - 1];
->  	}
->  
->  	df->min_freq = value;
-> @@ -1158,17 +1161,20 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
->  	struct devfreq *df = to_devfreq(dev);
->  	unsigned long value;
->  	int ret;
-> -	unsigned long min;
->  
->  	ret = sscanf(buf, "%lu", &value);
->  	if (ret != 1)
->  		return -EINVAL;
->  
->  	mutex_lock(&df->lock);
-> -	min = df->min_freq;
-> -	if (value && min && value < min) {
-> -		ret = -EINVAL;
-> -		goto unlock;
-> +
-> +	if (!value) {
-> +		value = df->profile->freq_table[0];
-> +	} else {
-> +		if (value < df->min_freq) {
-> +			ret = -EINVAL;
-> +			goto unlock;
-> +		}
->  	}
->  
->  	df->max_freq = value;
-> 
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
 
+   text	   data	    bss	    dec	    hex	filename
+18131468 10068488 2936832 31136788 1db1c14 ./vmlinux before
+18146418 10064100 2936832 31147350 1db4556 ./vmlinux after (+10562)
 
+Static text symbols:
+Before:	39788
+After:	39673	(-115)
+
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: virtualization@lists.linux-foundation.org
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/paravirt_types.h | 63 +++++++++++++++++----------
+ 1 file changed, 39 insertions(+), 24 deletions(-)
+
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..ea62204c2ee6 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -346,20 +346,45 @@ extern struct pv_lock_ops pv_lock_ops;
+ /*
+  * Generate some code, and mark it as patchable by the
+  * apply_paravirt() alternate instruction patcher.
++ *
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ *
++ * The paravirtual alternative logic and data are encapsulated within an
++ * assembly macro, which is then called on each use. This hack is necessary to
++ * prevent GCC from considering the inline assembly blocks as costly in time and
++ * space, which can prevent function inlining and lead to other bad compilation
++ * decisions. GCC computes inline assembly cost according to the number of
++ * perceived number of assembly instruction, based on the number of new-lines
++ * and semicolons in the assembly block. The macro will eventually be compiled
++ * into a single instruction (and some data). This scheme allows GCC to better
++ * understand the inline asm cost.
+  */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
++asm(".macro __paravirt_alt type:req clobber:req pv_opptr:req\n"
++    "771:\n\t"
++    ANNOTATE_RETPOLINE_SAFE "\n\t"
++    "call *\\pv_opptr\n"
++    "772:\n\t"
++    ".pushsection .parainstructions,\"a\"\n\t"
++    _ASM_ALIGN "\n\t"
++    _ASM_PTR " 771b\n\t"
++    ".byte \\type\n\t"
++    ".byte 772b-771b\n\t"
++    ".short \\clobber\n\t"
++    ".popsection\n\t"
++    ".endm");
++
++#define _paravirt_alt(type, clobber, pv_opptr)				\
++	"__paravirt_alt type=" __stringify(type)			\
++	" clobber=" __stringify(clobber)				\
++	" pv_opptr=" __stringify(pv_opptr) "\n\t"
+ 
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_alt							\
++	_paravirt_alt("%c[paravirt_typenum]", "%c[paravirt_clobber]",	\
++		      "%c[paravirt_opptr]")
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +412,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +549,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +559,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +586,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_alt				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.0
