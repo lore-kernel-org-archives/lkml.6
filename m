@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751396AbeEQE76 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 00:59:58 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:16743 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeEQE74 (ORCPT
+        id S1751843AbeEQFAJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:00:09 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:32461 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeEQFAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 00:59:56 -0400
+        Thu, 17 May 2018 01:00:03 -0400
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfyq4rHQ=="
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,10 +19,14 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v7 0/3] pcal6524 extensions and fixes for pca953x driver
-Date: Thu, 17 May 2018 06:59:46 +0200
-Message-Id: <cover.1526533188.git.hns@goldelico.com>
+Subject: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
+Date: Thu, 17 May 2018 06:59:49 +0200
+Message-Id: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
+In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
+References: <cover.1526533188.git.hns@goldelico.com>
+In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
+References: <cover.1526533188.git.hns@goldelico.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -30,55 +34,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V7:
-* replace PCAL register masks by hex constants
+The register constants are so far defined in a way that they fit
+for the pcal9555a when shifted by the number of banks, i.e. are
+multiplied by 2 in the accessor function.
 
-2018-05-16 19:01:29: V6:
-* added proper attribution to the formula used for fixing the
-  pcal6524 register address (changes commit message only)
-* add back missing first patch from V2 that defines the
-  PCA_LATCH_INT constant
-* removed patches already merged
+Now, the pcal6524 has 3 banks which means the relative offset
+is multiplied by 4 for the standard registers.
 
-2018-04-28 18:33:42: V5:
-* fix wrong split up between patches 1/7 and 2/7.
+Simply applying the bit shift to the extended registers gives
+a wrong result, since the base offset is already included in
+the offset.
 
-2018-04-26 19:35:07: V4:
-* introduced PCA_LATCH_INT constant to make of_table more
-  readable (suggested by Andy Shevchenko)
-* converted all register constants to hex in a separate
-  patch (suggested by Andy Shevchenko)
-* separated additional pcal953x and pcal6524 register
-  definitions into separate patches (suggested by Andy Shevchenko)
-* made special pcal6524 address adjustment more readable
-  (suggested by Andy Shevchenko)
-* moved gpio-controller and interrupt-controller to the
-  "required" section (reviewed by Rob Herring)
+Therefore, we have to add code to the 24 bit accessor functions
+that adjusts the register number for these exended registers.
 
-2018-04-10 18:07:07: V3:
-* add Reported-by: and Reviewed-by:
-* fix wording for bindings description and example
-* convert all register offsets to hex
-* omit the LEVEL-IRQ RFC/hack commit
+The formula finally used was developed and proposed by
+Andy Shevchenko <andy.shevchenko@gmail.com>.
 
-2018-04-04 21:00:27: V2:
-* added PCA_PCAL flags if matched through of-table
-* fix address calculation for extended PCAL6524 registers
-* hack to map LEVEL_LOW to EDGE_FALLING to be able to
-  test in combination with ts3a227e driver
-* improve description of bindings for optional vcc-supply
-  and interrupt-controller;
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/gpio/gpio-pca953x.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-2018-03-10 09:32:53: no initial description
-
-H. Nikolaus Schaller (3):
-  gpio: pca953x: set the PCA_PCAL flag also when matching by DT
-  gpio: pca953x: define masks for addressing common and extended
-    registers
-  gpio: pca953x: fix address calculation for pcal6524
-
- drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index c682921d7019..4ad553f4e41f 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -222,9 +222,11 @@ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+ 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
++	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
++	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+ 
+ 	return i2c_smbus_write_i2c_block_data(chip->client,
+-					      (reg << bank_shift) | REG_ADDR_AI,
++					      pinctrl | addr | REG_ADDR_AI,
+ 					      NBANK(chip), val);
+ }
+ 
+@@ -264,9 +266,11 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+ 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
++	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
++	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+ 
+ 	return i2c_smbus_read_i2c_block_data(chip->client,
+-					     (reg << bank_shift) | REG_ADDR_AI,
++					     pinctrl | addr | REG_ADDR_AI,
+ 					     NBANK(chip), val);
+ }
+ 
 -- 
 2.12.2
