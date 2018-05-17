@@ -1,89 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeEQRWK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:22:10 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40099 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeEQRWF (ORCPT
+        id S1752515AbeEQRWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:22:34 -0400
+Received: from www381.your-server.de ([78.46.137.84]:42291 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752030AbeEQRWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:22:05 -0400
-X-Google-Smtp-Source: AB8JxZqAMiOXXAeOf8vFKg7ki6ME6ndy+24uyFHyJeGp0jS9yoRqm8vlQkmi3Cl6DWy7AqR0x8LzDA==
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, rkrcmar@redhat.com, kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.17-rc6
-Date: Thu, 17 May 2018 19:21:59 +0200
-Message-Id: <1526577719-39368-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 17 May 2018 13:22:31 -0400
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+To: Frank Mori Hess <fmh6jj@gmail.com>, Vinod Koul <vinod.koul@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+References: <2484918.HKVQc3yJkt@bear>
+ <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
+ <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
+ <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
+ <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
+ <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
+ <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+ <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
+ <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl>
+ <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <b232b906-9359-bea1-447f-2c1341cc19d5@metafoo.de>
+Date: Thu, 17 May 2018 19:22:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: lars@metafoo.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 05/17/2018 06:20 PM, Frank Mori Hess wrote:
+> Sorry to keep coming back to this, but I'm experiencing a bit of
+> incredulity that you are saying what you seem to be saying.  You seem
+> to be saying dmaengine provides no way to permanently stop a transfer
+> safely other than transferring the full number of bytes initially
+> requested.  So the proper resolution is the 8250 serial driver needs
+> to remove rx dma support, because they are just trying to do something
+> that is not supported.
 
-The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
+The problem is not so much on the software side but even more so on the
+hardware side. Not all hardware even supports aborting a transfer with no
+data loss because there is no precise measurement of how much data has been
+transferred. The residue that is reported is always the lower bound, this
+much has been transferred but it might actually have been more.
 
-  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+And even if hardware supports precise residue reporting there often is no
+synchronization mechanism to ensure that there is no pending data anywhere
+in the pipeline. This doesn't even have to be inside the DMA's buffers, the
+DMA might have send the data to the peripheral but it has not arrived at the
+peripheral side.
 
-are available in the git repository at:
+If the peripheral has a memory mapped FIFO there will typically be some
+confirmation that the data was received, but with a dedicated DMA bus
+between the DMA controller and the peripheral that is often not the case.
+And for the first case the DMA controller also needs to actually expose the
+information how many acknowledgements it has received.
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Because there are basically two different resides, residue one is how much
+data has been read from/written to memory and the other is how much data has
+been read from/written to the peripheral. Any differences between the two
+will account for in flight data.
 
-for you to fetch changes up to 633711e82878dc29083fc5d2605166755e25b57a:
+What I'd recommend is to add a flush_sync() operation to the DMA interface.
+This function would wait until all in flight data transfers have been
+completed. That makes it safe to call terminate() without the risk of
+loosing data and also allow accurate residue reporting.
 
-  kvm: rename KVM_HINTS_DEDICATED to KVM_HINTS_REALTIME (2018-05-17 19:12:13 +0200)
-
-----------------------------------------------------------------
-* ARM/ARM64 locking fixes
-* x86 fixes: PCID, UMIP, locking
-* Improved support for recent Windows version that have a 2048 Hz
-APIC timer.
-* Rename KVM_HINTS_DEDICATED CPUID bit to KVM_HINTS_REALTIME
-* Better behaved selftests.
-
-----------------------------------------------------------------
-Andre Przywara (4):
-      KVM: arm/arm64: Properly protect VGIC locks from IRQs
-      KVM: arm/arm64: VGIC/ITS: Promote irq_lock() in update_affinity
-      KVM: arm/arm64: VGIC/ITS: protect kvm_read_guest() calls with SRCU lock
-      KVM: arm/arm64: VGIC/ITS save/restore: protect kvm_read_guest() calls
-
-Junaid Shahid (1):
-      kvm: x86: Suppress CR3_PCID_INVD bit only when PCIDs are enabled
-
-Marian Rotariu (1):
-      x86: Delay skip of emulated hypercall instruction
-
-Michael S. Tsirkin (1):
-      kvm: rename KVM_HINTS_DEDICATED to KVM_HINTS_REALTIME
-
-Paolo Bonzini (2):
-      KVM: hyperv: idr_find needs RCU protection
-      KVM: selftests: exit with 0 status code when tests cannot be run
-
-Sean Christopherson (1):
-      KVM: vmx: update sec exec controls for UMIP iff emulating UMIP
-
-Wanpeng Li (2):
-      KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
-      KVM: X86: Lower the default timer frequency limit to 200us
-
- Documentation/virtual/kvm/cpuid.txt               |  6 ++--
- arch/arm/include/asm/kvm_mmu.h                    | 16 +++++++++
- arch/arm64/include/asm/kvm_mmu.h                  | 16 +++++++++
- arch/x86/include/uapi/asm/kvm_para.h              |  2 +-
- arch/x86/kernel/kvm.c                             |  8 ++---
- arch/x86/kvm/hyperv.c                             |  6 ++--
- arch/x86/kvm/vmx.c                                | 28 ++++++++--------
- arch/x86/kvm/x86.c                                | 26 +++++++++------
- include/linux/kvm_host.h                          |  8 +----
- tools/testing/selftests/kvm/Makefile              |  2 +-
- tools/testing/selftests/kvm/include/test_util.h   |  1 +
- tools/testing/selftests/kvm/lib/kvm_util.c        | 16 ++++-----
- tools/testing/selftests/kvm/sync_regs_test.c      | 40 ++++++++++++++++++-----
- tools/testing/selftests/kvm/vmx_tsc_adjust_test.c |  4 +--
- virt/kvm/arm/vgic/vgic-debug.c                    |  5 +--
- virt/kvm/arm/vgic/vgic-its.c                      | 34 ++++++++++---------
- virt/kvm/arm/vgic/vgic-v3.c                       |  4 +--
- virt/kvm/arm/vgic/vgic.c                          | 22 ++++++++-----
- 18 files changed, 157 insertions(+), 87 deletions(-)
+Although I'd expect that there is fair risk that implementations will not
+get flush_sync() 100% correct because it requires in-depth knowledge about
+the internal behavior of the DMA which is often not documented.
