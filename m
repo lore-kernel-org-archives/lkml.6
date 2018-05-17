@@ -1,123 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeEQK6n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:58:43 -0400
-Received: from gateway36.websitewelcome.com ([192.185.185.36]:33659 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751274AbeEQK6m (ORCPT
+        id S1752056AbeEQK7N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:59:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51972 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeEQK7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:58:42 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
- <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
- <20180423161742.66f939ba@vento.lan>
- <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
- <20180426204241.03a42996@vento.lan>
- <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
- <20180515085953.65bfa107@vento.lan> <20180515141655.idzuh2jfdkuu5grs@mwanda>
- <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
- <20180515193936.m25kzyeknsk2bo2c@mwanda>
- <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
-Message-ID: <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
-Date: Thu, 17 May 2018 05:36:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 06:59:11 -0400
+X-Google-Smtp-Source: AB8JxZr5zb+s0D1o/eNcCAqv37pFuho3QFcteoypcjFOEX7+lXZWQ/m09a/IqexK9tc8WCoXm+vIHg==
+Date: Thu, 17 May 2018 12:59:07 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
+        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
+        linux-pm@vger.kernel.org, viresh.kumar@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180517105907.GC22493@localhost.localdomain>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+ <20180516151925.GO28366@localhost.localdomain>
+ <20180516154733.GF12198@hirez.programming.kicks-ass.net>
+ <20180516163105.GP28366@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.172.56.86
-X-Source-L: No
-X-Exim-ID: 1fJGGU-001Uzd-1Z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:37950
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516163105.GP28366@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16/05/18 18:31, Juri Lelli wrote:
+> On 16/05/18 17:47, Peter Zijlstra wrote:
+> > On Wed, May 16, 2018 at 05:19:25PM +0200, Juri Lelli wrote:
+> > 
+> > > Anyway, FWIW I started testing this on a E5-2609 v3 and I'm not seeing
+> > > hackbench regressions so far (running with schedutil governor).
+> > 
+> > https://en.wikipedia.org/wiki/Haswell_(microarchitecture)#Server_processors
+> > 
+> > Lists the E5 2609 v3 as not having turbo at all, which is basically a
+> > best case scenario for this patch.
+> > 
+> > As I wrote earlier today; when turbo exists, like say the 2699, then
+> > when we're busy we'll run at U=2.3/3.6 ~ .64, which might confuse
+> > things.
+> 
+> Indeed. I was mostly trying to see if adding this to the tick might
+> introduce noticeable overhead.
 
+Blindly testing on an i5-5200U (2.2/2.7 GHz) gave the following
 
-On 05/16/2018 08:14 PM, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 05/15/2018 02:39 PM, Dan Carpenter wrote:
->>> Dan,
->>>
->>> These are all the Spectre media issues I see smatch is reporting in
->>> linux-next-20180515:
->>>
->>> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line()
->>> warn: potential spectre issue 'pin->error_inj_args'
->>> drivers/media/dvb-core/dvb_ca_en50221.c:1479 
->>> dvb_ca_en50221_io_write() warn:
->>> potential spectre issue 'ca->slot_info' (local cap)
->>> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn:
->>> potential spectre issue 'p->ule_next_hdr'
->>>
->>> I pulled the latest changes from the smatch repository and compiled it.
->>>
->>> I'm running smatch v0.5.0-4459-g2f66d40 now. Is this the latest version?
->>>
->>> I wonder if there is anything I might be missing.
->>>
->>
->> You'd need to rebuild the db (possibly twice but definitely once).
->>
-> 
-> Hi Dan,
-> 
-> After rebuilding the db (once), these are all the Spectre media warnings 
-> I get:
-> 
-> drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
-> potential spectre issue 'ddbs'
-> drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
-> potential spectre issue 'pdev->port'
-> drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
-> potential spectre issue 'idev->input'
-> drivers/media/dvb-core/dvb_ca_en50221.c:1400 
-> dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
-> 'ca->slot_info' (local cap)
-> drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
-> warn: potential spectre issue 'ca->slot_info' (local cap)
-> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
-> potential spectre issue 'p->ule_next_hdr'
-> drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
-> spectre issue 'dvbnet->device' (local cap)
-> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
-> warn: potential spectre issue 'pin->error_inj_args'
-> 
-> I just want to double check if you are getting the same output. In case 
-> you are getting the same, then what Mauro commented about these issues:
-> 
-> https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
-> 
-> being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
-> to be correct.
-> 
+# perf bench sched messaging --pipe --thread --group 2 --loop 20000
 
-Interesting, I've rebuild the db twice and now I get a total of 75 
-Spectre warnings in drivers/media
+                      count       mean       std     min     50%       95%       99%     max
+hostname kernel                                                                             
+i5-5200U test_after    30.0  13.843433  0.590605  12.369  13.810  14.85635  15.08205  15.127
+         test_before   30.0  13.571167  0.999798  12.228  13.302  15.57805  16.40029  16.690
 
---
-Gustavo
+It might be interesting to see what happens when using a single CPU
+only?
+
+Also, I will look at how the util signals look when a single CPU is
+busy..
