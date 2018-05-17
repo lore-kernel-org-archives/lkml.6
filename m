@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752549AbeEQHnX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:23 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:18258 "EHLO
+        id S1752522AbeEQHnV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:43:21 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:57577 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752396AbeEQHnQ (ORCPT
+        with ESMTP id S1752442AbeEQHnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 03:43:16 -0400
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="17447187"
-X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="163842609"
+   d="scan'208";a="17447184"
+X-IronPort-AV: E=McAfee;i="5900,7806,8890"; a="195745873"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -21,9 +21,9 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
         Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>,
         Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 8/9] PCI/AER: Pass service type to pcie_do_fatal_recovery()
-Date: Thu, 17 May 2018 03:43:10 -0400
-Message-Id: <1526542991-5291-9-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v17 5/9] PCI/portdrv: Add generic pcie_port_find_service()
+Date: Thu, 17 May 2018 03:43:07 -0400
+Message-Id: <1526542991-5291-6-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
@@ -31,92 +31,138 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pass the service type to pcie_do_fatal_recovery() instead of assuming AER.
-We will make DPC also use pcie_do_fatal_recovery(), and it needs to do
-things a little differently for AER and DPC.
+Add generic pcie_port_find_service() routine.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-[bhelgaas: split to separate patch]
 Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 5e8857a..6af7595 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -354,7 +354,7 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
- void pci_enable_acs(struct pci_dev *dev);
- 
- /* PCI error reporting and recovery */
--void pcie_do_fatal_recovery(struct pci_dev *dev);
-+void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service);
- void pcie_do_nonfatal_recovery(struct pci_dev *dev);
- 
- bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
 diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
-index fdfc474..36e622d 100644
+index 4fa1ee4..fdfc474 100644
 --- a/drivers/pci/pcie/aer/aerdrv_core.c
 +++ b/drivers/pci/pcie/aer/aerdrv_core.c
-@@ -254,7 +254,7 @@ static void handle_error_source(struct pcie_device *aerdev,
- 	} else if (info->severity == AER_NONFATAL)
- 		pcie_do_nonfatal_recovery(dev);
- 	else if (info->severity == AER_FATAL)
--		pcie_do_fatal_recovery(dev);
-+		pcie_do_fatal_recovery(dev, PCIE_PORT_SERVICE_AER);
+@@ -228,32 +228,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
  }
  
- #ifdef CONFIG_ACPI_APEI_PCIEAER
-@@ -321,7 +321,7 @@ static void aer_recover_work_func(struct work_struct *work)
- 		if (entry.severity == AER_NONFATAL)
- 			pcie_do_nonfatal_recovery(pdev);
- 		else if (entry.severity == AER_FATAL)
--			pcie_do_fatal_recovery(pdev);
-+			pcie_do_fatal_recovery(pdev, PCIE_PORT_SERVICE_AER);
- 		pci_dev_put(pdev);
- 	}
- }
+-static int find_aer_service_iter(struct device *device, void *data)
+-{
+-	struct pcie_port_service_driver *service_driver, **drv;
+-
+-	drv = (struct pcie_port_service_driver **) data;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
+-			*drv = service_driver;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+-{
+-	struct pcie_port_service_driver *drv = NULL;
+-
+-	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
+-
+-	return drv;
+-}
+-
+ /**
+  * handle_error_source - handle logging error into an event log
+  * @aerdev: pointer to pcie_device data structure of the root port
 diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index a1668e9..8d68cd7 100644
+index 307120b..a1668e9 100644
 --- a/drivers/pci/pcie/err.c
 +++ b/drivers/pci/pcie/err.c
-@@ -180,7 +180,7 @@ static pci_ers_result_t default_reset_link(struct pci_dev *dev)
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
--static pci_ers_result_t reset_link(struct pci_dev *dev)
-+static pci_ers_result_t reset_link(struct pci_dev *dev, u32 service)
- {
- 	struct pci_dev *udev;
- 	pci_ers_result_t status;
-@@ -195,7 +195,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+@@ -194,10 +194,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 		udev = dev->bus->self;
  	}
  
+-#if IS_ENABLED(CONFIG_PCIEAER)
  	/* Use the aer driver of the component firstly */
--	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
-+	driver = pcie_port_find_service(udev, service);
+-	driver = find_aer_service(udev);
+-#endif
++	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
  
  	if (driver && driver->reset_link) {
  		status = driver->reset_link(udev);
-@@ -281,7 +281,7 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
-  * beneath this AER agent, followed by reset link e.g. secondary bus reset
-  * followed by re-enumeration of devices.
-  */
--void pcie_do_fatal_recovery(struct pci_dev *dev)
-+void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
- {
- 	struct pci_dev *udev;
- 	struct pci_bus *parent;
-@@ -307,9 +307,10 @@ void pcie_do_fatal_recovery(struct pci_dev *dev)
- 		pci_dev_put(pdev);
- 	}
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 47c9824..ba6c963 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -112,5 +112,6 @@ static inline bool pcie_pme_no_msi(void) { return false; }
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
  
--	result = reset_link(udev);
-+	result = reset_link(udev, service);
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index c9c0663..e5bbf08 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -18,6 +18,10 @@
  
--	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-+	if ((service == PCIE_PORT_SERVICE_AER) &&
-+	    (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)) {
- 		/*
- 		 * If the error is reported by a bridge, we think this error
- 		 * is related to the downstream link of the bridge, so we
+ #include "../pci.h"
+ #include "portdrv.h"
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	u32 service;
++};
+ 
+ /**
+  * release_pcie_device - free PCI Express port service device structure
+@@ -398,6 +402,46 @@ static int remove_iter(struct device *dev, void *data)
+ 	return 0;
+ }
+ 
++static int find_service_iter(struct device *device, void *data)
++{
++	struct pcie_port_service_driver *service_driver;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
++
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
++
++	if (device->bus == &pcie_port_bus_type && device->driver) {
++		service_driver = to_service_driver(device->driver);
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
++			return 1;
++		}
++	}
++
++	return 0;
++}
++/**
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service is associated with
++ * @service: Service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
++{
++	struct pcie_port_service_driver *drv;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.drv = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
++}
++
+ /**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
 -- 
 2.7.4
