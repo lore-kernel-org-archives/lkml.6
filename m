@@ -1,121 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeEQSH2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:07:28 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:46305 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeEQSH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:07:26 -0400
-X-Google-Smtp-Source: AB8JxZqT6CwvNz9cCQiRPyl5+4bTOwg2Z/j2irGdKTVMu7UoJ4igZ8ol4LObitSGdF5mnpjOHJGrKw==
-Date: Thu, 17 May 2018 14:07:07 -0400
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>, linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v6 6/9] dt-bindings: counter: Document stm32 quadrature
- encoder
-Message-ID: <20180517180707.GA30194@sophia>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com>
- <ccdbbfb2833d274b6bfa234aada57e68d9793dd5.1526487615.git.vilhelm.gray@gmail.com>
- <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
+        id S1752230AbeEQSHi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:07:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39608 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752112AbeEQSHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 14:07:36 -0400
+Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
+ through memblock list
+To: Baoquan He <bhe@redhat.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-5-takahiro.akashi@linaro.org>
+ <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+ <20180507055906.GE11326@linaro.org> <20180517021024.GI24627@MiWiFi-R3L-srv>
+ <20180517021547.GJ24627@MiWiFi-R3L-srv>
+From: James Morse <james.morse@arm.com>
+Message-ID: <d9b8a3ca-93bc-87f9-1316-f45c0dfe47ae@arm.com>
+Date: Thu, 17 May 2018 19:04:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180517021547.GJ24627@MiWiFi-R3L-srv>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 11:23:22AM -0500, Rob Herring wrote:
->On Wed, May 16, 2018 at 12:51 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->> From: Benjamin Gaignard <benjamin.gaignard@st.com>
->
->v6? Where's v1-v5?
+Hi Baoquan,
 
-Hi Rob,
-
-I apologize, I should have CC you on the rest of the patchset to give
-you a better idea of the context of this particular patch. Benjamin
-Gaignard authored this particular patch, so I'll leave it up to him to
-respond to your inline comments, but I can at least provide a brief
-history of the revisions of this patchset as a whole.
-
-This patchset introduces a "Generic Counter" interface for drivers to
-support various counter devices (tally counters, rotary encoders, etc.).
-The v1 revision was submitted on 31 July 2017
-(https://lkml.org/lkml/2017/7/31/514) as a wrapper over existing
-IIO functionality. This implementation design was unsuitable for the
-needs of Generic Counter API, so the v4 revision submitted on 14
-December 2017 reimplemented the Generic Counter API as its own Counter
-subsystem (https://lkml.org/lkml/2017/12/14/778).
-
-The v5 revision was submitted on 9 March 2018
-(https://lkml.org/lkml/2018/3/9/728) and introduced the STM32 Timer
-quadrature encoder driver with Generic Counter interface support. I
-should have CC you in that revision to comment on the dt-bindings patch,
-but I overlooked it, so I made sure to CC you on this v6 revision.
-
-William Breathitt Gray
-
->
->> Add bindings for STM32 Timer quadrature encoder.
->> It is a sub-node of STM32 Timer which implement the
->> counter part of the hardware.
+On 17/05/18 03:15, Baoquan He wrote:
+> On 05/17/18 at 10:10am, Baoquan He wrote:
+>> On 05/07/18 at 02:59pm, AKASHI Takahiro wrote:
+>>> On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
+>>>> On 25/04/18 07:26, AKASHI Takahiro wrote:
+>>>>> We need to prevent firmware-reserved memory regions, particularly EFI
+>>>>> memory map as well as ACPI tables, from being corrupted by loading
+>>>>> kernel/initrd (or other kexec buffers). We also want to support memory
+>>>>> allocation in top-down manner in addition to default bottom-up.
+>>>>> So let's have arm64 specific arch_kexec_walk_mem() which will search
+>>>>> for available memory ranges in usable memblock list,
+>>>>> i.e. !NOMAP & !reserved, 
+>>>>
+>>>>> instead of system resource tree.
+>>>>
+>>>> Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
+>>>> be safe in the EFI-memory-map/ACPI-tables case?
+>>>>
+>>>> It would be good to avoid having two ways of doing this, and I would like to
+>>>> avoid having extra arch code...
+>>>
+>>> I know what you mean.
+>>> /proc/iomem or system resource is, in my opinion, not the best place to
+>>> describe memory usage of kernel but rather to describe *physical* hardware
+>>> layout. As we are still discussing about "reserved" memory, I don't want
+>>> to depend on it.
+>>> Along with memblock list, we will have more accurate control over memory
+>>> usage.
 >>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->> ---
->>  .../bindings/counter/stm32-timer-cnt.txt      | 26 +++++++++++++++++++
->>  .../devicetree/bindings/mfd/stm32-timers.txt  |  7 +++++
->>  2 files changed, 33 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->>
->> diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->> new file mode 100644
->> index 000000000000..377728128bef
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->> @@ -0,0 +1,26 @@
->> +STMicroelectronics STM32 Timer quadrature encoder
->> +
->> +STM32 Timer provides quadrature encoder counter mode to detect
->
->'mode' does not sound like a sub-block of the timers block.
->
->> +angular position and direction of rotary elements,
->> +from IN1 and IN2 input signals.
->> +
->> +Must be a sub-node of an STM32 Timer device tree node.
->> +See ../mfd/stm32-timers.txt for details about the parent node.
->> +
->> +Required properties:
->> +- compatible:          Must be "st,stm32-timer-counter".
->> +- pinctrl-names:       Set to "default".
->> +- pinctrl-0:           List of phandles pointing to pin configuration nodes,
->> +                       to set IN1/IN2 pins in mode of operation for Low-Power
->> +                       Timer input on external pin.
->> +
->> +Example:
->> +       timers@40010000  {
->> +               compatible = "st,stm32-timers";
->> +               ...
->> +               counter {
->> +                       compatible = "st,stm32-timer-counter";
->
->Is there only 1? How is the counter addressed?
->
->> +                       pinctrl-names = "default";
->> +                       pinctrl-0 = <&tim1_in_pins>;
->> +               };
->> +       };
+>> In kexec-tools, we see any usable memory as candidate which can be used
+> 
+> Here I said 'any', it's not accurate. Those memory which need be passed
+> to 2nd kernel for use need be excluded, just as we have done in
+> kexec-tools.
+> 
+>> to load kexec kernel image/initrd etc. However kexec loading is a
+>> preparation work, it just books those position for later kexec kernel
+>> jumping after "kexec -e", that is why we need kexec_buf to remember
+>> them and do the real content copy of kernel/initrd.
+
+The problem we have on arm64 is /proc/iomem is being used for two things.
+1) Kexec's this is memory I can book for the new kernel.
+2) Kdump's this is memory I must describe for vmcore.
+
+We get the memory map from UEFI via the EFI stub, and leave it in
+memblock_reserved() memory. A new kexec kernel needs this to boot: it mustn't
+overwrite it. The same goes for the ACPI tables, they could be reclaimed and
+used as memory, but the new kexec kernel needs them to boot, they are
+memblock_reserved() too.
+
+If we knock all memblock_reserved() regions out of /proc/iomem then kdump
+doesn't work, because /proc/iomem is only generated once. Its a snapshot. The
+initcode/data is an example of memory we release from memblock_reserve() after
+this, then gets used for data we need in the vmcore.
+
+Ideally we would describe all this in /proc/iomem with:
+| 8001e80000-83ff186fff : System RAM
+|   8002080000-8002feffff : [Data you really need to boot]
+
+kexec-tools should not overwrite 'data you really need to boot' unless it knows
+what it is, and that the system will never need it again. (examples: overwrite
+the ACPI tables when booting a non-acpi kernel, overwrite the UEFI memory map if
+the DT has been regenerated for a non-uefi kernel)
+
+But, kexec-tools doesn't parse those second level entries properly. We have a
+bug in user-space, and a bug in the kernel.
+
+Because /proc/iomem is being used for two things, and kexec-tools only parses
+one level, I don't think we can fix this in the kernel without breaking one of
+the use-cases. I think Akashi's fix user-space too approach is the most
+pragmatic approach.
+
+
+>> Here you use
+>> memblock to search available memory, isn't it deviating too far away
+>> from the original design in kexec-tools. Assume kexec loading and
+>> kexec_file loading should be consistent on loading even though they are
+>> done in different space, kernel space and user space.
+
+Its much easier for us to parse memblock in the kernel as the helpers step over
+the regions we know we don't want. For the resource list we would need to
+strcmp(), and a bunch of handling for the second level entries.
+
+
+Thanks,
+
+James
