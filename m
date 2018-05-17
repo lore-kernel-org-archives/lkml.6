@@ -1,111 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeEQXaA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:30:00 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:31398 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751649AbeEQX2l (ORCPT
+        id S1751995AbeEQXjd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:39:33 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44017 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEQXjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 19:28:41 -0400
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Christopher Li <sparse@chrisli.org>, <linux-sparse@vger.kernel.org>
-Subject: [PATCH 1/6] x86: objtool: use asm macro for better compiler decisions
-Date: Thu, 17 May 2018 09:13:57 -0700
-Message-ID: <20180517161402.78089-2-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180517161402.78089-1-namit@vmware.com>
-References: <20180517161402.78089-1-namit@vmware.com>
+        Thu, 17 May 2018 19:39:31 -0400
+X-Google-Smtp-Source: AB8JxZoGgPIpWaHN3ToHDGJQW5LO6Wk8RsZIgPKIb6FxgFqmDV8SwqGEP00Tj2zS7pjq7vXJEE+ZQA==
+Date: Thu, 17 May 2018 16:39:23 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Michael Kelley <mhkelley58@gmail.com>
+Cc: mikelley@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
+        martin.petersen@oracle.com, longli@microsoft.com,
+        jejb@linux.vnet.ibm.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 1/1] scsi: storvsc: Avoid allocating memory for temp
+ cpumasks
+Message-ID: <20180517163923.022c0536@xeon-e3>
+In-Reply-To: <1526591260-27162-1-git-send-email-mikelley@microsoft.com>
+References: <1526591260-27162-1-git-send-email-mikelley@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+On Thu, 17 May 2018 14:07:40 -0700
+Michael Kelley <mhkelley58@gmail.com> wrote:
 
-In the case of objtool, this distortion is extreme, since anyhow the
-annotations of objtool are discarded during linkage.
+> Current code allocates 240 Kbytes (in typical configs) for
+> each synthetic SCSI controller to use as temp cpumask variables.
+> Recode to avoid needing the temp cpumask variables and remove the
+> memory allocation.
+> 
+> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 
-The solution is to set an assembly macro and call it from the inlinedv
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
-
-This patch slightly increases the kernel size.
-
-   text    data     bss     dec     hex filename
-18126699 10066728 2936832 31130259 1db0293 ./vmlinux before
-18126824 10067268 2936832 31130924 1db052c ./vmlinux after (+665)
-
-But allows more aggressive inlining. Static text symbols:
-Before: 40033
-After: 40015 (-18)
-
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: linux-sparse@vger.kernel.org
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- include/linux/compiler.h | 37 +++++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c63601..6cbabc6b195a 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -97,19 +97,40 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-  * These macros help objtool understand GCC code flow for unreachable code.
-  * The __COUNTER__ based labels are a hack to make each instance of the macros
-  * unique, to convince GCC not to merge duplicate inline asm statements.
-+ *
-+ * The annotation logic is encapsulated within assembly macros, which are then
-+ * called on each annotation. This hack is necessary to prevent GCC from
-+ * considering the inline assembly blocks as costly in time and space, which can
-+ * prevent function inlining and lead to other bad compilation decisions. GCC
-+ * computes inline assembly cost according to the number of perceived number of
-+ * assembly instruction, based on the number of new-lines and semicolons in the
-+ * assembly block. Since the annotations will be discarded during linkage, the
-+ * macros make the annotations to be considered "cheap" and let GCC to emit
-+ * better code.
-  */
-+asm(".macro __annotate_reachable counter:req\n"
-+    "\\counter:\n\t"
-+    ".pushsection .discard.reachable\n\t"
-+    ".long \\counter\\()b -.\n\t"
-+    ".popsection\n\t"
-+    ".endm");
-+
- #define annotate_reachable() ({						\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.reachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("__annotate_reachable %c0" : : "i" (__COUNTER__));	\
- })
-+
-+asm(".macro __annotate_unreachable counter:req\n"
-+    "\\counter:\n\t"
-+    ".pushsection .discard.unreachable\n\t"
-+    ".long \\counter\\()b -.\n\t"
-+    ".popsection\n\t"
-+    ".endm");
-+
- #define annotate_unreachable() ({					\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.unreachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("__annotate_unreachable %c0" : :			\
-+		     "i" (__COUNTER__));				\
- })
-+
- #define ASM_UNREACHABLE							\
- 	"999:\n\t"							\
- 	".pushsection .discard.unreachable\n\t"				\
--- 
-2.17.0
+Acked-by: Stephen Hemminger <sthemmin@microsoft.com>
