@@ -1,88 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeEQNRs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:17:48 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:45591 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbeEQNRo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:17:44 -0400
-X-Google-Smtp-Source: AB8JxZoKTkBE+eh36pqSzvyBTMLEyfgSGutub2O4lZZqg088HjcV4koB3HxK8+tzhlFOSHodgMo44K5k5HBDehZ/c3k=
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 15:17:42 +0200
-X-Google-Sender-Auth: GMQSXBWrTFAe2vQRis8fu2FhPCQ
-Message-ID: <CAMuHMdUd9A_JG4zvFTtJtKEJF4NFs11vWdG+vCnFAtoqYS0Yog@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752263AbeEQNSa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:18:30 -0400
+Received: from anholt.net ([50.246.234.109]:45454 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeEQNS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:18:29 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH] drm/vc4: Introduce tracepoints for CL execution.
+Date: Thu, 17 May 2018 14:18:24 +0100
+Message-Id: <20180517131824.29619-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 12:16 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, May 17, 2018 at 10:01 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
->>> On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
->>>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>>> > Add bindings for CryptoCell instance in the SoC.
->>>> >
->>>> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>>>
->>>> Thanks for your patch!
->>>>
->>>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>>> > @@ -528,6 +528,14 @@
->>>> >                         status = "disabled";
->>>> >                 };
->>>> >
->>>> > +               arm_cc630p: crypto@e6601000 {
->>>> > +                       compatible = "arm,cryptocell-630p-ree";
->>>> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
->>>> > +                       #interrupt-cells = <2>;
->>>>
->>>> I believe the #interrupt-cells property is not needed.
->>>>
->>>> > +                       reg = <0x0 0xe6601000 0 0x1000>;
->>>> > +                       clocks = <&cpg CPG_MOD 229>;
->
-> Missing "power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;", as
-> the Secure Engine is part of the CPG/MSSR clock domain (see below [*]).
+This has been useful for debugging the window movement lag in X11, and
+I have patches to sysprof that watch these to produce nice
+visualizations.
 
-And missing "resets = <&cpg 229>;", as the module is tied to the CPG/MSSR
-reset controller.
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/vc4/vc4_gem.c   |  4 +++
+ drivers/gpu/drm/vc4/vc4_irq.c   |  4 +++
+ drivers/gpu/drm/vc4/vc4_trace.h | 58 +++++++++++++++++++++++++++++++++
+ 3 files changed, 66 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index 7910b9acedd6..7e98eb93bcc0 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -479,6 +479,7 @@ vc4_submit_next_bin_job(struct drm_device *dev)
+ 	 */
+ 	if (exec->ct0ca != exec->ct0ea) {
+ 		submit_cl(dev, 0, exec->ct0ca, exec->ct0ea);
++		trace_vc4_submit_cl(dev, exec->seqno, false);
+ 	} else {
+ 		struct vc4_exec_info *next;
+ 
+@@ -513,6 +514,7 @@ vc4_submit_next_render_job(struct drm_device *dev)
+ 	vc4_flush_texture_caches(dev);
+ 
+ 	submit_cl(dev, 1, exec->ct1ca, exec->ct1ea);
++	trace_vc4_submit_cl(dev, exec->seqno, true);
+ }
+ 
+ void
+@@ -1124,6 +1126,8 @@ vc4_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 	struct dma_fence *in_fence;
+ 	int ret = 0;
+ 
++	trace_vc4_submit_cl_begin(dev);
++
+ 	if ((args->flags & ~(VC4_SUBMIT_CL_USE_CLEAR_COLOR |
+ 			     VC4_SUBMIT_CL_FIXED_RCL_ORDER |
+ 			     VC4_SUBMIT_CL_RCL_ORDER_INCREASING_X |
+diff --git a/drivers/gpu/drm/vc4/vc4_irq.c b/drivers/gpu/drm/vc4/vc4_irq.c
+index 4cd2ccfe15f4..d331ad136ae8 100644
+--- a/drivers/gpu/drm/vc4/vc4_irq.c
++++ b/drivers/gpu/drm/vc4/vc4_irq.c
+@@ -47,6 +47,7 @@
+ 
+ #include "vc4_drv.h"
+ #include "vc4_regs.h"
++#include "vc4_trace.h"
+ 
+ #define V3D_DRIVER_IRQS (V3D_INT_OUTOMEM | \
+ 			 V3D_INT_FLDONE | \
+@@ -109,6 +110,7 @@ vc4_irq_finish_bin_job(struct drm_device *dev)
+ 	if (!exec)
+ 		return;
+ 
++	trace_vc4_finish_cl(dev, exec->seqno, false);
+ 	vc4_move_job_to_render(dev, exec);
+ 	next = vc4_first_bin_job(vc4);
+ 
+@@ -147,6 +149,8 @@ vc4_irq_finish_render_job(struct drm_device *dev)
+ 	if (!exec)
+ 		return;
+ 
++	trace_vc4_finish_cl(dev, exec->seqno, true);
++
+ 	vc4->finished_seqno++;
+ 	list_move_tail(&exec->head, &vc4->job_done_list);
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_trace.h b/drivers/gpu/drm/vc4/vc4_trace.h
+index deafb32923e1..d5f2b91035a5 100644
+--- a/drivers/gpu/drm/vc4/vc4_trace.h
++++ b/drivers/gpu/drm/vc4/vc4_trace.h
+@@ -55,6 +55,64 @@ TRACE_EVENT(vc4_wait_for_seqno_end,
+ 		      __entry->dev, __entry->seqno)
+ );
+ 
++TRACE_EVENT(vc4_submit_cl_begin,
++	    TP_PROTO(struct drm_device *dev),
++	    TP_ARGS(dev),
++
++	    TP_STRUCT__entry(
++			     __field(u32, dev)
++			     ),
++
++	    TP_fast_assign(
++			   __entry->dev = dev->primary->index;
++			   ),
++
++	    TP_printk("dev=%u",
++		      __entry->dev)
++);
++
++TRACE_EVENT(vc4_submit_cl,
++	    TP_PROTO(struct drm_device *dev, uint64_t seqno, int ring),
++	    TP_ARGS(dev, seqno, ring),
++
++	    TP_STRUCT__entry(
++			     __field(u32, dev)
++			     __field(u64, seqno)
++			     __field(bool, ring)
++			     ),
++
++	    TP_fast_assign(
++			   __entry->dev = dev->primary->index;
++			   __entry->seqno = seqno;
++			   __entry->ring = ring;
++			   ),
++
++	    TP_printk("dev=%u, seqno=%llu %s",
++		      __entry->dev, __entry->seqno,
++		      __entry->ring ? "RCL" : "BCL")
++);
++
++TRACE_EVENT(vc4_finish_cl,
++	    TP_PROTO(struct drm_device *dev, uint64_t seqno, int ring),
++	    TP_ARGS(dev, seqno, ring),
++
++	    TP_STRUCT__entry(
++			     __field(u32, dev)
++			     __field(u64, seqno)
++			     __field(bool, ring)
++			     ),
++
++	    TP_fast_assign(
++			   __entry->dev = dev->primary->index;
++			   __entry->seqno = seqno;
++			   __entry->ring = ring;
++			   ),
++
++	    TP_printk("dev=%u, seqno=%llu %s",
++		      __entry->dev, __entry->seqno,
++		      __entry->ring ? "RCL" : "BCL")
++);
++
+ #endif /* _VC4_TRACE_H_ */
+ 
+ /* This part must be outside protection */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
