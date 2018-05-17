@@ -1,226 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeEQLW2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:22:28 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:46564 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752189AbeEQLWY (ORCPT
+        id S1752482AbeEQLW5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:22:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36670 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeEQLU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:22:24 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 17 May 2018 13:22:21 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
-        Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx7d: correct enet clock CCGR register offset
-In-Reply-To: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <96f2ab49e1a9c03ccd477346b8285c76@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.80 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.70)[83.33%];
-         ARC_NA(0.00)[]
+        Thu, 17 May 2018 07:20:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A4B460F91
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        rjw@rjwysocki.net, linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Date: Thu, 17 May 2018 14:19:10 +0300
+Message-Id: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.05.2018 10:40, Anson Huang wrote:
-> Correct enet clock CCGR register offset.
-> 
-> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
-> 
-> IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY,
-> no gate after this clock, its parent clock root has gate.
-> IMX7D_ENET1_REF_ROOT_DIV/IMX7D_ENET2_REF_ROOT_DIV supplies clocks
-> for enet IPG_CLK_RMII, no gate after the clock, its parent
-> clock root has gate.
-> 
-> IMX7D_PLL_ENET_MAIN_125M_CLK (anatop pll) supplies clock for
-> enet RGMII tx_clk.
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU frequency subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-As far as I can tell there are two changes here in one patch:
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/Kconfig.arm          |  10 +++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 166 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 180 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-1. The non existing IMX7D_ENET_PHY_REF_ROOT_CLK gate is removed
-
-2. Shared clock gate for the enet time/ipg clock is taken into account.
-
-
-I would rather prefer to have separate patches. The device tree change
-also does two things, so this would lead to 4 patches total.
-
-We can avoid the device tree change for the PHY clk and even maintain
-backward compatibility for that part by renaming
-IMX7D_ENET_PHY_REF_ROOT_DIV to IMX7D_ENET_PHY_REF_ROOT_CLK.
-
-
-So this would end up with the following first patch to address the
-PHY_ROOT clock issue:
-
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -738,7 +738,7 @@ static void __init imx7d_clocks_init(struct
-device_node *ccm_node)
-        clks[IMX7D_ENET1_TIME_ROOT_DIV] =
-imx_clk_divider2("enet1_time_post_div", "enet1_time_pre_div", base +
-0xa780, 0, 6);
-        clks[IMX7D_ENET2_REF_ROOT_DIV] =
-imx_clk_divider2("enet2_ref_post_div", "enet2_ref_pre_div", base +
-0xa800, 0, 6);
-        clks[IMX7D_ENET2_TIME_ROOT_DIV] =
-imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base +
-0xa880, 0, 6);
--       clks[IMX7D_ENET_PHY_REF_ROOT_DIV] =
-imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base +
-0xa900, 0, 6);
-+       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
-imx_clk_divider2("enet_phy_ref_root_clk", "enet_phy_ref_pre_div", base +
-0xa900, 0, 6);
-        clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div",
-"eim_pre_div", base + 0xa980, 0, 6);
-        clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk",
-"nand_pre_div", base + 0xaa00, 0, 6);
-        clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div",
-"qspi_pre_div", base + 0xaa80, 0, 6);
-@@ -816,7 +816,6 @@ static void __init imx7d_clocks_init(struct
-device_node *ccm_node)
-        clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
-0x44f0, 0);
-        clks[IMX7D_ENET2_REF_ROOT_CLK] =
-imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500,
-0);
-        clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
-0x4510, 0);
--       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
-imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
-0x4520, 0);
-        clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
-"eim_post_div", base + 0x4160, 0);
-        clks[IMX7D_NAND_RAWNAND_CLK] =
-imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
-0x4140, 0, &share_count_nand);
-        clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
-imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
-base + 0x4140, 0, &share_count_nand);
-
-
-A second patch would then fix the clock gate issue and the third the
-unavoidable device tree change for the ipg clock.
-
---
-Stefan
-
-
-> 
-> Based on Andy Duan's patch from the NXP kernel tree.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx7d.c             | 11 ++++++-----
->  include/dt-bindings/clock/imx7d-clock.h |  4 +++-
->  2 files changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 975a20d..485ab49 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -26,6 +26,8 @@ static u32 share_count_sai1;
->  static u32 share_count_sai2;
->  static u32 share_count_sai3;
->  static u32 share_count_nand;
-> +static u32 share_count_enet1;
-> +static u32 share_count_enet2;
->  
->  static const struct clk_div_table test_div_table[] = {
->  	{ .val = 3, .div = 1, },
-> @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk",
-> "mipi_dsi_post_div", base + 0x4650, 0);
->  	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk",
-> "mipi_csi_post_div", base + 0x4640, 0);
->  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk",
-> "mipi_dphy_post_div", base + 0x4660, 0);
-> +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
-> + 0x4700, 0, &share_count_enet1);
-> +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
-> base + 0x4700, 0, &share_count_enet1);
-> +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
-> + 0x4710, 0, &share_count_enet2);
-> +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
-> base + 0x4710, 0, &share_count_enet2);
->  	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk",
-> "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
->  	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk", 
-> "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
->  	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk",
-> "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
-> @@ -812,11 +818,6 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk",
-> "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
->  	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk", 
-> "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
->  	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk",
-> "spdif_post_div", base + 0x44d0, 0);
-> -	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk",
-> "enet1_ref_post_div", base + 0x44e0, 0);
-> -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
-> 0x44f0, 0);
-> -	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
-> "enet2_ref_post_div", base + 0x4500, 0);
-> -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
-> 0x4510, 0);
-> -	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
-> imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
-> 0x4520, 0);
->  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
-> "eim_post_div", base + 0x4160, 0);
->  	clks[IMX7D_NAND_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
-> 0x4140, 0, &share_count_nand);
->  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
-> base + 0x4140, 0, &share_count_nand);
-> diff --git a/include/dt-bindings/clock/imx7d-clock.h
-> b/include/dt-bindings/clock/imx7d-clock.h
-> index b2325d3e2..fef0647 100644
-> --- a/include/dt-bindings/clock/imx7d-clock.h
-> +++ b/include/dt-bindings/clock/imx7d-clock.h
-> @@ -455,5 +455,7 @@
->  #define IMX7D_SNVS_CLK			442
->  #define IMX7D_CAAM_CLK			443
->  #define IMX7D_KPP_ROOT_CLK		444
-> -#define IMX7D_CLK_END			445
-> +#define IMX7D_ENET1_IPG_ROOT_CLK        445
-> +#define IMX7D_ENET2_IPG_ROOT_CLK        446
-> +#define IMX7D_CLK_END			447
->  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
+ 
++config ARM_QCOM_CPUFREQ_KRYO
++	bool "Qualcomm Kryo based CPUFreq"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
++
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
+ 
+ 	{ .compatible = "nvidia,tegra124", },
+ 
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
++
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..a2b9fb2
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,166 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM	137
++#define SILVER_LEAD	0
++#define GOLD_LEAD	2
++
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++{
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
++
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
++
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
++	}
++
++	return version;
++}
++
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++	size_t len;
++	int ret = 0;
++	u32 versions;
++	enum _msm8996_version msm8996_version;
++	u8 *speedbin;
++	struct device *cpu_dev_silver, *cpu_dev_gold;
++	struct device_node *np;
++	struct nvmem_cell *speedbin_nvmem;
++	struct platform_device *pdev;
++	struct opp_table *opp_silver = NULL;
++	struct opp_table *opp_gold = NULL;
++
++	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
++	if (IS_ERR_OR_NULL(cpu_dev_silver))
++		return PTR_ERR(cpu_dev_silver);
++
++	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
++	if (IS_ERR_OR_NULL(cpu_dev_gold))
++		return PTR_ERR(cpu_dev_gold);
++
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
++	if (IS_ERR_OR_NULL(np))
++		return PTR_ERR(np);
++
++	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
++
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(speedbin_nvmem)) {
++		ret = PTR_ERR(speedbin_nvmem);
++		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
++		goto free_np;
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	nvmem_cell_put(speedbin_nvmem);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
++	if (IS_ERR_OR_NULL(opp_silver)) {
++		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_silver);
++		goto free_np;
++	}
++
++	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
++	if (IS_ERR_OR_NULL(opp_gold)) {
++		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_gold);
++		goto free_opp_silver;
++	}
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (!IS_ERR_OR_NULL(pdev))
++		goto out;
++
++	ret = PTR_ERR(pdev);
++	dev_err(cpu_dev_silver, "Failed to register platform device\n");
++	dev_pm_opp_put_supported_hw(opp_gold);
++
++free_opp_silver:
++	dev_pm_opp_put_supported_hw(opp_silver);
++
++free_np:
++	of_node_put(np);
++
++out:
++	return ret;
++}
++late_initcall(qcom_cpufreq_kryo_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
