@@ -1,140 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752595AbeEQH6b (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:58:31 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:36504 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752556AbeEQH63 (ORCPT
+        id S1751999AbeEQIAO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:00:14 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:36332 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751212AbeEQIAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:58:29 -0400
-X-Google-Smtp-Source: AB8JxZrNxkaUT5IX92ONVo8XwUeZKw1RrSpi5dljdGC2njne+zczAaUnmEwUWB+aoDSV0QAYKYK6a64qQK3kx9P+XBQ=
+        Thu, 17 May 2018 04:00:11 -0400
+X-Google-Smtp-Source: AB8JxZqTarK4DbDTJZrlRXASzuDgoF4HlW/rkHvvge3j8YsJuCNDsRWCnIRKQlJWXTbtIlAnWZGv+T1TV3u3/HaHEO4=
 MIME-Version: 1.0
-In-Reply-To: <20180517000027.26639-1-labbott@redhat.com>
-References: <20180517000027.26639-1-labbott@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 09:58:26 +0200
-X-Google-Sender-Auth: wAgg6v0R94pa7-f-FvYPr1IkQRE
-Message-ID: <CAMuHMdXiopVBM+N+wYMY6JP7_sOJ2nncNkhpFq+aMc0pdfPtrQ@mail.gmail.com>
-Subject: Re: [PATCHv6] gpio: Remove VLA from gpiolib
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-3-git-send-email-gilad@benyossef.com> <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 17 May 2018 11:00:10 +0300
+Message-ID: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
-
-On Thu, May 17, 2018 at 2:00 AM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
+On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
 >
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
+> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>>
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 >
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-
-Thanks for your patch!
-
-> Also to other points: I don't think the warning should be triggerable
-> from userspace, it should only happen on probe. I also think only
-> memsetting half the array is more likely to be error prone. We can
-> change it if there is significant overhead.
-
-With the default of 512, that's a memset of 128 bytes. Not so insignificant
-on embedded 32 bit.
-
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -22,6 +22,16 @@ menuconfig GPIOLIB
+> Thanks for your patch!
 >
->  if GPIOLIB
+>> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+>> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
 >
-> +config GPIOLIB_FASTPATH_LIMIT
-> +       int "Maximum number of GPIOs for fast path"
-> +       default 512
+> I don't know if "ccree" is the proper name for this clock, as there
+> may be multiple
+> instances.
 
-I think you need a range here.  Else someone will pick a too large value,
-causing stack overflow.
+I'd be happy to rename it to anything else. Suggestions?
 
-512 (128 bytes for each recursion level) sounds like a safe maximum to me.
+> I also can't verify the parent clock.
 
-> +       help
-> +          This adjusts the point at which certain APIs will switch from
-> +          using a statically allocated fixed size buffer to a dynamically
+I'm afraid I can't really help. This is based on code snippet from
+Renesas. I verified it works but
+I am not an expert on the clock settings :-(
 
-The fast path doesn't use a statically allocated buffer (it cannot, due to
-recursion), but a buffer on the stack. I think you need to make that very
-clear in the help text, as this has the potential of causing random crashes.
-
-> +          allocated buffer. This is a trade-off in stackspace vs. speed.
-> +          You shouldn't need to change this unless you really need to
-> +          optimize one of those two.
-
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-
-> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->                 goto err_free_descs;
->         }
 >
-> +       if (chip->ngpio > FASTPATH_NGPIO)
-> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
-
-%u (twice)
-
-> +               chip->ngpio, FASTPATH_NGPIO);
-> +
->         gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
->         if (!gdev->label) {
->                 status = -ENOMEM;
-> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>>         DEF_MOD("cmt3",                  300,   R8A7795_CLK_R),
+>>         DEF_MOD("cmt2",                  301,   R8A7795_CLK_R),
+>>         DEF_MOD("cmt1",                  302,   R8A7795_CLK_R),
 >
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int first, j, ret;
+> Gr{oetje,eeting}s,
 >
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       memset(fastpath, 0, sizeof(fastpath));
-> +                       mask = fastpath;
-> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
-> +               } else {
-> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               }
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-The assignment to bits could be made common, and moved out of the if/else.
 
-Likewise for the memset, which means you would usually clear a single word
-again, instead of 128 bytes (or more).
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
