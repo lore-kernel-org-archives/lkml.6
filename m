@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeEQJYn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 05:24:43 -0400
+        id S1752507AbeEQJYr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 05:24:47 -0400
 Received: from mga05.intel.com ([192.55.52.43]:6649 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752395AbeEQJYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 05:24:40 -0400
+        id S1752223AbeEQJYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 05:24:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="41683725"
+   d="scan'208";a="41683742"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V2 19/20] perf buildid-cache: kcore_copy: Copy x86 PTI entry trampoline sections
-Date: Thu, 17 May 2018 12:22:07 +0300
-Message-Id: <1526548928-20790-20-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH V2 20/20] perf buildid-cache: kcore_copy: Amend the offset of sections that remap kernel text
+Date: Thu, 17 May 2018 12:22:08 +0300
+Message-Id: <1526548928-20790-21-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
 References: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
@@ -32,114 +32,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Identify and copy any sections for x86 PTI entry trampolines.
+x86 PTI entry trampolines all map to the same physical page. If that is
+reflected in the program headers of /proc/kcore, then do the same for the
+copy of kcore.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/symbol-elf.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ tools/perf/util/symbol-elf.c | 53 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 37d9324c277c..584966913aeb 100644
+index 584966913aeb..29770ea61768 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -1392,6 +1392,11 @@ struct phdr_data {
+@@ -1390,6 +1390,7 @@ struct phdr_data {
+ 	u64 addr;
+ 	u64 len;
  	struct list_head node;
++	struct phdr_data *remaps;
  };
  
-+struct sym_data {
-+	u64 addr;
-+	struct list_head node;
-+};
-+
- struct kcore_copy_info {
- 	u64 stext;
- 	u64 etext;
-@@ -1401,6 +1406,7 @@ struct kcore_copy_info {
- 	u64 last_module_symbol;
- 	size_t phnum;
- 	struct list_head phdrs;
-+	struct list_head syms;
- };
- 
- #define kcore_copy__for_each_phdr(k, p) \
-@@ -1441,6 +1447,29 @@ static void kcore_copy__free_phdrs(struct kcore_copy_info *kci)
- 	}
- }
- 
-+static struct sym_data *kcore_copy__new_sym(struct kcore_copy_info *kci,
-+					    u64 addr)
-+{
-+	struct sym_data *s = zalloc(sizeof(*s));
-+
-+	if (s) {
-+		s->addr = addr;
-+		list_add_tail(&s->node, &kci->syms);
-+	}
-+
-+	return s;
-+}
-+
-+static void kcore_copy__free_syms(struct kcore_copy_info *kci)
-+{
-+	struct sym_data *s, *tmp;
-+
-+	list_for_each_entry_safe(s, tmp, &kci->syms, node) {
-+		list_del(&s->node);
-+		free(s);
-+	}
-+}
-+
- static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
- 					u64 start)
- {
-@@ -1471,6 +1500,9 @@ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
- 		return 0;
- 	}
- 
-+	if (is_entry_trampoline(name) && !kcore_copy__new_sym(kci, start))
-+		return -1;
-+
+ struct sym_data {
+@@ -1597,16 +1598,62 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
  	return 0;
  }
  
-@@ -1538,6 +1570,7 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
- {
- 	struct kcore_copy_info *kci = data;
- 	u64 end = start + len;
-+	struct sym_data *sdat;
- 
- 	if (kcore_copy__map(kci, start, end, pgoff, kci->stext, kci->etext))
- 		return -1;
-@@ -1546,6 +1579,13 @@ static int kcore_copy__read_map(u64 start, u64 len, u64 pgoff, void *data)
- 			    kci->last_module_symbol))
- 		return -1;
- 
-+	list_for_each_entry(sdat, &kci->syms, node) {
-+		u64 s = round_down(sdat->addr, page_size);
++static void kcore_copy__find_remaps(struct kcore_copy_info *kci)
++{
++	struct phdr_data *p, *k = NULL;
++	u64 kend;
 +
-+		if (kcore_copy__map(kci, start, end, pgoff, s, s + len))
-+			return -1;
++	if (!kci->stext)
++		return;
++
++	/* Find phdr that corresponds to the kernel map (contains stext) */
++	kcore_copy__for_each_phdr(kci, p) {
++		u64 pend = p->addr + p->len - 1;
++
++		if (p->addr <= kci->stext && pend >= kci->stext) {
++			k = p;
++			break;
++		}
 +	}
 +
- 	return 0;
- }
- 
-@@ -1740,6 +1780,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
++	if (!k)
++		return;
++
++	kend = k->offset + k->len;
++
++	/* Find phdrs that remap the kernel */
++	kcore_copy__for_each_phdr(kci, p) {
++		u64 pend = p->offset + p->len;
++
++		if (p == k)
++			continue;
++
++		if (p->offset >= k->offset && pend <= kend)
++			p->remaps = k;
++	}
++}
++
+ static void kcore_copy__layout(struct kcore_copy_info *kci)
+ {
  	struct phdr_data *p;
+ 	off_t rel = 0;
  
- 	INIT_LIST_HEAD(&kci.phdrs);
-+	INIT_LIST_HEAD(&kci.syms);
- 
- 	if (kcore_copy__copy_file(from_dir, to_dir, "kallsyms"))
- 		return -1;
-@@ -1806,6 +1847,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 		kcore_copy__unlink(to_dir, "kallsyms");
- 
- 	kcore_copy__free_phdrs(&kci);
-+	kcore_copy__free_syms(&kci);
- 
- 	return err;
++	kcore_copy__find_remaps(kci);
++
+ 	kcore_copy__for_each_phdr(kci, p) {
+-		p->rel = rel;
+-		rel += p->len;
++		if (!p->remaps) {
++			p->rel = rel;
++			rel += p->len;
++		}
+ 		kci->phnum += 1;
+ 	}
++
++	kcore_copy__for_each_phdr(kci, p) {
++		struct phdr_data *k = p->remaps;
++
++		if (k)
++			p->rel = p->offset - k->offset + k->rel;
++	}
  }
+ 
+ static int kcore_copy__calc_maps(struct kcore_copy_info *kci, const char *dir,
+@@ -1821,6 +1868,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	kcore_copy__for_each_phdr(&kci, p) {
+ 		off_t offs = p->rel + offset;
+ 
++		if (p->remaps)
++			continue;
+ 		if (copy_bytes(kcore.fd, p->offset, extract.fd, offs, p->len))
+ 			goto out_extract_close;
+ 	}
 -- 
 1.9.1
