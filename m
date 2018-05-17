@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752328AbeEQGV3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:21:29 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:26235 "EHLO
+        id S1752204AbeEQGTU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:19:20 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:24994 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeEQGT5 (ORCPT
+        with ESMTP id S1751231AbeEQGTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:19:57 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbUN002841
+        Thu, 17 May 2018 02:19:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbUG002841
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -17,9 +17,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
         Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 25/31] kconfig: add CC_IS_CLANG and CLANG_VERSION
-Date: Thu, 17 May 2018 15:17:04 +0900
-Message-Id: <1526537830-22606-26-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 18/31] kconfig: error out if a recursive variable references itself
+Date: Thu, 17 May 2018 15:16:57 +0900
+Message-Id: <1526537830-22606-19-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
@@ -27,70 +27,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will be useful to describe the clang version dependency.
+When using a recursively expanded variable, it is a common mistake
+to make circular reference.
+
+For example, Make terminates the following code:
+
+  X = $(X)
+  Y := $(X)
+
+Let's detect the circular expansion in Kconfig, too.
+
+On the other hand, a function that recurses itself is a commonly-used
+programming technique.  So, Make does not check recursion in the
+reference with 'call'.  For example, the following code continues
+running eternally:
+
+  X = $(call X)
+  Y := $(X)
+
+Kconfig allows circular expansion if one or more arguments are given,
+but terminates when the same function is recursively invoked 1000 times,
+assuming it is a programming mistake.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
 
-Changes in v4: None
+Changes in v4:
+ - Newly added
+
 Changes in v3: None
 Changes in v2: None
 
- init/Kconfig             |  7 +++++++
- scripts/clang-version.sh | 18 ++++--------------
- 2 files changed, 11 insertions(+), 14 deletions(-)
+ scripts/kconfig/preprocess.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index c6ac856..3aeb37a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -16,6 +16,13 @@ config GCC_VERSION
- 	default $(shell, $(srctree)/scripts/gcc-version.sh -p $(CC) | sed 's/^0*//') if CC_IS_GCC
- 	default 0
+diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
+index c39e30e..246f879 100644
+--- a/scripts/kconfig/preprocess.c
++++ b/scripts/kconfig/preprocess.c
+@@ -276,6 +276,7 @@ struct variable {
+ 	char *name;
+ 	char *value;
+ 	enum variable_flavor flavor;
++	int exp_count;
+ 	struct list_head node;
+ };
  
-+config CC_IS_CLANG
-+	def_bool $(success, $(CC) --version | grep -q clang)
+@@ -306,8 +307,19 @@ static char *variable_expand(const char *name, int argc, char *argv[],
+ 		expanded_argv[i] = expand_string_with_args(argv[i],
+ 							   old_argc, old_argv);
+ 
++	if (argc == 0 && v->exp_count)
++		pperror("Recursive variable '%s' references itself (eventually)",
++			name);
 +
-+config CLANG_VERSION
-+	int
-+	default $(shell, $(srctree)/scripts/clang-version.sh $(CC))
++	if (v->exp_count > 1000)
++		pperror("Too deep recursive expansion");
 +
- config CONSTRUCTORS
- 	bool
- 	depends on !UML
-diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
-index 9780efa..dbf0a31 100755
---- a/scripts/clang-version.sh
-+++ b/scripts/clang-version.sh
-@@ -10,24 +10,14 @@
- # clang-5.0.1 etc.
- #
++	v->exp_count++;
++
+ 	res = expand_string_with_args(v->value, argc, expanded_argv);
  
--if [ "$1" = "-p" ] ; then
--	with_patchlevel=1;
--	shift;
--fi
--
- compiler="$*"
++	v->exp_count--;
++
+ 	for (i = 0; i < argc; i++)
+ 		free(expanded_argv[i]);
  
--if [ ${#compiler} -eq 0 ]; then
--	echo "Error: No compiler specified."
--	printf "Usage:\n\t$0 <clang-command>\n"
-+if !( $compiler --version | grep -q clang) ; then
-+	echo 0
- 	exit 1
- fi
+@@ -337,6 +349,7 @@ void variable_add(const char *name, const char *value,
  
- MAJOR=$(echo __clang_major__ | $compiler -E -x c - | tail -n 1)
- MINOR=$(echo __clang_minor__ | $compiler -E -x c - | tail -n 1)
--if [ "x$with_patchlevel" != "x" ] ; then
--	PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
--	printf "%02d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
--else
--	printf "%02d%02d\\n" $MAJOR $MINOR
--fi
-+PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
-+printf "%d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
+ 		v = xmalloc(sizeof(*v));
+ 		v->name = xstrdup(name);
++		v->exp_count = 0;
+ 		list_add_tail(&v->node, &variable_list);
+ 	}
+ 
 -- 
 2.7.4
