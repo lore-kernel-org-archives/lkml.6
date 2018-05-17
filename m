@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeEQJYU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 05:24:20 -0400
+        id S1752416AbeEQJY1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 05:24:27 -0400
 Received: from mga05.intel.com ([192.55.52.43]:6649 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752336AbeEQJYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 05:24:19 -0400
+        id S1752366AbeEQJYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 05:24:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="41683675"
+   d="scan'208";a="41683684"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V2 14/20] perf buildid-cache: kcore_copy: Keep a count of phdrs
-Date: Thu, 17 May 2018 12:22:02 +0300
-Message-Id: <1526548928-20790-15-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH V2 15/20] perf buildid-cache: kcore_copy: Calculate offset from phnum
+Date: Thu, 17 May 2018 12:22:03 +0300
+Message-Id: <1526548928-20790-16-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
 References: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
@@ -32,53 +32,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to add more program headers, keep a count of phdrs.
+In preparation to add more program headers, calculate offset from the
+number of phdrs.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/symbol-elf.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ tools/perf/util/symbol-elf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index b13873a6f368..4e7b71e8ac0e 100644
+index 4e7b71e8ac0e..4aec12102e19 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -1398,6 +1398,7 @@ struct kcore_copy_info {
- 	u64 last_symbol;
- 	u64 first_module;
- 	u64 last_module_symbol;
-+	size_t phnum;
- 	struct phdr_data kernel_map;
- 	struct phdr_data modules_map;
- 	struct list_head phdrs;
-@@ -1517,6 +1518,8 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
- 	if (kci->modules_map.len)
- 		list_add_tail(&kci->modules_map.node, &kci->phdrs);
- 
-+	kci->phnum = !!kci->kernel_map.len + !!kci->modules_map.len;
-+
- 	return 0;
- }
- 
-@@ -1678,7 +1681,6 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- {
+@@ -1682,7 +1682,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
  	struct kcore kcore;
  	struct kcore extract;
--	size_t count = 2;
  	int idx = 0, err = -1;
- 	off_t offset = page_size, sz, modules_offset = 0;
+-	off_t offset = page_size, sz, modules_offset = 0;
++	off_t offset, sz, modules_offset = 0;
  	struct kcore_copy_info kci = { .stext = 0, };
-@@ -1705,10 +1707,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (kcore__init(&extract, extract_filename, kcore.elfclass, false))
- 		goto out_kcore_close;
- 
--	if (!kci.modules_map.addr)
--		count -= 1;
--
--	if (kcore__copy_hdr(&kcore, &extract, count))
-+	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
+@@ -1710,6 +1710,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
  		goto out_extract_close;
  
++	offset = gelf_fsize(extract.elf, ELF_T_EHDR, 1, EV_CURRENT) +
++		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
++	offset = round_up(offset, page_size);
++
  	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
+ 			    kci.kernel_map.len))
+ 		goto out_extract_close;
 -- 
 1.9.1
