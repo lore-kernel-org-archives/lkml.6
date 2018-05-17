@@ -1,85 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeEQLw4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:52:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56050 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751868AbeEQLwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751965AbeEQLwy (ORCPT <rfc822;w@1wt.eu>);
         Thu, 17 May 2018 07:52:54 -0400
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Keith Busch <keith.busch@intel.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH v3] nvme: fix lockdep warning in nvme_mpath_clear_current_path
-Date: Thu, 17 May 2018 13:52:50 +0200
-Message-Id: <20180517115250.10027-1-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.3
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44162 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751839AbeEQLwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 07:52:53 -0400
+X-Google-Smtp-Source: AB8JxZq13bcbVZX/hqOXZHUsEybRws8cnpsqyps1hNC/W9SOuJt8NG4D09uXxSZX+5kRssQ9Oxl7jQ==
+Date: Thu, 17 May 2018 20:52:48 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, dvyukov@google.com,
+        pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        syzkaller@googlegroups.com, rostedt@goodmis.org,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20180517115248.GA409@jagdpanzerIV>
+References: <20180511014515.GA895@jagdpanzerIV>
+ <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+ <20180511062151.GA18160@jagdpanzerIV>
+ <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+ <20180511095004.GA6575@jagdpanzerIV>
+ <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
+ <20180517112135.GB20796@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517112135.GB20796@jagdpanzerIV>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running blktest's nvme/005 with a lockdep enabled kernel the test
-case fails due to the following lockdep splat in dmesg:
+On (05/17/18 20:21), Sergey Senozhatsky wrote:
+> Dunno...
+> For instance, can we store context tracking info as a extended record
+> data? We have that dict/dict_len thing. So may we can store tracking
+> info there? Extended records will appear on the serial console /* if
+> console supports extended data */ or can be read in via devkmsg_read().
 
- =============================
- WARNING: suspicious RCU usage
- 4.17.0-rc5 #881 Not tainted
- -----------------------------
- drivers/nvme/host/nvme.h:457 suspicious rcu_dereference_check() usage!
+Those extended records are already there for exactly the same
+reason - people want to attach a special context to printk() entries.
+See dev_vprintk_emit() and create_syslog_header(). So we can add more
+key/value data to that context. Sounds kinda-sorta reasonable.
 
- other info that might help us debug this:
+So, for example, this output
+cat /dev/kmsg
 
- rcu_scheduler_active = 2, debug_locks = 1
- 3 locks held by kworker/u32:5/1102:
-  #0:         (ptrval) ((wq_completion)"nvme-wq"){+.+.}, at: process_one_work+0x152/0x5c0
-  #1:         (ptrval) ((work_completion)(&ctrl->scan_work)){+.+.}, at: process_one_work+0x152/0x5c0
-  #2:         (ptrval) (&subsys->lock#2){+.+.}, at: nvme_ns_remove+0x43/0x1c0 [nvme_core]
+6,577,3156036,-;snd_hda_codec_generic hdaudioC1D0: autoconfig for Generic: line_outs=0 (0x0/0x0/0x0/0x0/0x0) type:line
+ SUBSYSTEM=hdaudio
+ DEVICE=+hdaudio:hdaudioC1D
+6,578,3156807,-;snd_hda_codec_generic hdaudioC1D0:    speaker_outs=0 (0x0/0x0/0x0/0x0/0x0)
+ SUBSYSTEM=hdaudio
+ DEVICE=+hdaudio:hdaudioC1D
 
-The only caller of nvme_mpath_clear_current_path() is nvme_ns_remove()
-which holds the subsys lock so it's likely a false positive, but when
-using rcu_access_pointer(), we're telling rcu and lockdep that we're
-only after the pointer falue.
+Becomes this:
+6,566,3033752,-;snd_hda_codec_realtek hdaudioC0D0:      Front Mic=0x19
+ 3/207: 0/0/0
+ SUBSYSTEM=hdaudio
+ DEVICE=+hdaudio:hdaudioC0D
+6,567,3033754,-;snd_hda_codec_realtek hdaudioC0D0:      Rear Mic=0x18
+ 3/207: 0/0/0
+ SUBSYSTEM=hdaudio
+ DEVICE=+hdaudio:hdaudioC0D
 
-Fixes: 32acab3181c7 ("nvme: implement multipath access to nvme subsystems")
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+"3/207: 0/0/0" is smp_processor_id/task_pid_nr and then masked
+out bits of preempt count: hard irq, soft irq, nmi.
+
+We definitely can change the format, etc. This is just a very quick and
+dirty PoC.
+
+Something as follows?
+/* just to demonstrate the idea */
 
 ---
-Changes to v2:
-- Added Christoph's R-b
-- Removed most of the lockdep splat from commit log
 
-Changes to v1:
-- Change rcu_dereference_protected() to rc_access_pointer() (Paul)
+ kernel/printk/printk.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
----
- drivers/nvme/host/nvme.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 17d2f7cf3fed..af2bb6bc984d 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -22,6 +22,7 @@
- #include <linux/lightnvm.h>
- #include <linux/sed-opal.h>
- #include <linux/fault-inject.h>
-+#include <linux/rcupdate.h>
- 
- extern unsigned int nvme_io_timeout;
- #define NVME_IO_TIMEOUT	(nvme_io_timeout * HZ)
-@@ -454,7 +455,7 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
- {
- 	struct nvme_ns_head *head = ns->head;
- 
--	if (head && ns == srcu_dereference(head->current_path, &head->srcu))
-+	if (head && ns == rcu_access_pointer(head->current_path))
- 		rcu_assign_pointer(head->current_path, NULL);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 2f4af216bd6e..4a82d52a343d 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -580,16 +580,33 @@ static u32 truncate_msg(u16 *text_len, u16 *trunc_msg_len,
+ 	return msg_used_size(*text_len + *trunc_msg_len, 0, pad_len);
  }
- struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
--- 
-2.16.3
+ 
++static size_t add_log_origin(char *buf, size_t buf_len)
++{
++	return snprintf(buf,
++			buf_len,
++			"%d/%d: %lu/%lu/%lu",
++			raw_smp_processor_id(),
++			task_pid_nr(current),
++			preempt_count() & HARDIRQ_MASK,
++			preempt_count() & SOFTIRQ_MASK,
++			preempt_count() & NMI_MASK);
++}
++
+ /* insert record into the buffer, discard old ones, update heads */
+ static int log_store(int facility, int level,
+ 		     enum log_flags flags, u64 ts_nsec,
+ 		     const char *dict, u16 dict_len,
+ 		     const char *text, u16 text_len)
+ {
++	static char log_origin[64];
++	static size_t log_origin_len;
+ 	struct printk_log *msg;
+ 	u32 size, pad_len;
+ 	u16 trunc_msg_len = 0;
+ 
++	log_origin_len = add_log_origin(log_origin, sizeof(log_origin));
++	dict_len += log_origin_len;
++
+ 	/* number of '\0' padding bytes to next message */
+ 	size = msg_used_size(text_len, dict_len, &pad_len);
+ 
+@@ -620,7 +637,10 @@ static int log_store(int facility, int level,
+ 		memcpy(log_text(msg) + text_len, trunc_msg, trunc_msg_len);
+ 		msg->text_len += trunc_msg_len;
+ 	}
+-	memcpy(log_dict(msg), dict, dict_len);
++	memcpy(log_dict(msg), log_origin, log_origin_len);
++	memcpy(log_dict(msg) + log_origin_len + 1,
++		dict,
++		dict_len - log_origin_len);
+ 	msg->dict_len = dict_len;
+ 	msg->facility = facility;
+ 	msg->level = level & 7;
+ 
