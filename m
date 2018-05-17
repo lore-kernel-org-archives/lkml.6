@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeEQLKd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:10:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46562 "EHLO
+        id S1752211AbeEQLHQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:07:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48804 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752263AbeEQLHY (ORCPT
+        by vger.kernel.org with ESMTP id S1751478AbeEQLHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:07:24 -0400
+        Thu, 17 May 2018 07:07:10 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -31,16 +31,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
         paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v11 15/26] mm: introduce __lru_cache_add_active_or_unevictable
-Date: Thu, 17 May 2018 13:06:22 +0200
+Subject: [PATCH v11 06/26] mm: introduce pte_spinlock for FAULT_FLAG_SPECULATIVE
+Date: Thu, 17 May 2018 13:06:13 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051711-0040-0000-0000-0000043ACCBC
+x-cbid: 18051711-0044-0000-0000-00000553750C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051711-0041-0000-0000-0000263FE969
-Message-Id: <1526555193-7242-16-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18051711-0045-0000-0000-00002894E8EA
+Message-Id: <1526555193-7242-7-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -52,100 +52,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The speculative page fault handler which is run without holding the
-mmap_sem is calling lru_cache_add_active_or_unevictable() but the vm_flags
-is not guaranteed to remain constant.
-Introducing __lru_cache_add_active_or_unevictable() which has the vma flags
-value parameter instead of the vma pointer.
+When handling page fault without holding the mmap_sem the fetch of the
+pte lock pointer and the locking will have to be done while ensuring
+that the VMA is not touched in our back.
 
-Acked-by: David Rientjes <rientjes@google.com>
+So move the fetch and locking operations in a dedicated function.
+
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/swap.h | 10 ++++++++--
- mm/memory.c          |  8 ++++----
- mm/swap.c            |  6 +++---
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ mm/memory.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index f73eafcaf4e9..730c14738574 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -338,8 +338,14 @@ extern void deactivate_file_page(struct page *page);
- extern void mark_page_lazyfree(struct page *page);
- extern void swap_setup(void);
- 
--extern void lru_cache_add_active_or_unevictable(struct page *page,
--						struct vm_area_struct *vma);
-+extern void __lru_cache_add_active_or_unevictable(struct page *page,
-+						unsigned long vma_flags);
-+
-+static inline void lru_cache_add_active_or_unevictable(struct page *page,
-+						struct vm_area_struct *vma)
-+{
-+	return __lru_cache_add_active_or_unevictable(page, vma->vm_flags);
-+}
- 
- /* linux/mm/vmscan.c */
- extern unsigned long zone_reclaimable_pages(struct zone *zone);
 diff --git a/mm/memory.c b/mm/memory.c
-index cb6310b74cfb..deac7f12d777 100644
+index a55e72c8e469..fa0d9493acac 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -2569,7 +2569,7 @@ static int wp_page_copy(struct vm_fault *vmf)
- 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
- 		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(new_page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(new_page, vma);
-+		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
- 		/*
- 		 * We call the notify macro here because, when using secondary
- 		 * mmu page tables (such as kvm shadow page tables), we want the
-@@ -3105,7 +3105,7 @@ int do_swap_page(struct vm_fault *vmf)
- 	if (unlikely(page != swapcache && swapcache)) {
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(page, vma);
-+		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
- 		do_page_add_anon_rmap(page, vma, vmf->address, exclusive);
- 		mem_cgroup_commit_charge(page, memcg, true, false);
-@@ -3256,7 +3256,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
- 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
- 	page_add_new_anon_rmap(page, vma, vmf->address, false);
- 	mem_cgroup_commit_charge(page, memcg, false, false);
--	lru_cache_add_active_or_unevictable(page, vma);
-+	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- setpte:
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
+@@ -2298,6 +2298,13 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+ }
+ EXPORT_SYMBOL_GPL(apply_to_page_range);
  
-@@ -3510,7 +3510,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(page, vma);
-+		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
- 		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
- 		page_add_file_rmap(page, false);
-diff --git a/mm/swap.c b/mm/swap.c
-index 26fc9b5f1b6c..ba97d437e68a 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -456,12 +456,12 @@ void lru_cache_add(struct page *page)
-  * directly back onto it's zone's unevictable list, it does NOT use a
-  * per cpu pagevec.
-  */
--void lru_cache_add_active_or_unevictable(struct page *page,
--					 struct vm_area_struct *vma)
-+void __lru_cache_add_active_or_unevictable(struct page *page,
-+					   unsigned long vma_flags)
++static inline bool pte_spinlock(struct vm_fault *vmf)
++{
++	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
++	spin_lock(vmf->ptl);
++	return true;
++}
++
+ static inline bool pte_map_lock(struct vm_fault *vmf)
  {
- 	VM_BUG_ON_PAGE(PageLRU(page), page);
+ 	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
+@@ -3814,8 +3821,8 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	 * validation through pte_unmap_same(). It's of NUMA type but
+ 	 * the pfn may be screwed if the read is non atomic.
+ 	 */
+-	vmf->ptl = pte_lockptr(vma->vm_mm, vmf->pmd);
+-	spin_lock(vmf->ptl);
++	if (!pte_spinlock(vmf))
++		return VM_FAULT_RETRY;
+ 	if (unlikely(!pte_same(*vmf->pte, vmf->orig_pte))) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		goto out;
+@@ -4008,8 +4015,8 @@ static int handle_pte_fault(struct vm_fault *vmf)
+ 	if (pte_protnone(vmf->orig_pte) && vma_is_accessible(vmf->vma))
+ 		return do_numa_page(vmf);
  
--	if (likely((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
-+	if (likely((vma_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
- 		SetPageActive(page);
- 	else if (!TestSetPageMlocked(page)) {
- 		/*
+-	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+-	spin_lock(vmf->ptl);
++	if (!pte_spinlock(vmf))
++		return VM_FAULT_RETRY;
+ 	entry = vmf->orig_pte;
+ 	if (unlikely(!pte_same(*vmf->pte, entry)))
+ 		goto unlock;
 -- 
 2.7.4
