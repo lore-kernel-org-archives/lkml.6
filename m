@@ -1,270 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeEQBFk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 21:05:40 -0400
-Received: from mx.socionext.com ([202.248.49.38]:17717 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751013AbeEQBFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 21:05:38 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Abylay Ospan'" <aospan@netup.ru>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        "linux-media" <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180516083753.15510-1-suzuki.katsuhiro@socionext.com> <CAK3bHNVH1476vtJOTR0oFpFC8bvwLecYmgJEQCGp0Y+E4=LSsA@mail.gmail.com>
-In-Reply-To: <CAK3bHNVH1476vtJOTR0oFpFC8bvwLecYmgJEQCGp0Y+E4=LSsA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: helene: add I2C device probe function
-Date: Thu, 17 May 2018 10:05:33 +0900
-Message-ID: <000701d3ed7b$282e7550$788b5ff0$@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT7PEvSnqE1PiJAk2z4UnnfdT6kKQxl6+AgAGCzCA=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+        id S1751698AbeEQBIE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 21:08:04 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:19015 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbeEQBIB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 21:08:01 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180517010759epoutp03b5203d7a0b6c233ee3ae2c197a78cb9c~vSTJzLZYu1266412664epoutp03Q
+X-AuditID: b6c32a45-8f3ff70000001020-59-5afcd5ed11f4
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AFCD5EC.5080200@samsung.com>
+Date: Thu, 17 May 2018 10:07:56 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] PM / devfreq: Init user limits from OPP limits, not
+ viceversa
+In-reply-to: <20180516225709.153138-1-mka@chromium.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmme7bq3+iDHbckLTY9PE9q8XZZQfZ
+        LM42vWG3uLxrDpvF594jjBafNzxmtLjduILNgd1jdsNFFo++LasYPT5vkgtgjkq1yUhNTEkt
+        UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAFarqRQlphTChQKSCwu
+        VtK3synKLy1JVcjILy6xVYo2NDTSMzQw1zMyAtLGsVZGpkAlCakZH0/dYCp4IV5x5Fp5A+NN
+        4S5GTg4JAROJV7fOMYPYQgI7GCXuP9TvYuQCsr8zSjz/9ZMJpujRkveMEIndjBL3+j8ygiR4
+        BQQlfky+x9LFyMHBLCAvceRSNkiYWUBTYuvu9ewQ9XcZJV6cPcAKUa8l8X3FPDCbRUBVYvfB
+        X2Cb2YDi+1/cYAOx+QUUJa7+eAw2X1QgQmLn/G/sIPNFBOokVnypB5nJLNDPKLGxcRHYHGGB
+        EIn+bw/BDuUUMJdYs/kR2GIJgQNsEhc79jKCNEsIuEgcvWkB8YywxKvjW9ghbGmJZ6s2MkLU
+        tzNKtO+dxwzhTGGUOHf9HtT7xhLPFnYxQbzGJ9Fx+C87xFBeiY42IYgSD4kXU/dClTtKPJ3Q
+        xALxfRejxKGWX+wTGOVmIQXYLESAzUIKsAWMzKsYxVILinPTU4uNCgz1ihNzi0vz0vWS83M3
+        MYJTm5brDsYZ53wOMQpwMCrx8ArY/YkSYk0sK67MPcQowcGsJMIr1A0U4k1JrKxKLcqPLyrN
+        SS0+xGgKDO+JzFKiyfnAtJtXEm9oamRsbGxham5pbGCpJM67RulrlJBAemJJanZqakFqEUwf
+        EwenVAPjraIudn8T+8kyTBuuTz1dtS2k72Rxe3Yeu6P93UiTTS7+j18W/VRe4+X+ZZv+30k6
+        p18XGxqeLy6KVRNNbKqNSgo1MdLk2rHP/Hy+qtr8HZW+yzRqfCMfBO/7Va06bbtL4YM7aq3n
+        5L7ufH3X8epU97cZSrt7ClsWT96ZHPXC84PEAsutdc5KLMUZiYZazEXFiQDp96eSgwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jAd23V/9EGaw7x2ax6eN7Vouzyw6y
+        WZxtesNucXnXHDaLz71HGC0+b3jMaHG7cQWbA7vH7IaLLB59W1YxenzeJBfAHMVlk5Kak1mW
+        WqRvl8CV8fHUDaaCF+IVR66VNzDeFO5i5OSQEDCReLTkPWMXIxeHkMBORom2G5+ZQRK8AoIS
+        PybfY+li5OBgFpCXOHIpGyTMLKAuMWneImaI+vuMEi8+zoCq15L4vmIeK4jNIqAqsfvgL7A4
+        G1B8/4sbbCA2v4CixNUfjxlBZooKREh0n6gEmSMi0MAo0fhqNhuIwywwkVHi6qp7YIOEBUIk
+        Nn+EOEhIoIdRonVJGIjNKWAusWbzI/YJjAKzkNw6C+HWWUhuXcDIvIpRMrWgODc9t9iowCgv
+        tVyvODG3uDQvXS85P3cTIzCstx3W6t/B+HhJ/CFGAQ5GJR5eAbs/UUKsiWXFlbmHGCU4mJVE
+        eIW6gUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+fOPRQoJpCeWpGanphakFsFkmTg4pRoYdwiE
+        iu0ynRmvseLt5a0eGuuYZp4NnOXQPumMIpv954c9WZV31i7ayPfW8n+E/7wnzhxOb4x9jn/a
+        vfy+wP2Jgn4bE0LfX/TNMHtzxrtnSuCbhadDPdN9O36LdP8WZvy7Xq3DaUfl9luPP9lJr2V+
+        Wf1r0uZCd9mmCEeeKQc+dIddSmLrmy3GosRSnJFoqMVcVJwIADuZNt9nAgAA
+X-CMS-MailID: 20180517010757epcas2p30c01d2ac5e4a4a72fccec0f06a4e13a1
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c
+X-RootMTR: 20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c
+References: <CGME20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c@epcas5p1.samsung.com>
+        <20180516225709.153138-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Abylay,
+Hi,
 
-> -----Original Message-----
-> From: Abylay Ospan <aospan@netup.ru>
-> Sent: Wednesday, May 16, 2018 7:54 PM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; linux-media
-> <linux-media@vger.kernel.org>; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2] media: helene: add I2C device probe function
+On 2018년 05월 17일 07:57, Matthias Kaehlcke wrote:
+> Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
+> the devfreq device") introduced the initialization of the user
+> limits min/max_freq from the lowest/highest available OPPs. Later
+> commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
+> frequency") added scaling_min/max_freq, which actually represent
+> the frequencies of the lowest/highest available OPP. scaling_min/
+> max_freq are initialized with the values from min/max_freq, which
+> is totally correct in the context, but a bit awkward to read.
 > 
-> Hi Katsuhiro,
+> Swap the initialization and assign scaling_min/max_freq with the
+> OPP freqs and then the user limts min/max_freq with scaling_min/
+> max_freq.
 > 
-> Thanks for patch.
+> Needless to say that this change is a NOP, intended to improve
+> readability.
 > 
-> What is the purpose to rework helene_set_params(_t|_s) ?
-> other part of this patch looks ok for me, but not tested due to lack of spare time ;(
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Additional context: I'm considering to introduce the concept of
+> a devfreq policy, which would probably move min/max_freq inside
+> of a struct policy, this would make the initialization even
+> more awkward to read. If this moves forward I might also propose
+> to rename scaling_min/max_freq to something like min/max_opp_freq
+> to avoid confusion with the frequencies in the policy (cpufreq uses
+> scaling_min/max_freq for the sysfs attributes of the policy
+> limits).
+> 
+>  drivers/devfreq/devfreq.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index fe2af6aa88fc..0057ef5b0a98 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>  		mutex_lock(&devfreq->lock);
+>  	}
+>  
+> -	devfreq->min_freq = find_available_min_freq(devfreq);
+> -	if (!devfreq->min_freq) {
+> +	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
+> +	if (!devfreq->scaling_min_freq) {
+>  		mutex_unlock(&devfreq->lock);
+>  		err = -EINVAL;
+>  		goto err_dev;
+>  	}
+> -	devfreq->scaling_min_freq = devfreq->min_freq;
+> +	devfreq->min_freq = devfreq->scaling_min_freq;
+>  
+> -	devfreq->max_freq = find_available_max_freq(devfreq);
+> -	if (!devfreq->max_freq) {
+> +	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
+> +	if (!devfreq->scaling_max_freq) {
+>  		mutex_unlock(&devfreq->lock);
+>  		err = -EINVAL;
+>  		goto err_dev;
+>  	}
+> -	devfreq->scaling_max_freq = devfreq->max_freq;
+> +	devfreq->max_freq = devfreq->scaling_max_freq;
+>  
+>  	dev_set_name(&devfreq->dev, "devfreq%d",
+>  				atomic_inc_return(&devfreq_no));
 > 
 
-I'm using Socionext SC1501A (or MN88443x) ISDB-S/ISDB-T demodulator with this 
-tuner. This demodulator has 1 port, and can use ISDB-S or ISDB-T exclusively.
+This patch just clean-up codes related to min/max_freq and scaling_min/max_freq.
+It seems be good.
 
-So I think I cannot use ISDB-S features of this tuner if I use helene_attach(), 
-and I cannot use ISDB-T if I use helene_attach_s() too.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+But, I don't want to change the name from 'scaling_min/max_freq'
+to 'min/max_opp_freq'. You can check the meaning of variables
+in comment of struct devfreq.
 
-Regards,
---
-Katsuhiro Suzuki
-
-
-> 
-> 2018-05-16 4:37 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com
-> <mailto:suzuki.katsuhiro@socionext.com> >:
-> 
-> 
-> 	This patch adds I2C probe function to use dvb_module_probe()
-> 	with this driver.
-> 
-> 	Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com
-> <mailto:suzuki.katsuhiro@socionext.com> >
-> 
-> 	---
-> 
-> 	Changes since v1:
-> 	  - Add documents for dvb_frontend member of helene_config
-> 	---
-> 	 drivers/media/dvb-frontends/helene.c | 88 ++++++++++++++++++++++++++--
-> 	 drivers/media/dvb-frontends/helene.h |  3 +
-> 	 2 files changed, 87 insertions(+), 4 deletions(-)
-> 
-> 	diff --git a/drivers/media/dvb-frontends/helene.c
-> b/drivers/media/dvb-frontends/helene.c
-> 	index a0d0b53c91d7..04033f0c278b 100644
-> 	--- a/drivers/media/dvb-frontends/helene.c
-> 	+++ b/drivers/media/dvb-frontends/helene.c
-> 	@@ -666,7 +666,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
-> 	        return 0;
-> 	 }
-> 
-> 	-static int helene_set_params(struct dvb_frontend *fe)
-> 	+static int helene_set_params_t(struct dvb_frontend *fe)
-> 	 {
-> 	        u8 data[MAX_WRITE_REGSIZE];
-> 	        u32 frequency;
-> 	@@ -835,6 +835,19 @@ static int helene_set_params(struct dvb_frontend *fe)
-> 	        return 0;
-> 	 }
-> 
-> 	+static int helene_set_params(struct dvb_frontend *fe)
-> 	+{
-> 	+       struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-> 	+
-> 	+       if (p->delivery_system == SYS_DVBT ||
-> 	+           p->delivery_system == SYS_DVBT2 ||
-> 	+           p->delivery_system == SYS_ISDBT ||
-> 	+           p->delivery_system == SYS_DVBC_ANNEX_A)
-> 	+               return helene_set_params_t(fe);
-> 	+
-> 	+       return helene_set_params_s(fe);
-> 	+}
-> 	+
-> 	 static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
-> 	 {
-> 	        struct helene_priv *priv = fe->tuner_priv;
-> 	@@ -843,7 +856,7 @@ static int helene_get_frequency(struct dvb_frontend *fe,
-> u32 *frequency)
-> 	        return 0;
-> 	 }
-> 
-> 	-static const struct dvb_tuner_ops helene_tuner_ops = {
-> 	+static const struct dvb_tuner_ops helene_tuner_ops_t = {
-> 	        .info = {
-> 	                .name = "Sony HELENE Ter tuner",
-> 	                .frequency_min = 1000000,
-> 	@@ -853,7 +866,7 @@ static const struct dvb_tuner_ops helene_tuner_ops = {
-> 	        .init = helene_init,
-> 	        .release = helene_release,
-> 	        .sleep = helene_sleep,
-> 	-       .set_params = helene_set_params,
-> 	+       .set_params = helene_set_params_t,
-> 	        .get_frequency = helene_get_frequency,
-> 	 };
-> 
-> 	@@ -871,6 +884,20 @@ static const struct dvb_tuner_ops helene_tuner_ops_s
-> = {
-> 	        .get_frequency = helene_get_frequency,
-> 	 };
-> 
-> 	+static const struct dvb_tuner_ops helene_tuner_ops = {
-> 	+       .info = {
-> 	+               .name = "Sony HELENE Sat/Ter tuner",
-> 	+               .frequency_min = 500000,
-> 	+               .frequency_max = 1200000000,
-> 	+               .frequency_step = 1000,
-> 	+       },
-> 	+       .init = helene_init,
-> 	+       .release = helene_release,
-> 	+       .sleep = helene_sleep,
-> 	+       .set_params = helene_set_params,
-> 	+       .get_frequency = helene_get_frequency,
-> 	+};
-> 	+
-> 	 /* power-on tuner
-> 	  * call once after reset
-> 	  */
-> 	@@ -1032,7 +1059,7 @@ struct dvb_frontend *helene_attach(struct
-> dvb_frontend *fe,
-> 	        if (fe->ops.i2c_gate_ctrl)
-> 	                fe->ops.i2c_gate_ctrl(fe, 0);
-> 
-> 	-       memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
-> 	+       memcpy(&fe->ops.tuner_ops, &helene_tuner_ops_t,
-> 	                        sizeof(struct dvb_tuner_ops));
-> 	        fe->tuner_priv = priv;
-> 	        dev_info(&priv->i2c->dev,
-> 	@@ -1042,6 +1069,59 @@ struct dvb_frontend *helene_attach(struct
-> dvb_frontend *fe,
-> 	 }
-> 	 EXPORT_SYMBOL(helene_attach);
-> 
-> 	+static int helene_probe(struct i2c_client *client,
-> 	+                       const struct i2c_device_id *id)
-> 	+{
-> 	+       struct helene_config *config = client->dev.platform_data;
-> 	+       struct dvb_frontend *fe = config->fe;
-> 	+       struct device *dev = &client->dev;
-> 	+       struct helene_priv *priv;
-> 	+
-> 	+       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> 	+       if (!priv)
-> 	+               return -ENOMEM;
-> 	+
-> 	+       priv->i2c_address = client->addr;
-> 	+       priv->i2c = client->adapter;
-> 	+       priv->set_tuner_data = config->set_tuner_priv;
-> 	+       priv->set_tuner = config->set_tuner_callback;
-> 	+       priv->xtal = config->xtal;
-> 	+
-> 	+       if (fe->ops.i2c_gate_ctrl)
-> 	+               fe->ops.i2c_gate_ctrl(fe, 1);
-> 	+
-> 	+       if (helene_x_pon(priv) != 0)
-> 	+               return -EINVAL;
-> 	+
-> 	+       if (fe->ops.i2c_gate_ctrl)
-> 	+               fe->ops.i2c_gate_ctrl(fe, 0);
-> 	+
-> 	+       memcpy(&fe->ops.tuner_ops, &helene_tuner_ops,
-> 	+              sizeof(struct dvb_tuner_ops));
-> 	+       fe->tuner_priv = priv;
-> 	+       i2c_set_clientdata(client, priv);
-> 	+
-> 	+       dev_info(dev, "Sony HELENE attached on addr=%x at I2C adapter %p\n",
-> 	+                priv->i2c_address, priv->i2c);
-> 	+
-> 	+       return 0;
-> 	+}
-> 	+
-> 	+static const struct i2c_device_id helene_id[] = {
-> 	+       { "helene", },
-> 	+       {}
-> 	+};
-> 	+MODULE_DEVICE_TABLE(i2c, helene_id);
-> 	+
-> 	+static struct i2c_driver helene_driver = {
-> 	+       .driver = {
-> 	+               .name = "helene",
-> 	+       },
-> 	+       .probe    = helene_probe,
-> 	+       .id_table = helene_id,
-> 	+};
-> 	+module_i2c_driver(helene_driver);
-> 	+
-> 	 MODULE_DESCRIPTION("Sony HELENE Sat/Ter tuner driver");
-> 	 MODULE_AUTHOR("Abylay Ospan <aospan@netup.ru <mailto:aospan@netup.ru>
-> >");
-> 	 MODULE_LICENSE("GPL");
-> 	diff --git a/drivers/media/dvb-frontends/helene.h
-> b/drivers/media/dvb-frontends/helene.h
-> 	index c9fc81c7e4e7..8562d01bc93e 100644
-> 	--- a/drivers/media/dvb-frontends/helene.h
-> 	+++ b/drivers/media/dvb-frontends/helene.h
-> 	@@ -39,6 +39,7 @@ enum helene_xtal {
-> 	  * @set_tuner_callback:        Callback function that notifies the parent
-> driver
-> 	  *                     which tuner is active now
-> 	  * @xtal: Cristal frequency as described by &enum helene_xtal
-> 	+ * @fe: Frontend for which connects this tuner
-> 	  */
-> 	 struct helene_config {
-> 	        u8      i2c_address;
-> 	@@ -46,6 +47,8 @@ struct helene_config {
-> 	        void    *set_tuner_priv;
-> 	        int     (*set_tuner_callback)(void *, int);
-> 	        enum helene_xtal xtal;
-> 	+
-> 	+       struct dvb_frontend *fe;
-> 	 };
-> 
-> 	 #if IS_REACHABLE(CONFIG_DVB_HELENE)
-> 	--
-> 	2.17.0
-> 
-> 
-> 
-> 
-> 
-> 
-> --
-> 
-> Abylay Ospan,
-> NetUP Inc.
-> http://www.netup.tv <http://www.netup.tv/>
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
