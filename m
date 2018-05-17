@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeEQLdK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:33:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60494 "EHLO
+        id S1752165AbeEQLdT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:33:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60614 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeEQLdI (ORCPT
+        with ESMTP id S1751097AbeEQLdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:33:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E61486055C
+        Thu, 17 May 2018 07:33:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2ED9609D1
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From: Vikash Garodia <vgarodia@codeaurora.org>
@@ -16,9 +16,9 @@ To: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         acourbot@google.com, Vikash Garodia <vgarodia@codeaurora.org>
-Subject: [PATCH 2/4] media: venus: add a routine to reset ARM9
-Date: Thu, 17 May 2018 17:02:18 +0530
-Message-Id: <1526556740-25494-3-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH 3/4] venus: add check to make scm calls
+Date: Thu, 17 May 2018 17:02:19 +0530
+Message-Id: <1526556740-25494-4-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
 References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
@@ -26,93 +26,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new routine to reset the ARM9 and brings it
-out of reset. This is in preparation to add PIL
+In order to invoke scm calls, ensure that the platform
+has the required support to invoke the scm calls in
+secure world. This code is in preparation to add PIL
 functionality in venus driver.
 
 Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 ---
- drivers/media/platform/qcom/venus/firmware.c     | 26 ++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/firmware.h     |  1 +
- drivers/media/platform/qcom/venus/hfi_venus_io.h |  5 +++++
- 3 files changed, 32 insertions(+)
+ drivers/media/platform/qcom/venus/hfi_venus.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-index c4a5778..8f25375 100644
---- a/drivers/media/platform/qcom/venus/firmware.c
-+++ b/drivers/media/platform/qcom/venus/firmware.c
-@@ -14,6 +14,7 @@
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index f61d34b..9bcce94 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -27,6 +27,7 @@
+ #include "hfi_msgs.h"
+ #include "hfi_venus.h"
+ #include "hfi_venus_io.h"
++#include "firmware.h"
  
- #include <linux/device.h>
- #include <linux/firmware.h>
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -22,11 +23,36 @@
- #include <linux/sizes.h>
- #include <linux/soc/qcom/mdt_loader.h>
- 
-+#include "core.h"
- #include "firmware.h"
-+#include "hfi_venus_io.h"
- 
- #define VENUS_PAS_ID			9
- #define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
- 
-+void venus_reset_hw(struct venus_core *core)
-+{
-+	void __iomem *reg_base = core->base;
-+
-+	writel(0, reg_base + WRAPPER_FW_START_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_FW_END_ADDR);
-+	writel(0, reg_base + WRAPPER_CPA_START_ADDR);
-+	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_CPA_END_ADDR);
-+	writel(0x0, reg_base + WRAPPER_CPU_CGC_DIS);
-+	writel(0x0, reg_base + WRAPPER_CPU_CLOCK_CONFIG);
-+
-+	/* Make sure all register writes are committed. */
-+	mb();
-+
-+	/*
-+	 * Need to wait 10 cycles of internal clocks before bringing ARM9
-+	 * out of reset.
-+	 */
-+	udelay(1);
-+
-+	/* Bring Arm9 out of reset */
-+	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
-+}
- int venus_boot(struct device *dev, const char *fwname)
+ #define HFI_MASK_QHDR_TX_TYPE		0xff000000
+ #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
+@@ -570,13 +571,19 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
+ static int venus_power_off(struct venus_hfi_device *hdev)
  {
- 	const struct firmware *mdt;
-diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-index 428efb5..d56f5b2 100644
---- a/drivers/media/platform/qcom/venus/firmware.h
-+++ b/drivers/media/platform/qcom/venus/firmware.h
-@@ -18,5 +18,6 @@
+ 	int ret;
++	void __iomem *reg_base;
  
- int venus_boot(struct device *dev, const char *fwname);
- int venus_shutdown(struct device *dev);
-+void venus_reset_hw(struct venus_core *core);
+ 	if (!hdev->power_enabled)
+ 		return 0;
  
- #endif
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-index 76f4793..39afa5d 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
-+++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-@@ -109,6 +109,11 @@
- #define WRAPPER_CPU_CGC_DIS			(WRAPPER_BASE + 0x2010)
- #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
- #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
-+#define WRAPPER_CPA_START_ADDR		(WRAPPER_BASE + 0x1020)
-+#define WRAPPER_CPA_END_ADDR		(WRAPPER_BASE + 0x1024)
-+#define WRAPPER_FW_START_ADDR		(WRAPPER_BASE + 0x1028)
-+#define WRAPPER_FW_END_ADDR			(WRAPPER_BASE + 0x102C)
-+#define WRAPPER_A9SS_SW_RESET		(WRAPPER_BASE + 0x3000)
+-	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+-	if (ret)
+-		return ret;
++	if (qcom_scm_is_available()) {
++		ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
++		if (ret)
++			return ret;
++	} else {
++		reg_base = hdev->core->base;
++		writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
++	}
  
- /* Venus 4xx */
- #define WRAPPER_VCODEC0_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x90)
+ 	ret = venus_halt_axi(hdev);
+ 	if (ret)
+@@ -594,9 +601,13 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+ 	if (hdev->power_enabled)
+ 		return 0;
+ 
+-	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
+-	if (ret)
+-		goto err;
++	if (qcom_scm_is_available()) {
++		ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
++		if (ret)
++			goto err;
++	} else {
++		venus_reset_hw(hdev->core);
++	}
+ 
+ 	ret = venus_run(hdev);
+ 	if (ret)
+@@ -607,7 +618,8 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+ 	return 0;
+ 
+ err_suspend:
+-	qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
++	if (qcom_scm_is_available())
++		qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+ err:
+ 	hdev->power_enabled = false;
+ 	return ret;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
