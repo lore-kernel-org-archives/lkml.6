@@ -1,503 +1,502 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeEQLd1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:33:27 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50925 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeEQLdV (ORCPT
+        id S1752260AbeEQLdv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:33:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60786 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751379AbeEQLdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:33:21 -0400
-X-Google-Smtp-Source: AB8JxZoOHmBgR9gvld1bjBIotJ7y98BUX0o3EXp+yzFDKtDSjJPtQg4zQIUT3DugQGqx1/M8XC3vFw==
-From: Ramon Fried <ramon.fried@linaro.org>
-To: kvalo@codeaurora.org
-Cc: linux-kernel@vger.kernel.org, wcn36xx@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Eyal Ilsar <eilsar@codeaurora.org>,
-        Ramon Fried <ramon.fried@linaro.org>
-Subject: [PATCH] wcn36xx: Add support for Factory Test Mode (FTM)
-Date: Thu, 17 May 2018 14:32:50 +0300
-Message-Id: <20180517113250.16517-1-ramon.fried@linaro.org>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 17 May 2018 07:33:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 743D360A00
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com, Vikash Garodia <vgarodia@codeaurora.org>
+Subject: [PATCH 4/4] media: venus: add PIL support
+Date: Thu, 17 May 2018 17:02:20 +0530
+Message-Id: <1526556740-25494-5-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eyal Ilsar <eilsar@codeaurora.org>
+This adds support to load the video firmware
+and bring ARM9 out of reset. This is useful
+for platforms which does not have trustzone
+to reset the ARM9.
 
-Introduce infrastructure for supporting Factory Test Mode (FTM) of the
-wireless LAN subsystem. In order for the user space to access the
-firmware in test mode the relevant netlink channel needs to be exposed
-from the kernel driver.
-
-The above is achieved as follows:
-1) Register wcn36xx driver to testmode callback from netlink
-2) Add testmode callback implementation to handle incoming FTM commands
-3) Add FTM command packet structure
-4) Add handling for GET_BUILD_RELEASE_NUMBER (msgid=0x32A2)
-5) Add generic handling for all PTT_MSG packets
-
-Signed-off-by: Eyal Ilsar <eilsar@codeaurora.org>
-Signed-off-by: Ramon Fried <ramon.fried@linaro.org>
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 ---
- drivers/net/wireless/ath/wcn36xx/Makefile     |   2 +
- drivers/net/wireless/ath/wcn36xx/hal.h        |  16 ++
- drivers/net/wireless/ath/wcn36xx/main.c       |   3 +
- drivers/net/wireless/ath/wcn36xx/smd.c        |  74 +++++++++
- drivers/net/wireless/ath/wcn36xx/smd.h        |   4 +
- drivers/net/wireless/ath/wcn36xx/testmode.c   | 151 ++++++++++++++++++
- drivers/net/wireless/ath/wcn36xx/testmode.h   |  46 ++++++
- drivers/net/wireless/ath/wcn36xx/testmode_i.h |  29 ++++
- drivers/net/wireless/ath/wcn36xx/wcn36xx.h    |   2 +
- 9 files changed, 327 insertions(+)
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode.c
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode.h
- create mode 100644 drivers/net/wireless/ath/wcn36xx/testmode_i.h
+ .../devicetree/bindings/media/qcom,venus.txt       |   8 +-
+ drivers/media/platform/qcom/venus/core.c           |  67 +++++++--
+ drivers/media/platform/qcom/venus/core.h           |   6 +
+ drivers/media/platform/qcom/venus/firmware.c       | 163 +++++++++++++++++----
+ drivers/media/platform/qcom/venus/firmware.h       |  10 +-
+ 5 files changed, 217 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/Makefile b/drivers/net/wireless/ath/wcn36xx/Makefile
-index 3b09435104eb..582049f65735 100644
---- a/drivers/net/wireless/ath/wcn36xx/Makefile
-+++ b/drivers/net/wireless/ath/wcn36xx/Makefile
-@@ -6,3 +6,5 @@ wcn36xx-y +=   main.o \
-                smd.o \
-                pmc.o \
-                debug.o
-+
-+wcn36xx-$(CONFIG_NL80211_TESTMODE) += testmode.o
-diff --git a/drivers/net/wireless/ath/wcn36xx/hal.h b/drivers/net/wireless/ath/wcn36xx/hal.h
-index 182963522941..8491b3cb3206 100644
---- a/drivers/net/wireless/ath/wcn36xx/hal.h
-+++ b/drivers/net/wireless/ath/wcn36xx/hal.h
-@@ -2230,6 +2230,22 @@ struct wcn36xx_hal_switch_channel_rsp_msg {
+diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+index 00d0d1b..0ff0f2d 100644
+--- a/Documentation/devicetree/bindings/media/qcom,venus.txt
++++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+@@ -53,7 +53,7 @@
  
- } __packed;
+ * Subnodes
+ The Venus video-codec node must contain two subnodes representing
+-video-decoder and video-encoder.
++video-decoder and video-encoder, one optional firmware subnode.
  
-+struct wcn36xx_hal_process_ptt_msg_req_msg {
-+	struct wcn36xx_hal_msg_header header;
-+
-+	/* Actual FTM Command body */
-+	u8 ptt_msg[0];
-+} __packed;
-+
-+struct wcn36xx_hal_process_ptt_msg_rsp_msg {
-+	struct wcn36xx_hal_msg_header header;
-+
-+	/* FTM Command response status */
-+	u32 ptt_msg_resp_status;
-+	/* Actual FTM Command body */
-+	u8 ptt_msg[0];
-+} __packed;
-+
- struct update_edca_params_req_msg {
- 	struct wcn36xx_hal_msg_header header;
+ Every of video-encoder or video-decoder subnode should have:
  
-diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
-index 69d6be59d97f..ea14f87d11ff 100644
---- a/drivers/net/wireless/ath/wcn36xx/main.c
-+++ b/drivers/net/wireless/ath/wcn36xx/main.c
-@@ -26,6 +26,7 @@
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/soc/qcom/wcnss_ctrl.h>
- #include "wcn36xx.h"
-+#include "testmode.h"
+@@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
+ 		    power domain which is responsible for collapsing
+ 		    and restoring power to the subcore.
  
- unsigned int wcn36xx_dbg_mask;
- module_param_named(debug_mask, wcn36xx_dbg_mask, uint, 0644);
-@@ -1116,6 +1117,8 @@ static const struct ieee80211_ops wcn36xx_ops = {
- 	.sta_add		= wcn36xx_sta_add,
- 	.sta_remove		= wcn36xx_sta_remove,
- 	.ampdu_action		= wcn36xx_ampdu_action,
++The firmware sub node must contain the iommus specifiers for ARM9.
 +
-+	CFG80211_TESTMODE_CMD(wcn36xx_tm_cmd)
- };
+ * An Example
+ 	video-codec@1d00000 {
+ 		compatible = "qcom,msm8916-venus";
+@@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
+ 			clock-names = "core";
+ 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
+ 		};
++		firmware {
++			compatible = "qcom,venus-pil-no-tz";
++			iommus = <&apps_smmu 0x10b2 0x0>;
++		}
+ 	};
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 1308488..16910558 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/pm_runtime.h>
++#include <linux/iommu.h>
+ #include <media/videobuf2-v4l2.h>
+ #include <media/v4l2-mem2mem.h>
+ #include <media/v4l2-ioctl.h>
+@@ -30,6 +31,7 @@
+ #include "vdec.h"
+ #include "venc.h"
+ #include "firmware.h"
++#include "hfi_venus.h"
  
- static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 8932af5e4d8d..8eaf192f8bdb 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -292,12 +292,26 @@ static void init_hal_msg(struct wcn36xx_hal_msg_header *hdr,
- 		msg_body.header.len = sizeof(msg_body);			\
- 	} while (0)							\
- 
-+#define INIT_HAL_PTT_MSG(p_msg_body, ppt_msg_len) \
-+	do { \
-+		memset(p_msg_body, 0, sizeof(*p_msg_body) + ppt_msg_len); \
-+		p_msg_body->header.msg_type = WCN36XX_HAL_PROCESS_PTT_REQ; \
-+		p_msg_body->header.msg_version = WCN36XX_HAL_MSG_VERSION0; \
-+		p_msg_body->header.len = sizeof(*p_msg_body) + ppt_msg_len; \
-+	} while (0)
-+
- #define PREPARE_HAL_BUF(send_buf, msg_body) \
- 	do {							\
- 		memset(send_buf, 0, msg_body.header.len);	\
- 		memcpy(send_buf, &msg_body, sizeof(msg_body));	\
- 	} while (0)						\
- 
-+#define PREPARE_HAL_PTT_MSG_BUF(send_buf, p_msg_body) \
-+	do {							\
-+		memset(send_buf, 0, p_msg_body->header.len); \
-+		memcpy(send_buf, p_msg_body, p_msg_body->header.len); \
-+	} while (0)
-+
- static int wcn36xx_smd_rsp_status_check(void *buf, size_t len)
+ static void venus_event_notify(struct venus_core *core, u32 event)
  {
- 	struct wcn36xx_fw_msg_status_rsp *rsp;
-@@ -741,6 +755,64 @@ int wcn36xx_smd_switch_channel(struct wcn36xx *wcn,
- 	return ret;
+@@ -76,7 +78,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+ 	hfi_core_deinit(core, true);
+ 	hfi_destroy(core);
+ 	mutex_lock(&core->lock);
+-	venus_shutdown(core->dev);
++	venus_shutdown(core);
+ 
+ 	pm_runtime_put_sync(core->dev);
+ 
+@@ -84,7 +86,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+ 
+ 	pm_runtime_get_sync(core->dev);
+ 
+-	ret |= venus_boot(core->dev, core->res->fwname);
++	ret |= venus_boot(core);
+ 
+ 	ret |= hfi_core_resume(core, true);
+ 
+@@ -179,6 +181,20 @@ static u32 to_v4l2_codec_type(u32 codec)
+ 	}
  }
  
-+static int wcn36xx_smd_process_ptt_msg_rsp(void *buf, size_t len,
-+					   void **p_ptt_rsp_msg)
++static int store_firmware_dev(struct device *dev, void *data)
 +{
-+	struct wcn36xx_hal_process_ptt_msg_rsp_msg *rsp;
-+	int ret = 0;
++	struct venus_core *core;
 +
-+	ret = wcn36xx_smd_rsp_status_check(buf, len);
-+	if (ret)
-+		return ret;
-+
-+	rsp = (struct wcn36xx_hal_process_ptt_msg_rsp_msg *)buf;
-+
-+	wcn36xx_dbg(WCN36XX_DBG_HAL, "process ptt msg responded with length %d\n",
-+		    rsp->header.len);
-+	wcn36xx_dbg_dump(WCN36XX_DBG_HAL_DUMP, "HAL_PTT_MSG_RSP:", rsp->ptt_msg,
-+			 rsp->header.len - sizeof(rsp->ptt_msg_resp_status));
-+
-+	if (rsp->header.len > 0) {
-+		*p_ptt_rsp_msg = kmalloc(rsp->header.len, GFP_ATOMIC);
-+		memcpy(*p_ptt_rsp_msg, rsp->ptt_msg, rsp->header.len);
-+	}
-+	return ret;
-+}
-+
-+int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
-+				struct ieee80211_vif *vif, void *ptt_msg, size_t len,
-+		void **ptt_rsp_msg)
-+{
-+	struct wcn36xx_hal_process_ptt_msg_req_msg *p_msg_body;
-+	int ret = 0;
-+
-+	mutex_lock(&wcn->hal_mutex);
-+	p_msg_body = kmalloc(
-+		sizeof(struct wcn36xx_hal_process_ptt_msg_req_msg) + len,
-+		GFP_ATOMIC);
-+	INIT_HAL_PTT_MSG(p_msg_body, len);
-+
-+	memcpy(&p_msg_body->ptt_msg, ptt_msg, len);
-+
-+	PREPARE_HAL_PTT_MSG_BUF(wcn->hal_buf, p_msg_body);
-+
-+	ret = wcn36xx_smd_send_and_wait(wcn, p_msg_body->header.len);
-+	if (ret) {
-+		wcn36xx_err("Sending hal_process_ptt_msg failed\n");
-+		goto out;
-+	}
-+	ret = wcn36xx_smd_process_ptt_msg_rsp(wcn->hal_buf, wcn->hal_rsp_len,
-+					      ptt_rsp_msg);
-+	if (ret) {
-+		wcn36xx_err("process_ptt_msg response failed err=%d\n", ret);
-+		goto out;
-+	}
-+out:
-+	kfree(p_msg_body);
-+	mutex_unlock(&wcn->hal_mutex);
-+	return ret;
-+}
-+
- static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
- {
- 	struct wcn36xx_hal_update_scan_params_resp *rsp;
-@@ -2367,6 +2439,7 @@ int wcn36xx_smd_rsp_process(struct rpmsg_device *rpdev,
- 	case WCN36XX_HAL_JOIN_RSP:
- 	case WCN36XX_HAL_UPDATE_SCAN_PARAM_RSP:
- 	case WCN36XX_HAL_CH_SWITCH_RSP:
-+	case WCN36XX_HAL_PROCESS_PTT_RSP:
- 	case WCN36XX_HAL_FEATURE_CAPS_EXCHANGE_RSP:
- 	case WCN36XX_HAL_8023_MULTICAST_LIST_RSP:
- 	case WCN36XX_HAL_START_SCAN_OFFLOAD_RSP:
-@@ -2407,6 +2480,7 @@ int wcn36xx_smd_rsp_process(struct rpmsg_device *rpdev,
- 
- 	return 0;
- }
-+
- static void wcn36xx_ind_smd_work(struct work_struct *work)
- {
- 	struct wcn36xx *wcn =
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
-index 8076edf40ac8..6d83cc99dc25 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.h
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.h
-@@ -86,6 +86,10 @@ int wcn36xx_smd_send_beacon(struct wcn36xx *wcn, struct ieee80211_vif *vif,
- 			    u16 p2p_off);
- int wcn36xx_smd_switch_channel(struct wcn36xx *wcn,
- 			       struct ieee80211_vif *vif, int ch);
-+int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
-+				struct ieee80211_vif *vif,
-+				void *ptt_msg, size_t len,
-+				void **ptt_rsp_msg);
- int wcn36xx_smd_update_proberesp_tmpl(struct wcn36xx *wcn,
- 				      struct ieee80211_vif *vif,
- 				      struct sk_buff *skb);
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wireless/ath/wcn36xx/testmode.c
-new file mode 100644
-index 000000000000..07d66b6bb4e8
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
-@@ -0,0 +1,151 @@
-+﻿/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#include <net/netlink.h>
-+#include <linux/firmware.h>
-+#include <net/cfg80211.h>
-+#include "wcn36xx.h"
-+
-+#include "testmode.h"
-+#include "testmode_i.h"
-+#include "hal.h"
-+#include "smd.h"
-+
-+static const struct nla_policy wcn36xx_tm_policy[WCN36XX_TM_ATTR_MAX + 1] = {
-+	[WCN36XX_TM_ATTR_CMD] = { .type = NLA_U16 },
-+	[WCN36XX_TM_ATTR_DATA] = { .type = NLA_BINARY,
-+	.len = WCN36XX_TM_DATA_MAX_LEN },
-+};
-+
-+struct build_release_number {
-+	u16 drv_major;
-+	u16 drv_minor;
-+	u16 drv_patch;
-+	u16 drv_build;
-+	u16 ptt_max;
-+	u16 ptt_min;
-+	u16 fw_ver;
-+} __packed;
-+
-+static int wcn36xx_tm_cmd_ptt(struct wcn36xx *wcn, struct ieee80211_vif *vif,
-+			      struct nlattr *tb[])
-+{
-+	int ret = 0, buf_len;
-+	void *buf;
-+	struct ftm_rsp_msg *msg, *rsp = NULL;
-+	struct sk_buff *skb;
-+
-+	if (!tb[WCN36XX_TM_ATTR_DATA]) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	buf = nla_data(tb[WCN36XX_TM_ATTR_DATA]);
-+	buf_len = nla_len(tb[WCN36XX_TM_ATTR_DATA]);
-+	msg = (struct ftm_rsp_msg *)buf;
-+
-+	wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+		    "testmode cmd wmi msg_id 0x%04X msg_len %d buf %pK buf_len %d\n",
-+		   msg->msg_id, msg->msg_body_length,
-+		   buf, buf_len);
-+
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "REQ ", buf, buf_len);
-+
-+	if (msg->msg_id == MSG_GET_BUILD_RELEASE_NUMBER) {
-+		struct build_release_number *body =
-+				(struct build_release_number *)
-+				msg->msg_response;
-+
-+		body->drv_major = wcn->fw_major;
-+		body->drv_minor = wcn->fw_minor;
-+		body->drv_patch = wcn->fw_version;
-+		body->drv_build = wcn->fw_revision;
-+		body->ptt_max = 10;
-+		body->ptt_min = 0;
-+
-+		rsp = msg;
-+		rsp->resp_status = 0;
-+	} else {
-+		wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+			    "PPT Request >> HAL size %d\n",
-+				msg->msg_body_length);
-+
-+		msg->resp_status = wcn36xx_smd_process_ptt_msg(wcn, vif, msg,
-+							       msg->msg_body_length, (void *)(&rsp));
-+
-+		wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+			    "Response status = %d\n",
-+				msg->resp_status);
-+		if (rsp)
-+			wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
-+				    "PPT Response << HAL size %d\n",
-+					rsp->msg_body_length);
-+	}
-+
-+	if (!rsp) {
-+		rsp = msg;
-+		wcn36xx_warn("No response! Echoing request with response status %d\n",
-+			     rsp->resp_status);
-+	}
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "RSP ",
-+			 rsp, rsp->msg_body_length);
-+
-+	skb = cfg80211_testmode_alloc_reply_skb(wcn->hw->wiphy,
-+						nla_total_size(msg->msg_body_length));
-+	if (!skb) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ret = nla_put(skb, WCN36XX_TM_ATTR_DATA, rsp->msg_body_length, rsp);
-+	if (ret) {
-+		kfree_skb(skb);
-+		goto out;
-+	}
-+
-+	ret = cfg80211_testmode_reply(skb);
-+
-+out:
-+	if (rsp != msg)
-+		kfree(rsp);
-+
-+	return ret;
-+}
-+
-+int wcn36xx_tm_cmd(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+		   void *data, int len)
-+{
-+	struct wcn36xx *wcn = hw->priv;
-+	struct nlattr *tb[WCN36XX_TM_ATTR_MAX + 1];
-+	int ret = 0;
-+	unsigned short attr;
-+
-+	wcn36xx_dbg_dump(WCN36XX_DBG_TESTMODE_DUMP, "Data:", data, len);
-+	ret = nla_parse(tb, WCN36XX_TM_ATTR_MAX, data, len,
-+			wcn36xx_tm_policy, NULL);
-+	if (ret)
-+		return ret;
-+
-+	if (!tb[WCN36XX_TM_ATTR_CMD])
++	core = (struct venus_core *)data;
++	if (!core)
 +		return -EINVAL;
 +
-+	attr = nla_get_u16(tb[WCN36XX_TM_ATTR_CMD]);
++	if (of_device_is_compatible(dev->of_node, "qcom,venus-pil-no-tz"))
++		core->fw.dev = dev;
 +
-+	if (attr != WCN36XX_TM_CMD_PTT)
-+		return -EOPNOTSUPP;
-+
-+	return wcn36xx_tm_cmd_ptt(wcn, vif, tb);
-+}
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.h b/drivers/net/wireless/ath/wcn36xx/testmode.h
-new file mode 100644
-index 000000000000..aba014896dfd
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode.h
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#include "wcn36xx.h"
-+
-+struct ftm_rsp_msg {
-+	u16 msg_id;
-+	u16 msg_body_length;
-+	u32 resp_status;
-+	u8 msg_response[0];
-+} __packed;
-+
-+/* The request buffer of FTM which contains a byte of command and the request */
-+struct ftm_payload {
-+	u16 ftm_cmd_type;
-+	struct ftm_rsp_msg ftm_cmd_msg;
-+} __packed;
-+
-+#define MSG_GET_BUILD_RELEASE_NUMBER 0x32A2
-+
-+#ifdef CONFIG_NL80211_TESTMODE
-+int wcn36xx_tm_cmd(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+		   void *data, int len);
-+
-+#else
-+static inline int wcn36xx_tm_cmd(struct ieee80211_hw *hw,
-+				 struct ieee80211_vif *vif,
-+				void *data, int len)
-+{
 +	return 0;
 +}
 +
-+#endif
-diff --git a/drivers/net/wireless/ath/wcn36xx/testmode_i.h b/drivers/net/wireless/ath/wcn36xx/testmode_i.h
-new file mode 100644
-index 000000000000..8a1477ffd5a0
---- /dev/null
-+++ b/drivers/net/wireless/ath/wcn36xx/testmode_i.h
-@@ -0,0 +1,29 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
+ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
+ {
+ 	const struct hfi_inst_ops dummy_ops = {};
+@@ -229,6 +245,7 @@ static int venus_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct venus_core *core;
+ 	struct resource *r;
++	struct iommu_domain *iommu_domain;
+ 	int ret;
+ 
+ 	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
+@@ -279,7 +296,14 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_runtime_disable;
+ 
+-	ret = venus_boot(dev, core->res->fwname);
++	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	if (ret)
++		goto err_runtime_disable;
 +
-+#define WCN36XX_TM_DATA_MAX_LEN		5000
++	/* Attempt to register child devices */
++	ret = device_for_each_child(dev, core, store_firmware_dev);
 +
-+enum wcn36xx_tm_attr {
-+	__WCN36XX_TM_ATTR_INVALID	= 0,
-+	WCN36XX_TM_ATTR_CMD		= 1,
-+	WCN36XX_TM_ATTR_DATA		= 2,
++	ret = venus_boot(core);
+ 	if (ret)
+ 		goto err_runtime_disable;
+ 
+@@ -303,14 +327,17 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_core_deinit;
+ 
+-	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	ret = pm_runtime_put_sync(dev);
+ 	if (ret)
+ 		goto err_dev_unregister;
+ 
+-	ret = pm_runtime_put_sync(dev);
+-	if (ret)
++	iommu_domain = iommu_get_domain_for_dev(dev);
++	if (!iommu_domain)
+ 		goto err_dev_unregister;
+ 
++	iommu_domain->geometry.aperture_start = VENUS_FW_MEM_SIZE;
++	iommu_domain->geometry.aperture_end = VENUS_MAX_MEM_REGION;
 +
-+	/* keep last */
-+	__WCN36XX_TM_ATTR_AFTER_LAST,
-+	WCN36XX_TM_ATTR_MAX		= __WCN36XX_TM_ATTR_AFTER_LAST - 1,
-+};
+ 	return 0;
+ 
+ err_dev_unregister:
+@@ -318,7 +345,7 @@ static int venus_probe(struct platform_device *pdev)
+ err_core_deinit:
+ 	hfi_core_deinit(core, false);
+ err_venus_shutdown:
+-	venus_shutdown(dev);
++	venus_shutdown(core);
+ err_runtime_disable:
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_disable(dev);
+@@ -339,7 +366,7 @@ static int venus_remove(struct platform_device *pdev)
+ 	WARN_ON(ret);
+ 
+ 	hfi_destroy(core);
+-	venus_shutdown(dev);
++	venus_shutdown(core);
+ 	of_platform_depopulate(dev);
+ 
+ 	pm_runtime_put_sync(dev);
+@@ -483,7 +510,29 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
+ 		.pm = &venus_pm_ops,
+ 	},
+ };
+-module_platform_driver(qcom_venus_driver);
 +
-+#define WCN36XX_TM_CMD_PTT 3
-diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-index 5854adf43f3a..547e9a9eb28f 100644
---- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-+++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
-@@ -56,6 +56,8 @@ enum wcn36xx_debug_mask {
- 	WCN36XX_DBG_BEACON_DUMP	= 0x00001000,
- 	WCN36XX_DBG_PMC		= 0x00002000,
- 	WCN36XX_DBG_PMC_DUMP	= 0x00004000,
-+	WCN36XX_DBG_TESTMODE		= 0x00008000,
-+	WCN36XX_DBG_TESTMODE_DUMP	= 0x00010000,
- 	WCN36XX_DBG_ANY		= 0xffffffff,
++static int __init venus_init(void)
++{
++	int ret;
++
++	ret = platform_driver_register(&qcom_video_firmware_driver);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&qcom_venus_driver);
++	if (ret)
++		platform_driver_unregister(&qcom_video_firmware_driver);
++
++	return ret;
++}
++module_init(venus_init);
++
++static void __exit venus_exit(void)
++{
++	platform_driver_unregister(&qcom_venus_driver);
++	platform_driver_unregister(&qcom_video_firmware_driver);
++}
++module_exit(venus_exit);
+ 
+ MODULE_ALIAS("platform:qcom-venus");
+ MODULE_DESCRIPTION("Qualcomm Venus video encoder and decoder driver");
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 85e66e2..68fc8af 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -80,6 +80,11 @@ struct venus_caps {
+ 	bool valid;
  };
  
++struct video_firmware {
++	struct device *dev;
++	dma_addr_t iova;
++	struct iommu_domain *iommu_domain;
++};
+ /**
+  * struct venus_core - holds core parameters valid for all instances
+  *
+@@ -124,6 +129,7 @@ struct venus_core {
+ 	struct device *dev;
+ 	struct device *dev_dec;
+ 	struct device *dev_enc;
++	struct video_firmware fw;
+ 	struct mutex lock;
+ 	struct list_head instances;
+ 	atomic_t insts_count;
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index 8f25375..614c805 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -12,8 +12,12 @@
+  *
+  */
+ 
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/device.h>
+ #include <linux/firmware.h>
++#include <linux/iommu.h>
+ #include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+@@ -27,8 +31,10 @@
+ #include "firmware.h"
+ #include "hfi_venus_io.h"
+ 
+-#define VENUS_PAS_ID			9
+-#define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
++static const struct of_device_id firmware_dt_match[] = {
++	{ .compatible = "qcom,venus-pil-no-tz" },
++	{ }
++};
+ 
+ void venus_reset_hw(struct venus_core *core)
+ {
+@@ -53,40 +59,37 @@ void venus_reset_hw(struct venus_core *core)
+ 	/* Bring Arm9 out of reset */
+ 	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
+ }
+-int venus_boot(struct device *dev, const char *fwname)
++EXPORT_SYMBOL_GPL(venus_reset_hw);
++
++int venus_load_fw(struct device *dev, const char *fwname,
++		phys_addr_t *mem_phys, size_t *mem_size)
+ {
+ 	const struct firmware *mdt;
+ 	struct device_node *node;
+-	phys_addr_t mem_phys;
+ 	struct resource r;
+ 	ssize_t fw_size;
+-	size_t mem_size;
+ 	void *mem_va;
+ 	int ret;
+ 
+-	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
+-		return -EPROBE_DEFER;
+-
+ 	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+ 	if (!node) {
+ 		dev_err(dev, "no memory-region specified\n");
+ 		return -EINVAL;
+ 	}
+-
+ 	ret = of_address_to_resource(node, 0, &r);
+ 	if (ret)
+ 		return ret;
+ 
+-	mem_phys = r.start;
+-	mem_size = resource_size(&r);
++	*mem_phys = r.start;
++	*mem_size = resource_size(&r);
+ 
+-	if (mem_size < VENUS_FW_MEM_SIZE)
++	if (*mem_size < VENUS_FW_MEM_SIZE)
+ 		return -EINVAL;
+ 
+-	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
++	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+ 	if (!mem_va) {
+ 		dev_err(dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, mem_size);
++			&r.start, *mem_size);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -101,24 +104,134 @@ int venus_boot(struct device *dev, const char *fwname)
+ 		goto err_unmap;
+ 	}
+ 
+-	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+-			    mem_size, NULL);
++	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, *mem_phys,
++			    *mem_size, NULL);
+ 
+ 	release_firmware(mdt);
+ 
+-	if (ret)
+-		goto err_unmap;
+-
+-	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+-	if (ret)
+-		goto err_unmap;
+-
+ err_unmap:
+ 	memunmap(mem_va);
+ 	return ret;
+ }
+ 
+-int venus_shutdown(struct device *dev)
++int venus_boot_noTZ(struct venus_core *core, phys_addr_t mem_phys,
++							size_t mem_size)
+ {
+-	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
++	struct iommu_domain *iommu;
++	struct device *dev;
++	int ret;
++
++	if (!core->fw.dev)
++		return -EPROBE_DEFER;
++
++	dev = core->fw.dev;
++
++	iommu = iommu_domain_alloc(&platform_bus_type);
++	if (!iommu) {
++		dev_err(dev, "Failed to allocate iommu domain\n");
++		return -ENOMEM;
++	}
++
++	iommu->geometry.aperture_start = 0x0;
++	iommu->geometry.aperture_end = VENUS_FW_MEM_SIZE;
++
++	ret = iommu_attach_device(iommu, dev);
++	if (ret) {
++		dev_err(dev, "could not attach device\n");
++		goto err_attach;
++	}
++
++	ret = iommu_map(iommu, core->fw.iova, mem_phys, mem_size,
++			IOMMU_READ|IOMMU_WRITE|IOMMU_PRIV);
++	if (ret) {
++		dev_err(dev, "could not map video firmware region\n");
++		goto err_map;
++	}
++	core->fw.iommu_domain = iommu;
++	venus_reset_hw(core);
++
++	return 0;
++
++err_map:
++	iommu_detach_device(iommu, dev);
++err_attach:
++	iommu_domain_free(iommu);
++	return ret;
+ }
++
++int venus_shutdown_noTZ(struct venus_core *core)
++{
++	struct iommu_domain *iommu;
++	u32 reg;
++	struct device *dev = core->fw.dev;
++	void __iomem *reg_base = core->base;
++
++	/* Assert the reset to ARM9 */
++	reg = readl_relaxed(reg_base + WRAPPER_A9SS_SW_RESET);
++	reg |= BIT(4);
++	writel_relaxed(reg, reg_base + WRAPPER_A9SS_SW_RESET);
++
++	/* Make sure reset is asserted before the mapping is removed */
++	mb();
++
++	iommu = core->fw.iommu_domain;
++
++	iommu_unmap(iommu, core->fw.iova, VENUS_FW_MEM_SIZE);
++	iommu_detach_device(iommu, dev);
++	iommu_domain_free(iommu);
++
++	return 0;
++}
++
++int venus_boot(struct venus_core *core)
++{
++	phys_addr_t mem_phys;
++	size_t mem_size;
++	int ret;
++	struct device *dev;
++
++	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER))
++		return -EPROBE_DEFER;
++
++	dev = core->dev;
++
++	ret = venus_load_fw(dev, core->res->fwname, &mem_phys, &mem_size);
++	if (ret) {
++		dev_err(dev, "fail to load video firmware\n");
++		return -EINVAL;
++	}
++
++	if (qcom_scm_is_available())
++		ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++	else
++		ret = venus_boot_noTZ(core, mem_phys, mem_size);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(venus_boot);
++
++int venus_shutdown(struct venus_core *core)
++{
++	int ret = 0;
++
++	if (qcom_scm_is_available())
++		qcom_scm_pas_shutdown(VENUS_PAS_ID);
++	else
++		ret = venus_shutdown_noTZ(core);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(venus_shutdown);
++
++MODULE_DEVICE_TABLE(of, firmware_dt_match);
++
++struct platform_driver qcom_video_firmware_driver = {
++	.driver = {
++			.name = "qcom-video-firmware",
++			.of_match_table = firmware_dt_match,
++	},
++};
++
++MODULE_ALIAS("platform:qcom-video-firmware");
++MODULE_DESCRIPTION("Qualcomm Venus firmware driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+index d56f5b2..bce8f0a 100644
+--- a/drivers/media/platform/qcom/venus/firmware.h
++++ b/drivers/media/platform/qcom/venus/firmware.h
+@@ -14,10 +14,16 @@
+ #ifndef __VENUS_FIRMWARE_H__
+ #define __VENUS_FIRMWARE_H__
+ 
++#define VENUS_PAS_ID			9
++#define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
++#define VENUS_MAX_MEM_REGION	0xE0000000
++
+ struct device;
+ 
+-int venus_boot(struct device *dev, const char *fwname);
+-int venus_shutdown(struct device *dev);
++extern struct platform_driver qcom_video_firmware_driver;
++
++int venus_boot(struct venus_core *core);
++int venus_shutdown(struct venus_core *core);
+ void venus_reset_hw(struct venus_core *core);
+ 
+ #endif
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
