@@ -1,64 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeEQOIz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:08:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40064 "EHLO mail.kernel.org"
+        id S1751649AbeEQOKr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:10:47 -0400
+Received: from mout.gmx.net ([212.227.17.22]:55767 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751319AbeEQOIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:08:53 -0400
-X-Google-Smtp-Source: AB8JxZq0BKFIik0eXgwMJ4t6DtxbDoIyGQSzy4Q+l1aycE9gSYVzx8r4I37Se03MdjNZYDl1dRvtV0xETGeCxk2RfN0=
-MIME-Version: 1.0
-In-Reply-To: <20180517070407.GA13919@kroah.com>
-References: <20180516235007.3951-1-atull@kernel.org> <20180517070407.GA13919@kroah.com>
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 17 May 2018 09:08:11 -0500
-X-Gmail-Original-Message-ID: <CANk1AXS2jqG_RT5tL=b_+n8+FzZnWEUHoJh2qgjWJJ4hEv2vMw@mail.gmail.com>
-Message-ID: <CANk1AXS2jqG_RT5tL=b_+n8+FzZnWEUHoJh2qgjWJJ4hEv2vMw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] fpga api changes and kernel-doc fixup
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1751280AbeEQOKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:10:45 -0400
+Message-ID: <1526566209.8616.19.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <efault@gmx.de>
+To: paulmck@linux.vnet.ibm.com
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Date: Thu, 17 May 2018 16:10:09 +0200
+In-Reply-To: <20180517140345.GI3803@linux.vnet.ibm.com>
+References: <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+         <1525351221.9956.4.camel@gmx.de>
+         <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+         <1525354359.5576.1.camel@gmx.de>
+         <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+         <1525357015.5577.2.camel@gmx.de>
+         <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+         <20180503161231.GI26088@linux.vnet.ibm.com>
+         <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+         <1526358626.19125.0.camel@gmx.de>
+         <20180517140345.GI3803@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:iSd/xDFpZChhe1oNpEREGvEGtstcG1WENOxCsupQlmdi1p+sF4m
+ qpmx3TiaMh1ThOZI+LXYGm5R+l6C12P6mpAtd47Ns8WUdfnEZCPIYvmythoZo+pKpaa2+Xl
+ NZyWkAQhvB+WI0LjRi9bjWXVBB7YHOoqr4kAf2r7wPx66Kfx0uIxOy1pAOWoQiReuo9HBA5
+ HGiZOi+/PdKUPgxUp1lwQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AxKx4UirVXM=:BhKm/4dMJwUSxgjRoHGlfV
+ NOvM5Aorzw5mEyykU+NmMRpnx1+4yxcIXGiExa3eeZ5WCCU+KP6kmJUuG2HfG3B1TNqXqLEIT
+ bCAa6n+0C3Rkc0GmqNyZzQCHXkB3H804gHGkI1DuN16gKJEhxqQBnh240TTsxj5RpTVpiC/2k
+ Wrl1+J2uA5Qt8QgGX06vCJNpCV+oIYhd+zINzoFOOtWD19eefZ9zzfgxTYvTdGaR+45FlsSrr
+ DCo9Yir142uQDK7UrS1mnkl+JJYX24XoqwomkYTjSWm2K0oZ5Nlmmc+hQfRRE/kNWnwzhVquY
+ nYryGX+gDBppB9Jvil20b5I/HXTh2yLKmac39styN86CElaC7zvX950oBJ7DsSgp+MLxaY2jR
+ J1j2i5oRemoMvuJBK+1TzqrM52WinRAVxOXc/OskfkphjCGMTit8OGWpXFcltihnvILxUHint
+ 41SorcEp/k6IAckHC2iecmOqqqH7sJth1U6h/qUZN2AqoN/PnVd2z9S22oZKZ1jLTU1Acr5Lk
+ pY/mM3wMi7bq7bQmnCiKq/tuia6nGyKH9r8wWw7suwy+LWRsGkXFTAhmCTVo7UFzE7xHDEuFW
+ xgTpihT+el8kXQXBn11bUXcA1BHeVjxZRC6OyMvzyxUXKEb5zg1DMm0QBhe29u3RQla/755oQ
+ SSlTzLG7/kLtzGTPuyLEi9ieCTuEejDH22Hcy6Hhnp76/0tLn3FG68mVi9wl/1Ro/RLm6vil1
+ Mou5IVcaqDRX5DmaASX2EsSpO2hQbjLaQih3S3+y0T8BS5y/74TRdIpeJmFal83a1fZ/4dgZ2
+ kjgzGgF
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 2:04 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Wed, May 16, 2018 at 06:49:53PM -0500, Alan Tull wrote:
->> I'm posting these all together because they are interdependent.
->>
->> Patches 1-4 are a repost of v4 of the FPGA api change.
->>
->> Patch 5 is a repost of adding SPDX to my fpga code
->>
->> Patch 6-12 update the fpga kernel-doc documentation and move
->> existing .txt fpga documentation to driver-api ReST documents.
->>
->> Patch 13 is a minor documentation fix
->>
->> Patch 14 updates MAINTAINERS for the new driver-api/fpga directory
->
-> Are these just for review, or do you feel they are good enough for me to
-> queue up for 4.18-rc1 now?
+On Thu, 2018-05-17 at 07:03 -0700, Paul E. McKenney wrote:
+> On Tue, May 15, 2018 at 06:30:26AM +0200, Mike Galbraith wrote:
+> 
+> > > Something like so perhaps? Mike, can you play around with that? Could
+> > > burn your granny and eat your cookies.
+> > 
+> > Did this get queued anywhere?
+> 
+> I have not queued it, but given Peter's Signed-off-by and your Tested-by
+> I would be happy to do so.
 
-I think the first five are good to go, but that's your call.
+Here's the later. Tested-by: Mike Galbraith <efault@gmx.de>
 
-Patches 1-4 are the API reworked following your suggestions.
-
-Patch 5 (SPDX) = I haven't heard any feedback on, but I think it's good.
-
-So I think patches 1-5 are good (if you agree).  The rest are new to
-the mailing list and haven't been reviewed/acked by anybody else yet.
-
-I generally avoid posting reviewed/unreviewed patches together, sorry.
-I just didn't want to open the possibility of patches being applied
-out of order and the issues that can cause.
-
-Alan
-
->
-> thanks,
->
-> greg k-h
+> > > diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+> > > index 7468de429087..07360523c3ce 100644
+> > > --- a/arch/x86/kernel/cpu/mtrr/main.c
+> > > +++ b/arch/x86/kernel/cpu/mtrr/main.c
+> > > @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
+> > >  
+> > >  	if (!use_intel() || mtrr_aps_delayed_init)
+> > >  		return;
+> > > +
+> > > +	rcu_cpu_starting(smp_processor_id());
+> > > +
+> > >  	/*
+> > >  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
+> > >  	 * changed, but this routine will be called in cpu boot time,
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 2a734692a581..4dab46950fdb 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static DEFINE_PER_CPU(int, rcu_cpu_started);
+> > > +
+> > >  /*
+> > >   * Mark the specified CPU as being online so that subsequent grace periods
+> > >   * (both expedited and normal) will wait on it.  Note that this means that
+> > > @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
+> > >  	struct rcu_node *rnp;
+> > >  	struct rcu_state *rsp;
+> > >  
+> > > +	if (per_cpu(rcu_cpu_started, cpu))
+> > > +		return;
+> > > +
+> > > +	per_cpu(rcu_cpu_started, cpu) = 1;
+> > > +
+> > >  	for_each_rcu_flavor(rsp) {
+> > >  		rdp = per_cpu_ptr(rsp->rda, cpu);
+> > >  		rnp = rdp->mynode;
+> > > @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
+> > >  	preempt_enable();
+> > >  	for_each_rcu_flavor(rsp)
+> > >  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
+> > > +
+> > > +	per_cpu(rcu_cpu_started, cpu) = 0;
+> > >  }
+> > >  
+> > >  /* Migrate the dead CPU's callbacks to the current CPU. */
+> > 
+> 
