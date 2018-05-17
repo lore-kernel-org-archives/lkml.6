@@ -1,120 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeEQRoD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:44:03 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59670 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751958AbeEQRoC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:44:02 -0400
-Subject: Re: [PATCH v3 1/2] xen/PVH: Set up GS segment for stack canary
-To: Jan Beulich <JBeulich@suse.com>
-Cc: xen-devel <xen-devel@lists.xenproject.org>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-References: <20180517144723.21585-1-boris.ostrovsky@oracle.com>
- <20180517144723.21585-2-boris.ostrovsky@oracle.com>
- <5AFD999402000078001C3B29@prv1-mh.provo.novell.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <656c5250-3406-a98a-309c-ac3d7e3e4c41@oracle.com>
-Date: Thu, 17 May 2018 13:47:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751698AbeEQRq1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:46:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:39362 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751231AbeEQRq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 13:46:26 -0400
+Date: Thu, 17 May 2018 18:46:19 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Xiaowei Song <songxiaowei@hisilicon.com>
+Cc: wangbinghui@hisilicon.com, bhelgaas@google.com, xuwei5@huawei.com,
+        robh+dt@kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dimitrysh@google.com,
+        andy.shevchenko@gmail.com, guodong.xu@linaro.org,
+        suzhuangluan@hisilicon.com, kongfei@hisilicon.com,
+        chenyao11@huawei.com
+Subject: Re: [PATCH v4] PCI: kirin: Add MSI support
+Message-ID: <20180517174619.GA4056@e107981-ln.cambridge.arm.com>
+References: <20180516012159.44081-1-songxiaowei@hisilicon.com>
+ <20180516012159.44081-2-songxiaowei@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <5AFD999402000078001C3B29@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=964
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170166
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516012159.44081-2-songxiaowei@hisilicon.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 11:02 AM, Jan Beulich wrote:
->>>> On 17.05.18 at 16:47, <boris.ostrovsky@oracle.com> wrote:
->> @@ -64,6 +67,9 @@ ENTRY(pvh_start_xen)
->>  	mov %eax,%es
->>  	mov %eax,%ss
->>  
->> +	mov $PVH_CANARY_SEL,%eax
->> +	mov %eax,%gs
-> I doubt this is needed for 64-bit (you could equally well load zero or leave
-> in place what's there in that case),
+On Wed, May 16, 2018 at 09:21:59AM +0800, Xiaowei Song wrote:
+> From: Yao Chen <chenyao11@huawei.com>
+> 
+> Add support for MSI.
+> 
+> Signed-off-by: Yao Chen <chenyao11@huawei.com>
+> Cc: Xiaowei Song <songxiaowei@hisilicon.com>
+> ---
+>  drivers/pci/dwc/pcie-kirin.c | 51 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+> index d2970a0..00ca4e5 100644
+> --- a/drivers/pci/dwc/pcie-kirin.c
+> +++ b/drivers/pci/dwc/pcie-kirin.c
+> @@ -426,9 +426,28 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
+>  	return 0;
+>  }
+>  
+> +static irqreturn_t kirin_pcie_msi_irq_handler(int irq, void *arg)
+> +{
+> +	struct pcie_port *pp = arg;
+> +
+> +	return dw_handle_msi_irq(pp);
+> +}
 
-I don't understand this.
+You do not need an IRQ handler, the IRQ is handled already in the
+dwc driver following Gustavo's rework.
 
+https://patchwork.ozlabs.org/patch/882017/
 
->  and loading the selector before setting
-> the base address in the descriptor won't have the intended effect.
+> +static void kirin_pcie_msi_init(struct pcie_port *pp)
+> +{
+> +	dw_pcie_msi_init(pp);
+> +}
+> +
+> +static void kirin_pcie_enable_interrupts(struct pcie_port *pp)
+> +{
+> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +		kirin_pcie_msi_init(pp);
+> +}
 
+Why do you need two functons ?
 
-I wasn't sure about this either but then I noticed that
-secondary_startup_64() does it in the same order (although not using the
-MSR).
+> +
+>  static int kirin_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	kirin_pcie_establish_link(pp);
+> +	kirin_pcie_enable_interrupts(pp);
+>  
+>  	return 0;
+>  }
+> @@ -445,9 +464,41 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+>  	.host_init = kirin_pcie_host_init,
+>  };
+>  
+> +static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> +				struct platform_device *pdev)
+> +{
+> +	int ret = 0;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +		ret = platform_get_irq(pdev, 0);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev, "failed to get MSI IRQ (%d)\n",
+> +				pci->pp.msi_irq);
+> +			return ret;
+> +		}
+> +
+> +		pci->pp.msi_irq = ret;
+> +
+> +		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
+> +					   kirin_pcie_msi_irq_handler,
+> +					   IRQF_SHARED | IRQF_NO_THREAD,
+> +					   "kirin_pcie_msi", &pci->pp);
+> +		if (ret)
+> +			dev_err(&pdev->dev, "failed to request MSI IRQ %d\n",
+> +				pci->pp.msi_irq);
 
+This is wrong. If msi_irq is set, the dwc driver will handle the MSI and
+you must not request the IRQ in the platform driver, see above for
+the link to Gustavo's work.
 
->
->> @@ -150,9 +170,12 @@ gdt_start:
->>  	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
->>  #endif
->>  	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
->> +	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
->>  gdt_end:
->>  
->> -	.balign 4
->> +	.balign 16
->> +canary:
->> +	.fill 24, 1, 0
-> This is too little space for 64-bit afaict (the canary lives at offset 40 there
-> if I can trust asm/processor.h).
+Lorenzo
 
-Yes, should be 48. I didn't realize the two modes use different offsets.
-
--boris
+> +	}
+> +	return ret;
+> +}
+> +
+>  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+>  				      struct platform_device *pdev)
+>  {
+> +	int ret;
+> +
+> +	ret = kirin_pcie_add_msi(pci, pdev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	pci->pp.ops = &kirin_pcie_host_ops;
+>  
+>  	return dw_pcie_host_init(&pci->pp);
+> -- 
+> 2.7.3
+> 
