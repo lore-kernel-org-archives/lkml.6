@@ -1,28 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752753AbeEQQl6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:41:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53794 "EHLO
+        id S1752737AbeEQQl5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:41:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53694 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeEQQlz (ORCPT
+        with ESMTP id S1752715AbeEQQlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:41:55 -0400
+        Thu, 17 May 2018 12:41:52 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, mka@chromium.org,
-        collinsd@codeaurora.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Allow for regulators that can't be read at bootup" to the regulator tree
-In-Reply-To: <20180515220717.254950-1-dianders@chromium.org>
-Message-Id: <20180517164149.A49E444007E@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 17:41:49 +0100 (BST)
+To: David Collins <collinsd@codeaurora.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: of: add support for allowed modes configuration" to the regulator tree
+In-Reply-To: <58bb4f965515a67a6cbbc726b0d7b092c22b79d7.1526088289.git.collinsd@codeaurora.org>
+Message-Id: <20180517164144.0CD3D44007E@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 17:41:44 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Allow for regulators that can't be read at bootup
+   regulator: of: add support for allowed modes configuration
 
 has been applied to the regulator tree at
 
@@ -47,91 +50,67 @@ to this mail.
 Thanks,
 Mark
 
->From 84b3a7c9c6befe5ab4d49070fe7bcab2da22637e Mon Sep 17 00:00:00 2001
-From: Douglas Anderson <dianders@chromium.org>
-Date: Tue, 15 May 2018 15:07:17 -0700
-Subject: [PATCH] regulator: core: Allow for regulators that can't be read at
- bootup
+>From 54557ad9737e28b06b632cce723ef2373fe6bf12 Mon Sep 17 00:00:00 2001
+From: David Collins <collinsd@codeaurora.org>
+Date: Fri, 11 May 2018 18:46:47 -0700
+Subject: [PATCH] regulator: of: add support for allowed modes configuration
 
-Regulators attached via RPMh on Qualcomm sdm845 apparently are
-write-only.  Specifically you can send a request for a certain voltage
-but you can't read back to see what voltage you've requested.  What
-this means is that at bootup we have absolutely no idea what voltage
-we could be at.
+Add support for configuring the machine constraints
+valid_modes_mask element based on a list of allowed modes
+specified via a device tree property.
 
-As discussed in the patches to try to support the RPMh regulators [1],
-the fact that regulators are write-only means that its driver's
-get_voltage_sel() should return an error code if it's called before
-any calls to set_voltage_sel().  This causes problems in
-machine_constraints_voltage() when trying to apply the constraints.
-
-A proposed fix was to come up with an error code that could be
-returned by get_voltage_sel() which would cause the regulator
-framework to simply try setting the voltage with the current
-constraints.
-
-In this patch I propose the error code -ENOTRECOVERABLE.  In errno.h
-this error is described as "State not recoverable".  Though the error
-code was originally intended "for robust mutexes", the description of
-the error code seems to apply here because we can't read the state of
-the regulator.  Also note that the only existing user of this error
-code in the regulator framework is tps65090-regulator.c which returns
-this error code from the enable() call (not get_voltage() or
-get_voltage_sel()), so there should be no existing regulators that
-might accidentally get the new behavior.  (Side note is that tps65090
-seems to interpret this error code to mean an error that you can't
-recover from rather than some data that can't be recovered).
-
-[1] https://patchwork.kernel.org/patch/10340897/
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: David Collins <collinsd@codeaurora.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c         | 12 ++++++++++++
- include/linux/regulator/driver.h |  7 +++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/regulator/of_regulator.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index d4803460a557..fe314ff56772 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -886,6 +886,18 @@ static int machine_constraints_voltage(struct regulator_dev *rdev,
- 	    rdev->constraints->min_uV && rdev->constraints->max_uV) {
- 		int target_min, target_max;
- 		int current_uV = _regulator_get_voltage(rdev);
-+
-+		if (current_uV == -ENOTRECOVERABLE) {
-+			/* This regulator can't be read and must be initted */
-+			rdev_info(rdev, "Setting %d-%duV\n",
-+				  rdev->constraints->min_uV,
-+				  rdev->constraints->max_uV);
-+			_regulator_do_set_voltage(rdev,
-+						  rdev->constraints->min_uV,
-+						  rdev->constraints->max_uV);
-+			current_uV = _regulator_get_voltage(rdev);
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 0d3f73eacb99..d61fed28fdb9 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -32,7 +32,7 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	struct regulator_state *suspend_state;
+ 	struct device_node *suspend_np;
+ 	unsigned int mode;
+-	int ret, i;
++	int ret, i, len;
+ 	u32 pval;
+ 
+ 	constraints->name = of_get_property(np, "regulator-name", NULL);
+@@ -136,6 +136,33 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		}
+ 	}
+ 
++	len = of_property_count_elems_of_size(np, "regulator-allowed-modes",
++						sizeof(u32));
++	if (len > 0) {
++		if (desc && desc->of_map_mode) {
++			for (i = 0; i < len; i++) {
++				ret = of_property_read_u32_index(np,
++					"regulator-allowed-modes", i, &pval);
++				if (ret) {
++					pr_err("%s: couldn't read allowed modes index %d, ret=%d\n",
++						np->name, i, ret);
++					break;
++				}
++				mode = desc->of_map_mode(pval);
++				if (mode == REGULATOR_MODE_INVALID)
++					pr_err("%s: invalid regulator-allowed-modes element %u\n",
++						np->name, pval);
++				else
++					constraints->valid_modes_mask |= mode;
++			}
++			if (constraints->valid_modes_mask)
++				constraints->valid_ops_mask
++					|= REGULATOR_CHANGE_MODE;
++		} else {
++			pr_warn("%s: mode mapping not defined\n", np->name);
 +		}
++	}
 +
- 		if (current_uV < 0) {
- 			rdev_err(rdev,
- 				 "failed to get the current voltage(%d)\n",
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4fc96cb8e5d7..14e512ad6d4f 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -81,9 +81,12 @@ struct regulator_linear_range {
-  * @set_voltage_sel: Set the voltage for the regulator using the specified
-  *                   selector.
-  * @map_voltage: Convert a voltage into a selector
-- * @get_voltage: Return the currently configured voltage for the regulator.
-+ * @get_voltage: Return the currently configured voltage for the regulator;
-+ *                   return -ENOTRECOVERABLE if regulator can't be read at
-+ *                   bootup and hasn't been set yet.
-  * @get_voltage_sel: Return the currently configured voltage selector for the
-- *                   regulator.
-+ *                   regulator; return -ENOTRECOVERABLE if regulator can't
-+ *                   be read at bootup and hasn't been set yet.
-  * @list_voltage: Return one of the supported voltages, in microvolts; zero
-  *	if the selector indicates a voltage that is unusable on this system;
-  *	or negative errno.  Selectors range from zero to one less than
+ 	if (!of_property_read_u32(np, "regulator-system-load", &pval))
+ 		constraints->system_load = pval;
+ 
 -- 
 2.17.0
