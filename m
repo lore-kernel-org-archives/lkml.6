@@ -1,100 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751665AbeEQA54 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:57:56 -0400
-Received: from mx.socionext.com ([202.248.49.38]:17540 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751290AbeEQA5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:57:55 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Abylay Ospan'" <aospan@netup.ru>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        "linux-media" <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180516084111.28618-1-suzuki.katsuhiro@socionext.com> <CAK3bHNUVqd2GODY3k4fzWwtZkZZKMH5Qxs+oiWCODcU9gdYK0A@mail.gmail.com>
-In-Reply-To: <CAK3bHNUVqd2GODY3k4fzWwtZkZZKMH5Qxs+oiWCODcU9gdYK0A@mail.gmail.com>
-Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
-Date: Thu, 17 May 2018 09:57:50 +0900
-Message-ID: <000601d3ed7a$145a94b0$3d0fbe10$@socionext.com>
+        id S1751644AbeEQBCY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 21:02:24 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46460 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbeEQBCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 21:02:21 -0400
+X-Google-Smtp-Source: AB8JxZoENvDTF0quaFzdYchR7C0G3y+shatn5o91nQbxVpaavtzxEdM+ZSaxLka/kA87jvrTjeOolQ==
+Date: Wed, 16 May 2018 19:02:17 -0600
+From: Anatoliy Glagolev <glagolig@gmail.com>
+To: linux-scsi@vger.kernel.org,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: James.Bottomley@hansenpartnership.com
+Subject: [PATCH] Bsg referencing parent device
+Message-ID: <20180517010214.GA18978@xldev-tmpl.dev.purestorage.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT7PGl7tKKohr1DUO9vcZ/b7rAcKQxmCgAgAGAn1A=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Abylay,
+A follow-up on earlier discussions:
+[PATCH] bsg referencing bus driver module
+https://www.spinics.net/lists/linux-scsi/msg119631.html
+[PATCH] Waiting for scsi_host_template release
+https://www.spinics.net/lists/linux-scsi/msg119432.html
 
-> -----Original Message-----
-> From: Abylay Ospan <aospan@netup.ru>
-> Sent: Wednesday, May 16, 2018 7:56 PM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; linux-media
-> <linux-media@vger.kernel.org>; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
-> 
-> True.
-> I'm curious but how did it worked before ...
-> Which hardware (dvb adapter) are you using ?
-> 
+All these discussions are attempts to fix a crash after
+SCSI transport driver unload if a user-mode process
+holds a handle in BSG layer towards the unloaded driver
+via SCSI mid-layer:
 
-I'm using evaluation boards of my company. So it's not exist in market...
-Tuner module is SONY SUT-PJ series for ISDB-S/ISDB-T (not for DVB).
+[16834.636216,07] Call Trace:
+                             ...   scsi_proc_hostdir_rm
+[16834.641944,07]  [<ffffffff8141723f>] scsi_host_dev_release+0x3f/0x130
+[16834.647740,07]  [<ffffffff813e4f82>] device_release+0x32/0xa0
+[16834.653423,07]  [<ffffffff812dc6c7>] kobject_cleanup+0x77/0x190
+[16834.659002,07]  [<ffffffff812dc585>] kobject_put+0x25/0x50
+[16834.664430,07]  [<ffffffff813e5277>] put_device+0x17/0x20
+[16834.669740,07]  [<ffffffff812d0334>] bsg_kref_release_function+0x24/0x30
+[16834.675007,07]  [<ffffffff812d14a6>] bsg_release+0x166/0x1d0
+[16834.680148,07]  [<ffffffff8119ba2b>] __fput+0xcb/0x1d0
+[16834.685156,07]  [<ffffffff8119bb6e>] ____fput+0xe/0x10
+[16834.690017,07]  [<ffffffff81077476>] task_work_run+0x86/0xb0
+[16834.694781,07]  [<ffffffff81057043>] exit_to_usermode_loop+0x6b/0x9a
+[16834.699466,07]  [<ffffffff81002875>] syscall_return_slowpath+0x55/0x60
+[16834.704110,07]  [<ffffffff8172d615>] int_ret_from_sys_call+0x25/0x9f
 
-Regards,
---
-Katsuhiro Suzuki
+The latest input from earlier discussions was to cut off access
+to the unloaded driver at bsg_unregister_queue time by calling
+blk_cleanup_queue. If we do that we still have to release
+the reference to the parent device (otherwise we crash with
+the same stack). The next logical step is, rather than maintaining
+a "part-time" reference to be dropped early, we discard
+referencing completely.
+Discarding the reference turns out to be the only thing needed
+to fix the problem: all transport drivers already do blk_cleanup_queue
+before releasing their reference to the parent device.
 
+>From 7eaa9b43f0b99766b1d197044eb4d2e549d11a24 Mon Sep 17 00:00:00 2001
+From: Anatoliy Glagolev <glagolig@gmail.com>
+Date: Wed, 16 May 2018 17:03:09 -0600
+Subject: [PATCH] Bsg referencing parent device
+Signed-off-by: Anatoliy Glagolev <glagolig@gmail.com>
 
-> 2018-05-16 4:41 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com
-> <mailto:suzuki.katsuhiro@socionext.com> >:
-> 
-> 
-> 	This patch fixes tuning frequency of satellite to kHz. That as same
-> 	as terrestrial one.
-> 
-> 	Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com
-> <mailto:suzuki.katsuhiro@socionext.com> >
-> 	---
-> 	 drivers/media/dvb-frontends/helene.c | 2 +-
-> 	 1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> 	diff --git a/drivers/media/dvb-frontends/helene.c
-> b/drivers/media/dvb-frontends/helene.c
-> 	index 04033f0c278b..0a4f312c4368 100644
-> 	--- a/drivers/media/dvb-frontends/helene.c
-> 	+++ b/drivers/media/dvb-frontends/helene.c
-> 	@@ -523,7 +523,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
-> 	        enum helene_tv_system_t tv_system;
-> 	        struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-> 	        struct helene_priv *priv = fe->tuner_priv;
-> 	-       int frequencykHz = p->frequency;
-> 	+       int frequencykHz = p->frequency / 1000;
-> 	        uint32_t frequency4kHz = 0;
-> 	        u32 symbol_rate = p->symbol_rate/1000;
-> 
-> 	--
-> 	2.17.0
-> 
-> 
-> 
-> 
-> 
-> 
-> --
-> 
-> Abylay Ospan,
-> NetUP Inc.
-> http://www.netup.tv <http://www.netup.tv/>
+Bsg holding reference to a parent device may result in a crash
+if user closes a bsg file handle after the parent device driver
+has unloaded.
+Holding a reference is not really needed: parent device must exist
+between bsg_register_queue and bsg_unregister_queue. Before
+the device goes away the caller does blk_cleanup_queue so that
+all in-flight requests to the device are gone and all new requests
+cannot pass beyond the queue. The queue itself is a refcounted
+object and it will stay alive with a bsg file.
+---
+ block/bsg.c | 37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
+
+diff --git a/block/bsg.c b/block/bsg.c
+index defa06c..f9e4b91 100644
+--- a/block/bsg.c
++++ b/block/bsg.c
+@@ -650,18 +650,6 @@ static struct bsg_device *bsg_alloc_device(void)
+ 	return bd;
+ }
+ 
+-static void bsg_kref_release_function(struct kref *kref)
+-{
+-	struct bsg_class_device *bcd =
+-		container_of(kref, struct bsg_class_device, ref);
+-	struct device *parent = bcd->parent;
+-
+-	if (bcd->release)
+-		bcd->release(bcd->parent);
+-
+-	put_device(parent);
+-}
+-
+ static int bsg_put_device(struct bsg_device *bd)
+ {
+ 	int ret = 0, do_free;
+@@ -694,7 +682,6 @@ static int bsg_put_device(struct bsg_device *bd)
+ 
+ 	kfree(bd);
+ out:
+-	kref_put(&q->bsg_dev.ref, bsg_kref_release_function);
+ 	if (do_free)
+ 		blk_put_queue(q);
+ 	return ret;
+@@ -760,8 +747,6 @@ static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
+ 	 */
+ 	mutex_lock(&bsg_mutex);
+ 	bcd = idr_find(&bsg_minor_idr, iminor(inode));
+-	if (bcd)
+-		kref_get(&bcd->ref);
+ 	mutex_unlock(&bsg_mutex);
+ 
+ 	if (!bcd)
+@@ -772,8 +757,6 @@ static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
+ 		return bd;
+ 
+ 	bd = bsg_add_device(inode, bcd->queue, file);
+-	if (IS_ERR(bd))
+-		kref_put(&bcd->ref, bsg_kref_release_function);
+ 
+ 	return bd;
+ }
+@@ -902,6 +885,8 @@ static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ void bsg_unregister_queue(struct request_queue *q)
+ {
++	struct device *parent;
++	void (*release)(struct device *dev);
+ 	struct bsg_class_device *bcd = &q->bsg_dev;
+ 
+ 	if (!bcd->class_dev)
+@@ -913,8 +898,21 @@ void bsg_unregister_queue(struct request_queue *q)
+ 		sysfs_remove_link(&q->kobj, "bsg");
+ 	device_unregister(bcd->class_dev);
+ 	bcd->class_dev = NULL;
+-	kref_put(&bcd->ref, bsg_kref_release_function);
++	parent = bcd->parent;
++	release = bcd->release;
++	bcd->parent = NULL;
++	bcd->release = NULL;
+ 	mutex_unlock(&bsg_mutex);
++
++	/*
++	 * The caller of bsg_[un]register_queue must hold a reference
++	 * to the parent device between ..register.. and ..unregister..
++	 * so we do not maintain a refcount to parent here.
++	 * Note: the caller is expected to blk_cleanup_queue(q)
++	 * before releasing the reference to the parent device.
++	 */
++	if (release)
++		release(parent);
+ }
+ EXPORT_SYMBOL_GPL(bsg_unregister_queue);
+ 
+@@ -955,10 +953,9 @@ int bsg_register_queue(struct request_queue *q, struct device *parent,
+ 
+ 	bcd->minor = ret;
+ 	bcd->queue = q;
+-	bcd->parent = get_device(parent);
++	bcd->parent = parent;
+ 	bcd->release = release;
+ 	bcd->ops = ops;
+-	kref_init(&bcd->ref);
+ 	dev = MKDEV(bsg_major, bcd->minor);
+ 	class_dev = device_create(bsg_class, parent, dev, NULL, "%s", devname);
+ 	if (IS_ERR(class_dev)) {
+-- 
+1.9.1
