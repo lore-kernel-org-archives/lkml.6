@@ -1,58 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeEQG1j (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:27:39 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:40829 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeEQG1e (ORCPT
+        id S1752604AbeEQG2Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:28:25 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:24167 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751047AbeEQGSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:27:34 -0400
-X-Google-Smtp-Source: AB8JxZpQ6Juc50C433dn/JBhc6Vzm1vSSC26/qJe44NLt3oo5k77b8KtemBjxs9a3ixJm4wEI9KaFaeifpwFyF4AIvk=
-MIME-Version: 1.0
-In-Reply-To: <1526537830-22606-31-git-send-email-yamada.masahiro@socionext.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com> <1526537830-22606-31-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 16 May 2018 23:27:33 -0700
-X-Google-Sender-Auth: sY8gGXq6-t-qHEjTqXaXRvsU8Ww
-Message-ID: <CAGXu5jKjHAnT8666MVWzfK3ZYqwqf3hhDKmJ4gJZ8NUeqM==Aw@mail.gmail.com>
-Subject: Re: [PATCH v4 30/31] gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thu, 17 May 2018 02:18:51 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbU2002841
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v4 04/31] kconfig: remove string expansion in file_lookup()
+Date: Thu, 17 May 2018 15:16:43 +0900
+Message-Id: <1526537830-22606-5-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 11:17 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Now that the compiler's plugin support is checked in Kconfig,
-> all{yes,mod}config will not be bothered.
->
-> Remove 'depends on !COMPILE_TEST' for GCC_PLUGINS.
->
-> 'depends on !COMPILE_TEST' for the following three are still kept:
->   GCC_PLUGIN_CYC_COMPLEXITY
->   GCC_PLUGIN_STRUCTLEAK_VERBOSE
->   GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
->
-> Kees said to do so because the first two are too noisy, and the last
-> one would reduce the compile test coverage.  I commented the reasons
-> in arch/Kconfig.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+There are two callers of file_lookup(), but there is no more reason
+to expand the given path.
 
-I'm really looking forward to these being enabled for COMPILE_TEST. :)
+[1] zconf_initscan()
+    This is used to open the first Kconfig.  sym_expand_string_value()
+    has never been used in a useful way here; before opening the first
+    Kconfig file, obviously there is no symbol to expand.  If you use
+    expand_string_value() instead, environments in KBUILD_KCONFIG would
+    be expanded, but I do not see practical benefits for that.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+[2] zconf_nextfile()
+    This is used to open the next file from 'source' statement.
+    Symbols in the path like "arch/$SRCARCH/Kconfig" needed expanding,
+    but it was replaced with the direct environment expansion.  The
+    environment has already been expanded before the token is passed
+    to the parser.
 
--Kees
+By the way, file_lookup() was already buggy; it expanded a given path,
+but it used the path before expansion for look-up:
+        if (!strcmp(name, file->name)) {
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+
+Changes in v4: None
+Changes in v3: None
+Changes in v2:
+  - Simplify the patch.  Just remove text expansion.
+
+ scripts/kconfig/util.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 807147e..790967df 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -14,18 +14,16 @@
+ struct file *file_lookup(const char *name)
+ {
+ 	struct file *file;
+-	char *file_name = sym_expand_string_value(name);
+ 
+ 	for (file = file_list; file; file = file->next) {
+ 		if (!strcmp(name, file->name)) {
+-			free(file_name);
+ 			return file;
+ 		}
+ 	}
+ 
+ 	file = xmalloc(sizeof(*file));
+ 	memset(file, 0, sizeof(*file));
+-	file->name = file_name;
++	file->name = xstrdup(name);
+ 	file->next = file_list;
+ 	file_list = file;
+ 	return file;
 -- 
-Kees Cook
-Pixel Security
+2.7.4
