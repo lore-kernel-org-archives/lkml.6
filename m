@@ -1,72 +1,84 @@
-Return-Path: <mchehab@smtp.s-opensource.com>
-X-Google-Smtp-Source: AB8JxZoe+F+p9d/GFEK1mY7aHM0bLK2QorWevchfgDXdW8+3KHfwsh0iUTuFr4tFKeyBTq7TRifr
-ARC-Seal: i=1; a=rsa-sha256; t=1525871952; cv=none;
+Return-Path: <erin.lo@mediatek.com>
+X-Google-Smtp-Source: AB8JxZpvTLYSWqghiIuYRkRRvEjHLS6avAZeXnuCSOecsMK4DrMTBtY5W7ok72yTaXiLbtI1nxVH
+ARC-Seal: i=1; a=rsa-sha256; t=1526538137; cv=none;
         d=google.com; s=arc-20160816;
-        b=YfQEgu7GldiAcIaVnkt45kVEHnzY11wcKQwDVWuEyyyAQlxxSPnm69VRaO5brkwScD
-         kJGIcTs6eeA4CDT+KBWH/3aT12pI1QsjKJfPZEIaI8eU6kdEeL/dNSnvlytwOE6xrVrM
-         e/DNy9vYS2ZC/bL8p0/NBUFCKzrYyWg4wZSN9QHlKvIKGLrwt9CAZ/cVcDutcZM8OUXm
-         6CobsJguQpEJxZVDdgrDrVLVmJnCobASjfi+WjR/xPn6XRXGPnqZWugTApW8oZIOPV5S
-         fDuNbKGH27H5utBr2oO4KmvQErsrrDyq9c4SjDfI4/jHqewoakdxvzeyyVd3UHgNdoqH
-         MC9w==
+        b=o2vtnFPVv2R2D/Jga6Usw8+QNbY0JGAxpMDJz5bWtdDwrkVSrwTyLo7EwffCSV+xwV
+         3+CbbNegMZy5+Nw5TI6dseH1+8v1MEWg189uIvXsoldvH/rgUD7tYz+gYNQ1Y4WIGqMF
+         s/C1PekgFl/iXqvyREoXu/bBPJlJiLkFiUDcEQTsTO7bxBTsl07o6+vZMstpiEemlutJ
+         f+cYcpVYhQlwqziFfssDGqfHatZnmRkaqt6c9uV4GqLvZaSAq6AbS656q79JhkZkaps5
+         EOsTKbWQzde+VWZZQeZWIhyIWjj6B4rDRX+ed3XIzWY6w9JVrYaYCDg63T12KMGAkvSC
+         qseg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:references:in-reply-to:references:in-reply-to:message-id
-         :date:subject:cc:to:from:arc-authentication-results;
-        bh=7nvR6SM1qoeJQqNneeZWpxcam4zSkmAOTGZK2F8rdUE=;
-        b=kqPEHXd0gCN4w72Q310QuedglRYke0IENipdaEJzSl8PLJV8LmImeKZlHmGX5Mhv1t
-         JuDwt4oTvA5uRnQPFD93yFM+LXy1c9JVzMAGhjfEWTbWqg+9pS1IylLlNIWaU2iF6FHH
-         iZVAPf0Z4v+T5zWBsHkBFoxO6X3+MtA+CWdfjO5kU53jn/i8mDJbSM1oXh7iweZv+BiF
-         KRVzSooekHCIsFaxqDuFe3tk2DBq6AJYjLUgvTDvdqPKC0x4YD4eDaVtPFvhsMBJVJIj
-         tnmgvulNY5ULj3tnDZPtPogMi5Alqr0wssM/rLc1s0Ha3EFjTNmzAGTcOAvhjW6zw2S1
-         QveA==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=4TVuVcuqm8rVhHDkdCBa81qpXL1tpTnrU16vA0F0lAw=;
+        b=BWoymJg0rQtZ1nNuhWoY4oSA0vh8sH05OXu80DTK9qpgs7OXRsyLR23xZv1pl2aYjy
+         3PCMygPQtJtowkwaKPj96YQ//8ASer19fgJd2uxegDvw/S2gdOG0zjF02OX5T/AZc8K8
+         Q4SiSYxHHXOjqD+vlFYzjYBcGATXH4gL/0xvOFQjnLHwL695rfKcnwywOHajF7NAM0e4
+         /AyZ+++wAxNd2J0kXDD5kp4yr4JUpm5qIN8XO358037iOcOISJJDrELzN54YLaszRHi8
+         4YfTFowussHJI2y+JotUOC6aF2iwP0/UyQC2uHgGMFwwoY4mDy7t7P31RIcpgnHzMZpK
+         50kQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of erin.lo@mediatek.com designates 210.61.82.183 as permitted sender) smtp.mailfrom=erin.lo@mediatek.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 05/11] docs: uio-howto.rst: use a code block to solve a warning
-Date: Wed,  9 May 2018 10:18:48 -0300
-Message-Id: <4093cc9c8d981c3a5d810c22d7366b70164c61b3.1525870886.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
+       spf=pass (google.com: domain of erin.lo@mediatek.com designates 210.61.82.183 as permitted sender) smtp.mailfrom=erin.lo@mediatek.com
+X-UUID: 55cf72e1da2e401791d6a83b40b95202-20180517
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier
+	<marc.zyngier@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <devicetree@vger.kernel.org>, srv_heupstream
+	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yingjoe.chen@mediatek.com>,
+	<erin.lo@mediatek.com>, <mars.cheng@mediatek.com>
+Subject: [PATCH v3 0/4] Add basic support for Mediatek MT8183 SoC
+Date: Thu, 17 May 2018 14:22:02 +0800
+Message-ID: <1526538126-51497-1-git-send-email-erin.lo@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599992708463086993?=
-X-GMAIL-MSGID: =?utf-8?q?1599992708463086993?=
+X-GMAIL-THRID: =?utf-8?q?1600691253968751720?=
+X-GMAIL-MSGID: =?utf-8?q?1600691253968751720?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-/devel/v4l/docs/Documentation/driver-api/uio-howto.rst:715: WARNING: Unexpected indentation.
+MT8183 is a SoC based on 64bit ARMv8 architecture.
+It contains 4 CA53 and 4 CA73 cores.
+MT8183 share many HW IP with MT65xx series.
+This patchset was tested on MT8183 evaluation board, and boot to shell ok.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/driver-api/uio-howto.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This series contains document bindings, device tree including interrupt, uart.
 
-diff --git a/Documentation/driver-api/uio-howto.rst b/Documentation/driver-api/uio-howto.rst
-index 92056c20e070..fb2eb73be4a3 100644
---- a/Documentation/driver-api/uio-howto.rst
-+++ b/Documentation/driver-api/uio-howto.rst
-@@ -711,7 +711,8 @@ The vmbus device regions are mapped into uio device resources:
- 
- If a subchannel is created by a request to host, then the uio_hv_generic
- device driver will create a sysfs binary file for the per-channel ring buffer.
--For example:
-+For example::
-+
- 	/sys/bus/vmbus/devices/3811fe4d-0fa0-4b62-981a-74fc1084c757/channels/21/ring
- 
- Further information
--- 
-2.17.0
+Change in v3:
+1. Fill out GICC, GICH, GICV regions
+2. Update Copyright to 2018
+
+Change in v2:
+1. Split dt-bindings into different patches
+2. Correct bindings for supported SoCs (mtk-uart.txt)
+
+Ben Ho (1):
+  arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+    Makefile
+
+Erin Lo (3):
+  dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+  dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+  dt-bindings: serial: Add compatible for Mediatek MT8183
+
+ Documentation/devicetree/bindings/arm/mediatek.txt |   4 +
+ .../interrupt-controller/mediatek,sysirq.txt       |   1 +
+ .../devicetree/bindings/serial/mtk-uart.txt        |   1 +
+ arch/arm64/boot/dts/mediatek/Makefile              |   1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |  31 ++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           | 182 +++++++++++++++++++++
+ 6 files changed, 220 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
+
+--
+1.9.1
