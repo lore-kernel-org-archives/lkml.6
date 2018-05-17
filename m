@@ -1,31 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeEQQsn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:48:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53370 "EHLO
+        id S1752237AbeEQQtI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:49:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53142 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeEQQll (ORCPT
+        with ESMTP id S1752647AbeEQQle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:41:41 -0400
+        Thu, 17 May 2018 12:41:34 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: s2mps11: Pass descriptor instead of GPIO number" to the regulator tree
-In-Reply-To: <20180212131717.27193-14-linus.walleij@linaro.org>
-Message-Id: <20180517164135.98F9344007E@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 17:41:35 +0100 (BST)
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Parse coupled regulators properties" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180517164128.D71D244007E@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 17:41:28 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: s2mps11: Pass descriptor instead of GPIO number
+   regulator: core: Parse coupled regulators properties
 
 has been applied to the regulator tree at
 
@@ -50,148 +45,319 @@ to this mail.
 Thanks,
 Mark
 
->From 0369e02b75e6381f892e3bd45f1d8d6330d855fb Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 14 May 2018 10:06:31 +0200
-Subject: [PATCH] regulator: s2mps11: Pass descriptor instead of GPIO number
+>From a085a31af566254fb8f7721911c828c8fa797894 Mon Sep 17 00:00:00 2001
+From: Maciej Purski <m.purski@samsung.com>
+Date: Mon, 23 Apr 2018 16:33:39 +0200
+Subject: [PATCH] regulator: core: Parse coupled regulators properties
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up with the standard devm_gpiod_get_optional()
-call.
+On Odroid XU3/4 and other Exynos5422 based boards there is a case, that
+different devices on the board are supplied by different regulators
+with non-fixed voltages. If one of these devices temporarily requires
+higher voltage, there might occur a situation that the spread between
+devices' voltages is so high, that there is a risk of changing
+'high' and 'low' states on the interconnection between devices powered
+by those regulators.
 
-This regulator supports passing platform data, but enable/sleep
-regulators are looked up from the device tree exclusively, so
-we can need not touch other files.
+Add new structure "coupling_desc" to regulator_dev, which contains
+pointers to all coupled regulators including the owner of the structure,
+number of coupled regulators and counter of currently resolved
+regulators.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Add of_functions to parse all data needed in regulator coupling.
+Provide method to check DTS data consistency. Check if each coupled
+regulator's max_spread is equal and if their lists of regulators match.
+
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s2mps11.c | 46 ++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ drivers/regulator/internal.h      |  28 +++++-
+ drivers/regulator/of_regulator.c  | 151 ++++++++++++++++++++++++++++++
+ include/linux/regulator/driver.h  |  18 ++++
+ include/linux/regulator/machine.h |   4 +
+ 4 files changed, 199 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 7726b874e539..9a1dca26362e 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -18,7 +18,7 @@
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index 24fde1e08f3a..943926a156f2 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -62,6 +62,14 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			         const struct regulator_desc *desc,
+ 				 struct regulator_config *config,
+ 				 struct device_node **node);
++
++struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
++						 int index);
++
++int of_get_n_coupled(struct regulator_dev *rdev);
++
++bool of_check_coupling_data(struct regulator_dev *rdev);
++
+ #else
+ static inline struct regulator_dev *
+ of_find_regulator_by_node(struct device_node *np)
+@@ -77,8 +85,25 @@ regulator_of_get_init_data(struct device *dev,
+ {
+ 	return NULL;
+ }
+-#endif
  
- #include <linux/bug.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -27,7 +27,6 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
--#include <linux/of_gpio.h>
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
-@@ -57,7 +56,7 @@ struct s2mps11_info {
- 	 * Array (size: number of regulators) with GPIO-s for external
- 	 * sleep control.
- 	 */
--	int *ext_control_gpio;
-+	struct gpio_desc **ext_control_gpiod;
++static inline struct regulator_dev *
++of_parse_coupled_regulator(struct regulator_dev *rdev,
++			   int index)
++{
++	return NULL;
++}
++
++static inline int of_get_n_coupled(struct regulator_dev *rdev)
++{
++	return 0;
++}
++
++static inline bool of_check_coupling_data(struct regulator_dev *rdev)
++{
++	return false;
++}
++
++#endif
+ enum regulator_get_type {
+ 	NORMAL_GET,
+ 	EXCLUSIVE_GET,
+@@ -88,5 +113,4 @@ enum regulator_get_type {
+ 
+ struct regulator *_regulator_get(struct device *dev, const char *id,
+ 				 enum regulator_get_type get_type);
+-
+ #endif
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index d61fed28fdb9..638f17d4c848 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -166,6 +166,10 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	if (!of_property_read_u32(np, "regulator-system-load", &pval))
+ 		constraints->system_load = pval;
+ 
++	if (!of_property_read_u32(np, "regulator-coupled-max-spread",
++				  &pval))
++		constraints->max_spread = pval;
++
+ 	constraints->over_current_protection = of_property_read_bool(np,
+ 					"regulator-over-current-protection");
+ 
+@@ -435,3 +439,150 @@ struct regulator_dev *of_find_regulator_by_node(struct device_node *np)
+ 
+ 	return dev ? dev_to_rdev(dev) : NULL;
+ }
++
++/*
++ * Returns number of regulators coupled with rdev.
++ */
++int of_get_n_coupled(struct regulator_dev *rdev)
++{
++	struct device_node *node = rdev->dev.of_node;
++	int n_phandles;
++
++	n_phandles = of_count_phandle_with_args(node,
++						"regulator-coupled-with",
++						NULL);
++
++	return (n_phandles > 0) ? n_phandles : 0;
++}
++
++/* Looks for "to_find" device_node in src's "regulator-coupled-with" property */
++static bool of_coupling_find_node(struct device_node *src,
++				  struct device_node *to_find)
++{
++	int n_phandles, i;
++	bool found = false;
++
++	n_phandles = of_count_phandle_with_args(src,
++						"regulator-coupled-with",
++						NULL);
++
++	for (i = 0; i < n_phandles; i++) {
++		struct device_node *tmp = of_parse_phandle(src,
++					   "regulator-coupled-with", i);
++
++		if (!tmp)
++			break;
++
++		/* found */
++		if (tmp == to_find)
++			found = true;
++
++		of_node_put(tmp);
++
++		if (found)
++			break;
++	}
++
++	return found;
++}
++
++/**
++ * of_check_coupling_data - Parse rdev's coupling properties and check data
++ *			    consistency
++ * @rdev - pointer to regulator_dev whose data is checked
++ *
++ * Function checks if all the following conditions are met:
++ * - rdev's max_spread is greater than 0
++ * - all coupled regulators have the same max_spread
++ * - all coupled regulators have the same number of regulator_dev phandles
++ * - all regulators are linked to each other
++ *
++ * Returns true if all conditions are met.
++ */
++bool of_check_coupling_data(struct regulator_dev *rdev)
++{
++	int max_spread = rdev->constraints->max_spread;
++	struct device_node *node = rdev->dev.of_node;
++	int n_phandles = of_get_n_coupled(rdev);
++	struct device_node *c_node;
++	int i;
++	bool ret = true;
++
++	if (max_spread <= 0) {
++		dev_err(&rdev->dev, "max_spread value invalid\n");
++		return false;
++	}
++
++	/* iterate over rdev's phandles */
++	for (i = 0; i < n_phandles; i++) {
++		int c_max_spread, c_n_phandles;
++
++		c_node = of_parse_phandle(node,
++					  "regulator-coupled-with", i);
++
++		if (!c_node)
++			ret = false;
++
++		c_n_phandles = of_count_phandle_with_args(c_node,
++							  "regulator-coupled-with",
++							  NULL);
++
++		if (c_n_phandles != n_phandles) {
++			dev_err(&rdev->dev, "number of couped reg phandles mismatch\n");
++			ret = false;
++			goto clean;
++		}
++
++		if (of_property_read_u32(c_node, "regulator-coupled-max-spread",
++					 &c_max_spread)) {
++			ret = false;
++			goto clean;
++		}
++
++		if (c_max_spread != max_spread) {
++			dev_err(&rdev->dev,
++				"coupled regulators max_spread mismatch\n");
++			ret = false;
++			goto clean;
++		}
++
++		if (!of_coupling_find_node(c_node, node)) {
++			dev_err(&rdev->dev, "missing 2-way linking for coupled regulators\n");
++			ret = false;
++		}
++
++clean:
++		of_node_put(c_node);
++		if (!ret)
++			break;
++	}
++
++	return ret;
++}
++
++/**
++ * of_parse_coupled regulator - Get regulator_dev pointer from rdev's property
++ * @rdev: Pointer to regulator_dev, whose DTS is used as a source to parse
++ *	  "regulator-coupled-with" property
++ * @index: Index in phandles array
++ *
++ * Returns the regulator_dev pointer parsed from DTS. If it has not been yet
++ * registered, returns NULL
++ */
++struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
++						 int index)
++{
++	struct device_node *node = rdev->dev.of_node;
++	struct device_node *c_node;
++	struct regulator_dev *c_rdev;
++
++	c_node = of_parse_phandle(node, "regulator-coupled-with", index);
++	if (!c_node)
++		return NULL;
++
++	c_rdev = of_find_regulator_by_node(c_node);
++
++	of_node_put(c_node);
++
++	return c_rdev;
++}
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index c2a181fa7287..fc2dc8df476f 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -15,6 +15,8 @@
+ #ifndef __LINUX_REGULATOR_DRIVER_H_
+ #define __LINUX_REGULATOR_DRIVER_H_
+ 
++#define MAX_COUPLED		4
++
+ #include <linux/device.h>
+ #include <linux/notifier.h>
+ #include <linux/regulator/consumer.h>
+@@ -409,6 +411,20 @@ struct regulator_config {
+ 	unsigned int ena_gpio_flags;
  };
  
- static int get_ramp_delay(int ramp_delay)
-@@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 	case S2MPS14X:
- 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPS14_ENABLE_SUSPEND;
--		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
-+		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
- 			val = S2MPS14_ENABLE_EXT_CONTROL;
- 		else
- 			val = rdev->desc->enable_mask;
-@@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
- {
--	int *gpio = s2mps11->ext_control_gpio;
-+	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
- 	unsigned int i;
- 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
- 		S2MPS14_LDO12 };
-@@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
- 			continue;
++/*
++ * struct coupling_desc
++ *
++ * Describes coupling of regulators. Each regulator should have
++ * at least a pointer to itself in coupled_rdevs array.
++ * When a new coupled regulator is resolved, n_resolved is
++ * incremented.
++ */
++struct coupling_desc {
++	struct regulator_dev *coupled_rdevs[MAX_COUPLED];
++	int n_resolved;
++	int n_coupled;
++};
++
+ /*
+  * struct regulator_dev
+  *
+@@ -432,6 +448,8 @@ struct regulator_dev {
+ 	/* lists we own */
+ 	struct list_head consumer_list; /* consumers we supply */
  
--		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
--				"samsung,ext-control-gpios", 0);
--		if (gpio_is_valid(gpio[reg]))
--			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
--					gpio[reg], reg, rdata[reg].name);
-+		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
-+							rdata[reg].of_node,
-+							"samsung,ext-control-gpios",
-+							0,
-+							GPIOD_OUT_HIGH,
-+							"s2mps11-LDO");
-+		if (IS_ERR(gpio[reg])) {
-+			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
-+				reg, rdata[reg].name);
-+			continue;
-+		}
-+		if (gpio[reg])
-+			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
-+				reg, rdata[reg].name);
- 	}
- }
++	struct coupling_desc coupling_desc;
++
+ 	struct blocking_notifier_head notifier;
+ 	struct mutex mutex; /* consumer lock */
+ 	struct task_struct *mutex_owner;
+diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
+index 93a04893c739..3468703d663a 100644
+--- a/include/linux/regulator/machine.h
++++ b/include/linux/regulator/machine.h
+@@ -103,6 +103,7 @@ struct regulator_state {
+  * @ilim_uA: Maximum input current.
+  * @system_load: Load that isn't captured by any consumer requests.
+  *
++ * @max_spread: Max possible spread between coupled regulators
+  * @valid_modes_mask: Mask of modes which may be configured by consumers.
+  * @valid_ops_mask: Operations which may be performed by consumers.
+  *
+@@ -154,6 +155,9 @@ struct regulation_constraints {
  
-@@ -1139,17 +1147,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	int system_load;
  
--	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
--			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
-+	s2mps11->ext_control_gpiod = devm_kmalloc(&pdev->dev,
-+			sizeof(*s2mps11->ext_control_gpiod) * rdev_num,
- 			GFP_KERNEL);
--	if (!s2mps11->ext_control_gpio)
-+	if (!s2mps11->ext_control_gpiod)
- 		return -ENOMEM;
--	/*
--	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
--	 * to indicate that external control won't be used for this regulator.
--	 */
--	for (i = 0; i < rdev_num; i++)
--		s2mps11->ext_control_gpio[i] = -EINVAL;
++	/* used for coupled regulators */
++	int max_spread;
++
+ 	/* valid regulator operating modes for this machine */
+ 	unsigned int valid_modes_mask;
  
- 	if (!iodev->dev->of_node) {
- 		if (iodev->pdata) {
-@@ -1179,8 +1181,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
--	config.ena_gpio_initialized = true;
- 	for (i = 0; i < rdev_num; i++) {
- 		struct regulator_dev *regulator;
- 
-@@ -1191,7 +1191,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			config.init_data = rdata[i].init_data;
- 			config.of_node = rdata[i].of_node;
- 		}
--		config.ena_gpio = s2mps11->ext_control_gpio[i];
-+		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
- 
- 		regulator = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
-@@ -1202,7 +1202,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
-+		if (s2mps11->ext_control_gpiod[i]) {
- 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
- 					regulator);
- 			if (ret < 0) {
 -- 
 2.17.0
