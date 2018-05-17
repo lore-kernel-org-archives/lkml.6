@@ -1,609 +1,383 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeEQRSS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:18:18 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33362 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751231AbeEQRSQ (ORCPT
+        id S1752277AbeEQRSo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:18:44 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43401 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752136AbeEQRSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:18:16 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v4] media: Remove depends on HAS_DMA in case of platform dependency
-Date: Thu, 17 May 2018 19:18:12 +0200
-Message-Id: <1526577492-19538-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 17 May 2018 13:18:41 -0400
+X-Google-Smtp-Source: AB8JxZrH+tiHC5/8pWMWsnDvbDry7WlTRvmsAnTW4iKixsBMwVp+kHW5e00+QqamrqZMc8FQNBY9tVf9BEnkBOLs7FU=
+MIME-Version: 1.0
+In-Reply-To: <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
+References: <cover.1526504511.git.sean@mess.org> <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
+From: Y Song <ys114321@gmail.com>
+Date: Thu, 17 May 2018 10:17:59 -0700
+Message-ID: <CAH3MdRUhrBzHXKgcu1htSHTqeKVWnci+ADrTriCqjXLHUezB+w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] bpf: add selftest for rawir_event type program
+To: Sean Young <sean@mess.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4HHImE2027849
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+On Wed, May 16, 2018 at 2:04 PM, Sean Young <sean@mess.org> wrote:
+> This is simple test over rc-loopback.
+>
+> Signed-off-by: Sean Young <sean@mess.org>
+> ---
+>  tools/bpf/bpftool/prog.c                      |   1 +
+>  tools/include/uapi/linux/bpf.h                |  57 +++++++-
+>  tools/lib/bpf/libbpf.c                        |   1 +
+>  tools/testing/selftests/bpf/Makefile          |   8 +-
+>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
+>  tools/testing/selftests/bpf/test_rawir.sh     |  37 +++++
+>  .../selftests/bpf/test_rawir_event_kern.c     |  26 ++++
+>  .../selftests/bpf/test_rawir_event_user.c     | 130 ++++++++++++++++++
+>  8 files changed, 261 insertions(+), 5 deletions(-)
+>  create mode 100755 tools/testing/selftests/bpf/test_rawir.sh
+>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_kern.c
+>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_user.c
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Could you copy include/uapi/linux/lirc.h file to tools directory as well.
+Otherwise, I will get the following compilation error:
 
-This simplifies the dependencies, and allows to improve compile-testing.
+gcc -Wall -O2 -I../../../include/uapi -I../../../lib
+-I../../../lib/bpf -I../../../../include/generated  -I../../../include
+   test_rawir_event_user.c
+/home/yhs/work/bpf-next/tools/testing/selftests/bpf/libbpf.a -lcap
+-lelf -lrt -lpthread -o
+/home/yhs/work/bpf-next/tools/testing/selftests/bpf/test_rawir_event_user
+test_rawir_event_user.c: In function ‘main’:
+test_rawir_event_user.c:60:15: error: ‘LIRC_MODE_SCANCODE’ undeclared
+(first use in this function); did you mean ‘LIRC_MODE_LIRCCODE’?
+        mode = LIRC_MODE_SCANCODE;
+               ^~~~~~~~~~~~~~~~~~
+               LIRC_MODE_LIRCCODE
+test_rawir_event_user.c:60:15: note: each undeclared identifier is
+reported only once for each function it appears in
+test_rawir_event_user.c:93:29: error: storage size of ‘lsc’ isn’t known
+        struct lirc_scancode lsc;
+                             ^~~
+test_rawir_event_user.c:93:29: warning: unused variable ‘lsc’
+[-Wunused-variable]
 
-Note:
-  - The various VIDEOBUF*DMA* symbols had to loose their dependencies on
-    HAS_DMA, as they are selected by several individual drivers.
+>
+> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> index 9bdfdf2d3fbe..8889a4ee8577 100644
+> --- a/tools/bpf/bpftool/prog.c
+> +++ b/tools/bpf/bpftool/prog.c
+> @@ -71,6 +71,7 @@ static const char * const prog_type_name[] = {
+>         [BPF_PROG_TYPE_SK_MSG]          = "sk_msg",
+>         [BPF_PROG_TYPE_RAW_TRACEPOINT]  = "raw_tracepoint",
+>         [BPF_PROG_TYPE_CGROUP_SOCK_ADDR] = "cgroup_sock_addr",
+> +       [BPF_PROG_TYPE_RAWIR_EVENT]     = "rawir_event",
+>  };
+>
+>  static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> index 1205d86a7a29..243e141e8a5b 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
+> @@ -141,6 +141,7 @@ enum bpf_prog_type {
+>         BPF_PROG_TYPE_SK_MSG,
+>         BPF_PROG_TYPE_RAW_TRACEPOINT,
+>         BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
+> +       BPF_PROG_TYPE_RAWIR_EVENT,
+>  };
+>
+>  enum bpf_attach_type {
+> @@ -158,6 +159,7 @@ enum bpf_attach_type {
+>         BPF_CGROUP_INET6_CONNECT,
+>         BPF_CGROUP_INET4_POST_BIND,
+>         BPF_CGROUP_INET6_POST_BIND,
+> +       BPF_RAWIR_EVENT,
+>         __MAX_BPF_ATTACH_TYPE
+>  };
+>
+> @@ -1829,7 +1831,6 @@ union bpf_attr {
+>   *     Return
+>   *             0 on success, or a negative error in case of failure.
+>   *
+> - *
+>   * int bpf_fib_lookup(void *ctx, struct bpf_fib_lookup *params, int plen, u32 flags)
+>   *     Description
+>   *             Do FIB lookup in kernel tables using parameters in *params*.
+> @@ -1856,6 +1857,7 @@ union bpf_attr {
+>   *             Egress device index on success, 0 if packet needs to continue
+>   *             up the stack for further processing or a negative error in case
+>   *             of failure.
+> + *
+>   * int bpf_sock_hash_update(struct bpf_sock_ops_kern *skops, struct bpf_map *map, void *key, u64 flags)
+>   *     Description
+>   *             Add an entry to, or update a sockhash *map* referencing sockets.
+> @@ -1902,6 +1904,35 @@ union bpf_attr {
+>   *             egress otherwise). This is the only flag supported for now.
+>   *     Return
+>   *             **SK_PASS** on success, or **SK_DROP** on error.
+> + *
+> + * int bpf_rc_keydown(void *ctx, u32 protocol, u32 scancode, u32 toggle)
+> + *     Description
+> + *             Report decoded scancode with toggle value. For use in
+> + *             BPF_PROG_TYPE_RAWIR_EVENT, to report a successfully
+> + *             decoded scancode. This is will generate a keydown event,
+> + *             and a keyup event once the scancode is no longer repeated.
+> + *
+> + *             *ctx* pointer to bpf_rawir_event, *protocol* is decoded
+> + *             protocol (see RC_PROTO_* enum).
+> + *
+> + *             Some protocols include a toggle bit, in case the button
+> + *             was released and pressed again between consecutive scancodes,
+> + *             copy this bit into *toggle* if it exists, else set to 0.
+> + *
+> + *     Return
+> + *             Always return 0 (for now)
+> + *
+> + * int bpf_rc_repeat(void *ctx)
+> + *     Description
+> + *             Repeat the last decoded scancode; some IR protocols like
+> + *             NEC have a special IR message for repeat last button,
+> + *             in case user is holding a button down; the scancode is
+> + *             not repeated.
+> + *
+> + *             *ctx* pointer to bpf_rawir_event.
+> + *
+> + *     Return
+> + *             Always return 0 (for now)
+>   */
+>  #define __BPF_FUNC_MAPPER(FN)          \
+>         FN(unspec),                     \
+> @@ -1976,7 +2007,9 @@ union bpf_attr {
+>         FN(fib_lookup),                 \
+>         FN(sock_hash_update),           \
+>         FN(msg_redirect_hash),          \
+> -       FN(sk_redirect_hash),
+> +       FN(sk_redirect_hash),           \
+> +       FN(rc_repeat),                  \
+> +       FN(rc_keydown),
+>
+>  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+>   * function eBPF program intends to call
+> @@ -2043,6 +2076,26 @@ enum bpf_hdr_start_off {
+>         BPF_HDR_START_NET,
+>  };
+>
+> +/*
+> + * user accessible mirror of in-kernel ir_raw_event
+> + */
+> +#define BPF_RAWIR_EVENT_SPACE          0
+> +#define BPF_RAWIR_EVENT_PULSE          1
+> +#define BPF_RAWIR_EVENT_TIMEOUT                2
+> +#define BPF_RAWIR_EVENT_RESET          3
+> +#define BPF_RAWIR_EVENT_CARRIER                4
+> +#define BPF_RAWIR_EVENT_DUTY_CYCLE     5
+> +
+> +struct bpf_rawir_event {
+> +       union {
+> +               __u32   duration;
+> +               __u32   carrier;
+> +               __u32   duty_cycle;
+> +       };
+> +
+> +       __u32   type;
+> +};
+> +
+>  /* user accessible mirror of in-kernel sk_buff.
+>   * new fields can only be added to the end of this structure
+>   */
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index df54c4c9e48a..372269e9053d 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -1455,6 +1455,7 @@ static bool bpf_prog_type__needs_kver(enum bpf_prog_type type)
+>         case BPF_PROG_TYPE_CGROUP_DEVICE:
+>         case BPF_PROG_TYPE_SK_MSG:
+>         case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
+> +       case BPF_PROG_TYPE_RAWIR_EVENT:
+>                 return false;
+>         case BPF_PROG_TYPE_UNSPEC:
+>         case BPF_PROG_TYPE_KPROBE:
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index 1eb0fa2aba92..b84e36d05d34 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -24,7 +24,7 @@ urandom_read: urandom_read.c
+>  # Order correspond to 'make run_tests' order
+>  TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
+>         test_align test_verifier_log test_dev_cgroup test_tcpbpf_user \
+> -       test_sock test_btf test_sockmap
+> +       test_sock test_btf test_sockmap test_rawir_event_user
+>
+>  TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test_obj_id.o \
+>         test_pkt_md_access.o test_xdp_redirect.o test_xdp_meta.o sockmap_parse_prog.o     \
+> @@ -33,7 +33,8 @@ TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test
+>         sample_map_ret0.o test_tcpbpf_kern.o test_stacktrace_build_id.o \
+>         sockmap_tcp_msg_prog.o connect4_prog.o connect6_prog.o test_adjust_tail.o \
+>         test_btf_haskv.o test_btf_nokv.o test_sockmap_kern.o test_tunnel_kern.o \
+> -       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o
+> +       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o \
+> +       test_rawir_event_kern.o
+>
+>  # Order correspond to 'make run_tests' order
+>  TEST_PROGS := test_kmod.sh \
+> @@ -42,7 +43,8 @@ TEST_PROGS := test_kmod.sh \
+>         test_xdp_meta.sh \
+>         test_offload.py \
+>         test_sock_addr.sh \
+> -       test_tunnel.sh
+> +       test_tunnel.sh \
+> +       test_rawir.sh
+>
+>  # Compile but not part of 'make run_tests'
+>  TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr
+> diff --git a/tools/testing/selftests/bpf/bpf_helpers.h b/tools/testing/selftests/bpf/bpf_helpers.h
+> index 8f143dfb3700..26d89b7f9841 100644
+> --- a/tools/testing/selftests/bpf/bpf_helpers.h
+> +++ b/tools/testing/selftests/bpf/bpf_helpers.h
+> @@ -114,6 +114,12 @@ static int (*bpf_get_stack)(void *ctx, void *buf, int size, int flags) =
+>  static int (*bpf_fib_lookup)(void *ctx, struct bpf_fib_lookup *params,
+>                              int plen, __u32 flags) =
+>         (void *) BPF_FUNC_fib_lookup;
+> +static int (*bpf_rc_repeat)(void *ctx) =
+> +       (void *) BPF_FUNC_rc_repeat;
+> +static int (*bpf_rc_keydown)(void *ctx, unsigned int protocol,
+> +                            unsigned int scancode, unsigned int toggle) =
+> +       (void *) BPF_FUNC_rc_keydown;
+> +
+>
+>  /* llvm builtin functions that eBPF C program may use to
+>   * emit BPF_LD_ABS and BPF_LD_IND instructions
+> diff --git a/tools/testing/selftests/bpf/test_rawir.sh b/tools/testing/selftests/bpf/test_rawir.sh
+> new file mode 100755
+> index 000000000000..0aa77b043ee1
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/test_rawir.sh
+> @@ -0,0 +1,37 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# Test bpf_rawir_event over rc-loopback. Steps for the test:
+> +#
+> +# 1. Find the /dev/lircN device for rc-loopback
+> +# 2. Attach bpf_rawir_event program which decodes some IR.
+> +# 3. Send some IR to the same IR device; since it is loopback, this will
+> +#    end up in the bpf program
+> +# 4. bpf program should decode IR and report keycode
+> +# 5. We can read keycode from same /dev/lirc device
+> +
+> +GREEN='\033[0;92m'
+> +RED='\033[0;31m'
+> +NC='\033[0m' # No Color
+> +
+> +modprobe rc-loopback
+> +
+> +for i in /sys/class/rc/rc*
+> +do
+> +       if grep -q DRV_NAME=rc-loopback $i/uevent
+> +       then
+> +               LIRCDEV=$(grep DEVNAME= $i/lirc*/uevent | sed sQDEVNAME=Q/dev/Q)
+> +       fi
+> +done
+> +
+> +if [ -n $LIRCDEV ];
+> +then
+> +       TYPE=rawir_event
+> +       ./test_rawir_event_user $LIRCDEV
+> +       ret=$?
+> +       if [ $ret -ne 0 ]; then
+> +               echo -e ${RED}"FAIL: $TYPE"${NC}
+> +       else
+> +               echo -e ${GREEN}"PASS: $TYPE"${NC}
+> +       fi
+> +fi
+> diff --git a/tools/testing/selftests/bpf/test_rawir_event_kern.c b/tools/testing/selftests/bpf/test_rawir_event_kern.c
+> new file mode 100644
+> index 000000000000..33ba5d30af62
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/test_rawir_event_kern.c
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// test ir decoder
+> +//
+> +// Copyright (C) 2018 Sean Young <sean@mess.org>
+> +
+> +#include <linux/bpf.h>
+> +#include "bpf_helpers.h"
+> +
+> +SEC("rawir_event")
+> +int bpf_decoder(struct bpf_rawir_event *e)
+> +{
+> +       if (e->type == BPF_RAWIR_EVENT_PULSE) {
+> +               /*
+> +                * The lirc interface is microseconds, but here we receive
+> +                * nanoseconds.
+> +                */
+> +               int microseconds = e->duration / 1000;
+> +
+> +               if (microseconds & 0x10000)
+> +                       bpf_rc_keydown(e, 0x40, microseconds & 0xffff, 0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +char _license[] SEC("license") = "GPL";
+> diff --git a/tools/testing/selftests/bpf/test_rawir_event_user.c b/tools/testing/selftests/bpf/test_rawir_event_user.c
+> new file mode 100644
+> index 000000000000..c3d7f2c68033
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/test_rawir_event_user.c
+> @@ -0,0 +1,130 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// test ir decoder
+> +//
+> +// Copyright (C) 2018 Sean Young <sean@mess.org>
+> +
+> +#include <linux/bpf.h>
+> +#include <linux/lirc.h>
+> +#include <assert.h>
+> +#include <errno.h>
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <stdbool.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <poll.h>
+> +#include <libgen.h>
+> +#include <sys/resource.h>
+> +#include <sys/types.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/stat.h>
+> +#include <fcntl.h>
+> +
+> +#include "bpf_util.h"
+> +#include <bpf/bpf.h>
+> +#include <bpf/libbpf.h>
+> +
+> +int main(int argc, char **argv)
+> +{
+> +       struct bpf_object *obj;
+> +       int ret, lircfd, progfd, mode;
+> +       int testir = 0x1dead;
+> +       u32 prog_ids[10], prog_flags[10], prog_cnt;
+> +
+> +       if (argc != 2) {
+> +               printf("Usage: %s /dev/lircN\n", argv[0]);
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
----
-From: kbuild test robot <lkp@intel.com>
+Most people probably not really familiar with lircN device. It would be
+good to provide more information about how to enable this, e.g.,
+  CONFIG_RC_CORE=y
+  CONFIG_BPF_RAWIR_EVENT=y
+  CONFIG_RC_LOOPBACK=y
+  ......
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git  no-dma-compile-testing-v4-media
-branch HEAD: 9fd4215b490cae0bb6dd058a18a19e60dbcd3020  media: Remove depends on HAS_DMA in case of platform dependency
-
-elapsed time: 41m
-
-configs tested: 99
-
----
-v4:
-  - Rebase to media-next on 2018-05-17,
-
-v3:
-  - Rebase to v4.17-rc1,
-  - Handle new VIDEO_RENESAS_CEU symbol,
-
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Drop dependency of VIDEOBUF{,2}_DMA_{CONTIG,SG} on HAS_DMA,
-  - Drop new dependencies of VIDEO_IPU3_CIO2 and DVB_C8SECTPFE on
-    HAS_DMA,
-  - Split per subsystem.
----
- drivers/media/common/videobuf2/Kconfig       |  2 --
- drivers/media/pci/dt3155/Kconfig             |  1 -
- drivers/media/pci/intel/ipu3/Kconfig         |  1 -
- drivers/media/pci/solo6x10/Kconfig           |  1 -
- drivers/media/pci/sta2x11/Kconfig            |  1 -
- drivers/media/pci/tw5864/Kconfig             |  1 -
- drivers/media/pci/tw686x/Kconfig             |  1 -
- drivers/media/platform/Kconfig               | 43 +++++++++-------------------
- drivers/media/platform/am437x/Kconfig        |  2 +-
- drivers/media/platform/atmel/Kconfig         |  4 +--
- drivers/media/platform/davinci/Kconfig       |  6 ----
- drivers/media/platform/marvell-ccic/Kconfig  |  2 --
- drivers/media/platform/rcar-vin/Kconfig      |  2 +-
- drivers/media/platform/soc_camera/Kconfig    |  3 +-
- drivers/media/platform/sti/c8sectpfe/Kconfig |  2 +-
- drivers/media/v4l2-core/Kconfig              |  2 --
- drivers/staging/media/davinci_vpfe/Kconfig   |  1 -
- drivers/staging/media/omap4iss/Kconfig       |  1 -
- 18 files changed, 20 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/media/common/videobuf2/Kconfig b/drivers/media/common/videobuf2/Kconfig
-index 17c32ea58395d78f..4ed11b46676ac4d0 100644
---- a/drivers/media/common/videobuf2/Kconfig
-+++ b/drivers/media/common/videobuf2/Kconfig
-@@ -12,7 +12,6 @@ config VIDEOBUF2_MEMOPS
- 
- config VIDEOBUF2_DMA_CONTIG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF2_CORE
- 	select VIDEOBUF2_MEMOPS
- 	select DMA_SHARED_BUFFER
-@@ -25,7 +24,6 @@ config VIDEOBUF2_VMALLOC
- 
- config VIDEOBUF2_DMA_SG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF2_CORE
- 	select VIDEOBUF2_MEMOPS
- 
-diff --git a/drivers/media/pci/dt3155/Kconfig b/drivers/media/pci/dt3155/Kconfig
-index 5145e0dfa2aa9e12..858b0f2f15bef9c8 100644
---- a/drivers/media/pci/dt3155/Kconfig
-+++ b/drivers/media/pci/dt3155/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_DT3155
- 	tristate "DT3155 frame grabber"
- 	depends on PCI && VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	default n
- 	---help---
-diff --git a/drivers/media/pci/intel/ipu3/Kconfig b/drivers/media/pci/intel/ipu3/Kconfig
-index 45cf99a512e484d5..c8bd98d7564afdfb 100644
---- a/drivers/media/pci/intel/ipu3/Kconfig
-+++ b/drivers/media/pci/intel/ipu3/Kconfig
-@@ -4,7 +4,6 @@ config VIDEO_IPU3_CIO2
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	depends on (X86 && ACPI) || COMPILE_TEST
- 	depends on MEDIA_CONTROLLER
--	depends on HAS_DMA
- 	select V4L2_FWNODE
- 	select VIDEOBUF2_DMA_SG
- 
-diff --git a/drivers/media/pci/solo6x10/Kconfig b/drivers/media/pci/solo6x10/Kconfig
-index 0fb91dc7ca73529e..d9e06a6bf1ebc1a7 100644
---- a/drivers/media/pci/solo6x10/Kconfig
-+++ b/drivers/media/pci/solo6x10/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_SOLO6X10
- 	tristate "Bluecherry / Softlogic 6x10 capture cards (MPEG-4/H.264)"
- 	depends on PCI && VIDEO_DEV && SND && I2C
--	depends on HAS_DMA
- 	select BITREVERSE
- 	select FONT_SUPPORT
- 	select FONT_8x16
-diff --git a/drivers/media/pci/sta2x11/Kconfig b/drivers/media/pci/sta2x11/Kconfig
-index 7af3f1cbcea824b9..4407b9f881e400d8 100644
---- a/drivers/media/pci/sta2x11/Kconfig
-+++ b/drivers/media/pci/sta2x11/Kconfig
-@@ -1,7 +1,6 @@
- config STA2X11_VIP
- 	tristate "STA2X11 VIP Video For Linux"
- 	depends on STA2X11 || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEO_ADV7180 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEOBUF2_DMA_CONTIG
- 	depends on PCI && VIDEO_V4L2 && VIRT_TO_BUS
-diff --git a/drivers/media/pci/tw5864/Kconfig b/drivers/media/pci/tw5864/Kconfig
-index 87c8f327e2d49dfa..760fb11dfeaef47b 100644
---- a/drivers/media/pci/tw5864/Kconfig
-+++ b/drivers/media/pci/tw5864/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_TW5864
- 	tristate "Techwell TW5864 video/audio grabber and encoder"
- 	depends on VIDEO_DEV && PCI && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
- 	  Support for boards based on Techwell TW5864 chip which provides
-diff --git a/drivers/media/pci/tw686x/Kconfig b/drivers/media/pci/tw686x/Kconfig
-index 34ff37712313b780..da8bfee71b44cca5 100644
---- a/drivers/media/pci/tw686x/Kconfig
-+++ b/drivers/media/pci/tw686x/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_TW686X
- 	tristate "Intersil/Techwell TW686x video capture cards"
- 	depends on PCI && VIDEO_DEV && VIDEO_V4L2 && SND
--	depends on HAS_DMA
- 	select VIDEOBUF2_VMALLOC
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEOBUF2_DMA_SG
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 5c3ae58cc40cdebd..254f09a8ef6b1a4e 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -34,7 +34,7 @@ source "drivers/media/platform/omap/Kconfig"
- config VIDEO_SH_VOU
- 	tristate "SuperH VOU video output driver"
- 	depends on MEDIA_CAMERA_SUPPORT
--	depends on VIDEO_DEV && I2C && HAS_DMA
-+	depends on VIDEO_DEV && I2C
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	help
-@@ -64,8 +64,7 @@ config VIDEO_OMAP3
- 	tristate "OMAP 3 Camera support"
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on (ARCH_OMAP3 && OMAP_IOMMU) || COMPILE_TEST
--	depends on COMMON_CLK
--	depends on HAS_DMA && OF
-+	depends on COMMON_CLK && OF
- 	select ARM_DMA_USE_IOMMU if OMAP_IOMMU
- 	select VIDEOBUF2_DMA_CONTIG
- 	select MFD_SYSCON
-@@ -81,7 +80,7 @@ config VIDEO_OMAP3_DEBUG
- 
- config VIDEO_PXA27x
- 	tristate "PXA27x Quick Capture Interface driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on PXA27x || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select SG_SPLIT
-@@ -91,7 +90,7 @@ config VIDEO_PXA27x
- 
- config VIDEO_QCOM_CAMSS
- 	tristate "Qualcomm 8x16 V4L2 Camera Subsystem driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select V4L2_FWNODE
-@@ -101,7 +100,6 @@ config VIDEO_S3C_CAMIF
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on PM
- 	depends on ARCH_S3C64XX || PLAT_S3C24XX || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
- 	  This is a v4l2 driver for s3c24xx and s3c64xx SoC series camera
-@@ -112,7 +110,7 @@ config VIDEO_S3C_CAMIF
- 
- config VIDEO_STM32_DCMI
- 	tristate "STM32 Digital Camera Memory Interface (DCMI) support"
--	depends on VIDEO_V4L2 && OF && HAS_DMA
-+	depends on VIDEO_V4L2 && OF
- 	depends on ARCH_STM32 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-@@ -125,7 +123,7 @@ config VIDEO_STM32_DCMI
- 
- config VIDEO_RENESAS_CEU
- 	tristate "Renesas Capture Engine Unit (CEU) driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_SHMOBILE || ARCH_R7S72100 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-@@ -143,7 +141,6 @@ config VIDEO_TI_CAL
- 	tristate "TI CAL (Camera Adaptation Layer) driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on SOC_DRA7XX || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
- 	default n
-@@ -171,7 +168,6 @@ if V4L_MEM2MEM_DRIVERS
- config VIDEO_CODA
- 	tristate "Chips&Media Coda multi-standard codec IP"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && (ARCH_MXC || COMPILE_TEST)
--	depends on HAS_DMA
- 	select SRAM
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEOBUF2_VMALLOC
-@@ -189,7 +185,6 @@ config VIDEO_MEDIATEK_JPEG
- 	depends on MTK_IOMMU_V1 || COMPILE_TEST
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	---help---
-@@ -201,7 +196,7 @@ config VIDEO_MEDIATEK_JPEG
- 
- config VIDEO_MEDIATEK_VPU
- 	tristate "Mediatek Video Processor Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	---help---
- 	    This driver provides downloading VPU firmware and
-@@ -217,7 +212,6 @@ config VIDEO_MEDIATEK_MDP
- 	depends on MTK_IOMMU || COMPILE_TEST
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	select VIDEO_MEDIATEK_VPU
-@@ -232,7 +226,7 @@ config VIDEO_MEDIATEK_MDP
- config VIDEO_MEDIATEK_VCODEC
- 	tristate "Mediatek Video Codec driver"
- 	depends on MTK_IOMMU || COMPILE_TEST
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -259,7 +253,6 @@ config VIDEO_SAMSUNG_S5P_G2D
- 	tristate "Samsung S5P and EXYNOS4 G2D 2d graphics accelerator driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	default n
-@@ -271,7 +264,6 @@ config VIDEO_SAMSUNG_S5P_JPEG
- 	tristate "Samsung S5P/Exynos3250/Exynos4 JPEG codec driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	---help---
-@@ -282,7 +274,6 @@ config VIDEO_SAMSUNG_S5P_MFC
- 	tristate "Samsung S5P MFC Video Codec"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	default n
- 	help
-@@ -292,7 +283,6 @@ config VIDEO_MX2_EMMAPRP
- 	tristate "MX2 eMMa-PrP support"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on SOC_IMX27 || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	help
-@@ -304,7 +294,6 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- 	tristate "Samsung Exynos G-Scaler driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_EXYNOS || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	help
-@@ -313,7 +302,6 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- config VIDEO_STI_BDISP
- 	tristate "STMicroelectronics BDISP 2D blitter driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	depends on ARCH_STI || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -323,7 +311,6 @@ config VIDEO_STI_BDISP
- config VIDEO_STI_HVA
- 	tristate "STMicroelectronics HVA multi-format video encoder V4L2 driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on HAS_DMA
- 	depends on ARCH_STI || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -350,7 +337,6 @@ config VIDEO_STI_DELTA
- 	tristate "STMicroelectronics DELTA multi-format video decoder V4L2 driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_STI || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 		This V4L2 driver enables DELTA multi-format video decoder
- 		of STMicroelectronics STiH4xx SoC series allowing hardware
-@@ -396,7 +382,7 @@ config VIDEO_SH_VEU
- 
- config VIDEO_RENESAS_FDP1
- 	tristate "Renesas Fine Display Processor"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
- 	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -410,7 +396,7 @@ config VIDEO_RENESAS_FDP1
- 
- config VIDEO_RENESAS_JPU
- 	tristate "Renesas JPEG Processing Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -435,7 +421,7 @@ config VIDEO_RENESAS_FCP
- 
- config VIDEO_RENESAS_VSP1
- 	tristate "Renesas VSP1 Video Processing Engine"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on (ARCH_RENESAS && OF) || COMPILE_TEST
- 	depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -448,7 +434,7 @@ config VIDEO_RENESAS_VSP1
- 
- config VIDEO_ROCKCHIP_RGA
- 	tristate "Rockchip Raster 2d Graphic Acceleration Unit"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	select VIDEOBUF2_DMA_SG
- 	select V4L2_MEM2MEM_DEV
-@@ -465,7 +451,6 @@ config VIDEO_TI_VPE
- 	tristate "TI VPE (Video Processing Engine) driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on SOC_DRA7XX || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	select VIDEO_TI_VPDMA
-@@ -484,7 +469,7 @@ config VIDEO_TI_VPE_DEBUG
- 
- config VIDEO_QCOM_VENUS
- 	tristate "Qualcomm Venus V4L2 encoder/decoder driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
- 	select QCOM_MDT_LOADER if ARCH_QCOM
- 	select QCOM_SCM if ARCH_QCOM
-@@ -626,7 +611,7 @@ if SDR_PLATFORM_DRIVERS
- 
- config VIDEO_RCAR_DRIF
- 	tristate "Renesas Digitial Radio Interface (DRIF)"
--	depends on VIDEO_V4L2 && HAS_DMA
-+	depends on VIDEO_V4L2
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_VMALLOC
- 	---help---
-diff --git a/drivers/media/platform/am437x/Kconfig b/drivers/media/platform/am437x/Kconfig
-index 160e77e9a0fbfa61..f4ce1176e4dc8179 100644
---- a/drivers/media/platform/am437x/Kconfig
-+++ b/drivers/media/platform/am437x/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_AM437X_VPFE
- 	tristate "TI AM437x VPFE video capture driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on SOC_AM43XX || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/atmel/Kconfig b/drivers/media/platform/atmel/Kconfig
-index 55de751e5f51500b..a211ef20f77eadba 100644
---- a/drivers/media/platform/atmel/Kconfig
-+++ b/drivers/media/platform/atmel/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_ATMEL_ISC
- 	tristate "ATMEL Image Sensor Controller (ISC) support"
--	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select REGMAP_MMIO
-@@ -11,7 +11,7 @@ config VIDEO_ATMEL_ISC
- 
- config VIDEO_ATMEL_ISI
- 	tristate "ATMEL Image Sensor Interface (ISI) support"
--	depends on VIDEO_V4L2 && OF && HAS_DMA
-+	depends on VIDEO_V4L2 && OF
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/davinci/Kconfig b/drivers/media/platform/davinci/Kconfig
-index b463d1726335a51d..06b5e581f25f2416 100644
---- a/drivers/media/platform/davinci/Kconfig
-+++ b/drivers/media/platform/davinci/Kconfig
-@@ -2,7 +2,6 @@ config VIDEO_DAVINCI_VPIF_DISPLAY
- 	tristate "TI DaVinci VPIF V4L2-Display driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	select VIDEO_ADV7343 if MEDIA_SUBDRV_AUTOSELECT
-@@ -19,7 +18,6 @@ config VIDEO_DAVINCI_VPIF_CAPTURE
- 	tristate "TI DaVinci VPIF video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-@@ -35,7 +33,6 @@ config VIDEO_DM6446_CCDC
- 	tristate "TI DM6446 CCDC video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -52,7 +49,6 @@ config VIDEO_DM355_CCDC
- 	tristate "TI DM355 CCDC video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -69,7 +65,6 @@ config VIDEO_DM365_ISIF
- 	tristate "TI DM365 ISIF video capture driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	help
-@@ -84,7 +79,6 @@ config VIDEO_DAVINCI_VPBE_DISPLAY
- 	tristate "TI DaVinci VPBE V4L2-Display driver"
- 	depends on VIDEO_V4L2
- 	depends on ARCH_DAVINCI || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on I2C
- 	select VIDEOBUF2_DMA_CONTIG
- 	help
-diff --git a/drivers/media/platform/marvell-ccic/Kconfig b/drivers/media/platform/marvell-ccic/Kconfig
-index 21dacef7c2fccdfc..60dbe6d1fae9c9d5 100644
---- a/drivers/media/platform/marvell-ccic/Kconfig
-+++ b/drivers/media/platform/marvell-ccic/Kconfig
-@@ -1,7 +1,6 @@
- config VIDEO_CAFE_CCIC
- 	tristate "Marvell 88ALP01 (Cafe) CMOS Camera Controller support"
- 	depends on PCI && I2C && VIDEO_V4L2
--	depends on HAS_DMA
- 	select VIDEO_OV7670
- 	select VIDEOBUF2_VMALLOC
- 	select VIDEOBUF2_DMA_CONTIG
-@@ -14,7 +13,6 @@ config VIDEO_CAFE_CCIC
- config VIDEO_MMP_CAMERA
- 	tristate "Marvell Armada 610 integrated camera controller support"
- 	depends on I2C && VIDEO_V4L2
--	depends on HAS_DMA
- 	depends on ARCH_MMP || COMPILE_TEST
- 	select VIDEO_OV7670
- 	select I2C_GPIO
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index 8fa7ee468c63afb9..89b4860bafba566d 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_RCAR_VIN
- 	tristate "R-Car Video Input (VIN) Driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && MEDIA_CONTROLLER
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/soc_camera/Kconfig b/drivers/media/platform/soc_camera/Kconfig
-index f5979c12ad618f4a..669d116b8f09b2aa 100644
---- a/drivers/media/platform/soc_camera/Kconfig
-+++ b/drivers/media/platform/soc_camera/Kconfig
-@@ -18,9 +18,8 @@ config SOC_CAMERA_PLATFORM
- 
- config VIDEO_SH_MOBILE_CEU
- 	tristate "SuperH Mobile CEU Interface driver"
--	depends on VIDEO_DEV && SOC_CAMERA && HAS_DMA && HAVE_CLK
-+	depends on VIDEO_DEV && SOC_CAMERA && HAVE_CLK
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
--	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select SOC_CAMERA_SCALE_CROP
- 	---help---
-diff --git a/drivers/media/platform/sti/c8sectpfe/Kconfig b/drivers/media/platform/sti/c8sectpfe/Kconfig
-index 740190f8a3b606d3..7420a50572d347ef 100644
---- a/drivers/media/platform/sti/c8sectpfe/Kconfig
-+++ b/drivers/media/platform/sti/c8sectpfe/Kconfig
-@@ -1,6 +1,6 @@
- config DVB_C8SECTPFE
- 	tristate "STMicroelectronics C8SECTPFE DVB support"
--	depends on PINCTRL && DVB_CORE && I2C && HAS_DMA
-+	depends on PINCTRL && DVB_CORE && I2C
- 	depends on ARCH_STI || ARCH_MULTIPLATFORM || COMPILE_TEST
- 	select FW_LOADER
- 	select DEBUG_FS
-diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
-index 2a56f37f186bbe4b..b97090e859968c99 100644
---- a/drivers/media/v4l2-core/Kconfig
-+++ b/drivers/media/v4l2-core/Kconfig
-@@ -65,7 +65,6 @@ config VIDEOBUF_GEN
- 
- config VIDEOBUF_DMA_SG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF_GEN
- 
- config VIDEOBUF_VMALLOC
-@@ -74,5 +73,4 @@ config VIDEOBUF_VMALLOC
- 
- config VIDEOBUF_DMA_CONTIG
- 	tristate
--	depends on HAS_DMA
- 	select VIDEOBUF_GEN
-diff --git a/drivers/staging/media/davinci_vpfe/Kconfig b/drivers/staging/media/davinci_vpfe/Kconfig
-index bcba9a64c514bef6..aea449a8dbf8a08a 100644
---- a/drivers/staging/media/davinci_vpfe/Kconfig
-+++ b/drivers/staging/media/davinci_vpfe/Kconfig
-@@ -2,7 +2,6 @@ config VIDEO_DM365_VPFE
- 	tristate "DM365 VPFE Media Controller Capture Driver"
- 	depends on VIDEO_V4L2
- 	depends on (ARCH_DAVINCI_DM365 && !VIDEO_DM365_ISIF) || COMPILE_TEST
--	depends on HAS_DMA
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	depends on VIDEO_DAVINCI_VPBE_DISPLAY
- 	select VIDEOBUF2_DMA_CONTIG
-diff --git a/drivers/staging/media/omap4iss/Kconfig b/drivers/staging/media/omap4iss/Kconfig
-index 192ba0829128a76a..dddd27335cb433bf 100644
---- a/drivers/staging/media/omap4iss/Kconfig
-+++ b/drivers/staging/media/omap4iss/Kconfig
-@@ -2,7 +2,6 @@ config VIDEO_OMAP4
- 	tristate "OMAP 4 Camera support"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && I2C
- 	depends on ARCH_OMAP4 || COMPILE_TEST
--	depends on HAS_DMA
- 	select MFD_SYSCON
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
--- 
-2.7.4
+Thanks!
