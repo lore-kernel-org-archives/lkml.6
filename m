@@ -1,168 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeEQVIf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:08:35 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35262 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbeEQVIe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:08:34 -0400
-X-Google-Smtp-Source: AB8JxZrz0yk7oJfpJImINt3G0gHs7Fg5ShL2KKkSW/W32Kx9Fn3xOG/7tkPBmPkK1xNQFXkvzvEzCg==
-From: Michael Kelley <mhkelley58@gmail.com>
-X-Google-Original-From: Michael Kelley <mikelley@microsoft.com>
-To: kys@microsoft.com, sthemmin@microsoft.com, martin.petersen@oracle.com,
-        longli@microsoft.com, jejb@linux.vnet.ibm.com,
-        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Cc: mikelley@microsoft.com
-Subject: [PATCH 1/1] scsi: storvsc: Avoid allocating memory for temp cpumasks
-Date: Thu, 17 May 2018 14:07:40 -0700
-Message-Id: <1526591260-27162-1-git-send-email-mikelley@microsoft.com>
-X-Mailer: git-send-email 2.7.4
-Reply-To: mikelley@microsoft.com
+        id S1752325AbeEQVJi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:09:38 -0400
+Received: from muru.com ([72.249.23.125]:42930 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752279AbeEQVJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 17:09:35 -0400
+Date: Thu, 17 May 2018 14:09:31 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, bcousson@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, paul@pwsan.com, lokeshvutla@ti.com,
+        linux@armlinux.org.uk
+Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180517210931.GQ98604@atomide.com>
+References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
+ <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code allocates 240 Kbytes (in typical configs) for
-each synthetic SCSI controller to use as temp cpumask variables.
-Recode to avoid needing the temp cpumask variables and remove the
-memory allocation.
+* Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
+> From: Lokesh Vutla <lokeshvutla@ti.com>
+> 
+> Add MCAN hwmod data and register it for dra762 silicons.
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> index 62352d1..a2cd7f8 100644
+> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+>  };
+>  
+>  /*
+> + * 'mcan' class
+> + *
+> + */
+> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
+> +	.name	= "mcan",
+> +};
+> +
+> +/* mcan */
+> +static struct omap_hwmod dra76x_mcan_hwmod = {
+> +	.name		= "mcan",
+> +	.class		= &dra76x_mcan_hwmod_class,
+> +	.clkdm_name	= "wkupaon_clkdm",
+> +	.main_clk	= "mcan_clk",
+> +	.prcm = {
+> +		.omap4 = {
+> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
+> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
+> +			.modulemode   = MODULEMODE_SWCTRL,
+> +		},
+> +	},
+> +};
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
+So based on the ti-sysc related dts comments, this patch should
+work except you should be able to just leave out the clocks here
+with the dts changes.
 
-This patch is for the 4.18/scsi-queue branch and improves on commit
-2217a47de42f on April 20, 2018.
+> +/*
+>   * 'mcspi' class
+>   *
+>   */
+> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+>  	.user		= OCP_USER_MPU,
+>  };
+>  
+> +/* l3_main_1 -> mcan */
+> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
+> +	.master		= &dra7xx_l3_main_1_hwmod,
+> +	.slave		= &dra76x_mcan_hwmod,
+> +	.clk		= "l3_iclk_div",
+> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
+> +};
+> +
+>  static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
+>  	&dra7xx_l3_main_1__dmm,
+>  	&dra7xx_l3_main_2__l3_instr,
+> @@ -3958,6 +3989,7 @@ static struct omap_hwmod_ocp_if *dra7xx_gp_hwmod_ocp_ifs[] __initdata = {
+>  /* SoC variant specific hwmod links */
+>  static struct omap_hwmod_ocp_if *dra76x_hwmod_ocp_ifs[] __initdata = {
+>  	&dra7xx_l4_per3__usb_otg_ss4,
+> +	&dra76x_l3_main_1__mcan,
+>  	NULL,
+>  };
 
----
- drivers/scsi/storvsc_drv.c | 50 ++++++++++++++++++----------------------------
- 1 file changed, 19 insertions(+), 31 deletions(-)
+So the omap_hwmod_class, omap_hwmod_ocp_if and entry on the
+dra76x_hwmod_ocp_ifs list are still needed with ti-sysc for a
+while. Eventually that data will just come from the dts interconnect
+hierarchy. For struct omap_hwmod_class_sysconfig, ti-sysc will
+allocate and it based on the dts data.
 
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index d3897c4..a667119 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -474,13 +474,6 @@ struct storvsc_device {
- 	 * Mask of CPUs bound to subchannels.
- 	 */
- 	struct cpumask alloced_cpus;
--	/*
--	 * Pre-allocated struct cpumask for each hardware queue.
--	 * struct cpumask is used by selecting out-going channels. It is a
--	 * big structure, default to 1024k bytes when CONFIG_MAXSMP=y.
--	 * Pre-allocate it to avoid allocation on the kernel stack.
--	 */
--	struct cpumask *cpumask_chns;
- 	/* Used for vsc/vsp channel reset process */
- 	struct storvsc_cmd_request init_request;
- 	struct storvsc_cmd_request reset_request;
-@@ -885,13 +878,6 @@ static int storvsc_channel_init(struct hv_device *device, bool is_fc)
- 	if (stor_device->stor_chns == NULL)
- 		return -ENOMEM;
- 
--	stor_device->cpumask_chns = kcalloc(num_possible_cpus(),
--			sizeof(struct cpumask), GFP_KERNEL);
--	if (stor_device->cpumask_chns == NULL) {
--		kfree(stor_device->stor_chns);
--		return -ENOMEM;
--	}
--
- 	stor_device->stor_chns[device->channel->target_cpu] = device->channel;
- 	cpumask_set_cpu(device->channel->target_cpu,
- 			&stor_device->alloced_cpus);
-@@ -1252,7 +1238,6 @@ static int storvsc_dev_remove(struct hv_device *device)
- 	vmbus_close(device->channel);
- 
- 	kfree(stor_device->stor_chns);
--	kfree(stor_device->cpumask_chns);
- 	kfree(stor_device);
- 	return 0;
- }
-@@ -1262,7 +1247,7 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
- {
- 	u16 slot = 0;
- 	u16 hash_qnum;
--	struct cpumask *alloced_mask = &stor_device->cpumask_chns[q_num];
-+	const struct cpumask *node_mask;
- 	int num_channels, tgt_cpu;
- 
- 	if (stor_device->num_sc == 0)
-@@ -1278,10 +1263,13 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
- 	 * III. Mapping is persistent.
- 	 */
- 
--	cpumask_and(alloced_mask, &stor_device->alloced_cpus,
--		    cpumask_of_node(cpu_to_node(q_num)));
-+	node_mask = cpumask_of_node(cpu_to_node(q_num));
- 
--	num_channels = cpumask_weight(alloced_mask);
-+	num_channels = 0;
-+	for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
-+		if (cpumask_test_cpu(tgt_cpu, node_mask))
-+			num_channels++;
-+	}
- 	if (num_channels == 0)
- 		return stor_device->device->channel;
- 
-@@ -1289,7 +1277,9 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
- 	while (hash_qnum >= num_channels)
- 		hash_qnum -= num_channels;
- 
--	for_each_cpu(tgt_cpu, alloced_mask) {
-+	for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
-+		if (!cpumask_test_cpu(tgt_cpu, node_mask))
-+			continue;
- 		if (slot == hash_qnum)
- 			break;
- 		slot++;
-@@ -1308,7 +1298,7 @@ static int storvsc_do_io(struct hv_device *device,
- 	struct vstor_packet *vstor_packet;
- 	struct vmbus_channel *outgoing_channel, *channel;
- 	int ret = 0;
--	struct cpumask *alloced_mask;
-+	const struct cpumask *node_mask;
- 	int tgt_cpu;
- 
- 	vstor_packet = &request->vstor_packet;
-@@ -1329,11 +1319,11 @@ static int storvsc_do_io(struct hv_device *device,
- 			 * Ideally, we want to pick a different channel if
- 			 * available on the same NUMA node.
- 			 */
--			alloced_mask = &stor_device->cpumask_chns[q_num];
--			cpumask_and(alloced_mask, &stor_device->alloced_cpus,
--				    cpumask_of_node(cpu_to_node(q_num)));
--
--			for_each_cpu_wrap(tgt_cpu, alloced_mask, q_num + 1) {
-+			node_mask = cpumask_of_node(cpu_to_node(q_num));
-+			for_each_cpu_wrap(tgt_cpu,
-+				 &stor_device->alloced_cpus, q_num + 1) {
-+				if (!cpumask_test_cpu(tgt_cpu, node_mask))
-+					continue;
- 				if (tgt_cpu == q_num)
- 					continue;
- 				channel = stor_device->stor_chns[tgt_cpu];
-@@ -1359,10 +1349,9 @@ static int storvsc_do_io(struct hv_device *device,
- 			 * NUMA node are busy. Try to find a channel in
- 			 * other NUMA nodes
- 			 */
--			cpumask_andnot(alloced_mask, &stor_device->alloced_cpus,
--					cpumask_of_node(cpu_to_node(q_num)));
--
--			for_each_cpu(tgt_cpu, alloced_mask) {
-+			for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
-+				if (cpumask_test_cpu(tgt_cpu, node_mask))
-+					continue;
- 				channel = stor_device->stor_chns[tgt_cpu];
- 				if (hv_get_avail_to_write_percent(
- 							&channel->outbound)
-@@ -1911,7 +1900,6 @@ static int storvsc_probe(struct hv_device *device,
- 
- err_out1:
- 	kfree(stor_device->stor_chns);
--	kfree(stor_device->cpumask_chns);
- 	kfree(stor_device);
- 
- err_out0:
--- 
-2.7.4
+Regards,
+
+Tony
