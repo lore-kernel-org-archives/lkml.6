@@ -1,327 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeEQWc3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 18:32:29 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37988 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751798AbeEQWc2 (ORCPT
+        id S1752165AbeEQWdN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 18:33:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45567 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751047AbeEQWdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 18:32:28 -0400
-X-Google-Smtp-Source: AB8JxZp0gDAh/tWSpjgmiSXI6SwjBJa0N1l6zGJWefaMtpTmVSgM+/KF73JcqVyiRWrU1NaYclZh9w==
-From: Laura Abbott <labbott@redhat.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Phil Reid <preid@electromag.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCHv7] gpio: Remove VLA from gpiolib
-Date: Thu, 17 May 2018 15:32:22 -0700
-Message-Id: <20180517223222.8468-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 17 May 2018 18:33:12 -0400
+X-Google-Smtp-Source: AB8JxZoSNPRGlKOkK70k1luUMhLHHoOwsHU4zyqIp8lKihuVUjmsBjZSrkn8SgkbLAeQeKrgYgEplw==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] PM / devfreq: Fix handling of min/max_freq == 0
+Date: Thu, 17 May 2018 15:32:55 -0700
+Message-Id: <20180517223255.211918-1-mka@chromium.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new challenge is to remove VLAs from the kernel
-(see https://lkml.org/lkml/2018/3/7/621) to eventually
-turn on -Wvla.
+Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
+devfreq device") initializes df->min/max_freq with the min/max OPP when
+the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
+available min/max frequency") adds df->scaling_min/max_freq and the
+following to the frequency adjustment code:
 
-Using a kmalloc array is the easy way to fix this but kmalloc is still
-more expensive than stack allocation. Introduce a fast path with a
-fixed size stack array to cover most chip with gpios below some fixed
-amount. The slow path dynamically allocates an array to cover those
-chips with a large number of gpios.
+  max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
 
-Reviewed-by: Phil Reid <preid@electromag.com.au>
-Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
+With the current handling of min/max_freq this is incorrect:
+
+Even though df->max_freq is now initialized to a value != 0 user space
+can still set it to 0, in this case max_freq would be 0 instead of
+df->scaling_max_freq as intended. In consequence the frequency adjustment
+is not performed:
+
+  if (max_freq && freq > max_freq) {
+	freq = max_freq;
+
+To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
+when the user passes a value of 0. This also prevents df->max_freq from
+being set below the min OPP when df->min_freq is 0, and similar for
+min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
+checks for this case can be removed.
+
+Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
-v7: Tweaked the Kconfig text to clarify the wording. Also fixed a few
-other comments from Geert, including the earlier suggestion to reduce
-the zeroing since I was wrong about that.
+ drivers/devfreq/devfreq.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-I've kept most of the existing Tested/Reviewed-by (thank you!). If you'd
-like to take another look/do another test feel free.
----
- drivers/gpio/Kconfig          | 12 ++++++
- drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
- drivers/gpio/gpiolib.h        |  2 +-
- include/linux/gpio/consumer.h | 10 +++--
- 4 files changed, 78 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b960f6f35abd..e3f826257871 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -22,6 +22,18 @@ menuconfig GPIOLIB
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fe2af6aa88fc..e007534297f7 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -283,11 +283,11 @@ int update_devfreq(struct devfreq *devfreq)
+ 	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+ 	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
  
- if GPIOLIB
- 
-+config GPIOLIB_FASTPATH_LIMIT
-+	int "Maximum number of GPIOs for fast path"
-+	range 16 512
-+	default 512
-+	help
-+	   This adjusts the point at which certain APIs will switch from
-+	   using a stack allocated buffer to a dynamically allocated buffer.
-+
-+	   You shouldn't need to change this unless you really need to
-+	   optimize either stack space or performance. Change this carefully
-+	   since setting an incorrect value could cause stack corruption.
-+
- config OF_GPIO
- 	def_bool y
- 	depends on OF
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d8ccb500872f..d29916cd3b74 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
- 	.name = "gpio",
- };
- 
-+/*
-+ * Number of GPIOs to use for the fast path in set array
-+ */
-+#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
-+
- /* gpio_lock prevents conflicts during gpio_desc[] table updates.
-  * While any GPIO is requested, its gpio_chip is not removable;
-  * each GPIO's "requested" flag serves as a lock and refcount.
-@@ -450,12 +455,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
- 			vals[i] = !!ghd.values[i];
- 
- 		/* Reuse the array setting function */
--		gpiod_set_array_value_complex(false,
-+		return gpiod_set_array_value_complex(false,
- 					      true,
- 					      lh->numdescs,
- 					      lh->descs,
- 					      vals);
--		return 0;
+-	if (min_freq && freq < min_freq) {
++	if (freq < min_freq) {
+ 		freq = min_freq;
+ 		flags &= ~DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use GLB */
  	}
- 	return -EINVAL;
- }
-@@ -1244,6 +1248,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 		goto err_free_descs;
+-	if (max_freq && freq > max_freq) {
++	if (freq > max_freq) {
+ 		freq = max_freq;
+ 		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
  	}
+@@ -1123,17 +1123,20 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
+ 	int ret;
+-	unsigned long max;
  
-+	if (chip->ngpio > FASTPATH_NGPIO)
-+		chip_warn(chip, "line cnt %u is greater than fast path cnt %u\n",
-+		chip->ngpio, FASTPATH_NGPIO);
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&df->lock);
+-	max = df->max_freq;
+-	if (value && max && value > max) {
+-		ret = -EINVAL;
+-		goto unlock;
 +
- 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
- 	if (!gdev->label) {
- 		status = -ENOMEM;
-@@ -2719,16 +2727,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
--		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
--		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-+		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-+		unsigned long *mask, *bits;
- 		int first, j, ret;
- 
-+		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-+			mask = fastpath;
-+		} else {
-+			mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-+					   sizeof(*mask),
-+					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-+			if (!mask)
-+				return -ENOMEM;
++	if (value) {
++		if (value > df->max_freq) {
++			ret = -EINVAL;
++			goto unlock;
 +		}
-+
-+		bits = mask + BITS_TO_LONGS(chip->ngpio);
-+		memset(mask, 0, BITS_TO_LONGS(chip->ngpio) * sizeof(*mask));
-+
- 		if (!can_sleep)
- 			WARN_ON(chip->can_sleep);
++	} else {
++		value = df->profile->freq_table[df->profile->max_state - 1];
+ 	}
  
- 		/* collect all inputs belonging to the same chip */
- 		first = i;
--		memset(mask, 0, sizeof(mask));
- 		do {
- 			const struct gpio_desc *desc = desc_array[i];
- 			int hwgpio = gpio_chip_hwgpio(desc);
-@@ -2739,8 +2759,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			 (desc_array[i]->gdev->chip == chip));
+ 	df->min_freq = value;
+@@ -1158,17 +1161,20 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
+ 	int ret;
+-	unsigned long min;
  
- 		ret = gpio_chip_get_multiple(chip, mask, bits);
--		if (ret)
-+		if (ret) {
-+			if (mask != fastpath)
-+				kfree(mask);
- 			return ret;
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&df->lock);
+-	min = df->min_freq;
+-	if (value && min && value < min) {
+-		ret = -EINVAL;
+-		goto unlock;
++
++	if (!value) {
++		value = df->profile->freq_table[0];
++	} else {
++		if (value < df->min_freq) {
++			ret = -EINVAL;
++			goto unlock;
 +		}
- 
- 		for (j = first; j < i; j++) {
- 			const struct gpio_desc *desc = desc_array[j];
-@@ -2752,6 +2775,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			value_array[j] = value;
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
- 		}
-+
-+		if (mask != fastpath)
-+			kfree(mask);
  	}
- 	return 0;
- }
-@@ -2935,7 +2961,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- 	}
- }
  
--void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-+int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   unsigned int array_size,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array)
-@@ -2944,14 +2970,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
--		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
--		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-+		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-+		unsigned long *mask, *bits;
- 		int count = 0;
- 
-+		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-+			mask = fastpath;
-+		} else {
-+			mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-+					   sizeof(*mask),
-+					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-+			if (!mask)
-+				return -ENOMEM;
-+		}
-+
-+		bits = mask + BITS_TO_LONGS(chip->ngpio);
-+		memset(mask, 0, BITS_TO_LONGS(chip->ngpio) * sizeof(*mask));
-+
- 		if (!can_sleep)
- 			WARN_ON(chip->can_sleep);
- 
--		memset(mask, 0, sizeof(mask));
- 		do {
- 			struct gpio_desc *desc = desc_array[i];
- 			int hwgpio = gpio_chip_hwgpio(desc);
-@@ -2982,7 +3020,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 		/* push collected bits to outputs */
- 		if (count != 0)
- 			gpio_chip_set_multiple(chip, mask, bits);
-+
-+		if (mask != fastpath)
-+			kfree(mask);
- 	}
-+	return 0;
- }
- 
- /**
-@@ -3057,13 +3099,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
-  * This function should be called from contexts where we cannot sleep, and will
-  * complain if the GPIO chip functions potentially sleep.
-  */
--void gpiod_set_raw_array_value(unsigned int array_size,
-+int gpiod_set_raw_array_value(unsigned int array_size,
- 			 struct gpio_desc **desc_array, int *value_array)
- {
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(true, false, array_size, desc_array,
--				      value_array);
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(true, false, array_size,
-+					desc_array, value_array);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
- 
-@@ -3383,14 +3425,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
-  *
-  * This function is to be called from contexts that can sleep.
-  */
--void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(true, true, array_size, desc_array,
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
- 				      value_array);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index ad456b6f9d8b..1a8e20363861 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned int array_size,
- 				  struct gpio_desc **desc_array,
- 				  int *value_array);
--void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-+int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   unsigned int array_size,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index dbd065963296..243112c7fa7d 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
- 			      struct gpio_desc **desc_array,
- 			      int *value_array);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array_value(unsigned int array_size,
-+int gpiod_set_raw_array_value(unsigned int array_size,
- 			       struct gpio_desc **desc_array,
- 			       int *value_array);
- 
-@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       struct gpio_desc **desc_array,
- 				       int *value_array);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array);
- 
-@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array_value(unsigned int array_size,
-+static inline int gpiod_set_raw_array_value(unsigned int array_size,
- 					     struct gpio_desc **desc_array,
- 					     int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- 
- static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
-@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 						struct gpio_desc **desc_array,
- 						int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- 
- static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ 	df->max_freq = value;
 -- 
-2.17.0
+2.17.0.441.gb46fe60e1d-goog
