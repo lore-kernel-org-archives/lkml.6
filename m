@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752365AbeEQHaj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:30:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7677 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752129AbeEQHaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:30:10 -0400
+        id S1752430AbeEQHa5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:30:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55105 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751017AbeEQHaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:30:00 -0400
 From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
 To: <dledford@redhat.com>, <jgg@ziepe.ca>
 CC: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <xavier.huwei@tom.com>, <lijun_nudt@163.com>
-Subject: [PATCH rdma-next 3/5] RDMA/hns: Increase checking CMQ status timeout value
-Date: Thu, 17 May 2018 16:02:51 +0800
-Message-ID: <1526544173-106587-4-git-send-email-xavier.huwei@huawei.com>
+Subject: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in hip08
+Date: Thu, 17 May 2018 16:02:52 +0800
+Message-ID: <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
 References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
@@ -24,27 +24,181 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch increases checking CMQ status timeout value and
-uses the same value with NIC driver to avoid deficiency of
-time.
+This patch added reset process for RoCE in hip08.
 
 Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hns/hns_roce_cmd.c    |  3 ++
+ drivers/infiniband/hw/hns/hns_roce_device.h |  2 +
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 60 +++++++++++++++++++++++++++++
+ drivers/infiniband/hw/hns/hns_roce_main.c   |  7 ++++
+ 4 files changed, 72 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index 182b672..f16df1b 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -76,7 +76,7 @@
- #define HNS_ROCE_V2_PAGE_SIZE_SUPPORTED		0xFFFFF000
- #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
- #define HNS_ROCE_INVALID_LKEY			0x100
--#define HNS_ROCE_CMQ_TX_TIMEOUT			200
-+#define HNS_ROCE_CMQ_TX_TIMEOUT			30000
+diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+index 9ebe839..a0ba19d 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
++++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+@@ -176,6 +176,9 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
+ 		      unsigned long in_modifier, u8 op_modifier, u16 op,
+ 		      unsigned long timeout)
+ {
++	if (hr_dev->is_reset)
++		return 0;
++
+ 	if (hr_dev->cmd.use_events)
+ 		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
+ 					      in_modifier, op_modifier, op,
+diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+index 412297d4..da8512b 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_device.h
++++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+@@ -774,6 +774,8 @@ struct hns_roce_dev {
+ 	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
+ 	spinlock_t		sm_lock;
+ 	spinlock_t		bt_cmd_lock;
++	bool			active;
++	bool			is_reset;
+ 	struct hns_roce_ib_iboe iboe;
  
- #define HNS_ROCE_CONTEXT_HOP_NUM		1
- #define HNS_ROCE_MTT_HOP_NUM			1
+ 	struct list_head        pgdir_list;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 86ef15f..e1c44a6 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+ 	int ret = 0;
+ 	int ntc;
+ 
++	if (hr_dev->is_reset)
++		return 0;
++
+ 	spin_lock_bh(&csq->lock);
+ 
+ 	if (num > hns_roce_cmq_space(csq)) {
+@@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+ 	return 0;
+ 
+ error_failed_get_cfg:
++	handle->priv = NULL;
+ 	kfree(hr_dev->priv);
+ 
+ error_failed_kzalloc:
+@@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+ {
+ 	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+ 
++	if (!hr_dev)
++		return;
++
+ 	hns_roce_exit(hr_dev);
++	handle->priv = NULL;
+ 	kfree(hr_dev->priv);
+ 	ib_dealloc_device(&hr_dev->ib_dev);
+ }
+ 
++static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
++{
++	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
++	struct ib_event event;
++
++	if (!hr_dev) {
++		dev_err(&handle->pdev->dev,
++			"Input parameter handle->priv is NULL!\n");
++		return -EINVAL;
++	}
++
++	hr_dev->active = false;
++	hr_dev->is_reset = true;
++
++	event.event = IB_EVENT_DEVICE_FATAL;
++	event.device = &hr_dev->ib_dev;
++	event.element.port_num = 1;
++	ib_dispatch_event(&event);
++
++	return 0;
++}
++
++static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
++{
++	msleep(100);
++	hns_roce_hw_v2_uninit_instance(handle, false);
++	return 0;
++}
++
++static int hns_roce_hw_v2_reset_notify(struct hnae3_handle *handle,
++				       enum hnae3_reset_notify_type type)
++{
++	int ret = 0;
++
++	switch (type) {
++	case HNAE3_DOWN_CLIENT:
++		ret = hns_roce_hw_v2_reset_notify_down(handle);
++		break;
++	case HNAE3_INIT_CLIENT:
++		ret = hns_roce_hw_v2_init_instance(handle);
++		break;
++	case HNAE3_UNINIT_CLIENT:
++		ret = hns_roce_hw_v2_reset_notify_uninit(handle);
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
+ static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
+ 	.init_instance = hns_roce_hw_v2_init_instance,
+ 	.uninit_instance = hns_roce_hw_v2_uninit_instance,
++	.reset_notify = hns_roce_hw_v2_reset_notify,
+ };
+ 
+ static struct hnae3_client hns_roce_hw_v2_client = {
+diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+index 7fafe9d..56ee172 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_main.c
++++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+@@ -336,6 +336,9 @@ static struct ib_ucontext *hns_roce_alloc_ucontext(struct ib_device *ib_dev,
+ 	struct hns_roce_ib_alloc_ucontext_resp resp = {};
+ 	struct hns_roce_dev *hr_dev = to_hr_dev(ib_dev);
+ 
++	if (!hr_dev->active)
++		return ERR_PTR(-EAGAIN);
++
+ 	resp.qp_tab_size = hr_dev->caps.num_qps;
+ 
+ 	context = kmalloc(sizeof(*context), GFP_KERNEL);
+@@ -461,6 +464,7 @@ static void hns_roce_unregister_device(struct hns_roce_dev *hr_dev)
+ {
+ 	struct hns_roce_ib_iboe *iboe = &hr_dev->iboe;
+ 
++	hr_dev->active = false;
+ 	unregister_netdevice_notifier(&iboe->nb);
+ 	ib_unregister_device(&hr_dev->ib_dev);
+ }
+@@ -573,6 +577,7 @@ static int hns_roce_register_device(struct hns_roce_dev *hr_dev)
+ 		goto error_failed_setup_mtu_mac;
+ 	}
+ 
++	hr_dev->active = true;
+ 	return 0;
+ 
+ error_failed_setup_mtu_mac:
+@@ -765,6 +770,7 @@ int hns_roce_init(struct hns_roce_dev *hr_dev)
+ 			return ret;
+ 		}
+ 	}
++	hr_dev->is_reset = false;
+ 
+ 	if (hr_dev->hw->cmq_init) {
+ 		ret = hr_dev->hw->cmq_init(hr_dev);
+@@ -864,6 +870,7 @@ int hns_roce_init(struct hns_roce_dev *hr_dev)
+ void hns_roce_exit(struct hns_roce_dev *hr_dev)
+ {
+ 	hns_roce_unregister_device(hr_dev);
++
+ 	if (hr_dev->hw->hw_exit)
+ 		hr_dev->hw->hw_exit(hr_dev);
+ 	hns_roce_cleanup_bitmap(hr_dev);
 -- 
 1.9.1
