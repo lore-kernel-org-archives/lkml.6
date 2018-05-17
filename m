@@ -1,126 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751478AbeEQFb7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:31:59 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35313 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbeEQFb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 01:31:58 -0400
-X-Google-Smtp-Source: AB8JxZo17qk61xEM4AajrG6EaR3ty12FU0oEV6nkkd3a1HS0hJTAJlL1Z7BuZXtLllKUvRrhLR+lxQ==
-Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
- configuration
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180514144029.16019-1-andr2000@gmail.com>
- <20180514144029.16019-2-andr2000@gmail.com> <20180516171528.GD21971@dtor-ws>
- <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
- <20180516210817.GF21971@dtor-ws>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <7cecb5d1-5cd3-b63d-d6eb-d1e2dfba9ca6@gmail.com>
-Date: Thu, 17 May 2018 08:31:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751231AbeEQFjC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:39:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35726 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750727AbeEQFjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 01:39:01 -0400
+Date: Thu, 17 May 2018 13:38:55 +0800
+From: Baoquan He <bhe@redhat.com>
+To: linux_dti@icloud.com
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages
+ handling
+Message-ID: <20180517053228.GM24627@MiWiFi-R3L-srv>
+References: <20180516100532.14083-1-bhe@redhat.com>
+ <20180516100532.14083-2-bhe@redhat.com>
+ <20180517051225.GA2361@zrhn9910b>
 MIME-Version: 1.0
-In-Reply-To: <20180516210817.GF21971@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517051225.GA2361@zrhn9910b>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 12:08 AM, Dmitry Torokhov wrote:
-> On Wed, May 16, 2018 at 08:47:30PM +0300, Oleksandr Andrushchenko wrote:
->> On 05/16/2018 08:15 PM, Dmitry Torokhov wrote:
->>> Hi Oleksandr,
->>>
->>> On Mon, May 14, 2018 at 05:40:29PM +0300, Oleksandr Andrushchenko wrote:
->>>> @@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
->>>>    	if (!info->page)
->>>>    		goto error_nomem;
->>>> -	/* Set input abs params to match backend screen res */
->>>> -	abs = xenbus_read_unsigned(dev->otherend,
->>>> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
->>>> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
->>>> -						  XENKBD_FIELD_WIDTH,
->>>> -						  ptr_size[KPARAM_X]);
->>>> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
->>>> -						  XENKBD_FIELD_HEIGHT,
->>>> -						  ptr_size[KPARAM_Y]);
->>>> -	if (abs) {
->>>> -		ret = xenbus_write(XBT_NIL, dev->nodename,
->>>> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
->>>> -		if (ret) {
->>>> -			pr_warn("xenkbd: can't request abs-pointer\n");
->>>> -			abs = 0;
->>>> -		}
->>>> -	}
->>>> +	/*
->>>> +	 * The below are reverse logic, e.g. if the feature is set, then
->>>> +	 * do not expose the corresponding virtual device.
->>>> +	 */
->>>> +	with_kbd = !xenbus_read_unsigned(dev->nodename,
->>>> +					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
->>>> -	touch = xenbus_read_unsigned(dev->nodename,
->>>> -				     XENKBD_FIELD_FEAT_MTOUCH, 0);
->>>> -	if (touch) {
->>>> +	with_ptr = !xenbus_read_unsigned(dev->nodename,
->>>> +					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
->>>> +
->>>> +	/* Direct logic: if set, then create multi-touch device. */
->>>> +	with_mtouch = xenbus_read_unsigned(dev->nodename,
->>>> +					   XENKBD_FIELD_FEAT_MTOUCH, 0);
->>>> +	if (with_mtouch) {
->>>>    		ret = xenbus_write(XBT_NIL, dev->nodename,
->>>>    				   XENKBD_FIELD_REQ_MTOUCH, "1");
->>>>    		if (ret) {
->>>>    			pr_warn("xenkbd: can't request multi-touch");
->>>> -			touch = 0;
->>>> +			with_mtouch = 0;
->>>>    		}
->>>>    	}
->>> Does it make sense to still end up calling xenkbd_connect_backend() when
->>> all interfaces (keyboard, pointer, and multitouch) are disabled? Should
->>> we do:
->>>
->>> 	if (!(with_kbd || || with_ptr || with_mtouch))
->>> 		return -ENXIO;
->>>
->>> ?
->> It does make sense. Then we probably need to move all xenbus_read_unsigned
->> calls to the very beginning of the .probe, so no memory allocations are made
->> which will be useless if we return -ENXIO, e.g. something like
->>
->> static int xenkbd_probe(struct xenbus_device *dev,
->>                    const struct xenbus_device_id *id)
->> {
->>      int ret, i;
->>      bool with_mtouch, with_kbd, with_ptr;
->>      struct xenkbd_info *info;
->>      struct input_dev *kbd, *ptr, *mtouch;
->>
->> <read with_mtouch, with_kbd, with_ptr here>
->>
->> if (!(with_kbd | with_ptr | with_mtouch))
->>          return -ENXIO;
->>
->> Does the above looks ok?
-> Yes. Another option is to keep the check where I suggested and do
->
-> 	if (...) {
-> 		ret = -ENXIO;
-> 		goto error;
-> 	}
->
-> Whichever you prefer is fine with me.
-I will go with the change you suggested and
-I'll send v4 tomorrow then.
-> Thanks.
->
-Thank you,
-Oleksandr
+On 05/17/18 at 07:12am, damian wrote:
+> On Wed, 16. May 18:05, Baoquan He wrote:
+> > Functions parse_gb_huge_pages() and process_gb_huge_page() are introduced to
+> > handle conflict between KASLR and huge pages, will be used in the next patch.
+> > 
+> > Function parse_gb_huge_pages() is used to parse kernel command-line to get
+> > how many 1GB huge pages have been specified. A static global variable
+> > 'max_gb_huge_pages' is added to store the number.
+> > 
+> > And process_gb_huge_page() is used to skip as many 1GB huge pages as possible
+> > from the passed in memory region according to the specified number.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  arch/x86/boot/compressed/kaslr.c | 71 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 71 insertions(+)
+> > 
+> > diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> > index a0a50b91ecef..13bd879cdc5d 100644
+> > --- a/arch/x86/boot/compressed/kaslr.c
+> > +++ b/arch/x86/boot/compressed/kaslr.c
+> > @@ -215,6 +215,32 @@ static void mem_avoid_memmap(char *str)
+> >  		memmap_too_large = true;
+> >  }
+> >  
+> > +/* Store the number of 1GB huge pages which user specified.*/
+> > +static unsigned long max_gb_huge_pages;
+> > +
+> > +static int parse_gb_huge_pages(char *param, char* val)
+> > +{
+> > +	char *p;
+> > +	u64 mem_size;
+> > +	static bool gbpage_sz = false;
+> > +
+> > +	if (!strcmp(param, "hugepagesz")) {
+> > +		p = val;
+> > +		mem_size = memparse(p, &p);
+> > +		if (mem_size == PUD_SIZE) {
+> > +			if (gbpage_sz)
+> > +				warn("Repeadly set hugeTLB page size of 1G!\n");
+> > +			gbpage_sz = true;
+> > +		} else
+> > +			gbpage_sz = false;
+> > +	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
+> > +		p = val;
+> > +		max_gb_huge_pages = simple_strtoull(p, &p, 0);
+> > +		debug_putaddr(max_gb_huge_pages);
+> > +	}
+> > +}
+> Hello,
+> 
+> the return value is missing for the function or not ?
+
+Thanks, very good catch. It should be 'static void ', no return value
+since we didn't check it. Will update when repost.
+
+> 
+> > +
+> > +
+> >  static int handle_mem_memmap(void)
+> >  {
+> >  	char *args = (char *)get_cmd_line_ptr();
+> > @@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
+> >  	}
+> >  }
+> >  
+> > +/* Skip as many 1GB huge pages as possible in the passed region. */
+> > +static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
+> > +{
+> > +	int i = 0;
+> > +	unsigned long addr, size;
+> > +	struct mem_vector tmp;
+> > +
+> > +	if (!max_gb_huge_pages) {
+> > +		store_slot_info(region, image_size);
+> > +		return;
+> > +	}
+> > +
+> > +	addr = ALIGN(region->start, PUD_SIZE);
+> > +	/* If Did we raise the address above the passed in memory entry? */
+> > +	if (addr < region->start + region->size)
+> > +		size = region->size - (addr - region->start);
+> > +
+> > +	/* Check how many 1GB huge pages can be filtered out*/
+> > +	while (size > PUD_SIZE && max_gb_huge_pages) {
+> > +		size -= PUD_SIZE;
+> > +		max_gb_huge_pages--;
+> > +		i++;
+> > +	}
+> > +
+> > +	if (!i) {
+> > +		store_slot_info(region, image_size);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Process the remaining regions after filtering out. */
+> > +
+> > +	if (addr >= region->start + image_size) {
+> > +		tmp.start = region->start;
+> > +		tmp.size = addr - region->start;
+> > +		store_slot_info(&tmp, image_size);
+> > +	}
+> > +
+> > +	size  = region->size - (addr - region->start) - i * PUD_SIZE;
+> > +        if (size >= image_size) {
+> > +		tmp.start = addr + i*PUD_SIZE;
+> > +		tmp.size = size;
+> > +		store_slot_info(&tmp, image_size);
+> > +        }
+> > +}
+> > +
+> >  static unsigned long slots_fetch_random(void)
+> >  {
+> >  	unsigned long slot;
+> > -- 
+> > 2.13.6
+> > 
