@@ -1,98 +1,408 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEQHpD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:45:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37402 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752348AbeEQHpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:45:01 -0400
-Date: Thu, 17 May 2018 09:44:54 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with
- VFIO mdev framework
-Message-ID: <20180517094454.6afae7ba.cohuck@redhat.com>
-In-Reply-To: <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
-        <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752657AbeEQHpX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:45:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752348AbeEQHpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:45:20 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 1/3] ARM: dts: tegra: Remove skeleton.dtsi and fix DTC warnings for /memory
+Date: Thu, 17 May 2018 09:45:01 +0200
+Message-Id: <1526543103-21668-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 15:42:18 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+Remove the usage of skeleton.dtsi and add necessary properties to /memory
+node to fix the DTC warnings:
 
-> On 05/11/2018 01:18 PM, Halil Pasic wrote:
-> >
-> >
-> > On 05/07/2018 05:11 PM, Tony Krowiak wrote:  
-> >> Registers the matrix device created by the VFIO AP device
-> >> driver with the VFIO mediated device framework.
-> >> Registering the matrix device will create the sysfs
-> >> structures needed to create mediated matrix devices
-> >> each of which will be used to configure the AP matrix
-> >> for a guest and connect it to the VFIO AP device driver.
+    arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
 
-> >> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
-> >> mdev_device *mdev)
-> >> +{
-> >> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-> >> +
-> >> +    ap_matrix->available_instances--;
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +
-> >> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
-> >> +{
-> >> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-> >> +
-> >> +    ap_matrix->available_instances++;
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +  
-> >
-> > The above functions seem to be called with the lock of this 
-> > auto-generated
-> > mdev parent device held. That's why we don't have to care about 
-> > synchronization
-> > ourselves, right?  
-> 
-> I would assume as much. The comments for the 'struct mdev_parent_ops' in
-> include/linux/mdev.h do not mention anything about synchronization, nor 
-> did I
-> see any locking or synchronization in the vfio_ccw implementation after 
-> which
-> I modeled my code, so frankly it is something I did not consider.
-> 
-> >
-> >
-> > A small comment in the code could be helpful for mdev non-experts. 
-> > Hell, I would
-> > even consider documenting it for all mdev -- took me some time to 
-> > figure out.  
-> 
-> You may want to bring this up with the VFIO mdev maintainers, but I'd be 
-> happy to
-> include a comment in the functions in question if you think it important.
+The DTB after the change is the same as before except adding
+unit-address to /memory node.
 
-Important note: There's currently a patch on list that removes the mdev
-parent mutex, and it seems there was never intended to be any
-serialization in that place by the mdev core. (Look for "vfio/mdev:
-Check globally for duplicate devices".)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes since v4:
+1. None
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts      | 3 ++-
+ arch/arm/boot/dts/tegra114-roth.dts         | 3 ++-
+ arch/arm/boot/dts/tegra114-tn7.dts          | 3 ++-
+ arch/arm/boot/dts/tegra114.dtsi             | 4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 3 ++-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        | 3 ++-
+ arch/arm/boot/dts/tegra124-venice2.dts      | 3 ++-
+ arch/arm/boot/dts/tegra124.dtsi             | 2 --
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 3 ++-
+ arch/arm/boot/dts/tegra20-harmony.dts       | 3 ++-
+ arch/arm/boot/dts/tegra20-paz00.dts         | 3 ++-
+ arch/arm/boot/dts/tegra20-seaboard.dts      | 3 ++-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi     | 3 ++-
+ arch/arm/boot/dts/tegra20-trimslice.dts     | 3 ++-
+ arch/arm/boot/dts/tegra20-ventana.dts       | 3 ++-
+ arch/arm/boot/dts/tegra20.dtsi              | 7 +++++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi       | 5 +++++
+ arch/arm/boot/dts/tegra30-beaver.dts        | 3 ++-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       | 3 ++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      | 3 ++-
+ arch/arm/boot/dts/tegra30.dtsi              | 7 +++++--
+ 23 files changed, 53 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index eafff16765b4..5cdcedfc19cb 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -23,7 +23,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 7ed7370ee67a..b4f329a07c60 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -28,7 +28,8 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		/* memory >= 0x79600000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x79600000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 7fc4a8b31e45..12092d344ce8 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -28,7 +28,8 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		/* memory >= 0x37e00000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x37e00000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 0e4a13295d8a..b917784d3f97 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -5,11 +5,11 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra114";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	host1x@50000000 {
+ 		compatible = "nvidia,tegra114-host1x", "simple-bus";
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index bb67edb016c5..80b52c612891 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -15,7 +15,8 @@
+ 	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
+ 		     "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 65a2161b9b8e..3ca7601cafe9 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -50,7 +50,8 @@
+ 	model = "Toradex Apalis TK1";
+ 	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 6dbcf84dafbc..8d9e6ee6c6a7 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -24,7 +24,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 3609367037a6..15a2b0e3237e 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -13,7 +13,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 89bcc178994d..241cdc4b6600 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 174092bfac90..df1642876a4c 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -7,8 +7,6 @@
+ #include <dt-bindings/reset/tegra124-car.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra124";
+ 	interrupt-parent = <&lic>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1..305efb275b48 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -10,7 +10,8 @@
+ 		rtc1 = "/rtc@7000e000";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 628a55a9318b..5009a55ae15c 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 30436969adc0..e794ac5442ef 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -19,7 +19,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 284aae351ff2..6cb832cfa4f3 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 872046d48709..6ceb1228fed3 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -15,7 +15,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index d55c6b240a30..3f94be3da9e5 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index ee3fbf941e79..c897a90289bc 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..290ebbeb210f 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -4,11 +4,14 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra20";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
+ 
+ 	iram@40000000 {
+ 		compatible = "mmio-sram";
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d1d21ec2a844..184f60c720fa 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -10,6 +10,11 @@
+ 	model = "Toradex Apalis T30";
+ 	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+ 
++	memory@0 {
++		device_type = "memory";
++		reg = <0 0>;
++	};
++
+ 	pcie@3000 {
+ 		avdd-pexa-supply = <&vdd2_reg>;
+ 		vdd-pexa-supply = <&vdd2_reg>;
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index ae52a5039506..72369877d284 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -17,7 +17,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x7ff00000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 92a9740c533f..24c04d4c335d 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -40,7 +40,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index c44d8c40c410..cc46cedf80b9 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -10,7 +10,8 @@
+ 	model = "Toradex Colibri T30";
+ 	compatible = "toradex,colibri_t30", "nvidia,tegra30";
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index a110cf84d85f..4383f0fd789d 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -5,11 +5,14 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra30";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
+ 
+ 	pcie@3000 {
+ 		compatible = "nvidia,tegra30-pcie";
+-- 
+2.7.4
