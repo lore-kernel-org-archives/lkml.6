@@ -1,172 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEQKu1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:50:27 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:27694 "EHLO pegase1.c-s.fr"
+        id S1752149AbeEQKu0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:50:26 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:27618 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751844AbeEQKty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:49:54 -0400
-Message-Id: <404fbea1966e65b3d6d8f33856f6ff4c6486cce6.1526553552.git.christophe.leroy@c-s.fr>
+        id S1752014AbeEQKt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:49:58 -0400
+Message-Id: <f42d0e828227103cc20349d111b2562c6a77dd49.1526553552.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1526553552.git.christophe.leroy@c-s.fr>
 References: <cover.1526553552.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 2/5] powerpc/lib: optimise 32 bits __clear_user()
+Subject: [PATCH v2 4/5] powerpc/lib: inline string functions NUL size
+ verification
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu, 17 May 2018 12:49:52 +0200 (CEST)
+Date: Thu, 17 May 2018 12:49:56 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite clear_user() on the same principle as memset(0), making use
-of dcbz to clear complete cache lines.
+Many calls to memcmp(), strncmp(), strncpy() and memchr()
+are done with constant size.
 
-This code is a copy/paste of memset(), with some modifications
-in order to retrieve remaining number of bytes to be cleared,
-as it needs to be returned in case of error.
+This patch gives GCC a chance to optimise out
+the NUL size verification.
 
-On a MPC885, throughput is almost doubled:
-
-Before:
-~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 18.990779 seconds, 52.7MB/s
-
-After:
-~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 9.611468 seconds, 104.0MB/s
-
-On a MPC8321, throughput is multiplied by 2.12:
-
-Before:
-root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 6.844352 seconds, 146.1MB/s
-
-After:
-root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 3.218854 seconds, 310.7MB/s
+This is only done when CONFIG_FORTIFY_SOURCE is not set, because
+when CONFIG_FORTIFY_SOURCE is set, other inline versions of the
+functions are defined in linux/string.h and conflict with ours.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/lib/string_32.S | 85 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 60 insertions(+), 25 deletions(-)
+ arch/powerpc/include/asm/string.h      | 45 +++++++++++++++++++++++++++++++---
+ arch/powerpc/kernel/prom_init_check.sh |  2 +-
+ arch/powerpc/lib/memcmp_64.S           |  8 ++++++
+ arch/powerpc/lib/string.S              | 14 +++++++++++
+ arch/powerpc/lib/string_32.S           |  8 ++++++
+ 5 files changed, 73 insertions(+), 4 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
+index 9b8cedf618f4..35f1aaad9b50 100644
+--- a/arch/powerpc/include/asm/string.h
++++ b/arch/powerpc/include/asm/string.h
+@@ -15,17 +15,56 @@
+ #define __HAVE_ARCH_MEMCPY_FLUSHCACHE
+ 
+ extern char * strcpy(char *,const char *);
+-extern char * strncpy(char *,const char *, __kernel_size_t);
+ extern __kernel_size_t strlen(const char *);
+ extern int strcmp(const char *,const char *);
+-extern int strncmp(const char *, const char *, __kernel_size_t);
+ extern char * strcat(char *, const char *);
+ extern void * memset(void *,int,__kernel_size_t);
+ extern void * memcpy(void *,const void *,__kernel_size_t);
+ extern void * memmove(void *,const void *,__kernel_size_t);
++extern void * memcpy_flushcache(void *,const void *,__kernel_size_t);
++
++#ifdef CONFIG_FORTIFY_SOURCE
++
++extern char * strncpy(char *,const char *, __kernel_size_t);
++extern int strncmp(const char *, const char *, __kernel_size_t);
+ extern int memcmp(const void *,const void *,__kernel_size_t);
+ extern void * memchr(const void *,int,__kernel_size_t);
+-extern void * memcpy_flushcache(void *,const void *,__kernel_size_t);
++
++#else
++
++extern char *__strncpy(char *,const char *, __kernel_size_t);
++extern int __strncmp(const char *, const char *, __kernel_size_t);
++extern int __memcmp(const void *,const void *,__kernel_size_t);
++extern void *__memchr(const void *,int,__kernel_size_t);
++
++static inline char *strncpy(char *p, const char *q, __kernel_size_t size)
++{
++	if (unlikely(!size))
++		return p;
++	return __strncpy(p, q, size);
++}
++
++static inline int strncmp(const char *p, const char *q, __kernel_size_t size)
++{
++	if (unlikely(!size))
++		return 0;
++	return __strncmp(p, q, size);
++}
++
++static inline int memcmp(const void *p,const void *q,__kernel_size_t size)
++{
++	if (unlikely(!size))
++		return 0;
++	return __memcmp(p, q, size);
++}
++
++static inline void *memchr(const void *p, int c, __kernel_size_t size)
++{
++	if (unlikely(!size))
++		return NULL;
++	return __memchr(p, c, size);
++}
++#endif
+ 
+ #ifdef CONFIG_PPC64
+ #define __HAVE_ARCH_MEMSET32
+diff --git a/arch/powerpc/kernel/prom_init_check.sh b/arch/powerpc/kernel/prom_init_check.sh
+index acb6b9226352..2d87e5f9d87b 100644
+--- a/arch/powerpc/kernel/prom_init_check.sh
++++ b/arch/powerpc/kernel/prom_init_check.sh
+@@ -18,7 +18,7 @@
+ 
+ WHITELIST="add_reloc_offset __bss_start __bss_stop copy_and_flush
+ _end enter_prom memcpy memset reloc_offset __secondary_hold
+-__secondary_hold_acknowledge __secondary_hold_spinloop __start
++__secondary_hold_acknowledge __secondary_hold_spinloop __start  __strncmp
+ strcmp strcpy strlcpy strlen strncmp strstr kstrtobool logo_linux_clut224
+ reloc_got2 kernstart_addr memstart_addr linux_banner _stext
+ __prom_init_toc_start __prom_init_toc_end btext_setup_display TOC."
+diff --git a/arch/powerpc/lib/memcmp_64.S b/arch/powerpc/lib/memcmp_64.S
+index d75d18b7bd55..9b28286b85cf 100644
+--- a/arch/powerpc/lib/memcmp_64.S
++++ b/arch/powerpc/lib/memcmp_64.S
+@@ -29,8 +29,14 @@
+ #define LD	ldx
+ #endif
+ 
++#ifndef CONFIG_FORTIFY_SOURCE
++#define memcmp __memcmp
++#endif
++
+ _GLOBAL(memcmp)
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	cmpdi	cr1,r5,0
++#endif
+ 
+ 	/* Use the short loop if both strings are not 8B aligned */
+ 	or	r6,r3,r4
+@@ -39,7 +45,9 @@ _GLOBAL(memcmp)
+ 	/* Use the short loop if length is less than 32B */
+ 	cmpdi	cr6,r5,31
+ 
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	beq	cr1,.Lzero
++#endif
+ 	bne	.Lshort
+ 	bgt	cr6,.Llong
+ 
+diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+index 0ef189847337..2521c159e644 100644
+--- a/arch/powerpc/lib/string.S
++++ b/arch/powerpc/lib/string.S
+@@ -14,12 +14,20 @@
+ #include <asm/export.h>
+ 
+ 	.text
++
++#ifndef CONFIG_FORTIFY_SOURCE
++#define strncpy __strncpy
++#define strncmp __strncmp
++#define memchr __memchr
++#endif
+ 	
+ /* This clears out any unused part of the destination buffer,
+    just as the libc version does.  -- paulus */
+ _GLOBAL(strncpy)
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	PPC_LCMPI 0,r5,0
+ 	beqlr
++#endif
+ 	mtctr	r5
+ 	addi	r6,r3,-1
+ 	addi	r4,r4,-1
+@@ -40,8 +48,10 @@ _GLOBAL(strncpy)
+ EXPORT_SYMBOL(strncpy)
+ 
+ _GLOBAL(strncmp)
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	PPC_LCMPI 0,r5,0
+ 	beq-	2f
++#endif
+ 	mtctr	r5
+ 	addi	r5,r3,-1
+ 	addi	r4,r4,-1
+@@ -55,13 +65,17 @@ _GLOBAL(strncmp)
+ 	beqlr	1
+ 	bdnzt	eq,1b
+ 	blr
++#ifdef CONFIG_FORTIFY_SOURCE
+ 2:	li	r3,0
+ 	blr
++#endif
+ EXPORT_SYMBOL(strncmp)
+ 
+ _GLOBAL(memchr)
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	PPC_LCMPI 0,r5,0
+ 	beq-	2f
++#endif
+ 	mtctr	r5
+ 	addi	r3,r3,-1
+ #ifdef CONFIG_PPC64
 diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
-index ab8c4f5f31b6..2c11c2019b69 100644
+index 5c0e77baa9c7..15f6fa175ec1 100644
 --- a/arch/powerpc/lib/string_32.S
 +++ b/arch/powerpc/lib/string_32.S
-@@ -13,6 +13,7 @@
- #include <asm/errno.h>
- #include <asm/ppc_asm.h>
- #include <asm/export.h>
-+#include <asm/cache.h>
+@@ -17,9 +17,15 @@
  
  	.text
  
-@@ -31,44 +32,78 @@ _GLOBAL(memcmp)
++#ifndef CONFIG_FORTIFY_SOURCE
++#define memcmp __memcmp
++#endif
++
+ _GLOBAL(memcmp)
++#ifdef CONFIG_FORTIFY_SOURCE
+ 	PPC_LCMPI 0,r5,0
+ 	beq-	2f
++#endif
+ 	srawi.	r7, r5, 2		/* Divide len by 4 */
+ 	mr	r6, r3
+ 	beq-	3f
+@@ -56,8 +62,10 @@ _GLOBAL(memcmp)
+ 	lbzx	r0, r4, r7
+ 	subf.	r3, r0, r3
  	blr
++#ifdef CONFIG_FORTIFY_SOURCE
+ 2:	li	r3,0
+ 	blr
++#endif
  EXPORT_SYMBOL(memcmp)
  
-+CACHELINE_BYTES = L1_CACHE_BYTES
-+LG_CACHELINE_BYTES = L1_CACHE_SHIFT
-+CACHELINE_MASK = (L1_CACHE_BYTES-1)
-+
- _GLOBAL(__clear_user)
--	addi	r6,r3,-4
--	li	r3,0
--	li	r5,0
--	cmplwi	0,r4,4
-+/*
-+ * Use dcbz on the complete cache lines in the destination
-+ * to set them to zero.  This requires that the destination
-+ * area is cacheable.
-+ */
-+	cmplwi	cr0, r4, 4
-+	mr	r10, r3
-+	li	r3, 0
- 	blt	7f
--	/* clear a single word */
--11:	stwu	r5,4(r6)
-+
-+11:	stw	r3, 0(r10)
- 	beqlr
--	/* clear word sized chunks */
--	andi.	r0,r6,3
--	add	r4,r0,r4
--	subf	r6,r0,r6
--	srwi	r0,r4,2
--	andi.	r4,r4,3
-+	andi.	r0, r10, 3
-+	add	r11, r0, r4
-+	subf	r6, r0, r10
-+
-+	clrlwi	r7, r6, 32 - LG_CACHELINE_BYTES
-+	add	r8, r7, r11
-+	srwi	r9, r8, LG_CACHELINE_BYTES
-+	addic.	r9, r9, -1	/* total number of complete cachelines */
-+	ble	2f
-+	xori	r0, r7, CACHELINE_MASK & ~3
-+	srwi.	r0, r0, 2
-+	beq	3f
-+	mtctr	r0
-+4:	stwu	r3, 4(r6)
-+	bdnz	4b
-+3:	mtctr	r9
-+	li	r7, 4
-+10:	dcbz	r7, r6
-+	addi	r6, r6, CACHELINE_BYTES
-+	bdnz	10b
-+	clrlwi	r11, r8, 32 - LG_CACHELINE_BYTES
-+	addi	r11, r11, 4
-+
-+2:	srwi	r0 ,r11 ,2
- 	mtctr	r0
--	bdz	7f
--1:	stwu	r5,4(r6)
-+	bdz	6f
-+1:	stwu	r3, 4(r6)
- 	bdnz	1b
--	/* clear byte sized chunks */
--7:	cmpwi	0,r4,0
-+6:	andi.	r11, r11, 3
- 	beqlr
--	mtctr	r4
--	addi	r6,r6,3
--8:	stbu	r5,1(r6)
-+	mtctr	r11
-+	addi	r6, r6, 3
-+8:	stbu	r3, 1(r6)
- 	bdnz	8b
- 	blr
--90:	mr	r3,r4
-+
-+7:	cmpwi	cr0, r4, 0
-+	beqlr
-+	mtctr	r4
-+	addi	r6, r10, -1
-+9:	stbu	r3, 1(r6)
-+	bdnz	9b
- 	blr
--91:	mfctr	r3
--	slwi	r3,r3,2
--	add	r3,r3,r4
-+
-+90:	mr	r3, r4
- 	blr
--92:	mfctr	r3
-+91:	add	r3, r10, r4
-+	subf	r3, r6, r3
- 	blr
- 
- 	EX_TABLE(11b, 90b)
-+	EX_TABLE(4b, 91b)
-+	EX_TABLE(10b, 91b)
- 	EX_TABLE(1b, 91b)
--	EX_TABLE(8b, 92b)
-+	EX_TABLE(8b, 91b)
-+	EX_TABLE(9b, 91b)
- 
- EXPORT_SYMBOL(__clear_user)
+ CACHELINE_BYTES = L1_CACHE_BYTES
 -- 
 2.13.3
