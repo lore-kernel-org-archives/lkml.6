@@ -1,100 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752339AbeEQRyW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:54:22 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55939 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752311AbeEQRyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:54:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,411,1520924400";
-   d="scan'208";a="200253658"
-Subject: Re: [PATCH V2 04/20] x86: kcore: Give entry trampolines all the same
- offset in kcore
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
- <1526548928-20790-5-git-send-email-adrian.hunter@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <47ed588e-c4d6-1e69-d9da-e4d41e448ef4@linux.intel.com>
-Date: Thu, 17 May 2018 10:54:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752095AbeEQR5G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:57:06 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:35516 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751396AbeEQR5C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 13:57:02 -0400
+X-Google-Smtp-Source: AB8JxZplh3K5AK3T2xR8wRBhyxTP6IWyJLJKmh7nchA2pdytR7QTSAaolC23wyOPMT3lT/inrJtBMsFoKYhKxLqA1ltW14i/UQ9e
 MIME-Version: 1.0
-In-Reply-To: <1526548928-20790-5-git-send-email-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Thu, 17 May 2018 10:57:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000048356056c6a90e2@google.com>
+Subject: KASAN: use-after-free Read in timer_is_static_object
+From: syzbot <syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com>
+To: alexey.kodanev@oracle.com, davem@davemloft.net, dccp@vger.kernel.org,
+        edumazet@google.com, gerrit@erg.abdn.ac.uk, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        soheil@google.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 02:21 AM, Adrian Hunter wrote:
-> @@ -149,9 +149,9 @@ static void __init setup_cpu_entry_area(int cpu)
->  
->  	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
->  		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
-> -	kclist_add(&per_cpu(kcore_entry_trampoline, cpu),
-> -		   &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE,
-> -		   KCORE_TEXT);
-> +	kclist_add_remap(&per_cpu(kcore_entry_trampoline, cpu),
-> +			 _entry_trampoline,
-> +			 &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE);
->  #endif
->  	percpu_setup_debug_store(cpu);
->  }
+Hello,
 
-Why do you bother adding then immediately removing this code?
+syzbot found the following crash on:
+
+HEAD commit:    e6506eb24187 Merge tag 'trace-v4.17-rc4-2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=177fe477800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d47e9ec91a6f15dbd6f
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com
+
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000016
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000017
+R13: 0000000000000053 R14: 00000000006f4868 R15: 0000000000000001
+==================================================================
+BUG: KASAN: use-after-free in timer_is_static_object+0x80/0x90  
+kernel/time/timer.c:607
+Read of size 8 at addr ffff8801bebb5118 by task syz-executor2/25299
+
+CPU: 1 PID: 25299 Comm: syz-executor2 Not tainted 4.17.0-rc5+ #54
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  timer_is_static_object+0x80/0x90 kernel/time/timer.c:607
+  debug_object_activate+0x2d9/0x670 lib/debugobjects.c:508
+  debug_timer_activate kernel/time/timer.c:709 [inline]
+  debug_activate kernel/time/timer.c:764 [inline]
+  __mod_timer kernel/time/timer.c:1041 [inline]
+  mod_timer+0x4d3/0x13b0 kernel/time/timer.c:1102
+  sk_reset_timer+0x22/0x60 net/core/sock.c:2742
+  ccid2_hc_tx_rto_expire+0x587/0x680 net/dccp/ccids/ccid2.c:147
+  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:cap_capable+0x3f/0x260 security/commoncap.c:82
+RSP: 0018:ffff8801ac75f8c8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: ffffffff88d5be00 RCX: 0000000000000000
+RDX: 1ffff100386dc571 RSI: ffffffff830ee893 RDI: ffff8801c36e2b88
+RBP: ffff8801ac75f910 R08: ffff8801ac126440 R09: ffff8801ac75fcb8
+R10: ffff8801ac126c78 R11: ffff8801ac75fc78 R12: dffffc0000000000
+R13: dffffc0000000000 R14: ffff8801c36e2b00 R15: 0000000000000021
+  cap_vm_enough_memory+0x50/0x70 security/commoncap.c:1307
+  security_vm_enough_memory_mm+0x71/0xc0 security/security.c:327
+  mmap_region+0x37b/0x1870 mm/mmap.c:1714
+  do_mmap+0xde2/0x1360 mm/mmap.c:1535
+  do_mmap_pgoff include/linux/mm.h:2237 [inline]
+  vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
+  ksys_mmap_pgoff+0x26e/0x640 mm/mmap.c:1585
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a5a
+RSP: 002b:0000000000a3e778 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000455a5a
+RDX: 0000000000000003 RSI: 0000000000021000 RDI: 0000000000000000
+RBP: ffffffffffffffff R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000020022 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000021000 R14: 0000000000020022 R15: 0000000000000000
+
+Allocated by task 25374:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
+  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
+  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
+  dccp_feat_activate_values+0x3a7/0x819 net/dccp/feat.c:1538
+  dccp_create_openreq_child+0x472/0x610 net/dccp/minisocks.c:128
+  dccp_v4_request_recv_sock+0x12c/0xca0 net/dccp/ipv4.c:408
+  dccp_v6_request_recv_sock+0x125d/0x1f10 net/dccp/ipv6.c:415
+  dccp_check_req+0x455/0x6a0 net/dccp/minisocks.c:197
+  dccp_v4_rcv+0x7b8/0x1f3f net/dccp/ipv4.c:841
+  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
+  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
+  process_backlog+0x219/0x760 net/core/dev.c:5337
+  napi_poll net/core/dev.c:5735 [inline]
+  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+
+Freed by task 25374:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
+  dccp_disconnect+0x130/0xc66 net/dccp/proto.c:286
+  dccp_close+0x3bc/0xe60 net/dccp/proto.c:1045
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:460
+  sock_release+0x96/0x1b0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801bebb4cc0
+  which belongs to the cache ccid2_hc_tx_sock of size 1240
+The buggy address is located 1112 bytes inside of
+  1240-byte region [ffff8801bebb4cc0, ffff8801bebb5198)
+The buggy address belongs to the page:
+page:ffffea0006faed00 count:1 mapcount:0 mapping:ffff8801bebb41c0  
+index:0xffff8801bebb5240 compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801bebb41c0 ffff8801bebb5240 0000000100000003
+raw: ffff8801cdba3138 ffffea0007634120 ffff8801cdbaab40 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801bebb5000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801bebb5080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801bebb5100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff8801bebb5180: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801bebb5200: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
