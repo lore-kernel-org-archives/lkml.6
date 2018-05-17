@@ -1,177 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752513AbeEQQJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:09:56 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37832 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752451AbeEQQJw (ORCPT
+        id S1752226AbeEQQRP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:17:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33808 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeEQQRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:09:52 -0400
-X-Google-Smtp-Source: AB8JxZoyoQdONdVtp4fy3Goxrc7xwTCp2FazT/xp9g8DYSwvFY+SS/+SdMAcnKg4BvTlomK26IrUbUKdW7cMssZaQP0=
+        Thu, 17 May 2018 12:17:13 -0400
+Date: Thu, 17 May 2018 18:16:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, tglx@linutronix.de,
+        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
+        mgorman@techsingularity.net, x86@kernel.org, linux-pm@vger.kernel.org,
+        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180517161649.GX12217@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+ <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+ <20180516151925.GO28366@localhost.localdomain>
+ <20180516154733.GF12198@hirez.programming.kicks-ass.net>
+ <20180516163105.GP28366@localhost.localdomain>
+ <20180517105907.GC22493@localhost.localdomain>
+ <20180517150418.GF22493@localhost.localdomain>
+ <1526571692.11765.10.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180408192952.GB685@sol.localdomain>
-References: <001a1140ad88c4f006055d3836d2@google.com> <001a113f8d5653a67c0561346ed3@google.com>
- <20180408192952.GB685@sol.localdomain>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 17 May 2018 18:09:31 +0200
-Message-ID: <CACT4Y+a_0qXgZkXMmcFpb1RB9xcrMpMBhs574RiHLfOk-ZwcXQ@mail.gmail.com>
-Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: syzbot
-        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>, dccp@vger.kernel.org,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526571692.11765.10.camel@linux.intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 9:29 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
->> syzkaller has found reproducer for the following crash on
->> fba961ab29e5ffb055592442808bb0f7962e05da
->> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached
->> Raw console output is attached.
->> C reproducer is attached
->> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->> for information about syzkaller reproducers
->>
->>
->> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
->>
->> =============================
->> WARNING: suspicious RCU usage
->> 4.15.0-rc4+ #164 Not tainted
->> -----------------------------
->> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
->>
->> other info that might help us debug this:
->>
->>
->> rcu_scheduler_active = 2, debug_locks = 1
->> 1 lock held by syzkaller667189/5780:
->>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
->> include/net/sock.h:1462 [inline]
->>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
->> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
->>
->> stack backtrace:
->> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:17 [inline]
->>  dump_stack+0x194/0x257 lib/dump_stack.c:53
->>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
->>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
->>  inet_csk_route_req+0x824/0xca0 net/ipv4/inet_connection_sock.c:544
->>  dccp_v4_send_response+0xa7/0x640 net/dccp/ipv4.c:485
->>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
->>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
->>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
->>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
->>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
->>  sk_backlog_rcv include/net/sock.h:907 [inline]
->>  __release_sock+0x124/0x360 net/core/sock.c:2274
->>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
->>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
->>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
->>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
->>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
->>  SYSC_setsockopt net/socket.c:1821 [inline]
->>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
->>  entry_SYSCALL_64_fastpath+0x1f/0x96
->> RIP: 0033:0x445ec9
->> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
->> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
->> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
->> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
->> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
->> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
->>
->> =============================
->> WARNING: suspicious RCU usage
->> 4.15.0-rc4+ #164 Not tainted
->> -----------------------------
->> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
->>
->> other info that might help us debug this:
->>
->>
->> rcu_scheduler_active = 2, debug_locks = 1
->> 1 lock held by syzkaller667189/5780:
->>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
->> include/net/sock.h:1462 [inline]
->>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
->> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
->>
->> stack backtrace:
->> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:17 [inline]
->>  dump_stack+0x194/0x257 lib/dump_stack.c:53
->>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
->>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
->>  dccp_v4_send_response+0x4b0/0x640 net/dccp/ipv4.c:496
->>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
->>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
->>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
->>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
->>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
->>  sk_backlog_rcv include/net/sock.h:907 [inline]
->>  __release_sock+0x124/0x360 net/core/sock.c:2274
->>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
->>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
->>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
->>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
->>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
->>  SYSC_setsockopt net/socket.c:1821 [inline]
->>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
->>  entry_SYSCALL_64_fastpath+0x1f/0x96
->> RIP: 0033:0x445ec9
->> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
->> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
->> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
->> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
->> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
->> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
->
-> syzbot stopped hitting this for some reason, but the bug is still there.
-> Here's a simplified reproducer that works on Linus' tree as of today:
->
-> #include <linux/in.h>
-> #include <stdlib.h>
-> #include <sys/socket.h>
-> #include <unistd.h>
->
-> int main()
-> {
->         int is_parent = (fork() != 0);
->         for (;;) {
->                 int fd = socket(AF_INET, SOCK_DCCP, 0);
->                 struct sockaddr_in addr = {
->                         .sin_family = AF_INET,
->                         .sin_port = htobe16(0x4e23),
->                 };
->                 if (is_parent) {
->                         connect(fd, (void *)&addr, sizeof(addr));
->                 } else {
->                         bind(fd, (void *)&addr, sizeof(addr));
->                         listen(fd, 100);
->                         setsockopt(fd, 0, 0xFFFF, NULL, 0);
->                 }
->                 close(fd);
->         }
-> }
+On Thu, May 17, 2018 at 08:41:32AM -0700, Srinivas Pandruvada wrote:
+> One more point to note. Even if we calculate some utilization based on
+> the freq-invariant and arrive at a P-state, we will not be able to
+> control any P-state in turbo region (not even as a cap) on several
+> Intel processors using PERF_CTL MSRs.
 
+Right, but don't we need to set the PERF_CTL to max P in order to access
+the turbo bins? So we still need to compute a P state, but as soon as we
+reach max P, we're done.
 
-
-Still happens on the current upstream HEAD
-e6506eb241871d68647c53cb6d0a16299550ae97.
+And its not as if setting anything below max P is a firm setting either
+anyway, its hints all the way down.
