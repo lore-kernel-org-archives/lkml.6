@@ -1,155 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752450AbeEQHnQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:16 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:57577 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752393AbeEQHnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:43:15 -0400
-X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="17447178"
-X-IronPort-AV: E=McAfee;i="5900,7806,8890"; a="195745864"
-From: Oza Pawandeep <poza@codeaurora.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
-        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 1/9] PCI: Add generic pcie_wait_for_link() interface
-Date: Thu, 17 May 2018 03:43:03 -0400
-Message-Id: <1526542991-5291-2-git-send-email-poza@codeaurora.org>
+        id S1752601AbeEQHpx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752326AbeEQHpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:45:22 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 2/3] ARM: dts: tegra: Fix unit_address_vs_reg and avoid_unnecessary_addr_size DTC warnings
+Date: Thu, 17 May 2018 09:45:02 +0200
+Message-Id: <1526543103-21668-2-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
-References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
+In-Reply-To: <1526543103-21668-1-git-send-email-krzk@kernel.org>
+References: <1526543103-21668-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clients such as hotplug and Downstream Port Containment (DPC) both need to
-wait until a link becomes active or inactive.
+Remove unneeded address/size cells properties and unit addresses to fix
+DTC warnings like:
 
-Add a generic pcie_wait_link_active() interface and use it instead of
-duplicating the code.
+    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (unit_address_vs_reg):
+        /i2c@7000d000/stmpe811@41/stmpe_touchscreen@0: node has a unit name, but no reg property
+    arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (avoid_unnecessary_addr_size):
+        /i2c@7000d000/stmpe811@41: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8..e0c2b8e 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
- 	return ret;
- }
+---
+
+Changes since v4:
+1. None
+---
+ arch/arm/boot/dts/tegra30-apalis.dtsi  | 4 +---
+ arch/arm/boot/dts/tegra30-beaver.dts   | 3 ---
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 2 --
+ 3 files changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 184f60c720fa..5038ca7b68af 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -590,8 +590,6 @@
+ 		/* STMPE811 touch screen controller */
+ 		stmpe811@41 {
+ 			compatible = "st,stmpe811";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 			reg = <0x41>;
+ 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&gpio>;
+@@ -600,7 +598,7 @@
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
  
--static void __pcie_wait_link_active(struct controller *ctrl, bool active)
--{
--	int timeout = 1000;
+-			stmpe_touchscreen@0 {
++			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+ 				/* 3.25 MHz ADC clock speed */
+ 				st,adc-freq = <1>;
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 72369877d284..961934f70639 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1791,9 +1791,6 @@
+ 			vccio-supply = <&vdd_5v_in_reg>;
+ 
+ 			regulators {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
 -
--	if (pciehp_check_link_active(ctrl) == active)
--		return;
--	while (timeout > 0) {
--		msleep(10);
--		timeout -= 10;
--		if (pciehp_check_link_active(ctrl) == active)
--			return;
--	}
--	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
--			active ? "set" : "cleared");
--}
--
- static void pcie_wait_link_active(struct controller *ctrl)
- {
--	__pcie_wait_link_active(ctrl, true);
-+	struct pci_dev *pdev = ctrl_dev(ctrl);
-+
-+	pcie_wait_for_link(pdev, true);
- }
- 
- static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e597655..764bf64 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4138,6 +4138,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
- 
- 	return pci_dev_wait(dev, "PM D3->D0", PCIE_RESET_READY_POLL_MS);
- }
-+/**
-+ * pcie_wait_for_link - Wait until link is active or inactive
-+ * @pdev: Bridge device
-+ * @active: waiting for active or inactive?
-+ *
-+ * Use this to wait till link becomes active or inactive.
-+ */
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
-+{
-+	int timeout = 1000;
-+	bool ret;
-+	u16 lnk_status;
-+
-+	for (;;) {
-+		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-+		if (ret == active)
-+			return true;
-+		if (timeout <= 0)
-+			break;
-+		msleep(10);
-+		timeout -= 10;
-+	}
-+
-+	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
-+		 active ? "set" : "cleared");
-+
-+	return false;
-+}
- 
- void pci_reset_secondary_bus(struct pci_dev *dev)
- {
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 023f7cf..cec9d8c 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -353,6 +353,7 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
- 
- void pci_enable_acs(struct pci_dev *dev);
- 
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
- #ifdef CONFIG_PCIEASPM
- void pcie_aspm_init_link_state(struct pci_dev *pdev);
- void pcie_aspm_exit_link_state(struct pci_dev *pdev);
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 8c57d60..80ec384 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -68,19 +68,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
- 
- static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- {
--	unsigned long timeout = jiffies + HZ;
- 	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 lnk_status;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	}
--	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
--		dev_warn(dev, "Link state not disabled for DPC event\n");
-+	pcie_wait_for_link(pdev, false);
- }
- 
- static void dpc_work(struct work_struct *work)
+ 				vdd1_reg: vdd1 {
+ 					regulator-name = "vddio_ddr_1v2";
+ 					regulator-min-microvolt = <1200000>;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index cc46cedf80b9..a593dc8be47f 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -352,8 +352,6 @@
+ 		/* STMPE811 touch screen controller */
+ 		stmpe811@41 {
+ 			compatible = "st,stmpe811";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 			reg = <0x41>;
+ 			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&gpio>;
 -- 
 2.7.4
