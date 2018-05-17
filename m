@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeEQRNL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:13:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44828 "EHLO
+        id S1752371AbeEQRNY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:13:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44858 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752174AbeEQRNJ (ORCPT
+        with ESMTP id S1752183AbeEQRNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:13:09 -0400
+        Thu, 17 May 2018 13:13:10 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Anson Huang <Anson.Huang@nxp.com>
 Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
         broonie@kernel.org, Linux-imx@nxp.com, linux-kernel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Applied "regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops" to the regulator tree
-In-Reply-To: <1526542042-28485-2-git-send-email-Anson.Huang@nxp.com>
-Message-Id: <20180517171302.B3F1E44007C@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 18:13:02 +0100 (BST)
+Subject: Applied "regulator: pfuze100: add enable/disable for switch" to the regulator tree
+In-Reply-To: <1526542042-28485-1-git-send-email-Anson.Huang@nxp.com>
+Message-Id: <20180517171304.CE03944007C@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 18:13:04 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
+   regulator: pfuze100: add enable/disable for switch
 
 has been applied to the regulator tree at
 
@@ -47,35 +47,46 @@ to this mail.
 Thanks,
 Mark
 
->From 0b01fd3d40fe6402e5fa3b491ef23109feb1aaa5 Mon Sep 17 00:00:00 2001
+>From 5fe156f1cab4f340ddb6283c993912be77594016 Mon Sep 17 00:00:00 2001
 From: Anson Huang <Anson.Huang@nxp.com>
-Date: Thu, 17 May 2018 15:27:22 +0800
-Subject: [PATCH] regulator: pfuze100: add .is_enable() for
- pfuze100_swb_regulator_ops
+Date: Thu, 17 May 2018 15:27:21 +0800
+Subject: [PATCH] regulator: pfuze100: add enable/disable for switch
 
-If is_enabled() is not defined, regulator core will assume
-this regulator is already enabled, then it can NOT be really
-enabled after disabled.
+Add enable/disable support for switch regulator on pfuze100.
 
-Based on Li Jun's patch from the NXP kernel tree.
+Based on Robin Gong's patch from the NXP kernel tree.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/pfuze100-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/pfuze100-regulator.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 053eb1ecf18d..677a070eeb1c 100644
+index 680f076e3d85..053eb1ecf18d 100644
 --- a/drivers/regulator/pfuze100-regulator.c
 +++ b/drivers/regulator/pfuze100-regulator.c
-@@ -168,6 +168,7 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
- static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
+@@ -155,6 +155,9 @@ static const struct regulator_ops pfuze100_fixed_regulator_ops = {
+ };
+ 
+ static const struct regulator_ops pfuze100_sw_regulator_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
 +	.is_enabled = regulator_is_enabled_regmap,
- 	.list_voltage = regulator_list_voltage_table,
- 	.map_voltage = regulator_map_voltage_ascend,
+ 	.list_voltage = regulator_list_voltage_linear,
  	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+@@ -200,6 +203,11 @@ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 			.uV_step = (step),	\
+ 			.vsel_reg = (base) + PFUZE100_VOL_OFFSET,	\
+ 			.vsel_mask = 0x3f,	\
++			.enable_reg = (base) + PFUZE100_MODE_OFFSET,	\
++			.enable_val = 0xc,	\
++			.disable_val = 0x0,	\
++			.enable_mask = 0xf,	\
++			.enable_time = 500,	\
+ 		},	\
+ 		.stby_reg = (base) + PFUZE100_STANDBY_OFFSET,	\
+ 		.stby_mask = 0x3f,	\
 -- 
 2.17.0
