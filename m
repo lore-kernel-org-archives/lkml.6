@@ -1,61 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeEQHR0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:17:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:43993 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751367AbeEQHRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:17:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="42511863"
-Date: Thu, 17 May 2018 10:17:20 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jason Chen <jasonx.z.chen@intel.com>, Andy Yeh <andy.yeh@intel.com>,
-        Alan Chiang <alanx.chiang@intel.com>, Tomasz Figa <tfiga@chromium.org>,
-        Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
-Message-ID: <20180517071720.rb6sdozr5bwy543e@paasikivi.fi.intel.com>
-References: <20180517073702.5497e72e@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752228AbeEQHSY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:18:24 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:60644 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbeEQHSX (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Thu, 17 May 2018 03:18:23 -0400
+Message-Id: <5AFD2CBD02000078001C37BE@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Thu, 17 May 2018 01:18:21 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Nadav Amit" <namit@vmware.com>
+Cc: <keescook@chromium.org>, "the arch/x86 maintainers" <x86@kernel.org>,
+        <tglx@linutronix.de>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        <mingo@redhat.com>, <linux-kernel@vger.kernel.org>, <hpa@zytor.com>
+Subject: Re: [RFC 5/8] x86: refcount: prevent gcc distortions
+References: <20180515141124.84254-1-namit@vmware.com>
+ <20180515141124.84254-15-namit@vmware.com>
+ <5AFBDA6302000078001C31AC@prv1-mh.provo.novell.com>
+ <8B7DE95F-5E57-44F0-90E0-CCBA35F98A07@vmware.com>
+In-Reply-To: <8B7DE95F-5E57-44F0-90E0-CCBA35F98A07@vmware.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20180517073702.5497e72e@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 07:37:02AM +1000, Stephen Rothwell wrote:
-> Hi Mauro,
+>>> On 16.05.18 at 18:44, <namit@vmware.com> wrote:
+> Jan Beulich <JBeulich@suse.com> wrote:
+>>>>> On 15.05.18 at 16:11, <namit@vmware.com> wrote:
+>>> --- a/arch/x86/include/asm/refcount.h
+>>> +++ b/arch/x86/include/asm/refcount.h
+>>> @@ -14,34 +14,43 @@
+>>>  * central refcount exception. The fixup address for the exception points
+>>>  * back to the regular execution flow in .text.
+>>>  */
+>>> -#define _REFCOUNT_EXCEPTION				\
+>>> -	".pushsection .text..refcount\n"		\
+>>> -	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+>>> -	"112:\t" ASM_UD2 "\n"				\
+>>> -	ASM_UNREACHABLE					\
+>>> -	".popsection\n"					\
+>>> -	"113:\n"					\
+>>> +
+>>> +asm ("\n"
+>>> +	".macro __REFCOUNT_EXCEPTION counter:vararg\n\t"
+>>> +	".pushsection .text..refcount\n"
+>>> +	"111:\tlea \\counter, %" _ASM_CX "\n"
+>>> +	"112:\t" ASM_UD2 "\n\t"
+>>> +	ASM_UNREACHABLE
+>>> +	".popsection\n\t"
+>>> +	"113:\n"
+>>> 	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+>>> +	".endm");
+>> 
+>> A few comments on assembly code formatting - while gas at present is
+>> relatively lax in this regard, I wouldn't exclude that there might be a
+>> more strict mode in the future, and that such a mode might eventually
+>> become the default. Furthermore these formatting aspects affect
+>> readability of the assembly produced, should anyone ever find a need
+>> to look at it (perhaps because of some breakage) - I certainly do every
+>> once in a while.
+>> 
+>> Labels should be placed without any indentation (but of course there
+>> may be more than one on a line, in which case subsequent ones may
+>> of course be arbitrarily indented). Instructions and directives, otoh,
+>> should be placed with at least a single tab or space of indentation
+>> (unless preceded by a label, in which case the extra white space still
+>> helps readability).
 > 
-> Commit
-> 
->   af76c93aa36d ("media: cadence: csi2rx: Fix csi2rx_start error handling")
-> 
-> is missing a Signed-off-by from its committer.
+> Writing these patches, I looked at the generated assembly, and there did not
+> appear to be a standard. IIRC, .pushsection directives were not always
+> inlined. I will fix it according to your comments.
 
-Mauro's SoB line is indeed missing. I wonder what happened.
+Right, I should have made explicit that there's no consistency at all in
+pre-existing code. I merely think the issue shouldn't be made worse.
 
-> 
-> Commits
-> 
->   c578c7710712 ("media: imx258: Add imx258 camera sensor driver")
->   3a8fdc1426c3 ("media: dw9807: Add dw9807 vcm driver")
->   2f9c1c88369f ("media: dt-bindings: Add bindings for Dongwoon DW9807 voice coil")
-> 
-> are missing a Signed-off-by from their author.
-
-Thanks for pointing this out. We'll be more careful going forward.
-
--- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Jan
