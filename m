@@ -1,31 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeEQQl3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:41:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52886 "EHLO
+        id S1752663AbeEQQlf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:41:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53040 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeEQQl0 (ORCPT
+        with ESMTP id S1752645AbeEQQlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:41:26 -0400
+        Thu, 17 May 2018 12:41:31 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-kernel@vger.kernel.org
-Subject: Applied "regulator: wm8994: Pass descriptor instead of GPIO number" to the regulator tree
-In-Reply-To: <20180422230742.3729-13-linus.walleij@linaro.org>
-Message-Id: <20180517164120.485F844007E@finisterre.ee.mobilebroadband>
-Date: Thu, 17 May 2018 17:41:20 +0100 (BST)
+Subject: Applied "regulator: core: Add voltage balancing mechanism" to the regulator tree
+In-Reply-To: <1516631412-17542-7-git-send-email-m.purski@samsung.com>
+Message-Id: <20180517164124.BBD2644007E@finisterre.ee.mobilebroadband>
+Date: Thu, 17 May 2018 17:41:24 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: wm8994: Pass descriptor instead of GPIO number
+   regulator: core: Add voltage balancing mechanism
 
 has been applied to the regulator tree at
 
@@ -50,168 +52,265 @@ to this mail.
 Thanks,
 Mark
 
->From 3c6b38d45fa51c7c51c5e2347fc1a6bef6a46525 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 14 May 2018 10:06:34 +0200
-Subject: [PATCH] regulator: wm8994: Pass descriptor instead of GPIO number
+>From 696861761a58d8c93605b5663824929fb6540f16 Mon Sep 17 00:00:00 2001
+From: Maciej Purski <m.purski@samsung.com>
+Date: Mon, 23 Apr 2018 16:33:41 +0200
+Subject: [PATCH] regulator: core: Add voltage balancing mechanism
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up from the device tree node or the board file
-decriptor table for the regulator.
+On Odroid XU3/4 and other Exynos5422 based boards there is a case, that
+different devices on the board are supplied by different regulators
+with non-fixed voltages. If one of these devices temporarily requires
+higher voltage, there might occur a situation that the spread between
+two devices' voltages is so high, that there is a risk of changing
+'high' and 'low' states on the interconnection between devices powered
+by those regulators.
 
-There is a single board file passing the GPIOs for LDO1 and LDO2
-through platform data, so augment this to pass descriptors
-associated with the i2c device as well.
+Introduce new function regulator_balance_voltage(), which
+keeps max_spread constraint fulfilled between a group of coupled
+regulators. It should be called if a regulator changes its
+voltage or after disabling or enabling. Disabled regulators should
+follow changes of the enabled ones, but their consumers' demands
+shouldn't be taken into account while calculating voltage of other
+coupled regulators.
 
-The special GPIO enable DT property for the enable GPIO is
-nonstandard but this was accomodated in
-commit 6a537d48461deacc57c07ed86d9915e5aa4b3539
-"gpio: of: Support regulator nonstandard GPIO properties".
+Find voltages, which are closest to suiting all the consumers' demands,
+while fulfilling max_spread constraint, keeping the following rules:
+- if one regulator is about to rise its voltage, rise others
+  voltages in order to keep the max_spread
+- if a regulator, which has caused rising other regulators, is
+  lowered, lower other regulators if possible
+- if one regulator is about to lower its voltage, but it hasn't caused
+  rising other regulators, don't change its voltage if it breaks the
+  max_spread
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Change regulators' voltages step by step, keeping max_spread constraint
+fulfilled all the time. Function regulator_get_optimal_voltage()
+should find the best possible change for the regulator, which doesn't
+break max_spread constraint. In function regulator_balance_voltage()
+optimize number of steps by finding highest voltage difference on
+each iteration.
+
+If a regulator, which is about to change its voltage, is not coupled,
+method regulator_get_optimal_voltage() should simply return the lowest
+voltage fulfilling consumers' demands.
+
+Coupling should be checked only if the system is in PM_SUSPEND_ON state.
+
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410-module.c | 17 +++++++++++++++--
- drivers/mfd/wm8994-core.c                    |  9 ---------
- drivers/regulator/wm8994-regulator.c         | 19 +++++++++++--------
- include/linux/mfd/wm8994/pdata.h             |  3 ---
- 4 files changed, 26 insertions(+), 22 deletions(-)
+ drivers/regulator/core.c | 192 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 192 insertions(+)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index 5aa472892465..76c4855a03bc 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -194,8 +194,8 @@ static struct wm8994_pdata wm8994_pdata = {
- 		0x3,          /* IRQ out, active high, CMOS */
- 	},
- 	.ldo = {
--		 { .enable = S3C64XX_GPN(6), .init_data = &wm8994_ldo1, },
--		 { .enable = S3C64XX_GPN(4), .init_data = &wm8994_ldo2, },
-+		 { .init_data = &wm8994_ldo1, },
-+		 { .init_data = &wm8994_ldo2, },
- 	},
- };
- 
-@@ -203,6 +203,18 @@ static const struct i2c_board_info wm1277_devs[] = {
- 	{ I2C_BOARD_INFO("wm8958", 0x1a),  /* WM8958 is the superset */
- 	  .platform_data = &wm8994_pdata,
- 	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2,
-+	  .dev_name = "wm8958",
-+	},
-+};
-+
-+static struct gpiod_lookup_table wm8994_gpiod_table = {
-+	.dev_id = "i2c-wm8958", /* I2C device name */
-+	.table = {
-+		GPIO_LOOKUP("GPION", 6,
-+			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("GPION", 4,
-+			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
-+		{ },
- 	},
- };
- 
-@@ -381,6 +393,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
- 
- 	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
- 	gpiod_add_lookup_table(&wm5102_gpiod_table);
-+	gpiod_add_lookup_table(&wm8994_gpiod_table);
- 
- 	if (i < ARRAY_SIZE(gf_mods)) {
- 		dev_info(&i2c->dev, "%s revision %d\n",
-diff --git a/drivers/mfd/wm8994-core.c b/drivers/mfd/wm8994-core.c
-index 953d0790ffd5..c409464231f6 100644
---- a/drivers/mfd/wm8994-core.c
-+++ b/drivers/mfd/wm8994-core.c
-@@ -21,7 +21,6 @@
- #include <linux/mfd/core.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-@@ -302,14 +301,6 @@ static int wm8994_set_pdata_from_of(struct wm8994 *wm8994)
- 	if (of_find_property(np, "wlf,ldoena-always-driven", NULL))
- 		pdata->lineout2fb = true;
- 
--	pdata->ldo[0].enable = of_get_named_gpio(np, "wlf,ldo1ena", 0);
--	if (pdata->ldo[0].enable < 0)
--		pdata->ldo[0].enable = 0;
--
--	pdata->ldo[1].enable = of_get_named_gpio(np, "wlf,ldo2ena", 0);
--	if (pdata->ldo[1].enable < 0)
--		pdata->ldo[1].enable = 0;
--
- 	return 0;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 6ed568b96c0e..225eaca24921 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -105,6 +105,8 @@ static int _notifier_call_chain(struct regulator_dev *rdev,
+ 				  unsigned long event, void *data);
+ static int _regulator_do_set_voltage(struct regulator_dev *rdev,
+ 				     int min_uV, int max_uV);
++static int regulator_balance_voltage(struct regulator_dev *rdev,
++				     suspend_state_t state);
+ static struct regulator *create_regulator(struct regulator_dev *rdev,
+ 					  struct device *dev,
+ 					  const char *supply_name);
+@@ -3102,6 +3104,196 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
+ 	return ret;
  }
- #else
-diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
-index 7a4ce6df4f22..d3a5f48119c2 100644
---- a/drivers/regulator/wm8994-regulator.c
-+++ b/drivers/regulator/wm8994-regulator.c
-@@ -19,7 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/slab.h>
  
- #include <linux/mfd/wm8994/core.h>
-@@ -129,6 +129,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
- 	struct regulator_config config = { };
- 	struct wm8994_ldo *ldo;
-+	struct gpio_desc *gpiod;
- 	int ret;
- 
- 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
-@@ -145,12 +146,14 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 	config.driver_data = ldo;
- 	config.regmap = wm8994->regmap;
- 	config.init_data = &ldo->init_data;
--	if (pdata) {
--		config.ena_gpio = pdata->ldo[id].enable;
--	} else if (wm8994->dev->of_node) {
--		config.ena_gpio = wm8994->pdata.ldo[id].enable;
--		config.ena_gpio_initialized = true;
--	}
++static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
++{
++	struct coupling_desc *c_desc = &rdev->coupling_desc;
++	struct regulator_dev **c_rdevs = c_desc->coupled_rdevs;
++	int max_spread = rdev->constraints->max_spread;
++	int n_coupled = c_desc->n_coupled;
++	int desired_min_uV, desired_max_uV, min_current_uV = INT_MAX;
++	int max_current_uV = 0, highest_min_uV = 0, target_uV, possible_uV;
++	int i, ret;
 +
-+	/* Look up LDO enable GPIO from the parent device node */
-+	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
-+					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
-+					GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod))
-+		return PTR_ERR(gpiod);
-+	config.ena_gpiod = gpiod;
- 
- 	/* Use default constraints if none set up */
- 	if (!pdata || !pdata->ldo[id].init_data || wm8994->dev->of_node) {
-@@ -159,7 +162,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
- 
- 		ldo->init_data = wm8994_ldo_default[id];
- 		ldo->init_data.consumer_supplies = &ldo->supply;
--		if (!config.ena_gpio)
-+		if (!gpiod)
- 			ldo->init_data.constraints.valid_ops_mask = 0;
- 	} else {
- 		ldo->init_data = *pdata->ldo[id].init_data;
-diff --git a/include/linux/mfd/wm8994/pdata.h b/include/linux/mfd/wm8994/pdata.h
-index 90c60524a496..fca67bd194e2 100644
---- a/include/linux/mfd/wm8994/pdata.h
-+++ b/include/linux/mfd/wm8994/pdata.h
-@@ -20,9 +20,6 @@
- #define WM8994_NUM_AIF   3
- 
- struct wm8994_ldo_pdata {
--	/** GPIOs to enable regulator, 0 or less if not available */
--	int enable;
--
- 	const struct regulator_init_data *init_data;
- };
- 
++	/* If consumers don't provide any demands, set voltage to min_uV */
++	desired_min_uV = rdev->constraints->min_uV;
++	desired_max_uV = rdev->constraints->max_uV;
++	ret = regulator_check_consumers(rdev,
++					&desired_min_uV,
++					&desired_max_uV, PM_SUSPEND_ON);
++	if (ret < 0)
++		goto out;
++
++	/*
++	 * If there are no coupled regulators, simply set the voltage demanded
++	 * by consumers.
++	 */
++	if (n_coupled == 1) {
++		ret = desired_min_uV;
++		goto out;
++	}
++
++	/* Find highest min desired voltage */
++	for (i = 0; i < n_coupled; i++) {
++		int tmp_min = 0;
++		int tmp_max = INT_MAX;
++
++		if (!_regulator_is_enabled(c_rdevs[i]))
++			continue;
++
++		ret = regulator_check_consumers(c_rdevs[i],
++						&tmp_min,
++						&tmp_max, PM_SUSPEND_ON);
++		if (ret < 0)
++			goto out;
++
++		if (tmp_min > highest_min_uV)
++			highest_min_uV = tmp_min;
++	}
++
++	/*
++	 * Let target_uV be equal to the desired one if possible.
++	 * If not, set it to minimum voltage, allowed by other coupled
++	 * regulators.
++	 */
++	target_uV = max(desired_min_uV,  highest_min_uV - max_spread);
++
++	/*
++	 * Find min and max voltages, which currently aren't
++	 * violating max_spread
++	 */
++	for (i = 0; i < n_coupled; i++) {
++		int tmp_act;
++
++		/*
++		 * Don't check the regulator, which is about
++		 * to change voltage
++		 */
++		if (c_rdevs[i] == rdev)
++			continue;
++		if (!_regulator_is_enabled(c_rdevs[i]))
++			continue;
++
++		tmp_act = _regulator_get_voltage(c_rdevs[i]);
++		if (tmp_act < 0) {
++			ret = tmp_act;
++			goto out;
++		}
++
++		if (tmp_act < min_current_uV)
++			min_current_uV = tmp_act;
++
++		if (tmp_act > max_current_uV)
++			max_current_uV = tmp_act;
++	}
++
++	/* There aren't any other regulators enabled */
++	if (max_current_uV == 0) {
++		possible_uV = target_uV;
++	} else {
++		/*
++		 * Correct target voltage, so as it currently isn't
++		 * violating max_spread
++		 */
++		possible_uV = max(target_uV, max_current_uV - max_spread);
++		possible_uV = min(possible_uV, min_current_uV + max_spread);
++	}
++
++	if (possible_uV > desired_max_uV) {
++		ret = -EINVAL;
++		goto out;
++	}
++	ret = possible_uV;
++
++out:
++	return ret;
++}
++
++static int regulator_balance_voltage(struct regulator_dev *rdev,
++				     suspend_state_t state)
++{
++	struct regulator_dev **c_rdevs;
++	struct regulator_dev *best_rdev;
++	struct coupling_desc *c_desc = &rdev->coupling_desc;
++	int n_coupled;
++	int i, best_delta, best_uV, ret = 1;
++
++	c_rdevs = c_desc->coupled_rdevs;
++	n_coupled = c_desc->n_coupled;
++
++	/*
++	 * if system is in a state other than PM_SUSPEND_ON, don't check
++	 * other coupled regulators
++	 */
++	if (state != PM_SUSPEND_ON)
++		n_coupled = 1;
++
++	/*
++	 * Find the best possible voltage change on each loop. Leave the loop
++	 * if there isn't any possible change.
++	 */
++	while (1) {
++		best_delta = 0;
++		best_uV = 0;
++		best_rdev = NULL;
++
++		/*
++		 * Find highest difference between optimal voltage
++		 * and current voltage.
++		 */
++		for (i = 0; i < n_coupled; i++) {
++			/*
++			 * optimal_uV is the best voltage that can be set for
++			 * i-th regulator at the moment without violating
++			 * max_spread constraint in order to balance
++			 * the coupled voltages.
++			 */
++			int optimal_uV, current_uV;
++
++			optimal_uV = regulator_get_optimal_voltage(c_rdevs[i]);
++			if (optimal_uV < 0) {
++				ret = optimal_uV;
++				goto out;
++			}
++
++			current_uV = _regulator_get_voltage(c_rdevs[i]);
++			if (current_uV < 0) {
++				ret = optimal_uV;
++				goto out;
++			}
++
++			if (abs(best_delta) < abs(optimal_uV - current_uV)) {
++				best_delta = optimal_uV - current_uV;
++				best_rdev = c_rdevs[i];
++				best_uV = optimal_uV;
++			}
++		}
++
++		/* Nothing to change, return successfully */
++		if (!best_rdev) {
++			ret = 0;
++			goto out;
++		}
++
++		/*
++		 * Lock just the supply regulators, as the regulator itself
++		 * is already locked by regulator_lock_coupled().
++		 */
++		if (best_rdev->supply)
++			regulator_lock_supply(best_rdev->supply->rdev);
++
++		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
++						 best_uV, state);
++		if (best_rdev->supply)
++			regulator_unlock_supply(best_rdev->supply->rdev);
++
++		if (ret < 0)
++			goto out;
++	}
++
++out:
++	return ret;
++}
++
+ /**
+  * regulator_set_voltage - set regulator output voltage
+  * @regulator: regulator source
 -- 
 2.17.0
