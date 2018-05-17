@@ -1,88 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeEQQHg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:07:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:52633 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEQQHe (ORCPT
+        id S1752513AbeEQQJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:09:56 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37832 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752451AbeEQQJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:07:34 -0400
-Date: Thu, 17 May 2018 18:06:32 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Eric Anholt <eric@anholt.net>, Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <385156660.62726.1526573192894@email.1und1.de>
-In-Reply-To: <alpine.DEB.2.21.1805171007260.7820@macbook-air>
-References: <20180517131727.29263-1-eric@anholt.net>
- <alpine.DEB.2.21.1805171007260.7820@macbook-air>
-Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+        Thu, 17 May 2018 12:09:52 -0400
+X-Google-Smtp-Source: AB8JxZoyoQdONdVtp4fy3Goxrc7xwTCp2FazT/xp9g8DYSwvFY+SS/+SdMAcnKg4BvTlomK26IrUbUKdW7cMssZaQP0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:d+yeZnuF6vdu4Wtgi3zpquTs7bZk+7kA9kro0knYgcl7YRyiIz/
- XtLmSKMs6jTbn+KJY7r/3ScVdT6waROMo6aeTfFcHmoSpKQ6kFIb8hdizBs4rjN5CjdKiFQ
- A8TU5bZPb62BMfqpQC+jMVH2x4bZLtE/xmrdQeLeJ96lGM+ww3bdHxM8Ks/OG5Fc5WDK7xH
- twsK5a2y8G2TpREo1gP9g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZNbQc3oHAGI=:sA+Wj4l9Mame8b9ETlhzzj
- YL4dYSwLQ66CHuicL8F0nSS28RUrKCLEnCNcJb2PJHnDhMAQC/D9s2q/pdoUAPxIYkDQbPekh
- NoCW1EKvOLd3XtrW9HMANKzBvi8ddP5j4pUS2U/w5CIg/WlKktKTGp0PYd42s7h04vUvRwWLn
- 9XbvOLPOrjMt3aWKOCHQTxakSBeknIZ1G18aRKp0ItnhxH1O4fsQfXlzAI+vxbggCZyM0vvJd
- i/3SFjaj7HrcrJEtSpCw7k6v4pluMkaa8xuyu1T0zojWwdSA160mRM9EqYDRH8XaQyQph1Tt1
- 2g1MQNqbDKxiogwPcoIy2+XRPc9ER/44L+C/nfZcudezMfYgZDVG58mIsUZRLtib6ZWk455dr
- 4x0Vn0/XrBT4TRzUwm1+eJADSbO8Tvi+GA9b6rptP+lv5bZETH70dlHmCqNcxA1Mc6eawPuz1
- pH83B8lNXzmUN5A1BfOfCmHMFF2t9M86TNe0K8Smo+e2feyS/2mhmt7yNNmgjE2GppKGCvYfH
- OId4UJfG44N8YsGob10LudIgXKF+1JGYqL5ijoI3kqQGgRrt10qHXLZlaBWU/EN+/v/RWV1SE
- AgSmb+wbuA0sC/JPTgjxyEwTlmaS0Orx7pT0sbVfyzCRdwGeVihzfiCba1a0OmycWMVmMNsRo
- fWxHbv0WcD4UT9c1uEVpPMp11gY7KuzPgTmpAACjku/h2WAn50BlQONKOFDnEoeJp0EtH7H5y
- V0n89bNUYvHX1KLy
+In-Reply-To: <20180408192952.GB685@sol.localdomain>
+References: <001a1140ad88c4f006055d3836d2@google.com> <001a113f8d5653a67c0561346ed3@google.com>
+ <20180408192952.GB685@sol.localdomain>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 17 May 2018 18:09:31 +0200
+Message-ID: <CACT4Y+a_0qXgZkXMmcFpb1RB9xcrMpMBhs574RiHLfOk-ZwcXQ@mail.gmail.com>
+Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: syzbot
+        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>, dccp@vger.kernel.org,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Apr 8, 2018 at 9:29 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>> syzkaller has found reproducer for the following crash on
+>> fba961ab29e5ffb055592442808bb0f7962e05da
+>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>> C reproducer is attached
+>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+>> for information about syzkaller reproducers
+>>
+>>
+>> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
+>>
+>> =============================
+>> WARNING: suspicious RCU usage
+>> 4.15.0-rc4+ #164 Not tainted
+>> -----------------------------
+>> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
+>>
+>> other info that might help us debug this:
+>>
+>>
+>> rcu_scheduler_active = 2, debug_locks = 1
+>> 1 lock held by syzkaller667189/5780:
+>>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
+>> include/net/sock.h:1462 [inline]
+>>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
+>> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
+>>
+>> stack backtrace:
+>> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:17 [inline]
+>>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
+>>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
+>>  inet_csk_route_req+0x824/0xca0 net/ipv4/inet_connection_sock.c:544
+>>  dccp_v4_send_response+0xa7/0x640 net/dccp/ipv4.c:485
+>>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
+>>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
+>>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
+>>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
+>>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
+>>  sk_backlog_rcv include/net/sock.h:907 [inline]
+>>  __release_sock+0x124/0x360 net/core/sock.c:2274
+>>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
+>>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
+>>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
+>>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
+>>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+>>  SYSC_setsockopt net/socket.c:1821 [inline]
+>>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
+>>  entry_SYSCALL_64_fastpath+0x1f/0x96
+>> RIP: 0033:0x445ec9
+>> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
+>> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
+>> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
+>> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
+>> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
+>> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
+>>
+>> =============================
+>> WARNING: suspicious RCU usage
+>> 4.15.0-rc4+ #164 Not tainted
+>> -----------------------------
+>> ./include/net/inet_sock.h:136 suspicious rcu_dereference_check() usage!
+>>
+>> other info that might help us debug this:
+>>
+>>
+>> rcu_scheduler_active = 2, debug_locks = 1
+>> 1 lock held by syzkaller667189/5780:
+>>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>] lock_sock
+>> include/net/sock.h:1462 [inline]
+>>  #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000008d7d4e62>]
+>> do_ipv6_setsockopt.isra.9+0x23d/0x38f0 net/ipv6/ipv6_sockglue.c:167
+>>
+>> stack backtrace:
+>> CPU: 0 PID: 5780 Comm: syzkaller667189 Not tainted 4.15.0-rc4+ #164
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:17 [inline]
+>>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>>  lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4585
+>>  ireq_opt_deref include/net/inet_sock.h:135 [inline]
+>>  dccp_v4_send_response+0x4b0/0x640 net/dccp/ipv4.c:496
+>>  dccp_v4_conn_request+0x9ee/0x11b0 net/dccp/ipv4.c:633
+>>  dccp_v6_conn_request+0xd30/0x1350 net/dccp/ipv6.c:317
+>>  dccp_rcv_state_process+0x574/0x1620 net/dccp/input.c:612
+>>  dccp_v4_do_rcv+0xeb/0x160 net/dccp/ipv4.c:682
+>>  dccp_v6_do_rcv+0x81a/0x9b0 net/dccp/ipv6.c:578
+>>  sk_backlog_rcv include/net/sock.h:907 [inline]
+>>  __release_sock+0x124/0x360 net/core/sock.c:2274
+>>  release_sock+0xa4/0x2a0 net/core/sock.c:2789
+>>  do_ipv6_setsockopt.isra.9+0x50f/0x38f0 net/ipv6/ipv6_sockglue.c:898
+>>  ipv6_setsockopt+0xd7/0x150 net/ipv6/ipv6_sockglue.c:922
+>>  dccp_setsockopt+0x85/0xd0 net/dccp/proto.c:573
+>>  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2978
+>>  SYSC_setsockopt net/socket.c:1821 [inline]
+>>  SyS_setsockopt+0x189/0x360 net/socket.c:1800
+>>  entry_SYSCALL_64_fastpath+0x1f/0x96
+>> RIP: 0033:0x445ec9
+>> RSP: 002b:00007fa001b58db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
+>> RAX: ffffffffffffffda RBX: 00000000006dbc24 RCX: 0000000000445ec9
+>> RDX: 0000000000000020 RSI: 0000000000000029 RDI: 0000000000000004
+>> RBP: 00000000006dbc20 R08: 0000000000000020 R09: 0000000000000000
+>> R10: 000000002030a000 R11: 0000000000000297 R12: 0000000000000000
+>> R13: 00007fff809eec1f R14: 00007fa001b599c0 R15: 0000000000000001
+>
+> syzbot stopped hitting this for some reason, but the bug is still there.
+> Here's a simplified reproducer that works on Linus' tree as of today:
+>
+> #include <linux/in.h>
+> #include <stdlib.h>
+> #include <sys/socket.h>
+> #include <unistd.h>
+>
+> int main()
+> {
+>         int is_parent = (fork() != 0);
+>         for (;;) {
+>                 int fd = socket(AF_INET, SOCK_DCCP, 0);
+>                 struct sockaddr_in addr = {
+>                         .sin_family = AF_INET,
+>                         .sin_port = htobe16(0x4e23),
+>                 };
+>                 if (is_parent) {
+>                         connect(fd, (void *)&addr, sizeof(addr));
+>                 } else {
+>                         bind(fd, (void *)&addr, sizeof(addr));
+>                         listen(fd, 100);
+>                         setsockopt(fd, 0, 0xFFFF, NULL, 0);
+>                 }
+>                 close(fd);
+>         }
+> }
 
-> Vince Weaver <vincent.weaver@maine.edu> hat am 17. Mai 2018 um 16:11 geschrieben:
-> 
-> 
-> On Thu, 17 May 2018, Eric Anholt wrote:
-> 
-> > diff --git a/arch/arm/boot/dts/bcm2837.dtsi b/arch/arm/boot/dts/bcm2837.dtsi
-> > index 7704bb029605..1f5e5c782835 100644
-> > --- a/arch/arm/boot/dts/bcm2837.dtsi
-> > +++ b/arch/arm/boot/dts/bcm2837.dtsi
-> > @@ -17,6 +17,12 @@
-> >  		};
-> >  	};
-> >  
-> > +	arm-pmu {
-> > +		compatible = "arm,cortex-a53-pmu", "arm,cortex-a7-pmu";
-> > +		interrupt-parent = <&local_intc>;
-> > +		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
-> > +	};
-> > +
-> 
-> why this and not
-> 
-> arm-pmu {
-> 	compatible = "arm,armv8-pmuv3";
-> 	interrupt-parent = <&local_intc>;
-> 	interrupts = <9>;
-> };
-> 
-> which works, though when I didn't get very far when I submitted the patch 
-> to add this last August.
 
-Eric's variant is more specific so we better chose this. The init code diverse between the general arm,armv8-pmuv3 and arm,cortex-a53-pmu.
 
-> 
-> Vince
-> 
-> _______________________________________________
-> linux-rpi-kernel mailing list
-> linux-rpi-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel
+Still happens on the current upstream HEAD
+e6506eb241871d68647c53cb6d0a16299550ae97.
