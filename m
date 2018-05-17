@@ -1,128 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeEQQft (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:35:49 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45780 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbeEQQfr (ORCPT
+        id S1752560AbeEQQgU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:36:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752470AbeEQQgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:35:47 -0400
-X-Google-Smtp-Source: AB8JxZpgF1LaH5CTQlUxpObPSoXCkPhoz5ktQYPyIxSfE3oMRy/7aNWj9+nBvhknV7ZMEDJElVebxw==
-Date: Thu, 17 May 2018 09:35:43 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] PM / devfreq: Init user limits from OPP limits, not
- viceversa
-Message-ID: <20180517163543.GO19594@google.com>
-References: <CGME20180516225800epcas5p188094c0edfe8a9c3ffd3bfb9e48ce87c@epcas5p1.samsung.com>
- <20180516225709.153138-1-mka@chromium.org>
- <5AFCD5EC.5080200@samsung.com>
+        Thu, 17 May 2018 12:36:17 -0400
+Subject: Re: [PATCH v11 01/26] mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>, akpm@linux-foundation.org,
+        mhocko@kernel.org, peterz@infradead.org, kirill@shutemov.name,
+        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, khandual@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        sergey.senozhatsky.work@gmail.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        vinayak menon <vinayakm.list@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
+        paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1526555193-7242-2-git-send-email-ldufour@linux.vnet.ibm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2cb8256d-5822-d94d-b0e6-c46f21d84852@infradead.org>
+Date: Thu, 17 May 2018 09:36:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1526555193-7242-2-git-send-email-ldufour@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5AFCD5EC.5080200@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 10:07:56AM +0900, Chanwoo Choi wrote:
-> Hi,
+Hi,
+
+On 05/17/2018 04:06 AM, Laurent Dufour wrote:
+> This configuration variable will be used to build the code needed to
+> handle speculative page fault.
 > 
-> On 2018년 05월 17일 07:57, Matthias Kaehlcke wrote:
-> > Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
-> > the devfreq device") introduced the initialization of the user
-> > limits min/max_freq from the lowest/highest available OPPs. Later
-> > commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
-> > frequency") added scaling_min/max_freq, which actually represent
-> > the frequencies of the lowest/highest available OPP. scaling_min/
-> > max_freq are initialized with the values from min/max_freq, which
-> > is totally correct in the context, but a bit awkward to read.
-> > 
-> > Swap the initialization and assign scaling_min/max_freq with the
-> > OPP freqs and then the user limts min/max_freq with scaling_min/
-> > max_freq.
-> > 
-> > Needless to say that this change is a NOP, intended to improve
-> > readability.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > Additional context: I'm considering to introduce the concept of
-> > a devfreq policy, which would probably move min/max_freq inside
-> > of a struct policy, this would make the initialization even
-> > more awkward to read. If this moves forward I might also propose
-> > to rename scaling_min/max_freq to something like min/max_opp_freq
-> > to avoid confusion with the frequencies in the policy (cpufreq uses
-> > scaling_min/max_freq for the sysfs attributes of the policy
-> > limits).
-> > 
-> >  drivers/devfreq/devfreq.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> > index fe2af6aa88fc..0057ef5b0a98 100644
-> > --- a/drivers/devfreq/devfreq.c
-> > +++ b/drivers/devfreq/devfreq.c
-> > @@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
-> >  		mutex_lock(&devfreq->lock);
-> >  	}
-> >  
-> > -	devfreq->min_freq = find_available_min_freq(devfreq);
-> > -	if (!devfreq->min_freq) {
-> > +	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
-> > +	if (!devfreq->scaling_min_freq) {
-> >  		mutex_unlock(&devfreq->lock);
-> >  		err = -EINVAL;
-> >  		goto err_dev;
-> >  	}
-> > -	devfreq->scaling_min_freq = devfreq->min_freq;
-> > +	devfreq->min_freq = devfreq->scaling_min_freq;
-> >  
-> > -	devfreq->max_freq = find_available_max_freq(devfreq);
-> > -	if (!devfreq->max_freq) {
-> > +	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
-> > +	if (!devfreq->scaling_max_freq) {
-> >  		mutex_unlock(&devfreq->lock);
-> >  		err = -EINVAL;
-> >  		goto err_dev;
-> >  	}
-> > -	devfreq->scaling_max_freq = devfreq->max_freq;
-> > +	devfreq->max_freq = devfreq->scaling_max_freq;
-> >  
-> >  	dev_set_name(&devfreq->dev, "devfreq%d",
-> >  				atomic_inc_return(&devfreq_no));
-> > 
+> By default it is turned off, and activated depending on architecture
+> support, ARCH_HAS_PTE_SPECIAL, SMP and MMU.
 > 
-> This patch just clean-up codes related to min/max_freq and scaling_min/max_freq.
-> It seems be good.
+> The architecture support is needed since the speculative page fault handler
+> is called from the architecture's page faulting code, and some code has to
+> be added there to handle the speculative handler.
 > 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> The dependency on ARCH_HAS_PTE_SPECIAL is required because vm_normal_page()
+> does processing that is not compatible with the speculative handling in the
+> case ARCH_HAS_PTE_SPECIAL is not set.
+> 
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Suggested-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  mm/Kconfig | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 1d0888c5b97a..a38796276113 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -761,3 +761,25 @@ config GUP_BENCHMARK
+>  
+>  config ARCH_HAS_PTE_SPECIAL
+>  	bool
+> +
+> +config ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+> +       def_bool n
+> +
+> +config SPECULATIVE_PAGE_FAULT
+> +       bool "Speculative page faults"
+> +       default y
+> +       depends on ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+> +       depends on ARCH_HAS_PTE_SPECIAL && MMU && SMP
+> +       help
+> +         Try to handle user space page faults without holding the mmap_sem.
+> +
+> +	 This should allow better concurrency for massively threaded process
 
-Thanks for the review!
+	                                                             processes
 
-> But, I don't want to change the name from 'scaling_min/max_freq'
-> to 'min/max_opp_freq'.
+> +	 since the page fault handler will not wait for other threads memory
 
-It's obviously up to you in the end, and I won't insist if you are
-convinced that scaling_min/max_freq is the better name (I suggest to
-make this judgement after a new revision of the policy patch [1],
-which likely will introduce another pair of frequencies, and naming
-can help to clearly differentiate between them).
+	                                                      thread's
 
-> You can check the meaning of variables in comment of struct devfreq.
+> +	 layout change to be done, assuming that this change is done in another
+> +	 part of the process's memory space. This type of page fault is named
+> +	 speculative page fault.
+> +
+> +	 If the speculative page fault fails because of a concurrency is
 
-This is true, but ideally code should be as self-explaining as
-possible (without becoming too verbose ;-), and variable/function
-names are a key element for that.
+	                                     because a concurrency is
 
-Best regards
+> +	 detected or because underlying PMD or PTE tables are not yet
+> +	 allocating, it is failing its processing and a classic page fault
 
-Matthias
+	 allocated, the speculative page fault fails and a classic page fault
 
-[1] https://patchwork.kernel.org/patch/10401999/
+> +	 is then tried.
+
+
+Also, all of the help text (below the "help" line) should be indented by
+1 tab + 2 spaces (in coding-style.rst).
+
+
+-- 
+~Randy
