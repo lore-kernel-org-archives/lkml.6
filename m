@@ -1,100 +1,140 @@
-Return-Path: <jhogan@kernel.org>
-X-Google-Smtp-Source: AB8JxZr478wBJ7wNjx/xNnXaoiz3gPX48BWZiRLVPo1CiTN4ncA3H//SBp0nCrme9R4ODE10nu0W
-ARC-Seal: i=1; a=rsa-sha256; t=1526567452; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yLlna0iTZDHC6w4P4s9Fept/NsF0cOcApeJ1q+VDACuydn5WTaGZ5tqDIJ3SpvunoR
-         /Pl+5wHEOXQvwiWe12a5MPkB4Dn3Myzxz0v4uCnyERWLzEkM3ale9KeM2ZUijGnK/w4a
-         9qKeZk4nQJcdxqHDw8LWOpl8NpnlJN9ztZUTjKpdStJu1onC5RIF7QTtA5FQSdvD01IH
-         hnDcIbiNNkngeIAYNWqVVHO/jnvdVyLKAU75MzhiXBvfIJPEoPkXaP2ae07fAsC8fX0I
-         ukJ6HowXr1imTnT2cbTy5fjveyMWLT3y1hy/c5dtpjs0cja0kmT0xVCDSChVuTvJOGcL
-         DGvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=BxrKrkwiT6TRWc4SmGF1B4BueldZSVHtPBmvHlc+JX0=;
-        b=KDyzQzBRwB8fLOOhPJeV3V+3frHKdVeUSo5yENhZhSN+FX+GX1CRuAEiQxH+AP/YcI
-         uo/y8+g1sjE/wR9xWk/Cl22ZtgkoRSHSMGMeiN7CVgthPsf/IGBS033dc4GfIRLmPu+r
-         +fIQpUDtNLIu0un14ulSrUeidIviH6+jnUabW3DYrL97j2BKrkIg7wiE3eDKHP9IFOiI
-         cwyfegNW3MSHYei/G+QakqdYv2E4N81Iha4cqqjC0ue0WPWntO72vMz4Hqq+QLoOc+Q9
-         nKye88Dg2cTKKwAQeW8XZEB9AmZOiz5m/HvRcIIZhZJiA/5jESvOKozQ7se1/sRmXKhy
-         /9KA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cpy4s+0g;
-       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=cpy4s+0g;
-       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 17 May 2018 15:30:47 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/6] MIPS: Move ehb() to barrier.h
-Message-ID: <20180517143046.GA24704@jamesdev>
-References: <1515148270-9391-1-git-send-email-matt.redfearn@mips.com>
- <1515148270-9391-2-git-send-email-matt.redfearn@mips.com>
+Return-Path: <sfr@canb.auug.org.au>
+X-Cyrus-Session-Id: sloti22d1t05-1376423-1526530656-2-9827661306699449272
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, SPF_HELO_PASS -0.001, SPF_PASS -0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='203.11.71.1', Host='ozlabs.org', Country='AU', FromHeader='au',
+  MailFrom='au'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: sfr@canb.auug.org.au
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526530655; b=X7SKIoGF8tP1kPpYFk/kg2577HzIwRsG8E5b8gDZzTLXoviozj
+    jIBOgplv4lHZWbNKAXVRu4mCl9vwKO9r1la+ohhsbol506ULRrAvUDUt3DrWzJzG
+    2uY3UavtGzSMw3/vSluV/dihl2o9Y0nyIRQY8zH7A/AZ42XNhLFCiqgUC/GDjZRZ
+    vMWmzVx4IY7W0J7PbZiegMTiBZknUNP3Iy6N8gtGGWhDjNngLx8x0BAME4MhBUk7
+    DCgMUmohAuJt0EAjBf9eordRWVHrkqXNTt8e6qNQyj4Qu0PoEIRF2Fdih7fcvi9/
+    4TurHBrsm+LCD2tNp5ZmbhTEBOTGDMoX1WGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type; s=fm2; t=1526530655; bh=iLiKkS7ZqN9e
+    wj3oZ+aReG6MGkrIIMNiJohzNwb8R4g=; b=iEEFVPABt994s56gopYGrr+YNoDt
+    7Arxk0krossPsOrqgFIPnjALKFokLPNmgFub4thp6OAHJ6T0WZ4Gned6UzQg65FQ
+    QFRQgDN5OZLt0m6URzQgYdZ1bZu2PrqW5NLiX/PYlK2i1GlrS4EbJmgc9GnLIdY8
+    nvkJAHEcr4qJoz3e+WStabaRhLe44UxGg1nTDa+NPqxJwOEfIF5z8Bjag/Vys2I/
+    R8Ig6gG67UjKysd4lnwAGHkogXVGChadyVLl85elq8L0PPPzED/tHvR3j8YwaHmI
+    k3B2X4DCWpFW3mclq734Bwj/yVpHlsWZD/0gZX6fgRTFfQV85Ok5rVqoSw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au
+    header.i=@canb.auug.org.au header.b=uq8MhUbP x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=203.11.71.1 (ozlabs.org);
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass (Address match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass
+    smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=canb.auug.org.au header.result=pass
+    header_org.domain=auug.org.au header_org.result=pass
+    header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au
+      header.i=@canb.auug.org.au header.b=uq8MhUbP x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=203.11.71.1 (ozlabs.org);
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass (Address match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass
+      smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=canb.auug.org.au header.result=pass
+      header_org.domain=auug.org.au header_org.result=pass
+      header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDaCoYJntq/29ca1qJRgHdcH0lHemTa/xDPFvDxAXm1XfSepiEhW5p6MhPfhGgbgApnd3+Yv1jAStbptDxkgubjxERJCrh6n1nr4xE1/ijuAR3Pb8r72
+    JEd+a/qBe6CDdLTNWqEy7VSNd9ExYuulityU8n/Kiml7VNhriI2bjc6e
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=CXkk7yaifMICXdoo4J6eGQ==:117
+    a=CXkk7yaifMICXdoo4J6eGQ==:17 a=VUJBJC2UJ8kA:10 a=l7hcehSRk-cl0uQWkQoA:9
+    a=CjuIK1q_8ugA:10 a=HJvMzH8fk0rqN5kH_UMA:9
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 17 May 2018 14:17:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Alan Cox <alan@linux.intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Message-ID: <20180517141727.3119e1da@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
-Content-Disposition: inline
-In-Reply-To: <1515148270-9391-2-git-send-email-matt.redfearn@mips.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+ boundary="Sig_/VDskecHVq82fb9TxccKhCFK"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1588748166594079924?=
-X-GMAIL-MSGID: =?utf-8?q?1600721993513954226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+--Sig_/VDskecHVq82fb9TxccKhCFK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Hi all,
 
-On Fri, Jan 05, 2018 at 10:31:05AM +0000, Matt Redfearn wrote:
-> The current location of ehb() in mipsmtregs.h does not make sense, since
-> it is not strictly related to multi-threading, and may be used in code
-> which does not include mipsmtregs.h
+Today's linux-next merge of the staging tree got a conflict in:
 
->  arch/mips/include/asm/barrier.h    | 13 +++++++++++++
->  arch/mips/include/asm/mipsmtregs.h |  8 --------
+  drivers/staging/media/atomisp/TODO
 
-But ehb isn't really a memory barrier like the other barriers in
-barrier.h, its an execution hazard barrier, as used when available by
-the hazard macros in hazards.h, and in fact there is already an _ehb()
-there.
+between commit:
 
-I suspect the intention was that most MIPS arch code using ehb would do
-so using the appropriate hazard abstractions, which would do the right
-number of NOPs on hardware without the EHB instruction. Code that is
-specific to certain arch revisions (like the MIPS MT code and MIPS KVM)
-can get away with using _ehb/ehb, but should use the abstractions where
-they exist to make intentions clear.
+  51b8dc5163d2 ("media: staging: atomisp: Remove driver")
 
-None of the specific hazards in hazards.h really match the case in patch
-2, I suppose you could have a new sync_mfc0_hazard() macro, but its so
-specific and EHB should be guaranteed to exist there, so perhaps _ehb()
-should just be used instead of ehb() there? (with a comment to describe
-what operations are being protected from what hazards).
+from the v4l-dvb tree and commit:
 
-Cheers
-James
+  1bd421154821 ("staging: atomisp: Augment TODO file with GPIO work item")
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature; name="signature.asc"
+from the staging tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VDskecHVq82fb9TxccKhCFK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWv2SFQAKCRA1zuSGKxAj
-8g1NAQDbRoahEifuu6/yUogKV60Ye0OY1HPN5uhoF/Sps8q+6AD8DQ8sqzB6icvF
-yii4y7HzTo+e6WZ7o9i1Z1pm2g8YqgA=
-=6e5S
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr9AlcACgkQAVBC80lX
+0GwJLAf/VZ+BycYvK+7jWCqN9o/7YALaOwXxFdqD4XGhlJ9+RQCgwhyoNrP7maVR
+U0rbFrAkUV83bqT5jupQCHMwd8xna9bquBLohfq6KYEvhA8e1ozAULsIQPiJNKD2
+rQOjyQHK8Cmh/VLpeDECJbgFrotCC/D+ypfAxxWUEKbRg9ukZwRaFtE9eTKm3QbV
+APJpX8pUNd6Xs/Ey24yyc8GTRRMhzIuLn6L3i75OdNlM2LwOmBgxftjbE2CRlvM3
+8C+AqbHPxyFRsp66Bsz4yk82bo3tfsdY17SfvgQ3CB8YUAZBUulwNQzbiS4uwFb0
+cchSwAyhyM2IbIwYwmjJVGnxNgWEzQ==
+=hzCw
 -----END PGP SIGNATURE-----
 
---fUYQa+Pmc3FrFX/N--
+--Sig_/VDskecHVq82fb9TxccKhCFK--
