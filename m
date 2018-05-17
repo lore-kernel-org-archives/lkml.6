@@ -1,90 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeEQV0Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:26:25 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33424 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQV0Y (ORCPT
+        id S1751985AbeEQV2R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:28:17 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:33669 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeEQV2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:26:24 -0400
-X-Google-Smtp-Source: AB8JxZrsVhNu077i9LRTJdCC+oTlRVKdXugrhwhV3Yjobx8HhZFZZazKc9sHpS7uwGSZfjqeqq6e/A==
-Date: Thu, 17 May 2018 11:26:21 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH v2] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS
- generation
-Message-ID: <20180517212621.i6ljgrcfhhadrkij@gmail.com>
+        Thu, 17 May 2018 17:28:14 -0400
+X-Google-Smtp-Source: AB8JxZrfrRzU/oSj5YLXlfV8vTRGZ25+mG48o3DyXWWxGOLdIXtKJ5eTv2oKs7n3di9H8pAOsEVGbw==
+Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <20180515154352.20263-2-dmurphy@ti.com>
+ <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
+ <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
+ <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
+ <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
+ <52380a68-9e33-f52a-134d-5d4a928b5383@ti.com>
+ <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
+ <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <f8147f95-b7e3-4a78-90d7-59888b20fd60@gmail.com>
+Date: Thu, 17 May 2018 23:26:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nmt45bq3vtii2hpn"
-Content-Disposition: inline
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dan,
 
---nmt45bq3vtii2hpn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/17/2018 04:34 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 05/16/2018 04:17 PM, Dan Murphy wrote:
+> <snip>
+> 
+>>>>>
+>>>>>
+>>>>>>>> +               if (!ret)
+>>>>>>>
+>>>>>>> if (ret) sounds more natural. And better just to split
+>>>>>>>
+>>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>>>>>>> +                               "%s:%s", led->led_node->name, name);
+>>>>>>>> +               else
+>>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>>>>>>> +                               "%s:torch", led->led_node->name);
+>>>>>>>
+>>>>>>> const char *tmp;
+>>>>>>>
+>>>>>>> ret = device_property_read_...(&tmp);
+>>>>>>> if (ret)
+>>>>>>>    tmp = ...
+>>>>>>> sprintf(...);
+>>>>
+>>>> We're no longer taking devicename section of a LED class device name
+>>>> from DT, so it will look differently anyway.
+>>>>
+> 
+> So in adding the device_property code I think we again are reaching the LED label issue.
+> In ARM with DT we would take the parent device node name and append it to the label
 
-Parsing `ls` is fragile at best and _will_ fail when $tree
-contains spaces. Replace this with a glob-generated string
-and directly assign it to $ALLSOURCE_ARCHS; a subshell is
-implied by $(), so `cd` doesn't affect the current working
-directory.
+AFAIR this approach (parent DT node name used for devicename ) was 
+incidentally applied in leds-as3645a.c. Soon after that we started
+to use led-controller for parent DT name, according to Rob's request.
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+In the most of LED class drivers this is a child DT node which is used
+for devicename, in case label is absent.
 
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> if the optional label property was not available.  In migrating to the device_property
+> APIs we don't or can't depend on that parent node anymore.
+> 
+> So for the case where the label property does not exist should we use a hard coded name
+> or should we try to use the name from a device_id table.
+> 
+> This is how we did this for the leds-lp8860 driver.  If the label did not exist we used the
+> i2c_device_id table and pulled the string from there.
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 78e546ff689c2d5f40..a4b089aa35efbc0a13 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -29,14 +29,11 @@ fi
- ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
-=20
- # Find all available archs
- find_all_archs()
- {
--	ALLSOURCE_ARCHS=3D""
--	for arch in `ls ${tree}arch`; do
--		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
--	done
-+	ALLSOURCE_ARCHS=3D"$(cd "${tree}arch/" && echo *)"
- }
-=20
- # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
- if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
- 	ALLSOURCE_ARCHS=3D${SRCARCH}
---=20
-2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+i2c_device_id can't be applied as a generic pattern, but only for I2C
+hooked devices. Nonetheless since it allows to save few lines of code
+in case of drivers supporting a family of chips we can use it.
 
---nmt45bq3vtii2hpn
-Content-Type: application/pgp-signature; name="signature.asc"
+We are going to get rid of a devicename section from LED class device
+name soon anyway, since it is redundant.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr9830ACgkQruvLfWhy
-VBmEyRAAxvIuQ/LVioeCJHeaHRIV9XEF8HbBDp630v+tREr9iXBjHOL5FWfyfA/3
-bYk0+DCNCRYR4pTdoe0oyF5QmxwpdwdFiatQRTo8/r/J5+sXTsiOCUCadwomBczc
-3S41xLfbmu4OajL+szz/85SlGyqX84c3MbOpiVTyRbh2GDPtfPg13ZPfcA/GYtuY
-ttj45GvPemjx9oHCo6gZh93/wGShktM1M1KxzLiVngYvNdsot6J8AKm3Edb+VQpA
-XvDxVuniCAMLs86iQxizOgTUHL5owTMWcIOGiIKIf5bCjJwSsZjVqpgz2bkx0Kl1
-vsOBKJxuq++oYDM3VwtaFJMdOgbbZilff+43Cf3HKv81bMCGBnXQGtRVVvwi/Cr4
-7Rl1rDJn3IhL5HbPoIsX7q+cpGtMzEq9J2Kx3kEnxe0PrgkAJMVv0DfSWNz5bRsp
-e2nu5Q4n+QNDzZklpoKJw35pYjZfj4U+hwS4SloCHF8RS/9U6EODrNMpidoXx98D
-p1WqL187QGyuhSBGir72CF0MrrCDFvXA3x+ISK0oSDjJUikP7MNBkMspk8F+hexD
-+os8Ol+PBhixa/6xUXfHY2uJorAFIw2YmkElK2o7v95cmXVlfSJR/5AUQUoNj/Eq
-5AQ6kkk8eb9LHt9ZNtaR31LsDnVXIzM7l9jyaiK5ynHJr/UluSw=
-=2lV5
------END PGP SIGNATURE-----
-
---nmt45bq3vtii2hpn--
+-- 
+Best regards,
+Jacek Anaszewski
