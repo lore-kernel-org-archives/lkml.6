@@ -1,170 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752266AbeEQRJh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:09:37 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:53440 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751640AbeEQRJb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:09:31 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v2 4/7] PCI: dwc: Rework MSI callbacks handler
-Date: Thu, 17 May 2018 18:09:20 +0100
-Message-Id: <9558d4fcd6f888599e3b70133f1f242c7a6664ee.1526576613.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+        id S1752329AbeEQRJl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:09:41 -0400
+Received: from anholt.net ([50.246.234.109]:47796 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752285AbeEQRJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 13:09:39 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Vince Weaver <vincent.weaver@maine.edu>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+In-Reply-To: <alpine.DEB.2.21.1805171233500.7984@macbook-air>
+References: <20180517131727.29263-1-eric@anholt.net> <1412187220.62585.1526572780332@email.1und1.de> <alpine.DEB.2.21.1805171233500.7984@macbook-air>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Thu, 17 May 2018 18:09:34 +0100
+Message-ID: <877eo2mcoh.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate defines located on pcie-designware.h file already
-available on /include/uapi/linux/pci-regs.h file.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Add pci_epc_set_msi() maximum 32 interrupts validation.
+Vince Weaver <vincent.weaver@maine.edu> writes:
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
+> On Thu, 17 May 2018, Stefan Wahren wrote:
+>
+>>=20
+>> > Eric Anholt <eric@anholt.net> hat am 17. Mai 2018 um 15:17 geschrieben:
+>> >=20
+>> >=20
+>> > The a53 and a7 counters seem to match up, so we advertise a7 so that
+>> > arm32 can probe.
+>
+> so how closely did you look at the a53/a7 differences?  I see some major=
+=20
+> differences, especially with the CPU_CYCLES event (0xff vs 0x11).
 
- drivers/pci/dwc/pcie-designware-ep.c | 49 ++++++++++++++++++++++++------------
- drivers/pci/dwc/pcie-designware.h    | 11 --------
- drivers/pci/endpoint/pci-epc-core.c  |  3 ++-
- 3 files changed, 35 insertions(+), 28 deletions(-)
+I'm a bit lost in the code, but it seemed like the 0xff was a
+placeholder for a bit of special behavior, but that the cpu_cycles ->
+ARMV7_PERFCTR_CLOCK_CYCLES mapping got you that same value in the end.
 
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index e5f2377..a4baa0d 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
- 
- static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msi_cap)
-+		return 0;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	if (!(val & MSI_CAP_MSI_EN_MASK))
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	if (!(val & PCI_MSI_FLAGS_ENABLE))
- 		return -EINVAL;
- 
--	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
-+	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
-+
- 	return val;
- }
- 
--static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
-+static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	val &= ~MSI_CAP_MMC_MASK;
--	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
-+	if (!ep->msi_cap)
-+		return 0;
-+
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	val &= ~PCI_MSI_FLAGS_QMASK;
-+	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
-+	dw_pcie_writew_dbi(pci, reg, val);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	return 0;
-@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct pci_epc *epc = ep->epc;
- 	u16 msg_ctrl, msg_data;
--	u32 msg_addr_lower, msg_addr_upper;
-+	u32 msg_addr_lower, msg_addr_upper, reg;
- 	u64 msg_addr;
- 	bool has_upper;
- 	int ret;
- 
-+	if (!ep->msi_cap)
-+		return 0;
-+
- 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
--	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
- 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
--	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
-+	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
-+	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
- 	if (has_upper) {
--		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
-+		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
-+		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
-+		reg = ep->msi_cap + PCI_MSI_DATA_64;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	} else {
- 		msg_addr_upper = 0;
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
-+		reg = ep->msi_cap + PCI_MSI_DATA_32;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	}
- 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
- 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index b22c5bb..a0ab12f 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -96,17 +96,6 @@
- #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
- 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
- 
--#define MSI_MESSAGE_CONTROL		0x52
--#define MSI_CAP_MMC_SHIFT		1
--#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
--#define MSI_CAP_MME_SHIFT		4
--#define MSI_CAP_MSI_EN_MASK		0x1
--#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
--#define MSI_MESSAGE_ADDR_L32		0x54
--#define MSI_MESSAGE_ADDR_U32		0x58
--#define MSI_MESSAGE_DATA_32		0x58
--#define MSI_MESSAGE_DATA_64		0x5C
--
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index a23aa75..b18a8b07 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- 	u8 encode_int;
- 	unsigned long flags;
- 
--	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    interrupts > 32)
- 		return -EINVAL;
- 
- 	if (!epc->ops->set_msi)
--- 
-2.7.4
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlr9t04ACgkQtdYpNtH8
+nug6GA//WbCbCgUyT8tNGxSWFgh1TTmOWv5t7C5cd7nEa3Lt6+XiVdCbyqdvEwK0
+w5TRFWdVaEiWnUZltNUKxZKgc2MKAnGiISP7kV/J51Eg2eg5SHdYKIemsVLUXAJP
+X4u7bOKSwtF5yQ8vw2a4s5rVZc8Q634fVjY7PBZ7pr9zgjfYJdDKtZFQQ8HbabpF
+YZgxrOhjyiBJ+4yUwh2GNg00B3zGfkh/dkN0c9pxcEfCf7wG0Ys/aocMzKpRdOz+
+2puB6ofM7AOfomMiwiklyrrm3emJENLHDeAuwPyXJwzOY8O+lt2PlxAvbLdsUkEd
+MJcOieMzbkCqtkgB8EXBGx2gRYgJTQoOOy/98gIpHHvwyiNifvJLKGcsxKSTD45G
+z5oRJFWUEEWNBbWKNrzZiQy3YRkknl9SwHyp21a7MjU6KVgG2e2PXIXqDKu5LfaT
+3ehhXdp/kXd5gwIw+h7wQdGIWIzpJ+PUv3Aqlscet6ifLkhlX84JBKS7xhyTdfUL
+egB8ZgpLyODO3YrQADkwbv5OdJt0G/TFyk8FnVKPGbEFNuiSYu50PUT9uuJCBwri
+JJR46V8dfsRb5LL1ywAq7EVus+XpDx6R1oXgs/I+yKOdxc0nMZG8SoqidLef6cv/
+q83CeZdV5ZWrXQ4u9kO6BzH8iW5wUoOwXyFfZlz1bmBEQOwlRxA=
+=lsxw
+-----END PGP SIGNATURE-----
+--=-=-=--
