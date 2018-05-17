@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeEQVVs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:21:48 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:40045 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbeEQVVq (ORCPT
+        id S1752083AbeEQVWO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:22:14 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:43304 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751971AbeEQVWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:21:46 -0400
-X-Google-Smtp-Source: AB8JxZqtrffDWlQPzDZlOp56/oTR8QmKJNo2rVm2g3mbA8p6j5pfOzOvnFtHbNx56c/xtWcpq7STdfh327UtVX0EUDk=
+        Thu, 17 May 2018 17:22:11 -0400
+X-Google-Smtp-Source: AB8JxZpYg1UXfUYJ+YTFVIpUzfwKKm295UVGjVbp+ryBmEyGMCOxbpBCGCgJeGuE9RF4iEnXgNCs3s8hSiy9pmwN/QM=
 MIME-Version: 1.0
-In-Reply-To: <f3aa166ddd11c8f9813602be68aa5b10e5c90979.1526088289.git.collinsd@codeaurora.org>
-References: <cover.1526088289.git.collinsd@codeaurora.org> <f3aa166ddd11c8f9813602be68aa5b10e5c90979.1526088289.git.collinsd@codeaurora.org>
+In-Reply-To: <58bb4f965515a67a6cbbc726b0d7b092c22b79d7.1526088289.git.collinsd@codeaurora.org>
+References: <cover.1526088289.git.collinsd@codeaurora.org> <58bb4f965515a67a6cbbc726b0d7b092c22b79d7.1526088289.git.collinsd@codeaurora.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 17 May 2018 14:21:42 -0700
-X-Google-Sender-Auth: QcWjHovs_QRHoPoVDRMjHUHhxlE
-Message-ID: <CAD=FV=W5vqTJHGiuoznqgJGtvGs2eYs54JvV8-8ukwmsJ5p7bw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regulator: of: add property for allowed modes specification
+Date: Thu, 17 May 2018 14:22:09 -0700
+X-Google-Sender-Auth: MY9aaknfyl2NAWnc8VhcNuplgx0
+Message-ID: <CAD=FV=Wk_vYcxV+XXvHVdSC4erNB3=_ecMimeUrEw61Po04Rmg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] regulator: of: add support for allowed modes configuration
 To: David Collins <collinsd@codeaurora.org>
 Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -32,36 +32,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Fri, May 11, 2018 at 6:46 PM, David Collins <collinsd@codeaurora.org> wrote:
-> Add a common device tree property for regulator nodes to support
-> the specification of allowed operating modes.
+> @@ -136,6 +136,33 @@ static void of_get_regulation_constraints(struct device_node *np,
+>                 }
+>         }
 >
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
-> index 2babe15b..c627aa0 100644
-> --- a/Documentation/devicetree/bindings/regulator/regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/regulator.txt
-> @@ -59,6 +59,11 @@ Optional properties:
->  - regulator-initial-mode: initial operating mode. The set of possible operating
->    modes depends on the capabilities of every hardware so each device binding
->    documentation explains which values the regulator supports.
-> +- regulator-allowed-modes: list of operating modes that software is allowed to
-> +  configure for the regulator at run-time.  Elements may be specified in any
-> +  order.  The set of possible operating modes depends on the capabilities of
-> +  every hardware so each device binding document explains which values the
-> +  regulator supports.
+> +       len = of_property_count_elems_of_size(np, "regulator-allowed-modes",
+> +                                               sizeof(u32));
+> +       if (len > 0) {
+> +               if (desc && desc->of_map_mode) {
+> +                       for (i = 0; i < len; i++) {
+> +                               ret = of_property_read_u32_index(np,
+> +                                       "regulator-allowed-modes", i, &pval);
+> +                               if (ret) {
+> +                                       pr_err("%s: couldn't read allowed modes index %d, ret=%d\n",
+> +                                               np->name, i, ret);
+> +                                       break;
+> +                               }
+> +                               mode = desc->of_map_mode(pval);
+> +                               if (mode == REGULATOR_MODE_INVALID)
+> +                                       pr_err("%s: invalid regulator-allowed-modes element %u\n",
+> +                                               np->name, pval);
+> +                               else
+> +                                       constraints->valid_modes_mask |= mode;
+> +                       }
+> +                       if (constraints->valid_modes_mask)
+> +                               constraints->valid_ops_mask
+> +                                       |= REGULATOR_CHANGE_MODE;
 
-Looks sane to me.  It might be interesting to be explicit about what
-happens if "regulator-allowed-modes" doesn't include the mode that was
-listed as "regulator-initial-mode".  Does that mean that there's no
-way to get back to "regulator-initial-mode" after it's been changed
-once, or is it an error to not include the initial mode in the set of
-allowed modes?
+Kinda calls into question the value of REGULATOR_CHANGE_MODE in the
+valid_ops_mask if it's just set whenever valid_modes_mask is non-zero,
+huh?
 
-I'm not 100% sure if going to such detail is necessary though.  Thus,
-feel free to add:
+> +               } else {
+> +                       pr_warn("%s: mode mapping not defined\n", np->name);
+> +               }
+> +       }
+> +
+
+This patch seems good to me.
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
