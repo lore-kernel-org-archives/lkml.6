@@ -1,128 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751520AbeEQLaw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:30:52 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:46670 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeEQLau (ORCPT
+        id S1751715AbeEQLck (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:32:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59126 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeEQLci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:30:50 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 17 May 2018 13:30:48 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v5 2/3] ARM: dts: tegra: Fix unit_address_vs_reg and
- avoid_unnecessary_addr_size DTC warnings
-In-Reply-To: <1526543103-21668-2-git-send-email-krzk@kernel.org>
-References: <1526543103-21668-1-git-send-email-krzk@kernel.org>
- <1526543103-21668-2-git-send-email-krzk@kernel.org>
-Message-ID: <6c8e0e10662c29b49b45e37d031a712b@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+        Thu, 17 May 2018 07:32:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9AF160881
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com, Vikash Garodia <vgarodia@codeaurora.org>
+Subject: [PATCH 0/4] Venus updates - PIL 
+Date: Thu, 17 May 2018 17:02:16 +0530
+Message-Id: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.05.2018 09:45, Krzysztof Kozlowski wrote:
-> Remove unneeded address/size cells properties and unit addresses to fix
-> DTC warnings like:
-> 
->     arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning (unit_address_vs_reg):
->         /i2c@7000d000/stmpe811@41/stmpe_touchscreen@0: node has a unit
-> name, but no reg property
->     arch/arm/boot/dts/tegra30-apalis-eval.dtb: Warning
-> (avoid_unnecessary_addr_size):
->         /i2c@7000d000/stmpe811@41: unnecessary
-> #address-cells/#size-cells without "ranges" or child "reg" property
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hello,
 
-Looks good!
+The patch set mainly adds PIL functionality in video driver. 
+There are boards with qcom video hardware but does not have
+trustzone. For such boards, the PIL added now will load the
+video firmware and reset the ARM9.
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+The patch set is based on top of recent venus updates v2 patches
+posted by Stanimir Varbanov.
 
-> 
-> ---
-> 
-> Changes since v4:
-> 1. None
-> ---
->  arch/arm/boot/dts/tegra30-apalis.dtsi  | 4 +---
->  arch/arm/boot/dts/tegra30-beaver.dts   | 3 ---
->  arch/arm/boot/dts/tegra30-colibri.dtsi | 2 --
->  3 files changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 184f60c720fa..5038ca7b68af 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -590,8 +590,6 @@
->  		/* STMPE811 touch screen controller */
->  		stmpe811@41 {
->  			compatible = "st,stmpe811";
-> -			#address-cells = <1>;
-> -			#size-cells = <0>;
->  			reg = <0x41>;
->  			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
->  			interrupt-parent = <&gpio>;
-> @@ -600,7 +598,7 @@
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
->  
-> -			stmpe_touchscreen@0 {
-> +			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
->  				/* 3.25 MHz ADC clock speed */
->  				st,adc-freq = <1>;
-> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
-> b/arch/arm/boot/dts/tegra30-beaver.dts
-> index 72369877d284..961934f70639 100644
-> --- a/arch/arm/boot/dts/tegra30-beaver.dts
-> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-> @@ -1791,9 +1791,6 @@
->  			vccio-supply = <&vdd_5v_in_reg>;
->  
->  			regulators {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
->  				vdd1_reg: vdd1 {
->  					regulator-name = "vddio_ddr_1v2";
->  					regulator-min-microvolt = <1200000>;
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index cc46cedf80b9..a593dc8be47f 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -352,8 +352,6 @@
->  		/* STMPE811 touch screen controller */
->  		stmpe811@41 {
->  			compatible = "st,stmpe811";
-> -			#address-cells = <1>;
-> -			#size-cells = <0>;
->  			reg = <0x41>;
->  			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
->  			interrupt-parent = <&gpio>;
+Comments are welcome!
+
+regards,
+Vikash
+
+Vikash Garodia (4):
+  soc: qcom: mdt_loader: Add check to make scm calls
+  media: venus: add a routine to reset ARM9
+  venus: add check to make scm calls
+  media: venus: add PIL support
+
+ .../devicetree/bindings/media/qcom,venus.txt       |   8 +-
+ drivers/media/platform/qcom/venus/core.c           |  67 +++++++-
+ drivers/media/platform/qcom/venus/core.h           |   6 +
+ drivers/media/platform/qcom/venus/firmware.c       | 189 ++++++++++++++++++---
+ drivers/media/platform/qcom/venus/firmware.h       |  11 +-
+ drivers/media/platform/qcom/venus/hfi_venus.c      |  26 ++-
+ drivers/media/platform/qcom/venus/hfi_venus_io.h   |   5 +
+ drivers/soc/qcom/mdt_loader.c                      |  21 ++-
+ 8 files changed, 281 insertions(+), 52 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
