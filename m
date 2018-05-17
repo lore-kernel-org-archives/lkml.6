@@ -1,76 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeEQNy4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:54:56 -0400
-Received: from sauhun.de ([88.99.104.3]:51438 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751233AbeEQNyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:54:55 -0400
-Date: Thu, 17 May 2018 15:54:53 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: jdelvare@suse.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: i801: fix unused-function warning
-Message-ID: <20180517135453.ori4uopsqnxn6wte@ninjato>
-References: <20180510152719.6e37b10e@endymion>
- <20180514093326.30314-1-anders.roxell@linaro.org>
+        id S1752096AbeEQNzW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:55:22 -0400
+Received: from cli-5b7ef064.bcn.adamo.es ([91.126.240.100]:59819 "HELO
+        mail.sysvalve.es" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with SMTP id S1751788AbeEQNzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:55:21 -0400
+From: =?UTF-8?q?L=2E=20Alberto=20Gim=C3=A9nez?= <agimenez@sysvalve.es>
+To: linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org
+Subject: [PATCH] build: Exclude cscope and tags files from packaging
+Date: Thu, 17 May 2018 15:48:37 +0200
+Message-Id: <20180517134838.8403-1-agimenez@sysvalve.es>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vro5bi3toditkjgc"
-Content-Disposition: inline
-In-Reply-To: <20180514093326.30314-1-anders.roxell@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When building a Debian package, cscope and tags generated files are
+accounted in the Debian packaging process, even causing some errors
+under some circumstances (generating diff between "pristine" tar and
+"patched sources").
 
---vro5bi3toditkjgc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ignore these generated files for packaging related purposes.
 
-On Mon, May 14, 2018 at 11:33:26AM +0200, Anders Roxell wrote:
-> With CONFIG_PM, we get a harmless build warning:
-> drivers/i2c/busses/i2c-i801.c:1723:12: warning: =E2=80=98i801_resume=E2=
-=80=99 defined but not used [-Wunused-function]
->  static int i801_resume(struct device *dev)
->             ^~~~~~~~~~~
-> drivers/i2c/busses/i2c-i801.c:1714:12: warning: =E2=80=98i801_suspend=E2=
-=80=99 defined but not used [-Wunused-function]
->  static int i801_suspend(struct device *dev)
->             ^~~~~~~~~~~~
->=20
-> Follow design pattern from other drivers like i2c-brcmstb, i2c-mpc,
-> i2c-ocores, i2c-pnx, i2c-puv3, i2c-st, i2c-stu300 and i2c-mux-pca954x
-> and changing the ifdef CONFIG_PM to CONFIG_PM_SLEEP.
->=20
-> Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtim=
-e PM")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: L. Alberto Giménez <agimenez@sysvalve.es>
+---
+ Makefile                 | 5 ++++-
+ scripts/package/Makefile | 4 ++--
+ scripts/package/mkspec   | 6 +++---
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-Applied to for-next, thanks!
-
-
---vro5bi3toditkjgc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9ia0ACgkQFA3kzBSg
-KbadwA/9GsKwsmiOW7KLc3Cfv86pVOZaEF8HPeccuW+fkZk4hu+9mEtta6fE43bH
-rBFAGAcbzU7Uv73zZ8OEogLPB+EnI3r/vrMD+3dvpBLlQOJ2sp1uzBg1JiZz+MsR
-OJa1a+WFC3s2J3AYCWUNJ2cc83YLSiImQQLJfgtDyCUJGPcMrTetx3r85lZfM0Dd
-Nvaab1Pg7gkbuAsaynTs7NUPqngSc3lHkKUfB1TW0Dx2rGFVg3lw342pfh//VJwq
-wfBm2CsNwGY1EN5xXcN6A+FQVhUYCfGKq9FvaawGCya6c7jDapOTe86AN16FbnUw
-bfyWmudlVrnPg8a4KdGiDpmNinUHcCdvgh4zrWES45Z5Sp7PvXKKjy746ziULZRe
-stdel7ov36WtghkLl9ncABWuZLXJPoE34GRem2xwqisvLqSTGvRTTNlq5zpyTQv9
-m2TTlAmbvxEzZShf0EU7BFbZ/LUKXK3ThRgMogrulp4H3DhP1xSq0umx5F/3x8o7
-zmrlxB1bft2L/DLqxmYffRF8Qe4yjQeAc61/RNrfmdu7HYseuYs00cC9ZYHS1f1v
-pydbP5ECgGszAgeBJOLeCQ8rwt2enPTMarPMy6svRKBu3kw1zMau0jrq8bLM6dfJ
-zD2BSL3Wwyqsau8pBV8xVzCZtZ8LUbtDFEtsAoEEeKbfddnX0wQ=
-=X2Ca
------END PGP SIGNATURE-----
-
---vro5bi3toditkjgc--
+diff --git a/Makefile b/Makefile
+index ba3106b36597..0b862a544a6a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -453,11 +453,14 @@ export MODVERDIR := $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/).tmp_ve
+ # Files to ignore in find ... statements
+ 
+ export RCS_FIND_IGNORE := \( -name SCCS -o -name BitKeeper -o -name .svn -o    \
+-			  -name CVS -o -name .pc -o -name .hg -o -name .git \) \
++			  -name CVS -o -name .pc -o -name .hg -o -name .git -o \
++			  -name tags -o -name 'cscope*' \) \
+ 			  -prune -o
+ export RCS_TAR_IGNORE := --exclude SCCS --exclude BitKeeper --exclude .svn \
+ 			 --exclude CVS --exclude .pc --exclude .hg --exclude .git
+ 
++export TAR_EXTRA_IGNORE := --exclude tags --exclude 'cscope*'
++
+ # ===========================================================================
+ # Rules shared between *config targets and build targets
+ 
+diff --git a/scripts/package/Makefile b/scripts/package/Makefile
+index 73503ebce632..520532b3bcb2 100644
+--- a/scripts/package/Makefile
++++ b/scripts/package/Makefile
+@@ -44,7 +44,7 @@ if test "$(objtree)" != "$(srctree)"; then \
+ 	false; \
+ fi ; \
+ $(srctree)/scripts/setlocalversion --save-scmversion; \
+-tar -cz $(RCS_TAR_IGNORE) -f $(2).tar.gz \
++tar -cz $(RCS_TAR_IGNORE) $(TAR_EXTRA_IGNORE) -f $(2).tar.gz \
+ 	--transform 's:^:$(2)/:S' $(TAR_CONTENT) $(3); \
+ rm -f $(objtree)/.scmversion
+ 
+@@ -73,7 +73,7 @@ deb-pkg: FORCE
+ 	$(call cmd,src_tar,$(KDEB_SOURCENAME))
+ 	origversion=$$(dpkg-parsechangelog -SVersion |sed 's/-[^-]*$$//');\
+ 		mv $(KDEB_SOURCENAME).tar.gz ../$(KDEB_SOURCENAME)_$${origversion}.orig.tar.gz
+-	+dpkg-buildpackage -r$(KBUILD_PKG_ROOTCMD) -a$$(cat debian/arch) -i.git -us -uc
++	+dpkg-buildpackage -r$(KBUILD_PKG_ROOTCMD) -a$$(cat debian/arch) -i'(.git|cscope.*)' -us -uc
+ 
+ bindeb-pkg: FORCE
+ 	$(CONFIG_SHELL) $(srctree)/scripts/package/mkdebian
+diff --git a/scripts/package/mkspec b/scripts/package/mkspec
+index e05646dc24dc..e966a87c0011 100755
+--- a/scripts/package/mkspec
++++ b/scripts/package/mkspec
+@@ -28,9 +28,9 @@ fi
+ 
+ PROVIDES="$PROVIDES kernel-$KERNELRELEASE"
+ __KERNELRELEASE=$(echo $KERNELRELEASE | sed -e "s/-/_/g")
+-EXCLUDES="$RCS_TAR_IGNORE --exclude=.tmp_versions --exclude=*vmlinux* \
+---exclude=*.o --exclude=*.ko --exclude=*.cmd --exclude=Documentation \
+---exclude=.config.old --exclude=.missing-syscalls.d"
++EXCLUDES="$RCS_TAR_IGNORE $TAR_EXTRA_IGNORE --exclude=.tmp_versions \
++--exclude=*vmlinux* --exclude=*.o --exclude=*.ko --exclude=*.cmd \
++--exclude=Documentation --exclude=.config.old --exclude=.missing-syscalls.d"
+ 
+ # We can label the here-doc lines for conditional output to the spec file
+ #
+-- 
+2.17.0
