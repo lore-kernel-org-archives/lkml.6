@@ -1,27 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeEQKdG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:33:06 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47383 "EHLO
+        id S1752083AbeEQKe0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:34:26 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41356 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeEQKdE (ORCPT
+        with ESMTP id S1751334AbeEQKeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:33:04 -0400
+        Thu, 17 May 2018 06:34:25 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to related_cpus unnecessarily"
-Date: Thu, 17 May 2018 12:32:29 +0200
-Message-ID: <2334592.UYLPsVHIHB@aspire.rjw.lan>
-In-Reply-To: <20180509045527.ylf2nwolsxxcsjkq@vireshk-i7>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com> <20180509045527.ylf2nwolsxxcsjkq@vireshk-i7>
+To: Joel Fernandes <joel@joelfernandes.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [V2] sched/schedutil: Don't set next_freq to UINT_MAX
+Date: Thu, 17 May 2018 12:33:51 +0200
+Message-ID: <218097156.b89HneGrTB@aspire.rjw.lan>
+In-Reply-To: <20180511204712.GA83958@joelaf.mtv.corp.google.com>
+References: <dadd359a7fc0f719b9e95161b2ac469e1a3c70cc.1525861952.git.viresh.kumar@linaro.org> <20180511204712.GA83958@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -29,121 +25,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, May 9, 2018 6:55:27 AM CEST Viresh Kumar wrote:
-> On 08-05-18, 08:33, Dietmar Eggemann wrote:
-> > This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+On Friday, May 11, 2018 10:47:12 PM CEST Joel Fernandes wrote:
+> On Wed, May 09, 2018 at 04:05:24PM +0530, Viresh Kumar wrote:
+> > The schedutil driver sets sg_policy->next_freq to UINT_MAX on certain
+> > occasions to discard the cached value of next freq:
+> > - In sugov_start(), when the schedutil governor is started for a group
+> >   of CPUs.
+> > - And whenever we need to force a freq update before rate-limit
+> >   duration, which happens when:
+> >   - there is an update in cpufreq policy limits.
+> >   - Or when the utilization of DL scheduling class increases.
 > > 
-> > Lifting the restriction that the sugov kthread is bound to the
-> > policy->related_cpus for a system with a slow switching cpufreq driver,
-> > which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
-> > only not beneficial it also harms Enery-Aware Scheduling (EAS) on
-> > systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+> > In return, get_next_freq() doesn't return a cached next_freq value but
+> > recalculates the next frequency instead.
 > > 
-> > The sugov kthread which does the update for the little cpus could
-> > potentially run on a big cpu. It could prevent that the big cluster goes
-> > into deeper idle states although all the tasks are running on the little
-> > cluster.
+> > But having special meaning for a particular value of frequency makes the
+> > code less readable and error prone. We recently fixed a bug where the
+> > UINT_MAX value was considered as valid frequency in
+> > sugov_update_single().
 > > 
-> > Example: hikey960 w/ 4.16.0-rc6-+
-> >          Arm big.LITTLE with per-cluster DVFS
+> > All we need is a flag which can be used to discard the value of
+> > sg_policy->next_freq and we already have need_freq_update for that. Lets
+> > reuse it instead of setting next_freq to UINT_MAX.
 > > 
-> > root@h960:~# cat /proc/cpuinfo | grep "^CPU part"
-> > CPU part        : 0xd03 (Cortex-A53, little cpu)
-> > CPU part        : 0xd03
-> > CPU part        : 0xd03
-> > CPU part        : 0xd03
-> > CPU part        : 0xd09 (Cortex-A73, big cpu)
-> > CPU part        : 0xd09
-> > CPU part        : 0xd09
-> > CPU part        : 0xd09
-> > 
-> > root@h960:/sys/devices/system/cpu/cpufreq# ls
-> > policy0  policy4  schedutil
-> > 
-> > root@h960:/sys/devices/system/cpu/cpufreq# cat policy*/related_cpus
-> > 0 1 2 3
-> > 4 5 6 7
-> > 
-> > (1) w/o the revert:
-> > 
-> > root@h960:~# ps -eo pid,class,rtprio,pri,psr,comm | awk 'NR == 1 ||
-> > /sugov/'
-> >   PID CLS RTPRIO PRI PSR COMMAND
-> >   1489 #6      0 140   1 sugov:0
-> >   1490 #6      0 140   0 sugov:4
-> > 
-> > The sugov kthread sugov:4 responsible for policy4 runs on cpu0. (In this
-> > case both sugov kthreads run on little cpus).
-> > 
-> > cross policy (cluster) remote callback example:
-> > ...
-> > migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=5
-> > migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=5
-> >                      sg_cpu->sg_policy->policy->related_cpus=4-7
-> >   sugov:4-1490 [000] sugov_work: this_cpu=0
-> >                      sg_cpu->sg_policy->policy->related_cpus=4-7
-> > ...
-> > 
-> > The remote callback (this_cpu=1, target_cpu=5) is executed on cpu=0.
-> > 
-> > (2) w/ the revert:
-> > 
-> > root@h960:~# ps -eo pid,class,rtprio,pri,psr,comm | awk 'NR == 1 ||
-> > /sugov/'
-> >   PID CLS RTPRIO PRI PSR COMMAND
-> >   1491 #6      0 140   2 sugov:0
-> >   1492 #6      0 140   4 sugov:4
-> > 
-> > The sugov kthread sugov:4 responsible for policy4 runs on cpu4.
-> > 
-> > cross policy (cluster) remote callback example:
-> > ...
-> > migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=7
-> > migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=7
-> >                      sg_cpu->sg_policy->policy->related_cpus=4-7
-> >   sugov:4-1492 [004] sugov_work: this_cpu=4
-> >                      sg_cpu->sg_policy->policy->related_cpus=4-7
-> > ...
-> > 
-> > The remote callback (this_cpu=1, target_cpu=7) is executed on cpu=4.
-> > 
-> > Now the sugov kthread executes again on the policy (cluster) for which
-> > the Operating Performance Point (OPP) should be changed.
-> > It avoids the problem that an otherwise idle policy (cluster) is running
-> > schedutil (the sugov kthread) for another one.
-> > 
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Pavan Kondeti <pkondeti@codeaurora.org>
-> > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > Cc: Joel Fernandes <joelaf@google.com>
-> > Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-> > Cc: Quentin Perret <quentin.perret@arm.com>
-> > Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > > ---
-> >  kernel/sched/cpufreq_schedutil.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> > V2:
+> > - Rebased over the fix sent by Rafael
 > > 
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index d2c6083304b4..63014cff76a5 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -523,11 +523,7 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
-> >  	}
-> >  
-> >  	sg_policy->thread = thread;
-> > -
-> > -	/* Kthread is bound to all CPUs by default */
-> > -	if (!policy->dvfs_possible_from_any_cpu)
-> > -		kthread_bind_mask(thread, policy->related_cpus);
-> > -
-> > +	kthread_bind_mask(thread, policy->related_cpus);
-> >  	init_irq_work(&sg_policy->irq_work, sugov_irq_work);
-> >  	mutex_init(&sg_policy->work_lock);
-> >  
+> >   lkml.kernel.org/r/2276196.ev9rMjHTR0@aspire.rjw.lan
+> > 
+> > - Remove the additional check from sugov_update_single() as well.
+> > - This is for 4.18 now instead of stable kernels.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
 Applied, thanks!
