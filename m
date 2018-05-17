@@ -1,148 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeEQNDf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:03:35 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40497 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQNDe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:03:34 -0400
-X-Google-Smtp-Source: AB8JxZowElDBOAg3pj38Gj48W1I/OrHT1N8NiJ4EY1e57hzZcJYHlolqCf77s5/nZxHDDrZvaRqgR3r1U4/RopTOi10=
+        id S1752106AbeEQNEM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:04:12 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34515 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751280AbeEQNEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:04:10 -0400
+Date: Thu, 17 May 2018 15:04:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: davem@davemloft.net, linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 1/2] net: phy: sfp: make the i2c-bus property
+ really optional
+Message-ID: <20180517130406.GH8547@lunn.ch>
+References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+ <20180517082907.14420-2-antoine.tenart@bootlin.com>
+ <20180517124127.GG8547@lunn.ch>
+ <20180517125648.GM32746@kwain>
 MIME-Version: 1.0
-In-Reply-To: <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
-References: <cover.1526553552.git.christophe.leroy@c-s.fr> <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Thu, 17 May 2018 15:03:12 +0200
-X-Google-Sender-Auth: 9uJv1cmff5VEv032MrMGjgaS3Vk
-Message-ID: <CA+7wUsyEBW-sKiwP_KJpwuWC0JGi_Cg-xnxcnw0d_Wc7-GWeeA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] powerpc/lib: inline memcmp() for small constant sizes
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517125648.GM32746@kwain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 12:49 PM, Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
-> In my 8xx configuration, I get 208 calls to memcmp()
-> Within those 208 calls, about half of them have constant sizes,
-> 46 have a size of 8, 17 have a size of 16, only a few have a
-> size over 16. Other fixed sizes are mostly 4, 6 and 10.
->
-> This patch inlines calls to memcmp() when size
-> is constant and lower than or equal to 16
->
-> In my 8xx configuration, this reduces the number of calls
-> to memcmp() from 208 to 123
->
-> The following table shows the number of TB timeticks to perform
-> a constant size memcmp() before and after the patch depending on
-> the size
->
->         Before  After   Improvement
-> 01:      7577    5682   25%
-> 02:     41668    5682   86%
-> 03:     51137   13258   74%
-> 04:     45455    5682   87%
-> 05:     58713   13258   77%
-> 06:     58712   13258   77%
-> 07:     68183   20834   70%
-> 08:     56819   15153   73%
-> 09:     70077   28411   60%
-> 10:     70077   28411   60%
-> 11:     79546   35986   55%
-> 12:     68182   28411   58%
-> 13:     81440   35986   55%
-> 14:     81440   39774   51%
-> 15:     94697   43562   54%
-> 16:     79546   37881   52%
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/include/asm/string.h | 46 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->
-> diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
-> index 35f1aaad9b50..80cf0f9605dd 100644
-> --- a/arch/powerpc/include/asm/string.h
-> +++ b/arch/powerpc/include/asm/string.h
-> @@ -4,6 +4,8 @@
->
->  #ifdef __KERNEL__
->
-> +#include <linux/kernel.h>
-> +
->  #define __HAVE_ARCH_STRNCPY
->  #define __HAVE_ARCH_STRNCMP
->  #define __HAVE_ARCH_MEMSET
-> @@ -51,10 +53,54 @@ static inline int strncmp(const char *p, const char *q, __kernel_size_t size)
->         return __strncmp(p, q, size);
->  }
->
-> +static inline int __memcmp1(const void *p, const void *q, int off)
+On Thu, May 17, 2018 at 02:56:48PM +0200, Antoine Tenart wrote:
+> Hi Andrew,
+> 
+> On Thu, May 17, 2018 at 02:41:28PM +0200, Andrew Lunn wrote:
+> > On Thu, May 17, 2018 at 10:29:06AM +0200, Antoine Tenart wrote:
+> > > The SFF,SFP documentation is clear about making all the DT properties,
+> > > with the exception of the compatible, optional. In practice this is not
+> > > the case and without an i2c-bus property provided the SFP code will
+> > > throw NULL pointer exceptions.
+> > > 
+> > > This patch is an attempt to fix this.
+> > 
+> > How usable is an SFF/SFP module without access to the i2c EEPROM? I
+> > guess this comes down to link speed. Can it be manually configured?
+> >
+> > I'm just wondering if we want to make this mandatory? Fail the probe
+> > if it is not listed?
+> 
+> Yes, the other option would be to fail when probing a cage missing the
+> i2c description. I'd say a passive module can work without the i2c
+> EEPROM accessible as it does not need to be configured. I don't know
+> what would happen with active ones.
 
-Does that change anything if you change void* to char* pointer ? I
-find void* arithmetic hard to read.
+Hi Antoine
 
-> +{
-> +       return *(u8*)(p + off) - *(u8*)(q + off);
-> +}
-> +
-> +static inline int __memcmp2(const void *p, const void *q, int off)
-> +{
-> +       return be16_to_cpu(*(u16*)(p + off)) - be16_to_cpu(*(u16*)(q + off));
-> +}
-> +
-> +static inline int __memcmp4(const void *p, const void *q, int off)
-> +{
-> +       return be32_to_cpu(*(u32*)(p + off)) - be32_to_cpu(*(u32*)(q + off));
-> +}
-> +
-> +static inline int __memcmp8(const void *p, const void *q, int off)
-> +{
-> +       s64 tmp = be64_to_cpu(*(u64*)(p + off)) - be64_to_cpu(*(u64*)(q + off));
+I was thinking about how it reads the bit rate from the EEPROM. From
+that it determines what mode the MAC could use, 1000-Base-X,
+2500-Base-X, etc. Can you still configure this correctly via ethtool,
+if you don't have the bitrate information?
 
-I always assumed 64bits unaligned access would trigger an exception.
-Is this correct ?
-
-> +       return tmp >> 32 ? : (int)tmp;
-> +}
-> +
-> +static inline int __memcmp_cst(const void *p,const void *q,__kernel_size_t size)
-> +{
-> +       if (size == 1)
-> +               return __memcmp1(p, q, 0);
-> +       if (size == 2)
-> +               return __memcmp2(p, q, 0);
-> +       if (size == 3)
-> +               return __memcmp2(p, q, 0) ? : __memcmp1(p, q, 2);
-> +       if (size == 4)
-> +               return __memcmp4(p, q, 0);
-> +       if (size == 5)
-> +               return __memcmp4(p, q, 0) ? : __memcmp1(p, q, 4);
-> +       if (size == 6)
-> +               return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4);
-> +       if (size == 7)
-> +               return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4) ? : __memcmp1(p, q, 6);
-> +       return __memcmp8(p, q, 0);
-> +}
-> +
->  static inline int memcmp(const void *p,const void *q,__kernel_size_t size)
->  {
->         if (unlikely(!size))
->                 return 0;
-> +       if (__builtin_constant_p(size) && size <= 8)
-> +               return __memcmp_cst(p, q, size);
-> +       if (__builtin_constant_p(size) && size <= 16)
-> +               return __memcmp8(p, q, 0) ? : __memcmp_cst(p + 8, q + 8, size - 8);
->         return __memcmp(p, q, size);
->  }
->
-> --
-> 2.13.3
->
+   Andrew
