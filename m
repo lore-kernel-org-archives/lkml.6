@@ -1,62 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752244AbeERCH4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 22:07:56 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44957 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbeERCHy (ORCPT
+        id S1752020AbeERCKJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 22:10:09 -0400
+Received: from p3plsmtpa12-03.prod.phx3.secureserver.net ([68.178.252.232]:47591
+        "EHLO p3plsmtpa12-03.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751564AbeERCKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 22:07:54 -0400
-X-Google-Smtp-Source: AB8JxZoryqmjSvFi6f6BqvUFrPPaeOTdNBaxMeRAw0f+aV1YE6K89t4vep8ykAXEh3aoKIJmguj+jw==
-Date: Fri, 18 May 2018 07:37:51 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 11/11] ARM: tegra: Create platform device for
- tegra20-cpufreq driver
-Message-ID: <20180518020751.og5ov7lfrplj5dqo@vireshk-i7>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-12-digetx@gmail.com>
+        Thu, 17 May 2018 22:10:07 -0400
+Subject: Re: [RFC PATCH 00/09] Implement direct user I/O interfaces for RDMA
+To: longli@microsoft.com, Steve French <sfrench@samba.org>,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20180518002214.5657-1-longli@linuxonhyperv.com>
+From: Tom Talpey <tom@talpey.com>
+Message-ID: <d5eaf67d-4b0d-9206-a016-67cb3b5a0df8@talpey.com>
+Date: Thu, 17 May 2018 19:10:04 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-12-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180518002214.5657-1-longli@linuxonhyperv.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHJWMPRfaqyTk9DV8ZW4EahqaTPlu2M9KFb/sqq221lmKoc7I5LW6PUi+4Pz893oent8F5hxIE6nA31l04DxdCBaG6XYy2RYo8B4WgM+0qTy3NM3NHAP
+ c+25MfKyhQoRko+Pgdax8bK/Si0n/36WMefNqvybYsQrPNrT2Clw2cPuRbPbxe/VmaUrxTxs+OElk+KbqteXscgLYCZ0Z9306Uh6Nt3AZ3K9/W3hcWkVAPX6
+ SoaEjd5Aeyl/BPQP3JmQt20SPqRy3AFVZgsDUKPuleiyEwzZOKRaKSLU+4LHsRHePVUAnKvjAos5KRqD+3pc5M92qdfjj3hAg0r6phgacseuf/EmZcTFsALC
+ s+N+RNQp
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-05-18, 21:00, Dmitry Osipenko wrote:
-> Tegra20-cpufreq driver require a platform device in order to be loaded,
-> instantiate a simple platform device for the driver during of the machines
-> late initialization.
+On 5/17/2018 8:22 PM, Long Li wrote:
+> From: Long Li <longli@microsoft.com>
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/tegra.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> This patchset implements direct user I/O through RDMA.
 > 
-> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-> index 02e712d2ea30..f9587be48235 100644
-> --- a/arch/arm/mach-tegra/tegra.c
-> +++ b/arch/arm/mach-tegra/tegra.c
-> @@ -97,6 +97,10 @@ static void __init tegra_dt_init_late(void)
->  	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
->  	    of_machine_is_compatible("compal,paz00"))
->  		tegra_paz00_wifikill_init();
-> +
-> +	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
-> +	    of_machine_is_compatible("nvidia,tegra20"))
-> +		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
->  }
->  
->  static const char * const tegra_dt_board_compat[] = {
+> In normal code path (even with cache=none), CIFS copies I/O data from
+> user-space to kernel-space for security reasons.
+> 
+> With this patchset, a new mounting option is introduced to have CIFS pin the
+> user-space buffer into memory and performs I/O through RDMA. This avoids memory
+> copy, at the cost of added security risk.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+What's the security risk? This type of direct i/o behavior is not
+uncommon, and can certainly be made safe, using the appropriate
+memory registration and protection domains. Any risk needs to be
+stated explicitly, and mitigation provided, or at least described.
 
--- 
-viresh
+Tom.
+
+> 
+> This patchset is RFC. The work is in progress, do not merge.
+> 
+> 
+> Long Li (9):
+>    Introduce offset for the 1st page in data transfer structures
+>    Change wdata alloc to support direct pages
+>    Change rdata alloc to support direct pages
+>    Change function to support offset when reading pages
+>    Change RDMA send to regonize page offset in the 1st page
+>    Change RDMA recv to support offset in the 1st page
+>    Support page offset in memory regsitrations
+>    Implement no-copy file I/O interfaces
+>    Introduce cache=rdma moutning option
+>   
+> 
+>   fs/cifs/cifs_fs_sb.h      |   2 +
+>   fs/cifs/cifsfs.c          |  19 +++
+>   fs/cifs/cifsfs.h          |   3 +
+>   fs/cifs/cifsglob.h        |   6 +
+>   fs/cifs/cifsproto.h       |   4 +-
+>   fs/cifs/cifssmb.c         |  10 +-
+>   fs/cifs/connect.c         |  13 +-
+>   fs/cifs/dir.c             |   5 +
+>   fs/cifs/file.c            | 351 ++++++++++++++++++++++++++++++++++++++++++----
+>   fs/cifs/inode.c           |   4 +-
+>   fs/cifs/smb2ops.c         |   2 +-
+>   fs/cifs/smb2pdu.c         |  22 ++-
+>   fs/cifs/smbdirect.c       | 132 ++++++++++-------
+>   fs/cifs/smbdirect.h       |   2 +-
+>   fs/read_write.c           |   7 +
+>   include/linux/ratelimit.h |   2 +-
+>   16 files changed, 489 insertions(+), 95 deletions(-)
+> 
