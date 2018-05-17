@@ -1,84 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeEQVXS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:23:18 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:43228 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751843AbeEQVXQ (ORCPT
+        id S1751892AbeEQV0Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:26:25 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33424 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEQV0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:23:16 -0400
-X-Google-Smtp-Source: AB8JxZqgoqB7os7zTlxcxn8vw0/zP+urp60lFwvdbjb5EA0YmZMzpJVygy1AtiGKt7/9QU0Lxyp3b2/7ON/dr+PC2QM=
+        Thu, 17 May 2018 17:26:24 -0400
+X-Google-Smtp-Source: AB8JxZrsVhNu077i9LRTJdCC+oTlRVKdXugrhwhV3Yjobx8HhZFZZazKc9sHpS7uwGSZfjqeqq6e/A==
+Date: Thu, 17 May 2018 11:26:21 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH v2] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS
+ generation
+Message-ID: <20180517212621.i6ljgrcfhhadrkij@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3a4195365ab0d252fdf064d2300f45b9b777991c.1526088081.git.collinsd@codeaurora.org>
-References: <cover.1526088081.git.collinsd@codeaurora.org> <3a4195365ab0d252fdf064d2300f45b9b777991c.1526088081.git.collinsd@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 17 May 2018 14:23:15 -0700
-X-Google-Sender-Auth: kos2GJ0dIMl_GmMdGQ0ISnpHC4o
-Message-ID: <CAD=FV=UiZEFTAtO9C0UbRO=ow5=dv6zNG-XMqhHm1Fmp2GwVcA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] regulator: add QCOM RPMh regulator driver
-To: David Collins <collinsd@codeaurora.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nmt45bq3vtii2hpn"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, May 11, 2018 at 7:28 PM, David Collins <collinsd@codeaurora.org> wrote:
-> +static int rpmh_regulator_parse_vrm_modes(struct rpmh_vreg *vreg,
-> +                               struct device *dev, struct device_node *node)
-> +{
-> +       const char *prop;
-> +       int i, len, ret, mode;
-> +       u32 *buf;
-> +
-> +       /* qcom,allowed-drms-modes is optional */
-> +       prop = "qcom,allowed-drms-modes";
+--nmt45bq3vtii2hpn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As per comments in bindings patch: this is a duplicate of your new
-attribute you added to the regulator core.  Makes no sense to have a
-private attribute too with the same value.
+Parsing `ls` is fragile at best and _will_ fail when $tree
+contains spaces. Replace this with a glob-generated string
+and directly assign it to $ALLSOURCE_ARCHS; a subshell is
+implied by $(), so `cd` doesn't affect the current working
+directory.
 
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-> +       prop = "qcom,drms-mode-max-microamps";
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-As per comments in the bindings patch, I think we should move
-"qcom,drms-mode-max-microamps" to the regulator core.
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 78e546ff689c2d5f40..a4b089aa35efbc0a13 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -29,14 +29,11 @@ fi
+ ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
+=20
+ # Find all available archs
+ find_all_archs()
+ {
+-	ALLSOURCE_ARCHS=3D""
+-	for arch in `ls ${tree}arch`; do
+-		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
+-	done
++	ALLSOURCE_ARCHS=3D"$(cd "${tree}arch/" && echo *)"
+ }
+=20
+ # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+ if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
+ 	ALLSOURCE_ARCHS=3D${SRCARCH}
+--=20
+2.17.0.rc1.35.g90bbd502d54fe92035.dirty
 
+--nmt45bq3vtii2hpn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +               prop = "qcom,regulator-initial-microvolt";
+-----BEGIN PGP SIGNATURE-----
 
-As per comments in bindings patch: seems like we should get rid of
-"qcom,regulator-initial-microvolt" or move to the core.
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr9830ACgkQruvLfWhy
+VBmEyRAAxvIuQ/LVioeCJHeaHRIV9XEF8HbBDp630v+tREr9iXBjHOL5FWfyfA/3
+bYk0+DCNCRYR4pTdoe0oyF5QmxwpdwdFiatQRTo8/r/J5+sXTsiOCUCadwomBczc
+3S41xLfbmu4OajL+szz/85SlGyqX84c3MbOpiVTyRbh2GDPtfPg13ZPfcA/GYtuY
+ttj45GvPemjx9oHCo6gZh93/wGShktM1M1KxzLiVngYvNdsot6J8AKm3Edb+VQpA
+XvDxVuniCAMLs86iQxizOgTUHL5owTMWcIOGiIKIf5bCjJwSsZjVqpgz2bkx0Kl1
+vsOBKJxuq++oYDM3VwtaFJMdOgbbZilff+43Cf3HKv81bMCGBnXQGtRVVvwi/Cr4
+7Rl1rDJn3IhL5HbPoIsX7q+cpGtMzEq9J2Kx3kEnxe0PrgkAJMVv0DfSWNz5bRsp
+e2nu5Q4n+QNDzZklpoKJw35pYjZfj4U+hwS4SloCHF8RS/9U6EODrNMpidoXx98D
+p1WqL187QGyuhSBGir72CF0MrrCDFvXA3x+ISK0oSDjJUikP7MNBkMspk8F+hexD
++os8Ol+PBhixa/6xUXfHY2uJorAFIw2YmkElK2o7v95cmXVlfSJR/5AUQUoNj/Eq
+5AQ6kkk8eb9LHt9ZNtaR31LsDnVXIzM7l9jyaiK5ynHJr/UluSw=
+=2lV5
+-----END PGP SIGNATURE-----
 
-
-> +                       /*
-> +                        * Default the voltage selector to an error value in the
-> +                        * case that qcom,regulator-initial-microvolt is not
-> +                        * specified in device tree since the true voltage is
-> +                        * not known.  Note that this value causes
-> +                        * devm_regulator_register() to fail in the case that
-> +                        * regulator-min-microvolt and regulator-max-microvolt
-> +                        * are specified in device tree due to
-> +                        * machine_constraints_voltage() bailing when the
-> +                        * get_voltage_sel() callback returns this error value.
-> +                        */
-> +                       vreg->voltage_selector = -EINVAL;
-
-As per comments in other threads, adjust this comment and use
--ENOTRECOVERABLE now.
-
-
-NOTE: I think this driver is looking really good now.  Hopefully the
-above things should be quick to spin (even getting "max-microamps" in
-the core should be quick I think)  and we can get something landed!
-:)
-
--Doug
+--nmt45bq3vtii2hpn--
