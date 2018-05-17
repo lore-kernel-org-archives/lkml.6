@@ -1,103 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeEQSDK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:03:10 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39098 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQSDH (ORCPT
+        id S1752309AbeEQSBU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:01:20 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38485 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbeEQSBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:03:07 -0400
-X-Google-Smtp-Source: AB8JxZpKMDvA23o2zNsMvy+MzfWU3R+i2WVZ35ChlhnaH5qULKdWgHnY6EjNvuLe8lAe8d2InMRZfd9P1HvbaNqELNI=
-MIME-Version: 1.0
-In-Reply-To: <20180517170656.1f746914@canb.auug.org.au>
-References: <20180517170656.1f746914@canb.auug.org.au>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 17 May 2018 23:33:05 +0530
-Message-ID: <CA+G9fYsJ01fWgD1ER1s46VNtHG57dZ26javkLtqwftjQTnA=rw@mail.gmail.com>
-Subject: Re: linux-next: Tree for May 17
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 May 2018 14:01:16 -0400
+X-Google-Smtp-Source: AB8JxZoq4O8SzODfrRboNTyLIoJvAwkjFW5uhqlmjtGUhpwJekwD0FOlcgBVoa6gdSg0c3MyTFWDSg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH v1 03/11] cpufreq: tegra20: Remove EMC clock usage
+Date: Thu, 17 May 2018 21:00:48 +0300
+Message-Id: <20180517180056.13336-4-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180517180056.13336-1-digetx@gmail.com>
+References: <20180517180056.13336-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 May 2018 at 12:36, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> News: I will not be doing any linux-next releases between Friday 18 May
-> and Friday 25 May inclusive.
->
-> Changes since 20180516:
->
-> New trees: devicetree-fixes
->
-> The kbuild tree still had its build failure for which I applied a patch.
->
-> The mvebu tree gained a conflict against the arm-soc tree.
->
-> The renesas tree gained conflicts against the mvebu tree.
->
-> The net-next tree gained a conflict against the vfs tree.
->
-> The drm tree still had its build failure for which I applied a patch.
->
-> The usb-gadget tree gained a conflict against the usb tree.
->
-> The staging tree gained a conflict against the v4l-dvb tree.
->
-> The akpm tree gained a conflict against the vfs tree.
->
-> Non-merge commits (relative to Linus' tree): 7398
->  7852 files changed, 294207 insertions(+), 302289 deletions(-)
->
-> ----------------------------------------------------------------------------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
->
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+The EMC driver has been gone 4 years ago, since the commit a7cbe92cef27
+("ARM: tegra: remove tegra EMC scaling driver"). Remove the EMC clock
+usage as it does nothing. We may consider re-implementing the EMC scaling
+later, probably using PM Memory Bandwidth QoS API.
 
-Linux-20180517 - arm64 build failed.
-Build failed for HiKey, Juno and dragonboard 410c.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/cpufreq/tegra20-cpufreq.c | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
-Build failed log:
----------------------
-  CC [M]  drivers/gpu/drm/msm/hdmi/hdmi_phy_8960.o
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c: In function
- 'rcar_du_vsp_plane_atomic_duplicate_state':
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:6: error:
- 'struct rcar_du_vsp_plane_state' has no member named 'alpha'
-  copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
-      ^~
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:53: error:
- 'struct rcar_du_vsp_plane_state' has no member named 'alpha'
-  copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
-                                                     ^~
-scripts/Makefile.build:311: recipe for target
- 'drivers/gpu/drm/rcar-du/rcar_du_vsp.o' failed
-make[6]: *** [drivers/gpu/drm/rcar-du/rcar_du_vsp.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-  CC [M]  drivers/gpu/drm/msm/hdmi/hdmi_phy_8x60.o
-  CC [M]  net/bluetooth/mgmt_util.o
-scripts/Makefile.build:552: recipe for target 'drivers/gpu/drm/rcar-du' failed
-make[5]: *** [drivers/gpu/drm/rcar-du] Error 2
-
-Complete log link:
-------------------------
-https://ci.linaro.org/job/openembedded-lkft-linux-next/DISTRO=rpb,MACHINE=juno,label=docker-stretch-amd64/263/console
+diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+index dd8a76a64a8e..693f9067ba8a 100644
+--- a/drivers/cpufreq/tegra20-cpufreq.c
++++ b/drivers/cpufreq/tegra20-cpufreq.c
+@@ -44,7 +44,6 @@ static struct cpufreq_frequency_table freq_table[] = {
+ static struct clk *cpu_clk;
+ static struct clk *pll_x_clk;
+ static struct clk *pll_p_clk;
+-static struct clk *emc_clk;
+ static bool pll_x_prepared;
+ 
+ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+@@ -95,17 +94,6 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
+ 	unsigned int ifreq = clk_get_rate(pll_p_clk) / 1000;
+ 	int ret = 0;
+ 
+-	/*
+-	 * Vote on memory bus frequency based on cpu frequency
+-	 * This sets the minimum frequency, display or avp may request higher
+-	 */
+-	if (rate >= 816000)
+-		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
+-	else if (rate >= 456000)
+-		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
+-	else
+-		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
+-
+ 	/*
+ 	 * target freq == pll_p, don't need to take extra reference to pll_x_clk
+ 	 * as it isn't used anymore.
+@@ -141,14 +129,12 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ 	if (policy->cpu >= NUM_CPUS)
+ 		return -EINVAL;
+ 
+-	clk_prepare_enable(emc_clk);
+ 	clk_prepare_enable(cpu_clk);
+ 
+ 	/* FIXME: what's the actual transition time? */
+ 	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
+ 	if (ret) {
+ 		clk_disable_unprepare(cpu_clk);
+-		clk_disable_unprepare(emc_clk);
+ 		return ret;
+ 	}
+ 
+@@ -160,7 +146,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ static int tegra_cpu_exit(struct cpufreq_policy *policy)
+ {
+ 	clk_disable_unprepare(cpu_clk);
+-	clk_disable_unprepare(emc_clk);
+ 	return 0;
+ }
+ 
+@@ -192,19 +177,12 @@ static int __init tegra_cpufreq_init(void)
+ 	if (IS_ERR(pll_p_clk))
+ 		return PTR_ERR(pll_p_clk);
+ 
+-	emc_clk = clk_get_sys("cpu", "emc");
+-	if (IS_ERR(emc_clk)) {
+-		clk_put(cpu_clk);
+-		return PTR_ERR(emc_clk);
+-	}
+-
+ 	return cpufreq_register_driver(&tegra_cpufreq_driver);
+ }
+ 
+ static void __exit tegra_cpufreq_exit(void)
+ {
+ 	cpufreq_unregister_driver(&tegra_cpufreq_driver);
+-	clk_put(emc_clk);
+ 	clk_put(cpu_clk);
+ }
+ 
+-- 
+2.17.0
