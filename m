@@ -1,125 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeEQNg5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:36:57 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45062 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeEQNgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:36:55 -0400
-X-Google-Smtp-Source: AB8JxZqX/AbVlNLA6FPlEchgr6Q4k5Gzw3YdbATmznRBBWoS9T+Z55ft7J4CnBxCvuv/46XQHxv5rg==
-Date: Thu, 17 May 2018 23:36:43 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] powerpc/mm: Only read faulting instruction when
- necessary in do_page_fault()
-Message-ID: <20180517233643.4551142e@roar.ozlabs.ibm.com>
-In-Reply-To: <20180517105930.71B1D6F937@po14934vm.idsi0.si.c-s.fr>
-References: <20180517105930.71B1D6F937@po14934vm.idsi0.si.c-s.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752199AbeEQNiK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:38:10 -0400
+Received: from sauhun.de ([88.99.104.3]:51290 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750938AbeEQNiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:38:09 -0400
+Date: Thu, 17 May 2018 15:38:07 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] i2c: core-smbus: fix a potential missing-check bug
+Message-ID: <20180517133807.dmlf7rlpavmls6cg@ninjato>
+References: <1525525341-10046-1-git-send-email-wang6495@umn.edu>
+ <20180510111658.sxf3mvye5q6ihxa7@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vvt4nisdeyjjnky4"
+Content-Disposition: inline
+In-Reply-To: <20180510111658.sxf3mvye5q6ihxa7@ninjato>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018 12:59:29 +0200 (CEST)
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 
-> Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
-> userspace instruction miss") has shown that limiting the read of
-> faulting instruction to likely cases improves performance.
-> 
-> This patch goes further into this direction by limiting the read
-> of the faulting instruction to the only cases where it is definitly
-> needed.
-> 
-> On an MPC885, with the same benchmark app as in the commit referred
-> above, we see a reduction of 4000 dTLB misses (approx 3%):
-> 
-> Before the patch:
->  Performance counter stats for './fault 500' (10 runs):
-> 
->          720495838      cpu-cycles		( +-  0.04% )
->             141769      dTLB-load-misses	( +-  0.02% )
->              52722      iTLB-load-misses	( +-  0.01% )
->              19611      faults			( +-  0.02% )
-> 
->        5.750535176 seconds time elapsed		( +-  0.16% )
-> 
-> With the patch:
->  Performance counter stats for './fault 500' (10 runs):
-> 
->          717669123      cpu-cycles		( +-  0.02% )
->             137344      dTLB-load-misses	( +-  0.03% )
->              52731      iTLB-load-misses	( +-  0.01% )
->              19614      faults			( +-  0.03% )
-> 
->        5.728423115 seconds time elapsed		( +-  0.14% )
-> 
-> The proper work of the huge stack expansion was tested with the
-> following app:
-> 
-> int main(int argc, char **argv)
-> {
-> 	char buf[1024 * 1025];
-> 
-> 	sprintf(buf, "Hello world !\n");
-> 	printf(buf);
-> 
-> 	exit(0);
-> }
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  v6: Rebased on latest powerpc/merge branch ; Using __get_user_inatomic() instead of get_user() in order
->      to move it inside the semaphored area. That removes all the complexity of the patch.
-> 
->  v5: Reworked to fit after Benh do_fault improvement and rebased on top of powerpc/merge (65152902e43fef)
-> 
->  v4: Rebased on top of powerpc/next (f718d426d7e42e) and doing access_ok() verification before __get_user_xxx()
-> 
->  v3: Do a first try with pagefault disabled before releasing the semaphore
-> 
->  v2: Changes 'if (cond1) if (cond2)' by 'if (cond1 && cond2)'
-> 
->  arch/powerpc/mm/fault.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> index c01d627e687a..a7d5cc76a8ce 100644
-> --- a/arch/powerpc/mm/fault.c
-> +++ b/arch/powerpc/mm/fault.c
-> @@ -72,8 +72,18 @@ static inline bool notify_page_fault(struct pt_regs *regs)
->  static bool store_updates_sp(struct pt_regs *regs)
->  {
->  	unsigned int inst;
-> +	int ret;
->  
-> -	if (get_user(inst, (unsigned int __user *)regs->nip))
-> +	/*
-> +	 * Using get_user_in_atomic() as reading code around nip can result in
-> +	 * fault, which may cause a deadlock when called with mmap_sem held,
-> +	 * however since we are reading the instruction that generated the DSI
-> +	 * we are handling, the page is necessarily already present.
-> +	 */
-> +	pagefault_disable();
-> +	ret = __get_user_inatomic(inst, (unsigned int __user *)regs->nip);
-> +	pagefault_enable();
-> +	if (ret)
->  		return false;
+--vvt4nisdeyjjnky4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Problem is that the page can be removed from page tables between
-taking the fault and reading the address here.
+On Thu, May 10, 2018 at 01:16:59PM +0200, Wolfram Sang wrote:
+> On Sat, May 05, 2018 at 08:02:21AM -0500, Wenwen Wang wrote:
+> > In i2c_smbus_xfer_emulated(), the function i2c_transfer() is invoked to
+> > transfer i2c messages. The number of actual transferred messages is
+> > returned and saved to 'status'. If 'status' is negative, that means an
+> > error occurred during the transfer process. In that case, the value of
+> > 'status' is an error code to indicate the reason of the transfer failur=
+e.
+> > In most cases, i2c_transfer() can transfer 'num' messages with no error.
+> > And so 'status' =3D=3D 'num'. However, due to unexpected errors, it is =
+probable
+> > that only partial messages are transferred by i2c_transfer(). As a resu=
+lt,
+> > 'status' !=3D 'num'. This special case is not checked after the invocat=
+ion of
+> > i2c_transfer() and can potentially lead to unexpected issues in the
+> > following execution since it is expected that 'status' =3D=3D 'num'.
+> >=20
+> > This patch checks the return value of i2c_transfer() and returns an err=
+or
+> > code -EIO if the number of actual transferred messages 'status' is not
+> > equal to 'num'.
+> >=20
+> > Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+>=20
+> Applied to for-current, thanks!
 
-That case would be so rare that it should be fine to do a big hammer
-fix like drop the mmap_sem, do a fault_in_pages_readable, and then
-restart from taking the mmap_sem again.
+Reconsidered and applied to for-next, thanks!
 
-Thanks,
-Nick
+
+--vvt4nisdeyjjnky4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9hboACgkQFA3kzBSg
+KbYi4g/9GkQOcONR0sLn2iA40fe80fR0lb8WO6fQD4LSskofEiVyuRNgOHzNPg8R
+DnAbinrpUjuq1GWFlNZyivbiTQFs7ku9oMbt0XcJ0ZmxvgHNJmAUObj+WpkW2mJ+
+oCeJbRKdG3uVuvBtuULe7gbRKwIgdVVWt2hxnXX6X56i/8qZGpJo9v7J0zD/JsRd
+zfjBpn0mndG3Mpw/lEOnhnteUduG30h4OtlBTqwTqzaIxfIFBY2ja1P78dbfSotX
+sju3EC71m4qmqQoKn9vtquk5QLyCFDXYNDSg46DJ3chfWKges/Ip7iFA5j2BiSAC
+Em4uOW4yBBF/0OXcdg5w3dSsmdCdkhVRJOsCXsMYmh5cQS1zDasUWRD+/kZX/ve7
+AphPlCOWW6G6OcY5ACaeCzMXcTnEEi1MIaWlOyWa7xnAq+fSdYWESGivQZzF3FYd
+F9AZMF+/gg3URbY59NLxXbdXPhZb41OjjRLnt3OOW0FuAWLSUqyeYPIK81rlNfny
+n+4igX4ikdq7AgpIoq6NgXRfMYP6RFMgg5idg/bGcb0sp8z/ya1eYIJbblLGLnr6
+xzkUtbBYxysLgVUxTcTWJPDOntcTY8G8i+KlS/RjWuJ5yHZBDmYumzP0J5qmjCS/
+D70rCqy7rok88MuORmVhaS3UcMRENGK5A5pkwHlATsRNhzuSZzk=
+=fN6z
+-----END PGP SIGNATURE-----
+
+--vvt4nisdeyjjnky4--
