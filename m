@@ -1,161 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeEQKku (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:40:50 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:52742 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeEQKkt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:40:49 -0400
-Subject: Re: [PATCH v3 5/7] MIPS: perf: Allocate per-core counters on demand
-To: James Hogan <jhogan@kernel.org>
-CC: Ralf Baechle <ralf@linux-mips.org>,
-        Florian Fainelli <f.fainelli@gmail.com>, <linux-mips@linux-mips.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <1524219789-31241-1-git-send-email-matt.redfearn@mips.com>
- <1524219789-31241-6-git-send-email-matt.redfearn@mips.com>
- <20180516180518.GB12837@jamesdev>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <ea713dfc-a4ef-a2ea-de9f-bd40ef28b128@mips.com>
-Date: Thu, 17 May 2018 11:40:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751530AbeEQKls (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:41:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49872 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750938AbeEQKlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:41:46 -0400
+Date: Thu, 17 May 2018 12:41:24 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Cc: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
+ block
+Message-ID: <20180517104124.GA25595@pd.tnic>
+References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+ <20180201184813.82253-3-Yazen.Ghannam@amd.com>
+ <20180414004230.GA2033@probook>
+ <20180416115624.GA1543@probook>
+ <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180515093953.GA1746@probook>
+ <20180516224641.GA31929@pd.tnic>
+ <20180517064930.GA26421@probook>
 MIME-Version: 1.0
-In-Reply-To: <20180516180518.GB12837@jamesdev>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1526553619-637139-24071-42272-1
-X-BESS-VER: 2018.6-r1805161801
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193074
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517064930.GA26421@probook>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Thu, May 17, 2018 at 08:49:31AM +0200, Johannes Hirte wrote:
+> Maybe I'm missing something, but those RDMSR IPSs don't happen on
+> pre-SMCA systems, right? So the caching should be avoided here, cause
+> the whole lookup looks more expensive to me than the simple switch-block
+> in get_block_address.
 
-On 16/05/18 19:05, James Hogan wrote:
-> On Fri, Apr 20, 2018 at 11:23:07AM +0100, Matt Redfearn wrote:
->> Previously when performance counters are per-core, rather than
->> per-thread, the number available were divided by 2 on detection, and the
->> counters used by each thread in a core were "swizzled" to ensure
->> separation. However, this solution is suboptimal since it relies on a
->> couple of assumptions:
->> a) Always having 2 VPEs / core (number of counters was divided by 2)
->> b) Always having a number of counters implemented in the core that is
->>     divisible by 2. For instance if an SoC implementation had a single
->>     counter and 2 VPEs per core, then this logic would fail and no
->>     performance counters would be available.
->> The mechanism also does not allow for one VPE in a core using more than
->> it's allocation of the per-core counters to count multiple events even
->> though other VPEs may not be using them.
->>
->> Fix this situation by instead allocating (and releasing) per-core
->> performance counters when they are requested. This approach removes the
->> above assumptions and fixes the shortcomings.
->>
->> In order to do this:
->> Add additional logic to mipsxx_pmu_alloc_counter() to detect if a
->> sibling is using a per-core counter, and to allocate a per-core counter
->> in all sibling CPUs.
->> Similarly, add a mipsxx_pmu_free_counter() function to release a
->> per-core counter in all sibling CPUs when it is finished with.
->> A new spinlock, core_counters_lock, is introduced to ensure exclusivity
->> when allocating and releasing per-core counters.
->> Since counters are now allocated per-core on demand, rather than being
->> reserved per-thread at boot, all of the "swizzling" of counters is
->> removed.
->>
->> The upshot is that in an SoC with 2 counters / thread, counters are
->> reported as:
->> Performance counters: mips/interAptiv PMU enabled, 2 32-bit counters
->> available to each CPU, irq 18
->>
->> Running an instance of a test program on each of 2 threads in a
->> core, both threads can use their 2 counters to count 2 events:
->>
->> taskset 4 perf stat -e instructions:u,branches:u ./test_prog & taskset 8
->> perf stat -e instructions:u,branches:u ./test_prog
->>
->>   Performance counter stats for './test_prog':
->>
->>               30002      instructions:u
->>               10000      branches:u
->>
->>         0.005164264 seconds time elapsed
->>   Performance counter stats for './test_prog':
->>
->>               30002      instructions:u
->>               10000      branches:u
->>
->>         0.006139975 seconds time elapsed
->>
->> In an SoC with 2 counters / core (which can be forced by setting
->> cpu_has_mipsmt_pertccounters = 0), counters are reported as:
->> Performance counters: mips/interAptiv PMU enabled, 2 32-bit counters
->> available to each core, irq 18
->>
->> Running an instance of a test program on each of 2 threads in a/soak/bin/bashsoak -E cpuhotplugHi
->> core, now only one thread manages to secure the performance counters to
->> count 2 events. The other thread does not get any counters.
->>
->> taskset 4 perf stat -e instructions:u,branches:u ./test_prog & taskset 8
->> perf stat -e instructions:u,branches:u ./test_prog
->>
->>   Performance counter stats for './test_prog':
->>
->>       <not counted>       instructions:u
->>       <not counted>       branches:u
->>
->>         0.005179533 seconds time elapsed
->>
->>   Performance counter stats for './test_prog':
->>
->>               30002      instructions:u
->>               10000      branches:u
->>
->>         0.005179467 seconds time elapsed
->>
->> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-> 
-> While this sounds like an improvement in practice, being able to use
-> more counters on single threaded stuff than otherwise, I'm a little
-> concerned what would happen if a task was migrated to a different CPU
-> and the perf counters couldn't be obtained on the new CPU due to
-> counters already being in use. Would the values be incorrectly small?
+Yeah, and we should simply cache all those MSR values as I suggested then.
 
-This change was really forced by the new I7200 development. Current 
-configurations have 2 counters per core, but each core has 3 VPEs - 
-which means the current logic cannot correctly assign counters. IoW the 
-2 assumptions stated in the commit log are no longer true.
+The patch at the end should fix your issue.
 
-Though you are right that if a task migrated to a core on which another 
-VPE is already using the counters, this change would mean counters 
-cannot be assigned. In that case we return EAGAIN. I'm not sure if that 
-error would be handled gracefully by the scheduler and the task 
-scheduled away again... The code events logic that backs this is tricky 
-to follow.
+Yazen, so I'm working on the assumption that all addresses are the same
+on every core - I dumped them and it looks like this:
 
-Thanks,
-Matt
+    128 bank: 00, block: 0 : 0xc0002003
+    128 bank: 00, block: 1 : 0x0
+    128 bank: 01, block: 0 : 0xc0002013
+    128 bank: 01, block: 1 : 0x0
+    128 bank: 02, block: 0 : 0xc0002023
+    128 bank: 02, block: 1 : 0x0
+    128 bank: 03, block: 0 : 0xc0002033
+    128 bank: 03, block: 1 : 0x0
+    128 bank: 04, block: 0 : 0x0
+    128 bank: 05, block: 0 : 0xc0002053
+    128 bank: 05, block: 1 : 0x0
+    128 bank: 06, block: 0 : 0xc0002063
+    128 bank: 06, block: 1 : 0x0
+    128 bank: 07, block: 0 : 0xc0002073
+    128 bank: 07, block: 1 : 0x0
+    128 bank: 08, block: 0 : 0xc0002083
+    128 bank: 08, block: 1 : 0x0
+    128 bank: 09, block: 0 : 0xc0002093
+    128 bank: 09, block: 1 : 0x0
+    128 bank: 10, block: 0 : 0xc00020a3
+    128 bank: 10, block: 1 : 0x0
+    128 bank: 11, block: 0 : 0xc00020b3
+    128 bank: 11, block: 1 : 0x0
+    128 bank: 12, block: 0 : 0xc00020c3
+    128 bank: 12, block: 1 : 0x0
+    128 bank: 13, block: 0 : 0xc00020d3
+    128 bank: 13, block: 1 : 0x0
+    128 bank: 14, block: 0 : 0xc00020e3
+    128 bank: 14, block: 1 : 0x0
+    128 bank: 15, block: 0 : 0xc00020f3
+    128 bank: 15, block: 1 : 0x0
+    128 bank: 16, block: 0 : 0xc0002103
+    128 bank: 16, block: 1 : 0x0
+    128 bank: 17, block: 0 : 0xc0002113
+    128 bank: 17, block: 1 : 0x0
+    128 bank: 18, block: 0 : 0xc0002123
+    128 bank: 18, block: 1 : 0x0
+    128 bank: 19, block: 0 : 0xc0002133
+    128 bank: 19, block: 1 : 0x0
+    128 bank: 20, block: 0 : 0xc0002143
+    128 bank: 20, block: 1 : 0x0
+    128 bank: 21, block: 0 : 0xc0002153
+    128 bank: 21, block: 1 : 0x0
+    128 bank: 22, block: 0 : 0xc0002163
+    128 bank: 22, block: 1 : 0x0
 
+so you have 128 times the same address on a 128 core Zen box.
 
-> 
-> Cheers
-> James
-> 
+If that is correct, then we can use this nice simplification and cache
+them globally and not per-CPU. Seems to work here. Scream if something's
+amiss.
+
+Thx.
+
+---
+>From d8614e904d8f63b89d2d204d6fa247c4c416a1b6 Mon Sep 17 00:00:00 2001
+From: Borislav Petkov <bp@susede>
+Date: Thu, 17 May 2018 10:46:26 +0200
+Subject: [PATCH] array caching
+
+Not-Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 29 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index f7666eef4a87..c8e038800591 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[] = {
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
+ };
+ 
++static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
++{
++	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
++};
++
+ const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsigned int cpu, unsigned int bank,
+ 	if (!block)
+ 		return MSR_AMD64_SMCA_MCx_MISC(bank);
+ 
++	/* Check our cache first: */
++	if (smca_bank_addrs[bank][block] != -1)
++		return smca_bank_addrs[bank][block];
++
+ 	/*
+ 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
+ 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
+ 	 */
+ 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-		return addr;
++		goto out;
+ 
+ 	if (!(low & MCI_CONFIG_MCAX))
+-		return addr;
++		goto out;
+ 
+ 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+ 	    (low & MASK_BLKPTR_LO))
+-		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+ 
++out:
++	smca_bank_addrs[bank][block] = addr;
+ 	return addr;
+ }
+ 
+@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
+ 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+ 		return addr;
+ 
+-	/* Get address from already initialized block. */
+-	if (per_cpu(threshold_banks, cpu)) {
+-		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+-
+-		if (bankp && bankp->blocks) {
+-			struct threshold_block *blockp = &bankp->blocks[block];
+-
+-			if (blockp)
+-				return blockp->address;
+-		}
+-	}
+-
+ 	if (mce_flags.smca)
+ 		return smca_get_block_address(cpu, bank, block);
+ 
+-- 
+2.17.0.391.g1f1cddd558b5
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
