@@ -1,61 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752466AbeEQO3V (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:29:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49414 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751930AbeEQO3U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:29:20 -0400
-Date: Thu, 17 May 2018 10:29:05 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
-        andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
- configuration
-Message-ID: <20180517142905.GF12679@char.us.oracle.com>
-References: <20180514144029.16019-1-andr2000@gmail.com>
- <20180514144029.16019-2-andr2000@gmail.com>
- <20180516171528.GD21971@dtor-ws>
- <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
- <20180516210817.GF21971@dtor-ws>
- <7cecb5d1-5cd3-b63d-d6eb-d1e2dfba9ca6@gmail.com>
- <d35b6720-62e3-e9d4-dbe5-a04d75dde0b7@oracle.com>
- <60ed5392-eff6-be1c-f092-bb93184db060@gmail.com>
+        id S1752014AbeEQOaR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:30:17 -0400
+Received: from anholt.net ([50.246.234.109]:46184 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751293AbeEQOaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:30:16 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+In-Reply-To: <alpine.DEB.2.21.1805171007260.7820@macbook-air>
+References: <20180517131727.29263-1-eric@anholt.net> <alpine.DEB.2.21.1805171007260.7820@macbook-air>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Thu, 17 May 2018 15:30:11 +0100
+Message-ID: <87efia1hjg.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60ed5392-eff6-be1c-f092-bb93184db060@gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8895 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=654
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170133
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 04:09:04PM +0300, Oleksandr Andrushchenko wrote:
-> On 05/17/2018 04:08 PM, Boris Ostrovsky wrote:
-> > On 05/17/2018 01:31 AM, Oleksandr Andrushchenko wrote:
-> > > I will go with the change you suggested and
-> > > I'll send v4 tomorrow then.
-> > 
-> > 
-> > Please make sure your changes to kbdif.h are in Xen first. I believe you
-> > submitted a patch there but I don't see it in the staging tree yet.
-> Sure, I already have Release ack for the one which is not
-> in Xen tree yet, hope Konrad can apply it today,
-> so tomorrow Xen and Linux are both ok (or by the time
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-It is checked in (on the Xen tree).
-> I send v4).
-> > -boris
-> Thank you,
-> Oleksandr
+Vince Weaver <vincent.weaver@maine.edu> writes:
+
+> On Thu, 17 May 2018, Eric Anholt wrote:
+>
+>> diff --git a/arch/arm/boot/dts/bcm2837.dtsi b/arch/arm/boot/dts/bcm2837.=
+dtsi
+>> index 7704bb029605..1f5e5c782835 100644
+>> --- a/arch/arm/boot/dts/bcm2837.dtsi
+>> +++ b/arch/arm/boot/dts/bcm2837.dtsi
+>> @@ -17,6 +17,12 @@
+>>  		};
+>>  	};
+>>=20=20
+>> +	arm-pmu {
+>> +		compatible =3D "arm,cortex-a53-pmu", "arm,cortex-a7-pmu";
+>> +		interrupt-parent =3D <&local_intc>;
+>> +		interrupts =3D <9 IRQ_TYPE_LEVEL_HIGH>;
+>> +	};
+>> +
+>
+> why this and not
+>
+> arm-pmu {
+> 	compatible =3D "arm,armv8-pmuv3";
+> 	interrupt-parent =3D <&local_intc>;
+> 	interrupts =3D <9>;
+> };
+>
+> which works, though when I didn't get very far when I submitted the patch=
+=20
+> to add this last August.
+
+Is that better than a53?  I'm happy to switch to that.  The important
+part to me is the a7, since basically everyone with this hw is running
+arm32.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlr9kfMACgkQtdYpNtH8
+nugh8hAAppFgslLzTmpl2HL5S2OQdj7pmNuULSr/2zGR9wR6gJKi525m2YUmExET
+mklAuaFFMV/gobblrfCeyfEpKRt1Zyvr6INITKBzc/9162ZeF/o8KlmMFv8W6sXY
+7B9p0xfTez52T371+JRmO6KcQtrqB0aUTOaO7ZUjkSBuBCTTQbZW8RQ2s7CVdrTV
+cR2tzGBbu5Af6mwMgFj+zRwtQ8Qk8ehNyu2cp50yZ+Tnq+CrX09pWMb7Ec/34HO1
+UiqKuYXkFm/Guvy+fsKgqBOm61TEZKwMYImOAYqbR7bWHYSxBrPjzKjq0iEIsFKA
+6paP/TEZaZ38oD+2Amwqsea6StNtfzVwf4OBXBEMt1vzQmqYFgY8YpmLFYUivb1t
+okmslqj6/4CM38o5ekEpbB6WceJjtgK2Htwyjd5sMMQswZJwrNcn7KZ5YjtSflRK
+P8LhpWWyvDMoLZH5Mayx4toRFWqxJBo+BsG34m0ODhRRsnWIyzZ9qlAU1hxYq8Xn
+aWUnjfuePvpRRxA9mkszCuZMLZ4HjcRGbz3bitLwjgNq0v8L33i6ZRj08ivYomVe
+GcroTIyzhs34OGKq0Qp1HLGk6bxYpVa1w5UQCQtCW3tTkRDT9VOnvc9Tzl2nIaoS
+uGTy75H7upUwI6dL4LBuZ0kZl0734W3PE8sb8VsWfEZeF5t+DMw=
+=TN6G
+-----END PGP SIGNATURE-----
+--=-=-=--
