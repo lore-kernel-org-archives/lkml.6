@@ -1,75 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752493AbeEQOcL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:32:11 -0400
-Received: from sauhun.de ([88.99.104.3]:51688 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751868AbeEQOcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:32:05 -0400
-Date: Thu, 17 May 2018 16:32:03 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-omap@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Subject: Re: [PATCH 0/7] i2c: clean up include/linux/i2c-*
-Message-ID: <20180517143202.vzwmqkemlqxj2xgu@ninjato>
-References: <20180419200015.15095-1-wsa@the-dreams.de>
+        id S1752338AbeEQOdp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:33:45 -0400
+Received: from gateway20.websitewelcome.com ([192.185.69.18]:36438 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751647AbeEQOdo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:33:44 -0400
+X-Authority-Reason: nr=8
+Date: Thu, 17 May 2018 09:08:43 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 1/2] bpf: sockmap, fix uninitialized variable
+Message-ID: <11073635016901e9e84c2f34f20d412073b26297.1526565461.git.gustavo@embeddedor.com>
+References: <cover.1526565461.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2am76ftu5fuftxje"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180419200015.15095-1-wsa@the-dreams.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <cover.1526565461.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fJJaG-000BKQ-5P
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.172.56.86]:58220
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is a potential execution path in which variable err is
+returned without being properly initialized previously.
 
---2am76ftu5fuftxje
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix this by initializing variable err to 0.
 
-On Thu, Apr 19, 2018 at 10:00:06PM +0200, Wolfram Sang wrote:
-> Move all plain platform_data includes to the platform_data-dir
-> (except for i2c-pnx which can be moved into the driver itself).
->=20
-> My preference is to take these patches via the i2c tree. I can provide an
-> immutable branch if needed. But we can also discuss those going in via
-> arch-trees if dependencies are against us.
+Addresses-Coverity-ID: 1468964 ("Uninitialized scalar variable")
+Fixes: e5cd3abcb31a ("bpf: sockmap, refactor sockmap routines to work
+with hashmap")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ kernel/bpf/sockmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All applied to for-next!
-
-The immutable branch is here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/platform_da=
-ta-immutable
-
-Thanks,
-
-   Wolfram
-
-
---2am76ftu5fuftxje
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr9kmIACgkQFA3kzBSg
-KbZKxw/+JSU2lxyogS2eTiaKLZ+5KEMXeB/xFcc1vSljvMU6dkspqQUo7QJHZW8Q
-AsIJtMO1XLfKODlsmidF4yhhOy2cninfK+MQbmZOsuReUF5eEf9DnUxs6YE1YKmJ
-3MuoIHqmKXDEYUjL+0xJeU5g8lsPbXVyML+AJ+96THHEDkUf0MeAFApESAoplIWa
-/+B+A465tDedkI1MCSrNNtwiNUUfkMFyS9G6UFIT3ovjbofNN8xoyNP+5aYqwd2S
-DtVRPNaBg8kYzZur7na3n9+ARxGHGFPOLpx+Z5E67IEfJlS5uYLFuZBhQyXyKLBx
-qhhOB6/lHP5hW7vU2EyUjHvpHS55SP0kIQltV85krPlOvmrV3aBp+ucL87NM2BfQ
-OTIUTLZdo49bY1gmPo2FfKtPuPgK9T6t82LOrO/IBx7PkaXSNxhw9HL6+kRyxHBI
-ELISIMIDIrUG27qhrbBT5ttdTJkAKDvviW/e7vy5VHcEHztrK3L0oz/PMDmlzIvL
-YFts1pN6v61jRyr/J7Dv3MYk1bk+B/n94kuZgnTrUws+6Zbv9MBw5l28kOClOp3N
-grELJFSGl5PPSiGp7lntGVSt46iEhJToQzwNRbJHL2Ks19rFPlzBbQCRxY3VtJAj
-jZ7YVZnaWnmDyRUvedNP+YeiTW351d6OQeJAeK6s+9iCz0GjpX4=
-=vxpG
------END PGP SIGNATURE-----
-
---2am76ftu5fuftxje--
+diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
+index c6de139..41b41fc 100644
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -1713,7 +1713,7 @@ static int __sock_map_ctx_update_elem(struct bpf_map *map,
+ 	struct smap_psock_map_entry *e = NULL;
+ 	struct smap_psock *psock;
+ 	bool new = false;
+-	int err;
++	int err = 0;
+ 
+ 	/* 1. If sock map has BPF programs those will be inherited by the
+ 	 * sock being added. If the sock is already attached to BPF programs
+-- 
+2.7.4
