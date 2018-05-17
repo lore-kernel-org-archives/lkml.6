@@ -1,86 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeEQS2i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:28:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41964 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeEQS2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:28:36 -0400
-Date: Thu, 17 May 2018 20:28:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-Message-ID: <20180517182803.GY12217@hirez.programming.kicks-ass.net>
-References: <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
- <20180516151925.GO28366@localhost.localdomain>
- <20180516154733.GF12198@hirez.programming.kicks-ass.net>
- <20180516163105.GP28366@localhost.localdomain>
- <20180517105907.GC22493@localhost.localdomain>
- <20180517150418.GF22493@localhost.localdomain>
- <1526571692.11765.10.camel@linux.intel.com>
- <20180517161649.GX12217@hirez.programming.kicks-ass.net>
- <1526575358.11765.14.camel@linux.intel.com>
- <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
+        id S1751999AbeEQSbT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:31:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35239 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751047AbeEQSbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 14:31:17 -0400
+Date: Thu, 17 May 2018 20:30:58 +0200
+From: Borislav Petkov <bp@suse.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: [PATCH 1/2] x86/MCE/AMD: Cache SMCA MISC block addresses
+Message-ID: <20180517183058.GA24312@pd.tnic>
+References: <20180414004230.GA2033@probook>
+ <20180416115624.GA1543@probook>
+ <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180515093953.GA1746@probook>
+ <20180516224641.GA31929@pd.tnic>
+ <20180517064930.GA26421@probook>
+ <20180517104124.GA25595@pd.tnic>
+ <CY4PR12MB1557AB31F5F9D1ECBDAC2DA6F8910@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180517134415.GC27738@pd.tnic>
+ <CY4PR12MB1557F564AF25A4F2306C7DE4F8910@CY4PR12MB1557.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CY4PR12MB1557F564AF25A4F2306C7DE4F8910@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 06:56:37PM +0200, Rafael J. Wysocki wrote:
-> On Thu, May 17, 2018 at 6:42 PM, Srinivas Pandruvada
+From: Borislav Petkov <bp@suse.de>
 
-> > What will happen if we look at all core turbo as max and cap any
-> > utilization above this to 1024?
-> 
-> I was going to suggest that.
+... into a global, two-dimensional array and service subsequent reads
+from that cache to avoid rdmsr_on_cpu() calls during CPU hotplug (IPIs
+with IRQs disabled).
 
-To the basic premise behind all our frequency scaling is that there's a
-linear relation between utilization and frequency, where u=1 gets us the
-fastest.
+In addition, this fixes a KASAN slab-out-of-bounds read due to wrong
+usage of the bank->blocks pointer.
 
-Now, we all know this is fairly crude, but it is what we work with.
+Reported-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Fixes: 27bd59502702 ("x86/mce/AMD: Get address from already initialized block")
+Link: http://lkml.kernel.org/r/20180414004230.GA2033@probook
+---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 29 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-OTOH, the whole premise of turbo is that you don't in fact know what the
-fastest is, and in that respect setting u=1 at the guaranteed or
-sustainable frequency makes sense.
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index f7666eef4a87..c8e038800591 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[] = {
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
+ };
+ 
++static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
++{
++	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
++};
++
+ const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsigned int cpu, unsigned int bank,
+ 	if (!block)
+ 		return MSR_AMD64_SMCA_MCx_MISC(bank);
+ 
++	/* Check our cache first: */
++	if (smca_bank_addrs[bank][block] != -1)
++		return smca_bank_addrs[bank][block];
++
+ 	/*
+ 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
+ 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
+ 	 */
+ 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-		return addr;
++		goto out;
+ 
+ 	if (!(low & MCI_CONFIG_MCAX))
+-		return addr;
++		goto out;
+ 
+ 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+ 	    (low & MASK_BLKPTR_LO))
+-		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+ 
++out:
++	smca_bank_addrs[bank][block] = addr;
+ 	return addr;
+ }
+ 
+@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
+ 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+ 		return addr;
+ 
+-	/* Get address from already initialized block. */
+-	if (per_cpu(threshold_banks, cpu)) {
+-		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+-
+-		if (bankp && bankp->blocks) {
+-			struct threshold_block *blockp = &bankp->blocks[block];
+-
+-			if (blockp)
+-				return blockp->address;
+-		}
+-	}
+-
+ 	if (mce_flags.smca)
+ 		return smca_get_block_address(cpu, bank, block);
+ 
+-- 
+2.17.0.391.g1f1cddd558b5
 
-The direct concequence of allowing clipping is that u=1 doesn't select
-the highest frequency, but since we don't select anything anyway
-(p-code does that for us) all we really need is to have u=1 above that
-turbo activation point you mentioned.
-
-For parts where we have to directly select frequency this obviously
-comes apart.
-
-However; what happens when the sustainable freq drops below our initial
-'max'? Imagine us dropping below the all-core-turbo because of AVX. Then
-we're back to running at u<1 at full tilt.
-
-Or for mobile parts, the sustainable frequency could drop because of
-severe thermal limits. Now I _think_ we have the possibility for getting
-interrupts and reading the new guaranteed frequency, so we could
-re-guage.
-
-So in theory I think it works, in practise we need to always be able to
-find the actual max -- be it all-core turbo, AVX or thermal constrained
-frequency. Can we do that in all cases?
-
-
-I need to go back to see what the complains against Vincent's proposal
-were, because I really liked the fact that it did away with all this.
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
