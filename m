@@ -1,65 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeEQNgi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:36:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:4687 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751619AbeEQNgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:36:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,410,1520924400";
-   d="scan'208";a="42590068"
-Date: Thu, 17 May 2018 16:36:29 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Tony Lindgren <tony@atomide.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Minchan Kim <minchan@kernel.org>, Rik van Riel <riel@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        id S1752223AbeEQNg5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:36:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45062 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751921AbeEQNgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:36:55 -0400
+X-Google-Smtp-Source: AB8JxZqX/AbVlNLA6FPlEchgr6Q4k5Gzw3YdbATmznRBBWoS9T+Z55ft7J4CnBxCvuv/46XQHxv5rg==
+Date: Thu, 17 May 2018 23:36:43 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "mm/cma: manage the memory of the CMA area by
- using the ZONE_MOVABLE"
-Message-ID: <20180517133629.GH23723@intel.com>
-References: <20180517125959.8095-1-ville.syrjala@linux.intel.com>
- <20180517132109.GU12670@dhcp22.suse.cz>
+Subject: Re: [PATCH v6] powerpc/mm: Only read faulting instruction when
+ necessary in do_page_fault()
+Message-ID: <20180517233643.4551142e@roar.ozlabs.ibm.com>
+In-Reply-To: <20180517105930.71B1D6F937@po14934vm.idsi0.si.c-s.fr>
+References: <20180517105930.71B1D6F937@po14934vm.idsi0.si.c-s.fr>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180517132109.GU12670@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 03:21:09PM +0200, Michal Hocko wrote:
-> On Thu 17-05-18 15:59:59, Ville Syrjala wrote:
-> > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > 
-> > This reverts commit bad8c6c0b1144694ecb0bc5629ede9b8b578b86e.
-> > 
-> > Make x86 with HIGHMEM=y and CMA=y boot again.
+On Thu, 17 May 2018 12:59:29 +0200 (CEST)
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+
+> Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
+> userspace instruction miss") has shown that limiting the read of
+> faulting instruction to likely cases improves performance.
 > 
-> Is there any bug report with some more details? It is much more
-> preferable to fix the issue rather than to revert the whole thing
-> right away.
+> This patch goes further into this direction by limiting the read
+> of the faulting instruction to the only cases where it is definitly
+> needed.
+> 
+> On an MPC885, with the same benchmark app as in the commit referred
+> above, we see a reduction of 4000 dTLB misses (approx 3%):
+> 
+> Before the patch:
+>  Performance counter stats for './fault 500' (10 runs):
+> 
+>          720495838      cpu-cycles		( +-  0.04% )
+>             141769      dTLB-load-misses	( +-  0.02% )
+>              52722      iTLB-load-misses	( +-  0.01% )
+>              19611      faults			( +-  0.02% )
+> 
+>        5.750535176 seconds time elapsed		( +-  0.16% )
+> 
+> With the patch:
+>  Performance counter stats for './fault 500' (10 runs):
+> 
+>          717669123      cpu-cycles		( +-  0.02% )
+>             137344      dTLB-load-misses	( +-  0.03% )
+>              52731      iTLB-load-misses	( +-  0.01% )
+>              19614      faults			( +-  0.03% )
+> 
+>        5.728423115 seconds time elapsed		( +-  0.14% )
+> 
+> The proper work of the huge stack expansion was tested with the
+> following app:
+> 
+> int main(int argc, char **argv)
+> {
+> 	char buf[1024 * 1025];
+> 
+> 	sprintf(buf, "Hello world !\n");
+> 	printf(buf);
+> 
+> 	exit(0);
+> }
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  v6: Rebased on latest powerpc/merge branch ; Using __get_user_inatomic() instead of get_user() in order
+>      to move it inside the semaphored area. That removes all the complexity of the patch.
+> 
+>  v5: Reworked to fit after Benh do_fault improvement and rebased on top of powerpc/merge (65152902e43fef)
+> 
+>  v4: Rebased on top of powerpc/next (f718d426d7e42e) and doing access_ok() verification before __get_user_xxx()
+> 
+>  v3: Do a first try with pagefault disabled before releasing the semaphore
+> 
+>  v2: Changes 'if (cond1) if (cond2)' by 'if (cond1 && cond2)'
+> 
+>  arch/powerpc/mm/fault.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+> index c01d627e687a..a7d5cc76a8ce 100644
+> --- a/arch/powerpc/mm/fault.c
+> +++ b/arch/powerpc/mm/fault.c
+> @@ -72,8 +72,18 @@ static inline bool notify_page_fault(struct pt_regs *regs)
+>  static bool store_updates_sp(struct pt_regs *regs)
+>  {
+>  	unsigned int inst;
+> +	int ret;
+>  
+> -	if (get_user(inst, (unsigned int __user *)regs->nip))
+> +	/*
+> +	 * Using get_user_in_atomic() as reading code around nip can result in
+> +	 * fault, which may cause a deadlock when called with mmap_sem held,
+> +	 * however since we are reading the instruction that generated the DSI
+> +	 * we are handling, the page is necessarily already present.
+> +	 */
+> +	pagefault_disable();
+> +	ret = __get_user_inatomic(inst, (unsigned int __user *)regs->nip);
+> +	pagefault_enable();
+> +	if (ret)
+>  		return false;
 
-The machine I have in front of me right now didn't give me anything.
-Black screen, and netconsole was silent. No serial port on this
-machine unfortunately.
+Problem is that the page can be removed from page tables between
+taking the fault and reading the address here.
 
--- 
-Ville Syrjälä
-Intel
+That case would be so rare that it should be fine to do a big hammer
+fix like drop the mmap_sem, do a fault_in_pages_readable, and then
+restart from taking the mmap_sem again.
+
+Thanks,
+Nick
