@@ -1,82 +1,368 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752228AbeEQHSY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:18:24 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:60644 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750938AbeEQHSX (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Thu, 17 May 2018 03:18:23 -0400
-Message-Id: <5AFD2CBD02000078001C37BE@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Thu, 17 May 2018 01:18:21 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Nadav Amit" <namit@vmware.com>
-Cc: <keescook@chromium.org>, "the arch/x86 maintainers" <x86@kernel.org>,
-        <tglx@linutronix.de>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        <mingo@redhat.com>, <linux-kernel@vger.kernel.org>, <hpa@zytor.com>
-Subject: Re: [RFC 5/8] x86: refcount: prevent gcc distortions
-References: <20180515141124.84254-1-namit@vmware.com>
- <20180515141124.84254-15-namit@vmware.com>
- <5AFBDA6302000078001C31AC@prv1-mh.provo.novell.com>
- <8B7DE95F-5E57-44F0-90E0-CCBA35F98A07@vmware.com>
-In-Reply-To: <8B7DE95F-5E57-44F0-90E0-CCBA35F98A07@vmware.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1752168AbeEQHTv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:19:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48468 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeEQHTs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:19:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B8ED60558
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Amit Kucheria'" <amit.kucheria@linaro.org>
+Cc: "'Michael Turquette'" <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        "'Rob Herring'" <robh@kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Viresh Kumar'" <viresh.kumar@linaro.org>, <nm@ti.com>,
+        <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        "'Andy Gross'" <andy.gross@linaro.org>,
+        "'David Brown'" <david.brown@linaro.org>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Linux PM list'" <linux-pm@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        "'lakml'" <linux-arm-kernel@lists.infradead.org>,
+        "'Rajendra Nayak'" <rnayak@codeaurora.org>,
+        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>,
+        <tfinkel@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
+In-Reply-To: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
+Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+Date: Thu, 17 May 2018 10:19:27 +0300
+Message-ID: <017101d3edaf$68653800$392fa800$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGnp1nyG6UZbI+UZ9yYhcbjWitfQAKeDSLwAZ7sm4mkaiejoA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4H7Juwb020575
 
->>> On 16.05.18 at 18:44, <namit@vmware.com> wrote:
-> Jan Beulich <JBeulich@suse.com> wrote:
->>>>> On 15.05.18 at 16:11, <namit@vmware.com> wrote:
->>> --- a/arch/x86/include/asm/refcount.h
->>> +++ b/arch/x86/include/asm/refcount.h
->>> @@ -14,34 +14,43 @@
->>>  * central refcount exception. The fixup address for the exception points
->>>  * back to the regular execution flow in .text.
->>>  */
->>> -#define _REFCOUNT_EXCEPTION				\
->>> -	".pushsection .text..refcount\n"		\
->>> -	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
->>> -	"112:\t" ASM_UD2 "\n"				\
->>> -	ASM_UNREACHABLE					\
->>> -	".popsection\n"					\
->>> -	"113:\n"					\
->>> +
->>> +asm ("\n"
->>> +	".macro __REFCOUNT_EXCEPTION counter:vararg\n\t"
->>> +	".pushsection .text..refcount\n"
->>> +	"111:\tlea \\counter, %" _ASM_CX "\n"
->>> +	"112:\t" ASM_UD2 "\n\t"
->>> +	ASM_UNREACHABLE
->>> +	".popsection\n\t"
->>> +	"113:\n"
->>> 	_ASM_EXTABLE_REFCOUNT(112b, 113b)
->>> +	".endm");
->> 
->> A few comments on assembly code formatting - while gas at present is
->> relatively lax in this regard, I wouldn't exclude that there might be a
->> more strict mode in the future, and that such a mode might eventually
->> become the default. Furthermore these formatting aspects affect
->> readability of the assembly produced, should anyone ever find a need
->> to look at it (perhaps because of some breakage) - I certainly do every
->> once in a while.
->> 
->> Labels should be placed without any indentation (but of course there
->> may be more than one on a line, in which case subsequent ones may
->> of course be arbitrarily indented). Instructions and directives, otoh,
->> should be placed with at least a single tab or space of indentation
->> (unless preceded by a label, in which case the extra white space still
->> helps readability).
+
+
+> -----Original Message-----
+> From: amit.kucheria@verdurent.com <amit.kucheria@verdurent.com> On
+> Behalf Of Amit Kucheria
+> Sent: Wednesday, May 16, 2018 16:13
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>; sboyd@kernel.org; Rob
+> Herring <robh@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Viresh
+> Kumar <viresh.kumar@linaro.org>; nm@ti.com; lgirdwood@gmail.com;
+> broonie@kernel.org; Andy Gross <andy.gross@linaro.org>; David Brown
+> <david.brown@linaro.org>; catalin.marinas@arm.com;
+> will.deacon@arm.com; Rafael J. Wysocki <rjw@rjwysocki.net>; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; LKML <linux-
+> kernel@vger.kernel.org>; Linux PM list <linux-pm@vger.kernel.org>; linux-
+> arm-msm@vger.kernel.org; linux-soc@vger.kernel.org; lakml <linux-arm-
+> kernel@lists.infradead.org>; Rajendra Nayak <rnayak@codeaurora.org>;
+> nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> tfinkel@codeaurora.org
+> Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
 > 
-> Writing these patches, I looked at the generated assembly, and there did not
-> appear to be a standard. IIRC, .pushsection directives were not always
-> inlined. I will fix it according to your comments.
+> On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
+> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+> > processors, the CPU ferequencies subset and voltage value of each OPP
+> > varies
+> 
+> s/ferequencies/frequency
+> 
+> > based on the silicon variant in use. Qualcomm Process Voltage Scaling
+> > Tables defines the voltage and frequency value based on the msm-id in
+> > SMEM and speedbin blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+> > SoC to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP
+> > of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> >
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > ---
+> >  drivers/cpufreq/Kconfig.arm          |  11 +++
+> >  drivers/cpufreq/Makefile             |   1 +
+> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 150
+> > +++++++++++++++++++++++++++++++++++
+> >  4 files changed, 165 insertions(+)
+> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+> >
+> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> > index de55c7d..5c16f05 100644
+> > --- a/drivers/cpufreq/Kconfig.arm
+> > +++ b/drivers/cpufreq/Kconfig.arm
+> > @@ -124,6 +124,17 @@ config ARM_OMAP2PLUS_CPUFREQ
+> >         depends on ARCH_OMAP2PLUS
+> >         default ARCH_OMAP2PLUS
+> >
+> > +config ARM_QCOM_CPUFREQ_KRYO
+> > +       bool "Qualcomm Technologies, Inc. Kryo based CPUFreq"
+> 
+> "Qualcomm Kryo CPUFreq support" should be enough. Kconfig isn't the place
+> for Trademark compliance :-)
 
-Right, I should have made explicit that there's no consistency at all in
-pre-existing code. I merely think the issue shouldn't be made worse.
+This is mandatory requirement of the QTIs legal.
 
-Jan
+> 
+> > +       depends on QCOM_QFPROM
+> > +       depends on QCOM_SMEM
+> > +       select PM_OPP
+> > +       help
+> > +         This adds the CPUFreq driver for
+> > +         Qualcomm Technologies, Inc. Kryo SoC based boards.
+> > +
+> > +         If in doubt, say N.
+> > +
+> >  config ARM_S3C_CPUFREQ
+> >         bool
+> >         help
+> > diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile index
+> > 8d24ade..fb4a2ec 100644
+> > --- a/drivers/cpufreq/Makefile
+> > +++ b/drivers/cpufreq/Makefile
+> > @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)           += mvebu-
+> cpufreq.o
+> >  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)    += omap-cpufreq.o
+> >  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)       += pxa2xx-cpufreq.o
+> >  obj-$(CONFIG_PXA3xx)                   += pxa3xx-cpufreq.o
+> > +obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)    += qcom-cpufreq-kryo.o
+> >  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)      += s3c2410-cpufreq.o
+> >  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)      += s3c2412-cpufreq.o
+> >  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)      += s3c2416-cpufreq.o
+> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > index 3b585e4..77d6ab8 100644
+> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > @@ -118,6 +118,9 @@
+> >
+> >         { .compatible = "nvidia,tegra124", },
+> >
+> > +       { .compatible = "qcom,apq8096", },
+> > +       { .compatible = "qcom,msm8996", },
+> > +
+> >         { .compatible = "st,stih407", },
+> >         { .compatible = "st,stih410", },
+> >
+> > diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > new file mode 100644
+> > index 0000000..10d7236
+> > --- /dev/null
+> > +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > @@ -0,0 +1,150 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> 
+> Stray space here.
+> 
+> > + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + modify
+> > + * it under the terms of the GNU General Public License version 2 and
+> > + * only version 2 as published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/cpu.h>
+> > +#include <linux/err.h>
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/nvmem-consumer.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_opp.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/soc/qcom/smem.h>
+> > +
+> > +#define MSM_ID_SMEM    137
+> > +#define SILVER_LEAD    0
+> > +#define GOLD_LEAD      2
+> > +
+> > +enum _msm_id {
+> > +       MSM8996V3 = 0xF6ul,
+> > +       APQ8096V3 = 0x123ul,
+> > +       MSM8996SG = 0x131ul,
+> > +       APQ8096SG = 0x138ul,
+> > +};
+> > +
+> > +enum _msm8996_version {
+> > +       MSM8996_V3,
+> > +       MSM8996_SG,
+> > +       NUM_OF_MSM8996_VERSIONS,
+> > +};
+> > +
+> > +static enum _msm8996_version __init
+> > +qcom_cpufreq_kryo_get_msm_id(void)
+> > +{
+> > +       size_t len;
+> > +       u32 *msm_id;
+> > +       enum _msm8996_version version;
+> > +
+> > +       msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY,
+> MSM_ID_SMEM, &len);
+> > +       /* The first 4 bytes are format, next to them is the actual msm-id */
+> > +       msm_id++;
+> > +
+> > +       switch ((enum _msm_id)*msm_id) {
+> > +       case MSM8996V3:
+> > +       case APQ8096V3:
+> > +               version = MSM8996_V3;
+> > +               break;
+> > +       case MSM8996SG:
+> > +       case APQ8096SG:
+> > +               version = MSM8996_SG;
+> > +               break;
+> > +       default:
+> > +               version = NUM_OF_MSM8996_VERSIONS;
+> > +       }
+> > +
+> > +       return version;
+> > +}
+> > +
+> > +static int __init qcom_cpufreq_kryo_driver_init(void)
+> > +{
+> > +       size_t len;
+> > +       int ret;
+> > +       u32 versions;
+> > +       enum _msm8996_version msm8996_version;
+> > +       u8 *speedbin;
+> > +       struct device *cpu_dev;
+> > +       struct device_node *np;
+> > +       struct nvmem_cell *speedbin_nvmem;
+> > +       struct opp_table *opp_temp = NULL;
+> > +
+> > +       cpu_dev = get_cpu_device(SILVER_LEAD);
+> > +       if (IS_ERR_OR_NULL(cpu_dev))
+> > +               return PTR_ERR(cpu_dev);
+> > +
+> > +       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> > +       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> > +               dev_err(cpu_dev, "Not Snapdragon 820/821!");
+> > +               return -ENODEV;
+> > +        }
+> 
+> Use tab instead of spaces.
+> 
+> > +
+> > +       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+> > +       if (IS_ERR_OR_NULL(np))
+> > +               return PTR_ERR(np);
+> > +
+> > +       if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> > +               ret = -ENOENT;
+> > +               goto free_np;
+> > +       }
+> > +
+> > +       speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> > +       if (IS_ERR(speedbin_nvmem)) {
+> > +               ret = PTR_ERR(speedbin_nvmem);
+> > +               dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
+> > +               goto free_np;
+> > +       }
+> > +
+> > +       speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> > +
+> > +       switch (msm8996_version) {
+> > +       case MSM8996_V3:
+> > +               versions = 1 << (unsigned int)(*speedbin);
+> > +               break;
+> > +       case MSM8996_SG:
+> > +               versions = 1 << ((unsigned int)(*speedbin) + 4);
+> > +               break;
+> > +       default:
+> > +               BUG();
+> > +               break;
+> > +       }
+> > +
+> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > +       if (0 > ret)
+> 
+> Any particular reason to prefer this over (ret < 0) that is generally used? I've
+> seen it used to avoid the == vs. = typos, but not for other comparisons.
+> 
+> Suggest sticking to what is commonly used i.e. ret < 0.
+> 
+> > +               goto free_opp;
+> > +
+> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
+> 
+> Error check cpu_dev here?
+> 
+> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > +       if (0 > ret)
+> > +               goto free_opp;
+> > +
+> > +
+> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-
+> dt",
+> > +                                                             -1,
+> > + NULL, 0));
+> > +
+> > +       if (0 == ret)
+> > +               return 0;
+> > +
+> > +free_opp:
+> > +       dev_pm_opp_put_supported_hw(opp_temp);
+> 
+> This is not needed because dev_pm_opp_set_supported_hw will free
+> memory in case of failure. This call in only needed in case of a successful get.
+> 
+> > +
+> > +free_np:
+> > +       of_node_put(np);
+> > +       return ret;
+> 
+> 
+> Suggest something like this instead:
+> 
+> .
+> .
+> 
+> opp_temp = dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> if (IS_ERR(opp_temp)) {
+>      dev_err(cpu_dev, "Failed to set supported hardware\n");
+>      ret = PTR_ERR(opp_temp);
+>     goto free_np;
+> }
+> 
+> cpu_dev = get_cpu_device(GOLD_LEAD);
+> 
+> opp_temp = dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> if (IS_ERR(opp_temp)) {
+>      dev_err(cpu_dev, "Failed to set supported hardware\n");
+>      ret = PTR_ERR(opp_temp);
+>     goto free_np;
+> }
+> 
+> ret =  platform_device_register_simple("cpufreq-dt", -1, NULL, 0));
+> 
+> if (!IS_ERR_OR_NULL(ret))
+>      goto out;
+> 
+> free_np:
+>      of_node_put(np);
+> out:
+>      return ret;
+> 
+> > +}
+> > +late_initcall(qcom_cpufreq_kryo_driver_init);
+> > +
+> > +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq
+> > +driver"); MODULE_LICENSE("GPL v2");
+> > --
+> > 1.9.1
+> >
