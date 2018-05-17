@@ -1,79 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeEQKEQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:04:16 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:61429 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbeEQKEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:04:15 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/lib: Remove .balign inside string functions for PPC32
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180517100413.856096F938@po14934vm.idsi0.si.c-s.fr>
-Date: Thu, 17 May 2018 12:04:13 +0200 (CEST)
+        id S1752059AbeEQKEk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:04:40 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17670 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751858AbeEQKEh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:04:37 -0400
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] rtc: stm32: add stm32mp1 rtc support
+Thread-Topic: [PATCH v2 3/3] rtc: stm32: add stm32mp1 rtc support
+Thread-Index: AQHT56ze/8fjHTRwJkyhVQlr72s466QyuTAAgADimYA=
+Date: Thu, 17 May 2018 10:03:41 +0000
+Message-ID: <18a9abfc-a67c-509e-7f9b-af666ada52ae@st.com>
+References: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
+ <1525880770-22263-4-git-send-email-amelie.delaunay@st.com>
+ <20180516203240.GB24496@piout.net>
+In-Reply-To: <20180516203240.GB24496@piout.net>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <41C4990E1A1C24408B13FA943DBE64D3@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4HA4j5q032094
 
-commit 87a156fb18fe1 ("Align hot loops of some string functions")
-degraded the performance of string functions by adding useless
-nops
+On 05/16/2018 10:32 PM, Alexandre Belloni wrote:
+> On 09/05/2018 17:46:10+0200, Amelie Delaunay wrote:
+>>   struct stm32_rtc_registers {
+>> @@ -86,6 +98,9 @@ struct stm32_rtc_registers {
+>>   	u8 prer;
+>>   	u8 alrmar;
+>>   	u8 wpr;
+>> +	u8 sr;
+>> +	u8 scr;
+>> +	u16 verr;
+> 
+> All those offsets should probably be u16 or u32...
+>
 
-A simple benchmark on an 8xx calling 100000x a memchr() that
-matches the first byte runs in 41668 TB ticks before this patch
-and in 35986 TB ticks after this patch. So this gives an
-improvement of approx 10%
+OK, those offsets will be all u16 in v3, the maximum STM32 RTC register 
+offset value being 0x3FC.
 
-Another benchmark doing the same with a memchr() matching the 128th
-byte runs in 1011365 TB ticks before this patch and 1005682 TB ticks
-after this patch, so regardless on the number of loops, removing
-those useless nops improves the test by 5683 TB ticks.
+>> +	if (regs.verr != UNDEF_REG) {
+> 
+> ...else, this is not working, as reported by kbuild
+> 
 
-Fixes: 87a156fb18fe1 ("Align hot loops of some string functions")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- Was sent already as part of a serie optimising string functions.
- Resending on itself as it is independent of the other changes in the serie
+Yes, in v3, UNDEF_REG will be the maximum u16 value (0xFFFF) instead of ~0.
 
- arch/powerpc/lib/string.S | 6 ++++++
- 1 file changed, 6 insertions(+)
+>> +		u32 ver = readl_relaxed(rtc->base + regs.verr);
+>> +
+>> +		dev_info(&pdev->dev, "registered rev:%d.%d\n",
+>> +			 (ver >> STM32_RTC_VERR_MAJREV_SHIFT) & 0xF,
+>> +			 (ver >> STM32_RTC_VERR_MINREV_SHIFT) & 0xF);
+>> +	}
+>> +
+> 
 
-diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
-index a787776822d8..a026d8fa8a99 100644
---- a/arch/powerpc/lib/string.S
-+++ b/arch/powerpc/lib/string.S
-@@ -23,7 +23,9 @@ _GLOBAL(strncpy)
- 	mtctr	r5
- 	addi	r6,r3,-1
- 	addi	r4,r4,-1
-+#ifdef CONFIG_PPC64
- 	.balign 16
-+#endif
- 1:	lbzu	r0,1(r4)
- 	cmpwi	0,r0,0
- 	stbu	r0,1(r6)
-@@ -43,7 +45,9 @@ _GLOBAL(strncmp)
- 	mtctr	r5
- 	addi	r5,r3,-1
- 	addi	r4,r4,-1
-+#ifdef CONFIG_PPC64
- 	.balign 16
-+#endif
- 1:	lbzu	r3,1(r5)
- 	cmpwi	1,r3,0
- 	lbzu	r0,1(r4)
-@@ -77,7 +81,9 @@ _GLOBAL(memchr)
- 	beq-	2f
- 	mtctr	r5
- 	addi	r3,r3,-1
-+#ifdef CONFIG_PPC64
- 	.balign 16
-+#endif
- 1:	lbzu	r0,1(r3)
- 	cmpw	0,r0,r4
- 	bdnzf	2,1b
--- 
-2.13.3
+Thanks,
+Amelie
