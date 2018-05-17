@@ -1,89 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751468AbeEQFJx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:09:53 -0400
-Received: from vulcan.kevinlocke.name ([107.191.43.88]:56826 "EHLO
-        vulcan.kevinlocke.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750865AbeEQFJw (ORCPT
+        id S1751481AbeEQFMh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:12:37 -0400
+Received: from ms11p00im-qufv17100601.me.com ([17.58.37.33]:34786 "EHLO
+        ms11p00im-qufv17100601.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750727AbeEQFMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 01:09:52 -0400
-Date: Wed, 16 May 2018 23:00:41 -0600
-From: Kevin Locke <kevin@kevinlocke.name>
-To: linux-kernel@vger.kernel.org
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Sander Eikelenboom <linux@eikelenboom.it>, 890817@bugs.debian.org
-Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
- make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
- remove check_stdin()"
-Message-ID: <20180517050041.GA10885@kevinolos>
-Mail-Followup-To: Kevin Locke <kevin@kevinlocke.name>,
-        linux-kernel@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Sander Eikelenboom <linux@eikelenboom.it>, 890817@bugs.debian.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFkk2KSsdrdf28GaMgOX2hMDOdoNdsjmcFiMsmqA8C4NC-EARQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 17 May 2018 01:12:36 -0400
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-17_02:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1011 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805170049
+Date: Thu, 17 May 2018 07:12:26 +0200
+From: damian <linux_dti@icloud.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages
+ handling
+Message-id: <20180517051225.GA2361@zrhn9910b>
+Mail-followup-to: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+ mingo@kernel.org, lcapitulino@redhat.com, keescook@chromium.org,
+ tglx@linutronix.de, x86@kernel.org, hpa@zytor.com, fanc.fnst@cn.fujitsu.com,
+ yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+References: <20180516100532.14083-1-bhe@redhat.com>
+ <20180516100532.14083-2-bhe@redhat.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Content-disposition: inline
+In-reply-to: <20180516100532.14083-2-bhe@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 2:07 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> On Tue, Feb 13, 2018 at 12:33:24PM +0100, Ulf Magnusson wrote:
->>>>>> Sander Eikelenboom wrote:
->>>>>>> The Debian kernel-package tool make-kpkg for easy building of upstream
->>>>>>> kernels on Debian fails with linux 4.16-rc1.
->>>>>>>
->>>>>>> Bisection turned up as culprit:
->>>>>>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
->>>
->>> What the commit does is to make silentoldconfig not immediately exit(1)
->>> when both of the following apply:
->>>
->>>     1. stdin is from something that's not a terminal
->>>
->>>     2. New symbols are prompted for
+On Wed, 16. May 18:05, Baoquan He wrote:
+> Functions parse_gb_huge_pages() and process_gb_huge_page() are introduced to
+> handle conflict between KASLR and huge pages, will be used in the next patch.
 > 
-> Shouldn't be a problem to back this one out either if it turns out to
-> cause massive amounts of pain in practice I guess, even if it's the
-> Debian tools doing something weird.
+> Function parse_gb_huge_pages() is used to parse kernel command-line to get
+> how many 1GB huge pages have been specified. A static global variable
+> 'max_gb_huge_pages' is added to store the number.
 > 
-> Good to look into what it is they're doing in any case.
+> And process_gb_huge_page() is used to skip as many 1GB huge pages as possible
+> from the passed in memory region according to the specified number.
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/boot/compressed/kaslr.c | 71 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index a0a50b91ecef..13bd879cdc5d 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -215,6 +215,32 @@ static void mem_avoid_memmap(char *str)
+>  		memmap_too_large = true;
+>  }
+>  
+> +/* Store the number of 1GB huge pages which user specified.*/
+> +static unsigned long max_gb_huge_pages;
+> +
+> +static int parse_gb_huge_pages(char *param, char* val)
+> +{
+> +	char *p;
+> +	u64 mem_size;
+> +	static bool gbpage_sz = false;
+> +
+> +	if (!strcmp(param, "hugepagesz")) {
+> +		p = val;
+> +		mem_size = memparse(p, &p);
+> +		if (mem_size == PUD_SIZE) {
+> +			if (gbpage_sz)
+> +				warn("Repeadly set hugeTLB page size of 1G!\n");
+> +			gbpage_sz = true;
+> +		} else
+> +			gbpage_sz = false;
+> +	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
+> +		p = val;
+> +		max_gb_huge_pages = simple_strtoull(p, &p, 0);
+> +		debug_putaddr(max_gb_huge_pages);
+> +	}
+> +}
+Hello,
 
-It appears that make-kpkg is trying to extract kernel version and
-configuration information by including the kernel Makefile then
-referencing the variables it exports.  The offending make-kpkg
-Makefile is kernel_version.mk[1] which can be simplified to the
-following example:
+the return value is missing for the function or not ?
 
--8<- make-kpkg-regression.mk -----------------------------------------
-include Makefile
-.PHONY: debian_VERSION
-debian_VERSION:
--8<-------------------------------------------------------------------
+regards
+Damian
 
-Invoking this script from the root of the kernel source tree, with
-stderr redirected (but not stdin) demonstrates the issue:
-
-make -f make-kpkg-regression.mk debian_VERSION >/dev/null 2>&1
-
-Before d2a04648a5db this would exit, after it will hang waiting for
-input.  This occurs because the debian_VERSION target name isn't in
-no-dot-config-targets defined in Makefile, so Makefile invokes
-silentoldconfig automatically as necessary.[2]
-
-I think the issue is best fixed by make-kpkg, and that d2a04648a5db
-doesn't need to be reverted.  The simple fix would be for make-kpkg to
-redirect stdin when redirecting stdout/stderr so that
-scripts/kconfig/conf will fail as it did before.  The better fix would
-be for make-kpkg to use a supported interface for getting the
-variables it needs, rather than including Makefile.
-
-Best,
-Kevin
-
-1. https://salsa.debian.org/srivasta/kernel-package/blob/master/kernel/ruleset/kernel_version.mk
-2. Interestingly, it's not just that the target isn't in
-   no-dot-config-targets.  make-kpkg actually sets `dot-config := 1`
-   to force silentoldconfig (since 38399c1[3]).
-3. https://salsa.debian.org/srivasta/kernel-package/commit/38399c1
+> +
+> +
+>  static int handle_mem_memmap(void)
+>  {
+>  	char *args = (char *)get_cmd_line_ptr();
+> @@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
+>  	}
+>  }
+>  
+> +/* Skip as many 1GB huge pages as possible in the passed region. */
+> +static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
+> +{
+> +	int i = 0;
+> +	unsigned long addr, size;
+> +	struct mem_vector tmp;
+> +
+> +	if (!max_gb_huge_pages) {
+> +		store_slot_info(region, image_size);
+> +		return;
+> +	}
+> +
+> +	addr = ALIGN(region->start, PUD_SIZE);
+> +	/* If Did we raise the address above the passed in memory entry? */
+> +	if (addr < region->start + region->size)
+> +		size = region->size - (addr - region->start);
+> +
+> +	/* Check how many 1GB huge pages can be filtered out*/
+> +	while (size > PUD_SIZE && max_gb_huge_pages) {
+> +		size -= PUD_SIZE;
+> +		max_gb_huge_pages--;
+> +		i++;
+> +	}
+> +
+> +	if (!i) {
+> +		store_slot_info(region, image_size);
+> +		return;
+> +	}
+> +
+> +	/* Process the remaining regions after filtering out. */
+> +
+> +	if (addr >= region->start + image_size) {
+> +		tmp.start = region->start;
+> +		tmp.size = addr - region->start;
+> +		store_slot_info(&tmp, image_size);
+> +	}
+> +
+> +	size  = region->size - (addr - region->start) - i * PUD_SIZE;
+> +        if (size >= image_size) {
+> +		tmp.start = addr + i*PUD_SIZE;
+> +		tmp.size = size;
+> +		store_slot_info(&tmp, image_size);
+> +        }
+> +}
+> +
+>  static unsigned long slots_fetch_random(void)
+>  {
+>  	unsigned long slot;
+> -- 
+> 2.13.6
+> 
