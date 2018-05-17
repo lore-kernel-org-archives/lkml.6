@@ -1,62 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeEQMyU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:54:20 -0400
-Received: from mail-ua0-f182.google.com ([209.85.217.182]:36355 "EHLO
-        mail-ua0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQMyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:54:18 -0400
-X-Google-Smtp-Source: AB8JxZo18KmKwyHWijs6t7QgBm3B/7FHu8zPFogsIAsUDvsvjnwHM5IYmcKEMxAH28q2+0R78TYGmI2b7QTJDGDPmBU=
+        id S1751868AbeEQM4w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:56:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53203 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750826AbeEQM4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 08:56:50 -0400
+Date: Thu, 17 May 2018 14:56:48 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 1/2] net: phy: sfp: make the i2c-bus property
+ really optional
+Message-ID: <20180517125648.GM32746@kwain>
+References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+ <20180517082907.14420-2-antoine.tenart@bootlin.com>
+ <20180517124127.GG8547@lunn.ch>
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <1526387370-17142-2-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-2-git-send-email-gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 17 May 2018 15:54:17 +0300
-Message-ID: <CAOtvUMcN2kYFQEiMc7ignecPTdt9yOnfs2=TDjRnMAJ9WNRbuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] crypto: ccree: drop signature register check
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517124127.GG8547@lunn.ch>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Herbert,
+Hi Andrew,
 
-On Tue, May 15, 2018 at 3:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> We were using the content of the signature register as a sanity
-> check for the hardware functioning but it turns out not all
-> implementers use the same values so the check is giving false
-> negative on certain SoCs and so we drop it.
+On Thu, May 17, 2018 at 02:41:28PM +0200, Andrew Lunn wrote:
+> On Thu, May 17, 2018 at 10:29:06AM +0200, Antoine Tenart wrote:
+> > The SFF,SFP documentation is clear about making all the DT properties,
+> > with the exception of the compatible, optional. In practice this is not
+> > the case and without an i2c-bus property provided the SFP code will
+> > throw NULL pointer exceptions.
+> > 
+> > This patch is an attempt to fix this.
+> 
+> How usable is an SFF/SFP module without access to the i2c EEPROM? I
+> guess this comes down to link speed. Can it be manually configured?
 >
+> I'm just wondering if we want to make this mandatory? Fail the probe
+> if it is not listed?
 
-Please drop this patch. I have found a better fix and will send a v2 soon.
+Yes, the other option would be to fail when probing a cage missing the
+i2c description. I'd say a passive module can work without the i2c
+EEPROM accessible as it does not need to be configured. I don't know
+what would happen with active ones.
 
-Thanks,
-Gilad
+So the question is, do we want to enable partially working SFP cages
+(ie. probably working with only a subset of SFP modules)?
 
+Thanks!
+Antoine
 
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
