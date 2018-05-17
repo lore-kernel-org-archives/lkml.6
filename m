@@ -1,530 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeEQLWT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:22:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37212 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752307AbeEQLUh (ORCPT
+        id S1752550AbeEQLW2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:22:28 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:46564 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752189AbeEQLWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:20:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EC58D60558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        rjw@rjwysocki.net, linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v8 12/15] dt: qcom: Add qcom-cpufreq-kryo driver configuration
-Date: Thu, 17 May 2018 14:19:12 +0300
-Message-Id: <1526555955-29960-13-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+        Thu, 17 May 2018 07:22:24 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Thu, 17 May 2018 13:22:21 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
+        Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx7d: correct enet clock CCGR register offset
+In-Reply-To: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+References: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <96f2ab49e1a9c03ccd477346b8285c76@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-0.80 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[15];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-0.70)[83.33%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. Add NVMEM node for the speedbin
-2. Add definitions for all possible MSM8996 CPU OPPs.
-The qcom-cpufreq-kryo driver will select the appropriate subset.
+On 17.05.2018 10:40, Anson Huang wrote:
+> Correct enet clock CCGR register offset.
+> 
+> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
+> 
+> IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY,
+> no gate after this clock, its parent clock root has gate.
+> IMX7D_ENET1_REF_ROOT_DIV/IMX7D_ENET2_REF_ROOT_DIV supplies clocks
+> for enet IPG_CLK_RMII, no gate after the clock, its parent
+> clock root has gate.
+> 
+> IMX7D_PLL_ENET_MAIN_125M_CLK (anatop pll) supplies clock for
+> enet RGMII tx_clk.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi       | 281 ++++++++++++++++++++++++++--
- 2 files changed, 270 insertions(+), 13 deletions(-)
+As far as I can tell there are two changes here in one patch:
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-index 230e9c8..da23bda 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-@@ -17,5 +17,5 @@
- 
- / {
- 	model = "Qualcomm Technologies, Inc. DB820c";
--	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
-+	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index e6cf290..d96a112 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -1,13 +1,6 @@
--/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2015, 2018 The Linux Foundation. All rights reserved.
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -169,177 +162,436 @@
- 	};
- 
- 	cluster0_opp: opp_table0 {
--		compatible = "operating-points-v2";
-+		compatible = "operating-points-v2-kryo-cpu",
-+					"operating-points-v2";
-+		nvmem-cells = <&speedbin_efuse>;
- 		opp-shared;
- 
- 		opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-422400000 {
- 			opp-hz = /bits/ 64 <422400000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-460800000 {
-+			opp-hz = /bits/ 64 <460800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-537600000 {
-+			opp-hz = /bits/ 64 <537600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-614400000 {
-+			opp-hz = /bits/ 64 <614400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-691200000 {
-+			opp-hz = /bits/ 64 <691200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-768000000 {
-+			opp-hz = /bits/ 64 <768000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-844800000 {
- 			opp-hz = /bits/ 64 <844800000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-902400000 {
-+			opp-hz = /bits/ 64 <902400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-960000000 {
- 			opp-hz = /bits/ 64 <960000000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-979200000 {
-+			opp-hz = /bits/ 64 <979200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1056000000 {
-+			opp-hz = /bits/ 64 <1056000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1132800000 {
-+			opp-hz = /bits/ 64 <1132800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1209600000 {
-+			opp-hz = /bits/ 64 <1209600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1228800000 {
- 			opp-hz = /bits/ 64 <1228800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1286400000 {
-+			opp-hz = /bits/ 64 <1286400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
-+			opp-supported-hw = <0x5>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-supported-hw = <0x72>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
-+			opp-supported-hw = <0x5>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1440000000 {
-+			opp-hz = /bits/ 64 <1440000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1497600000 {
-+			opp-hz = /bits/ 64 <1497600000>;
-+			opp-supported-hw = <0x4>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1516800000 {
-+			opp-hz = /bits/ 64 <1516800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1593600000 {
- 			opp-hz = /bits/ 64 <1593600000>;
-+			opp-supported-hw = <0x71>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 <1996800000>;
-+			opp-supported-hw = <0x20>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-supported-hw = <0x10>;
- 			clock-latency-ns = <200000>;
- 		};
- 	};
- 
- 	cluster1_opp: opp_table1 {
--		compatible = "operating-points-v2";
-+		compatible = "operating-points-v2-kryo-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
- 		opp-shared;
- 
- 		opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-403200000 {
- 			opp-hz = /bits/ 64 <403200000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-460800000 {
-+			opp-hz = /bits/ 64 <460800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-537600000 {
-+			opp-hz = /bits/ 64 <537600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-614400000 {
-+			opp-hz = /bits/ 64 <614400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-691200000 {
-+			opp-hz = /bits/ 64 <691200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-748800000 {
-+			opp-hz = /bits/ 64 <748800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-806400000 {
- 			opp-hz = /bits/ 64 <806400000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-825600000 {
-+			opp-hz = /bits/ 64 <825600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-883200000 {
- 			opp-hz = /bits/ 64 <883200000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-902400000 {
-+			opp-hz = /bits/ 64 <902400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-940800000 {
- 			opp-hz = /bits/ 64 <940800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-979200000 {
-+			opp-hz = /bits/ 64 <979200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1056000000 {
-+			opp-hz = /bits/ 64 <1056000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1132800000 {
-+			opp-hz = /bits/ 64 <1132800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1209600000 {
-+			opp-hz = /bits/ 64 <1209600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1248000000 {
- 			opp-hz = /bits/ 64 <1248000000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1286400000 {
-+			opp-hz = /bits/ 64 <1286400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1440000000 {
-+			opp-hz = /bits/ 64 <1440000000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1516800000 {
-+			opp-hz = /bits/ 64 <1516800000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1555200000 {
- 			opp-hz = /bits/ 64 <1555200000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 <1593600000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1632000000 {
- 			opp-hz = /bits/ 64 <1632000000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1670400000 {
-+			opp-hz = /bits/ 64 <1670400000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1708800000 {
- 			opp-hz = /bits/ 64 <1708800000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1747200000 {
-+			opp-hz = /bits/ 64 <1747200000>;
-+			opp-supported-hw = <0x70>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1785600000 {
- 			opp-hz = /bits/ 64 <1785600000>;
-+			opp-supported-hw = <0x7>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1804800000 {
-+			opp-hz = /bits/ 64 <1804800000>;
-+			opp-supported-hw = <0x6>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1824000000 {
- 			opp-hz = /bits/ 64 <1824000000>;
-+			opp-supported-hw = <0x71>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1900800000 {
-+			opp-hz = /bits/ 64 <1900800000>;
-+			opp-supported-hw = <0x74>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1920000000 {
- 			opp-hz = /bits/ 64 <1920000000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1977600000 {
-+			opp-hz = /bits/ 64 <1977600000>;
-+			opp-supported-hw = <0x30>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1996800000 {
- 			opp-hz = /bits/ 64 <1996800000>;
-+			opp-supported-hw = <0x1>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2054400000 {
-+			opp-hz = /bits/ 64 <2054400000>;
-+			opp-supported-hw = <0x30>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-2073600000 {
- 			opp-hz = /bits/ 64 <2073600000>;
-+			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-2150400000 {
- 			opp-hz = /bits/ 64 <2150400000>;
-+			opp-supported-hw = <0x31>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2246400000 {
-+			opp-hz = /bits/ 64 <2246400000>;
-+			opp-supported-hw = <0x10>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2342400000 {
-+			opp-hz = /bits/ 64 <2342400000>;
-+			opp-supported-hw = <0x10>;
- 			clock-latency-ns = <200000>;
- 		};
- 	};
-@@ -917,6 +1169,11 @@
- 				reg = <0x24f 0x1>;
- 				bits = <1 4>;
- 			};
-+
-+			speedbin_efuse: speedbin@133 {
-+				reg = <0x133 0x1>;
-+				bits = <5 3>;
-+			};
- 		};
- 
- 		phy@34000 {
--- 
-1.9.1
+1. The non existing IMX7D_ENET_PHY_REF_ROOT_CLK gate is removed
+
+2. Shared clock gate for the enet time/ipg clock is taken into account.
+
+
+I would rather prefer to have separate patches. The device tree change
+also does two things, so this would lead to 4 patches total.
+
+We can avoid the device tree change for the PHY clk and even maintain
+backward compatibility for that part by renaming
+IMX7D_ENET_PHY_REF_ROOT_DIV to IMX7D_ENET_PHY_REF_ROOT_CLK.
+
+
+So this would end up with the following first patch to address the
+PHY_ROOT clock issue:
+
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -738,7 +738,7 @@ static void __init imx7d_clocks_init(struct
+device_node *ccm_node)
+        clks[IMX7D_ENET1_TIME_ROOT_DIV] =
+imx_clk_divider2("enet1_time_post_div", "enet1_time_pre_div", base +
+0xa780, 0, 6);
+        clks[IMX7D_ENET2_REF_ROOT_DIV] =
+imx_clk_divider2("enet2_ref_post_div", "enet2_ref_pre_div", base +
+0xa800, 0, 6);
+        clks[IMX7D_ENET2_TIME_ROOT_DIV] =
+imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base +
+0xa880, 0, 6);
+-       clks[IMX7D_ENET_PHY_REF_ROOT_DIV] =
+imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base +
+0xa900, 0, 6);
++       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
+imx_clk_divider2("enet_phy_ref_root_clk", "enet_phy_ref_pre_div", base +
+0xa900, 0, 6);
+        clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div",
+"eim_pre_div", base + 0xa980, 0, 6);
+        clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk",
+"nand_pre_div", base + 0xaa00, 0, 6);
+        clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div",
+"qspi_pre_div", base + 0xaa80, 0, 6);
+@@ -816,7 +816,6 @@ static void __init imx7d_clocks_init(struct
+device_node *ccm_node)
+        clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
+0x44f0, 0);
+        clks[IMX7D_ENET2_REF_ROOT_CLK] =
+imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500,
+0);
+        clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
+0x4510, 0);
+-       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
+imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
+0x4520, 0);
+        clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
+"eim_post_div", base + 0x4160, 0);
+        clks[IMX7D_NAND_RAWNAND_CLK] =
+imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
+0x4140, 0, &share_count_nand);
+        clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
+imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
+base + 0x4140, 0, &share_count_nand);
+
+
+A second patch would then fix the clock gate issue and the third the
+unavoidable device tree change for the ipg clock.
+
+--
+Stefan
+
+
+> 
+> Based on Andy Duan's patch from the NXP kernel tree.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx7d.c             | 11 ++++++-----
+>  include/dt-bindings/clock/imx7d-clock.h |  4 +++-
+>  2 files changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 975a20d..485ab49 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -26,6 +26,8 @@ static u32 share_count_sai1;
+>  static u32 share_count_sai2;
+>  static u32 share_count_sai3;
+>  static u32 share_count_nand;
+> +static u32 share_count_enet1;
+> +static u32 share_count_enet2;
+>  
+>  static const struct clk_div_table test_div_table[] = {
+>  	{ .val = 3, .div = 1, },
+> @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk",
+> "mipi_dsi_post_div", base + 0x4650, 0);
+>  	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk",
+> "mipi_csi_post_div", base + 0x4640, 0);
+>  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk",
+> "mipi_dphy_post_div", base + 0x4660, 0);
+> +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
+> + 0x4700, 0, &share_count_enet1);
+> +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
+> base + 0x4700, 0, &share_count_enet1);
+> +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
+> + 0x4710, 0, &share_count_enet2);
+> +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
+> base + 0x4710, 0, &share_count_enet2);
+>  	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk",
+> "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
+>  	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk", 
+> "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
+>  	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk",
+> "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
+> @@ -812,11 +818,6 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk",
+> "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
+>  	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk", 
+> "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
+>  	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk",
+> "spdif_post_div", base + 0x44d0, 0);
+> -	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk",
+> "enet1_ref_post_div", base + 0x44e0, 0);
+> -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
+> 0x44f0, 0);
+> -	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
+> "enet2_ref_post_div", base + 0x4500, 0);
+> -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
+> 0x4510, 0);
+> -	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
+> imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
+> 0x4520, 0);
+>  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
+> "eim_post_div", base + 0x4160, 0);
+>  	clks[IMX7D_NAND_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
+> 0x4140, 0, &share_count_nand);
+>  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
+> base + 0x4140, 0, &share_count_nand);
+> diff --git a/include/dt-bindings/clock/imx7d-clock.h
+> b/include/dt-bindings/clock/imx7d-clock.h
+> index b2325d3e2..fef0647 100644
+> --- a/include/dt-bindings/clock/imx7d-clock.h
+> +++ b/include/dt-bindings/clock/imx7d-clock.h
+> @@ -455,5 +455,7 @@
+>  #define IMX7D_SNVS_CLK			442
+>  #define IMX7D_CAAM_CLK			443
+>  #define IMX7D_KPP_ROOT_CLK		444
+> -#define IMX7D_CLK_END			445
+> +#define IMX7D_ENET1_IPG_ROOT_CLK        445
+> +#define IMX7D_ENET2_IPG_ROOT_CLK        446
+> +#define IMX7D_CLK_END			447
+>  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
