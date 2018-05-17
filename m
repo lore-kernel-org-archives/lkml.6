@@ -1,63 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752457AbeEQPCN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:02:13 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60334 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeEQPCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:02:11 -0400
-Date: Thu, 17 May 2018 16:01:55 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 1/2] net: phy: sfp: make the i2c-bus property
- really optional
-Message-ID: <20180517150155.GB17671@n2100.armlinux.org.uk>
-References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
- <20180517082907.14420-2-antoine.tenart@bootlin.com>
- <20180517124127.GG8547@lunn.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752491AbeEQPCs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:02:48 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:57143 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeEQPCr (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:4:1>);
+        Thu, 17 May 2018 11:02:47 -0400
+Message-Id: <5AFD999402000078001C3B29@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Thu, 17 May 2018 09:02:44 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] xen/PVH: Set up GS segment for stack canary
+References: <20180517144723.21585-1-boris.ostrovsky@oracle.com>
+ <20180517144723.21585-2-boris.ostrovsky@oracle.com>
+In-Reply-To: <20180517144723.21585-2-boris.ostrovsky@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20180517124127.GG8547@lunn.ch>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 02:41:28PM +0200, Andrew Lunn wrote:
-> On Thu, May 17, 2018 at 10:29:06AM +0200, Antoine Tenart wrote:
-> > The SFF,SFP documentation is clear about making all the DT properties,
-> > with the exception of the compatible, optional. In practice this is not
-> > the case and without an i2c-bus property provided the SFP code will
-> > throw NULL pointer exceptions.
-> > 
-> > This patch is an attempt to fix this.
-> 
-> Hi Antoine, Russell
-> 
-> How usable is an SFF/SFP module without access to the i2c EEPROM? I
-> guess this comes down to link speed. Can it be manually configured?
+>>> On 17.05.18 at 16:47, <boris.ostrovsky@oracle.com> wrote:
+> @@ -64,6 +67,9 @@ ENTRY(pvh_start_xen)
+>  	mov %eax,%es
+>  	mov %eax,%ss
+>  
+> +	mov $PVH_CANARY_SEL,%eax
+> +	mov %eax,%gs
 
-While we can support forcing the speed/duplex through ethtool, there
-is no obvious facility via ethtool to set the protocol currently (eg,
-SGMII vs 1000base-X).  There is, however, the possibility to use the
-advertise mask to determine which mode we should be using, but that's
-awkward to deal with via ethtool as ethtool wants a hex mask, which
-really isn't user friendly.
+I doubt this is needed for 64-bit (you could equally well load zero or leave
+in place what's there in that case), and loading the selector before setting
+the base address in the descriptor won't have the intended effect.
 
-The protocol matters - for example, a copper SFP module will typically
-want to use SGMII, and if it encounters 1000base-X on the other side,
-the PHY won't pass data because it will believe that the link to the
-MAC is down.
+> @@ -150,9 +170,12 @@ gdt_start:
+>  	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
+>  #endif
+>  	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
+> +	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
+>  gdt_end:
+>  
+> -	.balign 4
+> +	.balign 16
+> +canary:
+> +	.fill 24, 1, 0
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+This is too little space for 64-bit afaict (the canary lives at offset 40 there
+if I can trust asm/processor.h).
+
+Jan
