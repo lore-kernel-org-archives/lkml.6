@@ -1,101 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeEQUFu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:05:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeEQUFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:05:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4535602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] mm/dmapool: localize page allocations
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-References: <1526578581-7658-1-git-send-email-okaya@codeaurora.org>
- <20180517181815.GC26718@bombadil.infradead.org>
- <9844a638-bc4e-46bd-133e-0c82a3e9d6ea@codeaurora.org>
- <20180517194612.GG26718@bombadil.infradead.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <d49e594a-c18a-160f-ca4c-91520ff3b293@codeaurora.org>
-Date: Thu, 17 May 2018 16:05:45 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752112AbeEQUGQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 16:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751644AbeEQUGP (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 16:06:15 -0400
+Date: Thu, 17 May 2018 17:06:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 2/2] perf annotate: Create hotkey 'c' to show max/min
+ cycles
+Message-ID: <20180517200610.GA25467@kernel.org>
+References: <1526569118-14217-1-git-send-email-yao.jin@linux.intel.com>
+ <1526569118-14217-3-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180517194612.GG26718@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526569118-14217-3-git-send-email-yao.jin@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/2018 3:46 PM, Matthew Wilcox wrote:
->> Remember that the CPU core that is running this driver is most probably on
->> the same NUMA node as the device itself.
-> Umm ... says who?  If my process is running on NUMA node 5 and I submit
-> an I/O, it should be allocating from a pool on node 5, not from a pool
-> on whichever node the device is attached to.
+Em Thu, May 17, 2018 at 10:58:38PM +0800, Jin Yao escreveu:
+> In perf annotate view, a new hotkey 'c' is created for
+> showing the max/min cycles.
 
-OK, let's do an exercise. Maybe, I'm missing something in the big picture.
+I just changed everything from "max/min" to "min/max", as it looked
+strange print the max first, thanks, applying.
 
-If a user process is running at node 5, it submits some work to the hardware
-via block layer that is eventually invoked by syscall. 
-
-Whatever buffer process is using, it gets copied into the kernel space as
-it is crossing a userspace/kernel space boundary.
-
-Block layer packages a block request with the kernel pointers and makes a
-request to the NVMe driver for consumption.
-
-Last time I checked, dma_alloc_coherent() API uses the locality information
-from the device not from the CPU for allocation.
-
-While the metadata for dma_pool is pointing to the currently running CPU core,
-the DMA buffer itself is created using the device node itself today without
-my patch.
-
-I would think that you actually want to run the process at the same NUMA node
-as the CPU and device itself for performance reasons. Otherwise, performance
-expectations should be low. 
-
-Even if user says please keep my process to a particular NUMA node,
-we keep pointing to the memory on the other node today. 
-
-I don't know what is so special about memory on the default node. IMO, all memory
-allocations used by a driver need to follow the device. 
-
-I wish I could do this in kmalloc(). devm_kmalloc() follows the device as another
-example not CPU.
-
-With these assumptions, even though user said please use the NUMA node from the
-device, we still keep pointing to the default domain for pointers.
-
-Isn't this wrong?
-
+- Arnaldo
+ 
+> For example, when press 'c', the annotate view is:
 > 
-> If it actually makes a performance difference, then NVMe should allocate
-> one pool per queue, rather than one pool per device like it currently
-> does.
+> Percent│ IPC     Cycle(max/min)
+>        │
+>        │
+>        │                             Disassembly of section .text:
+>        │
+>        │                             000000000003aab0 <random@@GLIBC_2.2.5>:
+>   8.22 │3.92                           sub    $0x18,%rsp
+>        │3.92                           mov    $0x1,%esi
+>        │3.92                           xor    %eax,%eax
+>        │3.92                           cmpl   $0x0,argp_program_version_hook@@G
+>        │3.92             1(2/1)      ↓ je     20
+>        │                               lock   cmpxchg %esi,__abort_msg@@GLIBC_P
+>        │                             ↓ jne    29
+>        │                             ↓ jmp    43
+>        │1.10                     20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+
+>   8.93 │1.10             1(5/1)      ↓ je     43
 > 
->> Also, if it was a one time init kind of thing, I'd say "yeah, leave it alone". 
->> DMA pool is used by a wide range of drivers and it is used to allocate
->> fixed size buffers at runtime. 
->  * DMA Pool allocator
->  *
->  * Copyright 2001 David Brownell
->  * Copyright 2007 Intel Corporation
->  *   Author: Matthew Wilcox <willy@linux.intel.com>
+> When press 'c' again, the annotate view is switched back:
 > 
-> I know what it's used for.
+> Percent│ IPC Cycle
+>        │
+>        │
+>        │                Disassembly of section .text:
+>        │
+>        │                000000000003aab0 <random@@GLIBC_2.2.5>:
+>   8.22 │3.92              sub    $0x18,%rsp
+>        │3.92              mov    $0x1,%esi
+>        │3.92              xor    %eax,%eax
+>        │3.92              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x
+>        │3.92     1      ↓ je     20
+>        │                  lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>        │                ↓ jne    29
+>        │                ↓ jmp    43
+>        │1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>   8.93 │1.10     1      ↓ je     43
 > 
-
-cool, good to know.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/ui/browsers/annotate.c |  8 ++++++++
+>  tools/perf/util/annotate.c        | 37 +++++++++++++++++++++++++++++++------
+>  tools/perf/util/annotate.h        |  7 ++++++-
+>  3 files changed, 45 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> index 3781d74..f202a3f 100644
+> --- a/tools/perf/ui/browsers/annotate.c
+> +++ b/tools/perf/ui/browsers/annotate.c
+> @@ -695,6 +695,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+>  		"O             Bump offset level (jump targets -> +call -> all -> cycle thru)\n"
+>  		"s             Toggle source code view\n"
+>  		"t             Circulate percent, total period, samples view\n"
+> +		"c             Show max/min cycle\n"
+>  		"/             Search string\n"
+>  		"k             Toggle line numbers\n"
+>  		"P             Print to [symbol_name].annotation file.\n"
+> @@ -791,6 +792,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
+>  				notes->options->show_total_period = true;
+>  			annotation__update_column_widths(notes);
+>  			continue;
+> +		case 'c':
+> +			if (notes->options->show_maxmin_cycle)
+> +				notes->options->show_maxmin_cycle = false;
+> +			else
+> +				notes->options->show_maxmin_cycle = true;
+> +			annotation__update_column_widths(notes);
+> +			continue;
+>  		case K_LEFT:
+>  		case K_ESC:
+>  		case 'q':
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 934a172..17fff6f 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2495,13 +2495,38 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+>  		else
+>  			obj__printf(obj, "%*s ", ANNOTATION__IPC_WIDTH - 1, "IPC");
+>  
+> -		if (al->cycles)
+> -			obj__printf(obj, "%*" PRIu64 " ",
+> +		if (!notes->options->show_maxmin_cycle) {
+> +			if (al->cycles)
+> +				obj__printf(obj, "%*" PRIu64 " ",
+>  					   ANNOTATION__CYCLES_WIDTH - 1, al->cycles);
+> -		else if (!show_title)
+> -			obj__printf(obj, "%*s", ANNOTATION__CYCLES_WIDTH, " ");
+> -		else
+> -			obj__printf(obj, "%*s ", ANNOTATION__CYCLES_WIDTH - 1, "Cycle");
+> +			else if (!show_title)
+> +				obj__printf(obj, "%*s",
+> +					    ANNOTATION__CYCLES_WIDTH, " ");
+> +			else
+> +				obj__printf(obj, "%*s ",
+> +					    ANNOTATION__CYCLES_WIDTH - 1,
+> +					    "Cycle");
+> +		} else {
+> +			if (al->cycles) {
+> +				char str[32];
+> +
+> +				scnprintf(str, sizeof(str),
+> +					"%" PRIu64 "(%" PRIu64 "/%" PRIu64 ")",
+> +					al->cycles, al->cycles_max,
+> +					al->cycles_min);
+> +
+> +				obj__printf(obj, "%*s ",
+> +					    ANNOTATION__MAXMIN_CYCLES_WIDTH - 1,
+> +					    str);
+> +			} else if (!show_title)
+> +				obj__printf(obj, "%*s",
+> +					    ANNOTATION__MAXMIN_CYCLES_WIDTH,
+> +					    " ");
+> +			else
+> +				obj__printf(obj, "%*s ",
+> +					    ANNOTATION__MAXMIN_CYCLES_WIDTH - 1,
+> +					    "Cycle(max/min)");
+> +		}
+>  	}
+>  
+>  	obj__printf(obj, " ");
+> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> index d50363d..4cafd63 100644
+> --- a/tools/perf/util/annotate.h
+> +++ b/tools/perf/util/annotate.h
+> @@ -61,6 +61,7 @@ bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2);
+>  
+>  #define ANNOTATION__IPC_WIDTH 6
+>  #define ANNOTATION__CYCLES_WIDTH 6
+> +#define ANNOTATION__MAXMIN_CYCLES_WIDTH 19
+>  
+>  struct annotation_options {
+>  	bool hide_src_code,
+> @@ -69,7 +70,8 @@ struct annotation_options {
+>  	     show_linenr,
+>  	     show_nr_jumps,
+>  	     show_nr_samples,
+> -	     show_total_period;
+> +	     show_total_period,
+> +	     show_maxmin_cycle;
+>  	u8   offset_level;
+>  };
+>  
+> @@ -243,6 +245,9 @@ struct annotation {
+>  
+>  static inline int annotation__cycles_width(struct annotation *notes)
+>  {
+> +	if (notes->have_cycles && notes->options->show_maxmin_cycle)
+> +		return ANNOTATION__IPC_WIDTH + ANNOTATION__MAXMIN_CYCLES_WIDTH;
+> +
+>  	return notes->have_cycles ? ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH : 0;
+>  }
+>  
+> -- 
+> 2.7.4
