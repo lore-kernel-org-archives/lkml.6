@@ -1,71 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeEQVWp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:22:45 -0400
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:40394 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeEQVWo (ORCPT
+        id S1752200AbeEQVWx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:22:53 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41437 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbeEQVWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:22:44 -0400
-X-Google-Smtp-Source: AB8JxZoZopvd7+Rd1pYcSYa7gpGtZ93QJGP+ua/syVHaf+eCu45YDfMrjH3oH4YN67NENZgXQhrY8Q==
-Date: Thu, 17 May 2018 11:22:41 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH] scripts/tags.sh: don't rely on parsing `ls` for
- $ALLSOURCE_ARCHS generation
-Message-ID: <20180517212241.jb7z6mj3nlynxuvx@gmail.com>
-References: <20180516001311.ng6wyxdjqty5ef5j@gmail.com>
+        Thu, 17 May 2018 17:22:50 -0400
+X-Google-Smtp-Source: AB8JxZrXh3150NGchErmaK0oG1wmKDPN/tgo3Bms4+/iuI7PwPABrQJNMy8Br8NQuPLfzAnesRED4wKnQbd7wZ5oJCk=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ckqo6g5yg2iasbxz"
-Content-Disposition: inline
-In-Reply-To: <20180516001311.ng6wyxdjqty5ef5j@gmail.com>
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <41d5df73ddac772551d2966e0752bb0c357b1ded.1526088081.git.collinsd@codeaurora.org>
+References: <cover.1526088081.git.collinsd@codeaurora.org> <41d5df73ddac772551d2966e0752bb0c357b1ded.1526088081.git.collinsd@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 17 May 2018 14:22:47 -0700
+X-Google-Sender-Auth: fiELKMz6TC64gOeGPhbuWc1lqoE
+Message-ID: <CAD=FV=XegPeFR8pdZM-YiBBJjrbej=C+2biBt4zJKnE90uTYZA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+To: David Collins <collinsd@codeaurora.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---ckqo6g5yg2iasbxz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 11, 2018 at 7:28 PM, David Collins <collinsd@codeaurora.org> wrote:
+> +- qcom,regulator-initial-microvolt
+> +       Usage:      optional; VRM regulators only
+> +       Value type: <u32>
+> +       Definition: Specifies the initial voltage in microvolts to request for a
+> +                   VRM regulator.
 
-On Tue, May 15, 2018 at 02:13:11PM -1000, Joey Pabalinas wrote:
-> and directly assign it to $ALLSOURCE_ARCHS; use a subshell
-> so `cd` doesn't affect the current working directory.
+Now that Mark has landed the patch adding support for the
+-ENOTRECOVERABLE error code from get_voltage() / get_voltage_sel(), do
+we still need the qcom,regulator-initial-microvolt property?  If this
+is really still needed, can it be moved to the regulator core?
 
-Whoops, turns out the inner `()` isn't needed, so going to
-revise and send a v2.
 
---=20
-Cheers,
-Joey Pabalinas
+> +- regulator-initial-mode
+> +       Usage:      optional; VRM regulators only
+> +       Value type: <u32>
+> +       Definition: Specifies the initial mode to request for a VRM regulator.
+> +                   Supported values are RPMH_REGULATOR_MODE_* which are defined
+> +                   in [1] (i.e. 0 to 3).  This property may be specified even
+> +                   if the regulator-allow-set-load property is not specified.
 
---ckqo6g5yg2iasbxz
-Content-Type: application/pgp-signature; name="signature.asc"
+Every time I read the above I wonder why you're documenting a standard
+regulator regulator property in your bindings.  ...then I realize it's
+because you're doing it because you want to explicitly document what
+the valid modes are.  I wonder if it makes sense to just put a
+reference somewhere else in this document to go look at the header
+file where these are all nicely documented.
 
------BEGIN PGP SIGNATURE-----
+Speaking of documenting things like that, it might be worth finding
+somewhere in this doc to mention that the "bob" regulator on PMI8998
+can support "regulator-allow-bypass".  That tidbit got lost when we
+moved to the standard regulator bindings for bypass.
 
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr98qEACgkQruvLfWhy
-VBmLaxAAoOOBxQSLCHYHXSAjqv7u/szt6XCR1RwGP1O1/ZAv1gOBBVVHQXOMCN6V
-acsDTsdUoyo/IkPUnVBLlOcc+FRAOhWgHxH+P9ESX1uVVdSx+vAEgC2bYAYJCPXy
-03pVZ6dnEYPoECe1LR575lY/1WyNgRwIt0XgbgNR04qfUK+0JLoxnfC/+8qr3uvh
-fOzQPC0jEs8CQc4+ox7lnh3O3Gvx6jYMn4hRx6lE4nTPHo4TW92VSLLsUAx4wdZV
-qKMp2RjL381BiXYts8lhstjrsti3aUcgJYE3qu5m0C5k7FPOmIngK+n5XBRh0HSF
-rfu86SWz02lre6E/AOvEhLjSA2X5Dd9LPhode0Gq4+y9OEpdvra4vM46MRagfhEA
-g+23jcXyFQHh2WLpZTClQUSrNRJIgiGdCRuIKw7uUz6W3Cb4PcVj/vxg9zW/eByH
-NDIv4catAcH9CvpHlYiwqxuRTKA++/L3zDMqIneQEBqvSEMJ4wzmhOaLloICn0rz
-lU2UmUuDNEF5UlXMi7V2IEqewCJRnC42zrKeq+z4bA7opQfFBlkTo/JvcgM9QhWm
-/ylO2QL0BvPX+hgLL09lVEO9m7XSQLTbrwKyJA3DWCT3H8FM3TiZF7lYsEmRyBm2
-umKASO/plV8ngtWHZv+G6l7s71QlFAywAQgYxaofdFw0gyy4Dyk=
-=S7Kc
------END PGP SIGNATURE-----
 
---ckqo6g5yg2iasbxz--
+> +- qcom,allowed-drms-modes
+> +       Usage:      required if regulator-allow-set-load is specified;
+> +                   VRM regulators only
+> +       Value type: <prop-encoded-array>
+> +       Definition: A list of integers specifying the PMIC regulator modes which
+> +                   can be configured at runtime based upon consumer load needs.
+> +                   Supported values are RPMH_REGULATOR_MODE_* which are defined
+> +                   in [1] (i.e. 0 to 3).
+
+Why is this still here?  You moved it to the core regulator framework,
+right?  It's still in your examples too.  Shouldn't this be removed?
+It looks like the driver still needs this and it needs to be an exact
+duplicate of the common binding.  That doesn't seem right...
+
+
+> +- qcom,drms-mode-max-microamps
+> +       Usage:      required if regulator-allow-set-load is specified;
+> +                   VRM regulators only
+> +       Value type: <prop-encoded-array>
+> +       Definition: A list of integers specifying the maximum allowed load
+> +                   current in microamps for each of the modes listed in
+> +                   qcom,allowed-drms-modes (matched 1-to-1 in order).  Elements
+> +                   must be specified in order from lowest to highest value.
+
+Any reason this can't go into the regulator core?  You'd basically
+just take the existing concept of rpmh_regulator_vrm_set_load() and
+put it in the core.
+
+
+> +- qcom,headroom-microvolt
+> +       Usage:      optional; VRM regulators only
+> +       Value type: <u32>
+> +       Definition: Specifies the headroom voltage in microvolts to request for
+> +                   a VRM regulator.  RPMh hardware automatically ensures that
+> +                   the parent of this regulator outputs a voltage high enough
+> +                   to satisfy the requested headroom.  Supported values are
+> +                   0 to 511000.
+
+I'm curious: is this a voted-for value, or a global value?
+
+Said another way: the whole point of RPMh is that there may be more
+than one processor that needs the same rails, right?  So the AP might
+request 1.1 V for a rail and the modem might request 1.3 V.  RPMh
+would decide to pick the higher of those two (1.3 V), but if the modem
+said it no longer needs the rail it will drop down to 1.1 V.
+
+...and as an example of why the headroom needs to be in hardware, if
+the source voltage was normally 1.4 V and the headroom was 200 mV then
+the hardware would need to know to bump up the source voltage to 1.5V
+during the period of of time that the modem wants the rail at 1.3V.
+
+So my question is: do the AP and modem in the above situation
+separately vote for headroom?  How is it aggregated?  ...or is it a
+global value and this sets the headroom for all clients of RPMh?  It
+would be interesting to document this as it might help with figuring
+out how this value should be set.
+
+
+> diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+> new file mode 100644
+> index 0000000..4378c4b
+> --- /dev/null
+> +++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+> +/*
+> + * These mode constants may be used for regulator-initial-mode and
+> + * qcom,allowed-drms-modes properties of an RPMh regulator device tree node.
+
+Technically also for your new "regulator-allowed-modes".  Maybe just
+say that they're used anywhere a regulator mode is needed in this
+driver and give regulator-initial-mode as an example?
+
+
+-Doug
