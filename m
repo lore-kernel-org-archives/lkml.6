@@ -1,46 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751965AbeEQSfD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:35:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51604 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeEQSfC (ORCPT
+        id S1752106AbeEQSfr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:35:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751409AbeEQSfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:35:02 -0400
-Subject: Re: linux-next: Tree for May 17 (drivers/pwm/pwm-stm32.c)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gerald Baeza <gerald.baeza@st.com>, linux-pwm@vger.kernel.org
-References: <20180517170656.1f746914@canb.auug.org.au>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b611bea0-d77b-7841-2127-277acda55747@infradead.org>
-Date: Thu, 17 May 2018 11:34:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 14:35:46 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180517170656.1f746914@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 17 May 2018 11:35:44 -0700
+From: Jeff Johnson <jjohnson@codeaurora.org>
+To: Ramon Fried <ramon.fried@linaro.org>
+Cc: kvalo@codeaurora.org, linux-kernel@vger.kernel.org,
+        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, Eyal Ilsar <eilsar@codeaurora.org>,
+        linux-wireless-owner@vger.kernel.org
+Subject: Re: [PATCH] wcn36xx: Add support for Factory Test Mode (FTM)
+In-Reply-To: <20180517113250.16517-1-ramon.fried@linaro.org>
+References: <20180517113250.16517-1-ramon.fried@linaro.org>
+Message-ID: <b4a96b0e326cd45928f97d6e5796c748@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 12:06 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
+On 2018-05-17 04:32, Ramon Fried wrote:
+> From: Eyal Ilsar <eilsar@codeaurora.org>
+...
+> +static int wcn36xx_smd_process_ptt_msg_rsp(void *buf, size_t len,
+> +					   void **p_ptt_rsp_msg)
+> +{
+> +	struct wcn36xx_hal_process_ptt_msg_rsp_msg *rsp;
+> +	int ret = 0;
 
-on x86_64:
+why initialize 'ret' when you immediately overwrite?
 
-drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture':
-pwm-stm32.c:(.text+0x53d): undefined reference to `stm32_timers_dma_burst_read'
+> +	ret = wcn36xx_smd_rsp_status_check(buf, len);
+...
+> +	if (rsp->header.len > 0) {
+> +		*p_ptt_rsp_msg = kmalloc(rsp->header.len, GFP_ATOMIC);
 
-when COMPILE_TEST=y and MFD_STM32_TIMERS is not set.
+NULL check required?
 
+> +		memcpy(*p_ptt_rsp_msg, rsp->ptt_msg, rsp->header.len);
+> +	}
+> +	return ret;
+> +}
+> +
+> +int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
+> +				struct ieee80211_vif *vif, void *ptt_msg, size_t len,
+> +		void **ptt_rsp_msg)
+> +{
+> +	struct wcn36xx_hal_process_ptt_msg_req_msg *p_msg_body;
+> +	int ret = 0;
 
-Any suggestions?
+why initialize 'ret' when it is always overwritten before use?
 
-thanks,
--- 
-~Randy
+> +	ret = wcn36xx_smd_send_and_wait(wcn, p_msg_body->header.len);
