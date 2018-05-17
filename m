@@ -1,75 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeEQNQb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:16:31 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34685 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeEQNQ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:16:29 -0400
-X-Google-Smtp-Source: AB8JxZp4L+SbUHnQ+TlmHGaAYh8kl8PeaQA/X30ZJegpZFfiyW3QKDTPaqop+9SzS06E77eToAZmFw==
-Date: Thu, 17 May 2018 22:16:22 +0900
-From: DaeRyong Jeong <threeearcat@gmail.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dledford@redhat.com, leon@kernel.org, parav@mellanox.com,
-        danielj@mellanox.com, swise@opengridcomputing.com, monis@mellanox.com,
-        inux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
-Subject: Re: KASAN: use-after-free Read in cma_cancel_operation
-Message-ID: <20180517131620.GA12745@dragonet.kaist.ac.kr>
-References: <20180511052519.GA14824@dragonet.kaist.ac.kr>
- <20180513203413.GB16286@ziepe.ca>
-MIME-Version: 1.0
+        id S1752204AbeEQNQo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:16:44 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33667 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751976AbeEQNQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:16:42 -0400
+Date: Thu, 17 May 2018 08:15:50 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers save/restore in asm
+Message-ID: <20180517131550.GR17342@gate.crashing.org>
+References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr> <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr> <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180513203413.GB16286@ziepe.ca>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 02:34:13PM -0600, Jason Gunthorpe wrote:
-> On Fri, May 11, 2018 at 02:25:22PM +0900, DaeRyong Jeong wrote:
-> > We report the crash: KASAN: use-after-free Read in cma_cancel_operation
-> > 
-> > Note that this bug is previously reported by syzkaller.
-> > https://syzkaller.appspot.com/bug?id=95f89b8fb9fdc42e28ad586e657fea074e4e719b
-> > Nonetheless, this bug has not fixed yet, and we hope that this report and our
-> > analysis, which gets help by the RaceFuzzer's feature, will helpful to fix the
-> > crash.
-> > 
-> > This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
-> > version of Syzkaller), which we describe more at the end of this
-> > report. Our analysis shows that the race occurs when invoking two
-> > syscalls concurrently, write$rdma_cm and write$rdma_cm.
+On Thu, May 17, 2018 at 10:10:21PM +1000, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> > arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
+> > in order to use multiple word instructions in functions entry/exit
 > 
-> Well, calling rdma_destroy_id() twice/concurrently is invalid.. The
-> confusing part of this is how does it happen from ucma.c ..
+> True, though that could be a lot simpler because the MULTIPLEWORD value
+> is only used for PPC32, which is always big endian. I'll send a patch
+> for that.
+
+Do you mean in the kernel?  Many 32-bit processors can do LE, and many
+do not implement multiple or string insns in LE mode.
+
+> > The patch does the same for the asm parts, for consistency
+> >
+> > On processors like the 8xx on which insn fetching is pretty slow,
+> > this speeds up registers save/restore
 > 
-> Double calls via write look OK to me, the ID is removed from the IDR
-> at the top so it cannot be invoked twice.. So not sure what
-> "write$rdma_cm and write$rdma_cm." is supposed to me?
-
-It meant two write syscalls. One for ucma_listen, one for ucma_resolve_ip.
+> OK. I've always heard that they should be avoided, but that's coming
+> from 64-bit land.
 > 
-> Is your test showing that write() vs close() is the problem? The oops
-> suggests that.. And the logic around ctx->closing looks tortured
-> enough that it is probably wrong...
+> I guess we've been enabling this for all 32-bit targets for ever so it
+> must be a reasonable option.
 
-My previous dianosis seems wrong... I'm sorry to make you confusing.
-I'm looking into the code and trying to find out the cause of the crash.
+On 603, load multiple (and string) are one cycle slower than doing all the
+loads separately, and store is essentially the same as separate stores.
+On 7xx and 7xxx both loads and stores are one cycle slower as multiple
+than as separate insns.
 
-> 
-> Jason
+load/store multiple are nice for saving/storing registers.
 
-We have found the one more crash. null-ptr-deref in cma_bind_listen caused
-by two ucma_listen calls.
-I think I have the clear idea why null-ptr-deref occured. I will send the
-report for the null-ptr-deref. Please look at it.
 
-We suspect that this crash and null-ptr-deref have the same root cause,
-incomplete state check.
-Hopefully, the second report is helpful to find out the root cause of this
-bug.
-
-DaeRyong Jeong
+Segher
