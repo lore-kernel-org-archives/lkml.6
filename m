@@ -1,113 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeEQMK2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:10:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:39885 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750826AbeEQMK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:10:27 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers save/restore in asm
-In-Reply-To: <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr>
-References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr> <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr>
-Date: Thu, 17 May 2018 22:10:21 +1000
-Message-ID: <87zi0ymqj6.fsf@concordia.ellerman.id.au>
+        id S1752159AbeEQMLE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:11:04 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50377 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeEQMLA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 08:11:00 -0400
+X-Google-Smtp-Source: AB8JxZrhh1TPhFXhvsUjjpuX3fFTfc7UYcJt9BIL4tGCnXMsYCY1vSpqEbLMXnYp+wwEjBaHoe0Bdg==
+Subject: Re: [PATCH v3 1/2] media: rc: introduce BPF_PROG_RAWIR_EVENT
+To: Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>
+References: <cover.1526504511.git.sean@mess.org>
+ <92785c791057185fa5691f78cecfa4beae7fc336.1526504511.git.sean@mess.org>
+From: Quentin Monnet <quentin.monnet@netronome.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=quentin.monnet@netronome.com; prefer-encrypt=mutual; keydata=
+ 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
+ RHhSHGnKaQ6MfrTge5Q0h5A=
+Message-ID: <592262ad-e92f-2b53-f6bb-086257c21db0@netronome.com>
+Date: Thu, 17 May 2018 13:10:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <92785c791057185fa5691f78cecfa4beae7fc336.1526504511.git.sean@mess.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
-> in order to use multiple word instructions in functions entry/exit
-
-True, though that could be a lot simpler because the MULTIPLEWORD value
-is only used for PPC32, which is always big endian. I'll send a patch
-for that.
-
-> The patch does the same for the asm parts, for consistency
->
-> On processors like the 8xx on which insn fetching is pretty slow,
-> this speeds up registers save/restore
-
-OK. I've always heard that they should be avoided, but that's coming
-from 64-bit land.
-
-I guess we've been enabling this for all 32-bit targets for ever so it
-must be a reasonable option.
-
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+2018-05-16 22:04 UTC+0100 ~ Sean Young <sean@mess.org>
+> Add support for BPF_PROG_RAWIR_EVENT. This type of BPF program can call
+> rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
+> that the last key should be repeated.
+> 
+> The bpf program can be attached to using the bpf(BPF_PROG_ATTACH) syscall;
+> the target_fd must be the /dev/lircN device.
+> 
+> Signed-off-by: Sean Young <sean@mess.org>
 > ---
->  v2: Swapped both patches in the serie to reduce number of impacted
->      lines and added the same modification in ppc_save_regs()
->
->  arch/powerpc/include/asm/ppc_asm.h  |  5 +++++
->  arch/powerpc/kernel/misc.S          | 10 ++++++++++
->  arch/powerpc/kernel/ppc_save_regs.S |  4 ++++
->  3 files changed, 19 insertions(+)
->
-> diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-> index 13f7f4c0e1ea..4bb765d0b758 100644
-> --- a/arch/powerpc/include/asm/ppc_asm.h
-> +++ b/arch/powerpc/include/asm/ppc_asm.h
-> @@ -80,11 +80,16 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
->  #else
->  #define SAVE_GPR(n, base)	stw	n,GPR0+4*(n)(base)
->  #define REST_GPR(n, base)	lwz	n,GPR0+4*(n)(base)
-> +#ifdef CONFIG_CPU_BIG_ENDIAN
-> +#define SAVE_NVGPRS(base)	stmw	13, GPR0+4*13(base)
-> +#define REST_NVGPRS(base)	lmw	13, GPR0+4*13(base)
-> +#else
->  #define SAVE_NVGPRS(base)	SAVE_GPR(13, base); SAVE_8GPRS(14, base); \
->  				SAVE_10GPRS(22, base)
->  #define REST_NVGPRS(base)	REST_GPR(13, base); REST_8GPRS(14, base); \
->  				REST_10GPRS(22, base)
+>  drivers/media/rc/Kconfig           |  13 ++
+>  drivers/media/rc/Makefile          |   1 +
+>  drivers/media/rc/bpf-rawir-event.c | 363 +++++++++++++++++++++++++++++
+>  drivers/media/rc/lirc_dev.c        |  24 ++
+>  drivers/media/rc/rc-core-priv.h    |  24 ++
+>  drivers/media/rc/rc-ir-raw.c       |  14 +-
+>  include/linux/bpf_rcdev.h          |  30 +++
+>  include/linux/bpf_types.h          |   3 +
+>  include/uapi/linux/bpf.h           |  55 ++++-
+>  kernel/bpf/syscall.c               |   7 +
+>  10 files changed, 531 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/media/rc/bpf-rawir-event.c
+>  create mode 100644 include/linux/bpf_rcdev.h
+> 
 
-There is no 32-bit little endian, so this is basically dead code now.
+[...]
 
-Maybe there'll be a 32-bit LE port one day, but if so we can put the
-code back then.
+Hi Sean,
 
-So I'll just drop the else case.
+Please find below some nitpicks on the documentation for the two helpers.
 
->  #endif
-> +#endif
->  
->  #define SAVE_2GPRS(n, base)	SAVE_GPR(n, base); SAVE_GPR(n+1, base)
->  #define SAVE_4GPRS(n, base)	SAVE_2GPRS(n, base); SAVE_2GPRS(n+2, base)
-> diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
-> index 746ee0320ad4..a316d90a5c26 100644
-> --- a/arch/powerpc/kernel/misc.S
-> +++ b/arch/powerpc/kernel/misc.S
-> @@ -49,6 +49,10 @@ _GLOBAL(setjmp)
->  	PPC_STL	r0,0(r3)
->  	PPC_STL	r1,SZL(r3)
->  	PPC_STL	r2,2*SZL(r3)
-> +#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index d94d333a8225..243e141e8a5b 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
 
-And this could just be:
+[...]
 
-#ifdef CONFIG_PPC32
+> @@ -1902,6 +1904,35 @@ union bpf_attr {
+>   *		egress otherwise). This is the only flag supported for now.
+>   *	Return
+>   *		**SK_PASS** on success, or **SK_DROP** on error.
+> + *
+> + * int bpf_rc_keydown(void *ctx, u32 protocol, u32 scancode, u32 toggle)
+> + *	Description
+> + *		Report decoded scancode with toggle value. For use in
+> + *		BPF_PROG_TYPE_RAWIR_EVENT, to report a successfully
 
-> +	mfcr	r12
-> +	stmw	r12, 3*SZL(r3)
-> +#else
->  	mfcr	r0
->  	PPC_STL	r0,3*SZL(r3)
->  	PPC_STL	r13,4*SZL(r3)
-> @@ -70,10 +74,15 @@ _GLOBAL(setjmp)
->  	PPC_STL	r29,20*SZL(r3)
->  	PPC_STL	r30,21*SZL(r3)
->  	PPC_STL	r31,22*SZL(r3)
-> +#endif
+Could you please use bold RST markup for constants and function names?
+Typically for BPF_PROG_TYPE_RAWIR_EVENT here and the enum below.
 
-It's a pity to end up with this basically split in half by ifdefs for
-32/64-bit, but maybe we can clean that up later.
+> + *		decoded scancode. This is will generate a keydown event,
 
-cheers
+s/This is will/This will/?
+
+> + *		and a keyup event once the scancode is no longer repeated.
+> + *
+> + *		*ctx* pointer to bpf_rawir_event, *protocol* is decoded
+> + *		protocol (see RC_PROTO_* enum).
+
+This documentation is intended to be compiled as a man page. Could you
+please use a complete sentence here?
+Also, this could do with additional markup as well: **struct
+bpf_rawir_event**.
+
+> + *
+> + *		Some protocols include a toggle bit, in case the button
+> + *		was released and pressed again between consecutive scancodes,
+> + *		copy this bit into *toggle* if it exists, else set to 0.
+> + *
+> + *     Return
+
+The "Return" lines here and in the second helper use space indent
+instead as tabs (as all other lines do). Would you mind fixing it for
+consistency?
+
+> + *		Always return 0 (for now)
+
+Other helpers use just "0" in that case, but I do not really mind.
+Out of curiosity, do you have anything specific in mind for changing the
+return value here in the future?
+
+> + *
+> + * int bpf_rc_repeat(void *ctx)
+> + *	Description
+> + *		Repeat the last decoded scancode; some IR protocols like
+> + *		NEC have a special IR message for repeat last button,
+
+s/repeat/repeating/?
+
+> + *		in case user is holding a button down; the scancode is
+> + *		not repeated.
+> + *
+> + *		*ctx* pointer to bpf_rawir_event.
+
+Please use a complete sentence here as well, if you do not mind.
+
+> + *
+> + *     Return
+> + *		Always return 0 (for now)
+>   */
+Thanks,
+Quentin
