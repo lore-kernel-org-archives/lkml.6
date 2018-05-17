@@ -1,89 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeEQQXr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeEQQXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:23:44 -0400
-X-Google-Smtp-Source: AB8JxZobk1e9Zry5SsWSEjRSp3R/noASUKfM3gSxqJRHJYHXdoprrWkGm0P0TRAPxQtm2RrZ972lckKkEOH+9zng5CE=
+        id S1751958AbeEQQ1a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:27:30 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:39113 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751468AbeEQQ12 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 12:27:28 -0400
+X-Google-Smtp-Source: AB8JxZqNWfPkdxw2TG+esfRmt3YVpwoK/+RJIwBAcGhTDCuc9U5nHuxeMI1ByyWqMUSiJHRRSzzqIw==
 MIME-Version: 1.0
-In-Reply-To: <ccdbbfb2833d274b6bfa234aada57e68d9793dd5.1526487615.git.vilhelm.gray@gmail.com>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com> <ccdbbfb2833d274b6bfa234aada57e68d9793dd5.1526487615.git.vilhelm.gray@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 17 May 2018 11:23:22 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+a4s=5N6wUWifoHWQoornbDBY-UY2xrwj1kggNH4Q5pQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/9] dt-bindings: counter: Document stm32 quadrature encoder
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>, linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
+References: <20180501234721.187135-1-evgreen@chromium.org> <07fc9a48-a84c-b754-0d00-6f61f39e5f86@intel.com>
+In-Reply-To: <07fc9a48-a84c-b754-0d00-6f61f39e5f86@intel.com>
+From: Evan Green <evgreen@chromium.org>
+Date: Thu, 17 May 2018 09:26:48 -0700
+X-Gmail-Original-Message-ID: <CAE=gft5=nmKndCrKposh6bQa=3Oh62ZxfmmRUOK4cPLzfy7xSQ@mail.gmail.com>
+Message-ID: <CAE=gft5=nmKndCrKposh6bQa=3Oh62ZxfmmRUOK4cPLzfy7xSQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] mmc: sdhci: Don't get card-detect without preemption
+To: adrian.hunter@intel.com
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 12:51 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> From: Benjamin Gaignard <benjamin.gaignard@st.com>
+On Wed, May 16, 2018 at 2:52 AM Adrian Hunter <adrian.hunter@intel.com>
+wrote:
 
-v6? Where's v1-v5?
+> On 02/05/18 02:47, Evan Green wrote:
+> > For a controller with SDHCI_QUIRK_NO_CARD_NO_RESET, there are several
+> > conditions where sdhci_do_reset is called under a spinlock with
+interrupts
+> > disabled. The card detect is often a GPIO, which might sleep. Avoid
+> > asking for the card detect status if interrupts are disabled to prevent
+> > a warning like the following:
+> >
+> > [    2.480199] Call trace:
+> > [    2.480218] [<ffffff800808a698>] dump_backtrace+0x0/0x228
+> > [    2.480224] [<ffffff800808a8e0>] show_stack+0x20/0x28
+> > [    2.480235] [<ffffff80088a0214>] dump_stack+0x90/0xb0
+> > [    2.480245] [<ffffff80080d7aa8>] ___might_sleep+0x110/0x128
+> > [    2.480248] [<ffffff80080d7b38>] __might_sleep+0x78/0x88
+> > [    2.480260] [<ffffff80083cdd28>]
+gpiod_get_raw_value_cansleep+0x2c/0xc4
+> > [    2.480269] [<ffffff80086a93a8>] mmc_gpio_get_cd+0x3c/0x68
+> > [    2.480275] [<ffffff80086b008c>] sdhci_get_cd+0x20/0x98
+> > [    2.480280] [<ffffff80086b081c>] sdhci_do_reset+0x50/0x88
+> > [    2.480283] [<ffffff80086b4640>] sdhci_tasklet_finish+0x1a8/0x270
+> > [    2.480292] [<ffffff80080b29d4>] tasklet_action+0x90/0xf4
+> > [    2.480296] [<ffffff80080813b8>] __do_softirq+0x1c8/0x360
+> > [    2.480300] [<ffffff80080b2408>] irq_exit+0x88/0xd0
+> >
+> > ---
+> >
+> > I discovered this warning while trying to bring up SD, somewhat
+unsuccessfully,
+> > on a new device, and hit this error path.
+> >
+> > This change is not ideal as it only makes a best effort to adhere to
+the quirk,
+> > but may in some cases end up resetting the controller with no card
+present.
+> >
+> > Another option I considered was trying to call sdhci_do_reset within
+only
+> > sleepable contexts. I actually got as far as converting the tasklet to a
+> > work queue, and deferring the reset to the end of the function in
+> > sdhci_request_done. But 1) I'm not sure if that deferral was actually
+safe,
+> > and 2) we call sdhci_do_reset from under the lock in several other
+places,
+> > such as sdhci_card_event and sdhci_cqe_disable.
+> >
+> > Finally, I also considered calling the non-_maysleep gpio functions in
+> > mmc_gpio_get_cd. I assume this is not workable as someone somewhere has
+put
+> > a card detect off of a PMIC or GPIO expander.
+> >
+> > Any advice?
 
-> Add bindings for STM32 Timer quadrature encoder.
-> It is a sub-node of STM32 Timer which implement the
-> counter part of the hardware.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
->  .../bindings/counter/stm32-timer-cnt.txt      | 26 +++++++++++++++++++
->  .../devicetree/bindings/mfd/stm32-timers.txt  |  7 +++++
->  2 files changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
->
-> diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-> new file mode 100644
-> index 000000000000..377728128bef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-> @@ -0,0 +1,26 @@
-> +STMicroelectronics STM32 Timer quadrature encoder
-> +
-> +STM32 Timer provides quadrature encoder counter mode to detect
+> The SDHCI_QUIRK_NO_CARD_NO_RESET quirk was designed for host controllers
+> that use the present state register.  I have to assume that users of GPIO
+> card detect get away with using the quirk because:
+>          a) their GPIO does not sleep, and
+>          b) they don't enable the debugging that produces the "might sleep"
+>          warning
 
-'mode' does not sound like a sub-block of the timers block.
+> If you know your device's card detect GPIO does not sleep, then you can
+look
+> at making a non-sleep version of mmc_gpio_get_cd().
 
-> +angular position and direction of rotary elements,
-> +from IN1 and IN2 input signals.
-> +
-> +Must be a sub-node of an STM32 Timer device tree node.
-> +See ../mfd/stm32-timers.txt for details about the parent node.
-> +
-> +Required properties:
-> +- compatible:          Must be "st,stm32-timer-counter".
-> +- pinctrl-names:       Set to "default".
-> +- pinctrl-0:           List of phandles pointing to pin configuration nodes,
-> +                       to set IN1/IN2 pins in mode of operation for Low-Power
-> +                       Timer input on external pin.
-> +
-> +Example:
-> +       timers@40010000  {
-> +               compatible = "st,stm32-timers";
-> +               ...
-> +               counter {
-> +                       compatible = "st,stm32-timer-counter";
+> Another possibility is to look at using mmc_gpio_set_cd_isr() to keep
+track
+> of whether the card has been removed.  Also try to use sdhci_ops->reset()
+> rather than SDHCI_QUIRK_NO_CARD_NO_RESET.
 
-Is there only 1? How is the counter addressed?
 
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&tim1_in_pins>;
-> +               };
-> +       };
+Thanks Adrian for the guidance. I'll explore this a bit and see what shakes
+out.
+-Evan
