@@ -1,75 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751640AbeEQFYg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:24:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:7993 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750779AbeEQFYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 01:24:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="200064330"
-Message-ID: <4d7158c407973a5be972a690a64c3f69119bd921.camel@intel.com>
-Subject: Re: [linux-firmware] Version in WHENCE file
-From: Luciano Coelho <luciano.coelho@intel.com>
-To: sedat.dilek@gmail.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 17 May 2018 08:24:31 +0300
-In-Reply-To: <CA+icZUXy5VyJq_L=ipyutvYk6gpsCb9jxHzBa7T3MRhs3XgQKA@mail.gmail.com>
-References: <CA+icZUXrHmOJPKT0gnym9yOs6Erm3wDOZU3sbr_MGB8pYjfuzA@mail.gmail.com>
-         <0f8aaff5ecad8af6d146453d4d3a5d4dd145977b.camel@intel.com>
-         <CA+icZUXy5VyJq_L=ipyutvYk6gpsCb9jxHzBa7T3MRhs3XgQKA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751478AbeEQFb7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:31:59 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35313 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeEQFb6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 01:31:58 -0400
+X-Google-Smtp-Source: AB8JxZo17qk61xEM4AajrG6EaR3ty12FU0oEV6nkkd3a1HS0hJTAJlL1Z7BuZXtLllKUvRrhLR+lxQ==
+Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
+ configuration
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180514144029.16019-1-andr2000@gmail.com>
+ <20180514144029.16019-2-andr2000@gmail.com> <20180516171528.GD21971@dtor-ws>
+ <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
+ <20180516210817.GF21971@dtor-ws>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <7cecb5d1-5cd3-b63d-d6eb-d1e2dfba9ca6@gmail.com>
+Date: Thu, 17 May 2018 08:31:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180516210817.GF21971@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-07 at 09:47 +0200, Sedat Dilek wrote:
-> On Sun, May 6, 2018 at 3:07 PM, Luciano Coelho <luciano.coelho@intel.
-> com> wrote:
-> > On Sun, 2018-05-06 at 14:46 +0200, Sedat Dilek wrote:
-> > > Hi Luca,
-> > > 
-> > > I hope I catched the correct MLs (not sure if linux-firmware has
-> > > a
-> > > ML,
-> > > I did not found any in the MAINTAINERS file).
-> > > 
-> > > I have seen that in the WHENCE file there is "Version" with and
-> > > without ":", mostly iwlwifi ucodes.
-> > > 
-> > > As an example:
-> > > 
-> > >  File: iwlwifi-8265-36.ucode
-> > > -Version 36.e91976c0.0
-> > > +Version: 36.e91976c0.0
-> > > 
-> > > I don't know the workflow: Do you want to fix it in your tree or
-> > > directly in linux-firmware.git upstream?
-> > > My attached patch is against upstream.
-> > 
-> > Thanks, Sedat!
-> > 
-> > I'm going to send a new pull-request this week, so I can include
-> > your
-> > patch in my tree and as part of the pull-request.
-> > 
-> > --
-> > Cheers,
-> > Luca.
-> 
-> OK, Thanks.
-> Attached Patch v2 is against your tree [1].
-> It differs from v1 against upstream.
-
-You need to write a proper commit message and sign it off so I can
-apply it.
-
---
-Luca.
+On 05/17/2018 12:08 AM, Dmitry Torokhov wrote:
+> On Wed, May 16, 2018 at 08:47:30PM +0300, Oleksandr Andrushchenko wrote:
+>> On 05/16/2018 08:15 PM, Dmitry Torokhov wrote:
+>>> Hi Oleksandr,
+>>>
+>>> On Mon, May 14, 2018 at 05:40:29PM +0300, Oleksandr Andrushchenko wrote:
+>>>> @@ -211,93 +220,114 @@ static int xenkbd_probe(struct xenbus_device *dev,
+>>>>    	if (!info->page)
+>>>>    		goto error_nomem;
+>>>> -	/* Set input abs params to match backend screen res */
+>>>> -	abs = xenbus_read_unsigned(dev->otherend,
+>>>> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
+>>>> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
+>>>> -						  XENKBD_FIELD_WIDTH,
+>>>> -						  ptr_size[KPARAM_X]);
+>>>> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
+>>>> -						  XENKBD_FIELD_HEIGHT,
+>>>> -						  ptr_size[KPARAM_Y]);
+>>>> -	if (abs) {
+>>>> -		ret = xenbus_write(XBT_NIL, dev->nodename,
+>>>> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
+>>>> -		if (ret) {
+>>>> -			pr_warn("xenkbd: can't request abs-pointer\n");
+>>>> -			abs = 0;
+>>>> -		}
+>>>> -	}
+>>>> +	/*
+>>>> +	 * The below are reverse logic, e.g. if the feature is set, then
+>>>> +	 * do not expose the corresponding virtual device.
+>>>> +	 */
+>>>> +	with_kbd = !xenbus_read_unsigned(dev->nodename,
+>>>> +					 XENKBD_FIELD_FEAT_DSBL_KEYBRD, 0);
+>>>> -	touch = xenbus_read_unsigned(dev->nodename,
+>>>> -				     XENKBD_FIELD_FEAT_MTOUCH, 0);
+>>>> -	if (touch) {
+>>>> +	with_ptr = !xenbus_read_unsigned(dev->nodename,
+>>>> +					 XENKBD_FIELD_FEAT_DSBL_POINTER, 0);
+>>>> +
+>>>> +	/* Direct logic: if set, then create multi-touch device. */
+>>>> +	with_mtouch = xenbus_read_unsigned(dev->nodename,
+>>>> +					   XENKBD_FIELD_FEAT_MTOUCH, 0);
+>>>> +	if (with_mtouch) {
+>>>>    		ret = xenbus_write(XBT_NIL, dev->nodename,
+>>>>    				   XENKBD_FIELD_REQ_MTOUCH, "1");
+>>>>    		if (ret) {
+>>>>    			pr_warn("xenkbd: can't request multi-touch");
+>>>> -			touch = 0;
+>>>> +			with_mtouch = 0;
+>>>>    		}
+>>>>    	}
+>>> Does it make sense to still end up calling xenkbd_connect_backend() when
+>>> all interfaces (keyboard, pointer, and multitouch) are disabled? Should
+>>> we do:
+>>>
+>>> 	if (!(with_kbd || || with_ptr || with_mtouch))
+>>> 		return -ENXIO;
+>>>
+>>> ?
+>> It does make sense. Then we probably need to move all xenbus_read_unsigned
+>> calls to the very beginning of the .probe, so no memory allocations are made
+>> which will be useless if we return -ENXIO, e.g. something like
+>>
+>> static int xenkbd_probe(struct xenbus_device *dev,
+>>                    const struct xenbus_device_id *id)
+>> {
+>>      int ret, i;
+>>      bool with_mtouch, with_kbd, with_ptr;
+>>      struct xenkbd_info *info;
+>>      struct input_dev *kbd, *ptr, *mtouch;
+>>
+>> <read with_mtouch, with_kbd, with_ptr here>
+>>
+>> if (!(with_kbd | with_ptr | with_mtouch))
+>>          return -ENXIO;
+>>
+>> Does the above looks ok?
+> Yes. Another option is to keep the check where I suggested and do
+>
+> 	if (...) {
+> 		ret = -ENXIO;
+> 		goto error;
+> 	}
+>
+> Whichever you prefer is fine with me.
+I will go with the change you suggested and
+I'll send v4 tomorrow then.
+> Thanks.
+>
+Thank you,
+Oleksandr
