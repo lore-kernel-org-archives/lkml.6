@@ -1,131 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeEQJYr (ORCPT <rfc822;w@1wt.eu>);
+        id S1752304AbeEQJYv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 05:24:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45682 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752509AbeEQJYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 05:24:47 -0400
-Received: from mga05.intel.com ([192.55.52.43]:6649 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752223AbeEQJYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 05:24:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="41683742"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V2 20/20] perf buildid-cache: kcore_copy: Amend the offset of sections that remap kernel text
-Date: Thu, 17 May 2018 12:22:08 +0300
-Message-Id: <1526548928-20790-21-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
-References: <1526548928-20790-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Date: Thu, 17 May 2018 11:24:43 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Cc: Halil Pasic <pasic@linux.ibm.com>,
+        "Jason J. Herne" <jjherne@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] s390: vfio-ccw: push down unsupported IDA check
+Message-ID: <20180517112443.0b39d7d9.cohuck@redhat.com>
+In-Reply-To: <20180517010925.GA30480@bjsdjshi@linux.ibm.com>
+References: <20180516173342.15174-1-pasic@linux.ibm.com>
+        <20180517010925.GA30480@bjsdjshi@linux.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-x86 PTI entry trampolines all map to the same physical page. If that is
-reflected in the program headers of /proc/kcore, then do the same for the
-copy of kcore.
+On Thu, 17 May 2018 09:09:25 +0800
+Dong Jia Shi <bjsdjshi@linux.ibm.com> wrote:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/symbol-elf.c | 53 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 2 deletions(-)
+> * Halil Pasic <pasic@linux.ibm.com> [2018-05-16 19:33:42 +0200]:
+> 
+> Nitpick for Subject prefix (?):
+> s/s390: vfio-ccw:/vfio: ccw:/
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 584966913aeb..29770ea61768 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1390,6 +1390,7 @@ struct phdr_data {
- 	u64 addr;
- 	u64 len;
- 	struct list_head node;
-+	struct phdr_data *remaps;
- };
- 
- struct sym_data {
-@@ -1597,16 +1598,62 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
- 	return 0;
- }
- 
-+static void kcore_copy__find_remaps(struct kcore_copy_info *kci)
-+{
-+	struct phdr_data *p, *k = NULL;
-+	u64 kend;
-+
-+	if (!kci->stext)
-+		return;
-+
-+	/* Find phdr that corresponds to the kernel map (contains stext) */
-+	kcore_copy__for_each_phdr(kci, p) {
-+		u64 pend = p->addr + p->len - 1;
-+
-+		if (p->addr <= kci->stext && pend >= kci->stext) {
-+			k = p;
-+			break;
-+		}
-+	}
-+
-+	if (!k)
-+		return;
-+
-+	kend = k->offset + k->len;
-+
-+	/* Find phdrs that remap the kernel */
-+	kcore_copy__for_each_phdr(kci, p) {
-+		u64 pend = p->offset + p->len;
-+
-+		if (p == k)
-+			continue;
-+
-+		if (p->offset >= k->offset && pend <= kend)
-+			p->remaps = k;
-+	}
-+}
-+
- static void kcore_copy__layout(struct kcore_copy_info *kci)
- {
- 	struct phdr_data *p;
- 	off_t rel = 0;
- 
-+	kcore_copy__find_remaps(kci);
-+
- 	kcore_copy__for_each_phdr(kci, p) {
--		p->rel = rel;
--		rel += p->len;
-+		if (!p->remaps) {
-+			p->rel = rel;
-+			rel += p->len;
-+		}
- 		kci->phnum += 1;
- 	}
-+
-+	kcore_copy__for_each_phdr(kci, p) {
-+		struct phdr_data *k = p->remaps;
-+
-+		if (k)
-+			p->rel = p->offset - k->offset + k->rel;
-+	}
- }
- 
- static int kcore_copy__calc_maps(struct kcore_copy_info *kci, const char *dir,
-@@ -1821,6 +1868,8 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	kcore_copy__for_each_phdr(&kci, p) {
- 		off_t offs = p->rel + offset;
- 
-+		if (p->remaps)
-+			continue;
- 		if (copy_bytes(kcore.fd, p->offset, extract.fd, offs, p->len))
- 			goto out_extract_close;
- 	}
--- 
-1.9.1
+Trivial to fix up while applying.
+
+> 
+> > There is at least one relevant guest OS that doesn't set the IDA flags in
+> > the ORB as we would like them, but never uses any IDA. So instead of
+> > saying -EOPNOTSUPP when observing an ORB, such that a channel program
+> > specified by it could be a not supported one, let us say -EOPNOTSUPP only
+> > if the channel program is a not supported one.
+> > 
+> > Of course, the real solution would be doing proper translation for all
+> > IDA. This is possible, but given the current code not straight forward.
+> > 
+> > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> > Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
+> > ---
+> > ---  
+> Leftover?
+
+git am will drop this anyway :)
+
+> 
+> >  drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
+> >  1 file changed, 16 insertions(+), 3 deletions(-)
+> >   
+> 
+> Reviewed-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+
+Thanks!
