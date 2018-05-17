@@ -1,92 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeEQHeO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:34:14 -0400
-Received: from olimex.com ([184.105.72.32]:39151 "EHLO olimex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751017AbeEQHeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:34:12 -0400
-Subject: Re: [PATCH 1/1] ARM:dts:sunxi: Add Olimex A20-SOM-EVB-eMMC board
-To: Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-sunxi@googlegroups.com
-References: <1526470689-6275-1-git-send-email-stefan@olimex.com>
- <96201051.35560.1526541952287@email.1und1.de>
-From: Stefan Mavrodiev <stefan@olimex.com>
-Message-ID: <7ad11904-be61-a459-f2be-ff37fcd02402@olimex.com>
-Date: Thu, 17 May 2018 10:34:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <96201051.35560.1526541952287@email.1und1.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1752195AbeEQHfN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:35:13 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:31320 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751533AbeEQHfM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:35:12 -0400
+X-UUID: 368b49c857464442b15a3ba8d0a94392-20180517
+Message-ID: <1526542504.31853.106.camel@mhfsdcap03>
+Subject: Re: Some questions about the spi mem framework
+From: Xiangsheng Hou <xiangsheng.hou@mediatek.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-mtd@lists.infradead.org>, <srv_heupstream@mediatek.com>,
+        <guochun.mao@mediatek.com>, <benliang.zhao@mediatek.com>,
+        <bayi.cheng@mediatek.com>, <dandan.he@mediatek.com>,
+        <sean.wang@mediatek.com>, <ryder.lee@mediatek.com>,
+        <xiaolei.li@mediatek.com>, <honghui.zhang@mediatek.com>
+Date: Thu, 17 May 2018 15:35:04 +0800
+In-Reply-To: <20180517091308.387f0a70@bbrezillon>
+References: <1526355800.31853.45.camel@mhfsdcap03>
+         <20180515172551.1adcf276@bbrezillon>   <1526472699.31853.80.camel@mhfsdcap03>
+         <20180516144204.65bb20c5@bbrezillon>   <1526540304.31853.98.camel@mhfsdcap03>
+         <20180517091308.387f0a70@bbrezillon>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 10:25 AM, Stefan Wahren wrote:
-> Hi Stefan,
->
->> Stefan Mavrodiev <stefan@olimex.com> hat am 16. Mai 2018 um 13:38 geschrieben:
->>
->>
->> With the new rev.E of A20-SOM-EVB, there is option for 16GB eMMC.
->> Currently used card is KLMAG2GEND, wired to MMC2 slot.
->>
->> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->> ---
->>   arch/arm/boot/dts/Makefile                         |  1 +
->>   .../arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts | 37 ++++++++++++++++++++++
->>   2 files changed, 38 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 1db91ec..7f1ee65 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -959,6 +959,7 @@ dtb-$(CONFIG_MACH_SUN7I) += \
->>   	sun7i-a20-m3.dtb \
->>   	sun7i-a20-mk808c.dtb \
->>   	sun7i-a20-olimex-som-evb.dtb \
->> +	sun7i-a20-olimex-som-evb-emmc.dtb \
->>   	sun7i-a20-olimex-som204-evb.dtb \
->>   	sun7i-a20-olimex-som204-evb-emmc.dtb \
->>   	sun7i-a20-olinuxino-lime.dtb \
->> diff --git a/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
->> new file mode 100644
->> index 0000000..81ebc97
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb-emmc.dts
->> @@ -0,0 +1,37 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Device Tree Source for A20-Olimex-SOM-EVB-eMMC Board
->> + *
->> + * Copyright (C) 2018 Olimex Ltd.
->> + *   Author: Stefan Mavrodiev <stefan@olimex.com>
->> + */
->> +
->> +/dts-v1/;
->> +#include "sun7i-a20-olimex-som-evb.dts"
->> +
->> +/ {
->> +
->> +	model = "Olimex A20-Olimex-SOM-EVB-eMMC";
->> +	compatible = "olimex,a20-olimex-som-evb-emmc", "allwinner,sun7i-a20";
-> the file Documentation/devicetree/bindings/arm/olimex.txt seems to be out of date. I cannot find any recent board compatible.
->
-> Didn't checkpatch complain about it?
-Yes it did. I didn't get is seriously because neither Olimex A20 based 
-board is documented in the binding.
->
-> Regards
-> Stefan
+On Thu, 2018-05-17 at 09:13 +0200, Boris Brezillon wrote:
+> On Thu, 17 May 2018 14:58:24 +0800
+> Xiangsheng Hou <xiangsheng.hou@mediatek.com> wrote:
+> 
+> > Hi Boris,
+> > 
+> > On Wed, 2018-05-16 at 14:42 +0200, Boris Brezillon wrote:
+> > > On Wed, 16 May 2018 20:11:39 +0800
+> > > Xiangsheng Hou <xiangsheng.hou@mediatek.com> wrote:
+> > >   
+> > > > Hi Boris,
+> > > > 
+> > > > On Tue, 2018-05-15 at 17:25 +0200, Boris Brezillon wrote:  
+> > > > > Hi,
+> > > > > 
+> > > > > On Tue, 15 May 2018 11:43:20 +0800
+> > > > > Xiangsheng Hou <xiangsheng.hou@mediatek.com> wrote:
+> > > > >     
+> > > > > > Hello Boris,
+> > > > > > 
+> > > > > > I have seen you are working on extend the framework to generically
+> > > > > > support spi memory devices.
+> > > > > > And, I am working on upstream SPI Nand driver of Mediatek SPI NAND
+> > > > > > controller based on your branch[1].    
+> > > > > 
+> > > > > Great!
+> > > > >     
+> > > > > > I have some questions need your comment.
+> > > > > > 
+> > > > > > 1) There is a difference between different SPI NAND Flash when using the
+> > > > > > Quad SPI command,for example Macronix,Etron and GigaDevice, 
+> > > > > > Quad SPI commands require the Quad Enable bit in Status Register(B0H) to
+> > > > > > be set.
+> > > > > > However, current spi-mem framework does not have this operation,
+> > > > > > do you have a plan to support it?    
+> > > > > 
+> > > > > I added support for the QE bit in the v7 I sent just a few minutes ago
+> > > > > [1].    
+> > > > 
+> > > > Ok,I have studied v7.
+> > > >   
+> > > > >     
+> > > > > > 
+> > > > > > 2) I see that current spi-mem framework doesn't support ECC,
+> > > > > > But we need ECC, and we use Mediatek controller's HW ECC
+> > > > > > instead of spi nand on-chip ECC,
+> > > > > > maybe other companies also have this behavior,
+> > > > > > So the ECC part must be implemented in controller's driver.
+> > > > > > Will you abstract ECC interface in future?     
+> > > > > 
+> > > > > Well, I added support for on-die ECC in my v7 since all chips seem to
+> > > > > provide this feature. I was initially planning on abstracting ECC
+> > > > > engines, but I decided to go for a simpler approach and only support
+> > > > > on-die ECC. That does not mean we shouldn't work on this "ECC engine
+> > > > > abstraction", just that I wanted to get something out and didn't have
+> > > > > time to spend on this topic.
+> > > > > 
+> > > > > I'd be happy if someone else could work on that aspect though. BTW, do
+> > > > > you plan to use this engine [2], or is this yet another ECC engine?    
+> > > > 
+> > > > Yes,I plan to use this ecc engine[2].  
+> > > 
+> > > Cool. That probably means we'll have to move the driver one level up
+> > > (in drivers/mtd/nand) and work on this ECC engine interface I was
+> > > talking about.
+> > >    
+> > > > > > 3) You know, some nand controller need configure their registers when
+> > > > > > getting some information(page size, spare size) of nand flash,
+> > > > > > But the spi-mem framework doesn't has an interface for scanning NAND
+> > > > > > flash, when controller driver initialization.    
+> > > > > 
+> > > > > You seem to mix 2 different things:
+> > > > > - spi-mem: this is generic interface provided by the SPI framework to
+> > > > >   send spi_mem_op. There's nothing NOR or NAND specific in there, and
+> > > > >   I'd like it to stay like that as much as possible
+> > > > > - spinand: this the spi-mem driver that is dealing with SPI NAND
+> > > > >   devices, and this is where all the code related to SPI NAND support
+> > > > >   should end up.
+> > > > > 
+> > > > > Can you tell me exactly why your SPI controller needs such a detailed
+> > > > > description? Is it able to program/read pages or erase blocks on its
+> > > > > own? Do you have a spec of this controller publicly available?    
+> > > > 
+> > > > For Mediatek SPI Nand controller,I have to configure registers for ECC
+> > > > engine,page format and spare format according to nand information just
+> > > > like[3] in mtk_nfc_hw_runtime_config() function.  
+> > > 
+> > > So it's all related to the NAND controller, nothing specific to the SPI
+> > > controller, right?  
+> > 
+> > Yes,we use NAND controller rather than SPI controller.
+> 
+> Sorry, I meant ECC engine, not NAND controller.
 
-Regards,
-Stefan Mavrodiev
+It's related to ECC engine and NAND controller.
+
+Best Regards,
+Xiangsheng Hou
