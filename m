@@ -1,82 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeEQQ4U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:56:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:50263 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQQ4T (ORCPT
+        id S1752309AbeEQQ4i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:56:38 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:45229 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752266AbeEQQ4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:56:19 -0400
-Date: Thu, 17 May 2018 18:55:26 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Vince Weaver <vincent.weaver@maine.edu>, linux-kernel@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org
-Message-ID: <307323036.63872.1526576126537@email.1und1.de>
-In-Reply-To: <alpine.DEB.2.21.1805171233500.7984@macbook-air>
-References: <20180517131727.29263-1-eric@anholt.net>
- <1412187220.62585.1526572780332@email.1und1.de>
- <alpine.DEB.2.21.1805171233500.7984@macbook-air>
-Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+        Thu, 17 May 2018 12:56:35 -0400
+X-Google-Smtp-Source: AB8JxZrIO/M9nvonWHreweqVcZaGdimYfOFUAfc5gADTZYWI7dBzUFamJKLrfNORT4/lXLVmb5HAFA==
+Subject: Re: [PATCH] of: overlay: validate offset from property fixups
+From: Frank Rowand <frowand.list@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1526530791-18591-1-git-send-email-frowand.list@gmail.com>
+Message-ID: <21ae05b7-e9d4-d518-c341-861c74f32922@gmail.com>
+Date: Thu, 17 May 2018 09:56:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1526530791-18591-1-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:aGq2ulLPCFSp+GvrXkPzBsbXJ7n0pv/6eQRZGsMnzKSNsg6jkq1
- 3QA9DnOX5L9zcyQBjI3aKgZ6rBtDMByaHGooHAlJB3kU2ZQ6aN2EjqqSuHpBbXunRbpR7qw
- 7BqkLPGTNg7sN4eCHw6Y6telFzU2IsNTznisHXdtnwQ2pXC3xUx/I2bjD8Q2nlmPQsoQmS/
- L/Gv9cxsI0wRWJC41DbCA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:u52ML8cg6HQ=:rzSnraGWxNafmB9xzU5Ske
- 4pCyd5Y/AGx2uFQBEmTa+iR2Xu+7ZGlUVQHRRASwlnR+7MM9zyMtfWopC7fUfMGKmyp5vWKGm
- Odj2o/jHmaRTx6hcePDbsdNQjlMJ3Vwo3QGqZK1QCWguJVjK7NO2cg6YJdZU/gHC0cr34lHIc
- LX2jdBINyQSDq12siPHMUCkGAGkv0xUv1hBOSSohXeDipkyKD8NRk7dtpaAxAOXR/dRZz0h5F
- hE4uSe8XaXcDXnQqaqJAHIEpo2MtlRCnw2SfkooNDczU57AnbxT8G6Ie6+aypI9gVGkl3YXxe
- /cefUKGQoiNvBVaTBBisajF4WrQJfk9pzn537YGTtTrQ1/0tvQRcUiVEASjPyxNzSMK0NWDsM
- oxSKk7IkdCz9I60NWgF3TKz/m4zJ5oc9GAldFAmUgR18rn81qPtiKjVzE2o0SsNtKxXpdKmFa
- yD9d5tUDnGnAiT1l0H/ojhQYC/FZ7JgJz/uHxxCPKaPMvswev5tq++2hnbBrc5YP02M97Y982
- Uq75SDqR9X3MhwsBmBGR6ff9w6eeDhHg+WtXu9b6tDEoh1WdXnT9ejANXvFRLidIbHikCqXk6
- z4L22urNscaFxrrNOTUxmJnmvuRCIOLB1vDOQ4T8bFsiU85NBf5v9b5Nua824xMncZwxSYEzP
- hh3ptNWH57KclqQ1dfJwJBEsoROsuTKq3TBB8aWW9SWNhJ724ghILrTgBSIX8TzjdjVndMqAW
- DDonC6FyRWU86+qc
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Rob,
 
-[added Peter, Ingo and Arnaldo]
+On 05/16/18 21:19, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> The smatch static checker marks the data in offset as untrusted,
+> leading it to warn:
+> 
+>   drivers/of/resolver.c:125 update_usages_of_a_phandle_reference()
+>   error: buffer underflow 'prop->value' 's32min-s32max'
+> 
+> Add check to verify that offset is within the property data.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>  drivers/of/resolver.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
+> index 65d0b7adfcd4..7edfac6f1914 100644
+> --- a/drivers/of/resolver.c
+> +++ b/drivers/of/resolver.c
+> @@ -122,6 +122,11 @@ static int update_usages_of_a_phandle_reference(struct device_node *overlay,
+>  			goto err_fail;
+>  		}
+>  
+> +		if (offset < 0 || offset + sizeof(__be32) > prop->length) {
+> +			err = -EINVAL;
+> +			goto err_fail;
+> +		}
+> +
+>  		*(__be32 *)(prop->value + offset) = cpu_to_be32(phandle);
+>  	}
+>  
+> 
 
-> Vince Weaver <vincent.weaver@maine.edu> hat am 17. Mai 2018 um 18:34 geschrieben:
-> 
-> 
-> On Thu, 17 May 2018, Stefan Wahren wrote:
-> 
-> > 
-> > > Eric Anholt <eric@anholt.net> hat am 17. Mai 2018 um 15:17 geschrieben:
-> > > 
-> > > 
-> > > The a53 and a7 counters seem to match up, so we advertise a7 so that
-> > > arm32 can probe.
-> 
-> so how closely did you look at the a53/a7 differences?  I see some major 
-> differences, especially with the CPU_CYCLES event (0xff vs 0x11).
-> 
-> The proper fix here might be to add a cortex-a53 PMU entry to the armv7 
-> code rather than trying to treat it as a cortex-a7.
+I should have mentioned that this results in a new compile warning
+for W=2 and W=3.  The new if statement results in:
 
-we like to use the PMU of BCM2837 SoC (4x A53 cores) under arm32 and arm64.
+drivers/of/resolver.c:125:45: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 
-What is the right way (tm) to the define the DT compatibles?
-Does the arm32 PMU driver need patching for proper A53 support?
+There are other pre-existing warnings in the same file for comparing
+an integer to prop->length.  The correct solution is probably to
+change the type of the length field in struct property to be
+unsigned.  I have added that task to my todo list.
 
-Stefan
-
-> 
-> Vince
+-Frank
