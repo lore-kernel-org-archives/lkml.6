@@ -1,20 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752420AbeEQIGa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:06:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35733 "EHLO mx2.suse.de"
+        id S1752060AbeEQIIf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:08:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35886 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751520AbeEQIG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:06:26 -0400
-Date: Thu, 17 May 2018 10:06:23 +0200
-Message-ID: <s5hzi0y7lkw.wl-tiwai@suse.de>
+        id S1750731AbeEQIIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 04:08:30 -0400
+Date: Thu, 17 May 2018 10:08:28 +0200
+Message-ID: <s5hwow27lhf.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: "Colin King" <colin.king@canonical.com>
-Cc: <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: emu10k1: fix spelling mistake: "Caputre" -> "Capture"
-In-Reply-To: <20180517080420.23020-1-colin.king@canonical.com>
-References: <20180517080420.23020-1-colin.king@canonical.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 4.17-rc6
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -24,16 +21,130 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018 10:04:20 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in audigy_outs arrays.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Linus,
 
-Applied, thanks.
+please pull sound fixes for v4.17-rc6 from:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.17-rc6
 
-Takashi
+The topmost commit is c99f0802e42fcd38e84ee4d306691805ebed204f
+
+----------------------------------------------------------------
+
+sound fixes for 4.17-rc6
+
+We have a core fix in the compat code for covering a potential race
+(double references), but it's a very minor change.
+The rest are all small device-specific quirks, as well as a correction
+of the new UAC3 support code.
+
+----------------------------------------------------------------
+
+Federico Cuello (1):
+      ALSA: usb: mixer: volume quirk for CM102-A+/102S+
+
+Hans de Goede (1):
+      ALSA: hda: Add Lenovo C50 All in one to the power_save blacklist
+
+Jeremy Soller (1):
+      ALSA: hda/realtek - Clevo P950ER ALC1220 Fixup
+
+Jorge Sanjuan (1):
+      ALSA: usb-audio: Use Class Specific EP for UAC3 devices.
+
+Wenwen Wang (1):
+      ALSA: control: fix a redundant-copy issue
+
+---
+ sound/core/control_compat.c   | 3 +--
+ sound/pci/hda/hda_intel.c     | 2 ++
+ sound/pci/hda/patch_realtek.c | 1 +
+ sound/usb/mixer.c             | 8 ++++++++
+ sound/usb/stream.c            | 9 ++++++++-
+ 5 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/sound/core/control_compat.c b/sound/core/control_compat.c
+index a848836a5de0..507fd5210c1c 100644
+--- a/sound/core/control_compat.c
++++ b/sound/core/control_compat.c
+@@ -396,8 +396,7 @@ static int snd_ctl_elem_add_compat(struct snd_ctl_file *file,
+ 	if (copy_from_user(&data->id, &data32->id, sizeof(data->id)) ||
+ 	    copy_from_user(&data->type, &data32->type, 3 * sizeof(u32)))
+ 		goto error;
+-	if (get_user(data->owner, &data32->owner) ||
+-	    get_user(data->type, &data32->type))
++	if (get_user(data->owner, &data32->owner))
+ 		goto error;
+ 	switch (data->type) {
+ 	case SNDRV_CTL_ELEM_TYPE_BOOLEAN:
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index b0c8c79848a9..a0c93b9c9a28 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2210,6 +2210,8 @@ static struct snd_pci_quirk power_save_blacklist[] = {
+ 	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1572975 */
++	SND_PCI_QUIRK(0x17aa, 0x36a7, "Lenovo C50 All in one", 0),
+ 	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
+ 	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
+ 	{}
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 2dd34dd77447..01a6643fc7d4 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -2363,6 +2363,7 @@ static const struct snd_pci_quirk alc882_fixup_tbl[] = {
+ 	SND_PCI_QUIRK_VENDOR(0x1462, "MSI", ALC882_FIXUP_GPIO3),
+ 	SND_PCI_QUIRK(0x147b, 0x107a, "Abit AW9D-MAX", ALC882_FIXUP_ABIT_AW9D_MAX),
+ 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
++	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 344d7b069d59..bb5ab7a7dfa5 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -967,6 +967,14 @@ static void volume_control_quirks(struct usb_mixer_elem_info *cval,
+ 		}
+ 		break;
+ 
++	case USB_ID(0x0d8c, 0x0103):
++		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
++			usb_audio_info(chip,
++				 "set volume quirk for CM102-A+/102S+\n");
++			cval->min = -256;
++		}
++		break;
++
+ 	case USB_ID(0x0471, 0x0101):
+ 	case USB_ID(0x0471, 0x0104):
+ 	case USB_ID(0x0471, 0x0105):
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 956be9f7c72a..5ed334575fc7 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -576,7 +576,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 
+ 	if (protocol == UAC_VERSION_1) {
+ 		attributes = csep->bmAttributes;
+-	} else {
++	} else if (protocol == UAC_VERSION_2) {
+ 		struct uac2_iso_endpoint_descriptor *csep2 =
+ 			(struct uac2_iso_endpoint_descriptor *) csep;
+ 
+@@ -585,6 +585,13 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 		/* emulate the endpoint attributes of a v1 device */
+ 		if (csep2->bmControls & UAC2_CONTROL_PITCH)
+ 			attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
++	} else { /* UAC_VERSION_3 */
++		struct uac3_iso_endpoint_descriptor *csep3 =
++			(struct uac3_iso_endpoint_descriptor *) csep;
++
++		/* emulate the endpoint attributes of a v1 device */
++		if (le32_to_cpu(csep3->bmControls) & UAC2_CONTROL_PITCH)
++			attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
+ 	}
+ 
+ 	return attributes;
