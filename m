@@ -1,95 +1,265 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752244AbeEQNF7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:05:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45658 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752221AbeEQNF4 (ORCPT
+        id S1752278AbeEQNGE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:06:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44454 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751619AbeEQNF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:05:56 -0400
-Subject: Re: [PATCH v3 2/2] Input: xen-kbdfront - allow better run-time
- configuration
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
-        konrad.wilk@oracle.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180514144029.16019-1-andr2000@gmail.com>
- <20180514144029.16019-2-andr2000@gmail.com> <20180516171528.GD21971@dtor-ws>
- <e9882c52-3641-7c32-1f64-dd9c4f35de5f@gmail.com>
- <20180516210817.GF21971@dtor-ws>
- <7cecb5d1-5cd3-b63d-d6eb-d1e2dfba9ca6@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <d35b6720-62e3-e9d4-dbe5-a04d75dde0b7@oracle.com>
-Date: Thu, 17 May 2018 09:08:59 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <7cecb5d1-5cd3-b63d-d6eb-d1e2dfba9ca6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8895 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=554
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170121
+        Thu, 17 May 2018 09:05:59 -0400
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v2] selftests: cgroup/memcontrol: add basic test for socket accounting
+Date: Thu, 17 May 2018 16:05:46 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18051713-0020-0000-0000-0000041E4144
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051713-0021-0000-0000-000042B3641D
+Message-Id: <1526562346-27178-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805170121
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 01:31 AM, Oleksandr Andrushchenko wrote:
-> I will go with the change you suggested and
-> I'll send v4 tomorrow then.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+---
+v2 changes:
+* bumped error percentage for comparing memory.current with memory.stat.sock
+* added checks that memory.stat.sock == 0 and memory.current >= 0 after TCP
+server exits
+* simplified error handling
 
+ tools/testing/selftests/cgroup/test_memcontrol.c | 193 +++++++++++++++++++++++
+ 1 file changed, 193 insertions(+)
 
-
-Please make sure your changes to kbdif.h are in Xen first. I believe you
-submitted a patch there but I don't see it in the staging tree yet.
-
--boris
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index beae06c9c899..cf0bddc9d271 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -9,6 +9,12 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <sys/socket.h>
++#include <sys/wait.h>
++#include <arpa/inet.h>
++#include <netinet/in.h>
++#include <netdb.h>
++#include <errno.h>
+ 
+ #include "../kselftest.h"
+ #include "cgroup_util.h"
+@@ -772,6 +778,192 @@ static int test_memcg_oom_events(const char *root)
+ 	return ret;
+ }
+ 
++struct tcp_server_args {
++	unsigned short port;
++	int ctl[2];
++};
++
++static int tcp_server(const char *cgroup, void *arg)
++{
++	struct tcp_server_args *srv_args = arg;
++	struct sockaddr_in6 saddr = { 0 };
++	socklen_t slen = sizeof(saddr);
++	int sk, client_sk, ctl_fd, yes = 1, ret = -1;
++
++	close(srv_args->ctl[0]);
++	ctl_fd = srv_args->ctl[1];
++
++	saddr.sin6_family = AF_INET6;
++	saddr.sin6_addr = in6addr_any;
++	saddr.sin6_port = htons(srv_args->port);
++
++	sk = socket(AF_INET6, SOCK_STREAM, 0);
++	if (sk < 0)
++		return ret;
++
++	if (setsockopt(sk, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0)
++		goto cleanup;
++
++	if (bind(sk, (struct sockaddr *)&saddr, slen)) {
++		write(ctl_fd, &errno, sizeof(errno));
++		goto cleanup;
++	}
++
++	if (listen(sk, 1))
++		goto cleanup;
++
++	ret = 0;
++	if (write(ctl_fd, &ret, sizeof(ret)) != sizeof(ret)) {
++		ret = -1;
++		goto cleanup;
++	}
++
++	client_sk = accept(sk, NULL, NULL);
++	if (client_sk < 0)
++		goto cleanup;
++
++	ret = -1;
++	for (;;) {
++		uint8_t buf[0x100000];
++
++		if (write(client_sk, buf, sizeof(buf)) <= 0) {
++			if (errno == ECONNRESET)
++				ret = 0;
++			break;
++		}
++	}
++
++	close(client_sk);
++
++cleanup:
++	close(sk);
++	return ret;
++}
++
++static int tcp_client(const char *cgroup, unsigned short port)
++{
++	const char server[] = "localhost";
++	struct addrinfo *ai;
++	char servport[6];
++	int retries = 0x10; /* nice round number */
++	int sk, ret;
++
++	snprintf(servport, sizeof(servport), "%hd", port);
++	ret = getaddrinfo(server, servport, NULL, &ai);
++	if (ret)
++		return ret;
++
++	sk = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
++	if (sk < 0)
++		goto free_ainfo;
++
++	ret = connect(sk, ai->ai_addr, ai->ai_addrlen);
++	if (ret < 0)
++		goto close_sk;
++
++	ret = KSFT_FAIL;
++	while (retries--) {
++		uint8_t buf[0x100000];
++		long current, sock;
++
++		if (read(sk, buf, sizeof(buf)) <= 0)
++			goto close_sk;
++
++		current = cg_read_long(cgroup, "memory.current");
++		sock = cg_read_key_long(cgroup, "memory.stat", "sock ");
++
++		if (current < 0 || sock < 0)
++			goto close_sk;
++
++		if (current < sock)
++			goto close_sk;
++
++		if (values_close(current, sock, 10)) {
++			ret = KSFT_PASS;
++			break;
++		}
++	}
++
++close_sk:
++	close(sk);
++free_ainfo:
++	freeaddrinfo(ai);
++	return ret;
++}
++
++/*
++ * This test checks socket memory accounting.
++ * The test forks a TCP server listens on a random port between 1000
++ * and 61000. Once it gets a client connection, it starts writing to
++ * its socket.
++ * The TCP client interleaves reads from the socket with check whether
++ * memory.current and memory.stat.sock are similar.
++ */
++static int test_memcg_sock(const char *root)
++{
++	int bind_retries = 5, ret = KSFT_FAIL, pid, err;
++	unsigned short port;
++	char *memcg;
++
++	memcg = cg_name(root, "memcg_test");
++	if (!memcg)
++		goto cleanup;
++
++	if (cg_create(memcg))
++		goto cleanup;
++
++	while (bind_retries--) {
++		struct tcp_server_args args;
++
++		if (pipe(args.ctl))
++			goto cleanup;
++
++		port = args.port = 1000 + rand() % 60000;
++
++		pid = cg_run_nowait(memcg, tcp_server, &args);
++		if (pid < 0)
++			goto cleanup;
++
++		close(args.ctl[1]);
++		if (read(args.ctl[0], &err, sizeof(err)) != sizeof(err))
++			goto cleanup;
++		close(args.ctl[0]);
++
++		if (!err)
++			break;
++		if (err != EADDRINUSE)
++			goto cleanup;
++
++		waitpid(pid, NULL, 0);
++	}
++
++	if (err == EADDRINUSE) {
++		ret = KSFT_SKIP;
++		goto cleanup;
++	}
++
++	if (tcp_client(memcg, port) != KSFT_PASS)
++		goto cleanup;
++
++	waitpid(pid, &err, 0);
++	if (WEXITSTATUS(err))
++		goto cleanup;
++
++	if (cg_read_long(memcg, "memory.current") < 0)
++		goto cleanup;
++
++	if (cg_read_key_long(memcg, "memory.stat", "sock "))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	cg_destroy(memcg);
++	free(memcg);
++
++	return ret;
++}
++
+ #define T(x) { x, #x }
+ struct memcg_test {
+ 	int (*fn)(const char *root);
+@@ -785,6 +977,7 @@ struct memcg_test {
+ 	T(test_memcg_max),
+ 	T(test_memcg_oom_events),
+ 	T(test_memcg_swap_max),
++	T(test_memcg_sock),
+ };
+ #undef T
+ 
+-- 
+2.7.4
