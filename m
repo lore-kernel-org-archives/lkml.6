@@ -1,75 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeEQUqb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:46:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:44765 "EHLO ozlabs.org"
+        id S1752219AbeEQUrN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 16:47:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39325 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750938AbeEQUq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:46:29 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 18 May 2018 06:46:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: Linux-kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        0-Day Mailing List <lkp@lists.01.org>,
-        Linus <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: a new pending-fixes branch
-Message-ID: <20180518064626.3f79e30f@canb.auug.org.au>
-In-Reply-To: <20180517174247.GI8514@sasha-vm>
-References: <20180512143523.250ab803@canb.auug.org.au>
-        <20180517174247.GI8514@sasha-vm>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q+yAS7jwNljWY7ZWzXY11hb"; protocol="application/pgp-signature"
+        id S1751017AbeEQUrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 16:47:09 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 1/2] rtc: vr41xx: fix possible race condition
+Date: Thu, 17 May 2018 22:47:05 +0200
+Message-Id: <20180517204706.28192-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/q+yAS7jwNljWY7ZWzXY11hb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The probe function is not allowed to fail after the RTC is registered
+because the following may happen:
 
-Hi Sasha,
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
 
-On Thu, 17 May 2018 17:42:49 +0000 Sasha Levin <Alexander.Levin@microsoft.c=
-om> wrote:
->
-> On Sat, May 12, 2018 at 02:35:23PM +1000, Stephen Rothwell wrote:
-> >Hi all,
-> >
-> >As an outcome of some discussion, I have added a pending-fixes branch
-> >to linux-next.  This branch contains Linus' tree merged with branches
-> >containing only fixes pending for the current release.  The branch is a
-> >strict subset of linux-next each day (as so rebases like linux-next
-> >does). =20
->=20
-> will you be keeping a history of this branch like the linux-next history
-> tree?
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-vr41xx.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-I hadn't intended to.  Do you think it would be useful/necessary?  The
-commits themselves will be in the linux-next history tree, just not a
-separate branch name.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/q+yAS7jwNljWY7ZWzXY11hb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr96iIACgkQAVBC80lX
-0GyQ0Af/b3DC6F3s+A/epMJBLWWvkoX300qKz6q/Nh8FrEzPEtW2JHgL+wl69kl6
-+qymGxH5sc1VXixon0PAv8ir8PTHTxwcgqKl6iBIPmpigroHbY4QCPKUFSaDQfFP
-dhe3pSj7BrxM566R9jo39ct2MQ+ECvNOQtCt0Ata/xKqFKag8L7pQhdwZpZpRI76
-te7Se6Pljkyssj2yWXzWFWGVYE3b/5gl0j1yqSiRq6U7ohw0Ezb6eAuHgMFNA1NO
-BYrPAwPjBADnsCD2OYpjc+YmWiHNOdhbHGoeC48FLvGiokTX2it83la+eIrwK+2p
-HvorCy2sIFvxlpqSQ+LDwyknSNjd6A==
-=t8rP
------END PGP SIGNATURE-----
-
---Sig_/q+yAS7jwNljWY7ZWzXY11hb--
+diff --git a/drivers/rtc/rtc-vr41xx.c b/drivers/rtc/rtc-vr41xx.c
+index 480cffe8d321..2f1212a25f7e 100644
+--- a/drivers/rtc/rtc-vr41xx.c
++++ b/drivers/rtc/rtc-vr41xx.c
+@@ -292,13 +292,14 @@ static int rtc_probe(struct platform_device *pdev)
+ 		goto err_rtc1_iounmap;
+ 	}
+ 
+-	rtc = devm_rtc_device_register(&pdev->dev, rtc_name, &vr41xx_rtc_ops,
+-					THIS_MODULE);
++	rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc)) {
+ 		retval = PTR_ERR(rtc);
+ 		goto err_iounmap_all;
+ 	}
+ 
++	rtc->ops = &vr41xx_rtc_ops;
++
+ 	rtc->max_user_freq = MAX_PERIODIC_RATE;
+ 
+ 	spin_lock_irq(&rtc_lock);
+@@ -340,6 +341,10 @@ static int rtc_probe(struct platform_device *pdev)
+ 
+ 	dev_info(&pdev->dev, "Real Time Clock of NEC VR4100 series\n");
+ 
++	retval = rtc_register_device(rtc);
++	if (retval)
++		goto err_iounmap_all;
++
+ 	return 0;
+ 
+ err_iounmap_all:
+-- 
+2.17.0
