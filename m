@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeEQKUa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:20:30 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45923 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQKU2 (ORCPT
+        id S1751897AbeEQKWS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:22:18 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45539 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbeEQKWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:20:28 -0400
-X-Google-Smtp-Source: AB8JxZobgrCdk1d74HVdMN8tvM0qgzqw3LaD/WuMPo9/e/dXFLWR0r+ppq9neGwtzCuhdiUg+2gDKA==
-Date: Thu, 17 May 2018 15:50:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180517102024.s3dxo4uepujh5f65@vireshk-i7>
-References: <20180516224518.109891-1-joel@joelfernandes.org>
- <20180517070026.GA22493@localhost.localdomain>
+        Thu, 17 May 2018 06:22:17 -0400
+Date: Thu, 17 May 2018 12:22:14 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-rt-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH RT] sched: let softirq_count() return !0 if inside
+ local_bh_disable()ed section
+Message-ID: <20180517102214.orea3ol6dj7wvpf5@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180517070026.GA22493@localhost.localdomain>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-05-18, 09:00, Juri Lelli wrote:
-> Hi Joel,
-> 
-> On 16/05/18 15:45, Joel Fernandes (Google) wrote:
-> 
-> [...]
-> 
-> > @@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
-> >  static void sugov_work(struct kthread_work *work)
-> >  {
-> >  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> > +	unsigned int freq;
-> > +	unsigned long flags;
-> > +
-> > +	/*
-> > +	 * Hold sg_policy->update_lock shortly to handle the case where:
-> > +	 * incase sg_policy->next_freq is read here, and then updated by
-> > +	 * sugov_update_shared just before work_in_progress is set to false
-> > +	 * here, we may miss queueing the new update.
-> > +	 */
-> > +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-> > +	freq = sg_policy->next_freq;
-> > +	sg_policy->work_in_progress = false;
-> > +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
-> 
-> OK, we queue the new request up, but still we need to let this kthread
-> activation complete and then wake it up again to service the request
-> already queued, right? Wasn't what Claudio proposed (service back to
-> back requests all in the same kthread activation) better from an
-> overhead pow?
+I don't see a reason why softirq_count() shouldn't reflect the fact that
+we are within a local_bh_disable() section. I *think* it was done
+primary because in RT the softirq is slightly different (and
+preemptible) and it broke some of RCU's assumptions.
+I don't see any fallout with this change. Furthermore, all checks like
+"WARN_ON(!softirq_count())" will work and we can drop the workaround we
+currently have in the queue.
 
-We would need more locking stuff in the work handler in that case and
-I think there maybe a chance of missing the request in that solution
-if the request happens right at the end of when sugov_work returns.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/preempt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index 0591df500e9d..d8c05a2626ca 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -91,7 +91,7 @@
+ # define softirq_count()	(preempt_count() & SOFTIRQ_MASK)
+ # define in_serving_softirq()	(softirq_count() & SOFTIRQ_OFFSET)
+ #else
+-# define softirq_count()	(0UL)
++# define softirq_count()	(current->softirq_nestcnt)
+ extern int in_serving_softirq(void);
+ #endif
+ 
 -- 
-viresh
+2.17.0
