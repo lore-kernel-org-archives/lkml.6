@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeEQLW5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:22:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36670 "EHLO
+        id S1752552AbeEQLXR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:23:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36620 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeEQLU2 (ORCPT
+        with ESMTP id S1751784AbeEQLU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 07:20:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A4B460F91
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2401A60F8F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: Ilia Lin <ilialin@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rnayak@codeaurora.org, ilialin@codeaurora.org,
         amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
         celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Date: Thu, 17 May 2018 14:19:10 +0300
-Message-Id: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+Subject: [PATCH v8 09/15] dt: qcom: Add opp and thermal to the msm8996
+Date: Thu, 17 May 2018 14:19:09 +0300
+Message-Id: <1526555955-29960-10-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
@@ -32,244 +32,407 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
-
 Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 166 +++++++++++++++++++++++++++++++++++
- 4 files changed, 180 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 260 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152c..e6cf290 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
  
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -97,6 +98,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -109,6 +113,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
  
- 	{ .compatible = "nvidia,tegra124", },
+@@ -117,6 +124,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -129,6 +139,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
  
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
+@@ -155,6 +168,182 @@
+ 		};
+ 	};
  
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..a2b9fb2
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <422400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <844800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <960000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 <1228800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			clock-latency-ns = <200000>;
++		};
++	};
 +
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <403200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <806400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <883200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <940800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 <1248000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 <1555200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 <1632000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 <1708800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 <1785600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 <1824000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 <1920000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 <2073600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 <2150400000>;
++			clock-latency-ns = <200000>;
++		};
++	};
 +
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -163,18 +352,34 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
 +
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal1 {
+@@ -184,18 +389,34 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
 +
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	size_t len;
-+	int ret = 0;
-+	u32 versions;
-+	enum _msm8996_version msm8996_version;
-+	u8 *speedbin;
-+	struct device *cpu_dev_silver, *cpu_dev_gold;
-+	struct device_node *np;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct opp_table *opp_silver = NULL;
-+	struct opp_table *opp_gold = NULL;
-+
-+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-+	if (IS_ERR_OR_NULL(cpu_dev_silver))
-+		return PTR_ERR(cpu_dev_silver);
-+
-+	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-+	if (IS_ERR_OR_NULL(cpu_dev_gold))
-+		return PTR_ERR(cpu_dev_gold);
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-+	if (IS_ERR_OR_NULL(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-+	if (IS_ERR_OR_NULL(opp_silver)) {
-+		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_silver);
-+		goto free_np;
-+	}
-+
-+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-+	if (IS_ERR_OR_NULL(opp_gold)) {
-+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_gold);
-+		goto free_opp_silver;
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR_OR_NULL(pdev))
-+		goto out;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-+	dev_pm_opp_put_supported_hw(opp_gold);
-+
-+free_opp_silver:
-+	dev_pm_opp_put_supported_hw(opp_silver);
-+
-+free_np:
-+	of_node_put(np);
-+
-+out:
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -205,18 +426,33 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -226,9 +462,14 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+@@ -238,6 +479,16 @@
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
+@@ -414,7 +665,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+@@ -1001,7 +1252,7 @@
+ 
+ 				pinctrl-names = "default", "sleep";
+ 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
+-				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
++				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
+ 
+ 				vdda-supply = <&pm8994_l28>;
+ 
 -- 
 1.9.1
