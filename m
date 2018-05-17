@@ -1,65 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeEQP7u (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:59:50 -0400
-Received: from mail1.microway.com ([50.245.10.177]:45574 "EHLO microway.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751047AbeEQP7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:59:48 -0400
-Subject: Re: [bisected] rcu_sched detected stalls - 4.15 or newer kernel with
- some Xeon skylake CPUs and extended APIC
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <831e8a53-05d1-edfb-6287-fecfba22b8bd@microway.com>
- <b346f6d2-dd4e-d19b-099e-633045e88f4b@microway.com>
- <alpine.DEB.2.21.1805152208590.1605@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1805161642040.1627@nanos.tec.linutronix.de>
- <cb8012ab-2599-90fd-ca9f-6d1baeea5b12@microway.com>
- <alpine.DEB.2.21.1805171418210.1947@nanos.tec.linutronix.de>
-From: Rick Warner <rick@microway.com>
-Message-ID: <df100e7c-ffd9-5afe-41c2-fb00f43bc255@microway.com>
-Date: Thu, 17 May 2018 11:59:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752539AbeEQQAR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:00:17 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56143 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeEQQAQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 12:00:16 -0400
+Date: Thu, 17 May 2018 17:59:40 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <1412187220.62585.1526572780332@email.1und1.de>
+In-Reply-To: <20180517131727.29263-1-eric@anholt.net>
+References: <20180517131727.29263-1-eric@anholt.net>
+Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1805171418210.1947@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:I90nzdkZM7NUSEsuaRFdLxzZ8I8Qn/S0vO/TgUNyx3sQDtpPQfP
+ 6VQ6XT9ICxDu1Mav8hX/U37Kg9N6vS1GtrlMX9hmoftmsq/I8gXdwvZdKSR8NM0w1Rc2XKi
+ 8bxQY0QD9lzvHrwlk3Mh4XsBEQJM4GqqYQiJ9eBXpr2d2eOFrMielM21QmBm6agKmBqh8Ji
+ wGkVoZhp8K6iGni85J99g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BiAWei0QUJE=:W+I8cSveR/1nUDgHkiNqQL
+ ZqQg3laTR8F4QooH8IfNRkx2P+6sYO5xZjduIWKs03By6+HFhfMPFdbBFdinpzUGhDHBWHndJ
+ fdBpUqmWYa3L6vH0BzTgVz4jcpHkHeiyaAUQnOtg0sxzd2dMUMH8tbxyw3aNZ0DUy68w3GML/
+ vYxYuvN+XjvaBBy1aqcPMM2bGeS2vSbrhkQbJskifEQjnvx+j0q8UnYqGYOS+IyvigApW55nO
+ jpNqynPWCeNknTcXIzLnWKVb5oF4vbpWOczKe12NnMa+1Z+Jf3Qwa5jlYK+7uOhke6CEcNPTe
+ kO9nz3fwVhnaSZH3L8/zQYcMYGdKAECaF69bZRfGbF29EWsWHq5U3ZZf73tjeOA9n0G5chA9T
+ hMuHKPGcr+ZWHJ6zyC1ewJ6g+6fFifUTbPcEZkxISwO53KmyJ9xFGbzeJMs8v4EMr6DfBhu5t
+ aCk4Cx5CH+U4FNzbs8ezoIP5Iwxk5eHOx2+/RSt1nAm/Yrk0TXTRFZqi4OEcGvMW+R43OKzDr
+ vK/hsrQrOCXEfb/L5gpnOJDb/8RmSkJEo+beNFNn7GuJc00XzVm82MBPA9B2lxinri4YKJFiz
+ gpGAC/yZkSE5s1dZTdTxV99vFLXO6lJnSixPDDHPuwFmb+eBJFZswxEMdcBfU0/Me7mlQLmjV
+ rCIUuhaU9sazRKnODPwpV0MoXwpwMz3oX9vp2vVvG2kmHDEQl4xECS/40rNBC3Kji44dOiZrE
+ OO6lz47WWhREfwbj
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Success!
 
-This resolved the issue.  Thanks Thomas!
+> Eric Anholt <eric@anholt.net> hat am 17. Mai 2018 um 15:17 geschrieben:
+> 
+> 
+> The a53 and a7 counters seem to match up, so we advertise a7 so that
+> arm32 can probe.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Rick
-
-On 05/17/18 08:36, Thomas Gleixner wrote:
-> Rick,
->
-> On Wed, 16 May 2018, Rick Warner wrote:
->
->> I've attached the dmesg output with the kernel parameter and supplied patch.
-> Thanks for providing the data. I think I know what's wrong here. Does the
-> patch below fix your problem?
->
-> While you test, I go looking for a big brown paperbag.
->
-> Thanks,
->
-> 	tglx
->
-> 8<----------------
->
-> --- a/arch/x86/kernel/apic/x2apic_cluster.c
-> +++ b/arch/x86/kernel/apic/x2apic_cluster.c
-> @@ -124,6 +124,7 @@ static void init_x2apic_ldr(void)
->  			goto update;
->  	}
->  	cmsk = cluster_hotplug_mask;
-> +	cmsk->clusterid = cluster;
->  	cluster_hotplug_mask = NULL;
->  update:
->  	this_cpu_write(cluster_masks, cmsk);
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
