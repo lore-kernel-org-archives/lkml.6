@@ -1,213 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeEQKtz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:49:55 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51310 "EHLO pegase1.c-s.fr"
+        id S1752096AbeEQKuD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:50:03 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:6258 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751097AbeEQKtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:49:52 -0400
-Message-Id: <68d0167111d06a8b21d7e52140bf399d79979e3b.1526553552.git.christophe.leroy@c-s.fr>
+        id S1752060AbeEQKuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:50:00 -0400
+Message-Id: <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1526553552.git.christophe.leroy@c-s.fr>
 References: <cover.1526553552.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 1/5] powerpc/lib: move PPC32 specific functions out of
- string.S
+Subject: [PATCH v2 5/5] powerpc/lib: inline memcmp() for small constant sizes
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu, 17 May 2018 12:49:50 +0200 (CEST)
+Date: Thu, 17 May 2018 12:49:58 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of optimisation patches, move PPC32 specific
-memcmp() and __clear_user() into string_32.S
+In my 8xx configuration, I get 208 calls to memcmp()
+Within those 208 calls, about half of them have constant sizes,
+46 have a size of 8, 17 have a size of 16, only a few have a
+size over 16. Other fixed sizes are mostly 4, 6 and 10.
+
+This patch inlines calls to memcmp() when size
+is constant and lower than or equal to 16
+
+In my 8xx configuration, this reduces the number of calls
+to memcmp() from 208 to 123
+
+The following table shows the number of TB timeticks to perform
+a constant size memcmp() before and after the patch depending on
+the size
+
+	Before	After	Improvement
+01:	 7577	 5682	25%
+02:	41668	 5682	86%
+03:	51137	13258	74%
+04:	45455	 5682	87%
+05:	58713	13258	77%
+06:	58712	13258	77%
+07:	68183	20834	70%
+08:	56819	15153	73%
+09:	70077	28411	60%
+10:	70077	28411	60%
+11:	79546	35986	55%
+12:	68182	28411	58%
+13:	81440	35986	55%
+14:	81440	39774	51%
+15:	94697	43562	54%
+16:	79546	37881	52%
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/lib/Makefile    |  5 +--
- arch/powerpc/lib/string.S    | 61 ------------------------------------
- arch/powerpc/lib/string_32.S | 74 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 77 insertions(+), 63 deletions(-)
- create mode 100644 arch/powerpc/lib/string_32.S
+ arch/powerpc/include/asm/string.h | 46 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
-index 653901042ad7..2c9b8c0adf22 100644
---- a/arch/powerpc/lib/Makefile
-+++ b/arch/powerpc/lib/Makefile
-@@ -26,13 +26,14 @@ obj-$(CONFIG_PPC_BOOK3S_64) += copyuser_power7.o copypage_power7.o \
- 			       memcpy_power7.o
+diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
+index 35f1aaad9b50..80cf0f9605dd 100644
+--- a/arch/powerpc/include/asm/string.h
++++ b/arch/powerpc/include/asm/string.h
+@@ -4,6 +4,8 @@
  
- obj64-y	+= copypage_64.o copyuser_64.o mem_64.o hweight_64.o \
--	   string_64.o memcpy_64.o memcmp_64.o pmem.o
-+	   memcpy_64.o memcmp_64.o pmem.o
+ #ifdef __KERNEL__
  
- obj64-$(CONFIG_SMP)	+= locks.o
- obj64-$(CONFIG_ALTIVEC)	+= vmx-helper.o
- obj64-$(CONFIG_KPROBES_SANITY_TEST) += test_emulate_step.o
++#include <linux/kernel.h>
++
+ #define __HAVE_ARCH_STRNCPY
+ #define __HAVE_ARCH_STRNCMP
+ #define __HAVE_ARCH_MEMSET
+@@ -51,10 +53,54 @@ static inline int strncmp(const char *p, const char *q, __kernel_size_t size)
+ 	return __strncmp(p, q, size);
+ }
  
--obj-y			+= checksum_$(BITS).o checksum_wrappers.o
-+obj-y			+= checksum_$(BITS).o checksum_wrappers.o \
-+			   string_$(BITS).o
++static inline int __memcmp1(const void *p, const void *q, int off)
++{
++	return *(u8*)(p + off) - *(u8*)(q + off);
++}
++
++static inline int __memcmp2(const void *p, const void *q, int off)
++{
++	return be16_to_cpu(*(u16*)(p + off)) - be16_to_cpu(*(u16*)(q + off));
++}
++
++static inline int __memcmp4(const void *p, const void *q, int off)
++{
++	return be32_to_cpu(*(u32*)(p + off)) - be32_to_cpu(*(u32*)(q + off));
++}
++
++static inline int __memcmp8(const void *p, const void *q, int off)
++{
++	s64 tmp = be64_to_cpu(*(u64*)(p + off)) - be64_to_cpu(*(u64*)(q + off));
++	return tmp >> 32 ? : (int)tmp;
++}
++
++static inline int __memcmp_cst(const void *p,const void *q,__kernel_size_t size)
++{
++	if (size == 1)
++		return __memcmp1(p, q, 0);
++	if (size == 2)
++		return __memcmp2(p, q, 0);
++	if (size == 3)
++		return __memcmp2(p, q, 0) ? : __memcmp1(p, q, 2);
++	if (size == 4)
++		return __memcmp4(p, q, 0);
++	if (size == 5)
++		return __memcmp4(p, q, 0) ? : __memcmp1(p, q, 4);
++	if (size == 6)
++		return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4);
++	if (size == 7)
++		return __memcmp4(p, q, 0) ? : __memcmp2(p, q, 4) ? : __memcmp1(p, q, 6);
++	return __memcmp8(p, q, 0);
++}
++
+ static inline int memcmp(const void *p,const void *q,__kernel_size_t size)
+ {
+ 	if (unlikely(!size))
+ 		return 0;
++	if (__builtin_constant_p(size) && size <= 8)
++		return __memcmp_cst(p, q, size);
++	if (__builtin_constant_p(size) && size <= 16)
++		return __memcmp8(p, q, 0) ? : __memcmp_cst(p + 8, q + 8, size - 8);
+ 	return __memcmp(p, q, size);
+ }
  
- obj-y			+= sstep.o ldstfp.o quad.o
- obj64-y			+= quad.o
-diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
-index a026d8fa8a99..0ef189847337 100644
---- a/arch/powerpc/lib/string.S
-+++ b/arch/powerpc/lib/string.S
-@@ -59,23 +59,6 @@ _GLOBAL(strncmp)
- 	blr
- EXPORT_SYMBOL(strncmp)
- 
--#ifdef CONFIG_PPC32
--_GLOBAL(memcmp)
--	PPC_LCMPI 0,r5,0
--	beq-	2f
--	mtctr	r5
--	addi	r6,r3,-1
--	addi	r4,r4,-1
--1:	lbzu	r3,1(r6)
--	lbzu	r0,1(r4)
--	subf.	r3,r0,r3
--	bdnzt	2,1b
--	blr
--2:	li	r3,0
--	blr
--EXPORT_SYMBOL(memcmp)
--#endif
--
- _GLOBAL(memchr)
- 	PPC_LCMPI 0,r5,0
- 	beq-	2f
-@@ -91,47 +74,3 @@ _GLOBAL(memchr)
- 2:	li	r3,0
- 	blr
- EXPORT_SYMBOL(memchr)
--
--#ifdef CONFIG_PPC32
--_GLOBAL(__clear_user)
--	addi	r6,r3,-4
--	li	r3,0
--	li	r5,0
--	cmplwi	0,r4,4
--	blt	7f
--	/* clear a single word */
--11:	stwu	r5,4(r6)
--	beqlr
--	/* clear word sized chunks */
--	andi.	r0,r6,3
--	add	r4,r0,r4
--	subf	r6,r0,r6
--	srwi	r0,r4,2
--	andi.	r4,r4,3
--	mtctr	r0
--	bdz	7f
--1:	stwu	r5,4(r6)
--	bdnz	1b
--	/* clear byte sized chunks */
--7:	cmpwi	0,r4,0
--	beqlr
--	mtctr	r4
--	addi	r6,r6,3
--8:	stbu	r5,1(r6)
--	bdnz	8b
--	blr
--90:	mr	r3,r4
--	blr
--91:	mfctr	r3
--	slwi	r3,r3,2
--	add	r3,r3,r4
--	blr
--92:	mfctr	r3
--	blr
--
--	EX_TABLE(11b, 90b)
--	EX_TABLE(1b, 91b)
--	EX_TABLE(8b, 92b)
--
--EXPORT_SYMBOL(__clear_user)
--#endif
-diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
-new file mode 100644
-index 000000000000..ab8c4f5f31b6
---- /dev/null
-+++ b/arch/powerpc/lib/string_32.S
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * String handling functions for PowerPC32
-+ *
-+ * Copyright (C) 2018 CS Systemes d'Information
-+ *
-+ * Author: Christophe Leroy <christophe.leroy@c-s.fr>
-+ *
-+ */
-+
-+#include <asm/processor.h>
-+#include <asm/errno.h>
-+#include <asm/ppc_asm.h>
-+#include <asm/export.h>
-+
-+	.text
-+
-+_GLOBAL(memcmp)
-+	PPC_LCMPI 0,r5,0
-+	beq-	2f
-+	mtctr	r5
-+	addi	r6,r3,-1
-+	addi	r4,r4,-1
-+1:	lbzu	r3,1(r6)
-+	lbzu	r0,1(r4)
-+	subf.	r3,r0,r3
-+	bdnzt	2,1b
-+	blr
-+2:	li	r3,0
-+	blr
-+EXPORT_SYMBOL(memcmp)
-+
-+_GLOBAL(__clear_user)
-+	addi	r6,r3,-4
-+	li	r3,0
-+	li	r5,0
-+	cmplwi	0,r4,4
-+	blt	7f
-+	/* clear a single word */
-+11:	stwu	r5,4(r6)
-+	beqlr
-+	/* clear word sized chunks */
-+	andi.	r0,r6,3
-+	add	r4,r0,r4
-+	subf	r6,r0,r6
-+	srwi	r0,r4,2
-+	andi.	r4,r4,3
-+	mtctr	r0
-+	bdz	7f
-+1:	stwu	r5,4(r6)
-+	bdnz	1b
-+	/* clear byte sized chunks */
-+7:	cmpwi	0,r4,0
-+	beqlr
-+	mtctr	r4
-+	addi	r6,r6,3
-+8:	stbu	r5,1(r6)
-+	bdnz	8b
-+	blr
-+90:	mr	r3,r4
-+	blr
-+91:	mfctr	r3
-+	slwi	r3,r3,2
-+	add	r3,r3,r4
-+	blr
-+92:	mfctr	r3
-+	blr
-+
-+	EX_TABLE(11b, 90b)
-+	EX_TABLE(1b, 91b)
-+	EX_TABLE(8b, 92b)
-+
-+EXPORT_SYMBOL(__clear_user)
 -- 
 2.13.3
