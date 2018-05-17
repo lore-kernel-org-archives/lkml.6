@@ -1,100 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeEQMCB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:02:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751179AbeEQMCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:02:00 -0400
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
- <20180516123909.GB986@debian>
- <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
- <20180516134550.GB4171@debian>
- <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
- <20180516143332.GA1957@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
-Date: Thu, 17 May 2018 20:01:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751839AbeEQMFJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:05:09 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:5698 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750938AbeEQMFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 08:05:06 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v3 1/4] rtc: stm32: fix misspelling and misalignment issues
+Date: Thu, 17 May 2018 14:04:23 +0200
+Message-ID: <1526558666-24243-2-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526558666-24243-1-git-send-email-amelie.delaunay@st.com>
+References: <1526558666-24243-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180516143332.GA1957@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch cleans the following checkpatch complaints:
 
+CHECK: 'initalized' may be misspelled - perhaps 'initialized'?
+#644: FILE: drivers/rtc/rtc-stm32.c:644:
++	 * the calendar has been initalized or not. INITS flag is reset by a
 
-On 2018年05月16日 22:33, Tiwei Bie wrote:
-> On Wed, May 16, 2018 at 10:05:44PM +0800, Jason Wang wrote:
->> On 2018年05月16日 21:45, Tiwei Bie wrote:
->>> On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
->>>> On 2018年05月16日 20:39, Tiwei Bie wrote:
->>>>> On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
->>>>>> On 2018年05月16日 16:37, Tiwei Bie wrote:
-> [...]
->>>>>>> +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
->>>>>>> +			      unsigned int id, void **ctx)
->>>>>>> +{
->>>>>>> +	struct vring_packed_desc *desc;
->>>>>>> +	unsigned int i, j;
->>>>>>> +
->>>>>>> +	/* Clear data ptr. */
->>>>>>> +	vq->desc_state[id].data = NULL;
->>>>>>> +
->>>>>>> +	i = head;
->>>>>>> +
->>>>>>> +	for (j = 0; j < vq->desc_state[id].num; j++) {
->>>>>>> +		desc = &vq->vring_packed.desc[i];
->>>>>>> +		vring_unmap_one_packed(vq, desc);
->>>>>> As mentioned in previous discussion, this probably won't work for the case
->>>>>> of out of order completion since it depends on the information in the
->>>>>> descriptor ring. We probably need to extend ctx to record such information.
->>>>> Above code doesn't depend on the information in the descriptor
->>>>> ring. The vq->desc_state[] is the extended ctx.
->>>>>
->>>>> Best regards,
->>>>> Tiwei Bie
->>>> Yes, but desc is a pointer to descriptor ring I think so
->>>> vring_unmap_one_packed() still depends on the content of descriptor ring?
->>>>
->>> I got your point now. I think it makes sense to reserve
->>> the bits of the addr field. Driver shouldn't try to get
->>> addrs from the descriptors when cleanup the descriptors
->>> no matter whether we support out-of-order or not.
->> Maybe I was wrong, but I remember spec mentioned something like this.
-> You're right. Spec mentioned this. I was just repeating
-> the spec to emphasize that it does make sense. :)
->
->>> But combining it with the out-of-order support, it will
->>> mean that the driver still needs to maintain a desc/ctx
->>> list that is very similar to the desc ring in the split
->>> ring. I'm not quite sure whether it's something we want.
->>> If it is true, I'll do it. So do you think we also want
->>> to maintain such a desc/ctx list for packed ring?
->> To make it work for OOO backends I think we need something like this
->> (hardware NIC drivers are usually have something like this).
-> Which hardware NIC drivers have this?
+CHECK: Alignment should match open parenthesis
+#669: FILE: drivers/rtc/rtc-stm32.c:669:
++	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
++			&stm32_rtc_ops, THIS_MODULE);
 
-It's quite common I think, e.g driver track e.g dma addr and page frag 
-somewhere. e.g the ring->rx_info in mlx4 driver.
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/rtc/rtc-stm32.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks
-
->
->> Not for the patch, but it looks like having a OUT_OF_ORDER feature bit is
->> much more simpler to be started with.
-> +1
->
-> Best regards,
-> Tiwei Bie
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index de49b5b..d41f804 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -641,7 +641,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 
+ 	/*
+ 	 * After a system reset, RTC_ISR.INITS flag can be read to check if
+-	 * the calendar has been initalized or not. INITS flag is reset by a
++	 * the calendar has been initialized or not. INITS flag is reset by a
+ 	 * power-on reset (no vbat, no power-supply). It is not reset if
+ 	 * rtc_ck parent clock has changed (so RTC prescalers need to be
+ 	 * changed). That's why we cannot rely on this flag to know if RTC
+@@ -666,7 +666,7 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 			 "alarm won't be able to wake up the system");
+ 
+ 	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+-			&stm32_rtc_ops, THIS_MODULE);
++						&stm32_rtc_ops, THIS_MODULE);
+ 	if (IS_ERR(rtc->rtc_dev)) {
+ 		ret = PTR_ERR(rtc->rtc_dev);
+ 		dev_err(&pdev->dev, "rtc device registration failed, err=%d\n",
+-- 
+2.7.4
