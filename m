@@ -1,137 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeEQOyt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:54:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752383AbeEQOyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:54:47 -0400
-Date: Thu, 17 May 2018 07:56:14 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <1525357015.5577.2.camel@gmx.de>
- <20180503144450.GD12217@hirez.programming.kicks-ass.net>
- <20180503161231.GI26088@linux.vnet.ibm.com>
- <20180503164508.GG12217@hirez.programming.kicks-ass.net>
- <1526358626.19125.0.camel@gmx.de>
- <20180517140345.GI3803@linux.vnet.ibm.com>
- <20180517142322.GU12217@hirez.programming.kicks-ass.net>
+        id S1752550AbeEQOzR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:55:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58380 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752030AbeEQOzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:55:15 -0400
+Date: Thu, 17 May 2018 10:55:13 -0400
+From: Peter Jones <pjones@redhat.com>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
+        ard.biesheuvel@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+Message-ID: <20180517145512.cmr3twodfyz7lzon@redhat.com>
+References: <1526563343-28721-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180517142322.GU12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051714-0024-0000-0000-0000035A7E4C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009041; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01033651; UDB=6.00528543; IPR=6.00812779;
- MB=3.00021163; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-17 14:54:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051714-0025-0000-0000-0000480BEC23
-Message-Id: <20180517145614.GK3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805170138
+In-Reply-To: <1526563343-28721-1-git-send-email-okaya@codeaurora.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 04:23:22PM +0200, Peter Zijlstra wrote:
-> On Thu, May 17, 2018 at 07:03:45AM -0700, Paul E. McKenney wrote:
-> > On Tue, May 15, 2018 at 06:30:26AM +0200, Mike Galbraith wrote:
-> > I have not queued it, but given Peter's Signed-off-by and your Tested-by
-> > I would be happy to do so.
+On Thu, May 17, 2018 at 09:22:23AM -0400, Sinan Kaya wrote:
+> A host bridge is allowed to remap BAR addresses using _TRA attribute in
+> _CRS windows.
 > 
-> And a Changelog of course :-)
+> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff window] (bus address [0x00100000-0x1fffffff])
+> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
+> 
+> When a VGA device is behind such a host bridge and the resource is
+> translated efifb driver is trying to do ioremap against bus address
+> rather than the resource address and is failing to probe.
+> 
+> efifb driver is having difficulty locating the base address from BAR
+> address when
+> 
+> efifb: probing for efifb
+> efifb: cannot reserve video memory at 0x1e000000
+> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
+> efifb: mode is 800x600x32, linelength=3200, pages=1
+> efifb: scrolling: redraw
+> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
+> 
+> Use the host bridge offset information to convert bus address to
+> resource address in the fixup.
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 
-Thank you both!
+Looks reasonable to me - Ard, do you want to take this up through the
+EFI tree?
 
-Is this OK for 4.19, or do we need it for 4.18?  I am guessing 4.18,
-but figured I should ask before wildly rebasing the 82 commits destined
-for 4.19.  ;-)
-
-							Thanx, Paul
+Signed-off-by: Peter Jones <pjones@redhat.com>
 
 > ---
-> From: Peter Zijlstra <peterz@infradead.org>
-> Subject: rcu/x86: Provide early rcu_cpu_starting() callback
+>  drivers/video/fbdev/efifb.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> The x86/mtrr code does horrific things because hardware. It uses
-> stop_machine_from_inactive_cpu(), which does a wakeup (of the stopper
-> thread on another CPU), which uses RCU, all before the CPU is onlined.
+> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+> index 46a4484..ea68d5c 100644
+> --- a/drivers/video/fbdev/efifb.c
+> +++ b/drivers/video/fbdev/efifb.c
+> @@ -428,6 +428,8 @@ static void efifb_fixup_resources(struct pci_dev *dev)
+>  {
+>  	u64 base = screen_info.lfb_base;
+>  	u64 size = screen_info.lfb_size;
+> +	struct pci_bus_region region;
+> +	struct resource res;
+>  	int i;
+>  
+>  	if (efifb_pci_dev || screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
+> @@ -439,6 +441,14 @@ static void efifb_fixup_resources(struct pci_dev *dev)
+>  	if (!base)
+>  		return;
+>  
+> +	region.start = base;
+> +	region.end = base + size - 1;
+> +	res.start = 0;
+> +	res.flags = IORESOURCE_MEM;
+> +	pcibios_bus_to_resource(dev->bus, &res, &region);
+> +	if (res.start)
+> +		base = res.start;
+> +
+>  	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
+>  		struct resource *res = &dev->resource[i];
+>  
+> -- 
+> 2.7.4
 > 
-> RCU complains about this, because wakeups use RCU and RCU does
-> (rightfully) not consider offline CPUs for grace-periods.
-> 
-> Fix this by initializing RCU way early in the MTRR case.
-> 
-> Tested-by: Mike Galbraith <efault@gmx.de>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> 
-> > > > diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-> > > > index 7468de429087..07360523c3ce 100644
-> > > > --- a/arch/x86/kernel/cpu/mtrr/main.c
-> > > > +++ b/arch/x86/kernel/cpu/mtrr/main.c
-> > > > @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
-> > > >  
-> > > >  	if (!use_intel() || mtrr_aps_delayed_init)
-> > > >  		return;
-> > > > +
-> > > > +	rcu_cpu_starting(smp_processor_id());
-> > > > +
-> > > >  	/*
-> > > >  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
-> > > >  	 * changed, but this routine will be called in cpu boot time,
-> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > > index 2a734692a581..4dab46950fdb 100644
-> > > > --- a/kernel/rcu/tree.c
-> > > > +++ b/kernel/rcu/tree.c
-> > > > @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > +static DEFINE_PER_CPU(int, rcu_cpu_started);
-> > > > +
-> > > >  /*
-> > > >   * Mark the specified CPU as being online so that subsequent grace periods
-> > > >   * (both expedited and normal) will wait on it.  Note that this means that
-> > > > @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
-> > > >  	struct rcu_node *rnp;
-> > > >  	struct rcu_state *rsp;
-> > > >  
-> > > > +	if (per_cpu(rcu_cpu_started, cpu))
-> > > > +		return;
-> > > > +
-> > > > +	per_cpu(rcu_cpu_started, cpu) = 1;
-> > > > +
-> > > >  	for_each_rcu_flavor(rsp) {
-> > > >  		rdp = per_cpu_ptr(rsp->rda, cpu);
-> > > >  		rnp = rdp->mynode;
-> > > > @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
-> > > >  	preempt_enable();
-> > > >  	for_each_rcu_flavor(rsp)
-> > > >  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
-> > > > +
-> > > > +	per_cpu(rcu_cpu_started, cpu) = 0;
-> > > >  }
-> > > >  
-> > > >  /* Migrate the dead CPU's callbacks to the current CPU. */
-> > > 
-> > 
-> 
+
+-- 
+  Peter
