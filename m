@@ -1,152 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeEQVIN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:08:13 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:43665 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeEQVIL (ORCPT
+        id S1752195AbeEQVIf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:08:35 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35262 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbeEQVIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:08:11 -0400
-Message-ID: <1526591280.9159.176.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 159/190] ipsec: check return value of skb_to_sgvec
- always
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Date: Thu, 17 May 2018 22:08:00 +0100
-In-Reply-To: <20180517091002.GH25318@kroah.com>
-References: <20180411183550.114495991@linuxfoundation.org>
-         <20180411183601.856116959@linuxfoundation.org>
-         <1526479082.9159.120.camel@codethink.co.uk>
-         <20180517091002.GH25318@kroah.com>
-Organization: Codethink Ltd.
-Content-Type: multipart/mixed; boundary="=-whUuwoWHN+d65Huw6Uyh"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Thu, 17 May 2018 17:08:34 -0400
+X-Google-Smtp-Source: AB8JxZrz0yk7oJfpJImINt3G0gHs7Fg5ShL2KKkSW/W32Kx9Fn3xOG/7tkPBmPkK1xNQFXkvzvEzCg==
+From: Michael Kelley <mhkelley58@gmail.com>
+X-Google-Original-From: Michael Kelley <mikelley@microsoft.com>
+To: kys@microsoft.com, sthemmin@microsoft.com, martin.petersen@oracle.com,
+        longli@microsoft.com, jejb@linux.vnet.ibm.com,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Cc: mikelley@microsoft.com
+Subject: [PATCH 1/1] scsi: storvsc: Avoid allocating memory for temp cpumasks
+Date: Thu, 17 May 2018 14:07:40 -0700
+Message-Id: <1526591260-27162-1-git-send-email-mikelley@microsoft.com>
+X-Mailer: git-send-email 2.7.4
+Reply-To: mikelley@microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Current code allocates 240 Kbytes (in typical configs) for
+each synthetic SCSI controller to use as temp cpumask variables.
+Recode to avoid needing the temp cpumask variables and remove the
+memory allocation.
 
---=-whUuwoWHN+d65Huw6Uyh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+---
 
-On Thu, 2018-05-17 at 11:10 +0200, Greg Kroah-Hartman wrote:
-> On Wed, May 16, 2018 at 02:58:02PM +0100, Ben Hutchings wrote:
-> > On Wed, 2018-04-11 at 20:36 +0200, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Jason A. Donenfeld <Jason@zx2c4.com>
-> > > 
-> > > commit 3f29770723fe498a5c5f57c3a31a996ebdde03e1 upstream.
-> > 
-> > [...]
-> > 
-> > This leaves the error paths in esp{4,6}.c leaking memory; fixed
-> > upstream by:
-> > 
-> > commit e6194923237f3952b955c343b65b211f36bce01c
-> > Author: Steffen Klassert <steffen.klassert@secunet.com>
-> > Date:   Thu Jul 13 09:13:30 2017 +0200
-> > 
-> >     esp: Fix memleaks on error paths.
-> 
-> Really?  That patch doesn't apply at all.  It looks like this patch
-> fixes things that happened after the above patch.
-> 
-> Or am I confused?
+This patch is for the 4.18/scsi-queue branch and improves on commit
+2217a47de42f on April 20, 2018.
 
-It's partly fixing bugs introduced in 4.12, but it's also fixing
-similar bugs introduced by the commit that has been backported to
-stable branches.
+---
+ drivers/scsi/storvsc_drv.c | 50 ++++++++++++++++++----------------------------
+ 1 file changed, 19 insertions(+), 31 deletions(-)
 
-I've attached a backport to 4.4 that will also work for 4.9 (it has
-identical versions of esp4 and esp6).  I would appreciate a review from
-those actually familiar with the code.  Also, it looks like
-esp6_input() still has a potential leak both upstream and in stable
-branches.
-
-Ben.
-
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index d3897c4..a667119 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -474,13 +474,6 @@ struct storvsc_device {
+ 	 * Mask of CPUs bound to subchannels.
+ 	 */
+ 	struct cpumask alloced_cpus;
+-	/*
+-	 * Pre-allocated struct cpumask for each hardware queue.
+-	 * struct cpumask is used by selecting out-going channels. It is a
+-	 * big structure, default to 1024k bytes when CONFIG_MAXSMP=y.
+-	 * Pre-allocate it to avoid allocation on the kernel stack.
+-	 */
+-	struct cpumask *cpumask_chns;
+ 	/* Used for vsc/vsp channel reset process */
+ 	struct storvsc_cmd_request init_request;
+ 	struct storvsc_cmd_request reset_request;
+@@ -885,13 +878,6 @@ static int storvsc_channel_init(struct hv_device *device, bool is_fc)
+ 	if (stor_device->stor_chns == NULL)
+ 		return -ENOMEM;
+ 
+-	stor_device->cpumask_chns = kcalloc(num_possible_cpus(),
+-			sizeof(struct cpumask), GFP_KERNEL);
+-	if (stor_device->cpumask_chns == NULL) {
+-		kfree(stor_device->stor_chns);
+-		return -ENOMEM;
+-	}
+-
+ 	stor_device->stor_chns[device->channel->target_cpu] = device->channel;
+ 	cpumask_set_cpu(device->channel->target_cpu,
+ 			&stor_device->alloced_cpus);
+@@ -1252,7 +1238,6 @@ static int storvsc_dev_remove(struct hv_device *device)
+ 	vmbus_close(device->channel);
+ 
+ 	kfree(stor_device->stor_chns);
+-	kfree(stor_device->cpumask_chns);
+ 	kfree(stor_device);
+ 	return 0;
+ }
+@@ -1262,7 +1247,7 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
+ {
+ 	u16 slot = 0;
+ 	u16 hash_qnum;
+-	struct cpumask *alloced_mask = &stor_device->cpumask_chns[q_num];
++	const struct cpumask *node_mask;
+ 	int num_channels, tgt_cpu;
+ 
+ 	if (stor_device->num_sc == 0)
+@@ -1278,10 +1263,13 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
+ 	 * III. Mapping is persistent.
+ 	 */
+ 
+-	cpumask_and(alloced_mask, &stor_device->alloced_cpus,
+-		    cpumask_of_node(cpu_to_node(q_num)));
++	node_mask = cpumask_of_node(cpu_to_node(q_num));
+ 
+-	num_channels = cpumask_weight(alloced_mask);
++	num_channels = 0;
++	for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
++		if (cpumask_test_cpu(tgt_cpu, node_mask))
++			num_channels++;
++	}
+ 	if (num_channels == 0)
+ 		return stor_device->device->channel;
+ 
+@@ -1289,7 +1277,9 @@ static struct vmbus_channel *get_og_chn(struct storvsc_device *stor_device,
+ 	while (hash_qnum >= num_channels)
+ 		hash_qnum -= num_channels;
+ 
+-	for_each_cpu(tgt_cpu, alloced_mask) {
++	for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
++		if (!cpumask_test_cpu(tgt_cpu, node_mask))
++			continue;
+ 		if (slot == hash_qnum)
+ 			break;
+ 		slot++;
+@@ -1308,7 +1298,7 @@ static int storvsc_do_io(struct hv_device *device,
+ 	struct vstor_packet *vstor_packet;
+ 	struct vmbus_channel *outgoing_channel, *channel;
+ 	int ret = 0;
+-	struct cpumask *alloced_mask;
++	const struct cpumask *node_mask;
+ 	int tgt_cpu;
+ 
+ 	vstor_packet = &request->vstor_packet;
+@@ -1329,11 +1319,11 @@ static int storvsc_do_io(struct hv_device *device,
+ 			 * Ideally, we want to pick a different channel if
+ 			 * available on the same NUMA node.
+ 			 */
+-			alloced_mask = &stor_device->cpumask_chns[q_num];
+-			cpumask_and(alloced_mask, &stor_device->alloced_cpus,
+-				    cpumask_of_node(cpu_to_node(q_num)));
+-
+-			for_each_cpu_wrap(tgt_cpu, alloced_mask, q_num + 1) {
++			node_mask = cpumask_of_node(cpu_to_node(q_num));
++			for_each_cpu_wrap(tgt_cpu,
++				 &stor_device->alloced_cpus, q_num + 1) {
++				if (!cpumask_test_cpu(tgt_cpu, node_mask))
++					continue;
+ 				if (tgt_cpu == q_num)
+ 					continue;
+ 				channel = stor_device->stor_chns[tgt_cpu];
+@@ -1359,10 +1349,9 @@ static int storvsc_do_io(struct hv_device *device,
+ 			 * NUMA node are busy. Try to find a channel in
+ 			 * other NUMA nodes
+ 			 */
+-			cpumask_andnot(alloced_mask, &stor_device->alloced_cpus,
+-					cpumask_of_node(cpu_to_node(q_num)));
+-
+-			for_each_cpu(tgt_cpu, alloced_mask) {
++			for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
++				if (cpumask_test_cpu(tgt_cpu, node_mask))
++					continue;
+ 				channel = stor_device->stor_chns[tgt_cpu];
+ 				if (hv_get_avail_to_write_percent(
+ 							&channel->outbound)
+@@ -1911,7 +1900,6 @@ static int storvsc_probe(struct hv_device *device,
+ 
+ err_out1:
+ 	kfree(stor_device->stor_chns);
+-	kfree(stor_device->cpumask_chns);
+ 	kfree(stor_device);
+ 
+ err_out0:
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
-
---=-whUuwoWHN+d65Huw6Uyh
-Content-Disposition: attachment; filename="0001-esp-Fix-memleaks-on-error-paths.patch"
-Content-Type: text/x-patch; name="0001-esp-Fix-memleaks-on-error-paths.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-RnJvbSBlNjE5NDkyMzIzN2YzOTUyYjk1NWMzNDNiNjViMjExZjM2YmNlMDFjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGVmZmVuIEtsYXNzZXJ0IDxzdGVmZmVuLmtsYXNzZXJ0QHNl
-Y3VuZXQuY29tPgpEYXRlOiBUaHUsIDEzIEp1bCAyMDE3IDA5OjEzOjMwICswMjAwClN1YmplY3Q6
-IFtQQVRDSF0gZXNwOiBGaXggbWVtbGVha3Mgb24gZXJyb3IgcGF0aHMuCgpXZSBsZWFrIHRoZSB0
-ZW1wb3JhcnkgYWxsb2NhdGVkIHJlc291cmNlcyBpbiBlcnJvciBwYXRocywKZml4IHRoaXMgYnkg
-ZnJlZWluZyB0aGVtLgoKRml4ZXM6IGZjYTExZWJkZTNmICgiZXNwNDogUmVvcmdhbml6ZSBlc3Bf
-b3V0cHV0IikKRml4ZXM6IDM4M2QwMzUwZjJjICgiZXNwNjogUmVvcmdhbml6ZSBlc3Bfb3V0cHV0
-IikKRml4ZXM6IDNmMjk3NzA3MjNmICgiaXBzZWM6IGNoZWNrIHJldHVybiB2YWx1ZSBvZiBza2Jf
-dG9fc2d2ZWMgYWx3YXlzIikKU2lnbmVkLW9mZi1ieTogU3RlZmZlbiBLbGFzc2VydCA8c3RlZmZl
-bi5rbGFzc2VydEBzZWN1bmV0LmNvbT4KLS0tCiBuZXQvaXB2NC9lc3A0LmMgfCAxMyArKysrKysr
-Ky0tLS0tCiBuZXQvaXB2Ni9lc3A2LmMgfCAgOSArKysrKy0tLS0KIDIgZmlsZXMgY2hhbmdlZCwg
-MTMgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvaXB2NC9l
-c3A0LmMgYi9uZXQvaXB2NC9lc3A0LmMKaW5kZXggMGNiZWUwYTY2NmZmLi5kYmIzMWE5NDJkZmEg
-MTAwNjQ0Ci0tLSBhL25ldC9pcHY0L2VzcDQuYworKysgYi9uZXQvaXB2NC9lc3A0LmMKQEAgLTM4
-MSw3ICszODEsNyBAQCBpbnQgZXNwX291dHB1dF90YWlsKHN0cnVjdCB4ZnJtX3N0YXRlICp4LCBz
-dHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1Y3QgZXNwX2luZm8gKgogCQkgICAgICAgICAgICh1bnNp
-Z25lZCBjaGFyICopZXNwaCAtIHNrYi0+ZGF0YSwKIAkJICAgICAgICAgICBhc3NvY2xlbiArIGl2
-bGVuICsgZXNwLT5jbGVuICsgYWxlbik7CiAJaWYgKHVubGlrZWx5KGVyciA8IDApKQotCQlnb3Rv
-IGVycm9yOworCQlnb3RvIGVycm9yX2ZyZWU7CiAKIAlpZiAoIWVzcC0+aW5wbGFjZSkgewogCQlp
-bnQgYWxsb2NzaXplOwpAQCAtMzkyLDcgKzM5Miw3IEBAIGludCBlc3Bfb3V0cHV0X3RhaWwoc3Ry
-dWN0IHhmcm1fc3RhdGUgKngsIHN0cnVjdCBza19idWZmICpza2IsIHN0cnVjdCBlc3BfaW5mbyAq
-CiAJCXNwaW5fbG9ja19iaCgmeC0+bG9jayk7CiAJCWlmICh1bmxpa2VseSghc2tiX3BhZ2VfZnJh
-Z19yZWZpbGwoYWxsb2NzaXplLCBwZnJhZywgR0ZQX0FUT01JQykpKSB7CiAJCQlzcGluX3VubG9j
-a19iaCgmeC0+bG9jayk7Ci0JCQlnb3RvIGVycm9yOworCQkJZ290byBlcnJvcl9mcmVlOwogCQl9
-CiAKIAkJc2tiX3NoaW5mbyhza2IpLT5ucl9mcmFncyA9IDE7CkBAIC00MDksNyArNDA5LDcgQEAg
-aW50IGVzcF9vdXRwdXRfdGFpbChzdHJ1Y3QgeGZybV9zdGF0ZSAqeCwgc3RydWN0IHNrX2J1ZmYg
-KnNrYiwgc3RydWN0IGVzcF9pbmZvICoKIAkJCSAgICAgICAgICAgKHVuc2lnbmVkIGNoYXIgKill
-c3BoIC0gc2tiLT5kYXRhLAogCQkJICAgICAgICAgICBhc3NvY2xlbiArIGl2bGVuICsgZXNwLT5j
-bGVuICsgYWxlbik7CiAJCWlmICh1bmxpa2VseShlcnIgPCAwKSkKLQkJCWdvdG8gZXJyb3I7CisJ
-CQlnb3RvIGVycm9yX2ZyZWU7CiAJfQogCiAJaWYgKCh4LT5wcm9wcy5mbGFncyAmIFhGUk1fU1RB
-VEVfRVNOKSkKQEAgLTQ0Miw4ICs0NDIsOSBAQCBpbnQgZXNwX291dHB1dF90YWlsKHN0cnVjdCB4
-ZnJtX3N0YXRlICp4LCBzdHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1Y3QgZXNwX2luZm8gKgogCiAJ
-aWYgKHNnICE9IGRzZykKIAkJZXNwX3NzZ191bnJlZih4LCB0bXApOwotCWtmcmVlKHRtcCk7CiAK
-K2Vycm9yX2ZyZWU6CisJa2ZyZWUodG1wKTsKIGVycm9yOgogCXJldHVybiBlcnI7CiB9CkBAIC02
-OTUsOCArNjk2LDEwIEBAIHNraXBfY293OgogCiAJc2dfaW5pdF90YWJsZShzZywgbmZyYWdzKTsK
-IAllcnIgPSBza2JfdG9fc2d2ZWMoc2tiLCBzZywgMCwgc2tiLT5sZW4pOwotCWlmICh1bmxpa2Vs
-eShlcnIgPCAwKSkKKwlpZiAodW5saWtlbHkoZXJyIDwgMCkpIHsKKwkJa2ZyZWUodG1wKTsKIAkJ
-Z290byBvdXQ7CisJfQogCiAJc2tiLT5pcF9zdW1tZWQgPSBDSEVDS1NVTV9OT05FOwogCmRpZmYg
-LS1naXQgYS9uZXQvaXB2Ni9lc3A2LmMgYi9uZXQvaXB2Ni9lc3A2LmMKaW5kZXggOWVkMzU0NzNk
-Y2I1Li4zOTJkZWYxZmNmMjEgMTAwNjQ0Ci0tLSBhL25ldC9pcHY2L2VzcDYuYworKysgYi9uZXQv
-aXB2Ni9lc3A2LmMKQEAgLTM0NSw3ICszNDUsNyBAQCBpbnQgZXNwNl9vdXRwdXRfdGFpbChzdHJ1
-Y3QgeGZybV9zdGF0ZSAqeCwgc3RydWN0IHNrX2J1ZmYgKnNrYiwgc3RydWN0IGVzcF9pbmZvCiAJ
-CSAgICAgICAgICAgKHVuc2lnbmVkIGNoYXIgKillc3BoIC0gc2tiLT5kYXRhLAogCQkgICAgICAg
-ICAgIGFzc29jbGVuICsgaXZsZW4gKyBlc3AtPmNsZW4gKyBhbGVuKTsKIAlpZiAodW5saWtlbHko
-ZXJyIDwgMCkpCi0JCWdvdG8gZXJyb3I7CisJCWdvdG8gZXJyb3JfZnJlZTsKIAogCWlmICghZXNw
-LT5pbnBsYWNlKSB7CiAJCWludCBhbGxvY3NpemU7CkBAIC0zNTYsNyArMzU2LDcgQEAgaW50IGVz
-cDZfb3V0cHV0X3RhaWwoc3RydWN0IHhmcm1fc3RhdGUgKngsIHN0cnVjdCBza19idWZmICpza2Is
-IHN0cnVjdCBlc3BfaW5mbwogCQlzcGluX2xvY2tfYmgoJngtPmxvY2spOwogCQlpZiAodW5saWtl
-bHkoIXNrYl9wYWdlX2ZyYWdfcmVmaWxsKGFsbG9jc2l6ZSwgcGZyYWcsIEdGUF9BVE9NSUMpKSkg
-ewogCQkJc3Bpbl91bmxvY2tfYmgoJngtPmxvY2spOwotCQkJZ290byBlcnJvcjsKKwkJCWdvdG8g
-ZXJyb3JfZnJlZTsKIAkJfQogCiAJCXNrYl9zaGluZm8oc2tiKS0+bnJfZnJhZ3MgPSAxOwpAQCAt
-MzczLDcgKzM3Myw3IEBAIGludCBlc3A2X291dHB1dF90YWlsKHN0cnVjdCB4ZnJtX3N0YXRlICp4
-LCBzdHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1Y3QgZXNwX2luZm8KIAkJCSAgICAgICAgICAgKHVu
-c2lnbmVkIGNoYXIgKillc3BoIC0gc2tiLT5kYXRhLAogCQkJICAgICAgICAgICBhc3NvY2xlbiAr
-IGl2bGVuICsgZXNwLT5jbGVuICsgYWxlbik7CiAJCWlmICh1bmxpa2VseShlcnIgPCAwKSkKLQkJ
-CWdvdG8gZXJyb3I7CisJCQlnb3RvIGVycm9yX2ZyZWU7CiAJfQogCiAJaWYgKCh4LT5wcm9wcy5m
-bGFncyAmIFhGUk1fU1RBVEVfRVNOKSkKQEAgLTQwNiw4ICs0MDYsOSBAQCBpbnQgZXNwNl9vdXRw
-dXRfdGFpbChzdHJ1Y3QgeGZybV9zdGF0ZSAqeCwgc3RydWN0IHNrX2J1ZmYgKnNrYiwgc3RydWN0
-IGVzcF9pbmZvCiAKIAlpZiAoc2cgIT0gZHNnKQogCQllc3Bfc3NnX3VucmVmKHgsIHRtcCk7Ci0J
-a2ZyZWUodG1wKTsKIAorZXJyb3JfZnJlZToKKwlrZnJlZSh0bXApOwogZXJyb3I6CiAJcmV0dXJu
-IGVycjsKIH0KLS0gCjIuMTEuMAoK
-
-
---=-whUuwoWHN+d65Huw6Uyh--
+2.7.4
