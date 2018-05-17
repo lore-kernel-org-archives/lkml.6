@@ -1,119 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeEQOy2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:54:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43908 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751481AbeEQOy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:54:26 -0400
-Date: Thu, 17 May 2018 17:54:24 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
-Message-ID: <1526568841-35372-1-git-send-email-mst@redhat.com>
+        id S1752547AbeEQOyt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:54:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752383AbeEQOyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:54:47 -0400
+Date: Thu, 17 May 2018 07:56:14 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+ <1525354359.5576.1.camel@gmx.de>
+ <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+ <1525357015.5577.2.camel@gmx.de>
+ <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+ <20180503161231.GI26088@linux.vnet.ibm.com>
+ <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+ <1526358626.19125.0.camel@gmx.de>
+ <20180517140345.GI3803@linux.vnet.ibm.com>
+ <20180517142322.GU12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mutt-Fcc: =sent
+In-Reply-To: <20180517142322.GU12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051714-0024-0000-0000-0000035A7E4C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009041; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01033651; UDB=6.00528543; IPR=6.00812779;
+ MB=3.00021163; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-17 14:54:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051714-0025-0000-0000-0000480BEC23
+Message-Id: <20180517145614.GK3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805170138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HINTS_DEDICATED seems to be somewhat confusing:
+On Thu, May 17, 2018 at 04:23:22PM +0200, Peter Zijlstra wrote:
+> On Thu, May 17, 2018 at 07:03:45AM -0700, Paul E. McKenney wrote:
+> > On Tue, May 15, 2018 at 06:30:26AM +0200, Mike Galbraith wrote:
+> > I have not queued it, but given Peter's Signed-off-by and your Tested-by
+> > I would be happy to do so.
+> 
+> And a Changelog of course :-)
 
-Guest doesn't really care whether it's the only task running on a host
-CPU as long as it's not preempted.
+Thank you both!
 
-And there are more reasons for Guest to be preempted than host CPU
-sharing, for example, with memory overcommit it can get preempted on a
-memory access, post copy migration can cause preemption, etc.
+Is this OK for 4.19, or do we need it for 4.18?  I am guessing 4.18,
+but figured I should ask before wildly rebasing the 82 commits destined
+for 4.19.  ;-)
 
-Let's call it KVM_HINTS_REALTIME which seems to better
-match what guests expect.
+							Thanx, Paul
 
-Also, the flag most be set on all vCPUs - current guests assume this.
-Note so in the documentation.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- Documentation/virtual/kvm/cpuid.txt  | 6 +++---
- arch/x86/include/uapi/asm/kvm_para.h | 2 +-
- arch/x86/kernel/kvm.c                | 8 ++++----
- 3 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index d4f33eb8..ab022dc 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -72,8 +72,8 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
- 
- flag                               || value || meaning
- ==================================================================================
--KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit to
--                                   ||       || determine if there is vCPU pinning
--                                   ||       || and there is no vCPU over-commitment,
-+KVM_HINTS_REALTIME                 ||     0 || guest checks this feature bit to
-+                                   ||       || determine that vCPUs are never
-+                                   ||       || preempted for an unlimited time,
-                                    ||       || allowing optimizations
- ----------------------------------------------------------------------------------
-diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
-index 4c851eb..0ede697 100644
---- a/arch/x86/include/uapi/asm/kvm_para.h
-+++ b/arch/x86/include/uapi/asm/kvm_para.h
-@@ -29,7 +29,7 @@
- #define KVM_FEATURE_PV_TLB_FLUSH	9
- #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
- 
--#define KVM_HINTS_DEDICATED      0
-+#define KVM_HINTS_REALTIME      0
- 
- /* The last 8 bits are used to indicate how to interpret the flags field
-  * in pvclock structure. If no bits are set, all flags are ignored.
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 7867417..5b2300b 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -457,7 +457,7 @@ static void __init sev_map_percpu_data(void)
- static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
- {
- 	native_smp_prepare_cpus(max_cpus);
--	if (kvm_para_has_hint(KVM_HINTS_DEDICATED))
-+	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
- 		static_branch_disable(&virt_spin_lock_key);
- }
- 
-@@ -553,7 +553,7 @@ static void __init kvm_guest_init(void)
- 	}
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
--	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
-+	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
- 	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
- 		pv_mmu_ops.flush_tlb_others = kvm_flush_tlb_others;
- 
-@@ -649,7 +649,7 @@ static __init int kvm_setup_pv_tlb_flush(void)
- 	int cpu;
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
--	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
-+	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
- 	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
- 		for_each_possible_cpu(cpu) {
- 			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
-@@ -745,7 +745,7 @@ void __init kvm_spinlock_init(void)
- 	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
- 		return;
- 
--	if (kvm_para_has_hint(KVM_HINTS_DEDICATED))
-+	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
- 		return;
- 
- 	__pv_init_lock_hash();
--- 
-MST
+> ---
+> From: Peter Zijlstra <peterz@infradead.org>
+> Subject: rcu/x86: Provide early rcu_cpu_starting() callback
+> 
+> The x86/mtrr code does horrific things because hardware. It uses
+> stop_machine_from_inactive_cpu(), which does a wakeup (of the stopper
+> thread on another CPU), which uses RCU, all before the CPU is onlined.
+> 
+> RCU complains about this, because wakeups use RCU and RCU does
+> (rightfully) not consider offline CPUs for grace-periods.
+> 
+> Fix this by initializing RCU way early in the MTRR case.
+> 
+> Tested-by: Mike Galbraith <efault@gmx.de>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+> 
+> > > > diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+> > > > index 7468de429087..07360523c3ce 100644
+> > > > --- a/arch/x86/kernel/cpu/mtrr/main.c
+> > > > +++ b/arch/x86/kernel/cpu/mtrr/main.c
+> > > > @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
+> > > >  
+> > > >  	if (!use_intel() || mtrr_aps_delayed_init)
+> > > >  		return;
+> > > > +
+> > > > +	rcu_cpu_starting(smp_processor_id());
+> > > > +
+> > > >  	/*
+> > > >  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
+> > > >  	 * changed, but this routine will be called in cpu boot time,
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index 2a734692a581..4dab46950fdb 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > +static DEFINE_PER_CPU(int, rcu_cpu_started);
+> > > > +
+> > > >  /*
+> > > >   * Mark the specified CPU as being online so that subsequent grace periods
+> > > >   * (both expedited and normal) will wait on it.  Note that this means that
+> > > > @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
+> > > >  	struct rcu_node *rnp;
+> > > >  	struct rcu_state *rsp;
+> > > >  
+> > > > +	if (per_cpu(rcu_cpu_started, cpu))
+> > > > +		return;
+> > > > +
+> > > > +	per_cpu(rcu_cpu_started, cpu) = 1;
+> > > > +
+> > > >  	for_each_rcu_flavor(rsp) {
+> > > >  		rdp = per_cpu_ptr(rsp->rda, cpu);
+> > > >  		rnp = rdp->mynode;
+> > > > @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
+> > > >  	preempt_enable();
+> > > >  	for_each_rcu_flavor(rsp)
+> > > >  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
+> > > > +
+> > > > +	per_cpu(rcu_cpu_started, cpu) = 0;
+> > > >  }
+> > > >  
+> > > >  /* Migrate the dead CPU's callbacks to the current CPU. */
+> > > 
+> > 
+> 
