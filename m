@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeEQLHv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:07:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53264 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752391AbeEQLHq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752392AbeEQLHq (ORCPT <rfc822;w@1wt.eu>);
         Thu, 17 May 2018 07:07:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752329AbeEQLHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 07:07:39 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -31,16 +31,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
         paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v11 25/26] powerpc/mm: add speculative page fault
-Date: Thu, 17 May 2018 13:06:32 +0200
+Subject: [PATCH v11 22/26] perf tools: add support for the SPF perf event
+Date: Thu, 17 May 2018 13:06:29 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051711-0020-0000-0000-0000041E3570
+x-cbid: 18051711-0044-0000-0000-000005537522
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051711-0021-0000-0000-000042B35787
-Message-Id: <1526555193-7242-26-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18051711-0045-0000-0000-00002894E900
+Message-Id: <1526555193-7242-23-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -52,54 +52,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enable the speculative page fault on the PowerPC
-architecture.
+Add support for the new speculative faults event.
 
-This will try a speculative page fault without holding the mmap_sem,
-if it returns with VM_FAULT_RETRY, the mmap_sem is acquired and the
-traditional page fault processing is done.
-
-The speculative path is only tried for multithreaded process as there is no
-risk of contention on the mmap_sem otherwise.
-
+Acked-by: David Rientjes <rientjes@google.com>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- arch/powerpc/mm/fault.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ tools/include/uapi/linux/perf_event.h | 1 +
+ tools/perf/util/evsel.c               | 1 +
+ tools/perf/util/parse-events.c        | 4 ++++
+ tools/perf/util/parse-events.l        | 1 +
+ tools/perf/util/python.c              | 1 +
+ 5 files changed, 8 insertions(+)
 
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index ef268d5d9db7..d7b5742ffb2b 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -465,6 +465,21 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 	if (is_exec)
- 		flags |= FAULT_FLAG_INSTRUCTION;
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index b8e288a1f740..e2b74c055f51 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -112,6 +112,7 @@ enum perf_sw_ids {
+ 	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
+ 	PERF_COUNT_SW_DUMMY			= 9,
+ 	PERF_COUNT_SW_BPF_OUTPUT		= 10,
++	PERF_COUNT_SW_SPF			= 11,
  
-+	/*
-+	 * Try speculative page fault before grabbing the mmap_sem.
-+	 * The Page fault is done if VM_FAULT_RETRY is not returned.
-+	 * But if the memory protection keys are active, we don't know if the
-+	 * fault is due to key mistmatch or due to a classic protection check.
-+	 * To differentiate that, we will need the VMA we no more have, so
-+	 * let's retry with the mmap_sem held.
-+	 */
-+	fault = handle_speculative_fault(mm, address, flags);
-+	if (fault != VM_FAULT_RETRY && (IS_ENABLED(CONFIG_PPC_MEM_KEYS) &&
-+					fault != VM_FAULT_SIGSEGV)) {
-+		perf_sw_event(PERF_COUNT_SW_SPF, 1, regs, address);
-+		goto done;
-+	}
-+
- 	/* When running in the kernel we expect faults to occur only to
- 	 * addresses in user space.  All other faults represent errors in the
- 	 * kernel and should generate an OOPS.  Unfortunately, in the case of an
-@@ -565,6 +580,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	PERF_COUNT_SW_MAX,			/* non-ABI */
+ };
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 4cd2cf93f726..088ed45c68c1 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -429,6 +429,7 @@ const char *perf_evsel__sw_names[PERF_COUNT_SW_MAX] = {
+ 	"alignment-faults",
+ 	"emulation-faults",
+ 	"dummy",
++	"speculative-faults",
+ };
  
- 	up_read(&current->mm->mmap_sem);
+ static const char *__perf_evsel__sw_name(u64 config)
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 2fb0272146d8..54719f566314 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -140,6 +140,10 @@ struct event_symbol event_symbols_sw[PERF_COUNT_SW_MAX] = {
+ 		.symbol = "bpf-output",
+ 		.alias  = "",
+ 	},
++	[PERF_COUNT_SW_SPF] = {
++		.symbol = "speculative-faults",
++		.alias	= "spf",
++	},
+ };
  
-+done:
- 	if (unlikely(fault & VM_FAULT_ERROR))
- 		return mm_fault_error(regs, address, fault);
+ #define __PERF_EVENT_FIELD(config, name) \
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index a1a01b1ac8b8..86584d3a3068 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -308,6 +308,7 @@ emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EM
+ dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
+ duration_time					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
+ bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
++speculative-faults|spf				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_SPF); }
  
+ 	/*
+ 	 * We have to handle the kernel PMU event cycles-ct/cycles-t/mem-loads/mem-stores separately.
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 863b61478edd..df4f7ff9bdff 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -1181,6 +1181,7 @@ static struct {
+ 	PERF_CONST(COUNT_SW_ALIGNMENT_FAULTS),
+ 	PERF_CONST(COUNT_SW_EMULATION_FAULTS),
+ 	PERF_CONST(COUNT_SW_DUMMY),
++	PERF_CONST(COUNT_SW_SPF),
+ 
+ 	PERF_CONST(SAMPLE_IP),
+ 	PERF_CONST(SAMPLE_TID),
 -- 
 2.7.4
