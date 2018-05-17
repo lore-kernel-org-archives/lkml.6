@@ -1,128 +1,149 @@
-Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr66hvsodABKGTx/OqRnJY4lsKLIs1tUXpLMnAntCceJMLraHFwQZ7SCHJRV+m86MkiXuEi
-ARC-Seal: i=1; a=rsa-sha256; t=1526631411; cv=none;
-        d=google.com; s=arc-20160816;
-        b=l5eabdJxR2t3HpHQnewf06ccVP75Cl3dNT+Xv7h8yt7c/dQ5PQINUX8iEd1aPF7yL2
-         Y4yHeVe7jsvvKDYvnieljdaQMkNufowavV8vvfsDAUZIN07QefLIZnysbl3TqsY1t0cS
-         i2N+sP7eWHsYphREFvidijgb+5daRswvd/XLsfZIJRqM2fTmh5S7QBcUE8HOQe1x1Yq2
-         Mo1mWHmMP+xUiY3gyFfRi23aU8GaASPvFeBsyyUh6nl7xDo7+KVo7fvfKooSnnpNLZWu
-         /nwFcZftSP1c8X4RT77fsiHjIzL6XRLVVmFY8y21avzIASmCw7RLsXxFUaqnBfOFd0i4
-         CQMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DkCIACLDyPFd42iv0Q0IJ4kBu+LH489KgrD9f8hr7MA=;
-        b=oCcepn4RtbZuBPyygsdtIu4SW6LFIsfCXbvVN+gjwnKrGUZJx6o6dYodfzUC8iPvxH
-         WkdWLbNw1di1NjokifKIz0JQXy/EeQ5ybxwCf0q/AnSSPaOl7Mp5ZmDs4PtOTwyhildP
-         FehMHmNny57Rm2mB/OzXIrJnF60qJUcz1OXCcb1sSgv3dyE4V1TFCc3yg3SgXyAFbh5x
-         SW7QXz3mvxB1yoJQ9dc0arOEQ/ysuOyCazyapClJcAO/xuSdWXDqQoPRfur1Ggb8HvPk
-         ESFhtjVKAdk0w22jKdTmS0Y2/Lxnw6XGmrjTy8qGc9trssEa/YgkNDBSEFuXLq5z4eKW
-         s4CA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ZPO7exlm;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ZPO7exlm;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Moshe Shemesh <moshe@mellanox.com>,
-	Tariq Toukan <tariqt@mellanox.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 10/55] net/mlx4_en: Verify coalescing parameters are in range
-Date: Fri, 18 May 2018 10:15:06 +0200
-Message-Id: <20180518081457.886295717@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
-References: <20180518081457.428920292@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1376423-1526531699-2-772809287213848309
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526531698; b=OiXwllK4ke22OBMDZUxQA6RPxBYEdanoDH7xlxNw5/OIYJsWGU
+    xpVBqJEbWm3sDCfkWVbz5ase3peL/r7TzGz9XsIfM1eOqiPhTPd8T4gn73UTy/UX
+    OwMfefgaf0HCcVRFpxq1Ya+/tCcfEtn2rZLVD9Hmlf05huSfkhnkpZd3rmg2bWHa
+    xJ0jhqXeHhVbRpkIhKTMbm1TRC6h+9rM/JF56WjmEXg2SC3wbpwvQhgOyUcH9w2A
+    qJswmovg7IJRRFXqLJ/BtgnFb7uypZg1zPx3qoB7RhFC8PN2r1ysMs1ZSjGZSJq1
+    2bBZKjqxqXy8o4OBgdHd65sbil4Rhko7/qSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526531698; bh=y/sOzhmUCakpWB45y4hWTaWNv3KAYC
+    i06CZZTVldsOo=; b=H0mQiMnfSrgTGWzj8RcXuRTAqRbfARqa68fSScNgqbuibP
+    zuLQdbNWzTnPmLq6e2gDgAWxuZ/qOqZRuxDgyIrjjxBS0LWuYDyy3HtHGkI1tbjq
+    YfUWUw0wnN+VgwDmCkQpafVASQQIIfSKQOwSl+GJLiu1/Uh9JlTVOAvXSGvH/FKt
+    JNpbtNaiu/VQEKmE17Ozhlt66DxqzJujPt5hdeFAc+qesKSzWLb9U2UOwlDTaxTS
+    MxnypDOgkoeY617kXfvUqVp7X8eL1cb6zVRBtoz+0pxKW5v94G4VIiVzmtsYuEMO
+    rlYJ7BiJvEEQSFRfW9em2Mpd2OcgFLLZbcenigdA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=MQwfOehx x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=d/2lcfwK;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=MQwfOehx x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=d/2lcfwK;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfC4NRdWETTdD+LmVshvG/OYiX7i2dnB0QONv1v916FZC8xZMKP+DIkoGokdpyNO4wEqrKn1ivywpyVhC1/KT69Vf9oTfy6uHFNymhk+bUaZhlY7j0dhs
+    sT8sJL+gp+sZjxVaukf8JBGiPXFcF3BELhU8ObHGXQ016gogSiFdIBP4tJweo7sAnVU0d5UnGqiBly2dWvH1WCIhs390TPy+Q9l16F3b8A15JtTRc14TcHXy
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=3j4BkbkPAAAA:8 a=S2bl7dCyTycZogkFfaUA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750815AbeEQEe4 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 00:34:56 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:42663 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeEQEe4 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 17 May 2018 00:34:56 -0400
+X-Google-Smtp-Source: AB8JxZpg0Omp4yC0Y7t/kxBlWDJqg3itNHEmDdg6wxJKr6YL17kOJpYZPd9qr/SfM4Geose3keqLNw==
+From: Tejun Heo <tj@kernel.org>
+To: torvalds@linux-foundation.org, jiangshanlai@gmail.com,
+        akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel-team@fb.com, csmall@enc.com.au
+Subject: [PATCHSET] workqueue: Show the latest workqueue name in /proc/PID/{comm,stat,status}
+Date: Wed, 16 May 2018 21:34:42 -0700
+Message-Id: <20180517043448.3152269-1-tj@kernel.org>
+X-Mailer: git-send-email 2.9.5
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789059023166362?=
-X-GMAIL-MSGID: =?utf-8?q?1600789059023166362?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+There can be a lot of workqueue workers and they all show up with the
+cryptic kworker/* names making it difficult to understand which is
+doing what and how they came to be.
 
-------------------
+ # ps -ef | grep kworker
+ root           4       2  0 Feb25 ?        00:00:00 [kworker/0:0H]
+ root           6       2  0 Feb25 ?        00:00:00 [kworker/u112:0]
+ root          19       2  0 Feb25 ?        00:00:00 [kworker/1:0H]
+ root          25       2  0 Feb25 ?        00:00:00 [kworker/2:0H]
+ root          31       2  0 Feb25 ?        00:00:00 [kworker/3:0H]
+ ...
 
-From: Moshe Shemesh <moshe@mellanox.com>
+This patchset makes workqueue workers report the latest workqueue it
+was executing for through /proc/PID/{comm,stat,status}.  The extra
+information is appended to the kthread name with intervening '+' if
+currently executing, otherwise '-'.
 
-[ Upstream commit 6ad4e91c6d796b38a7f0e724db1de28eeb122bad ]
+ # cat /proc/25/comm
+ kworker/2:0-events_power_efficient
+ # cat /proc/25/stat
+ 25 (kworker/2:0-events_power_efficient) I 2 0 0 0 -1 69238880 0 0...
+ # grep Name /proc/25/status
+ Name:   kworker/2:0-events_power_efficient
 
-Add check of coalescing parameters received through ethtool are within
-range of values supported by the HW.
-Driver gets the coalescing rx/tx-usecs and rx/tx-frames as set by the
-users through ethtool. The ethtool support up to 32 bit value for each.
-However, mlx4 modify cq limits the coalescing time parameter and
-coalescing frames parameters to 16 bits.
-Return out of range error if user tries to set these parameters to
-higher values.
-Change type of sample-interval and adaptive_rx_coal parameters in mlx4
-driver to u32 as the ethtool holds them as u32 and these parameters are
-not limited due to mlx4 HW.
+For details on the design decisions, please refer to the following
+thread.
 
-Fixes: c27a02cd94d6 ('mlx4_en: Add driver for Mellanox ConnectX 10GbE NIC')
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |   16 ++++++++++++++++
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h    |    7 +++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ http://lkml.kernel.org/r/20180516153939.GH2368884@devbig577.frc2.facebook.com
 
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -1013,6 +1013,22 @@ static int mlx4_en_set_coalesce(struct n
- 	if (!coal->tx_max_coalesced_frames_irq)
- 		return -EINVAL;
- 
-+	if (coal->tx_coalesce_usecs > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs_low > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs_high > MLX4_EN_MAX_COAL_TIME) {
-+		netdev_info(dev, "%s: maximum coalesce time supported is %d usecs\n",
-+			    __func__, MLX4_EN_MAX_COAL_TIME);
-+		return -ERANGE;
-+	}
-+
-+	if (coal->tx_max_coalesced_frames > MLX4_EN_MAX_COAL_PKTS ||
-+	    coal->rx_max_coalesced_frames > MLX4_EN_MAX_COAL_PKTS) {
-+		netdev_info(dev, "%s: maximum coalesced frames supported is %d\n",
-+			    __func__, MLX4_EN_MAX_COAL_PKTS);
-+		return -ERANGE;
-+	}
-+
- 	priv->rx_frames = (coal->rx_max_coalesced_frames ==
- 			   MLX4_EN_AUTO_CONF) ?
- 				MLX4_EN_RX_COAL_TARGET :
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-@@ -132,6 +132,9 @@
- #define MLX4_EN_TX_COAL_PKTS	16
- #define MLX4_EN_TX_COAL_TIME	0x10
- 
-+#define MLX4_EN_MAX_COAL_PKTS	U16_MAX
-+#define MLX4_EN_MAX_COAL_TIME	U16_MAX
-+
- #define MLX4_EN_RX_RATE_LOW		400000
- #define MLX4_EN_RX_COAL_TIME_LOW	0
- #define MLX4_EN_RX_RATE_HIGH		450000
-@@ -552,8 +555,8 @@ struct mlx4_en_priv {
- 	u16 rx_usecs_low;
- 	u32 pkt_rate_high;
- 	u16 rx_usecs_high;
--	u16 sample_interval;
--	u16 adaptive_rx_coal;
-+	u32 sample_interval;
-+	u32 adaptive_rx_coal;
- 	u32 msg_enable;
- 	u32 loopback_ok;
- 	u32 validate_loopback;
+This patchset contains the following six patches.
+
+ 0001-proc-Don-t-allow-empty-proc-PID-cmdline-for-user-tas.patch
+ 0002-workqueue-Replace-pool-attach_mutex-with-global-wq_p.patch
+ 0003-workqueue-Make-worker_attach-detach_pool-update-work.patch
+ 0004-workqueue-Set-worker-desc-to-workqueue-name-by-defau.patch
+ 0005-proc-Consolidate-task-comm-formatting-into-proc_task.patch
+ 0006-workqueue-Show-the-latest-workqueue-name-in-proc-PID.patch
+
+I'm applying the patches to wq/for-4.18.  Please let me know if the
+patchset need updates (the branch doesn't have any other changes
+anyway).  diffstat follows.  Thanks.
+
+ fs/proc/array.c             |   33 +++++++-----
+ fs/proc/base.c              |   27 +++++++---
+ fs/proc/internal.h          |    2 
+ include/linux/workqueue.h   |    1 
+ kernel/workqueue.c          |  117 ++++++++++++++++++++++++++++----------------
+ kernel/workqueue_internal.h |    3 -
+ 6 files changed, 122 insertions(+), 61 deletions(-)
+
+--
+tejun
