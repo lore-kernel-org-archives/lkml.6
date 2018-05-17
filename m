@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeEQLIv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:08:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752366AbeEQLHl (ORCPT
+        id S1752549AbeEQLJQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:09:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752334AbeEQLHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:07:41 -0400
+        Thu, 17 May 2018 07:07:37 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -31,16 +31,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
         paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v11 23/26] mm: add speculative page fault vmstats
-Date: Thu, 17 May 2018 13:06:30 +0200
+Subject: [PATCH v11 21/26] perf: add a speculative page fault sw event
+Date: Thu, 17 May 2018 13:06:28 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051711-0020-0000-0000-0000041E356F
+x-cbid: 18051711-0040-0000-0000-0000045A6DD8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051711-0021-0000-0000-000042B35785
-Message-Id: <1526555193-7242-24-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18051711-0041-0000-0000-000020FEA556
+Message-Id: <1526555193-7242-22-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -52,61 +52,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add speculative_pgfault vmstat counter to count successful speculative page
-fault handling.
+Add a new software event to count succeeded speculative page faults.
 
-Also fixing a minor typo in include/linux/vm_event_item.h.
-
+Acked-by: David Rientjes <rientjes@google.com>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/vm_event_item.h | 3 +++
- mm/memory.c                   | 3 +++
- mm/vmstat.c                   | 5 ++++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ include/uapi/linux/perf_event.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index 5c7f010676a7..a240acc09684 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -111,6 +111,9 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		SWAP_RA,
- 		SWAP_RA_HIT,
- #endif
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+		SPECULATIVE_PGFAULT,
-+#endif
- 		NR_VM_EVENT_ITEMS
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index b8e288a1f740..e2b74c055f51 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -112,6 +112,7 @@ enum perf_sw_ids {
+ 	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
+ 	PERF_COUNT_SW_DUMMY			= 9,
+ 	PERF_COUNT_SW_BPF_OUTPUT		= 10,
++	PERF_COUNT_SW_SPF			= 11,
+ 
+ 	PERF_COUNT_SW_MAX,			/* non-ABI */
  };
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 30433bde32f2..48e1cf0a54ef 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4509,6 +4509,9 @@ int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 
- 	put_vma(vma);
- 
-+	if (ret != VM_FAULT_RETRY)
-+		count_vm_event(SPECULATIVE_PGFAULT);
-+
- 	/*
- 	 * The task may have entered a memcg OOM situation but
- 	 * if the allocation error was handled gracefully (no
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index a2b9518980ce..3af74498a969 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1289,7 +1289,10 @@ const char * const vmstat_text[] = {
- 	"swap_ra",
- 	"swap_ra_hit",
- #endif
--#endif /* CONFIG_VM_EVENTS_COUNTERS */
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	"speculative_pgfault",
-+#endif
-+#endif /* CONFIG_VM_EVENT_COUNTERS */
- };
- #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA */
- 
 -- 
 2.7.4
