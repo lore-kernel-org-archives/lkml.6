@@ -1,97 +1,87 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2887293-1526598283-2-2945548694273204001
+X-Cyrus-Session-Id: sloti22d1t05-1127333-1526522017-2-6155120796636899801
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-Attached: .config.gz
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526598283; b=F7yAMYxOnuaCiqrRoarbGELETDEGOky19EkBSfCCw/gY2VwR2P
-    hG8KzoKAG2XueJcL/GHVivy46UIzLp8s3SU3sxY+Z9iY7yTDA9ZbuzKPypKmCN9Y
-    F2Czj5sL8xupZA6Bg1fE57qNu1zI8d7JrpOQZ4zxqiiThqf6inNCTUBIoAl3h+Fy
-    FSbaT9ksl6l3js5vRy3EpGba8gE3ItLeku6hIl14LRLLBcPN1jO6Rma2/OFizkfn
-    y1MFJfQYZumta4ncsHPAC0hyfV/BJU071ULRxxFlkau/JPpKnyAmM0RZ0EWaoYV/
-    ibmDTh4CB53axQPzlyM+NIdF2Z3kAyTOtt4w==
+    1526522017; b=SO5+7faht3PZFngmSHRi1DOD+EQvaofpCgeMhNiFd3SWT8VfTl
+    1nku+4ozzHw1AE3Tw9KdDI9Ij9CxCNJYJaGFcUgZoarTFls0/5jWIBkx1AtqiMog
+    mpfG5iCqV4ERxXImkJVGH9MCDKC9JWEkRGfxXK7HCreCKm5lfLrx7+34MaP1e2r4
+    BIKiSqngHjw2DiwG19j7el4PrQajEZoIl+NJJRn9SAme7q5j9JkV9ySqtVX1ziXN
+    ibxzWBxj0tUhr2Nk/FmsZrXwEyn3ShYjwJhhm6S6LQ5gtg2uY+J1bPiNN0SAnWOK
+    TSSsde7Q5t16TTtP8PqFbO9frgxSYrZro3sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526598283; bh=NWqRk6tkVjfwiNgfa6pkyk3d4ZJEoOp55a39VE6bka
-    8=; b=lSPsBycRa4MWfK3AHYhQ0S5niszMM3IO4dJ8Y5yLNa5IDwVNm8VflnbsSC
-    r0W7odjxois+CrUQDZYgsWGVL/OelkLmzch+0eOHJgQGLsRMokFiGUrROxTjTCWD
-    RAqakNSYwmLOIrBQohhekktCFFXZlPtZ3cHlAn7Yd06xDaGx/otLHb6DgvaHtFOW
-    g1pD9YxRwswfvpoyQLoB87N97uC6wWbQYHYLVLvaXJVPkYEEV+JRpKwJVoRsDm7q
-    ZyXYWPYiXdl/b61FnD7OAgd6PuRM8+OBwV6V/2s848mNpokGKqCbREVcysEGc3Xw
-    6PkDBVIRmEB71nrGE8seHGzNT0lA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=paul-moore-com.20150623.gappssmtp.com
-    header.i=@paul-moore-com.20150623.gappssmtp.com header.b=RacGAVQ0
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526522017; bh=Mz6UH4wd57Gy24tRAuNwDkqMdLJI+a
+    jkvvRZ7Szgi58=; b=IbkdDVbo3GLBIFTcfUv2zS+bRohoPZSXWwtUYcAmjmGd7C
+    uhrT9hbYZ8574Lr0AjWbgZcMbrnL+1LEPxNAYxgjD7iQ243uCLtdGsQVVSfUtA9s
+    xTAB6KTNe5ctzoUDYbaSA8WuahyWFU0MOJuLzIi+jpJtpdaUfaPzv+K5tgeaZkeL
+    mK6De+rw/E6iO8NkdJgod0gzmHRAC0yWnMjHFqvvxElNsgEId4lUJEWyymwBFYuU
+    9NhTCb5Mkb3g9RsnjRe41XViXzeZSiELlVHzJXoLewiTYGDIafGxv4JcdSeT+E4e
+    f6wLdHFp3O60r1Dgx2cY5J3bYsUbDZ+XDtqKEljA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=BhJ2gisQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=paul-moore.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=paul-moore-com.20150623.gappssmtp.com
-      header.i=@paul-moore-com.20150623.gappssmtp.com header.b=RacGAVQ0
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=BhJ2gisQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=paul-moore.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH06wLh53oBvLd5aSBvfolsCGw41OOX4XSstl8ddc+riFnY0S42JJy99iH1oIgaFVM8szsyot0B5K1Bh3BcMGGAseUtjvAHLdLU4enADQs/grUfzHjLy
-    ajJ2X2xMVp004Au76XfWOuTYFJn23myyxOX4/Xn3eMyD335jIzeu3XgS4cPGXUK4z3r2OmZxEnlMzn6+xC+c8KlND0jKnFu0kFaTWs7vkz9ISJhhY2NHCJHn
-    sFHm7kvfHcJ7QUv6r4Yhyw==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8 a=NEAV23lmAAAA:8 a=xVhDTqbCAAAA:8
-    a=VwQbUJbxAAAA:8 a=HaXwMiz5ljGrDwebwVYA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=GrmWmAYt4dzCMttCBZOh:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEg6nz6T1V9YiHwuW68b9AT/tUG3GQuiTKnTNcRURI+C6sFIGWtrOkENnlaabUzwhK1qRVEKJYmHd9z/zJzxQmTN2DiVKKS/gqzBmWRphEPihODBqF6v
+    RWWVt6dxozAlLV9HKWAZaJTKTEd4q3ueNMO7bF4iVqedyAbymuTetyvnf4ZaK9QvlHzwbjw2zi94Nw4vJO/UGsPKa8C7gbVZJiAMWbEgPvodKgUIgEzgA1wZ
+    Upg46tPV2aVIS10EHy34cQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=NEAV23lmAAAA:8
+    a=i3X5FwGiAAAA:8 a=S7XZV6BSGvzWydq36HgA:9 a=CjuIK1q_8ugA:10
+    a=C6225xBG-2zkaSyXmIUA:9 a=49ladYHvHUoA:10 a=VwQbUJbxAAAA:8
+    a=6nUXITN49fC6jhMlmTEA:9 a=x8gzFH9gYPwA:10 a=mmqRlSCDY2ywfjPLJ4af:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeEQXEk (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 17 May 2018 19:04:40 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42857 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQXEi (ORCPT
+        id S1751430AbeEQBxd (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 16 May 2018 21:53:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4395 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751395AbeEQBxb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 May 2018 19:04:38 -0400
-X-Google-Smtp-Source: AB8JxZrig40jaU8itrohYm3PQVrhhb/1GoH5fi74RqSeqd5x+dEm38MxJ5q3NQi51hB9Pc0DFbCG+2f3UuGl/VXqeoU=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
-References: <cover.1526430313.git.rgb@redhat.com> <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 17 May 2018 19:04:35 -0400
-Message-ID: <CAHC9VhRXn782LH5nvh9fKpk+EzbmmCEaHsj7fNTG3Yi5fp03_g@mail.gmail.com>
-Subject: Re: [PATCH ghak81 V3 3/3] audit: collect audit task parameters
+        Wed, 16 May 2018 21:53:31 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,408,1520924400";
+   d="gz'50?scan'50,208,50";a="200022650"
+Date: Thu, 17 May 2018 09:43:16 +0800
+From: kbuild test robot <lkp@intel.com>
 To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+Cc: kbuild-all@01.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
         Netfilter Devel List <netfilter-devel@vger.kernel.org>,
@@ -101,320 +91,227 @@ Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
         <linux-integrity@vger.kernel.org>,
         SElinux list <selinux@tycho.nsa.gov>,
         Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Steve Grubb <sgrubb@redhat.com>,
         Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        David Howells <dhowells@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: [PATCH ghak81 V3 3/3] audit: collect audit task parameters
+Message-ID: <201805170921.vSuTk8UB%fengguang.wu@intel.com>
+References: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="AqsLC8rIMeq19msA"
+Content-Disposition: inline
+In-Reply-To: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 16, 2018 at 7:55 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> The audit-related parameters in struct task_struct should ideally be
-> collected together and accessed through a standard audit API.
->
-> Collect the existing loginuid, sessionid and audit_context together in a
-> new struct audit_task_info called "audit" in struct task_struct.
->
-> Use kmem_cache to manage this pool of memory.
-> Un-inline audit_free() to be able to always recover that memory.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/81
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
->  include/linux/sched.h |  5 +----
->  init/init_task.c      |  3 +--
->  init/main.c           |  2 ++
->  kernel/auditsc.c      | 51 ++++++++++++++++++++++++++++++++++++++++++---------
->  kernel/fork.c         |  2 +-
->  6 files changed, 71 insertions(+), 26 deletions(-)
 
-As discussed on-list and offline, I'm going to hold off on this change
-until the audit container ID work is father along.  That is the main
-driver for this change, and until that is closer to ready I just can't
-justify the extra overhead.
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 69c7847..4f824c4 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -216,8 +216,15 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
->
->  /* These are defined in auditsc.c */
->                                 /* Public API */
-> +struct audit_task_info {
-> +       kuid_t                  loginuid;
-> +       unsigned int            sessionid;
-> +       struct audit_context    *ctx;
-> +};
-> +extern struct audit_task_info init_struct_audit;
-> +extern void __init audit_task_init(void);
->  extern int  audit_alloc(struct task_struct *task);
-> -extern void __audit_free(struct task_struct *task);
-> +extern void audit_free(struct task_struct *task);
->  extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
->                                   unsigned long a2, unsigned long a3);
->  extern void __audit_syscall_exit(int ret_success, long ret_value);
-> @@ -239,12 +246,15 @@ extern void audit_seccomp_actions_logged(const char *names,
->
->  static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
->  {
-> -       task->audit_context = ctx;
-> +       task->audit->ctx = ctx;
->  }
->
->  static inline struct audit_context *audit_context(void)
->  {
-> -       return current->audit_context;
-> +       if (current->audit)
-> +               return current->audit->ctx;
-> +       else
-> +               return NULL;
->  }
->
->  static inline bool audit_dummy_context(void)
-> @@ -252,11 +262,7 @@ static inline bool audit_dummy_context(void)
->         void *p = audit_context();
->         return !p || *(int *)p;
->  }
-> -static inline void audit_free(struct task_struct *task)
-> -{
-> -       if (unlikely(task->audit_context))
-> -               __audit_free(task);
-> -}
-> +
->  static inline void audit_syscall_entry(int major, unsigned long a0,
->                                        unsigned long a1, unsigned long a2,
->                                        unsigned long a3)
-> @@ -328,12 +334,18 @@ extern int auditsc_get_stamp(struct audit_context *ctx,
->
->  static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
->  {
-> -       return tsk->loginuid;
-> +       if (tsk->audit)
-> +               return tsk->audit->loginuid;
-> +       else
-> +               return INVALID_UID;
->  }
->
->  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
->  {
-> -       return tsk->sessionid;
-> +       if (tsk->audit)
-> +               return tsk->audit->sessionid;
-> +       else
-> +               return AUDIT_SID_UNSET;
->  }
->
->  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
-> @@ -458,6 +470,8 @@ static inline void audit_fanotify(unsigned int response)
->  extern int audit_n_rules;
->  extern int audit_signals;
->  #else /* CONFIG_AUDITSYSCALL */
-> +static inline void __init audit_task_init(void)
-> +{ }
->  static inline int audit_alloc(struct task_struct *task)
->  {
->         return 0;
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index b3d697f..6a5db0e 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -29,7 +29,6 @@
->  #include <linux/task_io_accounting.h>
->
->  /* task_struct member predeclarations (sorted alphabetically): */
-> -struct audit_context;
->  struct backing_dev_info;
->  struct bio_list;
->  struct blk_plug;
-> @@ -832,10 +831,8 @@ struct task_struct {
->
->         struct callback_head            *task_works;
->
-> -       struct audit_context            *audit_context;
->  #ifdef CONFIG_AUDITSYSCALL
-> -       kuid_t                          loginuid;
-> -       unsigned int                    sessionid;
-> +       struct audit_task_info          *audit;
->  #endif
->         struct seccomp                  seccomp;
->
-> diff --git a/init/init_task.c b/init/init_task.c
-> index 74f60ba..4058840 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -119,8 +119,7 @@ struct task_struct init_task
->         .thread_group   = LIST_HEAD_INIT(init_task.thread_group),
->         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
->  #ifdef CONFIG_AUDITSYSCALL
-> -       .loginuid       = INVALID_UID,
-> -       .sessionid      = AUDIT_SID_UNSET,
-> +       .audit          = &init_struct_audit,
->  #endif
->  #ifdef CONFIG_PERF_EVENTS
->         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-> diff --git a/init/main.c b/init/main.c
-> index b795aa3..7ca3dfb 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -91,6 +91,7 @@
->  #include <linux/cache.h>
->  #include <linux/rodata_test.h>
->  #include <linux/jump_label.h>
-> +#include <linux/audit.h>
->
->  #include <asm/io.h>
->  #include <asm/bugs.h>
-> @@ -720,6 +721,7 @@ asmlinkage __visible void __init start_kernel(void)
->         nsfs_init();
->         cpuset_init();
->         cgroup_init();
-> +       audit_task_init();
->         taskstats_init_early();
->         delayacct_init();
->
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index ef3e189..4b1138a 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -841,7 +841,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
->                                                       int return_valid,
->                                                       long return_code)
->  {
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = tsk->audit->ctx;
->
->         if (!context)
->                 return NULL;
-> @@ -926,6 +926,15 @@ static inline struct audit_context *audit_alloc_context(enum audit_state state)
->         return context;
->  }
->
-> +static struct kmem_cache *audit_task_cache;
-> +
-> +void __init audit_task_init(void)
-> +{
-> +       audit_task_cache = kmem_cache_create("audit_task",
-> +                                            sizeof(struct audit_task_info),
-> +                                            0, SLAB_PANIC, NULL);
-> +}
-> +
->  /**
->   * audit_alloc - allocate an audit context block for a task
->   * @tsk: task
-> @@ -940,17 +949,28 @@ int audit_alloc(struct task_struct *tsk)
->         struct audit_context *context;
->         enum audit_state     state;
->         char *key = NULL;
-> +       struct audit_task_info *info;
-> +
-> +       info = kmem_cache_zalloc(audit_task_cache, GFP_KERNEL);
-> +       if (!info)
-> +               return -ENOMEM;
-> +       info->loginuid = audit_get_loginuid(current);
-> +       info->sessionid = audit_get_sessionid(current);
-> +       tsk->audit = info;
->
->         if (likely(!audit_ever_enabled))
->                 return 0; /* Return if not auditing. */
->
->         state = audit_filter_task(tsk, &key);
->         if (state == AUDIT_DISABLED) {
-> +               audit_set_context(tsk, NULL);
->                 clear_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
->                 return 0;
->         }
->
->         if (!(context = audit_alloc_context(state))) {
-> +               tsk->audit = NULL;
-> +               kmem_cache_free(audit_task_cache, info);
->                 kfree(key);
->                 audit_log_lost("out of memory in audit_alloc");
->                 return -ENOMEM;
-> @@ -962,6 +982,12 @@ int audit_alloc(struct task_struct *tsk)
->         return 0;
->  }
->
-> +struct audit_task_info init_struct_audit = {
-> +       .loginuid = INVALID_UID,
-> +       .sessionid = AUDIT_SID_UNSET,
-> +       .ctx = NULL,
-> +};
-> +
->  static inline void audit_free_context(struct audit_context *context)
->  {
->         audit_free_names(context);
-> @@ -1469,26 +1495,33 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
->  }
->
->  /**
-> - * __audit_free - free a per-task audit context
-> + * audit_free - free a per-task audit context
->   * @tsk: task whose audit context block to free
->   *
->   * Called from copy_process and do_exit
->   */
-> -void __audit_free(struct task_struct *tsk)
-> +void audit_free(struct task_struct *tsk)
->  {
->         struct audit_context *context;
-> +       struct audit_task_info *info;
->
->         context = audit_take_context(tsk, 0, 0);
-> -       if (!context)
-> -               return;
-> -
->         /* Check for system calls that do not go through the exit
->          * function (e.g., exit_group), then free context block.
->          * We use GFP_ATOMIC here because we might be doing this
->          * in the context of the idle thread */
->         /* that can happen only if we are called from do_exit() */
-> -       if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
-> +       if (context && context->in_syscall &&
-> +           context->current_state == AUDIT_RECORD_CONTEXT)
->                 audit_log_exit(context, tsk);
-> +       /* Freeing the audit_task_info struct must be performed after
-> +        * audit_log_exit() due to need for loginuid and sessionid.
-> +        */
-> +       info = tsk->audit;
-> +       tsk->audit = NULL;
-> +       kmem_cache_free(audit_task_cache, info);
-> +       if (!context)
-> +               return;
->         if (!list_empty(&context->killed_trees))
->                 audit_kill_trees(&context->killed_trees);
->
-> @@ -2071,8 +2104,8 @@ int audit_set_loginuid(kuid_t loginuid)
->                         sessionid = (unsigned int)atomic_inc_return(&session_id);
->         }
->
-> -       task->sessionid = sessionid;
-> -       task->loginuid = loginuid;
-> +       task->audit->sessionid = sessionid;
-> +       task->audit->loginuid = loginuid;
->  out:
->         audit_log_set_loginuid(oldloginuid, loginuid, oldsessionid, sessionid, rc);
->         return rc;
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index cd18448..92ab849 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1713,7 +1713,7 @@ static __latent_entropy struct task_struct *copy_process(
->         p->start_time = ktime_get_ns();
->         p->real_start_time = ktime_get_boot_ns();
->         p->io_context = NULL;
-> -       audit_set_context(p, NULL);
-> +       p->audit = NULL;
->         cgroup_fork(p);
->  #ifdef CONFIG_NUMA
->         p->mempolicy = mpol_dup(p->mempolicy);
-> --
-> 1.8.3.1
+Hi Richard,
 
--- 
-paul moore
-www.paul-moore.com
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on next-20180516]
+[cannot apply to linus/master tip/sched/core v4.17-rc5 v4.17-rc4 v4.17-rc3 v4.17-rc5]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Richard-Guy-Briggs/audit-group-task-params/20180517-090703
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+   kernel/fork.c: In function 'copy_process':
+>> kernel/fork.c:1739:3: error: 'struct task_struct' has no member named 'audit'
+     p->audit = NULL;
+      ^~
+
+vim +1739 kernel/fork.c
+
+  1728	
+  1729		p->default_timer_slack_ns = current->timer_slack_ns;
+  1730	
+  1731		task_io_accounting_init(&p->ioac);
+  1732		acct_clear_integrals(p);
+  1733	
+  1734		posix_cpu_timers_init(p);
+  1735	
+  1736		p->start_time = ktime_get_ns();
+  1737		p->real_start_time = ktime_get_boot_ns();
+  1738		p->io_context = NULL;
+> 1739		p->audit = NULL;
+  1740		cgroup_fork(p);
+  1741	#ifdef CONFIG_NUMA
+  1742		p->mempolicy = mpol_dup(p->mempolicy);
+  1743		if (IS_ERR(p->mempolicy)) {
+  1744			retval = PTR_ERR(p->mempolicy);
+  1745			p->mempolicy = NULL;
+  1746			goto bad_fork_cleanup_threadgroup_lock;
+  1747		}
+  1748	#endif
+  1749	#ifdef CONFIG_CPUSETS
+  1750		p->cpuset_mem_spread_rotor = NUMA_NO_NODE;
+  1751		p->cpuset_slab_spread_rotor = NUMA_NO_NODE;
+  1752		seqcount_init(&p->mems_allowed_seq);
+  1753	#endif
+  1754	#ifdef CONFIG_TRACE_IRQFLAGS
+  1755		p->irq_events = 0;
+  1756		p->hardirqs_enabled = 0;
+  1757		p->hardirq_enable_ip = 0;
+  1758		p->hardirq_enable_event = 0;
+  1759		p->hardirq_disable_ip = _THIS_IP_;
+  1760		p->hardirq_disable_event = 0;
+  1761		p->softirqs_enabled = 1;
+  1762		p->softirq_enable_ip = _THIS_IP_;
+  1763		p->softirq_enable_event = 0;
+  1764		p->softirq_disable_ip = 0;
+  1765		p->softirq_disable_event = 0;
+  1766		p->hardirq_context = 0;
+  1767		p->softirq_context = 0;
+  1768	#endif
+  1769	
+  1770		p->pagefault_disabled = 0;
+  1771	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--AqsLC8rIMeq19msA
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICOHa/FoAAy5jb25maWcAjFxbb+M4sn7fXyHMAAc9wJme3DqTxUEeaImyORZFjUjZTl4E
+j6NOG5PYOb7sdv/7U0XK1q3oPQvsbodVpHip+urCon/+x88BOx6278vDerV8e/sRvFabarc8
+VC/B1/Vb9T9BpIJUmYBHwnwG5mS9OX7/bX37cB/cfb7+/fPVr7vVl2Ba7TbVWxBuN1/Xr0fo
+vt5u/vHzP0KVxmJcLh7uy9ubxx+tv5s/RKpNXoRGqLSMeKginjdEVZisMGWscsnM40/V29fb
+m1/x4z+dOFgeTqBf7P58/Gm5W3377fvD/W8rO5e9nWr5Un11f5/7JSqcRjwrdZFlKjfNJ7Vh
+4dTkLORDmpRF84f9spQsK/M0KkfC6FKK9PHhEp0tHq/vaYZQyYyZ/zhOh60z3JinPBdhKTQr
+I8maiZ4IkzkX44npr4A9lRM242UWlnEUNtR8rrksF+FkzKKoZMlY5cJM5HDckCVilDPD4RwS
+9tQbf8J0GWZFmQNtQdFYOOFlIlLYb/HMCY5YJIbnZTbOctWavZ205qbIygzI+A2W89a6U86j
+M4nLEfwVi1ybMpwU6dTDl7Exp9ncfMSI5ymz0poprcUo6U9ZFzrjcFIe8pylppwU8JVMRqWe
+wJwpDru5LLGcJhkNvmElU5cqM0LCtkWgR7CHIh37OCM+KsZ2eSwB4e9oI2hnmbDnp3Ksfd0L
+2PwRb5FjsSg5y5Mn+LuUvCUX2dgwWHeZ8BlP9OPNWdPzP8u5yltbOipEEsECeMkXro/u6JuZ
+wIHi0mIF/1MaprEzAMvPwdjC1Fuwrw7HjwZqRrma8rSEKWmZtUFGmJKnM1gUqD7smHm8Pc8r
+zOGkrGIJOK2ffoLRTxTXVhquTbDeB5vtAT/YwhCWzHiuQRo6/dqEkhVGEZ2t+E5BmHhSjp9F
+1hPsmjICyg1NSp7bSt6mLJ59PZSPcAeE8/Rbs2pPvE+3c7vEgDMkVt6e5bCLujziHTEgwD8r
+EtAqpU3KJJzhp812U/3SOhH9pGciC8mx3fmDCKv8qWQG8H9C8hWaA9D5jtKqCyvATMK34PiT
+k6SC2Af741/7H/tD9d5I6hmuQSusbg2BFUl6ouY0Jeea5zMHRRLMZkvagQomMwRUcBrUgQWd
+sVxzZGraQjSHWhXQB+DHhJNI9YGkzRIxw+jOM7AFEZqChCGCPoUJsS6r8bNmm/r2BMcD7EiN
+vkhEM1my6I9CG4JPKgQtnMvpIMz6vdrtqbOYPCP+CxWJsC2TqUKKiBJOyoMlk5QJ2Fk8H7vS
+XLd57EzA0Pxmlvu/gwNMKVhuXoL9YXnYB8vVanvcHNab12ZuRoRTZ9zCUBWpcWd5/hSetd3P
+hjz4XB4WgR6uGnifSqC1h4M/AYthMyi804653V33+oup+4dPSwrw9hzQg9WP3GlS5m+EQggM
+RYqODxjAMk4KPWl/Khznqsg0eQBudERey0TyoEPyRFJGyRQwZWatRh7RmBGeTS+qGoqPdVLT
+kBNL73P3HJ0UNFikoMK6B8+FiK5brjJqjEngfEKeWbW3bmqvTxbqbAoTSpjBGTVUd6ztHZQA
+mgJQLaf3EBwPCRa3rBWVZnrSsb7IEU9Y6tMgcJHAixgqScOQi9RM6UMqxnSX7vrpvgwAMC58
+My4MX5AUninfPohxypKYFha7QA/NQpmHpidglEgKE7SZZNFMwNLq86D3FMYcsTwXnmMHzQmn
+mYJ9RwQzKqePborjP0n6E6MsvigTKHPWZHcX3nf8m5nCaClgumr7ytajj3jUl38Yujxbj5ZY
+XF/dDZCxjluzavd1u3tfblZVwP9VbQCKGYByiGAMJqOBTM/gtW+NRFhaOZPWxSaXPpOuf2nR
+2if3pygvp2VfJ2zkIRSUg6ITNWrPF/vD7uZjfvKdPNqnIPbqWZT2XivH0TqUU0uZSuHkvv3d
+PwqZgWcw4olvRB7HIhS4PwXoEygVwngYct0PTHCfMXwAK1SO9Jz1/WcBsoKmg4gZp/1QxrXm
+3JAEQG66g2vFWCOmgDguUpfV4HkOmC/SP7j9u8cGG9VrseuzI06UmvaIENmDdICdHxeqIPwj
+CHusx1J7flQ4DSGWiMF0W4+NYICYuvaGyYm5mMwlbcr5RBjwinU/q4BGHGLOJ3DH0eGzZsT2
+6A2Z87EGAxi5tEt91CXL+nsymYMycOaAqUeTYgFS0pC1HbVvSgFyoN0UeQqOG2yAaOeZ+shB
+nAoE6hF6K0UGOmPgKGurTw1CfP8EDnm90qiQfZG1G9eoSH+nwDNzrlOc8+GxOUkqNYs5+L4Z
+pm16A9StLjj10CJVeDIWEDyVLnA4BbzE5DUPEbnqjA3JgYtP4KR6xDG4SFlSjEXaAdZWsw8x
+gMMOiopuT6UVmPRJcPIp7/iQAw44uiJhHtM44AaZVinthwyZLyUC3EYLMwE4cwIS5xDJ9qWI
+8PY94JFimMfrVBNmffpKo6L6RDIegja0EkJAKhIANoRYnqA0JwRKWAporpIdZ7aZRCf12WPg
+C2FohOr2eugetcqeTvhjktaYEEakYA5g2+agpS2CSiJ0zeqU3O2AwHqI3GCgATA1p7RDPm9l
+Li+Q+t3dTnp4ckxaF2nHIz+1DZxTl/MK1ezXv5b76iX42zkuH7vt1/VbJ148j4/c5ckcdwJt
+p3G1wXAGZcJRWFqZOfSQNfoxj9ct19FJBiHEJ5kxgE2AMApgsr2uESIn0c0mLeFDGYh9kSJT
+Ny9R0+2JO/olGtl3noOF8nVuE7u9u9lPZhTasVzOexyoI38WvAADhIuwmRA/Sz6nGKzAnPzb
+csRj/D80FXVWx559ttuuqv1+uwsOPz5czuBrtTwcd9XepRTcgM+oCFE37da4fZKOhDEDHHMG
+thGMCKIOyTUGnYmFpnNj6Dwp3FKSCkYZVSWi3Uz8PF8YUFDMw1+K2+pUtcjFpbAfjso4+Cyt
+P+AJdCZPYJMhXAJkHhd0gjdV5Ugp47LbjRbcPdzTkdWXCwSj6YAAaVIuKJ26t/dkDSdgGMTr
+Ugh6oDP5Mp3e2hP1jqZOPQub/u5pf6Dbw7zQihYSaX1/rlKaOhdpOAEvxDORmnxLR9KSJ8wz
+7piDlo0X1xeoZUKnA2T4lIuFd79ngoW3JZ0ht0TP3iEMeHohDnk1o0Z0QpKQahUBk0z1jZue
+iNg8fmmzJNd+GqJYBtbE5Qd00UosIRmku9tQe5T3d/1mNeu2SJEKWUib4owhWkieHu/bdBtb
+hyaRuhNKwlQwVEAfjCfgX1FZNxgRENyhT8tZqJvt4XXupU8UJiOCHfSDFfmQYJ0tyQ0jxypk
+6Nob3MkgvrKhMXmSkRQUEtnbSY0e1xhtBHjEYJhJIuDokFSH+QNC05CB5ZaZGbjIp/aZSsAx
+YTmdMq25vLKJu5oJGgGtFHTzps7ktbIy79vN+rDdOU+n+WorYoNDA7ife3bVijcHf++pnEkP
+ShsFcj+iTad4oDMxOG7O0UjEYuHLRoPrANIKqudfvvZPG45JUGmyVOE1Q8821U13dExSU+/v
+qIzOTOosAct527lfaFoxEeJJaTmWG/qjDfk/jnBNzcveyKs41tw8Xn0Pr9x/unuUMSrt3k4k
+glqE+VPWz1PE4G44KiNu8m3A6ydb4DldHKKz1kIZkaC4JScPBC/GCv54dQ4iLvU9TUqytLCh
+euPgnGfkaMSi687d0UoL/K5fK+3QDAcxp2nHgC5G5HLUdZs7zfWgg9TbKbIYF1lvxyKhQwjQ
+iIHd+WfGjmuB6a6XDbWRGiW2Igc4BUet6GQOploSzKebYhtluuvDKH+8u/rnfQsGiOCZUr92
+1ci0o4RhwllqLSmdGfC458+ZUnS+/HlU0H7Nsx6mmk/uen0KtkbjlA7tADvPrZGCk/c4/ADa
+I1CbiWQ5Fbyd1Ssz3KURusJqwQu9BYjlFRZY5HmReU7R4SheaGP4OH+8bx2/NDmNjnYCLgfh
+RU/YIH/Q4+IScJlpljqdRUPpc3l9dUWlc57Lmy9XHUx+Lm+7rL1R6GEeYZiWPPMFp445mzxp
+EQLQwDnmCJDXfXzMOWb8bOrwUn+bbYf+N73u9VXELNL0lVMoIxtKj3zCC+CG6eYkMtSdkLP0
+239XuwAs/fK1eq82BxvesjATwfYDSwk7IW6dzKHdEFoQdCwG3wTZD+Jd9b/HarP6EexXy7ee
+c2Ed0pz/SfYUL29Vn7lfKGDpo+P+tIjgUxaKoDqsPv/ScWJCyuGDVlujmHBbm4Rtp1RAuHyp
+0CcClipYbTeH3fbtzVU2fHxsd7BuxxdV+/XrZr7cWdYg3MI/dJcF2/nm5WO73hx6c0I/0hov
+2h/SDBGXSum48sM6h9/u4AnZUeJIkko8BTsgqnRAlnLz5csVHcplIZoeP0486Xg0OD3+vVod
+D8u/3ipbDRtYf/SwD34L+PvxbTmQzZFIY2kwN0rfizqyDnORURGLS56qopMTrDth86VBpfAk
+GDCcxNsGKkJyun3brzCr011C9UwG7K/34g7vfP8Q5iSkUfWvNchotFv/y92gNlV761XdHKih
+dhfudnTCk8wXIPGZkVnsyQAZMAcM08G+MMUOH4tczlnurhCjwbHH6937v1Fv3raga7v2/OI5
+qCWLPHNDYzy3tSPUrvfui6NczLxrtAx8lnuScY4B6xLrYQDmIbSmEP5cEYU1RIVRnmIzJM+K
+BKtORwKcMWEvH84Y9mLPs3NU0tDqpGJiFi65j/XH52pj8LHq8urmfFzT4EDSmeR97JLr/Yqa
+Fuy6fMJkLjk58GcSpTHTic6GCD37q3NGm5Lwhpwg57CtsoXAzQctpfznbbi4H3Qz1fflPhCb
+/WF3fLd1B/tvIHcvwWG33OxxqADMUhW8wFrXH/jP0+rZ26HaLYM4GzOAplpcX7b/3qDIQrj8
+cgS4+oT2bb2r4BM34S+nrmJzqN4CUPDgv4Jd9WZr/Xumo2HBs3faeqLpUMRE80xlRGsz0GS7
+P3iJ4XL3Qn3Gy7/9OOfD9QFWEMjGefgUKi1/6UMPzu88XHM64cR7Jyea7LsOtahlrbVVZxOm
+BXo5nVwtC8F0Kj2p1XNYAyg2H8fDcMxWzjwrhnI2gY2yRy1+UwF26bpGWMT4/1M+y9q5amWS
+k6IdgkQuVyBtlLIZQ+eDALp8tUtAmvpoOCvwRRFAe95Fsy+ZFKWrKfPk9eeXYoJ05tPsLHz4
+/fb+eznOPMVVqQ79RJjR2AU7/tSeCeG/HhcVApGwf0nm5OQmJMXjhrb2OqOz0TqTNGGi6fYs
+G8psZrJg9bZd/d3HC76xPhIEE1ghjd47uApY64/xhd0RMMwyw1KiwxbGq4LDtypYvrys0QFY
+vrlR9587PqhIQ5PTMQUeQ68W+0ybe/w/zA2WbOYpNLRUjEA9pVCWjveBCS3wk7n03FyYCc8l
+o9dxqrUmdFbrUfsJSXOQmqrwGoXgclPso162wZnO49th/fW4WeHunzDo5YyXDYrFka2OLzkt
+bBODVhzix1s68oPuUy6zxHMpA2Rp7m//6bkHAbKWPneejRZfrq6sm+XvDeGm7zoJyEaUTN7e
+flng7QWL6CW6ehCjaI2WPBLsdE082Obxbvnxbb3aU/obda84nU0Ps+ATO76st2Dgzhe+vwye
+1TlmGQXJ+q/dcvcj2G2PB/ANzrYu3i3fq+Cv49evgNrRELVjWnOwgCKxViIJI2pVjRCqIqVy
+0gUIrZpg6CqMSexdhGCt+gqkD17VYeM5lzQJO3a00MOgDNusa/TStfDYnn37sceHjEGy/IEW
+ayjTqcrsFxchFzNycUgds2jsgQLzlHnUATsWSSa8tquY0xsvpedumEuN9f+eYBdCER7RX3KF
+dMJ68k/EQfGIhacwD8LRovXAzJIGh5SDqgPidhtkeH13/3D9UFMapTH4UINpT+wiIX4auN4u
+apRsVMRk1gcLJLCUhV5usYiEznwF/YXHaNvcMeGgdRiEgnNIiyGIrle77X779RBMfnxUu19n
+weuxAh+XUHYwfmPhqROz1xd10UNJ7EsTeUwgjuBnXl9xd5KwVC0u11FM5qdilaG3Z8273h53
+HZNwmkMy1XlYioebL61iKmiFmJxoHSXRubXlGotkpOgEjlBSFl48zav37aFCz59SbAyADQZb
+4bDjx/v+leyTSX06ZT/QzUU+TOxp+M4nbZ/UBGoDXvL645dg/1Gt1l/PCY4zNLH3t+0rNOtt
+2Eet0Q4CttX2naKtP8sF1f7ncfkGXfp9WrPGR1aDKS+wVOy7r9MCS70X5SwsyJ3IrHT2E6JN
+ILUwXltrL7no8/ZsezYfWkeM6Fewy8MAjIHmjAHIJFuUad4uWBMZllL64Ni6e7aaOleJL5yI
+5VCewKntPKhq/NI6mYIMpIUNZTlVKUNTcePlQp85W7Dy5iGV6J/TxqHDheP5HdfQcwciw6F1
+JW7dKUjL2RC92eZlt12/tNkgEMuVoP2/iHmyuP3Q0UW+c0yKrNabVxphaaRzNzyGLlqzyRNS
+64UHn3QiZE+augnDaKhXPKKXf85Bwmp9l1QRwHmZj2iNjMJoxHy1emqc8PMniLzT627Zyht1
+0iwxZrqdbLegP3KlQRDUtV5ktNQfETvWrtKzVJ5KCFuLihw+awgj1Bf1woMmka3e98CJo5Xe
+N20xu9D7z0IZWh4wbRrru9KTdI6xOMpDU+BbgFvSI9f3OKtvPb9cD26NnU7uq+PL1l5BNOfS
+qDiYPN/nLS2ciCTKOb2f9gUf7SW4nx7wUN3/wXl56HgfYc8bPmC4x11Jk+G21G+yvi1Xf3cf
+wtrf5AArECdsrFsequ31sVtvDn/b1MPLewXWvvEhmwlrZcVvbH+Z4FwT9fu54BKEGotNBhx3
+9YFt3z/gCH61r3bh7FZ/7+0HV659R/mtLlGPv2DgSUfbJx2gpPjrJ1nOQ2a456WgY5WF/WkK
+TtZTu6pXHO3x+urmro2PuchKpmXpfbSHhdT2C0zTWFqkIOcYVcuR8rwtdLU68/TitUZMXRtO
+OF6qaLey4ds67d5OoVRJzJl4soddJretKvWkbOrZKPvonbPpqZqDFmeGHgbIcvdeoTOUexJw
+kkgJ3irE5lH11/H1tV+4hvtka561F+e6v9fh3+5MCa1SH6C6YXKFT/YHv2PR41IjfKLmfWlT
+LxLMVf2Ap9f9RLnwBfe0pdC9kpoe14wq3TlnCGoe8Nl7xVEdwoXh66IrfN19eal2tgjgcWJ/
+hIFazIl8adGT3mVUfUEKchEkEG0dPxyMTJab154bH5vekzMaqIdP0zzTQSLgejq2T/LolOSf
+ZFayJXMpKAJomeoZeYreL3tzRMwH4yV3q8rEVe478cAfzxkAXG9PcYgp5xn1cwe4p43aBZ/2
+H+uNTS//d/B+PFTfK/gHVmF8tnUY9bDWbbFjY6Tesi5tUzq77LzYMbCe6pIwEIF3Xz7x/fnF
+e9/53DHhw955xjzureO1k/JDiGM6ZYIS2NL/MBbuDssEVjDGiCf0PO1XQQ7tmxIv7DTrqAej
+Yf38i1z0IAjysED8bYn/K+SKtduGYeAvOfHSVaZlBy8WrYp0E2fRkNeha18z5O8LgKREUgA9
+WoBkiaBAELq7vicOSePzT8xUIdO1nhSamXKERx6ulY4TAbUVYzPhs1gPnVAikaCHuK4QSZRB
+0epgMo30UVzYSR1w1gj5GRNxa5ZGFZp50pfVNBI1SVqp3gm7KfqkEmUh2CoKbiUzm51qnupi
+PU/d+CL7JGKzSPwujczqlBjB0TwEwh9WfrizqlwiXi7cQ+A218TdeOKQqIRZsazksZMe2Yjb
+akR2ItLpEKYOXb/ujOZNH3V6ca1hWUVIQYWu7343jDLjcCWavp6PRfeZfrcKiNvBdRavjOs/
+CbIEauRa5ZK1XX9Qf2IGF9A+ffG9grq5WBEcro4RkV7Rngmg3Ia6CXeF/QMA0ZvcpAgkbl3W
+Ia6guLMjSR1taIcBrspLBNeg9MefQubd+4/dusLXtj4jo5S2W1ALfJatTEPZb2z8ZzmscDUo
+26bFI/xf28dWwLFlxGLqyW8xL1/M2G1fmtQBSMo/mUJfFQvM80qDdGFAzSclg97sG1jcOumM
+x9qR2I4Ltsv9/vz6++fft7R3fe3vCjqqN7cJ/B0TRu+4j8p856av1jsp1Ci09d9jOk2M2C00
+sIrSenddxmioraXQH3WcdJW+XwW8P+4w4KOr01YoP7cfZeOJi0aHn6wZ7xix68CPtUXjkcul
+t4r1hIGMIpUHEMTPCL6bwJuVqTq8qoKQXhsLQo0XKFVbzGRmY8DL8UXrk8ynovP80+4IMhiW
+zOCx0NCse7mjjRaZpIoGGUlwgQNfTpP/MzJZNZSR++d2dfr+QbK14tRxNNo5FSccomRa02Zc
+KdnK5BIXFmScBmf/kk1kPHaEiXZyuMMqAoWFAChl/lHeErL6YCVqVU8NR98eO7AFCgVfeHsW
+R+Y/92GcCFNYAAA=
+
+--AqsLC8rIMeq19msA--
