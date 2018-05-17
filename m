@@ -1,126 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEQXCp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:02:45 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45813 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751898AbeEQXCm (ORCPT
+        id S1751985AbeEQXHc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:07:32 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41165 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751524AbeEQXHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 19:02:42 -0400
-X-Google-Smtp-Source: AB8JxZpTa7xvTm0lRZfCE4BIX/R6U1XTjcEwEs3vo51NAptv0w3zxtTKMEpl454X7rbveZ57htxST8lUYYeT/Vxi5Co=
+        Thu, 17 May 2018 19:07:30 -0400
+X-Google-Smtp-Source: AB8JxZp9EwoZgioIXq33wozF80CeQS0o3dXXVW+x94HJDZQts9i5V21ARRKOFVu67G02p3dq8AdQnQ==
+Date: Thu, 17 May 2018 16:07:28 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>
+Subject: Re: [RFC PATCH] PM / devfreq: Add policy notifier
+Message-ID: <20180517230728.GQ19594@google.com>
+References: <CGME20180515212545epcas1p2bdfd9c90f2ce6b74ac0fdd8cd9f9f63b@epcas1p2.samsung.com>
+ <20180515212447.180595-1-mka@chromium.org>
+ <5AFCE27E.20803@samsung.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <a50926963f4527a5273e0688275d1e9361e8d02e.1526430313.git.rgb@redhat.com>
-References: <cover.1526430313.git.rgb@redhat.com> <a50926963f4527a5273e0688275d1e9361e8d02e.1526430313.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 17 May 2018 19:02:39 -0400
-Message-ID: <CAHC9VhTU9q2c_3jCg5JLmuQbvFO03xLDiTi5NADDsadRv+p2Vw@mail.gmail.com>
-Subject: Re: [PATCH ghak81 V3 2/3] audit: normalize loginuid read access
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5AFCE27E.20803@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 7:55 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the loginuid is an internal audit value, use an access
-> function to retrieve the audit loginuid value for the task rather than
-> reaching directly into the task struct to get it.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/auditsc.c | 24 +++++++++++++++---------
->  1 file changed, 15 insertions(+), 9 deletions(-)
+Hi,
 
-Also merged into audit/next.
+On Thu, May 17, 2018 at 11:01:34AM +0900, Chanwoo Choi wrote:
+> Hi,
+> 
+> Could you give some use-case of DEVFREQ_POLICY_NOTIFIER
+> or send use-case patch with this patch?
 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index f3d3dc6..ef3e189 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
->         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
->                 return audit_compare_gid(cred->egid, name, f, ctx);
->         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
-> -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
-> +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
->         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
->                 return audit_compare_uid(cred->suid, name, f, ctx);
->         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
-> @@ -385,7 +385,8 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_compare_gid(cred->fsgid, name, f, ctx);
->         /* uid comparisons */
->         case AUDIT_COMPARE_UID_TO_AUID:
-> -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
-> +               return audit_uid_comparator(cred->uid, f->op,
-> +                                           audit_get_loginuid(tsk));
->         case AUDIT_COMPARE_UID_TO_EUID:
->                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
->         case AUDIT_COMPARE_UID_TO_SUID:
-> @@ -394,11 +395,14 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
->         /* auid comparisons */
->         case AUDIT_COMPARE_AUID_TO_EUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op,
-> +                                           cred->euid);
->         case AUDIT_COMPARE_AUID_TO_SUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op,
-> +                                           cred->suid);
->         case AUDIT_COMPARE_AUID_TO_FSUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op,
-> +                                           cred->fsuid);
->         /* euid comparisons */
->         case AUDIT_COMPARE_EUID_TO_SUID:
->                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
-> @@ -611,7 +615,8 @@ static int audit_filter_rules(struct task_struct *tsk,
->                                 result = match_tree_refs(ctx, rule->tree);
->                         break;
->                 case AUDIT_LOGINUID:
-> -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
-> +                       result = audit_uid_comparator(audit_get_loginuid(tsk),
-> +                                                     f->op, f->uid);
->                         break;
->                 case AUDIT_LOGINUID_SET:
->                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
-> @@ -2278,14 +2283,15 @@ int audit_signal_info(int sig, struct task_struct *t)
->  {
->         struct audit_aux_data_pids *axp;
->         struct audit_context *ctx = audit_context();
-> -       kuid_t uid = current_uid(), t_uid = task_uid(t);
-> +       kuid_t uid = current_uid(), auid, t_uid = task_uid(t);
->
->         if (auditd_test_task(t) &&
->             (sig == SIGTERM || sig == SIGHUP ||
->              sig == SIGUSR1 || sig == SIGUSR2)) {
->                 audit_sig_pid = task_tgid_nr(current);
-> -               if (uid_valid(current->loginuid))
-> -                       audit_sig_uid = current->loginuid;
-> +               auid = audit_get_loginuid(current);
-> +               if (uid_valid(auid))
-> +                       audit_sig_uid = auid;
->                 else
->                         audit_sig_uid = uid;
->                 security_task_getsecid(current, &audit_sig_sid);
-> --
-> 1.8.3.1
->
+This is a WIP patch that makes use of the DEVFREQ_POLICY_NOTIFIER:
 
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1065122
 
+> I already knew the CPUFREQ_POLICY_NOTIFIER.
+> But, until now, there are no any requirements of DEVFREQ_POLICY_NOTIFIER.
+> If there are no any use-case, it is not necessary codes.
 
--- 
-paul moore
-www.paul-moore.com
+Sure, I intend to land the above driver upstream if devfreq can
+provide the necessary interfaces.
+
+> On 2018년 05월 16일 06:24, Matthias Kaehlcke wrote:
+> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> > index fe2af6aa88fc..a7294c056f65 100644
+> > --- a/drivers/devfreq/devfreq.c
+> > +++ b/drivers/devfreq/devfreq.c
+> > @@ -273,6 +273,9 @@ int update_devfreq(struct devfreq *devfreq)
+> >  	if (err)
+> >  		return err;
+> >  
+> > +	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
+> > +			DEVFREQ_ADJUST, &freq);
+> 
+> It is not proper to used 'freq' as the passed data.
+> In current step,'freq' is not adjusted and is not final decided
+> frequency.
+
+Right, the next revision will pass a struct devfreq_policy instead,
+where the notifiers can adjust the min/max values, similar to what
+cpufreq does.
+
+Thanks
+
+Matthias
