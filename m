@@ -1,78 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752378AbeEQNHG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:07:06 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33191 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752328AbeEQNHB (ORCPT
+        id S1752404AbeEQNHL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:07:11 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45228 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752328AbeEQNHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:07:01 -0400
-From: Olivier MOYSAN <olivier.moysan@st.com>
-To: Mark Brown <broonie@kernel.org>, "tiwai@suse.com" <tiwai@suse.com>
-CC: "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@stlinux.com" <kernel@stlinux.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        "rmk@arm.linux.org.uk" <rmk@arm.linux.org.uk>,
-        "jsarha@ti.com" <jsarha@ti.com>
-Subject: Re: [PATCH 0/3] ASoC: stm32: sai: add support of iec958 controls
-Thread-Topic: [PATCH 0/3] ASoC: stm32: sai: add support of iec958 controls
-Thread-Index: AQHTuugk+f/v2G3G5kiIINnSVNO0DaQEtPsAgAAvCoCAL0OagA==
-Date: Thu, 17 May 2018 13:03:44 +0000
-Message-ID: <dcd08b5c-fc92-4b5d-6950-45afe9db3317@st.com>
-References: <1520958428-10930-1-git-send-email-olivier.moysan@st.com>
- <a0552849-47fa-dc72-a512-a3e075adb07f@st.com>
- <20180417111733.GG8973@sirena.org.uk>
-In-Reply-To: <20180417111733.GG8973@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <B86C931B4FF4BD45AA64B0F90C3B2626@st.com>
-Content-Transfer-Encoding: 8BIT
+        Thu, 17 May 2018 09:07:06 -0400
+X-Google-Smtp-Source: AB8JxZoEPO4dozeueMH3FbAjrTvqLOElSf2ldkRHZMi6NG7gEl8Qb9XwfK0Zf64tJDQQewmv6nAvHg==
+Date: Thu, 17 May 2018 06:07:04 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH RFC] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180517130704.GA139147@joelaf.mtv.corp.google.com>
+References: <20180516224518.109891-1-joel@joelfernandes.org>
+ <20180517070026.GA22493@localhost.localdomain>
+ <20180517102024.s3dxo4uepujh5f65@vireshk-i7>
+ <20180517105358.GB22493@localhost.localdomain>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_07:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517105358.GB22493@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Takashi,
+On Thu, May 17, 2018 at 12:53:58PM +0200, Juri Lelli wrote:
+> On 17/05/18 15:50, Viresh Kumar wrote:
+> > On 17-05-18, 09:00, Juri Lelli wrote:
+> > > Hi Joel,
+> > > 
+> > > On 16/05/18 15:45, Joel Fernandes (Google) wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > @@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+> > > >  static void sugov_work(struct kthread_work *work)
+> > > >  {
+> > > >  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> > > > +	unsigned int freq;
+> > > > +	unsigned long flags;
+> > > > +
+> > > > +	/*
+> > > > +	 * Hold sg_policy->update_lock shortly to handle the case where:
+> > > > +	 * incase sg_policy->next_freq is read here, and then updated by
+> > > > +	 * sugov_update_shared just before work_in_progress is set to false
+> > > > +	 * here, we may miss queueing the new update.
+> > > > +	 */
+> > > > +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+> > > > +	freq = sg_policy->next_freq;
+> > > > +	sg_policy->work_in_progress = false;
+> > > > +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+> > > 
+> > > OK, we queue the new request up, but still we need to let this kthread
+> > > activation complete and then wake it up again to service the request
+> > > already queued, right? Wasn't what Claudio proposed (service back to
+> > > back requests all in the same kthread activation) better from an
+> > > overhead pow?
 
-On 04/17/2018 01:17 PM, Mark Brown wrote:
-> On Tue, Apr 17, 2018 at 08:29:17AM +0000, Olivier MOYSAN wrote:
-> 
->> I guess the blocking patch in this patchset is the patch "add IEC958
->> channel status control helper". This patch has been reviewed several
->> times, but did not get a ack so far.
->> If you think these helpers will not be merged, I will reintegrate the
->> corresponding code in stm driver.
->> Please let me know, if I need to prepare a v2 without helpers, or if we
->> can go further in the review of iec helpers patch ?
-> 
-> I don't mind either way but you're right here, I'm waiting for Takashi
-> to review the first patch.  I'd probably be OK with it just integrated
-> into the driver if we have to go that way though.
-> 
+Hmm, from that perspective, yeah. But note that my patch doesn't increase the
+overhead from what it already is.. because we don't queue the irq_work again
+unless work_in_progress is cleared, which wouldn't be if the kthread didn't
+run yet.
 
-Kind reminder.
-Would you have some comments on this patchset ?
+> > 
+> > We would need more locking stuff in the work handler in that case and
+> > I think there maybe a chance of missing the request in that solution
+> > if the request happens right at the end of when sugov_work returns.
+> 
+> Mmm, true. Ideally we might want to use some sort of queue where to
+> atomically insert requests and then consume until queue is empty from
+> sugov kthread.
 
-Thanks
-olivier
+IMO we don't really need a queue or anything, we should need the kthread to
+process the *latest* request it sees since that's the only one that matters.
+
+> But, I guess that's going to be too much complexity for an (hopefully)
+> corner case.
+
+I thought of this corner case too, I'd argue its still an improvement over
+not doing anything, but we could tighten this up a bit more if you wanted by
+doing something like this on top of my patch. Thoughts?
+
+---8<-----------------------
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index a87fc281893d..e45ec24b810b 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -394,6 +394,7 @@ static void sugov_work(struct kthread_work *work)
+ 	unsigned int freq;
+ 	unsigned long flags;
+ 
++redo_work:
+ 	/*
+ 	 * Hold sg_policy->update_lock shortly to handle the case where:
+ 	 * incase sg_policy->next_freq is read here, and then updated by
+@@ -409,6 +410,9 @@ static void sugov_work(struct kthread_work *work)
+ 	__cpufreq_driver_target(sg_policy->policy, freq,
+ 				CPUFREQ_RELATION_L);
+ 	mutex_unlock(&sg_policy->work_lock);
++
++	if (sg_policy->work_in_progress)
++		goto redo_work;
+ }
+ 
+ static void sugov_irq_work(struct irq_work *irq_work)
