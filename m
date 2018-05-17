@@ -1,222 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751695AbeEQCBq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 22:01:46 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:33979 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751438AbeEQCBo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 22:01:44 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180517020142epoutp021d739e6c954498684fba9737b4380b43~vTCDbbhVo2316823168epoutp02r
-X-AuditID: b6c32a36-b6dff70000001027-84-5afce27fb69d
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFCE27E.20803@samsung.com>
-Date: Thu, 17 May 2018 11:01:34 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [RFC PATCH] PM / devfreq: Add policy notifier
-In-reply-to: <20180515212447.180595-1-mka@chromium.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRmVeSWpSXmKPExsWy7bCmnm79oz9RBvfn6Vps+vie1eJs0xt2
-        i8u75rBZfO49wmjxecNjRovbjSvYHNg8ZjdcZPHo27KK0ePzJrkA5qhUm4zUxJTUIoXUvOT8
-        lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygvUoKZYk5pUChgMTiYiV9O5ui
-        /NKSVIWM/OISW6VoQ0MjPUMDcz0jIyBtHGtlZApUkpCa8aHnMmPBQv2K9kWHWRsYt6p1MXJy
-        SAiYSKx59Ie1i5GLQ0hgB6PE83/3mCCc74wSHx5MYIWpOvxhPiNEYjejxIXOw2wgCV4BQYkf
-        k++xdDFycDALyEscuZQNEmYW0JTYuns9O0T9XUaJp7cPQNVrSHS8aQOzWQRUJWb9X8wOYrMJ
-        aEnsf3EDLM4voChx9cdjRhBbVCBCYuf8b+wg80UE6iRWfKmHmJ8qcXfTJrDbhAWsJG7MWwdm
-        cwqYS0z6uwzsTgmBPWwSSx+8Y4R4wEVixZFDULawxKvjW8BmSghIS1w6agtR384o0b53HjOE
-        M4VR4tx1UFCANBhLPFvYxQSxmU/i3dceVohmXomONiGIEg+Jv/cnQgPLUeLLt4Ngu4QEuhgl
-        2nq5JzDKzUIKrlmI4JqFFFwLGJlXMYqlFhTnpqcWGxYY6RUn5haX5qXrJefnbmIEJzQtsx2M
-        i875HGIU4GBU4uEVsPsTJcSaWFZcmXuIUYKDWUmEV6gbKMSbklhZlVqUH19UmpNafIjRFBja
-        E5mlRJPzgck2ryTe0NTI2NjYwsTQzNTQUEmcd47S1yghgfTEktTs1NSC1CKYPiYOTqkGRiez
-        8285Y6dcTN+171R4x6J5OeJedvPtKpevrlBf3P617MoldXlllykzK67sXn1vq7e34CvZXR0b
-        tCMZLpx+dMwnbKfBbBFNJY5LUVXCGaoxTxfPue2mf/cr4//+cw6t0XEl9ZttaoL5jn0wXeD/
-        0+mtF8MK/cLGazcWbPHmPcUgPH2hppbRWSWW4oxEQy3mouJEAFebEV9+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsVy+t9jAd36R3+iDH5fkbTY9PE9q8XZpjfs
-        Fpd3zWGz+Nx7hNHi84bHjBa3G1ewObB5zG64yOLRt2UVo8fnTXIBzFFcNimpOZllqUX6dglc
-        GR96LjMWLNSvaF90mLWBcataFyMnh4SAicThD/MZuxi5OIQEdjJKrJrVzwqS4BUQlPgx+R5L
-        FyMHB7OAvMSRS9kgYWYBdYlJ8xYxQ9TfZ5RoeXKKGaJeQ6LjTRsbiM0ioCox6/9idhCbTUBL
-        Yv+LG2BxfgFFias/HjOCzBQViJDoPlEJMkdEoIFRovHVbDaIBakST583gt0gLGAlcWPeOlaI
-        ZT2MEsf7HzCBJDgFzCUm/V3GOIFRYBaSW2ch3DoLya0LGJlXMUqmFhTnpucWGxUY5qWW6xUn
-        5haX5qXrJefnbmIEhvO2w1p9OxjvL4k/xCjAwajEwytg9ydKiDWxrLgy9xCjBAezkgivUDdQ
-        iDclsbIqtSg/vqg0J7X4EKM0B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6pBsaoE+wLTSwm
-        Hkplf3vxm7Xa/vIj2dfm/ai9zqvaZ9jmeK7b5XSpe9n06Ha35jzBP0eXtxa6Pdj5+evqQ7pL
-        a9knJJer9gV7THQuOXbc4xKbyXaTvzkbzCMjz/Por9Q/su1s1TtnqZLydZOWhTG8SODZ/vZN
-        zoQfPr+lnx9qaa51tD9y8tT3GgklluKMREMt5qLiRAAU7kH9YwIAAA==
-X-CMS-MailID: 20180517020135epcas1p323c2c4e83f86e79182dfab065abe827a
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180515212545epcas1p2bdfd9c90f2ce6b74ac0fdd8cd9f9f63b
-X-RootMTR: 20180515212545epcas1p2bdfd9c90f2ce6b74ac0fdd8cd9f9f63b
-References: <CGME20180515212545epcas1p2bdfd9c90f2ce6b74ac0fdd8cd9f9f63b@epcas1p2.samsung.com>
-        <20180515212447.180595-1-mka@chromium.org>
+        id S1752060AbeEQCKb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 22:10:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40894 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751984AbeEQCK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 22:10:29 -0400
+Date: Thu, 17 May 2018 10:10:24 +0800
+From: Baoquan He <bhe@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
+ through memblock list
+Message-ID: <20180517021024.GI24627@MiWiFi-R3L-srv>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-5-takahiro.akashi@linaro.org>
+ <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+ <20180507055906.GE11326@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507055906.GE11326@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Could you give some use-case of DEVFREQ_POLICY_NOTIFIER
-or send use-case patch with this patch?
-
-I already knew the CPUFREQ_POLICY_NOTIFIER.
-But, until now, there are no any requirements of DEVFREQ_POLICY_NOTIFIER.
-If there are no any use-case, it is not necessary codes.
-
-On 2018년 05월 16일 06:24, Matthias Kaehlcke wrote:
-> Policy notifiers are called before a frequency change and may adjust the
-> frequency, similar to CPUFREQ_ADJUST. The purpose of policy notifiers is
-> to support non-thermal throttling of devfreq devices.
+On 05/07/18 at 02:59pm, AKASHI Takahiro wrote:
+> James,
 > 
-> As of now notifiers may only select a lower frequency, but not increase it.
-> The reason for this limitation is that devfreq currently doesn't have an
-> actual policy for frequencies and OPPs > freq might be disabled by a
-> devfreq cooling device (see drivers/thermal/devfreq_cooling.c).
+> On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
+> > Hi Akashi,
+> > 
+> > On 25/04/18 07:26, AKASHI Takahiro wrote:
+> > > We need to prevent firmware-reserved memory regions, particularly EFI
+> > > memory map as well as ACPI tables, from being corrupted by loading
+> > > kernel/initrd (or other kexec buffers). We also want to support memory
+> > > allocation in top-down manner in addition to default bottom-up.
+> > > So let's have arm64 specific arch_kexec_walk_mem() which will search
+> > > for available memory ranges in usable memblock list,
+> > > i.e. !NOMAP & !reserved, 
+> > 
+> > > instead of system resource tree.
+> > 
+> > Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
+> > be safe in the EFI-memory-map/ACPI-tables case?
+> > 
+> > It would be good to avoid having two ways of doing this, and I would like to
+> > avoid having extra arch code...
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Marked as RFC since I'm aware that this isn't quite a 'policy' notifier,
-> but I also didn't want to make it too specific. Maybe devfreq devices should
-> have a policy similar to cpufreq?
-> 
-> Should devfreq core be in charge of disabling/enabling OPPs instead of
-> the thermal cooling device? Typically we don't want to use higher OPPs
-> than those whitelisted by thermal, so in practice the current situation
-> shouldn't be much of an issue.
-> 
->  drivers/devfreq/devfreq.c | 20 ++++++++++++++++----
->  include/linux/devfreq.h   |  6 ++++++
->  2 files changed, 22 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index fe2af6aa88fc..a7294c056f65 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -273,6 +273,9 @@ int update_devfreq(struct devfreq *devfreq)
->  	if (err)
->  		return err;
->  
-> +	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
-> +			DEVFREQ_ADJUST, &freq);
+> I know what you mean.
+> /proc/iomem or system resource is, in my opinion, not the best place to
+> describe memory usage of kernel but rather to describe *physical* hardware
+> layout. As we are still discussing about "reserved" memory, I don't want
+> to depend on it.
+> Along with memblock list, we will have more accurate control over memory
+> usage.
 
-It is not proper to used 'freq' as the passed data.
-In current step,'freq' is not adjusted and is not final decided frequency.
+In kexec-tools, we see any usable memory as candidate which can be used
+to load kexec kernel image/initrd etc. However kexec loading is a
+preparation work, it just books those position for later kexec kernel
+jumping after "kexec -e", that is why we need kexec_buf to remember
+them and do the real content copy of kernel/initrd. Here you use
+memblock to search available memory, isn't it deviating too far away
+from the original design in kexec-tools. Assume kexec loading and
+kexec_file loading should be consistent on loading even though they are
+done in different space, kernel space and user space.
 
-> +
->  	/*
->  	 * Adjust the frequency with user freq, QoS and available freq.
->  	 *
-> @@ -640,6 +643,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  	devfreq->last_stat_updated = jiffies;
->  
->  	srcu_init_notifier_head(&devfreq->transition_notifier_list);
-> +	srcu_init_notifier_head(&devfreq->policy_notifier_list);
->  
->  	mutex_unlock(&devfreq->lock);
->  
-> @@ -1414,7 +1418,7 @@ EXPORT_SYMBOL(devm_devfreq_unregister_opp_notifier);
->   * devfreq_register_notifier() - Register a driver with devfreq
->   * @devfreq:	The devfreq object.
->   * @nb:		The notifier block to register.
-> - * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-> + * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
->   */
->  int devfreq_register_notifier(struct devfreq *devfreq,
->  				struct notifier_block *nb,
-> @@ -1430,6 +1434,10 @@ int devfreq_register_notifier(struct devfreq *devfreq,
->  		ret = srcu_notifier_chain_register(
->  				&devfreq->transition_notifier_list, nb);
->  		break;
-> +	case DEVFREQ_POLICY_NOTIFIER:
-> +		ret = srcu_notifier_chain_register(
-> +				&devfreq->policy_notifier_list, nb);
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  	}
-> @@ -1442,7 +1450,7 @@ EXPORT_SYMBOL(devfreq_register_notifier);
->   * devfreq_unregister_notifier() - Unregister a driver with devfreq
->   * @devfreq:	The devfreq object.
->   * @nb:		The notifier block to be unregistered.
-> - * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-> + * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
->   */
->  int devfreq_unregister_notifier(struct devfreq *devfreq,
->  				struct notifier_block *nb,
-> @@ -1458,6 +1466,10 @@ int devfreq_unregister_notifier(struct devfreq *devfreq,
->  		ret = srcu_notifier_chain_unregister(
->  				&devfreq->transition_notifier_list, nb);
->  		break;
-> +	case DEVFREQ_POLICY_NOTIFIER:
-> +		ret = srcu_notifier_chain_unregister(
-> +				&devfreq->policy_notifier_list, nb);
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  	}
-> @@ -1485,7 +1497,7 @@ static void devm_devfreq_notifier_release(struct device *dev, void *res)
->   * @dev:	The devfreq user device. (parent of devfreq)
->   * @devfreq:	The devfreq object.
->   * @nb:		The notifier block to be unregistered.
-> - * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-> + * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
->   */
->  int devm_devfreq_register_notifier(struct device *dev,
->  				struct devfreq *devfreq,
-> @@ -1521,7 +1533,7 @@ EXPORT_SYMBOL(devm_devfreq_register_notifier);
->   * @dev:	The devfreq user device. (parent of devfreq)
->   * @devfreq:	The devfreq object.
->   * @nb:		The notifier block to be unregistered.
-> - * @list:	DEVFREQ_TRANSITION_NOTIFIER.
-> + * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
->   */
->  void devm_devfreq_unregister_notifier(struct device *dev,
->  				struct devfreq *devfreq,
-> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-> index 3aae5b3af87c..8edc538d78f7 100644
-> --- a/include/linux/devfreq.h
-> +++ b/include/linux/devfreq.h
-> @@ -33,6 +33,10 @@
->  #define	DEVFREQ_PRECHANGE		(0)
->  #define DEVFREQ_POSTCHANGE		(1)
->  
-> +#define DEVFREQ_POLICY_NOTIFIER		1
-> +
-> +#define	DEVFREQ_ADJUST			0
-> +
->  struct devfreq;
->  struct devfreq_governor;
->  
-> @@ -136,6 +140,7 @@ struct devfreq_dev_profile {
->   * @time_in_state:	Statistics of devfreq states
->   * @last_stat_updated:	The last time stat updated
->   * @transition_notifier_list: list head of DEVFREQ_TRANSITION_NOTIFIER notifier
-> + * @policy_notifier_list: list head of DEVFREQ_POLICY_NOTIFIER notifier
->   *
->   * This structure stores the devfreq information for a give device.
->   *
-> @@ -174,6 +179,7 @@ struct devfreq {
->  	unsigned long last_stat_updated;
->  
->  	struct srcu_notifier_head transition_notifier_list;
-> +	struct srcu_notifier_head policy_notifier_list;
->  };
->  
->  struct devfreq_freqs {
+I didn't follow the earlier post, may miss something.
+
+Thanks
+Baoquan
+
 > 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> > 
+> > > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > > new file mode 100644
+> > > index 000000000000..f9ebf54ca247
+> > > --- /dev/null
+> > > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > > @@ -0,0 +1,57 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * kexec_file for arm64
+> > > + *
+> > > + * Copyright (C) 2018 Linaro Limited
+> > > + * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > > + *
+> > 
+> > > + * Most code is derived from arm64 port of kexec-tools
+> > 
+> > How does kexec-tools walk memblock?
+> 
+> Will remove this comment from this patch.
+> Obviously, this comment is for the rest of the code which will be
+> added to succeeding patches (patch #5 and #7).
+> 
+> 
+> > 
+> > > + */
+> > > +
+> > > +#define pr_fmt(fmt) "kexec_file: " fmt
+> > > +
+> > > +#include <linux/ioport.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/kexec.h>
+> > > +#include <linux/memblock.h>
+> > > +
+> > > +int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > +				int (*func)(struct resource *, void *))
+> > > +{
+> > > +	phys_addr_t start, end;
+> > > +	struct resource res;
+> > > +	u64 i;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (kbuf->image->type == KEXEC_TYPE_CRASH)
+> > > +		return func(&crashk_res, kbuf);
+> > > +
+> > > +	if (kbuf->top_down)
+> > > +		for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,
+> > > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > > +				&start, &end, NULL) {
+> > 
+> > for_each_free_mem_range_reverse() is a more readable version of this helper.
+> 
+> OK. I used to use my own limited list of reserved memory instead of
+> memblock.reserved here to exclude verbose ranges.
+> 
+> 
+> > > +			if (!memblock_is_map_memory(start))
+> > > +				continue;
+> > 
+> > Passing MEMBLOCK_NONE means this walk will never find MEMBLOCK_NOMAP memory.
+> 
+> Sure, I confirmed it.
+> 
+> > 
+> > > +			res.start = start;
+> > > +			res.end = end;
+> > > +			ret = func(&res, kbuf);
+> > > +			if (ret)
+> > > +				break;
+> > > +		}
+> > > +	else
+> > > +		for_each_mem_range(i, &memblock.memory, &memblock.reserved,
+> > > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > > +				&start, &end, NULL) {
+> > 
+> > for_each_free_mem_range()?
+> 
+> OK.
+> 
+> > > +			if (!memblock_is_map_memory(start))
+> > > +				continue;
+> > > +
+> > > +			res.start = start;
+> > > +			res.end = end;
+> > > +			ret = func(&res, kbuf);
+> > > +			if (ret)
+> > > +				break;
+> > > +		}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > 
+> > 
+> > With these changes, what we have is almost:
+> > arch/powerpc/kernel/machine_kexec_file_64.c::arch_kexec_walk_mem() !
+> > (the difference being powerpc doesn't yet support crash-kernels here)
+> > 
+> > If the argument is walking memblock gives a better answer than the stringy
+> > walk_system_ram_res() thing, is there any mileage in moving this code into
+> > kexec_file.c, and using it if !IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK)?
+> > 
+> > This would save arm64/powerpc having near-identical implementations.
+> > 32bit arm keeps memblock if it has kexec, so it may be useful there too if
+> > kexec_file_load() support is added.
+> 
+> Thanks. I've forgot ppc.
+> 
+> -Takahiro AKASHI
+> 
+> 
+> > 
+> > Thanks,
+> > 
+> > James
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
