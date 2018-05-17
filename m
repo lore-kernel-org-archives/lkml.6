@@ -1,113 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeEQLnc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:43:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49012 "EHLO
+        id S1751695AbeEQLsY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:48:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51022 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeEQLna (ORCPT
+        with ESMTP id S1751047AbeEQLsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:43:30 -0400
-Date: Thu, 17 May 2018 08:43:24 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180517084324.3242c257@vento.lan>
-In-Reply-To: <20180517083440.14e6b975@vento.lan>
-References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
-        <20180423152455.363d285c@vento.lan>
-        <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
-        <20180423161742.66f939ba@vento.lan>
-        <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
-        <20180426204241.03a42996@vento.lan>
-        <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
-        <20180515085953.65bfa107@vento.lan>
-        <20180515141655.idzuh2jfdkuu5grs@mwanda>
-        <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
-        <20180515193936.m25kzyeknsk2bo2c@mwanda>
-        <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
-        <d34cf31f-6dc5-ee2d-ea6d-513dd5e8e5c3@embeddedor.com>
-        <20180517083440.14e6b975@vento.lan>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 17 May 2018 07:48:23 -0400
+Date: Thu, 17 May 2018 04:48:21 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: Re: [RFC v3 PATCH 1/5] mm/page_alloc: use helper functions to
+ add/remove a page to/from buddy
+Message-ID: <20180517114821.GA26689@bombadil.infradead.org>
+References: <20180509085450.3524-1-aaron.lu@intel.com>
+ <20180509085450.3524-2-aaron.lu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509085450.3524-2-aaron.lu@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 17 May 2018 08:34:40 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
+On Wed, May 09, 2018 at 04:54:46PM +0800, Aaron Lu wrote:
+> +static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+> +					unsigned int order, int mt)
+> +{
+> +	add_to_buddy_common(page, zone, order);
+> +	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
+> +}
 
-> Em Thu, 17 May 2018 05:36:03 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
-> 
-> > 
-> > 
-> > On 05/16/2018 08:14 PM, Gustavo A. R. Silva wrote:
-> > > 
-> > > 
-> > > On 05/15/2018 02:39 PM, Dan Carpenter wrote:
-> 
-> > >> You'd need to rebuild the db (possibly twice but definitely once).
-> 
-> How? Here, I just pull from your git tree and do a "make". At most,
-> make clean; make.
-
-Never mind. Found it using grep. I'm running this:
-
-	make allyesconfig
-	/devel/smatch/smatch_scripts/build_kernel_data.sh
-	/devel/smatch/smatch_scripts/build_kernel_data.sh
-
-
-> 
-> > >>
-> > > 
-> > > Hi Dan,
-> > > 
-> > > After rebuilding the db (once), these are all the Spectre media warnings 
-> > > I get:
-> > > 
-> > > drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
-> > > potential spectre issue 'ddbs'
-> > > drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
-> > > potential spectre issue 'pdev->port'
-> > > drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
-> > > potential spectre issue 'idev->input'
-> > > drivers/media/dvb-core/dvb_ca_en50221.c:1400 
-> > > dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
-> > > 'ca->slot_info' (local cap)
-> > > drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
-> > > warn: potential spectre issue 'ca->slot_info' (local cap)
-> > > drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
-> > > potential spectre issue 'p->ule_next_hdr'
-> > > drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
-> > > spectre issue 'dvbnet->device' (local cap)
-> > > drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
-> > > warn: potential spectre issue 'pin->error_inj_args'
-> > > 
-> > > I just want to double check if you are getting the same output. In case 
-> > > you are getting the same, then what Mauro commented about these issues:
-> > > 
-> > > https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
-> > > 
-> > > being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
-> > > to be correct.
-> > > 
-> > 
-> > Interesting, I've rebuild the db twice and now I get a total of 75 
-> > Spectre warnings in drivers/media
-> 
-> That makes more sense to me, as the same pattern is used by almost all
-> VIDIOC_ENUM_foo ioctls.
-> 
-> Thanks,
-> Mauro
-
-
-
-Thanks,
-Mauro
+Isn't this function (and all of its friends) misnamed?  We're not adding
+this page to the buddy allocator, we're adding it to the freelist.  It
+doesn't go to the buddy allocator until later, if at all.
