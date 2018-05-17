@@ -1,62 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeEQIEb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:04:31 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60182 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeEQIE2 (ORCPT
+        id S1752213AbeEQIEv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:04:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45916 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeEQIEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:04:28 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: emu10k1: fix spelling mistake: "Caputre" -> "Capture"
-Date: Thu, 17 May 2018 09:04:20 +0100
-Message-Id: <20180517080420.23020-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 17 May 2018 04:04:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BD1B60131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+        Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH v2] f2fs: Fix deadlock in shutdown ioctl
+Date: Thu, 17 May 2018 13:33:31 +0530
+Message-Id: <1526544211-26218-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+f2fs_ioc_shutdown() ioctl gets stuck in the below path
+when issued with F2FS_GOING_DOWN_FULLSYNC option.
 
-Trivial fix to spelling mistakes in audigy_outs arrays.
+__switch_to+0x90/0xc4
+percpu_down_write+0x8c/0xc0
+freeze_super+0xec/0x1e4
+freeze_bdev+0xc4/0xcc
+f2fs_ioctl+0xc0c/0x1ce0
+f2fs_compat_ioctl+0x98/0x1f0
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- sound/pci/emu10k1/emufx.c   | 2 +-
- sound/pci/emu10k1/emuproc.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+v2:
+remove lock coverage for only F2FS_GOING_DOWN_FULLSYNC case as suggested by Chao.
 
-diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-index 608ff4857d70..b45a01bb73e5 100644
---- a/sound/pci/emu10k1/emufx.c
-+++ b/sound/pci/emu10k1/emufx.c
-@@ -170,7 +170,7 @@ static char *audigy_outs[32] = {
- 	/* 0x0f */ "Rear Right",
- 	/* 0x10 */ "AC97 Front Left",
- 	/* 0x11 */ "AC97 Front Right",
--	/* 0x12 */ "ADC Caputre Left",
-+	/* 0x12 */ "ADC Capture Left",
- 	/* 0x13 */ "ADC Capture Right",
- 	/* 0x14 */ NULL,
- 	/* 0x15 */ NULL,
-diff --git a/sound/pci/emu10k1/emuproc.c b/sound/pci/emu10k1/emuproc.c
-index bde0d1954f56..055227caa7ca 100644
---- a/sound/pci/emu10k1/emuproc.c
-+++ b/sound/pci/emu10k1/emuproc.c
-@@ -135,7 +135,7 @@ static void snd_emu10k1_proc_read(struct snd_info_entry *entry,
- 		/* 15 */ "Rear Right",
- 		/* 16 */ "AC97 Front Left",
- 		/* 17 */ "AC97 Front Right",
--		/* 18 */ "ADC Caputre Left",
-+		/* 18 */ "ADC Capture Left",
- 		/* 19 */ "ADC Capture Right",
- 		/* 20 */ "???",
- 		/* 21 */ "???",
+ fs/f2fs/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6b94f19..5a132c9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1857,6 +1857,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 
+ 	switch (in) {
+ 	case F2FS_GOING_DOWN_FULLSYNC:
++		mnt_drop_write_file(filp);
+ 		sb = freeze_bdev(sb->s_bdev);
+ 		if (IS_ERR(sb)) {
+ 			ret = PTR_ERR(sb);
+@@ -1894,7 +1895,8 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+-	mnt_drop_write_file(filp);
++	if (in != F2FS_GOING_DOWN_FULLSYNC)
++		mnt_drop_write_file(filp);
+ 	return ret;
+ }
+ 
 -- 
-2.17.0
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
