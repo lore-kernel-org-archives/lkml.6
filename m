@@ -1,56 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752455AbeEQGnI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:43:08 -0400
-Received: from verein.lst.de ([213.95.11.211]:51576 "EHLO newverein.lst.de"
+        id S1752514AbeEQGnc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:43:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57866 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752230AbeEQGnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:43:05 -0400
-Date: Thu, 17 May 2018 08:47:37 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Chris Novakovic <chris@chrisn.me.uk>
-Subject: Re: linux-next: manual merge of the net-next tree with the vfs tree
-Message-ID: <20180517064737.GA24336@lst.de>
-References: <20180517113450.182c8259@canb.auug.org.au>
+        id S1752428AbeEQGna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 02:43:30 -0400
+Subject: Re: [PATCH] xen-netfront: fix xennet_start_xmit()'s return type
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, netdev@vger.kernel.org
+References: <20180424131815.5064-1-luc.vanoostenryck@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <934aa4fe-30ef-10b7-96d7-995ee7a4d6a0@suse.com>
+Date: Thu, 17 May 2018 08:43:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517113450.182c8259@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180424131815.5064-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> + /* Create a new file under /proc/net/ipconfig */
-> + static int ipconfig_proc_net_create(const char *name,
-> + 				    const struct file_operations *fops)
-> + {
-> + 	char *pname;
-> + 	struct proc_dir_entry *p;
-> + 
-> + 	if (!ipconfig_dir)
-> + 		return -ENOMEM;
-> + 
-> + 	pname = kasprintf(GFP_KERNEL, "%s%s", "ipconfig/", name);
-> + 	if (!pname)
-> + 		return -ENOMEM;
-> + 
-> + 	p = proc_create(pname, 0444, init_net.proc_net, fops);
-> + 	kfree(pname);
-> + 	if (!p)
-> + 		return -ENOMEM;
-> + 
-> + 	return 0;
+On 24/04/18 15:18, Luc Van Oostenryck wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
+> 
+> Fix this by returning 'netdev_tx_t' in this driver too.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-This code doesn't exist in the above mentioned commit.  But event
-without knowing the details of the /proc/net code this looks somewhat
-bogus.  For one I thought all the /proc/net files should be per-net
-namespace.  Second the ntp file really should be using proc_create_net,
-to handle all that under the hood - with the merge of the VFS
-tree it will take a seq_ops, which is what this code really wants
-anyway.
+Pushed to xen/tip.git for-linus-4.18
+
+
+Juergen
