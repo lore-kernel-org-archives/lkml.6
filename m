@@ -1,211 +1,380 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751850AbeEQJrS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 05:47:18 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:50104 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751280AbeEQJrQ (ORCPT
+        id S1752100AbeEQJrm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 05:47:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45118 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751481AbeEQJrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 05:47:16 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40038169"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>, <hpa@zytor.com>, <peterz@infradead.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [RFC PATCH 1/1] acpi/processor: Remove the check of duplicate processors
-Date: Thu, 17 May 2018 17:46:58 +0800
-Message-ID: <20180517094658.18707-2-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
-References: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
+        Thu, 17 May 2018 05:47:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: AF1764B3ED6D.ACC05
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 17 May 2018 15:17:34 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
+ peripheral
+In-Reply-To: <f970143860bd64624e7fad58333df1be@codeaurora.org>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
+ <20180507162004.GB2259@tuxbook-pro>
+ <f970143860bd64624e7fad58333df1be@codeaurora.org>
+Message-ID: <82fa847760309cb3382bf0a8da50162c@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, Linux checks the duplicate processor ids at boot time based on the ACPI
-namespace, and using it at hotplug time.
-
-But, In fact, it doesn't work, becasue of the wrong walk in all APIC namespace
-entries, and even if it would be right, it may miss an hotpluggable CPU（we can
-hotplug one of the duplicate processor, the others can be ignored).
-
-So, Remove the check code.
-
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
- drivers/acpi/acpi_processor.c | 126 ------------------------------------------
- include/linux/acpi.h          |   3 -
- 2 files changed, 129 deletions(-)
-
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..8358708e0bbb 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -281,13 +281,6 @@ static int acpi_processor_get_info(struct acpi_device *device)
- 		pr->acpi_id = value;
- 	}
- 
--	if (acpi_duplicate_processor_id(pr->acpi_id)) {
--		dev_err(&device->dev,
--			"Failed to get unique processor _UID (0x%x)\n",
--			pr->acpi_id);
--		return -ENODEV;
--	}
--
- 	pr->phys_id = acpi_get_phys_id(pr->handle, device_declaration,
- 					pr->acpi_id);
- 	if (invalid_phys_cpuid(pr->phys_id))
-@@ -579,127 +572,8 @@ static struct acpi_scan_handler processor_container_handler = {
- 	.attach = acpi_processor_container_attach,
- };
- 
--/* The number of the unique processor IDs */
--static int nr_unique_ids __initdata;
--
--/* The number of the duplicate processor IDs */
--static int nr_duplicate_ids;
--
--/* Used to store the unique processor IDs */
--static int unique_processor_ids[] __initdata = {
--	[0 ... NR_CPUS - 1] = -1,
--};
--
--/* Used to store the duplicate processor IDs */
--static int duplicate_processor_ids[] = {
--	[0 ... NR_CPUS - 1] = -1,
--};
--
--static void __init processor_validated_ids_update(int proc_id)
--{
--	int i;
--
--	if (nr_unique_ids == NR_CPUS||nr_duplicate_ids == NR_CPUS)
--		return;
--
--	/*
--	 * Firstly, compare the proc_id with duplicate IDs, if the proc_id is
--	 * already in the IDs, do nothing.
--	 */
--	for (i = 0; i < nr_duplicate_ids; i++) {
--		if (duplicate_processor_ids[i] == proc_id)
--			return;
--	}
--
--	/*
--	 * Secondly, compare the proc_id with unique IDs, if the proc_id is in
--	 * the IDs, put it in the duplicate IDs.
--	 */
--	for (i = 0; i < nr_unique_ids; i++) {
--		if (unique_processor_ids[i] == proc_id) {
--			duplicate_processor_ids[nr_duplicate_ids] = proc_id;
--			nr_duplicate_ids++;
--			return;
--		}
--	}
--
--	/*
--	 * Lastly, the proc_id is a unique ID, put it in the unique IDs.
--	 */
--	unique_processor_ids[nr_unique_ids] = proc_id;
--	nr_unique_ids++;
--}
--
--static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
--						  u32 lvl,
--						  void *context,
--						  void **rv)
--{
--	acpi_status status;
--	acpi_object_type acpi_type;
--	unsigned long long uid;
--	union acpi_object object = { 0 };
--	struct acpi_buffer buffer = { sizeof(union acpi_object), &object };
--
--	status = acpi_get_type(handle, &acpi_type);
--	if (ACPI_FAILURE(status))
--		return false;
--
--	switch (acpi_type) {
--	case ACPI_TYPE_PROCESSOR:
--		status = acpi_evaluate_object(handle, NULL, NULL, &buffer);
--		if (ACPI_FAILURE(status))
--			goto err;
--		uid = object.processor.proc_id;
--		break;
--
--	case ACPI_TYPE_DEVICE:
--		status = acpi_evaluate_integer(handle, "_UID", NULL, &uid);
--		if (ACPI_FAILURE(status))
--			goto err;
--		break;
--	default:
--		goto err;
--	}
--
--	processor_validated_ids_update(uid);
--	return true;
--
--err:
--	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
--
--}
--
--static void __init acpi_processor_check_duplicates(void)
--{
--	/* check the correctness for all processors in ACPI namespace */
--	acpi_walk_namespace(ACPI_TYPE_PROCESSOR, ACPI_ROOT_OBJECT,
--						ACPI_UINT32_MAX,
--						acpi_processor_ids_walk,
--						NULL, NULL, NULL);
--	acpi_get_devices(ACPI_PROCESSOR_DEVICE_HID, acpi_processor_ids_walk,
--						NULL, NULL);
--}
--
--bool acpi_duplicate_processor_id(int proc_id)
--{
--	int i;
--
--	/*
--	 * compare the proc_id with duplicate IDs, if the proc_id is already
--	 * in the duplicate IDs, return true, otherwise, return false.
--	 */
--	for (i = 0; i < nr_duplicate_ids; i++) {
--		if (duplicate_processor_ids[i] == proc_id)
--			return true;
--	}
--	return false;
--}
--
- void __init acpi_processor_init(void)
- {
--	acpi_processor_check_duplicates();
- 	acpi_scan_add_handler_with_hotplug(&processor_handler, "processor");
- 	acpi_scan_add_handler(&processor_container_handler);
- }
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 15bfb15c2fa5..068dcfe6768b 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -285,9 +285,6 @@ static inline bool invalid_phys_cpuid(phys_cpuid_t phys_id)
- 	return phys_id == PHYS_CPUID_INVALID;
- }
- 
--/* Validate the processor object's proc_id */
--bool acpi_duplicate_processor_id(int proc_id);
--
- #ifdef CONFIG_ACPI_HOTPLUG_CPU
- /* Arch dependent functions for cpu hotplug support */
- int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id,
--- 
-2.14.3
+On 2018-05-08 15:55, kgunda@codeaurora.org wrote:
+> On 2018-05-07 21:50, Bjorn Andersson wrote:
+>> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+>> 
+>>> WLED4 peripheral is present on some PMICs like pmi8998
+>>> and pm660l. It has a different register map and also
+>>> configurations are different. Add support for it.
+>>> 
+>> 
+>> Several things are going on in this patch, it needs to be split to
+>> not hide the functional changes from the structural/renames.
+>> 
+> Ok. I will split it in the next series.
+>>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>>> ---
+>>>  .../bindings/leds/backlight/qcom-wled.txt          | 172 ++++-
+>>>  drivers/video/backlight/qcom-wled.c                | 749 
+>>> +++++++++++++++------
+>>>  2 files changed, 696 insertions(+), 225 deletions(-)
+>>> 
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
+>>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>>> index fb39e32..0ceffa1 100644
+>>> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>>> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>>> @@ -1,30 +1,129 @@
+>>>  Binding for Qualcomm Technologies, Inc. WLED driver
+>>> 
+>>> -Required properties:
+>>> -- compatible: should be "qcom,pm8941-wled"
+>>> -- reg: slave address
+>>> -
+>>> -Optional properties:
+>>> -- default-brightness: brightness value on boot, value from: 0-4095
+>>> -	default: 2048
+>>> -- label: The name of the backlight device
+>>> -- qcom,cs-out: bool; enable current sink output
+>>> -- qcom,cabc: bool; enable content adaptive backlight control
+>>> -- qcom,ext-gen: bool; use externally generated modulator signal to 
+>>> dim
+>>> -- qcom,current-limit: mA; per-string current limit; value from 0 to 
+>>> 25
+>>> -	default: 20mA
+>>> -- qcom,current-boost-limit: mA; boost current limit; one of:
+>>> -	105, 385, 525, 805, 980, 1260, 1400, 1680
+>>> -	default: 805mA
+>>> -- qcom,switching-freq: kHz; switching frequency; one of:
+>>> -	600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
+>>> -	1600, 1920, 2400, 3200, 4800, 9600,
+>>> -	default: 1600kHz
+>>> -- qcom,ovp: V; Over-voltage protection limit; one of:
+>>> -	27, 29, 32, 35
+>>> -	default: 29V
+>>> -- qcom,num-strings: #; number of led strings attached; value from 1 
+>>> to 3
+>>> -	default: 2
+>>> +WLED (White Light Emitting Diode) driver is used for controlling 
+>>> display
+>>> +backlight that is part of PMIC on Qualcomm Technologies, Inc. 
+>>> reference
+>>> +platforms. The PMIC is connected to the host processor via SPMI bus.
+>>> +
+>>> +- compatible
+>>> +	Usage:        required
+>>> +	Value type:   <string>
+>>> +	Definition:   should be "qcom,pm8941-wled" or "qcom,pmi8998-wled".
+>>> +		      or "qcom,pm660l-wled".
+>> 
+>> Better written as
+>> 
+>> 		should be one of:
+>> 		      	X
+>> 		      	Y
+>> 		      	Z
+>> 
+> Will do it in the next series.
+>>> +
+>>> +- reg
+>>> +	Usage:        required
+>>> +	Value type:   <prop encoded array>
+>>> +	Definition:   Base address of the WLED modules.
+>>> +
+>>> +- interrupts
+>>> +	Usage:        optional
+>>> +	Value type:   <prop encoded array>
+>>> +	Definition:   Interrupts associated with WLED. Interrupts can be
+>>> +		      specified as per the encoding listed under
+>>> +		      Documentation/devicetree/bindings/spmi/
+>>> +		      qcom,spmi-pmic-arb.txt.
+>> 
+>> Better to describe that this should be the "short" and "ovp" 
+>> interrupts
+>> in this property than in the interrupt-names.
+>> 
+> Ok. I will do it in the next series.
+>>> +
+>>> +- interrupt-names
+>>> +	Usage:        optional
+>>> +	Value type:   <string>
+>>> +	Definition:   Interrupt names associated with the interrupts.
+>>> +		      Must be "short" and "ovp". The short circuit detection
+>>> +		      is not supported for PM8941.
+>>> +
+>>> +- label
+>>> +	Usage:        required
+>>> +	Value type:   <string>
+>>> +	Definition:   The name of the backlight device
+>>> +
+>>> +- default-brightness
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   brightness value on boot, value from: 0-4095
+>>> +		      Default: 2048
+>>> +
+>>> +- qcom,current-limit
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   uA; per-string current limit
+>> 
+>> You can't change unit on an existing property, that breaks any 
+>> existing
+>> dts using the qcom,pm8941-wled compatible.
+>> 
+> 
+>>> +		      value:
+>>> +		      For pm8941: from 0 to 25000 with 5000 ua step
+>>> +				  Default 20000 uA
+>>> +		      For pmi8998: from 0 to 30000 with 5000 ua step
+>>> +				   Default 25000 uA.
+>> 
+>> These values could be described just as well in mA, so keep the 
+>> original
+>> unit - in particular since the boot-limit is in mA...
+>> 
+> Ok. Will keep the original as is in the next series.
+Here, I may have to go with the approach as in "qcom,ovp". Because for 
+pm8941
+the current step is 1 mA (I have wrongly mentioned as 5000uA here) and 
+for PMI8998
+the current step is 2.5 mA. Hence, I will add another variable 
+"qcom,current-limit-ua"
+just like "qcom,ovp-mv".
+>>> +
+>>> +- qcom,current-boost-limit
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   mA; boost current limit.
+>>> +		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
+>>> +				 1680. Default: 805 mA
+>>> +		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
+>>> +				  1500. Default: 970 mA
+>>> +
+>>> +- qcom,switching-freq
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   kHz; switching frequency; one of: 600, 640, 685, 738,
+>>> +		      800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
+>>> +		      4800, 9600.
+>>> +		      Default: for pm8941: 1600 kHz
+>>> +			      for pmi8998: 800 kHz
+>>> +
+>>> +- qcom,ovp
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   mV; Over-voltage protection limit;
+>> 
+>> The existing users of qcom,pm8941-wled depends on this being in V, so
+>> you can't change the unit. I suggest that you add a new "qcom,ovp-mv"
+>> property and make the driver fall back to looking for qcom,ovp if that
+>> isn't specified.
+>> 
+>> PS. This is a very good example of why it is a good idea to not
+>> restructure and make changes at the same time - I almost missed this.
+>> 
+> Actually I have checked the current kernel and none of the properties 
+> are
+> being configured from the device tree node. Hence, i thought it is the 
+> right
+> time modify the units to mV to support the PMI8998.
+> 
+> You still want to have the qcom,ovp-mv, even though it is not being
+> configured from
+> device tree ?
+>>> +		      For pm8941:  one of 27000, 29000, 32000, 35000
+>>> +				  Default: 29000 mV
+>>> +		      For pmi8998: one of 18100, 19600, 29600, 31100
+>>> +				  Default: 29600 mV
+>>> +
+>>> +- qcom,num-strings
+>>> +	Usage:        optional
+>>> +	Value type:   <u32>
+>>> +	Definition:   #; number of led strings attached;
+>>> +		      for pm8941: value 3.
+>>> +		      for pmi8998: value 4.
+>> 
+>> This was the number of strings actually used, so you can't turn this
+>> into max number of strings supported. As we have different compatibles
+>> for the different pmics this can be hard coded in the driver, based on
+>> compatible, and qcom,num-strings can be kept as a special case of
+>> qcom,enabled-strings (enabling string 0 through N).
+>> 
+> Ok. Actually I don't see the use of this property as the 
+> qcom,enabled-strings
+> it self is enough to know the strings to be enabled. But for backward
+> compatibility
+> i keep it as original property.
+>>> +
+>>> +- qcom,enabled-strings
+>>> +	Usage:        optional
+>>> +	Value tyoe:   <u32>
+>>> +	Definition:   Bit mask of the WLED strings. Bit 0 to 3 indicates 
+>>> strings
+>>> +		      0 to 3 respectively. Each string of leds are operated
+>>> +		      individually. Specify the strings using the bit mask. Any
+>>> +		      combination of led strings can be used.
+>>> +		      for pm8941: Default value is 7 (b111).
+>>> +		      for pmi8998: Default value is 15 (b1111).
+>> 
+>> I think it's better if you describe the enabled strings in an array, 
+>> as
+>> it makes the dts easier to read and write for humans.
+>> 
+> ok. I will do that in the next series.
+>> Also I'm uncertain about the validity of these defaults, as it's not
+>> that the defaults are 7 and 15 it's that if this property is not
+>> specified all strings will be enabled and the auto calibration will 
+>> kick
+>> in to figure out the proper configuration.
+>> 
+>> It would be better to describe this as "absence of this property will
+>> trigger auto calibration".
+>> 
+> Ok. I will describe it in the next series.
+>>> +
+>>> +- qcom,cs-out
+>>> +	Usage:        optional
+>>> +	Value type:   <bool>
+>>> +	Definition:   enable current sink output.
+>>> +		      This property is supported only for PM8941.
+>>> +
+>>> +- qcom,cabc
+>>> +	Usage:        optional
+>>> +	Value type:   <bool>
+>>> +	Definition:   enable content adaptive backlight control.
+>>> +
+>>> +- qcom,ext-gen
+>>> +	Usage:        optional
+>>> +	Value type:   <bool>
+>>> +	Definition:   use externally generated modulator signal to dim.
+>>> +		      This property is supported only for PM8941.
+>>> +
+>>> +- qcom,external-pfet
+>>> +	Usage:        optional
+>>> +	Value type:   <bool>
+>>> +	Definition:   Specify if external PFET control for short circuit
+>>> +		      protection is used. This property is supported only
+>>> +		      for PMI8998.
+>>> +
+>>> +- qcom,auto-string-detection
+>>> +	Usage:        optional
+>>> +	Value type:   <bool>
+>>> +	Definition:   Enables auto-detection of the WLED string 
+>>> configuration.
+>>> +		      This feature is not supported for PM8941.
+>> 
+>> I don't like the idea of having the developer specifying
+>> qcom,enabled-strings and then qcom,auto-string-detection just in case. 
+>> I
+>> think it's better to trust the developer when qcom,enabled-strings is
+>> specified and if not use auto detection.
+>> 
+> Ok. I will modify the description in that way.
+>>> 
+>>>  Example:
+>>> 
+>>> @@ -34,9 +133,26 @@ pm8941-wled@d800 {
+>>>  	label = "backlight";
+>>> 
+>>>  	qcom,cs-out;
+>>> -	qcom,current-limit = <20>;
+>>> +	qcom,current-limit = <20000>;
+>>> +	qcom,current-boost-limit = <805>;
+>>> +	qcom,switching-freq = <1600>;
+>>> +	qcom,ovp = <29000>;
+>>> +	qcom,num-strings = <3>;
+>>> +	qcom,enabled-strings = <7>;
+>> 
+>> Having to change the existing example shows that you made 
+>> non-backwards
+>> compatible changes.
+>> 
+> Ok. I will keep them as is in the next series.
+>>> +};
+>>> +
+>>> +pmi8998-wled@d800 {
+>>> +	compatible = "qcom,pmi8998-wled";
+>>> +	reg = <0xd800 0xd900>;
+>>> +	label = "backlight";
+>>> +
+>>> +	interrupts = <3 0xd8 2 IRQ_TYPE_EDGE_RISING>,
+>>> +		     <3 0xd8 1 IRQ_TYPE_EDGE_RISING>;
+>>> +	interrupt-names = "short", "ovp";
+>>> +	qcom,current-limit = <25000>;
+>>>  	qcom,current-boost-limit = <805>;
+>>>  	qcom,switching-freq = <1600>;
+>>> -	qcom,ovp = <29>;
+>>> -	qcom,num-strings = <2>;
+>>> +	qcom,ovp = <29600>;
+>>> +	qcom,num-strings = <4>;
+>>> +	qcom,enabled-strings = <15>;
+>>>  };
+>>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>>> b/drivers/video/backlight/qcom-wled.c
+>>> index 0b6d219..be8b8d3 100644
+>>> --- a/drivers/video/backlight/qcom-wled.c
+>>> +++ b/drivers/video/backlight/qcom-wled.c
+>>> @@ -15,253 +15,529 @@
+>>>  #include <linux/module.h>
+>>>  #include <linux/of.h>
+>>>  #include <linux/of_device.h>
+>>> +#include <linux/of_address.h>
+>>>  #include <linux/regmap.h>
+>>> 
+>>>  /* From DT binding */
+>>> -#define PM8941_WLED_DEFAULT_BRIGHTNESS		2048
+>>> +#define WLED_DEFAULT_BRIGHTNESS				2048
+>> 
+>> These renames are good, but needs to go in a separate commit (either
+>> patch 1 or a new one), the current approach makes it impossible to
+>> review the rest of this patch.
+>> 
+>> 
+>> So, as the DT change is substantial that should be split in one patch
+>> that change the structure, then one that adds the new properties, one
+>> patch that renames pm8941 -> wled3 and finally one that adds wled4
+>> support.
+>> 
+> Ok. I will split the patches as you suggested.
+>> Regards,
+>> Bjorn
