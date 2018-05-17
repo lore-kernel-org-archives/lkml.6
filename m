@@ -1,57 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeEQKxn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:53:43 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39901 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQKxl (ORCPT
+        id S1751999AbeEQKyF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:54:05 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37437 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeEQKyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:53:41 -0400
-X-Google-Smtp-Source: AB8JxZrxIPX2Jktb8BFan5Ulhb+N3e55/ImY9KVIMBlTAJZUe8KAkU1BwKCMBb1OU+o19haX2Z/+Ew==
-Subject: Re: [PATCH] dmaengine: qcom: bam_dma: fix some doc warnings.
-To: Vinod Koul <vinod.koul@linaro.org>
-Cc: agross@codeaurora.org, dmaengine@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180517095916.11362-1-srinivas.kandagatla@linaro.org>
- <20180517105049.GZ13271@vkoul-mobl>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <c3b63215-ed0f-93ee-69df-6b22053f0479@linaro.org>
-Date: Thu, 17 May 2018 11:53:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 17 May 2018 06:54:03 -0400
+X-Google-Smtp-Source: AB8JxZrstbmHOdE7xU5jGzBbQhfRGdwe0uzOWjKOJWSpIaWb/lEVsxsfqWr25KLp8vjN8DvDZE0qOw==
+Date: Thu, 17 May 2018 12:53:58 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC] schedutil: Allow cpufreq requests to be made even
+ when kthread kicked
+Message-ID: <20180517105358.GB22493@localhost.localdomain>
+References: <20180516224518.109891-1-joel@joelfernandes.org>
+ <20180517070026.GA22493@localhost.localdomain>
+ <20180517102024.s3dxo4uepujh5f65@vireshk-i7>
 MIME-Version: 1.0
-In-Reply-To: <20180517105049.GZ13271@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517102024.s3dxo4uepujh5f65@vireshk-i7>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 17/05/18 11:50, Vinod Koul wrote:
-> On 17-05-18, 10:59, Srinivas Kandagatla wrote:
->> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
->> index 4a828c18099a..a05fff8a1447 100644
->> --- a/drivers/dma/qcom/bam_dma.c
->> +++ b/drivers/dma/qcom/bam_dma.c
->> @@ -451,7 +451,7 @@ static void bam_reset_channel(struct bam_chan *bchan)
->>   /**
->>    * bam_chan_init_hw - Initialize channel hardware
->>    * @bchan: bam channel
->> - *
->> + * @dir: DMA transfer direction
+On 17/05/18 15:50, Viresh Kumar wrote:
+> On 17-05-18, 09:00, Juri Lelli wrote:
+> > Hi Joel,
+> > 
+> > On 16/05/18 15:45, Joel Fernandes (Google) wrote:
+> > 
+> > [...]
+> > 
+> > > @@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+> > >  static void sugov_work(struct kthread_work *work)
+> > >  {
+> > >  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> > > +	unsigned int freq;
+> > > +	unsigned long flags;
+> > > +
+> > > +	/*
+> > > +	 * Hold sg_policy->update_lock shortly to handle the case where:
+> > > +	 * incase sg_policy->next_freq is read here, and then updated by
+> > > +	 * sugov_update_shared just before work_in_progress is set to false
+> > > +	 * here, we may miss queueing the new update.
+> > > +	 */
+> > > +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
+> > > +	freq = sg_policy->next_freq;
+> > > +	sg_policy->work_in_progress = false;
+> > > +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+> > 
+> > OK, we queue the new request up, but still we need to let this kthread
+> > activation complete and then wake it up again to service the request
+> > already queued, right? Wasn't what Claudio proposed (service back to
+> > back requests all in the same kthread activation) better from an
+> > overhead pow?
 > 
-> Do you want to add an empty line here?
-> 
-TBH, Am not 100% sure it it adds any value.
+> We would need more locking stuff in the work handler in that case and
+> I think there maybe a chance of missing the request in that solution
+> if the request happens right at the end of when sugov_work returns.
 
-Most of the function docs in the file have this same issue.. :-)
+Mmm, true. Ideally we might want to use some sort of queue where to
+atomically insert requests and then consume until queue is empty from
+sugov kthread.
 
-let me know if you still want an empty line, I can respin.
-
---srini
-
->>    * This function resets and initializes the BAM channel
+But, I guess that's going to be too much complexity for an (hopefully)
+corner case.
