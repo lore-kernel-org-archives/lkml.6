@@ -1,86 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751334AbeEQEta (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 00:49:30 -0400
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:41392 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750865AbeEQEt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 00:49:29 -0400
-X-Google-Smtp-Source: AB8JxZpUyBrUki2Cf3Bk2f38OvOPn0zrdZlT0mZAseCL2w0gor0sdbXosK57eFiXsLcKrzk5RwN8yw==
-Date: Thu, 17 May 2018 07:49:24 +0300
-From: Vladimir Davydov <vdavydov.dev@gmail.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
-Subject: Re: [PATCH v5 13/13] mm: Clear shrinker bit if there are no objects
- related to memcg
-Message-ID: <20180517044924.5tq6vbqituvr3nzh@esperanza>
-References: <152594582808.22949.8353313986092337675.stgit@localhost.localdomain>
- <152594605549.22949.16491037134168999424.stgit@localhost.localdomain>
- <20180515055913.alk3pau43e3jps3y@esperanza>
- <1e31235c-f4e3-1046-57c8-741de095e616@virtuozzo.com>
+        id S1751379AbeEQExF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 00:53:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47064 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeEQExE (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 00:53:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
+   d="scan'208";a="40581216"
+Subject: Re: [PATCH] perf annotate: Support multiple events without group
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1525960762-19520-1-git-send-email-yao.jin@linux.intel.com>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <61934d91-2fe6-43f4-9c1b-d08b8a7590ce@linux.intel.com>
+Date: Thu, 17 May 2018 12:53:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e31235c-f4e3-1046-57c8-741de095e616@virtuozzo.com>
+In-Reply-To: <1525960762-19520-1-git-send-email-yao.jin@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 11:55:04AM +0300, Kirill Tkhai wrote:
-> >> @@ -586,8 +586,23 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
-> >>  			continue;
-> >>  
-> >>  		ret = do_shrink_slab(&sc, shrinker, priority);
-> >> -		if (ret == SHRINK_EMPTY)
-> >> -			ret = 0;
-> >> +		if (ret == SHRINK_EMPTY) {
-> >> +			clear_bit(i, map->map);
-> >> +			/*
-> >> +			 * Pairs with mb in memcg_set_shrinker_bit():
-> >> +			 *
-> >> +			 * list_lru_add()     shrink_slab_memcg()
-> >> +			 *   list_add_tail()    clear_bit()
-> >> +			 *   <MB>               <MB>
-> >> +			 *   set_bit()          do_shrink_slab()
-> >> +			 */
-> > 
-> > Please improve the comment so that it isn't just a diagram.
+Hi,
+
+Any comments for this fix?
+
+Thanks
+Jin Yao
+
+On 5/10/2018 9:59 PM, Jin Yao wrote:
+> See example,
 > 
-> Please, say, which comment you want to see here.
-
-I want the reader to understand why we need to invoke the shrinker twice
-if it returns SHRINK_EMPTY. The diagram doesn't really help here IMO. So
-I'd write Something like this:
-
-	ret = do_shrink_slab(&sc, shrinker, priority);
-	if (ret == SHRINK_EMPTY) {
-		clear_bit(i, map->map);
-		/*
-		 * After the shrinker reported that it had no objects to free,
-		 * but before we cleared the corresponding bit in the memcg
-		 * shrinker map, a new object might have been added. To make
-		 * sure, we have the bit set in this case, we invoke the
-		 * shrinker one more time and re-set the bit if it reports that
-		 * it is not empty anymore. The memory barrier here pairs with
-		 * the barrier in memcg_set_shrinker_bit():
-		 *
-		 * list_lru_add()     shrink_slab_memcg()
-		 *   list_add_tail()    clear_bit()
-		 *   <MB>               <MB>
-		 *   set_bit()          do_shrink_slab()
-		 */
-		smp_mb__after_atomic();
-		ret = do_shrink_slab(&sc, shrinker, priority);
-			if (ret == SHRINK_EMPTY)
-				ret = 0;
-			else
-				memcg_set_shrinker_bit(memcg, nid, i);
+> perf record -e cycles,branches ./div
+> perf annotate main --stdio or
+> perf annotate main --stdio2 or
+> perf annotate main
+> 
+> The "perf annotate" should show both cycles and branches on the
+> left side, but actually it only shows one event cycles.
+> 
+> It works with events group like:
+> perf record -e "{cycles,branches}" ./div
+> 
+> It should work too even without group.
+> 
+> This patch uses 'symbol_conf.nr_events > 1' to check if it's the
+> multiple events case.
+> 
+> With this patch,
+> 
+> perf record -e cycles,branches ./div
+> perf annotate main --stdio2
+> 
+>    ......
+>                             for (i = 0; i < 2000000000; i++) {
+>                                     flag = compute_flag();
+>    4.85   5.83  38:   xor    %eax,%eax
+>    0.01   0.01      → callq  compute_flag
+> 
+>                                     count++;
+>    4.44   2.27        mov    count,%edx
+>    0.00   0.00        add    $0x1,%edx
+>    ......
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>   tools/perf/util/annotate.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 5d74a30..ca8d4b1 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -1054,6 +1054,8 @@ annotation_line__new(struct annotate_args *args, size_t privsize)
+>   
+>   	if (perf_evsel__is_group_event(evsel))
+>   		nr = evsel->nr_members;
+> +	else if (symbol_conf.nr_events > nr)
+> +		nr = symbol_conf.nr_events;
+>   
+>   	size += sizeof(al->samples[0]) * nr;
+>   
+> @@ -1326,6 +1328,8 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+>   
+>   		if (perf_evsel__is_group_event(evsel))
+>   			width *= evsel->nr_members;
+> +		else if (symbol_conf.nr_events > 1)
+> +			width *= symbol_conf.nr_events;
+>   
+>   		if (!*al->line)
+>   			printf(" %*s:\n", width, " ");
+> @@ -1967,6 +1971,8 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
+>   
+>   	if (perf_evsel__is_group_event(evsel))
+>   		width *= evsel->nr_members;
+> +	else if (symbol_conf.nr_events > 1)
+> +		width *= symbol_conf.nr_events;
+>   
+>   	graph_dotted_len = printf(" %-*.*s|	Source code & Disassembly of %s for %s (%" PRIu64 " samples)\n",
+>   				  width, width, symbol_conf.show_total_period ? "Period" :
+> @@ -2578,6 +2584,8 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
+>   
+>   	if (perf_evsel__is_group_event(evsel))
+>   		nr_pcnt = evsel->nr_members;
+> +	else if (symbol_conf.nr_events > nr_pcnt)
+> +		nr_pcnt = symbol_conf.nr_events;
+>   
+>   	err = symbol__annotate(sym, map, evsel, 0, parch);
+>   	if (err)
+> 
