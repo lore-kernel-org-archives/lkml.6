@@ -1,65 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeEQI2J (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:28:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59626 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeEQI2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:28:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1947602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=hpuranik@codeaurora.org
-From: Hemanth Puranik <hpuranik@codeaurora.org>
-To: netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Timur Tabi <timur@codeaurora.org>,
-        Hemanth Puranik <hpuranik@codeaurora.org>
-Subject: [PATCH] net: qcom/emac: Allocate buffers from local node
-Date: Thu, 17 May 2018 13:58:00 +0530
-Message-Id: <1526545680-21650-1-git-send-email-hpuranik@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1751647AbeEQIaP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:30:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41748 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751017AbeEQIaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 04:30:13 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: davem@davemloft.net, linux@armlinux.org.uk
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: [PATCH net-next 1/2] net: phy: sfp: make the i2c-bus property really optional
+Date: Thu, 17 May 2018 10:29:06 +0200
+Message-Id: <20180517082907.14420-2-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we use non-NUMA aware allocation for TPD and RRD buffers,
-this patch modifies to use NUMA friendly allocation.
+The SFF,SFP documentation is clear about making all the DT properties,
+with the exception of the compatible, optional. In practice this is not
+the case and without an i2c-bus property provided the SFP code will
+throw NULL pointer exceptions.
 
-Signed-off-by: Hemanth Puranik <hpuranik@codeaurora.org>
+This patch is an attempt to fix this.
+
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/ethernet/qualcomm/emac/emac-mac.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/phy/sfp.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac-mac.c b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-index 092718a..c3df86a 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-@@ -684,9 +684,10 @@ static int emac_tx_q_desc_alloc(struct emac_adapter *adpt,
+diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+index 4ab6e9a50bbe..0fd2a92a6f7b 100644
+--- a/drivers/net/phy/sfp.c
++++ b/drivers/net/phy/sfp.c
+@@ -298,11 +298,17 @@ static void sfp_set_state(struct sfp *sfp, unsigned int state)
+ 
+ static int sfp_read(struct sfp *sfp, bool a2, u8 addr, void *buf, size_t len)
  {
- 	struct emac_ring_header *ring_header = &adpt->ring_header;
- 	size_t size;
-+	int node = dev_to_node(adpt->netdev->dev.parent);
++	if (!sfp->read)
++		return -ENODEV;
++
+ 	return sfp->read(sfp, a2, addr, buf, len);
+ }
  
- 	size = sizeof(struct emac_buffer) * tx_q->tpd.count;
--	tx_q->tpd.tpbuff = kzalloc(size, GFP_KERNEL);
-+	tx_q->tpd.tpbuff = kzalloc_node(size, GFP_KERNEL, node);
- 	if (!tx_q->tpd.tpbuff)
- 		return -ENOMEM;
+ static int sfp_write(struct sfp *sfp, bool a2, u8 addr, void *buf, size_t len)
+ {
++	if (!sfp->write)
++		return -ENODEV;
++
+ 	return sfp->write(sfp, a2, addr, buf, len);
+ }
  
-@@ -725,9 +726,10 @@ static int emac_rx_descs_alloc(struct emac_adapter *adpt)
- 	struct emac_ring_header *ring_header = &adpt->ring_header;
- 	struct emac_rx_queue *rx_q = &adpt->rx_q;
- 	size_t size;
-+	int node = dev_to_node(adpt->netdev->dev.parent);
+@@ -533,6 +539,8 @@ static int sfp_sm_mod_hpower(struct sfp *sfp)
+ 		return 0;
  
- 	size = sizeof(struct emac_buffer) * rx_q->rfd.count;
--	rx_q->rfd.rfbuff = kzalloc(size, GFP_KERNEL);
-+	rx_q->rfd.rfbuff = kzalloc_node(size, GFP_KERNEL, node);
- 	if (!rx_q->rfd.rfbuff)
- 		return -ENOMEM;
+ 	err = sfp_read(sfp, true, SFP_EXT_STATUS, &val, sizeof(val));
++	if (err == -ENODEV)
++		goto err;
+ 	if (err != sizeof(val)) {
+ 		dev_err(sfp->dev, "Failed to read EEPROM: %d\n", err);
+ 		err = -EAGAIN;
+@@ -542,6 +550,8 @@ static int sfp_sm_mod_hpower(struct sfp *sfp)
+ 	val |= BIT(0);
  
+ 	err = sfp_write(sfp, true, SFP_EXT_STATUS, &val, sizeof(val));
++	if (err == -ENODEV)
++		goto err;
+ 	if (err != sizeof(val)) {
+ 		dev_err(sfp->dev, "Failed to write EEPROM: %d\n", err);
+ 		err = -EAGAIN;
+@@ -565,6 +575,8 @@ static int sfp_sm_mod_probe(struct sfp *sfp)
+ 	int ret;
+ 
+ 	ret = sfp_read(sfp, false, 0, &id, sizeof(id));
++	if (ret == -ENODEV)
++		return ret;
+ 	if (ret < 0) {
+ 		dev_err(sfp->dev, "failed to read EEPROM: %d\n", ret);
+ 		return -EAGAIN;
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0
