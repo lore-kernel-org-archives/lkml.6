@@ -1,169 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeEQAui (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:50:38 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5928 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751163AbeEQAug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:50:36 -0400
-From: "liwei (CM)" <liwei213@huawei.com>
-To: Rob Herring <robh@kernel.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregory.clement@free-electrons.com"
-        <gregory.clement@free-electrons.com>,
-        "thomas.petazzoni@free-electrons.com"
-        <thomas.petazzoni@free-electrons.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "riku.voipio@linaro.org" <riku.voipio@linaro.org>,
-        "treding@nvidia.com" <treding@nvidia.com>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        zangleigang <zangleigang@hisilicon.com>,
-        Gengjianfeng <gengjianfeng@hisilicon.com>,
-        "guodong.xu@linaro.org" <guodong.xu@linaro.org>
-Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSCB2OSAyLzVdIGR0LWJpbmRpbmdzOiBz?=
- =?utf-8?Q?csi:_ufs:_add_document_for_hisi-ufs?=
-Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjkgMi81XSBkdC1iaW5kaW5nczogc2NzaTogdWZz?=
- =?utf-8?Q?:_add_document_for_hisi-ufs?=
-Thread-Index: AQHT28v7/h3YBf0xYUW3C4WFP2HrR6QP5HOAgCIN+gCAAUceYA==
-Date: Thu, 17 May 2018 00:50:23 +0000
-Message-ID: <1699CE87DE933F49876AD744B5DC140FA63AC2@DGGEMM506-MBX.china.huawei.com>
-References: <20180417140814.38098-1-liwei213@huawei.com>
- <20180417140814.38098-3-liwei213@huawei.com>
- <20180424125827.k2dgeu6uon75wzni@rob-hp-laptop>
- <1699CE87DE933F49876AD744B5DC140FA5AC86@DGGEMM506-MBS.china.huawei.com>
- <CAL_JsqLf_r=NHHP2ZNEJOoLORXztF1KnU+tq-+COt4CPMLAsiA@mail.gmail.com>
-In-Reply-To: <CAL_JsqLf_r=NHHP2ZNEJOoLORXztF1KnU+tq-+COt4CPMLAsiA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.189.155.72]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        id S1751916AbeEQAwo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 20:52:44 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28426 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751163AbeEQAwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 20:52:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,408,1520924400";
+   d="scan'208";a="39946988"
+Message-ID: <1526518361.8766.1.camel@linux.intel.com>
+Subject: Re: [RFC/RFT] [PATCH 10/10] cpufreq: intel_pstate: enable boost for
+ SKX
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
+        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
+        linux-pm@vger.kernel.org, viresh.kumar@linaro.org, juri.lelli@arm.com,
+        linux-kernel@vger.kernel.org
+Date: Wed, 16 May 2018 17:52:41 -0700
+In-Reply-To: <20180516155424.GG12198@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
+         <20180516044911.28797-11-srinivas.pandruvada@linux.intel.com>
+         <20180516074948.GZ12217@hirez.programming.kicks-ass.net>
+         <1526485584.61700.19.camel@linux.intel.com>
+         <20180516155424.GG12198@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-2.fc25) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4H0oiQ4019422
 
-Hi, Rob
-
------邮件原件-----
-发件人: Rob Herring [mailto:robh@kernel.org] 
-发送时间: 2018年5月16日 21:16
-收件人: liwei (CM)
-抄送: mark.rutland@arm.com; catalin.marinas@arm.com; will.deacon@arm.com; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; khilman@baylibre.com; arnd@arndb.de; gregory.clement@free-electrons.com; thomas.petazzoni@free-electrons.com; yamada.masahiro@socionext.com; riku.voipio@linaro.org; treding@nvidia.com; krzk@kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-scsi@vger.kernel.org; zangleigang; Gengjianfeng; guodong.xu@linaro.org
-主题: Re: 答复: [PATCH v9 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
-
-On Tue, Apr 24, 2018 at 8:54 AM, liwei (CM) <liwei213@huawei.com> wrote:
-> Hi, Rob
->
-> Thanks for your patience.
->
-> Hi, Arnd
->
-> From Rob's suggestion, we have to list the properties node in ufs-hisi.txt bingings even if documented in the common binding.
->
-> -----邮件原件-----
-> 发件人: Rob Herring [mailto:robh@kernel.org]
-> 发送时间: 2018年4月24日 20:58
-> 收件人: liwei (CM)
-> 抄送: mark.rutland@arm.com; catalin.marinas@arm.com; will.deacon@arm.com; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; khilman@baylibre.com; arnd@arndb.de; gregory.clement@free-electrons.com; thomas.petazzoni@free-electrons.com; yamada.masahiro@socionext.com; riku.voipio@linaro.org; treding@nvidia.com; krzk@kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-scsi@vger.kernel.org; zangleigang; Gengjianfeng; guodong.xu@linaro.org
-> 主题: Re: [PATCH v9 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
->
-> On Tue, Apr 17, 2018 at 10:08:11PM +0800, Li Wei wrote:
->> add ufs node document for Hisilicon.
->>
->> Signed-off-by: Li Wei <liwei213@huawei.com>
->> ---
->>  Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 29 ++++++++++++++++++++++
->>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 10 +++++---
->>  2 files changed, 36 insertions(+), 3 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
->>
->> diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
->> new file mode 100644
->> index 000000000000..d49ab7d8f31d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
->> @@ -0,0 +1,29 @@
->> +* Hisilicon Universal Flash Storage (UFS) Host Controller
->> +
->> +UFS nodes are defined to describe on-chip UFS hardware macro.
->> +Each UFS Host Controller should have its own node.
->> +
->> +Required properties:
->> +- compatible        : compatible list, contains one of the following -
->> +                                     "hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
->> +                                     host controller present on Hi36xx chipset.
->> +- reg               : should contain UFS register address space & UFS SYS CTRL register address,
->> +- interrupt-parent  : interrupt device
->> +- interrupts        : interrupt number
->> +- resets            : reset node register, the "arst" corresponds to reset the APB/AXI bus.
->
-> arst belongs in reset-names.
->
-> OK, I will fix it in next patch;
->
->> +- reset-names       : describe reset node register
->
-> What happened to clocks? You still have to list which ones apply even if
-> documented in the common binding.
->
-> OK, I will fix it in next patch;
->
->> +
->> +Example:
->> +
->> +     ufs: ufs@ff3b0000 {
->> +             compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
->> +             /* 0: HCI standard */
->> +             /* 1: UFS SYS CTRL */
->> +             reg = <0x0 0xff3b0000 0x0 0x1000>,
->> +                     <0x0 0xff3b1000 0x0 0x1000>;
->> +             interrupt-parent = <&gic>;
->> +             interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
->> +             /* offset: 0x84; bit: 7  */
->> +             resets = <&crg_rst 0x84 7>;
->> +             reset-names = "arst";
->> +     };
->> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> index c39dfef76a18..adcfb79f63f5 100644
->> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->> @@ -41,6 +41,8 @@ Optional properties:
->>  -lanes-per-direction : number of lanes available per direction - either 1 or 2.
->>                         Note that it is assume same number of lanes is used both
->>                         directions at once. If not specified, default is 2 lanes per direction.
->> +- resets            : reset node register, the "rst" corresponds to reset the whole UFS IP.
->> +- reset-names       : describe reset node register
->
-> Does your controller have 1 or 2 resets? There's no point in adding this
-> here if it doesn't apply to your controller.
->
-> There are 2 reset in our soc init, the "rst" corresponds to reset the whole UFS IP, and " arst " only reset the APB/AXI bus.
-> Discussed with our soc colleagues that "arst" is assert by default and needs to deassert,but it done in bootloader,so will remove 'arst' in next patch.
->
-> About the 'reset' property，it seems that Arnd Bergmann has different suggestion，he suggested that add 'rst' to ufshcd-pltfrm because it seems common.
-> But it looks like only our soc init needs it. What's your opinion? Does it still needs add to common bindings?
-
-For a single reset, then I'm fine with it being in the common
-bindings. If there are multiple then it should be in the specific
-bindings as the reset names are likely different.
-
-OK, I will remove the 'arst' and keep only 'rst' in tne common bingings.
-
-Rob
+On Wed, 2018-05-16 at 17:54 +0200, Peter Zijlstra wrote:
+> On Wed, May 16, 2018 at 08:46:24AM -0700, Srinivas Pandruvada wrote:
+> > On Wed, 2018-05-16 at 09:49 +0200, Peter Zijlstra wrote:
+> > > On Tue, May 15, 2018 at 09:49:11PM -0700, Srinivas Pandruvada
+> > > wrote:
+> > > > Enable HWP boost on Skylake server platform.
+> > > 
+> > > Why not unconditionally enable it on everything HWP ?
+> > 
+> > Never noticed in any difference performance in clients with HWP nor
+> > anybody complained. Since clients uses single power domain, some
+> > other
+> > CPUs always gives boost. 
+> 
+> Can't the hardware tell us about per-core stuff? Do we really have to
+> use tables for that?
+AFAIK not in a standard way across all platforms. But I will check on
+this.
