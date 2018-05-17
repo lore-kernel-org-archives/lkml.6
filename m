@@ -1,55 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752095AbeEQKPl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:15:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59003 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeEQKPj (ORCPT
+        id S1752135AbeEQKQj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:16:39 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44889 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeEQKQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:15:39 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] acpi: add missing prototype for =?UTF-8?B?4oCYYXJjaF9wb3N0X2FjcGlfc3Vic3lzX2luaXTigJk=?=
-Date: Thu, 17 May 2018 12:15:04 +0200
-Message-ID: <1741093.hO3EZQahsV@aspire.rjw.lan>
-In-Reply-To: <20180505203603.4071-1-malat@debian.org>
-References: <20180505203603.4071-1-malat@debian.org>
+        Thu, 17 May 2018 06:16:35 -0400
+X-Google-Smtp-Source: AB8JxZqRepHQ6Rqfkhk/Em3BPgraOS91QyiauE9AFlvc39ag97KXGvmdIri19JMTHQhqfPyejnkex30S/3P/7gxdZyY=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 May 2018 12:16:33 +0200
+X-Google-Sender-Auth: wVRlPDCJfuLljW2DYcHhqc8FS5A
+Message-ID: <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, May 5, 2018 10:36:03 PM CEST Mathieu Malaterre wrote:
-> In commit e7ff3a47630d ("x86/amd: Check for the C1E bug post ACPI subsystem
-> init") a new function ‘arch_post_acpi_subsys_init’ was introduced. This
-> weak function can potentially be overridden on a per arch basis, introduce
-> the prototype for clarity.
-> 
-> Silence the following gcc warning (W=1):
-> 
->   init/main.c:484:20: warning: no previous prototype for ‘arch_post_acpi_subsys_init’ [-Wmissing-prototypes]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  include/linux/acpi.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 15bfb15c2fa5..cb4d7b6b085c 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -578,6 +578,7 @@ int acpi_match_platform_list(const struct acpi_platform_list *plat);
->  
->  extern void acpi_early_init(void);
->  extern void acpi_subsystem_init(void);
-> +extern void arch_post_acpi_subsys_init(void);
->  
->  extern int acpi_nvs_register(__u64 start, __u64 size);
->  
-> 
+Hi Gilad,
 
-Applied, thanks!
+On Thu, May 17, 2018 at 10:01 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
+>> On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
+>>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> > Add bindings for CryptoCell instance in the SoC.
+>>> >
+>>> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> > @@ -528,6 +528,14 @@
+>>> >                         status = "disabled";
+>>> >                 };
+>>> >
+>>> > +               arm_cc630p: crypto@e6601000 {
+>>> > +                       compatible = "arm,cryptocell-630p-ree";
+>>> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+>>> > +                       #interrupt-cells = <2>;
+>>>
+>>> I believe the #interrupt-cells property is not needed.
+>>>
+>>> > +                       reg = <0x0 0xe6601000 0 0x1000>;
+>>> > +                       clocks = <&cpg CPG_MOD 229>;
+
+Missing "power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;", as
+the Secure Engine is part of the CPG/MSSR clock domain (see below [*]).
+
+>>> > +               };
+>>>
+>>> The rest looks good, but I cannot verify the register block.
+>>>
+>>> > +
+>>> >                 i2c3: i2c@e66d0000 {
+>>> >                         #address-cells = <1>;
+>>> >                         #size-cells = <0>;
+>>
+>> Thanks, I have applied this after dropping the #interrupt-cells property.
+>
+> Thanks you!
+>
+> Alas, it will not work without the clk patch (the previous one in the
+> series) so they need to be
+> taken or dropped together.
+
+Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
+does not distinguish between the absence of the clock property, and an
+actual error in getting the clock, and never considers any error a failure
+(incl. -PROBE_DEFER).
+
+As of_clk_get() returns -ENOENT for both a missing clock property and a
+missing clock, you should use (devm_)clk_get() instead, and distinguish
+between NULL (no clock property) and IS_ERR() (actual failure -> abort).
+
+Hence in the absence of the clock patch, the driver accesses the crypto
+engine while its module clock is turned off, leading to:
+
+    ccree e6601000.crypto: Invalid CC signature: SIGNATURE=0x00000000
+!= expected=0xDCC63000
+
+You must be lucky, though, usually you get an imprecise external abort
+later, crashing the whole system ;-)
+
+So I think this patch should be dropped for now.
+
+However, even with your clock patch, the signature checking fails for me,
+on both R-Car H3 ES1.0 and ES2.0.
+Does this need changes to the ARM Trusted Firmware, to allow Linux to
+access the public SCEG module?
+
+[*] More on the subject of clock control:
+At least for Renesas SoCs, where the module is part of a clock domain, and
+can be controlled automatically by Runtime PM, you could drop the explicit
+clock control, and use Runtime PM instead
+(pm_runtime_{enable,get_sync,put,disable}()).  That would allow the driver
+to work on systems with any kind of PM Domains, too.
+Depending on the other platforms that include a CryptoCell and their
+(non)reliance on PM Domains, you may have to keep the explicit clock
+handling, in addition to Runtime PM.
+
+To decrease power consumption, I suggest to move the clock and/or Runtime
+PM handling to the routines that actually use the hardware, instead of
+powering the module in the probe routine.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
