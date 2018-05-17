@@ -1,124 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeEQFGR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:06:17 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36566 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeEQFGP (ORCPT
+        id S1751468AbeEQFJx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:09:53 -0400
+Received: from vulcan.kevinlocke.name ([107.191.43.88]:56826 "EHLO
+        vulcan.kevinlocke.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750865AbeEQFJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 01:06:15 -0400
-X-Google-Smtp-Source: AB8JxZq78LHlOaF5rQux1yZa4SdSGAOvGOiQinqidIT2m9DWMWBvcqU3htV5myKr/4pr3tY2OU7P8A==
-Date: Thu, 17 May 2018 10:36:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180517050611.yj2alkzckl3ximzu@vireshk-i7>
-References: <20180516224518.109891-1-joel@joelfernandes.org>
+        Thu, 17 May 2018 01:09:52 -0400
+Date: Wed, 16 May 2018 23:00:41 -0600
+From: Kevin Locke <kevin@kevinlocke.name>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Sander Eikelenboom <linux@eikelenboom.it>, 890817@bugs.debian.org
+Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
+ make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
+ remove check_stdin()"
+Message-ID: <20180517050041.GA10885@kevinolos>
+Mail-Followup-To: Kevin Locke <kevin@kevinlocke.name>,
+        linux-kernel@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Sander Eikelenboom <linux@eikelenboom.it>, 890817@bugs.debian.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180516224518.109891-1-joel@joelfernandes.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <CAFkk2KSsdrdf28GaMgOX2hMDOdoNdsjmcFiMsmqA8C4NC-EARQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-05-18, 15:45, Joel Fernandes (Google) wrote:
->  kernel/sched/cpufreq_schedutil.c | 36 +++++++++++++++++++++++++-------
->  1 file changed, 28 insertions(+), 8 deletions(-)
+On Tue, Feb 13, 2018 at 2:07 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>> On Tue, Feb 13, 2018 at 12:33:24PM +0100, Ulf Magnusson wrote:
+>>>>>> Sander Eikelenboom wrote:
+>>>>>>> The Debian kernel-package tool make-kpkg for easy building of upstream
+>>>>>>> kernels on Debian fails with linux 4.16-rc1.
+>>>>>>>
+>>>>>>> Bisection turned up as culprit:
+>>>>>>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
+>>>
+>>> What the commit does is to make silentoldconfig not immediately exit(1)
+>>> when both of the following apply:
+>>>
+>>>     1. stdin is from something that's not a terminal
+>>>
+>>>     2. New symbols are prompted for
 > 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index e13df951aca7..a87fc281893d 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->  		return false;
->  
-> -	if (sg_policy->work_in_progress)
-> -		return false;
-> -
->  	if (unlikely(sg_policy->need_freq_update)) {
->  		sg_policy->need_freq_update = false;
->  		/*
-> @@ -129,8 +126,11 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->  		policy->cur = next_freq;
->  		trace_cpu_frequency(next_freq, smp_processor_id());
->  	} else {
-> -		sg_policy->work_in_progress = true;
-> -		irq_work_queue(&sg_policy->irq_work);
-> +		/* Don't queue request if one was already queued */
-> +		if (!sg_policy->work_in_progress) {
+> Shouldn't be a problem to back this one out either if it turns out to
+> cause massive amounts of pain in practice I guess, even if it's the
+> Debian tools doing something weird.
+> 
+> Good to look into what it is they're doing in any case.
 
-Merge it above to make it "else if".
+It appears that make-kpkg is trying to extract kernel version and
+configuration information by including the kernel Makefile then
+referencing the variables it exports.  The offending make-kpkg
+Makefile is kernel_version.mk[1] which can be simplified to the
+following example:
 
-> +			sg_policy->work_in_progress = true;
-> +			irq_work_queue(&sg_policy->irq_work);
-> +		}
->  	}
->  }
->  
-> @@ -291,6 +291,15 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->  
->  	ignore_dl_rate_limit(sg_cpu, sg_policy);
->  
-> +	/*
-> +	 * For slow-switch systems, single policy requests can't run at the
-> +	 * moment if the governor thread is already processing a pending
-> +	 * frequency switch request, this can be fixed by acquiring update_lock
-> +	 * while updating next_freq and work_in_progress but we prefer not to.
-> +	 */
-> +	if (sg_policy->work_in_progress)
-> +		return;
-> +
+-8<- make-kpkg-regression.mk -----------------------------------------
+include Makefile
+.PHONY: debian_VERSION
+debian_VERSION:
+-8<-------------------------------------------------------------------
 
-@Rafael: Do you think its worth start using the lock now for unshared
-policies ?
+Invoking this script from the root of the kernel source tree, with
+stderr redirected (but not stdin) demonstrates the issue:
 
->  	if (!sugov_should_update_freq(sg_policy, time))
->  		return;
->  
-> @@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
->  static void sugov_work(struct kthread_work *work)
->  {
->  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> +	unsigned int freq;
-> +	unsigned long flags;
-> +
-> +	/*
-> +	 * Hold sg_policy->update_lock shortly to handle the case where:
-> +	 * incase sg_policy->next_freq is read here, and then updated by
-> +	 * sugov_update_shared just before work_in_progress is set to false
-> +	 * here, we may miss queueing the new update.
-> +	 */
-> +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-> +	freq = sg_policy->next_freq;
-> +	sg_policy->work_in_progress = false;
-> +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->  
->  	mutex_lock(&sg_policy->work_lock);
-> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> +	__cpufreq_driver_target(sg_policy->policy, freq,
->  				CPUFREQ_RELATION_L);
+make -f make-kpkg-regression.mk debian_VERSION >/dev/null 2>&1
 
-No need of line break anymore.
+Before d2a04648a5db this would exit, after it will hang waiting for
+input.  This occurs because the debian_VERSION target name isn't in
+no-dot-config-targets defined in Makefile, so Makefile invokes
+silentoldconfig automatically as necessary.[2]
 
->  	mutex_unlock(&sg_policy->work_lock);
-> -
-> -	sg_policy->work_in_progress = false;
->  }
->  
->  static void sugov_irq_work(struct irq_work *irq_work)
+I think the issue is best fixed by make-kpkg, and that d2a04648a5db
+doesn't need to be reverted.  The simple fix would be for make-kpkg to
+redirect stdin when redirecting stdout/stderr so that
+scripts/kconfig/conf will fail as it did before.  The better fix would
+be for make-kpkg to use a supported interface for getting the
+variables it needs, rather than including Makefile.
 
-LGTM.
+Best,
+Kevin
 
--- 
-viresh
+1. https://salsa.debian.org/srivasta/kernel-package/blob/master/kernel/ruleset/kernel_version.mk
+2. Interestingly, it's not just that the target isn't in
+   no-dot-config-targets.  make-kpkg actually sets `dot-config := 1`
+   to force silentoldconfig (since 38399c1[3]).
+3. https://salsa.debian.org/srivasta/kernel-package/commit/38399c1
