@@ -1,184 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeEQOxN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:53:13 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:49231 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeEQOxL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:53:11 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: david.wu@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 220.200.40.10
-X-LOGIN-NAME: david.wu@rock-chips.com
-X-UNIQUE-TAG: <04e50bde703655b1c12559308493abc2>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH] ethernet: stmmac: dwmac-rk: Add GMAC support for px30
-To: Shawn Lin <shawn.lin@rock-chips.com>, robh+dt@kernel.org
-Cc: davem@davemloft.net, heiko@sntech.de, mark.rutland@arm.com,
-        huangtao@rock-chips.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1526441925-12654-1-git-send-email-david.wu@rock-chips.com>
- <f7f67fbe-41e7-4497-cb01-a1fa2195d4b0@rock-chips.com>
-From: David Wu <david.wu@rock-chips.com>
-Message-ID: <4c9cdacb-4865-20f1-bad9-e9d826319bb7@rock-chips.com>
-Date: Thu, 17 May 2018 22:52:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752355AbeEQOy2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:54:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43908 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751481AbeEQOy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:54:26 -0400
+Date: Thu, 17 May 2018 17:54:24 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
+Message-ID: <1526568841-35372-1-git-send-email-mst@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <f7f67fbe-41e7-4497-cb01-a1fa2195d4b0@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+HINTS_DEDICATED seems to be somewhat confusing:
 
-Hi Shawn,
+Guest doesn't really care whether it's the only task running on a host
+CPU as long as it's not preempted.
 
-Thanks for the suggestion, the most is okay.
+And there are more reasons for Guest to be preempted than host CPU
+sharing, for example, with memory overcommit it can get preempted on a
+memory access, post copy migration can cause preemption, etc.
 
-在 2018年05月16日 14:34, Shawn Lin 写道:
-> Hi David,
-> 
-> On 2018/5/16 11:38, David Wu wrote:
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c 
->> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> index 13133b3..4b2ab71 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> @@ -61,6 +61,7 @@ struct rk_priv_data {
->>       struct clk *mac_clk_tx;
->>       struct clk *clk_mac_ref;
->>       struct clk *clk_mac_refout;
->> +    struct clk *clk_mac_speed;
-> 
-> No need to do anything now but it seems you could consider doing some
-> cleanup by using clk bulk APIs in the future.
+Let's call it KVM_HINTS_REALTIME which seems to better
+match what guests expect.
 
-The use of this may seem to be less applicable because there are many 
-scenarios using different clocks.
+Also, the flag most be set on all vCPUs - current guests assume this.
+Note so in the documentation.
 
-> 
->>       struct clk *aclk_mac;
->>       struct clk *pclk_mac;
->>       struct clk *clk_phy;
->> @@ -83,6 +84,64 @@ struct rk_priv_data {
->>       (((tx) ? soc##_GMAC_TXCLK_DLY_ENABLE : 
->> soc##_GMAC_TXCLK_DLY_DISABLE) | \
->>        ((rx) ? soc##_GMAC_RXCLK_DLY_ENABLE : 
->> soc##_GMAC_RXCLK_DLY_DISABLE))
->> +#define PX30_GRF_GMAC_CON1        0X0904
-> 
-> s/0X0904/0x0904 , since the other constants in this file follow the
-> same format.
-> 
->> +
->> +/* PX30_GRF_GMAC_CON1 */
->> +#define PX30_GMAC_PHY_INTF_SEL_RMII    (GRF_CLR_BIT(4) | 
->> GRF_CLR_BIT(5) | \
->> +                    GRF_BIT(6))
->> +#define PX30_GMAC_SPEED_10M        GRF_CLR_BIT(2)
->> +#define PX30_GMAC_SPEED_100M        GRF_BIT(2)
->> +
->> +static void px30_set_to_rmii(struct rk_priv_data *bsp_priv)
->> +{
->> +    struct device *dev = &bsp_priv->pdev->dev;
->> +
->> +    if (IS_ERR(bsp_priv->grf)) {
->> +        dev_err(dev, "%s: Missing rockchip,grf property\n", __func__);
->> +        return;
->> +    }
->> +
->> +    regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
->> +             PX30_GMAC_PHY_INTF_SEL_RMII);
->> +}
->> +
->> +static void px30_set_rmii_speed(struct rk_priv_data *bsp_priv, int 
->> speed)
->> +{
->> +    struct device *dev = &bsp_priv->pdev->dev;
->> +    int ret;
->> +
->> +    if (IS_ERR(bsp_priv->clk_mac_speed)) {
->> +        dev_err(dev, "%s: Missing clk_mac_speed clock\n", __func__);
->> +        return;
->> +    }
->> +
->> +    if (speed == 10) {
->> +        regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
->> +                 PX30_GMAC_SPEED_10M);
->> +
->> +        ret = clk_set_rate(bsp_priv->clk_mac_speed, 2500000);
->> +        if (ret)
->> +            dev_err(dev, "%s: set clk_mac_speed rate 2500000 failed: 
->> %d\n",
->> +                __func__, ret);
->> +    } else if (speed == 100) {
->> +        regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
->> +                 PX30_GMAC_SPEED_100M);
->> +
->> +        ret = clk_set_rate(bsp_priv->clk_mac_speed, 25000000);
->> +        if (ret)
->> +            dev_err(dev, "%s: set clk_mac_speed rate 25000000 failed: 
->> %d\n",
->> +                __func__, ret);
-> 
-> I know it follows the existing examples, but IMHO it duplicates
-> unnecessary code as all the difference is PX30_GMAC_SPEED_*
-> 
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ Documentation/virtual/kvm/cpuid.txt  | 6 +++---
+ arch/x86/include/uapi/asm/kvm_para.h | 2 +-
+ arch/x86/kernel/kvm.c                | 8 ++++----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-i think the difference is the register offset and bits.
-
->> +
->> +    } else {
->> +        dev_err(dev, "unknown speed value for RMII! speed=%d", speed);
->> +    }
->> +}
->> +
->> +static const struct rk_gmac_ops px30_ops = {
->> +    .set_to_rmii = px30_set_to_rmii,
->> +    .set_rmii_speed = px30_set_rmii_speed,
->> +};
->> +
->>   #define RK3128_GRF_MAC_CON0    0x0168
->>   #define RK3128_GRF_MAC_CON1    0x016c
->> @@ -1042,6 +1101,10 @@ static int rk_gmac_clk_init(struct 
->> plat_stmmacenet_data *plat)
->>           }
->>       }
->> +    bsp_priv->clk_mac_speed = devm_clk_get(dev, "clk_mac_speed");
-> 
-> Mightbe it'd be better to use "mac-speed" in DT bindings.
-> 
->> +    if (IS_ERR(bsp_priv->clk_mac_speed))
->> +        dev_err(dev, "cannot get clock %s\n", "clk_mac_speed");
->> +
-> 
-> Would you like to handle deferred probe >
-
-No,
-
->>       if (bsp_priv->clock_input) {
->>           dev_info(dev, "clock input from PHY\n");
->>       } else {
->> @@ -1424,6 +1487,7 @@ static int rk_gmac_resume(struct device *dev)
->>   static SIMPLE_DEV_PM_OPS(rk_gmac_pm_ops, rk_gmac_suspend, 
->> rk_gmac_resume);
->>   static const struct of_device_id rk_gmac_dwmac_match[] = {
->> +    { .compatible = "rockchip,px30-gmac",    .data = &px30_ops   },
->>       { .compatible = "rockchip,rk3128-gmac", .data = &rk3128_ops },
->>       { .compatible = "rockchip,rk3228-gmac", .data = &rk3228_ops },
->>       { .compatible = "rockchip,rk3288-gmac", .data = &rk3288_ops },
->>
-> 
-> 
-> 
+diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+index d4f33eb8..ab022dc 100644
+--- a/Documentation/virtual/kvm/cpuid.txt
++++ b/Documentation/virtual/kvm/cpuid.txt
+@@ -72,8 +72,8 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+ 
+ flag                               || value || meaning
+ ==================================================================================
+-KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit to
+-                                   ||       || determine if there is vCPU pinning
+-                                   ||       || and there is no vCPU over-commitment,
++KVM_HINTS_REALTIME                 ||     0 || guest checks this feature bit to
++                                   ||       || determine that vCPUs are never
++                                   ||       || preempted for an unlimited time,
+                                    ||       || allowing optimizations
+ ----------------------------------------------------------------------------------
+diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
+index 4c851eb..0ede697 100644
+--- a/arch/x86/include/uapi/asm/kvm_para.h
++++ b/arch/x86/include/uapi/asm/kvm_para.h
+@@ -29,7 +29,7 @@
+ #define KVM_FEATURE_PV_TLB_FLUSH	9
+ #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
+ 
+-#define KVM_HINTS_DEDICATED      0
++#define KVM_HINTS_REALTIME      0
+ 
+ /* The last 8 bits are used to indicate how to interpret the flags field
+  * in pvclock structure. If no bits are set, all flags are ignored.
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 7867417..5b2300b 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -457,7 +457,7 @@ static void __init sev_map_percpu_data(void)
+ static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
+ {
+ 	native_smp_prepare_cpus(max_cpus);
+-	if (kvm_para_has_hint(KVM_HINTS_DEDICATED))
++	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
+ 		static_branch_disable(&virt_spin_lock_key);
+ }
+ 
+@@ -553,7 +553,7 @@ static void __init kvm_guest_init(void)
+ 	}
+ 
+ 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+-	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
++	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+ 	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+ 		pv_mmu_ops.flush_tlb_others = kvm_flush_tlb_others;
+ 
+@@ -649,7 +649,7 @@ static __init int kvm_setup_pv_tlb_flush(void)
+ 	int cpu;
+ 
+ 	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+-	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
++	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+ 	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+ 		for_each_possible_cpu(cpu) {
+ 			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
+@@ -745,7 +745,7 @@ void __init kvm_spinlock_init(void)
+ 	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
+ 		return;
+ 
+-	if (kvm_para_has_hint(KVM_HINTS_DEDICATED))
++	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
+ 		return;
+ 
+ 	__pv_init_lock_hash();
+-- 
+MST
