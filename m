@@ -1,242 +1,143 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AB8JxZpweKUSisfyxBsvkqRwE7aMQMAmWDkZMKO5SeJkNXAwN9pwdT76ujtUpNatJy1CTH/6Jwp/
-ARC-Seal: i=1; a=rsa-sha256; t=1526595401; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JkacHd3F7I+ZaDmG0rwxqXhStXUpcoZMDsfzdUVRVMdqAGpWiBIGob5m7/G9SRKisu
-         KV4wPFVVFymcpsfKqCK4tiHhiYkgu863CWwPHpKbD83CbXeeHc4h2UmHXmbDbDw59NH9
-         QdCg+ZkLFt1pij6HG2KV8pZ6teV4zmxhwKotKl2RQxndJWkcupp5D/ClBIW+cbA524MY
-         Lm7FBcdiW5a44JPgH0jsSbAMwHrd2vSklZltoG+aY2Xoo+aRq/Ks+9Wko2Mabag64iFp
-         qIJXvyTyHuXTj8XwdSTRIbPi97rFUyFZuf4LH2UxIdV5k19Ao4ZkaryqaUvWFwMJUjEe
-         cOug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=jgS9u5CFb5dsjBo77DWBmCjY4RcC/0PhUMODTAdSeLc=;
-        b=fkYbacuo5E3rCKTnrGOvrzGYVLpauw2pBdBM+7fXcz+VQ2x8fM49Hq9JhVfBIawZvn
-         8cRRMORTR2IqLMvHd6a0SFaJKXvPTKaRBAdTVkgBzjXwFFBqvD2u1g41fTepHUB7AxS2
-         tTZWWT/uFm2m++YFLCF0Bv6P4xJGlEAUoyi6JFnfRC7CeX49paCojQ0JKyjt87hITRZD
-         Z9DQn/sgUos4GBPSVQE0+25tgZhFqCfSFCGbo9YK/TcaThuFVR60FmV8jnH+wr+fOsvM
-         BfnTsrDavA/6538HU5xdhF3nFxofKqb4YfGuV8GC1NBvBeinJDR38Hi1W+gqezynSX9T
-         xZBQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mp9BiGiw;
-       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mp9BiGiw;
-       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 17 May 2018 17:16:39 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>,
-	Russell Currey <ruscur@russell.cc>,
-	Sam Bobroff <sam.bobroff@au1.ibm.com>,
-	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Sebastian Ott <sebott@linux.vnet.ibm.com>,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v17 0/9] Address error and recovery for AER and DPC
-Message-ID: <20180517221639.GE19955@bhelgaas-glaptop.roam.corp.google.com>
-References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1724550-1526541413-2-8548061929090076174
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526541412; b=YTxJ3hlJswFItJhErGa2uJxJ/oDmm9jK2apyv87Z5xevPOaMp/
+    RibqQx7iJvisxDIaOr+OXIYIQ3x9f5tHkZyCppAgYBJf9suMbUy/AZumP6BWUjJA
+    sni22ABYZ6PtwKMwkgUtsWDHJBwLy1pB5qy82UzE2PkENiYPLHQ3tFhxmdu4lj0x
+    UrXnQTbHm/4Au2CutvAVD0hkayPT1LekxM6tRfXm5XAeH8DH1pFG3FzhsOY8MRvj
+    jzvp9ePDORLmN2KHNw8wNBOeicXSpk4rMFBYQJbwuqgSp4qcHJaLm5y1sG6gyLlO
+    oZKDNa1tQ+8gRt4KZTUVzOF7YOIwUF5CNpqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526541412; bh=CSkKLVTdxlSa3Cw3FnP5t9YpbHa3SO
+    sFzZ2PlgCXSL8=; b=bMiNWSqEhq8wfIgu8/QeAcYJbC7dfsr2TAlmZQ8HaafYUE
+    21enDqXbt+0zPaRPbyaYk2EqF67AEFsnf5NytV70NpRWDHmdwjqF0+C6nke0GVXR
+    U3nbS1W1rR92anjdQB/i2AjK7MFXqRcYK/HVKawnUdzjznerhRw/lyfKAuUFeP7d
+    YteP3FKs+7EMfmO175H7a50dk6Xsp9fqBSXIRzOauiceduIeBXOW+1sSl9+/lrhM
+    g0JrLJhnvkPoqE0Bd+TSIInmhRmFcE6xxOoO3sh/YLmiDlCU4airecz1h9X8tGsd
+    0jBPkUfa22auP+/XreVOyw9AQJcmogoWbHN+8BkQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+    header.i=@linaro.org header.b=FjceO5g7 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=jiVJ0mmf;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+      header.i=@linaro.org header.b=FjceO5g7 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=jiVJ0mmf;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLLWQxyItw9+ij0pm8eGzPkaEuBm9ndAtlCjF7+61nP0nKc+hpGfFYPDXGunD3ina9Ir4mSu5jfaE790Z9kkYEHD1mCZu7BefhqSkqfzI7/PjBgacib3
+    VQmIpxletoMfgG/n3TZjNvJGL/FK+dLrfQJwkV6Se0QbBwfkJikqBmA/n+DpICU94E1OtvUWfdovu/PrulfLNmYHnZjTGSL/nApSnHgdRWZunbxvIbm1Fklh
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=yZIbUncRJc3hp2jZsaMA:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751274AbeEQHQv (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 03:16:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38007 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeEQHQu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 03:16:50 -0400
+X-Google-Smtp-Source: AB8JxZrYWI1/RgeC3tW4s3fa8otHriXuYQIX7FJiTZNDXrKg/DDEiIWIJtu7XT3jlPXpuoLO4oPGQw==
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: patrick.bellasi@arm.com, viresh.kumar@linaro.org,
+        tglx@linutronix.de, efault@gmx.de, juri.lelli@redhat.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "# v4 . 16+" <stable@vger.kernel.org>
+Subject: [PATCH v2] sched/rt: fix call to cpufreq_update_util
+Date: Thu, 17 May 2018 09:16:43 +0200
+Message-Id: <1526541403-16380-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600696356667859969?=
-X-GMAIL-MSGID: =?utf-8?q?1600751299695315199?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-[+cc Russell, Sam, Bryant, linuxppc-dev, Sebastian, linux-s390]
+With commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+schedutil governor uses rq->rt.rt_nr_running to detect whether a RT task is
+currently running on the CPU and to set frequency to max if necessary.
+cpufreq_update_util() is called in enqueue/dequeue_top_rt_rq() but
+rq->rt.rt_nr_running as not been updated yet when dequeue_top_rt_rq() is
+called so schedutil still considers that a RT task is running when the
+last task is dequeued. The update of rq->rt.rt_nr_running happens later
+in dequeue_rt_stack()
 
-Sorry, I should have pulled in these new CC's earlier because ppc and
-s390 both have PCI error handling similar to what Oza is changing
-here.
+Fixes: 8f111bc357aa ('cpufreq/schedutil: Rewrite CPUFREQ_RT support')
+Cc: <stable@vger.kernel.org> # v4.16+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+- v2:
+  - remove blank line
 
-The basic issue is that the new PCIe DPC (Downstream Port Containment,
-see PCIe r4.0, sec 6.2.10) feature doesn't fit very well in the
-framework of the pci_error_handlers callbacks.
+ kernel/sched/rt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-When DPC is enabled, a Downstream Port (either a Root Port or a Switch
-Downstream Port) that receives an ERR_FATAL message automatically
-disables its Link.  IIUC, this is also intended for use in hot-unplug
-scenarios.
-
-When the DPC hardware takes the Link down, it resets all the
-downstream devices, and there's not much point in calling the
-pci_error_handlers callbacks because the devices are unreachable.
-Even after the Link comes back up, we can't be certain the same device
-is there because of the hotplug possibility.
-
-The software side of DPC recovery basically consists of detaching the
-drivers of the downstream devices (calling their .remove() methods),
-bringing the link back up, re-enumerating the downstream devices, and
-re-attaching the drivers (calling their .probe() methods).
-
-The existing AER code also responds to ERR_FATAL messages, but it does
-call the pci_error_handlers callbacks and also resets the link.
-
-This is a bit of a mess because things look a lot different to the
-driver depending on whether the platform supports AER or DPC.
-
-Since we can't change the way DPC works, the idea of this series is
-basically to make AER handle ERR_FATAL more like DPC does, i.e., by
-resetting the link, detaching, and re-attaching the drivers.
-
-This series is currently on my pci/aer branch
-(https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/log/?h=pci/aer)
-and is headed for v4.18 unless somebody raises major objections.
-
-On Thu, May 17, 2018 at 03:43:02AM -0400, Oza Pawandeep wrote:
-> This patch set brings in error handling support for DPC
-> 
-> The current implementation of AER and error message broadcasting to the
-> EP driver is tightly coupled and limited to AER service driver.
-> It is important to factor out broadcasting and other link handling
-> callbacks. So that not only when AER gets triggered, but also when DPC get
-> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
-> 
-> The goal of the patch-set is:
-> DPC should handle the error handling and recovery similar to AER, because 
-> finally both are attempting recovery in some or the other way,
-> and for that error handling and recovery framework has to be loosely
-> coupled.
-> 
-> It achieves uniformity and transparency to the error handling agents such
-> as AER, DPC, with respect to recovery and error handling.
-> 
-> So, this patch-set tries to unify lot of things between error agents and
-> make them behave in a well defined way. (be it error (FATAL, NON_FATAL)
-> handling or recovery).
-> 
-> The FATAL error handling is handled with remove/reset_link/re-enumerate
-> sequence while the NON_FATAL follows the default path.
-> Documentation/PCI/pci-error-recovery.txt talks more on that.
-
-I applied this series with a trivial change to remove an unused variable to
-pci/aer for v4.18, thanks!
-
-> Changes since v16:
->     Bjorn's comments addressed
->     > remove call pci_walk_bus(dev->subordinate, report_resume, &result_data)
->     > pci_cleanup_aer_uncorrect_error_status(dev); happens only if service is AER
->     > aer_error_resume does not handle ERR_FATAL clearing anymore
-> Changes since v15:
->     Bjorn's comments addressed
->     > minor comments fixed
->     > made FATAL sequence aligned to existing one, as far as clearing status are concerned.
->     > pcie_do_fatal_recovery and pcie_do_nonfatal_recovery functions made to modularize
->     > pcie_do_fatal_recovery now takes service as an argument
-> Changes since v14:
->     Bjorn's comments addressed
->     > simplified the patch set, and moved AER_FATAL handling in the beginning.
->     > rebase the code to 4.17-rc1.
-> Changes since v13:
->     Bjorn's comments addressed
->     > handke FATAL errors with remove devices followed by re-enumeration.
->     > changes in AER and DPC along with required Documentation.
-> Changes since v12:
->     Bjorn's and Keith's Comments addressed.
->     > Made DPC and AER error handling identical <aligned err.c>
->     > hanldled cases for hotplug enabled system differently.
-> Changes since v11:
->     Bjorn's comments addressed.
->     > rename pcie-err.c to err.c
->     > removed EXPORT_SYMBOL
->     > made generic find_serivce function in port driver.
->     > removed mutex patch as no need to have mutex in pcie_do_recovery
->     > brough in DPC_FATAL in aer.h
->     > so now all the error codes (AER and DPC) are unified in aer.h
-> Changes since v10:
->     Christoph Hellwig's, David Laight's and Randy Dunlap's
->     comments addressed.
->         > renamed pci_do_recovery to pcie_do_recovery
->         > removed inner braces in conditional statements.
->         > restrctured the code in pci_wait_for_link
->         > EXPORT_SYMBOL_GPL
-> Changes since v9:
->     Sinan's comments addressed.
->         > bool active = true; unnecessary variable removed.
-> Changes since v8:
->     Fixed Kbuild errors.
-> Changes since v7:
->     Rebased the code on pci master
->         > https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
-> Changes since v6:
->     Sinan's and Stefan's comments implemented.
->         > reordered patch 6 and 7
->         > cleaned up
-> Changes since v5:
->     Sinan's and Keith's comments incorporated.
->         > made separate patch for mutex
->         > unified error repotting codes into driver/pci/pci.h
->         > got rid of wait link active/inactive and
->           made generic function in driver/pci/pci.c
-> Changes since v4:
->     Bjorn's comments incorporated.
->         > Renamed only do_recovery.
->         > moved the things more locally to drivers/pci/pci.h
-> Changes since v3:
->     Bjorn's comments incorporated.
->         > Made separate patch renaming generic pci_err.c
->         > Introduce pci_err.h to contain all the error types and recovery
->         > removed all the dependencies on pci.h
-> Changes since v2:
->     Based on feedback from Keith:
->     "
->     When DPC is triggered due to receipt of an uncorrectable error Message,
->     the Requester ID from the Message is recorded in the DPC Error
->     Source ID register and that Message is discarded and not forwarded Upstream.
->     "
->     Removed the patch where AER checks if DPC service is active
-> Changes since v1:
->     Kbuild errors fixed:
->         > pci_find_dpc_dev made static
->         > ras_event.h updated
->         > pci_find_aer_service call with CONFIG check
->         > pci_find_dpc_service call with CONFIG check
-> 
-> Oza Pawandeep (9):
->   PCI: Unify wait for link active into generic PCI
->   pci-error-recovery: Add AER_FATAL handling
->   PCI/AER: Handle ERRR_FATAL with removal and re-enumeration of devices
->   PCI/AER: Rename error recovery to generic PCI naming
->   PCI/AER: Factor out error reporting from AER
->   PCI/PORTDRV: Implement generic find service
->   PCI/PORTDRV: Implement generic find device
->   PCI/DPC: Unify and plumb error handling into DPC
->   PCI/DPC: Disable ERR_NONFATAL and enable ERR_FATAL for DPC
-> 
->  Documentation/PCI/pci-error-recovery.txt |  35 ++-
->  drivers/pci/hotplug/pciehp_hpc.c         |  20 +-
->  drivers/pci/pci.c                        |  29 +++
->  drivers/pci/pci.h                        |   4 +
->  drivers/pci/pcie/Makefile                |   2 +-
->  drivers/pci/pcie/aer/aerdrv.c            |   2 +
->  drivers/pci/pcie/aer/aerdrv.h            |  30 ---
->  drivers/pci/pcie/aer/aerdrv_core.c       | 317 +-------------------------
->  drivers/pci/pcie/dpc.c                   |  58 +++--
->  drivers/pci/pcie/err.c                   | 374 +++++++++++++++++++++++++++++++
->  drivers/pci/pcie/portdrv.h               |   4 +
->  drivers/pci/pcie/portdrv_core.c          |  67 ++++++
->  include/linux/aer.h                      |   1 +
->  include/uapi/linux/pci_regs.h            |   1 +
->  14 files changed, 540 insertions(+), 404 deletions(-)
->  create mode 100644 drivers/pci/pcie/err.c
-> 
-> -- 
-> 2.7.4
-> 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 7aef6b4..a9f1119 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1000,9 +1000,6 @@ dequeue_top_rt_rq(struct rt_rq *rt_rq)
+ 
+ 	sub_nr_running(rq, rt_rq->rt_nr_running);
+ 	rt_rq->rt_queued = 0;
+-
+-	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+-	cpufreq_update_util(rq, 0);
+ }
+ 
+ static void
+@@ -1288,6 +1285,9 @@ static void dequeue_rt_stack(struct sched_rt_entity *rt_se, unsigned int flags)
+ 		if (on_rt_rq(rt_se))
+ 			__dequeue_rt_entity(rt_se, flags);
+ 	}
++
++	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
++	cpufreq_update_util(rq_of_rt_rq(rt_rq_of_se(back)), 0);
+ }
+ 
+ static void enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+-- 
+2.7.4
