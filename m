@@ -1,68 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeEQK7N (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:59:13 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51972 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeEQK7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:59:11 -0400
-X-Google-Smtp-Source: AB8JxZr5zb+s0D1o/eNcCAqv37pFuho3QFcteoypcjFOEX7+lXZWQ/m09a/IqexK9tc8WCoXm+vIHg==
-Date: Thu, 17 May 2018 12:59:07 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@suse.de, lenb@kernel.org,
-        rjw@rjwysocki.net, mgorman@techsingularity.net, x86@kernel.org,
-        linux-pm@vger.kernel.org, viresh.kumar@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-Message-ID: <20180517105907.GC22493@localhost.localdomain>
-References: <20180516044911.28797-1-srinivas.pandruvada@linux.intel.com>
- <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
- <20180516151925.GO28366@localhost.localdomain>
- <20180516154733.GF12198@hirez.programming.kicks-ass.net>
- <20180516163105.GP28366@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516163105.GP28366@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752129AbeEQK7d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:59:33 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:56012 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751396AbeEQK7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:59:32 -0400
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v6] powerpc/mm: Only read faulting instruction when necessary in
+ do_page_fault()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Message-Id: <20180517105930.71B1D6F937@po14934vm.idsi0.si.c-s.fr>
+Date: Thu, 17 May 2018 12:59:29 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/05/18 18:31, Juri Lelli wrote:
-> On 16/05/18 17:47, Peter Zijlstra wrote:
-> > On Wed, May 16, 2018 at 05:19:25PM +0200, Juri Lelli wrote:
-> > 
-> > > Anyway, FWIW I started testing this on a E5-2609 v3 and I'm not seeing
-> > > hackbench regressions so far (running with schedutil governor).
-> > 
-> > https://en.wikipedia.org/wiki/Haswell_(microarchitecture)#Server_processors
-> > 
-> > Lists the E5 2609 v3 as not having turbo at all, which is basically a
-> > best case scenario for this patch.
-> > 
-> > As I wrote earlier today; when turbo exists, like say the 2699, then
-> > when we're busy we'll run at U=2.3/3.6 ~ .64, which might confuse
-> > things.
-> 
-> Indeed. I was mostly trying to see if adding this to the tick might
-> introduce noticeable overhead.
+Commit a7a9dcd882a67 ("powerpc: Avoid taking a data miss on every
+userspace instruction miss") has shown that limiting the read of
+faulting instruction to likely cases improves performance.
 
-Blindly testing on an i5-5200U (2.2/2.7 GHz) gave the following
+This patch goes further into this direction by limiting the read
+of the faulting instruction to the only cases where it is definitly
+needed.
 
-# perf bench sched messaging --pipe --thread --group 2 --loop 20000
+On an MPC885, with the same benchmark app as in the commit referred
+above, we see a reduction of 4000 dTLB misses (approx 3%):
 
-                      count       mean       std     min     50%       95%       99%     max
-hostname kernel                                                                             
-i5-5200U test_after    30.0  13.843433  0.590605  12.369  13.810  14.85635  15.08205  15.127
-         test_before   30.0  13.571167  0.999798  12.228  13.302  15.57805  16.40029  16.690
+Before the patch:
+ Performance counter stats for './fault 500' (10 runs):
 
-It might be interesting to see what happens when using a single CPU
-only?
+         720495838      cpu-cycles		( +-  0.04% )
+            141769      dTLB-load-misses	( +-  0.02% )
+             52722      iTLB-load-misses	( +-  0.01% )
+             19611      faults			( +-  0.02% )
 
-Also, I will look at how the util signals look when a single CPU is
-busy..
+       5.750535176 seconds time elapsed		( +-  0.16% )
+
+With the patch:
+ Performance counter stats for './fault 500' (10 runs):
+
+         717669123      cpu-cycles		( +-  0.02% )
+            137344      dTLB-load-misses	( +-  0.03% )
+             52731      iTLB-load-misses	( +-  0.01% )
+             19614      faults			( +-  0.03% )
+
+       5.728423115 seconds time elapsed		( +-  0.14% )
+
+The proper work of the huge stack expansion was tested with the
+following app:
+
+int main(int argc, char **argv)
+{
+	char buf[1024 * 1025];
+
+	sprintf(buf, "Hello world !\n");
+	printf(buf);
+
+	exit(0);
+}
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v6: Rebased on latest powerpc/merge branch ; Using __get_user_inatomic() instead of get_user() in order
+     to move it inside the semaphored area. That removes all the complexity of the patch.
+
+ v5: Reworked to fit after Benh do_fault improvement and rebased on top of powerpc/merge (65152902e43fef)
+
+ v4: Rebased on top of powerpc/next (f718d426d7e42e) and doing access_ok() verification before __get_user_xxx()
+
+ v3: Do a first try with pagefault disabled before releasing the semaphore
+
+ v2: Changes 'if (cond1) if (cond2)' by 'if (cond1 && cond2)'
+
+ arch/powerpc/mm/fault.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index c01d627e687a..a7d5cc76a8ce 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -72,8 +72,18 @@ static inline bool notify_page_fault(struct pt_regs *regs)
+ static bool store_updates_sp(struct pt_regs *regs)
+ {
+ 	unsigned int inst;
++	int ret;
+ 
+-	if (get_user(inst, (unsigned int __user *)regs->nip))
++	/*
++	 * Using get_user_in_atomic() as reading code around nip can result in
++	 * fault, which may cause a deadlock when called with mmap_sem held,
++	 * however since we are reading the instruction that generated the DSI
++	 * we are handling, the page is necessarily already present.
++	 */
++	pagefault_disable();
++	ret = __get_user_inatomic(inst, (unsigned int __user *)regs->nip);
++	pagefault_enable();
++	if (ret)
+ 		return false;
+ 	/* check for 1 in the rA field */
+ 	if (((inst >> 16) & 0x1f) != 1)
+@@ -234,8 +244,7 @@ static bool bad_kernel_fault(bool is_exec, unsigned long error_code,
+ }
+ 
+ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+-				struct vm_area_struct *vma,
+-				bool store_update_sp)
++				struct vm_area_struct *vma)
+ {
+ 	/*
+ 	 * N.B. The POWER/Open ABI allows programs to access up to
+@@ -264,7 +273,7 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+ 		 * between the last mapped region and the stack will
+ 		 * expand the stack rather than segfaulting.
+ 		 */
+-		if (address + 2048 < uregs->gpr[1] && !store_update_sp)
++		if (address + 2048 < uregs->gpr[1] && !store_updates_sp(regs))
+ 			return true;
+ 	}
+ 	return false;
+@@ -403,7 +412,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	int is_user = user_mode(regs);
+ 	int is_write = page_fault_is_write(error_code);
+ 	int fault, major = 0;
+-	bool store_update_sp = false;
+ 
+ 	if (notify_page_fault(regs))
+ 		return 0;
+@@ -449,14 +457,6 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 		return bad_key_fault_exception(regs, address,
+ 					       get_mm_addr_key(mm, address));
+ 
+-	/*
+-	 * We want to do this outside mmap_sem, because reading code around nip
+-	 * can result in fault, which will cause a deadlock when called with
+-	 * mmap_sem held
+-	 */
+-	if (is_write && is_user)
+-		store_update_sp = store_updates_sp(regs);
+-
+ 	if (is_user)
+ 		flags |= FAULT_FLAG_USER;
+ 	if (is_write)
+@@ -503,7 +503,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 		return bad_area(regs, address);
+ 
+ 	/* The stack is being expanded, check if it's valid */
+-	if (unlikely(bad_stack_expansion(regs, address, vma, store_update_sp)))
++	if (unlikely(bad_stack_expansion(regs, address, vma)))
+ 		return bad_area(regs, address);
+ 
+ 	/* Try to expand it */
+-- 
+2.13.3
