@@ -1,66 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeEQMFT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:05:19 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55971 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752065AbeEQMFQ (ORCPT
+        id S1752183AbeEQMFg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:05:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54870 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751976AbeEQMFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:05:16 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v3 0/4] Introduce STM32MP1 RTC
-Date: Thu, 17 May 2018 14:04:22 +0200
-Message-ID: <1526558666-24243-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
+        Thu, 17 May 2018 08:05:15 -0400
+Subject: Re: [PATCH] ima: Fix pr_fmt() redefinition
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 17 May 2018 08:04:55 -0400
+In-Reply-To: <20180517104702.24689-1-pvorel@suse.cz>
+References: <20180517104702.24689-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051712-0008-0000-0000-000004F77F1F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051712-0009-0000-0000-00001E8BF3DF
+Message-Id: <1526558695.3306.11.camel@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805170111
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series introduces STM32MP1 RTC.
-On STM32MP1:
-- two clocks are needed, plck and rtc_ck;
-- to wakeup the system, a wakeup alarm interrupt is needed;
-- some registers or bits have moved, but the operation is the same;
-- the Backup Domain Protection (DBP) is not managed by RTC driver.
+Hi Petr,
 
----
-Changes in v3:
-* Move cleanup changes in a separate patch
-* Replace regs and evts by pointers to ensure no copy is made
-* Set all registers offset as u16 instead of u8 and u16
-* Fix Kbuild smatch warning:
-  drivers/rtc/rtc-stm32.c:827 stm32_rtc_probe()
-  warn: always true condition '(regs.verr != ~0) => (0-u16max != (-1))'
+On Thu, 2018-05-17 at 12:47 +0200, Petr Vorel wrote:
+> Previous definition was too late and caused problems in powerpc allyesconfig:
+> security/integrity/ima/ima_kexec.c:18:0: warning: "pr_fmt" redefined
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> 
+> In file included from include/linux/kernel.h:14:0,
+>                  from include/asm-generic/bug.h:18,
+>                  from arch/powerpc/include/asm/bug.h:128,
+>                  from include/linux/bug.h:5,
+>                  from include/linux/seq_file.h:7,
+>                  from security/integrity/ima/ima_kexec.c:13:
+> include/linux/printk.h:288:0: note: this is the location of the previous definition
+>  #define pr_fmt(fmt) fmt
+> 
+> Fixes: 3dea0d93d257 ("ima: Unify logging")
+> 
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Changes in v2:
-* One compatible per line in bindings file
-* Remove unnecessary comment under rtc_ck as this clock is required for all
-* Remove interrupts-extended and add stm32mp1 rtc alarm wakeup interrupt in
-  interrupts property description
+As the original patch hasn't been upstreamed yet, I'll squash this fix
+with the original patch.
 
-Amelie Delaunay (4):
-  rtc: stm32: fix misspelling and misalignment issues
-  rtc: stm32: rework register management to prepare other version of RTC
-  dt-bindings: rtc: update stm32-rtc documentation for stm32mp1 rtc
-  rtc: stm32: add stm32mp1 rtc support
+thanks!
 
- .../devicetree/bindings/rtc/st,stm32-rtc.txt       |  27 +-
- drivers/rtc/rtc-stm32.c                            | 273 ++++++++++++++++-----
- 2 files changed, 229 insertions(+), 71 deletions(-)
+Mimi
 
--- 
-2.7.4
+> ---
+>  security/integrity/ima/ima_kexec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index db0de585f6c0..16bd18747cfa 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -10,13 +10,13 @@
+>   * the Free Software Foundation; either version 2 of the License, or
+>   * (at your option) any later version.
+>   */
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/seq_file.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/kexec.h>
+>  #include "ima.h"
+> 
+> -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> -
+>  #ifdef CONFIG_IMA_KEXEC
+>  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  				     unsigned long segment_size)
