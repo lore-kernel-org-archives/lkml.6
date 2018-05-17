@@ -1,46 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeEQPqm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:46:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751695AbeEQPql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:46:41 -0400
-Date: Thu, 17 May 2018 17:46:37 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tycho Andersen <tycho@tycho.ws>
-Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        "Tobin C . Harding" <me@tobin.cc>
-Subject: Re: [PATCH v2 1/4] seccomp: add a return code to trap to userspace
-Message-ID: <20180517154637.GC8586@redhat.com>
-References: <20180517151218.12850-1-tycho@tycho.ws>
- <20180517151218.12850-2-tycho@tycho.ws>
- <20180517153323.GA8586@redhat.com>
- <20180517153957.GA3831@cisco>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517153957.GA3831@cisco>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752249AbeEQPqu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:46:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751695AbeEQPqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 11:46:49 -0400
+From: Jeff Layton <jlayton@kernel.org>
+To: viro@zeniv.linux.org.uk
+Cc: jack@suse.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] vfs: change iterate_supers callback to take an int arg instead of a void *
+Date: Thu, 17 May 2018 11:46:46 -0400
+Message-Id: <20180517154646.18751-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17, Tycho Andersen wrote:
->
-> > From lockdep pov this loop tries to take the same lock twice or more, it shoul
-> > complain.
->
-> I didn't, but I guess that's because it's not trying to take the same lock
-> twice -- the pointer cur is changing in the loop.
+From: Jeff Layton <jlayton@redhat.com>
 
-Yes, I see. But this is the same lock for lockdep, it has the same class.
+All of the callback functions for iterate_supers either ignore the
+opaque argument, or dereference the pointer only to fetch the int
+to which it points.
 
-Oleg.
+Change iterate_supers to pass an opaque int arg to the callback
+instead of a void pointer.
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/drop_caches.c         |  4 ++--
+ fs/quota/quota.c         |  6 ++----
+ fs/super.c               |  3 ++-
+ fs/sync.c                | 32 ++++++++++++++------------------
+ include/linux/fs.h       |  2 +-
+ mm/cleancache.c          |  4 ++--
+ security/selinux/hooks.c |  4 ++--
+ 7 files changed, 25 insertions(+), 30 deletions(-)
+
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index 82377017130f..1850e7276fdf 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -14,7 +14,7 @@
+ /* A global variable is a bit ugly, but it keeps the code simple */
+ int sysctl_drop_caches;
+ 
+-static void drop_pagecache_sb(struct super_block *sb, void *unused)
++static void drop_pagecache_sb(struct super_block *sb, int unused)
+ {
+ 	struct inode *inode, *toput_inode = NULL;
+ 
+@@ -52,7 +52,7 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
+ 		static int stfu;
+ 
+ 		if (sysctl_drop_caches & 1) {
+-			iterate_supers(drop_pagecache_sb, NULL);
++			iterate_supers(drop_pagecache_sb, 0);
+ 			count_vm_event(DROP_PAGECACHE);
+ 		}
+ 		if (sysctl_drop_caches & 2) {
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 860bfbe7a07a..5f1e1c494c07 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -46,10 +46,8 @@ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+ 	return security_quotactl(cmd, type, id, sb);
+ }
+ 
+-static void quota_sync_one(struct super_block *sb, void *arg)
++static void quota_sync_one(struct super_block *sb, int type)
+ {
+-	int type = *(int *)arg;
+-
+ 	if (sb->s_qcop && sb->s_qcop->quota_sync &&
+ 	    (sb->s_quota_types & (1 << type)))
+ 		sb->s_qcop->quota_sync(sb, type);
+@@ -63,7 +61,7 @@ static int quota_sync_all(int type)
+ 		return -EINVAL;
+ 	ret = security_quotactl(Q_SYNC, type, 0, NULL);
+ 	if (!ret)
+-		iterate_supers(quota_sync_one, &type);
++		iterate_supers(quota_sync_one, type);
+ 	return ret;
+ }
+ 
+diff --git a/fs/super.c b/fs/super.c
+index 122c402049a2..30b7490bd049 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -596,6 +596,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
+ 		__put_super(p);
+ 	spin_unlock(&sb_lock);
+ }
++
+ /**
+  *	iterate_supers - call function for all active superblocks
+  *	@f: function to call
+@@ -604,7 +605,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
+  *	Scans the superblock list and calls given function, passing it
+  *	locked superblock and given argument.
+  */
+-void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
++void iterate_supers(void (*f)(struct super_block *, int), int arg)
+ {
+ 	struct super_block *sb, *p = NULL;
+ 
+diff --git a/fs/sync.c b/fs/sync.c
+index b54e0541ad89..8c418da67e41 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -68,16 +68,16 @@ int sync_filesystem(struct super_block *sb)
+ }
+ EXPORT_SYMBOL(sync_filesystem);
+ 
+-static void sync_inodes_one_sb(struct super_block *sb, void *arg)
++static void sync_inodes_one_sb(struct super_block *sb, int unused)
+ {
+ 	if (!sb_rdonly(sb))
+ 		sync_inodes_sb(sb);
+ }
+ 
+-static void sync_fs_one_sb(struct super_block *sb, void *arg)
++static void sync_fs_one_sb(struct super_block *sb, int arg)
+ {
+ 	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
+-		sb->s_op->sync_fs(sb, *(int *)arg);
++		sb->s_op->sync_fs(sb, arg);
+ }
+ 
+ static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
+@@ -107,14 +107,12 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
+  */
+ void ksys_sync(void)
+ {
+-	int nowait = 0, wait = 1;
+-
+ 	wakeup_flusher_threads(WB_REASON_SYNC);
+-	iterate_supers(sync_inodes_one_sb, NULL);
+-	iterate_supers(sync_fs_one_sb, &nowait);
+-	iterate_supers(sync_fs_one_sb, &wait);
+-	iterate_bdevs(fdatawrite_one_bdev, NULL);
+-	iterate_bdevs(fdatawait_one_bdev, NULL);
++	iterate_supers(sync_inodes_one_sb, 0);
++	iterate_supers(sync_fs_one_sb, 0);
++	iterate_supers(sync_fs_one_sb, 1);
++	iterate_bdevs(fdatawrite_one_bdev, 0);
++	iterate_bdevs(fdatawait_one_bdev, 0);
+ 	if (unlikely(laptop_mode))
+ 		laptop_sync_completion();
+ }
+@@ -127,18 +125,16 @@ SYSCALL_DEFINE0(sync)
+ 
+ static void do_sync_work(struct work_struct *work)
+ {
+-	int nowait = 0;
+-
+ 	/*
+ 	 * Sync twice to reduce the possibility we skipped some inodes / pages
+ 	 * because they were temporarily locked
+ 	 */
+-	iterate_supers(sync_inodes_one_sb, &nowait);
+-	iterate_supers(sync_fs_one_sb, &nowait);
+-	iterate_bdevs(fdatawrite_one_bdev, NULL);
+-	iterate_supers(sync_inodes_one_sb, &nowait);
+-	iterate_supers(sync_fs_one_sb, &nowait);
+-	iterate_bdevs(fdatawrite_one_bdev, NULL);
++	iterate_supers(sync_inodes_one_sb, 0);
++	iterate_supers(sync_fs_one_sb, 0);
++	iterate_bdevs(fdatawrite_one_bdev, 0);
++	iterate_supers(sync_inodes_one_sb, 0);
++	iterate_supers(sync_fs_one_sb, 0);
++	iterate_bdevs(fdatawrite_one_bdev, 0);
+ 	printk("Emergency Sync complete\n");
+ 	kfree(work);
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 760d8da1b6c7..7107d291d853 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3115,7 +3115,7 @@ extern struct super_block *get_super_exclusive_thawed(struct block_device *bdev)
+ extern struct super_block *get_active_super(struct block_device *bdev);
+ extern void drop_super(struct super_block *sb);
+ extern void drop_super_exclusive(struct super_block *sb);
+-extern void iterate_supers(void (*)(struct super_block *, void *), void *);
++extern void iterate_supers(void (*)(struct super_block *, int), int);
+ extern void iterate_supers_type(struct file_system_type *,
+ 			        void (*)(struct super_block *, void *), void *);
+ 
+diff --git a/mm/cleancache.c b/mm/cleancache.c
+index f7b9fdc79d97..92d27cc10274 100644
+--- a/mm/cleancache.c
++++ b/mm/cleancache.c
+@@ -34,7 +34,7 @@ static u64 cleancache_failed_gets;
+ static u64 cleancache_puts;
+ static u64 cleancache_invalidates;
+ 
+-static void cleancache_register_ops_sb(struct super_block *sb, void *unused)
++static void cleancache_register_ops_sb(struct super_block *sb, int unused)
+ {
+ 	switch (sb->cleancache_poolid) {
+ 	case CLEANCACHE_NO_BACKEND:
+@@ -105,7 +105,7 @@ int cleancache_register_ops(const struct cleancache_ops *ops)
+ 	 * until the corresponding ->init_fs has been actually called and
+ 	 * cleancache_ops has been set.
+ 	 */
+-	iterate_supers(cleancache_register_ops_sb, NULL);
++	iterate_supers(cleancache_register_ops_sb, 0);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(cleancache_register_ops);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..91c13b72b427 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7138,7 +7138,7 @@ static __init int selinux_init(void)
+ 	return 0;
+ }
+ 
+-static void delayed_superblock_init(struct super_block *sb, void *unused)
++static void delayed_superblock_init(struct super_block *sb, int unused)
+ {
+ 	superblock_doinit(sb, NULL);
+ }
+@@ -7149,7 +7149,7 @@ void selinux_complete_init(void)
+ 
+ 	/* Set up any superblocks initialized prior to the policy load. */
+ 	printk(KERN_DEBUG "SELinux:  Setting up existing superblocks.\n");
+-	iterate_supers(delayed_superblock_init, NULL);
++	iterate_supers(delayed_superblock_init, 0);
+ }
+ 
+ /* SELinux requires early initialization in order to label
+-- 
+2.17.0
