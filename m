@@ -1,133 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752014AbeEQNL6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:11:58 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38041 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQNL5 (ORCPT
+        id S1752121AbeEQNM2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:12:28 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43076 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751850AbeEQNMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:11:57 -0400
-X-Google-Smtp-Source: AB8JxZrbjvDoW2xGrJEgya9vW3BVFP1GRo9maHVLeovwKbmRKV2VRS/3gzj3dV5Y0OPvNdEBKjuenQ==
-Date: Thu, 17 May 2018 06:11:55 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-Message-ID: <20180517131155.GB139147@joelaf.mtv.corp.google.com>
-References: <20180516224518.109891-1-joel@joelfernandes.org>
- <20180517050611.yj2alkzckl3ximzu@vireshk-i7>
+        Thu, 17 May 2018 09:12:24 -0400
+X-Google-Smtp-Source: AB8JxZpAUdYfIVenDi180bihAWVxljG3oFDMNHXdkc/+HUv8sKgkfXIztIvwHNofoEx9Z6/vboF0+n8Ibpw0STvNEfU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517050611.yj2alkzckl3ximzu@vireshk-i7>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <20180517090438.pqggltzkcdhzktsp@verge.net.au>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <20180517090438.pqggltzkcdhzktsp@verge.net.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 17 May 2018 16:12:23 +0300
+Message-ID: <CAOtvUMcnrPnkx35Sgru+3EUxYn+FY9FmDSYSNnZEaVUODHA7+w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 10:36:11AM +0530, Viresh Kumar wrote:
-> On 16-05-18, 15:45, Joel Fernandes (Google) wrote:
-> >  kernel/sched/cpufreq_schedutil.c | 36 +++++++++++++++++++++++++-------
-> >  1 file changed, 28 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index e13df951aca7..a87fc281893d 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-> >  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
-> >  		return false;
-> >  
-> > -	if (sg_policy->work_in_progress)
-> > -		return false;
-> > -
-> >  	if (unlikely(sg_policy->need_freq_update)) {
-> >  		sg_policy->need_freq_update = false;
-> >  		/*
-> > @@ -129,8 +126,11 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-> >  		policy->cur = next_freq;
-> >  		trace_cpu_frequency(next_freq, smp_processor_id());
-> >  	} else {
-> > -		sg_policy->work_in_progress = true;
-> > -		irq_work_queue(&sg_policy->irq_work);
-> > +		/* Don't queue request if one was already queued */
-> > +		if (!sg_policy->work_in_progress) {
-> 
-> Merge it above to make it "else if".
+On Thu, May 17, 2018 at 12:04 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 17, 2018 at 11:01:57AM +0300, Gilad Ben-Yossef wrote:
+>> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
+>> > On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
+>> >> Hi Gilad,
+>> >>
+>> >> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> >> > Add bindings for CryptoCell instance in the SoC.
+>> >> >
+>> >> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>> >>
+>> >> Thanks for your patch!
+>> >>
+>> >> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> >> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> >> > @@ -528,6 +528,14 @@
+>> >> >                         status = "disabled";
+>> >> >                 };
+>> >> >
+>> >> > +               arm_cc630p: crypto@e6601000 {
+>> >> > +                       compatible = "arm,cryptocell-630p-ree";
+>> >> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+>> >> > +                       #interrupt-cells = <2>;
+>> >>
+>> >> I believe the #interrupt-cells property is not needed.
+>> >>
+>> >> > +                       reg = <0x0 0xe6601000 0 0x1000>;
+>> >> > +                       clocks = <&cpg CPG_MOD 229>;
+>> >> > +               };
+>> >>
+>> >> The rest looks good, but I cannot verify the register block.
+>> >>
+>> >> > +
+>> >> >                 i2c3: i2c@e66d0000 {
+>> >> >                         #address-cells = <1>;
+>> >> >                         #size-cells = <0>;
+>> >
+>> > Thanks, I have applied this after dropping the #interrupt-cells property.
+>>
+>> Thanks you!
+>>
+>> Alas, it will not work without the clk patch (the previous one in the
+>> series) so they need to be
+>> taken or dropped together.
+>
+> I think its fine if it does not yet work.
+> But not if its causes things that previously worked to stop working.
 
-Sure.
+Based on the further discussion with Geert my recommendation is to
+drop my patch for now,
+take Geert CR clock  patch and I will follow up next week with a v2
+that fixes the clock
+handing as discussed with Geert.
 
-> > +			sg_policy->work_in_progress = true;
-> > +			irq_work_queue(&sg_policy->irq_work);
-> > +		}
-> >  	}
-> >  }
-> >  
-> > @@ -291,6 +291,15 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
-> >  
-> >  	ignore_dl_rate_limit(sg_cpu, sg_policy);
-> >  
-> > +	/*
-> > +	 * For slow-switch systems, single policy requests can't run at the
-> > +	 * moment if the governor thread is already processing a pending
-> > +	 * frequency switch request, this can be fixed by acquiring update_lock
-> > +	 * while updating next_freq and work_in_progress but we prefer not to.
-> > +	 */
-> > +	if (sg_policy->work_in_progress)
-> > +		return;
-> > +
-> 
-> @Rafael: Do you think its worth start using the lock now for unshared
-> policies ?
+Many thanks,
+Gilad
 
-Will wait for confirmation before next revision.
 
-> >  	if (!sugov_should_update_freq(sg_policy, time))
-> >  		return;
-> >  
-> > @@ -382,13 +391,24 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
-> >  static void sugov_work(struct kthread_work *work)
-> >  {
-> >  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> > +	unsigned int freq;
-> > +	unsigned long flags;
-> > +
-> > +	/*
-> > +	 * Hold sg_policy->update_lock shortly to handle the case where:
-> > +	 * incase sg_policy->next_freq is read here, and then updated by
-> > +	 * sugov_update_shared just before work_in_progress is set to false
-> > +	 * here, we may miss queueing the new update.
-> > +	 */
-> > +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-> > +	freq = sg_policy->next_freq;
-> > +	sg_policy->work_in_progress = false;
-> > +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
-> >  
-> >  	mutex_lock(&sg_policy->work_lock);
-> > -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> > +	__cpufreq_driver_target(sg_policy->policy, freq,
-> >  				CPUFREQ_RELATION_L);
-> 
-> No need of line break anymore.
 
-Yes, will fix.
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-> >  	mutex_unlock(&sg_policy->work_lock);
-> > -
-> > -	sg_policy->work_in_progress = false;
-> >  }
-> >  
-> >  static void sugov_irq_work(struct irq_work *irq_work)
-> 
-> LGTM.
-
-Cool, thanks.
-
-- Joel
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
