@@ -1,57 +1,300 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeEQNol (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:44:41 -0400
-Received: from gate.crashing.org ([63.228.1.57]:51920 "EHLO gate.crashing.org"
+        id S1752205AbeEQNp0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:45:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752030AbeEQNoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:44:39 -0400
-Message-ID: <d981664a47150acbe5eab9c666c9ce6676848037.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2 5/5] powerpc/lib: inline memcmp() for small constant
- sizes
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>
-Cc: Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Thu, 17 May 2018 23:44:15 +1000
-In-Reply-To: <c184c807-dac0-0617-f449-492f5b6eeec1@c-s.fr>
-References: <cover.1526553552.git.christophe.leroy@c-s.fr>
-         <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
-         <CA+7wUsyEBW-sKiwP_KJpwuWC0JGi_Cg-xnxcnw0d_Wc7-GWeeA@mail.gmail.com>
-         <c184c807-dac0-0617-f449-492f5b6eeec1@c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752219AbeEQNpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:45:23 -0400
+Date: Thu, 17 May 2018 08:45:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: dmeyer@gigaio.com
+Cc: logang@deltatee.com, kurt.schwemmer@microsemi.com,
+        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com,
+        bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
+        allenbh@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] NTB: PCI Quirk to Enable Switchtec NT Functionality
+ with IOMMU On
+Message-ID: <20180517134521.GC19955@bhelgaas-glaptop.roam.corp.google.com>
+References: <1526558413-23113-1-git-send-email-dmeyer@gigaio.com>
+ <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526558413-23113-3-git-send-email-dmeyer@gigaio.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-17 at 15:21 +0200, Christophe LEROY wrote:
-> > > +static inline int __memcmp8(const void *p, const void *q, int off)
-> > > +{
-> > > +       s64 tmp = be64_to_cpu(*(u64*)(p + off)) - be64_to_cpu(*(u64*)(q + off));
-> > 
-> > I always assumed 64bits unaligned access would trigger an exception.
-> > Is this correct ?
+On Thu, May 17, 2018 at 05:00:13AM -0700, dmeyer@gigaio.com wrote:
+> From: Doug Meyer <dmeyer@gigaio.com>
 > 
-> As far as I know, an unaligned access will only occur when the operand 
-> of lmw, stmw, lwarx, or stwcx. is not aligned.
+> Here we add the PCI quirk for the Microsemi Switchtec parts to allow
+> non-transparent bridging to work when the IOMMU is turned on.
+
+I'm not an NTB expert, but it *sounds* like you're specifically fixing
+DMA initiated by an NT endpoint.  I assume other aspects of
+non-transparent bridging, e.g., routing of config accesses,
+interrupts, doorbells, etc., might work even without this quirk.
+
+> When a requestor on one NT endpoint accesses memory on another NT
+> endpoint, it does this via a devfn proxy ID. Proxy IDs are uniquely
+> assigned on a per-requestor basis within the NT hardware, and are not
+> visible via PCI enumeration. As a result, a memory access from a peer
+> NT endpoint will have an unrecognized requestor ID devfn which the
+> IOMMU will reject.
+
+It would be very helpful if you could include a reference to the
+relevant section of a publicly available spec.
+
+> The quirk introduced here interrogates each configured remote NT
+> endpoint at runtime to obtain the proxy IDs that have been assigned,
+> and aliases every proxy ID to the local (enumerated) NT endpoint's
+> device. The IOMMU then accepts the remote proxy IDs as if they were
+> requests coming directly from the enumerated endpoint, giving remote
+> requestors access to memory resources which a given host has made
+> available. Operation with the IOMMU off is unchanged by this quirk.
+
+Who assigns these proxy IDs?  Quirks run before drivers claim the
+device, so it looks like this assumes the proxy ID assignments are
+either hard-wired into the device or programmed by firmware.  If the
+latter, how would they be programmed for hot-added NTBs?
+
+I'm wondering if all this could or should be done in the switchtec
+driver instead of in a quirk.  But I really don't know how that driver
+works.
+
+> Signed-off-by: Doug Meyer <dmeyer@gigaio.com>
+> ---
+>  drivers/pci/quirks.c | 196 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 196 insertions(+)
 > 
-> Maybe that's different for PPC64 ?
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 2990ad1..c7e27b3 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/platform_data/x86/apple.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/switchtec.h>
+>  #include <asm/dma.h>	/* isa_dma_bridge_buggy */
+>  #include "pci.h"
+>  
+> @@ -4741,3 +4742,198 @@ static void quirk_gpu_hda(struct pci_dev *hda)
+>  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+>  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+>  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+> +
+> +/*
+> + * Microsemi Switchtec NTB uses devfn proxy IDs to move TLPs between
+> + * NT endpoints via the internal switch fabric. These IDs replace the
+> + * originating requestor ID TLPs which access host memory on peer NTB
+> + * ports. Therefore, all proxy IDs must be aliased to the NTB device
+> + * to permit access when the IOMMU is turned on.
+> + */
+> +static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+> +{
+> +	void __iomem *mmio = NULL;
 
-It's very implementation specific.
+Don't initialize variables unless there's a path through the
+code that would otherwise use an uninitialized value.
 
-Recent ppc64 chips generally don't trap (unless it's cache inhibited
-space). Earlier variants might trap on page boundaries or segment
-boundaries. Some embedded parts are less forgiving... some earlier
-POWER chips will trap on unaligned in LE mode...
+> +	struct ntb_info_regs __iomem *mmio_ntb = NULL;
+> +	struct ntb_ctrl_regs __iomem *mmio_ctrl = NULL;
+> +	struct sys_info_regs __iomem *mmio_sys_info = NULL;
+> +
 
-I wouldn't worry too much about it though. I think if 8xx shows an
-improvement then it's probably fine everywhere else :-)
+No blank line here.
 
-Cheers,
-Ben.
+> +	u64 partition_map;
+> +	u8 partition;
+> +	int pp;
+> +
+> +	if (pci_enable_device(pdev)) {
+> +		dev_err(&pdev->dev, "Cannot enable Switchtec device\n");
+
+Use "pci_err(pdev, ...)" here and below.
+
+> +		return;
+> +	}
+> +
+> +	mmio = pci_iomap(pdev, 0, 0);
+> +	if (mmio == NULL) {
+> +		dev_err(&pdev->dev, "Cannot iomap Switchtec device\n");
+> +		return;
+> +	}
+> +
+> +	dev_info(&pdev->dev, "Setting Switchtec proxy ID aliases\n");
+> +
+> +	mmio_ntb = mmio + SWITCHTEC_GAS_NTB_OFFSET;
+> +	mmio_ctrl = (void * __iomem) mmio_ntb + SWITCHTEC_NTB_REG_CTRL_OFFSET;
+> +	mmio_sys_info = mmio + SWITCHTEC_GAS_SYS_INFO_OFFSET;
+> +
+> +	partition = ioread8(&mmio_ntb->partition_id);
+> +
+> +	partition_map = (u64) ioread32((void * __iomem) &mmio_ntb->ep_map);
+> +	partition_map |=
+> +		((u64) ioread32((void * __iomem) &mmio_ntb->ep_map + 4)) << 32;
+> +	partition_map &= ~(1ULL << partition);
+> +
+> +	for (pp = 0; pp < (sizeof(partition_map) * 8); pp++) {
+> +		struct ntb_ctrl_regs __iomem *mmio_peer_ctrl;
+> +		u32 table_sz = 0;
+> +		int te;
+> +
+> +		if (!(partition_map & (1ULL << pp)))
+> +			continue;
+> +
+> +		dev_dbg(&pdev->dev, "Processing partition %d\n", pp);
+> +
+> +		mmio_peer_ctrl = &mmio_ctrl[pp];
+> +
+> +		table_sz = ioread16(&mmio_peer_ctrl->req_id_table_size);
+> +		if (!table_sz) {
+> +			dev_warn(&pdev->dev, "Partition %d table_sz 0\n", pp);
+> +			continue;
+> +		}
+> +
+> +		if (table_sz > 512) {
+> +			dev_warn(&pdev->dev,
+> +				 "Invalid Switchtec partition %d table_sz %d\n",
+> +				 pp, table_sz);
+> +			continue;
+> +		}
+> +
+> +		for (te = 0; te < table_sz; te++) {
+> +			u32 rid_entry;
+> +			u8 devfn;
+> +
+> +			rid_entry = ioread32(&mmio_peer_ctrl->req_id_table[te]);
+> +			devfn = (rid_entry >> 1) & 0xFF;
+> +			dev_dbg(&pdev->dev,
+> +				"Aliasing Partition %d Proxy ID %02d.%d\n",
+> +				pp, PCI_SLOT(devfn), PCI_FUNC(devfn));
+> +			pci_add_dma_alias(pdev, devfn);
+> +		}
+> +	}
+> +
+> +	pci_iounmap(pdev, mmio);
+
+I think you should probably disable the device here (and in the error
+return path) to balance the enable above.
+
+> +}
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX24XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX32XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX48XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX64XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX80XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFX96XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PSX48XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PSX64XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PSX80XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PSX96XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX24XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX32XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX48XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX64XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX80XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PAX96XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL24XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL32XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL48XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL64XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL80XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXL96XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI24XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI32XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI48XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI64XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI80XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+> +			      PCI_DEVICE_ID_MICROSEMI_PFXI96XG3,
+> +			      PCI_CLASS_BRIDGE_OTHER, 8,
+> +			      quirk_switchtec_ntb_dma_alias);
+> -- 
+> 1.8.3.1
+> 
