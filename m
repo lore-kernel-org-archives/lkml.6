@@ -1,106 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeEQS1i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:27:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50626 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751965AbeEQS1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:27:35 -0400
-Date: Thu, 17 May 2018 20:27:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, joe@perches.com,
-        linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging prefixes
-Message-ID: <20180517182659.GB27807@pd.tnic>
-References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
- <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
+        id S1752174AbeEQS2i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:28:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41964 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeEQS2g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 14:28:36 -0400
+Date: Thu, 17 May 2018 20:28:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180517182803.GY12217@hirez.programming.kicks-ass.net>
+References: <20180516044911.28797-3-srinivas.pandruvada@linux.intel.com>
+ <20180516151925.GO28366@localhost.localdomain>
+ <20180516154733.GF12198@hirez.programming.kicks-ass.net>
+ <20180516163105.GP28366@localhost.localdomain>
+ <20180517105907.GC22493@localhost.localdomain>
+ <20180517150418.GF22493@localhost.localdomain>
+ <1526571692.11765.10.camel@linux.intel.com>
+ <20180517161649.GX12217@hirez.programming.kicks-ass.net>
+ <1526575358.11765.14.camel@linux.intel.com>
+ <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 12:27:45PM -0700, tip-bot for Joe Perches wrote:
-> Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
-> Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
-> Author:     Joe Perches <joe@perches.com>
-> AuthorDate: Thu, 10 May 2018 08:45:30 -0700
-> Committer:  Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Sun, 13 May 2018 21:25:18 +0200
+On Thu, May 17, 2018 at 06:56:37PM +0200, Rafael J. Wysocki wrote:
+> On Thu, May 17, 2018 at 6:42 PM, Srinivas Pandruvada
+
+> > What will happen if we look at all core turbo as max and cap any
+> > utilization above this to 1024?
 > 
-> x86: Remove pr_fmt duplicate logging prefixes
-> 
-> Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
-> added some duplicate prefixes.
-> 
-> Remove the duplicate prefixes.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Link: https://lkml.kernel.org/r/e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com
-> 
-> ---
->  arch/x86/events/amd/ibs.c |  2 +-
->  arch/x86/kernel/e820.c    | 32 +++++++++++++++++---------------
->  arch/x86/kernel/hpet.c    |  5 ++---
->  arch/x86/kernel/uprobes.c |  4 ++--
->  arch/x86/mm/numa.c        | 22 +++++++++++-----------
->  5 files changed, 33 insertions(+), 32 deletions(-)
+> I was going to suggest that.
 
-...
+To the basic premise behind all our frequency scaling is that there's a
+linear relation between utilization and frequency, where u=1 gets us the
+fastest.
 
-> @@ -830,8 +832,8 @@ static unsigned long __init e820_end_pfn(unsigned long limit_pfn, enum e820_type
->  	if (last_pfn > max_arch_pfn)
->  		last_pfn = max_arch_pfn;
->  
-> -	pr_info("e820: last_pfn = %#lx max_arch_pfn = %#lx\n",
-> -			 last_pfn, max_arch_pfn);
-> +	pr_info("last_pfn = %#lx max_arch_pfn = %#lx\n",
-> +		last_pfn, max_arch_pfn);
->  	return last_pfn;
->  }
->  
-> @@ -1005,7 +1007,7 @@ void __init e820__finish_early_params(void)
->  		if (e820__update_table(e820_table) < 0)
->  			early_panic("Invalid user supplied memory map");
->  
-> -		pr_info("e820: user-defined physical RAM map:\n");
-> +		pr_info("user-defined physical RAM map:\n");
->  		e820__print_table("user");
->  	}
->  }
-> @@ -1238,7 +1240,7 @@ void __init e820__memory_setup(void)
->  	memcpy(e820_table_kexec, e820_table, sizeof(*e820_table_kexec));
->  	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
->  
-> -	pr_info("e820: BIOS-provided physical RAM map:\n");
-> +	pr_info("BIOS-provided physical RAM map:\n");
->  	e820__print_table(who);
->  }
+Now, we all know this is fairly crude, but it is what we work with.
 
-Maybe I'm missing something but this dropped the prefixes now
-completely:
+OTOH, the whole premise of turbo is that you don't in fact know what the
+fastest is, and in that respect setting u=1 at the guaranteed or
+sustainable frequency makes sense.
 
--e820: BIOS-provided physical RAM map:
-+BIOS-provided physical RAM map:
+The direct concequence of allowing clipping is that u=1 doesn't select
+the highest frequency, but since we don't select anything anyway
+(p-code does that for us) all we really need is to have u=1 above that
+turbo activation point you mentioned.
 
--e820: last_pfn = 0x43f000 max_arch_pfn = 0x400000000
-+last_pfn = 0x43f000 max_arch_pfn = 0x400000000
+For parts where we have to directly select frequency this obviously
+comes apart.
 
--e820: last_pfn = 0x9d000 max_arch_pfn = 0x400000000
-+last_pfn = 0x9d000 max_arch_pfn = 0x400000000
+However; what happens when the sustainable freq drops below our initial
+'max'? Imagine us dropping below the all-core-turbo because of AVX. Then
+we're back to running at u<1 at full tilt.
 
-...
+Or for mobile parts, the sustainable frequency could drop because of
+severe thermal limits. Now I _think_ we have the possibility for getting
+interrupts and reading the new guaranteed frequency, so we could
+re-guage.
 
-I don't think that was the intention.
+So in theory I think it works, in practise we need to always be able to
+find the actual max -- be it all-core turbo, AVX or thermal constrained
+frequency. Can we do that in all cases?
 
--- 
-Regards/Gruss,
-    Boris.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I need to go back to see what the complains against Vincent's proposal
+were, because I really liked the fact that it did away with all this.
