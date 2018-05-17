@@ -1,83 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeEQRWe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:22:34 -0400
-Received: from www381.your-server.de ([78.46.137.84]:42291 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEQRWb (ORCPT
+        id S1752529AbeEQRWt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:22:49 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42971 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeEQRVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:22:31 -0400
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-To: Frank Mori Hess <fmh6jj@gmail.com>, Vinod Koul <vinod.koul@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-References: <2484918.HKVQc3yJkt@bear>
- <53b13d76-16a1-0e0a-09e1-c917e5d49326@samsung.com>
- <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
- <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com>
- <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
- <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
- <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
- <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
- <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl>
- <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <b232b906-9359-bea1-447f-2c1341cc19d5@metafoo.de>
-Date: Thu, 17 May 2018 19:22:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: lars@metafoo.de
+        Thu, 17 May 2018 13:21:55 -0400
+X-Google-Smtp-Source: AB8JxZqAW3r+j4eaji98Y1Q8ZLC3wA4WNU44WoVuPUqumTU9AJfGig+X1otltDE0b09/I2ZJPTeEZA==
+From: Ray Jui <ray.jui@broadcom.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        Ray Jui <ray.jui@broadcom.com>, Ray Jui <rjui@broadcom.com>
+Subject: [PATCH INTERNAL 2/3] PCI: iproc: Fix up corrupted PAXC root complex config registers
+Date: Thu, 17 May 2018 10:21:31 -0700
+Message-Id: <1526577692-21104-3-git-send-email-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
+References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 06:20 PM, Frank Mori Hess wrote:
-> Sorry to keep coming back to this, but I'm experiencing a bit of
-> incredulity that you are saying what you seem to be saying.  You seem
-> to be saying dmaengine provides no way to permanently stop a transfer
-> safely other than transferring the full number of bytes initially
-> requested.  So the proper resolution is the 8250 serial driver needs
-> to remove rx dma support, because they are just trying to do something
-> that is not supported.
+On certain versions of Broadcom PAXC based root complexes, certain
+regions of the configuration space are corrupted. As a result, it
+prevents the Linux PCIe stack from traversing the linked list of the
+capability registers completely and therefore the root complex is
+not advertised as "PCIe capable". This prevents the correct PCIe RID
+from being parsed in the kernel PCIe stack. A correct RID is required
+for mapping to a stream ID from the SMMU or the device ID from the
+GICv3 ITS
 
-The problem is not so much on the software side but even more so on the
-hardware side. Not all hardware even supports aborting a transfer with no
-data loss because there is no precise measurement of how much data has been
-transferred. The residue that is reported is always the lower bound, this
-much has been transferred but it might actually have been more.
+This patch fixes up the issue by manually populating the related
+PCIe capabilities based on readings from the PCIe capability structure
 
-And even if hardware supports precise residue reporting there often is no
-synchronization mechanism to ensure that there is no pending data anywhere
-in the pipeline. This doesn't even have to be inside the DMA's buffers, the
-DMA might have send the data to the peripheral but it has not arrived at the
-peripheral side.
+Signed-off-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/pci/quirks.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
-If the peripheral has a memory mapped FIFO there will typically be some
-confirmation that the data was received, but with a dedicated DMA bus
-between the DMA controller and the peripheral that is often not the case.
-And for the first case the DMA controller also needs to actually expose the
-information how many acknowledgements it has received.
-
-Because there are basically two different resides, residue one is how much
-data has been read from/written to memory and the other is how much data has
-been read from/written to the peripheral. Any differences between the two
-will account for in flight data.
-
-What I'd recommend is to add a flush_sync() operation to the DMA interface.
-This function would wait until all in flight data transfers have been
-completed. That makes it safe to call terminate() without the risk of
-loosing data and also allow accurate residue reporting.
-
-Although I'd expect that there is fair risk that implementations will not
-get flush_sync() 100% correct because it requires in-depth knowledge about
-the internal behavior of the DMA which is often not documented.
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 47dfea0..0cdbd0a 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2198,6 +2198,101 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
++
++/*
++ * The PCI capabilities list for certain revisions of Broadcom PAXC root
++ * complexes is incorrectly terminated due to corrupted configuration space
++ * registers in the range of 0x50 - 0x5f
++ *
++ * As a result, the capability list becomes broken and prevent standard PCI
++ * stack from being able to traverse to the PCIe capability structure
++ */
++static void quirk_paxc_pcie_capability(struct pci_dev *pdev)
++{
++	int pos, i = 0;
++	u8 next_cap;
++	u16 reg16, *cap;
++	struct pci_cap_saved_state *state;
++
++	/* bail out if PCIe capability can be found */
++	if (pdev->pcie_cap || pci_find_capability(pdev, PCI_CAP_ID_EXP))
++		return;
++
++	/* locate the power management capability */
++	pos = pci_find_capability(pdev, PCI_CAP_ID_PM);
++	if (!pos)
++		return;
++
++	/* bail out if the next capability pointer is not 0x50/0x58 */
++	pci_read_config_byte(pdev, pos + 1, &next_cap);
++	if (next_cap != 0x50 && next_cap != 0x58)
++		return;
++
++	/* bail out if we do not terminate at 0x50/0x58 */
++	pos = next_cap;
++	pci_read_config_byte(pdev, pos + 1, &next_cap);
++	if (next_cap != 0x00)
++		return;
++
++	/*
++	 * On these buggy HW, PCIe capability structure is expected to be at
++	 * 0xac and should terminate the list
++	 *
++	 * Borrow the similar logic from theIntel DH895xCC VFs fixup to save
++	 * the PCIe capability list
++	 */
++	pos = 0xac;
++	pci_read_config_word(pdev, pos, &reg16);
++	if (reg16 == (0x0000 | PCI_CAP_ID_EXP)) {
++		u32 status;
++
++#ifndef PCI_EXP_SAVE_REGS
++#define PCI_EXP_SAVE_REGS     7
++#endif
++		int size = PCI_EXP_SAVE_REGS * sizeof(u16);
++
++		pdev->pcie_cap = pos;
++		pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
++		pdev->pcie_flags_reg = reg16;
++		pci_read_config_word(pdev, pos + PCI_EXP_DEVCAP, &reg16);
++		pdev->pcie_mpss = reg16 & PCI_EXP_DEVCAP_PAYLOAD;
++
++		pdev->cfg_size = PCI_CFG_SPACE_EXP_SIZE;
++		if (pci_read_config_dword(pdev, PCI_CFG_SPACE_SIZE, &status) !=
++		    PCIBIOS_SUCCESSFUL || (status == 0xffffffff))
++			pdev->cfg_size = PCI_CFG_SPACE_SIZE;
++
++		if (pci_find_saved_cap(pdev, PCI_CAP_ID_EXP))
++			return;
++
++		state = kzalloc(sizeof(*state) + size, GFP_KERNEL);
++		if (!state)
++			return;
++
++		state->cap.cap_nr = PCI_CAP_ID_EXP;
++		state->cap.cap_extended = 0;
++		state->cap.size = size;
++		cap = (u16 *)&state->cap.data[0];
++		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL, &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL, &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_RTCTL,  &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL2, &cap[i++]);
++		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL2, &cap[i++]);
++		hlist_add_head(&state->next, &pdev->saved_cap_space);
++	}
++}
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_NX2_57810,
++			quirk_paxc_pcie_capability);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd,
++			quirk_paxc_pcie_capability);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0,
++			quirk_paxc_pcie_capability);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
++			quirk_paxc_pcie_capability);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
++			quirk_paxc_pcie_capability);
+ #endif
+ 
+ /* Originally in EDAC sources for i82875P:
+-- 
+2.1.4
