@@ -1,70 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752458AbeEQOfH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:35:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37814 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbeEQOfE (ORCPT
+        id S1752520AbeEQOhG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:37:06 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:41513 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeEQOhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:35:04 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [RFC] mm, THP: Map read-only text segments using large THP pages
-From: William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20180517075740.GA31969@dhcp22.suse.cz>
-Date: Thu, 17 May 2018 08:34:56 -0600
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-fsdevel@vger.kernel.org
-Message-Id: <59D5F452-4710-4CE9-9072-E587551D4862@oracle.com>
-References: <5BB682E1-DD52-4AA9-83E9-DEF091E0C709@oracle.com>
- <20180517075740.GA31969@dhcp22.suse.cz>
-To: Michal Hocko <mhocko@kernel.org>
-X-Mailer: Apple Mail (2.3445.8.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8895 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170134
+        Thu, 17 May 2018 10:37:02 -0400
+Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-26-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
+Date: Thu, 17 May 2018 20:05:52 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180509172606.29387-26-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4HEZBWF015246
 
+Hi David,
 
-
-> On May 17, 2018, at 1:57 AM, Michal Hocko <mhocko@kernel.org> wrote:
+On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
+> This adds device tree support to the davinci timer so that when clocks
+> are moved to device tree, the timer will still work.
 > 
-> [CCing Kirill and fs-devel]
-> 
-> On Mon 14-05-18 07:12:13, William Kucharski wrote:
->> One of the downsides of THP as currently implemented is that it only supports
->> large page mappings for anonymous pages.
-> 
-> There is a support for shmem merged already. ext4 was next on the plan
-> AFAIR but I haven't seen any patches and Kirill was busy with other
-> stuff IIRC.
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-I couldn't find anything that would specifically map text pages with large pages,
-so perhaps this could be integrated with that or I may have simply missed changes
-that would ultimately provide that functionality.
+> +static int __init of_davinci_timer_init(struct device_node *np)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		struct of_phandle_args clkspec;
+> +
+> +		/*
+> +		 * Fall back to using ref_clk if the actual clock is not
+> +		 * available. There will be problems later if the real clock
+> +		 * source is disabled.
+> +		 */
+> +
+> +		pr_warn("%s: falling back to ref_clk\n", __func__);
+> +
+> +		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+> +		if (IS_ERR(clkspec.np)) {
+> +			pr_err("%s: No clock available for timer!\n", __func__);
+> +			return PTR_ERR(clkspec.np);
+> +		}
+> +		clk = of_clk_get_from_provider(&clkspec);
+> +		of_node_put(clkspec.np);
+> +	}
 
-> 
->> I embarked upon this prototype on the theory that it would be advantageous to 
->> be able to map large ranges of read-only text pages using THP as well.
-> 
-> Can the fs really support THP only for read mappings? What if those
-> pages are to be shared in a writable mapping as well? In other words
-> can this all work without a full THP support for a particular fs?
+Do we need this error path now?
 
-The integration with the page cache would indeed require filesystem support.
-
-The end result I'd like to see is full R/W support for large THP pages; I
-thought the RO text mapping proof of concept worthwhile to see what kind of
-results we might see and what the thoughts of the community were.
-
-Thanks for the feedback.
-
-  -- Bill
+Thanks,
+Sekhar
