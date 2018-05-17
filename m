@@ -1,65 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeEQKXi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:23:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48590 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751530AbeEQKXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:23:37 -0400
-Date: Thu, 17 May 2018 12:23:30 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc: akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH] Add the memcg print oom info for system oom
-Message-ID: <20180517102330.GS12670@dhcp22.suse.cz>
-References: <1526540428-12178-1-git-send-email-ufo19890607@gmail.com>
- <20180517071140.GQ12670@dhcp22.suse.cz>
- <CAHCio2gOLnj4NpkFrxpYVygg6ZeSeuwgp2Lwr6oTHRxHpbmcWw@mail.gmail.com>
+        id S1752080AbeEQKYs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:24:48 -0400
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:45708 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751379AbeEQKYq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 06:24:46 -0400
+X-Google-Smtp-Source: AB8JxZp47z9ilix2d0TYQyCDBJ0gWDqiQvtnPL8Emg3fN2FBQMPPcqyZwLErY0CNz4ZbGR1cjSv06YuVTnP/73Wholw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCio2gOLnj4NpkFrxpYVygg6ZeSeuwgp2Lwr6oTHRxHpbmcWw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <b3a31c5a-7090-ff15-c90d-dfeab221471f@redhat.com>
+References: <20180501003907.4322-1-ahs3@redhat.com> <20180501003907.4322-4-ahs3@redhat.com>
+ <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org> <bb9eefb1-a22b-9fc1-4a51-d067bdbe3f99@redhat.com>
+ <CAJZ5v0itXwbatAwaXTumW17nxLVEKWTWhh1wqOiUqFmBSdjzzA@mail.gmail.com> <b3a31c5a-7090-ff15-c90d-dfeab221471f@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 May 2018 12:24:45 +0200
+X-Google-Sender-Auth: TWzuX6s-uDwYQflWFnOEjEYXMK4
+Message-ID: <CAJZ5v0i7fR+rAk4eRm0jV8Ot93juq8NZarsoJRX+7RV6-yELKw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] mailbox: ACPI: erroneous error message when
+ parsing the ACPI, PCCT
+To: Al Stone <ahs3@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Prakash, Prashanth" <pprakash@codeaurora.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-05-18 17:44:43, 禹舟键 wrote:
-> Hi Michal
-> I think the current OOM report is imcomplete. I can get the task which
-> invoked the oom-killer and the task which has been killed by the
-> oom-killer, and memory info when the oom happened. But I cannot infer the
-> certain memcg to which the task killed by oom-killer belongs, because that
-> task has been killed, and the dump_task will print all of the tasks in the
-> system.
+On Thu, May 17, 2018 at 12:01 AM, Al Stone <ahs3@redhat.com> wrote:
+> There have been multiple reports of the following error message:
+>
+> [    0.068293] Error parsing PCC subspaces from PCCT
+>
+> This error message is not correct.  In multiple cases examined, the PCCT
+> (Platform Communications Channel Table) concerned is actually properly
+> constructed; the problem is that acpi_pcc_probe() which reads the PCCT
+> is making the assumption that the only valid PCCT is one that contains
+> subtables of one of two types: ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE or
+> ACPI_PCCT_TYPE_HW_REDUCED_TYPE2.  The number of subtables of these
+> types are counted and as long as there is at least one of the desired
+> types, the acpi_pcc_probe() succeeds.  When no subtables of these types
+> are found, regardless of whether or not any other subtable types are
+> present, the error mentioned above is reported.
+>
+> In the cases reported to me personally, the PCCT contains exactly one
+> subtable of type ACPI_PCCT_TYPE_GENERIC_SUBSPACE.  The function
+> acpi_pcc_probe() does not count it as a valid subtable, so believes
+> there to be no valid subtables, and hence outputs the error message.
+>
+> An example of the PCCT being reported as erroneous yet perfectly fine
+> is the following:
+>
+>                     Signature : "PCCT"
+>                  Table Length : 0000006E
+>                      Revision : 05
+>                      Checksum : A9
+>                        Oem ID : "XXXXXX"
+>                  Oem Table ID : "XXXXX   "
+>                  Oem Revision : 00002280
+>               Asl Compiler ID : "XXXX"
+>         Asl Compiler Revision : 00000002
+>
+>         Flags (decoded below) : 00000001
+>                      Platform : 1
+>                      Reserved : 0000000000000000
+>
+>                 Subtable Type : 00 [Generic Communications Subspace]
+>                        Length : 3E
+>
+>                      Reserved : 000000000000
+>                  Base Address : 00000000DCE43018
+>                Address Length : 0000000000001000
+>
+>             Doorbell Register : [Generic Address Structure]
+>                      Space ID : 01 [SystemIO]
+>                     Bit Width : 08
+>                    Bit Offset : 00
+>          Encoded Access Width : 01 [Byte Access:8]
+>                       Address : 0000000000001842
+>
+>                 Preserve Mask : 00000000000000FD
+>                    Write Mask : 0000000000000002
+>               Command Latency : 00001388
+>           Maximum Access Rate : 00000000
+>       Minimum Turnaround Time : 0000
+>
+> To fix this, we count up all of the possible subtable types for the
+> PCCT, and only report an error when there are none (which could mean
+> either no subtables, or no valid subtables), or there are too many.
+> We also change the logic so that if there is a valid subtable, we
+> do try to initialize it per the PCCT subtable contents.  This is a
+> change in functionality; previously, the probe would have returned
+> right after the error message and would not have tried to use any
+> other subtable definition.
+>
+> Tested on my personal laptop which showed the error previously; the
+> error message no longer appears and the laptop appears to operate
+> normally.
 
-I can see how the origin memcg might be useful, but ...
-> 
-> mem_cgroup_print_oom_info will print five lines of content including
-> memcg's name , usage, limit. I don't think five lines of content will cause
-> a big problem. Or it at least prints the memcg's name.
-
-this is not 5 lines at all. We dump memcg stats for the whole oom memcg
-subtree. For your patch it would be the whole subtree of the memcg of
-the oom victim. With cgroup v1 this can be quite deep as tasks can
-belong to inter-nodes as well. Would be
-
-		pr_info("Task in ");
-		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-		pr_cont(" killed as a result of limit of ");
-
-part of that output sufficient for your usecase? You will not get memory
-consumption of the group but is that really so relevant when we are
-killing individual tasks? Please note that there are proposals to make
-the global oom killer memcg aware and select by the memcg size rather
-than pick on random tasks
-(http://lkml.kernel.org/r/20171130152824.1591-1-guro@fb.com). Maybe that
-will be more interesting for your container usecase.
--- 
-Michal Hocko
-SUSE Labs
+I'd like to know the Prashanth's opinion here.
