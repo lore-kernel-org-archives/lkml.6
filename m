@@ -1,236 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeEQPqu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:46:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751695AbeEQPqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:46:49 -0400
-From: Jeff Layton <jlayton@kernel.org>
-To: viro@zeniv.linux.org.uk
-Cc: jack@suse.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] vfs: change iterate_supers callback to take an int arg instead of a void *
-Date: Thu, 17 May 2018 11:46:46 -0400
-Message-Id: <20180517154646.18751-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        id S1752357AbeEQPrJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:47:09 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36561 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeEQPrH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 11:47:07 -0400
+X-Google-Smtp-Source: AB8JxZrAF/3aNleLr6cWY4OhLrXr30cTaxVRbq0jcY4deRCkyiWkqgGLL4VRNJ18r5a3brKF+VumUw==
+Date: Thu, 17 May 2018 08:47:05 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] PM / devfreq: Remove redundant frequency adjustment from
+ governors
+Message-ID: <20180517154705.GN19594@google.com>
+References: <CGME20180516211119epcas2p4370ceb0c9d959bd1441fa71493a9b0e0@epcas2p4.samsung.com>
+ <20180516211051.78875-1-mka@chromium.org>
+ <5AFCDE68.6000804@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5AFCDE68.6000804@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+Hi,
 
-All of the callback functions for iterate_supers either ignore the
-opaque argument, or dereference the pointer only to fetch the int
-to which it points.
+On Thu, May 17, 2018 at 10:44:08AM +0900, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 2018년 05월 17일 06:10, Matthias Kaehlcke wrote:
+> > The performance, powersave, simpleondemand and userspace governors
+> > determine a target frequency and then adjust it according to the
+> > df->min/max_freq limits that might have been set by user space. This
+> > adjustment is redundant, it is done in update_devfreq() for any
+> > governor, right after governor->get_target_freq().
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/devfreq/governor_performance.c    | 10 ++--------
+> >  drivers/devfreq/governor_powersave.c      |  5 -----
+> >  drivers/devfreq/governor_simpleondemand.c |  7 +------
+> >  drivers/devfreq/governor_userspace.c      | 16 ++++------------
+> >  4 files changed, 7 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
+> > index 4d23ecfbd948..31ee30622c00 100644
+> > --- a/drivers/devfreq/governor_performance.c
+> > +++ b/drivers/devfreq/governor_performance.c
+> > @@ -16,14 +16,8 @@
+> >  static int devfreq_performance_func(struct devfreq *df,
+> >  				    unsigned long *freq)
+> >  {
+> > -	/*
+> > -	 * target callback should be able to get floor value as
+> > -	 * said in devfreq.h
+> > -	 */
+> > -	if (!df->max_freq)
+> > -		*freq = UINT_MAX;
+> > -	else
+> > -		*freq = df->max_freq;
+> > +	*freq = UINT_MAX;
+> > +
+> 
+> It is difficult to understand why use UINT_MAX instead of df->max_freq.
+> 
+> Instead, after merged the commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq
+> when adding the devfreq device"), df->max/min_freq have the specific frequency
+> value always. So, we can change it as following without UINT_MAX. 
+> 
+> 	*freq = df->max_freq;
 
-Change iterate_supers to pass an opaque int arg to the callback
-instead of a void pointer.
+There are two reasons why I don't like to return df->max_freq:
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/drop_caches.c         |  4 ++--
- fs/quota/quota.c         |  6 ++----
- fs/super.c               |  3 ++-
- fs/sync.c                | 32 ++++++++++++++------------------
- include/linux/fs.h       |  2 +-
- mm/cleancache.c          |  4 ++--
- security/selinux/hooks.c |  4 ++--
- 7 files changed, 25 insertions(+), 30 deletions(-)
+1. update_devfreq() already handles the user limits (which is what
+min/max_freq actually are), no need to spread parts of this
+additionally over all governors.
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 82377017130f..1850e7276fdf 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -14,7 +14,7 @@
- /* A global variable is a bit ugly, but it keeps the code simple */
- int sysctl_drop_caches;
- 
--static void drop_pagecache_sb(struct super_block *sb, void *unused)
-+static void drop_pagecache_sb(struct super_block *sb, int unused)
- {
- 	struct inode *inode, *toput_inode = NULL;
- 
-@@ -52,7 +52,7 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
- 		static int stfu;
- 
- 		if (sysctl_drop_caches & 1) {
--			iterate_supers(drop_pagecache_sb, NULL);
-+			iterate_supers(drop_pagecache_sb, 0);
- 			count_vm_event(DROP_PAGECACHE);
- 		}
- 		if (sysctl_drop_caches & 2) {
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index 860bfbe7a07a..5f1e1c494c07 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -46,10 +46,8 @@ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
- 	return security_quotactl(cmd, type, id, sb);
- }
- 
--static void quota_sync_one(struct super_block *sb, void *arg)
-+static void quota_sync_one(struct super_block *sb, int type)
- {
--	int type = *(int *)arg;
--
- 	if (sb->s_qcop && sb->s_qcop->quota_sync &&
- 	    (sb->s_quota_types & (1 << type)))
- 		sb->s_qcop->quota_sync(sb, type);
-@@ -63,7 +61,7 @@ static int quota_sync_all(int type)
- 		return -EINVAL;
- 	ret = security_quotactl(Q_SYNC, type, 0, NULL);
- 	if (!ret)
--		iterate_supers(quota_sync_one, &type);
-+		iterate_supers(quota_sync_one, type);
- 	return ret;
- }
- 
-diff --git a/fs/super.c b/fs/super.c
-index 122c402049a2..30b7490bd049 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -596,6 +596,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
- 		__put_super(p);
- 	spin_unlock(&sb_lock);
- }
-+
- /**
-  *	iterate_supers - call function for all active superblocks
-  *	@f: function to call
-@@ -604,7 +605,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
-  *	Scans the superblock list and calls given function, passing it
-  *	locked superblock and given argument.
-  */
--void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
-+void iterate_supers(void (*f)(struct super_block *, int), int arg)
- {
- 	struct super_block *sb, *p = NULL;
- 
-diff --git a/fs/sync.c b/fs/sync.c
-index b54e0541ad89..8c418da67e41 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -68,16 +68,16 @@ int sync_filesystem(struct super_block *sb)
- }
- EXPORT_SYMBOL(sync_filesystem);
- 
--static void sync_inodes_one_sb(struct super_block *sb, void *arg)
-+static void sync_inodes_one_sb(struct super_block *sb, int unused)
- {
- 	if (!sb_rdonly(sb))
- 		sync_inodes_sb(sb);
- }
- 
--static void sync_fs_one_sb(struct super_block *sb, void *arg)
-+static void sync_fs_one_sb(struct super_block *sb, int arg)
- {
- 	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, *(int *)arg);
-+		sb->s_op->sync_fs(sb, arg);
- }
- 
- static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
-@@ -107,14 +107,12 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
-  */
- void ksys_sync(void)
- {
--	int nowait = 0, wait = 1;
--
- 	wakeup_flusher_threads(WB_REASON_SYNC);
--	iterate_supers(sync_inodes_one_sb, NULL);
--	iterate_supers(sync_fs_one_sb, &nowait);
--	iterate_supers(sync_fs_one_sb, &wait);
--	iterate_bdevs(fdatawrite_one_bdev, NULL);
--	iterate_bdevs(fdatawait_one_bdev, NULL);
-+	iterate_supers(sync_inodes_one_sb, 0);
-+	iterate_supers(sync_fs_one_sb, 0);
-+	iterate_supers(sync_fs_one_sb, 1);
-+	iterate_bdevs(fdatawrite_one_bdev, 0);
-+	iterate_bdevs(fdatawait_one_bdev, 0);
- 	if (unlikely(laptop_mode))
- 		laptop_sync_completion();
- }
-@@ -127,18 +125,16 @@ SYSCALL_DEFINE0(sync)
- 
- static void do_sync_work(struct work_struct *work)
- {
--	int nowait = 0;
--
- 	/*
- 	 * Sync twice to reduce the possibility we skipped some inodes / pages
- 	 * because they were temporarily locked
- 	 */
--	iterate_supers(sync_inodes_one_sb, &nowait);
--	iterate_supers(sync_fs_one_sb, &nowait);
--	iterate_bdevs(fdatawrite_one_bdev, NULL);
--	iterate_supers(sync_inodes_one_sb, &nowait);
--	iterate_supers(sync_fs_one_sb, &nowait);
--	iterate_bdevs(fdatawrite_one_bdev, NULL);
-+	iterate_supers(sync_inodes_one_sb, 0);
-+	iterate_supers(sync_fs_one_sb, 0);
-+	iterate_bdevs(fdatawrite_one_bdev, 0);
-+	iterate_supers(sync_inodes_one_sb, 0);
-+	iterate_supers(sync_fs_one_sb, 0);
-+	iterate_bdevs(fdatawrite_one_bdev, 0);
- 	printk("Emergency Sync complete\n");
- 	kfree(work);
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..7107d291d853 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3115,7 +3115,7 @@ extern struct super_block *get_super_exclusive_thawed(struct block_device *bdev)
- extern struct super_block *get_active_super(struct block_device *bdev);
- extern void drop_super(struct super_block *sb);
- extern void drop_super_exclusive(struct super_block *sb);
--extern void iterate_supers(void (*)(struct super_block *, void *), void *);
-+extern void iterate_supers(void (*)(struct super_block *, int), int);
- extern void iterate_supers_type(struct file_system_type *,
- 			        void (*)(struct super_block *, void *), void *);
- 
-diff --git a/mm/cleancache.c b/mm/cleancache.c
-index f7b9fdc79d97..92d27cc10274 100644
---- a/mm/cleancache.c
-+++ b/mm/cleancache.c
-@@ -34,7 +34,7 @@ static u64 cleancache_failed_gets;
- static u64 cleancache_puts;
- static u64 cleancache_invalidates;
- 
--static void cleancache_register_ops_sb(struct super_block *sb, void *unused)
-+static void cleancache_register_ops_sb(struct super_block *sb, int unused)
- {
- 	switch (sb->cleancache_poolid) {
- 	case CLEANCACHE_NO_BACKEND:
-@@ -105,7 +105,7 @@ int cleancache_register_ops(const struct cleancache_ops *ops)
- 	 * until the corresponding ->init_fs has been actually called and
- 	 * cleancache_ops has been set.
- 	 */
--	iterate_supers(cleancache_register_ops_sb, NULL);
-+	iterate_supers(cleancache_register_ops_sb, 0);
- 	return 0;
- }
- EXPORT_SYMBOL(cleancache_register_ops);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 4cafe6a19167..91c13b72b427 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7138,7 +7138,7 @@ static __init int selinux_init(void)
- 	return 0;
- }
- 
--static void delayed_superblock_init(struct super_block *sb, void *unused)
-+static void delayed_superblock_init(struct super_block *sb, int unused)
- {
- 	superblock_doinit(sb, NULL);
- }
-@@ -7149,7 +7149,7 @@ void selinux_complete_init(void)
- 
- 	/* Set up any superblocks initialized prior to the policy load. */
- 	printk(KERN_DEBUG "SELinux:  Setting up existing superblocks.\n");
--	iterate_supers(delayed_superblock_init, NULL);
-+	iterate_supers(delayed_superblock_init, 0);
- }
- 
- /* SELinux requires early initialization in order to label
--- 
-2.17.0
+2. I plan to introduce the concept of a devfreq policy [1], which
+would introduce another pair of frequencies, df->policy.min/max, and
+min/max_freq would become df->policy.user.min/max. The governors would
+then return df->policy.user.min/max, which isn't really incorrect
+since update_devfreq() takes care of adjusting the value with
+df->policy.min/max if needed, but it also isn't very clear. And we
+almost certainly shouldn't additionally handle df->policy.min/max in
+the governors.
+
+I agree though that just returning UINT_MAX isn't very clear either,
+even though that's what some governors are doing currently when
+df->min/max_freq is not set (which can still occur, since user space
+is free to set the value to 0).
+
+I think there are two better options than returning df->min/max_freq:
+
+a) create constants DEVFREQ_MIN/MAX_FREQ and return them, this clearly
+states the intent.
+
+b) return df->scaling_min/max_freq, which is the min/max frequency
+that is actually available on the device side, depending on the
+enabled OPPs.
+
+A slightly related question: Is it actually intended to keep
+supporting a value of 0 for df->min/max_freq to keep backwards
+compatibility, or should the related code be removed?
+
+Thanks
+
+Matthias
+
+[1] https://patchwork.kernel.org/patch/10401999/ (first draft, without
+df->policy.min/max)
