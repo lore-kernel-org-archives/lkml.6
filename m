@@ -1,101 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeEQIii (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:38:38 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:51916 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQIif (ORCPT
+        id S1751438AbeEQIlx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:41:53 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44161 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751409AbeEQIlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:38:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w4H8cKHT016871
-X-Nifty-SrcIP: [209.85.213.47]
-X-Google-Smtp-Source: AB8JxZoluVe4qxnXVa8jfg88ZPhXnDuE+fZscrFml/HB1F3kK+rxvz1qDiSZry0tJ7Sj2u6u03qJ5jzU+wZnsR6OBSI=
+        Thu, 17 May 2018 04:41:47 -0400
+X-Google-Smtp-Source: AB8JxZp1wvgLrFSNsAWrQqbRVxgszHp3Wi5/hFwc8FmFpJvH1Vj4lp/dDufdkHU9ihMxLXT376nGJs8QR0Ji9DczhcM=
 MIME-Version: 1.0
-In-Reply-To: <fb123c1f-7680-9e75-125a-e4e66f0f9c93@redhat.com>
-References: <20180329180112.11055-1-labbott@redhat.com> <CAK7LNATTfjpkG0PLR5_anZOW5zfSZxKgFO6sHXuMf50OEtx0PQ@mail.gmail.com>
- <fb123c1f-7680-9e75-125a-e4e66f0f9c93@redhat.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 17 May 2018 17:37:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR=YQswK2cgq2XUYpK-LrODGd-nSxg20b5fbsitNjD_PQ@mail.gmail.com>
-Message-ID: <CAK7LNAR=YQswK2cgq2XUYpK-LrODGd-nSxg20b5fbsitNjD_PQ@mail.gmail.com>
-Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
-To: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
-        Mark Wielaard <mjw@fedoraproject.org>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
+In-Reply-To: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-3-git-send-email-gilad@benyossef.com> <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+ <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 May 2018 10:41:46 +0200
+X-Google-Sender-Auth: o-kHCnH5JNcjMivl6phkjrxs-2c
+Message-ID: <CAMuHMdWxfZO+a0+tcd+4juNTVwB_nnJi0_SFD2C3OLCF1nSbKw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-15 6:02 GMT+09:00 Laura Abbott <labbott@redhat.com>:
-> On 05/06/2018 11:28 PM, Masahiro Yamada wrote:
->>
->> 2018-03-30 3:01 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+Hi Gilad,
+
+On Thu, May 17, 2018 at 10:00 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
 >>>
->>> Hi,
->>>
->>> This is v2 of my proposal to allow unique build-ids in the kernel. from
->>> last time:
->>>
->>> ""
->>> In Fedora, the debug information is packaged separately (foo-debuginfo)
->>> and
->>> can be installed separately. There's been a long standing issue where
->>> only one
->>> version of a debuginfo info package can be installed at a time. Mark
->>> Wielaard
->>> made an effort for Fedora 27 to allow parallel installation of debuginfo
->>> (see
->>> https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo for
->>> more details)
->>>
->>> Part of the requirement to allow this to work is that build ids are
->>> unique between builds. The existing upstream rpm implementation ensures
->>> this by re-calculating the build-id using the version and release as a
->>> seed. This doesn't work 100% for the kernel because of the vDSO which is
->>> its own binary and doesn't get updated. After poking holes in a few of my
->>> ideas, there was a discussion with some people from the binutils team
->>> about
->>> adding --build-id-salt to let ld do the calculation debugedit is doing.
->>> There
->>> was a counter proposal made about adding some extra information via a
->>> .comment
->>> which will affect the build id calculation but just get stripped out.
->>> ""
+>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 >>
+>> Thanks for your patch!
 >>
+>>> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>>> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>>> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>>>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>>>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>>>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+>>> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
 >>
->> I think you already know '--build-id=uuid' linker option.
->>
->> Doesn't this solve your problem?
->>
->> The disadvantage of this option is,
->> we will lose reproducible building because  --build-id=uuid
->> adds every time random salt.
->>
->> The advantage is, the implementation is even simpler,
->> and easier to migrate to --build-id-salt once it is supported
->> in the future.
->>
->>
+>> I don't know if "ccree" is the proper name for this clock, as there
+>> may be multiple
+>> instances.
 >
-> It could, theoretically. The reproducibility is nice though and
-> I'd like to keep the kernel close to matching what other packages
-> do though.
+> I'd be happy to rename it to anything else. Suggestions?
 
-Okay.
-I left some comments in v2
-about improvement, and cause of
-the sporadic build failures.
+I believe it should be called "sceg-pub".
 
-Will wait for v3.
+>> I also can't verify the parent clock.
+>
+> I'm afraid I can't really help. This is based on code snippet from
+> Renesas. I verified it works but
+> I am not an expert on the clock settings :-(
+
+As your driver doesn't care about the clock rate, only about
+enabling/disabling the clock, the actual parent doesn't matter much.
+
+After some deeper diving into the datasheet, I believe the correct parent is
+the CR clock, which is unfortunately not yet supported by the R-Car H3 clock
+driver. I'll send a patch...
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Best Regards
-Masahiro Yamada
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
