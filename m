@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752513AbeEQLJo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:09:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752303AbeEQLHa (ORCPT
+        id S1751788AbeEQLKB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:10:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752279AbeEQLH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:07:30 -0400
+        Thu, 17 May 2018 07:07:27 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -31,20 +31,20 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         haren@linux.vnet.ibm.com, npiggin@gmail.com, bsingharora@gmail.com,
         paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v11 18/26] mm: protect mm_rb tree with a rwlock
-Date: Thu, 17 May 2018 13:06:25 +0200
+Subject: [PATCH v11 16/26] mm: introduce __vm_normal_page()
+Date: Thu, 17 May 2018 13:06:23 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051711-0012-0000-0000-000005D790F0
+x-cbid: 18051711-0012-0000-0000-000005D790EB
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051711-0013-0000-0000-00001954BBDD
-Message-Id: <1526555193-7242-19-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18051711-0013-0000-0000-00001954BBD2
+Message-Id: <1526555193-7242-17-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1805170100
@@ -52,379 +52,125 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change is inspired by the Peter's proposal patch [1] which was
-protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
-that particular case, and it is introducing major performance degradation
-due to excessive scheduling operations.
+When dealing with the speculative fault path we should use the VMA's field
+cached value stored in the vm_fault structure.
 
-To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
-is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
-search it is safe to protect it using such a lock.  The VMA cache is not
-protected by the new rwlock and it should not be used without holding the
-mmap_sem.
+Currently vm_normal_page() is using the pointer to the VMA to fetch the
+vm_flags value. This patch provides a new __vm_normal_page() which is
+receiving the vm_flags flags value as parameter.
 
-To allow the picked VMA structure to be used once the rwlock is released, a
-use count is added to the VMA structure. When the VMA is allocated it is
-set to 1.  Each time the VMA is picked with the rwlock held its use count
-is incremented. Each time the VMA is released it is decremented. When the
-use count hits zero, this means that the VMA is no more used and should be
-freed.
+Note: The speculative path is turned on for architecture providing support
+for special PTE flag. So only the first block of vm_normal_page is used
+during the speculative path.
 
-This patch is preparing for 2 kind of VMA access :
- - as usual, under the control of the mmap_sem,
- - without holding the mmap_sem for the speculative page fault handler.
-
-Access done under the control the mmap_sem doesn't require to grab the
-rwlock to protect read access to the mm_rb tree, but access in write must
-be done under the protection of the rwlock too. This affects inserting and
-removing of elements in the RB tree.
-
-The patch is introducing 2 new functions:
- - vma_get() to find a VMA based on an address by holding the new rwlock.
- - vma_put() to release the VMA when its no more used.
-These services are designed to be used when access are made to the RB tree
-without holding the mmap_sem.
-
-When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
-we rely on the WMB done when releasing the rwlock to serialize the write
-with the RMB done in a later patch to check for the VMA's validity.
-
-When free_vma is called, the file associated with the VMA is closed
-immediately, but the policy and the file structure remained in used until
-the VMA's use count reach 0, which may happens later when exiting an
-in progress speculative page fault.
-
-[1] https://patchwork.kernel.org/patch/5108281/
-
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h       |   1 +
- include/linux/mm_types.h |   4 ++
- kernel/fork.c            |   3 ++
- mm/init-mm.c             |   3 ++
- mm/internal.h            |   6 +++
- mm/mmap.c                | 115 +++++++++++++++++++++++++++++++++++------------
- 6 files changed, 104 insertions(+), 28 deletions(-)
+ include/linux/mm.h | 18 +++++++++++++++---
+ mm/memory.c        | 21 ++++++++++++---------
+ 2 files changed, 27 insertions(+), 12 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index bcebec117d4d..05cbba70104b 100644
+index f385d721867d..bcebec117d4d 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1314,6 +1314,7 @@ static inline void INIT_VMA(struct vm_area_struct *vma)
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
- #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
- 	seqcount_init(&vma->vm_sequence);
-+	atomic_set(&vma->vm_ref_count, 1);
+@@ -1317,9 +1317,21 @@ static inline void INIT_VMA(struct vm_area_struct *vma)
  #endif
  }
  
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index fb5962308183..b16ba02f7fd6 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -337,6 +337,7 @@ struct vm_area_struct {
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
- #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
- 	seqcount_t vm_sequence;
-+	atomic_t vm_ref_count;		/* see vma_get(), vma_put() */
- #endif
- } __randomize_layout;
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device);
+-#define vm_normal_page(vma, addr, pte) _vm_normal_page(vma, addr, pte, false)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags);
++static inline struct page *_vm_normal_page(struct vm_area_struct *vma,
++					    unsigned long addr, pte_t pte,
++					    bool with_public_device)
++{
++	return __vm_normal_page(vma, addr, pte, with_public_device,
++				vma->vm_flags);
++}
++static inline struct page *vm_normal_page(struct vm_area_struct *vma,
++					  unsigned long addr, pte_t pte)
++{
++	return _vm_normal_page(vma, addr, pte, false);
++}
  
-@@ -355,6 +356,9 @@ struct kioctx_table;
- struct mm_struct {
- 	struct vm_area_struct *mmap;		/* list of VMAs */
- 	struct rb_root mm_rb;
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	rwlock_t mm_rb_lock;
-+#endif
- 	u32 vmacache_seqnum;                   /* per-thread vmacache */
- #ifdef CONFIG_MMU
- 	unsigned long (*get_unmapped_area) (struct file *filp,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 99198a02efe9..f1258c2ade09 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -907,6 +907,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	mm->mmap = NULL;
- 	mm->mm_rb = RB_ROOT;
- 	mm->vmacache_seqnum = 0;
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	rwlock_init(&mm->mm_rb_lock);
-+#endif
- 	atomic_set(&mm->mm_users, 1);
- 	atomic_set(&mm->mm_count, 1);
- 	init_rwsem(&mm->mmap_sem);
-diff --git a/mm/init-mm.c b/mm/init-mm.c
-index f0179c9c04c2..228134f5a336 100644
---- a/mm/init-mm.c
-+++ b/mm/init-mm.c
-@@ -17,6 +17,9 @@
- 
- struct mm_struct init_mm = {
- 	.mm_rb		= RB_ROOT,
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	.mm_rb_lock	= __RW_LOCK_UNLOCKED(init_mm.mm_rb_lock),
-+#endif
- 	.pgd		= swapper_pg_dir,
- 	.mm_users	= ATOMIC_INIT(2),
- 	.mm_count	= ATOMIC_INIT(1),
-diff --git a/mm/internal.h b/mm/internal.h
-index 62d8c34e63d5..fb2667b20f0a 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -40,6 +40,12 @@ void page_writeback_init(void);
- 
- int do_swap_page(struct vm_fault *vmf);
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+extern struct vm_area_struct *get_vma(struct mm_struct *mm,
-+				      unsigned long addr);
-+extern void put_vma(struct vm_area_struct *vma);
-+#endif
-+
- void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
- 		unsigned long floor, unsigned long ceiling);
- 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 2450860e3f8e..54d298a67047 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -169,6 +169,27 @@ void unlink_file_vma(struct vm_area_struct *vma)
- 	}
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 				pmd_t pmd);
+diff --git a/mm/memory.c b/mm/memory.c
+index deac7f12d777..cc4e6221ee7b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -780,7 +780,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
  }
  
-+static void __free_vma(struct vm_area_struct *vma)
-+{
-+	if (vma->vm_file)
-+		fput(vma->vm_file);
-+	mpol_put(vma_policy(vma));
-+	kmem_cache_free(vm_area_cachep, vma);
-+}
-+
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+void put_vma(struct vm_area_struct *vma)
-+{
-+	if (atomic_dec_and_test(&vma->vm_ref_count))
-+		__free_vma(vma);
-+}
-+#else
-+static inline void put_vma(struct vm_area_struct *vma)
-+{
-+	__free_vma(vma);
-+}
-+#endif
-+
  /*
-  * Close a vm structure and free it, returning the next.
+- * vm_normal_page -- This function gets the "struct page" associated with a pte.
++ * __vm_normal_page -- This function gets the "struct page" associated with
++ * a pte.
+  *
+  * "Special" mappings do not wish to be associated with a "struct page" (either
+  * it doesn't exist, or it exists but they don't want to touch it). In this
+@@ -821,8 +822,9 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+  * PFNMAP mappings in order to support COWable mappings.
+  *
   */
-@@ -179,10 +200,7 @@ static struct vm_area_struct *remove_vma(struct vm_area_struct *vma)
- 	might_sleep();
- 	if (vma->vm_ops && vma->vm_ops->close)
- 		vma->vm_ops->close(vma);
--	if (vma->vm_file)
--		fput(vma->vm_file);
--	mpol_put(vma_policy(vma));
--	kmem_cache_free(vm_area_cachep, vma);
-+	put_vma(vma);
- 	return next;
- }
- 
-@@ -402,6 +420,14 @@ static void validate_mm(struct mm_struct *mm)
- #define validate_mm(mm) do { } while (0)
- #endif
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+#define mm_rb_write_lock(mm)	write_lock(&(mm)->mm_rb_lock)
-+#define mm_rb_write_unlock(mm)	write_unlock(&(mm)->mm_rb_lock)
-+#else
-+#define mm_rb_write_lock(mm)	do { } while (0)
-+#define mm_rb_write_unlock(mm)	do { } while (0)
-+#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
-+
- RB_DECLARE_CALLBACKS(static, vma_gap_callbacks, struct vm_area_struct, vm_rb,
- 		     unsigned long, rb_subtree_gap, vma_compute_subtree_gap)
- 
-@@ -420,26 +446,37 @@ static void vma_gap_update(struct vm_area_struct *vma)
- }
- 
- static inline void vma_rb_insert(struct vm_area_struct *vma,
--				 struct rb_root *root)
-+				 struct mm_struct *mm)
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags)
  {
-+	struct rb_root *root = &mm->mm_rb;
-+
- 	/* All rb_subtree_gap values must be consistent prior to insertion */
- 	validate_mm_rb(root, NULL);
+ 	unsigned long pfn = pte_pfn(pte);
  
- 	rb_insert_augmented(&vma->vm_rb, root, &vma_gap_callbacks);
- }
+@@ -831,7 +833,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			goto check_pfn;
+ 		if (vma->vm_ops && vma->vm_ops->find_special_page)
+ 			return vma->vm_ops->find_special_page(vma, addr);
+-		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
++		if (vma_flags & (VM_PFNMAP | VM_MIXEDMAP))
+ 			return NULL;
+ 		if (is_zero_pfn(pfn))
+ 			return NULL;
+@@ -863,8 +865,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
  
--static void __vma_rb_erase(struct vm_area_struct *vma, struct rb_root *root)
-+static void __vma_rb_erase(struct vm_area_struct *vma, struct mm_struct *mm)
- {
-+	struct rb_root *root = &mm->mm_rb;
- 	/*
- 	 * Note rb_erase_augmented is a fairly large inline function,
- 	 * so make sure we instantiate it only once with our desired
- 	 * augmented rbtree callbacks.
- 	 */
-+	mm_rb_write_lock(mm);
- 	rb_erase_augmented(&vma->vm_rb, root, &vma_gap_callbacks);
-+	mm_rb_write_unlock(mm); /* wmb */
-+
-+	/*
-+	 * Ensure the removal is complete before clearing the node.
-+	 * Matched by vma_has_changed()/handle_speculative_fault().
-+	 */
-+	RB_CLEAR_NODE(&vma->vm_rb);
- }
+ 	/* !CONFIG_ARCH_HAS_PTE_SPECIAL case follows: */
  
- static __always_inline void vma_rb_erase_ignore(struct vm_area_struct *vma,
--						struct rb_root *root,
-+						struct mm_struct *mm,
- 						struct vm_area_struct *ignore)
- {
- 	/*
-@@ -447,21 +484,21 @@ static __always_inline void vma_rb_erase_ignore(struct vm_area_struct *vma,
- 	 * with the possible exception of the "next" vma being erased if
- 	 * next->vm_start was reduced.
- 	 */
--	validate_mm_rb(root, ignore);
-+	validate_mm_rb(&mm->mm_rb, ignore);
- 
--	__vma_rb_erase(vma, root);
-+	__vma_rb_erase(vma, mm);
- }
- 
- static __always_inline void vma_rb_erase(struct vm_area_struct *vma,
--					 struct rb_root *root)
-+					 struct mm_struct *mm)
- {
- 	/*
- 	 * All rb_subtree_gap values must be consistent prior to erase,
- 	 * with the possible exception of the vma being erased.
- 	 */
--	validate_mm_rb(root, vma);
-+	validate_mm_rb(&mm->mm_rb, vma);
- 
--	__vma_rb_erase(vma, root);
-+	__vma_rb_erase(vma, mm);
- }
- 
- /*
-@@ -576,10 +613,12 @@ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * immediately update the gap to the correct value. Finally we
- 	 * rebalance the rbtree after all augmented values have been set.
- 	 */
-+	mm_rb_write_lock(mm);
- 	rb_link_node(&vma->vm_rb, rb_parent, rb_link);
- 	vma->rb_subtree_gap = 0;
- 	vma_gap_update(vma);
--	vma_rb_insert(vma, &mm->mm_rb);
-+	vma_rb_insert(vma, mm);
-+	mm_rb_write_unlock(mm);
- }
- 
- static void __vma_link_file(struct vm_area_struct *vma)
-@@ -655,7 +694,7 @@ static __always_inline void __vma_unlink_common(struct mm_struct *mm,
- {
- 	struct vm_area_struct *next;
- 
--	vma_rb_erase_ignore(vma, &mm->mm_rb, ignore);
-+	vma_rb_erase_ignore(vma, mm, ignore);
- 	next = vma->vm_next;
- 	if (has_prev)
- 		prev->vm_next = next;
-@@ -932,16 +971,13 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
++	if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
++		if (vma_flags & VM_MIXEDMAP) {
+ 			if (!pfn_valid(pfn))
+ 				return NULL;
+ 			goto out;
+@@ -873,7 +875,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+ 			if (pfn == vma->vm_pgoff + off)
+ 				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
++			if (!is_cow_mapping(vma_flags))
+ 				return NULL;
+ 		}
  	}
+@@ -2753,7 +2755,8 @@ static int do_wp_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
  
- 	if (remove_next) {
--		if (file) {
-+		if (file)
- 			uprobe_munmap(next, next->vm_start, next->vm_end);
--			fput(file);
--		}
- 		if (next->anon_vma)
- 			anon_vma_merge(vma, next);
- 		mm->map_count--;
--		mpol_put(vma_policy(next));
- 		vm_raw_write_end(next);
--		kmem_cache_free(vm_area_cachep, next);
-+		put_vma(next);
+-	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
++	vmf->page = __vm_normal_page(vma, vmf->address, vmf->orig_pte, false,
++				     vmf->vma_flags);
+ 	if (!vmf->page) {
  		/*
- 		 * In mprotect's case 6 (see comments on vma_merge),
- 		 * we must remove another next too. It would clutter
-@@ -2199,15 +2235,11 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
- EXPORT_SYMBOL(get_unmapped_area);
+ 		 * VM_MIXEDMAP !pfn_valid() case, or VM_SOFTDIRTY clear on a
+@@ -3863,7 +3866,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
+ 	update_mmu_cache(vma, vmf->address, vmf->pte);
  
- /* Look up the first VMA which satisfies  addr < vm_end,  NULL if none. */
--struct vm_area_struct *find_vma(struct mm_struct *mm, unsigned long addr)
-+static struct vm_area_struct *__find_vma(struct mm_struct *mm,
-+					 unsigned long addr)
- {
- 	struct rb_node *rb_node;
--	struct vm_area_struct *vma;
--
--	/* Check the cache first. */
--	vma = vmacache_find(mm, addr);
--	if (likely(vma))
--		return vma;
-+	struct vm_area_struct *vma = NULL;
- 
- 	rb_node = mm->mm_rb.rb_node;
- 
-@@ -2225,13 +2257,40 @@ struct vm_area_struct *find_vma(struct mm_struct *mm, unsigned long addr)
- 			rb_node = rb_node->rb_right;
- 	}
- 
-+	return vma;
-+}
-+
-+struct vm_area_struct *find_vma(struct mm_struct *mm, unsigned long addr)
-+{
-+	struct vm_area_struct *vma;
-+
-+	/* Check the cache first. */
-+	vma = vmacache_find(mm, addr);
-+	if (likely(vma))
-+		return vma;
-+
-+	vma = __find_vma(mm, addr);
- 	if (vma)
- 		vmacache_update(addr, vma);
- 	return vma;
- }
--
- EXPORT_SYMBOL(find_vma);
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+struct vm_area_struct *get_vma(struct mm_struct *mm, unsigned long addr)
-+{
-+	struct vm_area_struct *vma = NULL;
-+
-+	read_lock(&mm->mm_rb_lock);
-+	vma = __find_vma(mm, addr);
-+	if (vma)
-+		atomic_inc(&vma->vm_ref_count);
-+	read_unlock(&mm->mm_rb_lock);
-+
-+	return vma;
-+}
-+#endif
-+
- /*
-  * Same as find_vma, but also return a pointer to the previous VMA in *pprev.
-  */
-@@ -2599,7 +2658,7 @@ detach_vmas_to_be_unmapped(struct mm_struct *mm, struct vm_area_struct *vma,
- 	insertion_point = (prev ? &prev->vm_next : &mm->mmap);
- 	vma->vm_prev = NULL;
- 	do {
--		vma_rb_erase(vma, &mm->mm_rb);
-+		vma_rb_erase(vma, mm);
- 		mm->map_count--;
- 		tail_vma = vma;
- 		vma = vma->vm_next;
+-	page = vm_normal_page(vma, vmf->address, pte);
++	page = __vm_normal_page(vma, vmf->address, pte, false, vmf->vma_flags);
+ 	if (!page) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		return 0;
 -- 
 2.7.4
