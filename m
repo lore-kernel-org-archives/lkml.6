@@ -1,54 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeEQN41 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 09:56:27 -0400
-Received: from muru.com ([72.249.23.125]:42634 "EHLO muru.com"
+        id S1752191AbeEQN4h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 09:56:37 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55726 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751017AbeEQN4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 09:56:25 -0400
-Date: Thu, 17 May 2018 06:56:21 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
-Message-ID: <20180517135621.GJ98604@atomide.com>
-References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
- <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
- <20180516100842.xuma7b3e727w7bpz@linutronix.de>
- <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
- <20180516104734.357oevogppu5bsg4@linutronix.de>
- <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
-MIME-Version: 1.0
+        id S1751647AbeEQN40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 09:56:26 -0400
+Date: Thu, 17 May 2018 08:55:51 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] powerpc/lib: inline memcmp() for small constant sizes
+Message-ID: <20180517135551.GT17342@gate.crashing.org>
+References: <cover.1526553552.git.christophe.leroy@c-s.fr> <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <8a6f90d882c8b60e5fa0826cd23dd70a92075659.1526553552.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> [180516 13:12]:
-> On Wed, 2018-05-16 at 12:47 +0200, Sebastian Andrzej Siewior wrote:
-> > But since I am on it. You have to enable runtime-PM for the UART. So
-> > what is the problem if you simply don't enable it for the UART which
-> > used as the kernel console?
+On Thu, May 17, 2018 at 12:49:58PM +0200, Christophe Leroy wrote:
+> In my 8xx configuration, I get 208 calls to memcmp()
+> Within those 208 calls, about half of them have constant sizes,
+> 46 have a size of 8, 17 have a size of 16, only a few have a
+> size over 16. Other fixed sizes are mostly 4, 6 and 10.
 > 
-> How do I know at the ->probe() time that device in question is going to
-> be kernel console? Maybe I missed simple way of it.
+> This patch inlines calls to memcmp() when size
+> is constant and lower than or equal to 16
+> 
+> In my 8xx configuration, this reduces the number of calls
+> to memcmp() from 208 to 123
+> 
+> The following table shows the number of TB timeticks to perform
+> a constant size memcmp() before and after the patch depending on
+> the size
+> 
+> 	Before	After	Improvement
+> 01:	 7577	 5682	25%
+> 02:	41668	 5682	86%
+> 03:	51137	13258	74%
+> 04:	45455	 5682	87%
+> 05:	58713	13258	77%
+> 06:	58712	13258	77%
+> 07:	68183	20834	70%
+> 08:	56819	15153	73%
+> 09:	70077	28411	60%
+> 10:	70077	28411	60%
+> 11:	79546	35986	55%
+> 12:	68182	28411	58%
+> 13:	81440	35986	55%
+> 14:	81440	39774	51%
+> 15:	94697	43562	54%
+> 16:	79546	37881	52%
 
-Hmm parse the kernel cmdline maybe? :)
+Could you show results with a more recent GCC?  What version was this?
 
-BTW, kernel already has earlycon doing exactly what you're trying to do.
+What is this really measuring?  I doubt it takes 7577 (or 5682) timebase
+ticks to do a 1-byte memcmp, which is just 3 instructions after all.
 
-Regards,
 
-Tony
+Segher
