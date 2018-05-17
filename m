@@ -1,120 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeEQMia (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:38:30 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40930 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeEQMi2 (ORCPT
+        id S1751642AbeEQMkE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:40:04 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:42888 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeEQMkD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:38:28 -0400
-X-Google-Smtp-Source: AB8JxZptg67Nj1TbVLHEiliuKCf2YK+s6KvwekJIpJSKOCBaeLq/Yfyt1ZPP5Lo5A926yZvBPz4lfA==
-Subject: Re: [PATCH 0/3] Add support to disable sensor groups in P9
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stewart@linux.vnet.ibm.com
-References: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <20180515150205.GA29321@roeck-us.net>
- <2ceb6b30-60b7-d985-ee0d-6c5784eda273@linux.vnet.ibm.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <56bba97b-c6ee-e7a1-136c-a2236437484a@roeck-us.net>
-Date: Thu, 17 May 2018 05:38:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 08:40:03 -0400
+X-Google-Smtp-Source: AB8JxZr3X/H7WjchEvq9OEsPdLCBTQ2f01G+xJN+CdEYdUHOHH2cJ1IQBu/U9+cLwE4FKdtz+fImqls/1ES6Jjo/WXkmycFPQD57
 MIME-Version: 1.0
-In-Reply-To: <2ceb6b30-60b7-d985-ee0d-6c5784eda273@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Thu, 17 May 2018 05:40:02 -0700
+In-Reply-To: <17752ce7-be26-7ae1-a5bd-6e5fff70fa9e@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005a57a3056c662298@google.com>
+Subject: Re: INFO: rcu detected stall in n_tty_receive_char_special
+From: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
+To: dvyukov@google.com, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        peter@hurleysoftware.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 11:10 PM, Shilpasri G Bhat wrote:
-> 
-> 
-> On 05/15/2018 08:32 PM, Guenter Roeck wrote:
->> On Thu, Mar 22, 2018 at 04:24:32PM +0530, Shilpasri G Bhat wrote:
->>> This patch series adds support to enable/disable OCC based
->>> inband-sensor groups at runtime. The environmental sensor groups are
->>> managed in HWMON and the remaining platform specific sensor groups are
->>> managed in /sys/firmware/opal.
->>>
->>> The firmware changes required for this patch is posted below:
->>> https://lists.ozlabs.org/pipermail/skiboot/2018-March/010812.html
->>>
->>
->> Sorry for not getting back earlier. This is a tough one.
->>
-> 
-> Thanks for the reply. I have tried to answer your questions according to my
-> understanding below:
-> 
->> Key problem is that you are changing the ABI with those new attributes.
->> On top of that, the attributes _do_ make some sense (many chips support
->> enabling/disabling of individual sensors), suggesting that those or
->> similar attributes may or even should at some point be added to the ABI.
->>
->> At the same time, returning "0" as measurement values when sensors are
->> disabled does not seem like a good idea, since "0" is a perfectly valid
->> measurement, at least for most sensors.
-> 
-> I agree.
-> 
->>
->> Given that, we need to have a discussion about adding _enable attributes to
->> the ABI
-> 
->> what is the scope,
-> IIUC the scope should be RW and the attribute is defined for each supported
-> sensor group
-> 
+Hello,
 
-That is _your_ need. I am not aware of any other chip where a per-sensor group
-attribute would make sense. The discussion we need has to extend beyond the need
-of a single chip.
+syzbot has tested the proposed patch but the reproducer still triggered  
+crash:
+INFO: rcu detected stall in corrupted
 
-Guenter
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+INFO: rcu_sched self-detected stall on CPU
+INFO: rcu_sched detected stalls on CPUs/tasks:
+	1-....: (124998 ticks this GP) idle=da2/1/4611686018427387906  
+softirq=12308/12308 fqs=30969
+	
+	1-....: (124998 ticks this GP) idle=da2/1/4611686018427387906  
+softirq=12308/12308 fqs=30969
+	
+  (t=125002 jiffies g=6046 c=6045 q=1179)
+(detected by 0, t=125002 jiffies, g=6046, c=6045, q=1179)
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 5134 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:rep_nop arch/x86/include/asm/processor.h:667 [inline]
+RIP: 0010:cpu_relax arch/x86/include/asm/processor.h:672 [inline]
+RIP: 0010:virt_spin_lock arch/x86/include/asm/qspinlock.h:69 [inline]
+RIP: 0010:native_queued_spin_lock_slowpath+0x204/0xde0  
+kernel/locking/qspinlock.c:305
+RSP: 0018:ffff8801db107030 EFLAGS: 00000002
+RAX: 0000000000000000 RBX: ffffed003b620e1f RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffff88b911c0
+RBP: ffff8801db1073a0 R08: fffffbfff1172239 R09: fffffbfff1172238
+R10: fffffbfff1172238 R11: ffffffff88b911c3 R12: ffffffff88b911c0
+R13: ffff8801db107378 R14: 0000000000000001 R15: dffffc0000000000
+FS:  00007fd0bf7b5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004d91e4 CR3: 00000001c68eb000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:674 [inline]
+  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:30 [inline]
+  queued_spin_lock include/asm-generic/qspinlock.h:90 [inline]
+  do_raw_spin_lock+0x1a7/0x200 kernel/locking/spinlock_debug.c:113
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+  _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:152
+  rcu_dump_cpu_stacks+0x9d/0x1c2 kernel/rcu/tree.c:1373
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:add_echo_byte drivers/tty/n_tty.c:829 [inline]
+RIP: 0010:echo_char+0x152/0x340 drivers/tty/n_tty.c:934
+RSP: 0018:ffff8801aa1ef720 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff8801a9a5e180 RBX: ffffc90002bb4000 RCX: ffffffff837ff667
+RDX: 0000000000000000 RSI: ffffffff837ff672 RDI: 0000000000000001
+RBP: ffff8801aa1ef748 R08: ffff8801a9a5e180 R09: 0000000000000001
+R10: ffff8801a9a5e9e0 R11: ffff8801a9a5e180 R12: 00000000000008df
+R13: 0000000000000000 R14: 0000000000000008 R15: ffffc90002bb6268
+  n_tty_receive_char_special+0x1451/0x3510 drivers/tty/n_tty.c:1324
+  n_tty_receive_buf_fast drivers/tty/n_tty.c:1595 [inline]
+  __receive_buf drivers/tty/n_tty.c:1629 [inline]
+  n_tty_receive_buf_common+0x21bd/0x2ca0 drivers/tty/n_tty.c:1727
+  n_tty_receive_buf+0x30/0x40 drivers/tty/n_tty.c:1756
+  tiocsti drivers/tty/tty_io.c:2171 [inline]
+  tty_ioctl+0x7e7/0x1870 drivers/tty/tty_io.c:2557
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455319
+RSP: 002b:00007fd0bf7b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fd0bf7b56d4 RCX: 0000000000455319
+RDX: 00000000200000c0 RSI: 0000000000005412 RDI: 0000000000000004
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000002f9 R14: 00000000006f77f8 R15: 0000000000000000
+Code: 5c 00 00 00 00 48 83 e7 f8 49 29 fc 41 8d 4c 24 64 c1 e9 03 f3 48 ab  
+48 81 c4 48 03 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 f3 90 <e9> 3b ff ff  
+ff 89 f1 81 fe 00 01 00 00 0f 84 9e 03 00 00 41 be
+NMI backtrace for cpu 1
+CPU: 1 PID: 5134 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:add_echo_byte drivers/tty/n_tty.c:829 [inline]
+RIP: 0010:echo_char+0x152/0x340 drivers/tty/n_tty.c:934
+RSP: 0018:ffff8801aa1ef720 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff8801a9a5e180 RBX: ffffc90002bb4000 RCX: ffffffff837ff667
+RDX: 0000000000000000 RSI: ffffffff837ff672 RDI: 0000000000000001
+RBP: ffff8801aa1ef748 R08: ffff8801a9a5e180 R09: 0000000000000001
+R10: ffff8801a9a5e9e0 R11: ffff8801a9a5e180 R12: 00000000000008df
+R13: 0000000000000000 R14: 0000000000000008 R15: ffffc90002bb6268
+  n_tty_receive_char_special+0x1451/0x3510 drivers/tty/n_tty.c:1324
+  n_tty_receive_buf_fast drivers/tty/n_tty.c:1595 [inline]
+  __receive_buf drivers/tty/n_tty.c:1629 [inline]
+  n_tty_receive_buf_common+0x21bd/0x2ca0 drivers/tty/n_tty.c:1727
+  n_tty_receive_buf+0x30/0x40 drivers/tty/n_tty.c:1756
+  tiocsti drivers/tty/tty_io.c:2171 [inline]
+  tty_ioctl+0x7e7/0x1870 drivers/tty/tty_io.c:2557
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455319
+RSP: 002b:00007fd0bf7b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fd0bf7b56d4 RCX: 0000000000455319
+RDX: 00000000200000c0 RSI: 0000000000005412 RDI: 0000000000000004
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000002f9 R14: 00000000006f77f8 R15: 0000000000000000
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.375  
+msecs
 
->> when should the attributes exist and when not,
-> We control this currently via device-tree
-> 
->> do we want/need power_enable or powerX_enable or both, and so on), and
-> We need power_enable right now
-> 
->> what to return if a sensor is disabled (such as -ENODATA).
-> -ENODATA sounds good.
-> 
-> Thanks and Regards,
-> Shilpa
-> 
->   Once we have an
->> agreement, we can continue with an implementation.
->>
->> Guenter
->>
->>> Shilpasri G Bhat (3):
->>>    powernv:opal-sensor-groups: Add support to enable sensor groups
->>>    hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
->>>    powernv: opal-sensor-groups: Add attributes to disable/enable sensors
->>>
->>>   .../ABI/testing/sysfs-firmware-opal-sensor-groups  |  34 ++++++
->>>   Documentation/hwmon/ibmpowernv                     |  31 ++++-
->>>   arch/powerpc/include/asm/opal-api.h                |   4 +-
->>>   arch/powerpc/include/asm/opal.h                    |   2 +
->>>   .../powerpc/platforms/powernv/opal-sensor-groups.c | 104 ++++++++++++-----
->>>   arch/powerpc/platforms/powernv/opal-wrappers.S     |   1 +
->>>   drivers/hwmon/ibmpowernv.c                         | 127 +++++++++++++++++++--
->>>   7 files changed, 265 insertions(+), 38 deletions(-)
->>>   create mode 100644 Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
->>>
->>> -- 
->>> 1.8.3.1
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> 
+
+Tested on:
+
+commit:         e6506eb24187 Merge tag 'trace-v4.17-rc4-2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15804957800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d57d2358c5d82736
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11608417800000
