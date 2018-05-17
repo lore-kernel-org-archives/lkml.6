@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeEQGtm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:49:42 -0400
-Received: from freki.datenkhaos.de ([81.7.17.101]:37096 "EHLO
-        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751995AbeEQGtk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:49:40 -0400
-Date: Thu, 17 May 2018 08:49:31 +0200
-From: Johannes Hirte <johannes.hirte@datenkhaos.de>
-To: Borislav Petkov <bp@suse.de>
-Cc: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 3/3] x86/MCE/AMD: Get address from already initialized
- block
-Message-ID: <20180517064930.GA26421@probook>
-References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
- <20180201184813.82253-3-Yazen.Ghannam@amd.com>
- <20180414004230.GA2033@probook>
- <20180416115624.GA1543@probook>
- <CY4PR12MB1557FB8EB5C17E55A9B405D8F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
- <20180515093953.GA1746@probook>
- <20180516224641.GA31929@pd.tnic>
+        id S1752260AbeEQGvO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:51:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:56695 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751698AbeEQGvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 02:51:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 17 May 2018 16:51:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Petr Vorel <pvorel@suse.cz>
+Subject: linux-next: build warning after merge of the integrity tree
+Message-ID: <20180517165110.6a014e12@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180516224641.GA31929@pd.tnic>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/wiM8keOEQv5.dp58dGNfUTz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018 Mai 17, Borislav Petkov wrote:
-> On Tue, May 15, 2018 at 11:39:54AM +0200, Johannes Hirte wrote:
-> > The out-of-bound access happens in get_block_address:
-> > 
-> > 	if (bankp && bankp->blocks) {
-> > 		struct threshold_block *blockp blockp = &bankp->blocks[block];
-> > 
-> > with block=1. This doesn't exists. I don't even find any array here.
-> > There is a linked list, created in allocate_threshold_blocks. On my
-> > system I get 17 lists with one element each.
-> 
-> Yes, what a mess this is. ;-\
-> 
-> There's no such thing as ->blocks[block] array. We assign simply the
-> threshold_block to it in allocate_threshold_blocks:
-> 
-> 	per_cpu(threshold_banks, cpu)[bank]->blocks = b;
-> 
-> And I can't say the design of this thing is really friendly but it is
-> still no excuse that I missed that during review. Grrr.
-> 
-> So, Yazen, what really needs to happen here is to iterate the
-> bank->blocks->miscj list to find the block you're looking for and return
-> its address, the opposite to this here:
-> 
->         if (per_cpu(threshold_banks, cpu)[bank]->blocks) {
->                 list_add(&b->miscj,
->                          &per_cpu(threshold_banks, cpu)[bank]->blocks->miscj);
->         } else {
->                 per_cpu(threshold_banks, cpu)[bank]->blocks = b;
->         }
-> 
-> and don't forget to look at ->blocks itself.
-> 
-> And then you need to make sure that searching for block addresses still
-> works when resuming from suspend so that you can avoid the RDMSR IPIs.
-> 
+--Sig_/wiM8keOEQv5.dp58dGNfUTz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Maybe I'm missing something, but those RDMSR IPSs don't happen on
-pre-SMCA systems, right? So the caching should be avoided here, cause
-the whole lookup looks more expensive to me than the simple switch-block
-in get_block_address.
+Hi all,
 
--- 
-Regards,
-  Johannes
+After merging the integrity tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
+
+security/integrity/ima/ima_kexec.c:18:0: warning: "pr_fmt" redefined
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+In file included from include/linux/kernel.h:14:0,
+                 from include/asm-generic/bug.h:18,
+                 from arch/powerpc/include/asm/bug.h:128,
+                 from include/linux/bug.h:5,
+                 from include/linux/seq_file.h:7,
+                 from security/integrity/ima/ima_kexec.c:13:
+include/linux/printk.h:288:0: note: this is the location of the previous de=
+finition
+ #define pr_fmt(fmt) fmt
+
+Introduced by commit
+
+  3dea0d93d257 ("ima: Unify logging")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/wiM8keOEQv5.dp58dGNfUTz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr9Jl4ACgkQAVBC80lX
+0GxGsQf/TScM5JgDHnr/o2YfzYeXwgN58KIpcApjma/mgKp9GdVUD/AdNf9tfU9l
+KahOOYcrO+3JFP3GRYNqoa25H5QFE6MDGpOvcj3chM/iXsJ9ULhAOxbI/kyVvyka
+fXqB+M7tJAjn20CQAL3FdZCyn3Y2zh5gfIlZl9oicl9NLiLtPuGwXEFsaFW5h1Bi
++OHt8I7IFRayNzfD01Qf7wlVMzB7Ccf6ymwH0/2ptbgoPcmWdvNvn18MJDVVOgQO
+zTMs35ozRhl1wIM4Oi2z3JxAU64/fhUmb2RFyFI0baktxruussaNc3n3apCt6cj+
+TPqA3qKTxtdQo6kxITXAuq6hHEtnqg==
+=TTqO
+-----END PGP SIGNATURE-----
+
+--Sig_/wiM8keOEQv5.dp58dGNfUTz--
