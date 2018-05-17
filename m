@@ -1,98 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeEQICB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:02:01 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:46643 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeEQIB6 (ORCPT
+        id S1752106AbeEQIEb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:04:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60182 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeEQIE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:01:58 -0400
-X-Google-Smtp-Source: AB8JxZpuzRqqW4N7zFaPQcOu2A1mb769FVwY1yCdohfqgUzuSsNUdeXdM3t5SamIC9vM8zaOPGiezWN9MW7hrCkgfzQ=
+        Thu, 17 May 2018 04:04:28 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: emu10k1: fix spelling mistake: "Caputre" -> "Capture"
+Date: Thu, 17 May 2018 09:04:20 +0100
+Message-Id: <20180517080420.23020-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <20180516074333.i2672u435ymwffk3@verge.net.au>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 17 May 2018 11:01:57 +0300
-Message-ID: <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
->> Hi Gilad,
->>
->> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> > Add bindings for CryptoCell instance in the SoC.
->> >
->> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>
->> Thanks for your patch!
->>
->> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->> > @@ -528,6 +528,14 @@
->> >                         status = "disabled";
->> >                 };
->> >
->> > +               arm_cc630p: crypto@e6601000 {
->> > +                       compatible = "arm,cryptocell-630p-ree";
->> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
->> > +                       #interrupt-cells = <2>;
->>
->> I believe the #interrupt-cells property is not needed.
->>
->> > +                       reg = <0x0 0xe6601000 0 0x1000>;
->> > +                       clocks = <&cpg CPG_MOD 229>;
->> > +               };
->>
->> The rest looks good, but I cannot verify the register block.
->>
->> > +
->> >                 i2c3: i2c@e66d0000 {
->> >                         #address-cells = <1>;
->> >                         #size-cells = <0>;
->
-> Thanks, I have applied this after dropping the #interrupt-cells property.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks you!
+Trivial fix to spelling mistakes in audigy_outs arrays.
 
-Alas, it will not work without the clk patch (the previous one in the
-series) so they need to be
-taken or dropped together.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/emu10k1/emufx.c   | 2 +-
+ sound/pci/emu10k1/emuproc.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Gilad
-
-
-
+diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+index 608ff4857d70..b45a01bb73e5 100644
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -170,7 +170,7 @@ static char *audigy_outs[32] = {
+ 	/* 0x0f */ "Rear Right",
+ 	/* 0x10 */ "AC97 Front Left",
+ 	/* 0x11 */ "AC97 Front Right",
+-	/* 0x12 */ "ADC Caputre Left",
++	/* 0x12 */ "ADC Capture Left",
+ 	/* 0x13 */ "ADC Capture Right",
+ 	/* 0x14 */ NULL,
+ 	/* 0x15 */ NULL,
+diff --git a/sound/pci/emu10k1/emuproc.c b/sound/pci/emu10k1/emuproc.c
+index bde0d1954f56..055227caa7ca 100644
+--- a/sound/pci/emu10k1/emuproc.c
++++ b/sound/pci/emu10k1/emuproc.c
+@@ -135,7 +135,7 @@ static void snd_emu10k1_proc_read(struct snd_info_entry *entry,
+ 		/* 15 */ "Rear Right",
+ 		/* 16 */ "AC97 Front Left",
+ 		/* 17 */ "AC97 Front Right",
+-		/* 18 */ "ADC Caputre Left",
++		/* 18 */ "ADC Capture Left",
+ 		/* 19 */ "ADC Capture Right",
+ 		/* 20 */ "???",
+ 		/* 21 */ "???",
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+2.17.0
