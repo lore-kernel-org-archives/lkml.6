@@ -1,37 +1,31 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526551787; cv=none;
+Return-Path: <tony@atomide.com>
+X-Google-Smtp-Source: AB8JxZqlt+o5cF4TYNSc+CKHlU/ITGTgvnsQsBsGxXjsZc9s7xlNsoJIf7nAva1kwr/u07xGC8mT
+ARC-Seal: i=1; a=rsa-sha256; t=1526577042; cv=none;
         d=google.com; s=arc-20160816;
-        b=GgSQM/o1JGaKi0l6F5uTuofFpgP1Dju+QqNLDN+L8kUNeKhtk8zxLGoJFjIxfMJ0wI
-         B3ppwypChfbrx6phVYefFQEQEcCRq6aupDmbALS4UqxVtlOcsNaIxAme1RcK+b13o+0m
-         pVQMHryDMRN8N8CgssT3tRl5TDS/BJVaxeobdAKa1Ec5KcdP+IP8p3oMXo9XkXt//3jf
-         wCO1XkwyhBE5ZAE0D127mWgOhXLSTK5SDnZiliE2marOfYI4eCv/DEgCazyvsL3zpMAn
-         vwHnOiSEmqVjsEHTkUMhJmEMc03H7zuXEE8sG8OwjIFaQ/kAF4Zpfs3nLy33r/ufdAxc
-         MHVg==
+        b=TPbTmkgYQRtms9IFbS3WpL0iNEyABy6BykZB85UQ1niQzHDoS0GpzjJHiHLSJUg9ui
+         lsW1Cc6Cm528eduDVZxsQr7yWKTc3iwkj9tSdBFyDyulXhsPy5dMCeZfb5xmyVjg+Lom
+         LSDwCLwr4P1iAx7+TksHHa2BJ1ckw7chNcTBQtFo0xsRiuuLiLvjeSvX/3/Wa30gDng6
+         ncjiUKb6O+AIWQeTnRscHpobc6yr3Y3Mg3hOJyDW4yJja2AQub6t6gwi6vRSk4864cWS
+         8hTR+lwQdGtGyHC9DghrIq28pwVAYA8gPNTynQiiOgh9CCTzM4IJG6zJrqIfZhuT/9WN
+         SZaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=82iiPBgu3p88DIHCjcvEwVhkn/nBOuPaVbQW1W1v+Dc=;
-        b=kxCdPNW0/5pvWA2FBNEeKeCB54nN8aSzxmEwQLErHyDy1lRzq6pYhDou2qmdvkG02v
-         FcRhL5+qhpMUo5gapLeDPbVitYUNX9hLk4dVsylCZDHA2HFjufR4zqDV+bbvnXlgrZ7V
-         eFwqyLIbbPeHyr8qz/cvXh2pXb6Cznb+DXvd7UwlMw933dj1xKZ9/se8mBAQEPWPN6JF
-         /Nb/EFYnyjA2+/xU6xxUgRrNOPtzt9cf/mOT9b6Bq1k4qShz13g0EsGoTAXKdcXweWLD
-         Fjzw8tn8bPyJUM6OFtPm6p/THm+iyfeWDXabJfNhObEMD8PHKKB9upUoJlK+i7cIaVH0
-         DN0g==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=mgqNt6i56ZLSd8VpFLG2JOaoKXaUMus/bRRmwqy6sM0=;
+        b=DpefgCopsna5oea86cxqVd7ENKL4lU2iqYPz5v87Nn3M/3NKBCZb471OBX7/ughYS7
+         +jf2DpAZSO2q1LcsfwHJyvJcD2jPESioQagA58IIxjOcGpPysIUJYqsj3rPe32Hue+hY
+         PLhOclvdY5laEsGVt9N1xbmyzhSOH3txvtPWZOR7JhVfYejq+Evoln5TDJA8YUgTy47A
+         bDWOCZswjinbbZfcBlIz5XzWs/yOrvhrzqLhVjot8kyB+lMcUlwldrC4puokqb2m2CC9
+         m33BCaaq9yMaC9iQLPE3whs5yUuz88bdNAQRzwlcrQVrGcNGOlrwR9UYsLoEpTxmfZvn
+         sc1g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jWXp9tAG;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jWXp9tAG;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZqX8861Ri+kJPkiYXlpnc8JZGhliT1tmugvej8dpn2v3BGcw+wqFdr9LH/iv7LusAvJn1+ykw==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Thu, 17 May 2018 12:09:48 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+Date: Thu, 17 May 2018 10:10:38 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
 	"H. Nikolaus Schaller" <hns@goldelico.com>,
 	Andreas Kemnade <andreas@kemnade.info>,
 	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +37,8 @@ Cc: Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
 	linux-omap@vger.kernel.org, linux-pm@vger.kernel.org
 Subject: Re: OMAP serial runtime PM and autosuspend (was: Re: [PATCH 4/7]
  dt-bindings: gnss: add u-blox binding))
-Message-ID: <20180517100948.GI30172@localhost>
-References: <20180507154515.GP98604@atomide.com>
- <20180507163439.GV2285@localhost>
+Message-ID: <20180517171038.GL98604@atomide.com>
+References: <20180507163439.GV2285@localhost>
  <20180507175032.GR98604@atomide.com>
  <20180508065852.GW2285@localhost>
  <20180508152228.GV98604@atomide.com>
@@ -54,53 +47,71 @@ References: <20180507154515.GP98604@atomide.com>
  <20180508164904.GZ98604@atomide.com>
  <20180509131003.GC2285@localhost>
  <20180509135706.GB98604@atomide.com>
+ <20180517100948.GI30172@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180509135706.GB98604@atomide.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180517100948.GI30172@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599992133232733602?=
-X-GMAIL-MSGID: =?utf-8?q?1600705567491248644?=
+X-GMAIL-MSGID: =?utf-8?q?1600732048521273700?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-[ Sorry about the late reply. ]
-
-On Wed, May 09, 2018 at 06:57:06AM -0700, Tony Lindgren wrote:
-> * Johan Hovold <johan@kernel.org> [180509 13:12]:
-
-> > It seems we really should not be using the negative autosuspend to
-> > configure the RPM behaviour the way these drivers do. Perhaps a new
-> > mechanism is needed.
+* Johan Hovold <johan@kernel.org> [180517 10:12]:
+> [ Sorry about the late reply. ]
 > 
-> Hmm well simply defaulting to "on" instead of "auto" and setting the
-> autosuspend_ms to 3000 by default might be doable. I think that way
-> we can keep use_autosuspend() in probe. Let's hope there are no
-> existing use cases that would break with that.
+> On Wed, May 09, 2018 at 06:57:06AM -0700, Tony Lindgren wrote:
+> > * Johan Hovold <johan@kernel.org> [180509 13:12]:
+> 
+> > > It seems we really should not be using the negative autosuspend to
+> > > configure the RPM behaviour the way these drivers do. Perhaps a new
+> > > mechanism is needed.
+> > 
+> > Hmm well simply defaulting to "on" instead of "auto" and setting the
+> > autosuspend_ms to 3000 by default might be doable. I think that way
+> > we can keep use_autosuspend() in probe. Let's hope there are no
+> > existing use cases that would break with that.
+> 
+> No, defaulting to "on" (i.e. calling pm_runtime_forbid()) wouldn't work
+> either as that would also prevent the device from runtime suspending
+> just as the current negative autosuspend delay does.
 
-No, defaulting to "on" (i.e. calling pm_runtime_forbid()) wouldn't work
-either as that would also prevent the device from runtime suspending
-just as the current negative autosuspend delay does.
+Well in that case we should just stick with -1 value for the
+autosuspend. And just do pm_runtime_put_sync_suspend() after
+probe and on close.
 
-I fail to see how we can implement this using the current toolbox. What
-you're after here is really a mechanism for selecting between two
-different runtime PM schemes at runtime:
+> I fail to see how we can implement this using the current toolbox. What
+> you're after here is really a mechanism for selecting between two
+> different runtime PM schemes at runtime:
+> 
+> 	1. normal serial RPM, where the controller is active while the
+> 	   port is open (this should be the safe default)
 
-	1. normal serial RPM, where the controller is active while the
-	   port is open (this should be the safe default)
+Agreed. And that is the case already.
 
-	2. aggressive serial RPM, where the controller is allowed to
-	   suspend while the port is open even though this may result in
-	   lost characters when waking up on incoming data
+> 	2. aggressive serial RPM, where the controller is allowed to
+> 	   suspend while the port is open even though this may result in
+> 	   lost characters when waking up on incoming data
 
-For normal ttys, we need a user-space interface for selecting between
-the two, and for serdev we may want a way to select the RPM scheme from
-within the kernel.
+In this case it seems that the only thing needed is to just
+configure the autosuspend delay for the parent port. The use of
+-1 has been around since the start of runtime PM AFAIK, so maybe
+we should just document it. I guess we could also introduce
+pm_runtime_block_autoidle_unless_configured() :)
 
-Note that with my serdev controller runtime PM patch, serdev core could
-always opt for aggressive PM (as by default serdev core holds an RPM
-reference for the controller while the port is open).
+> For normal ttys, we need a user-space interface for selecting between
+> the two, and for serdev we may want a way to select the RPM scheme from
+> within the kernel.
+> 
+> Note that with my serdev controller runtime PM patch, serdev core could
+> always opt for aggressive PM (as by default serdev core holds an RPM
+> reference for the controller while the port is open).
 
-Thanks,
-Johan
+So if your serdev controller was to set the parent autosuspend
+delay on open() and set it back on close() this should work?
+
+Regards,
+
+Tony
