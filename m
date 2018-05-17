@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752312AbeEQIa0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:30:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41775 "EHLO mail.bootlin.com"
+        id S1752629AbeEQIaj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:30:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41800 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751179AbeEQIaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:30:23 -0400
+        id S1752370AbeEQIa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 04:30:29 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: davem@davemloft.net, linux@armlinux.org.uk
+To: davem@davemloft.net, kishon@ti.com, linux@armlinux.org.uk,
+        gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net,
+        sebastian.hesselbarth@gmail.com
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 2/2] net: phy: sfp: warn the user when no tx_disable pin is available
-Date: Thu, 17 May 2018 10:29:07 +0200
-Message-Id: <20180517082907.14420-3-antoine.tenart@bootlin.com>
+        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net-next v3 01/10] net: mvpp2: align the ethtool ops definition
+Date: Thu, 17 May 2018 10:29:30 +0200
+Message-Id: <20180517082939.14598-2-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180517082907.14420-1-antoine.tenart@bootlin.com>
-References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
+In-Reply-To: <20180517082939.14598-1-antoine.tenart@bootlin.com>
+References: <20180517082939.14598-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case no Tx disable pin is available the SFP modules will always be
-emitting. This could be an issue when using modules using laser as their
-light source as we would have no way to disable it when the fiber is
-removed. This patch adds a warning when registering an SFP cage which do
-not have its tx_disable pin wired or available.
+Cosmetic patch to align the ethtool functions to ops definitions. This
+patch does not change in any way the driver's behaviour.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- drivers/net/phy/sfp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-index 0fd2a92a6f7b..4e62769b3e00 100644
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -1077,6 +1077,15 @@ static int sfp_probe(struct platform_device *pdev)
- 	if (poll)
- 		mod_delayed_work(system_wq, &sfp->poll, poll_jiffies);
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 6f410235987c..77dd91e3d962 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -7859,18 +7859,18 @@ static const struct net_device_ops mvpp2_netdev_ops = {
+ };
  
-+	/* We could have an issue in cases no Tx disable pin is available or
-+	 * wired as modules using a laser as their light source will continue to
-+	 * be active when the fiber is removed. This could be a safety issue and
-+	 * we should at least warn the user about that.
-+	 */
-+	if (!sfp->gpio[GPIO_TX_DISABLE])
-+		dev_warn(sfp->dev,
-+			 "No tx_disable pin: SFP modules will always be emitting.\n");
-+
- 	return 0;
- }
+ static const struct ethtool_ops mvpp2_eth_tool_ops = {
+-	.nway_reset	= phy_ethtool_nway_reset,
+-	.get_link	= ethtool_op_get_link,
+-	.set_coalesce	= mvpp2_ethtool_set_coalesce,
+-	.get_coalesce	= mvpp2_ethtool_get_coalesce,
+-	.get_drvinfo	= mvpp2_ethtool_get_drvinfo,
+-	.get_ringparam	= mvpp2_ethtool_get_ringparam,
+-	.set_ringparam	= mvpp2_ethtool_set_ringparam,
+-	.get_strings	= mvpp2_ethtool_get_strings,
+-	.get_ethtool_stats = mvpp2_ethtool_get_stats,
+-	.get_sset_count	= mvpp2_ethtool_get_sset_count,
+-	.get_link_ksettings = phy_ethtool_get_link_ksettings,
+-	.set_link_ksettings = phy_ethtool_set_link_ksettings,
++	.nway_reset		= phy_ethtool_nway_reset,
++	.get_link		= ethtool_op_get_link,
++	.set_coalesce		= mvpp2_ethtool_set_coalesce,
++	.get_coalesce		= mvpp2_ethtool_get_coalesce,
++	.get_drvinfo		= mvpp2_ethtool_get_drvinfo,
++	.get_ringparam		= mvpp2_ethtool_get_ringparam,
++	.set_ringparam		= mvpp2_ethtool_set_ringparam,
++	.get_strings		= mvpp2_ethtool_get_strings,
++	.get_ethtool_stats	= mvpp2_ethtool_get_stats,
++	.get_sset_count		= mvpp2_ethtool_get_sset_count,
++	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
++	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
+ };
  
+ /* Used for PPv2.1, or PPv2.2 with the old Device Tree binding that
 -- 
 2.17.0
