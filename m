@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752346AbeEQX3N (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:29:13 -0400
+        id S1752323AbeEQX3K (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:29:10 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:31398 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752204AbeEQX2o (ORCPT
+        by vger.kernel.org with ESMTP id S1750924AbeEQX2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 May 2018 19:28:44 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
-        Jan Beulich <JBeulich@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 5/6] x86: refcount: prevent gcc distortions
-Date: Thu, 17 May 2018 09:14:01 -0700
-Message-ID: <20180517161402.78089-6-namit@vmware.com>
+        "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 6/6] x86: removing unneeded new-lines
+Date: Thu, 17 May 2018 09:14:02 -0700
+Message-ID: <20180517161402.78089-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180517161402.78089-1-namit@vmware.com>
 References: <20180517161402.78089-1-namit@vmware.com>
@@ -31,150 +30,148 @@ the block in time and space. This data is distorted by the kernel code,
 which puts information in alternative sections. As a result, the
 compiler may perform incorrect inlining and branch optimizations.
 
-The solution is to set an assembly macro and call it from the inlined
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+This patch removes unneeded new-lines and semicolons to prevent such
+distortion.
 
-This patch allows to inline functions such as __get_seccomp_filter().
-The effect of the patch is as follows on the kernel size:
+Functions such as nfs_io_completion_put() get inlined. Its overall
+effect is not shown in the absolute numbers, but it seems to enable
+slightly better inlining:
 
    text	   data	    bss	    dec	    hex	filename
-18146418 10064100 2936832 31147350 1db4556 ./vmlinux before
-18148228 10063968 2936832 31149028 1db4be4 ./vmlinux after (+1678)
+18148228 10063968 2936832 31149028 1db4be4 ./vmlinux before
+18148888 10064016 2936832 31149736 1db4ea8 ./vmlinux after (+708)
 
 Static text symbols:
-Before:	39673
-After:	39649	(-24)
+Before:	39649
+After:	39650	(+1)
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jan Beulich <JBeulich@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/refcount.h | 62 +++++++++++++++++++++------------
- 1 file changed, 39 insertions(+), 23 deletions(-)
+ arch/x86/include/asm/asm.h           |  4 ++--
+ arch/x86/include/asm/cmpxchg.h       | 10 +++++-----
+ arch/x86/include/asm/special_insns.h | 12 ++++++------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 4cf11d88d3b3..3126141f2c80 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -13,35 +13,49 @@
-  * the exception handler to use (in mm/extable.c), and then triggers the
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-+ *
-+ * The logic and data are encapsulated within an assembly macro, which is then
-+ * called on each use. This hack is necessary to prevent GCC from considering
-+ * the inline assembly blocks as costly in time and space, which can prevent
-+ * function inlining and lead to other bad compilation decisions. GCC computes
-+ * inline assembly cost according to the number of perceived number of assembly
-+ * instruction, based on the number of new-lines and semicolons in the assembly
-+ * block. The macros will eventually be compiled into a single instruction that
-+ * will be actually executed (unless an exception happens). This scheme allows
-+ * GCC to better understand the inline asm cost.
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..571ceec97976 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -51,10 +51,10 @@
+  * The output operand must be type "bool".
   */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+asm(".macro __REFCOUNT_EXCEPTION counter:req\n\t"
-+    ".pushsection .text..refcount\n"
-+    "111:\tlea \\counter, %" _ASM_CX "\n"
-+    "112:\t" ASM_UD2 "\n\t"
-+    ASM_UNREACHABLE
-+    ".popsection\n"
-+    "113:\n\t"
-+    _ASM_EXTABLE_REFCOUNT(112b, 113b) "\n\t"
-+    ".endm");
+ #ifdef __GCC_ASM_FLAG_OUTPUTS__
+-# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
++# define CC_SET(c) "\n\t/* output condition code " #c "*/"
+ # define CC_OUT(c) "=@cc" #c
+ #else
+-# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
++# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]"
+ # define CC_OUT(c) [_cc_ ## c] "=qm"
+ #endif
  
- /* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
-+asm(".macro __REFCOUNT_CHECK_LT_ZERO counter:req\n\t"
-+    "js 111f\n\t"
-+    "__REFCOUNT_EXCEPTION \\counter\n\t"
-+    ".endm");
+diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+index e3efd8a06066..2be9582fcb2e 100644
+--- a/arch/x86/include/asm/cmpxchg.h
++++ b/arch/x86/include/asm/cmpxchg.h
+@@ -44,22 +44,22 @@ extern void __add_wrong_size(void)
+ 	        __typeof__ (*(ptr)) __ret = (arg);			\
+ 		switch (sizeof(*(ptr))) {				\
+ 		case __X86_CASE_B:					\
+-			asm volatile (lock #op "b %b0, %1\n"		\
++			asm volatile (lock #op "b %b0, %1"		\
+ 				      : "+q" (__ret), "+m" (*(ptr))	\
+ 				      : : "memory", "cc");		\
+ 			break;						\
+ 		case __X86_CASE_W:					\
+-			asm volatile (lock #op "w %w0, %1\n"		\
++			asm volatile (lock #op "w %w0, %1"		\
+ 				      : "+r" (__ret), "+m" (*(ptr))	\
+ 				      : : "memory", "cc");		\
+ 			break;						\
+ 		case __X86_CASE_L:					\
+-			asm volatile (lock #op "l %0, %1\n"		\
++			asm volatile (lock #op "l %0, %1"		\
+ 				      : "+r" (__ret), "+m" (*(ptr))	\
+ 				      : : "memory", "cc");		\
+ 			break;						\
+ 		case __X86_CASE_Q:					\
+-			asm volatile (lock #op "q %q0, %1\n"		\
++			asm volatile (lock #op "q %q0, %1"		\
+ 				      : "+r" (__ret), "+m" (*(ptr))	\
+ 				      : : "memory", "cc");		\
+ 			break;						\
+@@ -134,7 +134,7 @@ extern void __add_wrong_size(void)
+ 	__raw_cmpxchg((ptr), (old), (new), (size), LOCK_PREFIX)
  
- /* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
-+asm(".macro __REFCOUNT_CHECK_LE_ZERO counter:req\n\t"
-+    "jz 111f\n\t"
-+    "__REFCOUNT_CHECK_LT_ZERO counter=\\counter\n\t"
-+    ".endm");
+ #define __sync_cmpxchg(ptr, old, new, size)				\
+-	__raw_cmpxchg((ptr), (old), (new), (size), "lock; ")
++	__raw_cmpxchg((ptr), (old), (new), (size), "lock ")
  
- /* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
-+asm(".macro __REFCOUNT_ERROR counter:req\n\t"
-+    "jmp 111f\n\t"
-+    "__REFCOUNT_EXCEPTION counter=\\counter\n\t"
-+    ".endm");
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ #define __cmpxchg_local(ptr, old, new, size)				\
+ 	__raw_cmpxchg((ptr), (old), (new), (size), "")
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 317fc59b512c..9c56059aaf24 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -19,7 +19,7 @@ extern unsigned long __force_order;
+ static inline unsigned long native_read_cr0(void)
  {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"__REFCOUNT_CHECK_LT_ZERO %[counter]"
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -50,7 +64,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"__REFCOUNT_CHECK_LT_ZERO %[counter]"
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -58,7 +72,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"__REFCOUNT_CHECK_LE_ZERO %[counter]"
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -66,13 +80,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "__REFCOUNT_CHECK_LT_ZERO %[counter]",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
+ 	unsigned long val;
+-	asm volatile("mov %%cr0,%0\n\t" : "=r" (val), "=m" (__force_order));
++	asm volatile("mov %%cr0,%0" : "=r" (val), "=m" (__force_order));
+ 	return val;
  }
  
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+@@ -31,7 +31,7 @@ static inline void native_write_cr0(unsigned long val)
+ static inline unsigned long native_read_cr2(void)
  {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "__REFCOUNT_CHECK_LT_ZERO %[counter]",
- 				 r->refs.counter, "%0", e, "cx");
+ 	unsigned long val;
+-	asm volatile("mov %%cr2,%0\n\t" : "=r" (val), "=m" (__force_order));
++	asm volatile("mov %%cr2,%0" : "=r" (val), "=m" (__force_order));
+ 	return val;
  }
  
-@@ -90,7 +106,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+@@ -43,7 +43,7 @@ static inline void native_write_cr2(unsigned long val)
+ static inline unsigned long __native_read_cr3(void)
+ {
+ 	unsigned long val;
+-	asm volatile("mov %%cr3,%0\n\t" : "=r" (val), "=m" (__force_order));
++	asm volatile("mov %%cr3,%0" : "=r" (val), "=m" (__force_order));
+ 	return val;
+ }
  
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("__REFCOUNT_ERROR %[counter]"
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
+@@ -67,7 +67,7 @@ static inline unsigned long native_read_cr4(void)
+ 		     : "=r" (val), "=m" (__force_order) : "0" (0));
+ #else
+ 	/* CR4 always exists on x86_64. */
+-	asm volatile("mov %%cr4,%0\n\t" : "=r" (val), "=m" (__force_order));
++	asm volatile("mov %%cr4,%0" : "=r" (val), "=m" (__force_order));
+ #endif
+ 	return val;
+ }
+@@ -101,7 +101,7 @@ static inline u32 __read_pkru(void)
+ 	 * "rdpkru" instruction.  Places PKRU contents in to EAX,
+ 	 * clears EDX and requires that ecx=0.
+ 	 */
+-	asm volatile(".byte 0x0f,0x01,0xee\n\t"
++	asm volatile(".byte 0x0f,0x01,0xee"
+ 		     : "=a" (pkru), "=d" (edx)
+ 		     : "c" (ecx));
+ 	return pkru;
+@@ -115,7 +115,7 @@ static inline void __write_pkru(u32 pkru)
+ 	 * "wrpkru" instruction.  Loads contents in EAX to PKRU,
+ 	 * requires that ecx = edx = 0.
+ 	 */
+-	asm volatile(".byte 0x0f,0x01,0xef\n\t"
++	asm volatile(".byte 0x0f,0x01,0xef"
+ 		     : : "a" (pkru), "c"(ecx), "d"(edx));
+ }
+ #else
 -- 
 2.17.0
