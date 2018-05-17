@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2607644-1526585632-2-2658725695980922355
+X-Cyrus-Session-Id: sloti22d1t05-2531651-1526582786-2-1944222159468318728
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526585632; b=Gr+BrRP3+cBfLnLeU7U3bckul219qHLwxILaytF/X7JOwqW9RH
-    FzgPSqQbYpwNOuAohWW//SSFwxn3UaZ3xNaTMv2l9aEpd/mNz1K+wYUXe8POSSC+
-    ZT7ekRMG5JuHuBfDdSCvWuNJcPdsXhAhrgenLgKdA864VBWInXlwJIJ5t6Iy62zC
-    JkZ6IWskKb5cxJ8Fuc3UGUmY3Qmm7TCcQpcz8MAlmhXJEfjwR5Al103GTDS+12XL
-    PtbFGYkgOpVwM9TkkMWeLrV+623OCRnSBD/T9SkMn+56+96IkNSI5DBkewzhy0Jh
-    UL8LKnKoIEiH88gzz9kJNSags9ubHXkQ4nyQ==
+    1526582786; b=NSyeywu8fRXnLSsVWXNlFNNJOwxVKWbIDPOQRuYLQknHiPePPn
+    XtlYCUarcgU/oE3uECLAiCmvgaKPdKg2LahjomPrAB9UOe0Z1BKHCNj0aUEtji0Q
+    iUisVr9BI3vgChPCzq4NKSI/drm7kAImYgo38h7ILdYSJMaEDx4lO+pLaV3sf17Q
+    s85moGT/QvtFvBXf75ifoWxotMOft7bcgCG2FkgHQCnkFWo/YDA0cAAbNfF4jaDm
+    oVJuatsrKj8k3z5TQi5bvRdl2AcWpLXmix3eb63q4EN3oOhA1AeCB/2ONUdtTBGL
+    lGTEJ3dlDOZevFxqrHTnYIoZQogIv3/8mggg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:subject:to:cc:message-id:date
     :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1526585632; bh=uRrXjKNlDGJt93HiKjpfWpkfR3RYtS
-    dw2xcsDk7ZMjU=; b=ld5elgEOIbTsY17fnLPpMztsVYtXHyGenedHBLog/zD/1w
-    mlal23lJOU05XnhO358oZ+Ln0urIPJffX+BbrkkwYWXZDd7O38oI+cNdEID4C7ZG
-    TmoiIPuULwmL4dh1GBlhI5oT9Q8/Wt3By7ces5CbvWq0RB83EHGxtAbQ9zPR27I4
-    Cf1uLO3vz6I8RO9u2dAkUdPzH3KmfzxmCIrMZK3jvsF3KP6My8Yi0spoYlHH5N5U
-    hUCkjKUHEoXbUmT+QliVwRouLhaX5gGSiBEuca1ytiBAxxqqdSH+9JX7oIzjBYPV
-    Cab8izVSws1CkjfXXg26v5cuuBq9fPu345sxgZvQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526582786; bh=uRrXjKNlDGJt93HiKjpfWpkfR3RYtS
+    dw2xcsDk7ZMjU=; b=f7EBBTVh4OD6UJYzpnJjprbqdAzttd1HIKfdCy1YKYM8VO
+    ox0aGkczMRxrwy/FIuRB9CY0nzrd4y2aI3oDs+ABP856MBQTnvfYloJq7AGi380Z
+    ONmQak/HE94al/9pZ8SFP2Tfge6jlrylE+PNzpRU4Bt7bsNorC4wpI+PYqHsM5mE
+    +oNBDtZomBorryeDi42C66Vzmdm2f9pZXJNviQtAduYW33S+swAFfBNELd6UKK1D
+    v4MsZZBKuPvsTgRbt8xLwwx8GrkPo921CXE+GXBXQ4dpCdB3QGDa2MdZhtJxXhDL
+    PAbSjwZIBJfQTU4aR4t9z9lboMzpiRnGNKfgEDgg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-    header.i=@oracle.com header.b=ooj+h3Vf x-bits=2048 x-keytype=rsa
+    header.i=@oracle.com header.b=Gs+KXMUF x-bits=2048 x-keytype=rsa
     x-algorithm=sha256 x-selector=corp-2017-10-26;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,10 +43,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-      header.i=@oracle.com header.b=ooj+h3Vf x-bits=2048 x-keytype=rsa
+      header.i=@oracle.com header.b=Gs+KXMUF x-bits=2048 x-keytype=rsa
       x-algorithm=sha256 x-selector=corp-2017-10-26;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -60,23 +60,23 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMv5RmkIsR5oaSQi+ox2jFtZF3fmUo3AWrxaIdIhzNfKRRNlEWNn9JcNECRW5yfCeIt6e9M3ww9sMyGk2GhmTiN+pImjgW9/GbpEBYUIX4CQAMzZp6BN
-    Rp9R/YZVFN9DJpucPMr9kZs/2bqU4bWgvd4Trs2pRHU22sJtz7EvXW+s4HCQXBXzS9hWDiJidLouBMepqNOekO0NasvceD59W8cIq3Zkb2w86X2fDqZy9vG3
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCtWDvoA87fE42PnJ8hV/hZlZd1wFx/e278zKgnsDXUe50ouAbJhvbiYH/M2bcAdZz+lc/b2VGxGXhRNg2stlFOn52Lx/Z+/qIFXHj8JYoxUiGXKQCly
+    yfgkUoKTig3ME4VpSa7hQBFtTLx1Kadx0iivEmR2bsVAQsCEarxxOUGTTncmwlH12H09IDO3q0w1bz7NeBZDTPENUyQsDaYka+WM4CyC9NLLyDCPrBgl0M1J
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=_1eiS0DOzhJj2cjQq14A:9 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeEQTde (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 15:33:34 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:44676 "EHLO
+        id S1751231AbeEQSqY (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 14:46:24 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:43364 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeEQTdc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 15:33:32 -0400
+        with ESMTP id S1750924AbeEQSqX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 14:46:23 -0400
 From: Joe Jin <joe.jin@oracle.com>
-Subject: [PATCH] xen-swiotlb: fix the check condition for
+Subject: [PATCH UPSTREAM] xen-swiotlb: fix the check condition for
  xen_swiotlb_free_coherent
 To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         John Sobecki <john.sobecki@oracle.com>,
@@ -84,8 +84,8 @@ To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
 Cc: ASHISH_B_SRIVASTAVA <ashish.b.srivastava@oracle.com>,
         stable@vger.kernel.org
-Message-ID: <b787f389-6db9-c42e-eb7c-5b5810390da1@oracle.com>
-Date: Thu, 17 May 2018 12:33:28 -0700
+Message-ID: <25d8a709-9f2f-fe09-f66c-2a0704ddbbb0@oracle.com>
+Date: Thu, 17 May 2018 11:45:57 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -96,7 +96,7 @@ X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=6
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805170182
+ engine=8.0.1-1711220000 definitions=main-1805170176
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
