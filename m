@@ -1,188 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeEQHFD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:05:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:58279 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752063AbeEQHEz (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:04:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="224944278"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 2/2] perf annotate: Create hotkey 'c' to show max/min cycles
-Date: Thu, 17 May 2018 22:58:38 +0800
-Message-Id: <1526569118-14217-3-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526569118-14217-1-git-send-email-yao.jin@linux.intel.com>
-References: <1526569118-14217-1-git-send-email-yao.jin@linux.intel.com>
+        id S1751858AbeEQHGF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:06:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38766 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750779AbeEQHGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 03:06:03 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: KY Srinivasan <kys@microsoft.com>
+Cc: "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/8] x86/hyper-v: move struct hv_flush_pcpu{,ex} definitions to common header
+References: <20180516152131.30689-1-vkuznets@redhat.com>
+        <20180516152131.30689-2-vkuznets@redhat.com>
+        <MW2PR2101MB1113225D3DBAF5A62FAA990AA0920@MW2PR2101MB1113.namprd21.prod.outlook.com>
+Date: Thu, 17 May 2018 09:05:58 +0200
+In-Reply-To: <MW2PR2101MB1113225D3DBAF5A62FAA990AA0920@MW2PR2101MB1113.namprd21.prod.outlook.com>
+        (KY Srinivasan's message of "Wed, 16 May 2018 15:52:45 +0000")
+Message-ID: <87d0xuiwx5.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In perf annotate view, a new hotkey 'c' is created for
-showing the max/min cycles.
+KY Srinivasan <kys@microsoft.com> writes:
 
-For example, when press 'c', the annotate view is:
+>> -----Original Message-----
+>> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> Sent: Wednesday, May 16, 2018 8:21 AM
+>> To: kvm@vger.kernel.org
+>> Cc: x86@kernel.org; Paolo Bonzini <pbonzini@redhat.com>; Radim Krčmář
+>> <rkrcmar@redhat.com>; Roman Kagan <rkagan@virtuozzo.com>; KY
+>> Srinivasan <kys@microsoft.com>; Haiyang Zhang
+>> <haiyangz@microsoft.com>; Stephen Hemminger
+>> <sthemmin@microsoft.com>; Michael Kelley (EOSG)
+>> <Michael.H.Kelley@microsoft.com>; Mohammed Gamal
+>> <mmorsy@redhat.com>; Cathy Avery <cavery@redhat.com>; linux-
+>> kernel@vger.kernel.org
+>> Subject: [PATCH v4 1/8] x86/hyper-v: move struct hv_flush_pcpu{,ex}
+>> definitions to common header
+>> 
+>> Hyper-V TLB flush hypercalls definitions will be required for KVM so move
+>> them hyperv-tlfs.h. Structures also need to be renamed as '_pcpu' suffix is
+>> irrelevant for a general-purpose definition.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/hyperv/mmu.c              | 40 ++++++++++----------------------------
+>>  arch/x86/include/asm/hyperv-tlfs.h | 20 +++++++++++++++++++
+>>  2 files changed, 30 insertions(+), 30 deletions(-)
+>
+> Vitaly,
+>
+> We should  coordinate on this; I have patches in flight that conflict with
+> the changes here.
 
-Percent│ IPC     Cycle(max/min)
-       │
-       │
-       │                             Disassembly of section .text:
-       │
-       │                             000000000003aab0 <random@@GLIBC_2.2.5>:
-  8.22 │3.92                           sub    $0x18,%rsp
-       │3.92                           mov    $0x1,%esi
-       │3.92                           xor    %eax,%eax
-       │3.92                           cmpl   $0x0,argp_program_version_hook@@G
-       │3.92             1(2/1)      ↓ je     20
-       │                               lock   cmpxchg %esi,__abort_msg@@GLIBC_P
-       │                             ↓ jne    29
-       │                             ↓ jmp    43
-       │1.10                     20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+
-  8.93 │1.10             1(5/1)      ↓ je     43
+I see you also fixed 'HV_GENERIC_SET_SPARCE_4K' typo. I don't think it's
+a big deal as we fix it in the same way :-)
 
-When press 'c' again, the annotate view is switched back:
+I see you also altered hv_flush_pcpu_ex definition but kept it in mmu.c:
+I think my patches should be applied on top of yours, I only need to
+move it to hyperv-tlfs.h header and get rid of _pcpu suffix.
 
-Percent│ IPC Cycle
-       │
-       │
-       │                Disassembly of section .text:
-       │
-       │                000000000003aab0 <random@@GLIBC_2.2.5>:
-  8.22 │3.92              sub    $0x18,%rsp
-       │3.92              mov    $0x1,%esi
-       │3.92              xor    %eax,%eax
-       │3.92              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x
-       │3.92     1      ↓ je     20
-       │                  lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
-       │                ↓ jne    29
-       │                ↓ jmp    43
-       │1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
-  8.93 │1.10     1      ↓ je     43
+I hope Thomas will merge your patches very soon. In case Paolo/Radim
+decide that my series is ready too we'll ask their guidance on how to
+resolve the conflict (topic branch?). It should be relatively easy.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/ui/browsers/annotate.c |  8 ++++++++
- tools/perf/util/annotate.c        | 37 +++++++++++++++++++++++++++++++------
- tools/perf/util/annotate.h        |  7 ++++++-
- 3 files changed, 45 insertions(+), 7 deletions(-)
+Thanks,
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 3781d74..f202a3f 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -695,6 +695,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 		"O             Bump offset level (jump targets -> +call -> all -> cycle thru)\n"
- 		"s             Toggle source code view\n"
- 		"t             Circulate percent, total period, samples view\n"
-+		"c             Show max/min cycle\n"
- 		"/             Search string\n"
- 		"k             Toggle line numbers\n"
- 		"P             Print to [symbol_name].annotation file.\n"
-@@ -791,6 +792,13 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 				notes->options->show_total_period = true;
- 			annotation__update_column_widths(notes);
- 			continue;
-+		case 'c':
-+			if (notes->options->show_maxmin_cycle)
-+				notes->options->show_maxmin_cycle = false;
-+			else
-+				notes->options->show_maxmin_cycle = true;
-+			annotation__update_column_widths(notes);
-+			continue;
- 		case K_LEFT:
- 		case K_ESC:
- 		case 'q':
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 934a172..17fff6f 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2495,13 +2495,38 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
- 		else
- 			obj__printf(obj, "%*s ", ANNOTATION__IPC_WIDTH - 1, "IPC");
- 
--		if (al->cycles)
--			obj__printf(obj, "%*" PRIu64 " ",
-+		if (!notes->options->show_maxmin_cycle) {
-+			if (al->cycles)
-+				obj__printf(obj, "%*" PRIu64 " ",
- 					   ANNOTATION__CYCLES_WIDTH - 1, al->cycles);
--		else if (!show_title)
--			obj__printf(obj, "%*s", ANNOTATION__CYCLES_WIDTH, " ");
--		else
--			obj__printf(obj, "%*s ", ANNOTATION__CYCLES_WIDTH - 1, "Cycle");
-+			else if (!show_title)
-+				obj__printf(obj, "%*s",
-+					    ANNOTATION__CYCLES_WIDTH, " ");
-+			else
-+				obj__printf(obj, "%*s ",
-+					    ANNOTATION__CYCLES_WIDTH - 1,
-+					    "Cycle");
-+		} else {
-+			if (al->cycles) {
-+				char str[32];
-+
-+				scnprintf(str, sizeof(str),
-+					"%" PRIu64 "(%" PRIu64 "/%" PRIu64 ")",
-+					al->cycles, al->cycles_max,
-+					al->cycles_min);
-+
-+				obj__printf(obj, "%*s ",
-+					    ANNOTATION__MAXMIN_CYCLES_WIDTH - 1,
-+					    str);
-+			} else if (!show_title)
-+				obj__printf(obj, "%*s",
-+					    ANNOTATION__MAXMIN_CYCLES_WIDTH,
-+					    " ");
-+			else
-+				obj__printf(obj, "%*s ",
-+					    ANNOTATION__MAXMIN_CYCLES_WIDTH - 1,
-+					    "Cycle(max/min)");
-+		}
- 	}
- 
- 	obj__printf(obj, " ");
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index d50363d..4cafd63 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -61,6 +61,7 @@ bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2);
- 
- #define ANNOTATION__IPC_WIDTH 6
- #define ANNOTATION__CYCLES_WIDTH 6
-+#define ANNOTATION__MAXMIN_CYCLES_WIDTH 19
- 
- struct annotation_options {
- 	bool hide_src_code,
-@@ -69,7 +70,8 @@ struct annotation_options {
- 	     show_linenr,
- 	     show_nr_jumps,
- 	     show_nr_samples,
--	     show_total_period;
-+	     show_total_period,
-+	     show_maxmin_cycle;
- 	u8   offset_level;
- };
- 
-@@ -243,6 +245,9 @@ struct annotation {
- 
- static inline int annotation__cycles_width(struct annotation *notes)
- {
-+	if (notes->have_cycles && notes->options->show_maxmin_cycle)
-+		return ANNOTATION__IPC_WIDTH + ANNOTATION__MAXMIN_CYCLES_WIDTH;
-+
- 	return notes->have_cycles ? ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH : 0;
- }
- 
 -- 
-2.7.4
+  Vitaly
