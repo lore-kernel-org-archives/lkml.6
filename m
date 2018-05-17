@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeEQHns (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:43:48 -0400
+        id S1752618AbeEQHoD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:44:03 -0400
 Received: from wolverine01.qualcomm.com ([199.106.114.254]:18821 "EHLO
         wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeEQHnY (ORCPT
+        with ESMTP id S1752396AbeEQHnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:43:24 -0400
+        Thu, 17 May 2018 03:43:23 -0400
 X-IronPort-AV: E=Sophos;i="5.49,409,1520924400";
-   d="scan'208";a="340813093"
-X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="87448695"
+   d="scan'208";a="340813087"
+X-IronPort-AV: E=McAfee;i="5900,7806,8895"; a="87448687"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Philippe Ombredanne <pombredanne@nexb.com>,
@@ -21,9 +21,9 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
         Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>,
         Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v17 9/9] PCI/DPC: Use the generic pcie_do_fatal_recovery() path
-Date: Thu, 17 May 2018 03:43:11 -0400
-Message-Id: <1526542991-5291-10-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v17 2/9] PCI/AER: Handle ERR_FATAL with removal and re-enumeration of devices
+Date: Thu, 17 May 2018 03:43:04 -0400
+Message-Id: <1526542991-5291-3-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
 References: <1526542991-5291-1-git-send-email-poza@codeaurora.org>
@@ -31,116 +31,280 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our goal is to handle ERR_FATAL errors similarly, whether they are reported
-via AER or via DPC.  A previous commit changed AER so it handles ERR_FATAL
-by calling driver .remove() methods and resetting the Link.  DPC already
-does that (although the Link reset is done automatically by hardware and
-happens before we call the driver .remove() methods).
+PCIe ERR_FATAL errors mean the Link is unreliable.  Components on the Link
+may need to be reset to return to reliable operation (PCIe r4.0, sec
+6.2.2).  We previously handled these errors much differently depending on
+whether the platform supports Downstream Port Containment (DPC) (PCIe r4.0,
+sec 6.2.10) or not.
 
-Restructure the DPC code so it calls the same pcie_do_fatal_recovery()
-interface used by AER.  This makes it clearer that we want to use the same
-path.
+The AER driver has historically logged the error details, called
+driver-supplied pci_error_handlers callbacks, and reset the Link.  This
+reset downstream devices, but did not remove them from the PCI subsystem,
+re-enumerate them, or call their driver .remove() or .probe() methods.
 
-Implement the .reset_link() method used by pcie_do_fatal_recovery().  For
-DPC, the actual reset is done automatically by hardware, so we really only
-have to wait for the Link to be inactive, then release the Port from DPC.
+DPC is different because the hardware automatically disables the Link when
+it detects ERR_FATAL, which resets downstream devices.  There's no
+opportunity for pci_error_handlers callbacks before resetting the Link.
+The DPC driver removes affected devices (which calls their .remove()
+methods), brings the Link back up, and re-enumerates (which calls driver
+.probe() methods).
+
+Align AER ERR_FATAL handling with DPC by resetting the Link in software,
+skipping the driver pci_error_handlers callbacks, removing the devices from
+the PCI subsystem, and re-enumerating.  The idea is that drivers and
+devices should see the same behavior for ERR_FATAL events, regardless of
+whether they're handled by AER or DPC.
+
+Here are the basic ERR_FATAL recovery steps, showing the previous AER
+behavior, the AER behavior after this patch, and the DPC behavior:
+
+                          AER        AER      DPC
+                          previous   new      behavior
+                          --------   ---      --------
+  Log error               yes        yes      yes (minimal)
+  drv.error_detected()    yes        no       no
+  Reset Link              yes        yes      yes
+  drv.mmio_enabled()      yes        no       no
+  drv.slot_reset()        yes        no       no
+  drv.resume()            yes        no       no
+  Remove PCI devices      no         yes      yes
+    (calls drv.remove())
+  Re-enumerate            no         yes      yes
+    (calls drv.probe())
+
+N.B. With DPC, the Link reset happens before the driver .remove() calls,
+while with AER, the reset happens *after* the .remove() calls.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-[bhelgaas: changelog, DPC_FATAL is not a bitfield, can be sequential]
+[bhelgaas: changelog, squash doc patch into this]
 Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 361903f..6064041 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -73,29 +73,30 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- 	pcie_wait_for_link(pdev, false);
+diff --git a/Documentation/PCI/pci-error-recovery.txt b/Documentation/PCI/pci-error-recovery.txt
+index 0b6bb3e..688b691 100644
+--- a/Documentation/PCI/pci-error-recovery.txt
++++ b/Documentation/PCI/pci-error-recovery.txt
+@@ -110,7 +110,7 @@ The actual steps taken by a platform to recover from a PCI error
+ event will be platform-dependent, but will follow the general
+ sequence described below.
+ 
+-STEP 0: Error Event
++STEP 0: Error Event: ERR_NONFATAL
+ -------------------
+ A PCI bus error is detected by the PCI hardware.  On powerpc, the slot
+ is isolated, in that all I/O is blocked: all reads return 0xffffffff,
+@@ -228,13 +228,7 @@ proceeds to either STEP3 (Link Reset) or to STEP 5 (Resume Operations).
+ If any driver returned PCI_ERS_RESULT_NEED_RESET, then the platform
+ proceeds to STEP 4 (Slot Reset)
+ 
+-STEP 3: Link Reset
+-------------------
+-The platform resets the link.  This is a PCI-Express specific step
+-and is done whenever a fatal error has been detected that can be
+-"solved" by resetting the link.
+-
+-STEP 4: Slot Reset
++STEP 3: Slot Reset
+ ------------------
+ 
+ In response to a return value of PCI_ERS_RESULT_NEED_RESET, the
+@@ -320,7 +314,7 @@ Failure).
+ >>> However, it probably should.
+ 
+ 
+-STEP 5: Resume Operations
++STEP 4: Resume Operations
+ -------------------------
+ The platform will call the resume() callback on all affected device
+ drivers if all drivers on the segment have returned
+@@ -332,7 +326,7 @@ a result code.
+ At this point, if a new error happens, the platform will restart
+ a new error recovery sequence.
+ 
+-STEP 6: Permanent Failure
++STEP 5: Permanent Failure
+ -------------------------
+ A "permanent failure" has occurred, and the platform cannot recover
+ the device.  The platform will call error_detected() with a
+@@ -355,6 +349,27 @@ errors. See the discussion in powerpc/eeh-pci-error-recovery.txt
+ for additional detail on real-life experience of the causes of
+ software errors.
+ 
++STEP 0: Error Event: ERR_FATAL
++-------------------
++PCI bus error is detected by the PCI hardware. On powerpc, the slot is
++isolated, in that all I/O is blocked: all reads return 0xffffffff, all
++writes are ignored.
++
++STEP 1: Remove devices
++--------------------
++Platform removes the devices depending on the error agent, it could be
++this port for all subordinates or upstream component (likely downstream
++port)
++
++STEP 2: Reset link
++--------------------
++The platform resets the link.  This is a PCI-Express specific step and is
++done whenever a fatal error has been detected that can be "solved" by
++resetting the link.
++
++STEP 3: Re-enumerate the devices
++--------------------
++Initiates the re-enumeration.
+ 
+ Conclusion; General Remarks
+ ---------------------------
+diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+index 779b387..377e576 100644
+--- a/drivers/pci/pcie/aer/aerdrv.c
++++ b/drivers/pci/pcie/aer/aerdrv.c
+@@ -353,10 +353,7 @@ static void aer_error_resume(struct pci_dev *dev)
+ 	pos = dev->aer_cap;
+ 	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
+ 	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &mask);
+-	if (dev->error_state == pci_channel_io_normal)
+-		status &= ~mask; /* Clear corresponding nonfatal bits */
+-	else
+-		status &= mask; /* Clear corresponding fatal bits */
++	status &= ~mask; /* Clear corresponding nonfatal bits */
+ 	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
  }
  
--static void dpc_work(struct work_struct *work)
-+static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
- {
--	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
--	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
--	struct pci_bus *parent = pdev->subordinate;
--	u16 cap = dpc->cap_pos, ctl;
--
--	pci_lock_rescan_remove();
--	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
--					 bus_list) {
--		pci_dev_get(dev);
--		pci_dev_set_disconnected(dev, NULL);
--		if (pci_has_subordinate(dev))
--			pci_walk_bus(dev->subordinate,
--				     pci_dev_set_disconnected, NULL);
--		pci_stop_and_remove_bus_device(dev);
--		pci_dev_put(dev);
--	}
--	pci_unlock_rescan_remove();
--
-+	struct dpc_dev *dpc;
-+	struct pcie_device *pciedev;
-+	struct device *devdpc;
-+	u16 cap, ctl;
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 0ea5acc..b56f9c1 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/kfifo.h>
+ #include "aerdrv.h"
++#include "../../pci.h"
+ 
+ #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+ 				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+@@ -475,35 +476,82 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ }
+ 
+ /**
+- * do_recovery - handle nonfatal/fatal error recovery process
++ * do_fatal_recovery - handle fatal error recovery process
+  * @dev: pointer to a pci_dev data structure of agent detecting an error
+- * @severity: error severity type
+  *
+- * Invoked when an error is nonfatal/fatal. Once being invoked, broadcast
++ * Invoked when an error is fatal. Once being invoked, removes the devices
++ * beneath this AER agent, followed by reset link e.g. secondary bus reset
++ * followed by re-enumeration of devices.
++ */
++static void do_fatal_recovery(struct pci_dev *dev)
++{
++	struct pci_dev *udev;
++	struct pci_bus *parent;
++	struct pci_dev *pdev, *temp;
++	pci_ers_result_t result;
++	struct aer_broadcast_data result_data;
 +
-+	/*
-+	 * DPC disables the Link automatically in hardware, so it has
-+	 * already been reset by the time we get here.
-+	 */
-+	devdpc = pcie_port_find_device(pdev, PCIE_PORT_SERVICE_DPC);
-+	pciedev = to_pcie_device(devdpc);
-+	dpc = get_service_data(pciedev);
-+	cap = dpc->cap_pos;
++	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
++		udev = dev;
++	else
++		udev = dev->bus->self;
 +
-+	/*
-+	 * Wait until the Link is inactive, then clear DPC Trigger Status
-+	 * to allow the Port to leave DPC.
-+	 */
- 	dpc_wait_link_inactive(dpc);
++	parent = udev->subordinate;
++	pci_lock_rescan_remove();
++	list_for_each_entry_safe_reverse(pdev, temp, &parent->devices,
++					 bus_list) {
++		pci_dev_get(pdev);
++		pci_dev_set_disconnected(pdev, NULL);
++		if (pci_has_subordinate(pdev))
++			pci_walk_bus(pdev->subordinate,
++				     pci_dev_set_disconnected, NULL);
++		pci_stop_and_remove_bus_device(pdev);
++		pci_dev_put(pdev);
++	}
 +
- 	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
--		return;
-+		return PCI_ERS_RESULT_DISCONNECT;
- 	if (dpc->rp_extensions && dpc->rp_pio_status) {
- 		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
- 				       dpc->rp_pio_status);
-@@ -108,6 +109,17 @@ static void dpc_work(struct work_struct *work)
- 	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
- 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
- 			      ctl | PCI_EXP_DPC_CTL_INT_EN);
++	result = reset_link(udev);
 +
-+	return PCI_ERS_RESULT_RECOVERED;
++	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		/*
++		 * If the error is reported by a bridge, we think this error
++		 * is related to the downstream link of the bridge, so we
++		 * do error recovery on all subordinates of the bridge instead
++		 * of the bridge and clear the error status of the bridge.
++		 */
++		pci_cleanup_aer_uncorrect_error_status(dev);
++	}
++
++	if (result == PCI_ERS_RESULT_RECOVERED) {
++		if (pcie_wait_for_link(udev, true))
++			pci_rescan_bus(udev->bus);
++	} else {
++		pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
++		pci_info(dev, "AER: Device recovery from fatal error failed\n");
++	}
++
++	pci_unlock_rescan_remove();
 +}
 +
-+static void dpc_work(struct work_struct *work)
-+{
-+	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
-+	struct pci_dev *pdev = dpc->dev->port;
-+
-+	/* We configure DPC so it only triggers on ERR_FATAL */
-+	pcie_do_fatal_recovery(pdev, PCIE_PORT_SERVICE_DPC);
++/**
++ * do_nonfatal_recovery - handle nonfatal error recovery process
++ * @dev: pointer to a pci_dev data structure of agent detecting an error
++ *
++ * Invoked when an error is nonfatal. Once being invoked, broadcast
+  * error detected message to all downstream drivers within a hierarchy in
+  * question and return the returned code.
+  */
+-static void do_recovery(struct pci_dev *dev, int severity)
++static void do_nonfatal_recovery(struct pci_dev *dev)
+ {
+-	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
++	pci_ers_result_t status;
+ 	enum pci_channel_state state;
+ 
+-	if (severity == AER_FATAL)
+-		state = pci_channel_io_frozen;
+-	else
+-		state = pci_channel_io_normal;
++	state = pci_channel_io_normal;
+ 
+ 	status = broadcast_error_message(dev,
+ 			state,
+ 			"error_detected",
+ 			report_error_detected);
+ 
+-	if (severity == AER_FATAL) {
+-		result = reset_link(dev);
+-		if (result != PCI_ERS_RESULT_RECOVERED)
+-			goto failed;
+-	}
+-
+ 	if (status == PCI_ERS_RESULT_CAN_RECOVER)
+ 		status = broadcast_error_message(dev,
+ 				state,
+@@ -562,8 +610,10 @@ static void handle_error_source(struct pcie_device *aerdev,
+ 		if (pos)
+ 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
+ 					info->status);
+-	} else
+-		do_recovery(dev, info->severity);
++	} else if (info->severity == AER_NONFATAL)
++		do_nonfatal_recovery(dev);
++	else if (info->severity == AER_FATAL)
++		do_fatal_recovery(dev);
  }
  
- static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
-@@ -288,6 +300,7 @@ static struct pcie_port_service_driver dpcdriver = {
- 	.service	= PCIE_PORT_SERVICE_DPC,
- 	.probe		= dpc_probe,
- 	.remove		= dpc_remove,
-+	.reset_link	= dpc_reset_link,
- };
- 
- static int __init dpc_service_init(void)
-diff --git a/include/linux/aer.h b/include/linux/aer.h
-index 8f87bbe..514bffa 100644
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@ -14,6 +14,7 @@
- #define AER_NONFATAL			0
- #define AER_FATAL			1
- #define AER_CORRECTABLE			2
-+#define DPC_FATAL			3
- 
- struct pci_dev;
- 
+ #ifdef CONFIG_ACPI_APEI_PCIEAER
+@@ -627,8 +677,10 @@ static void aer_recover_work_func(struct work_struct *work)
+ 			continue;
+ 		}
+ 		cper_print_aer(pdev, entry.severity, entry.regs);
+-		if (entry.severity != AER_CORRECTABLE)
+-			do_recovery(pdev, entry.severity);
++		if (entry.severity == AER_NONFATAL)
++			do_nonfatal_recovery(pdev);
++		else if (entry.severity == AER_FATAL)
++			do_fatal_recovery(pdev);
+ 		pci_dev_put(pdev);
+ 	}
+ }
 -- 
 2.7.4
