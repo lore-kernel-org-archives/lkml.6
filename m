@@ -1,56 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752539AbeEQQAR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:00:17 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:56143 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeEQQAQ (ORCPT
+        id S1752199AbeEQQCP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:02:15 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33999 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751047AbeEQQCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:00:16 -0400
-Date: Thu, 17 May 2018 17:59:40 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>
-Cc: linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+        Thu, 17 May 2018 12:02:13 -0400
+X-Google-Smtp-Source: AB8JxZpMYfyrrAjgiU4pJKhTB6oim+FOfvdIhIctDk+Gn9MMpbouE0UPZAFf1rx+fHwLKtD+tE94tQ==
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Thu, 17 May 2018 12:02:08 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To: Eric Anholt <eric@anholt.net>
+cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Message-ID: <1412187220.62585.1526572780332@email.1und1.de>
-In-Reply-To: <20180517131727.29263-1-eric@anholt.net>
-References: <20180517131727.29263-1-eric@anholt.net>
 Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+In-Reply-To: <87efia1hjg.fsf@anholt.net>
+Message-ID: <alpine.DEB.2.21.1805171159110.7984@macbook-air>
+References: <20180517131727.29263-1-eric@anholt.net> <alpine.DEB.2.21.1805171007260.7820@macbook-air> <87efia1hjg.fsf@anholt.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:I90nzdkZM7NUSEsuaRFdLxzZ8I8Qn/S0vO/TgUNyx3sQDtpPQfP
- 6VQ6XT9ICxDu1Mav8hX/U37Kg9N6vS1GtrlMX9hmoftmsq/I8gXdwvZdKSR8NM0w1Rc2XKi
- 8bxQY0QD9lzvHrwlk3Mh4XsBEQJM4GqqYQiJ9eBXpr2d2eOFrMielM21QmBm6agKmBqh8Ji
- wGkVoZhp8K6iGni85J99g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BiAWei0QUJE=:W+I8cSveR/1nUDgHkiNqQL
- ZqQg3laTR8F4QooH8IfNRkx2P+6sYO5xZjduIWKs03By6+HFhfMPFdbBFdinpzUGhDHBWHndJ
- fdBpUqmWYa3L6vH0BzTgVz4jcpHkHeiyaAUQnOtg0sxzd2dMUMH8tbxyw3aNZ0DUy68w3GML/
- vYxYuvN+XjvaBBy1aqcPMM2bGeS2vSbrhkQbJskifEQjnvx+j0q8UnYqGYOS+IyvigApW55nO
- jpNqynPWCeNknTcXIzLnWKVb5oF4vbpWOczKe12NnMa+1Z+Jf3Qwa5jlYK+7uOhke6CEcNPTe
- kO9nz3fwVhnaSZH3L8/zQYcMYGdKAECaF69bZRfGbF29EWsWHq5U3ZZf73tjeOA9n0G5chA9T
- hMuHKPGcr+ZWHJ6zyC1ewJ6g+6fFifUTbPcEZkxISwO53KmyJ9xFGbzeJMs8v4EMr6DfBhu5t
- aCk4Cx5CH+U4FNzbs8ezoIP5Iwxk5eHOx2+/RSt1nAm/Yrk0TXTRFZqi4OEcGvMW+R43OKzDr
- vK/hsrQrOCXEfb/L5gpnOJDb/8RmSkJEo+beNFNn7GuJc00XzVm82MBPA9B2lxinri4YKJFiz
- gpGAC/yZkSE5s1dZTdTxV99vFLXO6lJnSixPDDHPuwFmb+eBJFZswxEMdcBfU0/Me7mlQLmjV
- rCIUuhaU9sazRKnODPwpV0MoXwpwMz3oX9vp2vVvG2kmHDEQl4xECS/40rNBC3Kji44dOiZrE
- OO6lz47WWhREfwbj
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 17 May 2018, Eric Anholt wrote:
+> 
+> Is that better than a53?  I'm happy to switch to that.  The important
+> part to me is the a7, since basically everyone with this hw is running
+> arm32.
 
-> Eric Anholt <eric@anholt.net> hat am 17. Mai 2018 um 15:17 geschrieben:
-> 
-> 
-> The a53 and a7 counters seem to match up, so we advertise a7 so that
-> arm32 can probe.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+no, on further investigation it looks like a53 is more proper to use than 
+the generic armv8.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Is the armv8 pmu on the cortex-a53 backwards compatible with armv7?  I'm 
+dreading having to pull up the various ARM ARMs to look for myself so if 
+it works for you I'm fine with that part too.
+
+The biggest pushback I had with my original patch was no one believing irq 
+9 was the right one to use.
+
+Vince
