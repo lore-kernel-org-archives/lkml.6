@@ -1,219 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeEQFxP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 01:53:15 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:61640 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750779AbeEQFxO (ORCPT
+        id S1751293AbeEQFzw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 01:55:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750779AbeEQFzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 01:53:14 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40028240"
-Date: Thu, 17 May 2018 13:53:01 +0800
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
-To: Baoquan He <bhe@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <mingo@kernel.org>,
-        <lcapitulino@redhat.com>, <keescook@chromium.org>,
-        <tglx@linutronix.de>, <x86@kernel.org>, <hpa@zytor.com>,
-        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages
- handling
-Message-ID: <20180517055301.GB6521@localhost.localdomain>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180516100532.14083-2-bhe@redhat.com>
- <20180517032702.GA6521@localhost.localdomain>
- <20180517040343.GL24627@MiWiFi-R3L-srv>
+        Thu, 17 May 2018 01:55:51 -0400
+Date: Thu, 17 May 2018 11:25:42 +0530
+From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To: Stewart Smith <stewart@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        ego@linux.vnet.ibm.com, npiggin@gmail.com
+Subject: Re: [PATCH] cpuidle/powernv : init all present cpus for deep states
+References: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+ <87efiby6a9.fsf@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180517040343.GL24627@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: B17764B34D47.AB773
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <87efiby6a9.fsf@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170306 (1.8.0)
+X-TM-AS-GCONF: 00
+x-cbid: 18051705-0040-0000-0000-0000045A4DB5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051705-0041-0000-0000-000020FE8368
+Message-Id: <20180517055542.vvpgw2vy2ivowfdc@aksadiga.ibm>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805170055
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 12:03:43PM +0800, Baoquan He wrote:
->Hi Chao,
->
->On 05/17/18 at 11:27am, Chao Fan wrote:
->> >+/* Store the number of 1GB huge pages which user specified.*/
->> >+static unsigned long max_gb_huge_pages;
->> >+
->> >+static int parse_gb_huge_pages(char *param, char* val)
->> >+{
->> >+	char *p;
->> >+	u64 mem_size;
->> >+	static bool gbpage_sz = false;
->> >+
->> >+	if (!strcmp(param, "hugepagesz")) {
->> >+		p = val;
->> >+		mem_size = memparse(p, &p);
->> >+		if (mem_size == PUD_SIZE) {
->> >+			if (gbpage_sz)
->> >+				warn("Repeadly set hugeTLB page size of 1G!\n");
->> >+			gbpage_sz = true;
->> >+		} else
->> >+			gbpage_sz = false;
->> >+	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
->> >+		p = val;
->> >+		max_gb_huge_pages = simple_strtoull(p, &p, 0);
->> >+		debug_putaddr(max_gb_huge_pages);
->> >+	}
->> >+}
->> >+
->> >+
->> > static int handle_mem_memmap(void)
->> > {
->> > 	char *args = (char *)get_cmd_line_ptr();
->> >@@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
->> > 	}
->> > }
->> > 
->> >+/* Skip as many 1GB huge pages as possible in the passed region. */
->> >+static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
->> >+{
->> >+	int i = 0;
->> >+	unsigned long addr, size;
->> >+	struct mem_vector tmp;
->> >+
->> >+	if (!max_gb_huge_pages) {
->> >+		store_slot_info(region, image_size);
->> >+		return;
->> >+	}
->> >+
->> >+	addr = ALIGN(region->start, PUD_SIZE);
->> >+	/* If Did we raise the address above the passed in memory entry? */
->> >+	if (addr < region->start + region->size)
->> >+		size = region->size - (addr - region->start);
->> >+
->> >+	/* Check how many 1GB huge pages can be filtered out*/
->> >+	while (size > PUD_SIZE && max_gb_huge_pages) {
->> >+		size -= PUD_SIZE;
->> >+		max_gb_huge_pages--;
->> 
->> The global variable 'max_gb_huge_pages' means how many huge pages
->> user specified when you get it from command line.
->> But here, everytime we find a position which is good for huge page
->> allocation, the 'max_gdb_huge_page' decreased. So in my understanding,
->> it is used to store how many huge pages that we still need to search memory
->> for good slots to filter out, right?
->> If it's right, maybe the name 'max_gb_huge_pages' is not very suitable.
->> If my understanding is wrong, please tell me.
->
->No, you have understood it very right. I finished the draft patch last
->week, but changed this variable name and the function names several
->time, still I feel they are not good. However I can't get a better name.
->
->Yes, 'max_gb_huge_pages' stores how many 1GB huge pages are expected
->from kernel command-line. And in this function it will be decreased. But
->we can't define another global variable only for decreasing in this
->place.
->
->And you can see that in this patchset I only take cares of 1GB huge
->pages. While on x86 we have two kinds of huge pages, 2MB and 1GB, why
->1GB only? Because 2MB is not impacted by KASLR, please check the code in 
->hugetlb_nrpages_setup() of mm/hugetlb.c . Only 1GB huge pages need be
->pre-allocated in hugetlb_nrpages_setup(), and if you look into
->hugetlb_nrpages_setup(), you will find that it will call
->alloc_bootmem_huge_page() to allocate huge pages one by one, but not at
->one time. That is why I always add 'gb' in the middle of the global
->variable and the newly added functions.
->
->And it will answer your below questions. When walk over all memory
->regions, 'max_gb_huge_pages' is still not 0, what should we do? It's
->normal and done as expected. Here hugetlb only try its best to allocate
->as many as possible according to 'max_gb_huge_pages'. If can't fully
->satisfied, it's fine. E.g on bare-metal machine with 16GB RAM, you add
->below to command-line:
->
->default_hugepagesz=1G hugepagesz=1G hugepages=20
->
->Then it will get 14 good 1GB huge pages with kaslr disabled since [0,1G)
->and [3G,4G) are touched by bios reservation and pci/firmware reservation.
->Then this 14 huge pages are maximal value which is expected. It's not a
->bug in huge page. But with kaslr enabled, it sometime only get 13 1GB
->huge pages because KASLR put kernel into one of those good 1GB huge
->pages. This is a bug.
+Yes this needs to be sent to  stable. 
 
-Thanks for your explaination, I got it.
-
->
->I am not very familiar with huge page handling, just read code recently
->because of this kaslr bug. Hope Luiz and people from his team can help
->correct and clarify if anything is not right. Especially the function
->names, I feel it's not good, if anyone have a better idea, I will really
->appreciate that.
->> 
->> >+		i++;
->> >+	}
->> >+
->> >+	if (!i) {
->> >+		store_slot_info(region, image_size);
->> >+		return;
->> >+	}
->> >+
->> >+	/* Process the remaining regions after filtering out. */
->> >+
->> This line may be unusable.
->
->Hmm, I made it on purpose. Because 1GB huge pages may be digged out from
->the middle, then the remaing head and tail regions still need be
->handled. I put it here to mean that it covers below two code blocks. 
->
-
-Yes, the two parts below are all in the condition when if(!i) is false.
-The first part is the memory before good slots for huge pages,
-the second part is after.
-
->I can remove it if people think it's not appropriate.
->
->> >+	if (addr >= region->start + image_size) {
->> >+		tmp.start = region->start;
->> >+		tmp.size = addr - region->start;
->> >+		store_slot_info(&tmp, image_size);
->> >+	}
->> >+
->> >+	size  = region->size - (addr - region->start) - i * PUD_SIZE;
->> >+        if (size >= image_size) {
->> >+		tmp.start = addr + i*PUD_SIZE;
->> >+		tmp.size = size;
->> >+		store_slot_info(&tmp, image_size);
->> >+        }
-These 5 lines may have a wrong space, you can check it.
-
-Thanks,
-Chao Fan
-
->> 
->> I have another question not related to kaslr.
->> Here you try to avoid the memory from addr to (addr + i * PUD_SIZE),
->> but I wonder if after walking all memory regions, 'max_gb_huge_pages'
->> is still more than 0, which means there isn't enough memory slots for
->> huge page, what will happen?
->
->Please check the response at the beginning of response.
->
->Thanks
->Baoquan
->
->> 
->> 
->> >+}
->> >+
->> > static unsigned long slots_fetch_random(void)
->> > {
->> > 	unsigned long slot;
->> >-- 
->> >2.13.6
->> >
->> >
->> >
->> 
->> 
->
->
+Fixes: d405a98c ("powerpc/powernv: Move cpuidle related code from setup.c
+to new file")
