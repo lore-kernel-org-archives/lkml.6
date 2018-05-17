@@ -1,112 +1,217 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1882526-1526549544-2-18256196443915893338
+X-Cyrus-Session-Id: sloti22d1t05-2641703-1526587936-2-16992693935187194651
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526549543; b=Z4kx+Eqh/C17BNLI5vK3RXxE+Gzqf9K/edcXy7+1FWGOegOyqn
-    mIlIYFOtGZT8Df2M6ltMOYuXnJP4CZZjUv0K5DvuXhtyKXzfEibSGC3s9qiGLuXZ
-    R0vP1waCsRKRa++85xk8dOYs2DlWq2FKyAKzbaoVPs/DHTIz67wGXwsqzMzRe4MT
-    BeGlro7nFk0iX3wcDP3Vod/YZmrPp5nRL/iqKjaUTaqogoKd8lZpp7O5YgqioCrm
-    mmiOioB0kgyk9eorIuDkinE75lTeJyHy9dso2QYMt0KyshkHaH6yK/RXSPnVpATD
-    LFeFATX+8Yb+LaG50p7WfCG20Y6vLUqhtkIQ==
+    1526587935; b=HTbxD1KR2RoRkCLdndRaF/n997GSYivAGub4xN44EUkszyaygk
+    YpALezW1dHyr2ZVXCA+Hm+8L3MBWeljGTlVXFWmqqQM2mWqsW/+lhIk48GT86UHd
+    1JwImdPrOtDkAG8PmXqD5kSvAaYyI/YqN28KNAjlY6Ed4IHgbU5/eL7nEo69uzPU
+    CQLSZQUlc1zChgUAQxk2Yf/CPtTwaDr4tarUE+tJlw5dScTzt2U73/P4Ut/rVT9i
+    oYEueUbMAANRCnezpOL98qdkLkZDnRq/QcPRYThVHGcIuSGvg7eAxZvf6s2tleJU
+    y4cFsEzQ1DrnhbJSgiU4nFPhEv6+CddG30eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526549543; bh=1ftq0LD9Di1ZeHLJEGo3THVP5J5upm
-    ScXBYjOegZ970=; b=ac5b0mlgDTl3Ln0spyPU4p29EVQHTqgibABi+jepT3L25M
-    yUmxw036ujyAqYcuNKaEIGp3C7RyL+O+/1ezwCyBh1qXc/mGbyOY7d0jisqr/Em7
-    Dh+FJgHWaYdfbdRxHspvIYn+4lwSqq5SSF9knULlGkqJVWqtS0A5nLVX1RH7sBfW
-    6roTmhpkNfAvYNSxXL9773rYJe+hlJEElt3kWHDufFh8DY9fl1tQG+qsrKHIobiG
-    iwPl5sSleYkO3LEO6k4fIoFXz2JTMm0beIwRDlPy3UvFROMlpLiS9dMic3tyF1Ek
-    bxaCFrJw8RcYwE5FeHuE1TlMCDSJTP5VQTUjRAeA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=x5lHMkHZ
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=merlin.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1526587935; bh=wNpoc5xfuHh
+    WhrI6VW7ECrs2C+L0URQrenUlSrKdW9Q=; b=SEFhe/Z6FVtw/0PG9DxrZMFPzvi
+    1nivPVYrz0hDP2pZOoP85JrgoA9iywH2RysOWIL4iEKJVCuWshATfDblkoU/8p8h
+    RiLuZ48iY0nBNPDz3LFtsHrL0yfOaY517JBEMfdfaPhPAoG2V3E895oG5Wjderzz
+    zqx1blJuKUp3vlXMLC4icdWu/os0GnQCwxHYpK9cwOuLF/chSP3Vx8DmkBF07kAy
+    RwhRbrWL+FfZFJdNgGeWRS0eZ75srTH0BnvQZz4KjpegzDW+1AVvo3wsJt2r4ylb
+    zfNC8+vXhtMDhZH7JCK9TwvQKfX5mLEG3IyQS0bBst9157TPIh8Ex57gj3g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+    header.i=@linaro.org header.b=RtCtN247 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=rcapZCVZ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=infradead.org header.result=pass
-    header_is_org_domain=yes;
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=x5lHMkHZ
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=merlin.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+      header.i=@linaro.org header.b=RtCtN247 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=rcapZCVZ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=infradead.org header.result=pass
-      header_is_org_domain=yes;
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAuuuf5eDst1jnI9ky+4iM+oAIZC6515DaauwQDXAf4z2/wlqxDfdoUgFcVfnSIZLjvXjhm17JEpiy4nKxXcdfD4n6bY9ptyVeWJPsohkJIGZysFZupR
-    BkDlaAwugQLbX+5xevyReW5BN40ZaUSppOJhL48wKJU5CUict/ZgvQGQ4ixAXTx03LZWKnkb/lFbRF7BSiDKVaMz335jHd7IRidLIUDHphVUgP8bUZopxEbI
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=lZ6kzMzFitiRADRsB-oA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfJnEPwMgq3XSSOsVm1oOKMzb/V9CWuprzNl/q3BxVuph1ku+Y2fUFx9C2hZOAdasCOs3uXbaUPGPuhrNHUl+ZN3X0c8fvihmnx6OXdVINgW+gL1b5e6i
+    K8GgkJXrbF4CxWmMcpNq2Ew6WqYRtnRRnokMxtqLDaYLdVEfNeuj31HJn+T7qwUr6FualIPbqa2nLQy1HdavkQ5NOdxdZllUGHgPt+6T1EIHexfZdRVRzDqY
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=oWUkm7qxZtmG1Q6IZ3QA:9 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeEQJcU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 05:32:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55002 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbeEQJcS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 05:32:18 -0400
-Date: Thu, 17 May 2018 11:32:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
+        id S1751543AbeEQUMM (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 16:12:12 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37580 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbeEQUML (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 16:12:11 -0400
+X-Google-Smtp-Source: AB8JxZr1+5HBeUD5vQKJeSkDIt5Z7ondh6GvSjz4DpqjQt0ECVNjIdTXbx5rnMHyHrKeJdCklcQL7A==
+Date: Thu, 17 May 2018 22:12:07 +0200
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: Peter Zijlstra <peterz@infradead.org>
 Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
         patrick.bellasi@arm.com, viresh.kumar@linaro.org,
         tglx@linutronix.de, efault@gmx.de, juri.lelli@redhat.com,
         "# v4 . 16+" <stable@vger.kernel.org>
 Subject: Re: [PATCH v2] sched/rt: fix call to cpufreq_update_util
-Message-ID: <20180517093206.GP12235@hirez.programming.kicks-ass.net>
+Message-ID: <20180517201207.GA478@linaro.org>
 References: <1526541403-16380-1-git-send-email-vincent.guittot@linaro.org>
  <20180517090530.GO12217@hirez.programming.kicks-ass.net>
+ <20180517093206.GP12235@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180517090530.GO12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517093206.GP12235@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 17, 2018 at 11:05:30AM +0200, Peter Zijlstra wrote:
-> Hurm.. I think this is also wrong. See how dequeue_rt_stack() is also
-> called from the enqueue path. Also, nothing calls cpufreq_update_util()
-> on the throttle path now.
-> 
-> And talking about throttle; I think we wanted to check rt_queued in that
-> case.
+Le Thursday 17 May 2018 à 11:32:06 (+0200), Peter Zijlstra a écrit :
+> On Thu, May 17, 2018 at 11:05:30AM +0200, Peter Zijlstra wrote:
+> > Hurm.. I think this is also wrong. See how dequeue_rt_stack() is also
+> > called from the enqueue path. Also, nothing calls cpufreq_update_util()
+> > on the throttle path now.
 
-Bah, clearly you also want to update on unthrottle.. but I think there's
-more buggered wrt throtteling.
+Yes I missed the point that rt_entities were dequeued then re-enqueued when
+a task was either enqueued or dequeued.
+
+That's also means that enqueue_top_rt_rq() is always called when a task is
+enqueued or dequeued and also when groups are throttled or unthrottled
+In fact, the only point where it's not called, is when root rt_rq is
+throttled. So I have prepared the patch below which call cpufreq_update util
+in enqueue_top_rt_rq() and also when we throttle the root rt_rq.
+According to the tests I have done , it seems to work for enqueue/dequeue and
+throttle/unthrottle use cases.
+
+I have re-used your rt_rq_is_runnable() which takes into account rt_queued
+
+---
+ kernel/sched/cpufreq_schedutil.c |  2 +-
+ kernel/sched/rt.c                | 16 ++++++++++------
+ kernel/sched/sched.h             |  5 +++++
+ 3 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index e13df95..1751f96 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -185,7 +185,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+ 	struct rq *rq = cpu_rq(sg_cpu->cpu);
+ 	unsigned long util;
+ 
+-	if (rq->rt.rt_nr_running) {
++	if (rt_rq_is_runnable(&rq->rt)) {
+ 		util = sg_cpu->max;
+ 	} else {
+ 		util = sg_cpu->util_dl;
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 7aef6b4..d6b9517 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -508,8 +508,11 @@ static void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+ 
+ 	rt_se = rt_rq->tg->rt_se[cpu];
+ 
+-	if (!rt_se)
++	if (!rt_se) {
+ 		dequeue_top_rt_rq(rt_rq);
++		/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
++		cpufreq_update_util(rq_of_rt_rq(rt_rq), 0);
++	}
+ 	else if (on_rt_rq(rt_se))
+ 		dequeue_rt_entity(rt_se, 0);
+ }
+@@ -1001,8 +1004,6 @@ dequeue_top_rt_rq(struct rt_rq *rt_rq)
+ 	sub_nr_running(rq, rt_rq->rt_nr_running);
+ 	rt_rq->rt_queued = 0;
+ 
+-	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+-	cpufreq_update_util(rq, 0);
+ }
+ 
+ static void
+@@ -1014,11 +1015,14 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
+ 
+ 	if (rt_rq->rt_queued)
+ 		return;
+-	if (rt_rq_throttled(rt_rq) || !rt_rq->rt_nr_running)
++
++	if (rt_rq_throttled(rt_rq))
+ 		return;
+ 
+-	add_nr_running(rq, rt_rq->rt_nr_running);
+-	rt_rq->rt_queued = 1;
++	if (rt_rq->rt_nr_running) {
++		add_nr_running(rq, rt_rq->rt_nr_running);
++		rt_rq->rt_queued = 1;
++	}
+ 
+ 	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+ 	cpufreq_update_util(rq, 0);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c9895d3..bbebcfe 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -609,6 +609,11 @@ struct rt_rq {
+ #endif
+ };
+ 
++static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
++{
++	return rt_rq->rt_queued && rt_rq->rt_nr_running;
++}
++
+ /* Deadline class' related fields in a runqueue */
+ struct dl_rq {
+ 	/* runqueue is an rbtree, ordered by deadline */
+-- 
+2.7.4
+
+
+
+
+
+> > 
+> > And talking about throttle; I think we wanted to check rt_queued in that
+> > case.
+> 
+> Bah, clearly you also want to update on unthrottle.. but I think there's
+> more buggered wrt throtteling.
