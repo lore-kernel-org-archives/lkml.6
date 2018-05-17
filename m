@@ -1,23 +1,23 @@
 Return-Path: <zohar@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZpgCs0HhH89FJO7bMo2Ma0gyvzEN0gGGvSF/Q4qxaCbTUvwPhwEBwrxRWyAJ3DM9tl2yEP9
-ARC-Seal: i=1; a=rsa-sha256; t=1526568591; cv=none;
+X-Google-Smtp-Source: AB8JxZrV7Kk0wlylmgzORIAKxJ97R7JhmXSokEvCXxl5OpRmqo49kusFcsrcr4glmhwAkB1O5Ga7
+ARC-Seal: i=1; a=rsa-sha256; t=1526568589; cv=none;
         d=google.com; s=arc-20160816;
-        b=eYJeBMqnPQIKxsIfDeFAxos+PcMAmpxtkTHNSRlJjxDKwKamjR1J+Pv4+UZM+Kzbhz
-         LaEgGORjvX50w4EA1CpO9OWQX8e24pc6xJVOCJ2B5Q0OBvB8re+jIN2fpr3mEzewFuOz
-         ezOSNGtmHOOImh84KNquq9oMyTQiGXESMR2y1hJte4C+CtDhq6zw5Syp/HHJEbRqnxl0
-         F+UqBiGFsqQWekWTj6YCc02RWHLXFekjpsAYXetryUx+EJC3EvGhq8l8iWM88GWcwS9x
-         OsnkVBi6n0vUDw4evpZffhMpBBZFBNLhmMl5vUhmFybjntkW4gN/sEHu/kCV99rq0Q2K
-         ClYg==
+        b=TtoVsnG6nbNR9a380tCUF7Xc4tWyDqLhUmStj8vvX2NybdH/HSSfQmge+ufITOI0lE
+         cCaAlotrg1es3qRWmh2DX4i7B3QVsoHXlsdR+NulIcQVcNP6wxaJGws0Kge/ousjCgOE
+         gSoPDsLNkea7pL8BXju8k31BW50noIR2NZHcvZBHnk4gLxIPh0wyCqiJHCQlw/em8NIx
+         PdyEruNuFkB8ZTZ9S0gOSLrJ1gc7GEZ0X4gQySkgJ7/blJFwIr7mW/1D1NgAMmE7XrJz
+         ALPE4KgGeCB5KspZxHHxsFhG5DeAvmocwUDUGY8oWL/fiFuRDsLlUIqhTHG7+YaQgrfJ
+         kM9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=aq6mzsOlRGILVIxAVw+U3wD2O/wbIFkzikuJBt68bgM=;
-        b=XXOANSIokP++zvmni77M8nZxQjvHkdid2LJNDINRSVXefmONK8QDFEC3yAF0srX0Ro
-         pBXYp2sVKXzLMzVAv4gbEdM16FEJK1H/X+RrhnEYsD8hR8xiOV6P+Mjod6D62Wj4cC19
-         87d2ldGLT+i47swx4vyulsIq0iNRR7qZzsU2tKEOTiMLzjAZIscRessW7ecipO+laH4W
-         M+GznUR9jpdtCXP+ttwibTBJUVYq01yiX/EoascI8mwKkFy82yMF/f8od+PQvqY/cyel
-         5BLeT/1GrM93BcjFdgwJ1WNiiQaY36jQECX8m2JW8R2laI0liaBGY+AodmPVL95JdBsb
-         5srg==
+        bh=i0V7Ctu4LSaXknMKaxDcuEchI2AIsMNHQM+ePVg/Nks=;
+        b=pjjVngwTbj36loqreJbmExswAUmEA3MDWeVPHMzY7v+7ba/waSZR1ummIJvSc5op2n
+         wMHPftZWkIlCg0WRYJoPt3CG7a5Irgz/fX/gOUEW/wV8OLEIPai/5UumXVXS1abQZ0gS
+         UhGFv90mfcyOoD3OH2f6JJFmF4X9keGzEQERnc664MGeek39owAH1ezLEpLlhYFv0RGr
+         oyx3NlMnSI5ka5yf/mWv2Kg2DbWQseD06900i+W11VMch8qvg+vLcMNKGJ8DRq+hZnDn
+         +BATeewMXlShEbSPw8YjocSz4/jOwZyAY/HMutt+SyH8gtKdHmhoEmoJ8GYyRkHXvuZ9
+         xbbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
@@ -34,18 +34,17 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2 6/9] firmware: add call to LSM hook before firmware sysfs fallback
-Date: Thu, 17 May 2018 10:48:47 -0400
+Subject: [PATCH v2 5/9] ima: based on policy require signed kexec kernel images
+Date: Thu, 17 May 2018 10:48:46 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051714-0012-0000-0000-000005D7A704
+x-cbid: 18051714-0012-0000-0000-000005D7A702
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051714-0013-0000-0000-00001954D35C
-Message-Id: <1526568530-9144-7-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18051714-0013-0000-0000-00001954D35A
+Message-Id: <1526568530-9144-6-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-17_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -54,63 +53,70 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorit
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1805170137
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600723187289207856?=
-X-GMAIL-MSGID: =?utf-8?q?1600723187289207856?=
+X-GMAIL-THRID: =?utf-8?q?1600723185178724685?=
+X-GMAIL-MSGID: =?utf-8?q?1600723185178724685?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add an LSM hook prior to allowing firmware sysfs fallback loading.
+The original kexec_load syscall can not verify file signatures.  This
+patch differentiates between the kexec_load and kexec_file_load
+syscalls.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
-
-Changelog:
-- call security_kernel_read_blob()
-- rename the READING_FIRMWARE_FALLBACK kernel_read_file_id enumeration to
-READING_FIRMWARE_FALLBACK_SYSFS.
+Cc: David Howells <dhowells@redhat.com>
 ---
- drivers/base/firmware_loader/fallback.c | 7 +++++++
- include/linux/fs.h                      | 1 +
- 2 files changed, 8 insertions(+)
+ security/integrity/ima/ima.h        | 1 +
+ security/integrity/ima/ima_main.c   | 9 +++++++++
+ security/integrity/ima/ima_policy.c | 2 ++
+ 3 files changed, 12 insertions(+)
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 358354148dec..6ec97e19c017 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 354bb5716ce3..78c15264b17b 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -232,6 +232,7 @@ int ima_policy_show(struct seq_file *m, void *v);
+ #define IMA_APPRAISE_MODULES	0x08
+ #define IMA_APPRAISE_FIRMWARE	0x10
+ #define IMA_APPRAISE_POLICY	0x20
++#define IMA_APPRAISE_KEXEC	0x40
  
- static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- {
-+	int ret;
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise_measurement(enum ima_hooks func,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 83f84928ad76..7e1a127f18fe 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -442,6 +442,15 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		}
+ 		return 0;	/* We rely on module signature checking */
+ 	}
 +
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
- 		return false;
-@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- 	if ((opt_flags & FW_OPT_NOFALLBACK))
- 		return false;
- 
-+	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
-+	ret = security_kernel_read_blob(READING_FIRMWARE_FALLBACK_SYSFS);
-+	if (ret < 0)
-+		return ret;
-+
- 	return fw_force_sysfs_fallback(opt_flags);
++	if (!file && read_id == READING_KEXEC_IMAGE) {
++		if ((ima_appraise & IMA_APPRAISE_KEXEC) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file syscall.\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
++		return 0;
++	}
+ 	return 0;
  }
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..6e31d9207435 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-+	id(FIRMWARE_FALLBACK_SYSFS, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8bbc18eb07eb..c27f6993b07a 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -448,6 +448,8 @@ static int ima_appraise_flag(enum ima_hooks func)
+ 		return IMA_APPRAISE_FIRMWARE;
+ 	else if (func == POLICY_CHECK)
+ 		return IMA_APPRAISE_POLICY;
++	else if (func == KEXEC_KERNEL_CHECK)
++		return IMA_APPRAISE_KEXEC;
+ 	return 0;
+ }
+ 
 -- 
 2.7.5
