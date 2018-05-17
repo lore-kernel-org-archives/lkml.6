@@ -1,191 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752095AbeEQR5G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 13:57:06 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:35516 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeEQR5C (ORCPT
+        id S1752223AbeEQR5b (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:57:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54992 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeEQR5a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 13:57:02 -0400
-X-Google-Smtp-Source: AB8JxZplh3K5AK3T2xR8wRBhyxTP6IWyJLJKmh7nchA2pdytR7QTSAaolC23wyOPMT3lT/inrJtBMsFoKYhKxLqA1ltW14i/UQ9e
+        Thu, 17 May 2018 13:57:30 -0400
+Subject: Re: [PATCH -V2 -mm] mm, hugetlbfs: Pass fault address to no page
+ handler
+To: "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        David Rientjes <rientjes@google.com>, Michal Hocko <mhocko@suse.com>
+References: <20180517083539.9242-1-ying.huang@intel.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <2eba3615-5144-f08d-169a-6cfd417d00b9@oracle.com>
+Date: Thu, 17 May 2018 10:56:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Date: Thu, 17 May 2018 10:57:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000048356056c6a90e2@google.com>
-Subject: KASAN: use-after-free Read in timer_is_static_object
-From: syzbot <syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com>
-To: alexey.kodanev@oracle.com, davem@davemloft.net, dccp@vger.kernel.org,
-        edumazet@google.com, gerrit@erg.abdn.ac.uk, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        soheil@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180517083539.9242-1-ying.huang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805170168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 05/17/2018 01:35 AM, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> This is to take better advantage of general huge page clearing
+> optimization (c79b57e462b5d, "mm: hugetlb: clear target sub-page last
+> when clearing huge page") for hugetlbfs.  In the general optimization
+> patch, the sub-page to access will be cleared last to avoid the cache
+> lines of to access sub-page to be evicted when clearing other
+> sub-pages.  This works better if we have the address of the sub-page
+> to access, that is, the fault address inside the huge page.  So the
+> hugetlbfs no page fault handler is changed to pass that information.
+> This will benefit workloads which don't access the begin of the
+> hugetlbfs huge page after the page fault under heavy cache contention
+> for shared last level cache.
+> 
+> The patch is a generic optimization which should benefit quite some
+> workloads, not for a specific use case.  To demonstrate the performance
+> benefit of the patch, we tested it with vm-scalability run on
+> hugetlbfs.
+> 
+> With this patch, the throughput increases ~28.1% in vm-scalability
+> anon-w-seq test case with 88 processes on a 2 socket Xeon E5 2699 v4
+> system (44 cores, 88 threads).  The test case creates 88 processes,
+> each process mmaps a big anonymous memory area with MAP_HUGETLB and
+> writes to it from the end to the begin.  For each process, other
+> processes could be seen as other workload which generates heavy cache
+> pressure.  At the same time, the cache miss rate reduced from ~36.3%
+> to ~25.6%, the IPC (instruction per cycle) increased from 0.3 to 0.37,
+> and the time spent in user space is reduced ~19.3%.
+> 
 
-syzbot found the following crash on:
+Agree with Michal that commit message looks better.
 
-HEAD commit:    e6506eb24187 Merge tag 'trace-v4.17-rc4-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=177fe477800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d47e9ec91a6f15dbd6f
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+I went through updated patch with haddr naming so,
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+still applies.
+-- 
+Mike Kravetz
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com
-
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000016
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000017
-R13: 0000000000000053 R14: 00000000006f4868 R15: 0000000000000001
-==================================================================
-BUG: KASAN: use-after-free in timer_is_static_object+0x80/0x90  
-kernel/time/timer.c:607
-Read of size 8 at addr ffff8801bebb5118 by task syz-executor2/25299
-
-CPU: 1 PID: 25299 Comm: syz-executor2 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  timer_is_static_object+0x80/0x90 kernel/time/timer.c:607
-  debug_object_activate+0x2d9/0x670 lib/debugobjects.c:508
-  debug_timer_activate kernel/time/timer.c:709 [inline]
-  debug_activate kernel/time/timer.c:764 [inline]
-  __mod_timer kernel/time/timer.c:1041 [inline]
-  mod_timer+0x4d3/0x13b0 kernel/time/timer.c:1102
-  sk_reset_timer+0x22/0x60 net/core/sock.c:2742
-  ccid2_hc_tx_rto_expire+0x587/0x680 net/dccp/ccids/ccid2.c:147
-  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
-  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:cap_capable+0x3f/0x260 security/commoncap.c:82
-RSP: 0018:ffff8801ac75f8c8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: ffffffff88d5be00 RCX: 0000000000000000
-RDX: 1ffff100386dc571 RSI: ffffffff830ee893 RDI: ffff8801c36e2b88
-RBP: ffff8801ac75f910 R08: ffff8801ac126440 R09: ffff8801ac75fcb8
-R10: ffff8801ac126c78 R11: ffff8801ac75fc78 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff8801c36e2b00 R15: 0000000000000021
-  cap_vm_enough_memory+0x50/0x70 security/commoncap.c:1307
-  security_vm_enough_memory_mm+0x71/0xc0 security/security.c:327
-  mmap_region+0x37b/0x1870 mm/mmap.c:1714
-  do_mmap+0xde2/0x1360 mm/mmap.c:1535
-  do_mmap_pgoff include/linux/mm.h:2237 [inline]
-  vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
-  ksys_mmap_pgoff+0x26e/0x640 mm/mmap.c:1585
-  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455a5a
-RSP: 002b:0000000000a3e778 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000455a5a
-RDX: 0000000000000003 RSI: 0000000000021000 RDI: 0000000000000000
-RBP: ffffffffffffffff R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000020022 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000021000 R14: 0000000000020022 R15: 0000000000000000
-
-Allocated by task 25374:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
-  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
-  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3a7/0x819 net/dccp/feat.c:1538
-  dccp_create_openreq_child+0x472/0x610 net/dccp/minisocks.c:128
-  dccp_v4_request_recv_sock+0x12c/0xca0 net/dccp/ipv4.c:408
-  dccp_v6_request_recv_sock+0x125d/0x1f10 net/dccp/ipv6.c:415
-  dccp_check_req+0x455/0x6a0 net/dccp/minisocks.c:197
-  dccp_v4_rcv+0x7b8/0x1f3f net/dccp/ipv4.c:841
-  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
-  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
-  process_backlog+0x219/0x760 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-
-Freed by task 25374:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
-  dccp_disconnect+0x130/0xc66 net/dccp/proto.c:286
-  dccp_close+0x3bc/0xe60 net/dccp/proto.c:1045
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:460
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801bebb4cc0
-  which belongs to the cache ccid2_hc_tx_sock of size 1240
-The buggy address is located 1112 bytes inside of
-  1240-byte region [ffff8801bebb4cc0, ffff8801bebb5198)
-The buggy address belongs to the page:
-page:ffffea0006faed00 count:1 mapcount:0 mapping:ffff8801bebb41c0  
-index:0xffff8801bebb5240 compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801bebb41c0 ffff8801bebb5240 0000000100000003
-raw: ffff8801cdba3138 ffffea0007634120 ffff8801cdbaab40 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bebb5000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801bebb5080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801bebb5100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                             ^
-  ffff8801bebb5180: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801bebb5200: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Shaohua Li <shli@fb.com>
+> Cc: Christopher Lameter <cl@linux.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> Cc: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+> Acked-by: David Rientjes <rientjes@google.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/hugetlb.c | 42 +++++++++++++++++++++---------------------
+>  1 file changed, 21 insertions(+), 21 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 129088710510..4f0682cb9414 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -3686,6 +3686,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	struct page *page;
+>  	pte_t new_pte;
+>  	spinlock_t *ptl;
+> +	unsigned long haddr = address & huge_page_mask(h);
+>  
+>  	/*
+>  	 * Currently, we are forced to kill the process in the event the
+> @@ -3716,7 +3717,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			u32 hash;
+>  			struct vm_fault vmf = {
+>  				.vma = vma,
+> -				.address = address,
+> +				.address = haddr,
+>  				.flags = flags,
+>  				/*
+>  				 * Hard to debug if it ends up being
+> @@ -3733,14 +3734,14 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			 * fault to make calling code simpler.
+>  			 */
+>  			hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping,
+> -							idx, address);
+> +							idx, haddr);
+>  			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+>  			ret = handle_userfault(&vmf, VM_UFFD_MISSING);
+>  			mutex_lock(&hugetlb_fault_mutex_table[hash]);
+>  			goto out;
+>  		}
+>  
+> -		page = alloc_huge_page(vma, address, 0);
+> +		page = alloc_huge_page(vma, haddr, 0);
+>  		if (IS_ERR(page)) {
+>  			ret = PTR_ERR(page);
+>  			if (ret == -ENOMEM)
+> @@ -3789,12 +3790,12 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	 * the spinlock.
+>  	 */
+>  	if ((flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
+> -		if (vma_needs_reservation(h, vma, address) < 0) {
+> +		if (vma_needs_reservation(h, vma, haddr) < 0) {
+>  			ret = VM_FAULT_OOM;
+>  			goto backout_unlocked;
+>  		}
+>  		/* Just decrements count, does not deallocate */
+> -		vma_end_reservation(h, vma, address);
+> +		vma_end_reservation(h, vma, haddr);
+>  	}
+>  
+>  	ptl = huge_pte_lock(h, mm, ptep);
+> @@ -3808,17 +3809,17 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  
+>  	if (anon_rmap) {
+>  		ClearPagePrivate(page);
+> -		hugepage_add_new_anon_rmap(page, vma, address);
+> +		hugepage_add_new_anon_rmap(page, vma, haddr);
+>  	} else
+>  		page_dup_rmap(page, true);
+>  	new_pte = make_huge_pte(vma, page, ((vma->vm_flags & VM_WRITE)
+>  				&& (vma->vm_flags & VM_SHARED)));
+> -	set_huge_pte_at(mm, address, ptep, new_pte);
+> +	set_huge_pte_at(mm, haddr, ptep, new_pte);
+>  
+>  	hugetlb_count_add(pages_per_huge_page(h), mm);
+>  	if ((flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
+>  		/* Optimization, do the COW without a second fault */
+> -		ret = hugetlb_cow(mm, vma, address, ptep, page, ptl);
+> +		ret = hugetlb_cow(mm, vma, haddr, ptep, page, ptl);
+>  	}
+>  
+>  	spin_unlock(ptl);
+> @@ -3830,7 +3831,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	spin_unlock(ptl);
+>  backout_unlocked:
+>  	unlock_page(page);
+> -	restore_reserve_on_error(h, vma, address, page);
+> +	restore_reserve_on_error(h, vma, haddr, page);
+>  	put_page(page);
+>  	goto out;
+>  }
+> @@ -3883,10 +3884,9 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	struct hstate *h = hstate_vma(vma);
+>  	struct address_space *mapping;
+>  	int need_wait_lock = 0;
+> +	unsigned long haddr = address & huge_page_mask(h);
+>  
+> -	address &= huge_page_mask(h);
+> -
+> -	ptep = huge_pte_offset(mm, address, huge_page_size(h));
+> +	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
+>  	if (ptep) {
+>  		entry = huge_ptep_get(ptep);
+>  		if (unlikely(is_hugetlb_entry_migration(entry))) {
+> @@ -3896,20 +3896,20 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			return VM_FAULT_HWPOISON_LARGE |
+>  				VM_FAULT_SET_HINDEX(hstate_index(h));
+>  	} else {
+> -		ptep = huge_pte_alloc(mm, address, huge_page_size(h));
+> +		ptep = huge_pte_alloc(mm, haddr, huge_page_size(h));
+>  		if (!ptep)
+>  			return VM_FAULT_OOM;
+>  	}
+>  
+>  	mapping = vma->vm_file->f_mapping;
+> -	idx = vma_hugecache_offset(h, vma, address);
+> +	idx = vma_hugecache_offset(h, vma, haddr);
+>  
+>  	/*
+>  	 * Serialize hugepage allocation and instantiation, so that we don't
+>  	 * get spurious allocation failures if two CPUs race to instantiate
+>  	 * the same page in the page cache.
+>  	 */
+> -	hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping, idx, address);
+> +	hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping, idx, haddr);
+>  	mutex_lock(&hugetlb_fault_mutex_table[hash]);
+>  
+>  	entry = huge_ptep_get(ptep);
+> @@ -3939,16 +3939,16 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	 * consumed.
+>  	 */
+>  	if ((flags & FAULT_FLAG_WRITE) && !huge_pte_write(entry)) {
+> -		if (vma_needs_reservation(h, vma, address) < 0) {
+> +		if (vma_needs_reservation(h, vma, haddr) < 0) {
+>  			ret = VM_FAULT_OOM;
+>  			goto out_mutex;
+>  		}
+>  		/* Just decrements count, does not deallocate */
+> -		vma_end_reservation(h, vma, address);
+> +		vma_end_reservation(h, vma, haddr);
+>  
+>  		if (!(vma->vm_flags & VM_MAYSHARE))
+>  			pagecache_page = hugetlbfs_pagecache_page(h,
+> -								vma, address);
+> +								vma, haddr);
+>  	}
+>  
+>  	ptl = huge_pte_lock(h, mm, ptep);
+> @@ -3973,16 +3973,16 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  
+>  	if (flags & FAULT_FLAG_WRITE) {
+>  		if (!huge_pte_write(entry)) {
+> -			ret = hugetlb_cow(mm, vma, address, ptep,
+> +			ret = hugetlb_cow(mm, vma, haddr, ptep,
+>  					  pagecache_page, ptl);
+>  			goto out_put_page;
+>  		}
+>  		entry = huge_pte_mkdirty(entry);
+>  	}
+>  	entry = pte_mkyoung(entry);
+> -	if (huge_ptep_set_access_flags(vma, address, ptep, entry,
+> +	if (huge_ptep_set_access_flags(vma, haddr, ptep, entry,
+>  						flags & FAULT_FLAG_WRITE))
+> -		update_mmu_cache(vma, address, ptep);
+> +		update_mmu_cache(vma, haddr, ptep);
+>  out_put_page:
+>  	if (page != pagecache_page)
+>  		unlock_page(page);
+> 
