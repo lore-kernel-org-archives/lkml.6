@@ -1,57 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeEQUxc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:53:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39490 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752044AbeEQUxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:53:30 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhc@lemote.com>,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 1/3] rtc: ls1x: switch to rtc_register_device
-Date: Thu, 17 May 2018 22:53:25 +0200
-Message-Id: <20180517205327.29150-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752403AbeEQUyR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 16:54:17 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:37880 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752370AbeEQUyO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 16:54:14 -0400
+From: Qing Huang <qing.huang@oracle.com>
+To: tariqt@mellanox.com, davem@davemloft.net, haakon.bugge@oracle.com,
+        yanjun.zhu@oracle.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com,
+        Qing Huang <qing.huang@oracle.com>
+Subject: [PATCH v3] mlx4_core: allocate ICM memory in page size chunks
+Date: Thu, 17 May 2018 13:53:43 -0700
+Message-Id: <20180517205343.8401-1-qing.huang@oracle.com>
+X-Mailer: git-send-email 2.9.3
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=935
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805170193
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows for future improvement of the driver.
+When a system is under memory presure (high usage with fragments),
+the original 256KB ICM chunk allocations will likely trigger kernel
+memory management to enter slow path doing memory compact/migration
+ops in order to complete high order memory allocations.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+When that happens, user processes calling uverb APIs may get stuck
+for more than 120s easily even though there are a lot of free pages
+in smaller chunks available in the system.
+
+Syslog:
+...
+Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+oracle_205573_e:205573 blocked for more than 120 seconds.
+...
+
+With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
+
+However in order to support smaller ICM chunk size, we need to fix
+another issue in large size kcalloc allocations.
+
+E.g.
+Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
+size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
+entry). So we need a 16MB allocation for a table->icm pointer array to
+hold 2M pointers which can easily cause kcalloc to fail.
+
+The solution is to use vzalloc to replace kcalloc. There is no need
+for contiguous memory pages for a driver meta data structure (no need
+of DMA ops).
+
+Signed-off-by: Qing Huang <qing.huang@oracle.com>
+Acked-by: Daniel Jurgens <danielj@mellanox.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
 ---
- drivers/rtc/rtc-ls1x.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+v3: use PAGE_SIZE instead of PAGE_SHIFT
+    add comma to the end of enum variables
+    include vmalloc.h header file to avoid build issues on Sparc
 
-diff --git a/drivers/rtc/rtc-ls1x.c b/drivers/rtc/rtc-ls1x.c
-index de86f9fabc11..609bd1d013f0 100644
---- a/drivers/rtc/rtc-ls1x.c
-+++ b/drivers/rtc/rtc-ls1x.c
-@@ -173,15 +173,15 @@ static int ls1x_rtc_probe(struct platform_device *pdev)
- 	while (readl(SYS_COUNTER_CNTRL) & SYS_CNTRL_TTS)
- 		usleep_range(1000, 3000);
+v2: adjuste chunk size to reflect different architectures
+
+ drivers/net/ethernet/mellanox/mlx4/icm.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
+index a822f7a..3705f4e 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.c
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+@@ -33,6 +33,7 @@
  
--	rtcdev = devm_rtc_device_register(&pdev->dev, "ls1x-rtc",
--					&ls1x_rtc_ops , THIS_MODULE);
--	if (IS_ERR(rtcdev)) {
--		ret = PTR_ERR(rtcdev);
--		goto err;
--	}
-+	rtcdev = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rtcdev))
-+		return PTR_ERR(rtcdev);
+ #include <linux/errno.h>
+ #include <linux/mm.h>
++#include <linux/vmalloc.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
  
- 	platform_set_drvdata(pdev, rtcdev);
--	return 0;
-+	rtcdev->ops = &ls1x_rtc_ops;
-+
-+	return rtc_register_device(rtcdev);
-+
- err:
- 	return ret;
+@@ -43,12 +44,12 @@
+ #include "fw.h"
+ 
+ /*
+- * We allocate in as big chunks as we can, up to a maximum of 256 KB
+- * per chunk.
++ * We allocate in page size (default 4KB on many archs) chunks to avoid high
++ * order memory allocations in fragmented/high usage memory situation.
+  */
+ enum {
+-	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
+-	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
++	MLX4_ICM_ALLOC_SIZE	= PAGE_SIZE,
++	MLX4_TABLE_CHUNK_SIZE	= PAGE_SIZE,
+ };
+ 
+ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
+@@ -400,7 +401,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+ 	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
+ 	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
+ 
+-	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
++	table->icm      = vzalloc(num_icm * sizeof(*table->icm));
+ 	if (!table->icm)
+ 		return -ENOMEM;
+ 	table->virt     = virt;
+@@ -446,7 +447,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+ 			mlx4_free_icm(dev, table->icm[i], use_coherent);
+ 		}
+ 
+-	kfree(table->icm);
++	vfree(table->icm);
+ 
+ 	return -ENOMEM;
+ }
+@@ -462,5 +463,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
+ 			mlx4_free_icm(dev, table->icm[i], table->coherent);
+ 		}
+ 
+-	kfree(table->icm);
++	vfree(table->icm);
  }
 -- 
-2.17.0
+2.9.3
