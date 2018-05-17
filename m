@@ -1,141 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeEQVhk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 17:37:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55072 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751061AbeEQVhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 17:37:39 -0400
-Date: Thu, 17 May 2018 15:37:37 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Kirti Wankhede <kwankhede@nvidia.com>
-Cc: Cornelia Huck <cohuck@redhat.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        "Halil Pasic" <pasic@linux.ibm.com>
-Subject: Re: [PATCH v3] vfio/mdev: Check globally for duplicate devices
-Message-ID: <20180517153737.74028a17@w520.home>
-In-Reply-To: <3ab0fe44-9290-8c29-5e4c-2599ba0de373@nvidia.com>
-References: <20180517031746.32242.17768.stgit@gimli.home>
-        <20180517100928.5949b11e.cohuck@redhat.com>
-        <50191254-4437-8ff3-06db-8d6b2df20b65@nvidia.com>
-        <20180517102000.50656267@w520.home>
-        <3ab0fe44-9290-8c29-5e4c-2599ba0de373@nvidia.com>
+        id S1752083AbeEQVpg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 17:45:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50258 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbeEQVpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 17:45:34 -0400
+From: Qing Huang <qing.huang@oracle.com>
+Subject: Re: [PATCH v3] mlx4_core: allocate ICM memory in page size chunks
+To: Eric Dumazet <eric.dumazet@gmail.com>, tariqt@mellanox.com,
+        davem@davemloft.net, haakon.bugge@oracle.com, yanjun.zhu@oracle.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+References: <20180517205343.8401-1-qing.huang@oracle.com>
+ <e6c470f0-f2ae-5efd-09ed-0c9562a4a764@gmail.com>
+Message-ID: <19b7818e-16f6-2349-dc34-245c2f215f6f@oracle.com>
+Date: Thu, 17 May 2018 14:45:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <e6c470f0-f2ae-5efd-09ed-0c9562a4a764@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8896 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=958
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805170202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 May 2018 01:56:50 +0530
-Kirti Wankhede <kwankhede@nvidia.com> wrote:
 
-> On 5/17/2018 9:50 PM, Alex Williamson wrote:
-> > On Thu, 17 May 2018 21:25:22 +0530
-> > Kirti Wankhede <kwankhede@nvidia.com> wrote:
-> >   
-> >> On 5/17/2018 1:39 PM, Cornelia Huck wrote:  
-> >>> On Wed, 16 May 2018 21:30:19 -0600
-> >>> Alex Williamson <alex.williamson@redhat.com> wrote:
-> >>>     
-> >>>> When we create an mdev device, we check for duplicates against the
-> >>>> parent device and return -EEXIST if found, but the mdev device
-> >>>> namespace is global since we'll link all devices from the bus.  We do
-> >>>> catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-> >>>> with it comes a kernel warning and stack trace for trying to create
-> >>>> duplicate sysfs links, which makes it an undesirable response.
-> >>>>
-> >>>> Therefore we should really be looking for duplicates across all mdev
-> >>>> parent devices, or as implemented here, against our mdev device list.
-> >>>> Using mdev_list to prevent duplicates means that we can remove
-> >>>> mdev_parent.lock, but in order not to serialize mdev device creation
-> >>>> and removal globally, we add mdev_device.active which allows UUIDs to
-> >>>> be reserved such that we can drop the mdev_list_lock before the mdev
-> >>>> device is fully in place.
-> >>>>
-> >>>> NB. there was never intended to be any serialization guarantee
-> >>>> provided by the mdev core with respect to creation and removal of mdev
-> >>>> devices, mdev_parent.lock provided this only as a side-effect of the
-> >>>> implementation for locking the namespace per parent.  That
-> >>>> serialization is now removed.    
-> >>>     
-> >>
-> >> mdev_parent.lock is to serialize create and remove of that mdev device,
-> >> that handles race condition that Cornelia mentioned below.  
-> > 
-> > Previously it was stated:
-> > 
-> > On Thu, 17 May 2018 01:01:40 +0530
-> > Kirti Wankhede <kwankhede@nvidia.com> wrote:  
-> >> Here lock is not for create/remove routines of vendor driver, its about
-> >> mdev device creation and device registration, which is a common code
-> >> path, and so is part of mdev core module.  
-> > 
-> > So the race condition was handled previously, but as a side-effect of
-> > protecting the namespace, aiui.  I'm trying to state above that the
-> > serialization of create/remove was never intended as a guarantee
-> > provided to mdev vendor drivers.  I don't see that there's a need to
-> > protect "mdev device creation and device registration" beyond conflicts
-> > in the UUID namespace, which is done here.  Are there others?
-> >   
-> 
-> Sorry not being elaborative in my earlier response to
-> 
-> > If we can
-> > show that vendor drivers handle the create/remove paths themselves,
-> > perhaps we can refine the locking granularity.  
-> 
-> mdev_device_create() function does :
-> - create mdev device
-> - register device
-> - call vendor driver->create
-> - create sysfs files.
-> 
-> mdev_device_remove() removes sysfs files, unregister device and delete
-> device.
-> 
-> There is common code in mdev_device_create() and mdev_device_remove()
-> independent of what vendor driver does in its create()/remove()
-> callback. Moving this code to each vendor driver to handle create/remove
-> themselves doesn't make sense to me.
 
-I don't see where anyone is suggesting that, I'm not.
- 
-> mdev_parent.lock here does take care of race conditions that could occur
-> during mdev device creation and deletion in this common code path.
+On 5/17/2018 2:14 PM, Eric Dumazet wrote:
+> On 05/17/2018 01:53 PM, Qing Huang wrote:
+>> When a system is under memory presure (high usage with fragments),
+>> the original 256KB ICM chunk allocations will likely trigger kernel
+>> memory management to enter slow path doing memory compact/migration
+>> ops in order to complete high order memory allocations.
+>>
+>> When that happens, user processes calling uverb APIs may get stuck
+>> for more than 120s easily even though there are a lot of free pages
+>> in smaller chunks available in the system.
+>>
+>> Syslog:
+>> ...
+>> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+>> oracle_205573_e:205573 blocked for more than 120 seconds.
+>> ...
+>>
+> NACK on this patch.
+>
+> You have been asked repeatedly to use kvmalloc()
+>
+> This is not a minor suggestion.
+>
+> Take a look athttps://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d8c13f2271ec5178c52fbde072ec7b562651ed9d
 
-Exactly what races in the common code path is mdev_parent.lock
-preventing?  mdev_device_create() calls:
+Would you please take a look at how table->icm is being used in the mlx4 
+driver? It's a meta data used for individual pointer variable referencing,
+not as data frag or in/out buffer. It has no need for contiguous phy. 
+memory.
 
-device_register()
-mdev_device_create_ops()
-  parent->ops->create()
-  sysfs_create_groups()
-mdev_create_sysfs_files()
-  sysfs_create_files()
-  sysfs_create_link()
-  sysfs_create_link()
+Thanks.
 
-mdev_parent.lock is certainly not serializing all calls across the
-entire kernel to device_register and sysfs_create_{groups,files,link}
-so what is it protecting other than serializing parent->ops->create()?
-Locks protect data, not code.  The data we're protecting is the shared
-mdev_list, there is no shared data once mdev_device_create() has its
-mdev_device with uuid reservation placed into that list.
-
-> What is the urge to remove mdev_parent.lock if that handles all race
-> conditions without bothering user to handle -EAGAIN?
-
-Can you say why -EAGAIN is undesirable?  Note that the user is only
-going to see this error if they attempt to remove the device in the
-minuscule gap between the sysfs remove file being created and the
-completion of the write to the create sysfs file.  It seems like you're
-asking that I decrease the locking granularity, but not too much
-because mdev_parent.lock protects "things".  If the -EAGAIN is really
-so terrible, we can avoid it by spinning until the mdev_device is
-either not found in the list or becomes active, we don't need
-mdev_parent.lock to solve that, but I don't think that's the best
-solution and there's no concrete statement to back -EAGAIN being a
-problem.  Thanks,
-
-Alex
+> And you'll understand some people care about this.
+>
+> Strongly.
+>
+> Thanks.
+>
