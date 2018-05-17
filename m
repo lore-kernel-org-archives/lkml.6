@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeEQX3q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 19:29:46 -0400
+        id S1752425AbeEQXaA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 19:30:00 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:31398 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751986AbeEQX2m (ORCPT
+        by vger.kernel.org with ESMTP id S1751649AbeEQX2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 19:28:42 -0400
+        Thu, 17 May 2018 19:28:41 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: <nadav.amit@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 3/6] x86: alternative: macrofy locks for better inlining
-Date: Thu, 17 May 2018 09:13:59 -0700
-Message-ID: <20180517161402.78089-4-namit@vmware.com>
+        Christopher Li <sparse@chrisli.org>, <linux-sparse@vger.kernel.org>
+Subject: [PATCH 1/6] x86: objtool: use asm macro for better compiler decisions
+Date: Thu, 17 May 2018 09:13:57 -0700
+Message-ID: <20180517161402.78089-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180517161402.78089-1-namit@vmware.com>
 References: <20180517161402.78089-1-namit@vmware.com>
@@ -30,78 +29,83 @@ the block in time and space. This data is distorted by the kernel code,
 which puts information in alternative sections. As a result, the
 compiler may perform incorrect inlining and branch optimizations.
 
-The solution is to set an assembly macro and call it from the inlined
+In the case of objtool, this distortion is extreme, since anyhow the
+annotations of objtool are discarded during linkage.
+
+The solution is to set an assembly macro and call it from the inlinedv
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-This patch handles the LOCK prefix, allowing more aggresive inlining.
+This patch slightly increases the kernel size.
 
-   text	   data	    bss	    dec	    hex	filename
-18127205 10068388 2936832 31132425 1db0b09 ./vmlinux before
-18131468 10068488 2936832 31136788 1db1c14 ./vmlinux after (+4363)
+   text    data     bss     dec     hex filename
+18126699 10066728 2936832 31130259 1db0293 ./vmlinux before
+18126824 10067268 2936832 31130924 1db052c ./vmlinux after (+665)
 
-Static text symbols:
-Before:	39860
-After:	39788	(-72)
+But allows more aggressive inlining. Static text symbols:
+Before: 40033
+After: 40015 (-18)
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: linux-sparse@vger.kernel.org
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/alternative.h | 34 +++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ include/linux/compiler.h | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 4cd6a3b71824..1dc47c9fd480 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -28,17 +28,35 @@
-  * The very common lock prefix is handled as special case in a
-  * separate table which is a pure address list without replacement ptr
-  * and size information.  That keeps the table sizes small.
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c63601..6cbabc6b195a 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -97,19 +97,40 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * These macros help objtool understand GCC code flow for unreachable code.
+  * The __COUNTER__ based labels are a hack to make each instance of the macros
+  * unique, to convince GCC not to merge duplicate inline asm statements.
 + *
-+ * Saving the lock data is encapsulated within an assembly macro, which is then
-+ * called on each use. This hack is necessary to prevent GCC from considering
-+ * the inline assembly blocks as costly in time and space, which can prevent
-+ * function inlining and lead to other bad compilation decisions. GCC computes
-+ * inline assembly cost according to the number of perceived number of assembly
-+ * instruction, based on the number of new-lines and semicolons in the assembly
-+ * block. The macro will eventually be compiled into a single instruction (and
-+ * some data). This scheme allows GCC to better understand the inline asm cost.
++ * The annotation logic is encapsulated within assembly macros, which are then
++ * called on each annotation. This hack is necessary to prevent GCC from
++ * considering the inline assembly blocks as costly in time and space, which can
++ * prevent function inlining and lead to other bad compilation decisions. GCC
++ * computes inline assembly cost according to the number of perceived number of
++ * assembly instruction, based on the number of new-lines and semicolons in the
++ * assembly block. Since the annotations will be discarded during linkage, the
++ * macros make the annotations to be considered "cheap" and let GCC to emit
++ * better code.
   */
- 
- #ifdef CONFIG_SMP
--#define LOCK_PREFIX_HERE \
--		".pushsection .smp_locks,\"a\"\n"	\
--		".balign 4\n"				\
--		".long 671f - .\n" /* offset */		\
--		".popsection\n"				\
--		"671:"
--
--#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
-+
-+asm(".macro __LOCK_PREFIX_HERE\n\t"
-+    ".pushsection .smp_locks,\"a\"\n\t"
-+    ".balign 4\n\t"
-+    ".long 671f - .\n\t" /* offset */
-+    ".popsection\n"
-+    "671:\n\t"
++asm(".macro __annotate_reachable counter:req\n"
++    "\\counter:\n\t"
++    ".pushsection .discard.reachable\n\t"
++    ".long \\counter\\()b -.\n\t"
++    ".popsection\n\t"
 +    ".endm");
 +
-+#define LOCK_PREFIX_HERE "__LOCK_PREFIX_HERE\n\t"
+ #define annotate_reachable() ({						\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.reachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("__annotate_reachable %c0" : : "i" (__COUNTER__));	\
+ })
 +
-+asm(".macro __LOCK_PREFIX ins:vararg\n\t"
-+    "__LOCK_PREFIX_HERE\n\t"
-+    "lock; \\ins\n\t"
++asm(".macro __annotate_unreachable counter:req\n"
++    "\\counter:\n\t"
++    ".pushsection .discard.unreachable\n\t"
++    ".long \\counter\\()b -.\n\t"
++    ".popsection\n\t"
 +    ".endm");
 +
-+#define LOCK_PREFIX "__LOCK_PREFIX "
- 
- #else /* ! CONFIG_SMP */
- #define LOCK_PREFIX_HERE ""
+ #define annotate_unreachable() ({					\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.unreachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("__annotate_unreachable %c0" : :			\
++		     "i" (__COUNTER__));				\
+ })
++
+ #define ASM_UNREACHABLE							\
+ 	"999:\n\t"							\
+ 	".pushsection .discard.unreachable\n\t"				\
 -- 
 2.17.0
