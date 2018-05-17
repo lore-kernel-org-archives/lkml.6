@@ -1,124 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeEQKOn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 06:14:43 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39380 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbeEQKOl (ORCPT
+        id S1752073AbeEQKPF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 06:15:05 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:45311 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeEQKPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 06:14:41 -0400
-X-Google-Smtp-Source: AB8JxZq/+hhlknolBNvoe8mV1TzehLMTln9p5epiubB9j4P7jFe22KtT5Kv4eQ/fcYiQhBGWsTycAA==
-Date: Thu, 17 May 2018 15:44:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>, robh@kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
-        amit.kucheria@linaro.org
-Subject: Re: [v0 1/2] dt-bindings: clock: Introduce QCOM CPUFREQ FW bindings
-Message-ID: <20180517101438.du7xihojuhjxq77l@vireshk-i7>
-References: <1526549401-25666-1-git-send-email-tdas@codeaurora.org>
- <1526549401-25666-2-git-send-email-tdas@codeaurora.org>
+        Thu, 17 May 2018 06:15:03 -0400
+X-Google-Smtp-Source: AB8JxZqzqqbgnhhQDRqW1TYlzwLHQ7wnstg59s1+IIOib0fEkEsXVuzvWMnD+Go2XxxWFK9GPpwHL/rjMhFxtxW7SaVQM/UTrzHf
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526549401-25666-2-git-send-email-tdas@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Date: Thu, 17 May 2018 03:15:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2d1fe056c641bd7@google.com>
+Subject: general protection fault in n_tty_flush_buffer
+From: syzbot <syzbot+083228748980909eb453@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Rob.
+Hello,
 
-On 17-05-18, 15:00, Taniya Das wrote:
-> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
-> SoCs. This is required for managing the cpu frequency transitions which are
-> controlled by firmware.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 68 ++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
-> new file mode 100644
-> index 0000000..bc912f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
-> @@ -0,0 +1,68 @@
-> +Qualcomm Technologies, Inc. CPUFREQ Bindings
-> +
-> +CPUFREQ FW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
-> +SoCs to manage frequency in hardware. It is capable of controlling frequency
-> +for multiple clusters.
-> +
-> +Properties:
-> +- compatible
-> +	Usage:		required
-> +	Value type:	<string>
-> +	Definition:	must be "qcom,cpufreq-fw".
-> +
-> +Note that #address-cells, #size-cells, and ranges shall be present to ensure
-> +the cpufreq can address a freq-domain registers.
-> +
-> +A freq-domain sub-node would be defined for the cpus with the following
-> +properties:
-> +
-> +- compatible:
-> +	Usage:		required
-> +	Value type:	<string>
-> +	Definition:	must be "cpufreq".
-> +
-> +- reg
-> +	Usage:		required
-> +	Value type:	<prop-encoded-array>
-> +	Definition:	Addresses and sizes for the memory of the perf_base
-> +			, lut_base and en_base.
-> +- reg-names
-> +	Usage:		required
-> +	Value type:	<stringlist>
-> +	Definition:	Address names. Must be "perf_base", "lut_base",
-> +			"en_base".
-> +			Must be specified in the same order as the
-> +			corresponding addresses are specified in the reg
-> +			property.
-> +
-> +- qcom,cpulist
-> +	Usage:		required
-> +	Value type:	<phandles of CPU>
-> +	Definition:	List of related cpu handles which are under a cluster.
-> +
-> +Example:
-> +	qcom,cpufreq-fw {
-> +		compatible = "qcom,cpufreq-fw";
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		freq-domain-0 {
-> +			compatible = "cpufreq";
-> +			reg = <0x17d43920 0x4>,
-> +			     <0x17d43110 0x500>,
-> +			     <0x17d41000 0x4>;
-> +			reg-names = "perf_base", "lut_base", "en_base";
-> +			qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3>;
-> +		};
-> +
-> +		freq-domain-1 {
-> +			compatible = "cpufreq";
-> +			reg = <0x17d46120 0x4>,
-> +			    <0x17d45910 0x500>,
-> +			    <0x17d45800 0x4>;
-> +			reg-names = "perf_base", "lut_base", "en_base";
-> +			qcom,cpulist = <&CPU4 &CPU5 &CPU6 &CPU7>;
-> +		};
-> +	};
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
+syzbot found the following crash on:
 
--- 
-viresh
+HEAD commit:    e6506eb24187 Merge tag 'trace-v4.17-rc4-2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1295d637800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=083228748980909eb453
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1340a7c7800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b25e37800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+083228748980909eb453@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4530 Comm: syz-executor147 Not tainted 4.17.0-rc5+ #54
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:reset_buffer_flags drivers/tty/n_tty.c:318 [inline]
+RIP: 0010:n_tty_flush_buffer+0x64/0x320 drivers/tty/n_tty.c:358
+RSP: 0018:ffff8801c60f77a0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000044c RSI: ffff8801ae012ef8 RDI: 0000000000002260
+RBP: ffff8801c60f77b8 R08: 0000000000007ad5 R09: 0000000000000002
+R10: ffff8801ae012f48 R11: ffff8801ae0126c0 R12: ffff8801d96321c0
+R13: ffff8801d96323f8 R14: 0000000000000000 R15: ffff8801c60f7808
+FS:  00007f53b10c8700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f53b10a6e78 CR3: 00000001ac8cf000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  set_termios+0x390/0x7d0 drivers/tty/tty_ioctl.c:404
+  tty_mode_ioctl+0x265/0xb50 drivers/tty/tty_ioctl.c:745
+  n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
+  n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
+  tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445c19
+RSP: 002b:00007f53b10c7da8 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445c19
+RDX: 0000000020000000 RSI: 0000000000005404 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000297 R12: 00000000006dac20
+R13: 6d74702f7665642f R14: 00007f53b10c89c0 R15: 0000000000000007
+Code: 03 80 3c 02 00 0f 85 b1 02 00 00 49 8b 9c 24 70 05 00 00 48 b8 00 00  
+00 00 00 fc ff df 48 8d bb 60 22 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+0f 85 9b 02 00 00 48 b8 00 00 00 00 00 fc ff df 48
+RIP: reset_buffer_flags drivers/tty/n_tty.c:318 [inline] RSP:  
+ffff8801c60f77a0
+RIP: n_tty_flush_buffer+0x64/0x320 drivers/tty/n_tty.c:358 RSP:  
+ffff8801c60f77a0
+---[ end trace 75cd8a017cb978de ]---
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
