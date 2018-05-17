@@ -1,40 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeEQSvA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 14:51:00 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:32806 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752014AbeEQSu6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 14:50:58 -0400
-Date: Thu, 17 May 2018 14:50:56 -0400 (EDT)
-Message-Id: <20180517.145056.1635507477734784563.davem@davemloft.net>
-To: mmullins@fb.com
-Cc: ilyal@mellanox.com, aviadye@mellanox.com, davejwatson@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] tls: don't use stack memory in a scatterlist
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180516174841.2119-1-mmullins@fb.com>
-References: <20180516174841.2119-1-mmullins@fb.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+        id S1751897AbeEQSzl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 14:55:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751047AbeEQSzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 14:55:39 -0400
+Message-ID: <49934b3d13263360fbf26bc56de2914db0b3513a.camel@kernel.org>
+Subject: Re: [PATCH v2] vfs: avoid dereferencing pointers in iterate_supers
+ callbacks
+From: Jeff Layton <jlayton@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, lurodriguez@suse.de
+Date: Thu, 17 May 2018 14:55:36 -0400
+In-Reply-To: <20180517182638.GD26718@bombadil.infradead.org>
+References: <20180517154646.18751-1-jlayton@kernel.org>
+         <20180517174336.18529-1-jlayton@kernel.org>
+         <20180517182638.GD26718@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matt Mullins <mmullins@fb.com>
-Date: Wed, 16 May 2018 10:48:40 -0700
-
-> scatterlist code expects virt_to_page() to work, which fails with
-> CONFIG_VMAP_STACK=y.
+On Thu, 2018-05-17 at 11:26 -0700, Matthew Wilcox wrote:
+> On Thu, May 17, 2018 at 01:43:36PM -0400, Jeff Layton wrote:
+> > @@ -107,12 +109,10 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
+> >   */
+> >  void ksys_sync(void)
+> >  {
+> > -	int nowait = 0, wait = 1;
+> > -
+> >  	wakeup_flusher_threads(WB_REASON_SYNC);
+> >  	iterate_supers(sync_inodes_one_sb, NULL);
+> > -	iterate_supers(sync_fs_one_sb, &nowait);
+> > -	iterate_supers(sync_fs_one_sb, &wait);
+> > +	iterate_supers(sync_fs_one_sb, NULL);
+> > +	iterate_supers(sync_fs_one_sb, (void *)1UL);
 > 
-> Fixes: c46234ebb4d1e ("tls: RX path for ktls")
-> Signed-off-by: Matt Mullins <mmullins@fb.com>
+> I think this is actually less clear.  How about:
+> 
+> 	void *wait = (void *)1UL;
+> 
+> 	iterate_supers(sync_fs_one_sb, !wait);
+> 	iterate_supers(sync_fs_one_sb, wait);
+> 
 
-Applied and queued up for -stable, thanks.
-
-I'm surprised this problem wasn't discovered sooner.  How exactly did you
-discover it?  Did you actually see it trigger or is this purely from code
-inspection?
+Sure, I could do that. We could also keep the wait/nowait vars too, I
+guess.
