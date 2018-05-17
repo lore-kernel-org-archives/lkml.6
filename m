@@ -1,79 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeEQANW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:13:22 -0400
-Received: from outprodmail01.cc.columbia.edu ([128.59.72.39]:58666 "EHLO
-        outprodmail01.cc.columbia.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751259AbeEQANV (ORCPT
+        id S1752060AbeEQAX6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 20:23:58 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:33225 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751259AbeEQAX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:13:21 -0400
-X-Google-Smtp-Source: AB8JxZoz9AWdB+XDYPDJmbzo2NF57SQrE0ahM2l8jH7jlLfs6WRfwrLv6/gbqr9PPjRmcDni7+dy9OrI14yH5wbgxd0=
+        Wed, 16 May 2018 20:23:56 -0400
+Subject: Re: [PATCH 1/5] random: fix crng_ready() test
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+References: <20180413013046.404-1-tytso@mit.edu>
+ <1699469.KmO53oa8XU@tauon.chronox.de> <20180413125313.GA2633@thunk.org>
+ <4393662.RPWnPK42dp@tauon.chronox.de> <20180413170037.GA28721@thunk.org>
+From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <6bb4d4cb-aafa-7440-0dc3-40faf647ec89@csail.mit.edu>
+Date: Wed, 16 May 2018 17:07:08 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-From: Shankara Pailoor <sp3485@columbia.edu>
-Date: Wed, 16 May 2018 17:13:18 -0700
-Message-ID: <CAASgV=v-ccec-7aXK-FGB=xHvZcKcfibp9Dy67O3RpTdMsPrKA@mail.gmail.com>
-Subject: general protection fault in klist_iter_exit
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, kaber@trash.net
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-No-Spam-Score: Local
+In-Reply-To: <20180413170037.GA28721@thunk.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 4/13/18 10:00 AM, Theodore Y. Ts'o wrote:
+> On Fri, Apr 13, 2018 at 03:05:01PM +0200, Stephan Mueller wrote:
+>>
+>> What I would like to point out that more and more folks change to 
+>> getrandom(2). As this call will now unblock much later in the boot cycle, 
+>> these systems see a significant departure from the current system behavior.
+>>
+>> E.g. an sshd using getrandom(2) would be ready shortly after the boot finishes 
+>> as of now. Now it can be a matter minutes before it responds. Thus, is such 
+>> change in the kernel behavior something for stable?
 
-I am fuzzing Linux 4.17-rc4 with Syzkaller and found the below crash.
-I don't have a reproducer but this crash happened twice.
+[...]
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN PTI
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 36 Comm: kworker/0:1 Not tainted 4.17.0-rc4+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 01/01/2011
-Workqueue: events netlink_sock_destruct_work
-RIP: 0010:klist_iter_exit+0x26/0x90 lib/klist.c:314
-RSP: 0018:ffff880103f57c30 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8490f6d5
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000000
-RBP: ffff880103f57c48 R08: fffffbfff0c133d9 R09: 0000000000000001
-R10: ffff880103f57c78 R11: ffffffff86099ec7 R12: 0000000000000008
-R13: ffffffff854a2ba0 R14: 0000000000000000 R15: ffff880103ec9400
-FS:  0000000000000000(0000) GS:ffff880104e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002031d000 CR3: 0000000005a22003 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- class_dev_iter_exit+0x15/0x20 drivers/base/class.c:323
- nfc_device_iter_exit net/nfc/nfc.h:133 [inline]
- nfc_genl_dump_devices_done+0x34/0x50 net/nfc/netlink.c:666
- genl_lock_done+0x89/0xd0 net/netlink/genetlink.c:493
- netlink_sock_destruct+0x98/0x2a0 net/netlink/af_netlink.c:397
- __sk_destruct+0x53/0x5e0 net/core/sock.c:1566
- sk_destruct+0x47/0x80 net/core/sock.c:1601
- __sk_free+0xf1/0x2b0 net/core/sock.c:1612
- sk_free+0x2a/0x40 net/core/sock.c:1623
- netlink_sock_destruct_work+0x19/0x20 net/netlink/af_netlink.c:419
- process_one_work+0x827/0x1550 kernel/workqueue.c:2145
- worker_thread+0xd2/0xcc0 kernel/workqueue.c:2279
- kthread+0x33c/0x400 kernel/kthread.c:238
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Code: 5d c3 0f 1f 00 55 48 89 e5 41 55 41 54 53 48 89 fb 4c 8d 63 08
-e8 4b 62 cf fc 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80>
-3c 02 00 75 43 4c 8b 6b 08 4d 85 ed 74 2e e8 26 62 cf fc 31
-RIP: klist_iter_exit+0x26/0x90 lib/klist.c:314 RSP: ffff880103f57c30
----[ end trace 69831a3bb9e34eca ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> I was a little worried that on VM's this could end up causing things
+> to block for a long time, but an experiment on a GCE VM shows that
+> isn't a problem:
+> 
+> [    0.000000] Linux version 4.16.0-rc3-ext4-00009-gf6b302ebca85 (tytso@cwcc) (gcc version 7.3.0 (Debian 7.3.0-15)) #16 SMP Thu Apr 12 16:57:17 EDT 2018
+> [    1.282220] random: fast init done
+> [    3.987092] random: crng init done
+> [    4.376787] EXT4-fs (sda1): re-mounted. Opts: (null)
+> 
+> There are some desktops where the "crng_init done" report doesn't
+> happen until 45-90 seconds into the boot.  I don't think I've seen
+> reports where it takes _minutes_ however.  Can you give me some
+> examples of such cases?
+
+On a Photon OS VM running on VMware ESXi, this patch causes a boot speed
+regression of 5 minutes :-( [ The VM doesn't have haveged or rng-tools
+(rngd) installed. ]
+
+[    1.420246] EXT4-fs (sda2): re-mounted. Opts: barrier,noacl,data=ordered
+[    1.469722] tsc: Refined TSC clocksource calibration: 1900.002 MHz
+[    1.470707] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x36c65c1a9e1, max_idle_ns: 881590695311 ns
+[    1.474249] clocksource: Switched to clocksource tsc
+[    1.584427] systemd-journald[216]: Received request to flush runtime journal from PID 1
+[  346.620718] random: crng init done
+
+Interestingly, the boot delay is exacerbated on VMs with large amounts
+of RAM. For example, the delay is not so noticeable (< 30 seconds) on a
+VM with 2GB memory, but goes up to 5 minutes on an 8GB VM.
+
+Also, cloud-init-local.service seems to be the one blocking for entropy
+here. systemd-analyze critical-chain shows:
+
+The time after the unit is active or started is printed after the "@" character.
+The time the unit takes to start is printed after the "+" character.
+
+multi-user.target @6min 1.283s
+└─vmtoolsd.service @6min 1.282s
+  └─cloud-final.service @6min 366ms +914ms
+    └─cloud-config.service @5min 59.174s +1.190s
+      └─cloud-config.target @5min 59.172s
+        └─cloud-init.service @5min 47.423s +11.744s
+          └─systemd-networkd-wait-online.service @5min 45.999s +1.420s
+            └─systemd-networkd.service @5min 45.975s +21ms
+              └─network-pre.target @5min 45.973s
+                └─cloud-init-local.service @241ms +5min 45.687s
+                  └─systemd-remount-fs.service @222ms +13ms
+                    └─systemd-fsck-root.service @193ms +26ms
+                      └─systemd-journald.socket @188ms
+                        └─-.mount @151ms
+                          └─system.slice @161ms
+                            └─-.slice @151ms
+
+It would be great if this CVE can be fixed somehow without causing boot speed
+to spike from ~20 seconds to 5 minutes, as that makes the system pretty much
+unusable. I can workaround this by installing haveged, but ideally an in-kernel
+fix would be better. If you need any other info about my setup or if you have
+a patch that I can test, please let me know!
+
+Thank you very much!
 
 Regards,
-Shankara
+Srivatsa
+VMware Photon OS
