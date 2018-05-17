@@ -1,55 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751898AbeEQO1k (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 10:27:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59520 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeEQO1j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 10:27:39 -0400
-Date: Thu, 17 May 2018 16:27:31 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: mingo@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] kernel: event: core: Change return type to vm_fault_t
-Message-ID: <20180517142731.GV12217@hirez.programming.kicks-ass.net>
-References: <20180414202831.GA20373@jordon-HP-15-Notebook-PC>
- <20180420082829.GE4064@hirez.programming.kicks-ass.net>
- <CAFqt6zb3N3qVVcUOvd2F4q2P3PYrOoU8M3c=qSZDEpHokHHBaQ@mail.gmail.com>
- <CAFqt6zaQKhijpVX6GrfwSx=_z7FOp_NoF9TTf2Gjgv+mg0TMSg@mail.gmail.com>
- <CAFqt6zaT=c87sSEU5dNs3AyWHthoe5c5iwkFGN1O1HrMsG=5_A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1752164AbeEQO2J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 10:28:09 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33193 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751798AbeEQO2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 10:28:08 -0400
+Date: Thu, 17 May 2018 09:27:32 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers save/restore in asm
+Message-ID: <20180517142732.GU17342@gate.crashing.org>
+References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr> <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr> <87zi0ymqj6.fsf@concordia.ellerman.id.au> <20180517131550.GR17342@gate.crashing.org> <74ce3f30-6c06-e884-f1ea-1539edbf1a74@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zaT=c87sSEU5dNs3AyWHthoe5c5iwkFGN1O1HrMsG=5_A@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74ce3f30-6c06-e884-f1ea-1539edbf1a74@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 07:55:13PM +0530, Souptick Joarder wrote:
-> On Thu, May 10, 2018 at 7:54 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > On Fri, Apr 20, 2018 at 5:18 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >>> I'm fine with the patch, but shouldn't this be part of a larger series /
-> >>> cocinelle script?
-> >>>
-> >>
-> >> This one is trivial but many others are not.
-> >> As part of this clean up we have fixed many
-> >> existing bugs in fault handlers of drivers/
-> >> file systems. Also we are replacing existing
-> >> vm_insert_foo() with new vmf_insert_foo()
-> >> in fault handlers (wherever applicable).
-> >> Refer - 1c8f422059ae5da07db7406ab916203f9417e396
-> >> in 4.17-rc1
+On Thu, May 17, 2018 at 03:27:37PM +0200, Christophe LEROY wrote:
+> Le 17/05/2018 à 15:15, Segher Boessenkool a écrit :
+> >>I guess we've been enabling this for all 32-bit targets for ever so it
+> >>must be a reasonable option.
 > >
-> > Any further comment on this patch ?
+> >On 603, load multiple (and string) are one cycle slower than doing all the
+> >loads separately, and store is essentially the same as separate stores.
+> >On 7xx and 7xxx both loads and stores are one cycle slower as multiple
+> >than as separate insns.
 > 
-> Peter, if no further comment, we would like to get this patch
-> in queue for 4.18.
+> That's in theory when the instructions are already in the cache.
+> 
+> But loading several instructions into the cache takes time.
 
-Nah, I still think you're doing this wrong by trickling single patches,
-but have at.
+Yes, of course, that's why I wrote:
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >load/store multiple are nice for saving/storing registers.
+
+:-)
+
+
+Segher
