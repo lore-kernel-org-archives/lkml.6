@@ -1,37 +1,39 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-610692-1526295704-5-5529383637567027259
+X-Cyrus-Session-Id: sloti22d1t05-1793992-1526547717-2-5869917707174005831
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
+ in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526295702; b=CdcemHyv0VM7of4GB5DzZsnP7z654X7s/MuUoffcqkz+1LnMKj
-    Hnh0T8Ah/EDB7CsxbQeMvnZpFtkV4Xd/lMiYauah1R21n2vc9pIUVwrkkleJh8UD
-    TvQuutgFLZwx6D100w3NBJ3OOy3E+XK32p3kafobrAYc2zp6Nltgwq2gL+rkF3KB
-    xKq2yfQpz46pmP9QyAL+BgHprKxTTZ/gNq8rFfRd0flnYbB6+1y1eeKe5CSyVla4
-    ouxNztQKjtJWyyIdROwg0RE+Ouh/9Vcnw0ZcLpH1EVc/Bfnmab/Qh8RLzUSs6qvd
-    w6VD6LtWMuSYAA+BH+D116Gx6zmW4Q7ZsXCg==
+    1526547716; b=Yk7l+v2kS6r8B2hCsvCiWOd0gyAWSBGOaKkKQ/QxQdtax997XJ
+    DKLUmkjHS+3OGFT6dwa52NxZj6lh1zP55gtnaC9CFsVjAh2XaehJ9A2bLKoxq44C
+    Cba80TktPi+DSyPv2CxtMcS2vm36txsdyMzKBrcLHoA5E9Yi/KJWWjDY2mrRzK1I
+    9Uff2XarYerk0Wlh7qcyF9R3OqxJMJ0JHbM71JHaBy3A6XNNgimvHf5R4Ug5PSQY
+    XUSTA4bRBsjTSMPFZAiTkSRLYer12khPpmy+C8cZFEvWgne9gz7xnvU/EAvxF3US
+    fnF8qito54nmFE3ehXHUw45xTIBjeAs7EXKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526295702; bh=
-    iw4BH/ZOU3sFRcj0tJt9EcU2QxliFGtiESZzOuy/RgA=; b=askr6HDfYlQq/s6q
-    pZH89LCGomRi6up0eWIUbwrNqKv3XVhKR6j4wsVDOTylgCr3FS3FAe9/fJBS7spR
-    N3hZcu+M7yIXHUgARiI3RFALORBRfFCz82QxE9KliYmT8w20QWXgD+o7mheLi4ri
-    9qgH8v13j5OwGLJR/O6/XQ+IMBxci9mxNREFbV/JHUwMODyqXYCpgop9mthrgJWE
-    6m4ocX/76LPMMu3QmTy1570reX9HCwg649u/GY30uYYUnAvfzS27SJ0fP4urOjDa
-    51oSFlWserQH29BBbK8xtojG2xBY6W5Exh1g0fM/2hXhAl9O22YARLKBBxNER6dh
-    Rd59QA==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526547716; bh=xHES714DI/tOB122IyZI2/5CWJIXVi
+    KDhYtPFxd7G80=; b=l+QWxAL0vtiRvVQAOhVrXcd6j5qnfl/xwhwRHcY8s5Dbho
+    UApau7/JI5Q8RulNgBQNI5LflyJneIBh5KVk1g3xwDiN5ymb5yuKEVkHg9wqKa0S
+    l5xStVETz/4ILc3fS18W+lLUkOsL3RJLasF0Zq2QiZ0P0+CzeAyfAIrM7AzOPrJ3
+    cxbaGXqEM5cFnRkjIHXZrCoqX4BlpA0cyf8s22XkEhFM5ZRP15i1HX9HPwrgRssZ
+    5OI3SKLxwIpnubfWSsm5G4XI0qW3WjMdBRfcvVY1AbenR2tJ7KnsH0OUlj70vPF/
+    NNavHnyH/dqcoLg6j+frcNPDcM6Y2U9tNMUEtc2g==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
+    header.i=@messagingengine.com header.b=IxXlcTX5 x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -40,12 +42,14 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
+      header.i=@messagingengine.com header.b=IxXlcTX5 x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -54,207 +58,84 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJfMeTSsWmEBWFatdm5QYIY8BG5cl1IEf0eAAl0D3FpunkpVnGhBKS/eFIxJ3oE3V4jADFWEmEDvnvNA1KHTbL9U466pYo8rlhn8lHpW5jNwY6eQIVX8
-    QncZWc4VnGp2Xjv5CQZSGj/KGeRPL677pmDqSCJUm9x+47/c+PHWTab+UWtN9O2MiGn20Gr01l+p37An9dosdFAVbE+t6qlH3ZDVg2rvR4LYe2mwIzoyaoYu
+X-CM-Envelope: MS4wfFMQz6D4vYE2mgAbCDNOjsPqpJ4v+fewLITt21Y4Llv0k7YEDWsYDJNKxR7awaGWV3kntz1nyG6/nQ7y1kssiS+C6oVIhXNStTOlvz112+to0AL3nSLu
+    70ajTC6B4/YwlON5B8OlSVS3S544r9aG1AURUIkO1bCog1lBRUnCoIWV5cfg2wRZEwag++cHDQ4vzcdzD6rUBnxKtK0irhLHLue+E7iFWWRoGysSwk0aJBdd
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=QBHdfG-Sftq2nLuhOi0A:9 a=AjGcO6oz07-iQ99wixmX:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=5hbFD1BkjCuMjG_J0ygA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeENLBW (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 07:01:22 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40016 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752516AbeENLBM (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 07:01:12 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: stable@vger.kernel.org
-Cc: suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
+        id S1751017AbeEQJBg (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 17 May 2018 05:01:36 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35565 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750779AbeEQJBd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 05:01:33 -0400
+X-ME-Proxy: <xmx:7ET9WsTIeW3_WGxCqG6Bq30Konpn6GVCSlDOPdmJvkotafxGjQn7OA>
+X-ME-Proxy: <xmx:7ET9WvchA8mUI0SRO6nVOlSYbpVMnEZUBiicrVMgeyoxfcuFVjNVtA>
+X-ME-Proxy: <xmx:7ET9WrBy5i02yrKJRZaKk6gkf8WgF2jzN5dnTVrGJcak1upw5uxQAg>
+X-ME-Proxy: <xmx:7ET9Wt0u6TfUzmZldpJx1uvQB3m2x1IQ41zeb4p26pf-tsgvzOCiww>
+X-ME-Proxy: <xmx:7ET9WrTH-uoNq3rmoetw0Rp4uoyBQ-hb_CNsc0v4bFDQqJWbCEV5hQ>
+X-ME-Proxy: <xmx:7ET9WjhPkfqtFuIKGQb7eWAiFhCRJxyXBkLcKFrnIX1vNBMKrdWg4w>
+X-ME-Sender: <xms:7ET9WvVzSXXqB7hrlrTI0yGq1LOXfQKkhd3rYOTSnx338m7Z-65R6Q>
+Date: Thu, 17 May 2018 11:01:15 +0200
+From: Greg KH <greg@kroah.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
         will.deacon@arm.com, mark.rutland@arm.com, dave.martin@arm.com
-Subject: [PATCH 2/2] [stable 4.4] arm64: Add work around for Arm Cortex-A55 Erratum 1024718
-Date: Mon, 14 May 2018 12:01:04 +0100
-Message-Id: <1526295664-22187-2-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526295664-22187-1-git-send-email-suzuki.poulose@arm.com>
+Subject: Re: [PATCH 2/2] [stable 4.4] arm64: Add work around for Arm
+ Cortex-A55 Erratum 1024718
+Message-ID: <20180517090115.GE25318@kroah.com>
 References: <1526295664-22187-1-git-send-email-suzuki.poulose@arm.com>
+ <1526295664-22187-2-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526295664-22187-2-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit ece1397cbc89c51914fae1aec729539cfd8bd62b upstream
+On Mon, May 14, 2018 at 12:01:04PM +0100, Suzuki K Poulose wrote:
+> commit ece1397cbc89c51914fae1aec729539cfd8bd62b upstream
+> 
+> Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
+> from an erratum 1024718, which causes incorrect updates when DBM/AP
+> bits in a page table entry is modified without a break-before-make
+> sequence. The work around is to disable the hardware DBM feature
+> on the affected cores. The hardware Access Flag management features
+> is not affected.
+> 
+> The hardware DBM feature is a non-conflicting capability, i.e, the
+> kernel could handle cores using the feature and those without having
+> the features running at the same time. So this work around is detected
+> at early boot time, rather than delaying it until the CPUs are brought
+> up into the kernel with MMU turned on. This also avoids other complexities
+> with late CPUs turning online, with or without the hardware DBM features.
+> 
+> Cc: stable@vger.kernel.org # v4.4
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Note: The upstream commit is on top of a reworked capability
+> infrastructure for arm64 heterogeneous systems, which allows
+> delaying the CPU model checks. This backport is based on the
+> original version of the patch [0], which checks the affected
+> CPU models during the early boot.
+> 
+> [0] https://lkml.kernel.org/r/20180116102323.3470-1-suzuki.poulose@arm.com
 
-Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
-from an erratum 1024718, which causes incorrect updates when DBM/AP
-bits in a page table entry is modified without a break-before-make
-sequence. The work around is to disable the hardware DBM feature
-on the affected cores. The hardware Access Flag management features
-is not affected.
+Thanks for these, now queued up.
 
-The hardware DBM feature is a non-conflicting capability, i.e, the
-kernel could handle cores using the feature and those without having
-the features running at the same time. So this work around is detected
-at early boot time, rather than delaying it until the CPUs are brought
-up into the kernel with MMU turned on. This also avoids other complexities
-with late CPUs turning online, with or without the hardware DBM features.
-
-Cc: stable@vger.kernel.org # v4.4
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
-Note: The upstream commit is on top of a reworked capability
-infrastructure for arm64 heterogeneous systems, which allows
-delaying the CPU model checks. This backport is based on the
-original version of the patch [0], which checks the affected
-CPU models during the early boot.
-
-[0] https://lkml.kernel.org/r/20180116102323.3470-1-suzuki.poulose@arm.com
----
- arch/arm64/Kconfig                 | 14 +++++++++++++
- arch/arm64/include/asm/assembler.h | 40 ++++++++++++++++++++++++++++++++++++++
- arch/arm64/include/asm/cputype.h   | 11 +++++++++++
- arch/arm64/mm/proc.S               |  5 +++++
- 4 files changed, 70 insertions(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 02c0867..5b47218 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -375,6 +375,20 @@ config ARM64_ERRATUM_843419
- 
- 	  If unsure, say Y.
- 
-+config ARM64_ERRATUM_1024718
-+	bool "Cortex-A55: 1024718: Update of DBM/AP bits without break before make might result in incorrect update"
-+	default y
-+	help
-+	  This option adds work around for Arm Cortex-A55 Erratum 1024718.
-+
-+	  Affected Cortex-A55 cores (r0p0, r0p1, r1p0) could cause incorrect
-+	  update of the hardware dirty bit when the DBM/AP bits are updated
-+	  without a break-before-make. The work around is to disable the usage
-+	  of hardware DBM locally on the affected cores. CPUs not affected by
-+	  erratum will continue to use the feature.
-+
-+	  If unsure, say Y.
-+
- config CAVIUM_ERRATUM_22375
- 	bool "Cavium erratum 22375, 24313"
- 	default y
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 83e2309..f68abb1 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -23,6 +23,7 @@
- #ifndef __ASM_ASSEMBLER_H
- #define __ASM_ASSEMBLER_H
- 
-+#include <asm/cputype.h>
- #include <asm/ptrace.h>
- #include <asm/thread_info.h>
- 
-@@ -224,4 +225,43 @@ lr	.req	x30		// link register
- 	movk	\reg, :abs_g0_nc:\val
- 	.endm
- 
-+/*
-+ * Check the MIDR_EL1 of the current CPU for a given model and a range of
-+ * variant/revision. See asm/cputype.h for the macros used below.
-+ *
-+ *	model:		MIDR_CPU_PART of CPU
-+ *	rv_min:		Minimum of MIDR_CPU_VAR_REV()
-+ *	rv_max:		Maximum of MIDR_CPU_VAR_REV()
-+ *	res:		Result register.
-+ *	tmp1, tmp2, tmp3: Temporary registers
-+ *
-+ * Corrupts: res, tmp1, tmp2, tmp3
-+ * Returns:  0, if the CPU id doesn't match. Non-zero otherwise
-+ */
-+	.macro	cpu_midr_match model, rv_min, rv_max, res, tmp1, tmp2, tmp3
-+	mrs		\res, midr_el1
-+	mov_q		\tmp1, (MIDR_REVISION_MASK | MIDR_VARIANT_MASK)
-+	mov_q		\tmp2, MIDR_CPU_PART_MASK
-+	and		\tmp3, \res, \tmp2	// Extract model
-+	and		\tmp1, \res, \tmp1	// rev & variant
-+	mov_q		\tmp2, \model
-+	cmp		\tmp3, \tmp2
-+	cset		\res, eq
-+	cbz		\res, .Ldone\@		// Model matches ?
-+
-+	.if (\rv_min != 0)			// Skip min check if rv_min == 0
-+	mov_q		\tmp3, \rv_min
-+	cmp		\tmp1, \tmp3
-+	cset		\res, ge
-+	.endif					// \rv_min != 0
-+	/* Skip rv_max check if rv_min == rv_max && rv_min != 0 */
-+	.if ((\rv_min != \rv_max) || \rv_min == 0)
-+	mov_q		\tmp2, \rv_max
-+	cmp		\tmp1, \tmp2
-+	cset		\tmp2, le
-+	and		\res, \res, \tmp2
-+	.endif
-+.Ldone\@:
-+	.endm
-+
- #endif	/* __ASM_ASSEMBLER_H */
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 1a59493..f43e10c 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -57,6 +57,14 @@
- #define MIDR_IMPLEMENTOR(midr)	\
- 	(((midr) & MIDR_IMPLEMENTOR_MASK) >> MIDR_IMPLEMENTOR_SHIFT)
- 
-+#define MIDR_CPU_VAR_REV(var, rev) \
-+	(((var) << MIDR_VARIANT_SHIFT) | (rev))
-+
-+#define MIDR_CPU_PART_MASK	  \
-+	(MIDR_IMPLEMENTOR_MASK	| \
-+	 MIDR_ARCHITECTURE_MASK | \
-+	 MIDR_PARTNUM_MASK)
-+
- #define MIDR_CPU_PART(imp, partnum) \
- 	(((imp)			<< MIDR_IMPLEMENTOR_SHIFT) | \
- 	(0xf			<< MIDR_ARCHITECTURE_SHIFT) | \
-@@ -70,11 +78,14 @@
- #define ARM_CPU_PART_FOUNDATION		0xD00
- #define ARM_CPU_PART_CORTEX_A57		0xD07
- #define ARM_CPU_PART_CORTEX_A53		0xD03
-+#define ARM_CPU_PART_CORTEX_A55		0xD05
- 
- #define APM_CPU_PART_POTENZA		0x000
- 
- #define CAVIUM_CPU_PART_THUNDERX	0x0A1
- 
-+#define MIDR_CORTEX_A55 MIDR_CPU_PART(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
-+
- #ifndef __ASSEMBLY__
- 
- /*
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 18201e9..f096367 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -221,6 +221,11 @@ ENTRY(__cpu_setup)
- 	cbz	x9, 2f
- 	cmp	x9, #2
- 	b.lt	1f
-+#ifdef CONFIG_ARM64_ERRATUM_1024718
-+	/* Disable hardware DBM on Cortex-A55 r0p0, r0p1 & r1p0 */
-+	cpu_midr_match MIDR_CORTEX_A55, MIDR_CPU_VAR_REV(0, 0), MIDR_CPU_VAR_REV(1, 0), x1, x2, x3, x4
-+	cbnz	x1, 1f
-+#endif
- 	orr	x10, x10, #TCR_HD		// hardware Dirty flag update
- 1:	orr	x10, x10, #TCR_HA		// hardware Access flag update
- 2:
--- 
-2.7.4
+greg k-h
