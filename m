@@ -1,63 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEQWKJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 18:10:09 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:36785 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQWKI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 18:10:08 -0400
-X-Google-Smtp-Source: AB8JxZrPlFWmBKtQF6IWWHINrNeriIP3xhuyoZ3F/uRyjdZ7MEthiPt4WdhQ8/yYrce0tzTBp0eGkw==
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-To: Takashi Iwai <tiwai@suse.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb: stream: fix potential memory leak during uac3 interface parsing
-Date: Fri, 18 May 2018 01:08:59 +0300
-Message-Id: <1526594939-21084-1-git-send-email-ruslan.bilovol@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751995AbeEQWO5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 18:14:57 -0400
+Received: from muru.com ([72.249.23.125]:42978 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751543AbeEQWOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 18:14:54 -0400
+From: Tony Lindgren <tony@atomide.com>
+To: linux-omap@vger.kernel.org
+Cc: Dave Gerlach <d-gerlach@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] bus: ti-sysc: Fix optional clocks array access
+Date: Thu, 17 May 2018 15:14:40 -0700
+Message-Id: <20180517221440.91897-1-tony@atomide.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UAC3 channel map is created during interface parsing,
-and in some cases was not freed in failure paths.
+We should be checking ddata->clocks[i] instead of clock_names[i]
+for the optional clocks. Currently this just happens to work for
+the typical case of one fck and one optional clock.
 
+Fixes: 09dfe5810762 ("bus: ti-sysc: Add handling for clkctrl opt clocks")
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- sound/usb/stream.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/bus/ti-sysc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-index bce3152..d16e1c2 100644
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -982,13 +982,16 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -128,7 +128,7 @@ static int sysc_get_one_clock(struct sysc *ddata, const char *name)
  
- 	dev_err(&dev->dev, "%u:%d : bogus bTerminalLink %d\n",
- 			iface_no, altno, as->bTerminalLink);
-+	kfree(chmap);
- 	return NULL;
- 
- found_clock:
- 	fp = audio_format_alloc_init(chip, alts, UAC_VERSION_3, iface_no,
- 				     altset_idx, altno, num_channels, clock);
--	if (!fp)
-+	if (!fp) {
-+		kfree(chmap);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	fp->chmap = chmap;
- 
-@@ -1009,6 +1012,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
- 							       iface_no);
- 		/* ok, let's parse further... */
- 		if (snd_usb_parse_audio_format_v3(chip, fp, as, stream) < 0) {
-+			kfree(fp->chmap);
- 			kfree(fp->rate_table);
- 			kfree(fp);
- 			return NULL;
+ 	if (index < 0) {
+ 		for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
+-			if (!clock_names[i]) {
++			if (!ddata->clocks[i]) {
+ 				index = i;
+ 				break;
+ 			}
 -- 
-1.9.1
+2.17.0
