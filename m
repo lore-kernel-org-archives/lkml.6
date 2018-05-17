@@ -1,130 +1,559 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeEQIo2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:44:28 -0400
-Received: from mail-db5eur01on0083.outbound.protection.outlook.com ([104.47.2.83]:59712
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750825AbeEQIoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:44:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, stefan@agner.ch, adriana.reus@nxp.com,
-        rui.silva@linaro.org
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: imx7: correct enet clock settings
-Date: Thu, 17 May 2018 16:40:22 +0800
-Message-Id: <1526546422-7431-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+        id S1752020AbeEQIou (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:44:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58934 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751843AbeEQIok (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 04:44:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA286602B6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers-next 2018-05-17
+Date: Thu, 17 May 2018 11:44:34 +0300
+Message-ID: <87k1s2k6x9.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK2PR02CA0194.apcprd02.prod.outlook.com
- (2603:1096:201:21::30) To HE1PR04MB1323.eurprd04.prod.outlook.com
- (2a01:111:e400:5889::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1323;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;3:x15peqZ5XnQhe2Pk2Uq5ZcZWgZ2miHXdIeqZcFvrlu1XyEhuZUrKRrDtHtDQLR5Yrkb36Iz+sxg819QUNRFIEUVi10St8aJSCmkQb7p0e5lxvjnZQoIGUQua7T7YXkf1LFsTbekU/Hzeoa02FNFFYgzwdZ+SQ5DnYs6ka/zX0/0jOAOZ15YCXbWGiVictsw6aCtl3ENioA2uKDACCq2eQDXO6Qd0Fgrc+xuZXSLn1QiHqxzQHEt2PjMixUZ926xk;25:6kFvzBtryvFWKrObhNQ/NGPxPciiFWXQd4POqkGExr50WXqL5AnT49qDor6Tkdt4GxsH/5rYg0LWf+LwEwZkP1xkHXeXkpTlPLXFTw5uziFZave7lupHKYFKvzUpfU66qLvejix/b4X6X5tV+NfPMZl4gkKYEp9viY2hcRRnrMAyzZpNirJTP1v32hzw9QEvQTarwFYpKJHFNwpyW5CMEdq0rAQtnvG1nADSoIrm/OEmcFPxojZpWwQ5naZ78hm+WiUMGqsfl5LsW3irvUN97BOANCZkHKOKTktOkGbC7fxL9y5erBvOd76lBW99NfpO6Iw2UflBMv8r10cJROCi5A==;31:prcI0lZvwc7lb4xHJ/mZmx/2gAZD+SCzh7vDq/K+pp42lmwn+XyqI0YK1yRpeOnOUva4OsZzwoc4PMXwIcIrZDPLF30w2noVri283bS4AJ5yePz4rKbfF0ciMM7p3drRxPubyiD4rt06ATji7RsOssf3v1EdINEnKPpVRPMDui/lEyXARjtURoJ4FCtvi2lRqjDW7bAyFsBEfJ2uJBKLp5N9g3FziXM5yW+PLc3CfUc=
-X-MS-TrafficTypeDiagnostic: HE1PR04MB1323:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;20:CDv9KjV1lCfAG1XyKkUVmbbyeMs7fee66SYQhQBlFSLqE/ZoR5r7+hvXT0CxD4jh6VwS6WvgzZQTfWrqnxo9xxWuxyRmolOBALX3nr7AvTdZukg38JcyXn+K7lZZIVA+LGf8xSqNBB5zr9BVCnU/QfPA+/XTgpfeIrpMICo8hhuxgmzNRRIKQimk3qDERVJqe+/zzaQIEluC7p4ERE7P06eYOIZql2af/L2Anyidhxa+5ZLpzg6QVpxsVEtMdbaufuvmq+en+O0YFNx1035/Foy6glQ04BM5r4O5chvfKMQGykpo3zw3M8jTqEiElvmoXqLAYXk5ODbtZ9qaAk0sg3yzGiG6Xb0LGC0XrcD6MNp1xNKIhe/RhzzV0ZpOCHIow4xJenngweRKpa1lC1XUDvLLLtlqutxPBAfmSGcdt0kcmPLr+lN3TFRVkb6PR0/LyOEj09BxHqwGHXg9v9H2YFGOTvDChFfz7qg12hkUbp13CYtrgp7KzXgmC+oJipcp;4:pjYYgCOZiGx49n7MrzrmiCayg4VOWt/3IHoDduAQOYYtFSGYFMGXmZqLjZzvNIRh9d8I8FuHYHy0j0W3fL9RwZQ71SWBHQ1b0FJp6CHU7US7sRSSbPRleuudsGL+mCrzfKLv9rZZkTo90Qk2/Y9kd9VOneHRzxX4v9DmG31GFFk5IV7QLRFV8tbAC7fgls2hDo7PaJssdQP0LmPk1qd6/WauWBrDarw1UlYMzMKSGqsQgIRN0tEdzKEJGQ+ijaPIEYfxWDsvHmeyHqC//Wtnqy0XVlr5Rbe0B1Ow5TwbCs0a4BFMAJkcLD1W5MHa5Qns
-X-Microsoft-Antispam-PRVS: <HE1PR04MB1323493F41682F29CDECC285F5910@HE1PR04MB1323.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1323;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1323;
-X-Forefront-PRVS: 067553F396
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39860400002)(366004)(39380400002)(189003)(199004)(68736007)(3846002)(446003)(316002)(16586007)(4326008)(48376002)(6512007)(956004)(6666003)(2616005)(11346002)(97736004)(53936002)(476003)(50466002)(2906002)(106356001)(478600001)(105586002)(305945005)(52116002)(16526019)(186003)(6116002)(7736002)(8676002)(25786009)(66066001)(81166006)(8936002)(47776003)(26005)(51416003)(6486002)(6506007)(386003)(86362001)(7416002)(5660300001)(81156014)(76176011)(486006)(36756003)(50226002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1323;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1323;23:T5PTE3w8gcQPxnEp0jTy/tcojxihlC5UpPtS9I+RG?=
- =?us-ascii?Q?x8CPL2gYBRHJlajs0fxGRWaJctC7Fb5s3KUqqis9hkOhXDV+Wr+FiBQX4oRV?=
- =?us-ascii?Q?V6iU9MXTcXuKFk7NLWr/kKvMju+5oCe6eJ/UlWBXwYfGLS5iUnGKmSKqv+NE?=
- =?us-ascii?Q?3ZV/uWb/VpxCwAlShwVe9WFkh8LSOzNnIkVmF7a0dWOu4qiCps58oz/+YAR7?=
- =?us-ascii?Q?J6GJVOVUkFkNeZbJ5lYd0X5Cb4VKrk+WFzXh8wClHZaxwDlU8iEed2lbiyXW?=
- =?us-ascii?Q?alRD43BaByu4/UsY0EADJUvOLRRLNYt/6EJQX4I6qM0FjFYfcaDhGiz3Mn7g?=
- =?us-ascii?Q?o/wb6Mtle44d8krbDLnv/M6pnzXH8GrhNusfKFdVFJ3TxOW1CyIC+pt91czm?=
- =?us-ascii?Q?TP9O+jaykukCwDH5fHdJ5CeD0U6zeWYmODBKTr1VI4yFZW/VmnNpdebDaokq?=
- =?us-ascii?Q?546c/jGVfVanLSC8JE9ZvZrX27kqdscKVepa8qGbOfwBx6Mt3WC6SjqUirEO?=
- =?us-ascii?Q?9WsBSYqjS/T1cvu2C+fnji8c/k8hWuZeKNiAOLnTrZ8uAxFsXKLoZVEZvO3a?=
- =?us-ascii?Q?nk47ZPSn0y3/Wd4YSiwE3hHMRYm9a8Qo57lm0Tzr0QgqJGdfhjKWhGnW/AbY?=
- =?us-ascii?Q?FP49t+GVSRBcuFccsP2Xe52V00P78pw41Z/qXNlikwMl9GAK4wvvPQg8ZcOw?=
- =?us-ascii?Q?pO2cNY5KwUzIEBOSo0p28dVswMmkTr2Cjy7AiLgLlXpno7aaQlFe/6NsSDYf?=
- =?us-ascii?Q?nALYZGxIVxc6REtBR3A/mQyMsFYT8MesQDIxMckr+JkknkscJUTRaRMYAgjA?=
- =?us-ascii?Q?y8AtKIKjOFbpgqDooQm+Tv78JTQp3rHvWSV6Z+w1RwWNEvbWAd0YgCmihdoh?=
- =?us-ascii?Q?CDL2til00ni5IW1xvpyranoq3r5zYWfPBjZID9Ap6nmsR8XQsAGixyL32SOW?=
- =?us-ascii?Q?wFmCIbhy8A93gCpiw1aeCKsDm69Rdm4b4c4lKLHziN9oH8Y8PFows829PwGX?=
- =?us-ascii?Q?cU6jh5wSf0VetaEpF21HbnaTLDOZ6aT2kMJ7pYRtL6mMlISwhcKuWkpPaLNP?=
- =?us-ascii?Q?DvV5zOWADX+eLrc7aT7+hsO6YgVLK9sqg/jpoqEtcZX36cJY61KSWup5bHvG?=
- =?us-ascii?Q?mUX/FYDWHrWAz8J8CKl/WNEJMIqY2zjyU6DWpN9GQRj2oe4vMIay2OyOdujw?=
- =?us-ascii?Q?gJxzZhD6PtDaiJaIlrTu4XX/DMMHqStJDuf?=
-X-Microsoft-Antispam-Message-Info: ntniD6b+gLm6VALSUInmcLwBNXwYYjjzg2/CwRrFDK61fG3PDRlHJ9pd/mpVy9OKj0qKQ0IhNRU9PEPA9KLqBdLFoypE3w6OtJ0u1PMaU2cX5inXCTE6COWR5XssWI5Ceqe2fLEiNlDyuR9YZ/gGDqc01QYtTFLAWlW07MdidLxZJt5rYADakk8uCUpolIdx
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;6:y2uU/+1X0lwSCNfFPMTenXz9Dw1cIEG4FZwkIYJpEpzudtpAYYPgfIhhiK8X7gNzbR0ANGAU0085yGKTm6YN0BxLG89xOPN+JowfJB1B4vNRT/DFFherKzVdooZSquggIcmaNPRhw6i+XZVZ+Q9yrsFpt/PmpsdeXVz3DDHqrFtFjkjC6HfwZY54u7B7Irsy+Ubx2S5wvydM1fEVS/W4Gi0UCMhNzo2lPRMhRPLZy7otoVOlEYaVyfI7scbNmc4Kc+/G1aSpmehujzf6jE51vpi8KAtG50gJbTAI+bK/l0O4UbXAKYdJ7OhCIilHo4o8wJ+eJfZOoCm1/424tLn14fRTCKMbsgjlxAEV5D53alP0+kOCVzllV7hsOmEnrQjnNe8DXl9MasywZ4Ro6+tDY3BJTUH1JWJaaVwzICmLtCisTknrQWGYp78Om4EQA8SJMcakq7z7qwPcgrBPO1/T6Q==;5:DolMJ7J/t9Dd5bTmrTbtEPC1Zv9kovwleanx9hANFmKxEvg6uTM7Sz7bg60yYyslz6VBiIm3oVDz1dEc6vn+qdzT2rsAo520+dcSQvbirrY2mKiPgc8VvVQN4e+GpyjPLe99PcXwsqGNp2UehvLOdrmBWZLLAIBNNM8RixLTuHs=;24:djSh2lKK7yG23ehFvL4ppOS9Rn0kbzSdMiM2oquUvE9m4vBoq+OMq2O9e3puk+yWgg20I090ZRzQCZUeyz2KL2SQwBhU9DJCHsQhaq40PSs=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;7:czpY7YlzGEy6QdIHPh5y2bz6/S8ClfBTTax/IDHtGbFxhJvA5cXuUEkSYr6/oxUx8Qs07uzWNqKjhewAa+HqVC5CLz+b2h+bDFSMnoBNrLxreX8sfZe3U+DxV3djmzA2RdXUyhcGM8TransWtmT9E970tZgpBkPVvw6PVh3PX85xyCPvl+QD5xi3OGmXFwU8s2jgjW1S+9cWmkrPgQgFQuVmY3ATC4Ve4VmiNGOgQ+AFcp/NTBEns1vSfDiNl5AO
-X-MS-Office365-Filtering-Correlation-Id: 1a0dfb8d-4ac0-448f-de31-08d5bbd25b5e
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2018 08:44:04.7324
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a0dfb8d-4ac0-448f-de31-08d5bbd25b5e
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1323
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4H8iv4c024624
 
-This patch corrects ENET "ipg" and "enet_out"
-clock settings according to clock driver's changes.
+Hi Dave,
 
-Based on Andy Duan's patch from the NXP kernel tree.
+here's a pull request to net-next for 4.18. I forgot to mention in the
+signed tag was that one id is added to include/linux/mmc/sdio_ids.h but
+that was acked by Ulf.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx7d.dtsi | 4 ++--
- arch/arm/boot/dts/imx7s.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+I suspect hat because of my merge of wireless-drivers into
+wireless-drivers-next the diffstat from request-pull was wrong again. I
+manually replaced that with the diffstat from my test pull to net-next.
 
-diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
-index 200714e..92022ea 100644
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -120,11 +120,11 @@
- 			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+		clocks = <&clks IMX7D_ENET2_IPG_ROOT_CLK>,
- 			<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 			<&clks IMX7D_ENET2_TIME_ROOT_CLK>,
- 			<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
--			<&clks IMX7D_ENET_PHY_REF_ROOT_CLK>;
-+			<&clks IMX7D_ENET_PHY_REF_ROOT_DIV>;
- 		clock-names = "ipg", "ahb", "ptp",
- 			"enet_clk_ref", "enet_out";
- 		fsl,num-tx-queues=<3>;
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 4d42335..cf4ba53 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -1091,11 +1091,11 @@
- 					<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+				clocks = <&clks IMX7D_ENET1_IPG_ROOT_CLK>,
- 					<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 					<&clks IMX7D_ENET1_TIME_ROOT_CLK>,
- 					<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
--					<&clks IMX7D_ENET_PHY_REF_ROOT_CLK>;
-+					<&clks IMX7D_ENET_PHY_REF_ROOT_DIV>;
- 				clock-names = "ipg", "ahb", "ptp",
- 					"enet_clk_ref", "enet_out";
- 				fsl,num-tx-queues=<3>;
+Please let me know if you have any problems.
+
+Kalle
+
+The following changes since commit af8a41cccf8f469165c6debc8fe07c5fd2ca501a:
+
+  rtlwifi: cleanup 8723be ant_sel definition (2018-04-24 13:15:08 +0300)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git tags/wireless-drivers-next-for-davem-2018-05-17
+
+for you to fetch changes up to 763ece85f45a6b93268e25a0abf02922f911dab4:
+
+  brcmfmac: fix initialization of struct cfg80211_inform_bss variable (2018-05-15 18:03:35 +0300)
+
+----------------------------------------------------------------
+wireless-drivers-next patches for 4.18
+
+The first pull request for 4.18. As usual new features and bug fixes
+but nothing really special.
+
+I also merged wireless-drivers due to an iwlwifi patch dependency.
+
+Major changes:
+
+iwlwifi
+
+* implement Traffic Condition Monitor and use it for scan, BT coex and
+  to detect when the AP doesn't support UAPSD properly
+
+* some more work for the 22000 family of devices;
+
+* introduce AMSDU rate control offload
+
+qtnfmac
+
+* DFS offload support
+
+rsi
+
+* roaming enhancements
+
+* increase max supported aggregation subframes
+
+* don't advertise 5 GHz support if the device doesn't support it
+
+brcmfmac
+
+* add support for BCM4366E chipset
+
+* add support for bcm43364 wireless chipset
+
+ath10k
+
+* enable temperature reads for QCA6174 and QCA9377
+
+* add firmware memory dump support for QCA9984
+
+* continue adding WCN3990 support via SNOC bus
+
+----------------------------------------------------------------
+Amitkumar Karwar (7):
+      rsi: disable fw watchdog timer during reset
+      rsi: device bootup parameter configuration
+      rsi: use appropriate interface for power save configuration
+      rsi: increase max supported aggregation subframes
+      rsi: parse TID from data frame correctly
+      rsi: enable power save by default for coex
+      rsi: advertise 5GHz support based on device capability
+
+Arend Van Spriel (2):
+      brcmfmac: check p2pdev mac address uniqueness
+      brcmfmac: constify firmware mapping tables
+
+Arnd Bergmann (1):
+      ath10k: avoid possible string overflow
+
+Carl Huang (2):
+      ath10k: add WMI_SERVICE_AVAILABLE_EVENT support
+      ath10k: support MAC address randomization in scan
+
+Colin Ian King (9):
+      wil6210: fix potential null dereference of ndev before null check
+      ath10k: fix spelling mistake: "tiggers" -> "triggers"
+      ath6kl: fix spelling mistake: "chache" -> "cache"
+      cw1200: fix spelling mistake: "Mailformed" -> "Malformed"
+      rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
+      ipw2100: fix spelling mistake: "decsribed" -> "described"
+      rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
+      ipw2200: fix spelling mistake: "functionalitis" -> "functionalities"
+      rsi: fix spelling mistake: "thead" -> "thread"
+
+Dan Carpenter (2):
+      rsi: remove unecessary PTR_ALIGN()s
+      mwifiex: pcie: tighten a check in mwifiex_pcie_process_event_ready()
+
+Dan Haab (1):
+      brcmfmac: add support for BCM4366E chipset
+
+Daniel Mack (11):
+      wcn36xx: check for DMA mapping errors in wcn36xx_dxe_tx_frame()
+      wcn36xx: don't keep reference to skb if transmission failed
+      wcn36xx: don't delete invalid bss indices
+      wcn36xx: allocate skbs with GFP_KERNEL during init
+      wcn36xx: use READ_ONCE() to access desc->ctrl
+      wcn36xx: pass correct BSS index when deleting BSS keys
+      wcn36xx: abort scan request when 'dequeued' indicator is sent
+      wcn36xx: cancel pending scan request when interface goes down
+      wcn36xx: handle scan cancellation when firmware support is missing
+      wcn36xx: send bss_type in scan requests
+      wcn36xx: pass information elements in scan requests
+
+Dmitry Lebed (1):
+      qtnfmac: add DFS offload support
+
+Eliad Peller (2):
+      iwlwifi: pcie: allow sending pre-built A-MSDUs
+      iwlwifi: mvm: set wakeup filters for wowlan "any" configuration
+
+Emmanuel Grumbach (3):
+      iwlwifi: mvm: BT Coex - make the primary / secondary pick traffic aware
+      iwlwifi: pcie: implement the overlow queue for Gen2 devices
+      iwlwifi: mvm: set the MFP flag for keys that are used by MFP stations
+
+Erik Stromdahl (2):
+      ath10k: add inlined wrappers for htt tx ops
+      ath10k: add inlined wrappers for htt rx ops
+
+Eyal Reizer (1):
+      wlcore: sdio: allow pm to handle sdio power
+
+Felix Fietkau (11):
+      mt76: stop tx queues from the driver callback instead of common code
+      mt76: add missing VHT maximum A-MPDU length capability
+      mt76: toggle driver station powersave bit before notifying mac80211
+      mt76: rework tx power handling
+      mt76: fix potential sleep in atomic context
+      mt76: set RX_FLAG_DUP_VALIDATED for A-MPDU reordered packets
+      mt76: check qos ack policy before reordering packets
+      mt76: fix concurrent rx calls on A-MPDU release
+      mt76: add rcu locking in tid reorder function
+      mt76: add rcu locking around tx scheduling
+      mt76: check for pending reset before attempting to schedule tx
+
+Franky Lin (5):
+      brcmfmac: reports boottime_ns while informing bss
+      brcmfmac: use nl80211_band directly to get ieee80211 channel
+      brcmfmac: add hostready indication
+      brcmfmac: coarse support for PCIe shared structure rev7
+      brcmfmac: fix initialization of struct cfg80211_inform_bss variable
+
+Ganapathi Bhat (1):
+      mwifiex: increase TX threashold to avoid TX timeout during ED MAC test
+
+Golan Ben Ami (2):
+      iwlwifi: allow different csr flags for different device families
+      iwlwifi: support new csr addresses for hw address
+
+Golan Ben-Ami (1):
+      iwlwifi: introduce Image Loader (IML) - new firmware image
+
+Govind Singh (15):
+      ath10k: build ce layer in ath10k core module
+      ath10k: platform driver for WCN3990 SNOC WLAN module
+      ath10k: add resource init and deinit for WCN3990
+      ath10k: add hif start/stop methods for wcn3990 snoc layer
+      ath10k: add HTC services for WCN3990
+      ath10k: map HTC services to tx/rx pipes for wcn3990
+      ath10k: add hif power-up/power-down methods
+      ath10k: add hif tx methods for wcn3990
+      ath10k: add hif rx methods for wcn3990
+      ath10k: modify hif tx paddr to dma_addr_t type
+      ath10k: vote for hardware resources for WCN3990
+      dt: bindings: add bindings for wcn3990 wifi block
+      ath10k: fix fw path name for WCN3990 target
+      ath10k: enable SRRI/DRRI support on ddr for WCN3990
+      ath10k: enable sta idle power save
+
+Gregory Greenman (1):
+      iwlwifi: mvm: support offload of AMSDU rate control
+
+Gustavo A. R. Silva (6):
+      ath9k: dfs: remove accidental use of stack VLA
+      mt7601u: phy: mark expected switch fall-through
+      brcmsmac: phy_lcn: remove duplicate code
+      qtnfmac: pearl: pcie: fix memory leak in qtnf_fw_work_handler
+      rsi_91x: fix structurally dead code
+      rsi_91x: fix uninitialized variable
+
+Haim Dreyfuss (1):
+      iwlwifi: move timestamp functions from debugfs.h to dbg.h
+
+Jia-Ju Bai (1):
+      net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in dma_tx_fragment
+
+Johannes Berg (3):
+      iwlwifi: mvm: detect U-APSD breaking aggregation
+      iwlwifi: mvm: clean up scan capability checks
+      iwlwifi: mvm: move skb padding reservation earlier
+
+Julia Lawall (1):
+      mwifiex: delete unneeded include
+
+Kalle Valo (4):
+      Merge tag 'iwlwifi-next-for-kalle-2018-04-20' of git://git.kernel.org/.../iwlwifi/iwlwifi-next
+      Merge ath-next from git://git.kernel.org/.../kvalo/ath.git
+      Merge git://git.kernel.org/.../kvalo/wireless-drivers.git
+      Merge tag 'iwlwifi-next-for-kalle-2018-04-26' of git://git.kernel.org/.../iwlwifi/iwlwifi-next
+
+Liad Kaufman (2):
+      iwlwifi: support api ver2 of NVM_GET_INFO resp
+      iwlwifi: mvm: support 22000 HW opening agg before traffic
+
+Loic Poulain (2):
+      wcn36xx: Add missing fall through comment in smd.c
+      wcn36xx: Remove useless skb spinlock
+
+Lorenzo Bianconi (10):
+      mt76x2: fix tssi initialization for 5GHz band
+      mt76x2: make mt76x2_mac_reset routine static
+      mt76x2: remove unnecessary MT_TX_ALC_CFG_4 configuration
+      mt76x2: fix tx_alc_enabled check
+      mt76x2: set default values in TX_ALC_CFG_{1, 2} for tempetaure compensation
+      mt76x2: fix TXD_INFO bitmask definition
+      mt76x2: fix is_mt7612 routine
+      mt76x2: remove unnecessary break in mt76x2_mac_process_tx_rate()
+      mt76x2: fix avg_rssi estimation
+      mt76x2: add a polling delay in mt76x2_mac_stop routine
+
+Luc Van Oostenryck (2):
+      mwifiex: fix mwifiex_hard_start_xmit()'s return type
+      qtnfmac: fix qtnf_netdev_hard_start_xmit()'s return type
+
+Luca Coelho (10):
+      iwlwifi: mvm: add traffic condition monitoring (TCM)
+      iwlwifi: mvm: use TCM data to decide scan priority
+      iwlwifi: mvm: fix OOC priority in scans
+      iwlwifi: use flags to denote modifiers for the channel maps
+      iwlwifi: remove upper case letters in sku_capa_band_*_enable
+      iwlwifi: cfg: remove unnecessary cfg data in non-dvm devices
+      iwlwifi: fw: harden page loading code
+      iwlwifi: fw: combine loading of last page block into main copy loop
+      iwlwifi: pcie: remove non-responsive device
+      iwlwifi: make bitfield a u32 instead of u16
+
+Maharaja Kennadyrajan (1):
+      ath10k: fix a typo in ath10k_wmi_set_wmm_param()
+
+Manikanta Pubbisetty (1):
+      ath10k: correct target assert problem due to CE5 stuck
+
+Marcus Folkesson (1):
+      ath10k: sdio: fix memory leak for probe allocations
+
+Naftali Goldstein (1):
+      iwlwifi: mvm: update rs-fw API
+
+Ping-Ke Shih (2):
+      rtlwifi: btcoex: remove identical statements within if-else branches
+      rtlwifi: remove duplicate definition of antenna number for btcoex
+
+Prameela Rani Garnepudi (4):
+      rsi: move xtend_desc structure from rsi_main.h to rsi_mgmt.h
+      rsi: move descriptor preparation to core
+      rsi: enable 80MHz clock by default
+      rsi: roaming enhancements
+
+Rafał Miłecki (1):
+      brcmfmac: set WIPHY_FLAG_HAVE_AP_SME flag
+
+Rakesh Pillai (5):
+      ath10k: add support to get target info from hif ops
+      ath10k: check all CE for data if irq summary is not retained
+      ath10k: enable hw checksum for wcn3990
+      ath10k: add hw params for shadow register support
+      ath10k: add support for shadow register for WNC3990
+
+Sanjay Kumar Konduri (1):
+      rsi: Add null check for virtual interfaces in wowlan config
+
+Sara Sharon (8):
+      iwlwifi: mvm: detect low latency and traffic load per band
+      iwlwifi: pcie: allocate shorter TX queues for 22000 devices
+      iwlwifi: Revert "iwlwifi: pcie: dynamic Tx command queue size"
+      iwlwifi: add TX queue size parameter to TX queue allocation
+      iwlwifi: pcie: use the queue size as sent by opmode
+      iwlwifi: mvm: use shorter queues for mgmt and auxilary queues
+      iwlwifi: mvm: use the new get_tid function
+      iwlwifi: mvm: remove check for non low latency TIDs
+
+Sean Lanigan (1):
+      brcmfmac: Add support for bcm43364 wireless chipset
+
+Shaul Triebitz (3):
+      iwlwifi: move all NVM parsing code to the common files
+      iwlwifi: pcie: gen2: fix race in cmd fifo write ptr
+      iwlwifi: get rid of fw/nvm.c
+
+Siva Rebbagondla (4):
+      rsi: fix nommu_map_sg overflow kernel panic
+      rsi: Fix 'invalid vdd' warning in mmc
+      rsi: reset hibernate_resume flag to work hibernate resume in coex mode.
+      rsi: Set wowlan flag while writing wowlan config parameters
+
+Stanislaw Gruszka (4):
+      mt7601u: use EWMA to calculate avg_rssi
+      mt7601u: run calibration works after finishing scanning
+      rt2x00: call sta_add/remove directly in rt2800
+      rt2x00: check against flushing empty queue
+
+Taketo Kabe (1):
+      b43: fix transmit failure when VT is switched
+
+Thomas Hebb (1):
+      ath10k: search all IEs for variant before falling back
+
+Toke Høiland-Jørgensen (1):
+      wireless-drivers: Dynamically allocate struct station_info
+
+Venkateswara Naralasetty (1):
+      ath10k: Add tx ack signal support for management frames
+
+Wen Gong (1):
+      ath10k: convert wow pattern from 802.3 to 802.11
+
+Xinming Hu (5):
+      mwifiex: uap: filter duplicate ERP IE
+      mwifiex: uap: support cfg80211 ignore_broadcast_ssid=2
+      mwifiex: make firmware mac address consistent with host configuration
+      mwifiex: always configure firmware mac address during changing virtual interface
+      mwifiex: keep user configured mac address during changing virtual interface
+
+Xose Vazquez Perez (1):
+      rt2x00: rt2800: add antenna diversity for RT5370G
+
+ drivers/net/wireless/ath/ath10k/Kconfig                          |   12 ++
+ drivers/net/wireless/ath/ath10k/Makefile                         |    7 +-
+ drivers/net/wireless/ath/ath10k/ce.c                             |  269 ++++++++++++++++++++++++++-
+ drivers/net/wireless/ath/ath10k/ce.h                             |   24 ++-
+ drivers/net/wireless/ath/ath10k/core.c                           |  183 +++++++++++-------
+ drivers/net/wireless/ath/ath10k/core.h                           |    2 +
+ drivers/net/wireless/ath/ath10k/hif.h                            |   15 +-
+ drivers/net/wireless/ath/ath10k/htc.c                            |    6 +
+ drivers/net/wireless/ath/ath10k/htc.h                            |    4 +
+ drivers/net/wireless/ath/ath10k/htt.c                            |    4 +-
+ drivers/net/wireless/ath/ath10k/htt.h                            |  111 ++++++++++-
+ drivers/net/wireless/ath/ath10k/htt_rx.c                         |   24 ++-
+ drivers/net/wireless/ath/ath10k/htt_tx.c                         |   19 +-
+ drivers/net/wireless/ath/ath10k/hw.c                             |    9 +-
+ drivers/net/wireless/ath/ath10k/hw.h                             |   22 ++-
+ drivers/net/wireless/ath/ath10k/mac.c                            |   26 ++-
+ drivers/net/wireless/ath/ath10k/pci.c                            |    8 +-
+ drivers/net/wireless/ath/ath10k/sdio.c                           |   24 +--
+ drivers/net/wireless/ath/ath10k/snoc.c                           | 1414 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/ath/ath10k/snoc.h                           |   95 ++++++++++
+ drivers/net/wireless/ath/ath10k/txrx.c                           |    8 +
+ drivers/net/wireless/ath/ath10k/wmi-ops.h                        |   46 +++++
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c                        |   63 +++++++
+ drivers/net/wireless/ath/ath10k/wmi-tlv.h                        |  357 ++++++++++++++++++++++++++++++++++-
+ drivers/net/wireless/ath/ath10k/wmi.c                            |   34 +++-
+ drivers/net/wireless/ath/ath10k/wmi.h                            |   28 +++
+ drivers/net/wireless/ath/ath10k/wow.c                            |  138 +++++++++++++-
+ drivers/net/wireless/ath/ath6kl/debug.c                          |    2 +-
+ drivers/net/wireless/ath/ath6kl/main.c                           |   14 +-
+ drivers/net/wireless/ath/ath9k/dfs.c                             |    6 +-
+ drivers/net/wireless/ath/wcn36xx/dxe.c                           |   36 ++--
+ drivers/net/wireless/ath/wcn36xx/dxe.h                           |    1 -
+ drivers/net/wireless/ath/wcn36xx/hal.h                           |    8 +-
+ drivers/net/wireless/ath/wcn36xx/main.c                          |   40 +++-
+ drivers/net/wireless/ath/wcn36xx/smd.c                           |   33 +++-
+ drivers/net/wireless/ath/wcn36xx/smd.h                           |    2 +
+ drivers/net/wireless/ath/wcn36xx/txrx.c                          |   15 +-
+ drivers/net/wireless/ath/wcn36xx/wcn36xx.h                       |    7 +-
+ drivers/net/wireless/ath/wil6210/debugfs.c                       |   22 ++-
+ drivers/net/wireless/ath/wil6210/main.c                          |    3 +-
+ drivers/net/wireless/ath/wil6210/wmi.c                           |   19 +-
+ drivers/net/wireless/broadcom/b43/dma.c                          |   14 +-
+ drivers/net/wireless/broadcom/b43legacy/dma.c                    |    2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c        |    1 +
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c      |   51 ++---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/chip.c          |    1 +
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c      |    2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h      |    2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.h        |    6 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c           |    7 +
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c          |   40 +++-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c          |    2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c           |    2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c   |    9 +-
+ drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h    |    1 +
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c                     |    2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.h                     |    2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c                     |    2 +-
+ drivers/net/wireless/intel/iwlwifi/Makefile                      |    2 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/1000.c                    |    8 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/2000.c                    |   13 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/22000.c                   |   11 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/5000.c                    |    8 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/6000.c                    |   19 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/7000.c                    |   12 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/8000.c                    |   10 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/9000.c                    |    6 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/main.c                    |    8 +-
+ drivers/net/wireless/intel/iwlwifi/fw/api/datapath.h             |    5 -
+ drivers/net/wireless/intel/iwlwifi/fw/api/nvm-reg.h              |   42 +++--
+ drivers/net/wireless/intel/iwlwifi/fw/api/rs.h                   |  156 ++++++----------
+ drivers/net/wireless/intel/iwlwifi/fw/api/txq.h                  |    2 +
+ drivers/net/wireless/intel/iwlwifi/fw/dbg.h                      |   36 ++++
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.c                  |    1 +
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.h                  |   31 ----
+ drivers/net/wireless/intel/iwlwifi/fw/file.h                     |    3 +
+ drivers/net/wireless/intel/iwlwifi/fw/img.h                      |    6 +
+ drivers/net/wireless/intel/iwlwifi/fw/nvm.c                      |  162 ----------------
+ drivers/net/wireless/intel/iwlwifi/fw/paging.c                   |   78 ++++----
+ drivers/net/wireless/intel/iwlwifi/fw/runtime.h                  |    1 -
+ drivers/net/wireless/intel/iwlwifi/iwl-config.h                  |   92 ++++++++-
+ drivers/net/wireless/intel/iwlwifi/iwl-csr.h                     |   28 +--
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c                     |   14 ++
+ drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c            |    4 +-
+ drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.h            |    5 +-
+ drivers/net/wireless/intel/iwlwifi/iwl-eeprom-read.c             |    8 +-
+ drivers/net/wireless/intel/iwlwifi/iwl-modparams.h               |    2 +
+ drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c               |  353 ++++++++++++++++++++++++++++++++---
+ drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.h               |   56 ++++--
+ drivers/net/wireless/intel/iwlwifi/iwl-trans.h                   |   13 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/coex.c                    |   37 ++++
+ drivers/net/wireless/intel/iwlwifi/mvm/constants.h               |    7 +
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c                      |   22 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c             |    2 +
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c                 |   25 +++
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c                      |   10 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c                |   33 ++++
+ drivers/net/wireless/intel/iwlwifi/mvm/mvm.h                     |  101 ++++++++--
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c                     |  208 +--------------------
+ drivers/net/wireless/intel/iwlwifi/mvm/ops.c                     |   18 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c                   |  117 ++++++------
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c                      |   15 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.h                      |    3 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/rx.c                      |  103 +++++++++-
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c                    |   33 ++--
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c                    |  194 +++++++++++++------
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c                     |   28 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.h                     |    7 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c                      |   56 +++++-
+ drivers/net/wireless/intel/iwlwifi/mvm/utils.c                   |  438 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c              |    2 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/internal.h               |    8 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c                     |    3 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c             |   15 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c                  |  139 ++++++++++----
+ drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c                |   55 ++++--
+ drivers/net/wireless/intel/iwlwifi/pcie/tx.c                     |   52 +++---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c                  |    7 +-
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c                    |    1 -
+ drivers/net/wireless/marvell/mwifiex/ie.c                        |    1 +
+ drivers/net/wireless/marvell/mwifiex/main.c                      |   43 +++--
+ drivers/net/wireless/marvell/mwifiex/main.h                      |    7 +-
+ drivers/net/wireless/marvell/mwifiex/pcie.c                      |    3 +-
+ drivers/net/wireless/marvell/mwifiex/uap_event.c                 |   25 ++-
+ drivers/net/wireless/mediatek/mt76/agg-rx.c                      |   16 +-
+ drivers/net/wireless/mediatek/mt76/mac80211.c                    |   13 +-
+ drivers/net/wireless/mediatek/mt76/mt76.h                        |    1 +
+ drivers/net/wireless/mediatek/mt76/mt76x2.h                      |    3 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_dma.h                  |    7 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_eeprom.c               |    6 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_eeprom.h               |    6 +
+ drivers/net/wireless/mediatek/mt76/mt76x2_init.c                 |   13 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_mac.c                  |    1 -
+ drivers/net/wireless/mediatek/mt76/mt76x2_mac.h                  |    1 -
+ drivers/net/wireless/mediatek/mt76/mt76x2_main.c                 |    1 +
+ drivers/net/wireless/mediatek/mt76/mt76x2_phy.c                  |   84 ++++++---
+ drivers/net/wireless/mediatek/mt76/tx.c                          |    6 +
+ drivers/net/wireless/mediatek/mt7601u/mac.c                      |    4 +-
+ drivers/net/wireless/mediatek/mt7601u/main.c                     |    6 +
+ drivers/net/wireless/mediatek/mt7601u/mt7601u.h                  |    5 +-
+ drivers/net/wireless/mediatek/mt7601u/phy.c                      |   11 +-
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c                |    9 +
+ drivers/net/wireless/quantenna/qtnfmac/core.c                    |    2 +-
+ drivers/net/wireless/quantenna/qtnfmac/event.c                   |   52 ++++--
+ drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c              |    4 +
+ drivers/net/wireless/quantenna/qtnfmac/qlink.h                   |    7 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800.h                      |   17 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800lib.c                   |   20 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800lib.h                   |    5 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800mmio.c                  |    1 +
+ drivers/net/wireless/ralink/rt2x00/rt2800pci.c                   |    6 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800soc.c                   |    6 +-
+ drivers/net/wireless/ralink/rt2x00/rt2800usb.c                   |    6 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00.h                      |    4 -
+ drivers/net/wireless/ralink/rt2x00/rt2x00mac.c                   |    3 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00queue.c                 |    2 +
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c |    2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c |    2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c |   19 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c |    2 +-
+ drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c              |    4 +-
+ drivers/net/wireless/realtek/rtlwifi/wifi.h                      |    5 -
+ drivers/net/wireless/rsi/rsi_91x_coex.c                          |    1 +
+ drivers/net/wireless/rsi/rsi_91x_core.c                          |   33 +++-
+ drivers/net/wireless/rsi/rsi_91x_hal.c                           |  108 +++++++----
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c                      |   72 ++++---
+ drivers/net/wireless/rsi/rsi_91x_mgmt.c                          |   34 ++--
+ drivers/net/wireless/rsi/rsi_91x_sdio.c                          |   27 +--
+ drivers/net/wireless/rsi/rsi_91x_usb.c                           |    8 +
+ drivers/net/wireless/rsi/rsi_boot_params.h                       |    3 +-
+ drivers/net/wireless/rsi/rsi_hal.h                               |    3 +
+ drivers/net/wireless/rsi/rsi_main.h                              |    7 +-
+ drivers/net/wireless/rsi/rsi_mgmt.h                              |   19 +-
+ drivers/net/wireless/rsi/rsi_sdio.h                              |    2 +-
+ drivers/net/wireless/rsi/rsi_usb.h                               |    1 +
+ drivers/net/wireless/st/cw1200/txrx.c                            |    2 +-
+ drivers/net/wireless/ti/wlcore/sdio.c                            |   27 +--
+ include/linux/mmc/sdio_ids.h                                     |    1 +
+ 179 files changed, 5580 insertions(+), 1480 deletions(-)
+ create mode 100644 drivers/net/wireless/ath/ath10k/snoc.c
+ create mode 100644 drivers/net/wireless/ath/ath10k/snoc.h
+ delete mode 100644 drivers/net/wireless/intel/iwlwifi/fw/nvm.c
+
 -- 
-2.7.4
+Kalle Valo
