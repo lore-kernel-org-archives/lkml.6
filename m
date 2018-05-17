@@ -1,90 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752265AbeEQUsZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 16:48:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39364 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751907AbeEQUsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 16:48:23 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 1/2] rtc: tps6586x: fix possible race condition
-Date: Thu, 17 May 2018 22:48:17 +0200
-Message-Id: <20180517204818.28593-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752323AbeEQUsq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 16:48:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54666 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbeEQUso (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 16:48:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7160E609D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Boyd <swboyd@chromium.org>, lgirdwood@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, ilina@codeaurora.org
+References: <cover.1521246069.git.collinsd@codeaurora.org>
+ <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
+ <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
+ <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
+ <152411734938.46528.9676451637772936597@swboyd.mtv.corp.google.com>
+ <20180419120813.GD27188@sirena.org.uk>
+ <38f42537-f801-115a-4120-1344a67a0462@codeaurora.org>
+ <20180424174111.GH22073@sirena.org.uk>
+ <d82ef514-b94f-8ed9-6b1e-e07de2a5f455@codeaurora.org>
+ <20180517060948.GI20254@sirena.org.uk>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <6cb2ac52-258c-332b-e912-809d16e14114@codeaurora.org>
+Date: Thu, 17 May 2018 13:48:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
+MIME-Version: 1.0
+In-Reply-To: <20180517060948.GI20254@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The probe function is not allowed to fail after the RTC is registered
-because the following may happen:
+On 05/16/2018 11:09 PM, Mark Brown wrote:
+> On Tue, Apr 24, 2018 at 01:46:21PM -0700, David Collins wrote:
+>> The RPMh hardware is aware of the parent-child connections between
+>> regulators as well as minimum headroom to ensure stable LDO voltage output
+>> for subregulated LDOs.  The intention of having the headroom be a
+>> configurable property for processors is to support usecases in which
+>> subregulated LDO loads are particularly sensitive to noise and require
+>> additional headroom.  Such usecases are board dependent and beyond the
+>> baseline configurations set in RPMh hardware.
+> 
+> So the hardware implementation is some hard coding stuff that doesn't
+> really adequately reflect reality?  This seems unfortunate.  However do
+> we really need to tell the hardware about the fact that we're adding
+> extra headroom - are there actual interactions with non-Linux things
+> here?
 
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
+The RPMh hardware is configured by the boot loader.  The configuration
+does reflect reality; however, it cannot handle all configurations at
+initialization time.  Specific headroom management typically comes up in
+modem usecases for RF supplies that are sensitive to noise.  This feature
+allows RPMh masters (application processor, modem processor, etc) to make
+requests only for the regulators that they directly care about without
+having to worry about power grid parent-child details and setting the
+voltage of parent regulators in order to ensure sufficient headroom.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-tps6586x.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+If you really don't like having this feature present in the Linux RPMh
+regulator driver, then I'd be ok removing it.  It is not required for
+SDM845 which the driver is initially targeting.
 
-diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
-index 46a19adf9a96..9b741143f131 100644
---- a/drivers/rtc/rtc-tps6586x.c
-+++ b/drivers/rtc/rtc-tps6586x.c
-@@ -276,14 +276,15 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
- 	device_init_wakeup(&pdev->dev, 1);
- 
- 	platform_set_drvdata(pdev, rtc);
--	rtc->rtc = devm_rtc_device_register(&pdev->dev, dev_name(&pdev->dev),
--				       &tps6586x_rtc_ops, THIS_MODULE);
-+	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
- 	if (IS_ERR(rtc->rtc)) {
- 		ret = PTR_ERR(rtc->rtc);
--		dev_err(&pdev->dev, "RTC device register: ret %d\n", ret);
-+		dev_err(&pdev->dev, "RTC allocate device: ret %d\n", ret);
- 		goto fail_rtc_register;
- 	}
- 
-+	rtc->rtc->ops = &tps6586x_rtc_ops;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
- 				tps6586x_rtc_irq,
- 				IRQF_ONESHOT,
-@@ -294,6 +295,13 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
- 		goto fail_rtc_register;
- 	}
- 	disable_irq(rtc->irq);
-+
-+	ret = rtc_register_device(rtc->rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "RTC device register: ret %d\n", ret);
-+		goto fail_rtc_register;
-+	}
-+
- 	return 0;
- 
- fail_rtc_register:
+
+>>>> XOB managed regulators physically cannot change voltage.  Therefore, do
+>>>> you agree that it is reasonable to use fixed_uV for them?  Note that I
+>>>> removed init_data->constraints.apply_uV manipulation in version 2 of this
+>>>> patch.
+> 
+>>> If these regulators can't change voltage then surely we know what
+>>> voltage they have without needing it to be specified in DT?
+> 
+>> In the case of XOB managed LDO regulators, the LDOs physically can be
+>> configured to different voltages by the bootloader.  However, the RPMh
+>> interface provides no mechanism for the application processor to read or
+>> change that voltage.  Therefore, we need a way to specify such voltages in
+>> a board specific (as opposed to driver specific) manner (i.e. device tree).
+> 
+> Is the kernel somehow prevented from varying these voltages?
+
+Yes.  Physically, there exists no RPMh register to read or write the
+voltage of LDOs managed via XOB.  Additionally, the kernel running on the
+application processor is blocked from configuring the voltage via a direct
+SPMI writes by access permissions that crash the system when violated.
+
+Take care,
+David
+
 -- 
-2.17.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
