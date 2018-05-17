@@ -1,115 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeEQBOV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 21:14:21 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.234]:20596 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752014AbeEQBOT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 21:14:19 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
- <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
- <20180423161742.66f939ba@vento.lan>
- <99e158c0-1273-2500-da9e-b5ab31cba889@embeddedor.com>
- <20180426204241.03a42996@vento.lan>
- <df8010f1-6051-7ff4-5f0e-4a436e900ec5@embeddedor.com>
- <20180515085953.65bfa107@vento.lan> <20180515141655.idzuh2jfdkuu5grs@mwanda>
- <f342d8d6-b5e6-0cbf-d002-9561b79c90e4@embeddedor.com>
- <20180515193936.m25kzyeknsk2bo2c@mwanda>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <0f31a60b-911d-0140-3546-98317e2a0557@embeddedor.com>
-Date: Wed, 16 May 2018 20:14:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751977AbeEQBe4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 21:34:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:46069 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751013AbeEQBey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 21:34:54 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 17 May 2018 11:34:50 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Chris Novakovic <chris@chrisn.me.uk>
+Subject: linux-next: manual merge of the net-next tree with the vfs tree
+Message-ID: <20180517113450.182c8259@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180515193936.m25kzyeknsk2bo2c@mwanda>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.172.56.86
-X-Source-L: No
-X-Exim-ID: 1fJ7Uo-0036Yi-E5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:34798
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9JDh.iCQyacovvxgBx6vtA/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/9JDh.iCQyacovvxgBx6vtA/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 05/15/2018 02:39 PM, Dan Carpenter wrote:
->> Dan,
->>
->> These are all the Spectre media issues I see smatch is reporting in
->> linux-next-20180515:
->>
->> drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line()
->> warn: potential spectre issue 'pin->error_inj_args'
->> drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() warn:
->> potential spectre issue 'ca->slot_info' (local cap)
->> drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn:
->> potential spectre issue 'p->ule_next_hdr'
->>
->> I pulled the latest changes from the smatch repository and compiled it.
->>
->> I'm running smatch v0.5.0-4459-g2f66d40 now. Is this the latest version?
->>
->> I wonder if there is anything I might be missing.
->>
-> 
-> You'd need to rebuild the db (possibly twice but definitely once).
-> 
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Hi Dan,
+  net/ipv4/ipconfig.c
 
-After rebuilding the db (once), these are all the Spectre media warnings 
-I get:
+between commits:
 
-drivers/media/pci/ddbridge/ddbridge-core.c:233 ddb_redirect() warn: 
-potential spectre issue 'ddbs'
-drivers/media/pci/ddbridge/ddbridge-core.c:243 ddb_redirect() warn: 
-potential spectre issue 'pdev->port'
-drivers/media/pci/ddbridge/ddbridge-core.c:252 ddb_redirect() warn: 
-potential spectre issue 'idev->input'
-drivers/media/dvb-core/dvb_ca_en50221.c:1400 
-dvb_ca_en50221_io_do_ioctl() warn: potential spectre issue 
-'ca->slot_info' (local cap)
-drivers/media/dvb-core/dvb_ca_en50221.c:1479 dvb_ca_en50221_io_write() 
-warn: potential spectre issue 'ca->slot_info' (local cap)
-drivers/media/dvb-core/dvb_net.c:252 handle_one_ule_extension() warn: 
-potential spectre issue 'p->ule_next_hdr'
-drivers/media/dvb-core/dvb_net.c:1483 dvb_net_do_ioctl() warn: potential 
-spectre issue 'dvbnet->device' (local cap)
-drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() 
-warn: potential spectre issue 'pin->error_inj_args'
+  3f3942aca6da ("proc: introduce proc_create_single{,_data}")
+  c04d2cb2009f ("ipconfig: Write NTP server IPs to /proc/net/ipconfig/ntp_s=
+ervers")
 
-I just want to double check if you are getting the same output. In case 
-you are getting the same, then what Mauro commented about these issues:
+from the vfs tree and commit:
 
-https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7277
+  4d019b3f80dc ("ipconfig: Create /proc/net/ipconfig directory")
 
-being resolved by commit 3ad3b7a2ebaefae37a7eafed0779324987ca5e56 seems 
-to be correct.
+from the net-next tree.
 
-Thanks
---
-Gustavo
+I fixed it up (see below - there may be more to do) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/ipconfig.c
+index bbcbcc113d19,86c9f755de3d..000000000000
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@@ -1282,6 -1317,74 +1317,61 @@@ static int pnp_seq_show(struct seq_fil
+  			   &ic_servaddr);
+  	return 0;
+  }
+ -
+ -static int pnp_seq_open(struct inode *indoe, struct file *file)
+ -{
+ -	return single_open(file, pnp_seq_show, NULL);
+ -}
+ -
+ -static const struct file_operations pnp_seq_fops =3D {
+ -	.open		=3D pnp_seq_open,
+ -	.read		=3D seq_read,
+ -	.llseek		=3D seq_lseek,
+ -	.release	=3D single_release,
+ -};
+ -
++ /* Create the /proc/net/ipconfig directory */
++ static int __init ipconfig_proc_net_init(void)
++ {
++ 	ipconfig_dir =3D proc_net_mkdir(&init_net, "ipconfig", init_net.proc_net=
+);
++ 	if (!ipconfig_dir)
++ 		return -ENOMEM;
++=20
++ 	return 0;
++ }
++=20
++ /* Create a new file under /proc/net/ipconfig */
++ static int ipconfig_proc_net_create(const char *name,
++ 				    const struct file_operations *fops)
++ {
++ 	char *pname;
++ 	struct proc_dir_entry *p;
++=20
++ 	if (!ipconfig_dir)
++ 		return -ENOMEM;
++=20
++ 	pname =3D kasprintf(GFP_KERNEL, "%s%s", "ipconfig/", name);
++ 	if (!pname)
++ 		return -ENOMEM;
++=20
++ 	p =3D proc_create(pname, 0444, init_net.proc_net, fops);
++ 	kfree(pname);
++ 	if (!p)
++ 		return -ENOMEM;
++=20
++ 	return 0;
++ }
++=20
++ /* Write NTP server IP addresses to /proc/net/ipconfig/ntp_servers */
++ static int ntp_servers_seq_show(struct seq_file *seq, void *v)
++ {
++ 	int i;
++=20
++ 	for (i =3D 0; i < CONF_NTP_SERVERS_MAX; i++) {
++ 		if (ic_ntp_servers[i] !=3D NONE)
++ 			seq_printf(seq, "%pI4\n", &ic_ntp_servers[i]);
++ 	}
++ 	return 0;
++ }
++=20
++ static int ntp_servers_seq_open(struct inode *inode, struct file *file)
++ {
++ 	return single_open(file, ntp_servers_seq_show, NULL);
++ }
++=20
++ static const struct file_operations ntp_servers_seq_fops =3D {
++ 	.open		=3D ntp_servers_seq_open,
++ 	.read		=3D seq_read,
++ 	.llseek		=3D seq_lseek,
++ 	.release	=3D single_release,
++ };
+  #endif /* CONFIG_PROC_FS */
+ =20
+  /*
+@@@ -1356,8 -1459,20 +1446,20 @@@ static int __init ip_auto_config(void
+  	int err;
+  	unsigned int i;
+ =20
++ 	/* Initialise all name servers and NTP servers to NONE (but only if the
++ 	 * "ip=3D" or "nfsaddrs=3D" kernel command line parameters weren't decod=
+ed,
++ 	 * otherwise we'll overwrite the IP addresses specified there)
++ 	 */
++ 	if (ic_set_manually =3D=3D 0) {
++ 		ic_nameservers_predef();
++ 		ic_ntp_servers_predef();
++ 	}
++=20
+  #ifdef CONFIG_PROC_FS
+ -	proc_create("pnp", 0444, init_net.proc_net, &pnp_seq_fops);
+ +	proc_create_single("pnp", 0444, init_net.proc_net, pnp_seq_show);
++=20
++ 	if (ipconfig_proc_net_init() =3D=3D 0)
++ 		ipconfig_proc_net_create("ntp_servers", &ntp_servers_seq_fops);
+  #endif /* CONFIG_PROC_FS */
+ =20
+  	if (!ic_enable)
+
+--Sig_/9JDh.iCQyacovvxgBx6vtA/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr83DoACgkQAVBC80lX
+0GwCOgf+OJOpmMXGZGwIm1XEQIc4vAlzHd9ML6Nu6IQn8nSFxoRvUq6AST+8nHXv
+1OGmxs/nL+p6urtzJIGb0tjF9l/cuHIqeA5idi0/ayGQLOFXAsjk92mdgjb70Jxd
+0wZ2wFnxcH8YBQIISjTtkkOn8GTopLcyMsZ4ceU6HTqEz9nbw+YJ6j1HjWAFEfNX
+KbwrPbwxkCCJVfMcMV2YjDFJBBFVVtwP06NMzemQlB0WtsMRjca+aswtcM33ExsS
+E1Ca4ZmoZe1lTkjhoLBzWf45yGrm2avp6HeqwK+aV7OTbZeMklB9P2ZTnqq0Ajm+
+63IeyYTwDstpNzQJSv9VZVl9UpHNag==
+=pcy+
+-----END PGP SIGNATURE-----
+
+--Sig_/9JDh.iCQyacovvxgBx6vtA/--
