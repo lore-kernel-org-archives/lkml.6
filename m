@@ -1,137 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeEQGTS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 02:19:18 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:24995 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeEQGTQ (ORCPT
+        id S1752441AbeEQGX5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 02:23:57 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:41453 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751921AbeEQGX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 02:19:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4H6HbUB002841
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 13/31] kconfig: support append assignment operator
-Date: Thu, 17 May 2018 15:16:52 +0900
-Message-Id: <1526537830-22606-14-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 17 May 2018 02:23:56 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <c88654a151e6bb6f4ea1607caee7a1d0>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mmc: block: propagate correct returned value in
+ mmc_rpmb_ioctl
+To: Mathieu Malaterre <malat@debian.org>
+References: <20180516192022.23541-1-malat@debian.org>
+ <316ca15c-86f2-f052-c307-ba12eea7b579@rock-chips.com>
+ <CA+7wUszzfp8u+PwRzOUj3MNNEdCpZYCUoFgGp3GwT8c9nyurpg@mail.gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <c6865f1b-8c0a-4a8c-d174-57665aaa5007@rock-chips.com>
+Date: Thu, 17 May 2018 14:24:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CA+7wUszzfp8u+PwRzOUj3MNNEdCpZYCUoFgGp3GwT8c9nyurpg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support += operator.  This appends a space and the text on the
-righthand side to a variable.
+On 2018/5/17 14:16, Mathieu Malaterre wrote:
+> On Thu, May 17, 2018 at 4:45 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>>
+>> On 2018/5/17 3:20, Mathieu Malaterre wrote:
+>>>
+>>> In commit 97548575bef3 ("mmc: block: Convert RPMB to a character device")
+>>> a
+>>> new function `mmc_rpmb_ioctl` was added. The final return is simply
+>>> returning a value of `0` instead of propagating the correct return code.
+>>>
+>>> Discovered during a compilation with W=1, silence the following gcc
+>>> warning
+>>>
+>>>     drivers/mmc/core/block.c:2470:6: warning: variable ‘ret’ set but not
+>>> used [-Wunused-but-set-variable]
+>>>
+>>
+>> Good catch! But hey, which gcc are you using now? Mine, gcc-linaro-
+>> 6.3.1-2017.05-x86_64_aarch64-linux-gnu, with W=1 doesn't warn about
+>> this.
+> 
+> $ powerpc-linux-gnu-gcc --version
+> powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
+> Copyright (C) 2016 Free Software Foundation, Inc.
+> This is free software; see the source for copying conditions.  There is NO
+> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+> 
 
-The timing of the evaluation of the righthand side depends on the
-flavor of the variable.  If the lefthand side was originally defined
-as a simple variable, the righthand side is expanded immediately.
-Otherwise, the expansion is deferred.  Appending something to an
-undefined variable results in a recursive variable.
+Thanks for sharing.
 
-To implement this, we need to remember the flavor of variables.
+> This is the default powerpc cross compiler on Debian stable (no
+> change). Config is simply a ppc32 (with some minor customization).
+> 
+> 
+>> And it's worth backporting to stable.
+> 
+> I am not familiar with the process, do I need to submit a v2 to add the line:
+> 
+> Cc: <stable@vger.kernel.org> # v4.15+
+> 
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+In general Ulf could kindly help with it when applied. :)
 
-Changes in v4: None
-Changes in v3:
-  - newly added
-
-Changes in v2: None
-
- scripts/kconfig/lkc_proto.h  |  1 +
- scripts/kconfig/preprocess.c | 29 +++++++++++++++++++++++++++--
- scripts/kconfig/zconf.l      |  1 +
- 3 files changed, 29 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
-index 6303193..a8b7a33 100644
---- a/scripts/kconfig/lkc_proto.h
-+++ b/scripts/kconfig/lkc_proto.h
-@@ -52,6 +52,7 @@ const char * prop_get_type_name(enum prop_type type);
- enum variable_flavor {
- 	VAR_SIMPLE,
- 	VAR_RECURSIVE,
-+	VAR_APPEND,
- };
- void env_write_dep(FILE *f, const char *auto_conf_name);
- void variable_add(const char *name, const char *value,
-diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
-index 5d7bd9d..47b32dc 100644
---- a/scripts/kconfig/preprocess.c
-+++ b/scripts/kconfig/preprocess.c
-@@ -208,6 +208,7 @@ static LIST_HEAD(variable_list);
- struct variable {
- 	char *name;
- 	char *value;
-+	enum variable_flavor flavor;
- 	struct list_head node;
- };
- 
-@@ -250,18 +251,42 @@ void variable_add(const char *name, const char *value,
- 		  enum variable_flavor flavor)
- {
- 	struct variable *v;
-+	char *new_value;
-+	bool append = false;
- 
- 	v = variable_lookup(name);
- 	if (v) {
--		free(v->value);
-+		/* For defined variables, += inherits the existing flavor */
-+		if (flavor == VAR_APPEND) {
-+			flavor = v->flavor;
-+			append = true;
-+		} else {
-+			free(v->value);
-+		}
- 	} else {
-+		/* For undefined variables, += assumes the recursive flavor */
-+		if (flavor == VAR_APPEND)
-+			flavor = VAR_RECURSIVE;
-+
- 		v = xmalloc(sizeof(*v));
- 		v->name = xstrdup(name);
- 		list_add_tail(&v->node, &variable_list);
- 	}
- 
--	v->value = (flavor == VAR_SIMPLE) ? expand_string(value) :
-+	v->flavor = flavor;
-+
-+	new_value = (flavor == VAR_SIMPLE) ? expand_string(value) :
- 								xstrdup(value);
-+
-+	if (append) {
-+		v->value = xrealloc(v->value,
-+				    strlen(v->value) + strlen(new_value) + 2);
-+		strcat(v->value, " ");
-+		strcat(v->value, new_value);
-+		free(new_value);
-+	} else {
-+		v->value = new_value;
-+	}
- }
- 
- static void variable_del(struct variable *v)
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index aa76942..c68ca56b 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -116,6 +116,7 @@ n	[A-Za-z0-9_-]
- 	}
- 	"="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_RECURSIVE; return T_ASSIGN; }
- 	":="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_SIMPLE; return T_ASSIGN; }
-+	"+="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_APPEND; return T_ASSIGN; }
- 	[[:blank:]]+
- 	.	warn_ignored_character(*yytext);
- 	\n	{
--- 
-2.7.4
+> ?
+> 
+>> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+>>
+>>
+>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>> ---
+>>>    drivers/mmc/core/block.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+>>> index 9e923cd1d80e..38a7586b00cc 100644
+>>> --- a/drivers/mmc/core/block.c
+>>> +++ b/drivers/mmc/core/block.c
+>>> @@ -2485,7 +2485,7 @@ static long mmc_rpmb_ioctl(struct file *filp,
+>>> unsigned int cmd,
+>>>                  break;
+>>>          }
+>>>    -     return 0;
+>>> +       return ret;
+>>>    }
+>>>      #ifdef CONFIG_COMPAT
+>>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
