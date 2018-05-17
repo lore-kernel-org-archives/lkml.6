@@ -1,154 +1,326 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752398AbeEQAA3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 20:00:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752146AbeEQAA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 20:00:28 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH -tip v3 7/7] x86: kprobes: Do not disable preempt on int3 path
-Date: Thu, 17 May 2018 09:00:03 +0900
-Message-Id: <152651520340.25583.15074431112097053694.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152651499561.25583.14488389770693278906.stgit@devbox>
-References: <152651499561.25583.14488389770693278906.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752505AbeEQAAk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 20:00:40 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41488 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbeEQAAh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 20:00:37 -0400
+X-Google-Smtp-Source: AB8JxZq5mqpje0BsTuq0NnVlk+DWid+f6HRuOEy4RzdOgxYwE1VAJjWX06kUWQF0as6E5uZvnz+6Qw==
+From: Laura Abbott <labbott@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Phil Reid <preid@electromag.com.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCHv6] gpio: Remove VLA from gpiolib
+Date: Wed, 16 May 2018 17:00:27 -0700
+Message-Id: <20180517000027.26639-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since int3 and debug exception(for singlestep) are run with
-IRQ disabled and while running single stepping we drop IF
-from regs->flags, that path must not be preemptible. So we
-can remove the preempt disable/enable calls from that path.
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621) to eventually
+turn on -Wvla.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
----
- Changes in v3:
-  - Split user-side changes to another patch
- Changes in v2:
-  - Include user-side changes.
----
- Documentation/kprobes.txt      |   11 +++++------
- arch/x86/kernel/kprobes/core.c |   18 ++++--------------
- arch/x86/kernel/kprobes/opt.c  |    1 -
- 3 files changed, 9 insertions(+), 21 deletions(-)
+Using a kmalloc array is the easy way to fix this but kmalloc is still
+more expensive than stack allocation. Introduce a fast path with a
+fixed size stack array to cover most chip with gpios below some fixed
+amount. The slow path dynamically allocates an array to cover those
+chips with a large number of gpios.
 
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 907a3017c0f2..3e9e99ea751b 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -566,12 +566,11 @@ the same handler) may run concurrently on different CPUs.
- Kprobes does not use mutexes or allocate memory except during
- registration and unregistration.
+Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v6: Introduce a config option for setting the fast path GPIOs because
+there are too many combinations to make the arch default workable. I
+went with a default of 512 in the Kconfig.
+
+Also to other points: I don't think the warning should be triggerable
+from userspace, it should only happen on probe. I also think only
+memsetting half the array is more likely to be error prone. We can
+change it if there is significant overhead.
+---
+ drivers/gpio/Kconfig          | 10 +++++
+ drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
+ drivers/gpio/gpiolib.h        |  2 +-
+ include/linux/gpio/consumer.h | 10 +++--
+ 4 files changed, 76 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 68d812b38be7..2855b5c5c8ca 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -22,6 +22,16 @@ menuconfig GPIOLIB
  
--Probe handlers are run with preemption disabled.  Depending on the
--architecture and optimization state, handlers may also run with
--interrupts disabled (e.g., kretprobe handlers and optimized kprobe
--handlers run without interrupt disabled on x86/x86-64).  In any case,
--your handler should not yield the CPU (e.g., by attempting to acquire
--a semaphore).
-+Probe handlers are run with preemption disabled or interrupt disabled,
-+which depends on the architecture and optimization state.  (e.g.,
-+kretprobe handlers and optimized kprobe handlers run without interrupt
-+disabled on x86/x86-64).  In any case, your handler should not yield
-+the CPU (e.g., by attempting to acquire a semaphore, or waiting I/O).
+ if GPIOLIB
  
- Since a return probe is implemented by replacing the return
- address with the trampoline's address, stack backtraces and calls
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 215a28bdd9df..a2896ff47ebc 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -596,7 +596,6 @@ static void setup_singlestep(struct kprobe *p, struct pt_regs *regs,
- 		 * stepping.
- 		 */
- 		regs->ip = (unsigned long)p->ainsn.insn;
--		preempt_enable_no_resched();
- 		return;
++config GPIOLIB_FASTPATH_LIMIT
++	int "Maximum number of GPIOs for fast path"
++	default 512
++	help
++	   This adjusts the point at which certain APIs will switch from
++	   using a statically allocated fixed size buffer to a dynamically
++	   allocated buffer. This is a trade-off in stackspace vs. speed.
++	   You shouldn't need to change this unless you really need to
++	   optimize one of those two.
++
+ config OF_GPIO
+ 	def_bool y
+ 	depends on OF
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..f7ce546796e0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
+ 	.name = "gpio",
+ };
+ 
++/*
++ * Number of GPIOs to use for the fast path in set array
++ */
++#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
++
+ /* gpio_lock prevents conflicts during gpio_desc[] table updates.
+  * While any GPIO is requested, its gpio_chip is not removable;
+  * each GPIO's "requested" flag serves as a lock and refcount.
+@@ -399,12 +404,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 			vals[i] = !!ghd.values[i];
+ 
+ 		/* Reuse the array setting function */
+-		gpiod_set_array_value_complex(false,
++		return gpiod_set_array_value_complex(false,
+ 					      true,
+ 					      lh->numdescs,
+ 					      lh->descs,
+ 					      vals);
+-		return 0;
  	}
- #endif
-@@ -669,12 +668,10 @@ int kprobe_int3_handler(struct pt_regs *regs)
+ 	return -EINVAL;
+ }
+@@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 		goto err_free_descs;
+ 	}
  
- 	addr = (kprobe_opcode_t *)(regs->ip - sizeof(kprobe_opcode_t));
- 	/*
--	 * We don't want to be preempted for the entire
--	 * duration of kprobe processing. We conditionally
--	 * re-enable preemption at the end of this function,
--	 * and also in reenter_kprobe() and setup_singlestep().
-+	 * We don't want to be preempted for the entire duration of kprobe
-+	 * processing. Since int3 and debug trap disables irqs and we clear
-+	 * IF while singlestepping, it must be no preemptible.
- 	 */
--	preempt_disable();
++	if (chip->ngpio > FASTPATH_NGPIO)
++		chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
++		chip->ngpio, FASTPATH_NGPIO);
++
+ 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
+ 	if (!gdev->label) {
+ 		status = -ENOMEM;
+@@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
  
- 	kcb = get_kprobe_ctlblk();
- 	p = get_kprobe(addr);
-@@ -695,10 +692,8 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 			 */
- 			if (!p->pre_handler || !p->pre_handler(p, regs))
- 				setup_singlestep(p, regs, kcb, 0);
--			else {
-+			else
- 				reset_current_kprobe();
--				preempt_enable_no_resched();
--			}
- 			return 1;
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int first, j, ret;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+ 		/* collect all inputs belonging to the same chip */
+ 		first = i;
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			const struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2682,8 +2702,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+-		if (ret)
++		if (ret) {
++			if (mask != fastpath)
++				kfree(mask);
+ 			return ret;
++		}
+ 
+ 		for (j = first; j < i; j++) {
+ 			const struct gpio_desc *desc = desc_array[j];
+@@ -2695,6 +2718,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			value_array[j] = value;
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
  		}
- 	} else if (*addr != BREAKPOINT_INSTRUCTION) {
-@@ -712,11 +707,9 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 		 * the original instruction.
- 		 */
- 		regs->ip = (unsigned long)addr;
--		preempt_enable_no_resched();
- 		return 1;
- 	} /* else: not a kprobe fault; let the kernel handle it */
- 
--	preempt_enable_no_resched();
++
++		if (mask != fastpath)
++			kfree(mask);
+ 	}
  	return 0;
  }
- NOKPROBE_SYMBOL(kprobe_int3_handler);
-@@ -967,8 +960,6 @@ int kprobe_debug_handler(struct pt_regs *regs)
+@@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
  	}
- 	reset_current_kprobe();
- out:
--	preempt_enable_no_resched();
--
- 	/*
- 	 * if somebody else is singlestepping across a probe point, flags
- 	 * will have TF set, in which case, continue the remaining processing
-@@ -1015,7 +1006,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
- 			restore_previous_kprobe(kcb);
- 		else
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 	} else if (kcb->kprobe_status == KPROBE_HIT_ACTIVE ||
- 		   kcb->kprobe_status == KPROBE_HIT_SSDONE) {
- 		/*
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 203d398802a3..eaf02f2e7300 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -491,7 +491,6 @@ int setup_detour_execution(struct kprobe *p, struct pt_regs *regs, int reenter)
- 		regs->ip = (unsigned long)op->optinsn.insn + TMPL_END_IDX;
- 		if (!reenter)
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 		return 1;
+ }
+ 
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array)
+@@ -2887,14 +2913,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int count = 0;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2925,7 +2963,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		/* push collected bits to outputs */
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
++
++		if (mask != fastpath)
++			kfree(mask);
  	}
- 	return 0;
++	return 0;
+ }
+ 
+ /**
+@@ -3000,13 +3042,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			 struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, false, array_size, desc_array,
+-				      value_array);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, false, array_size,
++					desc_array, value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+ 
+@@ -3326,14 +3368,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, true, array_size, desc_array,
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
+ 				      value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index b17ec6795c81..b64813e3876e 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+ 				  int *value_array);
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index dbd065963296..243112c7fa7d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
+ 			      struct gpio_desc **desc_array,
+ 			      int *value_array);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			       struct gpio_desc **desc_array,
+ 			       int *value_array);
+ 
+@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_desc **desc_array,
+ 				       int *value_array);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array);
+ 
+@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value(unsigned int array_size,
++static inline int gpiod_set_raw_array_value(unsigned int array_size,
+ 					     struct gpio_desc **desc_array,
+ 					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+-- 
+2.17.0
