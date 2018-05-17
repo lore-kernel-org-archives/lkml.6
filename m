@@ -1,115 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeEQMrI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 08:47:08 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42916 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeEQMrH (ORCPT
+        id S1752129AbeEQMwl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 08:52:41 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:13950 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751017AbeEQMwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 08:47:07 -0400
-X-Google-Smtp-Source: AB8JxZq8cjUp26MYSlMI2JufxoQsYqjV5mb2z0MyBhJdNV4xwWU5dFyuSpUpCoi8D8VEvItDAHGyyQ==
-Subject: Re: [PATCH] KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE
- aligned in unmap_stage2_range
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com
-References: <1526537487-14804-1-git-send-email-hejianet@gmail.com>
- <698b0355-d430-86b8-cd09-83c6d9e566f8@arm.com>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <fbb269c0-e915-a9f2-da3b-5ae3a2b31396@gmail.com>
-Date: Thu, 17 May 2018 20:46:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thu, 17 May 2018 08:52:39 -0400
+Subject: Re: MMC performance degradation due to too many requests
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Will Newton <will.newton@gmail.com>,
+        ext Tony Lindgren <tony@atomide.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <0ea1d2bf-fa0f-4b3d-556a-5dca5afbf2a9@ti.com>
+ <CACRpkdaZ5G=gBHNwf7YMLEBOqC2UrO+YLrz09H4h8HWYN=av4w@mail.gmail.com>
+ <3e2c96fa-273e-192f-1caf-788de7659592@ti.com>
+ <CACRpkda+jrHgG=5qs-s7dcy4ZV4b9gQFGuf8SkwbAoGKxhBpqw@mail.gmail.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <44f591d4-908b-9476-6deb-0ddf77794b49@ti.com>
+Date: Thu, 17 May 2018 18:24:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <698b0355-d430-86b8-cd09-83c6d9e566f8@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkda+jrHgG=5qs-s7dcy4ZV4b9gQFGuf8SkwbAoGKxhBpqw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki
+Hi,
 
-On 5/17/2018 4:17 PM, Suzuki K Poulose Wrote:
-> 
-> Hi Jia,
-> 
-> On 17/05/18 07:11, Jia He wrote:
->> I ever met a panic under memory pressure tests(start 20 guests and run
->> memhog in the host).
-> 
-> Please avoid using "I" in the commit description and preferably stick to
-> an objective description.
-
-Thanks for the pointing
-
-> 
+On Wednesday 16 May 2018 07:59 PM, Linus Walleij wrote:
+> On Tue, May 15, 2018 at 5:11 PM, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>> On Tuesday 15 May 2018 06:09 PM, Linus Walleij wrote:
+>>> On Mon, May 14, 2018 at 1:30 PM, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>>>
+>>>> Also, I see many times the number of interrupts for mmc1 in 4.14.
+>>> (...)
+>>>> I also printed out the size of the DMA transfers in the omap_hsmmc
+>>>> driver during the dd command. I see that the maximum size of the dma
+>>>> transfer has decreased from 1 MB to 256kB between 4.13 and 4.14.
+>>>
+>>> This seems like my fault for removing the bounce buffer.
+>>> (The name bounce buffer is misleading, I suspect the right
+>>> term for what is was doing was "merge buffer" or something,
+>>> coalescing physically consecutive requests.)
+>>>
+>>> commit de3ee99b097dd51938276e3af388cd4ad0f2750a
+>>> "mmc: Delete bounce buffer handling"
+>>> should be the culprit.
 >>
->> The root cause might be what I fixed at [1]. But from arm kvm points of
->> view, it would be better we caught the exception earlier and clearer.
+>> I don't think so. I checked out to the commit before that and see that
+>> the interrupts are still too high.
+> 
+> OK phew then I'm safe :)
+> 
+>>> The bounce buffer only makes any performance impact if the
+>>> host DMA controller is unable to handle scatter-gather lists
+>>> so the number of segments is set down to 1.
+>>>
+>>> Can you verifty that:
+>>> - mmc->max_segs == 1
 >>
->> If the size is not PAGE_SIZE aligned, unmap_stage2_range might unmap the
->> wrong(more or less) page range. Hence it caused the "BUG: Bad page
->> state"
+>> No. It is 64 in v4.14. It was 1024 in v4.13.
 > 
-> I don't see why we should ever panic with a "positive" size value. Anyways,
-> the unmap requests must be in units of pages. So this check might be useful.
-> 
+> This smells like:
+> commit 9442400486a1ec28915e9ab31517a5665ed35705
+> "mmc: omap_hsmmc: Reduce max_segs for reliability"
 > 
 
-good question,
+Yes. I was able to bisect the number of interrupts to the same commit as
+well.
 
-After further digging, maybe we need to harden the break condition as below?
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 7f6a944..dac9b2e 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -217,7 +217,7 @@ static void unmap_stage2_ptes(struct kvm *kvm, pmd_t *pmd,
+On top of v4.14,
 
-                        put_page(virt_to_page(pte));
-                }
--       } while (pte++, addr += PAGE_SIZE, addr != end);
-+       } while (pte++, addr += PAGE_SIZE, addr < end);
+*Without revert*:
+https://pastebin.ubuntu.com/p/VJgvzrCP9g/
 
-basically verified in my armv8a server
+avg speed for 100 MB transfer: 3.7 MBps
+Number of interrupts per 100 MB transfer: ~2000
 
--- 
-Cheers,
-Jia
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
->>
->> [1] https://lkml.org/lkml/2018/5/3/1042
->>
->> Signed-off-by: jia.he@hxt-semitech.com
->> ---
->>   virt/kvm/arm/mmu.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 7f6a944..8dac311 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -297,6 +297,8 @@ static void unmap_stage2_range(struct kvm *kvm,
->> phys_addr_t start, u64 size)
->>       phys_addr_t next;
->>         assert_spin_locked(&kvm->mmu_lock);
->> +    WARN_ON(size & ~PAGE_MASK);
->> +
->>       pgd = kvm->arch.pgd + stage2_pgd_index(addr);
->>       do {
->>           /*
->>
-> 
-> 
+*After revert*:
+https://pastebin.ubuntu.com/p/ktgTmKVKkN/
+
+avg speed for 100 MB transfer: 4.6 MBps
+Number of interrupts per 100 MB transfer: ~500
+
+Also, I'm getting 1M buffers in the omap_hsmmc DMA now.
+
+@Will will it be OK to change the mmc_segs back to 1024?
+
+Thanks,
+Faiz
