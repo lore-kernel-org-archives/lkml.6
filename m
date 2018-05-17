@@ -1,173 +1,251 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEQD1N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 16 May 2018 23:27:13 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:40684 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751457AbeEQD1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 May 2018 23:27:12 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40023199"
-Date: Thu, 17 May 2018 11:27:02 +0800
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
-To: Baoquan He <bhe@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <mingo@kernel.org>,
-        <lcapitulino@redhat.com>, <keescook@chromium.org>,
-        <tglx@linutronix.de>, <x86@kernel.org>, <hpa@zytor.com>,
-        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 1/2] x86/boot/KASLR: Add two functions for 1GB huge pages
- handling
-Message-ID: <20180517032702.GA6521@localhost.localdomain>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180516100532.14083-2-bhe@redhat.com>
+        id S1752022AbeEQDaX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 16 May 2018 23:30:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44936 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751844AbeEQDaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 May 2018 23:30:22 -0400
+Subject: [PATCH v3] vfio/mdev: Check globally for duplicate devices
+From: Alex Williamson <alex.williamson@redhat.com>
+To: kwankhede@nvidia.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, cohuck@redhat.com
+Date: Wed, 16 May 2018 21:30:19 -0600
+Message-ID: <20180517031746.32242.17768.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180516100532.14083-2-bhe@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 611814B3EF17.A954E
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baoquan,
+When we create an mdev device, we check for duplicates against the
+parent device and return -EEXIST if found, but the mdev device
+namespace is global since we'll link all devices from the bus.  We do
+catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
+with it comes a kernel warning and stack trace for trying to create
+duplicate sysfs links, which makes it an undesirable response.
 
-I have reviewed the patch, I think the caculation of address has no
-problem. But maybe I miss something, so I have several questions.
+Therefore we should really be looking for duplicates across all mdev
+parent devices, or as implemented here, against our mdev device list.
+Using mdev_list to prevent duplicates means that we can remove
+mdev_parent.lock, but in order not to serialize mdev device creation
+and removal globally, we add mdev_device.active which allows UUIDs to
+be reserved such that we can drop the mdev_list_lock before the mdev
+device is fully in place.
 
-On Wed, May 16, 2018 at 06:05:31PM +0800, Baoquan He wrote:
->Functions parse_gb_huge_pages() and process_gb_huge_page() are introduced to
->handle conflict between KASLR and huge pages, will be used in the next patch.
->
->Function parse_gb_huge_pages() is used to parse kernel command-line to get
->how many 1GB huge pages have been specified. A static global variable
->'max_gb_huge_pages' is added to store the number.
->
->And process_gb_huge_page() is used to skip as many 1GB huge pages as possible
->from the passed in memory region according to the specified number.
->
->Signed-off-by: Baoquan He <bhe@redhat.com>
->---
-> arch/x86/boot/compressed/kaslr.c | 71 ++++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 71 insertions(+)
->
->diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
->index a0a50b91ecef..13bd879cdc5d 100644
->--- a/arch/x86/boot/compressed/kaslr.c
->+++ b/arch/x86/boot/compressed/kaslr.c
->@@ -215,6 +215,32 @@ static void mem_avoid_memmap(char *str)
-> 		memmap_too_large = true;
-> }
-> 
->+/* Store the number of 1GB huge pages which user specified.*/
->+static unsigned long max_gb_huge_pages;
->+
->+static int parse_gb_huge_pages(char *param, char* val)
->+{
->+	char *p;
->+	u64 mem_size;
->+	static bool gbpage_sz = false;
->+
->+	if (!strcmp(param, "hugepagesz")) {
->+		p = val;
->+		mem_size = memparse(p, &p);
->+		if (mem_size == PUD_SIZE) {
->+			if (gbpage_sz)
->+				warn("Repeadly set hugeTLB page size of 1G!\n");
->+			gbpage_sz = true;
->+		} else
->+			gbpage_sz = false;
->+	} else if (!strcmp(param, "hugepages") && gbpage_sz) {
->+		p = val;
->+		max_gb_huge_pages = simple_strtoull(p, &p, 0);
->+		debug_putaddr(max_gb_huge_pages);
->+	}
->+}
->+
->+
-> static int handle_mem_memmap(void)
-> {
-> 	char *args = (char *)get_cmd_line_ptr();
->@@ -466,6 +492,51 @@ static void store_slot_info(struct mem_vector *region, unsigned long image_size)
-> 	}
-> }
-> 
->+/* Skip as many 1GB huge pages as possible in the passed region. */
->+static void process_gb_huge_page(struct mem_vector *region, unsigned long image_size)
->+{
->+	int i = 0;
->+	unsigned long addr, size;
->+	struct mem_vector tmp;
->+
->+	if (!max_gb_huge_pages) {
->+		store_slot_info(region, image_size);
->+		return;
->+	}
->+
->+	addr = ALIGN(region->start, PUD_SIZE);
->+	/* If Did we raise the address above the passed in memory entry? */
->+	if (addr < region->start + region->size)
->+		size = region->size - (addr - region->start);
->+
->+	/* Check how many 1GB huge pages can be filtered out*/
->+	while (size > PUD_SIZE && max_gb_huge_pages) {
->+		size -= PUD_SIZE;
->+		max_gb_huge_pages--;
+NB. there was never intended to be any serialization guarantee
+provided by the mdev core with respect to creation and removal of mdev
+devices, mdev_parent.lock provided this only as a side-effect of the
+implementation for locking the namespace per parent.  That
+serialization is now removed.
 
-The global variable 'max_gb_huge_pages' means how many huge pages
-user specified when you get it from command line.
-But here, everytime we find a position which is good for huge page
-allocation, the 'max_gdb_huge_page' decreased. So in my understanding,
-it is used to store how many huge pages that we still need to search memory
-for good slots to filter out, right?
-If it's right, maybe the name 'max_gb_huge_pages' is not very suitable.
-If my understanding is wrong, please tell me.
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
 
->+		i++;
->+	}
->+
->+	if (!i) {
->+		store_slot_info(region, image_size);
->+		return;
->+	}
->+
->+	/* Process the remaining regions after filtering out. */
->+
-This line may be unusable.
->+	if (addr >= region->start + image_size) {
->+		tmp.start = region->start;
->+		tmp.size = addr - region->start;
->+		store_slot_info(&tmp, image_size);
->+	}
->+
->+	size  = region->size - (addr - region->start) - i * PUD_SIZE;
->+        if (size >= image_size) {
->+		tmp.start = addr + i*PUD_SIZE;
->+		tmp.size = size;
->+		store_slot_info(&tmp, image_size);
->+        }
+v3: Rework locking and add a field to mdev_device so we can track
+    completed instances vs those added to reserve the namespace.
 
-I have another question not related to kaslr.
-Here you try to avoid the memory from addr to (addr + i * PUD_SIZE),
-but I wonder if after walking all memory regions, 'max_gb_huge_pages'
-is still more than 0, which means there isn't enough memory slots for
-huge page, what will happen?
+ drivers/vfio/mdev/mdev_core.c    |   94 +++++++++++++-------------------------
+ drivers/vfio/mdev/mdev_private.h |    2 -
+ 2 files changed, 34 insertions(+), 62 deletions(-)
 
-Thanks,
-Chao Fan
-
->+}
->+
-> static unsigned long slots_fetch_random(void)
-> {
-> 	unsigned long slot;
->-- 
->2.13.6
->
->
->
+diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+index 126991046eb7..55ea9d34ec69 100644
+--- a/drivers/vfio/mdev/mdev_core.c
++++ b/drivers/vfio/mdev/mdev_core.c
+@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *mdev)
+ }
+ EXPORT_SYMBOL(mdev_uuid);
+ 
+-static int _find_mdev_device(struct device *dev, void *data)
+-{
+-	struct mdev_device *mdev;
+-
+-	if (!dev_is_mdev(dev))
+-		return 0;
+-
+-	mdev = to_mdev_device(dev);
+-
+-	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
+-		return 1;
+-
+-	return 0;
+-}
+-
+-static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
+-{
+-	struct device *dev;
+-
+-	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
+-	if (dev) {
+-		put_device(dev);
+-		return true;
+-	}
+-
+-	return false;
+-}
+-
+ /* Should be called holding parent_list_lock */
+ static struct mdev_parent *__find_parent_device(struct device *dev)
+ {
+@@ -221,7 +193,6 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+ 	}
+ 
+ 	kref_init(&parent->ref);
+-	mutex_init(&parent->lock);
+ 
+ 	parent->dev = dev;
+ 	parent->ops = ops;
+@@ -304,7 +275,7 @@ static void mdev_device_release(struct device *dev)
+ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
+ {
+ 	int ret;
+-	struct mdev_device *mdev;
++	struct mdev_device *mdev, *tmp;
+ 	struct mdev_parent *parent;
+ 	struct mdev_type *type = to_mdev_type(kobj);
+ 
+@@ -312,21 +283,26 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
+ 	if (!parent)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&parent->lock);
++	mutex_lock(&mdev_list_lock);
+ 
+ 	/* Check for duplicate */
+-	if (mdev_device_exist(parent, uuid)) {
+-		ret = -EEXIST;
+-		goto create_err;
++	list_for_each_entry(tmp, &mdev_list, next) {
++		if (!uuid_le_cmp(tmp->uuid, uuid)) {
++			mutex_unlock(&mdev_list_lock);
++			return -EEXIST;
++		}
+ 	}
+ 
+ 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev) {
+-		ret = -ENOMEM;
+-		goto create_err;
++		mutex_unlock(&mdev_list_lock);
++		return -ENOMEM;
+ 	}
+ 
+ 	memcpy(&mdev->uuid, &uuid, sizeof(uuid_le));
++	list_add(&mdev->next, &mdev_list);
++	mutex_unlock(&mdev_list_lock);
++
+ 	mdev->parent = parent;
+ 	kref_init(&mdev->ref);
+ 
+@@ -352,21 +328,18 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
+ 	}
+ 
+ 	mdev->type_kobj = kobj;
++	mdev->active = true;
+ 	dev_dbg(&mdev->dev, "MDEV: created\n");
+ 
+-	mutex_unlock(&parent->lock);
+-
+-	mutex_lock(&mdev_list_lock);
+-	list_add(&mdev->next, &mdev_list);
+-	mutex_unlock(&mdev_list_lock);
+-
+-	return ret;
++	return 0;
+ 
+ create_failed:
+ 	device_unregister(&mdev->dev);
+ 
+ create_err:
+-	mutex_unlock(&parent->lock);
++	mutex_lock(&mdev_list_lock);
++	list_del(&mdev->next);
++	mutex_unlock(&mdev_list_lock);
+ 	mdev_put_parent(parent);
+ 	return ret;
+ }
+@@ -377,44 +350,43 @@ int mdev_device_remove(struct device *dev, bool force_remove)
+ 	struct mdev_parent *parent;
+ 	struct mdev_type *type;
+ 	int ret;
+-	bool found = false;
+ 
+ 	mdev = to_mdev_device(dev);
+ 
+ 	mutex_lock(&mdev_list_lock);
+ 	list_for_each_entry(tmp, &mdev_list, next) {
+-		if (tmp == mdev) {
+-			found = true;
++		if (tmp == mdev)
+ 			break;
+-		}
+ 	}
+ 
+-	if (found)
+-		list_del(&mdev->next);
++	if (tmp != mdev) {
++		mutex_unlock(&mdev_list_lock);
++		return -ENODEV;
++	}
+ 
+-	mutex_unlock(&mdev_list_lock);
++	if (!mdev->active) {
++		mutex_unlock(&mdev_list_lock);
++		return -EAGAIN;
++	}
+ 
+-	if (!found)
+-		return -ENODEV;
++	mdev->active = false;
++	mutex_unlock(&mdev_list_lock);
+ 
+ 	type = to_mdev_type(mdev->type_kobj);
+ 	parent = mdev->parent;
+-	mutex_lock(&parent->lock);
+ 
+ 	ret = mdev_device_remove_ops(mdev, force_remove);
+ 	if (ret) {
+-		mutex_unlock(&parent->lock);
+-
+-		mutex_lock(&mdev_list_lock);
+-		list_add(&mdev->next, &mdev_list);
+-		mutex_unlock(&mdev_list_lock);
+-
++		mdev->active = true;
+ 		return ret;
+ 	}
+ 
++	mutex_lock(&mdev_list_lock);
++	list_del(&mdev->next);
++	mutex_unlock(&mdev_list_lock);
++
+ 	mdev_remove_sysfs_files(dev, type);
+ 	device_unregister(dev);
+-	mutex_unlock(&parent->lock);
+ 	mdev_put_parent(parent);
+ 
+ 	return 0;
+diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
+index a9cefd70a705..b5819b7d7ef7 100644
+--- a/drivers/vfio/mdev/mdev_private.h
++++ b/drivers/vfio/mdev/mdev_private.h
+@@ -20,7 +20,6 @@ struct mdev_parent {
+ 	struct device *dev;
+ 	const struct mdev_parent_ops *ops;
+ 	struct kref ref;
+-	struct mutex lock;
+ 	struct list_head next;
+ 	struct kset *mdev_types_kset;
+ 	struct list_head type_list;
+@@ -34,6 +33,7 @@ struct mdev_device {
+ 	struct kref ref;
+ 	struct list_head next;
+ 	struct kobject *type_kobj;
++	bool active;
+ };
+ 
+ #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
