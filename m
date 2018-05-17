@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751647AbeEQIaP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 04:30:15 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41748 "EHLO mail.bootlin.com"
+        id S1752312AbeEQIa0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 04:30:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41775 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751017AbeEQIaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 04:30:13 -0400
+        id S1751179AbeEQIaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 04:30:23 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: davem@davemloft.net, linux@armlinux.org.uk
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
@@ -13,9 +13,9 @@ Cc: Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
         maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 1/2] net: phy: sfp: make the i2c-bus property really optional
-Date: Thu, 17 May 2018 10:29:06 +0200
-Message-Id: <20180517082907.14420-2-antoine.tenart@bootlin.com>
+Subject: [PATCH net-next 2/2] net: phy: sfp: warn the user when no tx_disable pin is available
+Date: Thu, 17 May 2018 10:29:07 +0200
+Message-Id: <20180517082907.14420-3-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180517082907.14420-1-antoine.tenart@bootlin.com>
 References: <20180517082907.14420-1-antoine.tenart@bootlin.com>
@@ -23,66 +23,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SFF,SFP documentation is clear about making all the DT properties,
-with the exception of the compatible, optional. In practice this is not
-the case and without an i2c-bus property provided the SFP code will
-throw NULL pointer exceptions.
-
-This patch is an attempt to fix this.
+In case no Tx disable pin is available the SFP modules will always be
+emitting. This could be an issue when using modules using laser as their
+light source as we would have no way to disable it when the fiber is
+removed. This patch adds a warning when registering an SFP cage which do
+not have its tx_disable pin wired or available.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- drivers/net/phy/sfp.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/phy/sfp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-index 4ab6e9a50bbe..0fd2a92a6f7b 100644
+index 0fd2a92a6f7b..4e62769b3e00 100644
 --- a/drivers/net/phy/sfp.c
 +++ b/drivers/net/phy/sfp.c
-@@ -298,11 +298,17 @@ static void sfp_set_state(struct sfp *sfp, unsigned int state)
+@@ -1077,6 +1077,15 @@ static int sfp_probe(struct platform_device *pdev)
+ 	if (poll)
+ 		mod_delayed_work(system_wq, &sfp->poll, poll_jiffies);
  
- static int sfp_read(struct sfp *sfp, bool a2, u8 addr, void *buf, size_t len)
- {
-+	if (!sfp->read)
-+		return -ENODEV;
++	/* We could have an issue in cases no Tx disable pin is available or
++	 * wired as modules using a laser as their light source will continue to
++	 * be active when the fiber is removed. This could be a safety issue and
++	 * we should at least warn the user about that.
++	 */
++	if (!sfp->gpio[GPIO_TX_DISABLE])
++		dev_warn(sfp->dev,
++			 "No tx_disable pin: SFP modules will always be emitting.\n");
 +
- 	return sfp->read(sfp, a2, addr, buf, len);
+ 	return 0;
  }
  
- static int sfp_write(struct sfp *sfp, bool a2, u8 addr, void *buf, size_t len)
- {
-+	if (!sfp->write)
-+		return -ENODEV;
-+
- 	return sfp->write(sfp, a2, addr, buf, len);
- }
- 
-@@ -533,6 +539,8 @@ static int sfp_sm_mod_hpower(struct sfp *sfp)
- 		return 0;
- 
- 	err = sfp_read(sfp, true, SFP_EXT_STATUS, &val, sizeof(val));
-+	if (err == -ENODEV)
-+		goto err;
- 	if (err != sizeof(val)) {
- 		dev_err(sfp->dev, "Failed to read EEPROM: %d\n", err);
- 		err = -EAGAIN;
-@@ -542,6 +550,8 @@ static int sfp_sm_mod_hpower(struct sfp *sfp)
- 	val |= BIT(0);
- 
- 	err = sfp_write(sfp, true, SFP_EXT_STATUS, &val, sizeof(val));
-+	if (err == -ENODEV)
-+		goto err;
- 	if (err != sizeof(val)) {
- 		dev_err(sfp->dev, "Failed to write EEPROM: %d\n", err);
- 		err = -EAGAIN;
-@@ -565,6 +575,8 @@ static int sfp_sm_mod_probe(struct sfp *sfp)
- 	int ret;
- 
- 	ret = sfp_read(sfp, false, 0, &id, sizeof(id));
-+	if (ret == -ENODEV)
-+		return ret;
- 	if (ret < 0) {
- 		dev_err(sfp->dev, "failed to read EEPROM: %d\n", ret);
- 		return -EAGAIN;
 -- 
 2.17.0
