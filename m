@@ -1,67 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeEQHwK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 03:52:10 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41816 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752243AbeEQHwI (ORCPT
+        id S1752326AbeEQH5o (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 03:57:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59959 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeEQH5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 03:52:08 -0400
-X-Google-Smtp-Source: AB8JxZrlUbiUmJeXYYjianfoqsC+7Heq1dVoPqU4WHfhTbJfvjIYtjoFyMU0mpcSMaBg2UAesNAbQw==
-Date: Thu, 17 May 2018 17:51:56 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v4 00/31] kconfig: move compiler capability tests to
- Kconfig
-Message-ID: <20180517175156.4c4246f6@roar.ozlabs.ibm.com>
-In-Reply-To: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526537830-22606-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 17 May 2018 03:57:43 -0400
+From: Colin King <colin.king@canonical.com>
+To: Karan Tilak Kumar <kartilak@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: snic: fix a couple of spelling mistakes: "COMPLETE"
+Date: Thu, 17 May 2018 08:57:38 +0100
+Message-Id: <20180517075738.22821-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018 15:16:39 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> [Introduction]
-> 
-> The motivation of this work is to move the compiler option tests to
-> Kconfig from Makefile.  A number of kernel features require the
-> compiler support.  Enabling such features blindly in Kconfig ends up
-> with a lot of nasty build-time testing in Makefiles.  If a chosen
-> feature turns out unsupported by the compiler, what the build system
-> can do is either to disable it (silently!) or to forcibly break the
-> build, despite Kconfig has let the user to enable it.  By moving the
-> compiler capability tests to Kconfig, Kconfig entries will be visible
-> only when they are available.
-> 
-> [Major Changes in V4]
+Trivial fix to spelling mistakes/typos:
+"SNIC_IOREQ_ABTS_COMPELTE" -> "SNIC_IOREQ_ABTS_COMPLETE"
+"SNIC_IOREQ_LR_COMPELTE"   -> "SNIC_IOREQ_LR_COMPLETE"
+"SNIC_IOREQ_CMD_COMPELTE"  -> "SNIC_IOREQ_CMD_COMPLETE"
 
-Do you have a git tree for v4? I can test it with the powerpc patches.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/snic/snic_scsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The new scripting capability in kconfig has allowed us to already
-improve the config process on powerpc:
-
-https://marc.info/?l=linuxppc-embedded&m=152648110727868&w=2
-
-I'm sure there's more clever things we can do with it but I haven't
-had time to think about it yet. One thing that comes to mind is that
-It might be nice to show the option as disabled, then the user could
-upgrade their compiler to get the options they want.
-
-Anyway v3 worked fine for me, the documentation is really nice, I
-could implement the above patch without any problem despite being a
-kbuild dummy. Thanks for the series, ack from me.
-
-Thanks,
-Nick
+diff --git a/drivers/scsi/snic/snic_scsi.c b/drivers/scsi/snic/snic_scsi.c
+index d8a376b7882d..d9b2e46424aa 100644
+--- a/drivers/scsi/snic/snic_scsi.c
++++ b/drivers/scsi/snic/snic_scsi.c
+@@ -47,10 +47,10 @@ static const char * const snic_req_state_str[] = {
+ 	[SNIC_IOREQ_NOT_INITED]	= "SNIC_IOREQ_NOT_INITED",
+ 	[SNIC_IOREQ_PENDING]	= "SNIC_IOREQ_PENDING",
+ 	[SNIC_IOREQ_ABTS_PENDING] = "SNIC_IOREQ_ABTS_PENDING",
+-	[SNIC_IOREQ_ABTS_COMPLETE] = "SNIC_IOREQ_ABTS_COMPELTE",
++	[SNIC_IOREQ_ABTS_COMPLETE] = "SNIC_IOREQ_ABTS_COMPLETE",
+ 	[SNIC_IOREQ_LR_PENDING]	= "SNIC_IOREQ_LR_PENDING",
+-	[SNIC_IOREQ_LR_COMPLETE] = "SNIC_IOREQ_LR_COMPELTE",
+-	[SNIC_IOREQ_COMPLETE]	= "SNIC_IOREQ_CMD_COMPELTE",
++	[SNIC_IOREQ_LR_COMPLETE] = "SNIC_IOREQ_LR_COMPLETE",
++	[SNIC_IOREQ_COMPLETE]	= "SNIC_IOREQ_CMD_COMPLETE",
+ };
+ 
+ /* snic cmd status strings */
+-- 
+2.17.0
