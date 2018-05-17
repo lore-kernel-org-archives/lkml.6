@@ -1,263 +1,306 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeEQJP4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 05:15:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42184 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750938AbeEQJPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 05:15:53 -0400
-Date: Thu, 17 May 2018 11:15:48 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH -V2 -mm] mm, hugetlbfs: Pass fault address to no page
- handler
-Message-ID: <20180517091548.GR12670@dhcp22.suse.cz>
-References: <20180517083539.9242-1-ying.huang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517083539.9242-1-ying.huang@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751610AbeEQJSP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 05:18:15 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46503 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750825AbeEQJSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 05:18:10 -0400
+X-Google-Smtp-Source: AB8JxZp0Gd/rvT8DmFC3oA/7DmlAq7e0ynEu5mv80TjVG0hOV5BZScvMacMVvdvyN2veRSSowP2Yww==
+From: Lin Huang <hl@rock-chips.com>
+To: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com
+Cc: dianders@chromium.org, briannorris@chromium.org,
+        linux-rockchip@lists.infradead.org, heiko@sntech.de,
+        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v5 1/4] drm/rockchip: add transfer function for cdn-dp
+Date: Thu, 17 May 2018 17:17:57 +0800
+Message-Id: <1526548680-2552-1-git-send-email-hl@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-05-18 16:35:39, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
-> 
-> This is to take better advantage of general huge page clearing
-> optimization (c79b57e462b5d, "mm: hugetlb: clear target sub-page last
-> when clearing huge page") for hugetlbfs.  In the general optimization
-> patch, the sub-page to access will be cleared last to avoid the cache
-> lines of to access sub-page to be evicted when clearing other
-> sub-pages.  This works better if we have the address of the sub-page
-> to access, that is, the fault address inside the huge page.  So the
-> hugetlbfs no page fault handler is changed to pass that information.
-> This will benefit workloads which don't access the begin of the
-> hugetlbfs huge page after the page fault under heavy cache contention
-> for shared last level cache.
-> 
-> The patch is a generic optimization which should benefit quite some
-> workloads, not for a specific use case.  To demonstrate the performance
-> benefit of the patch, we tested it with vm-scalability run on
-> hugetlbfs.
-> 
-> With this patch, the throughput increases ~28.1% in vm-scalability
-> anon-w-seq test case with 88 processes on a 2 socket Xeon E5 2699 v4
-> system (44 cores, 88 threads).  The test case creates 88 processes,
-> each process mmaps a big anonymous memory area with MAP_HUGETLB and
-> writes to it from the end to the begin.  For each process, other
-> processes could be seen as other workload which generates heavy cache
-> pressure.  At the same time, the cache miss rate reduced from ~36.3%
-> to ~25.6%, the IPC (instruction per cycle) increased from 0.3 to 0.37,
-> and the time spent in user space is reduced ~19.3%.
+From: Chris Zhong <zyw@rock-chips.com>
 
-OK, this description is much better. Thanks! I would still like to see
-the benefit on more realistic workloads. Those tends to be more towards
-large pre-allocated mappings AFAIK (something like a DB start). Can you
-add those numbers?
+We may support training outside firmware, so we need support
+dpcd read/write to get the message or do some setting with
+display.
 
-Btw. I do not mind the address->haddr change to be more in sync with THP
-but the previous patch was much more easier to review. Now you have to
-go to the code and check there are no unintended leftovers. So it would
-have been better to split that into two patches but I will not insist.
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Enric Balletbo <enric.balletbo@collabora.com>
+---
+Changes in v2:
+- update patch following Enric suggest
+Changes in v3:
+- None
+Changes in v4:
+- None
+Changes in v5:
+- None
 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@fb.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> Cc: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/hugetlb.c | 42 +++++++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 129088710510..4f0682cb9414 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3686,6 +3686,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct page *page;
->  	pte_t new_pte;
->  	spinlock_t *ptl;
-> +	unsigned long haddr = address & huge_page_mask(h);
->  
->  	/*
->  	 * Currently, we are forced to kill the process in the event the
-> @@ -3716,7 +3717,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  			u32 hash;
->  			struct vm_fault vmf = {
->  				.vma = vma,
-> -				.address = address,
-> +				.address = haddr,
->  				.flags = flags,
->  				/*
->  				 * Hard to debug if it ends up being
-> @@ -3733,14 +3734,14 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  			 * fault to make calling code simpler.
->  			 */
->  			hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping,
-> -							idx, address);
-> +							idx, haddr);
->  			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
->  			ret = handle_userfault(&vmf, VM_UFFD_MISSING);
->  			mutex_lock(&hugetlb_fault_mutex_table[hash]);
->  			goto out;
->  		}
->  
-> -		page = alloc_huge_page(vma, address, 0);
-> +		page = alloc_huge_page(vma, haddr, 0);
->  		if (IS_ERR(page)) {
->  			ret = PTR_ERR(page);
->  			if (ret == -ENOMEM)
-> @@ -3789,12 +3790,12 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  	 * the spinlock.
->  	 */
->  	if ((flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
-> -		if (vma_needs_reservation(h, vma, address) < 0) {
-> +		if (vma_needs_reservation(h, vma, haddr) < 0) {
->  			ret = VM_FAULT_OOM;
->  			goto backout_unlocked;
->  		}
->  		/* Just decrements count, does not deallocate */
-> -		vma_end_reservation(h, vma, address);
-> +		vma_end_reservation(h, vma, haddr);
->  	}
->  
->  	ptl = huge_pte_lock(h, mm, ptep);
-> @@ -3808,17 +3809,17 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  
->  	if (anon_rmap) {
->  		ClearPagePrivate(page);
-> -		hugepage_add_new_anon_rmap(page, vma, address);
-> +		hugepage_add_new_anon_rmap(page, vma, haddr);
->  	} else
->  		page_dup_rmap(page, true);
->  	new_pte = make_huge_pte(vma, page, ((vma->vm_flags & VM_WRITE)
->  				&& (vma->vm_flags & VM_SHARED)));
-> -	set_huge_pte_at(mm, address, ptep, new_pte);
-> +	set_huge_pte_at(mm, haddr, ptep, new_pte);
->  
->  	hugetlb_count_add(pages_per_huge_page(h), mm);
->  	if ((flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
->  		/* Optimization, do the COW without a second fault */
-> -		ret = hugetlb_cow(mm, vma, address, ptep, page, ptl);
-> +		ret = hugetlb_cow(mm, vma, haddr, ptep, page, ptl);
->  	}
->  
->  	spin_unlock(ptl);
-> @@ -3830,7 +3831,7 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
->  	spin_unlock(ptl);
->  backout_unlocked:
->  	unlock_page(page);
-> -	restore_reserve_on_error(h, vma, address, page);
-> +	restore_reserve_on_error(h, vma, haddr, page);
->  	put_page(page);
->  	goto out;
->  }
-> @@ -3883,10 +3884,9 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  	struct hstate *h = hstate_vma(vma);
->  	struct address_space *mapping;
->  	int need_wait_lock = 0;
-> +	unsigned long haddr = address & huge_page_mask(h);
->  
-> -	address &= huge_page_mask(h);
-> -
-> -	ptep = huge_pte_offset(mm, address, huge_page_size(h));
-> +	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
->  	if (ptep) {
->  		entry = huge_ptep_get(ptep);
->  		if (unlikely(is_hugetlb_entry_migration(entry))) {
-> @@ -3896,20 +3896,20 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  			return VM_FAULT_HWPOISON_LARGE |
->  				VM_FAULT_SET_HINDEX(hstate_index(h));
->  	} else {
-> -		ptep = huge_pte_alloc(mm, address, huge_page_size(h));
-> +		ptep = huge_pte_alloc(mm, haddr, huge_page_size(h));
->  		if (!ptep)
->  			return VM_FAULT_OOM;
->  	}
->  
->  	mapping = vma->vm_file->f_mapping;
-> -	idx = vma_hugecache_offset(h, vma, address);
-> +	idx = vma_hugecache_offset(h, vma, haddr);
->  
->  	/*
->  	 * Serialize hugepage allocation and instantiation, so that we don't
->  	 * get spurious allocation failures if two CPUs race to instantiate
->  	 * the same page in the page cache.
->  	 */
-> -	hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping, idx, address);
-> +	hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping, idx, haddr);
->  	mutex_lock(&hugetlb_fault_mutex_table[hash]);
->  
->  	entry = huge_ptep_get(ptep);
-> @@ -3939,16 +3939,16 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  	 * consumed.
->  	 */
->  	if ((flags & FAULT_FLAG_WRITE) && !huge_pte_write(entry)) {
-> -		if (vma_needs_reservation(h, vma, address) < 0) {
-> +		if (vma_needs_reservation(h, vma, haddr) < 0) {
->  			ret = VM_FAULT_OOM;
->  			goto out_mutex;
->  		}
->  		/* Just decrements count, does not deallocate */
-> -		vma_end_reservation(h, vma, address);
-> +		vma_end_reservation(h, vma, haddr);
->  
->  		if (!(vma->vm_flags & VM_MAYSHARE))
->  			pagecache_page = hugetlbfs_pagecache_page(h,
-> -								vma, address);
-> +								vma, haddr);
->  	}
->  
->  	ptl = huge_pte_lock(h, mm, ptep);
-> @@ -3973,16 +3973,16 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  
->  	if (flags & FAULT_FLAG_WRITE) {
->  		if (!huge_pte_write(entry)) {
-> -			ret = hugetlb_cow(mm, vma, address, ptep,
-> +			ret = hugetlb_cow(mm, vma, haddr, ptep,
->  					  pagecache_page, ptl);
->  			goto out_put_page;
->  		}
->  		entry = huge_pte_mkdirty(entry);
->  	}
->  	entry = pte_mkyoung(entry);
-> -	if (huge_ptep_set_access_flags(vma, address, ptep, entry,
-> +	if (huge_ptep_set_access_flags(vma, haddr, ptep, entry,
->  						flags & FAULT_FLAG_WRITE))
-> -		update_mmu_cache(vma, address, ptep);
-> +		update_mmu_cache(vma, haddr, ptep);
->  out_put_page:
->  	if (page != pagecache_page)
->  		unlock_page(page);
-> -- 
-> 2.16.1
-> 
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 55 +++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-core.h |  1 +
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c  | 69 ++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-reg.h  | 14 ++++++-
+ 4 files changed, 122 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index c6fbdcd..cce64c1 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -176,8 +176,8 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
+ 	u8 value;
+ 
+ 	*sink_count = 0;
+-	ret = cdn_dp_dpcd_read(dp, DP_SINK_COUNT, &value, 1);
+-	if (ret)
++	ret = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, &value, 1);
++	if (ret < 0)
+ 		return ret;
+ 
+ 	*sink_count = DP_GET_SINK_COUNT(value);
+@@ -374,9 +374,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
+ 	if (!cdn_dp_check_sink_connection(dp))
+ 		return -ENODEV;
+ 
+-	ret = cdn_dp_dpcd_read(dp, DP_DPCD_REV, dp->dpcd,
+-			       DP_RECEIVER_CAP_SIZE);
+-	if (ret) {
++	ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
++			       sizeof(dp->dpcd));
++	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
+ 		return ret;
+ 	}
+@@ -582,8 +582,8 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
+ 	if (!port || !dp->link.rate || !dp->link.num_lanes)
+ 		return false;
+ 
+-	if (cdn_dp_dpcd_read(dp, DP_LANE0_1_STATUS, link_status,
+-			     DP_LINK_STATUS_SIZE)) {
++	if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
++	    DP_LINK_STATUS_SIZE) {
+ 		DRM_ERROR("Failed to get link status\n");
+ 		return false;
+ 	}
+@@ -1012,6 +1012,40 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+ 
++static ssize_t cdn_dp_aux_transfer(struct drm_dp_aux *aux,
++				   struct drm_dp_aux_msg *msg)
++{
++	struct cdn_dp_device *dp = container_of(aux, struct cdn_dp_device, aux);
++	int ret;
++	u8 status;
++
++	switch (msg->request & ~DP_AUX_I2C_MOT) {
++	case DP_AUX_NATIVE_WRITE:
++	case DP_AUX_I2C_WRITE:
++	case DP_AUX_I2C_WRITE_STATUS_UPDATE:
++		ret = cdn_dp_dpcd_write(dp, msg->address, msg->buffer,
++					msg->size);
++		break;
++	case DP_AUX_NATIVE_READ:
++	case DP_AUX_I2C_READ:
++		ret = cdn_dp_dpcd_read(dp, msg->address, msg->buffer,
++				       msg->size);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	status = cdn_dp_get_aux_status(dp);
++	if (status == AUX_STATUS_ACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
++	else if (status == AUX_STATUS_NACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_NACK;
++	else if (status == AUX_STATUS_DEFER)
++		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
++
++	return ret;
++}
++
+ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+@@ -1030,6 +1064,13 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ 	dp->active = false;
+ 	dp->active_port = -1;
+ 	dp->fw_loaded = false;
++	dp->aux.name = "DP-AUX";
++	dp->aux.transfer = cdn_dp_aux_transfer;
++	dp->aux.dev = dev;
++
++	ret = drm_dp_aux_register(&dp->aux);
++	if (ret)
++		return ret;
+ 
+ 	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
+ 
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+index f57e296..46159b2 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+@@ -78,6 +78,7 @@ struct cdn_dp_device {
+ 	struct platform_device *audio_pdev;
+ 	struct work_struct event_work;
+ 	struct edid *edid;
++	struct drm_dp_aux aux;
+ 
+ 	struct mutex lock;
+ 	bool connected;
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+index eb3042c..979355d 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+@@ -221,7 +221,12 @@ static int cdn_dp_reg_write_bit(struct cdn_dp_device *dp, u16 addr,
+ 				   sizeof(field), field);
+ }
+ 
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
++/*
++ * Returns the number of bytes transferred on success, or a negative
++ * error code on failure. -ETIMEDOUT is returned if mailbox message was
++ * not send successfully;
++ */
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ {
+ 	u8 msg[5], reg[5];
+ 	int ret;
+@@ -247,24 +252,41 @@ int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ 		goto err_dpcd_read;
+ 
+ 	ret = cdn_dp_mailbox_read_receive(dp, data, len);
++	if (!ret)
++		return len;
+ 
+ err_dpcd_read:
++	DRM_DEV_ERROR(dp->dev, "dpcd read failed: %d\n", ret);
+ 	return ret;
+ }
+ 
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
++#define CDN_AUX_HEADER_SIZE	5
++#define CDN_AUX_MSG_SIZE	20
++/*
++ * Returns the number of bytes transferred on success, or a negative error
++ * code on failure. -ETIMEDOUT is returned if mailbox message was not send
++ * success; -EINVAL is returned if get the wrong data size after message
++ * is sent
++ */
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ {
+-	u8 msg[6], reg[5];
++	u8 msg[CDN_AUX_MSG_SIZE + CDN_AUX_HEADER_SIZE];
++	u8 reg[CDN_AUX_HEADER_SIZE];
+ 	int ret;
+ 
+-	msg[0] = 0;
+-	msg[1] = 1;
++	if (WARN_ON(len > CDN_AUX_MSG_SIZE) || WARN_ON(len <= 0))
++		return -EINVAL;
++
++	msg[0] = (len >> 8) & 0xff;
++	msg[1] = len & 0xff;
+ 	msg[2] = (addr >> 16) & 0xff;
+ 	msg[3] = (addr >> 8) & 0xff;
+ 	msg[4] = addr & 0xff;
+-	msg[5] = value;
++
++	memcpy(msg + CDN_AUX_HEADER_SIZE, data, len);
++
+ 	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_WRITE_DPCD,
+-				  sizeof(msg), msg);
++				  CDN_AUX_HEADER_SIZE + len, msg);
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+@@ -277,8 +299,12 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+-	if (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))
++	if ((len != (reg[0] << 8 | reg[1])) ||
++	    (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))) {
+ 		ret = -EINVAL;
++	} else {
++		return len;
++	}
+ 
+ err_dpcd_write:
+ 	if (ret)
+@@ -286,6 +312,33 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	return ret;
+ }
+ 
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp)
++{
++	u8 status;
++	int ret;
++
++	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX,
++				  DPTX_GET_LAST_AUX_STAUS, 0, NULL);
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_validate_receive(dp, MB_MODULE_ID_DP_TX,
++					      DPTX_GET_LAST_AUX_STAUS,
++					      sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_read_receive(dp, &status, sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	return status;
++
++err_get_hpd:
++	DRM_DEV_ERROR(dp->dev, "get aux status failed: %d\n", ret);
++	return ret;
++}
++
+ int cdn_dp_load_firmware(struct cdn_dp_device *dp, const u32 *i_mem,
+ 			 u32 i_size, const u32 *d_mem, u32 d_size)
+ {
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+index c4bbb4a83..6580b11 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+@@ -328,6 +328,13 @@
+ #define GENERAL_BUS_SETTINGS            0x03
+ #define GENERAL_TEST_ACCESS             0x04
+ 
++/* AUX status*/
++#define AUX_STATUS_ACK			0
++#define AUX_STATUS_NACK			1
++#define AUX_STATUS_DEFER			2
++#define AUX_STATUS_SINK_ERROR		3
++#define AUX_STATUS_BUS_ERROR		4
++
+ #define DPTX_SET_POWER_MNG			0x00
+ #define DPTX_SET_HOST_CAPABILITIES		0x01
+ #define DPTX_GET_EDID				0x02
+@@ -469,8 +476,11 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
+ int cdn_dp_event_config(struct cdn_dp_device *dp);
+ u32 cdn_dp_get_event(struct cdn_dp_device *dp);
+ int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value);
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
++			  u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
++			 u8 *data, u16 len);
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp);
+ int cdn_dp_get_edid_block(void *dp, u8 *edid,
+ 			  unsigned int block, size_t length);
+ int cdn_dp_train_link(struct cdn_dp_device *dp);
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
