@@ -1,185 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeEQPGf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 11:06:35 -0400
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:15135 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752309AbeEQPGc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 11:06:32 -0400
-From: "Ramsay, Frank" <frank.ramsay@hpe.com>
-To: Baoquan He <bhe@redhat.com>, "Travis, Mike" <mike.travis@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>
-CC: Ingo Molnar <mingo@kernel.org>,
+        id S1752485AbeEQPHL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 11:07:11 -0400
+Received: from mail-ve1eur01on0062.outbound.protection.outlook.com ([104.47.1.62]:12835
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751319AbeEQPHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 11:07:08 -0400
+From: Matt Sealey <Matt.Sealey@arm.com>
+To: Kim Phillips <Kim.Phillips@arm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>,
+        Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "thgarnie@google.com" <thgarnie@google.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>
-Subject: RE: [PATCH v2 RESEND 2/2] x86/mm/KASLR: Do not adapt the size of the
- direct mapping section for SGI UV system
-Thread-Topic: [PATCH v2 RESEND 2/2] x86/mm/KASLR: Do not adapt the size of the
- direct mapping section for SGI UV system
-Thread-Index: AQHTJ6zuezKG6sd0lUGgql2omKFhbaLKDx6AgAAJ0ACAAAiHgIAAVmGAgWpUIwCAAMRrMA==
-Date: Thu, 17 May 2018 15:06:27 +0000
-Message-ID: <AT5PR8401MB0370A3560532C224307B4B9383910@AT5PR8401MB0370.NAMPRD84.PROD.OUTLOOK.COM>
-References: <1504770150-25456-1-git-send-email-bhe@redhat.com>
- <1504770150-25456-3-git-send-email-bhe@redhat.com>
- <20170928075605.g74zm5xeglosmvct@gmail.com> <20170928083112.GN16025@x1>
- <20170928090143.m6sog2am2ccz5dm4@gmail.com>
- <25fc5345-3273-447e-de6a-2ac7c56d0f00@hpe.com>
- <20180517031802.GK24627@MiWiFi-R3L-srv>
-In-Reply-To: <20180517031802.GK24627@MiWiFi-R3L-srv>
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        Robin Murphy <Robin.Murphy@arm.com>, "Ingo Molnar" <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "alexander.shishkin@linux.intel.com"
+        <alexander.shishkin@linux.intel.com>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>
+Subject: RE: [PATCH] drivers/perf: arm-ccn: stop spamming dmesg in event_init
+Thread-Topic: [PATCH] drivers/perf: arm-ccn: stop spamming dmesg in event_init
+Thread-Index: AQHT7XWVQYchghNqw0Gmf2REANsJZ6Qz/XAQ
+Date: Thu, 17 May 2018 15:07:04 +0000
+Message-ID: <HE1PR0802MB241294860D79A65132C69382EE910@HE1PR0802MB2412.eurprd08.prod.outlook.com>
+References: <20180504104117.8086-1-mark.rutland@arm.com>
+        <20180508184050.75c60b82ba538d0ecdeb2d78@arm.com>
+        <1525882003.4199.55.camel@arm.com>
+        <20180509184154.9994df2874e7a08025b56dea@arm.com>
+        <cee9c043-3d64-56b9-4f23-e8c8370387dd@gmail.com>
+ <20180516192528.5519d2faf59766e0544bb2ee@arm.com>
+In-Reply-To: <20180516192528.5519d2faf59766e0544bb2ee@arm.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=frank.ramsay@hpe.com;
-x-originating-ip: [66.187.232.66]
+ smtp.mailfrom=Matt.Sealey@arm.com;
+x-originating-ip: [217.140.111.135]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0610;7:8mz1iatmsnYw/3DMl2LA3XW9CAmOwv1ju155GKysRxDmOrRVSlojH5aT+UL2fzzJ2IzatZEcpNeXZDvrhUBFzLKNu5G7PK1VV8OfWEYEzbzAQgMWguIt0XAjHqM9ZTy9hdTNWuXFqLQrNpun5Q7dh8di73NoP4r2WetEwPvYEKJPPdfMKNUzY5PcC8m2NuBWCy6A5FUDHnTT9HueZxgq1Znu+Feg1CkXswb/iNxclES91peU5ct/HGIZvQDXpGUN
+x-microsoft-exchange-diagnostics: 1;HE1PR0802MB2426;7:Yy2dq+TZgdW8MeIAqBmrJRzjTjHIAAjwX5TL686nLayo3AZ+jdNd6Nem0uWSwXeRfje1jYF/I6UzFE29T/c8w/ttWDbUVAWRyaaPSigDCxo5GJbvRVo2GMz2MA7+PD5bc/eTd/7+Oed1tGRcykikZNqkAAtj/m11R9P3WEdbZotOPmbcsHgGTdQU3yyny0Y9qC6GXzBsAMBQMRFXW7rj6RvBIz4oPnpyrqJuxNRITYQC7TFauVyy7SiBD159rWU/
 x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39860400002)(39380400002)(13464003)(199004)(189003)(6636002)(55016002)(3846002)(97736004)(74316002)(3660700001)(7736002)(68736007)(6506007)(2906002)(7416002)(3280700002)(486006)(478600001)(33656002)(5660300001)(6116002)(476003)(8676002)(305945005)(81156014)(11346002)(8936002)(81166006)(25786009)(229853002)(446003)(14454004)(59450400001)(316002)(53546011)(86362001)(54906003)(110136005)(93886005)(4326008)(2900100001)(6246003)(9686003)(7696005)(186003)(6436002)(26005)(99286004)(53936002)(106356001)(66066001)(76176011)(5250100002)(102836004)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0610;H:AT5PR8401MB0370.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:(222181515654134);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0610;
-x-ms-traffictypediagnostic: AT5PR8401MB0610:
-x-microsoft-antispam-prvs: <AT5PR8401MB06101E8E9537E60560C6D79D83910@AT5PR8401MB0610.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(227479698468861)(9452136761055)(211936372134217)(222181515654134)(17755550239193);
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR0802MB2426;
+x-ms-traffictypediagnostic: HE1PR0802MB2426:
+x-microsoft-antispam-prvs: <HE1PR0802MB2426A35F839A1736EBA90ECCEE910@HE1PR0802MB2426.eurprd08.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(278428928389397)(211171220733660);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB0610;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0610;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0802MB2426;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0802MB2426;
 x-forefront-prvs: 067553F396
-x-microsoft-antispam-message-info: MULJi5P01gH7be4haLgU4L7KvYS7vo7WiEc2Q74CFLp7evFo8XxIqzLVoWZqhUlyuFhMEK25w020avkyukiGTDx4JFODoxgzC4r9GQYhsohEjb3TXPaynSATpSg987iRe4wMk3z7ZQqaFcSm3RVUlb68G06NnVizBPzgxXt9Wn3+ZU7RpTzoy10yVi29PeDr
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(366004)(39380400002)(376002)(40434004)(199004)(189003)(53754006)(59450400001)(486006)(2906002)(6246003)(316002)(53936002)(110136005)(11346002)(446003)(54906003)(66066001)(102836004)(25786009)(476003)(6506007)(99286004)(305945005)(14454004)(7736002)(4326008)(7696005)(55016002)(6436002)(72206003)(478600001)(229853002)(3280700002)(39060400002)(3660700001)(26005)(76176011)(9686003)(74316002)(97736004)(5660300001)(33656002)(7416002)(5250100002)(86362001)(106356001)(105586002)(5890100001)(8676002)(2900100001)(8936002)(93886005)(81156014)(68736007)(6116002)(81166006)(3846002)(26753002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0802MB2426;H:HE1PR0802MB2412.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: /NiUJFjjGbPo23FeniJs5aRSi8FfLUfCpzP2vkjAztOgpAE4GGBb29cuPM3EzKfUYRzIgVrrmvdMnQqG2c8LZK5R19XCuN4wfTTVTo+Q8DXwZReuZ5KyzkISBFdp2du7medoP+H67C9+Rm/XPmfoLsYjKjlNxsOsCKxjaRmAC10CByjZknGEH9umraJ6m7ZS
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d6b624fc-9d6e-4230-bc37-08d5bc07c3ba
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6b624fc-9d6e-4230-bc37-08d5bc07c3ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2018 15:06:27.5759
+X-MS-Office365-Filtering-Correlation-Id: cc4d6f98-a768-450d-bf3b-08d5bc07d99e
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc4d6f98-a768-450d-bf3b-08d5bc07d99e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2018 15:07:04.2926
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0610
-X-OriginatorOrg: hpe.com
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0802MB2426
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4HF7Hjk018887
+
+Hi all,
+
+> > I don't have any dog in this, but maybe if providing information to the
+> > users is so essential to having a pleasant user experience, then
+> > rethinking the whole way these messages are funneled is necessary
+> > because the kernel log + dmesg is by no means appropriate. Take a look
+> > at what the networking maintainers recently did with netlink extended
+> > ack. You used to just get an "unsupported" error, and now you know
+> > exactly what is wrong when extack is available. It seems to me like
+> > something like this is what you might want here since you want to have
+> > perf be as user friendly as possible.
+>
+> Thanks, Florian.
+
+Florian, I'd love to know if you mean "implement netlink extended ack in
+perf" or "do something idiomatic for perf"?
+
+Let us assume we are semantically challenged over here. I'm going to
+proceed from the latter.
+
+> Acme & other perf people, do you foresee a problem adding netlink
+> extended ack support to the perf subsystem for extended error message
+> communication?
+>
+> If not, is struct perf_event_attr amenable to having error reporting
+> bit(s) added?
+
+I did have a think about this when Kim mentioned it in passing, and my
+reasoning was that a serialized error record similar to ACPI APEI BERT/ERST
+tables (without the NVRAM abstraction) would fit the need.
+
+As soon as I wrote down my thoughts I realized it scratch more itches than
+just something useful for perf.
+
+It would conceptually be a buffer passed from userspace with the syscall,
+which would be populated in the kernel with an identifying header, each
+record denoting its own length. The syscall fills the buffer with records
+of particular format for the syscall, and the errno returned to the
+application is then the state of the error recording buffer - for instance,
+if the kernel ran out of space in the buffer before reporting all the errors
+it could (-ENOBUFS or -EAGAIN), if it stopped recording errors on something
+that requires being contained and returned at that point (-EFAULT), and so
+on (anyone who's got RAS on the brain will see where I'm coming from).
+
+I have a distinct dislike of filling the kernel with const strings, so the
+records would be strictly machine-readable and contain information about
+the error for the record and the source. If userspace needs to print a
+string then it can look up unique identifiers (UUIDv1, give or take, to
+remove the need for any authority on numbering) in a database - be that
+plaintext, gettext.po, bdb, sqlite, xml, json, C structure embedded in the
+tool - one for each error source. That keeps strings, translations, string
+formatting entirely outside the kernel, and keeps records from being freeform
+typo-laden strings.
+
+That'd give some generic Producer code in the kernel, and imply a companion
+Consumer library in userspace (with said database backend), which could also
+be responsible for logging the binary records somewhere for future reference
+(perhaps bounded by capabilities or container privileges).
+
+Pretty much every syscall that has problems returning 'just an errno'
+could benefit from such a system, the only impediment I can see to it is
+that it's adding a new subsystem to the kernel to produce these records,
+and any syscall that needs it would have to gain either an extra parameter,
+or attribute setting addition (like setsockopts) or to shoehorn the buffer
+pointer into an existing parameter structure like perf_event_attr. That
+would have to be locked down to a consistent method that would be
+recommended (like adding a new syscall interface, not everyone has an
+attribute interface or parameter structure) although there's no stopping
+kernel devs adding in a way for legacy applications to easily receive
+the same information through existing ABI.
+
+In the case of perf_event_attr there is space enough to mark a bit to say
+that errors could be reported in a buffer, but not enough in the reserved
+space that exists to store a pointer for 64-bit systems (or 128-bit ones..)
+without increasing its size. But, besides that, it would have the benefit
+of simply being serialized with the syscall, and not a supplemental,
+potentially non-thread-safe errno/strerror-like kernel-side implementation,
+nor extra syscalls to retrieve information or arbitrary formatted or
+unformatted strings.
+
+Netlink extended ack could benefit from it simply by having been passed
+an nlattr pointing to the buffer and recording extended error information
+in it - the extended ack structure can report the status of the buffer
+and use the cookie field to reproduce some information if necessary (which
+extends the RAS error record concept further when needed).
+
+Thoughts? Does anyone have any objections to a RAS-like error reporting
+system for system calls, or any ideas on things that would benefit from
+it above and beyond perf? We could always audit all the system calls and
+their behaviors so we could do some worked examples but anyone who's got
+a good candidate outside perf is welcome to suggest it.
+
+Ta,
+Matt
 
 
 
-> -----Original Message-----
-> From: Baoquan He [mailto:bhe@redhat.com]
-> Sent: Wednesday, May 16, 2018 11:18 PM
-> To: Travis, Mike <mike.travis@hpe.com>; Anderson, Russ
-> <russ.anderson@hpe.com>; Ramsay, Frank <frank.ramsay@hpe.com>
-> Cc: Ingo Molnar <mingo@kernel.org>; linux-kernel@vger.kernel.org;
-> x86@kernel.org; mingo@redhat.com; tglx@linutronix.de; hpa@zytor.com;
-> thgarnie@google.com; keescook@chromium.org; akpm@linux-
-> foundation.org; yamada.masahiro@socionext.com; Sivanich, Dimitri
-> <dimitri.sivanich@hpe.com>; dyoung@redhat.com
-> Subject: Re: [PATCH v2 RESEND 2/2] x86/mm/KASLR: Do not adapt the size of
-> the direct mapping section for SGI UV system
-> 
-> Hi Mike, Russ and Frank,
-> 
-> On 09/28/17 at 07:10am, Mike Travis wrote:
-> >
-> >
-> > On 9/28/2017 2:01 AM, Ingo Molnar wrote:
-> > >
-> > > * Baoquan He <bhe@redhat.com> wrote:
-> > >
-> > > > > > @@ -123,7 +124,7 @@ void __init
-> kernel_randomize_memory(void)
-> > > > > >
-> 	CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> > > > > >   	/* Adapt phyiscal memory region size based on available
-> memory */
-> > > > > > -	if (memory_tb < kaslr_regions[0].size_tb)
-> > > > > > +	if (memory_tb < kaslr_regions[0].size_tb &&
-> > > > > > +!is_early_uv_system())
-> > > > > >   		kaslr_regions[0].size_tb = memory_tb;
-> > > > > This is really an ugly hack. Is kaslr_regions[] incorrect? If so
-> > > > > then it should be corrected instead of uglifying the code that uses it...
-> > > >
-> > > > Thanks for looking into this!
-> > > >
-> > > > If on SGI UV system, the kaslr_regions[0].size_tb, namely the size
-> > > > of the direct mapping section, is incorrect.
-> > > >
-> > > > Its direct mapping size includes two parts:
-> > > > #1 RAM size of system
-> > > > #2 MMIOH region size which only SGI UV system has.
-> > > >
-> > > > However, the #2 can only be got till uv_system_init() is called in
-> > > > native_smp_prepare_cpus(). That is too late for mm KASLR calculation.
-> > > > That's why I made this hack.
-> > > >
-> > > > I checked uv_system_init() code, seems not easy to know the size
-> > > > of MMIOH region before or inside kernel_randomize_memory(). I have
-> > > > CCed UV devel experts, not sure if they have any idea about this.
-> > > > Otherwise, this patch could be the only way I can think of.
-> > > >
-> > > > Hi Mike and Russ,
-> > > >
-> > > > Is there any chance we can get the size of MMIOH region before mm
-> > > > KASLR code, namely before we call kernel_randomize_memory()?
-> >
-> > The sizes of the MMIOL and MMIOH areas are tied into the HUB design
-> > and how it is communicated to BIOS and the kernel.  This is via some
-> > of the config MMR's found in the HUB and it would be impossible to
-> > provide any access to these registers as they change with each new UV
-> architecture.
-> >
-> > The kernel does reserve the memory in the EFI memmap.  I can send you
-> > a console log of the full startup that includes the MMIOH
-> > reservations. Note that it is dependent on what I/O devices are
-> > actually present as UV does not map empty slots unless forced (because
-> > we'd quickly run out of resources.) Also, the EFI memmap entries do
-> > not specify the exact usage of the contained areas.
-> 
-> This one is still a regression bug in our newer rhel since I just fixed them with
-> rhel-only patch. Now I still need the console log which includes the MMIOH
-> reservations.
-> 
 
-Does the system need to have an external IO device for this?  If not you should just be able to boot one of the SGI UV systems in the beaker lab (possibly also the HPE Superdome Flex that is in beaker; hpe-flex-01.rhts.eng.bos.redhat.com)
-
-> Could you help provide a console log with MMIOH info, or I need request
-> one from redhat's lab?
-> 
-> Or expert from HPE UV team can make a patch based on the finding and
-> analysis?
-> 
-> Thanks
-> Baoquan
-> >
-> > >
-> > > I don't mind system specific quirks to hardware enumeration details,
-> > > as long as they don't pollute generic code with such special hacks.
-> > >
-> > > I.e. in this case it's wrong to allow kaslr_regions[0].size_tb to be
-> > > wrong. Any other code that relies on it in the future will be wrong as well
-> on UV systems.
-> >
-> > Which may come into play on other arches with the new upcoming
-> memory
-> > technologies.
-> > >
-> > > The right quirk would be to fix that up where it gets introduced, or
-> > > something like that.
-> >
-> > Yes, does make sense.
-> > >
-> > > Thanks,
-> > >
-> > > 	Ingo
-> > >
+IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
