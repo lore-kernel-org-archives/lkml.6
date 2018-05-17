@@ -1,265 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeEQQz0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:55:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbeEQQzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:55:24 -0400
-Message-ID: <1d37b19a68eed903cdd7fbca67c5060922092d00.camel@kernel.org>
-Subject: Re: [PATCH] vfs: change iterate_supers callback to take an int arg
- instead of a void *
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, jack@suse.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, lurodriguez@suse.de
-Date: Thu, 17 May 2018 12:55:21 -0400
-In-Reply-To: <20180517163950.yympqumpiu4m7yy5@quack2.suse.cz>
-References: <20180517154646.18751-1-jlayton@kernel.org>
-         <20180517163950.yympqumpiu4m7yy5@quack2.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        id S1752230AbeEQQ4U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 12:56:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:50263 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeEQQ4T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 12:56:19 -0400
+Date: Thu, 17 May 2018 18:55:26 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Vince Weaver <vincent.weaver@maine.edu>, linux-kernel@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org
+Message-ID: <307323036.63872.1526576126537@email.1und1.de>
+In-Reply-To: <alpine.DEB.2.21.1805171233500.7984@macbook-air>
+References: <20180517131727.29263-1-eric@anholt.net>
+ <1412187220.62585.1526572780332@email.1und1.de>
+ <alpine.DEB.2.21.1805171233500.7984@macbook-air>
+Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:aGq2ulLPCFSp+GvrXkPzBsbXJ7n0pv/6eQRZGsMnzKSNsg6jkq1
+ 3QA9DnOX5L9zcyQBjI3aKgZ6rBtDMByaHGooHAlJB3kU2ZQ6aN2EjqqSuHpBbXunRbpR7qw
+ 7BqkLPGTNg7sN4eCHw6Y6telFzU2IsNTznisHXdtnwQ2pXC3xUx/I2bjD8Q2nlmPQsoQmS/
+ L/Gv9cxsI0wRWJC41DbCA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:u52ML8cg6HQ=:rzSnraGWxNafmB9xzU5Ske
+ 4pCyd5Y/AGx2uFQBEmTa+iR2Xu+7ZGlUVQHRRASwlnR+7MM9zyMtfWopC7fUfMGKmyp5vWKGm
+ Odj2o/jHmaRTx6hcePDbsdNQjlMJ3Vwo3QGqZK1QCWguJVjK7NO2cg6YJdZU/gHC0cr34lHIc
+ LX2jdBINyQSDq12siPHMUCkGAGkv0xUv1hBOSSohXeDipkyKD8NRk7dtpaAxAOXR/dRZz0h5F
+ hE4uSe8XaXcDXnQqaqJAHIEpo2MtlRCnw2SfkooNDczU57AnbxT8G6Ie6+aypI9gVGkl3YXxe
+ /cefUKGQoiNvBVaTBBisajF4WrQJfk9pzn537YGTtTrQ1/0tvQRcUiVEASjPyxNzSMK0NWDsM
+ oxSKk7IkdCz9I60NWgF3TKz/m4zJ5oc9GAldFAmUgR18rn81qPtiKjVzE2o0SsNtKxXpdKmFa
+ yD9d5tUDnGnAiT1l0H/ojhQYC/FZ7JgJz/uHxxCPKaPMvswev5tq++2hnbBrc5YP02M97Y982
+ Uq75SDqR9X3MhwsBmBGR6ff9w6eeDhHg+WtXu9b6tDEoh1WdXnT9ejANXvFRLidIbHikCqXk6
+ z4L22urNscaFxrrNOTUxmJnmvuRCIOLB1vDOQ4T8bFsiU85NBf5v9b5Nua824xMncZwxSYEzP
+ hh3ptNWH57KclqQ1dfJwJBEsoROsuTKq3TBB8aWW9SWNhJ724ghILrTgBSIX8TzjdjVndMqAW
+ DDonC6FyRWU86+qc
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-17 at 18:39 +0200, Jan Kara wrote:
-> On Thu 17-05-18 11:46:46, Jeff Layton wrote:
-> > From: Jeff Layton <jlayton@redhat.com>
-> > 
-> > All of the callback functions for iterate_supers either ignore the
-> > opaque argument, or dereference the pointer only to fetch the int
-> > to which it points.
-> > 
-> > Change iterate_supers to pass an opaque int arg to the callback
-> > instead of a void pointer.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Hi,
+
+[added Peter, Ingo and Arnaldo]
+
+> Vince Weaver <vincent.weaver@maine.edu> hat am 17. Mai 2018 um 18:34 geschrieben:
 > 
-> Hum, I'm not sure if Luis didn't have any plan with the argument in his
-> fs-freeze-during-hibernate series. Luis?
 > 
-> 								Honza
+> On Thu, 17 May 2018, Stefan Wahren wrote:
 > 
-
-No worries... Al already NAK'ed this over IRC. I'm reworking the patch
-to avoid dereferencing in the existing callers, but leave the callback
-prototypes intact. I'll send a v2 patch shortly...
-
-Thanks,
-Jeff
-
- 
-> > ---
-> >  fs/drop_caches.c         |  4 ++--
-> >  fs/quota/quota.c         |  6 ++----
-> >  fs/super.c               |  3 ++-
-> >  fs/sync.c                | 32 ++++++++++++++------------------
-> >  include/linux/fs.h       |  2 +-
-> >  mm/cleancache.c          |  4 ++--
-> >  security/selinux/hooks.c |  4 ++--
-> >  7 files changed, 25 insertions(+), 30 deletions(-)
 > > 
-> > diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> > index 82377017130f..1850e7276fdf 100644
-> > --- a/fs/drop_caches.c
-> > +++ b/fs/drop_caches.c
-> > @@ -14,7 +14,7 @@
-> >  /* A global variable is a bit ugly, but it keeps the code simple */
-> >  int sysctl_drop_caches;
-> >  
-> > -static void drop_pagecache_sb(struct super_block *sb, void *unused)
-> > +static void drop_pagecache_sb(struct super_block *sb, int unused)
-> >  {
-> >  	struct inode *inode, *toput_inode = NULL;
-> >  
-> > @@ -52,7 +52,7 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
-> >  		static int stfu;
-> >  
-> >  		if (sysctl_drop_caches & 1) {
-> > -			iterate_supers(drop_pagecache_sb, NULL);
-> > +			iterate_supers(drop_pagecache_sb, 0);
-> >  			count_vm_event(DROP_PAGECACHE);
-> >  		}
-> >  		if (sysctl_drop_caches & 2) {
-> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> > index 860bfbe7a07a..5f1e1c494c07 100644
-> > --- a/fs/quota/quota.c
-> > +++ b/fs/quota/quota.c
-> > @@ -46,10 +46,8 @@ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
-> >  	return security_quotactl(cmd, type, id, sb);
-> >  }
-> >  
-> > -static void quota_sync_one(struct super_block *sb, void *arg)
-> > +static void quota_sync_one(struct super_block *sb, int type)
-> >  {
-> > -	int type = *(int *)arg;
-> > -
-> >  	if (sb->s_qcop && sb->s_qcop->quota_sync &&
-> >  	    (sb->s_quota_types & (1 << type)))
-> >  		sb->s_qcop->quota_sync(sb, type);
-> > @@ -63,7 +61,7 @@ static int quota_sync_all(int type)
-> >  		return -EINVAL;
-> >  	ret = security_quotactl(Q_SYNC, type, 0, NULL);
-> >  	if (!ret)
-> > -		iterate_supers(quota_sync_one, &type);
-> > +		iterate_supers(quota_sync_one, type);
-> >  	return ret;
-> >  }
-> >  
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 122c402049a2..30b7490bd049 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -596,6 +596,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
-> >  		__put_super(p);
-> >  	spin_unlock(&sb_lock);
-> >  }
-> > +
-> >  /**
-> >   *	iterate_supers - call function for all active superblocks
-> >   *	@f: function to call
-> > @@ -604,7 +605,7 @@ static void __iterate_supers(void (*f)(struct super_block *))
-> >   *	Scans the superblock list and calls given function, passing it
-> >   *	locked superblock and given argument.
-> >   */
-> > -void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
-> > +void iterate_supers(void (*f)(struct super_block *, int), int arg)
-> >  {
-> >  	struct super_block *sb, *p = NULL;
-> >  
-> > diff --git a/fs/sync.c b/fs/sync.c
-> > index b54e0541ad89..8c418da67e41 100644
-> > --- a/fs/sync.c
-> > +++ b/fs/sync.c
-> > @@ -68,16 +68,16 @@ int sync_filesystem(struct super_block *sb)
-> >  }
-> >  EXPORT_SYMBOL(sync_filesystem);
-> >  
-> > -static void sync_inodes_one_sb(struct super_block *sb, void *arg)
-> > +static void sync_inodes_one_sb(struct super_block *sb, int unused)
-> >  {
-> >  	if (!sb_rdonly(sb))
-> >  		sync_inodes_sb(sb);
-> >  }
-> >  
-> > -static void sync_fs_one_sb(struct super_block *sb, void *arg)
-> > +static void sync_fs_one_sb(struct super_block *sb, int arg)
-> >  {
-> >  	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
-> > -		sb->s_op->sync_fs(sb, *(int *)arg);
-> > +		sb->s_op->sync_fs(sb, arg);
-> >  }
-> >  
-> >  static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
-> > @@ -107,14 +107,12 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
-> >   */
-> >  void ksys_sync(void)
-> >  {
-> > -	int nowait = 0, wait = 1;
-> > -
-> >  	wakeup_flusher_threads(WB_REASON_SYNC);
-> > -	iterate_supers(sync_inodes_one_sb, NULL);
-> > -	iterate_supers(sync_fs_one_sb, &nowait);
-> > -	iterate_supers(sync_fs_one_sb, &wait);
-> > -	iterate_bdevs(fdatawrite_one_bdev, NULL);
-> > -	iterate_bdevs(fdatawait_one_bdev, NULL);
-> > +	iterate_supers(sync_inodes_one_sb, 0);
-> > +	iterate_supers(sync_fs_one_sb, 0);
-> > +	iterate_supers(sync_fs_one_sb, 1);
-> > +	iterate_bdevs(fdatawrite_one_bdev, 0);
-> > +	iterate_bdevs(fdatawait_one_bdev, 0);
-> >  	if (unlikely(laptop_mode))
-> >  		laptop_sync_completion();
-> >  }
-> > @@ -127,18 +125,16 @@ SYSCALL_DEFINE0(sync)
-> >  
-> >  static void do_sync_work(struct work_struct *work)
-> >  {
-> > -	int nowait = 0;
-> > -
-> >  	/*
-> >  	 * Sync twice to reduce the possibility we skipped some inodes / pages
-> >  	 * because they were temporarily locked
-> >  	 */
-> > -	iterate_supers(sync_inodes_one_sb, &nowait);
-> > -	iterate_supers(sync_fs_one_sb, &nowait);
-> > -	iterate_bdevs(fdatawrite_one_bdev, NULL);
-> > -	iterate_supers(sync_inodes_one_sb, &nowait);
-> > -	iterate_supers(sync_fs_one_sb, &nowait);
-> > -	iterate_bdevs(fdatawrite_one_bdev, NULL);
-> > +	iterate_supers(sync_inodes_one_sb, 0);
-> > +	iterate_supers(sync_fs_one_sb, 0);
-> > +	iterate_bdevs(fdatawrite_one_bdev, 0);
-> > +	iterate_supers(sync_inodes_one_sb, 0);
-> > +	iterate_supers(sync_fs_one_sb, 0);
-> > +	iterate_bdevs(fdatawrite_one_bdev, 0);
-> >  	printk("Emergency Sync complete\n");
-> >  	kfree(work);
-> >  }
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 760d8da1b6c7..7107d291d853 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3115,7 +3115,7 @@ extern struct super_block *get_super_exclusive_thawed(struct block_device *bdev)
-> >  extern struct super_block *get_active_super(struct block_device *bdev);
-> >  extern void drop_super(struct super_block *sb);
-> >  extern void drop_super_exclusive(struct super_block *sb);
-> > -extern void iterate_supers(void (*)(struct super_block *, void *), void *);
-> > +extern void iterate_supers(void (*)(struct super_block *, int), int);
-> >  extern void iterate_supers_type(struct file_system_type *,
-> >  			        void (*)(struct super_block *, void *), void *);
-> >  
-> > diff --git a/mm/cleancache.c b/mm/cleancache.c
-> > index f7b9fdc79d97..92d27cc10274 100644
-> > --- a/mm/cleancache.c
-> > +++ b/mm/cleancache.c
-> > @@ -34,7 +34,7 @@ static u64 cleancache_failed_gets;
-> >  static u64 cleancache_puts;
-> >  static u64 cleancache_invalidates;
-> >  
-> > -static void cleancache_register_ops_sb(struct super_block *sb, void *unused)
-> > +static void cleancache_register_ops_sb(struct super_block *sb, int unused)
-> >  {
-> >  	switch (sb->cleancache_poolid) {
-> >  	case CLEANCACHE_NO_BACKEND:
-> > @@ -105,7 +105,7 @@ int cleancache_register_ops(const struct cleancache_ops *ops)
-> >  	 * until the corresponding ->init_fs has been actually called and
-> >  	 * cleancache_ops has been set.
-> >  	 */
-> > -	iterate_supers(cleancache_register_ops_sb, NULL);
-> > +	iterate_supers(cleancache_register_ops_sb, 0);
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL(cleancache_register_ops);
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 4cafe6a19167..91c13b72b427 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -7138,7 +7138,7 @@ static __init int selinux_init(void)
-> >  	return 0;
-> >  }
-> >  
-> > -static void delayed_superblock_init(struct super_block *sb, void *unused)
-> > +static void delayed_superblock_init(struct super_block *sb, int unused)
-> >  {
-> >  	superblock_doinit(sb, NULL);
-> >  }
-> > @@ -7149,7 +7149,7 @@ void selinux_complete_init(void)
-> >  
-> >  	/* Set up any superblocks initialized prior to the policy load. */
-> >  	printk(KERN_DEBUG "SELinux:  Setting up existing superblocks.\n");
-> > -	iterate_supers(delayed_superblock_init, NULL);
-> > +	iterate_supers(delayed_superblock_init, 0);
-> >  }
-> >  
-> >  /* SELinux requires early initialization in order to label
-> > -- 
-> > 2.17.0
-> > 
-> > 
+> > > Eric Anholt <eric@anholt.net> hat am 17. Mai 2018 um 15:17 geschrieben:
+> > > 
+> > > 
+> > > The a53 and a7 counters seem to match up, so we advertise a7 so that
+> > > arm32 can probe.
+> 
+> so how closely did you look at the a53/a7 differences?  I see some major 
+> differences, especially with the CPU_CYCLES event (0xff vs 0x11).
+> 
+> The proper fix here might be to add a cortex-a53 PMU entry to the armv7 
+> code rather than trying to treat it as a cortex-a7.
 
--- 
-Jeff Layton <jlayton@kernel.org>
+we like to use the PMU of BCM2837 SoC (4x A53 cores) under arm32 and arm64.
+
+What is the right way (tm) to the define the DT compatibles?
+Does the arm32 PMU driver need patching for proper A53 support?
+
+Stefan
+
+> 
+> Vince
