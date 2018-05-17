@@ -1,89 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeEQQ6c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 12:58:32 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35138 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEQQ6a (ORCPT
+        id S1751880AbeEQRBi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 13:01:38 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45939 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeEQRBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 12:58:30 -0400
-X-Google-Smtp-Source: AB8JxZo+0VG0vsjLTMSm0PcyYaRJodwwhbdzfq+y24FHNjNHJJeUq6SNCcL00raHpRIO6dSg97UOwg==
-Subject: Re: [PATCH] of: overlay: validate offset from property fixups
-From: Frank Rowand <frowand.list@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1526530791-18591-1-git-send-email-frowand.list@gmail.com>
- <21ae05b7-e9d4-d518-c341-861c74f32922@gmail.com>
-Message-ID: <05527f6c-dcf9-5a8b-a094-ad3cee5cb46d@gmail.com>
-Date: Thu, 17 May 2018 09:58:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 13:01:36 -0400
+X-Google-Smtp-Source: AB8JxZoy/o2ZW5FcrSrmv1CJB9/JCTHz3ei61/uwFW9ep/dwq2Y8RFnX8pnBrvooZkaEqothntK6QF68E1dg9YrVJfo=
 MIME-Version: 1.0
-In-Reply-To: <21ae05b7-e9d4-d518-c341-861c74f32922@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180516214750.82710e21075ad1461dd4c04b@linux-foundation.org> <20180517075124.GA2057@avx2>
+In-Reply-To: <20180517075124.GA2057@avx2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 17 May 2018 10:01:24 -0700
+Message-ID: <CA+55aFwpwho_MMxuFHDKgffH4Fz93wf3A6QVNZmCyNZ8G3xyng@mail.gmail.com>
+Subject: Re: Fw: [PATCHSET] workqueue: Show the latest workqueue name in /proc/PID/{comm,stat,status}
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/18 09:56, Frank Rowand wrote:
-> Hi Rob,
-> 
-> On 05/16/18 21:19, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> The smatch static checker marks the data in offset as untrusted,
->> leading it to warn:
->>
->>   drivers/of/resolver.c:125 update_usages_of_a_phandle_reference()
->>   error: buffer underflow 'prop->value' 's32min-s32max'
->>
->> Add check to verify that offset is within the property data.
->>
->> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->>  drivers/of/resolver.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
->> index 65d0b7adfcd4..7edfac6f1914 100644
->> --- a/drivers/of/resolver.c
->> +++ b/drivers/of/resolver.c
->> @@ -122,6 +122,11 @@ static int update_usages_of_a_phandle_reference(struct device_node *overlay,
->>  			goto err_fail;
->>  		}
->>  
->> +		if (offset < 0 || offset + sizeof(__be32) > prop->length) {
->> +			err = -EINVAL;
->> +			goto err_fail;
->> +		}
->> +
->>  		*(__be32 *)(prop->value + offset) = cpu_to_be32(phandle);
->>  	}
->>  
->>
-> 
-> I should have mentioned that this results in a new compile warning
-> for W=2 and W=3.  The new if statement results in:
-> 
+On Thu, May 17, 2018 at 12:51 AM Alexey Dobriyan <adobriyan@gmail.com>
+wrote:
 
-W=2 warning is:
 
-> drivers/of/resolver.c:125:45: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+> I'd say anything that extends ->comm past 16 charactes is no-no.
+> The reason is that userspace may do something stupid like:
 
-W=3 warning is:
+>          char comm[16];
 
-drivers/of/resolver.c:125:3: warning: conversion to 'unsigned int' from 'int' may change the sign of the result [-Wsign-conversion]
+Not may - does. We're already talking to the procps-ng people exactly
+because of this.
 
-> 
-> There are other pre-existing warnings in the same file for comparing
-> an integer to prop->length.  The correct solution is probably to
-> change the type of the length field in struct property to be
-> unsigned.  I have added that task to my todo list.
-> 
-> -Frank
-> 
+That said, nobody actually mis-parses anything or overflows any buffers
+(you'd actually have to work at it to do so), it's just that they don't
+save the full length of the result.
+
+So we can extend the kernel size (there are others who want it
+independently of the workqueue issue), but some of the tools simply won't
+show the full name until updated.
+
+So instead of showing "[kworker/4:2-events]", current procps-ng shows
+"[kworker/4:2-eve]" for example. Annoying, but not really any more cryptic
+than the current situation without the patch.
+
+               Linus
