@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752155AbeEQLTv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 07:19:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34226 "EHLO
+        id S1752199AbeEQLT7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 07:19:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35756 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeEQLTm (ORCPT
+        with ESMTP id S1751533AbeEQLTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 07:19:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00A3160F6E
+        Thu, 17 May 2018 07:19:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D15E160F61
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: Ilia Lin <ilialin@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rnayak@codeaurora.org, ilialin@codeaurora.org,
         amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
         celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v8 03/15] clk: Use devm_ in the register fixed factor clock
-Date: Thu, 17 May 2018 14:19:03 +0300
-Message-Id: <1526555955-29960-4-git-send-email-ilialin@codeaurora.org>
+Subject: [PATCH v8 05/15] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+Date: Thu, 17 May 2018 14:19:05 +0300
+Message-Id: <1526555955-29960-6-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
@@ -32,28 +32,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_clk_hw_register instead of clk_hw_register
-to simplify the usage of this API. This way drivers that call
-the clk_hw_register_fixed_factor won't need to maintain
-a data structure for further cleanup.
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
+
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
+
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
+
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
 
 Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/clk-fixed-factor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402d..8e39bda 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 	init.num_parents = 1;
- 
- 	hw = &fix->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = devm_clk_hw_register(dev, hw);
- 	if (ret) {
- 		kfree(fix);
- 		hw = ERR_PTR(ret);
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
 -- 
 1.9.1
