@@ -1,159 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752644AbeERNFm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:05:42 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38571 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752130AbeERNFO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:05:14 -0400
-X-Google-Smtp-Source: AB8JxZrTwoIaADB8tOhdGvA8eTn2JqVLJexa6uMl/OilpYBm805aQAp+0zX+EQaAHUpYvSMvUTluyA==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
-Date: Fri, 18 May 2018 15:05:01 +0200
-Message-Id: <1526648704-16873-3-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
-References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+        id S1752613AbeERNGd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:06:33 -0400
+Received: from ozlabs.org ([203.11.71.1]:34489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752662AbeERNGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:06:00 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Gautham R Shenoy <ego@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>
+Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] powerpc: Enable ASYM_SMT on interleaved big-core systems
+In-Reply-To: <20180516050508.GB14826@in.ibm.com>
+References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com> <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com> <1526268127.30369.21.camel@neuling.org> <20180516050508.GB14826@in.ibm.com>
+Date: Fri, 18 May 2018 23:05:57 +1000
+Message-ID: <87muwxxgei.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs adds the cec_notifier feature to the intel_hdmi part
-of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-between each HDMI ports.
-The changes will allow the i915 HDMI code to notify EDID and HPD changes
-to an eventual CEC adapter.
+Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/i915/Kconfig         |  1 +
- drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
- drivers/gpu/drm/i915/intel_drv.h     |  2 ++
- drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
- 4 files changed, 36 insertions(+)
+> On Mon, May 14, 2018 at 01:22:07PM +1000, Michael Neuling wrote:
+>> On Fri, 2018-05-11 at 16:47 +0530, Gautham R. Shenoy wrote:
+>> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+>> > 
+>> > Each of the SMT4 cores forming a fused-core are more or less
+>> > independent units. Thus when multiple tasks are scheduled to run on
+>> > the fused core, we get the best performance when the tasks are spread
+>> > across the pair of SMT4 cores.
+>> > 
+>> > Since the threads in the pair of SMT4 cores of an interleaved big-core
+>> > are numbered {0,2,4,6} and {1,3,5,7} respectively, enable ASYM_SMT on
+>> > such interleaved big-cores that will bias the load-balancing of tasks
+>> > on smaller numbered threads, which will automatically result in
+>> > spreading the tasks uniformly across the associated pair of SMT4
+>> > cores.
+>> > 
+>> > Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+>> > ---
+>> >  arch/powerpc/kernel/smp.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> > 
+>> > diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+>> > index 9ca7148..0153f01 100644
+>> > --- a/arch/powerpc/kernel/smp.c
+>> > +++ b/arch/powerpc/kernel/smp.c
+>> > @@ -1082,7 +1082,7 @@ static int powerpc_smt_flags(void)
+>> >  {
+>> >  	int flags = SD_SHARE_CPUCAPACITY | SD_SHARE_PKG_RESOURCES;
+>> >  
+>> > -	if (cpu_has_feature(CPU_FTR_ASYM_SMT)) {
+>> > +	if (cpu_has_feature(CPU_FTR_ASYM_SMT) || has_interleaved_big_core) {
+>> 
+>> Shouldn't we just set CPU_FTR_ASYM_SMT and leave this code
+> unchanged?
+>
+> Yes, that would have the same effect. I refrained from doing that
+> since I thought CPU_FTR_ASYM_SMT has the "lower numbered threads
+> expedite thread-folding" connotation from the POWER7 generation.
 
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index dfd9588..2d65d56 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -23,6 +23,7 @@ config DRM_I915
- 	select SYNC_FILE
- 	select IOSF_MBI
- 	select CRC32
-+	select CEC_CORE if CEC_NOTIFIER
- 	help
- 	  Choose this option if you have a system that has "Intel Graphics
- 	  Media Accelerator" or "HD Graphics" integrated graphics,
-diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
-index 4e7418b..c68d1c8 100644
---- a/drivers/gpu/drm/i915/intel_display.h
-+++ b/drivers/gpu/drm/i915/intel_display.h
-@@ -126,6 +126,26 @@ enum port {
- 
- #define port_name(p) ((p) + 'A')
- 
-+static inline const char *port_identifier(enum port port)
-+{
-+	switch (port) {
-+	case PORT_A:
-+		return "Port A";
-+	case PORT_B:
-+		return "Port B";
-+	case PORT_C:
-+		return "Port C";
-+	case PORT_D:
-+		return "Port D";
-+	case PORT_E:
-+		return "Port E";
-+	case PORT_F:
-+		return "Port F";
-+	default:
-+		return "<invalid>";
-+	}
-+}
-+
- enum dpio_channel {
- 	DPIO_CH0,
- 	DPIO_CH1
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index d436858..b50e51b 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -39,6 +39,7 @@
- #include <drm/drm_dp_mst_helper.h>
- #include <drm/drm_rect.h>
- #include <drm/drm_atomic.h>
-+#include <media/cec-notifier.h>
- 
- /**
-  * __wait_for - magic wait macro
-@@ -1001,6 +1002,7 @@ struct intel_hdmi {
- 	bool has_audio;
- 	bool rgb_quant_range_selectable;
- 	struct intel_connector *attached_connector;
-+	struct cec_notifier *notifier;
- };
- 
- struct intel_dp_mst_encoder;
-diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-index 1baef4a..d522b5b 100644
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
- 		connected = true;
- 	}
- 
-+	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
-+
- 	return connected;
- }
- 
-@@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
- {
- 	enum drm_connector_status status;
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-+	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
- 
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
- 		      connector->base.id, connector->name);
-@@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
- 
- 	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
- 
-+	if (status != connector_status_connected)
-+		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
-+
- 	return status;
- }
- 
-@@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
- 
- static void intel_hdmi_destroy(struct drm_connector *connector)
- {
-+	if (intel_attached_hdmi(connector)->notifier)
-+		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
- 	kfree(to_intel_connector(connector)->detect_edid);
- 	drm_connector_cleanup(connector);
- 	kfree(connector);
-@@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
- 		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
- 		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
- 	}
-+
-+	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
-+						     port_identifier(port));
-+	if (!intel_hdmi->notifier)
-+		DRM_DEBUG_KMS("CEC notifier get failed\n");
- }
- 
- void intel_hdmi_init(struct drm_i915_private *dev_priv,
--- 
-2.7.4
+The above code is the only use of the feature, so I don't think we need
+to worry about any other connotations.
+
+> If it is ok to overload CPU_FTR_ASYM_SMT, we can do what you suggest
+> and have all the changes in setup-common.c
+
+Yeah let's do that.
+
+cheers
