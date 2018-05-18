@@ -1,201 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeERVbN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:31:13 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33122 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeERVbH (ORCPT
+        id S1752406AbeERVbZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:31:25 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34682 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751942AbeERVbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:31:07 -0400
-X-Google-Smtp-Source: AB8JxZqZF622nT4R08JicRzPfWNF5r5jdRXU04tvXqED7DV1cJeyPkazjisdpq8feUIKCfouD9qbjQ==
-Date: Fri, 18 May 2018 14:31:04 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
-        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-Subject: Re: [PATCH v4 4/5] remoteproc: qcom: Add support for mss remoteproc
- on SDM845
-Message-ID: <20180518213104.GT14924@minitux>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
- <20180425150843.26657-5-sibis@codeaurora.org>
+        Fri, 18 May 2018 17:31:11 -0400
+X-Google-Smtp-Source: AB8JxZpP+HSXrt2x2ZkbijnyWSDm7MhL67obgmHigWQiYe3ITt4RhlxiDhzTTs06LWZguyCG5UEABg==
+Date: Fri, 18 May 2018 16:31:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mathieu Malaterre <malat@debian.org>, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH v3 6/8] MIPS: jz4780: dts: Fix watchdog node
+Message-ID: <20180518213109.GA28202@rob-hp-laptop>
+References: <20180510184751.13416-1-paul@crapouillou.net>
+ <20180510184751.13416-6-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425150843.26657-5-sibis@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180510184751.13416-6-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
-
-> From SDM845, the Q6SS reset sequence on software side has been
-> simplified with the introduction of boot FSM which assists in
-> bringing the Q6 out of reset
+On Thu, May 10, 2018 at 08:47:49PM +0200, Paul Cercueil wrote:
+> - The previous node requested a memory area of 0x100 bytes, while the
+>   driver only manipulates four registers present in the first 0x10 bytes.
 > 
-> Add GLINK subdevice to allow definition of GLINK edge as a
-> child of modem-pil
+> - The driver requests for the "rtc" clock, but the previous node did not
+>   provide any.
 > 
-
-Please split this in two patches; one adding sdm845 and one adding the
-glink subdev. You can squash in the addition of the compatible in the dt
-binding into the sdm845 code patch, you wish as well.
-
-Apart from that this looks good!
-
-Regards,
-Bjorn
-
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reviewed-by: Mathieu Malaterre <malat@debian.org>
+> Acked-by: James Hogan <jhogan@kernel.org>
 > ---
->  drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt | 7 ++++++-
+>  arch/mips/boot/dts/ingenic/jz4780.dtsi                            | 5 ++++-
+>  2 files changed, 10 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 7e2d04d4f2f0..4d9504e8bf8e 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -57,6 +57,8 @@
->  #define RMB_PMI_META_DATA_REG		0x10
->  #define RMB_PMI_CODE_START_REG		0x14
->  #define RMB_PMI_CODE_LENGTH_REG		0x18
-> +#define RMB_MBA_MSS_STATUS		0x40
-> +#define RMB_MBA_ALT_RESET		0x44
->  
->  #define RMB_CMD_META_DATA_READY		0x1
->  #define RMB_CMD_LOAD_READY		0x2
-> @@ -104,6 +106,13 @@
->  #define QDSP6SS_XO_CBCR		0x0038
->  #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
->  
-> +/* QDSP6v65 parameters */
-> +#define QDSP6SS_SLEEP                   0x3C
-> +#define QDSP6SS_BOOT_CORE_START         0x400
-> +#define QDSP6SS_BOOT_CMD                0x404
-> +#define SLEEP_CHECK_MAX_LOOPS           200
-> +#define BOOT_FSM_TIMEOUT                10000
-> +
->  struct reg_info {
->  	struct regulator *reg;
->  	int uV;
-> @@ -170,6 +179,7 @@ struct q6v5 {
->  	void *mpss_region;
->  	size_t mpss_size;
->  
-> +	struct qcom_rproc_glink glink_subdev;
->  	struct qcom_rproc_subdev smd_subdev;
->  	struct qcom_rproc_ssr ssr_subdev;
->  	struct qcom_sysmon *sysmon;
-> @@ -184,6 +194,7 @@ enum {
->  	MSS_MSM8916,
->  	MSS_MSM8974,
->  	MSS_MSM8996,
-> +	MSS_SDM845,
->  };
->  
->  static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-> @@ -390,8 +401,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->  	int ret;
->  	int i;
->  
-> +	if (qproc->version == MSS_SDM845) {
->  
-> -	if (qproc->version == MSS_MSM8996) {
-> +		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
-> +		val |= 0x1;
-> +		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-> +
-> +		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
-> +					 val, !(val & BIT(31)), 1,
-> +					 SLEEP_CHECK_MAX_LOOPS);
-> +		if (ret) {
-> +			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		/* De-assert QDSP6 stop core */
-> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
-> +		/* Trigger boot FSM */
-> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
-> +
-> +		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
-> +				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-> +		if (ret) {
-> +			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-> +			return ret;
-> +		}
-> +
-> +		goto pbl_wait;
-> +
-> +	} else if (qproc->version == MSS_MSM8996) {
->  		/* Override the ACC value if required */
->  		writel(QDSP6SS_ACC_OVERRIDE_VAL,
->  		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-> @@ -499,6 +537,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->  	val &= ~Q6SS_STOP_CORE;
->  	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
->  
-> +pbl_wait:
->  	/* Wait for PBL status */
->  	ret = q6v5_rmb_pbl_wait(qproc, 1000);
->  	if (ret == -ETIMEDOUT) {
-> @@ -1256,6 +1295,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  	}
->  	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
->  	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
-> +	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
->  	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
->  	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
-> @@ -1279,6 +1319,7 @@ static int q6v5_remove(struct platform_device *pdev)
->  	rproc_del(qproc->rproc);
->  
->  	qcom_remove_sysmon_subdev(qproc->sysmon);
-> +	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
->  	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
->  	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
->  	rproc_free(qproc->rproc);
-> @@ -1286,6 +1327,27 @@ static int q6v5_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct rproc_hexagon_res sdm845_mss = {
-> +	.hexagon_mba_image = "mba.mbn",
-> +	.proxy_clk_names = (char*[]){
-> +			"xo",
-> +			"axis2",
-> +			"prng",
-> +			NULL
-> +	},
-> +	.active_clk_names = (char*[]){
-> +			"iface",
-> +			"bus",
-> +			"mem",
-> +			"gpll0_mss",
-> +			"snoc_axi",
-> +			"mnoc_axi",
-> +			NULL
-> +	},
-> +	.need_mem_protection = true,
-> +	.version = MSS_SDM845,
-> +};
-> +
->  static const struct rproc_hexagon_res msm8996_mss = {
->  	.hexagon_mba_image = "mba.mbn",
->  	.proxy_clk_names = (char*[]){
-> @@ -1379,6 +1441,7 @@ static const struct of_device_id q6v5_of_match[] = {
->  	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
->  	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
->  	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
-> +	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, q6v5_of_match);
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+>  v2: No change
+>  v3: Also fix documentation
+
+Reviewed-by: Rob Herring <robh@kernel.org>
