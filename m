@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751542AbeERMT1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 08:19:27 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36627 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeERMTY (ORCPT
+        id S1751921AbeERMUn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 08:20:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53384 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeERMUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 08:19:24 -0400
-X-Google-Smtp-Source: AB8JxZr+Hf5WvncioyjfAVAuacXNp7Pwa0NM33Begj16rIoghS8vJC/OAcNYmvdwMYW28FM+BKM897eXvOqQJojvSu4=
+        Fri, 18 May 2018 08:20:41 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180517.163113.2110198960037727630.davem@davemloft.net>
-References: <20180517130529.2684-1-andrea.greco.gapmilano@gmail.com> <20180517.163113.2110198960037727630.davem@davemloft.net>
-From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-Date: Fri, 18 May 2018 14:18:41 +0200
-Message-ID: <CAPoXtQJJ-Fv6dBWxFs+r+B-+jhQAF+AxdqDg9g55AwSyBJ0U6g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arcnet: com20020: Add com20020 io mapped version
-To: David Miller <davem@davemloft.net>
-Cc: "Tobin C. Harding" <tobin@apporbit.com>,
-        Andrea Greco <a.greco@4sigma.it>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 18 May 2018 17:50:40 +0530
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: Trilok Soni <tsoni@codeaurora.org>
+Cc: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com, linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH 4/4] media: venus: add PIL support
+In-Reply-To: <e8596e31-42dc-8ac8-16e1-8990d7408bc4@codeaurora.org>
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+ <1526556740-25494-5-git-send-email-vgarodia@codeaurora.org>
+ <e8596e31-42dc-8ac8-16e1-8990d7408bc4@codeaurora.org>
+Message-ID: <9085424ea7db9cff46a853eadbd66697@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/2018 10:31 PM, David Miller wrote:
-> From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-> Date: Thu, 17 May 2018 15:05:29 +0200
->
->> + /* Will be set by userspace during if setup */
->> + dev->dev_addr[0] = 0;
->
-> Hmmm... really?
->
-> Also, every error path from this point forward will leak 'dev'.
->
+Hi Trilok,
 
-In com20020.c found this:
-/* FIXME: do this some other way! */
-if (!dev->dev_addr[0])
-dev->dev_addr[0] = arcnet_inb(ioaddr, 8);
+On 2018-05-18 06:10, Trilok Soni wrote:
+> Hi Vikash,
+> 
+> On 5/17/2018 4:32 AM, Vikash Garodia wrote:
+>> This adds support to load the video firmware
+>> and bring ARM9 out of reset. This is useful
+>> for platforms which does not have trustzone
+>> to reset the ARM9.
+> 
+> ARM9 = video core here? May be commit text needs little bit more 
+> detail.
+Yes, ARM9 here refers to the CPU running the firmware inside video core.
+I can add some more detail on the same.
 
-NODE-ID, must be univoque, for all arcnet network.
-My previews idea was take random value but, this could create a
-collision over network.
+>>   +static int store_firmware_dev(struct device *dev, void *data)
+>> +{
+>> +	struct venus_core *core;
+>> +
+>> +	core = (struct venus_core *)data;
+> 
+> No need of casting.
 
-A possible solution is:
-In case of collision com20020 set a bit in status register.
-Then peak a new NODE-ID and repeat this while correct NODE-ID is found.
+Ok. Will remove the casting.
 
-Other ideas is pass it via DTS.
-But suppose have 2 same product in same network, same address same problem.
-For this reason i prefer left standard driver behavior.
+> 
+>> +	if (!core)
+>> +		return -EINVAL;
+>> +
+>> +	if (of_device_is_compatible(dev->of_node, "qcom,venus-pil-no-tz"))
+>> +		core->fw.dev = dev;
+>> +
+>> +	return 0;
+>> +}
+>> +
+> 
+> 
+>>   -	ret = venus_boot(dev, core->res->fwname);
+>> +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>> +	if (ret)
+>> +		goto err_runtime_disable;
+>> +
+>> +	/* Attempt to register child devices */
+>> +	ret = device_for_each_child(dev, core, store_firmware_dev);
+>> +
+> 
+> and not ret check needed?
 
-Other ideas for solve this ?
+Not needed. The fn (store_firmware_dev) just stores the child device 
+pointer.
+Later in the driver, if the child device pointer is not populated, probe 
+is
+deferred. Again, child device for which this populate is added, is an 
+optional
+child node.
 
-Other question discussed with Tobin in RFC patch is:
-
-At now a devm_ioremap is done by this driver.
-
-Other version of this driver, PCI, PCMCIA, ISA do not remap memory.
-Other implementation, use:inb outb for r/w operation.
-I do a ugly #ifndef and redefine arcnet_inb in case is defined
-CONFIG_ARCNET_COM20020_IO.
-
-My proposal was:
-Add relative callback arcnet_inb, arcnet_outb and friends hw struct in
-arcdevice.h, then every driver set callback with required function.
-
-Regards, Andrea
+>> +	ret = venus_boot(core);
+>>   	if (ret)
+>>   		goto err_runtime_disable;
+>> 
