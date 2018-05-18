@@ -1,72 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752322AbeERN0S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:26:18 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:50803 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeERN0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:26:15 -0400
-X-Google-Smtp-Source: AB8JxZpm7lx5ohIpUdB9q08Vlk9VLFFqfnvVBHHcnE7d9N43d0bn3omzE0CKAGzlcuKQHQK1Glv6Mg==
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
- <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
- <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
- <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
- <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
- <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
- <91f87c43-0ae1-00ec-6b3e-819b639aa1b2@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <62b6f02c-d619-6e51-a107-331f0648e832@redhat.com>
-Date: Fri, 18 May 2018 15:26:13 +0200
+        id S1752467AbeERN0e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:26:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752213AbeERN0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:26:32 -0400
+Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        Eric Dumazet <edumazet@google.com>
+References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+ <20180518161253-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
+Date: Fri, 18 May 2018 21:26:23 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <91f87c43-0ae1-00ec-6b3e-819b639aa1b2@linux.intel.com>
+In-Reply-To: <20180518161253-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 18-05-18 15:15, Jarkko Nikula wrote:
-> On 05/18/2018 10:48 AM, Hans de Goede wrote:
->> Could it be the i2c input clock definition in drivers/mfd/intel-lpss-pci.c
->> is also wrong for Apollo Lake (N3450) ?  There are lots of people having
->> various issues with i2c attached touchpads on Apollo Lake devices, this bug:
->> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
+
+On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
+> On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
+>> We return -EIO on device down but can not raise EPOLLOUT after it was
+>> up. This may confuse user like vhost which expects tuntap to raise
+>> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
+>> be easily reproduced by transmitting packets from VM while down and up
+>> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
 >>
->> Is sort of a collection bug for these. Various models laptops, lots of
->> reporters. Note not sure thie is an i2c-designware issue, but it would
->> be good to double check the input clock on Apollo Lake.
+>> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+>> Cc: Eric Dumazet <edumazet@google.com>
+>> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>>   drivers/net/tun.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
-> Does i2c_designware_core.dyndbg=+p and i2c-hid.debug=1 command line arguments give any useful debug information from those machines?
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index d45ac37..1b29761 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
+>>   	int skb_xdp = 1;
+>>   	bool frags = tun_napi_frags_enabled(tun);
+>>   
+>> -	if (!(tun->dev->flags & IFF_UP))
+>> +	if (!(tun->dev->flags & IFF_UP)) {
+> Isn't this racy?  What if flag is cleared at this point?
 
-I've asked people in the bug to collect debug output with this
-added.
+I think you mean "set at this point"? Then yes, so we probably need to 
+set the bit during tun_net_close().
 
-Regards,
+Thanks
 
-Hans
+>> +		set_bit(SOCKWQ_ASYNC_NOSPACE, &tfile->socket.flags);
+>>   		return -EIO;
+>> +	}
+>>   
+>>   	if (!(tun->flags & IFF_NO_PI)) {
+>>   		if (len < sizeof(pi))
+>> -- 
+>> 2.7.4
