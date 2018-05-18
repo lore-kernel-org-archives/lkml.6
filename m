@@ -1,101 +1,124 @@
-Return-Path: <grygorii.strashko@ti.com>
-X-Google-Smtp-Source: AB8JxZqMsXGymUB8716fz8ANHDlFp3oqc4k7kyJKrIOU+NKmIbvblCA5ZAdP88aP7orzieaqGoXO
-ARC-Seal: i=1; a=rsa-sha256; t=1526661442; cv=none;
-        d=google.com; s=arc-20160816;
-        b=GhPR0YeQEPiC0vcvIOTuYXf8L1sZSimrUQ1yiEH2bwyRmwSkC3E8mwgsjacPzKdmvA
-         OzkFZxy+q34JdkMfp6V2SYRtTFM0H648uDQMqBlDWzlHFguN1exJyR7sIQLh7Ei4MX0z
-         hYXpoPfu9beUGVUms120EvYGlu7U2DTjEHx8PTruZF75UqngeXbCji89nQyaRO9FdOfc
-         SZ/joBdT+ZAwNarpjpRaPIO+adI5HlSjs/v//WR2bn3SLt6W6SUsI4hN0f6xH4nGSH2s
-         RjhW7JMOODzOHt9b2r2dK+QDB61n8aMDZ2LicZMoEAuZ6KQMhjQNGAn2lMSPtde/qiuE
-         Tu4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=JlvAKZqbGsWJ+hHUDCxqXcJVaeor6tSatSeemrq+3LE=;
-        b=LJ9bQ50/XT7EcLy9DRi5YPs117jXkAbPqU78IRRNg3ia8QeeYVydN1DcQh1TPLdlWt
-         yElNYacVp7CFyhIdba6vBO9Dm1ODdIKXuwvLbJAC2R3q5SchXT0HuMc79K1i43g7CJ2b
-         YcPWvmTIosRMpqrojvI989lsBXshoTYn3EkXbtVN5pmrLpL1pSO6GUORQ51tEXeBfZ5x
-         asxkJ/0xsmSwTLM0KUmfyccOUvh9mMCbyDDqsYd1TccBH6Y/SQer9EdHZMKpXBIjB8Ev
-         eMrLKh9rMaFIMQh/AxLDBjCtPHjZyNwjlaB6cEMaq+8sM7FrMl96MALzotfB63f5SDcJ
-         tx/w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=LAiXVmhQ;
-       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=LAiXVmhQ;
-       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix packet leaking in dual_mac
- mode
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju
-	<naresh.kamboju@linaro.org>
-CC: David Miller <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <nsekhar@ti.com>, open list <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20180501174122.11323-1-grygorii.strashko@ti.com>
- <20180502.110841.378324128079268584.davem@davemloft.net>
- <CA+G9fYv5yXD4_hyUSxWra+gxux1NFv+sD2HgB7LyJ4E78bgh+A@mail.gmail.com>
- <20180517191037.GE504@kroah.com>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <9e2ef403-4b67-f141-aed7-9f18714e16a6@ti.com>
-Date: Fri, 18 May 2018 11:37:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180517191037.GE504@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4043076-1526653413-2-13525659529150809447
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526653412; b=N1UzrvZncB81HqZs/QOHTkm/9sqyvY3TT5a+q4dMCBppyQRTGf
+    muJ7LdCBpaDKMxHsYOiGpxj1k5trojh6EIrGkFB8Hs1qhFb+ETBMnbQB6pEXqnGM
+    M/23lVsj2XYZ0hFbBCqpvzJnbHsRhflupmMi/+Tdx+4dBM1+VI3K7o551ALhC4Nz
+    jt55tM6Bdzn0E/F4Au3yv9ULfAUkFbiBQqn3gN7M+9CzyG+EbYgDvIj+WocaXBOs
+    Z265gxl2AbpWbWPKicVxPliUcyyoJuwDT+PD8ORm0FysL36fCGtkGfwFc/ihq6B5
+    YiRPVVpngYcz64nbEyw89b98bHnuW5xGGTgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1526653412; bh=q95MUy8eN6IZtsNCddHFFeeThj42/E
+    zVTWUzUIEWC8k=; b=Y8Bz+yWEKm2ZxwMxqu/bj9Bi0Y3n2UrwHHwUFnGdz95EAL
+    1RM5xIxJfRqVGBwMCKszdV4/0t2gJo+sV7j3Mj8qYzSExZj1pYIMYZgNu4UNCLcl
+    DdH/cbqQmHBjxwlU2V+hYNYqkdR1nR9J3nOj6RotrB/O1Xq/OtTAef/ALE/+yGjW
+    LDwQQE3YNQaBcmLaT6KKC2T+cRPNRnyot0AHStWEXoWX7g8p3gtVgHAmS94EB+qL
+    161aFO1+6dn56Nk9WDYeqPxtKcnkbAU30sG+Hp7AI+GlrQMTEGDphY5ACPvSZH2L
+    JmT5WK64qbvK9iBsvsQUNpX/37XK1Tzhtpka6LHg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+    header.i=@google.com header.b=ZSSJlURd x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=fCowBlG/;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+      header.i=@google.com header.b=ZSSJlURd x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=fCowBlG/;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFp4jppKPUBLXHTMZVAiLAKRvEpqMCurIgRf2UBL1urmdohW0e0evFMoW2375xOSuQr5tZYaHXLbewizgTFAeU4RvVulKQem6nATesovtAQxqzD5+UkQ
+    JfalZxM7Sn8SdDX2iCXw2SzSp8ulytMJaHakRSBU5Xz530srn99CDWo1cxcUt+CH0d8q+gxuFGk18CjcDmgn37VqyKcxv/jBsCj57MgVqvd02+sJDtY8zlns
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=NCkSHYsgAAAA:8
+    a=6wHSZF7M1drVXR-aaNcA:9 a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=AnMw66Xr5OuzjdxB04dI:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751280AbeEROXb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 10:23:31 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33215 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeEROX0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 10:23:26 -0400
+X-Google-Smtp-Source: AB8JxZrq6A5JUZY2pC7rftVxcDobD1UslqMbGN5FI3PqJpUbE+IY2fcmDlUHD8994HHSeLQAXibQvQ==
+From: Alexander Potapenko <glider@google.com>
+To: jthumshirn@suse.de, jejb@linux.vnet.ibm.com, dgilbert@interlog.com
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-scsi@vger.kernel.org, dvyukov@google.com, hare@suse.com,
+        torvalds@linux-foundation.org
+Subject: [PATCH] scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()
+Date: Fri, 18 May 2018 16:23:18 +0200
+Message-Id: <20180518142318.200260-1-glider@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1600734413444103525?=
-X-GMAIL-MSGID: =?utf-8?q?1600820548270783412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This shall help avoid copying uninitialized memory to the userspace
+when calling ioctl(fd, SG_IO) with an empty command.
 
+Reported-by: syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ drivers/scsi/sg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 05/17/2018 02:10 PM, Greg Kroah-Hartman wrote:
-> On Thu, May 17, 2018 at 11:18:16PM +0530, Naresh Kamboju wrote:
->> On 2 May 2018 at 20:38, David Miller <davem@davemloft.net> wrote:
->>> From: Grygorii Strashko <grygorii.strashko@ti.com>
->>> Date: Tue, 1 May 2018 12:41:22 -0500
->> <trim>
->>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>>
->>> Applied and queued up for -stable, thank you.
->>
->> 4.4 stable-rc build failed for arm32.
->> MACHINE=am57xx-evm
->>
->> Build error log:
->> --------------------
->> drivers/net/ethernet/ti/cpsw.c:
->>   In function 'cpsw_add_dual_emac_def_ale_entries':
->> drivers/net/ethernet/ti/cpsw.c:1112:23:
->>   error: 'cpsw' undeclared (first use in this function)
->>     cpsw_ale_control_set(cpsw->ale, slave_port,
->>                          ^~~~
->> drivers/net/ethernet/ti/cpsw.c:1112:23: note:
->>   each undeclared identifier is reported only once for each function it appears
->>   in
->> scripts/Makefile.build:269: recipe for target 'drivers/net/ethernet/ti/cpsw.o'
->>   failed
->>   make[6]: *** [drivers/net/ethernet/ti/cpsw.o] Error 1
->> scripts/Makefile.build:476: recipe for target 'drivers/net/ethernet/ti' failed
->>   make[5]: *** [drivers/net/ethernet/ti] Error 2
->>
-> 
-> Now dropped, it's nice to see I got 3 reports about this :)
-> 
-
-Sry, my bad. I've tested till 4.4 if it can be applied without 
-conflicts, but not tested build.
-
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index c198b96368dd..5c40d809830f 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1894,7 +1894,7 @@ sg_build_indirect(Sg_scatter_hold * schp, Sg_fd * sfp, int buff_size)
+ 		num = (rem_sz > scatter_elem_sz_prev) ?
+ 			scatter_elem_sz_prev : rem_sz;
+ 
+-		schp->pages[k] = alloc_pages(gfp_mask, order);
++		schp->pages[k] = alloc_pages(gfp_mask | __GFP_ZERO, order);
+ 		if (!schp->pages[k])
+ 			goto out;
+ 
 -- 
-regards,
--grygorii
+2.17.0.441.gb46fe60e1d-goog
