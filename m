@@ -1,103 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeERTwV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:52:21 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33446 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeERTwS (ORCPT
+        id S1752056AbeERTz5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:55:57 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:32794 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751197AbeERTzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:52:18 -0400
-X-Google-Smtp-Source: AB8JxZqem3WiKnTzxnOBSiQefUIYqv9j3PwBUqqIJYNBXH5ZkwqWgGAG+rEP4O3+MfS4ztuB8VZnow==
-Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
-To: Radu Pirea <radu.pirea@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Zhiqiang.Hou@nxp.com, pp@emlix.com, richard@nod.at,
-        computersforpeace@gmail.com, dwmw2@infradead.org
-References: <20180504155404.5285-1-radu.pirea@microchip.com>
- <20180504204013.254d90cf@bbrezillon>
- <e2e23aa21b37754b0c84003e6d87c7cb7d5a17fe.camel@microchip.com>
- <1db092c8-95fb-5747-f7b9-f6a215b1aa5b@gmail.com>
- <a34429cf43124de623fcaa645d5d7a360c755867.camel@microchip.com>
- <30ab9516-abc9-d2d5-79ea-266c682c5fa9@gmail.com>
- <1993151b-4434-c671-8498-b6488288f5f6@microchip.com>
- <e495fbdd-1bda-8b7e-52b5-ee51247231a8@gmail.com>
- <ba6be822-b8ac-588f-ec11-d7cb5cddd1a3@microchip.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <de2c119b-36f5-a219-7a9a-65668c61353c@gmail.com>
-Date: Fri, 18 May 2018 18:25:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <ba6be822-b8ac-588f-ec11-d7cb5cddd1a3@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 15:55:53 -0400
+X-Google-Smtp-Source: AB8JxZr4gVfbKS6hVpI86BeTIZDDjDk+f2KLNtdmoBgQ6kf2+dvm7wRNW7dMUjYoCRV35fxOFhWtng==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Atul Gupta <atul.gupta@chelsio.com>,
+        Michael Werner <werner@chelsio.com>, Casey Leedom <leedom@chelsio.com>,
+        linux-crypto@vger.kernel.org (open list:CXGB4 CRYPTO DRIVER (chcr)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] crypto: chtls - fix a missing-check bug
+Date: Fri, 18 May 2018 14:55:35 -0500
+Message-Id: <1526673338-486-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 03:00 PM, Radu Pirea wrote:
-> 
-> 
-> On 05/18/2018 01:03 PM, Marek Vasut wrote:
->> On 05/18/2018 11:50 AM, Radu Pirea wrote:
->>>
->>>
->>> On 05/16/2018 04:47 PM, Marek Vasut wrote:
->>>> On 05/16/2018 12:05 PM, Radu Pirea wrote:
->>>>> On Wed, 2018-05-16 at 00:17 +0200, Marek Vasut wrote:
->>>>>> On 05/15/2018 06:22 PM, Radu Pirea wrote:
->>>>>>> On Fri, 2018-05-04 at 20:40 +0200, Boris Brezillon wrote:
->>>>>>>> On Fri, 4 May 2018 18:54:04 +0300
->>>>>>>> Radu Pirea <radu.pirea@microchip.com> wrote:
->>>>>>>>
->>>>>>>>> Added geometry description for Microchip 25LC256 memory.
->>>>>>>>
->>>>>>>> Same as for the dataflash stuff you posted a few weeks ago: I
->>>>>>>> don't
->>>>>>>> think this device belongs in the SPI NOR framework.
->>>>>>>
->>>>>>> Hi Boris,
->>>>>>>
->>>>>>> 25lc256 memory is similar with mr25h256, the only difference is the
->>>>>>> page size(64 vs 256). Because mr25h256 is already in SPI NOR
->>>>>>> framework
->>>>>>> I added here 25lc256.
->>>>>>
->>>>>> I think I must be reading the wrong datasheet, but can you show me
->>>>>> how
->>>>>> does it support things like READID opcode ?
->>>>>>
->>>>> Hi Marek,
->>>>>
->>>>> I read the datasheet for 25lc256 and for mr25h256 and none of them
->>>>> supports READID. Is this required for a chip to be included in spi-nor
->>>>> framework? I just followed the mr25h256 as an example.
->>>>
->>>> So I thought until you pointed out the MR25 devices.
->>>>
->>>> Does the 25LC device need erase or not ? I think the MR25s didn't,
->>>> but I
->>>> might be wrong.
->>>
->>> You are right. MR25s does not need erase and the same thing is true for
->>> 25LC.
->>
->> Oh. And the command set is (except for readid) comparable to SPI NOR ?
->>
->>>> Maybe the framework could support the 25LC afterall.
->>>>
->>> Yes, this was my impression too.
->>
->> I am still thinking that the AT25 driver might be a better fit for such
->> devices. Can you take a look ?
-> 
-> I tested the memory with at25 driver and it works with no line changed
-> in driver. :)
+In do_chtls_setsockopt(), the tls crypto info is first copied from the
+poiner 'optval' in userspace and saved to 'tmp_crypto_info'. Then the
+'version' of the crypto info is checked. If the version is not as expected,
+i.e., TLS_1_2_VERSION, error code -ENOTSUPP is returned to indicate that
+the provided crypto info is not supported yet. Then, the 'cipher_type'
+field of the 'tmp_crypto_info' is also checked to see if it is
+TLS_CIPHER_AES_GCM_128. If it is, the whole struct of
+tls12_crypto_info_aes_gcm_128 is copied from the pointer 'optval' and then
+the function chtls_setkey() is invoked to set the key.
 
-So AT25 it is then ?
+Given that the 'optval' pointer resides in userspace, a malicious userspace
+process can race to change the data pointed by 'optval' between the two
+copies. For example, a user can provide a crypto info with TLS_1_2_VERSION
+and TLS_CIPHER_AES_GCM_128. After the first copy, the user can modify the
+'version' and the 'cipher_type' fields to any versions and/or cipher types
+that are not allowed. This way, the user can bypass the checks, inject
+bad data to the kernel, cause chtls_setkey() to set a wrong key or other
+issues.
 
+This patch reuses the data copied in the first try so as to ensure these
+checks will not be bypassed.
+
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/crypto/chelsio/chtls/chtls_main.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
+index 007c45c..39aab05 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_main.c
++++ b/drivers/crypto/chelsio/chtls/chtls_main.c
+@@ -491,9 +491,13 @@ static int do_chtls_setsockopt(struct sock *sk, int optname,
+ 
+ 	switch (tmp_crypto_info.cipher_type) {
+ 	case TLS_CIPHER_AES_GCM_128: {
+-		rc = copy_from_user(crypto_info, optval,
+-				    sizeof(struct
+-					   tls12_crypto_info_aes_gcm_128));
++		/* Obtain version and type from previous copy */
++		crypto_info[0] = tmp_crypto_info;
++		/* Now copy the following data */
++		rc = copy_from_user((char *)crypto_info + sizeof(*crypto_info),
++				optval + sizeof(*crypto_info),
++				sizeof(struct tls12_crypto_info_aes_gcm_128)
++				- sizeof(*crypto_info));
+ 
+ 		if (rc) {
+ 			rc = -EFAULT;
 -- 
-Best regards,
-Marek Vasut
+2.7.4
