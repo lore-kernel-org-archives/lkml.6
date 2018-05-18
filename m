@@ -1,71 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752661AbeEROAl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:00:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752177AbeEROAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:00:38 -0400
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-From: Jason Wang <jasowang@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Eric Dumazet <edumazet@google.com>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180518161253-mutt-send-email-mst@kernel.org>
- <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
-Message-ID: <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
-Date: Fri, 18 May 2018 22:00:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752373AbeERODY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:03:24 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:38950 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751577AbeERODW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:03:22 -0400
+Date: Fri, 18 May 2018 16:03:13 +0200
+From: Christian Brauner <christian@brauner.io>
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
+        "Tobin C . Harding" <me@tobin.cc>, Kees Cook <keescook@chromium.org>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>
+Subject: Re: [PATCH v2 0/4] seccomp trap to userspace
+Message-ID: <20180518140313.GA26297@mailbox.org>
+References: <20180517151218.12850-1-tycho@tycho.ws>
 MIME-Version: 1.0
-In-Reply-To: <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180517151218.12850-1-tycho@tycho.ws>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 17, 2018 at 09:12:14AM -0600, Tycho Andersen wrote:
+> Hi,
+> 
+> After a while focusing on other things, I finally managed ot get a v2 of
+> this series prepared. I believe I've addressed all the feedback from v1,
+> except for one major point: switching the communication protocol over
+> the fd to nlattr. I looked into doing this, but the kernel stuff for
+> dealing with nlattr seems to require an skb (via nlmsg_{new,put} and
+> netlink_unicast), which means we need to deal with the netlink sequence
+> numbers, portids, and create a socket protocol. I can do this if we
+> still think nlattr is necessary, but based on looking at it, it seems
+> like a lot of extra code for no real benefit.
 
+Yes, we've had that discussion before and I agree. I fail to see the
+benefit here too.
 
-On 2018年05月18日 21:26, Jason Wang wrote:
->
->
-> On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
->> On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
->>> We return -EIO on device down but can not raise EPOLLOUT after it was
->>> up. This may confuse user like vhost which expects tuntap to raise
->>> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
->>> be easily reproduced by transmitting packets from VM while down and up
->>> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
->>>
->>> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
->>> Cc: Eric Dumazet <edumazet@google.com>
->>> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
->>> Signed-off-by: Jason Wang <jasowang@redhat.com>
->>> ---
->>>   drivers/net/tun.c | 4 +++-
->>>   1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->>> index d45ac37..1b29761 100644
->>> --- a/drivers/net/tun.c
->>> +++ b/drivers/net/tun.c
->>> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct tun_struct 
->>> *tun, struct tun_file *tfile,
->>>       int skb_xdp = 1;
->>>       bool frags = tun_napi_frags_enabled(tun);
->>>   -    if (!(tun->dev->flags & IFF_UP))
->>> +    if (!(tun->dev->flags & IFF_UP)) {
->> Isn't this racy?  What if flag is cleared at this point?
->
-> I think you mean "set at this point"? Then yes, so we probably need to 
-> set the bit during tun_net_close().
->
-> Thanks 
+Christian
 
-Looks no need, vhost will poll socket after it see EIO. So we are ok here?
-
-Thanks
+> 
+> I've also added support for passing fds. The code itself is simple, but
+> the API could/should probably be different, see patch 4 for discussion.
+> 
+> Tycho
+> 
+> Tycho Andersen (4):
+>   seccomp: add a return code to trap to userspace
+>   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+>   seccomp: add a way to get a listener fd from ptrace
+>   seccomp: add support for passing fds via USER_NOTIF
+> 
+>  arch/Kconfig                                  |   7 +
+>  include/linux/seccomp.h                       |  14 +-
+>  include/uapi/linux/ptrace.h                   |   2 +
+>  include/uapi/linux/seccomp.h                  |  20 +-
+>  kernel/ptrace.c                               |   4 +
+>  kernel/seccomp.c                              | 480 +++++++++++++++++-
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 359 ++++++++++++-
+>  7 files changed, 878 insertions(+), 8 deletions(-)
+> 
+> -- 
+> 2.17.0
+> 
+> _______________________________________________
+> Containers mailing list
+> Containers@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/containers
