@@ -1,69 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeEROb7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:31:59 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33760 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751105AbeEROb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:31:56 -0400
-X-Google-Smtp-Source: AB8JxZqc7IMeIHVbOSLNur+luT96clhcdp1AkKNuB8pr8kznNP+ChqLAmgAe9pNjaKaELUnHItWC6Q==
-Date: Fri, 18 May 2018 09:31:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: rishabhb@codeaurora.org
-Cc: Stephen Boyd <swboyd@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm@lists.infradead.org,
-        tsoni@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: Documentation for qcom, llcc
-Message-ID: <20180518143154.GA6224@rob-hp-laptop>
-References: <1525810921-15878-1-git-send-email-rishabhb@codeaurora.org>
- <1525810921-15878-2-git-send-email-rishabhb@codeaurora.org>
- <152649021310.210890.14841324536807182632@swboyd.mtv.corp.google.com>
- <385198cbb91c4a36ad758997916ad271@codeaurora.org>
- <152649413707.210890.2655572242392552759@swboyd.mtv.corp.google.com>
- <079348edcb511cefb9f4d76877d50cb7@codeaurora.org>
+        id S1751914AbeEROdL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:33:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33181 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750763AbeEROdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:33:10 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,415,1520924400";
+   d="scan'208";a="200509195"
+Date: Fri, 18 May 2018 22:33:34 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
+Message-ID: <20180518143334.GA4537@debian>
+References: <20180516083737.26504-4-tiwei.bie@intel.com>
+ <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
+ <20180516123909.GB986@debian>
+ <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
+ <20180516134550.GB4171@debian>
+ <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
+ <20180516143332.GA1957@debian>
+ <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
+ <20180518112950.GA28224@debian>
+ <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <079348edcb511cefb9f4d76877d50cb7@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 04:32:27PM -0700, rishabhb@codeaurora.org wrote:
-> On 2018-05-16 11:08, Stephen Boyd wrote:
-> > Quoting rishabhb@codeaurora.org (2018-05-16 10:33:14)
-> > > On 2018-05-16 10:03, Stephen Boyd wrote:
-> > > > Quoting Rishabh Bhatnagar (2018-05-08 13:22:00)
-> > > 
-> > > >> +
-> > > >> +- max-slices:
-> > > >> +       usage: required
-> > > >> +       Value Type: <u32>
-> > > >> +       Definition: Number of cache slices supported by hardware
-> > > >> +
-> > > >> +Example:
-> > > >> +
-> > > >> +       llcc: qcom,llcc@1100000 {
-> > > >
-> > > > cache-controller@1100000 ?
-> > > >
-> > > We have tried to use consistent naming convention as in llcc_*
-> > > everywhere.
-> > > Using cache-controller will mix and match the naming convention.
-> > > Also in
-> > > the documentation it is explained what llcc is and its full form.
-> > > 
+On Fri, May 18, 2018 at 09:17:05PM +0800, Jason Wang wrote:
+> On 2018年05月18日 19:29, Tiwei Bie wrote:
+> > On Thu, May 17, 2018 at 08:01:52PM +0800, Jason Wang wrote:
+> > > On 2018年05月16日 22:33, Tiwei Bie wrote:
+> > > > On Wed, May 16, 2018 at 10:05:44PM +0800, Jason Wang wrote:
+> > > > > On 2018年05月16日 21:45, Tiwei Bie wrote:
+> > > > > > On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
+> > > > > > > On 2018年05月16日 20:39, Tiwei Bie wrote:
+> > > > > > > > On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
+> > > > > > > > > On 2018年05月16日 16:37, Tiwei Bie wrote:
+> > > > [...]
+> > > > > > > > > > +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > > > > > > > > > +			      unsigned int id, void **ctx)
+> > > > > > > > > > +{
+> > > > > > > > > > +	struct vring_packed_desc *desc;
+> > > > > > > > > > +	unsigned int i, j;
+> > > > > > > > > > +
+> > > > > > > > > > +	/* Clear data ptr. */
+> > > > > > > > > > +	vq->desc_state[id].data = NULL;
+> > > > > > > > > > +
+> > > > > > > > > > +	i = head;
+> > > > > > > > > > +
+> > > > > > > > > > +	for (j = 0; j < vq->desc_state[id].num; j++) {
+> > > > > > > > > > +		desc = &vq->vring_packed.desc[i];
+> > > > > > > > > > +		vring_unmap_one_packed(vq, desc);
+> > > > > > > > > As mentioned in previous discussion, this probably won't work for the case
+> > > > > > > > > of out of order completion since it depends on the information in the
+> > > > > > > > > descriptor ring. We probably need to extend ctx to record such information.
+> > > > > > > > Above code doesn't depend on the information in the descriptor
+> > > > > > > > ring. The vq->desc_state[] is the extended ctx.
+> > > > > > > > 
+> > > > > > > > Best regards,
+> > > > > > > > Tiwei Bie
+> > > > > > > Yes, but desc is a pointer to descriptor ring I think so
+> > > > > > > vring_unmap_one_packed() still depends on the content of descriptor ring?
+> > > > > > > 
+> > > > > > I got your point now. I think it makes sense to reserve
+> > > > > > the bits of the addr field. Driver shouldn't try to get
+> > > > > > addrs from the descriptors when cleanup the descriptors
+> > > > > > no matter whether we support out-of-order or not.
+> > > > > Maybe I was wrong, but I remember spec mentioned something like this.
+> > > > You're right. Spec mentioned this. I was just repeating
+> > > > the spec to emphasize that it does make sense. :)
+> > > > 
+> > > > > > But combining it with the out-of-order support, it will
+> > > > > > mean that the driver still needs to maintain a desc/ctx
+> > > > > > list that is very similar to the desc ring in the split
+> > > > > > ring. I'm not quite sure whether it's something we want.
+> > > > > > If it is true, I'll do it. So do you think we also want
+> > > > > > to maintain such a desc/ctx list for packed ring?
+> > > > > To make it work for OOO backends I think we need something like this
+> > > > > (hardware NIC drivers are usually have something like this).
+> > > > Which hardware NIC drivers have this?
+> > > It's quite common I think, e.g driver track e.g dma addr and page frag
+> > > somewhere. e.g the ring->rx_info in mlx4 driver.
+> > It seems that I had a misunderstanding on your
+> > previous comments. I know it's quite common for
+> > drivers to track e.g. DMA addrs somewhere (and
+> > I think one reason behind this is that they want
+> > to reuse the bits of addr field).
+> 
+> Yes, we may want this for virtio-net as well in the future.
+> 
+> >   But tracking
+> > addrs somewhere doesn't means supporting OOO.
+> > I thought you were saying it's quite common for
+> > hardware NIC drivers to support OOO (i.e. NICs
+> > will return the descriptors OOO):
 > > 
-> > DT prefers standard node names as opposed to vendor specific node names.
-> > Isn't it a cache controller? I fail to see why this can't be done.
-> Hi Stephen,
-> The driver is vendor specific and also for uniformity purposes we preferred
-> to go with this name.
+> > I'm not familiar with mlx4, maybe I'm wrong.
+> > I just had a quick glance. And I found below
+> > comments in mlx4_en_process_rx_cq():
+> > 
+> > ```
+> > /* We assume a 1:1 mapping between CQEs and Rx descriptors, so Rx
+> >   * descriptor offset can be deduced from the CQE index instead of
+> >   * reading 'cqe->index' */
+> > index = cq->mcq.cons_index & ring->size_mask;
+> > cqe = mlx4_en_get_cqe(cq->buf, index, priv->cqe_size) + factor;
+> > ```
+> > 
+> > It seems that although they have a completion
+> > queue, they are still using the ring in order.
+> 
+> I guess so (at least from the above bits). Git grep -i "out of order" in
+> drivers/net gives some hints. Looks like there're few deivces do this.
+> 
+> > I guess maybe storage device may want OOO.
+> 
+> Right, some iSCSI did.
+> 
+> But tracking them elsewhere is not only for OOO.
+> 
+> Spec said:
+> 
+> for element address
+> 
+> "
+> In a used descriptor, Element Address is unused.
+> "
+> 
+> for Next flag:
+> 
+> "
+> For example, if descriptors are used in the same order in which they are
+> made available, this will result in
+> the used descriptor overwriting the first available descriptor in the list,
+> the used descriptor for the next list
+> overwriting the first available descriptor in the next list, etc.
+> "
+> 
+> for in order completion:
+> 
+> "
+> This will result in the used descriptor overwriting the first available
+> descriptor in the batch, the used descriptor
+> for the next batch overwriting the first available descriptor in the next
+> batch, etc.
+> "
+> 
+> So:
+> 
+> - It's an alignment to the spec
+> - device may (or should) overwrite the descriptor make also make address
+> field useless.
 
-Almost *every* node and driver is vendor specific. Please do as Stephen 
-suggested.
+You didn't get my point...
 
-Rob
+I agreed driver should track the DMA addrs or some
+other necessary things from the very beginning. And
+I also repeated the spec to emphasize that it does
+make sense. And I'd like to do that.
+
+What I was saying is that, to support OOO, we may
+need to manage these context (which saves DMA addrs
+etc) via a list which is similar to the desc list
+maintained via `next` in split ring instead of an
+array whose elements always can be indexed directly.
+
+The desc ring in split ring is an array, but its
+free entries are managed as list via next. I was
+just wondering, do we want to manage such a list
+because of OOO. It's just a very simple question
+that I want to hear your opinion... (It doesn't
+means anything, e.g. It doesn't mean I don't want
+to support OOO. It's just a simple question...)
+
+Best regards,
+Tiwei Bie
+
+> 
+> Thanks
+> 
+> > 
+> > Best regards,
+> > Tiwei Bie
+> > 
+> > > Thanks
+> > > 
+> > > > > Not for the patch, but it looks like having a OUT_OF_ORDER feature bit is
+> > > > > much more simpler to be started with.
+> > > > +1
+> > > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> 
