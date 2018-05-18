@@ -1,125 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752395AbeERIP1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:15:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50940 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752056AbeERIPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:15:24 -0400
-Date: Fri, 18 May 2018 10:15:22 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Hao Zhang <hao5781286@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk,
-        Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Message-ID: <20180518081522.eiwlqy2c2twc72qs@flea>
-References: <20180225135308.GA14561@arx-s1>
- <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
- <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com>
- <20180515111711.l2g4vgsal7yr6dbr@flea>
- <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA@mail.gmail.com>
+        id S1753085AbeERITc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:19:32 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36000 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753046AbeERITY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:19:24 -0400
+X-Google-Smtp-Source: AB8JxZpqWNrmi9m626+XMruiaOzZzMsNDTdcdQHsVTtWvv8Idk1ytVWP8e1d0a+C5QfEq1OvVQUVBg==
+Date: Fri, 18 May 2018 10:19:19 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
+ pages when do physical randomization
+Message-ID: <20180518081919.GB11379@gmail.com>
+References: <20180516100532.14083-1-bhe@redhat.com>
+ <20180518070046.GA18660@gmail.com>
+ <20180518074359.GR24627@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tpj24l2pqvmxxz5t"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180518074359.GR24627@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---tpj24l2pqvmxxz5t
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Baoquan He <bhe@redhat.com> wrote:
 
-On Thu, May 17, 2018 at 10:48:58PM +0800, Hao Zhang wrote:
-> 2018-05-15 19:17 GMT+08:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> > Hi,
-> >
-> > On Mon, May 14, 2018 at 10:45:44PM +0800, Hao Zhang wrote:
-> >> 2018-02-26 17:00 GMT+08:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> >> > Thanks for respinning this serie. It looks mostly good, but you still
-> >> > have a quite significant number of checkpatch (--strict) warnings th=
-at
-> >> > you should address.
-> >>
-> >> Thanks for reviews :) ,i'm sorry for that, it will be fixed next
-> >> time.  and, besides, in what situation were the checkpatch warning
-> >> can be ignore=EF=BC=9F
-> >
-> > The only one that can be reasonably be ignored is the long line
-> > warning, and only if complying to the limit would make it less easy to
-> > understand.
-> >
-> >> >
-> >> > On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
-> >> >> +#define CAPTURE_IRQ_ENABLE_REG       0x0010
-> >> >> +#define CFIE(ch)     BIT(ch << 1 + 1)
-> >> >> +#define CRIE(ch)     BIT(ch << 1)
-> >> >
-> >> > You should also put your argument between parentheses here (and in a=
-ll
-> >> > your other macros).
-> >>
-> >> Do you mean like this ?
-> >> #define CFIE(ch)     BIT((ch) << 1 + 1)
-> >> #define CRIE(ch)     BIT((ch) << 1)
-> >
-> > Yep, exactly. Otherwise, if you do something like CRIE(1 + 1), the
-> > result will be BIT(1 + 1 << 1), which will expand to 3, instead of 4.
-> >
-> > Also, CFIE looks a bit weird here, is it the offset that is
-> > incremented, or the value? You should probably have parentheses to
-> > make it explicit.
->=20
-> The vallue,
-> BIT(((ch) << 1) + 1) It seem not very nice...
->=20
-> uhmm...
-> In CAPTURE_IRQ_ENABLE_REG odd number is CFIE, even number is CRIE
-> each channel has one CFIE and CRIE.
->=20
-> we can also describe like this:
-> #define CFIE(ch)     BIT((ch) * 2 + 1)
-> #define CRIE(ch)     BIT((ch) * 2)
+> OK, I realized my saying above is misled because I didn't explain the
+> background clearly. Let me add it:
+> 
+> Previously, FJ reported the movable_node issue that KASLR will put
+> kernel into movable_node. That cause those movable_nodes can't be hot
+> plugged any more. So finally we plannned to solve it by adding a new
+> kernel parameter :
+> 
+> 	kaslr_boot_mem=nn[KMG]@ss[KMG]
+> 
+> We want customer to specify memory regions which KASLR can make use to
+> randomize kernel into.
 
-That works for me.
+*WHY* should the "customer" care?
 
-Maxime
+This is a _bug_: movable, hotpluggable zones of physical memory should not be 
+randomized into.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> [...] Outside of the specified regions, we need avoid to put kernel into those 
+> regions even though they are also available RAM. As for movable_node issue, we 
+> can add immovable regions into kaslr_boot_mem=nn[KMG]@ss[KMG].
+> 
+> During this hotplug issue reviewing, Luiz's team reported this 1GB hugepages
+> regression bug, I reproduced the bug and found out the root cause, then
+> realized that I can utilize kaslr_boot_mem=nn[KMG]@ss[KMG] parameter to
+> fix it too. E.g the KVM guest with 4GB RAM, we have a good 1GB huge
+> page, then we can add "kaslr_boot_mem=1G@0, kaslr_boot_mem=3G@2G" to
+> kernel command-line, then the good 1GB region [1G, 2G) won't be taken
+> into account for kernel physical randomization.
+> 
+> Later, you pointed out that 'kaslr_boot_mem=' way need user to specify
+> memory region manually, it's not good, suggested to solve them by
+> getting information and solving them in KASLR boot code. So they are two
+> issues now, for the movable_node issue, we need get hotplug information
+> from SRAT table and then avoid them; for this 1GB hugepage issue, we
+> need get information from kernel command-line, then avoid them.
+> 
+> This patch is for the hugepage issue only. Since FJ reported the hotplug
+> issue and they assigned engineers to work on it, I would like to wait
+> for them to post according to your suggestion.
 
---tpj24l2pqvmxxz5t
-Content-Type: application/pgp-signature; name="signature.asc"
+All of this is handling it the wrong way about. This is *not* primarily about 
+KASLR at all, and the user should not be required to specify some weird KASLR 
+parameters.
 
------BEGIN PGP SIGNATURE-----
+This is a basic _memory map enumeration_ problem in both cases:
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+i5kACgkQ0rTAlCFN
-r3TAQQ/+LQG/hSPZpDRYqeSWNaIQwLG2uiGt/6GGDsa5UJn/YaPkWZ2TgsZ9nUZb
-fuqujyDzT/PKs5e8LcXlm1pVyILaKnVGW8zQsjIpG1mYkFJ16UAt7uLYxWAvHaoZ
-G9OdXBr+hpnpjbQNW2TXLyTE/H9BcjDlJ9mvOQsgrOnVZYzvi9qlpkk7GKzSTwCR
-k+StqmdoqfdGaQ/xmaNdRjYaDLi2YB1fEOPPvZYc3gSmEz6QhQFKy41LIw4eW232
-lYmutv/S2EdaajimkLRENJsfL+BZZF41VQlKrgFPzZGMjv0Tx05hqheBJK3SID9P
-z9Y65fbsqj4r+HKa7UyEV3NI+gr5UVhVB/OFCaelsE6P1Zl0gTqUXyxXHS5UyXvV
-lga7bGPDGlEtfr6g8oOPrPKUusipmyncGeZbo2GuU2k2lc0uApNTGdAjtnlNhp+G
-QiUYoQHnPJSltAsdLD4rUNyc6qISVvEGxbqvkTdSCJ2Qgtxd+fHmMNiHmMtyd9aw
-fv12TzUFjRR2ISnZHkYYQjjUBMSmvpD7DEn6xLPV9+7ZfvzCBGNNl6cen7qd590j
-vMmalYbEySaU7aS6hL4cv80ET4lfqIiqQvWXu6TO+cX+2ubkf1b8i5xyZ2n6rnxp
-4NJX1XjwH1rBj0ozeWYqGYEL3a09kpnLshL6AumloS1rX3fNUO0=
-=p0B0
------END PGP SIGNATURE-----
+ - in the hotplug case KASLR doesn't know that it's a movable zone and relocates 
+   into it,
 
---tpj24l2pqvmxxz5t--
+ - and in the KVM case KASLR doesn't know that it's a valuable 1GB page that
+   shouldn't be broken up.
+
+Note that it's not KASLR specific: if we had some other kernel feature that tried 
+to allocate a piece of memory from what appears to be perfectly usable generic RAM 
+we'd have the same problems!
+
+We need to fix the real root problem, which is lack of knowledge about crutial 
+attributes of physical memory. Once that knowledge is properly represented at this 
+early boot stage both KASLR and other memory allocators can make use of it to 
+avoid those regions.
+
+Thanks,
+
+	Ingo
