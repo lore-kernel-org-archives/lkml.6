@@ -1,84 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751846AbeERUCT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:02:19 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:52936 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbeERUCR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:02:17 -0400
-X-Google-Smtp-Source: AB8JxZoDq2Dven7deS0Ol/P/wO8ijIFgQxNbTfJHKNephbPIifVd9OOza+d/9/6Tsgj3T4SxdGsZgg==
-Date: Fri, 18 May 2018 23:02:13 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@lst.de
-Subject: [PATCH -vfs] proc: don't maintain sizeof(struct proc_dir_entry)
-Message-ID: <20180518200213.GA8006@avx2>
+        id S1752059AbeERUDM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:03:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33660 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751452AbeERUDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 16:03:11 -0400
+Date: Fri, 18 May 2018 22:02:59 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Nicholas Mc Guire <der.herr@hofr.at>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH V2 RFC] mtd: spi-nor: intel: provide a range for
+ poll_timout
+Message-ID: <20180518220259.04a85a05@bbrezillon>
+In-Reply-To: <20170214094724.GB15721@lahna.fi.intel.com>
+References: <1486973622-1072-1-git-send-email-der.herr@hofr.at>
+        <20170214094724.GB15721@lahna.fi.intel.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Automatically cap sizeof(struct proc_dir_entry) at 192/128 bytes or
-256/192 bytes if spinlock debugging/lockdep is enabled.
+On Tue, 14 Feb 2017 11:47:24 +0200
+Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> On Mon, Feb 13, 2017 at 09:13:42AM +0100, Nicholas Mc Guire wrote:
+> > The overall poll time here is INTEL_SPI_TIMEOUT * 1000 which is
+> > 5000 * 1000 - so 5seconds and it is coded as a tight loop here delay_us
+> > to readl_poll_timeout() is set to 0. As this is never called in an atomic
+> > context sleeping should be no issue and there is no reasons for the
+> > tight-loop here.
+> > 
+> > Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>  
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
- fs/proc/generic.c  |    2 +-
- fs/proc/inode.c    |    5 +++--
- fs/proc/internal.h |   10 ++++++----
- 3 files changed, 10 insertions(+), 7 deletions(-)
+Queued to spi-nor/next.
 
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -410,7 +410,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
- 	if (!ent)
- 		goto out;
- 
--	if (qstr.len + 1 <= sizeof(ent->inline_name)) {
-+	if (qstr.len + 1 <= SIZEOF_PDE_INLINE_NAME) {
- 		ent->name = ent->inline_name;
- 	} else {
- 		ent->name = kmalloc(qstr.len + 1, GFP_KERNEL);
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -105,9 +105,10 @@ void __init proc_init_kmemcache(void)
- 		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
- 				  SLAB_ACCOUNT|SLAB_PANIC, NULL);
- 	proc_dir_entry_cache = kmem_cache_create_usercopy(
--		"proc_dir_entry", sizeof(struct proc_dir_entry), 0, SLAB_PANIC,
-+		"proc_dir_entry", SIZEOF_PDE, 0, SLAB_PANIC,
- 		offsetof(struct proc_dir_entry, inline_name),
--		sizeof_field(struct proc_dir_entry, inline_name), NULL);
-+		SIZEOF_PDE_INLINE_NAME, NULL);
-+	BUILD_BUG_ON(sizeof(struct proc_dir_entry) >= SIZEOF_PDE);
- }
- 
- static int proc_show_options(struct seq_file *seq, struct dentry *root)
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -61,13 +61,15 @@ struct proc_dir_entry {
- 	char *name;
- 	umode_t mode;
- 	u8 namelen;
-+	char inline_name[];
-+} __randomize_layout;
-+
- #ifdef CONFIG_64BIT
--#define SIZEOF_PDE_INLINE_NAME	(192-155)
-+#define SIZEOF_PDE	(sizeof(spinlock_t) == 4 ? 192 : 256)
- #else
--#define SIZEOF_PDE_INLINE_NAME	(128-95)
-+#define SIZEOF_PDE	(sizeof(spinlock_t) == 4 ? 128 : 192)
- #endif
--	char inline_name[SIZEOF_PDE_INLINE_NAME];
--} __randomize_layout;
-+#define SIZEOF_PDE_INLINE_NAME	(SIZEOF_PDE - sizeof(struct proc_dir_entry))
- 
- extern struct kmem_cache *proc_dir_entry_cache;
- void pde_free(struct proc_dir_entry *pde);
+Thanks,
+
+Boris
+
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+
+
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
