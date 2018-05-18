@@ -1,92 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751601AbeERGZ6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:25:58 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35723 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbeERGZ5 (ORCPT
+        id S1752176AbeERG0r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:26:47 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41816 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751698AbeERG0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:25:57 -0400
-X-Google-Smtp-Source: AB8JxZrYWklUhoLeS00EJXYLH5+FCLGb300y366jgxVGAmTFBEb9YBcyUuU5lFbudgHgh1DEruyaUw==
-Date: Thu, 17 May 2018 20:25:53 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH v3] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS
- generation
-Message-ID: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zg4dzz4qm2b2imuj"
-Content-Disposition: inline
-User-Agent: NeoMutt/20180323-62-378db9
+        Fri, 18 May 2018 02:26:42 -0400
+X-Google-Smtp-Source: AB8JxZqdpaGcw3gdiflHAUX6fLmzx+C0XqnItkUmORorQu5xnOcnw3WK/tEoZRt4Gjg1qz2ll6O3+Q==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Andy Gross <andy.gross@linaro.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v3 0/3] Fix UFS and devfreq interaction
+Date: Thu, 17 May 2018 23:26:35 -0700
+Message-Id: <20180518062638.31777-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With the introduction of f1d981eaecf8 ("PM / devfreq: Use the available min/max
+frequency") the UFS host controller driver (UFSHCD) stopped probing for
+platforms that supports frequency scaling, e.g. all modern Qualcomm platforms.
 
---zg4dzz4qm2b2imuj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The cause of this was UFSHCD's reliance of not registering any frequencies and
+then being called by devfreq to switch between the frequencies 0 and UINT_MAX.
 
-Parsing `ls` is fragile at best and _will_ fail when $tree
-contains spaces. Replace this with a glob-generated string
-and directly assign it to $ALLSOURCE_ARCHS (Kconfig is
-removed as it isn't an architecture); a subshell is implied
-by $(), so `cd` doesn't affect the current working directory.
-
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 78e546ff689c2d5f40..e4aba2983f6272fc44 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -29,14 +29,12 @@ fi
- ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
-=20
- # Find all available archs
- find_all_archs()
- {
--	ALLSOURCE_ARCHS=3D""
--	for arch in `ls ${tree}arch`; do
--		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
--	done
-+	ALLSOURCE_ARCHS=3D"$(cd "${tree}arch/" && echo *)"
-+	ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS/Kconfig}"
- }
-=20
- # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
- if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
- 	ALLSOURCE_ARCHS=3D${SRCARCH}
---=20
-2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+The devfreq code implies that the client is able to pass the frequency table,
+instead of relying on opp tables, but as concluded after v1 this is not
+compliant with devfreq cooling, which will enable and disable opp entries in
+order to limit the valid frequencies. So instead the UFSHCD driver is modified
+to read the freq-table and register the first clock's two rates as the two
+available opp levels.
 
 
---zg4dzz4qm2b2imuj
-Content-Type: application/pgp-signature; name="signature.asc"
+This follows the first patch which facilitates the implementation of this in a
+clean fashion, and removes the kernel panic which previously happened when
+devfreq initialization failed.
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr+cfEACgkQruvLfWhy
-VBnPYBAApdgT3tXeanYkjzPbfMrg++P966Rd6jiZoErPJQeoPk/iVoZncHMl4Zt7
-99RytLnmTJqxRb7cxfJmGi3rrTKCI30ol3B61ucrTTpyIM7Vi6xVMVh6C8kA9Fls
-mR6+zMk7jP34BISmFSQAKqHDKl9TZsFjrO8CEqxFlFvyhH0udMcAm0xAt1gAdHj9
-1r6Nd1V+EGm9Pi/XgdFPleUXdwDJHFop2A3r/OPV2CyyW4RwFomlI3DNFt4xyQgf
-Jq7hq3yJHQeyJ7yph5QeC+v0tiekvTAs2GzGPF6WCyZdU89og8oZWIWi8T+s2HBl
-DOmeSKjxBjyntbigD+tV5WoZfqDFw4s+v8N7bRm4Geod7KaEHsKRKnWU4KDsnafG
-IPrmF8zvjwmUhj8gOXxw0pBG0yqeEiHeh6xqJ7ujHTX6MT3RAp3BxjzM6GLraVm4
-Xshsmzl7qhb4e+RQDRF1E73ou7Mk6mqRYjGD8mwn84tLJvLqhoBGNtQVxF20GPoV
-9ZjubHY/bRnKPilBAU1B9zUPjVl/6GqpdDUhlk7gfP79fi5PbQJFCP72gWAIoRLH
-pNNk7RpG0l+3HkPljR0iB0y4mVrGGemFXPjURZrStn/uPDiL4sPg9Tawpv0uDNSh
-b/N9qrU8V6ux4q7FA+ZD+xW7y5OS2xzQeaJoQSoaAGXz8z4Rc7Q=
-=5Jcd
------END PGP SIGNATURE-----
+With this UFS is once again functional on the db820c, and is needed to get UFS
+working on SDM845 (both tested).
 
---zg4dzz4qm2b2imuj--
+Added in v3 is the dts patch for Andy to introduce UFS in msm8996 and db820c,
+now that it finally works again.
+
+Bjorn Andersson (3):
+  scsi: ufs: Extract devfreq registration
+  scsi: ufs: Use freq table with devfreq
+  arm64: dts: qcom: msm8996: Add ufs related nodes
+
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |  8 ++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi        | 85 ++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c                    | 76 +++++++++++++----
+ 3 files changed, 154 insertions(+), 15 deletions(-)
+
+-- 
+2.17.0
