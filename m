@@ -1,178 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752289AbeERNRS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:17:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33128 "EHLO mx1.redhat.com"
+        id S1752297AbeERNTU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:19:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58494 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751496AbeERNRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:17:17 -0400
-Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180516083737.26504-1-tiwei.bie@intel.com>
- <20180516083737.26504-4-tiwei.bie@intel.com>
- <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
- <20180516123909.GB986@debian>
- <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
- <20180516134550.GB4171@debian>
- <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
- <20180516143332.GA1957@debian>
- <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
- <20180518112950.GA28224@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
-Date: Fri, 18 May 2018 21:17:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751496AbeERNTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:19:15 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: kvm <kvm@vger.kernel.org>,
+        "the arch\/x86 maintainers" <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
+References: <20180516152131.30689-1-vkuznets@redhat.com>
+        <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
+        <87bmddgrex.fsf@vitty.brq.redhat.com>
+        <8736ypgqie.fsf@vitty.brq.redhat.com>
+        <CANRm+Cy5buPHVW-8cLS6dQTGxPK79iy_pj-oqs=N0n5sGGxxHw@mail.gmail.com>
+        <87y3ghf83r.fsf@vitty.brq.redhat.com>
+        <CANRm+CzkgQ1ynLo6h=kWR63FU0-V79akMK16cwMNDYS4_+wX4Q@mail.gmail.com>
+Date: Fri, 18 May 2018 15:19:12 +0200
+In-Reply-To: <CANRm+CzkgQ1ynLo6h=kWR63FU0-V79akMK16cwMNDYS4_+wX4Q@mail.gmail.com>
+        (Wanpeng Li's message of "Fri, 18 May 2018 20:55:24 +0800")
+Message-ID: <87tvr5f6en.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180518112950.GA28224@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wanpeng Li <kernellwp@gmail.com> writes:
 
-
-On 2018年05月18日 19:29, Tiwei Bie wrote:
-> On Thu, May 17, 2018 at 08:01:52PM +0800, Jason Wang wrote:
->> On 2018年05月16日 22:33, Tiwei Bie wrote:
->>> On Wed, May 16, 2018 at 10:05:44PM +0800, Jason Wang wrote:
->>>> On 2018年05月16日 21:45, Tiwei Bie wrote:
->>>>> On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
->>>>>> On 2018年05月16日 20:39, Tiwei Bie wrote:
->>>>>>> On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
->>>>>>>> On 2018年05月16日 16:37, Tiwei Bie wrote:
->>> [...]
->>>>>>>>> +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
->>>>>>>>> +			      unsigned int id, void **ctx)
->>>>>>>>> +{
->>>>>>>>> +	struct vring_packed_desc *desc;
->>>>>>>>> +	unsigned int i, j;
->>>>>>>>> +
->>>>>>>>> +	/* Clear data ptr. */
->>>>>>>>> +	vq->desc_state[id].data = NULL;
->>>>>>>>> +
->>>>>>>>> +	i = head;
->>>>>>>>> +
->>>>>>>>> +	for (j = 0; j < vq->desc_state[id].num; j++) {
->>>>>>>>> +		desc = &vq->vring_packed.desc[i];
->>>>>>>>> +		vring_unmap_one_packed(vq, desc);
->>>>>>>> As mentioned in previous discussion, this probably won't work for the case
->>>>>>>> of out of order completion since it depends on the information in the
->>>>>>>> descriptor ring. We probably need to extend ctx to record such information.
->>>>>>> Above code doesn't depend on the information in the descriptor
->>>>>>> ring. The vq->desc_state[] is the extended ctx.
->>>>>>>
->>>>>>> Best regards,
->>>>>>> Tiwei Bie
->>>>>> Yes, but desc is a pointer to descriptor ring I think so
->>>>>> vring_unmap_one_packed() still depends on the content of descriptor ring?
->>>>>>
->>>>> I got your point now. I think it makes sense to reserve
->>>>> the bits of the addr field. Driver shouldn't try to get
->>>>> addrs from the descriptors when cleanup the descriptors
->>>>> no matter whether we support out-of-order or not.
->>>> Maybe I was wrong, but I remember spec mentioned something like this.
->>> You're right. Spec mentioned this. I was just repeating
->>> the spec to emphasize that it does make sense. :)
->>>
->>>>> But combining it with the out-of-order support, it will
->>>>> mean that the driver still needs to maintain a desc/ctx
->>>>> list that is very similar to the desc ring in the split
->>>>> ring. I'm not quite sure whether it's something we want.
->>>>> If it is true, I'll do it. So do you think we also want
->>>>> to maintain such a desc/ctx list for packed ring?
->>>> To make it work for OOO backends I think we need something like this
->>>> (hardware NIC drivers are usually have something like this).
->>> Which hardware NIC drivers have this?
->> It's quite common I think, e.g driver track e.g dma addr and page frag
->> somewhere. e.g the ring->rx_info in mlx4 driver.
-> It seems that I had a misunderstanding on your
-> previous comments. I know it's quite common for
-> drivers to track e.g. DMA addrs somewhere (and
-> I think one reason behind this is that they want
-> to reuse the bits of addr field).
-
-Yes, we may want this for virtio-net as well in the future.
-
->   But tracking
-> addrs somewhere doesn't means supporting OOO.
-> I thought you were saying it's quite common for
-> hardware NIC drivers to support OOO (i.e. NICs
-> will return the descriptors OOO):
->
-> I'm not familiar with mlx4, maybe I'm wrong.
-> I just had a quick glance. And I found below
-> comments in mlx4_en_process_rx_cq():
->
-> ```
-> /* We assume a 1:1 mapping between CQEs and Rx descriptors, so Rx
->   * descriptor offset can be deduced from the CQE index instead of
->   * reading 'cqe->index' */
-> index = cq->mcq.cons_index & ring->size_mask;
-> cqe = mlx4_en_get_cqe(cq->buf, index, priv->cqe_size) + factor;
-> ```
->
-> It seems that although they have a completion
-> queue, they are still using the ring in order.
-
-I guess so (at least from the above bits). Git grep -i "out of order" in 
-drivers/net gives some hints. Looks like there're few deivces do this.
-
-> I guess maybe storage device may want OOO.
-
-Right, some iSCSI did.
-
-But tracking them elsewhere is not only for OOO.
-
-Spec said:
-
-for element address
-
-"
-In a used descriptor, Element Address is unused.
-"
-
-for Next flag:
-
-"
-For example, if descriptors are used in the same order in which they are 
-made available, this will result in
-the used descriptor overwriting the first available descriptor in the 
-list, the used descriptor for the next list
-overwriting the first available descriptor in the next list, etc.
-"
-
-for in order completion:
-
-"
-This will result in the used descriptor overwriting the first available 
-descriptor in the batch, the used descriptor
-for the next batch overwriting the first available descriptor in the 
-next batch, etc.
-"
-
-So:
-
-- It's an alignment to the spec
-- device may (or should) overwrite the descriptor make also make address 
-field useless.
-
-Thanks
-
->
-> Best regards,
-> Tiwei Bie
->
->> Thanks
+> 2018-05-18 20:42 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
+>> Wanpeng Li <kernellwp@gmail.com> writes:
 >>
->>>> Not for the patch, but it looks like having a OUT_OF_ORDER feature bit is
->>>> much more simpler to be started with.
->>> +1
+>>> 2018-05-18 19:19 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
+>>>> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+>>>>
+>>>>> Wanpeng Li <kernellwp@gmail.com> writes:
+>>>>>
+>>>>>> Hi Vitaly,
+>>>>>> 2018-05-16 23:21 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
+>>>>>>> Changes since v3 [Radim Krcmar]:
+>>>>>>> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
+>>>>>>> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
+>>>>>>> - Fix undefined behavior for hv->vp_index >= 64.
+>>>>>>> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
+>>>>>>> - For -ex case preload all banks with a single kvm_read_guest().
+>>>>>>>
+>>>>>>> Description:
+>>>>>>>
+>>>>>>> This is both a new feature and a bugfix.
+>>>>>>>
+>>>>>>> Bugfix description:
+>>>>>>>
+>>>>>>> It was found that Windows 2016 guests on KVM crash when they have > 64
+>>>>>>> vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
+>>>>>>> sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
+>>>>>>
+>>>>>> We try the below command line, the Windows 2016 guest successfully to
+>>>>>> login and there are 80 vCPUs can be observed in the guest w/o the
+>>>>>> patchset, why you mentioned the crash and ignore?
+>>>>>>
+>>>>>> /usr/local/bin/qemu-system-x86_64 -machine  pc-i440fx-rhel7.3.0  -m
+>>>>>> 8192 -smp 80,sockets=2,cores=40,threads=1  -device
+>>>>>> ide-drive,bus=ide.0,drive=test -drive
+>>>>>> id=test,if=none,file=/instanceimage/359b18ab-05bb-460d-9b53-89505bca68ed/359b18ab-05bb-460d-9b53-89505bca68ed_vda_1.qcow2
+>>>>>>  -net nic,model=virtio -net user -monitor stdio -usb -usbdevice tablet
+>>>>>> --enable-kvm --cpu host -vnc 0.0.0.0:2
+>>>>>
+>>>>> Crash happens when you manifest yourself as Hyper-V, you can do this by
+>>>>> adding any 'hv-*' feature (e.g. try '-cpu host,hv_vpindex').
+>>>>
+>>>> Oh, and the 'ignore' happens when you pass more than 64 sockets
+>>>> (somthing like "-smp 128,sockets=128,cores=1,threads=1") -- and this
+>>>> happens regardless of Hyper-V enlightenments. But I guess it's just
+>>>> because Windows doesn't support more than 64 sockets.
 >>>
->>> Best regards,
->>> Tiwei Bie
+>>> Is there an option in the guest to avoid to check pvtlb support in hyperv?
+>>>
+>>
+>> You mean to tell Windows to not use PV TLB flush when it's available? I
+>> have no idea. My guess would be that it's left up to the hypervisor: if
+>> the feature is available Windows will use it.
+>
+> I mean a way to work around Windows guest crash since there is no PV
+> TLB flush enabled in product environment currently.
+>
+
+Unfortunately I don't know of such option, all real Hyper-V servers
+support it so I think nodoby ever tested how Windows behaves without
+it. I did and oops, it crashes...
+
+-- 
+  Vitaly
