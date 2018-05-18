@@ -1,93 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeERHJl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:09:41 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:63004 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERHJk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:09:40 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4I79PMS016924
-X-Nifty-SrcIP: [209.85.217.175]
-X-Google-Smtp-Source: AB8JxZq6yDlLnogKyjwgkBN+HhlRn2iqAd2K+4vckUly1MB1lqVaz983NxHAIUTCIYkQ+CT+tqELVtG+kmdBlJRMhu0=
+        id S1752065AbeERHLk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:11:40 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29552 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750763AbeERHLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:11:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
+   d="scan'208";a="200419377"
+Date: Fri, 18 May 2018 10:11:34 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: jmorris@namei.org
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd updates for v4.18
+Message-ID: <20180518071134.GA11205@linux.intel.com>
+References: <20180518070851.GA11123@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
-References: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 18 May 2018 16:08:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
-Message-ID: <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
-Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS generation
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518070851.GA11123@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-18 15:25 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
-> Parsing `ls` is fragile at best and _will_ fail when $tree
-> contains spaces. Replace this with a glob-generated string
-> and directly assign it to $ALLSOURCE_ARCHS (Kconfig is
-> removed as it isn't an architecture); a subshell is implied
-> by $(), so `cd` doesn't affect the current working directory.
->
-> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
->
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/scripts/tags.sh b/scripts/tags.sh
-> index 78e546ff689c2d5f40..e4aba2983f6272fc44 100755
-> --- a/scripts/tags.sh
-> +++ b/scripts/tags.sh
-> @@ -29,14 +29,12 @@ fi
->  ignore="$ignore ( -path ${tree}tools ) -prune -o"
->
->  # Find all available archs
->  find_all_archs()
->  {
-> -       ALLSOURCE_ARCHS=""
-> -       for arch in `ls ${tree}arch`; do
-> -               ALLSOURCE_ARCHS="${ALLSOURCE_ARCHS} "${arch##\/}
-> -       done
-> +       ALLSOURCE_ARCHS="$(cd "${tree}arch/" && echo *)"
-> +       ALLSOURCE_ARCHS="${ALLSOURCE_ARCHS/Kconfig}"
->  }
->
->  # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
->  if [ "${ALLSOURCE_ARCHS}" = "" ]; then
->         ALLSOURCE_ARCHS=${SRCARCH}
-> --
-> 2.17.0.rc1.35.g90bbd502d54fe92035.dirty
->
+Hi James,
 
+Sorry, pressed 'send' by accident before adding a cover message.
 
-I do not like hard-coding the file(s) in arch/.
+Anyway, this purely a bug fix release. The only major change is to move
+the event log code to its own subdirectory because there starts to be
+so much of it.
 
-Don't you have an idea to list only directories?
-'find -type d' or 'ls -F' or something?
+/Jarkko
 
-
-For example, the following worked for me, I wonder
-if there is a cleverer way...
-
-
-# Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
-if [ "${ALLSOURCE_ARCHS}" = "" ]; then
-        ALLSOURCE_ARCHS=${SRCARCH}
-elif [ "${ALLSOURCE_ARCHS}" = "all" ]; then
-        ALLSOURCE_ARCHS="$(cd "${tree}arch" && ls -1 -F | sed -n 's:/$::p')"
-fi
-
-
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+On Fri, May 18, 2018 at 10:08:51AM +0300, Jarkko Sakkinen wrote:
+> The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
+> 
+>   smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
+> 
+> for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
+> 
+>   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
+> 
+> ----------------------------------------------------------------
+> tpmdd updates for Linux 4.18
+> 
+> ----------------------------------------------------------------
+> Colin Ian King (2):
+>       tpm: st33zp24: remove redundant null check on chip
+>       tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
+> 
+> Jerry Snitselaar (1):
+>       tpm_tis: verify locality released before returning from release_locality
+> 
+> Ji-Hun Kim (2):
+>       tpm: replace kmalloc() + memcpy() with kmemdup()
+>       tpm: replace kmalloc() + memcpy() with kmemdup()
+> 
+> Nayna Jain (3):
+>       tpm: move the delay_msec increment after sleep in tpm_transmit()
+>       tpm: reduce poll sleep time in tpm_transmit()
+>       tpm: reduce polling time to usecs for even finer granularity
+> 
+> Tadeusz Struk (1):
+>       tpm: fix use after free in tpm2_load_context()
+> 
+> Thiebaud Weksteen (4):
+>       tpm: Add explicit endianness cast
+>       tpm: Move eventlog files to a subdirectory
+>       tpm: Move shared eventlog functions to common.c
+>       tpm: Move eventlog declarations to its own header
+> 
+> Winkler, Tomas (1):
+>       tpm: tpm_crb: relinquish locality on error path.
+> 
+>  drivers/char/tpm/Makefile                          |  10 +-
+>  .../tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c}   |   3 +-
+>  drivers/char/tpm/eventlog/common.c                 | 195 ++++++++++++++++++++
+>  drivers/char/tpm/eventlog/common.h                 |  35 ++++
+>  .../tpm/{tpm_eventlog_efi.c => eventlog/efi.c}     |   6 +-
+>  .../char/tpm/{tpm_eventlog_of.c => eventlog/of.c}  |  11 +-
+>  .../char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++-------------------
+>  .../char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+>  drivers/char/tpm/st33zp24/spi.c                    |   4 +-
+>  drivers/char/tpm/st33zp24/st33zp24.c               |   2 -
+>  drivers/char/tpm/tpm-interface.c                   |   5 +-
+>  drivers/char/tpm/tpm.h                             |  32 +---
+>  drivers/char/tpm/tpm2-space.c                      |   3 +-
+>  drivers/char/tpm/tpm_crb.c                         |  10 +-
+>  drivers/char/tpm/tpm_tis_core.c                    |  58 +++++-
+>  15 files changed, 331 insertions(+), 246 deletions(-)
+>  rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (98%)
+>  create mode 100644 drivers/char/tpm/eventlog/common.c
+>  create mode 100644 drivers/char/tpm/eventlog/common.h
+>  rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (91%)
+>  rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (91%)
+>  rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+>  rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
