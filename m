@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3571199-1526631844-2-5008773870587131942
+X-Cyrus-Session-Id: sloti22d1t05-3571199-1526631809-2-1354137060223874847
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526631843; b=m/oeso36VSmnMpiH8x0bVLL87R6RcbHUOh+fBLHfZhPLc2BZap
-    /LHYiHZKOJevigeB2wd0QbCe7dcOIa4bwnSpKpkS9yJHVoPSCTQkczHKzbcrAJLA
-    VEh62HnP7RLpC2Ln/mysID4TYFj5g+ebgGu5tV4xDnkUQjRygeKkevLyPIu/RSA/
-    dzG87qv3+F+OEFHaFBSj04VOfBhLK4aVdrGjmmfBXYQWECSPft/VUGAtYbWx4Wkh
-    SdRzbaG6WO18nq7Itz+2f6ELfotWjEP2wEqvMIxb3wtwub1kqcJwGFvfFc7mldvT
-    63CODuBy+LXkn7k0mBR/5HOI/8AC5GtN1TQg==
+    1526631808; b=Lar5KYNjlgQjg4gnAgIkSq1fw1Xptk/pBucrSGZKKUpRFJzmbk
+    4IN3OogYD0JPBZCb/cBMWQUbeUHJM4a7dLpqXe/3ZzenyH9gqIQE+5a5L+xBa+h0
+    zpqXh4UU9IPL8NO32DJ7Cm55yHCsdT4DA8V6eXz0On0K0cp5dm7trVHIhwUPwHE1
+    6BY9mQfVJxnlkKaeVKEnsrCoUvkf6W6KukJJPHM7qSAa8TiGlrkQ4E3bux+TvEL0
+    ctQQSQ8o6ZbrULPD0O6rp42iSQrBD4iGNpxJD8Gone7WCLP5eoNUKPr8ETy7JJrF
+    dWLAzS6m3PnKYr8T35qF75ipXjqhY170z+Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526631843; bh=H108iyybya3pvbmsSJ9JYRIle+TsEH
-    0tAybxpU9hJWo=; b=IjtRKNa+Z2CzPgSmBLPuUvQ6FugkRk3Lc035byKPsk6gOM
-    w0q/NMiKVCME934+zjio9BeHnuIQN9UAaPOjREPIL46tX+7BBiZdaZ672PdEaD1U
-    jODxFhiRzVqB7tyfnMyBJGFyDgrmbuPDHUwXyA0TJDSItVlLTKdx1P0HqbZolr7o
-    1o4LYWLqtF0LHhOIMDXpYHpGOhgqo5wiuUv2TLFfH+H2q2bX+RovaIxrVdq39QJ+
-    SweJJmWt2cIwWIWzmcalyeF9DhM7z8EFj7pT9+tl301tNGlQ5fiq9ebqdgBaQMWz
-    ZNZywRO+QivbtZc0z15dkXVVvLDnukHh1prQELOA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526631808; bh=7A+MVNxzfAPypwBhsHsMiE/LgLnBng
+    UJ3x+L8rBe5YE=; b=kcFGp6Cw7i+A9+AsoXYMIJTBCX5vYOcejBMscwiImozM9l
+    U7tZyrIvkfMIaGAZD9boOgPzN0VN52ucVhJvRADUlpUXwSdHH58J+RdxX2kKcB4X
+    dspFu+Uxui2nelGQ9A9icOURxrI3/k0k2TpsSetvX35DrnXkmDg0Hlv/SQDQxV0g
+    Ypb1kqUFsVCAe7NfEsJ80u3z7M88yFwY5KIvIfXb5ZnHsvmfHcwame7lg7Cz22Q7
+    otX14Ox+lxRFmV+dJTvCsqIfF2BCRInxSgRwiAoV3+lGEjletLf9wIFyJlyxkqKQ
+    j6sV9Cc9XIvZpoh7homZAsJLdEDQbseQt7a9C2EA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=L/DBnzdU x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=jKYpbDEx x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=L/DBnzdU x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=jKYpbDEx x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPAwr+hBO5J3PJKnBPTXaYA72T5CrBJYFkghLqWKvsFh9UJBR0mLRhz9lDqCHBXgjefhnx2SxYMPl2psQSWOSHOtNBOe2qK+wgqTAyNXCbitoM/HqlqO
-    enDQLYvPVlJEAk5O21n4X+S4v8zcdN14fO/Q3i67Afz83EOfNGe0BEix/2F5gMqVF3y8EIplOGIUzTB3XGfsaZCVN7URpiwng272ObWh8dsgBQ5d4ZQSCWMB
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMkQyU7zc9qPBhEVZbIBoEjZ64cKg1r7BfDyOx4GAISESb2GqxfkXeYiiY/LRuqFSvC4zriGxwYtYh5NrW/9myqYMly7WrSO9aCcjw3bkLlApEb4v/rt
+    /+hu9rPsyIzAfSfLA/8y9wqDmG/uIZcfyHrRN60DyLWGAhT0jhNa/pWhAbSfzHNS5d+NLwcI6/CHNOVOd4b9exESryvGM7REF2JUkvFrOO04w9GIXidJKxf/
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=HSIkpTvyAAAA:8 a=7ZN4cI0QAAAA:8 a=1EsaE_6oAAAA:8 a=ag1SF4gXAAAA:8
-    a=WFF-jGa1TUzVerVRpCMA:9 a=QEXdDO2ut3YA:10 a=nEgUQDT1tczs5vzW8NB_:22
-    a=Dl0WHwQvj8hGZljrFLtM:22 a=3ZumFrijQQ-2J9H5h8ct:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=X7Ea-ya5AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=G2dbtSLBsSqn76GcjF8A:9
+    a=QEXdDO2ut3YA:10 a=f3QdawHiMRSDlnPgGXNW:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753287AbeERIWo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 04:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32890 "EHLO mail.kernel.org"
+        id S1753139AbeERIXH (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 04:23:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753809AbeERIWg (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 18 May 2018 04:22:36 -0400
+        id S1753839AbeERIWr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 18 May 2018 04:22:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Antony Antony <antony@phenome.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 28/33] xfrm: fix xfrm_do_migrate() with AEAD e.g(AES-GCM)
-Date: Fri, 18 May 2018 10:16:07 +0200
-Message-Id: <20180518081536.206131271@linuxfoundation.org>
+        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 22/33] bonding: send learning packets for vlans on slave
+Date: Fri, 18 May 2018 10:16:01 +0200
+Message-Id: <20180518081535.982853490@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -106,40 +105,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antony Antony <antony@phenome.org>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-commit 75bf50f4aaa1c78d769d854ab3d975884909e4fb upstream.
+[ Upstream commit 21706ee8a47d3ede7fdae0be6d7c0a0e31a83229 ]
 
-copy geniv when cloning the xfrm state.
+There was a regression at some point from the intended functionality of
+commit f60c3704e87d ("bonding: Fix alb mode to only use first level
+vlans.")
 
-x->geniv was not copied to the new state and migration would fail.
+Given the return value vlan_get_encap_level() we need to store the nest
+level of the bond device, and then compare the vlan's encap level to
+this. Without this, this check always fails and learning packets are
+never sent.
 
-xfrm_do_migrate
-  ..
-  xfrm_state_clone()
-   ..
-   ..
-   esp_init_aead()
-   crypto_alloc_aead()
-    crypto_alloc_tfm()
-     crypto_find_alg() return EAGAIN and failed
+In addition, this same commit caused a regression in the behavior of
+balance_alb, which requires learning packets be sent for all interfaces
+using the slave's mac in order to load balance properly. For vlan's
+that have not set a user mac, we can send after checking one bit.
+Otherwise we need send the set mac, albeit defeating rx load balancing
+for that vlan.
 
-Signed-off-by: Antony Antony <antony@phenome.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/xfrm/xfrm_state.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/bonding/bond_alb.c  |   13 ++++++++-----
+ drivers/net/bonding/bond_main.c |    2 ++
+ include/net/bonding.h           |    1 +
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -1197,6 +1197,7 @@ static struct xfrm_state *xfrm_state_clo
+--- a/drivers/net/bonding/bond_alb.c
++++ b/drivers/net/bonding/bond_alb.c
+@@ -944,6 +944,10 @@ static void alb_send_lp_vid(struct slave
+ 	skb->priority = TC_PRIO_CONTROL;
+ 	skb->dev = slave->dev;
  
- 	if (orig->aead) {
- 		x->aead = xfrm_algo_aead_clone(orig->aead);
-+		x->geniv = orig->geniv;
- 		if (!x->aead)
- 			goto error;
- 	}
++	netdev_dbg(slave->bond->dev,
++		   "Send learning packet: dev %s mac %pM vlan %d\n",
++		   slave->dev->name, mac_addr, vid);
++
+ 	if (vid)
+ 		__vlan_hwaccel_put_tag(skb, vlan_proto, vid);
+ 
+@@ -966,14 +970,13 @@ static void alb_send_learning_packets(st
+ 	 */
+ 	rcu_read_lock();
+ 	netdev_for_each_all_upper_dev_rcu(bond->dev, upper, iter) {
+-		if (is_vlan_dev(upper) && vlan_get_encap_level(upper) == 0) {
+-			if (strict_match &&
+-			    ether_addr_equal_64bits(mac_addr,
+-						    upper->dev_addr)) {
++		if (is_vlan_dev(upper) &&
++		    bond->nest_level == vlan_get_encap_level(upper) - 1) {
++			if (upper->addr_assign_type == NET_ADDR_STOLEN) {
+ 				alb_send_lp_vid(slave, mac_addr,
+ 						vlan_dev_vlan_proto(upper),
+ 						vlan_dev_vlan_id(upper));
+-			} else if (!strict_match) {
++			} else {
+ 				alb_send_lp_vid(slave, upper->dev_addr,
+ 						vlan_dev_vlan_proto(upper),
+ 						vlan_dev_vlan_id(upper));
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1732,6 +1732,8 @@ int bond_enslave(struct net_device *bond
+ 	if (bond_mode_uses_xmit_hash(bond))
+ 		bond_update_slave_arr(bond, NULL);
+ 
++	bond->nest_level = dev_get_nest_level(bond_dev);
++
+ 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
+ 		    slave_dev->name,
+ 		    bond_is_active_slave(new_slave) ? "an active" : "a backup",
+--- a/include/net/bonding.h
++++ b/include/net/bonding.h
+@@ -197,6 +197,7 @@ struct bonding {
+ 	struct   slave __rcu *primary_slave;
+ 	struct   bond_up_slave __rcu *slave_arr; /* Array of usable slaves */
+ 	bool     force_primary;
++	u32      nest_level;
+ 	s32      slave_cnt; /* never change this value outside the attach/detach wrappers */
+ 	int     (*recv_probe)(const struct sk_buff *, struct bonding *,
+ 			      struct slave *);
