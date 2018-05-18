@@ -1,66 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeERTlq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:41:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49809 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751846AbeERTln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:41:43 -0400
-Date: Fri, 18 May 2018 12:41:17 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <F1BBC78E-CA44-4C7D-AF87-2F713266EE2A@vmware.com>
-References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com> <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com> <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com> <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com> <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com> <CA+55aFysH5iiJWCVFu1J6GQfN2G1AbMcHyc4RhpnrnPjtM3L0Q@mail.gmail.com> <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com> <CA+55aFz4vKF-xC+A=DOozkPMVyLHPC5xMqW+y6pg9D7W-c2BQw@mail.gmail.com> <102B8072-91D5-4D28-82C9-64D5AA73802C@zytor.com> <F1BBC78E-CA44-4C7D-AF87-2F713266EE2A@vmware.com>
+        id S1752237AbeERTmP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:42:15 -0400
+Received: from mta-p3.oit.umn.edu ([134.84.196.203]:33904 "EHLO
+        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbeERTmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:42:11 -0400
+X-Google-Smtp-Source: AB8JxZoTepiea5FRIctbn6lxAR+EfJ948W4JXkhh5/LIhrsZfGRSOFWzKViQM3vrYlXrVPqZ4r2aKsR8D2IgXsCC02I=
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
-To: Nadav Amit <namit@vmware.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-From: hpa@zytor.com
-Message-ID: <A1189639-5368-490D-BA7E-B2911C3B9DB9@zytor.com>
+In-Reply-To: <20180511.155046.122041869811590666.davem@davemloft.net>
+References: <1525548766-13017-1-git-send-email-wang6495@umn.edu> <20180511.155046.122041869811590666.davem@davemloft.net>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Fri, 18 May 2018 14:41:29 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7fR_DwdPiQ_g4i5nN=adpxMKHi1RhVX6h=BgKfYw=dkkA@mail.gmail.com>
+Message-ID: <CAAa=b7fR_DwdPiQ_g4i5nN=adpxMKHi1RhVX6h=BgKfYw=dkkA@mail.gmail.com>
+Subject: Re: [PATCH] isdn: eicon: fix a missing-check bug
+To: David Miller <davem@davemloft.net>
+Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 18, 2018 12:36:20 PM PDT, Nadav Amit <namit@vmware.com> wrote:
->hpa@zytor.com wrote:
->
->> On May 18, 2018 12:21:00 PM PDT, Linus Torvalds
-><torvalds@linux-foundation.org> wrote:
->>> On Fri, May 18, 2018 at 12:18 PM Nadav Amit <namit@vmware.com>
->wrote:
->>> 
->>>> Gnu ASM manual says: "Each time you run as it assembles exactly one
->>> source
->>>> program. The source program is made up of one or more files.”
->>> 
->>> Ok, that counts as documentation, although it's confusing as hell.
->Is
->>> it
->>> one source program or multiple files again? I see what they are
->trying
->>> to
->>> say, but it really could be phrased more clearly ;)
->>> 
->>>                    Linus
->> 
->> At least we have a solution!
->
->Thanks for all your help. I will try to do it over over the weekend.
->
->Funny, I see that this “trick” (-Wa,[filename.s]) is already being used
->to
->include arch/x86/boot/code16gcc.h so I feel “safer” to use it.
->
->Regards,
->Nadav
+Thanks for your suggestion, David! I will revise the patch and resubmit it.
 
-Oh. I don't remember when we did that... might even be my doing and then I just forgot about it :)
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Wenwen
+
+On Fri, May 11, 2018 at 2:50 PM, David Miller <davem@davemloft.net> wrote:
+> From: Wenwen Wang <wang6495@umn.edu>
+> Date: Sat,  5 May 2018 14:32:46 -0500
+>
+>> To avoid such issues, this patch adds a check after the second copy in the
+>> function diva_xdi_write(). If the adapter number is not equal to the one
+>> obtained in the first copy, (-4) will be returned to divas_write(), which
+>> will then return an error code -EINVAL.
+>
+> Better fix is to copy the msg header once into an on-stack buffer supplied
+> by diva_write() to diva_xdi_open_adapter(), which is then passed on to
+> diva_xdi_write() with an adjusted src pointer and length.
