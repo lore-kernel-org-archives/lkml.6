@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3296274-1526622000-2-2961754442825013597
+X-Cyrus-Session-Id: sloti22d1t05-3571199-1526629152-2-15525167667228268407
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
@@ -13,27 +13,29 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526622000; b=XEIGmF5AH9Y5KExINzf9spon4ZqXpjz0GIq32dnU861RJ57Dzw
-    PS4/qONONiffu3BJ2OelrP2Eh5PhBNetwnb0Unvg9YnkgV8uOvBqGSOrnRrqy3y5
-    oare9CVjs0LCy452RrWZ+lZQjq4TpowGe7xXkzj1wz5500mMwzq8OXvRvhhZER/j
-    p8DyQyf4DKFzAJ/FJq/ROC9elcF2Wf9HU9wNuEqFRCna4+h5wudlv1HmbGWKhix8
-    Lo9ztdgfkKq/LqkR7P+B8sSEVnDDEiRVE4yiixP9RWmqC9mfy0wtmHXsSfvLCD0c
-    HkWhDm06OXorMMpeVFI1TrW5Ynewsy9uahgg==
+    1526629151; b=TH6+2DqN0Cis5LwckscZ/7iElkjZ/hwHeY02CeWt5OCA4s2S1E
+    5KeWSKWojRyMdlQ/gGMaXD1e6rY7HVQqAs9KAXE/OelIOxwf5xIhG4yTyaVjPB8m
+    7HzwfNDdb+bwtVPoK+i9C/Uz4/78qfCtREBjzBXhO548qbP3NFwkOccMiVwZAndy
+    81QQk+2KrKtuKeslmKyz1dqBzMVmMGEs+rzj1L7RxNcclsiN7HkTPD2OlwGLuy4r
+    lVFqp/d/YXeC7Mx80TT4T0wyFJNhxT+SotTT3iRmIflt37RyT0GTkgrdIMPGtcIG
+    fltOgIm5clIar9l53G7EFi6YkEANoupWMONA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:from:message-id:date
-    :mime-version:in-reply-to:content-transfer-encoding:content-type
-    :references:sender:list-id; s=fm2; t=1526622000; bh=rixCJ447thnf
-    +S+8Rn9Bl62+Om3qjYAWiNlBvKsbPh8=; b=mI4JPe9FBDxtSR9yNu31epJPmAn9
-    ELJH/9DmELQRI4yS9mLD/Qi0+A4NnLOr0eJV6MuXnBlfN83clMkyVB0PFI7Gp7ru
-    4zUb5rkv9pCx03foirRl+KFj2j2BwwdngEENrsCaV0nNOmDjZAZ/O1qew6QP6hgb
-    qamH6/rgRDcap4oGY7DWLTyqVRLnWE187Q+/Xk9e54ga1q1gy2VBhFknrhkpHipz
-    tD0SjKJ5BSXK8a8M07xavoOnqjrvC9FsbKC3Q9E4reupTqomt4ltQcATWAbYZ6c1
-    dNxk9gAJLCAqhn4PKNp7wqHMm3elCTQ6aKBNMczI64jzfEvS6CAXpmQrYA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526629151;
+    bh=QwvzueB9iqKAnycPyJ5WW5vwxWGQrhvpHU7rwobI9ac=; b=WzCe6ezqheYQ
+    JjhrO3cJtCBiog7kfIZzSsp8quJ9ckRtauY6g3k4NRvBxtD+sNEueGPjRbXPZaBw
+    icX/U4rOiquII6JI/i+O3NAW086huZnnj99rk7EjET9AiGToVcv1Rct9EqxKkpju
+    1IyMPqGhOLeqJgcR/nO0y+SbCTFX8AH5XDy/t9aF7v3SKUwfBrWGAncHn9RtQXJU
+    HQuPxDyCDZ2xGDT1K9VbbNDlMWinNdIBn3gbRvP0pa1mrRNa5mS1tkPHcxiqLGuY
+    3A+8aU42IhvPmj9BK47mSv4MfcHjWqPbIKShvTax2iZTq53vh4TG1sQ6WO4LqZXU
+    sN2GkEd/Lg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=samsung.com header.i=@samsung.com header.b=nouiXc7L
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    header.d=ti.com header.i=@ti.com header.b=cepqmvFM x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
+    header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -42,14 +44,15 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    header.domain=ti.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=samsung.com header.i=@samsung.com header.b=nouiXc7L
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+      header.d=ti.com header.i=@ti.com header.b=cepqmvFM x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
+      header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -58,115 +61,141 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+      header.domain=ti.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJHQ+M3G7Ok4LRUS5OaoCZB5fvOSxc6yjNAmcq/Mj1LpZaXb2BCmekwa0k5xWYizTYt7mwNJChymp4dFZdMAKDco272vjeSc9VtgdJwLeS+g+/IwdqLo
-    /qWCXI4uX8L/PrwZIoaMekCKw1FFV2aFHbvSG/9XYgeDIUbyDBHfyA00InbjM7z6+W+JWU6M5ZKlN+gNtWkovobN3FeIpskPfAFMGdJA4W+bFUxli1iI+n8+
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBj9zDFDVPlj3nGU1zywbTh1zZnfwPXprfChSnT9uiIW2GlPPnk/U8aaL7x+8Vtq2l0tm8TpQo8/YdeVNm3xO8tnf/auPa6MDz4VXpGq5HP1qYspVlbh
+    eCdzJrOEAVYZdCu2nx7SL7tdzZY6EhdreJLGXMrierOt4hCmbWSvxSFeBFXUtUa4CLuvyAHPIyiVc08L5KSu3rMq+1OWvBxb5aEB6AMF/Xb4u12MUhmNfTy4
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=IlzZQvGxnmr6KL5XCuMA:9
+    a=QyXUC8HyAAAA:8 a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=Yw4ylKMVvAePqBwmjKYA:9
     a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751442AbeERFjy (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 01:39:54 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:56199 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbeERFjx (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 18 May 2018 01:39:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180518053951euoutp02dba11255ab1054f9980f82945c25a7c8~vppzfSGq_0385603856euoutp02T
-X-AuditID: cbfec7f5-b5fff700000028a9-5d-5afe672584bc
-Subject: Re: [RFC PATCH linux-next] USB: dwc3: dwc3_get_extcon() can be
- static
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, Felipe Balbi <felipe.balbi@linux.intel.com>,
+        id S1751473AbeERHi6 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 03:38:58 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:20621 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeERHi4 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 18 May 2018 03:38:56 -0400
+Subject: Re: [RFC PATCH linux-next] USB: dwc3: dwc3_get_extcon() can be static
+To: Andrzej Hajda <a.hajda@samsung.com>,
+        kbuild test robot <fengguang.wu@intel.com>
+CC: <kbuild-all@01.org>, Felipe Balbi <felipe.balbi@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <8b363802-50f5-1da0-0879-fe8d38231f5e@samsung.com>
-Date: Fri, 18 May 2018 07:39:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180517160641.GA55289@lkp-ib03>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djPc7qq6f+iDD5f47aYfzPJ4v3z9cwW
-        zYvXs1kcuz6R2eLyrjlsFouWtTI7sHnc38vusXjPSyaPeScDPfbPXcPu8XmTXABrFJdNSmpO
-        Zllqkb5dAlfG+Z0PmQo+sFVcvrOZsYHxOGsXIyeHhICJRMvn/SxdjFwcQgIrGCUebmhnhHC+
-        MEq0nGuAynxmlNh/7Cp7FyMHWMvNCfkQ8eWMEtNm72GFcN4ySqz+MI0dZK6wQIDEzDkvWUBs
-        EQE9iRUL28DGMgtsYJR4e/sIWBGbgKbE38032UCm8grYSSxalQwSZhFQlZjZ18gEYosKREg0
-        Pf8JVs4rIChxcuYTsJmcQDP/bbwBFmcWkJdo3jqbGcIWl7j1ZD4TyC4JgXXsEn+WzmODeNRF
-        YsXBSSwQtrDEq+Nb2CFsGYn/O+czQdjVEjdfNLFANHcwStz/3Q7VbC1x+PhFVpBDmYGOXr9L
-        HyJsK9E1YwITJFT4JG68FYS4gU9i0rbpzBBhXomONiGIakWJ+2e3MkPY4hJLL3xlm8CoPAvJ
-        Z7OQfDMLyTezEPYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZhyTv87/nUH474/
-        SYcYBTgYlXh4J/T/jRJiTSwrrsw9xCjBwawkwmtl+i9KiDclsbIqtSg/vqg0J7X4EKM0B4uS
-        OG+cRl2UkEB6YklqdmpqQWoRTJaJg1OqgVFOxs5Z+sfbhZVqkpv2Xedbbxeb6qf20SHCTePr
-        h3iHoC1ZL/4IeJUs62+qPeTpGOAn+d2wsW9ioZ74LMWUc3fnzm6ZZrb9Q+tP3Uy5XXc2PGZh
-        8/bf5mxad7LMYOnsf38q4z69efz4VFsxZ48nR4jRysdsfqsvXFrkM/2H6UYlIak7D7nSviix
-        FGckGmoxFxUnAgA3Duj9NQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xu7oq6f+iDDb8F7GYfzPJ4v3z9cwW
-        zYvXs1kcuz6R2eLyrjlsFouWtTI7sHnc38vusXjPSyaPeScDPfbPXcPu8XmTXABrlJ5NUX5p
-        SapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G+Z0PmQo+sFVc
-        vrOZsYHxOGsXIweHhICJxM0J+V2MnBxCAksZJR6/rgWxJQTEJXbPf8sMYQtL/LnWxQZR85pR
-        4sU1fxBbWMBP4tu2PSwgtoiAnsSKhW2MXYxcHMwCGxglLp1/wgriCAlsYpTYf74VrJtNQFPi
-        7+abbCCLeQXsJBatSgYJswioSszsa2QCsUUFIiTunf8EVs4rIChxcuYTsAWcQAv+bbzBDmIz
-        C6hL/Jl3iRnClpdo3jobyhaXuPVkPtMERqFZSNpnIWmZhaRlFpKWBYwsqxhFUkuLc9Nzi430
-        ihNzi0vz0vWS83M3MQIjbNuxn1t2MHa9Cz7EKMDBqMTD+2Li3ygh1sSy4srcQ4wSHMxKIrxW
-        pv+ihHhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfGP15JfGGpobmFpaG5sbmxmYWSuK85w0q
-        o4QE0hNLUrNTUwtSi2D6mDg4pYBRlLOxsa4+TfAX/1R2puWv/7/lyw25pXDKSqch3+wv466J
-        c0SV8mx2CP2x7u3UDZ6/4Crjb6aTj/vnaSqK//p1/0DMDEV/TWvhK3Mf7+YK5o9tvhZc0d9h
-        9fPGhXs1rZafHi1ZKGEqvO18qniB2gSP/U8/LXz8awNbBIPhEZsdxRU3d0Xt0H2vxFKckWio
-        xVxUnAgAxcLEkMYCAAA=
-X-CMS-MailID: 20180518053948eucas1p2241e5806baa6f3ae436f312acda0cde5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180518053948eucas1p2241e5806baa6f3ae436f312acda0cde5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180517160655epcas3p2b8e0c7aa08f2138882a84b5e2b7b291a
-X-RootMTR: 20180517160655epcas3p2b8e0c7aa08f2138882a84b5e2b7b291a
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <201805180059.3X1bJsDZ%fengguang.wu@intel.com>
-        <CGME20180517160655epcas3p2b8e0c7aa08f2138882a84b5e2b7b291a@epcas3p2.samsung.com>
-        <20180517160641.GA55289@lkp-ib03>
+ <CGME20180517160655epcas3p2b8e0c7aa08f2138882a84b5e2b7b291a@epcas3p2.samsung.com>
+ <20180517160641.GA55289@lkp-ib03>
+ <8b363802-50f5-1da0-0879-fe8d38231f5e@samsung.com>
+From: Roger Quadros <rogerq@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+ IwrfNkJOLj3CvocMIw==
+Message-ID: <50b8c19d-563d-660c-9cf1-134c64062ba8@ti.com>
+Date: Fri, 18 May 2018 10:38:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <8b363802-50f5-1da0-0879-fe8d38231f5e@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 17.05.2018 18:06, kbuild test robot wrote:
-> Fixes: 5f0b74e54890 ("USB: dwc3: get extcon device by OF graph bindings")
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+On 18/05/18 08:39, Andrzej Hajda wrote:
+> On 17.05.2018 18:06, kbuild test robot wrote:
+>> Fixes: 5f0b74e54890 ("USB: dwc3: get extcon device by OF graph bindings")
+>> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+> 
+> It should be static of course, my bad.
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-It should be static of course, my bad.
+I don't think we accept patches from robots, yet :)
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> 
+>  --
+> Regards
+> Andrzej
+> 
+>> ---
+>>  drd.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
+>> index 2706824..218371f 100644
+>> --- a/drivers/usb/dwc3/drd.c
+>> +++ b/drivers/usb/dwc3/drd.c
+>> @@ -440,7 +440,7 @@ static int dwc3_drd_notifier(struct notifier_block *nb,
+>>  	return NOTIFY_DONE;
+>>  }
+>>  
+>> -struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
+>> +static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
+>>  {
+>>  	struct device *dev = dwc->dev;
+>>  	struct device_node *np_phy, *np_conn;
+>>
+>>
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
- --
-Regards
-Andrzej
+-- 
+cheers,
+-roger
 
-> ---
->  drd.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-> index 2706824..218371f 100644
-> --- a/drivers/usb/dwc3/drd.c
-> +++ b/drivers/usb/dwc3/drd.c
-> @@ -440,7 +440,7 @@ static int dwc3_drd_notifier(struct notifier_block *nb,
->  	return NOTIFY_DONE;
->  }
->  
-> -struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
-> +static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
->  {
->  	struct device *dev = dwc->dev;
->  	struct device_node *np_phy, *np_conn;
->
->
->
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
