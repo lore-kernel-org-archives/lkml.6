@@ -1,53 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752356AbeERN20 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:28:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751526AbeERN2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:28:24 -0400
-Subject: Re: [PATCH v3] vfio/mdev: Check globally for duplicate devices
-To: Cornelia Huck <cohuck@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dong Jia Shi <bjsdjshi@linux.ibm.com>
-References: <20180517031746.32242.17768.stgit@gimli.home>
- <20180517100928.5949b11e.cohuck@redhat.com>
-From: Halil Pasic <pasic@linux.ibm.com>
-Date: Fri, 18 May 2018 15:28:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752389AbeERNdi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:33:38 -0400
+Received: from gofer.mess.org ([88.97.38.141]:58891 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751560AbeERNdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:33:32 -0400
+Date: Fri, 18 May 2018 14:33:30 +0100
+From: Sean Young <sean@mess.org>
+To: Quentin Monnet <quentin.monnet@netronome.com>
+Cc: Y Song <ys114321@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>
+Subject: Re: [PATCH v3 2/2] bpf: add selftest for rawir_event type program
+Message-ID: <20180518133329.fafkew5nkr2bmzah@gofer.mess.org>
+References: <cover.1526504511.git.sean@mess.org>
+ <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
+ <CAH3MdRUhrBzHXKgcu1htSHTqeKVWnci+ADrTriCqjXLHUezB+w@mail.gmail.com>
+ <20180517210140.ck225yuckq6onheb@gofer.mess.org>
+ <86ffb16c-9b4e-c826-ecd2-82266e7b8c2e@netronome.com>
 MIME-Version: 1.0
-In-Reply-To: <20180517100928.5949b11e.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18051813-0008-0000-0000-000004F7EE0A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051813-0009-0000-0000-00001E8C6B0C
-Message-Id: <a8747941-9d6c-9a45-46d2-3a4dd8431726@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805180147
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86ffb16c-9b4e-c826-ecd2-82266e7b8c2e@netronome.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 18, 2018 at 11:13:07AM +0100, Quentin Monnet wrote:
+> 2018-05-17 22:01 UTC+0100 ~ Sean Young <sean@mess.org>
+> > On Thu, May 17, 2018 at 10:17:59AM -0700, Y Song wrote:
+> >> On Wed, May 16, 2018 at 2:04 PM, Sean Young <sean@mess.org> wrote:
+> >>> This is simple test over rc-loopback.
+> >>>
+> >>> Signed-off-by: Sean Young <sean@mess.org>
+> >>> ---
+> >>>  tools/bpf/bpftool/prog.c                      |   1 +
+> >>>  tools/include/uapi/linux/bpf.h                |  57 +++++++-
+> >>>  tools/lib/bpf/libbpf.c                        |   1 +
+> >>>  tools/testing/selftests/bpf/Makefile          |   8 +-
+> >>>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
+> >>>  tools/testing/selftests/bpf/test_rawir.sh     |  37 +++++
+> >>>  .../selftests/bpf/test_rawir_event_kern.c     |  26 ++++
+> >>>  .../selftests/bpf/test_rawir_event_user.c     | 130 ++++++++++++++++++
+> >>>  8 files changed, 261 insertions(+), 5 deletions(-)
+> >>>  create mode 100755 tools/testing/selftests/bpf/test_rawir.sh
+> >>>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_kern.c
+> >>>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_user.c
+> 
+> [...]
+> 
+> >> Most people probably not really familiar with lircN device. It would be
+> >> good to provide more information about how to enable this, e.g.,
+> >>   CONFIG_RC_CORE=y
+> >>   CONFIG_BPF_RAWIR_EVENT=y
+> >>   CONFIG_RC_LOOPBACK=y
+> >>   ......
+> > 
+> > Good point. I'll add some words explaining what is and how to make it work.
+> > 
+> > Thanks
+> > Sean
+> 
+> 
+> By the way, shouldn't the two eBPF helpers bpf_rc_keydown() and
+> bpf_rc_repeat() be compiled out in patch 1 if e.g.
+> CONFIG_BPF_RAWIR_EVENT is not set? There are some other helpers that are
+> compiled only if relevant config options are set (bpf_get_xfrm_state()
+> for example).
 
+So if CONFIG_BPF_RAWIR_EVENT is not set, then bpf-rawir-event.c is not
+compiled. Stubs are created in include/linux/bpf_rcdev.h, so this is
+already the case if I understand your correctly.
+ 
+> (If you were to change that, please also update helper documentations to
+> indicate what configuration options are required to be able to use the
+> helpers.)
 
-On 05/17/2018 10:09 AM, Cornelia Huck wrote:
-> [Dong Jia, Halil: Can you please take a look whether vfio-ccw is really
-> ok? I don't think we open up any new races, but I'd appreciate a second
-> or third opinion.]
+Ok, I'll add that.
 
-I will wait for things to settle a bit before I start reviewing the synchronization
-for mdev and vfio-ccw. I suspect there will be a v4. I would appreciate a cc,
-so I don't miss it.
+Thanks again!
 
-Halil
+Sean
