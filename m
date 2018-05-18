@@ -1,127 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeERPL7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:11:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40730 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeERPLz (ORCPT
+        id S1752238AbeERPMf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:12:35 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:34862 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeERPMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:11:55 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
-        magnus.damm@gmail.com, robh+dt@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] arm64: dts: renesas: draak: Describe CVBS input
-Date: Fri, 18 May 2018 18:12:15 +0300
-Message-ID: <1569661.saMqNra8vc@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1526654878-11143-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org> <1526654878-11143-3-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 18 May 2018 11:12:31 -0400
+X-Google-Smtp-Source: AB8JxZoU/xfcxZ0uU9x1OfycClfWe+uco2R5GpdFX08Z8KE0NG8FgIUR+5HHgGqVtNYeqVQLFxRuU5F4DDBvAROV2JY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20180502222138.GA22088@beast>
+References: <20180502222138.GA22088@beast>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 18 May 2018 08:12:29 -0700
+X-Google-Sender-Auth: wBAQwCHCP0ONKCU9oz53bme1Plw
+Message-ID: <CAGXu5jJSQa8WNEOSX7qaPWnGwArx4=X01S+82DQakHP_VY23VA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: dpt_i2o: Remove VLA usage
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4IFC5VE029397
 
-Hi Jacopo,
+On Wed, May 2, 2018 at 3:21 PM, Kees Cook <keescook@chromium.org> wrote:
+> On the quest to remove all VLAs from the kernel[1] this moves the sg_list
+> variable off the stack, as already done for other allocated buffers in
+> adpt_i2o_passthru(). Additionally consolidates the error path for kfree().
+>
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Thank you for the patch.
+Friendly ping! How does this look for v4.18?
 
-On Friday, 18 May 2018 17:47:57 EEST Jacopo Mondi wrote:
-> Describe CVBS video input through analog video decoder ADV7180
-> connected to video input interface VIN4.
-> 
-> The video input signal path is shared with HDMI video input, and
-> selected by on-board switches SW-53 and SW-54 with CVBS input selected
-> by the default switches configuration.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
+Thanks!
+
+-Kees
+
 > ---
-> v2 -> v3:
-> - Add comment to describe the shared input video path
-> - Add my SoB and Niklas' R-b tags
-> ---
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 42 +++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..95745fc
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> @@ -142,6 +142,11 @@
->  		groups = "usb0";
->  		function = "usb0";
->  	};
+>  drivers/scsi/dpt_i2o.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+> index 5ceea8da7bb6..37de8fb186d7 100644
+> --- a/drivers/scsi/dpt_i2o.c
+> +++ b/drivers/scsi/dpt_i2o.c
+> @@ -1706,7 +1706,7 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+>         u32 reply_size = 0;
+>         u32 __user *user_msg = arg;
+>         u32 __user * user_reply = NULL;
+> -       void *sg_list[pHba->sg_tablesize];
+> +       void **sg_list = NULL;
+>         u32 sg_offset = 0;
+>         u32 sg_count = 0;
+>         int sg_index = 0;
+> @@ -1748,19 +1748,23 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+>         msg[2] = 0x40000000; // IOCTL context
+>         msg[3] = adpt_ioctl_to_context(pHba, reply);
+>         if (msg[3] == (u32)-1) {
+> -               kfree(reply);
+> -               return -EBUSY;
+> +               rcode = -EBUSY;
+> +               goto free;
+>         }
+>
+> -       memset(sg_list,0, sizeof(sg_list[0])*pHba->sg_tablesize);
+> +       sg_list = kcalloc(pHba->sg_tablesize, sizeof(*sg_list), GFP_KERNEL);
+> +       if (!sg_list) {
+> +               rcode = -ENOMEM;
+> +               goto free;
+> +       }
+>         if(sg_offset) {
+>                 // TODO add 64 bit API
+>                 struct sg_simple_element *sg =  (struct sg_simple_element*) (msg+sg_offset);
+>                 sg_count = (size - sg_offset*4) / sizeof(struct sg_simple_element);
+>                 if (sg_count > pHba->sg_tablesize){
+>                         printk(KERN_DEBUG"%s:IOCTL SG List too large (%u)\n", pHba->name,sg_count);
+> -                       kfree (reply);
+> -                       return -EINVAL;
+> +                       rcode = -EINVAL;
+> +                       goto free;
+>                 }
+>
+>                 for(i = 0; i < sg_count; i++) {
+> @@ -1879,7 +1883,6 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+>         if (rcode != -ETIME && rcode != -EINTR) {
+>                 struct sg_simple_element *sg =
+>                                 (struct sg_simple_element*) (msg +sg_offset);
+> -               kfree (reply);
+>                 while(sg_index) {
+>                         if(sg_list[--sg_index]) {
+>                                 dma_free_coherent(&pHba->pDev->dev,
+> @@ -1889,6 +1892,10 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+>                         }
+>                 }
+>         }
 > +
-> +	vin4_pins_cvbs: vin4 {
-> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-> +		function = "vin4";
-> +	};
->  };
-> 
->  &i2c0 {
-> @@ -154,6 +159,23 @@
->  		reg = <0x50>;
->  		pagesize = <8>;
->  	};
-> +
-> +	analog-video@20 {
-> +		compatible = "adi,adv7180";
-> +		reg = <0x20>;
-> +
-> +		port {
+> +free:
+> +       kfree(sg_list);
+> +       kfree(reply);
+>         return rcode;
+>  }
+>
+> --
+> 2.17.0
+>
+>
+> --
+> Kees Cook
+> Pixel Security
 
-The adv7180 DT bindings document the output port as 3 or 6 (respectively for 
-the CP and ST versions of the chip). You should thus number the port. Apart 
-from that the patch looks good.
 
-> +			/*
-> +			 * The VIN4 video input path is shared between
-> +			 * CVBS and HDMI inputs through SW[49-54] switches.
-> +			 *
-> +			 * CVBS is the default selection, link it to VIN4 here.
-> +			 */
-> +			adv7180_out: endpoint {
-> +				remote-endpoint = <&vin4_in>;
-> +			};
-> +		};
-> +	};
->  };
-> 
->  &i2c1 {
-> @@ -246,3 +268,23 @@
->  	timeout-sec = <60>;
->  	status = "okay";
->  };
-> +
-> +&vin4 {
-> +	pinctrl-0 = <&vin4_pins_cvbs>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +
-> +			vin4_in: endpoint {
-> +				remote-endpoint = <&adv7180_out>;
-> +			};
-> +		};
-> +	};
-> +};
 
 -- 
-Regards,
-
-Laurent Pinchart
+Kees Cook
+Pixel Security
