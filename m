@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeERGQl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:16:41 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39655 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbeERGQj (ORCPT
+        id S1752002AbeERGUj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:20:39 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:37812 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751458AbeERGUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:16:39 -0400
-X-Google-Smtp-Source: AB8JxZpkZZ6snXhsO28e4CdMWRno48jy68v1RLlE/U8/GTkYgsgK33gTHoy7KEeRXY7Ywsn9KzHbFg==
-Date: Fri, 18 May 2018 08:16:36 +0200
+        Fri, 18 May 2018 02:20:38 -0400
+X-Google-Smtp-Source: AB8JxZpikJvJ56GrjMQTNgOY6xUkLJGgLAUpeSf92j55WbQOYcxncBXduXd1ucxcNxG1Dh18+hbYBQ==
+Date: Fri, 18 May 2018 08:20:34 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
@@ -21,7 +21,7 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Subject: Re: [PATCH -tip v3 4/7] kprobes: Ignore break_handler
-Message-ID: <20180518061635.GA27960@gmail.com>
+Message-ID: <20180518062034.GB27960@gmail.com>
 References: <152651499561.25583.14488389770693278906.stgit@devbox>
  <152651511510.25583.17622383189254834099.stgit@devbox>
 MIME-Version: 1.0
@@ -38,37 +38,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 > Ignore break_handler related code because it was only
 > used by jprobe and jprobe is removed.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  Documentation/kprobes.txt |    2 +-
->  kernel/kprobes.c          |   39 +++++----------------------------------
->  2 files changed, 6 insertions(+), 35 deletions(-)
 
-Even after all these changes there's quite a bit of ->break_handler() use:
+I changed this description to:
 
-triton:~/tip> git grep -w break_handler
-arch/arc/kernel/kprobes.c:              if (p->break_handler && p->break_handler(p, regs)) {
-arch/arm/probes/kprobes/core.c:                  * for calling the break_handler below on re-entry,
-arch/arm/probes/kprobes/core.c:         if (cur->break_handler && cur->break_handler(cur, regs)) {
-arch/arm64/kernel/probes/kprobes.c:                      * for calling the break_handler below on re-entry,
-arch/arm64/kernel/probes/kprobes.c:             if (cur_kprobe->break_handler  &&
-arch/arm64/kernel/probes/kprobes.c:                  cur_kprobe->break_handler(cur_kprobe, regs)) {
-arch/ia64/kernel/kprobes.c:                     if (p->break_handler && p->break_handler(p, regs)) {
-arch/mips/kernel/kprobes.c:                     if (p->break_handler && p->break_handler(p, regs))
-arch/powerpc/kernel/kprobes.c:                  if (p->break_handler && p->break_handler(p, regs)) {
-arch/s390/kernel/kprobes.c:                      * for calling the break_handler below on re-entry
-arch/s390/kernel/kprobes.c:             if (p->break_handler && p->break_handler(p, regs)) {
-arch/s390/kernel/kprobes.c:                      * break_handler "returns" to the original
-arch/sh/kernel/kprobes.c:                       if (p->break_handler && p->break_handler(p, regs)) {
-arch/sh/kernel/kprobes.c:                                       if (p->break_handler &&
-arch/sh/kernel/kprobes.c:                                           p->break_handler(p, args->regs))
-arch/sparc/kernel/kprobes.c:                    if (p->break_handler && p->break_handler(p, regs))
-arch/x86/include/asm/kprobes.h:  * a post_handler or break_handler).
-include/linux/kprobes.h:        kprobe_break_handler_t break_handler;
+ ============
+ Subject: kprobes: Don't call the ->break_handler() in generic kprobes code
 
-Nothing appears to be actually _setting_ the break_handler, so all of this is 
-stale code as well which should be removed?
+ Don't call the ->break_handler() from the core kprobes code, because it was only 
+ used by jprobes which got removed.
+
+ ( In a followup patch we'll remove the remaining calls in low level 
+   arch handlers as well and remove the callback altogether. )
+ ============
+
+Please try to be a lot less vague in changelogs when it's possible and relevant!
+
+I.e. saying "Ignore break_handler related code" is annoyingly vague, it doesn't 
+explain things well at all. Saying "Don't call the ->break_handler()" is just as 
+compact, yet it also makes it very clear what's done in the patch...
 
 Thanks,
 
