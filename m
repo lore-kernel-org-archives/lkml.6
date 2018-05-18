@@ -1,38 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrlrja0GkAEgH8Sp2j7SG2dT3J1+mAN0FFR2YrbeOGfo82Y1Ul2Fahr0i+PB/WFtrrjSl/j
-ARC-Seal: i=1; a=rsa-sha256; t=1526631649; cv=none;
+X-Google-Smtp-Source: AB8JxZpbIG0Rpk6qZ0GYlVn6OsFtRjyq3ksanEzacBzfWC9Ps6615BqQoJjFN9y1ZwXBxEunNK5Y
+ARC-Seal: i=1; a=rsa-sha256; t=1526631646; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bt1mOX7/t10hTZJNwLmxxrCEQKSvcy802EzOP2WEXkikTmtaVCat2Xz8HhabsGjPxX
-         gtSTa7pCt4UHNdXiOv+KFY6JZ3gGHvkryDXtneISYe/M3AdTvruoEhDI7VVIsadun624
-         NU02735x1sJfEQtMEPpbAYw9MXdWDWLp4bi+UDr/NaO7UMarNadePIGsSFTccGLpKTia
-         gifY8IhXAsCDNzn0ZHOkOt3JdpvrvJFSYm2Iv7IhYY3G9uEPSWxVSzTSfQL85E0yU3BW
-         +bg4iqjrDzrv9jNs5OhfeYbT7gs3CMCm13H9yJ9u+z36j1iRxK9A22Z5fhW1DL/01oCh
-         sKPw==
+        b=V5lRqSPXjrlGmxgG+ZXTT/4ZkTWO6xZWjBrjglc85mJcPOpvMNfxzcMZx50RRQiJQ5
+         Xew8CQEPOXhsY+ulJf1AY9Hob19hx5dh/2GUQltPBS8rds4jpo6XGnlVuKqundFO93rM
+         vAC3QimQCTKzjB2ro9QZr6WXpfcB6zeea2N3l8slr4FiWLbI7lUG1K3awfmwc5H8a7i4
+         IR5suztnDCIlFSYQbRqk/c4sn5cPY0p4LAJeAGiL0lAW9lK8GTWv9A7UgmDuiQJGxl4j
+         xqIZS0LPKvfmXLAgFTY2p/GxyBLT3gx/v4kbadZEXzzNGFYPrWRwaFfmYqV4r5t74DeF
+         aEOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fwVciR1R0Zj/wBfNm/2RvOPecBf2as9InYYVgL+QOsY=;
-        b=jenPHg4ZtUeQXmdHuyvuFbYV9vyXGj+a2yalI9TlAad0BgJjO8OZXAAKJpknVF1T7X
-         cW9eH4JMmZDsXjR981X3QgSrC8UroJSgAzwW7LtWtzBjmVPeGY1dqns/LbOKqBql5Cg2
-         dYokqhVdjxaa78bs6O1aqf3RnS0rHguYavjTGREqfOtmm0ptksoNQavKEETG2ZQw2d2N
-         xp9Gt2Nsz7qz60SGZqcQdZ+mlgJlk0FWHjMM99bV38uBDT56zfqWgDpypNvZ4Fxb2Gpv
-         w0E40iGIUrW2csL84S94mTn25XQsrTemziL0pMk8wnzpJ9Lx24bm4Suki3pT22MlvDQP
-         d6SQ==
+        bh=mBUDAK4x1xQ8Z3DqX3xtrjdlWxYYGGy5XBf+P+qHr0A=;
+        b=YK5tTQr9FbH9OM5v6Tb1oz4Qq94/yhjI7rHJq8pI+O+ezHRvwyXB/6kldsDxyIbZOl
+         gRCkD4V7E2gNE+RgO4+bCj5VOM0GJsnNrGw8buiw5R1RVpLxu9aG/cPLnKHrGtJTiTxn
+         lQ+i6kTZCBJ6rJq9z7Vn1YYF7Ntl35mHUwqlnd1AL5Kunsl6Kgi67M1IYBSc80xTkmyq
+         woYhdj3rifPpszkOpQy7hB/JoWGy8P4OE/xCRSWjonnaf+TpZ7XYze4ee7qi2IHpS1rr
+         tTsjC7jgtC7N8IDXIs9LG/PKMvClPC1o/FAfSS8HPKx1ND99INh5heeTZTcyIobHrg66
+         f8Tg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nZg6I6Xq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=DPJT5/V6;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nZg6I6Xq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=DPJT5/V6;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	ethanwu <ethanwu@synology.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 42/45] btrfs: Take trans lock before access running trans in check_delayed_ref
-Date: Fri, 18 May 2018 10:15:59 +0200
-Message-Id: <20180518081532.519546814@linuxfoundation.org>
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Alistair Strachan <astrachan@google.com>
+Subject: [PATCH 4.14 41/45] xfrm: Use __skb_queue_tail in xfrm_trans_queue
+Date: Fri, 18 May 2018 10:15:58 +0200
+Message-Id: <20180518081532.463671114@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789307961962886?=
-X-GMAIL-MSGID: =?utf-8?q?1600789307961962886?=
+X-GMAIL-THRID: =?utf-8?q?1600789305167374817?=
+X-GMAIL-MSGID: =?utf-8?q?1600789305167374817?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: ethanwu <ethanwu@synology.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 998ac6d21cfd6efd58f5edf420bae8839dda9f2a upstream.
+commit d16b46e4fd8bc6063624605f25b8c0835bb1fbe3 upstream.
 
-In preivous patch:
-Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist
-We avoid starting btrfs transaction and get this information from
-fs_info->running_transaction directly.
+We do not need locking in xfrm_trans_queue because it is designed
+to use per-CPU buffers.  However, the original code incorrectly
+used skb_queue_tail which takes the lock.  This patch switches
+it to __skb_queue_tail instead.
 
-When accessing running_transaction in check_delayed_ref, there's a
-chance that current transaction will be freed by commit transaction
-after the NULL pointer check of running_transaction is passed.
-
-After looking all the other places using fs_info->running_transaction,
-they are either protected by trans_lock or holding the transactions.
-
-Fix this by using trans_lock and increasing the use_count.
-
-Fixes: e4c3b2dcd144 ("Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist")
-CC: stable@vger.kernel.org # 4.14+
-Signed-off-by: ethanwu <ethanwu@synology.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-and-tested-by: Artem Savkov <asavkov@redhat.com>
+Fixes: acf568ee859f ("xfrm: Reinject transport-mode packets...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/xfrm/xfrm_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -3171,7 +3171,11 @@ static noinline int check_delayed_ref(st
- 	struct btrfs_transaction *cur_trans;
- 	int ret = 0;
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -518,7 +518,7 @@ int xfrm_trans_queue(struct sk_buff *skb
+ 		return -ENOBUFS;
  
-+	spin_lock(&root->fs_info->trans_lock);
- 	cur_trans = root->fs_info->running_transaction;
-+	if (cur_trans)
-+		refcount_inc(&cur_trans->use_count);
-+	spin_unlock(&root->fs_info->trans_lock);
- 	if (!cur_trans)
- 		return 0;
- 
-@@ -3180,6 +3184,7 @@ static noinline int check_delayed_ref(st
- 	head = btrfs_find_delayed_ref_head(delayed_refs, bytenr);
- 	if (!head) {
- 		spin_unlock(&delayed_refs->lock);
-+		btrfs_put_transaction(cur_trans);
- 		return 0;
- 	}
- 
-@@ -3196,6 +3201,7 @@ static noinline int check_delayed_ref(st
- 		mutex_lock(&head->mutex);
- 		mutex_unlock(&head->mutex);
- 		btrfs_put_delayed_ref(&head->node);
-+		btrfs_put_transaction(cur_trans);
- 		return -EAGAIN;
- 	}
- 	spin_unlock(&delayed_refs->lock);
-@@ -3223,6 +3229,7 @@ static noinline int check_delayed_ref(st
- 	}
- 	spin_unlock(&head->lock);
- 	mutex_unlock(&head->mutex);
-+	btrfs_put_transaction(cur_trans);
- 	return ret;
+ 	XFRM_TRANS_SKB_CB(skb)->finish = finish;
+-	skb_queue_tail(&trans->queue, skb);
++	__skb_queue_tail(&trans->queue, skb);
+ 	tasklet_schedule(&trans->tasklet);
+ 	return 0;
  }
- 
