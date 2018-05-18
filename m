@@ -1,38 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrtTvGof7Xje7IC4R4M9nc/7F1ozyLYtV/7EgaPPMhcrEw6BnWNEVRIGc5xjqZE66cAxI9b
-ARC-Seal: i=1; a=rsa-sha256; t=1526631434; cv=none;
+X-Google-Smtp-Source: AB8JxZrIlWEq32bcfKhZBbYECcssfc4vs0+6i5wBIHj1NjE0gwbUFotOG1qQK3Wn2fUchCcGvIb2
+ARC-Seal: i=1; a=rsa-sha256; t=1526631432; cv=none;
         d=google.com; s=arc-20160816;
-        b=O6cgzAq1X9d5G4Jx5hFRTjlsLHhyC91fKA3+ElPGdw99nnWy2jGgPhH8V8eJb1nwyG
-         GQ+ooS5DPVYEdknXH3fUUJ4aRUJekck22Zb7TQuyvP29A/UmHnBy92lBFoxRdqePZuLT
-         LdrMrFEN5gVDGMR/sqLLppaYzGYTd9u+m1cKZj/gaQmbHmtRcb8M42fjQq+kyYwZJ39S
-         OQI8P6H1xOumkXDCuxhRDMp6IGlqowMQ6TMwUVDpnKskJLugBPMlPII42xBlHS0n9XRx
-         nmwHhYR054fsL70dBW35462TJbciUEFLHPIgGYfafnVwLd/In2TiCyf+ahmS0C4Wl6wa
-         SIfw==
+        b=Pbgg0hAtD73YHH7ExEE/VqBMVNABmsQ6YsHNvXVqJKNQAIaNJcyyc2Vq8EXJUHr53c
+         hS5DsJvKVYolBd3IOn9/wUv+esDn6mVo22hkZIfA39+mIkYLw8ZNkF2PMjBBZOVlX9WM
+         0fcM5wLXBmwEquLUz/tx/bQ7VaTsglXHvBgG0V6yVFxagvZoM923WzDWbPMOL7acBKyw
+         XJJPjvNngMrspPDs0zFFlEJoY/ppp59sxsxT9Fe2fOhXatH1J52VF/PofApOuuhC6wLI
+         QZO84YQGEqhFsntBM9KoiEWy/7r+s5+lCTM1vp8tFW77f5b6K9uUduV7pwLjl5bu6Nza
+         8q8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=UbJX4PIf0AuyrbJBv1OEY11eQCqyvAxv3Mo8bRpZZo8=;
-        b=ZrN2uaFaKTx2cejltsntxPnYW3ucvFfed5ohoBe1JeCnLRiJXYOXwTTeBQ3K3ko67i
-         EhfhTTiO24u20Wp6I5/pNnFc112WWLfLj7HRrrU8uKe7Io5vQjbbL/BN52bazyFHjhS1
-         kiaKVfBd8kGgOBxSg62r650Hf4LM+iGk64M6yPHJgbfrzmt9DdF+fssxbJHoKaMwaa5v
-         jnO7ML9EL0N/KJqD1K5vWQoGp0YQwrokGxMMRLQTmUyMTjpkyXdKumn4RhhX5/bgU/99
-         eWF8LuX1IuRhG/eQV2WqXahGhFpmEKaxrt6tD5qDh3Jrjc8GEPYslinD+MUVPTMRZqs8
-         uPUg==
+        bh=fRCE7k95KbYE0yqUZ2irr0usY2SXze/e+UWVyh5MYAs=;
+        b=Ud4yHTA531uk24SdOvecn0OeqJxDyqTMgsN9xExkrj4x+s76nBd+dYkULDG6AwxHsQ
+         ++cRb8wRHq5hSTorSAVI2ITlBN1nDCnSK40+gtbHLat/eABcOmt8C2D3fk2sKsO5wdU7
+         oV0KbUM/04Ipe974hcV1kMb2mCJRSTt7FLeNGDkgrmg7ifDlRiovUzv1+K6OrUOQGsdB
+         bjwXjB96SBsH2szA4jFp2Dqo5bCHdYwcFtMAy/ckp6sOVPp3LmMJiEH3oYScZNt7ayVC
+         +2E2YqGQijTPYl6TYTTEM2wiFyGQV9WwzkNPqBdzqbsQOrzG7m5lW87+K3p92DFxZAG6
+         yNNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jrlBLIuC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0HpeI5ci;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jrlBLIuC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0HpeI5ci;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Rob Taglang <rob@taglang.io>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 08/55] net: ethernet: ti: cpsw: fix packet leaking in dual_mac mode
-Date: Fri, 18 May 2018 10:15:04 +0200
-Message-Id: <20180518081457.782849746@linuxfoundation.org>
+Subject: [PATCH 4.16 07/55] net: ethernet: sun: niu set correct packet size in skb
+Date: Fri, 18 May 2018 10:15:03 +0200
+Message-Id: <20180518081457.724870892@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789083638521342?=
-X-GMAIL-MSGID: =?utf-8?q?1600789083638521342?=
+X-GMAIL-THRID: =?utf-8?q?1600789080586007484?=
+X-GMAIL-MSGID: =?utf-8?q?1600789080586007484?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +51,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Rob Taglang <rob@taglang.io>
 
-[ Upstream commit 5e5add172ea81152d518b161ec5706503ad3d799 ]
+[ Upstream commit 14224923c3600bae2ac4dcae3bf0c3d4dc2812be ]
 
-In dual_mac mode packets arrived on one port should not be forwarded by
-switch hw to another port. Only Linux Host can forward packets between
-ports. The below test case (reported in [1]) shows that packet arrived on
-one port can be leaked to anoter (reproducible with dual port evms):
- - connect port 1 (eth0) to linux Host 0 and run tcpdump or Wireshark
- - connect port 2 (eth1) to linux Host 1 with vlan 1 configured
- - ping <IPx> from Host 1 through vlan 1 interface.
-ARP packets will be seen on Host 0.
+Currently, skb->len and skb->data_len are set to the page size, not
+the packet size. This causes the frame check sequence to not be
+located at the "end" of the packet resulting in ethernet frame check
+errors. The driver does work currently, but stricter kernel facing
+networking solutions like OpenVSwitch will drop these packets as
+invalid.
 
-Issue happens because dual_mac mode is implemnted using two vlans: 1 (Port
-1+Port 0) and 2 (Port 2+Port 0), so there are vlan records created for for
-each vlan. By default, the ALE will find valid vlan record in its table
-when vlan 1 tagged packet arrived on Port 2 and so forwards packet to all
-ports which are vlan 1 members (like Port.
+These changes set the packet size correctly so that these errors no
+longer occur. The length does not include the frame check sequence, so
+that subtraction was removed.
 
-To avoid such behaviorr the ALE VLAN ID Ingress Check need to be enabled
-for each external CPSW port (ALE_PORTCTLn.VID_INGRESS_CHECK) so ALE will
-drop ingress packets if Rx port is not VLAN member.
+Tested on Oracle/SUN Multithreaded 10-Gigabit Ethernet Network
+Controller [108e:abcd] and validated in wireshark.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Rob Taglang <rob@taglang.io>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/sun/niu.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1278,6 +1278,8 @@ static inline void cpsw_add_dual_emac_de
- 	cpsw_ale_add_ucast(cpsw->ale, priv->mac_addr,
- 			   HOST_PORT_NUM, ALE_VLAN |
- 			   ALE_SECURE, slave->port_vlan);
-+	cpsw_ale_control_set(cpsw->ale, slave_port,
-+			     ALE_PORT_DROP_UNKNOWN_VLAN, 1);
- }
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -3443,7 +3443,7 @@ static int niu_process_rx_pkt(struct nap
  
- static void soft_reset_slave(struct cpsw_slave *slave)
+ 		len = (val & RCR_ENTRY_L2_LEN) >>
+ 			RCR_ENTRY_L2_LEN_SHIFT;
+-		len -= ETH_FCS_LEN;
++		append_size = len + ETH_HLEN + ETH_FCS_LEN;
+ 
+ 		addr = (val & RCR_ENTRY_PKT_BUF_ADDR) <<
+ 			RCR_ENTRY_PKT_BUF_ADDR_SHIFT;
+@@ -3453,7 +3453,6 @@ static int niu_process_rx_pkt(struct nap
+ 					 RCR_ENTRY_PKTBUFSZ_SHIFT];
+ 
+ 		off = addr & ~PAGE_MASK;
+-		append_size = rcr_size;
+ 		if (num_rcr == 1) {
+ 			int ptype;
+ 
+@@ -3466,7 +3465,7 @@ static int niu_process_rx_pkt(struct nap
+ 			else
+ 				skb_checksum_none_assert(skb);
+ 		} else if (!(val & RCR_ENTRY_MULTI))
+-			append_size = len - skb->len;
++			append_size = append_size - skb->len;
+ 
+ 		niu_rx_skb_append(skb, page, off, append_size, rcr_size);
+ 		if ((page->index + rp->rbr_block_size) - rcr_size == addr) {
