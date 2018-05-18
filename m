@@ -1,51 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeERQd3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:33:29 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39550 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeERQd0 (ORCPT
+        id S1751952AbeERQeM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:34:12 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35941 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeERQeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:33:26 -0400
-X-Google-Smtp-Source: AB8JxZrTlRggoJFbxMfav63QxqQz+Rrhj2mjmUdnQdg/oStVy17eVWc3KY7yzwR+b4JpUBWryvK9dA==
-Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com>
- <b3970608-95dd-3d4f-140c-3d7cbd12cf8d@kernel.dk>
- <20180518162314.GC25227@infradead.org>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <8fcb7b62-d3ac-54b6-3cb7-45864cafe2b1@kernel.dk>
-Date: Fri, 18 May 2018 10:33:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 18 May 2018 12:34:10 -0400
+X-Google-Smtp-Source: AB8JxZo3XcluRCGmaxGUFlp8DZ8E7kAKO4yDcX2SBfDOcsigspxTu2GpOvEy7Rg9I9WhXs1Bm2VjQg==
+Date: Fri, 18 May 2018 11:34:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: jic23@kernel.org, benjamin.gaignard@st.com, fabrice.gasnier@st.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 8/9] counter: stm32-lptimer: add counter device
+Message-ID: <20180518163408.GA6430@rob-hp-laptop>
+References: <cover.1526487615.git.vilhelm.gray@gmail.com>
+ <726de278f09aa4438b97b147cd26a03009522997.1526487615.git.vilhelm.gray@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180518162314.GC25227@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <726de278f09aa4438b97b147cd26a03009522997.1526487615.git.vilhelm.gray@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/18/18 10:23 AM, Christoph Hellwig wrote:
-> On Fri, May 11, 2018 at 03:13:38PM -0600, Jens Axboe wrote:
->> Looked over the series, and looks like both good cleanups and optimizations.
->> If we can get the mempool patch sorted, I can apply this for 4.18.
+On Wed, May 16, 2018 at 01:52:27PM -0400, William Breathitt Gray wrote:
+> From: Fabrice Gasnier <fabrice.gasnier@st.com>
 > 
-> FYI, I agree on the actual cleanups and optimization, but we really
-> shouldn't add new functions or even just exports without the code
-> using them.  I think it is enough if we can collect ACKs on them, but
-> there is no point in using them.  Especially as I'd really like to see
-> the users for some of them first.
+> Add support for new counter device to stm32-lptimer.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> ---
+>  .../{iio => }/counter/stm32-lptimer-cnt.txt   |   0
+>  .../devicetree/bindings/mfd/stm32-lptimer.txt |   2 +-
 
-I certainly agree on that in general, but at the same time it makes the
-expected submission of bcachefs not having to carry a number of
-(essentially) unrelated patches. I'm assuming the likelihood of bcachefs
-being submitted soonish is high, hence we won't have exports that don't
-have in-kernel users in the longer term.
+Please split bindings to separate patch.
 
--- 
-Jens Axboe
+>  drivers/counter/Kconfig                       |  10 +
+>  drivers/counter/Makefile                      |   1 +
+>  drivers/counter/stm32-lptimer-cnt.c           | 722 ++++++++++++++++++
+>  drivers/iio/counter/Kconfig                   |   9 -
+>  drivers/iio/counter/Makefile                  |   2 -
+>  drivers/iio/counter/stm32-lptimer-cnt.c       | 382 ---------
+>  8 files changed, 734 insertions(+), 394 deletions(-)
+>  rename Documentation/devicetree/bindings/{iio => }/counter/stm32-lptimer-cnt.txt (100%)
+>  create mode 100644 drivers/counter/stm32-lptimer-cnt.c
+>  delete mode 100644 drivers/iio/counter/stm32-lptimer-cnt.c
