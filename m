@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3715653-1526636108-2-12202499777722420454
+X-Cyrus-Session-Id: sloti22d1t05-222706-1526671563-2-8407266133251217295
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,362 +13,329 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526636107; b=PukD1+fyuG12w40wOUvMwKySXVi/mb4MpnMIo6Dwp3x+8fpla+
-    vKVclJY3uis4fPbGhO3K4z0U2rkds0XVys54dXPGtHTPlGH50v2euxd2JnxIkftp
-    fGaDc/bEzDfFxCG955bGp/nWPKa+Tnz4gGkFl40bmJdLBMMnscug2vs0Y8MJvLu0
-    mzFJXn6hr1YVRXZNEKn/AudbhjtAano9mVumJavEb3Mng494eZ/YGQeXlrNrYAUu
-    gH9gV3lPJZRXVo1gLOsQjkjDPhOXsdud0O6HtPCGJdJDn8aK/oONLJgtrKlQbBZf
-    oICl0jpv/WFXVPnH2+Et9Ijirm47XfpMdyWQ==
+    1526671562; b=NWctj0GRXBmcE/tUVUuBZ/jtcwzpGipBRsR5Fr/sZzr6pzFGo/
+    z4/Tpe0iIeFz7YjyH3Xvovk86A9CuYTaCYz81jKrhT1n2Ni35dWWCvJlMTlQTHGD
+    mh6sYBRIA2okAnCBr7UVbr49RevKaAMlFEcaFBaOFSxhV59791kadomL/AqJFIXT
+    /lQ4ieBp4XLqmNiOjYvQ5Xih+L3R/K7tmr/8YURK+uJENPwqDitUK3/XqRwteMh0
+    NCzoKNyQEu3/ieetArESrFKN18hO/pjU40A1QVuCdB88t9DbgcMCG8fx1qSK+mnB
+    CuZOdW5ehiT+FihwpZSTNYNcjWPmDKLa4JZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1526636107; bh=OpO+tgFpKvsvKfQpVIrnZBRchQnnri
-    HkHXt313+XUss=; b=UBo8Shch9ijNH41ndTcd4jje+lcx/yTTpH7eRFqogU/YsB
-    oPX6bdHAvWbnEkcPkhrfx0S0r7fzbH/tQufv3UG+/CFcDN0lPIcj/HUf5KNdSgJI
-    vfM9zw1vjGkbCNCiycJhBdpr7w1iB+XGN6S5puCZuh5ahx9Mdopc4n4N+KdIbLlT
-    77aestZ30eotY1rebePgCHPR1owQWIsqSMtL7dhaiobYLoLPKzdMNMpB2VBmABT+
-    XQmnuPrN9S3VA3cTECDUd5B8zjJf0qVaDnQTqzPAn1WWgyBTrMtHnnH7oFnXapT0
-    P7vVgEPli6ws9GM90vg7Lua/la0kpsNTr8dcCqlg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=D1oZwO8X x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526671562;
+    bh=GuU2WcwF2ecAbVlmb4unQtoARXlc9vlSW3ShPqjWdVY=; b=XqSeYFC/lnbm
+    dDG1HCGh8V3AbOE9lybIgSo3kdutrdR5lhltR8r+1yYxuGsGDWoTWAfKj3PLmvP/
+    Lyff2KApNg997kiu2e/qOMxF+vOxL3qIIfI0Ffkmf2wPNYlUOUcGClAomtyF8QSJ
+    7jMa9xAFvEMmPwMYU01D+m0U0DmkwHzwjwUGZXu24PmRyde22VgLBEVeJArYk9t+
+    tGXcNNx33ifAEi2KvknyKpzDfIhsKPDc9KHPc4ZmsSnjA7vk6edcGMrXkw2/lzab
+    Tfsr8BeMMM+C6+t6MYgep+cwODjdukHYuGGYzfWlzzfGoTZ3WOM+nwLkD8lCWBWd
+    923jltJw1g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+    header.i=@linaro.org header.b=g/naZGXv x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=SmpZ3WYA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=D1oZwO8X x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+      header.i=@linaro.org header.b=g/naZGXv x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=SmpZ3WYA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCvRmZueFb6ET0GUyzD6YKoSUlpCREQ1qL4AwWB7TlNOxU5OisgEnI9Av9ulCm0gJgVyRf9nRo7YkLWQvR2Jw/olWpmKE0Xn4T0CyZ8UQOswp9Ef9efF
-    WeH2aIfTY2aUsdsoLfoj96eN1PZyvHwhfXR2+XDxTEDUG6u2H7TbnjSPmdgJH3qGXni+ldkWpFRSlZHkuofAwenldrK7YZir2g0lqiVE2FueWjAy/IaO+1Zy
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMX0GpRwdryr1+KgDmqLId7RL6KPC7iwroPQYXnGVS0COy4s+MID/+PTvum/juEPLfWiBqNBpQCrtg9Dwi2y5ifTayyubsz5gL9zmw9yAnEA6ukYZkGB
+    K+lUElzGaX4YkrLHEVJ5rZVlsvpf2dJB055G376NiLbJGvgnUez7nNkkIW8q8dNP1G6PZcrf23cg9WRdKqE+v0VD++qHa67QT6br6u22MFiZmbgMO2LW1MZt
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=cED_tJPvky8A:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=MYakio4dAAAA:8
-    a=uBuKx8GwAAAA:8 a=VnNF1IyMAAAA:8 a=P-IC7800AAAA:8 a=CbDCq_QkAAAA:8
-    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=LD2kUS3hAAAA:8
-    a=jZVsG21pAAAA:8 a=X7Ea-ya5AAAA:8 a=Q-fNiiVtAAAA:8 a=-nPe0ZbFAAAA:8
-    a=FOH2dFAWAAAA:8 a=A7XncKjpAAAA:8 a=sozttTNsAAAA:8 a=uVVE2sHfDrTw2vXYte4A:9
-    a=QEXdDO2ut3YA:10 a=E2q1x9kB5HEA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=cei-m1nUyINrUup_78-m:22 a=wZgZ3yaTFkxMEWn-yT5t:22
-    a=d3PnA9EDa4IxuAV0gXij:22 a=1qrBK16LubpBFNPVNq2M:22 a=FTB9xuwByZgvWSGbqjUc:22
-    a=3Sh2lD0sZASs_lUdrUhf:22 a=f3QdawHiMRSDlnPgGXNW:22 a=Fp8MccfUoT0GBdDC_Lng:22
-    a=k4lkcq4DNYWinfFV1uuM:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=R9rPLQDAdC6-Ub70kJmZ:22
-    a=aeg5Gbbo78KNqacMgKqU:22
+    a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+    a=S7Sb04gcMGZj-zh2NKoA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeERJev (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 05:34:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752475AbeERIRU (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 18 May 2018 04:17:20 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.16 00/55] 4.16.10-stable review
-Date: Fri, 18 May 2018 10:14:56 +0200
-Message-Id: <20180518081457.428920292@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
+        id S1751936AbeERTZ7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 15:25:59 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41633 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751569AbeERTZ6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 15:25:58 -0400
+X-Google-Smtp-Source: AB8JxZqrozEEfR3xlJFnedL39m3CSo/TrwqzqgEEzxdnuivhMU3imwlWYTatJZIojCAmnb+F4I651cGwzz2hWIjD3I4=
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.10-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.16.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.16.10-rc1
-X-KernelTest-Deadline: 2018-05-20T08:14+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
+References: <20180518081457.428920292@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 19 May 2018 00:55:56 +0530
+Message-ID: <CA+G9fYvZpqy=bbOXXqm8TUDpXD+0j9-entsyF-x4uR1gB4uZ4w@mail.gmail.com>
+Subject: Re: [PATCH 4.16 00/55] 4.16.10-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.16.10 release.
-There are 55 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sun May 20 08:14:42 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.10-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.16.10-rc1
-
-Willy Tarreau <w@1wt.eu>
-    proc: do not access cmdline nor environ from file-backed areas
-
-Dave Carroll <david.carroll@microsemi.com>
-    scsi: aacraid: Correct hba_send to include iu_type
-
-Ursula Braun <ubraun@linux.ibm.com>
-    net/smc: keep clcsock reference in smc_tcp_listen_work()
-
-Antoine Tenart <antoine.tenart@bootlin.com>
-    net: phy: sfp: fix the BR,min computation
-
-Israel Rukshin <israelr@mellanox.com>
-    net/mlx5: Fix mlx5_get_vector_affinity function
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
-
-Hangbin Liu <liuhangbin@gmail.com>
-    ipv4: reset fnhe_mtu_locked after cache route flushed
-
-Mohammed Gamal <mgamal@redhat.com>
-    hv_netvsc: Fix net device attach on older Windows hosts
-
-Eric Dumazet <edumazet@google.com>
-    tipc: fix one byte leak in tipc_sk_set_orig_addr()
-
-Eric Dumazet <edumazet@google.com>
-    tcp: restore autocorking
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: clear the new asoc's stream outcnt in sctp_stream_update
-
-John Hurley <john.hurley@netronome.com>
-    nfp: flower: set tunnel ttl value to net default
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: systemport: Correclty disambiguate driver instances
-
-Huy Nguyen <huyn@mellanox.com>
-    net/mlx5e: DCBNL fix min inline header size for dscp
-
-Ido Schimmel <idosch@mellanox.com>
-    mlxsw: spectrum_switchdev: Do not remove mrouter port from MDB's ports list
-
-Paolo Abeni <pabeni@redhat.com>
-    udp: fix SO_BINDTODEVICE
-
-Eric Dumazet <edumazet@google.com>
-    nsh: fix infinite loop
-
-Jianbo Liu <jianbol@mellanox.com>
-    net/mlx5e: Allow offloading ipv4 header re-write for icmp
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: fix uninit-value in ip6_multipath_l3_keys()
-
-Stephen Hemminger <stephen@networkplumber.org>
-    hv_netvsc: set master device
-
-Talat Batheesh <talatb@mellanox.com>
-    net/mlx5: Avoid cleaning flow steering table twice during error flow
-
-Tariq Toukan <tariqt@mellanox.com>
-    net/mlx5e: TX, Use correct counter in dma_map error flow
-
-Jiri Pirko <jiri@mellanox.com>
-    net: sched: fix error path in tcf_proto_create() when modules are not configured
-
-Debabrata Banerjee <dbanerje@akamai.com>
-    bonding: send learning packets for vlans on slave
-
-Debabrata Banerjee <dbanerje@akamai.com>
-    bonding: do not allow rlb updates to invalid mac
-
-Michael Chan <michael.chan@broadcom.com>
-    tg3: Fix vunmap() BUG_ON() triggered from tg3_free_consistent().
-
-Yuchung Cheng <ycheng@google.com>
-    tcp: ignore Fast Open on repair mode
-
-Neal Cardwell <ncardwell@google.com>
-    tcp_bbr: fix to zero idle_restart only upon S/ACKed data
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: use the old asoc when making the cookie-ack chunk in dupcook_d
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: remove sctp_chunk_put from fail_mark err path in sctp_ulpevent_make_rcvmsg
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: handle two v4 addrs comparison in sctp_inet6_cmp_addr
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: fix the issue that the cookie-ack with auth can't get processed
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: delay the authentication for the duplicated cookie-echo chunk
-
-Eric Dumazet <edumazet@google.com>
-    rds: do not leak kernel memory to user land
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    r8169: fix powering up RTL8168h
-
-Bjørn Mork <bjorn@mork.no>
-    qmi_wwan: do not steal interfaces from class drivers
-
-Stefano Brivio <sbrivio@redhat.com>
-    openvswitch: Don't swap table in nlattr_set() after OVS_ATTR_NESTED is found
-
-Andre Tomt <andre@tomt.net>
-    net/tls: Fix connection stall on partial tls record
-
-Dave Watson <davejwatson@fb.com>
-    net/tls: Don't recursively call push_record during tls_write_space callbacks
-
-Lance Richardson <lance.richardson.net@gmail.com>
-    net: support compat 64-bit time in {s,g}etsockopt
-
-Ursula Braun <ubraun@linux.ibm.com>
-    net/smc: restrict non-blocking connect finish
-
-Eric Dumazet <edumazet@google.com>
-    net_sched: fq: take care of throttled flows before reuse
-
-Roman Mashak <mrv@mojatatu.com>
-    net sched actions: fix refcnt leak in skbmod
-
-Adi Nissim <adin@mellanox.com>
-    net/mlx5: E-Switch, Include VF RDMA stats in vport statistics
-
-Roi Dayan <roid@mellanox.com>
-    net/mlx5e: Err if asked to offload TC match on frag being first
-
-Moshe Shemesh <moshe@mellanox.com>
-    net/mlx4_en: Verify coalescing parameters are in range
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    net/mlx4_en: Fix an error handling path in 'mlx4_en_init_netdev()'
-
-Grygorii Strashko <grygorii.strashko@ti.com>
-    net: ethernet: ti: cpsw: fix packet leaking in dual_mac mode
-
-Rob Taglang <rob@taglang.io>
-    net: ethernet: sun: niu set correct packet size in skb
-
-Eric Dumazet <edumazet@google.com>
-    llc: better deal with too small mtu
-
-Andrey Ignatov <rdna@fb.com>
-    ipv4: fix memory leaks in udp_sendmsg, ping_v4_sendmsg
-
-Julian Anastasov <ja@ssi.bg>
-    ipv4: fix fnhe usage by non-cached routes
-
-Eric Dumazet <edumazet@google.com>
-    dccp: fix tasklet usage
-
-Hangbin Liu <liuhangbin@gmail.com>
-    bridge: check iface upper dev when setting master via ioctl
-
-Ingo Molnar <mingo@elte.hu>
-    8139too: Use disable_irq_nosync() in rtl8139_poll_controller()
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- drivers/infiniband/hw/mlx5/main.c                  |   2 +-
- drivers/net/bonding/bond_alb.c                     |  15 +--
- drivers/net/bonding/bond_main.c                    |   2 +
- drivers/net/ethernet/broadcom/bcmsysport.c         |  16 ++-
- drivers/net/ethernet/broadcom/tg3.c                |   9 +-
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c    |  16 +++
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c     |   8 +-
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h       |   7 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c |   8 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c    |   7 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c    |  20 ++--
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c  |  11 +-
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c  |  23 ++--
- drivers/net/ethernet/mellanox/mlxsw/core.c         |   4 +-
- .../ethernet/mellanox/mlxsw/spectrum_switchdev.c   |  12 +--
- drivers/net/ethernet/netronome/nfp/flower/action.c |  10 +-
- drivers/net/ethernet/netronome/nfp/flower/cmsg.h   |   5 +-
- drivers/net/ethernet/realtek/8139too.c             |   2 +-
- drivers/net/ethernet/realtek/r8169.c               |   3 +
- drivers/net/ethernet/sun/niu.c                     |   5 +-
- drivers/net/ethernet/ti/cpsw.c                     |   2 +
- drivers/net/hyperv/netvsc_drv.c                    |   3 +-
- drivers/net/hyperv/rndis_filter.c                  |   2 +-
- drivers/net/phy/sfp-bus.c                          |   2 +-
- drivers/net/usb/qmi_wwan.c                         |  12 +++
- drivers/scsi/aacraid/commsup.c                     |   8 +-
- fs/proc/base.c                                     |   8 +-
- include/linux/mlx5/driver.h                        |  12 +--
- include/linux/mm.h                                 |   1 +
- include/net/bonding.h                              |   1 +
- include/net/tls.h                                  |   1 +
- mm/gup.c                                           |   3 +
- net/bridge/br_if.c                                 |   4 +-
- net/compat.c                                       |   6 +-
- net/dccp/ccids/ccid2.c                             |  14 ++-
- net/dccp/timer.c                                   |   2 +-
- net/ipv4/ping.c                                    |   7 +-
- net/ipv4/route.c                                   | 119 ++++++++++-----------
- net/ipv4/tcp.c                                     |   5 +-
- net/ipv4/tcp_bbr.c                                 |   4 +-
- net/ipv4/udp.c                                     |  11 +-
- net/ipv6/route.c                                   |   7 +-
- net/ipv6/udp.c                                     |   4 +-
- net/llc/af_llc.c                                   |   3 +
- net/nsh/nsh.c                                      |   4 +
- net/openvswitch/flow_netlink.c                     |   9 +-
- net/rds/recv.c                                     |   1 +
- net/sched/act_skbmod.c                             |   5 +-
- net/sched/cls_api.c                                |   2 +-
- net/sched/sch_fq.c                                 |  37 ++++---
- net/sctp/associola.c                               |  30 +++++-
- net/sctp/inqueue.c                                 |   2 +-
- net/sctp/ipv6.c                                    |   3 +
- net/sctp/sm_statefuns.c                            |  88 ++++++++-------
- net/sctp/stream.c                                  |   2 +
- net/sctp/ulpevent.c                                |   1 -
- net/smc/af_smc.c                                   |  18 ++--
- net/tipc/socket.c                                  |   3 +-
- net/tls/tls_main.c                                 |   8 ++
- 60 files changed, 398 insertions(+), 245 deletions(-)
+On 18 May 2018 at 13:44, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
+ote:
+> This is the start of the stable review cycle for the 4.16.10 release.
+> There are 55 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun May 20 08:14:42 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.16.10-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.16.10-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.16.y
+git commit: de63ee0383b7163aa4305ab30fd66d3e99ebfebe
+git describe: v4.16.9-56-gde63ee0383b7
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/bu=
+ild/v4.16.9-56-gde63ee0383b7
+
+
+No regressions (compared to build v4.16.9-55-g2b695e770deb)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+dragonboard-410c - arm64
+* boot - pass: 20, fail: 1,
+* kselftest - pass: 40, fail: 1, skip: 26
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 14,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1017, skip: 133
+* ltp-timers-tests - pass: 13,
+
+hi6220-hikey - arm64
+* boot - pass: 20,
+* kselftest - pass: 45, skip: 22
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1016, skip: 134
+* ltp-timers-tests - pass: 13,
+
+juno-r2 - arm64
+* boot - pass: 21,
+* kselftest - pass: 44, skip: 24
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1017, skip: 133
+* ltp-timers-tests - pass: 13,
+
+qemu_arm
+* boot - pass: 20,
+* kselftest - pass: 37, skip: 31
+* libhugetlbfs - pass: 1,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 63, skip: 18
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 58, skip: 5
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 7, skip: 7
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1055, fail: 3, skip: 92
+* ltp-timers-tests - pass: 13,
+
+qemu_arm64
+* boot - pass: 20,
+* kselftest - pass: 41, skip: 29
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 8, skip: 6
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 993, fail: 2, skip: 155
+* ltp-timers-tests - pass: 13,
+
+qemu_x86_64
+* boot - pass: 20,
+* kselftest - pass: 50, skip: 30
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 57, skip: 6
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 13, skip: 1
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 997, skip: 153
+* ltp-timers-tests - pass: 13,
+
+x15 - arm
+* boot - pass: 20,
+* kselftest - pass: 37, skip: 28
+* libhugetlbfs - pass: 87, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 63, skip: 18
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 58, skip: 5
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 20, skip: 2
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 13, skip: 1
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1075, skip: 75
+* ltp-timers-tests - pass: 13,
+
+x86_64
+* boot - pass: 22,
+* kselftest - pass: 55, skip: 22
+* kselftest-vsyscall-mode-native - pass: 55, skip: 24
+* kselftest-vsyscall-mode-none - pass: 55, skip: 21
+* libhugetlbfs - pass: 90, skip: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 64, skip: 17
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 58, skip: 5
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 9, skip: 5
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1034, skip: 116
+* ltp-timers-tests - pass: 13,
+
+--=20
+Linaro QA (BETA)
+https://qa-reports.linaro.org
