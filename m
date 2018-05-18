@@ -1,69 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeERB7m (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 21:59:42 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:32790 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeERB7k (ORCPT
+        id S1752373AbeERB75 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 21:59:57 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43275 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeERB7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 21:59:40 -0400
-X-Google-Smtp-Source: AB8JxZovMaIDtGS90i944FM+CWhYLn+fBX6Y10XQgtIvUsMEfAqtR3+RVlS2fDL5BOPDouoBuAfUeQ==
-Date: Fri, 18 May 2018 07:29:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 07/11] cpufreq: tegra20: Check if this is Tegra20
- machine
-Message-ID: <20180518015937.kcu3ltv3kb3nvoli@vireshk-i7>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-8-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-8-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Thu, 17 May 2018 21:59:11 -0400
+X-Google-Smtp-Source: AB8JxZqBvZKUK7vBGdazj7IcsTf9dHD8g8kvSCwNzR76kVTX6haJ3Vac9+91xR7//6tq41knowfbog==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Todd Kjos <tkjos@google.com>,
+        Erick Reyes <erickreyes@google.com>, Julia Cartwright <julia@ni.com>,
+        kernel-team@android.com
+Subject: [PATCH 2/2] kselftests: ftrace: Add tests for the preemptoff and irqsoff tracers
+Date: Thu, 17 May 2018 18:59:02 -0700
+Message-Id: <20180518015902.131427-3-joelaf@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180518015902.131427-1-joelaf@google.com>
+References: <20180518015902.131427-1-joelaf@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-05-18, 21:00, Dmitry Osipenko wrote:
-> Don't even try to request the clocks during of module initialization on
-> non-Tegra20 machines (this is the case for a multi-platform kernel) for
-> consistency.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> index 147ae3e14f18..797c61c74b65 100644
-> --- a/drivers/cpufreq/tegra20-cpufreq.c
-> +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> @@ -19,6 +19,7 @@
->  #include <linux/clk.h>
->  #include <linux/cpufreq.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  
->  static struct cpufreq_frequency_table freq_table[] = {
->  	{ .frequency = 216000 },
-> @@ -155,6 +156,9 @@ static int __init tegra_cpufreq_init(void)
->  {
->  	int err;
->  
-> +	if (!of_machine_is_compatible("nvidia,tegra20"))
-> +		return -ENODEV;
-> +
->  	cpu_clk = clk_get_sys(NULL, "cclk");
->  	if (IS_ERR(cpu_clk))
->  		return PTR_ERR(cpu_clk);
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Here we add unit tests for the preemptoff and irqsoff tracer by using a
+kernel module introduced previously to trigger atomic sections in the
+kernel.
 
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Glexiner <tglx@linutronix.de>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Erick Reyes <erickreyes@google.com>
+Cc: Julia Cartwright <julia@ni.com>
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ tools/testing/selftests/ftrace/config         |  3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..29588b328345 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_PREEMPT_TRACER=y
++CONFIG_IRQSOFF_TRACER=y
++CONFIG_TEST_ATOMIC_SECTIONS=m
+diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+new file mode 100644
+index 000000000000..b76d781c5645
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+@@ -0,0 +1,74 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: test for the preemptirqsoff tracer
++
++MOD=test_atomic_sections
++
++fail() {
++    reset_tracer
++    rmmod $MOD || true
++    exit_fail
++}
++
++unsup() { #msg
++    reset_tracer
++    rmmod $MOD || true
++    echo $1
++    exit_unsupported
++}
++
++modprobe $MOD || unsup "$MOD module not available"
++rmmod $MOD
++
++grep "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
++grep "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
++
++reset_tracer
++
++# Simulate preemptoff section for half a second couple of times
++echo preemptoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep "tracer: preemptoff" trace || fail
++
++# Check the end of the section
++egrep "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep "latency: 5..... us" trace || fail
++
++reset_tracer
++
++# Simulate irqsoff section for half a second couple of times
++echo irqsoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep "tracer: irqsoff" trace || fail
++
++# Check the end of the section
++egrep "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep "latency: 5..... us" trace || fail
++
++reset_tracer
++exit 0
++
 -- 
-viresh
+2.17.0.441.gb46fe60e1d-goog
