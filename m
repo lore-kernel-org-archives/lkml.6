@@ -1,38 +1,40 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpMkvh789+FyJRORxtmAntQWZlLbgbI9zAmCn8Gix1rn11UhAXmBHMClRxDpdBrDRVBO9/h
-ARC-Seal: i=1; a=rsa-sha256; t=1526631751; cv=none;
+X-Google-Smtp-Source: AB8JxZqlWKZpOjVS8yskK+Xbia42FuapLCkdK4wi3EsJGmRrHcEnK3yLE/0sPXrUFe7TjHfJuup9
+ARC-Seal: i=1; a=rsa-sha256; t=1526631748; cv=none;
         d=google.com; s=arc-20160816;
-        b=nJflq7w7Tuwq/t4H6D/bUHm4PfIULdUE3q2F7/Ymjjb9Tyrli4atO8bearlhgVuZPZ
-         yJkuKnXAJkbzSRhux9rF6Nk2QtldlUvsj86TExR0ZnLSdBksH7aJip+kV8j0L9U2PIiq
-         W52YEXhQiVJ8NFJr/WGrKBTfdlSotJ7vasMbZOFkxgWzZMemOijrxKtL0YYusbrNwDIM
-         17Hvo7tNl2XmldCdwz+AldzGGviJvD6QuK7eUU4T6eyrP7xq1oiTwJ9ecRq59lnZ1owT
-         qhgxx2nqSvZ7D+tJCPgNY/oJeMLOgr1lH2PaIT2saYzBmOdMjG60zOAIn5+IxGWcdNHv
-         M8KA==
+        b=Jinez7ae0X79O4PAKyVP2pn7Dnb0vCCwtEXX7C6wiN3lm6qNqX4BycuKRgOtZ0659T
+         JzLiidiq2Ikkp6sqjVRyF5WhpJfItfEkSvi+s7HDavsAerPegnkIer5p/8SwMG6E9o+a
+         R9gCIu8fZJIMPdPtAHjPNvVR3lAH83AxFlKNps8m1AHxpehRK3bj1R0Ns0COsuuRJg/h
+         EsaNnJbGdvoxxPx8lTogNQgEhOmjOQ6gGk+JPgdRi781ry8lBTN8RMwd/dvNZbyKQ6At
+         90arssL1CnneCVb8ILoK+vDfTbd5hRUD7YbMQlcwbLDS3nJ0TUyRGrUk9BZ/A3qLGI38
+         9dAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Gw2it0bKRUVFgmb2qGWJDwEstZUZ097HlgGx0TsO6FM=;
-        b=jCZodeMMWGhDRk91/02c92RAQw+oEjN3O6TysWnq4p/SKpT2JwcVXC/0bkqo1f0FCF
-         G5SadSq59GZfr85ycM8837WY6Xhpghlt3bWuIqyHb8APb93HcBM7o6tRop6rvwUcO34H
-         oA3p4NbLZ9WXiUbquSGvOBRAwt0814TAZXnNlLGDBsSk2++gPowdBR7S4zso3OhrYejN
-         K6/M/+r+gbExmhPmQjYcQMDsN1mk23GQI5rd3ib1nbQB0Yr8jDNqK/c0uX9meXmZtJBQ
-         uxKsd37IYsYkbCm6mV20GU7JstoOO3IGo4LLk8MnbeUbfD0+qHoSX/bPr5y8KTaKWwHg
-         zqhw==
+        bh=gySUkZGrz8gk1Xd5boF/PD0O4xRdScFdOUFpbBChZyM=;
+        b=o9cp3NmUsIb+gVMBay41cZw6hroiFEDlYxq/3KOFaTFWznoDbsz62y34FESRkcPsDr
+         gZRFGotmodUPlszoQjZuDcIi3qpYiPVC7nDxa5VI1dXyOrlC8n16f8Hs1O8xUSFat5Yt
+         6CpjESdvE6BYLvEQ74xhuyUyG9wbFFhO/wXv9GJwPExAN8SXXvAPhFRBMpl3myt9H+Yd
+         CaljpajHuWSSyyl/AMm0VuTDqNJQKnyCEHEJ5L78Mlml5WPPu/EZIGxwPxAte0IloMYb
+         fJxOf8i1KUbSofvl4AP8S10Bi6A8lua2flFUADIGiK3qMSp2LMh1eSe8Nz2gajX9lmuM
+         +0Gw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iY/DN5wv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yreptq4S;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iY/DN5wv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yreptq4S;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 26/33] serial: sccnxp: Fix error handling in sccnxp_probe()
-Date: Fri, 18 May 2018 10:16:05 +0200
-Message-Id: <20180518081536.129606967@linuxfoundation.org>
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 25/33] sctp: delay the authentication for the duplicated cookie-echo chunk
+Date: Fri, 18 May 2018 10:16:04 +0200
+Message-Id: <20180518081536.092532832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789415588343883?=
-X-GMAIL-MSGID: =?utf-8?q?1600789415588343883?=
+X-GMAIL-THRID: =?utf-8?q?1600789094206270984?=
+X-GMAIL-MSGID: =?utf-8?q?1600789412759858709?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +53,247 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit c91261437985d481c472639d4397931d77f5d4e9 upstream.
+[ Upstream commit 59d8d4434f429b4fa8a346fd889058bda427a837 ]
 
-sccnxp_probe() returns result of regulator_disable() that may lead
-to returning zero, while device is not properly initialized.
-Also the driver enables clocks, but it does not disable it.
+Now sctp only delays the authentication for the normal cookie-echo
+chunk by setting chunk->auth_chunk in sctp_endpoint_bh_rcv(). But
+for the duplicated one with auth, in sctp_assoc_bh_rcv(), it does
+authentication first based on the old asoc, which will definitely
+fail due to the different auth info in the old asoc.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+The duplicated cookie-echo chunk will create a new asoc with the
+auth info from this chunk, and the authentication should also be
+done with the new asoc's auth info for all of the collision 'A',
+'B' and 'D'. Otherwise, the duplicated cookie-echo chunk with auth
+will never pass the authentication and create the new connection.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+This issue exists since very beginning, and this fix is to make
+sctp_assoc_bh_rcv() follow the way sctp_endpoint_bh_rcv() does
+for the normal cookie-echo chunk to delay the authentication.
+
+While at it, remove the unused params from sctp_sf_authenticate()
+and define sctp_auth_chunk_verify() used for all the places that
+do the delayed authentication.
+
+v1->v2:
+  fix the typo in changelog as Marcelo noticed.
+
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/sccnxp.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ net/sctp/associola.c    |   30 ++++++++++++++++
+ net/sctp/sm_statefuns.c |   87 ++++++++++++++++++++++++++----------------------
+ 2 files changed, 77 insertions(+), 40 deletions(-)
 
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -889,7 +889,16 @@ static int sccnxp_probe(struct platform_
- 			goto err_out;
- 		uartclk = 0;
- 	} else {
--		clk_prepare_enable(clk);
-+		ret = clk_prepare_enable(clk);
-+		if (ret)
-+			goto err_out;
+--- a/net/sctp/associola.c
++++ b/net/sctp/associola.c
+@@ -1006,9 +1006,10 @@ static void sctp_assoc_bh_rcv(struct wor
+ 	struct sctp_endpoint *ep;
+ 	struct sctp_chunk *chunk;
+ 	struct sctp_inq *inqueue;
+-	int state;
+ 	sctp_subtype_t subtype;
++	int first_time = 1;	/* is this the first time through the loop */
+ 	int error = 0;
++	int state;
+ 
+ 	/* The association should be held so we should be safe. */
+ 	ep = asoc->ep;
+@@ -1019,6 +1020,30 @@ static void sctp_assoc_bh_rcv(struct wor
+ 		state = asoc->state;
+ 		subtype = SCTP_ST_CHUNK(chunk->chunk_hdr->type);
+ 
++		/* If the first chunk in the packet is AUTH, do special
++		 * processing specified in Section 6.3 of SCTP-AUTH spec
++		 */
++		if (first_time && subtype.chunk == SCTP_CID_AUTH) {
++			struct sctp_chunkhdr *next_hdr;
 +
-+		ret = devm_add_action_or_reset(&pdev->dev,
-+				(void(*)(void *))clk_disable_unprepare,
-+				clk);
-+		if (ret)
-+			goto err_out;
++			next_hdr = sctp_inq_peek(inqueue);
++			if (!next_hdr)
++				goto normal;
 +
- 		uartclk = clk_get_rate(clk);
++			/* If the next chunk is COOKIE-ECHO, skip the AUTH
++			 * chunk while saving a pointer to it so we can do
++			 * Authentication later (during cookie-echo
++			 * processing).
++			 */
++			if (next_hdr->type == SCTP_CID_COOKIE_ECHO) {
++				chunk->auth_chunk = skb_clone(chunk->skb,
++							      GFP_ATOMIC);
++				chunk->auth = 1;
++				continue;
++			}
++		}
++
++normal:
+ 		/* SCTP-AUTH, Section 6.3:
+ 		 *    The receiver has a list of chunk types which it expects
+ 		 *    to be received only after an AUTH-chunk.  This list has
+@@ -1057,6 +1082,9 @@ static void sctp_assoc_bh_rcv(struct wor
+ 		/* If there is an error on chunk, discard this packet. */
+ 		if (error && chunk)
+ 			chunk->pdiscard = 1;
++
++		if (first_time)
++			first_time = 0;
+ 	}
+ 	sctp_association_put(asoc);
+ }
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -144,10 +144,8 @@ static sctp_disposition_t sctp_sf_violat
+ 				     void *arg,
+ 				     sctp_cmd_seq_t *commands);
+ 
+-static sctp_ierror_t sctp_sf_authenticate(struct net *net,
+-				    const struct sctp_endpoint *ep,
++static sctp_ierror_t sctp_sf_authenticate(
+ 				    const struct sctp_association *asoc,
+-				    const sctp_subtype_t type,
+ 				    struct sctp_chunk *chunk);
+ 
+ static sctp_disposition_t __sctp_sf_do_9_1_abort(struct net *net,
+@@ -615,6 +613,38 @@ sctp_disposition_t sctp_sf_do_5_1C_ack(s
+ 	return SCTP_DISPOSITION_CONSUME;
+ }
+ 
++static bool sctp_auth_chunk_verify(struct net *net, struct sctp_chunk *chunk,
++				   const struct sctp_association *asoc)
++{
++	struct sctp_chunk auth;
++
++	if (!chunk->auth_chunk)
++		return true;
++
++	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
++	 * is supposed to be authenticated and we have to do delayed
++	 * authentication.  We've just recreated the association using
++	 * the information in the cookie and now it's much easier to
++	 * do the authentication.
++	 */
++
++	/* Make sure that we and the peer are AUTH capable */
++	if (!net->sctp.auth_enable || !asoc->peer.auth_capable)
++		return false;
++
++	/* set-up our fake chunk so that we can process it */
++	auth.skb = chunk->auth_chunk;
++	auth.asoc = chunk->asoc;
++	auth.sctp_hdr = chunk->sctp_hdr;
++	auth.chunk_hdr = (struct sctp_chunkhdr *)
++				skb_push(chunk->auth_chunk,
++					 sizeof(struct sctp_chunkhdr));
++	skb_pull(chunk->auth_chunk, sizeof(struct sctp_chunkhdr));
++	auth.transport = chunk->transport;
++
++	return sctp_sf_authenticate(asoc, &auth) == SCTP_IERROR_NO_ERROR;
++}
++
+ /*
+  * Respond to a normal COOKIE ECHO chunk.
+  * We are the side that is being asked for an association.
+@@ -751,36 +781,9 @@ sctp_disposition_t sctp_sf_do_5_1D_ce(st
+ 	if (error)
+ 		goto nomem_init;
+ 
+-	/* SCTP-AUTH:  auth_chunk pointer is only set when the cookie-echo
+-	 * is supposed to be authenticated and we have to do delayed
+-	 * authentication.  We've just recreated the association using
+-	 * the information in the cookie and now it's much easier to
+-	 * do the authentication.
+-	 */
+-	if (chunk->auth_chunk) {
+-		struct sctp_chunk auth;
+-		sctp_ierror_t ret;
+-
+-		/* Make sure that we and the peer are AUTH capable */
+-		if (!net->sctp.auth_enable || !new_asoc->peer.auth_capable) {
+-			sctp_association_free(new_asoc);
+-			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+-		}
+-
+-		/* set-up our fake chunk so that we can process it */
+-		auth.skb = chunk->auth_chunk;
+-		auth.asoc = chunk->asoc;
+-		auth.sctp_hdr = chunk->sctp_hdr;
+-		auth.chunk_hdr = (sctp_chunkhdr_t *)skb_push(chunk->auth_chunk,
+-					    sizeof(sctp_chunkhdr_t));
+-		skb_pull(chunk->auth_chunk, sizeof(sctp_chunkhdr_t));
+-		auth.transport = chunk->transport;
+-
+-		ret = sctp_sf_authenticate(net, ep, new_asoc, type, &auth);
+-		if (ret != SCTP_IERROR_NO_ERROR) {
+-			sctp_association_free(new_asoc);
+-			return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+-		}
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc)) {
++		sctp_association_free(new_asoc);
++		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
  	}
  
-@@ -988,7 +997,7 @@ static int sccnxp_probe(struct platform_
- 	uart_unregister_driver(&s->uart);
- err_out:
- 	if (!IS_ERR(s->regulator))
--		return regulator_disable(s->regulator);
-+		regulator_disable(s->regulator);
+ 	repl = sctp_make_cookie_ack(new_asoc, chunk);
+@@ -1717,13 +1720,15 @@ static sctp_disposition_t sctp_sf_do_dup
+ 			       GFP_ATOMIC))
+ 		goto nomem;
  
- 	return ret;
- }
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Make sure no new addresses are being added during the
+ 	 * restart.  Though this is a pretty complicated attack
+ 	 * since you'd have to get inside the cookie.
+ 	 */
+-	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands)) {
++	if (!sctp_sf_check_restart_addrs(new_asoc, asoc, chunk, commands))
+ 		return SCTP_DISPOSITION_CONSUME;
+-	}
+ 
+ 	/* If the endpoint is in the SHUTDOWN-ACK-SENT state and recognizes
+ 	 * the peer has restarted (Action A), it MUST NOT setup a new
+@@ -1828,6 +1833,9 @@ static sctp_disposition_t sctp_sf_do_dup
+ 			       GFP_ATOMIC))
+ 		goto nomem;
+ 
++	if (!sctp_auth_chunk_verify(net, chunk, new_asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Update the content of current association.  */
+ 	sctp_add_cmd_sf(commands, SCTP_CMD_UPDATE_ASSOC, SCTP_ASOC(new_asoc));
+ 	sctp_add_cmd_sf(commands, SCTP_CMD_NEW_STATE,
+@@ -1920,6 +1928,9 @@ static sctp_disposition_t sctp_sf_do_dup
+ 	 * a COOKIE ACK.
+ 	 */
+ 
++	if (!sctp_auth_chunk_verify(net, chunk, asoc))
++		return SCTP_DISPOSITION_DISCARD;
++
+ 	/* Don't accidentally move back into established state. */
+ 	if (asoc->state < SCTP_STATE_ESTABLISHED) {
+ 		sctp_add_cmd_sf(commands, SCTP_CMD_TIMER_STOP,
+@@ -3981,10 +3992,8 @@ gen_shutdown:
+  *
+  * The return value is the disposition of the chunk.
+  */
+-static sctp_ierror_t sctp_sf_authenticate(struct net *net,
+-				    const struct sctp_endpoint *ep,
++static sctp_ierror_t sctp_sf_authenticate(
+ 				    const struct sctp_association *asoc,
+-				    const sctp_subtype_t type,
+ 				    struct sctp_chunk *chunk)
+ {
+ 	struct sctp_authhdr *auth_hdr;
+@@ -4083,7 +4092,7 @@ sctp_disposition_t sctp_sf_eat_auth(stru
+ 						  commands);
+ 
+ 	auth_hdr = (struct sctp_authhdr *)chunk->skb->data;
+-	error = sctp_sf_authenticate(net, ep, asoc, type, chunk);
++	error = sctp_sf_authenticate(asoc, chunk);
+ 	switch (error) {
+ 	case SCTP_IERROR_AUTH_BAD_HMAC:
+ 		/* Generate the ERROR chunk and discard the rest
