@@ -1,30 +1,30 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3322034-1526421043-2-1965052596035148389
+X-Cyrus-Session-Id: sloti22d1t05-35557-1526662546-2-2269319625543767384
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526421042; b=hfkKK8JNa3h+ddZTyIc7OZiFTZD+4aqYuMVv+mDMSvzY73DP0U
-    Hbh7jLYMZ6eu6T2uvHAJynEIqoQIhPsFXwxTjeWu2h3EMawIifN+8KlbsgsTGDvw
-    DM9RRAg5kqlG2wsfzehCK2FU/4lPuMf8/S6txAG66zJErrsbe2Cs2vXWVNiVqvh2
-    iqtNllhnjI3p6oVMCRPU6co62CeBldHEejaa0PKB5XlM8MMFnl2lEsmRXtpHMwhf
-    yoAaVAnPOd8yv+A829N5OF4OZODSovQJfGVS+Tz5e1HftT343i7bW6DxFCX+qIbT
-    /rIyDB6U+eKaY0fzg2MyUhrm6a+GKqnRGSMg==
+    1526662545; b=Jm25o3bdv4Puaiz0rv3MJbkQHuRnakq9qqunq0xG9sYZN+NZMk
+    JoCqjcYqITi5Nnovi/ddkgJqanDiuVA+jvwd1SLrkIlvW4mtki5R7jqGYk+4Z5ws
+    oL+EmWZeCQpnjg+0ZG4mQvGc9bnFCHfI/Dulvr0fMTQZbVy72ZTDbLBj1MkYLdvi
+    /HoftQ+KMvhUMUstUN0VOXPbI2Hridl/LUZHlltBvKFF9H1WagBDad+lzsDX05mY
+    H0ekoz4TNqQC54DP+EuhZ2c27H3vggkqaEEw/MEcF7uw18pX/m2qoVHtvJeJlaEh
+    dA65c+iuqe3mi7Cpnx1/rDKiBmuNL2ys68Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526421042; bh=
-    vV0mxsOxAuWLJvJB/yWbfKHmslKOnsFHRh08+gb8dy4=; b=UjBy1qdsOSWQMNEt
-    mgS0Txz7hEJKkZc91Lm6RDK2bJQKZejR/7Bjwl3V80LQWRGFnX5/kj7Nbe17apu3
-    2JhY1cMSrn/FNQ4BU3kN510nChkhWf3GTlVTiY3wbbcdDJcs/YEU6tb/Nu1EWEbr
-    exsgZL5cL3WJReqsO1O9eovYQAdBOZnvF9jLMma3JkLNa7MOGgZAlmT2uMhxcDz+
-    XLRG5i2oBF4jkpEBm6gXLJ2RaUQi7KacyDVeR4bLfdk1yqazfep/8R+bLnCaDhFK
-    k3xitEQjDzLRrZs86g8ICfXW2t2jqFOPBochdBkNM3rmvlG+HiBgzsbnEsM8e/Xx
-    A4/XcA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526662545; bh=7n7+dndSt5fcbo2GL+XYlSigCwX47z
+    sFFqehD1CXL4Q=; b=GHXyXlI1OP+ygU0wxbIbgJkk/S5ccyFCBgQP8mQeHfgdLv
+    JUmegpqKm/gPw79S05252wEG7q/+QS35qvL4kuyhGfBNsRWs5vmwpBevUIEhl5cJ
+    A9C2p7DEZjn0I1uTXSJkV5MwIBjR8oPgjrzJ5z2u1UkLlFOjminL5TV3u7d8pySZ
+    6KkAjCuWwMMeafV626EO8d98zQNICPT3L2DpnQ4NpCwgopwRg0kxJ7GLlxJ69825
+    28mQ3LWitCeg0eXXTK9Ib/fiSBgcZFOmBcDrsoqHjfZ1rEL+zpujlcUiMO0l5YfY
+    iInShOP36qpa0ZpM49ca4fnhLUCkoLhKClxVuhDw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -52,189 +52,110 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF4QCAuw1czbexbJmr5BbYeOzEtqXmKDUfnJ9mzXRI+ZCWt3sp+IJpF1k0ygndHAzUV3jTtq2B45ZXInO4JHW+F0bYyPOhGPiMYhRSk3UENEuMScO4uH
-    /LwlLIB+Qa3TZrRMORdJV/wptWmLXen50B6tW328uKCpmJcPamkdJoIuizM4MrAcghInZNBVMiFJo/ZrzYnQLCyDIJeQr7c9Cw6Mo8hkakwB6rziJFSXAD4q
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=9n50GB4xyT7VpKlAsUUA:9
+X-CM-Envelope: MS4wfAgW3dgcuoYQy9INiHk17Vsz7XB66b0cNq5ZiMu2Rd4xO3yTAry7ugyPnLOcKuhLrBKH3S1TOpBGUkIm7nre6tAEWX1hdTCmXE04TKACil7ezvidUuCX
+    ocseQbz1iyeoFFjXZa3b6R28cD5O7dOt8bjHPWuD/awde4YXCseRm4ma0g3oNQJr9PF17plExzPNkCZnrsCsKKgB9j//UXsPjhY0k11LRhpLMK/jhAuwUNSQ
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=20KFwNOVAAAA:8 a=eMGQAqyUu0D8OVugCf4A:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752378AbeEOVuj (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 15 May 2018 17:50:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39126 "EHLO mx1.redhat.com"
+        id S1752572AbeERQzl (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 12:55:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751578AbeEOVuE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 May 2018 17:50:04 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
+        id S1750882AbeERQzi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 May 2018 12:55:38 -0400
+Date: Fri, 18 May 2018 18:55:35 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Davidlohr Bueso <dave@stgolabs.net>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 1/2] locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
-Date: Tue, 15 May 2018 17:49:50 -0400
-Message-Id: <1526420991-21213-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1526420991-21213-1-git-send-email-longman@redhat.com>
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH] locking/rwsem: simplify the is-owner-spinnable checks
+Message-ID: <20180518165534.GA22348@redhat.com>
 References: <1526420991-21213-1-git-send-email-longman@redhat.com>
+ <1526420991-21213-2-git-send-email-longman@redhat.com>
+ <20180516121947.GE20670@bombadil.infradead.org>
+ <20180518070258.GA20971@gmail.com>
+ <20180518084122.GA14307@redhat.com>
+ <20180518094052.GA26150@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518094052.GA26150@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are use cases where a rwsem can be acquired by one task, but
-released by another task. In thess cases, optimistic spinning may need
-to be disabled.  One example will be the filesystem freeze/thaw code
-where the task that freezes the filesystem will acquire a write lock
-on a rwsem and then un-owns it before returning to userspace. Later on,
-another task will come along, acquire the ownership, thaw the filesystem
-and release the rwsem.
+Add the trivial owner_on_cpu() helper for rwsem_can_spin_on_owner() and
+rwsem_spin_on_owner(), it also allows to make rwsem_can_spin_on_owner()
+a bit more clear.
 
-Bit 0 of the owner field was used to designate that it is a reader
-owned rwsem. It is now repurposed to mean that the owner of the rwsem
-is not known. If only bit 0 is set, the rwsem is reader owned. If bit
-0 and other bits are set, it is writer owned with an unknown owner.
-One such value for the latter case is (-1L). So we can set owner to 1 for
-reader-owned, -1 for writer-owned. The owner is unknown in both cases.
-
-To handle transfer of rwsem ownership, the higher level code should
-set the owner field to -1 to indicate a write-locked rwsem with unknown
-owner.  Optimistic spinning will be disabled in this case.
-
-Once the higher level code figures who the new owner is, it can then
-set the owner field accordingly.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- kernel/locking/rwsem-xadd.c | 17 +++++++----------
- kernel/locking/rwsem.c      |  2 --
- kernel/locking/rwsem.h      | 30 +++++++++++++++++++++---------
- 3 files changed, 28 insertions(+), 21 deletions(-)
+ kernel/locking/rwsem-xadd.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index e795908..604d247 100644
+index a903367..3064c50 100644
 --- a/kernel/locking/rwsem-xadd.c
 +++ b/kernel/locking/rwsem-xadd.c
-@@ -357,11 +357,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+@@ -347,6 +347,15 @@ static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
+ 	}
+ }
+ 
++static inline bool owner_on_cpu(struct task_struct *owner)
++{
++	/*
++	 * As lock holder preemption issue, we both skip spinning if
++	 * task is not on cpu or its cpu is preempted
++	 */
++	return owner->on_cpu && !vcpu_is_preempted(task_cpu(owner));
++}
++
+ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ {
+ 	struct task_struct *owner;
+@@ -359,17 +368,10 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
  
  	rcu_read_lock();
  	owner = READ_ONCE(sem->owner);
--	if (!rwsem_owner_is_writer(owner)) {
--		/*
--		 * Don't spin if the rwsem is readers owned.
--		 */
--		ret = !rwsem_owner_is_reader(owner);
-+	if (!owner || !is_rwsem_owner_spinnable(owner)) {
-+		ret = !owner;	/* !owner is spinnable */
- 		goto done;
+-	if (!owner || !is_rwsem_owner_spinnable(owner)) {
+-		ret = !owner;	/* !owner is spinnable */
+-		goto done;
++	if (owner) {
++		ret = is_rwsem_owner_spinnable(owner) &&
++		      owner_on_cpu(owner);
  	}
- 
-@@ -382,11 +379,11 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- {
- 	struct task_struct *owner = READ_ONCE(sem->owner);
- 
--	if (!rwsem_owner_is_writer(owner))
--		goto out;
-+	if (!is_rwsem_owner_spinnable(owner))
-+		return false;
- 
- 	rcu_read_lock();
--	while (sem->owner == owner) {
-+	while (owner && (READ_ONCE(sem->owner) == owner)) {
- 		/*
- 		 * Ensure we emit the owner->on_cpu, dereference _after_
- 		 * checking sem->owner still matches owner, if that fails,
-@@ -408,12 +405,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- 		cpu_relax();
- 	}
+-
+-	/*
+-	 * As lock holder preemption issue, we both skip spinning if task is not
+-	 * on cpu or its cpu is preempted
+-	 */
+-	ret = owner->on_cpu && !vcpu_is_preempted(task_cpu(owner));
+-done:
  	rcu_read_unlock();
--out:
-+
- 	/*
- 	 * If there is a new owner or the owner is not set, we continue
- 	 * spinning.
- 	 */
--	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
-+	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
+ 	return ret;
  }
- 
- static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 30465a2..bc1e507 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -221,5 +221,3 @@ void up_read_non_owner(struct rw_semaphore *sem)
- EXPORT_SYMBOL(up_read_non_owner);
- 
- #endif
--
--
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a17cba8..b9d0e72 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -1,20 +1,24 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * The owner field of the rw_semaphore structure will be set to
-- * RWSEM_READ_OWNED when a reader grabs the lock. A writer will clear
-+ * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
-  * the owner field when it unlocks. A reader, on the other hand, will
-  * not touch the owner field when it unlocks.
-  *
-- * In essence, the owner field now has the following 3 states:
-+ * In essence, the owner field now has the following 4 states:
-  *  1) 0
-  *     - lock is free or the owner hasn't set the field yet
-  *  2) RWSEM_READER_OWNED
-  *     - lock is currently or previously owned by readers (lock is free
-  *       or not set by owner yet)
-- *  3) Other non-zero value
-- *     - a writer owns the lock
-+ *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
-+ *     - lock is owned by an anonymous writer, so spinning on the lock
-+ *       owner should be disabled.
-+ *  4) Other non-zero value
-+ *     - a writer owns the lock and other writers can spin on the lock owner.
-  */
--#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
-+#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
-+#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
- 
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-@@ -51,14 +55,22 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
- }
- 
--static inline bool rwsem_owner_is_writer(struct task_struct *owner)
-+/*
-+ * Return true if the a rwsem waiter can spin on the rwsem's owner
-+ * and steal the lock, i.e. the lock is not anonymously owned.
-+ * N.B. !owner is considered spinnable.
-+ */
-+static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
- {
--	return owner && owner != RWSEM_READER_OWNED;
-+	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
- }
- 
--static inline bool rwsem_owner_is_reader(struct task_struct *owner)
-+/*
-+ * Return true if rwsem is owned by an anonymous writer or readers.
-+ */
-+static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
- {
--	return owner == RWSEM_READER_OWNED;
-+	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
- }
- #else
- static inline void rwsem_set_owner(struct rw_semaphore *sem)
+@@ -398,8 +400,7 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 		 * abort spinning when need_resched or owner is not running or
+ 		 * owner's cpu is preempted.
+ 		 */
+-		if (!owner->on_cpu || need_resched() ||
+-				vcpu_is_preempted(task_cpu(owner))) {
++		if (need_resched() || !owner_on_cpu(owner)) {
+ 			rcu_read_unlock();
+ 			return false;
+ 		}
 -- 
-1.8.3.1
+2.5.0
