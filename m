@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752531AbeERHyQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:54:16 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41102 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752242AbeERHuF (ORCPT
+        id S1752586AbeERHyz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:54:55 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44440 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752136AbeERHt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:50:05 -0400
-X-Google-Smtp-Source: AB8JxZrNZ6wwEs3bAl1tD7sY0G5kgrl992kkOvfRmfMYnLLAYCRitpWn0SIdPwUUYjAz4Rh1jXj5bw==
+        Fri, 18 May 2018 03:49:59 -0400
+X-Google-Smtp-Source: AB8JxZqQ2AFoSAUplCmErIoOaoUPHdIyTR/anMQETPE59PqhZWJv8knYU27R4/jTSNtVSdoG0WNFhQ==
 From: Kent Overstreet <kent.overstreet@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 05/10] block: Add bio_copy_data_iter(), zero_fill_bio_iter()
-Date: Fri, 18 May 2018 03:49:07 -0400
-Message-Id: <20180518074918.13816-10-kent.overstreet@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
+Subject: [PATCH 03/10] locking: bring back lglocks
+Date: Fri, 18 May 2018 03:49:04 -0400
+Message-Id: <20180518074918.13816-7-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
 References: <20180518074918.13816-1-kent.overstreet@gmail.com>
@@ -23,142 +25,242 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add versions that take bvec_iter args instead of using bio->bi_iter - to
-be used by bcachefs.
+bcachefs makes use of them - also, add a proper lg_lock_init()
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c         | 44 ++++++++++++++++++++++++--------------------
- include/linux/bio.h | 18 +++++++++++++++---
- 2 files changed, 39 insertions(+), 23 deletions(-)
+ include/linux/lglock.h  |  97 +++++++++++++++++++++++++++++++++++++
+ kernel/locking/Makefile |   1 +
+ kernel/locking/lglock.c | 105 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 203 insertions(+)
+ create mode 100644 include/linux/lglock.h
+ create mode 100644 kernel/locking/lglock.c
 
-diff --git a/block/bio.c b/block/bio.c
-index b7cdad6fc4..d7bd765e9e 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -530,20 +530,20 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
- }
- EXPORT_SYMBOL(bio_alloc_bioset);
- 
--void zero_fill_bio(struct bio *bio)
-+void zero_fill_bio_iter(struct bio *bio, struct bvec_iter start)
- {
- 	unsigned long flags;
- 	struct bio_vec bv;
- 	struct bvec_iter iter;
- 
--	bio_for_each_segment(bv, bio, iter) {
-+	__bio_for_each_segment(bv, bio, iter, start) {
- 		char *data = bvec_kmap_irq(&bv, &flags);
- 		memset(data, 0, bv.bv_len);
- 		flush_dcache_page(bv.bv_page);
- 		bvec_kunmap_irq(data, &flags);
- 	}
- }
--EXPORT_SYMBOL(zero_fill_bio);
-+EXPORT_SYMBOL(zero_fill_bio_iter);
- 
- /**
-  * bio_put - release a reference to a bio
-@@ -971,28 +971,13 @@ void bio_advance(struct bio *bio, unsigned bytes)
- }
- EXPORT_SYMBOL(bio_advance);
- 
--/**
-- * bio_copy_data - copy contents of data buffers from one chain of bios to
-- * another
-- * @src: source bio list
-- * @dst: destination bio list
-- *
-- * If @src and @dst are single bios, bi_next must be NULL - otherwise, treats
-- * @src and @dst as linked lists of bios.
-- *
-- * Stops when it reaches the end of either @src or @dst - that is, copies
-- * min(src->bi_size, dst->bi_size) bytes (or the equivalent for lists of bios).
-- */
--void bio_copy_data(struct bio *dst, struct bio *src)
-+void bio_copy_data_iter(struct bio *dst, struct bvec_iter dst_iter,
-+			struct bio *src, struct bvec_iter src_iter)
- {
--	struct bvec_iter src_iter, dst_iter;
- 	struct bio_vec src_bv, dst_bv;
- 	void *src_p, *dst_p;
- 	unsigned bytes;
- 
--	src_iter = src->bi_iter;
--	dst_iter = dst->bi_iter;
--
- 	while (1) {
- 		if (!src_iter.bi_size) {
- 			src = src->bi_next;
-@@ -1029,6 +1014,25 @@ void bio_copy_data(struct bio *dst, struct bio *src)
- 		bio_advance_iter(dst, &dst_iter, bytes);
- 	}
- }
-+EXPORT_SYMBOL(bio_copy_data_iter);
-+
-+/**
-+ * bio_copy_data - copy contents of data buffers from one chain of bios to
-+ * another
-+ * @src: source bio list
-+ * @dst: destination bio list
+diff --git a/include/linux/lglock.h b/include/linux/lglock.h
+new file mode 100644
+index 0000000000..c1fbe64bd2
+--- /dev/null
++++ b/include/linux/lglock.h
+@@ -0,0 +1,97 @@
++/*
++ * Specialised local-global spinlock. Can only be declared as global variables
++ * to avoid overhead and keep things simple (and we don't want to start using
++ * these inside dynamically allocated structures).
 + *
-+ * If @src and @dst are single bios, bi_next must be NULL - otherwise, treats
-+ * @src and @dst as linked lists of bios.
++ * "local/global locks" (lglocks) can be used to:
 + *
-+ * Stops when it reaches the end of either @src or @dst - that is, copies
-+ * min(src->bi_size, dst->bi_size) bytes (or the equivalent for lists of bios).
++ * - Provide fast exclusive access to per-CPU data, with exclusive access to
++ *   another CPU's data allowed but possibly subject to contention, and to
++ *   provide very slow exclusive access to all per-CPU data.
++ * - Or to provide very fast and scalable read serialisation, and to provide
++ *   very slow exclusive serialisation of data (not necessarily per-CPU data).
++ *
++ * Brlocks are also implemented as a short-hand notation for the latter use
++ * case.
++ *
++ * Copyright 2009, 2010, Nick Piggin, Novell Inc.
 + */
-+void bio_copy_data(struct bio *dst, struct bio *src)
++#ifndef __LINUX_LGLOCK_H
++#define __LINUX_LGLOCK_H
++
++#include <linux/spinlock.h>
++#include <linux/lockdep.h>
++#include <linux/percpu.h>
++#include <linux/cpu.h>
++#include <linux/notifier.h>
++
++#ifdef CONFIG_SMP
++
++struct lglock {
++	arch_spinlock_t __percpu *lock;
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++	struct lockdep_map    dep_map;
++#endif
++};
++
++#define DEFINE_LGLOCK(name)						\
++	static DEFINE_PER_CPU(arch_spinlock_t, name ## _lock)		\
++	= __ARCH_SPIN_LOCK_UNLOCKED;					\
++	struct lglock name = { .lock = &name ## _lock }
++
++#define DEFINE_STATIC_LGLOCK(name)					\
++	static DEFINE_PER_CPU(arch_spinlock_t, name ## _lock)		\
++	= __ARCH_SPIN_LOCK_UNLOCKED;					\
++	static struct lglock name = { .lock = &name ## _lock }
++
++static inline void lg_lock_free(struct lglock *lg)
 +{
-+	bio_copy_data_iter(dst, dst->bi_iter,
-+			   src, src->bi_iter);
-+}
- EXPORT_SYMBOL(bio_copy_data);
- 
- struct bio_map_data {
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 91b02520e2..5a6ee955a8 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -67,8 +67,12 @@
- 
- #define bio_multiple_segments(bio)				\
- 	((bio)->bi_iter.bi_size != bio_iovec(bio).bv_len)
--#define bio_sectors(bio)	((bio)->bi_iter.bi_size >> 9)
--#define bio_end_sector(bio)	((bio)->bi_iter.bi_sector + bio_sectors((bio)))
-+
-+#define bvec_iter_sectors(iter)	((iter).bi_size >> 9)
-+#define bvec_iter_end_sector(iter) ((iter).bi_sector + bvec_iter_sectors((iter)))
-+
-+#define bio_sectors(bio)	bvec_iter_sectors((bio)->bi_iter)
-+#define bio_end_sector(bio)	bvec_iter_end_sector((bio)->bi_iter)
- 
- /*
-  * Return the data direction, READ or WRITE.
-@@ -501,6 +505,8 @@ static inline void bio_flush_dcache_pages(struct bio *bi)
- }
- #endif
- 
-+extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter dst_iter,
-+			       struct bio *src, struct bvec_iter src_iter);
- extern void bio_copy_data(struct bio *dst, struct bio *src);
- extern void bio_free_pages(struct bio *bio);
- 
-@@ -509,7 +515,13 @@ extern struct bio *bio_copy_user_iov(struct request_queue *,
- 				     struct iov_iter *,
- 				     gfp_t);
- extern int bio_uncopy_user(struct bio *);
--void zero_fill_bio(struct bio *bio);
-+void zero_fill_bio_iter(struct bio *bio, struct bvec_iter iter);
-+
-+static inline void zero_fill_bio(struct bio *bio)
-+{
-+	zero_fill_bio_iter(bio, bio->bi_iter);
++	free_percpu(lg->lock);
 +}
 +
- extern struct bio_vec *bvec_alloc(gfp_t, int, unsigned long *, mempool_t *);
- extern void bvec_free(mempool_t *, struct bio_vec *, unsigned int);
- extern unsigned int bvec_nr_vecs(unsigned short idx);
++#define lg_lock_lockdep_init(lock)					\
++do {									\
++	static struct lock_class_key __key;				\
++									\
++	lockdep_init_map(&(lock)->dep_map, #lock, &__key, 0);		\
++} while (0)
++
++static inline int __lg_lock_init(struct lglock *lg)
++{
++	lg->lock = alloc_percpu(*lg->lock);
++	return lg->lock ? 0 : -ENOMEM;
++}
++
++#define lg_lock_init(lock)						\
++({									\
++	lg_lock_lockdep_init(lock);					\
++	__lg_lock_init(lock);						\
++})
++
++void lg_local_lock(struct lglock *lg);
++void lg_local_unlock(struct lglock *lg);
++void lg_local_lock_cpu(struct lglock *lg, int cpu);
++void lg_local_unlock_cpu(struct lglock *lg, int cpu);
++
++void lg_double_lock(struct lglock *lg, int cpu1, int cpu2);
++void lg_double_unlock(struct lglock *lg, int cpu1, int cpu2);
++
++void lg_global_lock(struct lglock *lg);
++void lg_global_unlock(struct lglock *lg);
++
++#else
++/* When !CONFIG_SMP, map lglock to spinlock */
++#define lglock spinlock
++#define DEFINE_LGLOCK(name) DEFINE_SPINLOCK(name)
++#define DEFINE_STATIC_LGLOCK(name) static DEFINE_SPINLOCK(name)
++#define lg_lock_init(lg)	({ spin_lock_init(lg); 0; })
++#define lg_lock_free(lg)	do {} while (0)
++#define lg_local_lock spin_lock
++#define lg_local_unlock spin_unlock
++#define lg_local_lock_cpu(lg, cpu) spin_lock(lg)
++#define lg_local_unlock_cpu(lg, cpu) spin_unlock(lg)
++#define lg_global_lock spin_lock
++#define lg_global_unlock spin_unlock
++#endif
++
++#endif
+diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
+index 392c7f23af..e5bb62823d 100644
+--- a/kernel/locking/Makefile
++++ b/kernel/locking/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_LOCKDEP) += lockdep_proc.o
+ endif
+ obj-$(CONFIG_SMP) += spinlock.o
+ obj-$(CONFIG_LOCK_SPIN_ON_OWNER) += osq_lock.o
++obj-$(CONFIG_SMP) += lglock.o
+ obj-$(CONFIG_PROVE_LOCKING) += spinlock.o
+ obj-$(CONFIG_QUEUED_SPINLOCKS) += qspinlock.o
+ obj-$(CONFIG_RT_MUTEXES) += rtmutex.o
+diff --git a/kernel/locking/lglock.c b/kernel/locking/lglock.c
+new file mode 100644
+index 0000000000..051feaccc4
+--- /dev/null
++++ b/kernel/locking/lglock.c
+@@ -0,0 +1,105 @@
++/* See include/linux/lglock.h for description */
++#include <linux/module.h>
++#include <linux/lglock.h>
++#include <linux/cpu.h>
++#include <linux/string.h>
++
++/*
++ * Note there is no uninit, so lglocks cannot be defined in
++ * modules (but it's fine to use them from there)
++ * Could be added though, just undo lg_lock_init
++ */
++
++void lg_local_lock(struct lglock *lg)
++{
++	arch_spinlock_t *lock;
++
++	preempt_disable();
++	lock_acquire_shared(&lg->dep_map, 0, 0, NULL, _RET_IP_);
++	lock = this_cpu_ptr(lg->lock);
++	arch_spin_lock(lock);
++}
++EXPORT_SYMBOL(lg_local_lock);
++
++void lg_local_unlock(struct lglock *lg)
++{
++	arch_spinlock_t *lock;
++
++	lock_release(&lg->dep_map, 1, _RET_IP_);
++	lock = this_cpu_ptr(lg->lock);
++	arch_spin_unlock(lock);
++	preempt_enable();
++}
++EXPORT_SYMBOL(lg_local_unlock);
++
++void lg_local_lock_cpu(struct lglock *lg, int cpu)
++{
++	arch_spinlock_t *lock;
++
++	preempt_disable();
++	lock_acquire_shared(&lg->dep_map, 0, 0, NULL, _RET_IP_);
++	lock = per_cpu_ptr(lg->lock, cpu);
++	arch_spin_lock(lock);
++}
++EXPORT_SYMBOL(lg_local_lock_cpu);
++
++void lg_local_unlock_cpu(struct lglock *lg, int cpu)
++{
++	arch_spinlock_t *lock;
++
++	lock_release(&lg->dep_map, 1, _RET_IP_);
++	lock = per_cpu_ptr(lg->lock, cpu);
++	arch_spin_unlock(lock);
++	preempt_enable();
++}
++EXPORT_SYMBOL(lg_local_unlock_cpu);
++
++void lg_double_lock(struct lglock *lg, int cpu1, int cpu2)
++{
++	BUG_ON(cpu1 == cpu2);
++
++	/* lock in cpu order, just like lg_global_lock */
++	if (cpu2 < cpu1)
++		swap(cpu1, cpu2);
++
++	preempt_disable();
++	lock_acquire_shared(&lg->dep_map, 0, 0, NULL, _RET_IP_);
++	arch_spin_lock(per_cpu_ptr(lg->lock, cpu1));
++	arch_spin_lock(per_cpu_ptr(lg->lock, cpu2));
++}
++
++void lg_double_unlock(struct lglock *lg, int cpu1, int cpu2)
++{
++	lock_release(&lg->dep_map, 1, _RET_IP_);
++	arch_spin_unlock(per_cpu_ptr(lg->lock, cpu1));
++	arch_spin_unlock(per_cpu_ptr(lg->lock, cpu2));
++	preempt_enable();
++}
++
++void lg_global_lock(struct lglock *lg)
++{
++	int i;
++
++	preempt_disable();
++	lock_acquire_exclusive(&lg->dep_map, 0, 0, NULL, _RET_IP_);
++	for_each_possible_cpu(i) {
++		arch_spinlock_t *lock;
++		lock = per_cpu_ptr(lg->lock, i);
++		arch_spin_lock(lock);
++	}
++}
++EXPORT_SYMBOL(lg_global_lock);
++
++void lg_global_unlock(struct lglock *lg)
++{
++	int i;
++
++	lock_release(&lg->dep_map, 1, _RET_IP_);
++	for_each_possible_cpu(i) {
++		arch_spinlock_t *lock;
++		lock = per_cpu_ptr(lg->lock, i);
++		arch_spin_unlock(lock);
++	}
++	preempt_enable();
++}
++EXPORT_SYMBOL(lg_global_unlock);
 -- 
 2.17.0
