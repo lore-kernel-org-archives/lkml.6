@@ -1,158 +1,126 @@
-Return-Path: <casey@schaufler-ca.com>
-X-Google-Smtp-Source: AB8JxZr9RG+kzBcH3CgGeijyDoToX3ujiPzOMwiHdC2DbDnJRJgjzC9Jc1JSjc1rI2YI2ZsFu+jA
-ARC-Seal: i=1; a=rsa-sha256; t=1526603082; cv=none;
+Return-Path: <ebiederm@xmission.com>
+X-Google-Smtp-Source: AB8JxZo0TC4d5Qki4Iih4LYb1+gfF1jyZU2N+5IRKO2O+TcmtZ3oUCECBv8V/8VxODbI64K+MruG
+ARC-Seal: i=1; a=rsa-sha256; t=1526614655; cv=none;
         d=google.com; s=arc-20160816;
-        b=HYJ7q/ZKRduwh6Yo/RhBUZ1IDytOFWc3zMtePgLWzJQQnJiKlw9IR1U1GwvjxbRhKt
-         Sz+w8pnL4A31OH43yAAc55hvXV1Pv9c9Z5co7n2RIU6xzAPizxMyRfNGuGA3QTYhjzub
-         mMJQWH+oNon+TyrW0EEx4TxefZGktex2o7i6CWSTJmF+DpFnLGiFI9QOTbpNqrD2Fi0e
-         o4MPtF8am5WAOu7zW6OMhPNbpuzZbHBK4wqo7b4CLEAu+ArcdwkWnOuEha5KQ1X19zlS
-         WaoT4Knx8TDSCfPy51DB84qxDHDKycssefUFE6fdho2nDiuTdcwfygfJZi5payu8nQZH
-         j22g==
+        b=e+dUmT4eXHL/XJ1LQWHxzBco3wx4aMy6AYdEwnQEWNgVV/dHSB0h1ebkyip4pHGV5j
+         Tsh+ZHNPhVy5xzY3ydQI+WHUDsajd1mp2e9G/6Z6GyKYxVN9G824KLzpg550asvMvvda
+         wpBp5vyTmrucjQ9CU1bGdiN+lPShyYv/An4yL4cSmqxNJq76q0SCw0Md0oeLcShJrAV3
+         j3Y+yppjyx2FPzv2fpsAlvW6rwkHhNwLLr8PO6VoZMk8syKdf69oRaWfWVan2/BIxcIi
+         RdqLO2dYql8jBoeqepYME/CF2i/2Q2gfaF7Ibo6e7CwJGVUBG2rv1UOtA7qlB5THwEyU
+         lE0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=Hn2UaiWgiClEk1OIfSkB21wepK0Bazi0hGIkS0gxcCA=;
-        b=lWFvGLC4Om0JVszznGIHOybtsHumajO26OPUjNSou4OM1LbpuIfDhBKucKGF1d37DW
-         HL2yPOsrl1qA/FGb0fJzk47rIss+eJyMqnPA6erH2s4tCJBp4jRZ1gyctrnQnoB9imzB
-         yU7A1GRtgASurxq8hnPVvxflr0Oc/GGh/hurrBTjwJD3LSGd+Qm3oZSMoyvU2TeF5a8t
-         gTOhci9s96KKrJrR1jMGcISUJoPERZkDWm19J1H6heNCNJMOFI4Swtgd2OYMEHo5+sxH
-         dymf6T37ekPhhfBHd+Z+U0p5v0FTAVrKbOi52zM3hOu4Ns4wipX+eefsckpbJEQKLPFb
-         KC3Q==
+        h=subject:mime-version:user-agent:message-id:in-reply-to:date
+         :references:cc:to:from:arc-authentication-results;
+        bh=9nqH7RTif9Tb8wQ1Z1eDbP42Cooa1+0NGFQs5nNJUDA=;
+        b=p4jtbSVHhBbEl0infUE0uaRNOgWx1ddBuRV6s8ajuHF0uwSIEW+z3xP2JmYt+EQny3
+         UlMKIzVC9j+rjHb1ZyAd342sW033L5IoDZjLVFQ0ullgM8DDwuUiJ0abtBLX+tRRSUQ9
+         rCQRY6w/2euDa4eAL/v26wvFlMwIfqhEg1Wx8NOZ1wpgmdqMDNbxfJXwKApIhQQb7Wec
+         1GFzT9RjIeQoWzkje/mzuuUBWq1/W2FRCr89xQ/VWqWhJ7Hs+ZHnLZEaTtda2ZumQSre
+         R2eJ6U/K384R79xk9Un6Ks3+ldIIPx6blk9KWPNrPUFB88HBRmzRJhz+b0Dr0EUYpBFc
+         Dv9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@yahoo.com header.s=s2048 header.b=t4c5z3VC;
-       spf=neutral (google.com: 66.163.189.90 is neither permitted nor denied by best guess record for domain of casey@schaufler-ca.com) smtp.mailfrom=casey@schaufler-ca.com
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.233 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@yahoo.com header.s=s2048 header.b=t4c5z3VC;
-       spf=neutral (google.com: 66.163.189.90 is neither permitted nor denied by best guess record for domain of casey@schaufler-ca.com) smtp.mailfrom=casey@schaufler-ca.com
-X-YMail-OSG: RdrzShUVM1nVF5Z.LMKCv3_qU2cluqY4seE00vDkPs_UPjctaVqsFfP5sIPwhcL
- Y87gXebPrqh2_0ius86D0ssSMukZWnNxoQm0jXiLla14dEEG92rXCTf1K72OpKWSOg0jI1fISTBi
- OD4374ON63AvwbO6T2jaXQr.LCLw7qztLHQ3YVH24BAvPsDO5p8T0gxjvoWpLk36PaFgW2asKokz
- wDQ2DatSqU.cSccKsHzrexcY24rvZG1khPwxAAtv2AHTDtEuh6wJRNKNaRhgDEPx2fYgXLQTGyT2
- prX4K.h8tCQhWyoC3K.aWmdIxFxOxa91ZjxZPecYHgm8t6lg6Oq8U4gf5sqEkGzkflVEWDeSCDhb
- ISYBdbvNlaNRGw5WX57Y353ORnPiaw0GUnWhc40pJH6GcY8CBXShE0a_XF6OqBV1rcLgicGlSf1o
- iDJDarNu6VJaqCQL7Y0DQUC.9ncxe28I3RXdh.pq9i1O5Pit_vzimWKw1rohfMBwqE8OlbCXNjZ.
- iHT8FgzL0PcM8_ns.oKRg7T9y3JkpoRNHAhDCeLS9P5E_8keGWbc9yrvgf6LpI9osKkJDjZt5FaN
- x3tkW23R__vqAezIlS2nH0pBfsi.XfA7TBBV1lJHOgC1L1tpzsr.d14M7sk42nOi51hFvK6BjPK7
- 2_.0CzHF.jw--
-Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob()
- wrapper
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- David Howells <dhowells@redhat.com>, "Luis R . Rodriguez"
- <mcgrof@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>, Kees Cook <keescook@chromium.org>
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.233 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,  linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,  David Howells <dhowells@redhat.com>,  "Luis R . Rodriguez" <mcgrof@kernel.org>,  kexec@lists.infradead.org,  Andres Rodriguez <andresx7@gmail.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Ard Biesheuvel <ard.biesheuvel@linaro.org>,  Kees Cook <keescook@chromium.org>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
-Date: Thu, 17 May 2018 17:24:36 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+	<1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+	<74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
+Date: Thu, 17 May 2018 22:37:23 -0500
+In-Reply-To: <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com> (Casey
+	Schaufler's message of "Thu, 17 May 2018 17:24:36 -0700")
+Message-ID: <87y3ghhbws.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-XM-SPF: eid=1fJWCu-00015t-Sx;;;mid=<87y3ghhbws.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18PowzMLgO4QJviA6fk2tNgB80cxd0ZtgI=
+X-SA-Exim-Connect-IP: 97.90.247.198
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.7 XMSubLong Long Subject
+	*  0.5 XMGappySubj_01 Very gappy subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.1 XMSolicitRefs_0 Weightloss drug
+	*  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Casey Schaufler <casey@schaufler-ca.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 263 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 8 (3.2%), b_tie_ro: 6 (2.3%), parse: 1.00 (0.4%),
+	extract_message_metadata: 17 (6.3%), get_uri_detail_list: 1.97 (0.7%),
+	tests_pri_-1000: 7 (2.6%), tests_pri_-950: 1.23 (0.5%), tests_pri_-900: 1.01
+	(0.4%), tests_pri_-400: 21 (8.1%), check_bayes: 20 (7.7%), b_tokenize: 7
+	(2.6%), b_tok_get_all: 7 (2.5%), b_comp_prob: 2.0 (0.8%), b_tok_touch_all:
+	2.6 (1.0%), b_finish: 0.57 (0.2%), tests_pri_0: 198 (75.2%),
+	check_dkim_signature: 0.46 (0.2%), check_dkim_adsp: 2.6 (1.0%),
+	tests_pri_500: 6 (2.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob() wrapper
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600723179870285580?=
-X-GMAIL-MSGID: =?utf-8?q?1600759354071269998?=
+X-GMAIL-MSGID: =?utf-8?q?1600771489001858283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 5/17/2018 7:48 AM, Mimi Zohar wrote:
-> In order for LSMs and IMA-appraisal to differentiate between the original
-> and new syscalls (eg. kexec, kernel modules, firmware), both the original
-> and new syscalls must call an LSM hook.
->
-> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
-> introduced calling security_kernel_module_from_file() in both the original
-> and new syscalls.  Commit a1db74209483 ("module: replace
-> copy_module_from_fd with kernel version") replaced these LSM calls with
-> security_kernel_read_file().
->
-> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
-> with kernel version") and commit b804defe4297  ("kexec: replace call to
-> copy_file_from_fd() with kernel version") replaced their own version of
-> reading a file from the kernel with the generic
-> kernel_read_file_from_path/fd() versions, which call the pre and post
-> security_kernel_read_file LSM hooks.
->
-> Missing are LSM calls in the original kexec syscall and firmware sysfs
-> fallback method.  From a technical perspective there is no justification
-> for defining a new LSM hook, as the existing security_kernel_read_file()
-> works just fine.  The original syscalls, however, do not read a file, so
-> the security hook name is inappropriate.  Instead of defining a new LSM
-> hook, this patch defines security_kernel_read_blob() as a wrapper for
-> the existing LSM security_kernel_file_read() hook.
+Casey Schaufler <casey@schaufler-ca.com> writes:
 
-What a marvelous opportunity to bikeshed!
+> On 5/17/2018 7:48 AM, Mimi Zohar wrote:
+>> In order for LSMs and IMA-appraisal to differentiate between the original
+>> and new syscalls (eg. kexec, kernel modules, firmware), both the original
+>> and new syscalls must call an LSM hook.
+>>
+>> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
+>> introduced calling security_kernel_module_from_file() in both the original
+>> and new syscalls.  Commit a1db74209483 ("module: replace
+>> copy_module_from_fd with kernel version") replaced these LSM calls with
+>> security_kernel_read_file().
+>>
+>> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
+>> with kernel version") and commit b804defe4297  ("kexec: replace call to
+>> copy_file_from_fd() with kernel version") replaced their own version of
+>> reading a file from the kernel with the generic
+>> kernel_read_file_from_path/fd() versions, which call the pre and post
+>> security_kernel_read_file LSM hooks.
+>>
+>> Missing are LSM calls in the original kexec syscall and firmware sysfs
+>> fallback method.  From a technical perspective there is no justification
+>> for defining a new LSM hook, as the existing security_kernel_read_file()
+>> works just fine.  The original syscalls, however, do not read a file, so
+>> the security hook name is inappropriate.  Instead of defining a new LSM
+>> hook, this patch defines security_kernel_read_blob() as a wrapper for
+>> the existing LSM security_kernel_file_read() hook.
+>
+> What a marvelous opportunity to bikeshed!
+>
+> I really dislike adding another security_ interface just because
+> the name isn't quite right. Especially a wrapper, which is just
+> code and execution overhead. Why not change security_kernel_read_file()
+> to security_kernel_read_blob() everywhere and be done?
 
-I really dislike adding another security_ interface just because
-the name isn't quite right. Especially a wrapper, which is just
-code and execution overhead. Why not change security_kernel_read_file()
-to security_kernel_read_blob() everywhere and be done?
+Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
->
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
->
-> Changelog v2:
-> - Define a generic wrapper named security_kernel_read_blob() for
-> security_kernel_read_file().
->
-> Changelog v1:
-> - Define and call security_kexec_load(), a wrapper for
-> security_kernel_read_file().
-> ---
->  include/linux/security.h | 6 ++++++
->  security/security.c      | 6 ++++++
->  2 files changed, 12 insertions(+)
->
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 63030c85ee19..4db1967a688b 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -323,6 +323,7 @@ int security_kernel_module_request(char *kmod_name);
->  int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
->  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
->  				   enum kernel_read_file_id id);
-> +int security_kernel_read_blob(enum kernel_read_file_id id);
->  int security_task_fix_setuid(struct cred *new, const struct cred *old,
->  			     int flags);
->  int security_task_setpgid(struct task_struct *p, pid_t pgid);
-> @@ -922,6 +923,11 @@ static inline int security_kernel_post_read_file(struct file *file,
->  	return 0;
->  }
->  
-> +static inline int security_kernel_read_blob(enum kernel_read_file_id id)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_task_fix_setuid(struct cred *new,
->  					   const struct cred *old,
->  					   int flags)
-> diff --git a/security/security.c b/security/security.c
-> index 68f46d849abe..8f199b2bf4a2 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1044,6 +1044,12 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
->  }
->  EXPORT_SYMBOL_GPL(security_kernel_read_file);
->  
-> +int security_kernel_read_blob(enum kernel_read_file_id id)
-> +{
-> +	return security_kernel_read_file(NULL, id);
-> +}
-> +EXPORT_SYMBOL_GPL(security_kernel_read_blob);
-> +
->  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
->  				   enum kernel_read_file_id id)
->  {
+Nack on this sharing nonsense.  These two interfaces do not share any
+code in their implementations other than the if statement to distinguish
+between the two cases.
+
+Casey you are wrong.  We need something different here.
+
+Mimi a wrapper does not cut it.   The code is not shared.  Despite using
+a single function call today.
+
+If we want comprehensible and maintainable code in the security modules
+we need to split these two pieces of functionality apart.
+
+Eric
