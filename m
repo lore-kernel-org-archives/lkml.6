@@ -1,101 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeERHYS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:24:18 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34393 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751320AbeERHYQ (ORCPT
+        id S1752208AbeERHY2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:24:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751320AbeERHY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:24:16 -0400
-X-Google-Smtp-Source: AB8JxZoy3Y2ZaSnCS1571zRCBYzKFYfFSuHSVyrRxoJCwrZ4zi//3xOjSfr/nRJMF4qssmrFRk8KwA==
-Date: Fri, 18 May 2018 09:24:12 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Peter Anvin <h.peter.anvin@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>
-Subject: Re: [PATCH] objtool: Detect assembly code falling through to INT3
- padding
-Message-ID: <20180518072412.GC26358@gmail.com>
-References: <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
- <20180515214337.GA18021@avx2>
- <20180515222211.ods5hzne46hozojq@treble>
- <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com>
- <20180515224354.zmygmsnlqj5lrdbo@treble>
- <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com>
- <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com>
- <20180516033044.odb74pdgcn5nacwb@treble>
- <20180517134934.eog2fgoby5azq5a7@treble>
- <20180517140118.GT12217@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517140118.GT12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 18 May 2018 03:24:26 -0400
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@redhat.com
+Cc: linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, tmricht@linux.ibm.com
+Subject: [PATCH] perf tests: Fix regex for record+probe_libc_inet_pton.sh
+Date: Fri, 18 May 2018 12:54:17 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18051807-0008-0000-0000-000004F7CDB6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051807-0009-0000-0000-00001E8C47A6
+Message-Id: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805180081
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This test currently fails because the regular expressions for
+matching the output of perf script do not consider the symbol
+offsets to be part of the output.
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+The symbol offsets are seen because of the default behaviour
+introduced by commit 4140d2ea74b3 ("perf script: Show symbol
+offsets by default").
 
-> On Thu, May 17, 2018 at 08:49:34AM -0500, Josh Poimboeuf wrote:
-> > With the following commit:
-> > 
-> >   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
-> > 
-> > ... asm function alignments are padded with INT3, so it's no longer safe
-> > to fall through to an aligned function.  Make sure we catch any such
-> > cases with objtool.
-> > 
-> > Note this only adds checking for 64-bit, since objtool doesn't support
-> > x86-32.
-> > 
-> > Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> > ---
-> >  arch/x86/kernel/head_64.S       |  2 --
-> >  tools/objtool/arch.h            |  3 ++-
-> >  tools/objtool/arch/x86/decode.c |  2 +-
-> >  tools/objtool/check.c           | 11 ++++++++++-
-> >  4 files changed, 13 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-> > index 8344dd2f310a..3ed8cec6e765 100644
-> > --- a/arch/x86/kernel/head_64.S
-> > +++ b/arch/x86/kernel/head_64.S
-> > @@ -285,11 +285,9 @@ ENTRY(early_idt_handler_array)
-> >  	.endif
-> >  	pushq $i		# 72(%rsp) Vector number
-> >  	jmp early_idt_handler_common
-> > -	UNWIND_HINT_IRET_REGS
-> >  	i = i + 1
-> >  	.fill early_idt_handler_array + i*EARLY_IDT_HANDLER_SIZE - ., 1, 0xcc
-> >  	.endr
-> > -	UNWIND_HINT_IRET_REGS offset=16
-> >  END(early_idt_handler_array)
-> >  
-> >  early_idt_handler_common:
-> 
-> As noted on IRC; I got slightly confused what this was about.
-> 
-> Other than that:
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Before applying this patch:
 
-And after talking to you on IRC I added this paragraph to the changelog:
+  # perf test -v "probe libc's inet_pton & backtrace it with ping"
 
-  Also remove incorrect and unnecessary unwinder hints from head_64.S
-  which caused false positives in the new detection code.
+  62: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 30389
+  ping 30406 [002] 307144.280983: probe_libc:inet_pton: (7f4117adf220)
+  7f4117adf220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)
+  FAIL: expected backtrace entry 1 ".*inet_pton[[:space:]]\(/usr/lib64/libc-2.25.so|inlined\)$" got "7f4117adf220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)"
+  test child finished with -1
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: FAILED!
 
-Thanks,
+After applying this patch:
 
-	Ingo
+  # perf test -v "probe libc's inet_pton & backtrace it with ping"
+
+  62: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 30539
+  ping 30556 [003] 307254.313217: probe_libc:inet_pton: (7fe19ab10220)
+  7fe19ab10220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)
+  7fe19aad5ebd getaddrinfo+0x11d (/usr/lib64/libc-2.25.so)
+  56351e3c1c71 main+0x891 (/usr/bin/ping)
+  test child finished with 0
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: Ok
+
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index ee86473643be..650b208f700f 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,18 +16,18 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
++	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
+-		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+-		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
+-		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
++		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+-		expected[2]="getaddrinfo[[:space:]]\($libc\)$"
+-		expected[3]=".*\(.*/bin/ping.*\)$"
++		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
++		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	esac
+ 
+-- 
+2.13.6
