@@ -1,76 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753687AbeERIgK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:36:10 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34909 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752226AbeERIgG (ORCPT
+        id S1753806AbeERIgq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:36:46 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39652 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753757AbeERIgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:36:06 -0400
-X-Google-Smtp-Source: AB8JxZqkgS9izOBioLotkU7XnC6L2w2nx67/4y5h3n4ByFDpbqw3hR5Z1Q+nChIk9gfH07FiUl1Ba7Lzsoh5YOw5Lrs=
+        Fri, 18 May 2018 04:36:43 -0400
+X-Google-Smtp-Source: AB8JxZptoc6Nw0yrve6he3MzCyG9tiJKA8asxPwhTD/Xbq7RkQIfTyTHjeMdlARv7EYgk8WtbE/IvA==
+Date: Fri, 18 May 2018 10:36:39 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v1 03/11] cpufreq: tegra20: Remove EMC clock usage
+Message-ID: <20180518083639.GC14500@ulmo>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-4-digetx@gmail.com>
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 May 2018 10:36:04 +0200
-X-Google-Sender-Auth: 0Z4osnIVNe2peqK63RC3-6Ik4q8
-Message-ID: <CAMuHMdW_4gvQYhCxcXR+sa6dhwAshyJnhXhc36=VC=hWKB-7Jw@mail.gmail.com>
-Subject: cryptomgr_test / drbg_ctr: BUG: sleeping function called from invalid context
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        Stephan Mueller <smueller@chronox.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
+Content-Disposition: inline
+In-Reply-To: <20180517180056.13336-4-digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-After enabling CONFIG_CRYPTO_DRBG_CTR, I start seeing during kernel boot:
+--+xNpyl7Qekk2NvDX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-BUG: sleeping function called from invalid context at
-include/crypto/algapi.h:416
-in_atomic(): 1, irqs_disabled(): 0, pid: 203, name: cryptomgr_test
-1 lock held by cryptomgr_test/203:
- #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at: drbg_kcapi_seed+0x128/0x4bc
-CPU: 3 PID: 203 Comm: cryptomgr_test Not tainted
-4.17.0-rc5-salvator-x-00509-g0ad2b9f404d6a668-dirty #1742
-Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
-Call trace:
- dump_backtrace+0x0/0x140
- show_stack+0x14/0x1c
- dump_stack+0xb4/0xf0
- ___might_sleep+0x1fc/0x218
- skcipher_walk_done+0x2c8/0x38c
- ctr_encrypt+0x84/0x110
- simd_skcipher_encrypt+0xa4/0xb0
- drbg_kcapi_sym_ctr+0xb4/0x178
- drbg_ctr_update+0x17c/0x2c4
- drbg_seed+0x20c/0x26c
- drbg_kcapi_seed+0x458/0x4bc
- crypto_rng_reset+0x84/0xa8
- alg_test_drbg+0x12c/0x324
- alg_test.part.7+0x264/0x2bc
- alg_test+0x44/0x58
- cryptomgr_test+0x28/0x48
- kthread+0x11c/0x124
- ret_from_fork+0x10/0x18
+On Thu, May 17, 2018 at 09:00:48PM +0300, Dmitry Osipenko wrote:
+> The EMC driver has been gone 4 years ago, since the commit a7cbe92cef27
+> ("ARM: tegra: remove tegra EMC scaling driver"). Remove the EMC clock
+> usage as it does nothing. We may consider re-implementing the EMC scaling
+> later, probably using PM Memory Bandwidth QoS API.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 22 ----------------------
+>  1 file changed, 22 deletions(-)
 
-I tried following the code path, but couldn't find where it went wrong.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-mutex_lock(&drbg->drbg_mutex) is called from drbg_instantiate(), which is
-inlined by the compiler into drbg_kcapi_seed().
+--+xNpyl7Qekk2NvDX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Do you have a clue?
-Thanks!
+-----BEGIN PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+kJcACgkQ3SOs138+
+s6FpPA//RtNtZ1WXf+1QXkaeVmqWNiFwVGDxx+6FrMAPjSJ1GSMBfPyKAiC8T9qm
+LBPYO3w2cioqvITok4QB39QPgQH2tQHkkUkNs7FiYMBDZhECifzO/v2Njnw8KQwN
+6xOarW4xcApDKXziePhGbGb6mOhg7KPtFjQCcFXXo9liuR/OdZLpTSaXkzrHoquQ
+2BUSKMf1n/V1TnHKQwhDBZG9ZNVK94+Zk5oabST7cvuSQeZBTHiNF02KvDKm3g/x
+owXzc6bV1VZaDLBvEbwV2mkhUKEcnrVfTQt5jZWnnKp5vkjG3pXk0f4PkjIwxdAk
+/Q+ckpnR8rNVe4Ses7C8rX9kiOHjLyfRKd7GgFf3t2cO8GGFQzHKAwv1Aw5K6AAC
+XYyIJTlYtNmbqq7jBKwxYK/vbY+XGzBDhOmmte0tAY6INubZDdaO3pcGeQgX1H/E
+sPXdWS9P13Nvb3Yx//tPnU5OvjX4PoroMQUIQ1n5RsfNLUz6ha3hj8PJuLumbcLl
+rdpCGhLqc2+pEJNTCrvRVMawR9MTViCu75NgwVNnLKGoHwDlTG8kQf711XDiBjR4
+VjYR8uKx15wYyqLk2IWi9yAdNCNvOzhg+zltxL3xJBaFk12MlUGsW+huftOX4JGr
+YmLpI2JY/xCfN6dcrlyUdz1m27jEF6vDd/d1mtgNFLfAy6JnMHw=
+=5Djw
+-----END PGP SIGNATURE-----
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--+xNpyl7Qekk2NvDX--
