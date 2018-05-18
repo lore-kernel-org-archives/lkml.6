@@ -1,82 +1,89 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526645155; cv=none;
+Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqckQ5KtRHrPe0NDNzlvYR8C+dnWE1gMZpnDvGVbwk/hw7PCJlamZu/pi6BosAUrK/91iOp
+ARC-Seal: i=1; a=rsa-sha256; t=1526631555; cv=none;
         d=google.com; s=arc-20160816;
-        b=lmrj01MPnWxSOULTN1D1/88FGZXef4Gm7MlblfuczcIs+foUcPtUht+tA+GFtdNaAO
-         JidDus5O124+LoeLjUhhd7ebyyo7xzgS8lH9nZs2nnyUG1T21B+H8ZNQG92VVD+QAljA
-         V+yhQbNifr0rCuOSc8bHFgVE7xv4SBIb3dTPcagBc6W3G+3o40P1yWd7Vmx1YFKYD8cS
-         ns+lmcKDAwRUC/bbU7rGO06yNV8fb+gsNCsJPn7tJNo67PUjkSx+bAXORznObO9wH722
-         pqw3MG88mNqavQHqiUjSfXE4xHKJYJuvbuK+buXr7THE+kPMFAsadSVjxN4rHhSFninq
-         MggQ==
+        b=Cr+79p7sd3L+2E+wreb1FsP4HfuDay+iVOsbHbjWFjHfUX5xq59hfd8KGzIhgyxzbh
+         S7O+DZYapVfDe8108FdLf83YWs9AQozSx6M3tIDZtJClEa38jV10m//kQsWEAQ4Av+21
+         uAGBz3cnP0u7wtSufHOgyi5F3/kjumGoW4R3YzRK94ie6HtlSuIqdZeGb3PhHxKVAAkM
+         Xny8d/PUg0ISdc2iuoVwBq5ID+PYuFA2g+KA2JO6i64qL2lScHWbX9GWWvDdqGjvKCe+
+         XyGPO4LQCIjWCs9On3/9z3tojbZtnArC4Ckx4dXLqRyPaBZME01WtgSNM1x+PLSZrEuH
+         tLOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=sID66BzvL7VmWk3I0xs1T6kgHI2r3vUFRJrSMEtwD3c=;
-        b=Nk2jPyxcPWYSdt/vCDO1oHdPBq4xeVWINgn+O40VzTNZELhN6TojfCERl1di7e1jEs
-         BzZoyBKwbwz5f+1vwwXab/BBrHWTnGNCv/nsKc3wJTVTJzUTlwq8vfrgr63ZgIv2qesV
-         6OlXNtbFk4Fz6sFPMj5UK5SCfsBFxIxaBoDJ5/vnspX4DLS/vPxFmGVXebEGxfbBImp5
-         G5MYiO15Wj1sSD8Pqx4+1lWNPav6A3Fr8CmHmwAbagrNr2FQw6U6Ot4qDh3f33KvUJt/
-         fP+sEbgZUFDAP1aoLS/Upps24QufeQUKijwVqWf9/Hb5MaOoSK/SOGFBROdtwrAnkLvC
-         Daow==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=nDl6Cw0bDQRqgzon7P6FDy7d3fKdukEQFR5CrAprKg4=;
+        b=nJnHeY3ienHRtvBAnjCl+jFD3aUDVtbjQ4QK/tTVgl7yAsyWjW7FjAxpz+cVR8JMcJ
+         OMxv4pw+4krdogq220V1kBiL1KHM8+scMT4MPQSKSrf63El2XSaHel3q4tujb7X90Sor
+         7VhRAFMIvyVbnVofeSP4veluE2tMNAm5vtKSpFnas6tTCU0MISNaRSymUoBwBfNCIscZ
+         oq12LIpk2gdx8H1Tf5O8EjDkl9yKp2IIthRi+Am44T6NIJfYSBmkoPSybD3bUm+WU6JC
+         f3qXkFmKonYQ3Tafb2rAG4i0WKCIJgRW8mOowmXhzDgPB9EdZWqBmeKHOS5LffLHjo90
+         +gZw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=CP11o9g0;
+       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZoZG6OeHCpz+UFD08DWhtmrIQGAcmw0I6HcvwC5729IPMfzn6hc8GB4zsR5fDlp8Q6GcyjJxQ==
-Message-ID: <5afec1a2.1c69fb81.7caf5.979c@mx.google.com>
-Date: Fri, 18 May 2018 05:05:54 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.9-55-g2b695e770deb
+       dkim=pass header.i=@kernel.org header.s=default header.b=CP11o9g0;
+       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Ido Schimmel <idosch@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 50/55] mlxsw: core: Fix an error handling path in mlxsw_core_bus_device_register()
+Date: Fri, 18 May 2018 10:15:46 +0200
+Message-Id: <20180518081459.744546488@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
-Subject: Re: [PATCH 4.16 00/55] 4.16.10-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600789089014801693?=
-X-GMAIL-MSGID: =?utf-8?q?1600803470069598035?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600789209637025063?=
+X-GMAIL-MSGID: =?utf-8?q?1600789209637025063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 111 boots: 0 failed, 106 passed with 5 offline=
- (v4.16.9-55-g2b695e770deb)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.9-55-g2b695e770deb/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.9-55-g2b695e770deb/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.9-55-g2b695e770deb
-Git Commit: 2b695e770debb7122f8c9404f15ad1931815706e
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 57 unique boards, 23 SoC families, 15 builds out of 186
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Offline Platforms:
+[ Upstream commit 8ccc113172e4c1ebef45c2433f3c32ed6ae1b9c9 ]
 
-arm:
+Resources are not freed in the reverse order of the allocation.
+Labels are also mixed-up.
 
-    tegra_defconfig:
-        tegra30-beaver: 1 offline lab
+Fix it and reorder code and labels in the error handling path of
+'mlxsw_core_bus_device_register()'
 
-    multi_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        zynq-zc702: 1 offline lab
-
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-
+Fixes: ef3116e5403e ("mlxsw: spectrum: Register KVD resources with devlink")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/net/ethernet/mellanox/mlxsw/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1099,11 +1099,11 @@ err_emad_init:
+ err_alloc_lag_mapping:
+ 	mlxsw_ports_fini(mlxsw_core);
+ err_ports_init:
+-	mlxsw_bus->fini(bus_priv);
+-err_bus_init:
+ 	if (!reload)
+ 		devlink_resources_unregister(devlink, NULL);
+ err_register_resources:
++	mlxsw_bus->fini(bus_priv);
++err_bus_init:
+ 	if (!reload)
+ 		devlink_free(devlink);
+ err_devlink_alloc:
