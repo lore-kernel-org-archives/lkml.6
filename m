@@ -1,45 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752450AbeERCBN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 22:01:13 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37255 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752433AbeERCBK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 22:01:10 -0400
-X-Google-Smtp-Source: AB8JxZoswBBQC3GFo0IWFE7MPnZTsZBT7RlHcuNGEjEu8bqwQTG4HvtjZi53jEiZbkZau+aiXUBKgg==
-From: Li Qiang <liq3ea@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Li Qiang <liq3ea@gmail.com>
-Subject: [PATCH] fs.h: fix outdated comment about file flags
-Date: Thu, 17 May 2018 19:01:03 -0700
-Message-Id: <1526608863-4701-1-git-send-email-liq3ea@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752130AbeERCCw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 22:02:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751850AbeERCCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 22:02:51 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] audit: use existing session info function
+Date: Thu, 17 May 2018 22:01:48 -0400
+Message-Id: <9ffbbadb26bbc362c74c8c2140425ef614712e1a.1526608767.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __dentry_open function was removed in
-commit <2a027e7a18738>("fold __dentry_open() into its sole caller").
+Use the existing audit_log_session_info() function rather than
+hardcoding its functionality.
 
-Signed-off-by: Li Qiang <liq3ea@gmail.com>
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/auditfilter.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..7f07977bdfd7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -94,7 +94,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index d7a807e..9e87377 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1089,8 +1089,6 @@ static void audit_list_rules(int seq, struct sk_buff_head *q)
+ static void audit_log_rule_change(char *action, struct audit_krule *rule, int res)
+ {
+ 	struct audit_buffer *ab;
+-	uid_t loginuid = from_kuid(&init_user_ns, audit_get_loginuid(current));
+-	unsigned int sessionid = audit_get_sessionid(current);
  
- /*
-  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-- * to O_WRONLY and O_RDWR via the strange trick in __dentry_open()
-+ * to O_WRONLY and O_RDWR via the strange trick in do_dentry_open()
-  */
- 
- /* file is open for reading */
+ 	if (!audit_enabled)
+ 		return;
+@@ -1098,7 +1096,7 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+ 	if (!ab)
+ 		return;
+-	audit_log_format(ab, "auid=%u ses=%u" ,loginuid, sessionid);
++	audit_log_session_info(ab);
+ 	audit_log_task_context(ab);
+ 	audit_log_format(ab, " op=%s", action);
+ 	audit_log_key(ab, rule->filterkey);
 -- 
-2.16.3
+1.8.3.1
