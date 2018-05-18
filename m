@@ -1,47 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752725AbeEROIy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:08:54 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39019 "EHLO
+        id S1752804AbeEROJO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:09:14 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40266 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeEROIv (ORCPT
+        with ESMTP id S1752451AbeEROIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:08:51 -0400
-X-Google-Smtp-Source: AB8JxZpgOFtjtTqiisWlhcctKVuzqPtWqyCA4MsLQ2DfIhEYENNq2h0qehK1Q0jNrSP+HgYAp6L9ew==
+        Fri, 18 May 2018 10:08:53 -0400
+X-Google-Smtp-Source: AB8JxZpWwfuRH3Iw0DXRcW1lPb3YNoBKmrFXTm3svrhbgalthtpai4tAbTVd5yXVdAj1zfANY9tZAA==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [GIT PULL 0/1] EFI fix for v4.17
-Date: Fri, 18 May 2018 16:08:40 +0200
-Message-Id: <20180518140841.9731-1-ard.biesheuvel@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] efi/libstub/arm64: handle randomized TEXT_OFFSET
+Date: Fri, 18 May 2018 16:08:41 +0200
+Message-Id: <20180518140841.9731-2-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518140841.9731-1-ard.biesheuvel@linaro.org>
+References: <20180518140841.9731-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
+From: Mark Rutland <mark.rutland@arm.com>
 
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
+When CONFIG_RANDOMIZE_TEXT_OFFSET=y, TEXT_OFFSET is an arbitrary
+multiple of PAGE_SIZE in the interval [0, 2MB).
 
-are available in the Git repository at:
+The EFI stub does not account for the potential misalignment of
+TEXT_OFFSET relative to EFI_KIMG_ALIGN, and produces a randomized
+physical offset which is always a round multiple of EFI_KIMG_ALIGN.
+This may result in statically allocated objects whose alignment exceeds
+PAGE_SIZE to appear misaligned in memory. This has been observed to
+result in spurious stack overflow reports and failure to make use of
+the IRQ stacks, and theoretically could result in a number of other
+issues.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git efi-urgent
+We can OR in the low bits of TEXT_OFFSET to ensure that we have the
+necessary offset (and hence preserve the misalignment of TEXT_OFFSET
+relative to EFI_KIMG_ALIGN), so let's do that.
 
-for you to fetch changes up to bdad6e217f1e4402bd5809f67b1de39720732604:
-
-  efi/libstub/arm64: handle randomized TEXT_OFFSET (2018-05-14 09:53:24 +0200)
-
-----------------------------------------------------------------
-EFI fix for v4.17:
-- ensure that arm64 kernels built with CONFIG_RANDOMIZE_TEXT_OFFSET=y appear
-  correctly aligned in memory when KASLR is in effect.
-
-----------------------------------------------------------------
-Mark Rutland (1):
-      efi/libstub/arm64: handle randomized TEXT_OFFSET
-
+Fixes: 6f26b3671184c36d ("arm64: kaslr: increase randomization granularity")
+Reported-by: Kim Phillips <kim.phillips@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Kim Phillips <kim.phillips@arm.com>
+[ardb: clarify comment and commit log, drop unneeded parens]
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
  drivers/firmware/efi/libstub/arm64-stub.c | 10 ++++++++++
  1 file changed, 10 insertions(+)
+
+diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
+index b9bd827caa22..1b4d465cc5d9 100644
+--- a/drivers/firmware/efi/libstub/arm64-stub.c
++++ b/drivers/firmware/efi/libstub/arm64-stub.c
+@@ -97,6 +97,16 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
+ 		u32 offset = !IS_ENABLED(CONFIG_DEBUG_ALIGN_RODATA) ?
+ 			     (phys_seed >> 32) & mask : TEXT_OFFSET;
+ 
++		/*
++		 * With CONFIG_RANDOMIZE_TEXT_OFFSET=y, TEXT_OFFSET may not
++		 * be a multiple of EFI_KIMG_ALIGN, and we must ensure that
++		 * we preserve the misalignment of 'offset' relative to
++		 * EFI_KIMG_ALIGN so that statically allocated objects whose
++		 * alignment exceeds PAGE_SIZE appear correctly aligned in
++		 * memory.
++		 */
++		offset |= TEXT_OFFSET % EFI_KIMG_ALIGN;
++
+ 		/*
+ 		 * If KASLR is enabled, and we have some randomness available,
+ 		 * locate the kernel at a randomized offset in physical memory.
+-- 
+2.17.0
