@@ -1,218 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753407AbeERIUx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:20:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50474 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753361AbeERIUs (ORCPT
+        id S1753474AbeERIzt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:55:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60710 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751888AbeERIzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:20:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 156F060D81
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH V7 11/12] ARM: dts: ipq8074: Add pcie nodes
-Date: Fri, 18 May 2018 13:49:24 +0530
-Message-Id: <1526631565-9972-12-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
-References: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+        Fri, 18 May 2018 04:55:45 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 06/13] KVM: s390: interfaces to manage guest's AP
+ matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <f2646170-1aaf-8447-4c02-0679909d754f@linux.ibm.com>
+ <a9206728-2673-c8de-851b-323027a398fa@linux.vnet.ibm.com>
+ <f8c88504-55dc-99a8-90a1-2ddf63a20091@linux.ibm.com>
+ <13331f80-8821-6de3-ca29-7a3ea869e4f1@linux.vnet.ibm.com>
+ <1891f565-284f-ab30-ebc7-8fef85b5fba7@linux.ibm.com>
+ <a02a8fa0-9b05-41cf-4507-d4540b279247@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Fri, 18 May 2018 10:55:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <a02a8fa0-9b05-41cf-4507-d4540b279247@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051808-0012-0000-0000-000005D7ED35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051808-0013-0000-0000-000019551E03
+Message-Id: <2ae0b04a-f091-6c06-dc07-b6fa265b484a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805180099
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver/phy support for ipq8074 is available now.
-So enabling the nodes in DT.
+On 16/05/2018 15:48, Tony Krowiak wrote:
+> On 05/16/2018 09:15 AM, Pierre Morel wrote:
+>> On 16/05/2018 15:12, Tony Krowiak wrote:
+>>> On 05/16/2018 03:48 AM, Pierre Morel wrote:
+>>>> On 15/05/2018 18:07, Tony Krowiak wrote:
+>>>>> On 05/15/2018 10:55 AM, Pierre Morel wrote:
+>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>>> Provides interfaces to manage the AP adapters, usage domains
+>>>>>>> and control domains assigned to a KVM guest.
+>>>>>>>
+>>>>>>> The guest's SIE state description has a satellite structure 
+>>>>>>> called the
+>>>>>>> Crypto Control Block (CRYCB) containing three bitmask fields
+>>>>>>> identifying the adapters, queues (domains) and control domains
+>>>>>>> assigned to the KVM guest:
+>>>>>>>
+>>>> ...snip...
+>>>>>>> +}
+>>>>>>
+>>>>>> This function (ap_validate_queue_sharing) only verifies that VM 
+>>>>>> don't share queues.
+>>>>>> What about the queues used by a host application?
+>>>>>
+>>>>> How can that be verified from this function? I suppose I could put 
+>>>>> a check in here to
+>>>>> verify that the queues are reserved by the vfio_ap device driver, 
+>>>>> but that would
+>>>>> be redundant because an AP queue can not be assigned to a mediated 
+>>>>> matrix device
+>>>>> via its sysfs attributes unless it is reserved by the vfio_ap 
+>>>>> device driver (see
+>>>>> patches 7, 8 and 9).
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> I understand that you want to implement  these checks within KVM 
+>>>>>> but this is
+>>>>>> related to which queue devices are bound to the matrix and which 
+>>>>>> one are not.
+>>>>>
+>>>>> See my comments above and below about AP queue assignment to the 
+>>>>> mediated matrix
+>>>>> device. The one verification we can't do when the devices are 
+>>>>> assigned is whether
+>>>>> another guest is using the queue because assignment occurs before 
+>>>>> the guest using
+>>>>> the queue is started in which case we have no access to KVM. It 
+>>>>> makes no sense to
+>>>>> do so at assignment time anyway because it doesn't matter until 
+>>>>> the guest using
+>>>>> the mediated matrix device is started, so that check is done in KVM.
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> I think that this should be related somehow to the bounded queue 
+>>>>>> devices and
+>>>>>> therefor implemented inside the matrix driver.
+>>>>>
+>>>>> As I stated above, when an AP queue is assigned to the mediated 
+>>>>> matrix device via
+>>>>> its sysfs attributes, a check is done to verify that it is bound 
+>>>>> to the vfio_ap
+>>>>> device driver (see patches 7, 8 and 9). If not, then assignment 
+>>>>> will be rejected;
+>>>>> therefore, it will not be possible to configure a CRYCB with AP 
+>>>>> queues that are
+>>>>> not bound to the device driver.
+>>>>
+>>>> This patch and te followed patches take care that the queues are 
+>>>> bound to the
+>>>> matrix driver when they are assigned to the matrix using the sysfs 
+>>>> entries.
+>>>>
+>>>> But they do not take care that the queue can not be unbound before 
+>>>> you start
+>>>> the guest, and they are not in the path if the admin decide to 
+>>>> unbind a queue
+>>>> at some later time.
+>>>
+>>> That is a good point. I need to put a check in the device driver at 
+>>> the time
+>>> the mediated device fd is opened to verify that the queues being 
+>>> configured in
+>>> the guest's CRYCB are bound to the driver.
+>>
+>> not only, you also need to avoid the possibility of unbinding the 
+>> device.
+>> For this you need to use the remove callback from the driver.
+>
+> I thought I addressed this already. The definition of the remove 
+> callback does
+> not specify a return value, so there is currently no way to prevent 
+> the AP bus
+> from removing the queue device on unbind. I sent an email to Harald to 
+> discuss
+> adding a return value to the callback.
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 157 +++++++++++++++++++++++++++++++++-
- 1 file changed, 156 insertions(+), 1 deletion(-)
+If you can not prevent the unbinding you must remove
+the according bits in the matrix.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index bd58ab4..1822698 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -24,7 +24,7 @@
- 		ranges = <0 0 0 0xffffffff>;
- 		compatible = "simple-bus";
- 
--		pinctrl@1000000 {
-+		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,ipq8074-pinctrl";
- 			reg = <0x1000000 0x300000>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-@@ -278,6 +278,161 @@
- 			pinctrl-names = "default";
- 			status = "disabled";
- 		};
-+
-+		pcie_phy0: phy@86000 {
-+			compatible = "qcom,ipq8074-qmp-pcie-phy";
-+			reg = <0x86000 0x1000>;
-+			#phy-cells = <0>;
-+			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
-+			clock-names = "pipe_clk";
-+			clock-output-names = "pcie20_phy0_pipe_clk";
-+
-+			resets = <&gcc GCC_PCIE0_PHY_BCR>,
-+				<&gcc GCC_PCIE0PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		pcie0: pci@20000000 {
-+			compatible = "qcom,pcie-ipq8074";
-+			reg =  <0x20000000 0xf1d
-+				0x20000f20 0xa8
-+				0x80000 0x2000
-+				0x20100000 0x1000>;
-+			reg-names = "dbi", "elbi", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <0>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie_phy0>;
-+			phy-names = "pciephy";
-+
-+			ranges = <0x81000000 0 0x20200000 0x20200000
-+				  0 0x100000   /* downstream I/O */
-+				  0x82000000 0 0x20300000 0x20300000
-+				  0 0xd00000>; /* non-prefetchable memory */
-+
-+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 75
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 78
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 79
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 83
-+					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			clocks = <&gcc GCC_SYS_NOC_PCIE0_AXI_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE0_AHB_CLK>,
-+				 <&gcc GCC_PCIE0_AUX_CLK>;
-+
-+			clock-names = "iface",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "aux";
-+			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
-+				 <&gcc GCC_PCIE0_SLEEP_ARES>,
-+				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_MASTER_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_SLAVE_ARES>,
-+				 <&gcc GCC_PCIE0_AHB_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_MASTER_STICKY_ARES>;
-+			reset-names = "pipe",
-+				      "sleep",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "axi_m_sticky";
-+			status = "disabled";
-+		};
-+
-+		pcie_phy1: phy@8e000 {
-+			compatible = "qcom,ipq8074-qmp-pcie-phy";
-+			reg = <0x8e000 0x1000>;
-+			#phy-cells = <0>;
-+			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
-+			clock-names = "pipe_clk";
-+			clock-output-names = "pcie20_phy1_pipe_clk";
-+
-+			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-+				<&gcc GCC_PCIE1PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		pcie1: pci@10000000 {
-+			compatible = "qcom,pcie-ipq8074";
-+			reg =  <0x10000000 0xf1d
-+				0x10000f20 0xa8
-+				0x88000 0x2000
-+				0x10100000 0x1000>;
-+			reg-names = "dbi", "elbi", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <1>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie_phy1>;
-+			phy-names = "pciephy";
-+
-+			ranges = <0x81000000 0 0x10200000 0x10200000
-+				  0 0x100000   /* downstream I/O */
-+				  0x82000000 0 0x10300000 0x10300000
-+				  0 0xd00000>; /* non-prefetchable memory */
-+
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 142
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 143
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 144
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 145
-+					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE1_AHB_CLK>,
-+				 <&gcc GCC_PCIE1_AUX_CLK>;
-+			clock-names = "iface",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "aux";
-+			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-+				 <&gcc GCC_PCIE1_SLEEP_ARES>,
-+				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
-+				 <&gcc GCC_PCIE1_AHB_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>;
-+			reset-names = "pipe",
-+				      "sleep",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "axi_m_sticky";
-+			status = "disabled";
-+		};
- 	};
- 
- 	cpus {
+>
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Regards,
+>>>>>>
+>>>>>> Pierre
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
+>
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
