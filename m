@@ -1,154 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753264AbeERJIC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:08:02 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54855 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeERJH7 (ORCPT
+        id S1753320AbeERJIq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:08:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47716 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753110AbeERITl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:07:59 -0400
-X-Google-Smtp-Source: AB8JxZqkEmPhbqHtvOF7c2VJv4Ri0duPChfuhlPaNVIUq0R+95oMzq9iFZ1J7gOwRrQ/uTAvj8SfTA==
-Date: Fri, 18 May 2018 11:07:55 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 10/11] cpufreq: tegra20: Wrap cpufreq into platform
- driver
-Message-ID: <20180518090755.GJ14500@ulmo>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-11-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3MMMIZFJzhAsRj/+"
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-11-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Fri, 18 May 2018 04:19:41 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84997602B6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V7 00/12] ARM: dts: ipq: updates to enable a few peripherals
+Date: Fri, 18 May 2018 13:49:13 +0530
+Message-Id: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+All the patches have been tested on ipq4019 dk01, 04, 07 and ipq8074 hk01
+boards for spi, bam, qup, qpic, spi-nor, serial, pci.
 
---3MMMIZFJzhAsRj/+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[V7]
+    * Fixed Kbuild git bisectability issue
 
-On Thu, May 17, 2018 at 09:00:55PM +0300, Dmitry Osipenko wrote:
-> Currently tegra20-cpufreq kernel module isn't getting autoloaded because
-> there is no device associated with the module, this is one of two patches
-> that resolves the module autoloading. This patch adds a module alias that
-> will associate the tegra20-cpufreq kernel module with the platform device,
-> other patch will instantiate the actual platform device. And now it makes
-> sense to wrap cpufreq driver into a platform driver for consistency.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 116 +++++++++++++++++++-----------
->  1 file changed, 73 insertions(+), 43 deletions(-)
->=20
-> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-=
-cpufreq.c
-> index c0a7b5a78aa6..f9d02a28df9e 100644
-> --- a/drivers/cpufreq/tegra20-cpufreq.c
-> +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> @@ -19,7 +19,7 @@
->  #include <linux/clk.h>
->  #include <linux/cpufreq.h>
->  #include <linux/module.h>
-> -#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> =20
->  static struct cpufreq_frequency_table freq_table[] =3D {
->  	{ .frequency =3D 216000 },
-> @@ -33,15 +33,19 @@ static struct cpufreq_frequency_table freq_table[] =
-=3D {
->  	{ .frequency =3D CPUFREQ_TABLE_END },
->  };
-> =20
-> -static struct clk *cpu_clk;
-> -static struct clk *pll_x_clk;
-> -static struct clk *pll_p_clk;
-> -static bool pll_x_prepared;
-> +struct tegra20_cpufreq_data {
+[V6]
+    * Fixed Bjorn's comments, added his acks that he gave, added Varada's acks
+    * Rebased on top of Andy's for-next branch.
 
-Nit: I'm not a big fan of _data suffixes because they are completely
-redundant. Any data structure by definition hosts data, so I'd just drop
-that.
+[v5]
+    * Fixed a minor comment that i missed earlier.
+    * https://www.spinics.net/lists/arm-kernel/msg643071.html
 
-[...]
-> @@ -152,55 +161,76 @@ static struct cpufreq_driver tegra_cpufreq_driver =
-=3D {
->  	.suspend		=3D cpufreq_generic_suspend,
->  };
-> =20
-> -static int __init tegra_cpufreq_init(void)
-> +static int tegra20_cpufreq_probe(struct platform_device *pdev)
->  {
-> +	struct tegra20_cpufreq_data *data;
->  	int err;
-> =20
-> -	if (!of_machine_is_compatible("nvidia,tegra20"))
-> -		return -ENODEV;
-> +	data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> =20
-> -	cpu_clk =3D clk_get_sys(NULL, "cclk");
-> -	if (IS_ERR(cpu_clk))
-> -		return PTR_ERR(cpu_clk);
-> +	data->cpu_clk =3D clk_get_sys(NULL, "cclk");
-> +	if (IS_ERR(data->cpu_clk))
-> +		return PTR_ERR(data->cpu_clk);
-> =20
-> -	pll_x_clk =3D clk_get_sys(NULL, "pll_x");
-> -	if (IS_ERR(pll_x_clk)) {
-> -		err =3D PTR_ERR(pll_x_clk);
-> +	data->pll_x_clk =3D clk_get_sys(NULL, "pll_x");
-> +	if (IS_ERR(data->pll_x_clk)) {
-> +		err =3D PTR_ERR(data->pll_x_clk);
->  		goto put_cpu;
->  	}
-> =20
-> -	pll_p_clk =3D clk_get_sys(NULL, "pll_p");
-> -	if (IS_ERR(pll_p_clk)) {
-> -		err =3D PTR_ERR(pll_p_clk);
-> +	data->pll_p_clk =3D clk_get_sys(NULL, "pll_p");
-> +	if (IS_ERR(data->pll_p_clk)) {
-> +		err =3D PTR_ERR(data->pll_p_clk);
->  		goto put_pll_x;
->  	}
-> =20
-> +	data->dev =3D &pdev->dev;
-> +
-> +	tegra_cpufreq_driver.driver_data =3D data;
+[v4]
+    * Fixed more comments.
+    * Dropped reserved-memory nodes from board files as
+      that might break existing users whose u-boot do not
+      specify the fdt_high accordingly.
+    * Added chosen serial node for all boards to have
+      the default serial console specified from DT.
 
-Couldn't this be embedded into struct tegra20_cpufreq_data? Moving
-everything but this into a per-device data structure seems half-baked.
+[v3]
+    * Fixed minor comments from v2,
+      https://www.spinics.net/lists/arm-kernel/msg641480.html
 
-Thierry
+    * Added Abhishek's review tags
 
---3MMMIZFJzhAsRj/+
-Content-Type: application/pgp-signature; name="signature.asc"
+[v2]
+    * Addressed all comments from Abhishek
+    * Removed dk01-c2 and dk04-c5 spinand based boards
+      as support for spinand is not complete
+    * Based all patches on top of Andy's for-next branch
 
------BEGIN PGP SIGNATURE-----
+[V1]
+    * https://www.spinics.net/lists/arm-kernel/msg631318.html
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+l+sACgkQ3SOs138+
-s6EfsQ/9EYwXMm2wSSXGuFoJ1YQ/7t77vASBT8k9nMqoUKNRlFaIbsFHlCPwKPpv
-2ckdTB78HqNena8d6pkcFllRSp7aU8KoSSeuzq55y6ph7Ws1lXwnyv54TuQzpfZq
-YTVkPBD8RjFTaJDVDe8fZvzaO8+F/eQjdv7r408u8VErjPm2igotQGLzQLtQZZnt
-5E4FVtm+qxlrS1C68PQue/rx5ie/LEe8UzW9Sm2kgsYX7pqdmX1IR8V9ykjSeU7x
-JCR7Ubxh7uxreGcf2NffhGQQI8WT8pZE6ORlx5UmZJNWvJPcHENvwtNA8IPP90mF
-2De3JokVtEmfQZood6679szPRWjYHzcSCAIzQ2F/p/aE8EfpibQm1fGTcFc92YhV
-c35GFOhU2YtKZ3pmPMFde0rW8Wn138y4OnE0tqLkAk0h8ztcJ29HRQy/xSEJYQuf
-Pi0ToRk1ag8C0mi64vuBDUsHlfu3OqEm68vPtrHXCJJVq0lpwZQfWsKOd8LAGIj2
-k3V+nwDLZVXcw+ML+VQ/7DCgXlTRRo0vCeK5iZi7awgj9JcXNM/Lbe/eZebCdf/u
-dONsLMl8a8qoMms1cfvmqtSPJpxd/sEgY897jzSA98LLq0SFBTehRYvuRTJM3uc+
-j9e7wy98AI6wp7EfTTbdJecFBgxanpbIqPMYIRoG3a7s6KZwJ5Y=
-=hVBn
------END PGP SIGNATURE-----
+Sricharan R (12):
+  ARM: dts: ipq4019: Add a default chosen node
+  ARM: dts: ipq4019: Add a few peripheral nodes
+  ARM: dts: ipq4019: Change the max opp frequency
+  ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
+  ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3 board file
+  ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c1 board file
+  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
+  ARM: dts: ipq8074: Add peripheral nodes
+  ARM: dts: ipq8074: Add pcie nodes
+  ARM: dts: ipq8074: Enable few peripherals for hk01 board
 
---3MMMIZFJzhAsRj/+--
+ arch/arm/boot/dts/Makefile                      |   4 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi   |  10 +-
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts |  19 ++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts |   9 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi   | 111 +++++++++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts |  64 +++++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts |  25 ++
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi   |  75 ++++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi             | 162 ++++++++++--
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts       |  62 ++++-
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi           | 313 +++++++++++++++++++++++-
+ 11 files changed, 827 insertions(+), 27 deletions(-)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
