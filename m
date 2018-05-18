@@ -1,61 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752236AbeERR4b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:56:31 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38853 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752060AbeERR4a (ORCPT
+        id S1752054AbeERR6n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:58:43 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:36743 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751851AbeERR6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:56:30 -0400
-X-Google-Smtp-Source: AB8JxZrGErdGOB87f9FMQSjcRCwC1UBMUe1D4S/BmZfD0luyTL8TWGijHol4v5IyR26bFp6AkTOM4r3YACAHaBgE4/k=
+        Fri, 18 May 2018 13:58:41 -0400
+X-Google-Smtp-Source: AB8JxZqm5xt9AAWbBmp0kJHAojnApWUliWGmMI9bSedLQ4kJ82wXrJ5y2b3TKw45LvKg/1FWf4FnFXOBudDN1X7IhNM=
 MIME-Version: 1.0
-References: <20180518170202.11458-1-samitolvanen@google.com>
- <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
- <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com>
-In-Reply-To: <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Fri, 18 May 2018 10:56:18 -0700
-Message-ID: <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
-To: marc.zyngier@arm.com
-Cc: Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
-        Takahiro Akashi <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+In-Reply-To: <20180409210647.3718-1-labbott@redhat.com>
+References: <20180409210647.3718-1-labbott@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 18 May 2018 10:58:40 -0700
+X-Google-Sender-Auth: 6ftQfsFNqRPGXsCsivFZXT3e86I
+Message-ID: <CAGXu5jLcRqjk17BqprGsWJXqGusoR6nRSf8986w7chQ9UONKMA@mail.gmail.com>
+Subject: Re: [PATCH] drm/gma500: Remove VLA
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Laura Abbott <labbott@redhat.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Andrey
+On Mon, Apr 9, 2018 at 2:06 PM, Laura Abbott <labbott@redhat.com> wrote:
+>
+> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+> turn on -Wvla. Switch to a reasonable upper bound for the VLAs in
+> the gma500 driver.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-On Fri, May 18, 2018 at 10:45 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 18/05/18 18:40, Nick Desaulniers wrote:
-> > On Fri, May 18, 2018 at 10:30 AM Marc Zyngier <marc.zyngier@arm.com>
-wrote:
-> >> I'm going to ask the question I've asked before when this patch cropped
-> >> up (must be the 4th time now):
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-The previous threads for context:
-https://patchwork.kernel.org/patch/10060381/
-https://lkml.org/lkml/2018/3/16/434
+Daniel, can this go via you, or what's the best path for this patch?
 
-> >> Is it guaranteed that this is the only case where LLVM/clang is going
-to
-> >> generate absolute addresses instead of using relative addressing?
-> >
-> > It seems like if there's requirements that only relative addressing be
-> > used, then the compiler should be told explicitly about this
-restriction,
-> > no?
+Thanks!
 
-> Certainly. What's the rune?
+-Kees
 
-It seems like -fno-jump-tables covers all known issues and unblocks people
-from doing further work.  It sounds like you'd like some kind of stronger
-guarantee? Wont those cases still "crop up" as far as needing to annotate
-either the code, or build scripts?
+> ---
+> This was a little hard to figure out but I think 32 should be a
+> comfortable upper bound based on all the structures I saw. Of course I
+> can't test it.
+> ---
+>  drivers/gpu/drm/gma500/psb_intel_sdvo.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gma500/psb_intel_sdvo.c b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> index 84507912be84..3d4fa9f6b94c 100644
+> --- a/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> +++ b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+> @@ -429,13 +429,20 @@ static const char *cmd_status_names[] = {
+>         "Scaling not supported"
+>  };
+>
+> +#define MAX_ARG_LEN 32
+> +
+>  static bool psb_intel_sdvo_write_cmd(struct psb_intel_sdvo *psb_intel_sdvo, u8 cmd,
+>                                  const void *args, int args_len)
+>  {
+> -       u8 buf[args_len*2 + 2], status;
+> -       struct i2c_msg msgs[args_len + 3];
+> +       u8 buf[MAX_ARG_LEN*2 + 2], status;
+> +       struct i2c_msg msgs[MAX_ARG_LEN + 3];
+>         int i, ret;
+>
+> +       if (args_len > MAX_ARG_LEN) {
+> +               DRM_ERROR("Need to increase arg length\n");
+> +               return false;
+> +       }
+> +
+>         psb_intel_sdvo_debug_write(psb_intel_sdvo, cmd, args, args_len);
+>
+>         for (i = 0; i < args_len; i++) {
+> --
+> 2.14.3
+>
+
+
+
 -- 
-Thanks,
-~Nick Desaulniers
+Kees Cook
+Pixel Security
