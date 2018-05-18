@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeERJq2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:46:28 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45655 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeERJqZ (ORCPT
+        id S1752577AbeERJqm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:46:42 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44910 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751909AbeERJqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:46:25 -0400
-X-Google-Smtp-Source: AB8JxZovCzFOy5BtQGUR3nZ07Fexznz6sY/cCP1xbHxQzKYN4jr44upOgA5eaFWY5N4EyL5lYPMReQ==
+        Fri, 18 May 2018 05:46:39 -0400
+X-Google-Smtp-Source: AB8JxZr8T+b2wTvHyA6fBAeb9G4SD++I2bWpV6ec6Va4HCttATRZ+c5J1FjZhTvG7zRuI+g3xzKcjg==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 04/26] clk: sunxi-ng: a64: Add minimal rate for video PLLs
-Date: Fri, 18 May 2018 15:15:14 +0530
-Message-Id: <20180518094536.17201-5-jagan@amarulasolutions.com>
+Subject: [PATCH v2 06/26] drm/sun4i: Add support for A64 mixer1
+Date: Fri, 18 May 2018 15:15:16 +0530
+Message-Id: <20180518094536.17201-7-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
 References: <20180518094536.17201-1-jagan@amarulasolutions.com>
@@ -32,82 +32,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
+Mixers in Allwinner have similar capabilities as others SoCs with DE2.
 
-Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
+Mixer1 has 1 VI and 1 UI planes and supports HW scaling on all
+planes.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v2:
 - New patch
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index ee9c12cf3f08..d0e30192f0cf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x018,
-@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 36d90c76317a..5b02c6ee2be6 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -508,6 +508,15 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.mod_rate = 150000000,
  };
  
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x038,
++static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
++	.ccsc		= 1,
++	.index		= 1,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
++
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
+@@ -525,6 +534,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
++		.data = &sun50i_a64_mixer1_cfg,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
 -- 
 2.14.3
