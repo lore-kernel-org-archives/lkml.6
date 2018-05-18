@@ -1,268 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeERLXy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:23:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48672 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751435AbeERLXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:23:50 -0400
-Date: Fri, 18 May 2018 12:23:48 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Brian Starkey <brian.starkey@arm.com>
-Cc: Mali DP Maintainers <malidp@foss.arm.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        DRI-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v7 3/5] drm/mali-dp: Add writeback support for DP500.
-Message-ID: <20180518112348.GA15574@e110455-lin.cambridge.arm.com>
-References: <20180518082423.15500-1-Liviu.Dudau@arm.com>
- <20180518082423.15500-4-Liviu.Dudau@arm.com>
- <20180518085620.GA7182@e107564-lin.cambridge.arm.com>
+        id S1751994AbeERL2q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:28:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751117AbeERL2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 07:28:43 -0400
+Date: Fri, 18 May 2018 19:28:36 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
+ pages when do physical randomization
+Message-ID: <20180518112836.GS24627@MiWiFi-R3L-srv>
+References: <20180516100532.14083-1-bhe@redhat.com>
+ <20180518070046.GA18660@gmail.com>
+ <20180518074359.GR24627@MiWiFi-R3L-srv>
+ <20180518081919.GB11379@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180518085620.GA7182@e107564-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180518081919.GB11379@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:56:20AM +0100, Brian Starkey wrote:
-> Hi Liviu,
+On 05/18/18 at 10:19am, Ingo Molnar wrote:
 > 
-> On Fri, May 18, 2018 at 09:24:21AM +0100, Liviu Dudau wrote:
-> > Mali DP500 behaves differently from the rest of the Mali DP IP,
-> > in that it does not have a one-shot mode and keeps writing the
-> > content of the current frame to the provided memory area until
-> > stopped. As a way of emulating the one-shot behaviour, we are
-> > going to use the CVAL interrupt that is being raised at the
-> > start of each frame, during prefetch phase, to act as End-of-Write
-> > signal, but with a twist: we are going to disable the memory
-> > write engine right after we're notified that it has been enabled,
-> > using the knowledge that the bit controlling the enabling will
-> > only be acted upon on the next vblank/prefetch.
-> > 
-> > CVAL interrupt will fire durint the next prefetch phase every time
-> > the global CVAL bit gets set, so we need a state byte to track
-> > the memory write enabling.
-> > 
-> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-> > ---
-> > drivers/gpu/drm/arm/malidp_hw.c   | 77 +++++++++++++++++++++++++++++--
-> > drivers/gpu/drm/arm/malidp_hw.h   |  5 +-
-> > drivers/gpu/drm/arm/malidp_regs.h |  3 +-
-> > 3 files changed, 80 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-> > index 455a83689d039..d9a7f19c9f219 100644
-> > --- a/drivers/gpu/drm/arm/malidp_hw.c
-> > +++ b/drivers/gpu/drm/arm/malidp_hw.c
-> > @@ -22,6 +22,13 @@
-> > #include "malidp_drv.h"
-> > #include "malidp_hw.h"
-> > 
-> > +enum {
-> > +	MW_NOT_ENABLED = 0,	/* SE writeback not enabled */
-> > +	MW_ONESHOT,		/* SE in one-shot mode for writeback */
-> > +	MW_START,		/* SE started writeback */
-> > +	MW_STOP,		/* SE finished writeback */
-> > +};
-> > +
-> > static const struct malidp_format_id malidp500_de_formats[] = {
-> > 	/*    fourcc,   layers supporting the format,     internal id  */
-> > 	{ DRM_FORMAT_ARGB2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_GRAPHICS2,  0 },
-> > @@ -368,6 +375,50 @@ static long malidp500_se_calc_mclk(struct malidp_hw_device *hwdev,
-> > 	return ret;
-> > }
-> > 
-> > +static int malidp500_enable_memwrite(struct malidp_hw_device *hwdev,
-> > +				     dma_addr_t *addrs, s32 *pitches,
-> > +				     int num_planes, u16 w, u16 h, u32 fmt_id)
-> > +{
-> > +	u32 base = MALIDP500_SE_MEMWRITE_BASE;
-> > +	u32 de_base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
-> > +
-> > +	/* enable the scaling engine block */
-> > +	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
-> > +
-> > +	hwdev->mw_state = MW_START;
-> > +
-> > +	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
-> > +	switch (num_planes) {
-> > +	case 2:
-> > +		malidp_hw_write(hwdev, lower_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_LOW);
-> > +		malidp_hw_write(hwdev, upper_32_bits(addrs[1]), base + MALIDP_MW_P2_PTR_HIGH);
-> > +		malidp_hw_write(hwdev, pitches[1], base + MALIDP_MW_P2_STRIDE);
-> > +		/* fall through */
-> > +	case 1:
-> > +		malidp_hw_write(hwdev, lower_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_LOW);
-> > +		malidp_hw_write(hwdev, upper_32_bits(addrs[0]), base + MALIDP_MW_P1_PTR_HIGH);
-> > +		malidp_hw_write(hwdev, pitches[0], base + MALIDP_MW_P1_STRIDE);
-> > +		break;
-> > +	default:
-> > +		WARN(1, "Invalid number of planes");
-> > +	}
-> > +
-> > +	malidp_hw_write(hwdev, MALIDP_DE_H_ACTIVE(w) | MALIDP_DE_V_ACTIVE(h),
-> > +			MALIDP500_SE_MEMWRITE_OUT_SIZE);
-> > +	malidp_hw_setbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void malidp500_disable_memwrite(struct malidp_hw_device *hwdev)
-> > +{
-> > +	u32 base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
-> > +	if (hwdev->mw_state == MW_START)
-> > +		hwdev->mw_state = MW_STOP;
-> > +	malidp_hw_clearbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
-> > +	malidp_hw_clearbits(hwdev, MALIDP_SCALE_ENGINE_EN, base + MALIDP_DE_DISPLAY_FUNC);
-> > +}
-> > +
-> > static int malidp550_query_hw(struct malidp_hw_device *hwdev)
-> > {
-> > 	u32 conf = malidp_hw_read(hwdev, MALIDP550_CONFIG_ID);
-> > @@ -598,6 +649,8 @@ static int malidp550_enable_memwrite(struct malidp_hw_device *hwdev,
-> > 	/* enable the scaling engine block */
-> > 	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
-> > 
-> > +	hwdev->mw_state = MW_ONESHOT;
-> > +
-> > 	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
-> > 	switch (num_planes) {
-> > 	case 2:
-> > @@ -676,8 +729,9 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
-> > 				.vsync_irq = MALIDP500_DE_IRQ_VSYNC,
-> > 			},
-> > 			.se_irq_map = {
-> > -				.irq_mask = MALIDP500_SE_IRQ_CONF_MODE,
-> > -				.vsync_irq = 0,
-> > +				.irq_mask = MALIDP500_SE_IRQ_CONF_MODE |
-> > +					    MALIDP500_SE_IRQ_CONF_VALID,
-> > +				.vsync_irq = MALIDP500_SE_IRQ_CONF_VALID,
-> > 			},
-> > 			.dc_irq_map = {
-> > 				.irq_mask = MALIDP500_DE_IRQ_CONF_VALID,
-> > @@ -696,6 +750,8 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES] = {
-> > 		.rotmem_required = malidp500_rotmem_required,
-> > 		.se_set_scaling_coeffs = malidp500_se_set_scaling_coeffs,
-> > 		.se_calc_mclk = malidp500_se_calc_mclk,
-> > +		.enable_memwrite = malidp500_enable_memwrite,
-> > +		.disable_memwrite = malidp500_disable_memwrite,
-> > 		.features = MALIDP_DEVICE_LV_HAS_3_STRIDES,
-> > 	},
-> > 	[MALIDP_550] = {
-> > @@ -934,7 +990,21 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
-> > 	mask = malidp_hw_read(hwdev, hw->map.se_base + MALIDP_REG_MASKIRQ);
-> > 	status = malidp_hw_read(hwdev, hw->map.se_base + MALIDP_REG_STATUS);
-> > 	status &= mask;
-> > -	/* ToDo: status decoding and firing up of VSYNC and page flip events */
-> > +
-> > +	if (status & se->vsync_irq) {
-> > +		switch (hwdev->mw_state) {
-> > +		case MW_STOP:
-> > +		case MW_ONESHOT:
-> > +			/* disable writeback after stop or oneshot */
-> > +			hwdev->mw_state = MW_NOT_ENABLED;
-> > +			break;
-> > +		case MW_START:
-> > +			/* writeback started, need to emulate one-shot mode */
-> > +			hw->disable_memwrite(hwdev);
-> > +			hw->set_config_valid(hwdev);
+> * Baoquan He <bhe@redhat.com> wrote:
 > 
-> Is this serialised with incoming atomic commits? We have to make sure
-> we don't set CVAL while a new scene configuration is in-progress.
+> > OK, I realized my saying above is misled because I didn't explain the
+> > background clearly. Let me add it:
+> > 
+> > Previously, FJ reported the movable_node issue that KASLR will put
+> > kernel into movable_node. That cause those movable_nodes can't be hot
+> > plugged any more. So finally we plannned to solve it by adding a new
+> > kernel parameter :
+> > 
+> > 	kaslr_boot_mem=nn[KMG]@ss[KMG]
+> > 
+> > We want customer to specify memory regions which KASLR can make use to
+> > randomize kernel into.
+> 
+> *WHY* should the "customer" care?
+> 
+> This is a _bug_: movable, hotpluggable zones of physical memory should not be 
+> randomized into.
 
-We are not serialised with the incoming atomic commit, and we probably
-should. I'll have a think on how to sort this one out.
+Yes, for movable zones, agreed.
+
+But for huge pages, it's only related to memory layout.
 
 > 
-> I also think the current state tracking won't work properly for two
-> subsequent frames using writeback. In enable_memwrite() you change the
-> mw_state, but the currently ongoing job is relying on it to correctly
-> signal. We probably need to either block incoming commits until the
-> writeback is finished, or we need to enhance the state tracking to
-> manage multiple commits.
+> > [...] Outside of the specified regions, we need avoid to put kernel into those 
+> > regions even though they are also available RAM. As for movable_node issue, we 
+> > can add immovable regions into kaslr_boot_mem=nn[KMG]@ss[KMG].
+> > 
+> > During this hotplug issue reviewing, Luiz's team reported this 1GB hugepages
+> > regression bug, I reproduced the bug and found out the root cause, then
+> > realized that I can utilize kaslr_boot_mem=nn[KMG]@ss[KMG] parameter to
+> > fix it too. E.g the KVM guest with 4GB RAM, we have a good 1GB huge
+> > page, then we can add "kaslr_boot_mem=1G@0, kaslr_boot_mem=3G@2G" to
+> > kernel command-line, then the good 1GB region [1G, 2G) won't be taken
+> > into account for kernel physical randomization.
+> > 
+> > Later, you pointed out that 'kaslr_boot_mem=' way need user to specify
+> > memory region manually, it's not good, suggested to solve them by
+> > getting information and solving them in KASLR boot code. So they are two
+> > issues now, for the movable_node issue, we need get hotplug information
+> > from SRAT table and then avoid them; for this 1GB hugepage issue, we
+> > need get information from kernel command-line, then avoid them.
+> > 
+> > This patch is for the hugepage issue only. Since FJ reported the hotplug
+> > issue and they assigned engineers to work on it, I would like to wait
+> > for them to post according to your suggestion.
+> 
+> All of this is handling it the wrong way about. This is *not* primarily about 
+> KASLR at all, and the user should not be required to specify some weird KASLR 
+> parameters.
+> 
+> This is a basic _memory map enumeration_ problem in both cases:
+> 
+>  - in the hotplug case KASLR doesn't know that it's a movable zone and relocates 
+>    into it,
 
-I will go back to the drawing boards and come up with something more
-solid.
+Yes, in boot KASLR, we haven't parsed ACPI table to get hotplug
+information. If decide to read SRAT table, we can get if memory region
+is hotpluggable, then avoid them. This can be consistent with the later
+code after entering kernel.
 
-Best regards,
-Liviu
+> 
+>  - and in the KVM case KASLR doesn't know that it's a valuable 1GB page that
+>    shouldn't be broken up.
+> 
+> Note that it's not KASLR specific: if we had some other kernel feature that tried 
+> to allocate a piece of memory from what appears to be perfectly usable generic RAM 
+> we'd have the same problems!
 
+Hmm, this may not be the situation for 1GB huge pages. For 1GB huge
+pages, the bug is that on KVM guest with 4GB ram, when user adds
+'default_hugepagesz=1G hugepagesz=1G hugepages=1' to kernel
+command-line, if 'nokaslr' is specified, they can get 1GB huge page
+allocated successfully. If remove 'nokaslr', namely KASLR is enabled,
+the 1GB huge page allocation failed.
+
+In hugetlb_nrpages_setup(), you can see that the current huge page code
+relies on memblock to get 1GB huge pages. Below is the e820 memory
+map from Luiz's bug report. In fact there are two good 1GB huge pages,
+one is [0x40000000, 0x7fffffff], the 2nd one is
+[0x100000000, 0x13fffffff]. by default memblock will allocate top-down
+if movable_node is set, then [0x100000000, 0x13fffffff] will be broken
+when system initialization goes into hugetlb_nrpages_setup() invocation.
+So normally huge page can only get one good 1GB huge page, whether KASLR
+is enanled or not. This is not bug, but decided by the current huge page
+implementation. In this case, KASLR boot code can see two good 1GB huge
+pages, and try to avoid them. Besides, if it's a good 1GB huge page,
+it's not defined in memory map and also not attribute. It's only decided
+by the memory layout and also decided by the memory usage situation in
+the running system. If want to keep all good 1GB huge pages untouched,
+we may need to adjust the current memblock allocation code, to avoid
+any possibility to step into good 1GB huge pages before huge page
+allocation. However this comes to the improvement area of huge pages
+implementation, not related to KASLR.
+
+[  +0.000000] e820: BIOS-provided physical RAM map:
+[  +0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[  +0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
+
+Furthermore, on bare-metal with large memory, e.g with 100GB memory, if
+user specifies 'default_hugepagesz=1G hugepagesz=1G hugepages=2' to only
+expect two 1GB huge pages reserved, if we save all those tens of good
+1GB huge pages untouched, it seems to be over reactive.
+
+Not sure if I understand your point correctly, this is my thought about
+the huge page issue, please help to point out anything wrong if any.
+
+Thanks
+Baoquan
+> 
+> We need to fix the real root problem, which is lack of knowledge about crutial 
+> attributes of physical memory. Once that knowledge is properly represented at this 
+> early boot stage both KASLR and other memory allocators can make use of it to 
+> avoid those regions.
 > 
 > Thanks,
-> -Brian
 > 
-> > +			break;
-> > +		}
-> > +	}
-> > 
-> > 	malidp_hw_clear_irq(hwdev, MALIDP_SE_BLOCK, status);
-> > 
-> > @@ -964,6 +1034,7 @@ int malidp_se_irq_init(struct drm_device *drm, int irq)
-> > 		return ret;
-> > 	}
-> > 
-> > +	hwdev->mw_state = MW_NOT_ENABLED;
-> > 	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
-> > 			     hwdev->hw->map.se_irq_map.irq_mask);
-> > 
-> > diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-> > index a242e97cf6428..c479738b81af5 100644
-> > --- a/drivers/gpu/drm/arm/malidp_hw.h
-> > +++ b/drivers/gpu/drm/arm/malidp_hw.h
-> > @@ -178,7 +178,7 @@ struct malidp_hw {
-> > 	long (*se_calc_mclk)(struct malidp_hw_device *hwdev,
-> > 			     struct malidp_se_config *se_config,
-> > 			     struct videomode *vm);
-> > -	/**
-> > +	/*
-> > 	 * Enable writing to memory the content of the next frame
-> > 	 * @param hwdev - malidp_hw_device structure containing the HW description
-> > 	 * @param addrs - array of addresses for each plane
-> > @@ -232,6 +232,9 @@ struct malidp_hw_device {
-> > 	/* track the device PM state */
-> > 	bool pm_suspended;
-> > 
-> > +	/* track the SE memory writeback state */
-> > +	u8 mw_state;
-> > +
-> > 	/* size of memory used for rotating layers, up to two banks available */
-> > 	u32 rotation_memory[2];
-> > };
-> > diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-> > index e2b2c496225e3..93b198f3af864 100644
-> > --- a/drivers/gpu/drm/arm/malidp_regs.h
-> > +++ b/drivers/gpu/drm/arm/malidp_regs.h
-> > @@ -198,7 +198,8 @@
-> > #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
-> > #define MALIDP500_SE_BASE		0x00c00
-> > #define MALIDP500_SE_CONTROL		0x00c0c
-> > -#define MALIDP500_SE_PTR_BASE		0x00e0c
-> > +#define MALIDP500_SE_MEMWRITE_OUT_SIZE	0x00c2c
-> > +#define MALIDP500_SE_MEMWRITE_BASE	0x00e00
-> > #define MALIDP500_DC_IRQ_BASE		0x00f00
-> > #define MALIDP500_CONFIG_VALID		0x00f00
-> > #define MALIDP500_CONFIG_ID		0x00fd4
-> > -- 
-> > 2.17.0
-> > 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+> 	Ingo
