@@ -1,61 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeERNNj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:13:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751112AbeERNNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:13:38 -0400
-Date: Fri, 18 May 2018 16:13:36 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-Message-ID: <20180518161253-mutt-send-email-mst@kernel.org>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+        id S1752356AbeERNOI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:14:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:55491 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751395AbeERNOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:14:06 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Gautham R Shenoy <ego@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>
+Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] powerpc: Detect the presence of big-core with interleaved threads
+In-Reply-To: <20180516043516.GA14826@in.ibm.com>
+References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com> <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com> <1526268071.30369.20.camel@neuling.org> <20180516043516.GA14826@in.ibm.com>
+Date: Fri, 18 May 2018 23:14:04 +1000
+Message-ID: <87k1s1xg0z.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
-> We return -EIO on device down but can not raise EPOLLOUT after it was
-> up. This may confuse user like vhost which expects tuntap to raise
-> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
-> be easily reproduced by transmitting packets from VM while down and up
-> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
-> 
-> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/net/tun.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index d45ac37..1b29761 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
->  	int skb_xdp = 1;
->  	bool frags = tun_napi_frags_enabled(tun);
->  
-> -	if (!(tun->dev->flags & IFF_UP))
-> +	if (!(tun->dev->flags & IFF_UP)) {
+Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
+...
+>> > @@ -565,7 +615,16 @@ void __init smp_setup_cpu_maps(void)
+>> >  	vdso_data->processorCount = num_present_cpus();
+>> >  #endif /* CONFIG_PPC64 */
+>> >  
+>> > -        /* Initialize CPU <=> thread mapping/
+>> > +	dn = of_find_node_by_type(NULL, "cpu");
+>> > +	if (dn) {
+>> > +		if (check_for_interleaved_big_core(dn)) {
+>> > +			has_interleaved_big_core = true;
+>> > +			pr_info("Detected interleaved big-cores\n");
+>> 
+>> Is there a runtime way to check this also?  If the dmesg buffer overflows, we
+>> lose this.
+>
+> Where do you suggest we put this ? Should it be a part of
+> /proc/cpuinfo ?
 
-Isn't this racy?  What if flag is cleared at this point?
+Hmm, it'd be nice not to pollute it with more junk.
 
-> +		set_bit(SOCKWQ_ASYNC_NOSPACE, &tfile->socket.flags);
->  		return -EIO;
-> +	}
->  
->  	if (!(tun->flags & IFF_NO_PI)) {
->  		if (len < sizeof(pi))
-> -- 
-> 2.7.4
+Can you just look at the pir files in sysfs?
+
+eg. on a normal system:
+
+  # cd /sys/devices/system/cpu
+  # grep . cpu[0-7]/pir
+  cpu0/pir:20
+  cpu1/pir:21
+  cpu2/pir:22
+  cpu3/pir:23
+  cpu4/pir:24
+  cpu5/pir:25
+  cpu6/pir:26
+  cpu7/pir:27
+
+
+cheers
