@@ -1,126 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeERFLk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 01:11:40 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:38275 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeERFLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 01:11:39 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4I5BOVY004172
-X-Nifty-SrcIP: [209.85.217.178]
-X-Google-Smtp-Source: AB8JxZrR443oOGUgteaQMDTx679GuQU8BEz3yqJIFuoOIxl6YzAFfhrykJPEYuee4eB1NoHuT0SiCQRAUBQtuWFjZWw=
+        id S1751746AbeERFPS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 01:15:18 -0400
+Received: from mga07.intel.com ([134.134.136.100]:12757 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750882AbeERFPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 01:15:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
+   d="scan'208";a="42795989"
+Date: Fri, 18 May 2018 13:14:23 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Yuchung Cheng <ycheng@google.com>
+Cc: kbuild-all@01.org, netdev@vger.kernel.org,
+        Neal Cardwell <ncardwell@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Priyaranjan Jha <priyarjha@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        linux-kernel@vger.kernel.org
+Subject: [net-next:master 1200/1233] net/ipv4/tcp_recovery.c:24:5: sparse:
+ symbol 'tcp_rack_reo_wnd' was not declared. Should it be static?
+Message-ID: <201805181300.JN7KwXNm%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3ce8f87d-69fa-231a-b51c-9805e6525032@infradead.org>
-References: <9e9438b0-568a-8dc0-dad6-d29b6e39e53a@infradead.org>
- <CAK7LNAQxcVRvhJn6GQVdLLuEq0sJEUcfwkbMpmx9j9nbjscQRg@mail.gmail.com> <3ce8f87d-69fa-231a-b51c-9805e6525032@infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 18 May 2018 14:10:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
-Message-ID: <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: check for pkg-config on make {menu,n,g,x}config
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Bj=C3=B8rn_Forsman?= <bjorn.forsman@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+head:   538e2de104cfb4ef1acb35af42427bff42adbe4d
+commit: 20b654dfe1beaca60ab51894ff405a049248433d [1200/1233] tcp: support DUPACK threshold in RACK
+reproduce:
+        # apt-get install sparse
+        git checkout 20b654dfe1beaca60ab51894ff405a049248433d
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-2018-04-07 6:37 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 03/14/2018 10:50 PM, Masahiro Yamada wrote:
->> 2018-03-13 11:30 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->>> From: Randy Dunlap <rdunlap@infradead.org>
->>>
->>> Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
->>> that other required files are present, but none of these check that
->>> pkg-config itself is present.  Add a check for all 4 of these targets.
->>>
->>> Fixes kernel bugzilla #77511:
->>> https://bugzilla.kernel.org/show_bug.cgi?id=77511
->>>
->>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>> ---
->>> v2: use 'command -v' instead of 'which'
->>>
->>> I'm also OK with just documenting the pkg-config requirement in
->>> Documentation/Changes (= Documentation/process/changes.rst).
->>>
->>>  scripts/kconfig/Makefile           |   15 ++++++++++++++-
->>>  scripts/kconfig/check-pkgconfig.sh |   12 ++++++++++++
->>>  2 files changed, 26 insertions(+), 1 deletion(-)
->>>
->>> --- lnx-416-rc3.orig/scripts/kconfig/Makefile
->>> +++ lnx-416-rc3/scripts/kconfig/Makefile
->>> @@ -160,6 +160,9 @@ help:
->>>         @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
->>>         @echo  '  tinyconfig      - Configure the tiniest possible kernel'
->>>
->>> +# pkg-config check
->>> +check-pkgconfig  := $(srctree)/$(src)/check-pkgconfig.sh
->>> +
->>>  # lxdialog stuff
->>>  check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
->>>
->>> @@ -205,7 +208,17 @@ $(addprefix $(obj)/, mconf.o $(lxdialog)
->>>  $(obj)/dochecklxdialog:
->>>         $(Q)$(CONFIG_SHELL) $(check-lxdialog) -check $(HOSTCC) $(HOST_EXTRACFLAGS) $(HOSTLOADLIBES_mconf)
->>>
->>> -always := dochecklxdialog
->>> +# Check that we have pkg-config (used by each of menu/n/g/xconfig)
->>> +PHONY += $(obj)/docheckpkgconfig
->>> +$(addprefix $(obj)/, mconf.o): $(obj)/docheckpkgconfig
->>> +$(addprefix $(obj)/, nconf.o): $(obj)/docheckpkgconfig
->>> +$(addprefix $(obj)/, gconf.o): $(obj)/docheckpkgconfig
->>> +$(addprefix $(obj)/, qconf.o): $(obj)/docheckpkgconfig
->>> +
->>> +$(obj)/docheckpkgconfig:
->>> +       $(Q)$(CONFIG_SHELL) $(check-pkgconfig)
->>> +
->>> +always := docheckpkgconfig dochecklxdialog
->>
->>
->> I did not test this patch, but does this check work as expected?
->>
->> Probably we want to run 'docheckpkgconfig'
->> before 'dochecklxdiag', '.tmp_gtkcheck', '.tmp_qtcheck', etc.
->> But, I do not see such dependencies.
->>
->>
->> Also, if we make 'pkg-config' mandatory,
->> should we entirely drop fall-back logics like follows?
->>
->> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L10
->> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L29
->> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/Makefile#L230
->>
->>
->> What do you think?
->>
->
-> Hi,
->
-> I'm willing to keep patching/testing on this, but both pkg-config and depmod
-> (for depmod, see: https://bugzilla.kernel.org/show_bug.cgi?id=198965)
-> are basic requirements IMO, so just documenting their requirements is good
-> enough to me, but might not be good enough for some users.
->
-> Comments?
 
-Sorry for late comments.
+sparse warnings: (new ones prefixed by >>)
 
-OK, I am fine with making pkg-config a requirement.
-(and it should be documented)
+   net/ipv4/tcp_recovery.c:46:16: sparse: expression using sizeof(void)
+   net/ipv4/tcp_recovery.c:46:16: sparse: expression using sizeof(void)
+>> net/ipv4/tcp_recovery.c:24:5: sparse: symbol 'tcp_rack_reo_wnd' was not declared. Should it be static?
+   include/net/tcp.h:738:16: sparse: expression using sizeof(void)
+   net/ipv4/tcp_recovery.c:102:40: sparse: expression using sizeof(void)
+   net/ipv4/tcp_recovery.c:102:40: sparse: expression using sizeof(void)
+   include/net/tcp.h:738:16: sparse: expression using sizeof(void)
+   net/ipv4/tcp_recovery.c:210:42: sparse: expression using sizeof(void)
 
-But, I'd like to clean-up scripts/kconfig/Makefile first.
-It is already cluttered, and hesitate to add new code based on that.
-I posted the patches.
+Please review and possibly fold the followup patch.
 
-Could you send v3 after the cleaning work is done?
-
--- 
-Best Regards
-Masahiro Yamada
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
