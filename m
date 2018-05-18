@@ -1,120 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751565AbeERLxM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:53:12 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:29603 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbeERLxH (ORCPT
+        id S1751497AbeERL4S (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:56:18 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:40801 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeERL4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:53:07 -0400
-Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <bcousson@baylibre.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <paul@pwsan.com>,
-        <lokeshvutla@ti.com>, <linux@armlinux.org.uk>
-References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
- <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
- <20180517210931.GQ98604@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <96794128-c107-9b04-aed5-5dd9caa7a605@ti.com>
-Date: Fri, 18 May 2018 17:24:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 18 May 2018 07:56:14 -0400
+X-Google-Smtp-Source: AB8JxZrt/KJSBNdoF+uc9kzVeV2dLJbe3GsH745j4vOwH+PRpXHqdEKT5C8MvUn7WokMozovpX0f4oYBIcGCQGN5wnQ=
 MIME-Version: 1.0
-In-Reply-To: <20180517210931.GQ98604@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <8736ypgqie.fsf@vitty.brq.redhat.com>
+References: <20180516152131.30689-1-vkuznets@redhat.com> <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
+ <87bmddgrex.fsf@vitty.brq.redhat.com> <8736ypgqie.fsf@vitty.brq.redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Fri, 18 May 2018 19:56:13 +0800
+Message-ID: <CANRm+Cy5buPHVW-8cLS6dQTGxPK79iy_pj-oqs=N0n5sGGxxHw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm <kvm@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
-
-On Friday 18 May 2018 02:39 AM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
->> From: Lokesh Vutla <lokeshvutla@ti.com>
+2018-05-18 19:19 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
+> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+>
+>> Wanpeng Li <kernellwp@gmail.com> writes:
 >>
->> Add MCAN hwmod data and register it for dra762 silicons.
+>>> Hi Vitaly,
+>>> 2018-05-16 23:21 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
+>>>> Changes since v3 [Radim Krcmar]:
+>>>> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
+>>>> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
+>>>> - Fix undefined behavior for hv->vp_index >= 64.
+>>>> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
+>>>> - For -ex case preload all banks with a single kvm_read_guest().
+>>>>
+>>>> Description:
+>>>>
+>>>> This is both a new feature and a bugfix.
+>>>>
+>>>> Bugfix description:
+>>>>
+>>>> It was found that Windows 2016 guests on KVM crash when they have > 64
+>>>> vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
+>>>> sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
+>>>
+>>> We try the below command line, the Windows 2016 guest successfully to
+>>> login and there are 80 vCPUs can be observed in the guest w/o the
+>>> patchset, why you mentioned the crash and ignore?
+>>>
+>>> /usr/local/bin/qemu-system-x86_64 -machine  pc-i440fx-rhel7.3.0  -m
+>>> 8192 -smp 80,sockets=2,cores=40,threads=1  -device
+>>> ide-drive,bus=ide.0,drive=test -drive
+>>> id=test,if=none,file=/instanceimage/359b18ab-05bb-460d-9b53-89505bca68ed/359b18ab-05bb-460d-9b53-89505bca68ed_vda_1.qcow2
+>>>  -net nic,model=virtio -net user -monitor stdio -usb -usbdevice tablet
+>>> --enable-kvm --cpu host -vnc 0.0.0.0:2
 >>
->> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> ---
->>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
->>
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> index 62352d1..a2cd7f8 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
->>  };
->>  
->>  /*
->> + * 'mcan' class
->> + *
->> + */
->> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
->> +	.name	= "mcan",
->> +};
->> +
->> +/* mcan */
->> +static struct omap_hwmod dra76x_mcan_hwmod = {
->> +	.name		= "mcan",
->> +	.class		= &dra76x_mcan_hwmod_class,
->> +	.clkdm_name	= "wkupaon_clkdm",
->> +	.main_clk	= "mcan_clk",
->> +	.prcm = {
->> +		.omap4 = {
->> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
->> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
->> +			.modulemode   = MODULEMODE_SWCTRL,
->> +		},
->> +	},
->> +};
-> 
-> So based on the ti-sysc related dts comments, this patch should
-> work except you should be able to just leave out the clocks here
-> with the dts changes.
-> 
->> +/*
->>   * 'mcspi' class
->>   *
->>   */
->> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
->>  	.user		= OCP_USER_MPU,
->>  };
->>  
->> +/* l3_main_1 -> mcan */
->> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
->> +	.master		= &dra7xx_l3_main_1_hwmod,
->> +	.slave		= &dra76x_mcan_hwmod,
->> +	.clk		= "l3_iclk_div",
->> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
->> +};
->> +
->>  static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
->>  	&dra7xx_l3_main_1__dmm,
->>  	&dra7xx_l3_main_2__l3_instr,
->> @@ -3958,6 +3989,7 @@ static struct omap_hwmod_ocp_if *dra7xx_gp_hwmod_ocp_ifs[] __initdata = {
->>  /* SoC variant specific hwmod links */
->>  static struct omap_hwmod_ocp_if *dra76x_hwmod_ocp_ifs[] __initdata = {
->>  	&dra7xx_l4_per3__usb_otg_ss4,
->> +	&dra76x_l3_main_1__mcan,
->>  	NULL,
->>  };
-> 
-> So the omap_hwmod_class, omap_hwmod_ocp_if and entry on the
-> dra76x_hwmod_ocp_ifs list are still needed with ti-sysc for a
-> while. Eventually that data will just come from the dts interconnect
-> hierarchy. For struct omap_hwmod_class_sysconfig, ti-sysc will
-> allocate and it based on the dts data.
-> 
+>> Crash happens when you manifest yourself as Hyper-V, you can do this by
+>> adding any 'hv-*' feature (e.g. try '-cpu host,hv_vpindex').
+>
+> Oh, and the 'ignore' happens when you pass more than 64 sockets
+> (somthing like "-smp 128,sockets=128,cores=1,threads=1") -- and this
+> happens regardless of Hyper-V enlightenments. But I guess it's just
+> because Windows doesn't support more than 64 sockets.
 
-Thanks for the detailed pointers. I will figure out the ti-sysc node
-that needs to be added and post a v2.
+Is there an option in the guest to avoid to check pvtlb support in hyperv?
 
-Thanks,
-Faiz
+Regards,
+Wanpeng Li
