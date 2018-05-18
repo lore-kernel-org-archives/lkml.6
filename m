@@ -1,117 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeERRB4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:01:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752296AbeERRBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:01:50 -0400
-Date: Fri, 18 May 2018 20:01:49 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eduardo Habkost <ehabkost@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org
-Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
-Message-ID: <20180518195139-mutt-send-email-mst@kernel.org>
-References: <1526568841-35372-1-git-send-email-mst@redhat.com>
- <20180517184658.GA1543@localhost.localdomain>
- <20180517225316-mutt-send-email-mst@kernel.org>
- <20180518160431.GX25013@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518160431.GX25013@localhost.localdomain>
+        id S1752406AbeERRCN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:02:13 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:32898 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751936AbeERRCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:02:08 -0400
+X-Google-Smtp-Source: AB8JxZqSz0BHe/QoMpkf/buTguiY94fs/bgT2JkSrjZ2vpynVxwD+DnQrtq5hkyhj+Zfs+OSHMqWEA==
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
+Subject: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+Date: Fri, 18 May 2018 10:02:02 -0700
+Message-Id: <20180518170202.11458-1-samitolvanen@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 01:04:31PM -0300, Eduardo Habkost wrote:
-> CCing qemu-devel, as I'm now discussing userspace.
-> 
-> On Thu, May 17, 2018 at 10:55:33PM +0300, Michael S. Tsirkin wrote:
-> > On Thu, May 17, 2018 at 03:46:58PM -0300, Eduardo Habkost wrote:
-> > > On Thu, May 17, 2018 at 05:54:24PM +0300, Michael S. Tsirkin wrote:
-> > > > HINTS_DEDICATED seems to be somewhat confusing:
-> > > > 
-> > > > Guest doesn't really care whether it's the only task running on a host
-> > > > CPU as long as it's not preempted.
-> > > > 
-> > > > And there are more reasons for Guest to be preempted than host CPU
-> > > > sharing, for example, with memory overcommit it can get preempted on a
-> > > > memory access, post copy migration can cause preemption, etc.
-> > > > 
-> > > > Let's call it KVM_HINTS_REALTIME which seems to better
-> > > > match what guests expect.
-> > > > 
-> > > > Also, the flag most be set on all vCPUs - current guests assume th.
-> > > > Note so in the documentation.
-> > > > 
-> > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > ---
-> > > >  Documentation/virtual/kvm/cpuid.txt  | 6 +++---
-> > > >  arch/x86/include/uapi/asm/kvm_para.h | 2 +-
-> > > >  arch/x86/kernel/kvm.c                | 8 ++++----
-> > > >  3 files changed, 8 insertions(+), 8 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-> > > > index d4f33eb8..ab022dc 100644
-> > > > --- a/Documentation/virtual/kvm/cpuid.txt
-> > > > +++ b/Documentation/virtual/kvm/cpuid.txt
-> > > > @@ -72,8 +72,8 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-> > > >  
-> > > >  flag                               || value || meaning
-> > > >  ==================================================================================
-> > > > -KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit to
-> > > > -                                   ||       || determine if there is vCPU pinning
-> > > > -                                   ||       || and there is no vCPU over-commitment,
-> > > > +KVM_HINTS_REALTIME                 ||     0 || guest checks this feature bit to
-> > > > +                                   ||       || determine that vCPUs are never
-> > > > +                                   ||       || preempted for an unlimited time,
-> > > >                                     ||       || allowing optimizations
-> > > 
-> > > My understanding of the original patch is that the intention is
-> > > to tell the guest that it is very unlikely to be preempted,
-> > > so it
-> > > can choose a more appropriate spinlock implementation.  This
-> > > description implies that the guest will never be preempted, which
-> > > is much stronger guarantee.
-> > 
-> > Note:
-> > 
-> > ...  for an unlimited time.
-> 
-> Which still sounds like a stronger guarantee than the original
-> description.  But:
-> 
-> > 
-> > > 
-> > > Isn't this new description incompatible with existing usage of
-> > > the hint, which might include people who just use vCPU pinning
-> > > but no mlock?
-> > 
-> > Without mlock you should always use pv spinlocks.
-> > 
-> > Otherwise you risk blocking on a lock taken by
-> > a VCPU that is in turn blocked on IO, where the IO
-> > is not completing because CPU is being used up
-> > spinning.
-> 
-> So the stronger guarantee seems necessary.
-> 
-> Now what should host userspace do if the user is trying to run an
-> existing configuration where the CPUID hint was set but memory is
-> not pinned?
-> 
-> -- 
-> Eduardo
+Starting with LLVM r308050, clang generates a jump table with EL1
+virtual addresses in __init_stage2_translation, which results in a
+kernel panic when booting at EL2:
 
-As much as we'd like to be helpful and validate input, you need a real
-time host too. I'm not sure how we'd find out - I suggest we do not
-bother for now.
+  Kernel panic - not syncing: HYP panic:
+  PS:800003c9 PC:ffff0000089e6fd8 ESR:86000004
+  FAR:ffff0000089e6fd8 HPFAR:0000000009825000 PAR:0000000000000000
+  VCPU:000804fc20001221
 
+  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc7-dirty #3
+  Hardware name: ARM Juno development board (r1) (DT)
+  Call trace:
+  [<ffff000008088ea4>] dump_backtrace+0x0/0x34c
+  [<ffff000008089208>] show_stack+0x18/0x20
+  [<ffff0000089c73ec>] dump_stack+0xc4/0xfc
+  [<ffff0000080c8e1c>] panic+0x138/0x2b4
+  [<ffff0000080c8ce4>] panic+0x0/0x2b4
+  SMP: stopping secondary CPUs
+  SMP: failed to stop secondary CPUs 0-3,5
+  Kernel Offset: disabled
+  CPU features: 0x002086
+  Memory Limit: none
+  ---[ end Kernel panic - not syncing: HYP panic:
+  PS:800003c9 PC:ffff0000089e6fd8 ESR:86000004
+  FAR:ffff0000089e6fd8 HPFAR:0000000009825000 PAR:0000000000000000
+  VCPU:000804fc20001221
+
+This change adds -fno-jump-tables to arm64/hyp to work around the
+bug.
+
+Suggested-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ arch/arm64/kvm/hyp/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+index 4313f74753332..745b3255e7832 100644
+--- a/arch/arm64/kvm/hyp/Makefile
++++ b/arch/arm64/kvm/hyp/Makefile
+@@ -5,6 +5,10 @@
+ 
+ ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
+ 
++ifeq ($(cc-name),clang)
++ccflags-y += -fno-jump-tables
++endif
++
+ KVM=../../../../virt/kvm
+ 
+ obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v3-sr.o
 -- 
-MST
+2.17.0.441.gb46fe60e1d-goog
