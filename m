@@ -1,72 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752467AbeERN0e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:26:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45798 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752213AbeERN0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:26:32 -0400
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Eric Dumazet <edumazet@google.com>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180518161253-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
-Date: Fri, 18 May 2018 21:26:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752500AbeERN1Q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:27:16 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36092 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeERN1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:27:15 -0400
+X-Google-Smtp-Source: AB8JxZqM/o505V7mg4ANh963wRLhZeTaISGJoju4iJ+yms6oTMxXIyfancuyUhIlG7CULG8y1GKjaQ==
+Date: Fri, 18 May 2018 14:27:11 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH REPOST] mfd: syscon: atmel-smc: include string.h
+Message-ID: <20180518132711.GM5130@dell>
+References: <20180504103446.20104-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180518161253-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180504103446.20104-1-bigeasy@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 04 May 2018, Sebastian Andrzej Siewior wrote:
 
+> The string.h header file is needed for the memset() definition. The RT
+> build fails because it is not pulled in via other header files.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/mfd/atmel-smc.c |    1 +
+>  1 file changed, 1 insertion(+)
 
-On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
-> On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
->> We return -EIO on device down but can not raise EPOLLOUT after it was
->> up. This may confuse user like vhost which expects tuntap to raise
->> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
->> be easily reproduced by transmitting packets from VM while down and up
->> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
->>
->> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
->> Cc: Eric Dumazet <edumazet@google.com>
->> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/net/tun.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->> index d45ac37..1b29761 100644
->> --- a/drivers/net/tun.c
->> +++ b/drivers/net/tun.c
->> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
->>   	int skb_xdp = 1;
->>   	bool frags = tun_napi_frags_enabled(tun);
->>   
->> -	if (!(tun->dev->flags & IFF_UP))
->> +	if (!(tun->dev->flags & IFF_UP)) {
-> Isn't this racy?  What if flag is cleared at this point?
+Applied, thanks.
 
-I think you mean "set at this point"? Then yes, so we probably need to 
-set the bit during tun_net_close().
-
-Thanks
-
->> +		set_bit(SOCKWQ_ASYNC_NOSPACE, &tfile->socket.flags);
->>   		return -EIO;
->> +	}
->>   
->>   	if (!(tun->flags & IFF_NO_PI)) {
->>   		if (len < sizeof(pi))
->> -- 
->> 2.7.4
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
