@@ -1,75 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751644AbeERJ6i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:58:38 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42183 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbeERJ6h (ORCPT
+        id S1752177AbeERJ6u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:58:50 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37769 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeERJ6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:58:37 -0400
-X-Google-Smtp-Source: AB8JxZr0FFx3W902DYUBZaNs7v0YtLN/uPS31U8bTjnEduOvENtdSiLChnNyRKZ6T0LUj6ZQe0scyg==
-Date: Thu, 17 May 2018 23:58:33 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for
- $ALLSOURCE_ARCHS generation
-Message-ID: <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
-References: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
- <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
- <20180518093131.7g5m4mu3mtrgb7so@gmail.com>
- <CAK7LNATYiKYzD11anXzCqjWaqeezHo4R1db+qAdCAAJLkvuf9A@mail.gmail.com>
+        Fri, 18 May 2018 05:58:48 -0400
+X-Google-Smtp-Source: AB8JxZpBa/dr+XhNwaYxIPZ9DlUWiVqVetNwvO2NEEDi1vdPXL2YWs4q3Za9B3Vc5fP6KsiOM5s7lw==
+Date: Fri, 18 May 2018 18:58:48 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 07/11] arm64: kexec_file: add crash dump support
+Message-ID: <20180518095847.GO2737@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-8-takahiro.akashi@linaro.org>
+ <f8d8305d-42f5-e1e2-20c4-733cb38cbb8d@arm.com>
+ <3d70c7d1-4985-a427-ecc6-a7edc84edfff@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zzglkc3szrlmlunn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATYiKYzD11anXzCqjWaqeezHo4R1db+qAdCAAJLkvuf9A@mail.gmail.com>
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <3d70c7d1-4985-a427-ecc6-a7edc84edfff@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 16, 2018 at 09:34:41AM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 15/05/18 18:11, James Morse wrote:
+> > On 25/04/18 07:26, AKASHI Takahiro wrote:
+> >> Enabling crash dump (kdump) includes
+> >> * prepare contents of ELF header of a core dump file, /proc/vmcore,
+> >>   using crash_prepare_elf64_headers(), and
+> >> * add two device tree properties, "linux,usable-memory-range" and
+> >>   "linux,elfcorehdr", which represent repsectively a memory range
+> >>   to be used by crash dump kernel and the header's location
+> 
+> >> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> >> index 37c0a9dc2e47..ec674f4d267c 100644
+> >> --- a/arch/arm64/kernel/machine_kexec_file.c
+> >> +++ b/arch/arm64/kernel/machine_kexec_file.c
+> >> @@ -76,6 +81,78 @@ int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> 
+> >> +static void fill_property(void *buf, u64 val64, int cells)
+> >> +{
+> >> +	u32 val32;
+> >> +
+> >> +	if (cells == 1) {
+> >> +		val32 = cpu_to_fdt32((u32)val64);
+> >> +		memcpy(buf, &val32, sizeof(val32));
+> >> +	} else {
+> > 
+> >> +		memset(buf, 0, cells * sizeof(u32) - sizeof(u64));
+> >> +		buf += cells * sizeof(u32) - sizeof(u64);
+> > 
+> > Is this trying to clear the 'top' cells and shuffle the pointer to point at the
+> > 'bottom' 2? I'm pretty sure this isn't endian safe.
+> 
+> It came to me at 2am: this only works on big-endian, which is exactly what you
+> want as that is the DT format.
 
---zzglkc3szrlmlunn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oops, I was almost tricked as I haven't tested kexec on BE
+for a long time :)
 
-On Fri, May 18, 2018 at 06:52:48PM +0900, Masahiro Yamada wrote:
-> Why is 'paste' necessary?
+Thanks,
+-Takahiro AKASHI
 
-Without it newlines from find are retained from the find
-output (at least in bash when I tested it). Though it doesn't
-really matter here since we are feeding it to a for loop, I
-just wanted to be sure this didn't surprise someone in the
-future by squeezing the newlines into spaces.
-
---=20
-Cheers,
-Joey Pabalinas
-
---zzglkc3szrlmlunn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr+o8kACgkQruvLfWhy
-VBn4ZA//TKTGyWObBezaEfvXe5c+b3vlCxcbZK4AKo/q/4PzRWHbHubMwxtOJTbu
-4oFyIQk7BZ1P77dmAPFXHC/oTCUO+3QQCE0olvoaFeprLx3di6owAu43cvbSt4Tp
-YxDeVyFFvUOhz0L422gvsiFJs9FY9QP+Cs+0t621ST4aoXH08svoIm8CWcIV5n6c
-B6SUfbOaVjW9oYkunOI3RUn5Mm6BrUlW5TLgcEF+c2gWX4tNgarYq5ipXVNlHbYG
-oufA9n6lsxF6EYgKTOlFiI5kMdFqsHUAf1svyZScsgk4lOa6RBjcjf98CtFXyL7U
-E+g27idz8MUysXsbQUkMPQqzY9AbfC0KYgLPIbq6aI4cxFsEwcdyZK8ciaJwer/g
-OqjmPYm9TqV3NYxa4SBlkRn3Xwmk9lXNnBSJ6mv0f4CJB9lRO6YQ4/a46HjvIZxq
-lz/soSJbu7s7siAI7IBU9UQZqMxg+4ESNkl3lEa33t0paJ2EwgZdrkTmiv/8+uf+
-IUoYuDHfycULgg2737xjCxKWr+q4Uw4BredkkfdRdL1m4SPR0bfLu7amQCNtr4Wj
-yApkx6HWSxgnGFHUf05sNf4Lc8tEgBN2W1VgtkJMPwzumYuIbR56ycrvCVMNe2HX
-4lSRe8Z+bI9L3uww84d5hbfSCpsVn39g/qV8ez6uHdeHElPSSIo=
-=gjVE
------END PGP SIGNATURE-----
-
---zzglkc3szrlmlunn--
+> 
+> > Do we really expect a system to have #address-cells > 2?
+> 
+> 
+> Thanks,
+> 
+> James
