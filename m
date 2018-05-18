@@ -1,90 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753096AbeERJsb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:48:31 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38367 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752541AbeERJsZ (ORCPT
+        id S1753223AbeERJtO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:49:14 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:27533 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752657AbeERJsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:48:25 -0400
-X-Google-Smtp-Source: AB8JxZpRoEq6hy4ao2r+lZHkxDlvW89riXBGhu9WGAImoTu0EcuANtzQO1N4PlDN2eZ8lz5G/TrheA==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 22/26] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
-Date: Fri, 18 May 2018 15:15:32 +0530
-Message-Id: <20180518094536.17201-23-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+        Fri, 18 May 2018 05:48:55 -0400
+X-IronPort-AV: E=Sophos;i="5.49,414,1520924400";
+   d="scan'208";a="11672337"
+Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
+To: Marek Vasut <marek.vasut@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <Zhiqiang.Hou@nxp.com>, <pp@emlix.com>, <richard@nod.at>,
+        <computersforpeace@gmail.com>, <dwmw2@infradead.org>
+References: <20180504155404.5285-1-radu.pirea@microchip.com>
+ <20180504204013.254d90cf@bbrezillon>
+ <e2e23aa21b37754b0c84003e6d87c7cb7d5a17fe.camel@microchip.com>
+ <1db092c8-95fb-5747-f7b9-f6a215b1aa5b@gmail.com>
+ <a34429cf43124de623fcaa645d5d7a360c755867.camel@microchip.com>
+ <30ab9516-abc9-d2d5-79ea-266c682c5fa9@gmail.com>
+From: Radu Pirea <radu.pirea@microchip.com>
+Message-ID: <1993151b-4434-c671-8498-b6488288f5f6@microchip.com>
+Date: Fri, 18 May 2018 12:50:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <30ab9516-abc9-d2d5-79ea-266c682c5fa9@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable HDMI output on nanopi-a64 board.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- none
 
- .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On 05/16/2018 04:47 PM, Marek Vasut wrote:
+> On 05/16/2018 12:05 PM, Radu Pirea wrote:
+>> On Wed, 2018-05-16 at 00:17 +0200, Marek Vasut wrote:
+>>> On 05/15/2018 06:22 PM, Radu Pirea wrote:
+>>>> On Fri, 2018-05-04 at 20:40 +0200, Boris Brezillon wrote:
+>>>>> On Fri, 4 May 2018 18:54:04 +0300
+>>>>> Radu Pirea <radu.pirea@microchip.com> wrote:
+>>>>>
+>>>>>> Added geometry description for Microchip 25LC256 memory.
+>>>>>
+>>>>> Same as for the dataflash stuff you posted a few weeks ago: I
+>>>>> don't
+>>>>> think this device belongs in the SPI NOR framework.
+>>>>
+>>>> Hi Boris,
+>>>>
+>>>> 25lc256 memory is similar with mr25h256, the only difference is the
+>>>> page size(64 vs 256). Because mr25h256 is already in SPI NOR
+>>>> framework
+>>>> I added here 25lc256.
+>>>
+>>> I think I must be reading the wrong datasheet, but can you show me
+>>> how
+>>> does it support things like READID opcode ?
+>>>
+>> Hi Marek,
+>>
+>> I read the datasheet for 25lc256 and for mr25h256 and none of them
+>> supports READID. Is this required for a chip to be included in spi-nor
+>> framework? I just followed the mr25h256 as an example.
+> 
+> So I thought until you pointed out the MR25 devices.
+> 
+> Does the 25LC device need erase or not ? I think the MR25s didn't, but I
+> might be wrong.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index e2dce48fa29a..19fe7eed45e9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -57,6 +57,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -67,6 +82,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
--- 
-2.14.3
+You are right. MR25s does not need erase and the same thing is true for 
+25LC.
+
+> 
+> Maybe the framework could support the 25LC afterall.
+> 
+Yes, this was my impression too.
+
+Thanks.
