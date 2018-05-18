@@ -1,41 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeERQVa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:21:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37466 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeERQV2 (ORCPT
+        id S1752139AbeERQVo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:21:44 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:57265 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750957AbeERQVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:21:28 -0400
-Date: Fri, 18 May 2018 09:21:28 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 02/10] block: Convert bio_set to mempool_init()
-Message-ID: <20180518162128.GB25227@infradead.org>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com>
- <20180509013358.16399-3-kent.overstreet@gmail.com>
- <20180518162028.GA25227@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518162028.GA25227@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 18 May 2018 12:21:41 -0400
+From: Vlad Buslov <vladbu@mellanox.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org, davem@davemloft.net, lucasb@mojatatu.com,
+        jhs@mojatatu.com, mrv@mojatatu.com, linux-kernel@vger.kernel.org,
+        Vlad Buslov <vladbu@mellanox.com>
+Subject: [PATCH] tc-testing: flush gact actions on test teardown
+Date: Fri, 18 May 2018 19:21:22 +0300
+Message-Id: <1526660482-10424-1-git-send-email-vladbu@mellanox.com>
+X-Mailer: git-send-email 2.7.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:20:28AM -0700, Christoph Hellwig wrote:
-> On Tue, May 08, 2018 at 09:33:50PM -0400, Kent Overstreet wrote:
-> > Minor performance improvement by getting rid of pointer indirections
-> > from allocation/freeing fastpaths.
-> 
-> Can you please also send a long conversion for the remaining
-> few bioset_create users?  It would be rather silly to keep two
-> almost the same interfaces around for just about two hand full
-> of users.
+Test 6fb4 creates one mirred and one pipe action, but only flushes mirred
+on teardown. Leaking pipe action causes failures in other tests.
 
-This comment was ment in reply to the next patch, sorry.
+Add additional teardown command to also flush gact actions.
+
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+---
+ tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+index 443c9b3..acb24f7 100644
+--- a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+@@ -44,7 +44,8 @@
+         "matchPattern": "action order [0-9]*: mirred \\(Egress Redirect to device lo\\).*index 2 ref",
+         "matchCount": "1",
+         "teardown": [
+-            "$TC actions flush action mirred"
++            "$TC actions flush action mirred",
++            "$TC actions flush action gact"
+         ]
+     },
+     {
+-- 
+2.7.5
