@@ -1,52 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeEROxM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:53:12 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58348 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeEROxI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:53:08 -0400
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        vivek.gautam@codeaurora.org, subhashj@codeaurora.org,
-        vinholikatti@gmail.com, olof@lixom.net
-Subject: Re: [PATCH 0/4] Add required changes to ufshcd to support exynos ufs hci
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <CGME20180506102636epcas2p3432b71e5c867f6cfec16cf2a8c74b0e2@epcas2p3.samsung.com>
-        <1525601658-31989-1-git-send-email-alim.akhtar@samsung.com>
-Date: Fri, 18 May 2018 10:52:52 -0400
-In-Reply-To: <1525601658-31989-1-git-send-email-alim.akhtar@samsung.com> (Alim
-        Akhtar's message of "Sun, 06 May 2018 15:44:14 +0530")
-Message-ID: <yq1po1tggmz.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751534AbeERO5K (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:57:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:54520 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750975AbeERO5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:57:09 -0400
+Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5ff704da-b767-33d7-68c4-7aa02f83ac0a@arm.com>
+Date: Fri, 18 May 2018 15:57:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8897 signatures=668699
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=613
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805180163
+In-Reply-To: <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+One more thing now that I've actually looked at the Arm ARM...
 
-Alim,
+On 18/05/18 11:22, Suzuki K Poulose wrote:
+[...]
+> +static inline void armv8pmu_write_event_type(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx = hwc->idx;
+> +
+> +	/*
+> +	 * For chained events, write the high counter event type
+> +	 * followed by the low counter.
+> +	 */
+> +	if (armv8pmu_event_is_chained(event)) {
+> +		u32 chain_evt = ARMV8_PMUV3_PERFCTR_CHAIN;
+> +
+> +		/* Set the filters as that of the main event for chain */
+> +		chain_evt |= hwc->config_base & ~ARMV8_PMU_EVTYPE_EVENT;
 
-> These patches are part of a larger patch series [1] which attempts
-> upstreaming EXYNOS UFS driver support. There was not much activities
-> after v5 of that series. In between I saw there were other teams in
-> Samsung tried upstreaming the same, but that has not really gone
-> anywhere.  I have taken this task again and here is another attempt to
-> upstream exynos-ufs driver support. I have divided the patches into
-> two series, one which adds required infra in the ufshcd core needed by
-> exynos-ufs driver and other part will have actual exynos-ufs
-> driver. Splitting this has a advantage of less reviewing over head.
+The description of the chain event says that the filtering must only be 
+set on the lower counter, and that the chain event itself should be set 
+to count everything.
 
-Applied to 4.18/scsi-queue. Thank you!
+> +		armv8pmu_write_evtype(idx, chain_evt);
+> +		isb();
+> +		idx--;
+> +	}
+> +
+> +	armv8pmu_write_evtype(idx, hwc->config_base);
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+It also says that the 'real' event should be set up first and the chain 
+event second, with the rather ominous warning of "If software does not 
+program the event in this way, the count becomes UNPREDICTABLE."
+
+Robin.
