@@ -1,135 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752301AbeERP5Z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:57:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:55294 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751971AbeERP5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:57:21 -0400
-Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
-To: Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com
-References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
- <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
- <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5d53fe1d-dbd9-2aad-73bd-0c4284540240@arm.com>
-Date: Fri, 18 May 2018 16:57:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752377AbeERP5i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:57:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752221AbeERP5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 11:57:36 -0400
+Date: Fri, 18 May 2018 11:56:59 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
+        sgrubb@redhat.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Message-ID: <20180518155659.porewd6moctumkys@madcap2.tricolour.ca>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+ <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+ <1520259854.10396.313.camel@linux.vnet.ibm.com>
+ <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
+ <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+ <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
+ <86df5c2c-9db3-21b9-b91b-30a4f53f9504@linux.vnet.ibm.com>
+ <1526647996.3632.164.camel@linux.vnet.ibm.com>
+ <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
+ <1526654395.3632.196.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <32f2d870-9b9c-0b10-880f-cc99cf969bf6@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526654395.3632.196.camel@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-On 18/05/18 14:49, Robin Murphy wrote:
-> On 18/05/18 11:22, Suzuki K Poulose wrote:
->> Add support for chained event counters. PMUv3 allows chaining
->> a pair of adjacent PMU counters (with the lower counter number
->> being always "even"). The low counter is programmed to count
->> the event of interest and the high counter(odd numbered) is
->> programmed with a special event code (0x1e - Chain). Thus
->> we need special allocation schemes to make the full use of
->> available counters. So, we allocate the counters from either
->> ends. i.e, chained counters are allocated from the lower
->> end in pairs of two and the normal counters are allocated
->> from the higher number. Also makes necessary changes to
->> handle the chained events as a single event with 2 counters.
->>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/kernel/perf_event.c | 226 ++++++++++++++++++++++++++++++++++++-----
->>   1 file changed, 202 insertions(+), 24 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
->> index ea8e060..5f81cd0 100644
->> --- a/arch/arm64/kernel/perf_event.c
->> +++ b/arch/arm64/kernel/perf_event.c
->> @@ -446,9 +446,11 @@ static struct attribute_group armv8_pmuv3_events_attr_group = {
-
-..
-
->> +static inline u64 armv8pmu_read_chain_counter(int idx)
->> +{
->> +    u64 prev_hi, hi, lo;
->> +
->> +    do {
->> +        prev_hi = armv8pmu_read_evcntr(idx);
->> +        isb();
->> +        lo = armv8pmu_read_evcntr(idx - 1);
->> +        isb();
->> +        hi = armv8pmu_read_evcntr(idx);
->> +        isb();
->> +    } while (prev_hi != hi);
+On 2018-05-18 10:39, Mimi Zohar wrote:
+> On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
+> > On 05/18/2018 08:53 AM, Mimi Zohar wrote:
 > 
-> Is it worth trying to elide that last isb() in the highly likely case that we don't need it?
-
-You're right. Also, I will rework the code to reuse the "hi".
-
->> +static inline void armv8pmu_write_chain_counter(int idx, u64 value)
->> +{
->> +    armv8pmu_write_evcntr(idx, value >> 32);
->> +    isb();
->> +    armv8pmu_write_evcntr(idx - 1, value);
->> +    isb();
+> [..]
 > 
-> Either that isb() is unnecessary, or we are (and have been) missing one after a non-chained write.
-
-Thats right, it is not necessary, will remove it.
-
-
->>   static inline int armv8pmu_disable_counter(int idx)
->>   {
->>       u32 counter = ARMV8_IDX_TO_COUNTER(idx);
->> @@ -567,6 +669,24 @@ static inline int armv8pmu_disable_counter(int idx)
->>       return idx;
->>   }
->> +static inline void armv8pmu_disable_event_counter(struct perf_event *event)
->> +{
->> +    struct hw_perf_event *hwc = &event->hw;
+> > >>>> If so, which ones? We could probably refactor the current
+> > >>>> integrity_audit_message() and have ima_parse_rule() call into it to get
+> > >>>> those fields as well. I suppose adding new fields to it wouldn't be
+> > >>>> considered breaking user space?
+> > >>> Changing the order of existing fields or inserting fields could break
+> > >>> stuff and is strongly discouraged without a good reason, but appending
+> > >>> fields is usually the right way to add information.
+> > >>>
+> > >>> There are exceptions, and in this case, I'd pick the "more standard" of
+> > >>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
+> > >>> with that, abandoning the other format, renaming the less standard
+> > >>> version of the record (ima_parse_rule?) and perhpas adopting that
+> > >>> abandonned format for the new record type while using
+> > >>> current->audit_context.
+> > > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
+> > > ima_audit_measurement(). �Could we rename type=1805 to be
+> > 
+> > So do we want to change both? I thought that what 
+> > ima_audit_measurement() produces looks ok but may not have a good name 
+> > for the 'type'. Now in this case I would not want to 'break user space'.
+> > The only change I was going to make was to what ima_parse_rule() produces.
 > 
-> Nit: might as well drop this and be consistent with the enable case.
-
-Sure.
-
->>   static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
->>                     struct perf_event *event)
->>   {
->> @@ -755,7 +915,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
->>       struct hw_perf_event *hwc = &event->hw;
->>       unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
->> -    /* Always prefer to place a cycle counter into the cycle counter. */
->> +    /*
->> +     * Always prefer to place a cycle counter into the cycle counter
->> +     * irrespective of whether we are counting 32bit/64bit
+> The only change for now is separating the IMA policy rules from the
+> IMA-audit messages.
 > 
-> I don't think that comment change adds much :/
+> Richard, when the containerid is appended to the IMA-audit messages,
+> would we make the audit type name change then?
+
+No, go ahead and make the change now.  I'm expecting that the
+containerid record will just be another auxiliary record and should not
+affect you folks.
+
+> > > INTEGRITY_AUDIT or INTEGRITY_IMA_AUDIT? �The new type=1806 audit
+> > > message could be named INTEGRITY_RULE or, if that would be confusing,
+> > > INTEGRITY_POLICY_RULE.
+> > 
+> > For 1806, as we would use it in ima_parse_rule(), we could change that 
+> > in your patch to INTEGRITY_POLICY_RULE. IMA_POLICY_RULE may be better 
+> > for IMA to produce but that's inconsistent then.
 > 
-
-Thats a left over from rebasing. Thanks for spotting.
-
->>   /*
->> @@ -845,8 +1016,14 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
->>                          &armv8_pmuv3_perf_cache_map,
->>                          ARMV8_PMU_EVTYPE_EVENT);
->> -    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
->> +    if (hw_event_id == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
->> +        /* Prevent chaining for cycle counter */
+> Ok
 > 
-> Why? Sure, we want to avoid executing the chaining logic if we're scheduling a cycles event in the dedicated counter (which is perhaps what the comment above wanted to say), but if one ends up allocated into a regular counter (e.g. if the user asks for multiple cycle counts with different filters), then I don't see any reason to forbid that being chained.
+> > 
+> > >
+> > >> 1806 would be in sync with INTEGRITY_RULE now for process related info.
+> > >> If this looks good, I'll remove the dependency on your local context
+> > >> creation and post the series.
+> > >>
+> > >> The justification for the change is that the INTEGRITY_RULE, as produced
+> > >> by ima_parse_rule(), is broken.
+> > > Post which series? �The IMA namespacing patch set? �This change should
+> > > be upstreamed independently of IMA namespacing.
+> > 
+> > Without Richard's local context patch it may just be one or two patches.
+> 
+> Richard, if we separate the ima_parse_rules() audit messages, changing
+> the audit rule number now, without the call to audit_log_task_info(),
+> would adding the call later be breaking userspace?
 
-Ah, I didn't think about that case. I was under the assumption that the
-cycles are *only* placed on the cycle counter. I will take care of that.
-Thanks for the review.
+Userspace is arguably already broken due to two formats and one usage
+that isn't an auxiliary record.  All that should be necessary for now is
+to use a different record number and pass it current->audit_context
+instead of NULL.
 
-Suzuki
+> Mimi
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
