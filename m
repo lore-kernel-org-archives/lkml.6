@@ -1,49 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeERRpG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:45:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:57562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751429AbeERRpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:45:05 -0400
-Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
-        Takahiro Akashi <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180518170202.11458-1-samitolvanen@google.com>
- <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com>
- <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com>
-Date: Fri, 18 May 2018 18:45:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752259AbeERRpm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:45:42 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33024 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeERRpj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:45:39 -0400
+X-Google-Smtp-Source: AB8JxZrXTVny9GjHWSMArzjtXP0GsqxHaixpjsjaY/ibO5kBiLDFMMaLD/IgCog/9WHzByC6vf7qig==
+Date: Fri, 18 May 2018 13:45:36 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
+Subject: Re: [PATCH 00/10] RFC: assorted bcachefs patches
+Message-ID: <20180518174536.ai26bg3bhlvzq4pi@destiny>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
+User-Agent: NeoMutt/20170714 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/05/18 18:40, Nick Desaulniers wrote:
-> On Fri, May 18, 2018 at 10:30 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
->> I'm going to ask the question I've asked before when this patch cropped
->> up (must be the 4th time now):
+On Fri, May 18, 2018 at 03:48:58AM -0400, Kent Overstreet wrote:
+> These are all the remaining patches in my bcachefs tree that touch stuff outside
+> fs/bcachefs. Not all of them are suitable for inclusion as is, I wanted to get
+> some discussion first.
 > 
->> Is it guaranteed that this is the only case where LLVM/clang is going to
->> generate absolute addresses instead of using relative addressing?
+>  * pagecache add lock
 > 
-> It seems like if there's requirements that only relative addressing be
-> used, then the compiler should be told explicitly about this restriction,
-> no?
+> This is the only one that touches existing code in nontrivial ways.  The problem
+> it's solving is that there is no existing general mechanism for shooting down
+> pages in the page and keeping them removed, which is a real problem if you're
+> doing anything that modifies file data and isn't buffered writes.
+> 
+> Historically, the only problematic case has been direct IO, and people have been
+> willing to say "well, if you mix buffered and direct IO you get what you
+> deserve", and that's probably not unreasonable. But now we have fallocate insert
+> range and collapse range, and those are broken in ways I frankly don't want to
+> think about if they can't ensure consistency with the page cache.
+> 
+> Also, the mechanism truncate uses (i_size and sacrificing a goat) has
+> historically been rather fragile, IMO it might be a good think if we switched it
+> to a more general rigorous mechanism.
+> 
+> I need this solved for bcachefs because without this mechanism, the page cache
+> inconsistencies lead to various assertions popping (primarily when we didn't
+> think we need to get a disk reservation going by page cache state, but then do
+> the actual write and disk space accounting says oops, we did need one). And
+> having to reason about what can happen without a locking mechanism for this is
+> not something I care to spend brain cycles on.
+> 
+> That said, my patch is kind of ugly, and it requires filesystem changes for
+> other filesystems to take advantage of it. And unfortunately, since one of the
+> code paths that needs locking is readahead, I don't see any realistic way of
+> implementing the locking within just bcachefs code.
+> 
+> So I'm hoping someone has an idea for something cleaner (I think I recall
+> Matthew Wilcox saying he had an idea for how to use xarray to solve this), but
+> if not I'll polish up my pagecache add lock patch and see what I can do to make
+> it less ugly, and hopefully other people find it palatable or at least useful.
+> 
+>  * lglocks
+> 
+> They were removed by Peter Zijlstra when the last in kernel user was removed,
+> but I've found them useful. His commit message seems to imply he doesn't think
+> people should be using them, but I'm not sure why. They are a bit niche though,
+> I can move them to fs/bcachefs if people would prefer. 
+> 
+>  * Generic radix trees
+> 
+> This is a very simple radix tree implementation that can store types of
+> arbitrary size, not just pointers/unsigned long. It could probably replace
+> flex arrays.
+> 
+>  * Dynamic fault injection
+> 
 
-Certainly. What's the rune?
+I've not looked at this at all so this may not cover your usecase, but I
+implemeted a bpf_override_return() to do focused error injection a year ago.  I
+have this script
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+https://github.com/josefbacik/debug-scripts/blob/master/inject-error.py
+
+that does it generically, all you have to do is tag the function you want to be
+error injectable with ALLOW_ERROR_INJECTION() and then you get all these nice
+things like a debugfs interface to trigger them or use the above script to
+trigger specific errors and such.  Thanks,
+
+Josef
