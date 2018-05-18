@@ -1,103 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeERBwl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 21:52:41 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40819 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbeERBwk (ORCPT
+        id S1752112AbeERBx4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 21:53:56 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41190 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeERBxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 21:52:40 -0400
-X-Google-Smtp-Source: AB8JxZpviGZcHuHzrkVVzwdEvBnVQO+CKgzO1NTIMUuI8z1D8Fo+WZmri6XncBxeM5T4b6ExO1gVkg==
-Subject: Re: [PATCH] KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE
- aligned in unmap_stage2_range
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com
-References: <1526537487-14804-1-git-send-email-hejianet@gmail.com>
- <698b0355-d430-86b8-cd09-83c6d9e566f8@arm.com>
- <fbb269c0-e915-a9f2-da3b-5ae3a2b31396@gmail.com>
- <25dbb8c1-631f-c810-4d75-349a0b291cf8@arm.com>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <551c4ecc-412a-7087-8664-6e4b213bca17@gmail.com>
-Date: Fri, 18 May 2018 09:52:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 17 May 2018 21:53:54 -0400
+X-Google-Smtp-Source: AB8JxZpbuKA8yeYsXchBvrxRReenlC04/+LOagFNArlYJUS2plC63FNkkwx+1+MXpbYFCLc3DM65YQ==
+Date: Fri, 18 May 2018 07:23:50 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v1 01/11] cpufreq: tegra20: Change module description
+Message-ID: <20180518015350.5nihxltyxn5bhdho@vireshk-i7>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <25dbb8c1-631f-c810-4d75-349a0b291cf8@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517180056.13336-2-digetx@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki
-
-On 5/17/2018 11:03 PM, Suzuki K Poulose Wrote:
-> On 17/05/18 13:46, Jia He wrote:
->> Hi Suzuki
->>
->> On 5/17/2018 4:17 PM, Suzuki K Poulose Wrote:
->>>
->>> Hi Jia,
->>>
->>> On 17/05/18 07:11, Jia He wrote:
->>>> I ever met a panic under memory pressure tests(start 20 guests and run
->>>> memhog in the host).
->>>
->>> Please avoid using "I" in the commit description and preferably stick to
->>> an objective description.
->>
->> Thanks for the pointing
->>
->>>
->>>>
->>>> The root cause might be what I fixed at [1]. But from arm kvm points of
->>>> view, it would be better we caught the exception earlier and clearer.
->>>>
->>>> If the size is not PAGE_SIZE aligned, unmap_stage2_range might unmap the
->>>> wrong(more or less) page range. Hence it caused the "BUG: Bad page
->>>> state"
->>>
->>> I don't see why we should ever panic with a "positive" size value. Anyways,
->>> the unmap requests must be in units of pages. So this check might be useful.
->>>
->>>
->>
->> good question,
->>
->> After further digging, maybe we need to harden the break condition as below?
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 7f6a944..dac9b2e 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -217,7 +217,7 @@ static void unmap_stage2_ptes(struct kvm *kvm, pmd_t *pmd,
->>
->>                          put_page(virt_to_page(pte));
->>                  }
->> -       } while (pte++, addr += PAGE_SIZE, addr != end);
->> +       } while (pte++, addr += PAGE_SIZE, addr < end);
+On 17-05-18, 21:00, Dmitry Osipenko wrote:
+> Change module description to be in line with the other Tegra drivers, just
+> for consistency.
 > 
-> I don't think this change is need as stage2_pgd_addr_end(addr, end) must return
-> the smaller of the next entry or end. Thus we can't miss "addr" == "end".
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index 2bd62845e9d5..10793498355e 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -210,7 +210,7 @@ static void __exit tegra_cpufreq_exit(void)
+>  
+>  
+>  MODULE_AUTHOR("Colin Cross <ccross@android.com>");
+> -MODULE_DESCRIPTION("cpufreq driver for Nvidia Tegra2");
+> +MODULE_DESCRIPTION("NVIDIA Tegra20 cpufreq driver");
+>  MODULE_LICENSE("GPL");
+>  module_init(tegra_cpufreq_init);
+>  module_exit(tegra_cpufreq_exit);
 
-If it passes addr=202920000,size=fe00 to unmap_stage2_range->
-...->unmap_stage2_ptes
-
-unmap_stage2_ptes will get addr=202920000,end=20292fe00
-after first while loop addr=202930000, end=20292fe00, then addr!=end
-Thus it will touch another pages by put_pages() in the 2nd loop.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Cheers,
-Jia
+viresh
