@@ -1,82 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753480AbeERJZK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:25:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753364AbeERJY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753356AbeERJY4 (ORCPT <rfc822;w@1wt.eu>);
         Fri, 18 May 2018 05:24:56 -0400
-Subject: Re: KASAN: use-after-free Read in vhost_chr_write_iter
-To: DaeRyong Jeong <threeearcat@gmail.com>, mst@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
-References: <20180517134544.GA20646@dragonet.kaist.ac.kr>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <58419d62-3074-2e5a-8504-da1cdeb08280@redhat.com>
-Date: Fri, 18 May 2018 17:24:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180517134544.GA20646@dragonet.kaist.ac.kr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: from mx2.suse.de ([195.135.220.15]:45405 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752858AbeERJRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:36 -0400
+From: Jiri Slaby <jslaby@suse.cz>
+To: mingo@redhat.com
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: [PATCH v6 08/28] x86/boot/compressed: annotate local functions
+Date: Fri, 18 May 2018 11:17:01 +0200
+Message-Id: <20180518091721.7604-9-jslaby@suse.cz>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
+References: <20180518091721.7604-1-jslaby@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+relocated, paging_enabled, and no_longmode are self-standing local
+functions, annotate them as such. paging_enabled is annotated as
+NOALIGN, since the trampoline code has to be compact.
 
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: x86@kernel.org
+---
+ arch/x86/boot/compressed/head_32.S | 3 ++-
+ arch/x86/boot/compressed/head_64.S | 9 ++++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-On 2018年05月17日 21:45, DaeRyong Jeong wrote:
-> We report the crash: KASAN: use-after-free Read in vhost_chr_write_iter
->
-> This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
-> version of Syzkaller), which we describe more at the end of this
-> report. Our analysis shows that the race occurs when invoking two
-> syscalls concurrently, write$vnet and ioctl$VHOST_RESET_OWNER.
->
->
-> Analysis:
-> We think the concurrent execution of vhost_process_iotlb_msg() and
-> vhost_dev_cleanup() causes the crash.
-> Both of functions can run concurrently (please see call sequence below),
-> and possibly, there is a race on dev->iotlb.
-> If the switch occurs right after vhost_dev_cleanup() frees
-> dev->iotlb, vhost_process_iotlb_msg() still sees the non-null value and it
-> keep executing without returning -EFAULT. Consequently, use-after-free
-> occures
->
->
-> Thread interleaving:
-> CPU0 (vhost_process_iotlb_msg)				CPU1 (vhost_dev_cleanup)
-> (In the case of both VHOST_IOTLB_UPDATE and
-> VHOST_IOTLB_INVALIDATE)
-> =====							=====
-> 							vhost_umem_clean(dev->iotlb);
-> if (!dev->iotlb) {
-> 	        ret = -EFAULT;
-> 		        break;
-> }
-> 							dev->iotlb = NULL;
->
->
-> Call Sequence:
-> CPU0
-> =====
-> vhost_net_chr_write_iter
-> 	vhost_chr_write_iter
-> 		vhost_process_iotlb_msg
->
-> CPU1
-> =====
-> vhost_net_ioctl
-> 	vhost_net_reset_owner
-> 		vhost_dev_reset_owner
-> 			vhost_dev_cleanup
-
-Thanks a lot for the analysis.
-
-This could be addressed by simply protect it with dev mutex.
-
-Will post a patch.
+diff --git a/arch/x86/boot/compressed/head_32.S b/arch/x86/boot/compressed/head_32.S
+index 37380c0d5999..7e8ab0bb6968 100644
+--- a/arch/x86/boot/compressed/head_32.S
++++ b/arch/x86/boot/compressed/head_32.S
+@@ -209,7 +209,7 @@ ENDPROC(efi32_stub_entry)
+ #endif
+ 
+ 	.text
+-relocated:
++SYM_FUNC_START_LOCAL(relocated)
+ 
+ /*
+  * Clear BSS (stack is currently empty)
+@@ -260,6 +260,7 @@ relocated:
+  */
+ 	xorl	%ebx, %ebx
+ 	jmp	*%eax
++SYM_FUNC_END(relocated)
+ 
+ #ifdef CONFIG_EFI_STUB
+ 	.data
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fca012baba19..614dc4868915 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -469,7 +469,7 @@ ENDPROC(efi64_stub_entry)
+ #endif
+ 
+ 	.text
+-relocated:
++SYM_FUNC_START_LOCAL(relocated)
+ 
+ /*
+  * Clear BSS (stack is currently empty)
+@@ -511,6 +511,7 @@ relocated:
+  * Jump to the decompressed kernel.
+  */
+ 	jmp	*%rax
++SYM_FUNC_END(relocated)
+ 
+ 	.code32
+ /*
+@@ -575,9 +576,10 @@ ENTRY(trampoline_32bit_src)
+ 	lret
+ 
+ 	.code64
+-paging_enabled:
++SYM_FUNC_START_LOCAL_NOALIGN(paging_enabled)
+ 	/* Return from the trampoline */
+ 	jmp	*%rdi
++SYM_FUNC_END(paging_enabled)
+ 
+ 	/*
+          * The trampoline code has a size limit.
+@@ -587,11 +589,12 @@ paging_enabled:
+ 	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
+ 
+ 	.code32
+-no_longmode:
++SYM_FUNC_START_LOCAL(no_longmode)
+ 	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
+ 1:
+ 	hlt
+ 	jmp     1b
++SYM_FUNC_END(no_longmode)
+ 
+ #include "../../kernel/verify_cpu.S"
+ 
+-- 
+2.16.3
