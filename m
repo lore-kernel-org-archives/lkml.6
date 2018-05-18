@@ -1,41 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo2O6cv9w6IDOTpnhkRxr2wb9wv2LDFJFGZxfGMLahPz1f5wD9HxpnjzLruqnU/EnPuuT23
-ARC-Seal: i=1; a=rsa-sha256; t=1526631696; cv=none;
+X-Google-Smtp-Source: AB8JxZqF/Wrxjs9456bzg81ULTII+8kiAga+NKwctaGxl+GJe9NIh5jwCb8gsdZ2kaC2F3Adsf2o
+ARC-Seal: i=1; a=rsa-sha256; t=1526631693; cv=none;
         d=google.com; s=arc-20160816;
-        b=V/O+t3TGicL6aAGIWfXv+GsO5h8QeY6ucHvNl2ZYoneqErgfR/BZmnjjWNUa1gaKE7
-         o18TsqkCVti789/QlE8TVSJ4eww5jtniiCI3Mu9xK5BoDfX7kFoomn2Nju1cljOvP00H
-         htdiw/dvdbIF7uLUI4xJnzZ5L3lhxvLuZzL6hvL/5qgUmuy0IIV6qpEx7Jo0nVIBCUBF
-         U4zYcmFv6ybY2dSobD27jZvYXrpYpbL97WghdHJ3GlZDPTSJC6p/OkdqZue/USSKfO50
-         bMIH8Nw5DBCxFBIrPVNOvZanlJ+ey9vwDrso1JQ05KX6IbXPlahuh1nThKublq42572W
-         ndVw==
+        b=H74DiBQ4cL6/Tm40PurEjgGfy/VEclEmBZJk5RQ74rTfABt3IfnvZ8F0rDwh3C+Lv3
+         CbqI9Rb0sUzNMLMaREh1w0sJUT//I2+Juo1pTHksFsa8cWusw/AAzXMWMm4W5zx6dZx/
+         Idthi9zO7xUXsYZGpSCrgeBGSOIM4+X72EchmJQZkPrgxDWLi/PlCCNZukib2NRnJCxj
+         JrFmkmR+gszRgTuydvDjHQHKpLvw6SKBkOai/iI6ukS3JHuD4b/n77eGwRLGywhyouxV
+         Joyn+PnsBKyPY99NLmf6hGTHa08P/Gfqu5BpVVEjN1USRHU71qKDex1koOLBs5aAd9y+
+         c1gA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=e++axm6qQJFDaZP0xLBz27n1jjgV2HcslSYN7Lkx5z4=;
-        b=VtiMtwzw88id+N0bQNiIaU5cJhTkTDSau88zrWmx8TQvtMH6erLE7NCzIxluGk7yP4
-         OWfz8VK6QS/VIN6PFX7WdsNkmxB870maNf54OVVAbaH/MSyal7Yn2j5kGcH8n1Fc9Q9y
-         S9kunLaYAS8a/eRVG8VwO2cOSi91vcEnFLzE7eiE31yEvlnuF5z9V7cp50E1BZvdLIWb
-         XTlNk/MCW2wgoLhggxRvLB/hESgL5nf/Y4hmpJ1AwGJPqEYRO7As4nqzskGe6xSvJAek
-         sX2YSaFSmTWKhguInrwoD+42ggyVoeXbEZ2fUZnZPLp9FLvbbBvRuXaNbUy17sueAHhO
-         2BPA==
+        bh=TV9RFeGad/LEQGCX8lc7PxUkIl7y7khCeELk0MSXQP0=;
+        b=B3DJ3hNib9HAPa62jUplCDDMxWSxSge2+Pl2mkHHXy1HMFo5Q6mCOhthNu0bbHRZk2
+         Kwe9IZ7syvcHDQ4gk1Siikz18tSadpnbO+ezi6KJLF8AIovR+bntUOwnC4Py4B6LczGC
+         n7RXWgiPv2KMxDAQ1rprdYibfbrzlTacAS7Ff18edZEMR1tkcOezqFldkA6tB7w8HiB6
+         PqkGqd0F6C7WiWJf41EIZXSJJEE1r3SR7iUDRLFwzNK4iif6rwtvTOpa8yz30yHHNfT7
+         8XW3G6RvmdB+YWns5vCHjFzFIpLQ8C/x9GPHKQe4yZrrUo16EWsmSbw/4LsT5n3Mht31
+         Bdxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jjWjbQsi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=a9ByyGXd;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jjWjbQsi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=a9ByyGXd;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com,
-	Xin Long <lucien.xin@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Slava Kardakov <ojab@ojab.ru>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 15/33] sctp: handle two v4 addrs comparison in sctp_inet6_cmp_addr
-Date: Fri, 18 May 2018 10:15:54 +0200
-Message-Id: <20180518081535.712594336@linuxfoundation.org>
+Subject: [PATCH 4.9 14/33] r8169: fix powering up RTL8168h
+Date: Fri, 18 May 2018 10:15:53 +0200
+Message-Id: <20180518081535.668741058@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789099921166414?=
-X-GMAIL-MSGID: =?utf-8?q?1600789357738029916?=
+X-GMAIL-THRID: =?utf-8?q?1600789187415727149?=
+X-GMAIL-MSGID: =?utf-8?q?1600789355152121511?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,45 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit d625329b06e46bd20baf9ee40847d11982569204 ]
+[ Upstream commit 3148dedfe79e422f448a10250d3e2cdf8b7ee617 ]
 
-Since sctp ipv6 socket also supports v4 addrs, it's possible to
-compare two v4 addrs in pf v6 .cmp_addr, sctp_inet6_cmp_addr.
+Since commit a92a08499b1f "r8169: improve runtime pm in general and
+suspend unused ports" interfaces w/o link are runtime-suspended after
+10s. On systems where drivers take longer to load this can lead to the
+situation that the interface is runtime-suspended already when it's
+initially brought up.
+This shouldn't be a problem because rtl_open() resumes MAC/PHY.
+However with at least one chip version the interface doesn't properly
+come up, as reported here:
+https://bugzilla.kernel.org/show_bug.cgi?id=199549
 
-However after Commit 1071ec9d453a ("sctp: do not check port in
-sctp_inet6_cmp_addr"), it no longer calls af1->cmp_addr, which
-in this case is sctp_v4_cmp_addr, but calls __sctp_v6_cmp_addr
-where it handles them as two v6 addrs. It would cause a out of
-bounds crash.
+The vendor driver uses a delay to give certain chip versions some
+time to resume before starting the PHY configuration. So let's do
+the same. I don't know which chip versions may be affected,
+therefore apply this delay always.
 
-syzbot found this crash when trying to bind two v4 addrs to a
-v6 socket.
+This patch was reported to fix the issue for RTL8168h.
+I was able to reproduce the issue on an Asus H310I-Plus which also
+uses a RTL8168h. Also in my case the patch fixed the issue.
 
-This patch fixes it by adding the process for two v4 addrs in
-sctp_inet6_cmp_addr.
-
-Fixes: 1071ec9d453a ("sctp: do not check port in sctp_inet6_cmp_addr")
-Reported-by: syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Reported-by: Slava Kardakov <ojab@ojab.ru>
+Tested-by: Slava Kardakov <ojab@ojab.ru>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |    3 +++
+ drivers/net/ethernet/realtek/r8169.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -864,6 +864,9 @@ static int sctp_inet6_cmp_addr(const uni
- 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
- 		return 1;
- 
-+	if (addr1->sa.sa_family == AF_INET && addr2->sa.sa_family == AF_INET)
-+		return addr1->v4.sin_addr.s_addr == addr2->v4.sin_addr.s_addr;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -4861,6 +4861,9 @@ static void rtl_pll_power_down(struct rt
+ static void rtl_pll_power_up(struct rtl8169_private *tp)
+ {
+ 	rtl_generic_op(tp, tp->pll_power_ops.up);
 +
- 	return __sctp_v6_cmp_addr(addr1, addr2);
++	/* give MAC/PHY some time to resume */
++	msleep(20);
  }
  
+ static void rtl_init_pll_power_ops(struct rtl8169_private *tp)
