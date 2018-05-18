@@ -1,185 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeERHzP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:55:15 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:41912 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeERHt6 (ORCPT
+        id S1752457AbeERHzb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:55:31 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42742 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752016AbeERHz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:49:58 -0400
-X-Google-Smtp-Source: AB8JxZpkZZaEp9+wqUh80aqQt5apTLotFEbqs2AsQJ4h6hw8wGKRazZy8sgMPmB1xFPLH1AF8ZJ/aQ==
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 03/10] block: Add bioset_init()/bioset_exit()
-Date: Fri, 18 May 2018 03:49:03 -0400
-Message-Id: <20180518074918.13816-6-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
-References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+        Fri, 18 May 2018 03:55:29 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [RFC] platform: detach from PM domains on shutdown
+Date: Fri, 18 May 2018 09:54:54 +0200
+Message-ID: <1580300.sK9GS2NB4b@aspire.rjw.lan>
+In-Reply-To: <HE1PR04MB3004EF83E7AE2250E44C49A088910@HE1PR04MB3004.eurprd04.prod.outlook.com>
+References: <20180515090110.26820-1-peng.fan@nxp.com> <CAJZ5v0ibwRXqaGJW0vFcy+YqMEc_ao9itBErP_w1YjLQWVVtQg@mail.gmail.com> <HE1PR04MB3004EF83E7AE2250E44C49A088910@HE1PR04MB3004.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to mempool_init()/mempool_exit(), take a pointer indirection
-out of allocation/freeing by allowing biosets to be embedded in other
-structs.
+On Thursday, May 17, 2018 2:37:31 PM CEST Peng Fan wrote:
+> 
+> > -----Original Message-----
+> > From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of Rafael
+> > J. Wysocki
+> > Sent: 2018年5月17日 16:01
+> > To: Peng Fan <peng.fan@nxp.com>
+> > Cc: Rafael J. Wysocki <rafael@kernel.org>; Ulf Hansson
+> > <ulf.hansson@linaro.org>; Rafael J. Wysocki <rafael.j.wysocki@intel.com>;
+> > Fabio Estevam <fabio.estevam@nxp.com>; Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org>; Linux Kernel Mailing List
+> > <linux-kernel@vger.kernel.org>; Linux PM <linux-pm@vger.kernel.org>;
+> > dl-linux-imx <linux-imx@nxp.com>
+> > Subject: Re: [RFC] platform: detach from PM domains on shutdown
+> > 
+> > On Thu, May 17, 2018 at 4:33 AM, Peng Fan <peng.fan@nxp.com> wrote:
+> > >
+> > >
+> > >> -----Original Message-----
+> > >> From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of
+> > >> Rafael J. Wysocki
+> > >> Sent: 2018年5月17日 5:35
+> > >> To: Ulf Hansson <ulf.hansson@linaro.org>
+> > >> Cc: Peng Fan <peng.fan@nxp.com>; Rafael J. Wysocki
+> > >> <rafael.j.wysocki@intel.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> > >> Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Linux Kernel Mailing
+> > >> List <linux-kernel@vger.kernel.org>; Linux PM
+> > >> <linux-pm@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
+> > >> Subject: Re: [RFC] platform: detach from PM domains on shutdown
+> > >>
+> > >> On Wed, May 16, 2018 at 11:52 AM, Ulf Hansson
+> > >> <ulf.hansson@linaro.org>
+> > >> wrote:
+> > >> > On 15 May 2018 at 11:01, Peng Fan <peng.fan@nxp.com> wrote:
+> > >> >> When reboot Linux, the PM domains attached to a device are not
+> > >> >> shutdown. To SoCs which relys on reset the whole SoC, there is no
+> > >> >> need to shutdown PM domains, but to Linux running in a virtual
+> > >> >> machine with devices pass-through, we could not reset the whole SoC.
+> > >> >> Currently we need Linux to shutdown its PM domains when reboot.
+> > >> >
+> > >> > I am not sure I understand exactly why the PM domain needs to be
+> > >> > shutdown for these cases, could you please elaborate a bit on that.
+> > >> >
+> > >> > BTW, what platform are you running on and also what PM domains are
+> > >> > being
+> > >> used?
+> > >> >
+> > >> > Anyway, it seems like there may be need for certain cases, but
+> > >> > certainly not all - especially since it may slow down the shutdown
+> > >> > process, when not needed.
+> > >> >
+> > >> > Can we make this runtime configurable, via sysfs or whatever that
+> > >> > makes
+> > >> sense!?
+> > >> >
+> > >> >>
+> > >> >> commit 2d30bb0b3889 ("platform: Do not detach from PM domains on
+> > >> >> shutdown"), removes what this patch tries to add, because of a warning.
+> > >> >> commit e79aee49bcf9 ("PM: Avoid false-positive warnings in
+> > >> >> dev_pm_domain_set()") already fixes the false alarm warning. So
+> > >> >> let's detach the power domain to shutdown PM domains after driver
+> > shutdown.
+> > >> >>
+> > >> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > >> >> ---
+> > >> >>
+> > >> >> I do not find a better place to shutdown power domain when reboot
+> > >> >> Linux, so add back the line that commit 2d30bb0b3889 removes,
+> > >> >> because it is a false alarm warning as commit e79aee49bcf9 describes.
+> > >> >>
+> > >> >>  drivers/base/platform.c | 1 +
+> > >> >>  1 file changed, 1 insertion(+)
+> > >> >>
+> > >> >> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > >> >> index 8075ddc70a17..a5929f24dc3c 100644
+> > >> >> --- a/drivers/base/platform.c
+> > >> >> +++ b/drivers/base/platform.c
+> > >> >> @@ -616,6 +616,7 @@ static void platform_drv_shutdown(struct
+> > >> >> device
+> > >> >> *_dev)
+> > >> >>
+> > >> >>         if (drv->shutdown)
+> > >> >>                 drv->shutdown(dev);
+> > >> >> +       dev_pm_domain_detach(_dev, true);
+> > >> >
+> > >> > This would somewhat work, but only for platform devices. To make
+> > >> > this fully work, we need to call dev_pm_domain_detach() from amba,
+> > >> > spi, etc as well.
+> > >> >
+> > >> > Perhaps another option to manage this more generally, an without
+> > >> > having detach devices, could be to extend the struct dev_pm_domain
+> > >> > with a new callback, "->shutdown()" and then make the driver core
+> > >> > call it from device_shutdown().
+> > >>
+> > >> I'm sensing a possible ordering slippery slope with this (it will
+> > >> only work if all of the drivers/bus types etc do the right thing in
+> > >> their
+> > >> ->shutdown callbacks so nothing depends on the domain going forward).
+> > >>
+> > >> > Typically, for genpd, I would probably count the number of calls
+> > >> > being made to ->shutdown() per PM domain, then when it reaches the
+> > >> > number of attached devices to it, allow to power off it.
+> > >> >
+> > >> > Let's see what Rafael thinks about it.
+> > >>
+> > >> I'm not sure about the use case.  The hypervisor should be able to
+> > >> take care of turning power domains off on the client OS reboot in
+> > >> theory.  If the client OS leaving the hypervisor needs to worry about
+> > >> what state it leaves behind, the design of the hypervisor is sort of
+> > questionable IMO.
+> > >
+> > > This is valid concern. But moving the power domain logic into
+> > > hypervisor mostly micro-kernel design will introduce more complexity and
+> > make certification harder.
+> > > Currently, Let Linux shutdown it's power domain is the easiest way to
+> > > me and make things work well after reboot.
+> > 
+> > Well, to put it bluntly, if your hypervisor depends on the guest to do the right
+> > thing on exit, it doesn't do its job.  I wouldn't have certified it for you if that was
+> > my decision.
+> 
+> It is guest os not work well after guest os reboot. The hypervisor is not affected.
+> 
+> Thinking another case without hypervisor, M4 core run RTOS, A35 Core run Linux, when Linux rebooting,
+> RTOS should not be affected. After Linux reboot itself, because its power domain is not
+> paired with open/shutdown, some devices not function well.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- block/bio.c         | 93 +++++++++++++++++++++++++++++++--------------
- include/linux/bio.h |  2 +
- 2 files changed, 67 insertions(+), 28 deletions(-)
+The question boils down to whether or not devices should be detached from
+PM domains on shutdown IMO.
 
-diff --git a/block/bio.c b/block/bio.c
-index 360e9bcea5..980befd919 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1856,21 +1856,83 @@ int biovec_init_pool(mempool_t *pool, int pool_entries)
- 	return mempool_init_slab_pool(pool, pool_entries, bp->slab);
- }
- 
--void bioset_free(struct bio_set *bs)
-+/*
-+ * bioset_exit - exit a bioset initialized with bioset_init()
-+ *
-+ * May be called on a zeroed but uninitialized bioset (i.e. allocated with
-+ * kzalloc()).
-+ */
-+void bioset_exit(struct bio_set *bs)
- {
- 	if (bs->rescue_workqueue)
- 		destroy_workqueue(bs->rescue_workqueue);
-+	bs->rescue_workqueue = NULL;
- 
- 	mempool_exit(&bs->bio_pool);
- 	mempool_exit(&bs->bvec_pool);
- 
- 	bioset_integrity_free(bs);
--	bio_put_slab(bs);
-+	if (bs->bio_slab)
-+		bio_put_slab(bs);
-+	bs->bio_slab = NULL;
-+}
-+EXPORT_SYMBOL(bioset_exit);
- 
-+void bioset_free(struct bio_set *bs)
-+{
-+	bioset_exit(bs);
- 	kfree(bs);
- }
- EXPORT_SYMBOL(bioset_free);
- 
-+/**
-+ * bioset_init - Initialize a bio_set
-+ * @pool_size:	Number of bio and bio_vecs to cache in the mempool
-+ * @front_pad:	Number of bytes to allocate in front of the returned bio
-+ * @flags:	Flags to modify behavior, currently %BIOSET_NEED_BVECS
-+ *              and %BIOSET_NEED_RESCUER
-+ *
-+ * Similar to bioset_create(), but initializes a passed-in bioset instead of
-+ * separately allocating it.
-+ */
-+int bioset_init(struct bio_set *bs,
-+		unsigned int pool_size,
-+		unsigned int front_pad,
-+		int flags)
-+{
-+	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
-+
-+	bs->front_pad = front_pad;
-+
-+	spin_lock_init(&bs->rescue_lock);
-+	bio_list_init(&bs->rescue_list);
-+	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
-+
-+	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
-+	if (!bs->bio_slab)
-+		return -ENOMEM;
-+
-+	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
-+		goto bad;
-+
-+	if ((flags & BIOSET_NEED_BVECS) &&
-+	    biovec_init_pool(&bs->bvec_pool, pool_size))
-+		goto bad;
-+
-+	if (!(flags & BIOSET_NEED_RESCUER))
-+		return 0;
-+
-+	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
-+	if (!bs->rescue_workqueue)
-+		goto bad;
-+
-+	return 0;
-+bad:
-+	bioset_exit(bs);
-+	return -ENOMEM;
-+}
-+EXPORT_SYMBOL(bioset_init);
-+
- /**
-  * bioset_create  - Create a bio_set
-  * @pool_size:	Number of bio and bio_vecs to cache in the mempool
-@@ -1895,43 +1957,18 @@ struct bio_set *bioset_create(unsigned int pool_size,
- 			      unsigned int front_pad,
- 			      int flags)
- {
--	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
- 	struct bio_set *bs;
- 
- 	bs = kzalloc(sizeof(*bs), GFP_KERNEL);
- 	if (!bs)
- 		return NULL;
- 
--	bs->front_pad = front_pad;
--
--	spin_lock_init(&bs->rescue_lock);
--	bio_list_init(&bs->rescue_list);
--	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
--
--	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
--	if (!bs->bio_slab) {
-+	if (bioset_init(bs, pool_size, front_pad, flags)) {
- 		kfree(bs);
- 		return NULL;
- 	}
- 
--	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
--		goto bad;
--
--	if ((flags & BIOSET_NEED_BVECS) &&
--	    biovec_init_pool(&bs->bvec_pool, pool_size))
--		goto bad;
--
--	if (!(flags & BIOSET_NEED_RESCUER))
--		return bs;
--
--	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
--	if (!bs->rescue_workqueue)
--		goto bad;
--
- 	return bs;
--bad:
--	bioset_free(bs);
--	return NULL;
- }
- EXPORT_SYMBOL(bioset_create);
- 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 720f7261d0..fa3cf94a50 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -406,6 +406,8 @@ static inline struct bio *bio_next_split(struct bio *bio, int sectors,
- 	return bio_split(bio, sectors, gfp, bs);
- }
- 
-+extern int bioset_init(struct bio_set *, unsigned int, unsigned int, int flags);
-+extern void bioset_exit(struct bio_set *);
- extern struct bio_set *bioset_create(unsigned int, unsigned int, int flags);
- enum {
- 	BIOSET_NEED_BVECS = BIT(0),
--- 
-2.17.0
+They are detached from PM domains on driver removal, so I guess one answer is
+"yes, in analogy with that".  However, the point about performace brought up
+by Ulf seems to be valid too.
+
+In any case, the change should be made for all of the bus types using PM
+domains, not just one.
