@@ -1,66 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753788AbeERIrq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:47:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55018 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753610AbeERIrm (ORCPT
+        id S1753595AbeERItD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:49:03 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42678 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeERItA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:47:42 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 18 May 2018 01:47:40 -0700
-From: skannan@codeaurora.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Fri, 18 May 2018 04:49:00 -0400
+X-Google-Smtp-Source: AB8JxZqcg9jWbo1shP/53S6oiTTG7Ki3/e9XZ14ZCEyDytdg8wkvka7CDjJYlyL80WW2CakZxL3hlA==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
-        Rajendra Nayak <rjendra@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rjwysocki@gmail.com
-Subject: Re: [PATCH 1/2] Revert "cpufreq: Remove policy create/remove
- notifiers"
-In-Reply-To: <CAJZ5v0i_nCj=sBSwrTjxCbL74Q-AwXJb5L2fV1e9SEMYACZC=g@mail.gmail.com>
-References: <1526631889-5084-1-git-send-email-skannan@codeaurora.org>
- <1526631889-5084-2-git-send-email-skannan@codeaurora.org>
- <CAJZ5v0geHvVUfL=+x-XNMQt4ygpt8QumOaWSjG268Sbtw9oeKw@mail.gmail.com>
- <1a66e15a401b2e1602f26cff5e904f12@codeaurora.org>
- <CAJZ5v0i_nCj=sBSwrTjxCbL74Q-AwXJb5L2fV1e9SEMYACZC=g@mail.gmail.com>
-Message-ID: <e86a168756927b9fe4fb1c6bcc4eb198@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] PM / runtime: Fixup reference counting of device link suppliers at probe
+Date: Fri, 18 May 2018 10:48:49 +0200
+Message-Id: <1526633329-31729-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-18 01:33, Rafael J. Wysocki wrote:
-> On Fri, May 18, 2018 at 10:31 AM,  <skannan@codeaurora.org> wrote:
->> On 2018-05-18 01:29, Rafael J. Wysocki wrote:
->>> 
->>> On Fri, May 18, 2018 at 10:24 AM, Saravana Kannan
->>> <skannan@codeaurora.org> wrote:
->>>> 
->>>> This reverts commit f9f41e3ef99ac9d4e91b07634362e393fb929aad.
->>> 
->>> 
->>> No explanation, no cake. :-)
->>> 
->>>> Change-Id: Iddde3ef56c9e5b14dcb14f8737899b85e56f5b43
->>> 
->>> 
->>> S-o-b missing.
->> 
->> 
->> Sorry, forgot the S-o-b. But there's a long explanation in the cover 
->> letter
->> :)
-> 
-> Cover letters don't go into git repositories, so please move it to the
-> patch itself.
+In the driver core, before it invokes really_probe() it runtime resumes the
+suppliers for the device via calling pm_runtime_get_suppliers(), which also
+increases the runtime PM usage count for each of the available supplier.
 
-Will do. Do you have any opposition to what the series is trying to do?
+This makes sense, as to be able to allow the consumer device to be probed
+by its driver. However, if the driver decides to add a new supplier link
+during ->probe(), hence updating the list of suppliers, the following call
+to pm_runtime_put_suppliers(), invoked after really_probe() in the driver
+core, we get into trouble.
 
-Thanks,
-Saravana
+More precisely, pm_runtime_put() gets called also for the new supplier(s),
+which is wrong as the driver core, didn't trigger pm_runtime_get_sync() to
+be called for it in the first place. In other words, the new supplier may
+be runtime suspended even in cases when it shouldn't.
+
+Fix this behaviour, by runtime resume suppliers according to the same
+conditions as managed by the runtime PM core, when runtime resume callbacks
+are being invoked.
+
+Additionally, don't try to runtime suspend any of the suppliers after
+really_probe(), but instead rely on that to happen via the consumer device,
+when it becomes runtime suspended.
+
+Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+
+An optional solution (requires to add code, rather than remove), in case we
+think it's not suffient to rely on the consumer device to be runtime suspended
+after probe.
+
+This could be done via adding a new bool member to the struct device_link, and
+set it from pm_runtime_get_suppliers(). Check it at pm_runtime_put_suppliers(),
+and only call pm_runtime_put() on those suppliers that has it set.
+
+---
+ drivers/base/dd.c            |  3 +--
+ drivers/base/power/runtime.c | 27 +++------------------------
+ include/linux/pm_runtime.h   |  6 ++----
+ 3 files changed, 6 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 10454fe..a41c91b 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -580,7 +580,7 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 	pr_debug("bus: '%s': %s: matched device %s with driver %s\n",
+ 		 drv->bus->name, __func__, dev_name(dev), drv->name);
+ 
+-	pm_runtime_get_suppliers(dev);
++	pm_runtime_resume_suppliers(dev);
+ 	if (dev->parent)
+ 		pm_runtime_get_sync(dev->parent);
+ 
+@@ -591,7 +591,6 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 	if (dev->parent)
+ 		pm_runtime_put(dev->parent);
+ 
+-	pm_runtime_put_suppliers(dev);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 8bef3cb..6f4f50e 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1563,37 +1563,16 @@ void pm_runtime_clean_up_links(struct device *dev)
+ }
+ 
+ /**
+- * pm_runtime_get_suppliers - Resume and reference-count supplier devices.
++ * pm_runtime_resume_suppliers - Resume supplier devices.
+  * @dev: Consumer device.
+  */
+-void pm_runtime_get_suppliers(struct device *dev)
++void pm_runtime_resume_suppliers(struct device *dev)
+ {
+-	struct device_link *link;
+ 	int idx;
+ 
+ 	idx = device_links_read_lock();
+ 
+-	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+-		if (link->flags & DL_FLAG_PM_RUNTIME)
+-			pm_runtime_get_sync(link->supplier);
+-
+-	device_links_read_unlock(idx);
+-}
+-
+-/**
+- * pm_runtime_put_suppliers - Drop references to supplier devices.
+- * @dev: Consumer device.
+- */
+-void pm_runtime_put_suppliers(struct device *dev)
+-{
+-	struct device_link *link;
+-	int idx;
+-
+-	idx = device_links_read_lock();
+-
+-	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+-		if (link->flags & DL_FLAG_PM_RUNTIME)
+-			pm_runtime_put(link->supplier);
++	rpm_get_suppliers(dev);
+ 
+ 	device_links_read_unlock(idx);
+ }
+diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+index f0fc470..db5dbbf 100644
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -56,8 +56,7 @@ extern void pm_runtime_update_max_time_suspended(struct device *dev,
+ 						 s64 delta_ns);
+ extern void pm_runtime_set_memalloc_noio(struct device *dev, bool enable);
+ extern void pm_runtime_clean_up_links(struct device *dev);
+-extern void pm_runtime_get_suppliers(struct device *dev);
+-extern void pm_runtime_put_suppliers(struct device *dev);
++extern void pm_runtime_resume_suppliers(struct device *dev);
+ extern void pm_runtime_new_link(struct device *dev);
+ extern void pm_runtime_drop_link(struct device *dev);
+ 
+@@ -173,8 +172,7 @@ static inline unsigned long pm_runtime_autosuspend_expiration(
+ static inline void pm_runtime_set_memalloc_noio(struct device *dev,
+ 						bool enable){}
+ static inline void pm_runtime_clean_up_links(struct device *dev) {}
+-static inline void pm_runtime_get_suppliers(struct device *dev) {}
+-static inline void pm_runtime_put_suppliers(struct device *dev) {}
++static inline void pm_runtime_resume_suppliers(struct device *dev) {}
+ static inline void pm_runtime_new_link(struct device *dev) {}
+ static inline void pm_runtime_drop_link(struct device *dev) {}
+ 
+-- 
+2.7.4
