@@ -1,38 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqVxJxGxcL5TVJNTj/tW7Pv8pV0F2zRxNrdpgza6n4ViKl00UMrTieo/HIslPrHLaH36+Hi
-ARC-Seal: i=1; a=rsa-sha256; t=1526631467; cv=none;
+X-Google-Smtp-Source: AB8JxZrltXO02PMAzM8J51swceeNqlRbv8JJbX1zAABUTMZpsfvTsB/StFhCSrzbE5ZfWEfeKU/j
+ARC-Seal: i=1; a=rsa-sha256; t=1526631463; cv=none;
         d=google.com; s=arc-20160816;
-        b=OljbT+XrnQrHbFGlCplBEeH73J9Q6EvY2DB/dsjcmKE1wEtbJM1YLKeMZ5TZtSHf5V
-         qs9bhwgxox15Z4U3a4JOEaO6vjjF/iD1amdJMynr49tenIhR4mu/L4DrOjebu4ePCwfb
-         OZljtTpXRSFDDAUsb0e8txzkbpFqZUg6U9HMZAXFLycHDHIF6mne07bjWRAPIu2u+0CW
-         AKKzd43ep2XiWqr9SDmBTyrI5LRIe+eRsCJtmQ/tsCEA1Q6ZRrUVTtwXC3hKKEZeII5G
-         Bl4gIr1uVnLZioC4HsgEtCuweExjSTmclchx2QsK+PrXBQCpyvLb1GloMLYPqSsPUBmO
-         IL6A==
+        b=i47txzldM1pmSDVzXVmZlLtWk8xyr9gMj9VaiD3Z/wqh8vkN0bQQrSgH12XrDuQe0C
+         coGCfYoq/6bYWB6qrKCB9MwiUpUzclabcYvqhzRsal3L/Jm7vGbrmn+eWpPL58tnXUkg
+         YVhyQt6aU64eCqhGYs6YP+adLL5bwDT5GcOU4hDjGbCkTH9UAX1V93FfxpenWXZBdndE
+         5cIy6d9/S6PMwx1/6ghpBX6Pql49QSU38lykCBHo0dKkzS/8Va5DuUU6rqRPCm3EZlIr
+         5KUfiOKlKubVwfaifVWGrWZA/P6WVEfsegI6pNqovRXTNNxr7wQA2dLkbkQMSQkpxMvM
+         gUmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=3nXOwEZ9p0+AJj52O8mwXT5J/pNzjPojmtMUbaPxOjg=;
-        b=mgeNP83oQcafTfqlfjbGk/E09QtgR0b4nmfsBgpwwR/k3dh1yH3gaS3XmyDt+AxLjq
-         B1br9KoCmizrDRNUQ7yJD4Lfz/wmCbxHAQXqSet+2HJGmkhV5UuJOu39/6U+UtsozGEN
-         j85V6f2vNGI3enKTVvwKWZSninoZlELJcSPUlS4gsEiATitp/IS+caRoWyEfNIrlzkJw
-         xvYqFZ9JebpZwO3EpzFR5jXp8+BlRtHFo/a8N6RZ8f8hhsqT5qoBgShCGm7o4YguEjob
-         xKAG8EMY8F2AIupUzCcccPybP5LE744IMNV1xQfnDcxoaKA9KuferkPiM596YhCYmErd
-         D//g==
+        bh=QRzEVSyVCNd1DHsU58OQLHTYZw7pUB0gJ9aM5Ncz0U0=;
+        b=jjTUrZUNSFfDRh5N2pi0ZTkr9ztW3ozHqJNr7H2yrB7XWGZrk5oXWOtOTXbVLv8sLz
+         44rrE/WOwTX6UundoxDl3xVMXcFxXuX0o7cDvJjLfEZ+iicKQM0m+k57XHKgaTy1vdhB
+         U2lQwd1oyCAx88IsdXBJZa1Fsqc0e7FQfphERELixT80oyaRH1YneBKeR8tMnUIaWj8Y
+         3bMsQDDTnwh8bx5CFuLILtPYdT9sdT4ggb5oE8iCo0lN9YxKRFitl0cay2vQyCmNvSX1
+         tYGxYu+ELxkwhqyah8GYPxSX1RlOqzO8toSERGNJxGfJnrDpeD2aT7Y9E+DJ+PwYCCts
+         D5AA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lALQMQHQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dk8gO9/E;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lALQMQHQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dk8gO9/E;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Debabrata Banerjee <dbanerje@akamai.com>,
+	Zumeng Chen <zumeng.chen@gmail.com>,
+	Michael Chan <michael.chan@broadcom.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 31/55] bonding: do not allow rlb updates to invalid mac
-Date: Fri, 18 May 2018 10:15:27 +0200
-Message-Id: <20180518081458.962621076@linuxfoundation.org>
+Subject: [PATCH 4.16 30/55] tg3: Fix vunmap() BUG_ON() triggered from tg3_free_consistent().
+Date: Fri, 18 May 2018 10:15:26 +0200
+Message-Id: <20180518081458.916839224@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789117326053762?=
-X-GMAIL-MSGID: =?utf-8?q?1600789117326053762?=
+X-GMAIL-THRID: =?utf-8?q?1600789113551716291?=
+X-GMAIL-MSGID: =?utf-8?q?1600789113551716291?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +52,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Debabrata Banerjee <dbanerje@akamai.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 4fa8667ca3989ce14cf66301fa251544fbddbdd0 ]
+[ Upstream commit d89a2adb8bfe6f8949ff389acdb9fa298b6e8e12 ]
 
-Make sure multicast, broadcast, and zero mac's cannot be the output of rlb
-updates, which should all be directed arps. Receive load balancing will be
-collapsed if any of these happen, as the switch will broadcast.
+tg3_free_consistent() calls dma_free_coherent() to free tp->hw_stats
+under spinlock and can trigger BUG_ON() in vunmap() because vunmap()
+may sleep.  Fix it by removing the spinlock and relying on the
+TG3_FLAG_INIT_COMPLETE flag to prevent race conditions between
+tg3_get_stats64() and tg3_free_consistent().  TG3_FLAG_INIT_COMPLETE
+is always cleared under tp->lock before tg3_free_consistent()
+and therefore tg3_get_stats64() can safely access tp->hw_stats
+under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
 
-Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+Fixes: f5992b72ebe0 ("tg3: Fix race condition in tg3_get_stats64().")
+Reported-by: Zumeng Chen <zumeng.chen@gmail.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_alb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/tg3.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/bonding/bond_alb.c
-+++ b/drivers/net/bonding/bond_alb.c
-@@ -450,7 +450,7 @@ static void rlb_update_client(struct rlb
- {
- 	int i;
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -8733,14 +8733,15 @@ static void tg3_free_consistent(struct t
+ 	tg3_mem_rx_release(tp);
+ 	tg3_mem_tx_release(tp);
  
--	if (!client_info->slave)
-+	if (!client_info->slave || !is_valid_ether_addr(client_info->mac_dst))
+-	/* Protect tg3_get_stats64() from reading freed tp->hw_stats. */
+-	tg3_full_lock(tp, 0);
++	/* tp->hw_stats can be referenced safely:
++	 *     1. under rtnl_lock
++	 *     2. or under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
++	 */
+ 	if (tp->hw_stats) {
+ 		dma_free_coherent(&tp->pdev->dev, sizeof(struct tg3_hw_stats),
+ 				  tp->hw_stats, tp->stats_mapping);
+ 		tp->hw_stats = NULL;
+ 	}
+-	tg3_full_unlock(tp);
+ }
+ 
+ /*
+@@ -14178,7 +14179,7 @@ static void tg3_get_stats64(struct net_d
+ 	struct tg3 *tp = netdev_priv(dev);
+ 
+ 	spin_lock_bh(&tp->lock);
+-	if (!tp->hw_stats) {
++	if (!tp->hw_stats || !tg3_flag(tp, INIT_COMPLETE)) {
+ 		*stats = tp->net_stats_prev;
+ 		spin_unlock_bh(&tp->lock);
  		return;
- 
- 	for (i = 0; i < RLB_ARP_BURST_SIZE; i++) {
