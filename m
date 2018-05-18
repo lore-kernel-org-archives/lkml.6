@@ -1,38 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqOiU55zqj01mIt3vzF3g4Y52JPm0ltbs+1/2VWuxe7sIWJuS8iSkhVrbsjuXhc+QV0wp5X
-ARC-Seal: i=1; a=rsa-sha256; t=1526631628; cv=none;
+X-Google-Smtp-Source: AB8JxZoKLl3Cmgm/bbmHfYkROjlJq/BEID5TxR1Mqd6lDu10u9usfHreeDhzvT/dKbsAzPeqyRES
+ARC-Seal: i=1; a=rsa-sha256; t=1526631625; cv=none;
         d=google.com; s=arc-20160816;
-        b=juuD1/Xtzfifd/cbJz1l/SwG7evIxhQu7g/Pe5+o1wk6Szx5Udt9S11OVMwR7zHVpZ
-         ZRx1xpFRIndr1SfNbJq/+lDCFXOiUiqVdnLXAAD4EtJcJO9Cdp1KVMMeAL3UoOygvKZj
-         vdR1/33SfAvRu2K2qnJKnjYnl/owVeV05G+9wciiB3Norzir8LINGPUSwQex+FnBMl+R
-         mXBLqOIykc4S6d4HCWKlfkHU5KiIffqTzDNOLNsWQQTW/yUDr/7guxhK24E4P2TpLmWC
-         8OMs47RyhzZgMfYHPxdvNVx5vmCSdhmgftDnU8xj6/Pdh4YS6HAFIBj1OIsIRR7YWkHM
-         ed2A==
+        b=OmiGSoFpM1mRsuMjV5fs/nt7J9Vck4E7jE8f9xiryKe6e+Vvc7T85mJ7Lu4HTyscWN
+         6hHZt2wM+uc7TUovfWHdN8nMN4B6JYWEPBVBCOugYyyY/U5+vTbRwlSp1EB4KH19gJ9z
+         km8D02xT6g9MMDszcWEHXRdX5uSmy1SLKy3K1kHED3ZnGf1W0kSr4QgKhuTlUncMm5gp
+         hS9vWRr6B8D67cBZYerNEwzzsdd4xwwgYTp2/95qD1h7T3rpFa7zCDQNAZDb3Oie+r4n
+         hNaABe1sCB3vJats7rwkawOQp5O1z5RQk2IM513d+1FKgrZGzHr80clu0iJCEXOHc/IR
+         3lDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=0cFEzakhzj/6haQp7THSeM1pCwzQGR0nXhqHS6YxvUU=;
-        b=HeQV1zyDVUgNLY6MBDvxvLITaIksKBkyooq47Tx5WOfUKE1hCN9gFEYfOZPptDjzRt
-         asBFW1+iqwddV6Rnl6KQeAzv1C2m6VoKCgTR5SdeEzJSxgOyN0dtO8ktRKz6HTJBKC5T
-         EwPf//L96+msJKs2o5fL5792ck9ZEyKHXuurrIzWbiMfkA8d0mxSoHk6mv1qewe6PeUA
-         f++bUnO3Lf+XVbd1egEnvX3Rses+T0j+bUd/8S7wY2JZfFqKOEviEW/8FXX0RuAY4Owj
-         1g3QckkmnNvOLprW7bN8/lQMOj9b92tW+CfytbTWeHEUOYYypoJSpfOTZO3S9XOtnD0s
-         JSEw==
+        bh=3TKUZSCgCJeZi0o0Mci9dhDJ/bPvdPcVyIkPLZZXkQs=;
+        b=CS2gdAEyxFmNDvXhvUNRfx+LpvWEB1YCpyT8XjuHZVsMZOXF0i621psS9tndI+vLPR
+         ZVlAjIUL/rLQgBSu/ta4Jz26aWW90X1NkKf9RmxK9bwD1JSlNva/1wT7TcVqbY3yUVuW
+         IsfBFiRcAY0TYEhMmFfDZcA6VNqm6DU423IVsoqXkfmxcSEJ31rlgCJqW907cI+HynfM
+         VdkFrcIvOWyMPo/zfstYNS0tXYUtrAFQJ3VzrLFKEU/jkH+clAtvY0/tbQgsw28mwAuY
+         n/49J2vX0O0Ge4hHa4ZCf5oJ5w1QfIz3SwIS1zjtYTtUvSegMHFiUlYsRue/JIjR05OS
+         O7sQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oKoXZ53Z;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XS8dKfyq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oKoXZ53Z;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XS8dKfyq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 35/45] hv_netvsc: set master device
-Date: Fri, 18 May 2018 10:15:52 +0200
-Message-Id: <20180518081532.160649207@linuxfoundation.org>
+	Talat Batheesh <talatb@mellanox.com>,
+	Mark Bloch <markb@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 34/45] net/mlx5: Avoid cleaning flow steering table twice during error flow
+Date: Fri, 18 May 2018 10:15:51 +0200
+Message-Id: <20180518081532.105503583@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789134050894901?=
-X-GMAIL-MSGID: =?utf-8?q?1600789285790413024?=
+X-GMAIL-THRID: =?utf-8?q?1600789131160542701?=
+X-GMAIL-MSGID: =?utf-8?q?1600789283491612392?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +52,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Talat Batheesh <talatb@mellanox.com>
 
-[ Upstream commit 97f3efb64323beb0690576e9d74e94998ad6e82a ]
+[ Upstream commit 9c26f5f89d01ca21560c6b8a8e4054c271cc3a9c ]
 
-The hyper-v transparent bonding should have used master_dev_link.
-The netvsc device should look like a master bond device not
-like the upper side of a tunnel.
+When we fail to initialize the RX root namespace, we need
+to clean only that and not the entire flow steering.
 
-This makes the semantics the same so that userspace applications
-looking at network devices see the correct master relationshipship.
+Currently the code may try to clean the flow steering twice
+on error witch leads to null pointer deference.
+Make sure we clean correctly.
 
-Fixes: 0c195567a8f6 ("netvsc: transparent VF management")
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fba53f7b5719 ("net/mlx5: Introduce mlx5_flow_steering structure")
+Signed-off-by: Talat Batheesh <talatb@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |   23 +++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -1742,7 +1742,8 @@ static int netvsc_vf_join(struct net_dev
- 		goto rx_handler_failed;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -174,6 +174,7 @@ static void del_flow_group(struct fs_nod
+ static void del_fte(struct fs_node *node);
+ static bool mlx5_flow_dests_cmp(struct mlx5_flow_destination *d1,
+ 				struct mlx5_flow_destination *d2);
++static void cleanup_root_ns(struct mlx5_flow_root_namespace *root_ns);
+ static struct mlx5_flow_rule *
+ find_flow_rule(struct fs_fte *fte,
+ 	       struct mlx5_flow_destination *dest);
+@@ -2041,23 +2042,27 @@ static int create_anchor_flow_table(stru
  
--	ret = netdev_upper_dev_link(vf_netdev, ndev);
-+	ret = netdev_master_upper_dev_link(vf_netdev, ndev,
-+					   NULL, NULL);
- 	if (ret != 0) {
- 		netdev_err(vf_netdev,
- 			   "can not set master device %s (err = %d)\n",
+ static int init_root_ns(struct mlx5_flow_steering *steering)
+ {
++	int err;
++
+ 	steering->root_ns = create_root_ns(steering, FS_FT_NIC_RX);
+ 	if (!steering->root_ns)
+-		goto cleanup;
++		return -ENOMEM;
+ 
+-	if (init_root_tree(steering, &root_fs, &steering->root_ns->ns.node))
+-		goto cleanup;
++	err = init_root_tree(steering, &root_fs, &steering->root_ns->ns.node);
++	if (err)
++		goto out_err;
+ 
+ 	set_prio_attrs(steering->root_ns);
+-
+-	if (create_anchor_flow_table(steering))
+-		goto cleanup;
++	err = create_anchor_flow_table(steering);
++	if (err)
++		goto out_err;
+ 
+ 	return 0;
+ 
+-cleanup:
+-	mlx5_cleanup_fs(steering->dev);
+-	return -ENOMEM;
++out_err:
++	cleanup_root_ns(steering->root_ns);
++	steering->root_ns = NULL;
++	return err;
+ }
+ 
+ static void clean_tree(struct fs_node *node)
