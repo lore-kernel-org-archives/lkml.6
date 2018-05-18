@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeERQzN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:55:13 -0400
-Received: from vern.gendns.com ([206.190.152.46]:56848 "EHLO vern.gendns.com"
+        id S1752797AbeERQzS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:55:18 -0400
+Received: from vern.gendns.com ([206.190.152.46]:56882 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752577AbeERQuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:50:25 -0400
+        id S1751435AbeERQua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 12:50:30 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: David Lechner <david@lechnology.com>,
         Kevin Hilman <khilman@kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Fri, 18 May 2018 11:48:14 -0500
-Message-Id: <20180518164829.27052-13-david@lechnology.com>
+Subject: [PATCH v11 15/27] ARM: davinci: switch to common clock framework
+Date: Fri, 18 May 2018 11:48:17 -0500
+Message-Id: <20180518164829.27052-16-david@lechnology.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
 References: <20180518164829.27052-1-david@lechnology.com>
@@ -36,19 +36,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also, the #includes are sorted since we are adding some here.
+A few macros had to be moved to prevent compilation errors.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
-v10 changes:
+v11 changes:
 - none
 
 v10 changes:
@@ -61,84 +58,99 @@ v8 changes:
 - none
 
 v7 changes:
-- none
+- s/compile/compilation and space instead of tab
+- add PM_GENERIC_DOMAINS dependencies
 
 v6 changes:
-- none
+- clean up indent on Common objects section
 
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 78390c64e6ca..73de449bbc68 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
+ arch/arm/Kconfig                | 5 ++++-
+ arch/arm/mach-davinci/Makefile  | 4 ++--
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7f8e7f4b88f..a57ad13810c8 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -609,13 +609,16 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB
+ 	select HAVE_IDE
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e8178050027..8725d8bea567 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,8 +5,8 @@
+ #
  
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
+-			   usb.o common.o sram.o aemif.o
++obj-y 					:= time.o serial.o usb.o \
++					   common.o sram.o aemif.o
+ 
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+ 
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5aaa25..2d058568e004 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
+ 
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index fa99197d36f9..db4c95ef4d5c 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
+ 
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
 +
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09fc10c..b58707cf7033 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
  
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
 -- 
 2.17.0
