@@ -1,39 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZom6myXWVTzmPedhXEWq1Y4s59u+f1DcS7c8TEGS9HP31PTX3GxHZv1VUkp2cDCEErFS0Vc
-ARC-Seal: i=1; a=rsa-sha256; t=1526631592; cv=none;
+X-Google-Smtp-Source: AB8JxZrjlpoqpt5bQQ6+SiodR45tVmDod3EqrMv9ZkeBlOyiDYWVfkYc9uCQpn1pNFHAknNMfFZv
+ARC-Seal: i=1; a=rsa-sha256; t=1526631589; cv=none;
         d=google.com; s=arc-20160816;
-        b=yPYe3/mC6ZB1uzJP0FCXDLCLbOz48k524c1vvUi4aiM/xqGa7FiPAiND8wWlyPG6Ku
-         9qU1eoPZkE5bRTIO3W/KOlRf/Kw3jT9pPmVPcX9JPGieo/YfsgX5DnwTvQAOJAfQLrmk
-         DFxI+gRknGnWcBNfrZuPHrscCoiAj+YxAMqnO004coSUEXjwRd+2SGNgh9c5QqKvnpHo
-         I0ePVpo8j1WVhyAlcPJCgJkO0OtR2zBPqgfIZ0hvqeZlISpF1yuW2jS1D0jO94JGrw+f
-         yoLPerjIMq/6jfN8IXKJXbUymt1i/AC+LiSnHHOw2iDohJ0gsHdIl3rPP+9D1+FqWOaY
-         RDRQ==
+        b=Z0zBdM7yL+ReDJJeEJxp0gGMi6TpUeBYq06Z4k8Gjsmqu7aIOnJ30Y5Wfen0Z2yINH
+         rtSmEKIpwiyhnAIMYCGo0sFmhSpR3i0diKR6A59sK2Q99CdAx3K83lVuREa1+hQ2Gc0h
+         mZWb+8qVhYuSflRQbDIcncW0yC8rO/bUgkA/oARYSKCPm8tUFmIZwMYHO9hTtOyXfN7G
+         g0sATaBEV8wgsA5vaq0QiG5QnWWyisvqrxFY0UcsSRLBSoU9ZtzTZj7iNNJHlJCgBHcT
+         CbZJ04f/8xFelCR0rEBOP/w9mBwfJBpjf3dwDm8qByUtf/iA1grYL1exaYSgBrP9PcI7
+         2Ksw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/XgPfzHU2BEpNQcLAI2xhaMWayPwlx3gFNIeZJLD8D8=;
-        b=e8rV8HVlig9J20PVRNidgkWxDpBDJRcxqxJxMdXTH8DRwn89lDvgY+2fFhQTzJ1E+Q
-         AaCMV/bExZeM6EsFm0rt39J4Iu/6EPQA+IaZTWZjoqRP/GtbjfP6PYQpzekhfkzASUpK
-         6zj9yvaJdutWG1/Vvj+j+v40FC++MhfYvSmZUwghOmE5cn4SELhp7589rTYcSVMqyseN
-         hSw7EJVtqV2VCiwxPVEVo7CGJEHl5XdhDdsRckcTBgkjvnrg37YT+jZiJnEx/iM4du1+
-         UEf5x4obyKj/fRvuOyYDr99UsxYP2EkARYTYX0mtRqptxItFht4jTsb69LGOuCjIDhwt
-         Ur3w==
+        bh=1XTcy7C9Hyqt9tJQf2nnVmuZQbIFGh0TtgqkGIuqod0=;
+        b=d3hO2DE6eThm+xuFpuIlcYGWDrYOgm63QGEf9ncqLoYpRGhnpFTbXPpDuD+eanAEjm
+         XHunnLRW0RiPYU30N5cgzFSoAQn9mlIHkp/vUF/Mv2KSEpLkKbWtyszxhl67AqX5mi8B
+         Z1zj4ScV+GdZ9fglr3zhtgKGYIJ6cO6OeIb+X9zkmU7skTGeGdxydnkc1khFv3DeM5bU
+         qcYEvRZhUV4PTzKuKGepmQCYv9GrIFZWY6mFwdXgM3ZfyhjxlxBtVNWubv/LN84XCBdK
+         +CZPH4LR5j7CSa6b4txWF6O2ToSJ+jGlSh7B+6re/ranQRPnrLAWNbG0qZcdQYIkot1S
+         /mFA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Khio/sWn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pqwamgxp;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Khio/sWn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pqwamgxp;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
+	Andrey Ignatov <rdna@fb.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 06/45] llc: better deal with too small mtu
-Date: Fri, 18 May 2018 10:15:23 +0200
-Message-Id: <20180518081530.656876703@linuxfoundation.org>
+Subject: [PATCH 4.14 05/45] ipv4: fix memory leaks in udp_sendmsg, ping_v4_sendmsg
+Date: Fri, 18 May 2018 10:15:22 +0200
+Message-Id: <20180518081530.610320576@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789077943106120?=
-X-GMAIL-MSGID: =?utf-8?q?1600789248220258414?=
+X-GMAIL-THRID: =?utf-8?q?1600789075042388036?=
+X-GMAIL-MSGID: =?utf-8?q?1600789245587095323?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,78 +51,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit 2c5d5b13c6eb79f5677e206b8aad59b3a2097f60 ]
+[ Upstream commit 1b97013bfb11d66f041de691de6f0fec748ce016 ]
 
-syzbot loves to set very small mtu on devices, since it brings joy.
-We must make llc_ui_sendmsg() fool proof.
+Fix more memory leaks in ip_cmsg_send() callers. Part of them were fixed
+earlier in 919483096bfe.
 
-usercopy: Kernel memory overwrite attempt detected to wrapped address (offset 0, size 18446612139802320068)!
+* udp_sendmsg one was there since the beginning when linux sources were
+  first added to git;
+* ping_v4_sendmsg one was copy/pasted in c319b4d76b9e.
 
-kernel BUG at mm/usercopy.c:100!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 17464 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #36
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:88
-RSP: 0018:ffff8801868bf800 EFLAGS: 00010282
-RAX: 000000000000006c RBX: ffffffff87d2fb00 RCX: 0000000000000000
-RDX: 000000000000006c RSI: ffffffff81610731 RDI: ffffed0030d17ef6
-RBP: ffff8801868bf858 R08: ffff88018daa4200 R09: ffffed003b5c4fb0
-R10: ffffed003b5c4fb0 R11: ffff8801dae27d87 R12: ffffffff87d2f8e0
-R13: ffffffff87d2f7a0 R14: ffffffff87d2f7a0 R15: ffffffff87d2f7a0
-FS:  00007f56a14ac700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2bc21000 CR3: 00000001abeb1000 CR4: 00000000001426f0
-DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000030602
-Call Trace:
- check_bogus_address mm/usercopy.c:153 [inline]
- __check_object_size+0x5d9/0x5d9 mm/usercopy.c:256
- check_object_size include/linux/thread_info.h:108 [inline]
- check_copy_size include/linux/thread_info.h:139 [inline]
- copy_from_iter_full include/linux/uio.h:121 [inline]
- memcpy_from_msg include/linux/skbuff.h:3305 [inline]
- llc_ui_sendmsg+0x4b1/0x1530 net/llc/af_llc.c:941
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:639
- __sys_sendto+0x3d7/0x670 net/socket.c:1789
- __do_sys_sendto net/socket.c:1801 [inline]
- __se_sys_sendto net/socket.c:1797 [inline]
- __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1797
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455979
-RSP: 002b:00007f56a14abc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f56a14ac6d4 RCX: 0000000000455979
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000018
-RBP: 000000000072bea0 R08: 00000000200012c0 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000548 R14: 00000000006fbf60 R15: 0000000000000000
-Code: 55 c0 e8 c0 55 bb ff ff 75 c8 48 8b 55 c0 4d 89 f9 ff 75 d0 4d 89 e8 48 89 d9 4c 89 e6 41 56 48 c7 c7 80 fa d2 87 e8 a0 0b a3 ff <0f> 0b e8 95 55 bb ff e8 c0 a8 f7 ff 8b 95 14 ff ff ff 4d 89 e8
-RIP: usercopy_abort+0xbb/0xbd mm/usercopy.c:88 RSP: ffff8801868bf800
+Whenever return happens in udp_sendmsg() or ping_v4_sendmsg() IP options
+have to be freed if they were allocated previously.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Add label so that future callers (if any) can use it instead of kfree()
+before return that is easy to forget.
+
+Fixes: c319b4d76b9e (net: ipv4: add IPPROTO_ICMP socket kind)
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/llc/af_llc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ping.c |    7 +++++--
+ net/ipv4/udp.c  |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -930,6 +930,9 @@ static int llc_ui_sendmsg(struct socket
- 	if (size > llc->dev->mtu)
- 		size = llc->dev->mtu;
- 	copied = size - hdrlen;
-+	rc = -EINVAL;
-+	if (copied < 0)
-+		goto release;
- 	release_sock(sk);
- 	skb = sock_alloc_send_skb(sk, size, noblock, &rc);
- 	lock_sock(sk);
+--- a/net/ipv4/ping.c
++++ b/net/ipv4/ping.c
+@@ -775,8 +775,10 @@ static int ping_v4_sendmsg(struct sock *
+ 	ipc.addr = faddr = daddr;
+ 
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 	}
+ 	tos = get_rttos(&ipc, inet);
+@@ -842,6 +844,7 @@ back_from_confirm:
+ 
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err) {
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -978,8 +978,10 @@ int udp_sendmsg(struct sock *sk, struct
+ 	sock_tx_timestamp(sk, ipc.sockc.tsflags, &ipc.tx_flags);
+ 
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 		connected = 0;
+ 	}
+@@ -1087,6 +1089,7 @@ do_append_data:
+ 
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err)
