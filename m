@@ -1,74 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753867AbeERIeI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:34:08 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:38418 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753699AbeERIeE (ORCPT
+        id S1753687AbeERIgK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:36:10 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:34909 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752226AbeERIgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:34:04 -0400
-X-Google-Smtp-Source: AB8JxZrY5hrzhb8BNZ/lF0vKGZUMyFCJ8VRVaVhQsXLYR2dK+m1TP/oC3AIJrqho3n5Xp+xLTc9tiQ==
+        Fri, 18 May 2018 04:36:06 -0400
+X-Google-Smtp-Source: AB8JxZqkgS9izOBioLotkU7XnC6L2w2nx67/4y5h3n4ByFDpbqw3hR5Z1Q+nChIk9gfH07FiUl1Ba7Lzsoh5YOw5Lrs=
 MIME-Version: 1.0
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org> <20180424124436.26955-2-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180424124436.26955-2-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 18 May 2018 17:33:50 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CYaeUNFMFrQAC2mofd80LKt6zxBRwAje4AoWbhGvGJ0A@mail.gmail.com>
-Message-ID: <CAAFQd5CYaeUNFMFrQAC2mofd80LKt6zxBRwAje4AoWbhGvGJ0A@mail.gmail.com>
-Subject: Re: [PATCH 01/28] venus: hfi_msgs: correct pointer increment
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 18 May 2018 10:36:04 +0200
+X-Google-Sender-Auth: 0Z4osnIVNe2peqK63RC3-6Ik4q8
+Message-ID: <CAMuHMdW_4gvQYhCxcXR+sa6dhwAshyJnhXhc36=VC=hWKB-7Jw@mail.gmail.com>
+Subject: cryptomgr_test / drbg_ctr: BUG: sleeping function called from invalid context
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        Stephan Mueller <smueller@chronox.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
+Hi,
 
-Thanks for the series. I'll be gradually reviewing subsequent patches. Stay
-tuned. :)
+After enabling CONFIG_CRYPTO_DRBG_CTR, I start seeing during kernel boot:
 
-On Tue, Apr 24, 2018 at 9:56 PM Stanimir Varbanov <
-stanimir.varbanov@linaro.org> wrote:
+BUG: sleeping function called from invalid context at
+include/crypto/algapi.h:416
+in_atomic(): 1, irqs_disabled(): 0, pid: 203, name: cryptomgr_test
+1 lock held by cryptomgr_test/203:
+ #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at: drbg_kcapi_seed+0x128/0x4bc
+CPU: 3 PID: 203 Comm: cryptomgr_test Not tainted
+4.17.0-rc5-salvator-x-00509-g0ad2b9f404d6a668-dirty #1742
+Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+Call trace:
+ dump_backtrace+0x0/0x140
+ show_stack+0x14/0x1c
+ dump_stack+0xb4/0xf0
+ ___might_sleep+0x1fc/0x218
+ skcipher_walk_done+0x2c8/0x38c
+ ctr_encrypt+0x84/0x110
+ simd_skcipher_encrypt+0xa4/0xb0
+ drbg_kcapi_sym_ctr+0xb4/0x178
+ drbg_ctr_update+0x17c/0x2c4
+ drbg_seed+0x20c/0x26c
+ drbg_kcapi_seed+0x458/0x4bc
+ crypto_rng_reset+0x84/0xa8
+ alg_test_drbg+0x12c/0x324
+ alg_test.part.7+0x264/0x2bc
+ alg_test+0x44/0x58
+ cryptomgr_test+0x28/0x48
+ kthread+0x11c/0x124
+ ret_from_fork+0x10/0x18
 
-> Data pointer should be incremented by size of the structure not
-> the size of a pointer, correct the mistake.
+I tried following the code path, but couldn't find where it went wrong.
 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->   drivers/media/platform/qcom/venus/hfi_msgs.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+mutex_lock(&drbg->drbg_mutex) is called from drbg_instantiate(), which is
+inlined by the compiler into drbg_kcapi_seed().
 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c
-b/drivers/media/platform/qcom/venus/hfi_msgs.c
-> index 90c93d9603dc..589e1a6b36a9 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_msgs.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
-> @@ -60,14 +60,14 @@ static void event_seq_changed(struct venus_core
-*core, struct venus_inst *inst,
->                          frame_sz = (struct hfi_framesize *)data_ptr;
->                          event.width = frame_sz->width;
->                          event.height = frame_sz->height;
-> -                       data_ptr += sizeof(frame_sz);
-> +                       data_ptr += sizeof(*frame_sz);
->                          break;
->                  case HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT:
->                          data_ptr += sizeof(u32);
->                          profile_level = (struct hfi_profile_level
-*)data_ptr;
->                          event.profile = profile_level->profile;
->                          event.level = profile_level->level;
-> -                       data_ptr += sizeof(profile_level);
-> +                       data_ptr += sizeof(*profile_level);
->                          break;
->                  default:
->                          break;
+Do you have a clue?
+Thanks!
 
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Gr{oetje,eeting}s,
 
-Best regards,
-Tomasz
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
