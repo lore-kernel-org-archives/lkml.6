@@ -1,43 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeERQfP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:35:15 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37660 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeERQfM (ORCPT
+        id S1752231AbeERQfq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:35:46 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:32776 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeERQfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:35:12 -0400
-X-Google-Smtp-Source: AB8JxZr8QMPuafxEltrj3uoyrOMPAyAmy3jDo9LyJ4gkWvUt4Je1nTxsrmx7zaYeiwJtT46vo7wZ+A==
-Date: Fri, 18 May 2018 11:35:10 -0500
+        Fri, 18 May 2018 12:35:43 -0400
+X-Google-Smtp-Source: AB8JxZoDwh2aErz0jWql3ifpZ1RBJOTBOfeuXsZVihi2dogADmMJ3zCYBt4mQKC2h9nfZ7cfq+LaLg==
+Date: Fri, 18 May 2018 11:35:41 -0500
 From: Rob Herring <robh@kernel.org>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: jic23@kernel.org, ludovic.desroches@microchip.com,
+        alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v6 2/4] rtc: ds1307: support m41t11 variant
-Message-ID: <20180518163510.GA12620@rob-hp-laptop>
-References: <20180516210842.5874-1-giulio.benetti@micronovasrl.com>
- <20180516210842.5874-2-giulio.benetti@micronovasrl.com>
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        nicolas.ferre@microchip.com, dmitry.torokhov@gmail.com
+Subject: Re: [PATCH v5 3/9] dt-bindings: input: touchscreen: add minimum
+ pressure touchscreen property
+Message-ID: <20180518163541.GA13676@rob-hp-laptop>
+References: <1525949114-29263-1-git-send-email-eugen.hristev@microchip.com>
+ <1525949114-29263-4-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180516210842.5874-2-giulio.benetti@micronovasrl.com>
+In-Reply-To: <1525949114-29263-4-git-send-email-eugen.hristev@microchip.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 11:08:40PM +0200, Giulio Benetti wrote:
-> The m41t11 variant is very similar to the already supported m41t00 and
-> m41t0, but it has also 56 bytes of NVRAM.
+On Thu, May 10, 2018 at 01:45:08PM +0300, Eugen Hristev wrote:
+> Add a common touchscreen optional property that will specify
+> the minimum pressure applied to the screen that is needed
+> such that the driver will report the touch event.
 > 
-> Add it to driver taking into account NVRAM section.
-> 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 > ---
->  .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
->  drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
->  2 files changed, 15 insertions(+)
+> Changes in v5:
+>  - Modified property name to touchscreen-min-pressure from
+> touchscreen-threshold-property
+> 
+>  Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
