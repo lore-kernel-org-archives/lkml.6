@@ -1,49 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751768AbeERSXi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:23:38 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42702 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERSXf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:23:35 -0400
-X-Google-Smtp-Source: AB8JxZp+KpK2l6nT0hUf9uG/uRUm2bT6kBmvApBQqzgZ4m8uOMM2OQjYzNqgFurZeQwIlwxeRIo/ow==
-From: Anders Roxell <anders.roxell@linaro.org>
-To: ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: bpf: config: enable NET_SCH_INGRESS for xdp_meta.sh
-Date: Fri, 18 May 2018 20:23:24 +0200
-Message-Id: <20180518182324.23827-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        id S1752119AbeERSYZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 14:24:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751452AbeERSYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 14:24:24 -0400
+Date: Fri, 18 May 2018 15:24:20 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas-Mich Richter <tmricht@linux.ibm.com>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: Re: [PATCH] perf tests: Fix regex for record+probe_libc_inet_pton.sh
+Message-ID: <20180518182420.GA5001@kernel.org>
+References: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
+ <be181700-57a5-e4c8-7cd4-88a88b7a51f1@linux.ibm.com>
+ <764aa7ae-dcbe-6311-19fd-3d31b18f1645@linux.vnet.ibm.com>
+ <c14a2313-28af-15ef-0989-2ab8544de51b@linux.ibm.com>
+ <20180518141445.GB32141@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518141445.GB32141@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running bpf's selftest test_xdp_meta.sh it fails:
-./test_xdp_meta.sh
-Error: Specified qdisc not found.
-selftests: test_xdp_meta [FAILED]
+Em Fri, May 18, 2018 at 11:14:45AM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Fri, May 18, 2018 at 01:09:48PM +0200, Thomas-Mich Richter escreveu:
+> > On 05/18/2018 12:29 PM, Sandipan Das wrote:
+> > > Can you please apply these two patches as well and then re-test?
+> 
+> > > [1] https://lkml.org/lkml/2018/5/17/112
+> > > [2] https://lkml.org/lkml/2018/5/17/113
+> 
+> > Ahhh, yes that helped. Must have missed it. Thanks for the pointer.
+> 
+> Cool, can I take that as a Tested-by: Thomas?
 
-Need to enable CONFIG_NET_SCH_INGRESS and CONFIG_NET_CLS_ACT to get the
-test to pass.
+Actually I'll fold this patch into the patch that made this test break,
+so that we keep the tree bisectable wrt that specific 'perf test' entry.
 
-Fixes: 22c8852624fc ("bpf: improve selftests and add tests for meta pointer")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/testing/selftests/bpf/config | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index 983dd25d49f4..1eefe211a4a8 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -5,3 +5,5 @@ CONFIG_BPF_EVENTS=y
- CONFIG_TEST_BPF=m
- CONFIG_CGROUP_BPF=y
- CONFIG_NETDEVSIM=m
-+CONFIG_NET_CLS_ACT=y
-+CONFIG_NET_SCH_INGRESS=y
--- 
-2.17.0
+- Arnaldo
