@@ -1,96 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752061AbeERDdB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 23:33:01 -0400
-Received: from regular1.263xmail.com ([211.150.99.131]:41681 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751698AbeERDc7 (ORCPT
+        id S1752042AbeERDu3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 23:50:29 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50953 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751698AbeERDu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 23:32:59 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 183.57.25.242
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <ec6aef6e5315bae72a71363e0554d96b>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>,
-        Liang Chen <cl@rock-chips.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 0/5] Add sdmmc UHS support to ROC-RK3328-CC board.
-Date: Fri, 18 May 2018 11:32:03 +0800
-Message-Id: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
-X-Mailer: git-send-email 2.7.4
+        Thu, 17 May 2018 23:50:26 -0400
+X-ME-Proxy: <xmx:gU3-WrxeKbUF4UXn97gcoZErmigVBcQNWVqyvqmvdR9u_ZEVPHHZTw>
+X-ME-Proxy: <xmx:gU3-WiU5czn79Gfwo9henz3odjPo12OvZCUeq7so7XUZqvIkwROzMw>
+X-ME-Proxy: <xmx:gU3-WrhQD1OUmrzaIBu8zA5eRBFbrvlpBkxBhT81zTgp74ipbpf2CA>
+X-ME-Proxy: <xmx:gU3-WiDMk47-YVthlv8u05uembl1kGs2SxG5OwkhygQm6xoASkwPew>
+X-ME-Proxy: <xmx:gU3-Whs4EZQQ3pUFMBGDZlbf77GURxfrheViHO0EEzy4dQA4isOb7w>
+X-ME-Proxy: <xmx:gk3-Wm_teS41AeYqVY-wZEVILm4oOugYdCiaohwYBp57l0_9OdW2wg>
+X-ME-Sender: <xms:gU3-Wnmw4dk3K8K7YDbXaUtPkyyN5nV9NHKVq3fNrag6A0AqzrjCxQ>
+Subject: Re: mmotm 2018-05-17-16-26 uploaded (autofs)
+To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+References: <20180517232639.sD6Cz%akpm@linux-foundation.org>
+ <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
+From: Ian Kent <raven@themaw.net>
+Message-ID: <49acf718-da2e-73dc-a3bf-c41d7546576e@themaw.net>
+Date: Fri, 18 May 2018 11:50:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+On 18/05/18 08:21, Randy Dunlap wrote:
+> On 05/17/2018 04:26 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2018-05-17-16-26 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (4.x
+>> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> http://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
+>> This tree is partially included in linux-next.  To see which patches are
+>> included in linux-next, consult the `series' file.  Only the patches
+>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+>> linux-next.
+>>
+>> A git tree which contains the memory management portion of this tree is
+>> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+>> by Michal Hocko.  It contains the patches which are between the
+>> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+>> file, http://www.ozlabs.org/~akpm/mmotm/series.
+>>
+>>
+>> A full copy of the full kernel tree with the linux-next and mmotm patches
+>> already applied is available through git within an hour of the mmotm
+>> release.  Individual mmotm releases are tagged.  The master branch always
+>> points to the latest release, so it's constantly rebasing.
+> 
+> 
+> on x86_64: with (randconfig):
+> CONFIG_AUTOFS_FS=y
+> CONFIG_AUTOFS4_FS=y
 
+Oh right, I need to make these exclusive.
 
-Hi all, this is an attemp to add sdmmc UHS support to the
-ROC-RK3328-CC board.
+I seem to remember trying to do that along the way, can't remember why
+I didn't do it in the end.
 
-This patch series adds a new compatible `rockchip,gpio-syscon` to
-the gpio-syscon driver for general Rockchip SoC usage.
+Any suggestions about potential problems when doing it?
 
-A new gpio controller named `gpio_mute` is defined in
-rk3328.dtsi so that all rk3328 boards has access to it.
-
-The ROC-RK3328-CC board use the new gpio <&gpio_mute 1> in
-gpio-regulator to control the signal voltage of the sdmmc.
-It is essential for UHS support which requires 1.8V signal voltage.
-
-Many thanks to Heiko's great advice!
-
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in doc
-- Rename gpio_syscon10 to gpio_mute in rk3328.dtsi
-- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
-
-Changes in v1:
-- New: allow fetching syscon from parent node in gpio-syscon driver
-- Refactured for general gpio-syscon usage for Rockchip SoCs.
-- Add doc rockchip,gpio-syscon.txt
-- Split from V0 into small patches
-- Sort dts properties in sdmmc node
-
-Heiko Stuebner (1):
-  gpio: syscon: allow fetching syscon from parent node
-
-Levin Du (4):
-  gpio: syscon: Add gpio-syscon for rockchip
-  arm64: dts: rockchip: Add gpio-mute to rk3328
-  arm64: dts: rockchip: Add io-domain to roc-rk3328-cc
-  arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-
- .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts     | 30 ++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi           |  7 ++++
- drivers/gpio/gpio-syscon.c                         | 32 +++++++++++++++++
- 4 files changed, 110 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-
--- 
-2.7.4
+Thanks,
+Ian
