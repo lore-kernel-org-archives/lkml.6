@@ -1,54 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751672AbeERM32 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 08:29:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38626 "EHLO mail.kernel.org"
+        id S1752020AbeERM3x (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 08:29:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750975AbeERM3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 08:29:25 -0400
-X-Google-Smtp-Source: AB8JxZqkzIyU42bvYqPuXNkHvn4Xr0sxULhLaichi4IHDlhS4JYHivYauz5YIOjAkGoT0GjaX2akk1XcMxMLwuBivT0=
+        id S1751880AbeERM3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 08:29:50 -0400
+Date: Fri, 18 May 2018 17:59:46 +0530
+From: Vinod <vkoul@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, sibis@codeaurora.org
+Subject: Re: [PATCH V6 5/5] remoteproc: qcom: Add q6v5-wcss rproc ops
+Message-ID: <20180518122946.GC31996@vkoul-mobl>
+References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+ <1526294812-23390-6-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-References: <1526512248-54510-1-git-send-email-sherry.hurwitz@amd.com>
-In-Reply-To: <1526512248-54510-1-git-send-email-sherry.hurwitz@amd.com>
-From: Josh Boyer <jwboyer@kernel.org>
-Date: Fri, 18 May 2018 08:29:12 -0400
-X-Gmail-Original-Message-ID: <CA+5PVA6Xv1WeyBbSYXo94rtyUCxVBpBVw1zvNL+cB04-emdZtg@mail.gmail.com>
-Message-ID: <CA+5PVA6Xv1WeyBbSYXo94rtyUCxVBpBVw1zvNL+cB04-emdZtg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] linux-firmware: Update AMD cpu microcode
-To: sherry.hurwitz@amd.com
-Cc: Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        suravee.suthikulpanit@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526294812-23390-6-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 9:44 PM Sherry Hurwitz <sherry.hurwitz@amd.com>
-wrote:
+On 14-05-18, 16:16, Sricharan R wrote:
 
-> * Add AMD cpu microcode for processor family 17h
-> * Update AMD cpu microcode for processor family 15h
-> * Update the AMD cpu microcode license copyright
-> * Add a Version for both microcode family 15h and 17h
+> +static int q6v5_wcss_start(struct rproc *rproc)
+> +{
+> +	struct q6v5 *qproc = rproc->priv;
+> +	int ret = 0;
 
-> Key Name        = AMD Microcode Signing Key (for signing microcode
-container files only)
-> Key ID          = F328AE73
-> Key Fingerprint = FC7C 6C50 5DAF CC14 7183 57CA E4BE 5339 F328 AE73
+Superfluous initialization
 
-> Signed-off-by: Sherry Hurwitz <sherry.hurwitz@amd.com>
-> ---
->   LICENSE.amd-ucode                      |   2 +-
->   WHENCE                                 |   4 +++-
->   amd-ucode/microcode_amd_fam15h.bin     | Bin 7876 -> 5356 bytes
->   amd-ucode/microcode_amd_fam15h.bin.asc |  14 +++++++-------
->   amd-ucode/microcode_amd_fam17h.bin     | Bin 0 -> 3364 bytes
->   amd-ucode/microcode_amd_fam17h.bin.asc |  11 +++++++++++
->   6 files changed, 22 insertions(+), 9 deletions(-)
->   create mode 100644 amd-ucode/microcode_amd_fam17h.bin
->   create mode 100644 amd-ucode/microcode_amd_fam17h.bin.asc
+> +
+> +	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
+> +			      qproc->active_clk_count);
+> +	if (ret) {
+> +		dev_err(qproc->dev, "failed to enable clocks\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Release Q6 and WCSS reset */
+> +	ret = reset_control_deassert(qproc->wcss_reset);
+> +	if (ret)
+> +		dev_err(qproc->dev, "wcss_reset failed\n");
+> +
+> +	ret = reset_control_deassert(qproc->wcss_q6_reset);
+> +	if (ret)
+> +		dev_err(qproc->dev, "wcss_q6_reset failed\n");
 
-Applied and pushed out.  Thanks.
+shouldn't we abort on these two errors?
 
-josh
+> +
+> +	/* Lithium configuration - clock gating and bus arbitration */
+> +	ret = regmap_update_bits(qproc->halt_map,
+> +				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
+> +				 0x1F, 0x14);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(qproc->halt_map,
+> +				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
+> +				 1, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
+> +	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
+> +
+> +	ret = q6v5_reset(qproc);
+> +	if (ret)
+> +		return ret;
+
+all these returns, aren't we leaving device in some dangling state?
+
+> +static int q6v5_wcss_powerdown(struct q6v5 *qproc)
+> +{
+> +	unsigned int val = 0;
+
+superfluous initialization
+
+> +	int ret;
+> +
+> +	/* 1 - Assert WCSS/Q6 HALTREQ */
+> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+> +
+> +	/* 2 - Enable WCSSAON_CONFIG */
+> +	val = readl(qproc->rmb_base + SSCAON_CONFIG);
+> +	val |= SSCAON_ENABLE;
+> +	writel(val, qproc->rmb_base + SSCAON_CONFIG);
+> +
+> +	/* 3 - Set SSCAON_CONFIG */
+> +	val |= BIT(15);
+> +	val &= ~BIT(16);
+> +	val &= ~BIT(17);
+> +	val &= ~BIT(18);
+
+shouldn't bit 15 thru 18 be defined on what they mean?
+
+> +static int q6v5_q6_powerdown(struct q6v5 *qproc)
+> +{
+> +	int i = 0, ret;
+> +	unsigned int val = 0;
+> +
+> +	/* 1 - Halt Q6 bus interface */
+> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+> +
+> +	/* 2 - Disable Q6 Core clock */
+> +	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+> +	val &= ~Q6SS_CLK_ENABLE;
+> +	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+> +
+> +	/* 3 - Clamp I/O */
+> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +	val |= Q6SS_CLAMP_IO;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +	/* 4 - Clamp WL */
+> +	val |= QDSS_BHS_ON;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +	/* 5 - Clear Erase standby */
+> +	val &= ~Q6SS_L2DATA_STBY_N;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +	/* 6 - Clear Sleep RTN */
+> +	val &= ~Q6SS_SLP_RET_N;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
+> +	for (i = 0; i < 20; i++) {
+> +		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+> +		val &= ~BIT(i);
+> +		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+> +		mdelay(1);
+> +	}
+> +	/* 8 - Assert QMC memory RTN */
+> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +	val |= QDSP6v56_CLAMP_QMC_MEM;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +	/* 9 - Turn off BHS */
+> +	val &= ~QDSP6v56_BHS_ON;
+> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +	udelay(1);
+> +	/* 10 - Wait till BHS Reset is done */
+
+would help in readability if you can be consistent and add empty lines after each
+step as done for rest of the routine
+
+> +static int q6v5_wcss_stop(struct rproc *rproc)
+> +{
+> +	struct q6v5 *qproc = rproc->priv;
+> +	int ret = 0;
+
+this one too, I think if you run with sparse, it should warn you about these
+
+> +
+> +	qproc->running = false;
+> +
+> +	/* WCSS powerdown */
+> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
+> +				    BIT(qproc->stop_bit));
+> +
+> +	ret = wait_for_completion_timeout(&qproc->stop_done,
+> +					  msecs_to_jiffies(5000));
+> +	if (ret == 0) {
+> +		dev_err(qproc->dev, "timed out on wait\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
+> +
+> +	ret = q6v5_wcss_powerdown(qproc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Q6 Power down */
+> +	ret = q6v5_q6_powerdown(qproc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+this could be optimized to:
+        return q6v5_q6_powerdown()
+-- 
+~Vinod
