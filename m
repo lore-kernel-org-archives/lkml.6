@@ -1,27 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeERG1E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:27:04 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38708 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752133AbeERG0o (ORCPT
+        id S1752200AbeERG1B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:27:01 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43101 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752139AbeERG0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:26:44 -0400
-X-Google-Smtp-Source: AB8JxZoALqbHYV00ooEvU5sIRrpQFvq5i4P3lfNk9SzfGSYTq144vb2zTbB2jWDpWIvD3VqAAscNNA==
+        Fri, 18 May 2018 02:26:45 -0400
+X-Google-Smtp-Source: AB8JxZrAVDhIX4EUSs8wNXq/ClDgUVMfER9kNCyB2NRMp45xU7yU4waUgXbuIxLzrCre6tz/waYHfw==
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v3 2/3] scsi: ufs: Use freq table with devfreq
-Date: Thu, 17 May 2018 23:26:37 -0700
-Message-Id: <20180518062638.31777-3-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/3] arm64: dts: qcom: msm8996: Add ufs related nodes
+Date: Thu, 17 May 2018 23:26:38 -0700
+Message-Id: <20180518062638.31777-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518062638.31777-1-bjorn.andersson@linaro.org>
 References: <20180518062638.31777-1-bjorn.andersson@linaro.org>
@@ -29,127 +26,129 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devfreq requires that the client operates on actual frequencies, not
-only 0 and UMAX_INT and as such UFS brok with the introduction of
-f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency").
+Add the UFS QMP phy node and the UFS host controller node, now that we
+have working UFS and the necessary clocks in place.
 
-This patch registers the frequencies of the first clock with devfreq and
-use these to determine if we're trying to step up or down.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com> [for devfreq & OPP part]
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |  8 ++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi        | 85 ++++++++++++++++++++
+ 2 files changed, 93 insertions(+)
 
-Changes since v2:
-- Picked up R-b from Chanwoo and Subhash
-
-Chances since v1:
-- Register min_freq and max_freq as opp levels.
-- Unregister opp levels on removal, to make e.g. probe defer working
-
- drivers/scsi/ufs/ufshcd.c | 47 +++++++++++++++++++++++++++++++++------
- 1 file changed, 40 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index f04902a066cb..3d46a70ed41d 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1200,16 +1200,13 @@ static int ufshcd_devfreq_target(struct device *dev,
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 	ktime_t start;
- 	bool scale_up, sched_clk_scaling_suspend_work = false;
-+	struct list_head *clk_list = &hba->clk_list_head;
-+	struct ufs_clk_info *clki;
- 	unsigned long irq_flags;
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 8be666ea92bd..00e3ecd1180a 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -122,6 +122,14 @@
+ 			status = "okay";
+ 		};
  
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return -EINVAL;
++		phy@627000 {
++			status = "okay";
++		};
++
++		ufshc@624000 {
++			status = "okay";
++		};
++
+ 		phy@34000 {
+ 			status = "okay";
+ 		};
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152cb064..221bb3d383c5 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -633,6 +633,91 @@
+ 			#interrupt-cells = <4>;
+ 		};
  
--	if ((*freq > 0) && (*freq < UINT_MAX)) {
--		dev_err(hba->dev, "%s: invalid freq = %lu\n", __func__, *freq);
--		return -EINVAL;
--	}
--
- 	spin_lock_irqsave(hba->host->host_lock, irq_flags);
- 	if (ufshcd_eh_in_progress(hba)) {
- 		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-@@ -1219,7 +1216,13 @@ static int ufshcd_devfreq_target(struct device *dev,
- 	if (!hba->clk_scaling.active_reqs)
- 		sched_clk_scaling_suspend_work = true;
- 
--	scale_up = (*freq == UINT_MAX) ? true : false;
-+	if (list_empty(clk_list)) {
-+		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		goto out;
-+	}
++		ufsphy: phy@627000 {
++			compatible = "qcom,msm8996-ufs-phy-qmp-14nm";
++			reg = <0x627000 0xda8>;
++			reg-names = "phy_mem";
++			#phy-cells = <0>;
 +
-+	clki = list_first_entry(&hba->clk_list_head, struct ufs_clk_info, list);
-+	scale_up = (*freq == clki->max_freq) ? true : false;
- 	if (!ufshcd_is_devfreq_scaling_required(hba, scale_up)) {
- 		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 		ret = 0;
-@@ -1289,16 +1292,29 @@ static struct devfreq_dev_profile ufs_devfreq_profile = {
- 
- static int ufshcd_devfreq_init(struct ufs_hba *hba)
- {
-+	struct list_head *clk_list = &hba->clk_list_head;
-+	struct ufs_clk_info *clki;
- 	struct devfreq *devfreq;
- 	int ret;
- 
--	devfreq = devm_devfreq_add_device(hba->dev,
-+	/* Skip devfreq if we don't have any clocks in the list */
-+	if (list_empty(clk_list))
-+		return 0;
++			vdda-phy-supply = <&pm8994_l28>;
++			vdda-pll-supply = <&pm8994_l12>;
 +
-+	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
-+	dev_pm_opp_add(hba->dev, clki->min_freq, 0);
-+	dev_pm_opp_add(hba->dev, clki->max_freq, 0);
++			vdda-phy-max-microamp = <18380>;
++			vdda-pll-max-microamp = <9440>;
 +
-+	devfreq = devfreq_add_device(hba->dev,
- 			&ufs_devfreq_profile,
- 			DEVFREQ_GOV_SIMPLE_ONDEMAND,
- 			NULL);
- 	if (IS_ERR(devfreq)) {
- 		ret = PTR_ERR(devfreq);
- 		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
++			vddp-ref-clk-supply = <&pm8994_l25>;
++			vddp-ref-clk-max-microamp = <100>;
++			vddp-ref-clk-always-on;
 +
-+		dev_pm_opp_remove(hba->dev, clki->min_freq);
-+		dev_pm_opp_remove(hba->dev, clki->max_freq);
- 		return ret;
- 	}
- 
-@@ -1307,6 +1323,22 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
- 	return 0;
- }
- 
-+static void ufshcd_devfreq_remove(struct ufs_hba *hba)
-+{
-+	struct list_head *clk_list = &hba->clk_list_head;
-+	struct ufs_clk_info *clki;
++			clock-names = "ref_clk_src", "ref_clk";
++			clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
++				 <&gcc GCC_UFS_CLKREF_CLK>;
++			status = "disabled";
 +
-+	if (!hba->devfreq)
-+		return;
++			power-domains = <&gcc UFS_GDSC>;
++		};
 +
-+	devfreq_remove_device(hba->devfreq);
-+	hba->devfreq = NULL;
++		ufshc@624000 {
++			compatible = "qcom,ufshc";
++			reg = <0x624000 0x2500>;
++			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
 +
-+	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
-+	dev_pm_opp_remove(hba->dev, clki->min_freq);
-+	dev_pm_opp_remove(hba->dev, clki->max_freq);
-+}
++			phys = <&ufsphy>;
++			phy-names = "ufsphy";
 +
- static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- {
- 	unsigned long flags;
-@@ -7005,6 +7037,7 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
- 			if (hba->devfreq)
- 				ufshcd_suspend_clkscaling(hba);
- 			destroy_workqueue(hba->clk_scaling.workq);
-+			ufshcd_devfreq_remove(hba);
- 		}
- 		ufshcd_setup_clocks(hba, false);
- 		ufshcd_setup_hba_vreg(hba, false);
++			vcc-supply = <&pm8994_l20>;
++			vccq-supply = <&pm8994_l25>;
++			vccq2-supply = <&pm8994_s4>;
++
++			vcc-max-microamp = <600000>;
++			vccq-max-microamp = <450000>;
++			vccq2-max-microamp = <450000>;
++
++			clock-names =
++				"core_clk_src",
++				"core_clk",
++				"bus_clk",
++				"bus_aggr_clk",
++				"iface_clk",
++				"core_clk_unipro_src",
++				"core_clk_unipro",
++				"core_clk_ice",
++				"ref_clk",
++				"tx_lane0_sync_clk",
++				"rx_lane0_sync_clk";
++			clocks =
++				<&gcc UFS_AXI_CLK_SRC>,
++				<&gcc GCC_UFS_AXI_CLK>,
++				<&gcc GCC_SYS_NOC_UFS_AXI_CLK>,
++				<&gcc GCC_AGGRE2_UFS_AXI_CLK>,
++				<&gcc GCC_UFS_AHB_CLK>,
++				<&gcc UFS_ICE_CORE_CLK_SRC>,
++				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
++				<&gcc GCC_UFS_ICE_CORE_CLK>,
++				<&rpmcc RPM_SMD_LN_BB_CLK>,
++				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
++				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>;
++			freq-table-hz =
++				<100000000 200000000>,
++				<0 0>,
++				<0 0>,
++				<0 0>,
++				<0 0>,
++				<150000000 300000000>,
++				<0 0>,
++				<0 0>,
++				<0 0>,
++				<0 0>,
++				<0 0>;
++
++			lanes-per-direction = <1>;
++			status = "disabled";
++
++			ufs_variant {
++				compatible = "qcom,ufs_variant";
++			};
++		};
++
+ 		mmcc: clock-controller@8c0000 {
+ 			compatible = "qcom,mmcc-msm8996";
+ 			#clock-cells = <1>;
 -- 
 2.17.0
