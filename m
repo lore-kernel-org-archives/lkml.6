@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeERJqt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:46:49 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42016 "EHLO
+        id S1753156AbeERJso (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:48:44 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34703 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeERJqq (ORCPT
+        with ESMTP id S1752601AbeERJsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:46:46 -0400
-X-Google-Smtp-Source: AB8JxZrNScPE06T89nrwYemKBqsdsVWlw+aI/U7Lgzmvn1vqS8kJiUqINeLRn1TUgsclU/soDQTiJg==
+        Fri, 18 May 2018 05:48:39 -0400
+X-Google-Smtp-Source: AB8JxZp+cHWLXjLHCqNYOZ7vBEiZAmjGeZK9c7xhr+zGDvT5r55lZViUdB0WQ1fn0lBXulGtQ1XWFQ==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 07/26] dt-bindings: display: Add compatible for A64 DE2 tcon1 blocks
-Date: Fri, 18 May 2018 15:15:17 +0530
-Message-Id: <20180518094536.17201-8-jagan@amarulasolutions.com>
+Subject: [PATCH v2 24/26] arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+Date: Fri, 18 May 2018 15:15:34 +0530
+Message-Id: <20180518094536.17201-25-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
 References: <20180518094536.17201-1-jagan@amarulasolutions.com>
@@ -32,50 +32,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner A64 has DE2 pipeline with tcon0 and tcon1 block
-which is similar Allwinner A83T.
-
-This patch adds dt-binding documentation for A64 DE2 tcon1 blocks.
-
-Mixer1 has different configuration for A64 so use separate compatible
-but tcon1 has similar behaviour with A83T so add fallback compatible.
+Enable HDMI output on a64-olinuxino board.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v2:
-- Add fallback compatible for tcon1
-- Add separate compatible for mixer1 
+- none
 
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3346c1e2a7a0..863afad6a4df 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -148,6 +148,7 @@ Required properties:
-    * allwinner,sun8i-v3s-tcon
-    * allwinner,sun9i-a80-tcon-lcd
-    * allwinner,sun9i-a80-tcon-tv
-+   * "allwinner,sun50i-a64-tcon-tv", "allwinner,sun8i-a83t-tcon-tv"
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON.
-@@ -311,6 +312,7 @@ Required properties:
-     * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun50i-a64-de2-mixer-1"
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
-@@ -343,6 +345,7 @@ Required properties:
-     * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
-     * allwinner,sun9i-a80-display-engine
-+    * allwinner,sun50i-a64-display-engine
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3b3081b10ecb..83329c8fec4f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -58,12 +58,38 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-   - allwinner,pipelines: list of phandle to the display engine
-     frontends (DE 1.0) or mixers (DE 2.0) available.
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
 -- 
 2.14.3
