@@ -1,71 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeERWr5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 18:47:57 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41736 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeERWrx (ORCPT
+        id S1752263AbeERWxC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 18:53:02 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34934 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751851AbeERWxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 18:47:53 -0400
-X-Google-Smtp-Source: AB8JxZoq90QFTXmafx0muHbPiZLeGEZqbZT/mLa5d0wGTRNLQNuv7wLBnl+hDF4SMqdwIL9Ki39pSw==
-From: Stephen Boyd <swboyd@chromium.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: [PATCH] soc: qcom: geni: Make version macros simpler
-Date: Fri, 18 May 2018 15:47:50 -0700
-Message-Id: <20180518224750.232742-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Fri, 18 May 2018 18:53:00 -0400
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Nadia Yvette Chambers <nyc@holomorphy.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.cz>, Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH] MAINTAINERS: Change hugetlbfs maintainer and update files
+Date: Fri, 18 May 2018 15:52:36 -0700
+Message-Id: <20180518225236.19079-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.13.6
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8897 signatures=668699
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=839
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805180240
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This macro doesn't work, because it hides a local variable inside of the
-macro to hold the version and that variable name is called 'ver' and
-'version' sometimes.
+The current hugetlbfs maintainer has not been active for more than
+a few years.  I have been been active in this area for more than
+two years and plan to remain active in the foreseeable future.
 
-Let's change this to be more explicit. Introduce three macros for the
-major, minor, and step of the version, and require callers to pass the
-version in to get the part of the version out. This way we don't hide
-local variables inside macros and things are less evil overall.
+Also, update the hugetlbfs entry to include linux-mm mail list and
+additional hugetlbfs related files.  hugetlb.c and hugetlb.h are
+not 100% hugetlbfs, but a majority of their content is hugetlbfs
+related.
 
-Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-Cc: Sagar Dharia <sdharia@codeaurora.org>
-Cc: Girish Mahadevan <girishm@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- include/linux/qcom-geni-se.h | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ MAINTAINERS | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/qcom-geni-se.h b/include/linux/qcom-geni-se.h
-index 5d6144977828..3bcd67fd5548 100644
---- a/include/linux/qcom-geni-se.h
-+++ b/include/linux/qcom-geni-se.h
-@@ -225,19 +225,14 @@ struct geni_se {
- #define HW_VER_MINOR_SHFT		16
- #define HW_VER_STEP_MASK		GENMASK(15, 0)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9051a9ca24a2..c7a5eb074eb1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6564,9 +6564,15 @@ F:	Documentation/networking/hinic.txt
+ F:	drivers/net/ethernet/huawei/hinic/
  
-+#define GENI_SE_VERSION_MAJOR(ver) ((ver & HW_VER_MAJOR_MASK) >> HW_VER_MAJOR_SHFT)
-+#define GENI_SE_VERSION_MINOR(ver) ((ver & HW_VER_MINOR_MASK) >> HW_VER_MINOR_SHFT)
-+#define GENI_SE_VERSION_STEP(ver) (ver & HW_VER_STEP_MASK)
-+
- #if IS_ENABLED(CONFIG_QCOM_GENI_SE)
+ HUGETLB FILESYSTEM
+-M:	Nadia Yvette Chambers <nyc@holomorphy.com>
++M:	Mike Kravetz <mike.kravetz@oracle.com>
++L:	linux-mm@kvack.org
+ S:	Maintained
+ F:	fs/hugetlbfs/
++F:	mm/hugetlb.c
++F:	include/linux/hugetlb.h
++F:	Documentation/admin-guide/mm/hugetlbpage.rst
++F:	Documentation/vm/hugetlbfs_reserv.rst
++F:	Documentation/ABI/testing/sysfs-kernel-mm-hugepages
  
- u32 geni_se_get_qup_hw_version(struct geni_se *se);
- 
--#define geni_se_get_wrapper_version(se, major, minor, step) do { \
--	u32 ver; \
--\
--	ver = geni_se_get_qup_hw_version(se); \
--	major = (ver & HW_VER_MAJOR_MASK) >> HW_VER_MAJOR_SHFT; \
--	minor = (ver & HW_VER_MINOR_MASK) >> HW_VER_MINOR_SHFT; \
--	step = version & HW_VER_STEP_MASK; \
--} while (0)
--
- /**
-  * geni_se_read_proto() - Read the protocol configured for a serial engine
-  * @se:		Pointer to the concerned serial engine.
+ HVA ST MEDIA DRIVER
+ M:	Jean-Christophe Trotin <jean-christophe.trotin@st.com>
 -- 
-Sent by a computer through tubes
+2.13.6
