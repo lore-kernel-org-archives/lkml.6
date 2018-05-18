@@ -1,63 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752458AbeERUc2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:32:28 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37670 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752229AbeERUcZ (ORCPT
+        id S1752365AbeERUdR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:33:17 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45402 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751506AbeERUdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:32:25 -0400
-X-Google-Smtp-Source: AB8JxZq511jw0ljVG6lhY4R5W9k6tJzdLaZ1+0bZpE1YnMdin+EaofRC7k2CAYspyDMUJFyFRuK0bw==
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Vasyl Gomonovych <gomonovych@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] ring-buffer: Fix typo in comment
-Date: Fri, 18 May 2018 22:31:28 +0200
-Message-Id: <20180518203130.2011-1-gomonovych@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Fri, 18 May 2018 16:33:15 -0400
+X-Google-Smtp-Source: AB8JxZpQmDcJhfeuKZRHfwMXIzMxXdPFGaRzDKaOyqHjaOQTYDmqw8637ys/paCad41e1OcALWT2Fg==
+Date: Fri, 18 May 2018 13:33:13 -0700 (PDT)
+X-Google-Original-Date: Fri, 18 May 2018 13:26:06 PDT (-0700)
+Subject: Re: [PATCH v10 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+In-Reply-To: <20180515225124.20428-2-bart.vanassche@wdc.com>
+CC: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        bart.vanassche@wdc.com, catalin.marinas@arm.com,
+        Will Deacon <will.deacon@arm.com>, tony.luck@intel.com,
+        fenghua.yu@intel.com, geert@linux-m68k.org, jejb@parisc-linux.org,
+        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>, corbet@lwn.net
+From: Palmer Dabbelt <palmer@sifive.com>
+To: bart.vanassche@wdc.com
+Message-ID: <mhng-26ddbf89-8276-47a4-9235-e900f91fa575@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typo in the words 'reserved', 'been'
+On Tue, 15 May 2018 15:51:20 PDT (-0700), bart.vanassche@wdc.com wrote:
+> The next patch in this series introduces a call to cmpxchg64()
+> in the block layer core for those architectures on which this
+> functionality is available. Make it possible to test whether
+> cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
+>
+> Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  .../features/locking/cmpxchg64/arch-support.txt    | 33 ++++++++++++++++++++++
+>  arch/Kconfig                                       |  3 ++
+>  arch/alpha/Kconfig                                 |  1 +
+>  arch/arm/Kconfig                                   |  1 +
+>  arch/arm64/Kconfig                                 |  1 +
+>  arch/ia64/Kconfig                                  |  1 +
+>  arch/m68k/Kconfig                                  |  1 +
+>  arch/mips/Kconfig                                  |  1 +
+>  arch/parisc/Kconfig                                |  1 +
+>  arch/powerpc/Kconfig                               |  1 +
+>  arch/riscv/Kconfig                                 |  1 +
+>  arch/s390/Kconfig                                  |  1 +
+>  arch/sparc/Kconfig                                 |  1 +
+>  arch/x86/Kconfig                                   |  1 +
+>  arch/xtensa/Kconfig                                |  1 +
+>  15 files changed, 49 insertions(+)
+>  create mode 100644 Documentation/features/locking/cmpxchg64/arch-support.txt
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
----
- include/linux/ring_buffer.h | 2 +-
- kernel/trace/ring_buffer.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+[...]
 
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index 7d9eb39fa76a..aa500da87f2a 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -63,7 +63,7 @@ void *ring_buffer_event_data(struct ring_buffer_event *event);
- 
- /*
-  * ring_buffer_discard_commit will remove an event that has not
-- *   ben committed yet. If this is used, then ring_buffer_unlock_commit
-+ *   been committed yet. If this is used, then ring_buffer_unlock_commit
-  *   must not be called on the discarded event. This function
-  *   will try to remove the event from the ring buffer completely
-  *   if another event has not been written after it.
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index dcf1c4dd3efe..a8a8eb23c489 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2776,7 +2776,7 @@ rb_reserve_next_event(struct ring_buffer *buffer,
-  * @buffer: the ring buffer to reserve from
-  * @length: the length of the data to reserve (excluding event header)
-  *
-- * Returns a reseverd event on the ring buffer to copy directly to.
-+ * Returns a reserved event on the ring buffer to copy directly to.
-  * The user of this interface will need to get the body to write into
-  * and can use the ring_buffer_event_data() interface.
-  *
--- 
-2.14.1
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -8,6 +8,7 @@ config RISCV
+>  	select OF
+>  	select OF_EARLY_FLATTREE
+>  	select OF_IRQ
+> +	select ARCH_HAVE_CMPXCHG64
+>  	select ARCH_WANT_FRAME_POINTERS
+>  	select CLONE_BACKWARDS
+>  	select COMMON_CLK
+
+If I understand correctly, we should only have ARCH_HAVE_CMPXCHG64 on 64-bit 
+RISC-V systems so this should look something like
+
+   select ARCH_HAVE_CMPXCHG64 if 64BIT
+
+Of course, the RV32I port is broken right now so it's not a big deal, but we're 
+working through making it less broken...
