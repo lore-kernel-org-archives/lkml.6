@@ -1,39 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752406AbeERQFH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:05:07 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:36805 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751496AbeERQFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:05:03 -0400
-Date: Fri, 18 May 2018 18:04:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net: mscc: ocelot: add bonding support
-Message-ID: <20180518160455.GD26377@lunn.ch>
-References: <20180518064106.10122-1-alexandre.belloni@bootlin.com>
- <20180518064106.10122-2-alexandre.belloni@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518064106.10122-2-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752475AbeERQFe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:05:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58789 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752319AbeERQF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 12:05:28 -0400
+Message-ID: <1526659527.3948.16.camel@pengutronix.de>
+Subject: Re: [PATCH] gpu: ipu-csi: add rgb/bgr888 24bit support to
+ mbus_code_to_bus_cfg
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Date: Fri, 18 May 2018 18:05:27 +0200
+In-Reply-To: <20180502125226.24149-1-m.grzeschik@pengutronix.de>
+References: <20180502125226.24149-1-m.grzeschik@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 08:41:05AM +0200, Alexandre Belloni wrote:
-> Add link aggregation hardware offload support for Ocelot.
+On Wed, 2018-05-02 at 14:52 +0200, Michael Grzeschik wrote:
+> The 24bit RGB format configuration is currently missing, we add
+> it now.
+> 
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-Hi Alexandre
+Applied to imx-drm/next.
 
-What i don't see here is anything checking the mode being
-requested. If the user requests 'random' but the hardware only
-supports 'roundrobin', you probably should not do the offload.
-
-	 Andrew
+regards
+Philipp
