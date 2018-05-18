@@ -1,114 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeEROsq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:48:46 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:55913 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751049AbeEROsO (ORCPT
+        id S1752232AbeEROtc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:49:32 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:18074 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751488AbeEROt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:48:14 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] arm64: dts: renesas: draak: Describe CVBS input
-Date: Fri, 18 May 2018 16:47:57 +0200
-Message-Id: <1526654878-11143-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 18 May 2018 10:49:28 -0400
+Subject: Re: [PATCH] PCI: endpoint: Create configfs entry for each
+ pci_epf_device_id table entry
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+References: <20180402132935.32008-1-kishon@ti.com>
+ <20180518142253.GB18605@e107981-ln.cambridge.arm.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <5a4856cb-5680-586f-1826-fa2349a69328@ti.com>
+Date: Fri, 18 May 2018 20:19:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180518142253.GB18605@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Describe CVBS video input through analog video decoder ADV7180
-connected to video input interface VIN4.
+Hi Lorenzo,
 
-The video input signal path is shared with HDMI video input, and
-selected by on-board switches SW-53 and SW-54 with CVBS input selected
-by the default switches configuration.
+On Friday 18 May 2018 07:52 PM, Lorenzo Pieralisi wrote:
+> Hi Kishon, Gustavo,
+> 
+> On Mon, Apr 02, 2018 at 06:59:35PM +0530, Kishon Vijay Abraham I wrote:
+>> In order to be able to provide correct driver_data for pci_epf device,
+>> a separate configfs entry for each pci_epf_device_id table entry in
+>> pci_epf_driver is required.
+>>
+>> Add support to create configfs entry for each pci_epf_device_id
+>> table entry here.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  drivers/pci/endpoint/pci-epf-core.c | 23 +++++++++++++++++++++--
+>>  include/linux/pci-epf.h             |  4 ++--
+>>  2 files changed, 23 insertions(+), 4 deletions(-)
+> 
+> Do we still need this patch after the recent discussion on the configfs
+> interface ?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Yeah, Since we allow multiple pci_epf_device_id entries to be created, I think
+this patch is still valid.
 
----
-v2 -> v3:
-- Add comment to describe the shared input video path
-- Add my SoB and Niklas' R-b tags
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 42 ++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+If someone wants to create a new pci_epf_device_id entry (maybe for configuring
+the driver in a different way), this would be still required.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 9d73de8..95745fc 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -142,6 +142,11 @@
- 		groups = "usb0";
- 		function = "usb0";
- 	};
-+
-+	vin4_pins_cvbs: vin4 {
-+		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-+		function = "vin4";
-+	};
- };
-
- &i2c0 {
-@@ -154,6 +159,23 @@
- 		reg = <0x50>;
- 		pagesize = <8>;
- 	};
-+
-+	analog-video@20 {
-+		compatible = "adi,adv7180";
-+		reg = <0x20>;
-+
-+		port {
-+			/*
-+			 * The VIN4 video input path is shared between
-+			 * CVBS and HDMI inputs through SW[49-54] switches.
-+			 *
-+			 * CVBS is the default selection, link it to VIN4 here.
-+			 */
-+			adv7180_out: endpoint {
-+				remote-endpoint = <&vin4_in>;
-+			};
-+		};
-+	};
- };
-
- &i2c1 {
-@@ -246,3 +268,23 @@
- 	timeout-sec = <60>;
- 	status = "okay";
- };
-+
-+&vin4 {
-+	pinctrl-0 = <&vin4_pins_cvbs>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			vin4_in: endpoint {
-+				remote-endpoint = <&adv7180_out>;
-+			};
-+		};
-+	};
-+};
---
-2.7.4
+Thanks
+Kishon
+> 
+> https://patchwork.ozlabs.org/patch/903494/
+> 
+> Lorenzo
+> 
+>> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+>> index 59ed29e550e9..d6787f39fd41 100644
+>> --- a/drivers/pci/endpoint/pci-epf-core.c
+>> +++ b/drivers/pci/endpoint/pci-epf-core.c
+>> @@ -15,6 +15,8 @@
+>>  #include <linux/pci-epf.h>
+>>  #include <linux/pci-ep-cfs.h>
+>>  
+>> +static DEFINE_MUTEX(pci_epf_mutex);
+>> +
+>>  static struct bus_type pci_epf_bus_type;
+>>  static const struct device_type pci_epf_type;
+>>  
+>> @@ -139,7 +141,13 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
+>>   */
+>>  void pci_epf_unregister_driver(struct pci_epf_driver *driver)
+>>  {
+>> -	pci_ep_cfs_remove_epf_group(driver->group);
+>> +	struct config_group *group;
+>> +
+>> +	mutex_lock(&pci_epf_mutex);
+>> +	list_for_each_entry(group, &driver->epf_group, group_entry)
+>> +		pci_ep_cfs_remove_epf_group(group);
+>> +	list_del(&driver->epf_group);
+>> +	mutex_unlock(&pci_epf_mutex);
+>>  	driver_unregister(&driver->driver);
+>>  }
+>>  EXPORT_SYMBOL_GPL(pci_epf_unregister_driver);
+>> @@ -155,6 +163,8 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+>>  			      struct module *owner)
+>>  {
+>>  	int ret;
+>> +	struct config_group *group;
+>> +	const struct pci_epf_device_id *id;
+>>  
+>>  	if (!driver->ops)
+>>  		return -EINVAL;
+>> @@ -169,7 +179,16 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	driver->group = pci_ep_cfs_add_epf_group(driver->driver.name);
+>> +	INIT_LIST_HEAD(&driver->epf_group);
+>> +
+>> +	id = driver->id_table;
+>> +	while (id->name[0]) {
+>> +		group = pci_ep_cfs_add_epf_group(id->name);
+>> +		mutex_lock(&pci_epf_mutex);
+>> +		list_add_tail(&group->group_entry, &driver->epf_group);
+>> +		mutex_unlock(&pci_epf_mutex);
+>> +		id++;
+>> +	}
+>>  
+>>  	return 0;
+>>  }
+>> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+>> index e897bf076701..a30dcaafa6e8 100644
+>> --- a/include/linux/pci-epf.h
+>> +++ b/include/linux/pci-epf.h
+>> @@ -72,7 +72,7 @@ struct pci_epf_ops {
+>>   * @driver: PCI EPF driver
+>>   * @ops: set of function pointers for performing EPF operations
+>>   * @owner: the owner of the module that registers the PCI EPF driver
+>> - * @group: configfs group corresponding to the PCI EPF driver
+>> + * @epf_group: list of configfs group corresponding to the PCI EPF driver
+>>   * @id_table: identifies EPF devices for probing
+>>   */
+>>  struct pci_epf_driver {
+>> @@ -82,7 +82,7 @@ struct pci_epf_driver {
+>>  	struct device_driver	driver;
+>>  	struct pci_epf_ops	*ops;
+>>  	struct module		*owner;
+>> -	struct config_group	*group;
+>> +	struct list_head	epf_group;
+>>  	const struct pci_epf_device_id	*id_table;
+>>  };
+>>  
+>> -- 
+>> 2.16.2
+>>
