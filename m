@@ -1,39 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpbIG0Rpk6qZ0GYlVn6OsFtRjyq3ksanEzacBzfWC9Ps6615BqQoJjFN9y1ZwXBxEunNK5Y
-ARC-Seal: i=1; a=rsa-sha256; t=1526631646; cv=none;
+X-Google-Smtp-Source: AB8JxZoQq1xUQpdRXy9NO4w2AwhZSlzXtUM1oRelHXpyGV/t8cYPvmHtC9de3OgXk+e7x7ZHmeP3
+ARC-Seal: i=1; a=rsa-sha256; t=1526631644; cv=none;
         d=google.com; s=arc-20160816;
-        b=V5lRqSPXjrlGmxgG+ZXTT/4ZkTWO6xZWjBrjglc85mJcPOpvMNfxzcMZx50RRQiJQ5
-         Xew8CQEPOXhsY+ulJf1AY9Hob19hx5dh/2GUQltPBS8rds4jpo6XGnlVuKqundFO93rM
-         vAC3QimQCTKzjB2ro9QZr6WXpfcB6zeea2N3l8slr4FiWLbI7lUG1K3awfmwc5H8a7i4
-         IR5suztnDCIlFSYQbRqk/c4sn5cPY0p4LAJeAGiL0lAW9lK8GTWv9A7UgmDuiQJGxl4j
-         xqIZS0LPKvfmXLAgFTY2p/GxyBLT3gx/v4kbadZEXzzNGFYPrWRwaFfmYqV4r5t74DeF
-         aEOw==
+        b=SAJwBez9oQUJr6DK83ScJi3z5efK/d/xjuIypz+R/JILTy1+OgbmgryY2/+7I1dLZN
+         cMxu4nfRSoMqpEbcRG68cYP4DAjmSJtm13y/q2xjB8x0aDUYbTsZKlorIyip+MRiZDnr
+         2Q9N7izXn1DxYs43Cq9erUBBLYqD3kUpqO+TPJ0LE2nVcE9exSQ3o64aMHkBmzEy7IaU
+         kLVWylD4/4cQsI4GSTUM4GoNPkyQkBI4ac0/d0S3mAvnZ0BkJ8Iaon2Nl6MjuI3+ApDM
+         3f10KsTiYCr0+rS436LIQemLgP78B5pJxyOKdz7yheNiCn1ieEM872oKBEZXiq4y8lCx
+         ZUug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=mBUDAK4x1xQ8Z3DqX3xtrjdlWxYYGGy5XBf+P+qHr0A=;
-        b=YK5tTQr9FbH9OM5v6Tb1oz4Qq94/yhjI7rHJq8pI+O+ezHRvwyXB/6kldsDxyIbZOl
-         gRCkD4V7E2gNE+RgO4+bCj5VOM0GJsnNrGw8buiw5R1RVpLxu9aG/cPLnKHrGtJTiTxn
-         lQ+i6kTZCBJ6rJq9z7Vn1YYF7Ntl35mHUwqlnd1AL5Kunsl6Kgi67M1IYBSc80xTkmyq
-         woYhdj3rifPpszkOpQy7hB/JoWGy8P4OE/xCRSWjonnaf+TpZ7XYze4ee7qi2IHpS1rr
-         tTsjC7jgtC7N8IDXIs9LG/PKMvClPC1o/FAfSS8HPKx1ND99INh5heeTZTcyIobHrg66
-         f8Tg==
+        bh=AE3b6Hj068yca8Eh8TAtHmZoMMGUNi33DWtDcFsM74c=;
+        b=BG1UXhtxFw5+86aoJCrXmF4lwYt6edyleiabMtNtn4dwA5aUX8iEiqV/WTivRv8306
+         Rt10eXOZzVYWjRztznXQpY1ZWsLXp9HJjMoQfEo04IK1GqrxOeliKYifWxr3R36pK5ID
+         dbolMOuEX1x9j7QJled5v6hEORJbUgnTQJHkrrFTDsgBZI2JvRs67Ag3lyBZD+sM8lSJ
+         Zvx9SuEFhFSpa4v2mE3vbj2K/FebUkZua/b1xJnHySS1HwPlnZqNQy4AP36EAH5VS/dl
+         2rrHhQzU3odQKZsRxPYWVPOUqSUGa8z0UZi38dqYxOJPn/sOCvgOSH94kYz8cNz/JETI
+         //gA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DPJT5/V6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mpcBNZt2;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DPJT5/V6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mpcBNZt2;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Alistair Strachan <astrachan@google.com>
-Subject: [PATCH 4.14 41/45] xfrm: Use __skb_queue_tail in xfrm_trans_queue
-Date: Fri, 18 May 2018 10:15:58 +0200
-Message-Id: <20180518081532.463671114@linuxfoundation.org>
+	Noah Misner <nmisner@us.ibm.com>,
+	Dave Carroll <david.carroll@microsemi.com>,
+	Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
+	Brian King <brking@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 40/45] scsi: aacraid: Correct hba_send to include iu_type
+Date: Fri, 18 May 2018 10:15:57 +0200
+Message-Id: <20180518081532.408160633@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789305167374817?=
-X-GMAIL-MSGID: =?utf-8?q?1600789305167374817?=
+X-GMAIL-THRID: =?utf-8?q?1600789204656420532?=
+X-GMAIL-MSGID: =?utf-8?q?1600789302514145458?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,34 +54,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Dave Carroll <david.carroll@microsemi.com>
 
-commit d16b46e4fd8bc6063624605f25b8c0835bb1fbe3 upstream.
+commit 7d3af7d96af7b9f51e1ef67b6f4725f545737da2 upstream.
 
-We do not need locking in xfrm_trans_queue because it is designed
-to use per-CPU buffers.  However, the original code incorrectly
-used skb_queue_tail which takes the lock.  This patch switches
-it to __skb_queue_tail instead.
+commit b60710ec7d7a ("scsi: aacraid: enable sending of TMFs from
+aac_hba_send()") allows aac_hba_send() to send scsi commands, and TMF
+requests, but the existing code only updates the iu_type for scsi
+commands. For TMF requests we are sending an unknown iu_type to
+firmware, which causes a fault.
 
-Reported-and-tested-by: Artem Savkov <asavkov@redhat.com>
-Fixes: acf568ee859f ("xfrm: Reinject transport-mode packets...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Alistair Strachan <astrachan@google.com>
+Include iu_type prior to determining the validity of the command
+
+Reported-by: Noah Misner <nmisner@us.ibm.com>
+Fixes: b60710ec7d7ab ("aacraid: enable sending of TMFs from aac_hba_send()")
+Fixes: 423400e64d377 ("aacraid: Include HBA direct interface")
+Tested-by: Noah Misner <nmisner@us.ibm.com>
+cc: stable@vger.kernel.org
+Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Reviewed-by: Brian King <brking@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/aacraid/commsup.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -518,7 +518,7 @@ int xfrm_trans_queue(struct sk_buff *skb
- 		return -ENOBUFS;
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -752,6 +752,8 @@ int aac_hba_send(u8 command, struct fib
+ 	int wait;
+ 	unsigned long flags = 0;
+ 	unsigned long mflags = 0;
++	struct aac_hba_cmd_req *hbacmd = (struct aac_hba_cmd_req *)
++			fibptr->hw_fib_va;
  
- 	XFRM_TRANS_SKB_CB(skb)->finish = finish;
--	skb_queue_tail(&trans->queue, skb);
-+	__skb_queue_tail(&trans->queue, skb);
- 	tasklet_schedule(&trans->tasklet);
- 	return 0;
- }
+ 	fibptr->flags = (FIB_CONTEXT_FLAG | FIB_CONTEXT_FLAG_NATIVE_HBA);
+ 	if (callback) {
+@@ -762,11 +764,9 @@ int aac_hba_send(u8 command, struct fib
+ 		wait = 1;
+ 
+ 
+-	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
+-		struct aac_hba_cmd_req *hbacmd =
+-			(struct aac_hba_cmd_req *)fibptr->hw_fib_va;
++	hbacmd->iu_type = command;
+ 
+-		hbacmd->iu_type = command;
++	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
+ 		/* bit1 of request_id must be 0 */
+ 		hbacmd->request_id =
+ 			cpu_to_le32((((u32)(fibptr - dev->fibs)) << 2) + 1);
