@@ -1,132 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeERPOA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:14:00 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38368 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751363AbeERPN5 (ORCPT
+        id S1752260AbeERPPO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:15:14 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:39386 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbeERPPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:13:57 -0400
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Thread-Topic: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Thread-Index: AQHT0XoURhB9br3sCUChmBQl/h9UpqQDmnwAgA9bIgCAFBx/gIALa4OAgAALVoCAAQVhAIABoPiAgABrK4CAABaTgA==
-Date: Fri, 18 May 2018 15:13:26 +0000
-Message-ID: <a07b3f72-299b-3da3-a618-0c88dc9d6ed1@st.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
- <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
- <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
- <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com> <20180517063640.GK5130@dell>
- <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com> <20180518135237.GQ5130@dell>
-In-Reply-To: <20180518135237.GQ5130@dell>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <764FFDF114BFA64E9115C4C84910CFB7@st.com>
+        Fri, 18 May 2018 11:15:09 -0400
+X-Google-Smtp-Source: AB8JxZqguMCql3DvrHD90xlaiT9HBf8mVDNWZIA2mEP41CLjT/sPYfhe7OPBashsq/QMmFxyZSW80A==
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_06:,,
- signatures=0
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-9-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-9-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Sat, 19 May 2018 00:14:54 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AtfQL3-xz6MPSDOuXkJoZaVYU4PECJL0VOZjqYRoV-wQ@mail.gmail.com>
+Message-ID: <CAAFQd5AtfQL3-xz6MPSDOuXkJoZaVYU4PECJL0VOZjqYRoV-wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/29] venus: hfi_venus: fix suspend function for venus
+ 3xx versions
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4IFE4Bu029432
 
-On 05/18/2018 03:52 PM, Lee Jones wrote:
-> On Fri, 18 May 2018, Amelie DELAUNAY wrote:
-> 
->> On 05/17/2018 08:36 AM, Lee Jones wrote:
->>> On Wed, 16 May 2018, Amelie DELAUNAY wrote:
->>>
->>>>
->>>>
->>>> On 05/16/2018 04:20 PM, Linus Walleij wrote:
->>>>> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
->>>>>
->>>>>> Indeed, stmfx has other functions than GPIO. But, after comments done
->>>>>> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
->>>>>> child drivers into a single PINCTRL/GPIO driver because of the following
->>>>>> reasons:
->>>>>> - Other stmfx functions (IDD measurement and TouchScreen controller) are
->>>>>> not used on any of the boards using an stmfx and supported by Linux, so
->>>>>> no way to test these functions, and no need to maintain them while they
->>>>>> are not being used.
->>>>>> - But, in the case a new board will use more than GPIO function on
->>>>>> stmfx, the actual implementation allow to easily extract common init
->>>>>> part of stmfx and put it in an MFD driver.
->>>>>>
->>>>>> So I could remove gpio sub-node and put its contents in stmfx node and
->>>>>> keep single PINCTRL/GPIO driver for the time being.
->>>>>> Please advise,
->>>>>
->>>>> I would normally advice to use the right modeling from the start, create
->>>>> the MFD driver and spawn the devices from there. It is confusing
->>>>> if the layout of the driver(s) doesn't really match the layout of the
->>>>> hardware.
->>>>>
->>>>> I understand that it is a pain to write new MFD drivers to get your
->>>>> things going and it would be "nice to get this working really quick
->>>>> now" but in my experience it is better to do it right from the start.
->>>>>
->>>>
->>>> Hi Linus,
->>>>
->>>> Thanks for your advice. I understand the point.
->>>> So, the right modeling would be to:
->>>> - create an MFD driver with the common init part of stmfx
->>>> - remove all common init part of stmfx-pinctrl driver and keep only all
->>>> gpio/pinctrl functions.
->>>>
->>>> I will not develop the other stmfx functions (IDD measurement driver and
->>>> TouchScreen controller driver) because, as explained ealier, they are
->>>> not used on any of the boards using an stmfx and supported by Linux, so
->>>> no way to test these functions, and no need to maintain them while they
->>>> are not being used.
->>>>
->>>> Lee, are you OK with that ?
->>>
->>> I missed a lot of this conversation I think, but from what I've read,
->>> it sounds fine.
->>>
->>
->> I summarize the situation:
->> - I still don't have an official datasheet for STMFX device which could
->> justify the use of an MFD driver;
->> - the MFD driver will contain the STMFX chip initialization stuff such
->> as regmap initialization (regmap structure will be shared with the
->> child), chip initialization, global interrupt management;
->> - there will be only one child (GPIO/PINCTRL node) for the time being.
->>
->> So, is "MFD driver + GPIO/PINCTRL driver" the right modeling, and does
->> it still sound fine after this summary ? :)
-> 
-> It is starting to sound like there will only ever be one child device,
-> which starts to cross the line into "this is not an MFD" (M = Multi)
-> territory.
-> 
+On Tue, May 15, 2018 at 5:11 PM Stanimir Varbanov <
+stanimir.varbanov@linaro.org> wrote:
 
-... for the time being. So, Linus, Lee, is it possible to find common 
-ground ?
+> This fixes the suspend function for Venus 3xx versions by
+> add a check for WFI (wait for interrupt) bit. This bit
+> is on when the ARM9 is idle and entered in low power mode.
+
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>   drivers/media/platform/qcom/venus/hfi_venus.c    | 59
+++++++++++++++++--------
+>   drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
+>   2 files changed, 41 insertions(+), 19 deletions(-)
+
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c
+b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index 53546174aab8..aac351f699a0 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -1447,7 +1447,7 @@ static int venus_suspend_3xx(struct venus_core
+*core)
+>   {
+>          struct venus_hfi_device *hdev = to_hfi_priv(core);
+>          struct device *dev = core->dev;
+> -       u32 ctrl_status, wfi_status;
+> +       u32 ctrl_status, cpu_status;
+>          int ret;
+>          int cnt = 100;
+
+> @@ -1463,29 +1463,50 @@ static int venus_suspend_3xx(struct venus_core
+*core)
+>                  return -EINVAL;
+>          }
+
+> -       ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+> -       if (!(ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)) {
+> -               wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
+> +       /*
+> +        * Power collapse sequence for Venus 3xx and 4xx versions:
+> +        * 1. Check for ARM9 and video core to be idle by checking WFI bit
+> +        *    (bit 0) in CPU status register and by checking Idle (bit
+30) in
+> +        *    Control status register for video core.
+> +        * 2. Send a command to prepare for power collapse.
+> +        * 3. Check for WFI and PC_READY bits.
+> +        */
+> +
+> +       while (--cnt) {
+> +               cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
+>                  ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+
+> -               ret = venus_prepare_power_collapse(hdev, false);
+> -               if (ret) {
+> -                       dev_err(dev, "prepare for power collapse fail
+(%d)\n",
+> -                               ret);
+> -                       return ret;
+> -               }
+> +               if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
+> +                   ctrl_status & CPU_CS_SCIACMDARG0_INIT_IDLE_MSG_MASK)
+> +                       break;
+
+> -               cnt = 100;
+> -               while (cnt--) {
+> -                       wfi_status = venus_readl(hdev,
+WRAPPER_CPU_STATUS);
+> -                       ctrl_status = venus_readl(hdev,
+CPU_CS_SCIACMDARG0);
+> -                       if (ctrl_status & CPU_CS_SCIACMDARG0_PC_READY &&
+> -                           wfi_status & BIT(0))
+> -                               break;
+> -                       usleep_range(1000, 1500);
+> -               }
+> +               usleep_range(1000, 1500);
+>          }
+
+To avoid opencoding the polling, I'd suggest doing a readx_poll_timeout()
+trick:
+
+static bool venus_arm9_and_video_core_idle(struct venus_hfi_device *hdev)
+{
+         // Read both registers and return true if both have the right bits
+set
+}
+
+static int venus_suspend_3xx(struct venus_core *core)
+{
+         bool val;
+         int ret;
+         // ...
+         ret = readx_poll_timeout(venus_arm9_and_video_core_idle, hdev, val,
+val, 1500, 100 * 1500);
+         if (ret)
+                 return ret;
+         // ...
+}
+
+
+> +       if (!cnt)
+> +               return -ETIMEDOUT;
+> +
+> +       ret = venus_prepare_power_collapse(hdev, false);
+> +       if (ret) {
+> +               dev_err(dev, "prepare for power collapse fail (%d)\n",
+ret);
+> +               return ret;
+> +       }
+> +
+> +       cnt = 100;
+> +       while (--cnt) {
+> +               cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
+> +               ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
+> +
+> +               if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
+> +                   ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)
+> +                       break;
+> +
+> +               usleep_range(1000, 1500);
+> +       }
+> +
+> +       if (!cnt)
+> +               return -ETIMEDOUT;
+
+Same readx_poll_timeout() trick can be used here, with different helper
+function, e.g. venus_arm9_idle_and_pc_ready().
+
+Best regards,
+Tomasz
