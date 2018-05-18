@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751497AbeERL4S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:56:18 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40801 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERL4O (ORCPT
+        id S1751698AbeERL42 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:56:28 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45561 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeERL4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:56:14 -0400
-X-Google-Smtp-Source: AB8JxZrt/KJSBNdoF+uc9kzVeV2dLJbe3GsH745j4vOwH+PRpXHqdEKT5C8MvUn7WokMozovpX0f4oYBIcGCQGN5wnQ=
+        Fri, 18 May 2018 07:56:22 -0400
+X-Google-Smtp-Source: AB8JxZqmour0EIXdpHBc8a8cDtjVWY+zTNBMg8sZ9+EN0k1LDbaXcfZRihAarAhbGv+5FzS5+Kp7Qw==
+Date: Fri, 18 May 2018 01:56:19 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH v4] scripts/tags.sh: use `find` for $ALLSOURCE_ARCHS
+ generation
+Message-ID: <20180518115619.jqb4hqdym7fmrs2p@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <8736ypgqie.fsf@vitty.brq.redhat.com>
-References: <20180516152131.30689-1-vkuznets@redhat.com> <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
- <87bmddgrex.fsf@vitty.brq.redhat.com> <8736ypgqie.fsf@vitty.brq.redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Fri, 18 May 2018 19:56:13 +0800
-Message-ID: <CANRm+Cy5buPHVW-8cLS6dQTGxPK79iy_pj-oqs=N0n5sGGxxHw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm <kvm@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wytobq62ncva55nz"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-18 19:19 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
-> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
->
->> Wanpeng Li <kernellwp@gmail.com> writes:
->>
->>> Hi Vitaly,
->>> 2018-05-16 23:21 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
->>>> Changes since v3 [Radim Krcmar]:
->>>> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
->>>> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
->>>> - Fix undefined behavior for hv->vp_index >= 64.
->>>> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
->>>> - For -ex case preload all banks with a single kvm_read_guest().
->>>>
->>>> Description:
->>>>
->>>> This is both a new feature and a bugfix.
->>>>
->>>> Bugfix description:
->>>>
->>>> It was found that Windows 2016 guests on KVM crash when they have > 64
->>>> vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
->>>> sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
->>>
->>> We try the below command line, the Windows 2016 guest successfully to
->>> login and there are 80 vCPUs can be observed in the guest w/o the
->>> patchset, why you mentioned the crash and ignore?
->>>
->>> /usr/local/bin/qemu-system-x86_64 -machine  pc-i440fx-rhel7.3.0  -m
->>> 8192 -smp 80,sockets=2,cores=40,threads=1  -device
->>> ide-drive,bus=ide.0,drive=test -drive
->>> id=test,if=none,file=/instanceimage/359b18ab-05bb-460d-9b53-89505bca68ed/359b18ab-05bb-460d-9b53-89505bca68ed_vda_1.qcow2
->>>  -net nic,model=virtio -net user -monitor stdio -usb -usbdevice tablet
->>> --enable-kvm --cpu host -vnc 0.0.0.0:2
->>
->> Crash happens when you manifest yourself as Hyper-V, you can do this by
->> adding any 'hv-*' feature (e.g. try '-cpu host,hv_vpindex').
->
-> Oh, and the 'ignore' happens when you pass more than 64 sockets
-> (somthing like "-smp 128,sockets=128,cores=1,threads=1") -- and this
-> happens regardless of Hyper-V enlightenments. But I guess it's just
-> because Windows doesn't support more than 64 sockets.
 
-Is there an option in the guest to avoid to check pvtlb support in hyperv?
+--wytobq62ncva55nz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Wanpeng Li
+Parsing `ls` is fragile at best and _will_ fail when $tree
+contains spaces. Replace this with a find-generated string
+and directly assign it to $ALLSOURCE_ARCHS; a subshell is
+implied by $(), so `cd` doesn't affect the current working
+directory.
+
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 78e546ff689c2d5f40..c08347fdeef12a7621 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -26,24 +26,15 @@ else
+ fi
+=20
+ # ignore userspace tools
+ ignore=3D"$ignore ( -path ${tree}tools ) -prune -o"
+=20
+-# Find all available archs
+-find_all_archs()
+-{
+-	ALLSOURCE_ARCHS=3D""
+-	for arch in `ls ${tree}arch`; do
+-		ALLSOURCE_ARCHS=3D"${ALLSOURCE_ARCHS} "${arch##\/}
+-	done
+-}
+-
+ # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+ if [ "${ALLSOURCE_ARCHS}" =3D "" ]; then
+ 	ALLSOURCE_ARCHS=3D${SRCARCH}
+ elif [ "${ALLSOURCE_ARCHS}" =3D "all" ]; then
+-	find_all_archs
++	ALLSOURCE_ARCHS=3D"$(find "${tree}arch/" -mindepth 1 -maxdepth 1 -type d =
+-printf ' %f')"
+ fi
+=20
+ # find sources in arch/$ARCH
+ find_arch_sources()
+ {
+--=20
+2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+
+
+--wytobq62ncva55nz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr+v2MACgkQruvLfWhy
+VBlPww/9H8KmT79aFo3HmikjUqjuI+Gv3Pbg5sXzACkVgO5RZEUCrWrNhZIU1r3V
+9teWU8/ngA3Q/Ek5GohAnJ75DZ1jLFR0F71hd7Udrp+jIdavnenSYby9tkdRkrXs
+Z5AbS1JkMocxa2yhsyX82TSLPiSOGRV6BDdGZkEG8ppvJVlcXhbjwWInG2ULDaE9
+AmiwEz8McqlCGBUek1ZwnCh9o1HpLSCZuGfGpiuWGy4QCUb/GZXqyjvatigMwSae
+pLgntnZKuayLx+d+qV3RblyZow9xu0fKGaYZjR8X4i+bD6oMSuPX75Ln6AzCkbJk
+oqd1ZMcgcef0tT53H6K8iIhdevV19aszQ9UR7iq3WxK0cqIYGU41orwhJwrAX+eg
+FCo99RkODWtj1HE18jf4dNyTypU8aX9cpIvEwTgFI5c3OZ/cODGVzz7EB6mIEkNZ
+B+Pb+EUtCWEI1WFHGcoXcOWLaiQt1JI96Zwp6NpVAFC3AOpBoegimW3Vjd/GpPg5
+SBlJeADhSUM2IQLwyQaCB/E15B1FsBVCWwx/0bU4nXjnjp279PSbbRTe91sHAQEn
+ixlOWzTnZGAv1EePuD50nz5G9SBYy3WCxTPApaYajlHEuQqbM9W+lWXI3zZALrQX
+yyEhZFpDyTBj+hDzUnUao96auG4GsKhqMYae8w+FlEjjKzbc6E8=
+=2a/n
+-----END PGP SIGNATURE-----
+
+--wytobq62ncva55nz--
