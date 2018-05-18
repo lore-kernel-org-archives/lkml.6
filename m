@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeERVKY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:10:24 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42089 "EHLO
+        id S1752469AbeERVKl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:10:41 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:32842 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeERVKS (ORCPT
+        with ESMTP id S1752026AbeERVKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:10:18 -0400
-X-Google-Smtp-Source: AB8JxZrW91kCdRs1UurNuaSzkccQ87fCiQUjMMhVzgA7Vpt+JyW0GBjANv3TRWBnHDloeArWUa5igA==
+        Fri, 18 May 2018 17:10:15 -0400
+X-Google-Smtp-Source: AB8JxZrMaJcBfJoq0z8YWmvnXJnYQFGwp7g9NVX+UGIPhFQPIks90s+mnTHBA2mc3uue2QAO6ntibA==
 From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To: Tony Lindgren <tony@atomide.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 6/6] ARM: OMAP1: ams-delta: make board header file local to mach-omap1
-Date: Fri, 18 May 2018 23:09:54 +0200
-Message-Id: <20180518210954.29044-6-jmkrzyszt@gmail.com>
+Subject: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Fri, 18 May 2018 23:09:53 +0200
+Message-Id: <20180518210954.29044-5-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
 References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
@@ -33,73 +33,228 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now as the AMS Delta board header file is no longer included by
-drivers, move it to the root directory of mach-omap1.
+Now as the Amstrad Delta board provides GPIO lookup tables, switch from
+GPIO numbers to GPIO descriptors and use the table to locate required
+GPIO pins.
+
+Declare static variables for storing GPIO descriptors and replace
+gpio_ functions with their gpiod_ equivalents. Return -EPROBE_DEFER
+if the GPIO pins are not yet available so device initialization is
+postponed instead of aborted.
+
+Pin naming used by the driver should be followed while respective GPIO
+lookup table is initialized by a board init code.
+
+Created and tested against linux-4.17-rc3, on top of patch 1/6 "ARM:
+OMAP1: ams-delta: add GPIO lookup tables"
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- arch/arm/mach-omap1/ams-delta-fiq-handler.S              | 2 +-
- arch/arm/mach-omap1/ams-delta-fiq.c                      | 3 +--
- arch/arm/mach-omap1/board-ams-delta.c                    | 2 +-
- arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h | 0
- 4 files changed, 3 insertions(+), 4 deletions(-)
- rename arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h (100%)
+ drivers/mtd/nand/raw/ams-delta.c | 110 +++++++++++++++++++++------------------
+ 1 file changed, 58 insertions(+), 52 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq-handler.S b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-index bf608441b357..9005c00db948 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-+++ b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-@@ -16,9 +16,9 @@
- #include <linux/linkage.h>
- #include <asm/assembler.h>
- 
--#include <mach/board-ams-delta.h>
- #include <mach/ams-delta-fiq.h>
- 
-+#include "board-ams-delta.h"
- #include "iomap.h"
- #include "soc.h"
- 
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
-index d7ca9e2b40d2..30aedcc3f2b3 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq.c
-+++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-@@ -19,11 +19,10 @@
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 37a3cc21c7bc..c44be2f5a65c 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -20,23 +20,28 @@
+ #include <linux/slab.h>
  #include <linux/module.h>
- #include <linux/io.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+-#include <linux/gpio.h>
+ #include <linux/platform_data/gpio-omap.h>
+ 
+ #include <asm/io.h>
+ #include <asm/sizes.h>
  
 -#include <mach/board-ams-delta.h>
 -
- #include <asm/fiq.h>
+ #include <mach/hardware.h>
  
- #include <mach/ams-delta-fiq.h>
-+#include "board-ams-delta.h"
+ /*
+  * MTD structure for E3 (Delta)
+  */
+ static struct mtd_info *ams_delta_mtd = NULL;
++static struct gpio_desc *gpiod_rdy;
++static struct gpio_desc *gpiod_nce;
++static struct gpio_desc *gpiod_nre;
++static struct gpio_desc *gpiod_nwp;
++static struct gpio_desc *gpiod_nwe;
++static struct gpio_desc *gpiod_ale;
++static struct gpio_desc *gpiod_cle;
  
- static struct fiq_handler fh = {
- 	.name	= "ams-delta-fiq"
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 80f54cb54276..17d69eb64df3 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -36,7 +36,6 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
+ /*
+  * Define partitions for flash devices
+@@ -70,9 +75,9 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
  
--#include <mach/board-ams-delta.h>
- #include <linux/platform_data/keypad-omap.h>
- #include <mach/mux.h>
+ 	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	writew(byte, this->IO_ADDR_W);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 0);
++	gpiod_set_value(gpiod_nwe, 0);
+ 	ndelay(40);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 1);
++	gpiod_set_value(gpiod_nwe, 1);
+ }
  
-@@ -45,6 +44,7 @@
- #include "camera.h"
- #include <mach/usb.h>
+ static u_char ams_delta_read_byte(struct mtd_info *mtd)
+@@ -81,11 +86,11 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
+ 	struct nand_chip *this = mtd_to_nand(mtd);
+ 	void __iomem *io_base = (void __iomem *)nand_get_controller_data(this);
  
-+#include "board-ams-delta.h"
- #include "iomap.h"
- #include "common.h"
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 0);
++	gpiod_set_value(gpiod_nre, 0);
+ 	ndelay(40);
+ 	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	res = readw(this->IO_ADDR_R);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 1);
++	gpiod_set_value(gpiod_nre, 1);
  
-diff --git a/arch/arm/mach-omap1/include/mach/board-ams-delta.h b/arch/arm/mach-omap1/board-ams-delta.h
-similarity index 100%
-rename from arch/arm/mach-omap1/include/mach/board-ams-delta.h
-rename to arch/arm/mach-omap1/board-ams-delta.h
+ 	return res;
+ }
+@@ -120,12 +125,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ {
+ 
+ 	if (ctrl & NAND_CTRL_CHANGE) {
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NCE,
+-				(ctrl & NAND_NCE) == 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_CLE,
+-				(ctrl & NAND_CLE) != 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_ALE,
+-				(ctrl & NAND_ALE) != 0);
++		gpiod_set_value(gpiod_nce, !(ctrl & NAND_NCE));
++		gpiod_set_value(gpiod_cle, !!(ctrl & NAND_CLE));
++		gpiod_set_value(gpiod_ale, !!(ctrl & NAND_ALE));
+ 	}
+ 
+ 	if (cmd != NAND_CMD_NONE)
+@@ -134,41 +136,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ 
+ static int ams_delta_nand_ready(struct mtd_info *mtd)
+ {
+-	return gpio_get_value(AMS_DELTA_GPIO_PIN_NAND_RB);
++	return gpiod_get_value(gpiod_rdy);
+ }
+ 
+-static const struct gpio _mandatory_gpio[] = {
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NCE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nce",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NRE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nre",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWP,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwp",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwe",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_ALE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_ale",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_CLE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_cle",
+-	},
+-};
+ 
+ /*
+  * Main initialization routine
+@@ -216,12 +186,15 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	this->write_buf = ams_delta_write_buf;
+ 	this->read_buf = ams_delta_read_buf;
+ 	this->cmd_ctrl = ams_delta_hwcontrol;
+-	if (gpio_request(AMS_DELTA_GPIO_PIN_NAND_RB, "nand_rdy") == 0) {
++
++	gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
++	if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+ 		this->dev_ready = ams_delta_nand_ready;
+ 	} else {
+ 		this->dev_ready = NULL;
+ 		pr_notice("Couldn't request gpio for Delta NAND ready.\n");
+ 	}
++
+ 	/* 25 us command delay time */
+ 	this->chip_delay = 30;
+ 	this->ecc.mode = NAND_ECC_SOFT;
+@@ -230,7 +203,44 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, io_base);
+ 
+ 	/* Set chip enabled, but  */
+-	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
++	gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwp)) {
++		err = PTR_ERR(gpiod_nwp);
++		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nce)) {
++		err = PTR_ERR(gpiod_nce);
++		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nre)) {
++		err = PTR_ERR(gpiod_nre);
++		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwe)) {
++		err = PTR_ERR(gpiod_nwe);
++		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ale)) {
++		err = PTR_ERR(gpiod_ale);
++		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_cle)) {
++		err = PTR_ERR(gpiod_cle);
++		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
++	}
++err_gpiod:
++	if (err == -ENODEV || err == -ENOENT)
++		err = -EPROBE_DEFER;
+ 	if (err)
+ 		goto out_gpio;
+ 
+@@ -246,9 +256,7 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	goto out;
+ 
+  out_mtd:
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+ out_gpio:
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ out_free:
+ 	kfree(this);
+@@ -266,8 +274,6 @@ static int ams_delta_cleanup(struct platform_device *pdev)
+ 	/* Release resources, unregister device */
+ 	nand_release(ams_delta_mtd);
+ 
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ 
+ 	/* Free the MTD device structure */
 -- 
 2.16.1
