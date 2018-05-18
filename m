@@ -1,39 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrNlT30G82Jg8mQqnxF2XUqKWOIwE2Ko58OTxgliFwLF0N5acgSXWN7gYEAfnXsN6yS3Vtm
-ARC-Seal: i=1; a=rsa-sha256; t=1526631542; cv=none;
+X-Google-Smtp-Source: AB8JxZrkI5ody7I8DRxhR5E4THFLZmsWNCKXEcn+93MPlqFoPdXxsmkhie3/lc4125hFrOFZqLpK
+ARC-Seal: i=1; a=rsa-sha256; t=1526631539; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZCoE1fupdbOpfvzz1SW1IdNh/Z2VoL0Z0p+ygK3siTaeYD1DuYm6cDsXOlZ5TvEa5k
-         bQHWzavaZLNh8uTTOnZstvogu13gaFBc09cPiuVCM5u3VI+QZaTijIDxKon8GMDG4imb
-         Lwu7+BjeAjY/b45o1xKwh0WmXDdYnt8UXRLmzqiyNH8hfvPFfaMHLc8h+4+EqENW3Mal
-         8pb8xCuR6vhC1or9cN21scp16CajcpjnPKzfONCTlDS6zt7tQDNqGlv4UdtMsrwAI0mJ
-         1xW6bqVBJmkC2d3WJlVu4yuHfJONrYt2kr8jmnDBkVayzCx5NejruAkDSi2ihuHpzoBl
-         fozA==
+        b=XGHzZp2u5Lb72UfjHJUipRuV7IdW1gN+3Hf4NZlGHJEFXUEPMRTBgaT0xt8GVsR7N9
+         K9sY1TARmquX1deIJLk55PjCEgGlRCJV2ukjiB45wFxdQwgIRLVqs98U90uUK5HX8ZXS
+         tGBo0mx3JlO6rEyQKGCRJlIB2/DjNTgkpg/PHrLna1AR9pxc9rvmvECLlZ/xUwxFIPnL
+         1uNxC8Pdhcm082WguKYqJq/X1x2qCOFHpgGcH4zxzeaZAGjCymeKEF4UNXLSdTZ50UAO
+         QIT5n+0Z76xM6WgjZNTZ7r7CVOb2ptG7E/5TINJUmxzAFYkWZxcIS5p/vBE9xlmxuOep
+         Eeiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=E2lE4OvHFGbMoMDmljrSA9Q1JNhOZPvp7ETJva03rKA=;
-        b=Z1Db0cnYhmOeSod2UYvjnZEylGM84X68NwFmJ2LT7QZ3P7iC/uzmrC/N8csjXP4vON
-         2tXm276lRHlQRE3+MLnWib4LPygwVjrhzdO52TkiESbIA3v32gb9mifp4rOWGgUSvmOs
-         a1zBVchQGvx5ZhmBSH5IfJzc85i9bd9LYvvVTLdUx+SS/Fkb4UhT5DlKHl16YqukocoI
-         iprHp5uNKXRma/4BM2h38Aa4/5n3dcPJ0ODKqPBrsfzK5yLOy2rPepnfpEbxPd4b12UB
-         Aky+OwNW9ol0BqsTXtR+wXs0W16kH1DWzdvmkt4SLIVI5OjUB2MJNdRIVfy7uMYkkRty
-         AVog==
+        bh=e59970oXoqXHPnBV6hiR9tB+26RhnDGyWBiw6+mgwY4=;
+        b=P1pEIpDBJkXhGfbWLJAZug6DcPRj2MLokHnU0nuph6oC01rDGjrs2M9PiJ+1l8Zo4G
+         RTnREcUzQxBrlOOI10LhOYiidws7md18Xz1nQgFDhZR49NeY0U86aTgNuf3dBgQDElQt
+         9GH0tonhJX2p5vNRal6+3q7bK2DsvCikTbChh8sgB+j3XEOtHBiRWGXNvQSH14sQDg3h
+         NR6xZ1EtETfrOZIEz/kbwNUhdBA35t2C+Enoct5KIgC13MqYWZox39VYYwTajVz1q20O
+         Yt/AI04n1onhf2oozHVvTHQYFbUy+aRXgjwXy6XaLUndV6DIkjfR9jGhKpHtGBZ4QDd+
+         ecQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=m87lN+Lv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=V3/VanWm;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=m87lN+Lv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=V3/VanWm;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Israel Rukshin <israelr@mellanox.com>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Sagi Grimberg <sagi@grimberg.me>
-Subject: [PATCH 4.16 51/55] net/mlx5: Fix mlx5_get_vector_affinity function
-Date: Fri, 18 May 2018 10:15:47 +0200
-Message-Id: <20180518081459.785651055@linuxfoundation.org>
+	Roman Mashak <mrv@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 13/55] net sched actions: fix refcnt leak in skbmod
+Date: Fri, 18 May 2018 10:15:09 +0200
+Message-Id: <20180518081458.104164279@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789196114601610?=
-X-GMAIL-MSGID: =?utf-8?q?1600789196114601610?=
+X-GMAIL-THRID: =?utf-8?q?1600789193125725958?=
+X-GMAIL-MSGID: =?utf-8?q?1600789193125725958?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,70 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Roman Mashak <mrv@mojatatu.com>
 
-[ Upstream commit 6082d9c9c94a408d7409b5f2e4e42ac9e8b16d0d ]
+[ Upstream commit a52956dfc503f8cc5cfe6454959b7049fddb4413 ]
 
-Adding the vector offset when calling to mlx5_vector2eqn() is wrong.
-This is because mlx5_vector2eqn() checks if EQ index is equal to vector number
-and the fact that the internal completion vectors that mlx5 allocates
-don't get an EQ index.
+When application fails to pass flags in netlink TLV when replacing
+existing skbmod action, the kernel will leak refcnt:
 
-The second problem here is that using effective_affinity_mask gives the same
-CPU for different vectors.
-This leads to unmapped queues when calling it from blk_mq_rdma_map_queues().
-This doesn't happen when using affinity_hint mask.
+$ tc actions get action skbmod index 1
+total acts 0
 
-Fixes: 2572cf57d75a ("mlx5: fix mlx5_get_vector_affinity to start from completion vector 0")
-Fixes: 05e0cc84e00c ("net/mlx5: Fix get vector affinity helper function")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+        action order 0: skbmod pipe set smac 00:11:22:33:44:55
+         index 1 ref 1 bind 0
+
+For example, at this point a buggy application replaces the action with
+index 1 with new smac 00:aa:22:33:44:55, it fails because of zero flags,
+however refcnt gets bumped:
+
+$ tc actions get actions skbmod index 1
+total acts 0
+
+        action order 0: skbmod pipe set smac 00:11:22:33:44:55
+         index 1 ref 2 bind 0
+$
+
+Tha patch fixes this by calling tcf_idr_release() on existing actions.
+
+Fixes: 86da71b57383d ("net_sched: Introduce skbmod action")
+Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |    2 +-
- include/linux/mlx5/driver.h       |   12 +++---------
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ net/sched/act_skbmod.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -4303,7 +4303,7 @@ mlx5_ib_get_vector_affinity(struct ib_de
- {
- 	struct mlx5_ib_dev *dev = to_mdev(ibdev);
+--- a/net/sched/act_skbmod.c
++++ b/net/sched/act_skbmod.c
+@@ -131,8 +131,11 @@ static int tcf_skbmod_init(struct net *n
+ 	if (exists && bind)
+ 		return 0;
  
--	return mlx5_get_vector_affinity(dev->mdev, comp_vector);
-+	return mlx5_get_vector_affinity_hint(dev->mdev, comp_vector);
- }
+-	if (!lflags)
++	if (!lflags) {
++		if (exists)
++			tcf_idr_release(*a, bind);
+ 		return -EINVAL;
++	}
  
- /* The mlx5_ib_multiport_mutex should be held when calling this function */
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1269,25 +1269,19 @@ enum {
- };
- 
- static inline const struct cpumask *
--mlx5_get_vector_affinity(struct mlx5_core_dev *dev, int vector)
-+mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
- {
--	const struct cpumask *mask;
- 	struct irq_desc *desc;
- 	unsigned int irq;
- 	int eqn;
- 	int err;
- 
--	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
-+	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
- 	if (err)
- 		return NULL;
- 
- 	desc = irq_to_desc(irq);
--#ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
--	mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
--#else
--	mask = desc->irq_common_data.affinity;
--#endif
--	return mask;
-+	return desc->affinity_hint;
- }
- 
- #endif /* MLX5_DRIVER_H */
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
