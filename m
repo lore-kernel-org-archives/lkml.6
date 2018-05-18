@@ -1,88 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeERUb3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:31:29 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:46212 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeERUbZ (ORCPT
+        id S1752419AbeERUcU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:32:20 -0400
+Received: from www62.your-server.de ([213.133.104.62]:34150 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751488AbeERUcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:31:25 -0400
-X-Google-Smtp-Source: AB8JxZp94f9nrAQx3vc/wFPY3g7RWv2v+m9PEDtKoZsloqWO4ZKv/NEHdtmh+CfuFZCMa3r4etmxwuShHQuGmv0/9gE=
+        Fri, 18 May 2018 16:32:15 -0400
+Subject: Re: [PATCH] selftests: bpf: config: enable NET_SCH_INGRESS for
+ xdp_meta.sh
+To: Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org,
+        shuah@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20180518182324.23827-1-anders.roxell@linaro.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <eabe5ff5-623e-e36f-1dea-f4f78a362332@iogearbox.net>
+Date: Fri, 18 May 2018 22:32:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180518080308.GA28587@dragonet.kaist.ac.kr>
-References: <20180518080308.GA28587@dragonet.kaist.ac.kr>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Fri, 18 May 2018 16:30:44 -0400
-Message-ID: <CAF=yD-JbiE0W6pv77DUO0pYrJCYfgszm6zwCEfkv8HedvRfujQ@mail.gmail.com>
-Subject: Re: WARNING in __static_key_slow_dec
-To: DaeRyong Jeong <threeearcat@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Byoungyoung Lee <byoungyoung@purdue.edu>,
-        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180518182324.23827-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 4:03 AM, DaeRyong Jeong <threeearcat@gmail.com> wrote:
-> We report the crash: WARNING in __static_key_slow_dec
->
-> This crash has been found in v4.8 using RaceFuzzer (a modified
-> version of Syzkaller), which we describe more at the end of this
-> report.
-> Even though v4.8 is the relatively old version, we did manual verification
-> and we think the bug still exists.
-> Our analysis shows that the race occurs when invoking two syscalls
-> concurrently, setsockopt() with optname SO_TIMESTAMPING and ioctl() with
-> cmd SIOCGSTAMPNS.
->
->
-> Diagnosis:
-> We think if timestamp was previously enabled with
-> SOCK_TIMESTAMPING_RX_SOFTWARE flag, the concurrent execution of
-> sock_disable_timestamp() and sock_enable_timestamp() causes the crash.
->
->
-> Thread interleaving:
-> (Assume sk->flag has the SOCK_TIMESTAMPING_RX_SOFTWARE flag by the
-> previous setsockopt() call with SO_TIMESTAMPING)
->
-> CPU0 (sock_disable_timestamp())                 CPU1 (sock_enable_timestamp())
-> =====                                           =====
-> (flag == 1UL << SOCK_TIMESTAMPING_RX_SOFTWARE)  (flag == SOCK_TIMESTAMP)
->
->                                                 if (!sock_flag(sk, flag)) {
->                                                         unsigned long previous_flags = sk->sk_flags;
->
-> if (sk->sk_flags & flags) {
->         sk->sk_flags &= ~flags;
->         if (sock_needs_netstamp(sk) &&
->             !(sk->sk_flags & SK_FLAGS_TIMESTAMP))
->                 net_disable_timestamp();
->                                                         sock_set_flag(sk, flag);
->
->                                                         if (sock_needs_netstamp(sk) &&
->                                                             !(previous_flags & SK_FLAGS_TIMESTAMP))
->                                                                 net_enable_timestamp();
->                                                         /* Here, net_enable_timestamp() is not called because
->                                                          * previous_flags has the SOCK_TIMESTAMPING_RX_SOFTWARE
->                                                          * flag
->                                                          */
-> /* After the race, sk->sk has the flag SOCK_TIMESTAMP, but
->  * net_enable_timestamp() is not called one more time.
->  * Consequently, when the socket is closed, __sk_destruct()
->  * calls net_disable_timestamp() that leads WARNING.
->  */
+On 05/18/2018 08:23 PM, Anders Roxell wrote:
+> When running bpf's selftest test_xdp_meta.sh it fails:
+> ./test_xdp_meta.sh
+> Error: Specified qdisc not found.
+> selftests: test_xdp_meta [FAILED]
+> 
+> Need to enable CONFIG_NET_SCH_INGRESS and CONFIG_NET_CLS_ACT to get the
+> test to pass.
+> 
+> Fixes: 22c8852624fc ("bpf: improve selftests and add tests for meta pointer")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Thanks for the detailed analysis.
-
-Indeed the updates to sk->sk_flags and calls to net_(dis|en)able_timestamp
-should happen atomically, but this is not the case. The setsockopt
-path holds the socket lock, but not all ioctl paths.
-
-Perhaps we can take lock_sock_fast in sock_get_timestamp and
-variants.
+Applied to bpf tree, thanks Anders!
