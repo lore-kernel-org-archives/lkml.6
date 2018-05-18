@@ -1,75 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeERODY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:03:24 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:38950 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751577AbeERODW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:03:22 -0400
-Date: Fri, 18 May 2018 16:03:13 +0200
-From: Christian Brauner <christian@brauner.io>
-To: Tycho Andersen <tycho@tycho.ws>
-Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
-        "Tobin C . Harding" <me@tobin.cc>, Kees Cook <keescook@chromium.org>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: Re: [PATCH v2 0/4] seccomp trap to userspace
-Message-ID: <20180518140313.GA26297@mailbox.org>
-References: <20180517151218.12850-1-tycho@tycho.ws>
+        id S1752627AbeEROEX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:04:23 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:43890 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbeEROEV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:04:21 -0400
+X-Google-Smtp-Source: AB8JxZolB6vkpaRI2Vqso2BrT6WoUx76RKJoKw3kA1q8yM9w3T5VYVe5HJnNMYRYcqn5aTCmn9/PWxUluwcACVXbeo0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180517151218.12850-1-tycho@tycho.ws>
+In-Reply-To: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Fri, 18 May 2018 16:04:19 +0200
+Message-ID: <CAFqH_52JvXExvk6ToJ6_7kHVE+EDjc3NBngkexktx1ReOS1KuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Add ChromeOS EC CEC Support
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
+        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
+        Sean Paul <seanpaul@google.com>, sadolfsson@google.com,
+        Felix Ekblom <felixe@google.com>, Benson Leung <bleung@google.com>,
+        darekm@google.com,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
+        Fabien Parent <fparent@baylibre.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 09:12:14AM -0600, Tycho Andersen wrote:
-> Hi,
-> 
-> After a while focusing on other things, I finally managed ot get a v2 of
-> this series prepared. I believe I've addressed all the feedback from v1,
-> except for one major point: switching the communication protocol over
-> the fd to nlattr. I looked into doing this, but the kernel stuff for
-> dealing with nlattr seems to require an skb (via nlmsg_{new,put} and
-> netlink_unicast), which means we need to deal with the netlink sequence
-> numbers, portids, and create a socket protocol. I can do this if we
-> still think nlattr is necessary, but based on looking at it, it seems
-> like a lot of extra code for no real benefit.
+Hi Neil,
 
-Yes, we've had that discussion before and I agree. I fail to see the
-benefit here too.
+2018-05-18 15:04 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
+> Hi All,
+>
+> The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+> through it's Embedded Controller, to enable the Linux CEC Core to communicate
+> with it and get the CEC Physical Address from the correct HDMI Connector, the
+> following must be added/changed:
+> - Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+> - Add the CEC related commands and events definitions into the EC MFD driver
+> - Add a way to get a CEC notifier with it's (optional) connector name
+> - Add the CEC notifier to the i915 HDMI driver
+> - Add the proper ChromeOS EC CEC Driver
+>
+> The CEC notifier with the connector name is the tricky point, since even on
+> Device-Tree platforms, there is no way to distinguish between multiple HDMI
+> connectors from the same DRM driver. The solution I implemented is pretty
+> simple and only adds an optional connector name to eventually distinguish
+> an HDMI connector notifier from another if they share the same device.
+>
+> Feel free to comment this patchset !
+>
+> Changes since v2:
+>  - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+>  - Fixed and cleaned up the CEC commands and events handling
+>  - Rebased the CEC sub-device registration on top of Enric's serie
+>  - Fixed comments typo on cec driver
+>  - Protected the DMI match only with PCI and DMI Kconfigs
+>
 
-Christian
+Just because I got confused when I saw two v2 in my inbox. This is v3, right?
 
-> 
-> I've also added support for passing fds. The code itself is simple, but
-> the API could/should probably be different, see patch 4 for discussion.
-> 
-> Tycho
-> 
-> Tycho Andersen (4):
->   seccomp: add a return code to trap to userspace
->   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
->   seccomp: add a way to get a listener fd from ptrace
->   seccomp: add support for passing fds via USER_NOTIF
-> 
->  arch/Kconfig                                  |   7 +
->  include/linux/seccomp.h                       |  14 +-
->  include/uapi/linux/ptrace.h                   |   2 +
->  include/uapi/linux/seccomp.h                  |  20 +-
->  kernel/ptrace.c                               |   4 +
->  kernel/seccomp.c                              | 480 +++++++++++++++++-
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 359 ++++++++++++-
->  7 files changed, 878 insertions(+), 8 deletions(-)
-> 
-> -- 
-> 2.17.0
-> 
-> _______________________________________________
-> Containers mailing list
-> Containers@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/containers
+> Changes since v1:
+>  - Added cec_notifier_put to intel_hdmi
+>  - Fixed all small reported issues on the EC CEC driver
+>  - Moved the cec_notifier_get out of the #if .. #else .. #endif
+>
+> Changes since RFC:
+>  - Moved CEC sub-device registration after CEC commands and events definitions patch
+>  - Removed get_notifier_get_byname
+>  - Added CEC_CORE select into i915 Kconfig
+>  - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+>  - Fixed CEC core return type on error
+>  - Moved to cros-ec-cec media platform directory
+>  - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+>  - Fix Logical Address setup
+>  - Added comment about HW support
+>  - Removed memset of msg structures
+>
+> Neil Armstrong (5):
+>   media: cec-notifier: Get notifier by device and connector name
+>   drm/i915: hdmi: add CEC notifier to intel_hdmi
+>   mfd: cros-ec: Introduce CEC commands and events definitions.
+>   mfd: cros_ec_dev: Add CEC sub-device registration
+>   media: platform: Add Chrome OS EC CEC driver
+>
+>  drivers/gpu/drm/i915/Kconfig                     |   1 +
+>  drivers/gpu/drm/i915/intel_display.h             |  20 ++
+>  drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+>  drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+>  drivers/media/cec/cec-notifier.c                 |  11 +-
+>  drivers/media/platform/Kconfig                   |  11 +
+>  drivers/media/platform/Makefile                  |   2 +
+>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+>  drivers/mfd/cros_ec_dev.c                        |  16 ++
+>  drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+>  include/linux/mfd/cros_ec.h                      |   2 +-
+>  include/linux/mfd/cros_ec_commands.h             |  80 ++++++
+>  include/media/cec-notifier.h                     |  27 +-
+>  14 files changed, 557 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+>
+> --
+> 2.7.4
+>
