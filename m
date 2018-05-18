@@ -1,162 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeERWBb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 18:01:31 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.35]:49672 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752024AbeERWB2 (ORCPT
+        id S1752238AbeERWDC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 18:03:02 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38166 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeERWC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 18:01:28 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20180515030038.GA11822@embeddedor.com>
- <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
- <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
- <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
- <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
- <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
- <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
- <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
- <f6be31b7-a6f8-3d7f-f621-09490a1b0489@embeddedor.com>
- <CAPcyv4husQPy601-JKpud7C3YZFcxk4BAJJhcztu_yOeC=7U-w@mail.gmail.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <c22b86a0-5d35-72af-679d-0d237d386a32@embeddedor.com>
-Date: Fri, 18 May 2018 17:01:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 18 May 2018 18:02:57 -0400
+X-Google-Smtp-Source: AB8JxZpJFo/aI4XRuGzNZvDGS6wCO6laHrW9eg0r04trcaErSjSd/bkRUzWSsY+0L9SnRK3B6Qxd5w==
+Date: Sat, 19 May 2018 00:02:54 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v2 07/11] cpufreq: tegra20: Remove unnecessary parentheses
+Message-ID: <20180518220254.GC28123@ulmo>
+References: <20180518200642.24815-1-digetx@gmail.com>
+ <20180518200642.24815-8-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4husQPy601-JKpud7C3YZFcxk4BAJJhcztu_yOeC=7U-w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.93
-X-Source-L: No
-X-Exim-ID: 1fJnRH-002Ijx-9P
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-93.static.axtel.net ([192.168.15.106]) [187.162.252.93]:51162
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
+Content-Disposition: inline
+In-Reply-To: <20180518200642.24815-8-digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--xo44VMWPx7vlQ2+2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 05/18/2018 04:45 PM, Dan Williams wrote:
-> On Fri, May 18, 2018 at 2:27 PM, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->>
->> On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
->>>>>>
->>>>>>
->>>>>
->>>>> Oops, it seems I sent the wrong patch. The function would look like
->>>>> this:
->>>>>
->>>>> #ifndef sanitize_index_nospec
->>>>> inline bool sanitize_index_nospec(unsigned long *index,
->>>>>                                     unsigned long size)
->>>>> {
->>>>>           if (*index >= size)
->>>>>                   return false;
->>>>>           *index = array_index_nospec(*index, size);
->>>>>
->>>>>           return true;
->>>>> }
->>>>> #endif
->>>>
->>>>
->>>> I think this is fine in concept, we already do something similar in
->>>> mpls_label_ok(). Perhaps call it validate_index_nospec() since
->>>> validation is something that can fail, but sanitization in theory is
->>>> something that can always succeed.
->>>>
->>>
->>> OK. I got it.
->>>
->>>> However, the problem is the data type of the index. I expect you would
->>>> need to do this in a macro and use typeof() if you wanted this to be
->>>> generally useful, and also watch out for multiple usage of a macro
->>>> argument. Is it still worth it at that point?
->>>>
->>>
->>> Yeah. I think it is worth it. I'll work on this during the weekend and
->>> send a proper patch for review.
->>>
->>> Thanks for the feedback.
->>
->>
->> BTW, I'm analyzing other cases, like the following:
->>
->> bool foo(int x)
->> {
->>           if(!validate_index_nospec(&x))
->>                   return false;
->>
->>           [...]
->>
->>           return true;
->> }
->>
->> int vulnerable(int x)
->> {
->>           if (!foo(x))
->>                   return -1;
->>
->>           temp = array[x];
->>
->>           [...]
->>
->> };
->>
->> Basically my doubt is how deep this barrier can be placed into the call
->> chain in order to continue working.
-> 
-> This is broken you would need to pass the address of x into foo()
-> otherwise there may be speculation on the return value of foo.
-> 
+On Fri, May 18, 2018 at 11:06:38PM +0300, Dmitry Osipenko wrote:
+> Remove unnecessary parentheses as suggested by the checkpatch script.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh I see now. Just to double check, then something like the following 
-would be broken too, because is basically the same as the code above, 
-and well, it doesn't make much sense to store the value returned by 
-macro array_index_nospec into x, correct?:
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-bool foo(int x)
-{
-	if(x >= MAX)
-		return false;
+--xo44VMWPx7vlQ2+2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	x = array_index_nospec(x, MAX);
-	return true;
-}
+-----BEGIN PGP SIGNATURE-----
 
-int vulnerable(int x)
-{
-	if(!foo(x))
-		return -1;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr/TY4ACgkQ3SOs138+
+s6GV0w/9HBba7yTfqCMIuBjab3jvfawUuz2FlU0wIrRbW+BseG11hf7kQes13hJD
+8qJkC62nRsfjoGxzjO4aQSGJItS8R8wJ/3dkwCLlER51LmttsFzR92e7V+6CIU3Q
+EsEfkavHF6qqw2UX8o/jdthxZVsMJ3C5U+tYKHgb1YjzP803U5VUQtvnOpc0FzAF
+Utd4U5uto6HbxiKv8VNg8ES17EZY1ZtkQuVXsaP6Kpd4u2PScQpGh7Y6faAk1Dcm
+UJiH74VP90iJHge4tlQH/ZHmAwrk+G3pZnMwbu3+x2NeH5ISWD6b55qfyPxSTUzM
+L8bXH8LGo/i0olrEosj94tNbVVfaLNutMrwqC1d0KAnBakgbGlIigEzIKVB494uJ
+XaUWsBaJvbuCLdMKfb3GJ30uWvluqxkau+16Yooqm2yKmurg6sSKU12zRFIw6i/x
+TyEq6Imzkh+Jum0FTYx4DJs7NAh1x238OiwrsOCoMxYVYrrA+AI13emkXB/rIE97
+ZdynmqrJRVK4dQJqORvMIZOW52zlSxXKCTqFGVcT+VhKr6R84vxLWEMahzcsfYmq
+tyracS7vFBxYrvXrORZu14f9vVHugNf0oMojXwG55bAew5u/wmpEmSwjhs9mFHrD
+pMWYRufv+n4TtXUevlcaGNjym0jPqFokXGIeaR/3I5156JaYFYI=
+=V9cG
+-----END PGP SIGNATURE-----
 
-	temp = array[x];
-
-	[...]
-}
-
-Thanks
---
-Gustavo
+--xo44VMWPx7vlQ2+2--
