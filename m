@@ -1,101 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753320AbeERJIq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:08:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47716 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753110AbeERITl (ORCPT
+        id S1753216AbeERJKI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:10:08 -0400
+Received: from smtprelay0115.hostedemail.com ([216.40.44.115]:54777 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753153AbeERJKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:19:41 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84997602B6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH V7 00/12] ARM: dts: ipq: updates to enable a few peripherals
-Date: Fri, 18 May 2018 13:49:13 +0530
-Message-Id: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 18 May 2018 05:10:06 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:800:960:966:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1981:2110:2194:2196:2198:2199:2200:2201:2393:2559:2562:2689:2691:2693:2828:2895:2901:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4362:4385:5007:6117:6119:7974:8957:10004:10400:10848:11232:11658:11914:12296:12555:12663:12740:12760:12895:13069:13311:13357:13439:13869:13972:14181:14659:14721:21080:21324:21451:21627:21740:30005:30054:30055:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: dirt67_57fe51cddcd56
+X-Filterd-Recvd-Size: 2818
+Message-ID: <9332d922caf8e25747aa19e573cc3ab82519f6f7.camel@perches.com>
+Subject: Re: [PATCH 03/18] printk: Convert pr_fmt from blank define to
+ KBUILD_MODNAME
+From: Joe Perches <joe@perches.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Date: Fri, 18 May 2018 02:10:02 -0700
+In-Reply-To: <20180518084203.n2etqcigvwxzcanv@pathway.suse.cz>
+References: <cover.1525964381.git.joe@perches.com>
+         <deb55d864f0bf266e019a74456612db36f8921a9.1525964383.git.joe@perches.com>
+         <20180518084203.n2etqcigvwxzcanv@pathway.suse.cz>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the patches have been tested on ipq4019 dk01, 04, 07 and ipq8074 hk01
-boards for spi, bam, qup, qpic, spi-nor, serial, pci.
+On Fri, 2018-05-18 at 10:42 +0200, Petr Mladek wrote:
+> On Thu 2018-05-10 08:45:29, Joe Perches wrote:
+> > There are more than 1000 uses of #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > Make that the default define so these uses can be removed later via script.
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> 
+> It removes a lot of duplicates. I just hope that we will not need to
+> add the same amount of defines to remove/change the prefix where the
+> new default would look ugly.
 
-[V7]
-    * Fixed Kbuild git bisectability issue
+I expect there will be far far fewer additions,
+perhaps a few dozen, than the about 1200 removals.  
 
-[V6]
-    * Fixed Bjorn's comments, added his acks that he gave, added Varada's acks
-    * Rebased on top of Andy's for-next branch.
+> I am not completely convinced that it is worth it. But it makes some
+> sense. Feel free to use:
+> 
+> Acked-by: Petr Mladek <pmladek@suse.com>
+> 
+> 
+> BTW: I tried the entire patchset and there are still many locations
+> even in the boot log that might need an update:
 
-[v5]
-    * Fixed a minor comment that i missed earlier.
-    * https://www.spinics.net/lists/arm-kernel/msg643071.html
+Thanks.
 
-[v4]
-    * Fixed more comments.
-    * Dropped reserved-memory nodes from board files as
-      that might break existing users whose u-boot do not
-      specify the fdt_high accordingly.
-    * Added chosen serial node for all boards to have
-      the default serial console specified from DT.
+> [    0.000000] generic: MTRR default type: write-back
 
-[v3]
-    * Fixed minor comments from v2,
-      https://www.spinics.net/lists/arm-kernel/msg641480.html
+generic might be removed.
 
-    * Added Abhishek's review tags
+> [    0.000000] libftrace: ftrace: allocating 40753 entries in 160 pages
+> [    0.004008] apic: APIC: Switch to symmetric I/O mode setup
 
-[v2]
-    * Addressed all comments from Abhishek
-    * Removed dk01-c2 and dk04-c5 spinand based boards
-      as support for spinand is not complete
-    * Based all patches on top of Andy's for-next branch
+I believe the uppercase APIC: bit should be removed.
 
-[V1]
-    * https://www.spinics.net/lists/arm-kernel/msg631318.html
+> [    0.796479] workingset: workingset: timestamp_bits=36 max_order=20 bucket_order=0
 
-Sricharan R (12):
-  ARM: dts: ipq4019: Add a default chosen node
-  ARM: dts: ipq4019: Add a few peripheral nodes
-  ARM: dts: ipq4019: Change the max opp frequency
-  ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-  ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3 board file
-  ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c1 board file
-  ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
-  ARM: dts: ipq8074: Add peripheral nodes
-  ARM: dts: ipq8074: Add pcie nodes
-  ARM: dts: ipq8074: Enable few peripherals for hk01 board
+and I will submit patches for these other duplicates.
 
- arch/arm/boot/dts/Makefile                      |   4 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi   |  10 +-
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts |  19 ++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts |   9 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi   | 111 +++++++++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts |  64 +++++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts |  25 ++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi   |  75 ++++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi             | 162 ++++++++++--
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts       |  62 ++++-
- arch/arm64/boot/dts/qcom/ipq8074.dtsi           | 313 +++++++++++++++++++++++-
- 11 files changed, 827 insertions(+), 27 deletions(-)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+> [    1.044458] ipmi_si: ipmi_si: Unable to find any System Interface(s)
+> [    1.046489] ioatdma: ioatdma: Intel(R) QuickData Technology Driver 4.00
+> [    1.076080] ppdev: ppdev: user-space parallel port driver
+> [    1.484645] ehci_pci: ehci-pci: EHCI PCI platform driver
+> [    1.544643] parport: parport0: cannot grant exclusive access for device pps_parport
+> [    1.556821] usbcore: usbcore: registered new interface driver usbhid
+> [    1.558001] usbhid: usbhid: USB HID core driver
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+cheers, Joe
