@@ -1,179 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752383AbeERK0H (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:26:07 -0400
-Received: from mga03.intel.com ([134.134.136.65]:37967 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeERK0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:26:06 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,414,1520924400";
-   d="scan'208";a="56403566"
-Date: Fri, 18 May 2018 18:25:04 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [tip:x86/asm 2/2] drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:
- sparse: incorrect type in argument 1 (different base types)
-Message-ID: <201805181855.m2NfiYNc%fengguang.wu@intel.com>
+        id S1752306AbeERK3D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:29:03 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:52222 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751665AbeERK3C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 06:29:02 -0400
+X-Google-Smtp-Source: AB8JxZrDgD6aiKvdgfO/88nrGnUW7Iy8i0hoSbLPVy08IG86DICI682kI1nskhZPyRVy6rJ0EY3ENoQVSgSJNdBxN1arVMhFYrmw
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Date: Fri, 18 May 2018 03:29:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ab6f84056c786b93@google.com>
+Subject: WARNING in tracepoint_probe_register_prio (3)
+From: syzbot <syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
-head:   6469a0ee0a06b2ea1f5afbb1d5a3feed017d4c7a
-commit: 6469a0ee0a06b2ea1f5afbb1d5a3feed017d4c7a [2/2] x86/io: Define readq()/writeq() to use 64-bit type
-reproduce:
-        # apt-get install sparse
-        git checkout 6469a0ee0a06b2ea1f5afbb1d5a3feed017d4c7a
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+Hello,
 
+syzbot found the following crash on:
 
-sparse warnings: (new ones prefixed by >>)
+HEAD commit:    a78622932c27 bpf: sockmap, fix double-free
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1305ba77800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=774fddf07b7ab29a1e55
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-   drivers/scsi/mpt3sas/mpt3sas_base.c:397:17: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:403:34: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:414:53: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long long [unsigned] [usertype] chain_buffer_dma @@    got g long [unsigned] [usertype] chain_buffer_dma @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:414:53:    expected unsigned long long [unsigned] [usertype] chain_buffer_dma
-   drivers/scsi/mpt3sas/mpt3sas_base.c:414:53:    got restricted __le32 [usertype] Address
-   drivers/scsi/mpt3sas/mpt3sas_base.c:429:39: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 [usertype] Address @@    got unsignrestricted __le32 [usertype] Address @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:429:39:    expected restricted __le32 [usertype] Address
-   drivers/scsi/mpt3sas/mpt3sas_base.c:429:39:    got unsigned int [unsigned] [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:438:50: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:443:55: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 [usertype] Address @@    got unsignrestricted __le32 [usertype] Address @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:443:55:    expected restricted __le32 [usertype] Address
-   drivers/scsi/mpt3sas/mpt3sas_base.c:443:55:    got unsigned int [unsigned] [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:447:50: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:448:55: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 [usertype] Address @@    got unsignrestricted __le32 [usertype] Address @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:448:55:    expected restricted __le32 [usertype] Address
-   drivers/scsi/mpt3sas/mpt3sas_base.c:448:55:    got unsigned int [unsigned] [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:451:42: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:452:47: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:453:34: sparse: restricted __le32 degrades to integer
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1217:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] Event @@    got  short [unsigned] [usertype] Event @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1217:42:    expected unsigned short [unsigned] [usertype] Event
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1217:42:    got restricted __le16 [usertype] Event
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1218:49: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] EventContext @@    got ed int [unsigned] [usertype] EventContext @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1218:49:    expected unsigned int [unsigned] [usertype] EventContext
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1218:49:    got restricted __le32 [usertype] EventContext
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1436:49: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned int [unsigned] [usertype] reply @@    got ed int [unsigned] [usertype] reply @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1436:49:    expected unsigned int [unsigned] [usertype] reply
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1436:49:    got restricted __le32 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1462:64: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got oid volatile [noderef] <asn:2>*addr @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1462:64:    expected void volatile [noderef] <asn:2>*addr
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1462:64:    got unsigned long long [usertype] *<noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1511:52: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got oid volatile [noderef] <asn:2>*addr @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1511:52:    expected void volatile [noderef] <asn:2>*addr
-   drivers/scsi/mpt3sas/mpt3sas_base.c:1511:52:    got unsigned long long [usertype] *<noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2004:24: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2762:44: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2762:44: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2841:34: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2841:34: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2854:42: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:2854:42: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3047:32: sparse: cast removes address space of expression
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3392:26: sparse: cast removes address space of expression
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26: sparse: incorrect type in initializer (different base types) @@    expected unsigned long long [unsigned] [usertype] data_out @@    got g long [unsigned] [usertype] data_out @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    expected unsigned long long [unsigned] [usertype] data_out
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    got restricted __le64 [usertype] <noident>
->> drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long long [unsigned] [usertype] val @@    got g long [unsigned] [usertype] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    expected unsigned long long [unsigned] [usertype] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    got restricted __le64 [usertype] <noident>
->> drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long long [unsigned] [usertype] val @@    got g long [unsigned] [usertype] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    expected unsigned long long [unsigned] [usertype] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    got restricted __le64 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3476:34: sparse: cast removes address space of expression
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26: sparse: incorrect type in initializer (different base types) @@    expected unsigned long long [unsigned] [usertype] data_out @@    got g long [unsigned] [usertype] data_out @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    expected unsigned long long [unsigned] [usertype] data_out
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    got restricted __le64 [usertype] <noident>
->> drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long long [unsigned] [usertype] val @@    got g long [unsigned] [usertype] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    expected unsigned long long [unsigned] [usertype] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    got restricted __le64 [usertype] <noident>
->> drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long long [unsigned] [usertype] val @@    got g long [unsigned] [usertype] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    expected unsigned long long [unsigned] [usertype] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    got restricted __le64 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3545:34: sparse: cast removes address space of expression
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26: sparse: incorrect type in initializer (different base types) @@    expected unsigned long long [unsigned] [usertype] data_out @@    got g long [unsigned] [usertype] data_out @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    expected unsigned long long [unsigned] [usertype] data_out
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3342:26:    got restricted __le64 [usertype] <noident>
->> drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long long [unsigned] [usertype] val @@    got g long [unsigned] [usertype] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    expected unsigned long long [unsigned] [usertype] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:3365:16:    got restricted __le64 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4232:32: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4241:40: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4251:31: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4251:31: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4267:38: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4267:38: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4272:38: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4272:38: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4275:38: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4304:20: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4304:20: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4325:44: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4325:44: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:4491:28: sparse: expression using sizeof(void)
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5005:24: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] val @@    got restrunsigned int [unsigned] val @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5005:24:    expected unsigned int [unsigned] val
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5005:24:    got restricted __le32 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5026:20: sparse: cast to restricted __le16
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5035:20: sparse: cast to restricted __le16
-   drivers/scsi/mpt3sas/mpt3sas_base.c:5049:36: sparse: cast to restricted __le16
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6175:42: sparse: cast to restricted __le32
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6175:42: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned int [unsigned] [usertype] reply @@    got ed int [unsigned] [usertype] reply @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6175:42:    expected unsigned int [unsigned] [usertype] reply
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6175:42:    got restricted __le32 [usertype] <noident>
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6220:55: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got oid volatile [noderef] <asn:2>*addr @@
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6220:55:    expected void volatile [noderef] <asn:2>*addr
-   drivers/scsi/mpt3sas/mpt3sas_base.c:6220:55:    got unsigned long long [usertype] *<noident>
+Unfortunately, I don't have any reproducer for this crash yet.
 
-vim +3365 drivers/scsi/mpt3sas/mpt3sas_base.c
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com
 
-e5747439 Suganath Prabu Subramani 2018-02-07  3349  
-e5747439 Suganath Prabu Subramani 2018-02-07  3350  /**
-f92363d1 Sreekanth Reddy          2012-11-30  3351   * _base_writeq - 64 bit write to MMIO
-f92363d1 Sreekanth Reddy          2012-11-30  3352   * @ioc: per adapter object
-f92363d1 Sreekanth Reddy          2012-11-30  3353   * @b: data payload
-f92363d1 Sreekanth Reddy          2012-11-30  3354   * @addr: address in MMIO space
-f92363d1 Sreekanth Reddy          2012-11-30  3355   * @writeq_lock: spin lock
-f92363d1 Sreekanth Reddy          2012-11-30  3356   *
-f92363d1 Sreekanth Reddy          2012-11-30  3357   * Glue for handling an atomic 64 bit word to MMIO. This special handling takes
-f92363d1 Sreekanth Reddy          2012-11-30  3358   * care of 32 bit environment where its not quarenteed to send the entire word
-f92363d1 Sreekanth Reddy          2012-11-30  3359   * in one transfer.
-f92363d1 Sreekanth Reddy          2012-11-30  3360   */
-f92363d1 Sreekanth Reddy          2012-11-30  3361  #if defined(writeq) && defined(CONFIG_64BIT)
-f92363d1 Sreekanth Reddy          2012-11-30  3362  static inline void
-f92363d1 Sreekanth Reddy          2012-11-30  3363  _base_writeq(__u64 b, volatile void __iomem *addr, spinlock_t *writeq_lock)
-f92363d1 Sreekanth Reddy          2012-11-30  3364  {
-f92363d1 Sreekanth Reddy          2012-11-30 @3365  	writeq(cpu_to_le64(b), addr);
-f92363d1 Sreekanth Reddy          2012-11-30  3366  }
-f92363d1 Sreekanth Reddy          2012-11-30  3367  #else
-f92363d1 Sreekanth Reddy          2012-11-30  3368  static inline void
-f92363d1 Sreekanth Reddy          2012-11-30  3369  _base_writeq(__u64 b, volatile void __iomem *addr, spinlock_t *writeq_lock)
-f92363d1 Sreekanth Reddy          2012-11-30  3370  {
-e5747439 Suganath Prabu Subramani 2018-02-07  3371  	_base_mpi_ep_writeq(b, addr, writeq_lock);
-f92363d1 Sreekanth Reddy          2012-11-30  3372  }
-f92363d1 Sreekanth Reddy          2012-11-30  3373  #endif
-f92363d1 Sreekanth Reddy          2012-11-30  3374  
+WARNING: CPU: 0 PID: 11734 at kernel/tracepoint.c:210 tracepoint_add_func  
+kernel/tracepoint.c:210 [inline]
+WARNING: CPU: 0 PID: 11734 at kernel/tracepoint.c:210  
+tracepoint_probe_register_prio+0x3b4/0xa50 kernel/tracepoint.c:282
+Kernel panic - not syncing: panic_on_warn set ...
 
-:::::: The code at line 3365 was first introduced by commit
-:::::: f92363d12359498f9a9960511de1a550f0ec41c2 [SCSI] mpt3sas: add new driver supporting 12GB SAS
+CPU: 0 PID: 11734 Comm: syz-executor1 Not tainted 4.17.0-rc4+ #13
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:tracepoint_add_func kernel/tracepoint.c:210 [inline]
+RIP: 0010:tracepoint_probe_register_prio+0x3b4/0xa50 kernel/tracepoint.c:282
+RSP: 0018:ffff8801c7977438 EFLAGS: 00010216
+RAX: 0000000000040000 RBX: ffff8801c7977518 RCX: ffffc900080f9000
+RDX: 00000000000012a1 RSI: ffffffff817a9d34 RDI: ffff8801c29ddab0
+RBP: ffff8801c7977540 R08: ffff880197448700 R09: fffffbfff11b803c
+R10: ffff8801c7977428 R11: ffffffff88dc01e7 R12: 00000000ffffffef
+R13: 00000000ffffffff R14: ffffffff81516c90 R15: 0000000000000001
+  tracepoint_probe_register+0x2a/0x40 kernel/tracepoint.c:303
+  trace_event_reg+0x19a/0x350 kernel/trace/trace_events.c:305
+  perf_trace_event_reg kernel/trace/trace_event_perf.c:123 [inline]
+  perf_trace_event_init+0x4fe/0x990 kernel/trace/trace_event_perf.c:198
+  perf_trace_init+0x186/0x250 kernel/trace/trace_event_perf.c:222
+  perf_tp_event_init+0xa6/0x120 kernel/events/core.c:8337
+  perf_try_init_event+0x137/0x2f0 kernel/events/core.c:9734
+  perf_init_event kernel/events/core.c:9772 [inline]
+  perf_event_alloc.part.91+0x1248/0x3090 kernel/events/core.c:10038
+  perf_event_alloc kernel/events/core.c:10394 [inline]
+  __do_sys_perf_event_open+0xa8a/0x2fa0 kernel/events/core.c:10495
+  __se_sys_perf_event_open kernel/events/core.c:10384 [inline]
+  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10384
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a09
+RSP: 002b:00007f136b4f5c68 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
+RAX: ffffffffffffffda RBX: 00007f136b4f66d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000002001d000
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffffffffffff R11: 0000000000000246 R12: 0000000000000014
+R13: 000000000000050c R14: 00000000006fb9c0 R15: 0000000000000003
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-:::::: TO: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>
-:::::: CC: James Bottomley <JBottomley@Parallels.com>
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
