@@ -1,47 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeERQbd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:31:33 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:58628 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750882AbeERQb3 (ORCPT
+        id S1752002AbeERQd3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:33:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39550 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751221AbeERQd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:31:29 -0400
-From: Vlad Buslov <vladbu@mellanox.com>
-To: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org, davem@davemloft.net, lucasb@mojatatu.com,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, chrism@mellanox.com,
-        linux-kernel@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>
-Subject: [PATCH] tc-testing: fix ip address in u32 test
-Date: Fri, 18 May 2018 19:31:06 +0300
-Message-Id: <1526661066-11138-1-git-send-email-vladbu@mellanox.com>
-X-Mailer: git-send-email 2.7.5
+        Fri, 18 May 2018 12:33:26 -0400
+X-Google-Smtp-Source: AB8JxZrTlRggoJFbxMfav63QxqQz+Rrhj2mjmUdnQdg/oStVy17eVWc3KY7yzwR+b4JpUBWryvK9dA==
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>
+References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+ <b3970608-95dd-3d4f-140c-3d7cbd12cf8d@kernel.dk>
+ <20180518162314.GC25227@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <8fcb7b62-d3ac-54b6-3cb7-45864cafe2b1@kernel.dk>
+Date: Fri, 18 May 2018 10:33:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180518162314.GC25227@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix expected ip address to actually match configured ip address.
-Fix test to expect single matched filter.
+On 5/18/18 10:23 AM, Christoph Hellwig wrote:
+> On Fri, May 11, 2018 at 03:13:38PM -0600, Jens Axboe wrote:
+>> Looked over the series, and looks like both good cleanups and optimizations.
+>> If we can get the mempool patch sorted, I can apply this for 4.18.
+> 
+> FYI, I agree on the actual cleanups and optimization, but we really
+> shouldn't add new functions or even just exports without the code
+> using them.  I think it is enough if we can collect ACKs on them, but
+> there is no point in using them.  Especially as I'd really like to see
+> the users for some of them first.
 
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
----
- tools/testing/selftests/tc-testing/tc-tests/filters/tests.json | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I certainly agree on that in general, but at the same time it makes the
+expected submission of bcachefs not having to carry a number of
+(essentially) unrelated patches. I'm assuming the likelihood of bcachefs
+being submitted soonish is high, hence we won't have exports that don't
+have in-kernel users in the longer term.
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/tests.json b/tools/testing/selftests/tc-testing/tc-tests/filters/tests.json
-index 5fa02d8..99a5ffc 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/tests.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/tests.json
-@@ -12,8 +12,8 @@
-         "cmdUnderTest": "$TC filter add dev $DEV1 parent ffff: protocol ip prio 1 u32 match ip src 127.0.0.1/32 flowid 1:1 action ok",
-         "expExitCode": "0",
-         "verifyCmd": "$TC filter show dev $DEV1 parent ffff:",
--        "matchPattern": "match 7f000002/ffffffff at 12",
--        "matchCount": "0",
-+        "matchPattern": "match 7f000001/ffffffff at 12",
-+        "matchCount": "1",
-         "teardown": [
-             "$TC qdisc del dev $DEV1 ingress"
-         ]
 -- 
-2.7.5
+Jens Axboe
