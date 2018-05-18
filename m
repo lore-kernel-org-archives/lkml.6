@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3702976-1526635468-2-8039397464746893779
+X-Cyrus-Session-Id: sloti22d1t05-3702976-1526635282-2-1338212042945833446
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,23 +7,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526635467; b=iasxrkRT14/ThSqxA5bGceYXt2ZHsNY4QBnkzEc2KnrqEZotIa
-    huiPaOVdtvKo5i1+QaPbzruqFKmJFj+xr28NmdL5d2GP7ycfivSq/OfH6FfyHDFC
-    yB4lj0k5NDOCE541wbOaT6zg8a69iVdfL6ZTGMMH01hs1gFw0A+h1j3W96lZCtEN
-    K8Eg5yn8fvWsdN+RkKpnjph9DCfQts32fhCGtcMZpUrBGxdoyXDoYqhGTuC6Y3qP
-    IuqHv7zOUWAqsaaikzvgTzs9S2DJpjSuuz0Dher5s/Nx3Fs5jjTo0YQ1RgOo6XIM
-    xzzVSoeUIC7fZMau//RFG7k126t0X+OpGVng==
+    1526635281; b=UPdJSiqYsC0BwmhzORjsKzSFBt1oM68KR0bakVqjG57LvP/MOh
+    R55qlhdWETrS/4h3dwLbNyjHSe99cXHMv5mirY0HhCHIlsSFy9LOgJ8t5Q9GwuH+
+    x5RlfVPMsqZzQy3Jm02nST6WHdfrLYf4SZ1SPWji9s9KA1i6H9035/ekV1CMeLNS
+    4lwWgFn6+y1W/13Km07JKBGsF+5a3CrXsnA3Lgd3qw9SSvPDHooDnUsMIzE/9Fub
+    mLmYHQZlnJcWk78kEYYxXYYBV0ZDZTrHvJ7xoUO3t3EC95UFBa1BLIa/SF2bNQho
+    W0EvwD6nYLgf956NnZWrue3ft8k7zyfL8ZpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526635467; bh=
-    wAnRynTQ/kGiZLsPnL1gljRtHeoAPWQsVNQt5FRLKsg=; b=J+57k2Ws4gStAr3z
-    636IQLaCDQSvf8X2GZe6JDGy9KKdO5Vu871fkuspG/LpGxHCS2EftRbKDqe5Wtrk
-    +XOQzjPSMTxwACh5Brt51QloLMxU0K+wF4f1sGUEw14JPgE5YsLr36BjXRa1vxz3
-    rw9x4iLM7CgGi+UbFdE+BjAnwKcmDzf8Ogr8ea0tfXe3fTcCP/8e3eexiF9gflKC
-    SNK8FW1266KkrAbA8ovW1yf/xwtB9B5aeOgc5Y4uAZ4y40rO6BPYZNZRyq2Xrvdt
-    BJqU4/2dJhLmNxstYG6HO2YIIxsw0SZtHJOuqmFgKgWlgSh6ngPox8AHo3cnhOaE
-    n1GeXg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526635281; bh=
+    /asaFF07zDJOv4+7RFa3q2WXKBUT532YnxRdTestJ3E=; b=Xdz/PmuHTCcSbIsL
+    lM2d9uIxXpes261942SOO4Rj5fCU9MzJKoijFMLVrG0xqzJ6nsDXTaXjHUQBMS0v
+    7Oq5tND8tlVLA1/Ep7mu23F3otsnSQiLLdqcvcmiHBd7pR/iy6cgWHBkbundFGiI
+    K+9GhFRbFjIvtMUlCi+S8+4di6j+FGcO6PYU3VP8UPHLb9JUp7sy9zsUB4MPt5KR
+    kSYsRBtFbTIl2vQpl5Hjm9qRNrq0pDY8D5IDNbZW5Ks9hYGBQ5eDz6pMliNVPUbm
+    ELJXcW9E77QV2lX0HwOraQz0Xh/Wjjkjy2/1ALTRb5qamjx+uzoyFWyB7CcABNS7
+    yS84fQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -36,7 +36,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
@@ -51,37 +51,34 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMNuuk39MDKk62tReKSXS2vN6dxExWLkdseU9G4FKhldKcu+4QXV/8c4vbxmrWXrGymOnDxTMHtUTXEWS0bvCbiA5DDQbTQoD/IMleiNfYxUVzjrJvpY
-    CSCnsnhYAHcQSj6yQJSaiVLpMf5+dVgnQIar4YGQ08pHyMs2O/xjdN94SxtXoaxy3aGIKcWdvYyTItLlj4XjCUkV3utV+qDdG085SauD7AjwUh6Yk2jTzKjd
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=FNyBlpCuAAAA:8
-    a=J1Y8HTJGAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=VwQbUJbxAAAA:8
-    a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=cWRNjhkoAAAA:8 a=bD6g2wtbrv6IN7KrHosA:9
-    a=RlW-AWeGUCXs_Nkyno-6:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=NdAtdrkLVvyUPsUoGJp4:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=sVa6W5Aao32NNC1mekxh:22
+X-CM-Envelope: MS4wfK8hCtq1wRrXPSid3S5PuZyWhLxF387sC38uuaw/M7geAmtaSijf1PLTJhxb7UmlyKTL60hcERcIjoqyhwAldVy4YJ1T2bCvN6hhkBuhPtk/dPB+/WYk
+    HcycFAFmRcg2in5kpC9X6unSmeESiGO1XOif4FZZ/zEGHuoABhhkQV9is6TNGzGZD3E4ka3NIcgLxrAEsSzXo9JiXd2v6EiBNC43G68qES12b4A7kN9Ft8yH
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=oGMlB6cnAAAA:8
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=CxaZg77CAAAA:8 a=KKAkSRfTAAAA:8
+    a=cWRNjhkoAAAA:8 a=CpPLYx7oX9gRnv8IMmQA:9 a=NdAtdrkLVvyUPsUoGJp4:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=HxQw6O0h_v37Y3_G5fB_:22 a=cvBusfyB2V15izCimMoJ:22
+    a=sVa6W5Aao32NNC1mekxh:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeERJYY (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 05:24:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45430 "EHLO mx2.suse.de"
+        id S1752836AbeERJVS (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 05:21:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45405 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753016AbeERJRi (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Fri, 18 May 2018 05:17:38 -0400
+        id S1752792AbeERJRq (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:46 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-crypto@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH v6 09/28] x86/asm: annotate aliases
-Date: Fri, 18 May 2018 11:17:02 +0200
-Message-Id: <20180518091721.7604-10-jslaby@suse.cz>
+        Jiri Slaby <jslaby@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: [PATCH v6 20/28] x86/asm: make some functions local
+Date: Fri, 18 May 2018 11:17:13 +0200
+Message-Id: <20180518091721.7604-21-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
 References: <20180518091721.7604-1-jslaby@suse.cz>
@@ -91,141 +88,329 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-_key_expansion_128 is an alias to _key_expansion_256a, __memcpy to
-memcpy, xen_syscall32_target to xen_sysenter_target, and so on. Annotate
-them all using the new SYM_FUNC_START_ALIAS, SYM_FUNC_START_LOCAL_ALIAS,
-and SYM_FUNC_END_ALIAS. This will make the tools generating the
-debuginfo happy.
+There is a couple of assembly functions, which are invoked only locally
+in the file they are defined. In C, we mark them "static". In assembly,
+annotate them using SYM_{FUNC,CODE}_START_LOCAL (and switch their
+ENDPROC to SYM_{FUNC,CODE}_END too). Whether we use FUNC or CODE,
+depends on whether ENDPROC or END was used for a particular function
+before.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Reviewed-by: Juergen Gross <jgross@suse.com> [xen parts]
-Cc: <linux-crypto@vger.kernel.org>
-Cc: <xen-devel@lists.xenproject.org>
+Cc: x86@kernel.org
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
 ---
- arch/x86/crypto/aesni-intel_asm.S | 5 ++---
- arch/x86/lib/memcpy_64.S          | 4 ++--
- arch/x86/lib/memmove_64.S         | 4 ++--
- arch/x86/lib/memset_64.S          | 4 ++--
- arch/x86/xen/xen-asm_64.S         | 4 ++--
- 5 files changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/boot/compressed/efi_thunk_64.S |  8 ++++----
+ arch/x86/entry/entry_64.S               | 21 +++++++++++----------
+ arch/x86/lib/copy_page_64.S             |  4 ++--
+ arch/x86/lib/memcpy_64.S                | 12 ++++++------
+ arch/x86/lib/memset_64.S                |  8 ++++----
+ arch/x86/platform/efi/efi_thunk_64.S    | 12 ++++++------
+ arch/x86/xen/xen-pvh.S                  |  4 ++--
+ 7 files changed, 35 insertions(+), 34 deletions(-)
 
-diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
-index b482ac1a1fb3..c85ecb163c78 100644
---- a/arch/x86/crypto/aesni-intel_asm.S
-+++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -1761,8 +1761,7 @@ ENDPROC(aesni_gcm_finalize)
- #endif
- 
- 
--.align 4
--_key_expansion_128:
-+SYM_FUNC_START_LOCAL_ALIAS(_key_expansion_128)
- SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	pshufd $0b11111111, %xmm1, %xmm1
- 	shufps $0b00010000, %xmm0, %xmm4
-@@ -1773,8 +1772,8 @@ SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	movaps %xmm0, (TKEYP)
- 	add $0x10, TKEYP
+diff --git a/arch/x86/boot/compressed/efi_thunk_64.S b/arch/x86/boot/compressed/efi_thunk_64.S
+index d66000d23921..31312070db22 100644
+--- a/arch/x86/boot/compressed/efi_thunk_64.S
++++ b/arch/x86/boot/compressed/efi_thunk_64.S
+@@ -99,12 +99,12 @@ ENTRY(efi64_thunk)
  	ret
--ENDPROC(_key_expansion_128)
- SYM_FUNC_END(_key_expansion_256a)
-+SYM_FUNC_END_ALIAS(_key_expansion_128)
+ ENDPROC(efi64_thunk)
  
- SYM_FUNC_START_LOCAL(_key_expansion_192a)
- 	pshufd $0b01010101, %xmm1, %xmm1
+-ENTRY(efi_exit32)
++SYM_FUNC_START_LOCAL(efi_exit32)
+ 	movq	func_rt_ptr(%rip), %rax
+ 	push	%rax
+ 	mov	%rdi, %rax
+ 	ret
+-ENDPROC(efi_exit32)
++SYM_FUNC_END(efi_exit32)
+ 
+ 	.code32
+ /*
+@@ -112,7 +112,7 @@ ENDPROC(efi_exit32)
+  *
+  * The stack should represent the 32-bit calling convention.
+  */
+-ENTRY(efi_enter32)
++SYM_FUNC_START_LOCAL(efi_enter32)
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %es
+@@ -172,7 +172,7 @@ ENTRY(efi_enter32)
+ 	btsl	$X86_CR0_PG_BIT, %eax
+ 	movl	%eax, %cr0
+ 	lret
+-ENDPROC(efi_enter32)
++SYM_FUNC_END(efi_enter32)
+ 
+ 	.data
+ 	.balign	8
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index d55228508e80..d2e2de100b16 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1068,7 +1068,8 @@ idtentry hypervisor_callback xen_do_hypervisor_callback has_error_code=0
+  * existing activation in its critical region -- if so, we pop the current
+  * activation and restart the handler using the previous one.
+  */
+-ENTRY(xen_do_hypervisor_callback)		/* do_hypervisor_callback(struct *pt_regs) */
++/* do_hypervisor_callback(struct *pt_regs) */
++SYM_CODE_START_LOCAL(xen_do_hypervisor_callback)
+ 
+ /*
+  * Since we don't modify %rdi, evtchn_do_upall(struct *pt_regs) will
+@@ -1086,7 +1087,7 @@ ENTRY(xen_do_hypervisor_callback)		/* do_hypervisor_callback(struct *pt_regs) */
+ 	call	xen_maybe_preempt_hcall
+ #endif
+ 	jmp	error_exit
+-END(xen_do_hypervisor_callback)
++SYM_CODE_END(xen_do_hypervisor_callback)
+ 
+ /*
+  * Hypervisor uses this for application faults while it executes.
+@@ -1175,7 +1176,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+  * Use slow, but surefire "are we in kernel?" check.
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+-ENTRY(paranoid_entry)
++SYM_CODE_START_LOCAL(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+@@ -1192,7 +1193,7 @@ ENTRY(paranoid_entry)
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+-END(paranoid_entry)
++SYM_CODE_END(paranoid_entry)
+ 
+ /*
+  * "Paranoid" exit path from exception stack.  This is invoked
+@@ -1206,7 +1207,7 @@ END(paranoid_entry)
+  *
+  * On entry, ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
+  */
+-ENTRY(paranoid_exit)
++SYM_CODE_START_LOCAL(paranoid_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF_DEBUG
+@@ -1221,13 +1222,13 @@ ENTRY(paranoid_exit)
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ .Lparanoid_exit_restore:
+ 	jmp restore_regs_and_return_to_kernel
+-END(paranoid_exit)
++SYM_CODE_END(paranoid_exit)
+ 
+ /*
+  * Save all registers in pt_regs, and switch GS if needed.
+  * Return: EBX=0: came from user mode; EBX=1: otherwise
+  */
+-ENTRY(error_entry)
++SYM_CODE_START_LOCAL(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+@@ -1314,7 +1315,7 @@ ENTRY(error_entry)
+ 	mov	%rax, %rsp
+ 	decl	%ebx
+ 	jmp	.Lerror_entry_from_usermode_after_swapgs
+-END(error_entry)
++SYM_CODE_END(error_entry)
+ 
+ 
+ /*
+@@ -1322,14 +1323,14 @@ END(error_entry)
+  *   1: already in kernel mode, don't need SWAPGS
+  *   0: user gsbase is loaded, we need SWAPGS and standard preparation for return to usermode
+  */
+-ENTRY(error_exit)
++SYM_CODE_START_LOCAL(error_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF
+ 	testl	%ebx, %ebx
+ 	jnz	retint_kernel
+ 	jmp	retint_user
+-END(error_exit)
++SYM_CODE_END(error_exit)
+ 
+ /*
+  * Runs on exception stack.  Xen PV does not go through this path at all,
+diff --git a/arch/x86/lib/copy_page_64.S b/arch/x86/lib/copy_page_64.S
+index fd2d09afa097..f505870bd93b 100644
+--- a/arch/x86/lib/copy_page_64.S
++++ b/arch/x86/lib/copy_page_64.S
+@@ -21,7 +21,7 @@ ENTRY(copy_page)
+ ENDPROC(copy_page)
+ EXPORT_SYMBOL(copy_page)
+ 
+-ENTRY(copy_page_regs)
++SYM_FUNC_START_LOCAL(copy_page_regs)
+ 	subq	$2*8,	%rsp
+ 	movq	%rbx,	(%rsp)
+ 	movq	%r12,	1*8(%rsp)
+@@ -86,4 +86,4 @@ ENTRY(copy_page_regs)
+ 	movq	1*8(%rsp), %r12
+ 	addq	$2*8, %rsp
+ 	ret
+-ENDPROC(copy_page_regs)
++SYM_FUNC_END(copy_page_regs)
 diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 9a53a06e5a3e..4911b1c61aa8 100644
+index 4911b1c61aa8..728703c47d58 100644
 --- a/arch/x86/lib/memcpy_64.S
 +++ b/arch/x86/lib/memcpy_64.S
-@@ -26,7 +26,7 @@
-  * Output:
+@@ -27,7 +27,7 @@
   * rax original destination
   */
--ENTRY(__memcpy)
-+SYM_FUNC_START_ALIAS(__memcpy)
- ENTRY(memcpy)
+ SYM_FUNC_START_ALIAS(__memcpy)
+-ENTRY(memcpy)
++SYM_FUNC_START_LOCAL(memcpy)
  	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
  		      "jmp memcpy_erms", X86_FEATURE_ERMS
-@@ -40,7 +40,7 @@ ENTRY(memcpy)
+ 
+@@ -39,7 +39,7 @@ ENTRY(memcpy)
+ 	movl %edx, %ecx
  	rep movsb
  	ret
- ENDPROC(memcpy)
--ENDPROC(__memcpy)
-+SYM_FUNC_END_ALIAS(__memcpy)
+-ENDPROC(memcpy)
++SYM_FUNC_END(memcpy)
+ SYM_FUNC_END_ALIAS(__memcpy)
  EXPORT_SYMBOL(memcpy)
  EXPORT_SYMBOL(__memcpy)
- 
-diff --git a/arch/x86/lib/memmove_64.S b/arch/x86/lib/memmove_64.S
-index bbec69d8223b..50c1648311b3 100644
---- a/arch/x86/lib/memmove_64.S
-+++ b/arch/x86/lib/memmove_64.S
-@@ -26,7 +26,7 @@
+@@ -48,14 +48,14 @@ EXPORT_SYMBOL(__memcpy)
+  * memcpy_erms() - enhanced fast string memcpy. This is faster and
+  * simpler than memcpy. Use memcpy_erms when possible.
   */
- .weak memmove
+-ENTRY(memcpy_erms)
++SYM_FUNC_START_LOCAL(memcpy_erms)
+ 	movq %rdi, %rax
+ 	movq %rdx, %rcx
+ 	rep movsb
+ 	ret
+-ENDPROC(memcpy_erms)
++SYM_FUNC_END(memcpy_erms)
  
--ENTRY(memmove)
-+SYM_FUNC_START_ALIAS(memmove)
- ENTRY(__memmove)
+-ENTRY(memcpy_orig)
++SYM_FUNC_START_LOCAL(memcpy_orig)
+ 	movq %rdi, %rax
  
- 	/* Handle more 32 bytes in loop */
-@@ -208,6 +208,6 @@ ENTRY(__memmove)
- 13:
+ 	cmpq $0x20, %rdx
+@@ -180,7 +180,7 @@ ENTRY(memcpy_orig)
+ 
+ .Lend:
  	retq
- ENDPROC(__memmove)
--ENDPROC(memmove)
-+SYM_FUNC_END_ALIAS(memmove)
- EXPORT_SYMBOL(__memmove)
- EXPORT_SYMBOL(memmove)
+-ENDPROC(memcpy_orig)
++SYM_FUNC_END(memcpy_orig)
+ 
+ #ifndef CONFIG_UML
+ /*
 diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
-index 9bc861c71e75..927ac44d34aa 100644
+index 927ac44d34aa..564abf9ecedb 100644
 --- a/arch/x86/lib/memset_64.S
 +++ b/arch/x86/lib/memset_64.S
-@@ -19,7 +19,7 @@
+@@ -59,16 +59,16 @@ EXPORT_SYMBOL(__memset)
   *
   * rax   original destination
   */
--ENTRY(memset)
-+SYM_FUNC_START_ALIAS(memset)
- ENTRY(__memset)
- 	/*
- 	 * Some CPUs support enhanced REP MOVSB/STOSB feature. It is recommended
-@@ -43,8 +43,8 @@ ENTRY(__memset)
+-ENTRY(memset_erms)
++SYM_FUNC_START_LOCAL(memset_erms)
+ 	movq %rdi,%r9
+ 	movb %sil,%al
+ 	movq %rdx,%rcx
  	rep stosb
  	movq %r9,%rax
  	ret
--ENDPROC(memset)
- ENDPROC(__memset)
-+SYM_FUNC_END_ALIAS(memset)
- EXPORT_SYMBOL(memset)
- EXPORT_SYMBOL(__memset)
+-ENDPROC(memset_erms)
++SYM_FUNC_END(memset_erms)
  
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index 417b339e5c8e..e8f6f482bb20 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -164,13 +164,13 @@ ENDPROC(xen_sysenter_target)
+-ENTRY(memset_orig)
++SYM_FUNC_START_LOCAL(memset_orig)
+ 	movq %rdi,%r10
  
- #else /* !CONFIG_IA32_EMULATION */
+ 	/* expand byte value  */
+@@ -139,4 +139,4 @@ ENTRY(memset_orig)
+ 	subq %r8,%rdx
+ 	jmp .Lafter_bad_alignment
+ .Lfinal:
+-ENDPROC(memset_orig)
++SYM_FUNC_END(memset_orig)
+diff --git a/arch/x86/platform/efi/efi_thunk_64.S b/arch/x86/platform/efi/efi_thunk_64.S
+index 46c58b08739c..d677a7eb2d0a 100644
+--- a/arch/x86/platform/efi/efi_thunk_64.S
++++ b/arch/x86/platform/efi/efi_thunk_64.S
+@@ -67,7 +67,7 @@ ENDPROC(efi64_thunk)
+  *
+  * This function must be invoked with a 1:1 mapped stack.
+  */
+-ENTRY(__efi64_thunk)
++SYM_FUNC_START_LOCAL(__efi64_thunk)
+ 	movl	%ds, %eax
+ 	push	%rax
+ 	movl	%es, %eax
+@@ -114,14 +114,14 @@ ENTRY(__efi64_thunk)
+ 	or	%rcx, %rax
+ 1:
+ 	ret
+-ENDPROC(__efi64_thunk)
++SYM_FUNC_END(__efi64_thunk)
  
--ENTRY(xen_syscall32_target)
-+SYM_FUNC_START_ALIAS(xen_syscall32_target)
- ENTRY(xen_sysenter_target)
- 	lea 16(%rsp), %rsp	/* strip %rcx, %r11 */
- 	mov $-ENOSYS, %rax
- 	pushq $0
- 	jmp hypercall_iret
--ENDPROC(xen_syscall32_target)
- ENDPROC(xen_sysenter_target)
-+SYM_FUNC_END_ALIAS(xen_syscall32_target)
+-ENTRY(efi_exit32)
++SYM_FUNC_START_LOCAL(efi_exit32)
+ 	movq	func_rt_ptr(%rip), %rax
+ 	push	%rax
+ 	mov	%rdi, %rax
+ 	ret
+-ENDPROC(efi_exit32)
++SYM_FUNC_END(efi_exit32)
  
- #endif	/* CONFIG_IA32_EMULATION */
+ 	.code32
+ /*
+@@ -129,7 +129,7 @@ ENDPROC(efi_exit32)
+  *
+  * The stack should represent the 32-bit calling convention.
+  */
+-ENTRY(efi_enter32)
++SYM_FUNC_START_LOCAL(efi_enter32)
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %es
+@@ -145,7 +145,7 @@ ENTRY(efi_enter32)
+ 	pushl	%eax
+ 
+ 	lret
+-ENDPROC(efi_enter32)
++SYM_FUNC_END(efi_enter32)
+ 
+ 	.data
+ 	.balign	8
+diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+index 52b28793a625..a20a55cc5135 100644
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -54,7 +54,7 @@
+  * charge of setting up it's own stack, GDT and IDT.
+  */
+ 
+-ENTRY(pvh_start_xen)
++SYM_CODE_START_LOCAL(pvh_start_xen)
+ 	cld
+ 
+ 	lgdt (_pa(gdt))
+@@ -133,7 +133,7 @@ ENTRY(pvh_start_xen)
+ 
+ 	ljmp $__BOOT_CS, $_pa(startup_32)
+ #endif
+-END(pvh_start_xen)
++SYM_CODE_END(pvh_start_xen)
+ 
+ 	.section ".init.data","aw"
+ 	.balign 8
 -- 
 2.16.3
