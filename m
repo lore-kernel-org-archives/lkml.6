@@ -1,58 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeERNpT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:45:19 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44892 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752204AbeERNpN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:45:13 -0400
-X-Google-Smtp-Source: AB8JxZqy1RF+PN5BBb7W13F0gUhuelDCP69mjPZO2ZowqdgVq5NMEm3t8qXoI2fKI62LbHL0v9Y96A==
-Date: Fri, 18 May 2018 14:45:10 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
-Subject: Re: [RESEND PATCH v5 0/7] mfd: cros_ec: add subdevices and fixes
-Message-ID: <20180518134510.GN5130@dell>
-References: <20180418102405.17790-1-enric.balletbo@collabora.com>
+        id S1752563AbeERNpe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:45:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:59615 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751914AbeERNpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:45:31 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: fbarrat@linux.vnet.ibm.com, felix@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        npiggin@gmail.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.17-6 tag
+Date: Fri, 18 May 2018 23:45:27 +1000
+Message-ID: <87efi9xeko.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180418102405.17790-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018, Enric Balletbo i Serra wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-> Hi,
-> 
-> This is the five version of a patchset that collects some patches
-> already send but that needed some rework due the patchset to split the
-> cros_ec_devs modules in 2 parts. This patchset contains some improvements
-> and also some fixes. They can be applied independently and I think that
-> all can go through the MFD tree.
-> 
-> Note: In this RESEND I removed the patch
-> 
-> [PATCH v5 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as a
->                subdevice
-> 
-> This patch needs some minor changes but actually I don't have the
-> hardware to test it. The other patches has no dependency on this one,
-> I'll send the above patch once I have the hardware to test again.
-> 
-> Best regards,
->  Enric
+Hi Linus,
 
-All applied, thanks.
+Please pull some more powerpc fixes for 4.17:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The following changes since commit 6c0a8f6b5a45ac892a763b6299bd3c5324fc5e02:
+
+  powerpc/pseries: Fix CONFIG_NUMA=n build (2018-05-08 14:59:56 +1000)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.17-6
+
+for you to fetch changes up to c1d2a31397ec51f0370f6bd17b19b39152c263cb:
+
+  powerpc/powernv: Fix NVRAM sleep in invalid context when crashing (2018-05-18 00:23:07 +1000)
+
+- ----------------------------------------------------------------
+powerpc fixes for 4.17 #6
+
+Just three commits.
+
+The two cxl ones are not fixes per se, but they modify code that was added this
+cycle so that it will work with a recent firmware change.
+
+And then a fix for a recent commit that added sleeps in the NVRAM code, which
+needs to be more careful and not sleep if eg. we're called in the panic() path.
+
+Thanks to:
+  Nicholas Piggin, Philippe Bergheaud, Christophe Lombard.
+
+- ----------------------------------------------------------------
+Nicholas Piggin (1):
+      powerpc/powernv: Fix NVRAM sleep in invalid context when crashing
+
+Philippe Bergheaud (2):
+      cxl: Set the PBCQ Tunnel BAR register when enabling capi mode
+      cxl: Report the tunneled operations status
+
+ Documentation/ABI/testing/sysfs-class-cxl   |  8 ++++++++
+ arch/powerpc/platforms/powernv/opal-nvram.c | 14 ++++++++++++--
+ drivers/misc/cxl/cxl.h                      |  1 +
+ drivers/misc/cxl/pci.c                      | 12 ++++++++++++
+ drivers/misc/cxl/sysfs.c                    | 10 ++++++++++
+ 5 files changed, 43 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJa/tj4AAoJEFHr6jzI4aWAZBoP/2/kddNPHzMwnzcx0B5WzEfo
+3JQcTLZPEqsb5n0xwaWOgb0o0u8EpHDtPZlJlZZWwPKbphlZvQ+reAJAXCQXXj6P
+n6BrbfpHlJo1J2wZVeihOuVTtSiXqq82YEtCzdUCUQNa8+2rQ7bLOB56cLdnyFWx
+wvK/xOM4rG/nPDi3tlH+IvhNeUdc2Y1vCB6N/RVvJVJOduCED1zCxcWj7uJYGt1x
+UdFPcah4OPSF9qPemReu6CjiwesvEm3y3S9TYLLJLXBDmKvs7BDRbfczP52tY90P
+XMErJN4MtnNasotCJVcZylfNhSTCyyaQ4si+G/COAM0eh8oPdcIH3C2yXnQHXVPz
+pUpe7TF3N7DOoa66WHXsh9dr9G7E0DhcpBgpz30/HmYasaYSEYpDsCH6UvbmvpzO
+xtyocfgtuyaF28Rz4WVYSVGkJwE/+NhdsvfQUFI6DGQXoVu08Xxx3rhOlNKVecTw
+8yuaIpPSz0i1pFg3SRa1MaS0F4FqGs0T3OLFsEihjdsc3EpJeB3Vp0IiqbmhR6Pa
+1rhsjPY4yS5tPJS9K4CQszgw3Ke6C7KYIttGo7BxVKPLXsp52HhTqFpp0LHDcw8y
+zFjOS7kh07NCgn8tSwMLUTRUUXEDLE2fJOVWCDdvkXEzpd/LfaP15gjZ3m66OMTS
+Oj72EjBAGNX4dN4yQuo7
+=4xib
+-----END PGP SIGNATURE-----
