@@ -1,86 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeERNpe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:45:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:59615 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751914AbeERNpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:45:31 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: fbarrat@linux.vnet.ibm.com, felix@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        npiggin@gmail.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.17-6 tag
-Date: Fri, 18 May 2018 23:45:27 +1000
-Message-ID: <87efi9xeko.fsf@concordia.ellerman.id.au>
+        id S1752590AbeERNrf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:47:35 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52052 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752473AbeERNrb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:47:31 -0400
+X-Google-Smtp-Source: AB8JxZrhwdw43vYVgeVIM2ILBeK3evxOjEQYR+xYwTzoBbebY+7O63xsP23+IMANDdauVzYH2u0JyA==
+Date: Fri, 18 May 2018 14:47:27 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: intel-lpss: Program REMAP register in PIO mode
+Message-ID: <20180518134727.GO5130@dell>
+References: <20180424150010.60760-1-andriy.shevchenko@linux.intel.com>
+ <20180425102559.GO2173@lahna.fi.intel.com>
+ <3aa1361401b4ada2da2b8aa7c22969dddc22723b.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3aa1361401b4ada2da2b8aa7c22969dddc22723b.camel@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On Fri, 18 May 2018, Andy Shevchenko wrote:
 
-Hi Linus,
+> On Wed, 2018-04-25 at 13:25 +0300, Mika Westerberg wrote:
+> > On Tue, Apr 24, 2018 at 06:00:10PM +0300, Andy Shevchenko wrote:
+> > > According to documentation REMAP register has to be programmed in
+> > > either DMA or PIO mode of the slice.
+> > > 
+> > > Move the DMA capability check below to let REMAP register be
+> > > programmed
+> > > in PIO mode.
+> > > 
+> > > Fixes: 4b45efe85263 ("mfd: Add support for Intel Sunrisepoint LPSS
+> > > devices")
+> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > 
+> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Lee, can we have this applied in next rc cycle?
 
-Please pull some more powerpc fixes for 4.17:
+This has been broken since v4.3.
 
-The following changes since commit 6c0a8f6b5a45ac892a763b6299bd3c5324fc5e02:
+We'll roll it into v4.18 and tag it for -stable.
 
-  powerpc/pseries: Fix CONFIG_NUMA=n build (2018-05-08 14:59:56 +1000)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.17-6
-
-for you to fetch changes up to c1d2a31397ec51f0370f6bd17b19b39152c263cb:
-
-  powerpc/powernv: Fix NVRAM sleep in invalid context when crashing (2018-05-18 00:23:07 +1000)
-
-- ----------------------------------------------------------------
-powerpc fixes for 4.17 #6
-
-Just three commits.
-
-The two cxl ones are not fixes per se, but they modify code that was added this
-cycle so that it will work with a recent firmware change.
-
-And then a fix for a recent commit that added sleeps in the NVRAM code, which
-needs to be more careful and not sleep if eg. we're called in the panic() path.
-
-Thanks to:
-  Nicholas Piggin, Philippe Bergheaud, Christophe Lombard.
-
-- ----------------------------------------------------------------
-Nicholas Piggin (1):
-      powerpc/powernv: Fix NVRAM sleep in invalid context when crashing
-
-Philippe Bergheaud (2):
-      cxl: Set the PBCQ Tunnel BAR register when enabling capi mode
-      cxl: Report the tunneled operations status
-
- Documentation/ABI/testing/sysfs-class-cxl   |  8 ++++++++
- arch/powerpc/platforms/powernv/opal-nvram.c | 14 ++++++++++++--
- drivers/misc/cxl/cxl.h                      |  1 +
- drivers/misc/cxl/pci.c                      | 12 ++++++++++++
- drivers/misc/cxl/sysfs.c                    | 10 ++++++++++
- 5 files changed, 43 insertions(+), 2 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJa/tj4AAoJEFHr6jzI4aWAZBoP/2/kddNPHzMwnzcx0B5WzEfo
-3JQcTLZPEqsb5n0xwaWOgb0o0u8EpHDtPZlJlZZWwPKbphlZvQ+reAJAXCQXXj6P
-n6BrbfpHlJo1J2wZVeihOuVTtSiXqq82YEtCzdUCUQNa8+2rQ7bLOB56cLdnyFWx
-wvK/xOM4rG/nPDi3tlH+IvhNeUdc2Y1vCB6N/RVvJVJOduCED1zCxcWj7uJYGt1x
-UdFPcah4OPSF9qPemReu6CjiwesvEm3y3S9TYLLJLXBDmKvs7BDRbfczP52tY90P
-XMErJN4MtnNasotCJVcZylfNhSTCyyaQ4si+G/COAM0eh8oPdcIH3C2yXnQHXVPz
-pUpe7TF3N7DOoa66WHXsh9dr9G7E0DhcpBgpz30/HmYasaYSEYpDsCH6UvbmvpzO
-xtyocfgtuyaF28Rz4WVYSVGkJwE/+NhdsvfQUFI6DGQXoVu08Xxx3rhOlNKVecTw
-8yuaIpPSz0i1pFg3SRa1MaS0F4FqGs0T3OLFsEihjdsc3EpJeB3Vp0IiqbmhR6Pa
-1rhsjPY4yS5tPJS9K4CQszgw3Ke6C7KYIttGo7BxVKPLXsp52HhTqFpp0LHDcw8y
-zFjOS7kh07NCgn8tSwMLUTRUUXEDLE2fJOVWCDdvkXEzpd/LfaP15gjZ3m66OMTS
-Oj72EjBAGNX4dN4yQuo7
-=4xib
------END PGP SIGNATURE-----
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
