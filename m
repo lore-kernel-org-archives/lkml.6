@@ -1,71 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeERI5o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:57:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51032 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeERI5k (ORCPT
+        id S1753405AbeERI5Y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:57:24 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:36135 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeERI5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:57:40 -0400
-X-Google-Smtp-Source: AB8JxZq290IcHiOpiZUNCHUnIW7aRI2EznTjjM9Cr4ILWrYn8Y8DQouTyZgOzNtsdNa36VghO+6x/w==
-Date: Fri, 18 May 2018 10:57:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 06/11] cpufreq: tegra20: Remove unneeded check in
- tegra_cpu_init
-Message-ID: <20180518085737.GF14500@ulmo>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-7-digetx@gmail.com>
+        Fri, 18 May 2018 04:57:20 -0400
+X-Google-Smtp-Source: AB8JxZpYoM7e+PCY7QANmUMDQ/88ogyNrSFA0OWuJEz0oHbg7WBbsON4XMT3m+nqVud/krwJw8tZ9Q==
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w3uUfsyyY1Pqa/ej"
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-7-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-2-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-2-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 18 May 2018 17:57:06 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5C+S0admv8qVc-e+xBGwxku8+jF7WXKmt2qzD1NEtq8yA@mail.gmail.com>
+Message-ID: <CAAFQd5C+S0admv8qVc-e+xBGwxku8+jF7WXKmt2qzD1NEtq8yA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/29] venus: hfi_msgs: correct pointer increment
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 15, 2018 at 5:13 PM Stanimir Varbanov <
+stanimir.varbanov@linaro.org> wrote:
 
---w3uUfsyyY1Pqa/ej
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Data pointer should be incremented by size of the structure not
+> the size of a pointer, correct the mistake.
 
-On Thu, May 17, 2018 at 09:00:51PM +0300, Dmitry Osipenko wrote:
-> Remove checking of the CPU number for consistency as it won't ever fail
-> unless there is a severe bug in the cpufreq core.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/cpufreq/tegra20-cpufreq.c | 5 -----
->  1 file changed, 5 deletions(-)
+>   drivers/media/platform/qcom/venus/hfi_msgs.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c
+b/drivers/media/platform/qcom/venus/hfi_msgs.c
+> index 90c93d9603dc..589e1a6b36a9 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_msgs.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
+> @@ -60,14 +60,14 @@ static void event_seq_changed(struct venus_core
+*core, struct venus_inst *inst,
+>                          frame_sz = (struct hfi_framesize *)data_ptr;
+>                          event.width = frame_sz->width;
+>                          event.height = frame_sz->height;
+> -                       data_ptr += sizeof(frame_sz);
+> +                       data_ptr += sizeof(*frame_sz);
+>                          break;
+>                  case HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT:
+>                          data_ptr += sizeof(u32);
+>                          profile_level = (struct hfi_profile_level
+*)data_ptr;
+>                          event.profile = profile_level->profile;
+>                          event.level = profile_level->level;
+> -                       data_ptr += sizeof(profile_level);
+> +                       data_ptr += sizeof(*profile_level);
+>                          break;
+>                  default:
+>                          break;
+> --
+> 2.14.1
 
---w3uUfsyyY1Pqa/ej
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+(Posted to v1 originally, since I missed v2.)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+lYEACgkQ3SOs138+
-s6FCXA//e3o9EQLf8AXy4zLm2AdX1fPol4HziGLearqZXulBm7LFjk+q8JhuITXD
-pk0/froyjqxioHIdeYATbym1DuNO9Q3ZA0vcobpWakgN1HciS/HKbSKaVLLia4cc
-q73q9sIyqr41oQ3ych9hXtlxBkTKzmCET+IzbVJVoLrEvTc0jQEBPNJlO6Zpo0Ys
-hAHhfebmLBmTQ8YuAxf6XU/PIEsAEz5SENIccHNXNSqiR4mxBjjTbst4WVWEV4uh
-GFVRIQ2ooPIrDxswB2ZXpxFFSdSrE9P75odgoLoOb6hnyW8dTn3S9e57GdzKcZeE
-EXg08e206VRuk/vO1A4jFdqWnqZ2oZ4ZyKftDjpKB9jhC/hQg3FAan6CBeLWsuBY
-ACmjnMDL8+XJSZyqaJVHqQCceOQ1ZBe4zBAhx8C/X1Z0pbfAhlFDeuOpZoMxfj0X
-046X0aMqCykC+vQZ1A3psD5PjEdCoDXlV/ItrFjwnOTQCByW+rdJF/4v5q8HHLSc
-NJVRZlcUATtPu3GEmHl69EgCXZxSON1cVwqhNiVZ84GNttVOCaJDmMrYo9NoKoXY
-dYBMhyujklF8eTEdlV6DxTF91V4C6IK+Qsyyfe9qRNR+0sXVwr2rsHsL6R5xt38L
-IMijA/V3p/zRITaWFEF3YC1YosMgKd//lBQKnmP+5XOjO8seggI=
-=SAKT
------END PGP SIGNATURE-----
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 
---w3uUfsyyY1Pqa/ej--
+Best regards,
+Tomasz
