@@ -1,113 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753410AbeERIwl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:52:41 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:59344 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752955AbeERIwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:52:35 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: hl <hl@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-        Chris Zhong <zyw@rock-chips.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v5 4/4] drm/rockchip: support dp training outside dp firmware
-Date: Fri, 18 May 2018 10:52:17 +0200
-Message-ID: <11928313.3EhRqhFFHB@phil>
-In-Reply-To: <CA+ASDXN2LT6FcX_2-MM=Qu7cZOHwVK3+2rGDLGcC1SnY3BJaSw@mail.gmail.com>
-References: <1526548680-2552-1-git-send-email-hl@rock-chips.com> <d4c38236-7455-ccd5-a1d9-a000b7d78be9@rock-chips.com> <CA+ASDXN2LT6FcX_2-MM=Qu7cZOHwVK3+2rGDLGcC1SnY3BJaSw@mail.gmail.com>
+        id S1753481AbeERIwv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:52:51 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:36776 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753051AbeERIwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:52:44 -0400
+X-Google-Smtp-Source: AB8JxZrAXM5aS1sKvjNqFnmZELuxByOr7oQYiNFuyqqr+VbJI+wRyXUeImxH21hXR47fwML+a3M1tw==
+Subject: Re: [PATCH 01/28] venus: hfi_msgs: correct pointer increment
+To: Tomasz Figa <tfiga@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-2-stanimir.varbanov@linaro.org>
+ <CAAFQd5CYaeUNFMFrQAC2mofd80LKt6zxBRwAje4AoWbhGvGJ0A@mail.gmail.com>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <ace94242-b4cc-c671-451e-de668273d2ef@linaro.org>
+Date: Fri, 18 May 2018 11:52:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAAFQd5CYaeUNFMFrQAC2mofd80LKt6zxBRwAje4AoWbhGvGJ0A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 18. Mai 2018, 03:45:46 CEST schrieb Brian Norris:
-> On Thu, May 17, 2018 at 6:41 PM, hl <hl@rock-chips.com> wrote:
-> > On Thursday, May 17, 2018 09:51 PM, Sean Paul wrote:
-> >> On Thu, May 17, 2018 at 05:18:00PM +0800, Lin Huang wrote:
-> >>> DP firmware uses fixed phy config values to do training, but some
-> >>> boards need to adjust these values to fit for their unique hardware
-> >>> design. So get phy config values from dts and use software link training
-> >>> instead of relying on firmware, if software training fail, keep firmware
-> >>> training as a fallback if sw training fails.
-> >>>
-> >>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> >>> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> >>> ---
-> >>> Changes in v2:
-> >>> - update patch following Enric suggest
-> >>> Changes in v3:
-> >>> - use variable fw_training instead sw_training_success
-> >>> - base on DP SPCE, if training fail use lower link rate to retry training
-> >>> Changes in v4:
-> >>> - improve cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link() follow Sean suggest
-> >>> Changes in v5:
-> >>> - fix some whitespcae issue
-> >>>
-> >>>   drivers/gpu/drm/rockchip/Makefile               |   3 +-
-> >>>   drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
-> >>>   drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
-> >>>   drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 420 ++++++++++++++++++++++++
-> >>>   drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  31 +-
-> >>>   drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
-> >>>   6 files changed, 505 insertions(+), 13 deletions(-)
-> >>>   create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> >>>
-> ...
-> >>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-link-training.c b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> >>> new file mode 100644
-> >>> index 0000000..73c3290
-> >>> --- /dev/null
-> >>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> >>> @@ -0,0 +1,420 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0
-> >>> +/*
-> >>> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> >>> + * Author: Chris Zhong <zyw@rock-chips.com>
-> >>> + */
-> >>> +
-> >>> +#include <linux/device.h>
-> >>> +#include <linux/delay.h>
-> >>> +#include <linux/phy/phy.h>
-> >>> +#include <soc/rockchip/rockchip_phy_typec.h>
-> >>> +
-> >>> +#include "cdn-dp-core.h"
-> >>> +#include "cdn-dp-reg.h"
-> >>> +
-> >>> +static void cdn_dp_set_signal_levels(struct cdn_dp_device *dp)
-> >>> +{
-> >>> +       struct cdn_dp_port *port = dp->port[dp->active_port];
-> >>> +       struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
-> >>
-> >> You ignored Brian's comment on the previous patch:
-> >>    This is still antithetical to the PHY framework; you're assuming that
-> >>    this is a particular type of PHY here.
-> >>
-> >> FWIW, the mediatek drm driver also assumes a certain PHY type. A quick grep of
-> >> drivers/ shows that the only other non-phy/ driver using this function
-> >> (pinctrl-tegra-xusb.c) also casts it.
-> >>
-> >> Sean
-> >
-> > Thanks Sean, except phy framework have new API to handle it, i have not
-> > idea how to do it in a better way.
+Hi Tomasz,
+
+Thanks for the review!
+
+On 05/18/2018 11:33 AM, Tomasz Figa wrote:
+> Hi Stanimir,
 > 
-> Well, if Mediatek can do it for their MIPI and HDMI, then maybe we just do it...
+> Thanks for the series. I'll be gradually reviewing subsequent patches. Stay
+> tuned. :)
+> 
 
-I'd think so too. This is in Rockchip-specific code so it will always be
-possible to easily get the soc-type and thus phy-type, if that combination
-really changes down the road.
+Please consider that there is a v2 of this patchset. :)
 
+> 
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> 
 
-Heiko
+Thanks!
+
+-- 
+regards,
+Stan
