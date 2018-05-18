@@ -1,84 +1,206 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeERJlc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:41:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42434 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751280AbeERJl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:41:29 -0400
-Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
-To: Eduardo Habkost <ehabkost@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org
-References: <1526568841-35372-1-git-send-email-mst@redhat.com>
- <20180517184658.GA1543@localhost.localdomain>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a95b2a12-f3a9-b930-49fe-46c2278df34d@redhat.com>
-Date: Fri, 18 May 2018 11:41:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752059AbeERJpL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:45:11 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33133 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751446AbeERJpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:45:09 -0400
+X-Google-Smtp-Source: AB8JxZowKIHZn4uI7RmFFHCu2137dIXDNzbuy/rQINshgnyUWC8vqHfxHVSaSlFFGzUlcofYDPLARA==
 MIME-Version: 1.0
-In-Reply-To: <20180517184658.GA1543@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-3-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-3-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 18 May 2018 18:44:54 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Ddfrj7Gh5KAkUxEjiT_LPaYqyzxOd53eCcG5Q7weMEmw@mail.gmail.com>
+Message-ID: <CAAFQd5Ddfrj7Gh5KAkUxEjiT_LPaYqyzxOd53eCcG5Q7weMEmw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/29] venus: hfi: preparation to support venus 4xx
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/05/2018 20:46, Eduardo Habkost wrote:
-> My understanding of the original patch is that the intention is
-> to tell the guest that it is very unlikely to be preempted, so it
-> can choose a more appropriate spinlock implementation.  This
-> description implies that the guest will never be preempted, which
-> is much stronger guarantee.
-> 
-> Isn't this new description incompatible with existing usage of
-> the hint, which might include people who just use vCPU pinning
-> but no mlock?
+Hi Stanimir,
 
-If you use hugetlbfs and vhost-user you don't really need mlock for the
-QEMU process, do you?  The QEMU process is not doing much in that case
-and hugetlbfs gives you pinned memory automatically.
+On Tue, May 15, 2018 at 5:14 PM Stanimir Varbanov <
+stanimir.varbanov@linaro.org> wrote:
 
-Paolo
+> This covers the differences between 1xx,3xx and 4xx.
+
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>    drivers/media/platform/qcom/venus/core.h         |  4 ++
+>    drivers/media/platform/qcom/venus/helpers.c      | 37 +++++++----
+>    drivers/media/platform/qcom/venus/hfi_helper.h   | 84
+++++++++++++++++++++++--
+>    drivers/media/platform/qcom/venus/hfi_venus_io.h | 24 +++++++
+>    drivers/media/platform/qcom/venus/vdec.c         |  5 +-
+>    drivers/media/platform/qcom/venus/venc.c         |  5 +-
+>    6 files changed, 137 insertions(+), 22 deletions(-)
+
+Please see my comments inline.
+
+[snip]
+
+> @@ -257,12 +273,11 @@ static int load_scale_clocks(struct venus_core
+*core)
+
+>    set_freq:
+
+> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> -               ret = clk_set_rate(clk, freq);
+> +       ret = clk_set_rate(clk, freq);
+> +
+> +       if (IS_V3(core) || IS_V4(core)) {
+>                   ret |= clk_set_rate(core->core0_clk, freq);
+>                   ret |= clk_set_rate(core->core1_clk, freq);
+> -       } else {
+> -               ret = clk_set_rate(clk, freq);
+>           }
+
+nit: The clock API defines NULL clock as a special no-op value and so
+clk_set_rate(NULL, ...) would return 0 instantly. Maybe it would just make
+sense to have core0_clk and core1_clk set to NULL for V1 and remove the
+condition here?
+
+>           if (ret) {
+> diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h
+b/drivers/media/platform/qcom/venus/hfi_helper.h
+> index 55d8eb21403a..1bc5aab1ce6b 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_helper.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
+> @@ -121,6 +121,7 @@
+>    #define HFI_EXTRADATA_METADATA_FILLER                  0x7fe00002
+
+>    #define HFI_INDEX_EXTRADATA_INPUT_CROP                 0x0700000e
+> +#define HFI_INDEX_EXTRADATA_OUTPUT_CROP                        0x0700000f
+
+nit: Would it make sense to suffix this _4XX, so that reader could know
+that it was introduced in this version? Similarly for other newly added
+definitions.
+
+>    #define HFI_INDEX_EXTRADATA_DIGITAL_ZOOM               0x07000010
+>    #define HFI_INDEX_EXTRADATA_ASPECT_RATIO               0x7f100003
+
+> @@ -376,13 +377,18 @@
+>    #define HFI_BUFFER_OUTPUT2                     0x3
+>    #define HFI_BUFFER_INTERNAL_PERSIST            0x4
+>    #define HFI_BUFFER_INTERNAL_PERSIST_1          0x5
+> -#define HFI_BUFFER_INTERNAL_SCRATCH            0x1000001
+> -#define HFI_BUFFER_EXTRADATA_INPUT             0x1000002
+> -#define HFI_BUFFER_EXTRADATA_OUTPUT            0x1000003
+> -#define HFI_BUFFER_EXTRADATA_OUTPUT2           0x1000004
+> -#define HFI_BUFFER_INTERNAL_SCRATCH_1          0x1000005
+> -#define HFI_BUFFER_INTERNAL_SCRATCH_2          0x1000006
+> -
+> +#define HFI_BUFFER_INTERNAL_SCRATCH(ver)       \
+> +       (((ver) == HFI_VERSION_4XX) ? 0x6 : 0x1000001)
+> +#define HFI_BUFFER_INTERNAL_SCRATCH_1(ver)     \
+> +       (((ver) == HFI_VERSION_4XX) ? 0x7 : 0x1000005)
+> +#define HFI_BUFFER_INTERNAL_SCRATCH_2(ver)     \
+> +       (((ver) == HFI_VERSION_4XX) ? 0x8 : 0x1000006)
+> +#define HFI_BUFFER_EXTRADATA_INPUT(ver)                \
+> +       (((ver) == HFI_VERSION_4XX) ? 0xc : 0x1000002)
+> +#define HFI_BUFFER_EXTRADATA_OUTPUT(ver)       \
+> +       (((ver) == HFI_VERSION_4XX) ? 0xa : 0x1000003)
+> +#define HFI_BUFFER_EXTRADATA_OUTPUT2(ver)      \
+> +       (((ver) == HFI_VERSION_4XX) ? 0xb : 0x1000004)
+
+nit: Does it make sense to add an argument, rather than simply defining
+separate HFI_BUFFER_INTERNAL_SCRATCH_1XX and
+HFI_BUFFER_INTERNAL_SCRATCH_4XX? In my subjective opinion, the argument
+just makes it harder to read, as it's not clear how it is used inside the
+macro from reading just the call to it. Also it would get messy when adding
+further variants in future.
+
+[snip]
+
+> +/* HFI 4XX reorder the fields, use these macros */
+> +#define HFI_BUFREQ_HOLD_COUNT(bufreq, ver)     \
+> +       ((ver) == HFI_VERSION_4XX ? 0 : (bufreq)->hold_count)
+> +#define HFI_BUFREQ_COUNT_MIN(bufreq, ver)      \
+> +       ((ver) == HFI_VERSION_4XX ? (bufreq)->hold_count :
+(bufreq)->count_min)
+> +#define HFI_BUFREQ_COUNT_MIN_HOST(bufreq, ver) \
+> +       ((ver) == HFI_VERSION_4XX ? (bufreq)->count_min : 0)
+> +
+
+Hmm, this is a bit messy. The macro is supposed to return count_min, but it
+returns hold_count. Shouldn't we define a separate
+hfi_buffer_requirements_4xx struct for 4XX?
+
+Even though this seems to simplify the code eventually, I think it might be
+quite confusing for anyone working with the driver in the future.
+
+Also HFI_BUFREQ_HOLD_COUNT and HFI_BUFREQ_COUNT_MIN_HOST don't seem to be
+used anywhere.
+
+[snip]
+
+> +/* vcodec noc error log registers */
+> +#define VCODEC_CORE0_VIDEO_NOC_BASE_OFFS               0x4000
+> +#define VCODEC_CORE1_VIDEO_NOC_BASE_OFFS               0xc000
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_SWID_LOW_OFFS       0x500
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_SWID_HIGH_OFFS      0x504
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_MAINCTL_LOW_OFFS    0x508
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRVLD_LOW_OFFS     0x510
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRCLR_LOW_OFFS     0x518
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG0_LOW_OFFS    0x520
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG0_HIGH_OFFS   0x524
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG1_LOW_OFFS    0x528
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG1_HIGH_OFFS   0x52c
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG2_LOW_OFFS    0x530
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG2_HIGH_OFFS   0x534
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG3_LOW_OFFS    0x538
+> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG3_HIGH_OFFS   0x53c
+
+What are these offsets from?
+
+nit: Other registers seem to be defined as (xxx_BASE + offset). Is there
+any reason to define these in another way?
+
+> +
+>    #endif
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c
+b/drivers/media/platform/qcom/venus/vdec.c
+> index 49bbd1861d3a..261a51adeef2 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -689,6 +689,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
+
+>    static int vdec_verify_conf(struct venus_inst *inst)
+>    {
+> +       enum hfi_version ver = inst->core->res->hfi_version;
+>           struct hfi_buffer_requirements bufreq;
+>           int ret;
+
+> @@ -700,14 +701,14 @@ static int vdec_verify_conf(struct venus_inst *inst)
+>                   return ret;
+
+>           if (inst->num_output_bufs < bufreq.count_actual ||
+> -           inst->num_output_bufs < bufreq.count_min)
+> +           inst->num_output_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
+>                   return -EINVAL;
+
+>           ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
+>           if (ret)
+>                   return ret;
+
+> -       if (inst->num_input_bufs < bufreq.count_min)
+> +       if (inst->num_input_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
+>                   return -EINVAL;
+
+Back to the point I raised above, maybe we could make
+venus_helper_get_bufreq() untangle the order of fields for 4XX? It seems to
+do a memcpy anyway, so doing it field by field for such small struct
+shouldn't really matter.
+
+Best regards,
+Tomasz
