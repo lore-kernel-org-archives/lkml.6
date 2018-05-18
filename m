@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeERGr2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:47:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32972 "EHLO mx2.suse.de"
+        id S1752042AbeERGrk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:47:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32967 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750882AbeERGrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:47:17 -0400
+        id S1751298AbeERGrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 02:47:16 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: [PATCH v3 6/6] x86/stacktrace: enable HAVE_RELIABLE_STACKTRACE for the ORC unwinder
-Date: Fri, 18 May 2018 08:47:13 +0200
-Message-Id: <20180518064713.26440-6-jslaby@suse.cz>
+Cc: linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH v3 5/6] x86/unwind/orc: Detect the end of the stack
+Date: Fri, 18 May 2018 08:47:12 +0200
+Message-Id: <20180518064713.26440-5-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180518064713.26440-1-jslaby@suse.cz>
 References: <20180518064713.26440-1-jslaby@suse.cz>
@@ -22,33 +20,366 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In SUSE, we need a reliable stack unwinder for kernel live patching, but
-we do not want to enable frame pointers for performance reasons. So
-after the previous patches to make the ORC reliable, mark ORC as a
-reliable stack unwinder on x86.
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
+The existing UNWIND_HINT_EMPTY annotations happen to be good indicators
+of where entry code calls into C code for the first time.  So also use
+them to mark the end of the stack for the ORC unwinder.
+
+Use that information to set unwind->error if the ORC unwinder doesn't
+unwind all the way to the end.  This will be needed for enabling
+HAVE_RELIABLE_STACKTRACE for the ORC unwinder so we can use it with the
+livepatch consistency model.
+
+Thanks to Jiri Slaby for teaching the ORCs about the unwind hints.
+
+[v2] this patch is new in v2
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
 ---
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S                      |  1 +
+ arch/x86/include/asm/orc_types.h               |  2 +
+ arch/x86/include/asm/unwind_hints.h            | 16 +++++---
+ arch/x86/kernel/unwind_orc.c                   | 52 +++++++++++++++-----------
+ tools/objtool/arch/x86/include/asm/orc_types.h |  2 +
+ tools/objtool/check.c                          |  1 +
+ tools/objtool/check.h                          |  2 +-
+ tools/objtool/orc_dump.c                       |  3 +-
+ tools/objtool/orc_gen.c                        |  2 +
+ 9 files changed, 52 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 47e7f582f86a..e4199fbcc7f2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -181,7 +181,7 @@ config X86
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_RCU_TABLE_FREE
- 	select HAVE_REGS_AND_STACK_ACCESS_API
--	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
-+	select HAVE_RELIABLE_STACKTRACE		if X86_64 && (UNWINDER_FRAME_POINTER || UNWINDER_ORC) && STACK_VALIDATION
- 	select HAVE_STACK_VALIDATION		if X86_64
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 702ff719443b..e40ec8549fdc 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -410,6 +410,7 @@ SYM_CODE_START(ret_from_fork)
+ 
+ 1:
+ 	/* kernel thread */
++	UNWIND_HINT_EMPTY
+ 	movq	%r12, %rdi
+ 	CALL_NOSPEC %rbx
+ 	/*
+diff --git a/arch/x86/include/asm/orc_types.h b/arch/x86/include/asm/orc_types.h
+index 9c9dc579bd7d..46f516dd80ce 100644
+--- a/arch/x86/include/asm/orc_types.h
++++ b/arch/x86/include/asm/orc_types.h
+@@ -88,6 +88,7 @@ struct orc_entry {
+ 	unsigned	sp_reg:4;
+ 	unsigned	bp_reg:4;
+ 	unsigned	type:2;
++	unsigned	end:1;
+ } __packed;
+ 
+ /*
+@@ -101,6 +102,7 @@ struct unwind_hint {
+ 	s16		sp_offset;
+ 	u8		sp_reg;
+ 	u8		type;
++	u8		end;
+ };
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/arch/x86/include/asm/unwind_hints.h b/arch/x86/include/asm/unwind_hints.h
+index bae46fc6b9de..0bcdb1279361 100644
+--- a/arch/x86/include/asm/unwind_hints.h
++++ b/arch/x86/include/asm/unwind_hints.h
+@@ -26,7 +26,7 @@
+  * the debuginfo as necessary.  It will also warn if it sees any
+  * inconsistencies.
+  */
+-.macro UNWIND_HINT sp_reg=ORC_REG_SP sp_offset=0 type=ORC_TYPE_CALL
++.macro UNWIND_HINT sp_reg=ORC_REG_SP sp_offset=0 type=ORC_TYPE_CALL end=0
+ #ifdef CONFIG_STACK_VALIDATION
+ .Lunwind_hint_ip_\@:
+ 	.pushsection .discard.unwind_hints
+@@ -35,12 +35,14 @@
+ 		.short \sp_offset
+ 		.byte \sp_reg
+ 		.byte \type
++		.byte \end
++		.balign 4
+ 	.popsection
+ #endif
+ .endm
+ 
+ .macro UNWIND_HINT_EMPTY
+-	UNWIND_HINT sp_reg=ORC_REG_UNDEFINED
++	UNWIND_HINT sp_reg=ORC_REG_UNDEFINED end=1
+ .endm
+ 
+ .macro UNWIND_HINT_REGS base=%rsp offset=0 indirect=0 extra=1 iret=0
+@@ -86,19 +88,21 @@
+ 
+ #else /* !__ASSEMBLY__ */
+ 
+-#define UNWIND_HINT(sp_reg, sp_offset, type)			\
++#define UNWIND_HINT(sp_reg, sp_offset, type, end)		\
+ 	"987: \n\t"						\
+ 	".pushsection .discard.unwind_hints\n\t"		\
+ 	/* struct unwind_hint */				\
+ 	".long 987b - .\n\t"					\
+-	".short " __stringify(sp_offset) "\n\t"		\
++	".short " __stringify(sp_offset) "\n\t"			\
+ 	".byte " __stringify(sp_reg) "\n\t"			\
+ 	".byte " __stringify(type) "\n\t"			\
++	".byte " __stringify(end) "\n\t"			\
++	".balign 4 \n\t"					\
+ 	".popsection\n\t"
+ 
+-#define UNWIND_HINT_SAVE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_SAVE)
++#define UNWIND_HINT_SAVE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_SAVE, 0)
+ 
+-#define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE)
++#define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE, 0)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index feb28fee6cea..26038eacf74a 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -198,7 +198,7 @@ static int orc_sort_cmp(const void *_a, const void *_b)
+ 	 * whitelisted .o files which didn't get objtool generation.
+ 	 */
+ 	orc_a = cur_orc_table + (a - cur_orc_ip_table);
+-	return orc_a->sp_reg == ORC_REG_UNDEFINED ? -1 : 1;
++	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
+ }
+ 
+ #ifdef CONFIG_MODULES
+@@ -352,7 +352,7 @@ static bool deref_stack_iret_regs(struct unwind_state *state, unsigned long addr
+ 
+ bool unwind_next_frame(struct unwind_state *state)
+ {
+-	unsigned long ip_p, sp, orig_ip, prev_sp = state->sp;
++	unsigned long ip_p, sp, orig_ip = state->ip, prev_sp = state->sp;
+ 	enum stack_type prev_type = state->stack_info.type;
+ 	struct orc_entry *orc;
+ 	bool indirect = false;
+@@ -363,9 +363,9 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	/* Don't let modules unload while we're reading their ORC data. */
+ 	preempt_disable();
+ 
+-	/* Have we reached the end? */
++	/* End-of-stack check for user tasks: */
+ 	if (state->regs && user_mode(state->regs))
+-		goto done;
++		goto the_end;
+ 
+ 	/*
+ 	 * Find the orc_entry associated with the text address.
+@@ -374,9 +374,16 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	 * calls and calls to noreturn functions.
+ 	 */
+ 	orc = orc_find(state->signal ? state->ip : state->ip - 1);
+-	if (!orc || orc->sp_reg == ORC_REG_UNDEFINED)
+-		goto done;
+-	orig_ip = state->ip;
++	if (!orc)
++		goto err;
++
++	/* End-of-stack check for kernel threads: */
++	if (orc->sp_reg == ORC_REG_UNDEFINED) {
++		if (!orc->end)
++			goto err;
++
++		goto the_end;
++	}
+ 
+ 	/* Find the previous frame's stack: */
+ 	switch (orc->sp_reg) {
+@@ -402,7 +409,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg R10 at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->r10;
+ 		break;
+@@ -411,7 +418,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg R13 at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->r13;
+ 		break;
+@@ -420,7 +427,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg DI at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->di;
+ 		break;
+@@ -429,7 +436,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg DX at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->dx;
+ 		break;
+@@ -437,12 +444,12 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	default:
+ 		orc_warn("unknown SP base reg %d for ip %pB\n",
+ 			 orc->sp_reg, (void *)state->ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	if (indirect) {
+ 		if (!deref_stack_reg(state, sp, &sp))
+-			goto done;
++			goto err;
+ 	}
+ 
+ 	/* Find IP, SP and possibly regs: */
+@@ -451,7 +458,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		ip_p = sp - sizeof(long);
+ 
+ 		if (!deref_stack_reg(state, ip_p, &state->ip))
+-			goto done;
++			goto err;
+ 
+ 		state->ip = ftrace_graph_ret_addr(state->task, &state->graph_idx,
+ 						  state->ip, (void *)ip_p);
+@@ -465,7 +472,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!deref_stack_regs(state, sp, &state->ip, &state->sp)) {
+ 			orc_warn("can't dereference registers at %p for ip %pB\n",
+ 				 (void *)sp, (void *)orig_ip);
+-			goto done;
++			goto err;
+ 		}
+ 
+ 		state->regs = (struct pt_regs *)sp;
+@@ -477,7 +484,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!deref_stack_iret_regs(state, sp, &state->ip, &state->sp)) {
+ 			orc_warn("can't dereference iret registers at %p for ip %pB\n",
+ 				 (void *)sp, (void *)orig_ip);
+-			goto done;
++			goto err;
+ 		}
+ 
+ 		state->regs = (void *)sp - IRET_FRAME_OFFSET;
+@@ -500,18 +507,18 @@ bool unwind_next_frame(struct unwind_state *state)
+ 
+ 	case ORC_REG_PREV_SP:
+ 		if (!deref_stack_reg(state, sp + orc->bp_offset, &state->bp))
+-			goto done;
++			goto err;
+ 		break;
+ 
+ 	case ORC_REG_BP:
+ 		if (!deref_stack_reg(state, state->bp + orc->bp_offset, &state->bp))
+-			goto done;
++			goto err;
+ 		break;
+ 
+ 	default:
+ 		orc_warn("unknown BP base reg %d for ip %pB\n",
+ 			 orc->bp_reg, (void *)orig_ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	/* Prevent a recursive loop due to bad ORC data: */
+@@ -520,13 +527,16 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	    state->sp <= prev_sp) {
+ 		orc_warn("stack going in the wrong direction? ip=%pB\n",
+ 			 (void *)orig_ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	preempt_enable();
+ 	return true;
+ 
+-done:
++err:
++	state->error = true;
++
++the_end:
+ 	preempt_enable();
+ 	state->stack_info.type = STACK_TYPE_UNKNOWN;
+ 	return false;
+diff --git a/tools/objtool/arch/x86/include/asm/orc_types.h b/tools/objtool/arch/x86/include/asm/orc_types.h
+index 9c9dc579bd7d..46f516dd80ce 100644
+--- a/tools/objtool/arch/x86/include/asm/orc_types.h
++++ b/tools/objtool/arch/x86/include/asm/orc_types.h
+@@ -88,6 +88,7 @@ struct orc_entry {
+ 	unsigned	sp_reg:4;
+ 	unsigned	bp_reg:4;
+ 	unsigned	type:2;
++	unsigned	end:1;
+ } __packed;
+ 
+ /*
+@@ -101,6 +102,7 @@ struct unwind_hint {
+ 	s16		sp_offset;
+ 	u8		sp_reg;
+ 	u8		type;
++	u8		end;
+ };
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5409f6f6c48d..fef15cea9f1e 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1109,6 +1109,7 @@ static int read_unwind_hints(struct objtool_file *file)
+ 
+ 		cfa->offset = hint->sp_offset;
+ 		insn->state.type = hint->type;
++		insn->state.end = hint->end;
+ 	}
+ 
+ 	return 0;
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index c6b68fcb926f..95700a2bcb7c 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -31,7 +31,7 @@ struct insn_state {
+ 	int stack_size;
+ 	unsigned char type;
+ 	bool bp_scratch;
+-	bool drap;
++	bool drap, end;
+ 	int drap_reg, drap_offset;
+ 	struct cfi_reg vals[CFI_NUM_REGS];
+ };
+diff --git a/tools/objtool/orc_dump.c b/tools/objtool/orc_dump.c
+index c3343820916a..faa444270ee3 100644
+--- a/tools/objtool/orc_dump.c
++++ b/tools/objtool/orc_dump.c
+@@ -203,7 +203,8 @@ int orc_dump(const char *_objname)
+ 
+ 		print_reg(orc[i].bp_reg, orc[i].bp_offset);
+ 
+-		printf(" type:%s\n", orc_type_name(orc[i].type));
++		printf(" type:%s end:%d\n",
++		       orc_type_name(orc[i].type), orc[i].end);
+ 	}
+ 
+ 	elf_end(elf);
+diff --git a/tools/objtool/orc_gen.c b/tools/objtool/orc_gen.c
+index 18384d9be4e1..3f98dcfbc177 100644
+--- a/tools/objtool/orc_gen.c
++++ b/tools/objtool/orc_gen.c
+@@ -31,6 +31,8 @@ int create_orc(struct objtool_file *file)
+ 		struct cfi_reg *cfa = &insn->state.cfa;
+ 		struct cfi_reg *bp = &insn->state.regs[CFI_BP];
+ 
++		orc->end = insn->state.end;
++
+ 		if (cfa->base == CFI_UNDEFINED) {
+ 			orc->sp_reg = ORC_REG_UNDEFINED;
+ 			continue;
 -- 
 2.16.3
