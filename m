@@ -1,77 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeERHEq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:04:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752119AbeERHEp (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:04:45 -0400
-Date: Fri, 18 May 2018 09:04:41 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH v2 2/3] perf report: Use perf_evlist_forced_leader to
- support '--group'
-Message-ID: <20180518070441.GB30793@krava>
-References: <1526648260-30540-1-git-send-email-yao.jin@linux.intel.com>
- <1526648260-30540-3-git-send-email-yao.jin@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526648260-30540-3-git-send-email-yao.jin@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751534AbeERHHm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:07:42 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46592 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeERHHk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:07:40 -0400
+X-Google-Smtp-Source: AB8JxZqn/+ujSj+0q/DnIgmVUJfMg+sQ1jUjoJwwkwfKBpdFS9x5sDUajNFyaLsCJTZqNujp5NdBZA==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] PCI: qcom: add runtime pm support to pcie_port
+Date: Fri, 18 May 2018 00:07:36 -0700
+Message-Id: <20180518070736.3003-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 08:57:39PM +0800, Jin Yao wrote:
-> Since we have created a new function perf_evlist_forced_leader,
-> so now remove the old code and use perf_evlist_forced_leader
-> instead.
-> 
-> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> ---
->  tools/perf/builtin-report.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-> index 4c931af..63fe776 100644
-> --- a/tools/perf/builtin-report.c
-> +++ b/tools/perf/builtin-report.c
-> @@ -202,12 +202,8 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-there's comment in this place, which no longer applies in here:
+This patch is required when the pcie controller sits on a bus with
+its own power domain and clocks which are controlled via a bus driver
+like simple pm bus. As these bus driver have runtime pm enabled, it makes
+sense to update the usage counter so that the runtime pm does not suspend
+the clks or power domain associated with the bus driver.
 
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-/*
- * Events in data file are not collect in groups, but we still want
- * the group display. Set the artificial group and set the leader's
- * forced_leader flag to notify the display code.
- */
+This patch was posted 18 months ago but was somehow lost. linux-next recently
+enabled PCIe on MSM8996 and DB820c, but the system stalls as the agnoc gdsc
+isn't enabled. This patch still fixes this problem for me.
 
-could you please move/change/apply it to perf_evlist_forced_leader
+ drivers/pci/dwc/pcie-qcom.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-thanks,
-jirka
-
->  static void setup_forced_leader(struct report *report,
->  				struct perf_evlist *evlist)
-
->  {
-> -	if (report->group_set && !evlist->nr_groups) {
-> -		struct perf_evsel *leader = perf_evlist__first(evlist);
-> -
-> -		perf_evlist__set_leader(evlist);
-> -		leader->forced_leader = true;
-> -	}
-> +	if (report->group_set)
-> +		perf_evlist_forced_leader(evlist);
->  }
->  
->  static int process_feature_event(struct perf_tool *tool,
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 5897af7d3355..3f35098b71b1 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -1088,6 +1088,8 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+ 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+ 	int ret;
+ 
++	pm_runtime_get_sync(pci->dev);
++
+ 	qcom_ep_reset_assert(pcie);
+ 
+ 	ret = pcie->ops->init(pcie);
+@@ -1124,6 +1126,7 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+ 	phy_power_off(pcie->phy);
+ err_deinit:
+ 	pcie->ops->deinit(pcie);
++	pm_runtime_put_sync(pci->dev);
+ 
+ 	return ret;
+ }
+@@ -1204,6 +1207,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 	struct qcom_pcie *pcie;
+ 	int ret;
+ 
++
+ 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+ 		return -ENOMEM;
+@@ -1212,6 +1216,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 	if (!pci)
+ 		return -ENOMEM;
+ 
++	pm_runtime_enable(dev);
++
+ 	pci->dev = dev;
+ 	pci->ops = &dw_pcie_ops;
+ 	pp = &pci->pp;
+-- 
+2.17.0
