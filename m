@@ -1,69 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeERTt4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:49:56 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37653 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbeERTtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:49:55 -0400
-X-Google-Smtp-Source: AB8JxZrhFioJKD1+Z9XJ1dEcdM7+cZLFWLmh+EAGKvZphQmt4+I8mDR9pvSYZEKBv95RiqSXFGUtieWOCsKLFHrz8Rw=
+        id S1752060AbeERTwB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751197AbeERTv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:51:57 -0400
+Date: Fri, 18 May 2018 14:51:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: honghui.zhang@mediatek.com
+Cc: lorenzo.pieralisi@arm.com, marc.zyngier@arm.com, bhelgaas@google.com,
+        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com, xinping.qian@mediatek.com
+Subject: Re: [PATCH v7 2/2] PCI: mediatek: Using chained IRQ to setup IRQ
+ handle
+Message-ID: <20180518195154.GB41790@bhelgaas-glaptop.roam.corp.google.com>
+References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
+ <1525412853-24367-3-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <9ffbbadb26bbc362c74c8c2140425ef614712e1a.1526608767.git.rgb@redhat.com>
-References: <9ffbbadb26bbc362c74c8c2140425ef614712e1a.1526608767.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 18 May 2018 15:49:53 -0400
-Message-ID: <CAHC9VhRtMaunng7dpR5QVWsQfHvSq9Q-Q=sTB19cKwtmLtH7bw@mail.gmail.com>
-Subject: Re: [PATCH] audit: use existing session info function
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525412853-24367-3-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 10:01 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Use the existing audit_log_session_info() function rather than
-> hardcoding its functionality.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Fri, May 04, 2018 at 01:47:33PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> Using irq_chip solution to setup IRQs in order to consist
+> with IRQ framework.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 > ---
->  kernel/auditfilter.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/pci/host/pcie-mediatek.c | 206 ++++++++++++++++++++++-----------------
+>  1 file changed, 115 insertions(+), 91 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
+> index c3dc549..dabf1086 100644
+> --- a/drivers/pci/host/pcie-mediatek.c
+> +++ b/drivers/pci/host/pcie-mediatek.c
+> ...
 
-Merged into audit/next, thanks.
+> -static int mtk_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
+> -			    irq_hw_number_t hwirq)
+> +static struct msi_domain_info mtk_msi_domain_info = {
 
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index d7a807e..9e87377 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -1089,8 +1089,6 @@ static void audit_list_rules(int seq, struct sk_buff_head *q)
->  static void audit_log_rule_change(char *action, struct audit_krule *rule, int res)
->  {
->         struct audit_buffer *ab;
-> -       uid_t loginuid = from_kuid(&init_user_ns, audit_get_loginuid(current));
-> -       unsigned int sessionid = audit_get_sessionid(current);
->
->         if (!audit_enabled)
->                 return;
-> @@ -1098,7 +1096,7 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
->         ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
->         if (!ab)
->                 return;
-> -       audit_log_format(ab, "auid=%u ses=%u" ,loginuid, sessionid);
-> +       audit_log_session_info(ab);
->         audit_log_task_context(ab);
->         audit_log_format(ab, " op=%s", action);
->         audit_log_key(ab, rule->filterkey);
-> --
-> 1.8.3.1
->
+I think this patch should be amended to include this:
+
+diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+index 0d0177ce436c..368b70d9371b 100644
+--- a/drivers/pci/host/Kconfig
++++ b/drivers/pci/host/Kconfig
+@@ -193,7 +193,7 @@ config PCIE_MEDIATEK
+ 	bool "MediaTek PCIe controller"
+ 	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
+ 	depends on OF
+-	depends on PCI
++	depends on PCI_MSI_IRQ_DOMAIN
+ 	select PCIEPORTBUS
+ 	help
+ 	  Say Y here if you want to enable PCIe controller support on
 
 
-
--- 
-paul moore
-www.paul-moore.com
+Lorenzo, if you want to fold that in and update your branch, I can pull it.
+If not, I can add a patch on top, which should only break compile-testing
+bisection.
