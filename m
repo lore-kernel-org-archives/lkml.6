@@ -1,86 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeEROME (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:12:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750957AbeEROMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:12:03 -0400
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Eric Dumazet <edumazet@google.com>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180518161253-mutt-send-email-mst@kernel.org>
- <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
- <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
- <20180518170155-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <ac404f5e-22ea-00e7-8415-63116ce4881e@redhat.com>
-Date: Fri, 18 May 2018 22:11:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180518170155-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1752214AbeERON6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:13:58 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:57870 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeERONy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:13:54 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "hch@lst.de" <hch@lst.de>
+CC: "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "green.hu@gmail.com" <green.hu@gmail.com>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH 02/20] dma-mapping: provide a generic dma-noncoherent
+ implementation
+Thread-Topic: [PATCH 02/20] dma-mapping: provide a generic dma-noncoherent
+ implementation
+Thread-Index: AQHT7rJwE0RiyYL8c0WIr1H3arr2Xg==
+Date: Fri, 18 May 2018 14:13:47 +0000
+Message-ID: <913e288c5aabf0224cedcf2eb0c9be309745eace.camel@synopsys.com>
+References: <20180511075945.16548-1-hch@lst.de>
+         <20180511075945.16548-3-hch@lst.de>
+         <bad125dff49f6e49c895e818c9d1abb346a46e8e.camel@synopsys.com>
+         <20180518132731.GA31125@lst.de>
+In-Reply-To: <20180518132731.GA31125@lst.de>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C702843E962C4C4087A6422611F424FA@internal.synopsys.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4IEE4do025531
 
+Hi Christoph,
 
+On Fri, 2018-05-18 at 15:27 +0200, hch@lst.de wrote:
+> On Fri, May 18, 2018 at 01:03:46PM +0000, Alexey Brodkin wrote:
+> > Note mmc_get_dma_dir() is just "data->flags & MMC_DATA_WRITE ? DMA_TO_DEVICE : DMA_FROM_DEVICE".
+> > I.e. if we're preparing for sending data dma_noncoherent_map_sg() will have DMA_TO_DEVICE which
+> > is quite OK for passing to dma_noncoherent_sync_sg_for_device() but in case of reading we'll have
+> > DMA_FROM_DEVICE which we'll pass to dma_noncoherent_sync_sg_for_device() in dma_noncoherent_map_sg().
+> > 
+> > I'd say this is not entirely correct because IMHO arch_sync_dma_for_cpu() is supposed to only be used
+> > in case of DMA_FROM_DEVICE and arch_sync_dma_for_device() only in case of DMA_TO_DEVICE.
+> 
+> arc overrides the dir paramter of the dma_sync_single_for_device/
+> dma_sync_single_for_cpu calls.  My patches dropped that, and I have
+> restored that, and audit for the other architectures is pending.
 
-On 2018年05月18日 22:06, Michael S. Tsirkin wrote:
-> On Fri, May 18, 2018 at 10:00:31PM +0800, Jason Wang wrote:
->>
->> On 2018年05月18日 21:26, Jason Wang wrote:
->>>
->>> On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
->>>> On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
->>>>> We return -EIO on device down but can not raise EPOLLOUT after it was
->>>>> up. This may confuse user like vhost which expects tuntap to raise
->>>>> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
->>>>> be easily reproduced by transmitting packets from VM while down and up
->>>>> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
->>>>>
->>>>> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
->>>>> Cc: Eric Dumazet <edumazet@google.com>
->>>>> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
->>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
->>>>> ---
->>>>>    drivers/net/tun.c | 4 +++-
->>>>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->>>>> index d45ac37..1b29761 100644
->>>>> --- a/drivers/net/tun.c
->>>>> +++ b/drivers/net/tun.c
->>>>> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct
->>>>> tun_struct *tun, struct tun_file *tfile,
->>>>>        int skb_xdp = 1;
->>>>>        bool frags = tun_napi_frags_enabled(tun);
->>>>>    -    if (!(tun->dev->flags & IFF_UP))
->>>>> +    if (!(tun->dev->flags & IFF_UP)) {
->>>> Isn't this racy?  What if flag is cleared at this point?
->>> I think you mean "set at this point"? Then yes, so we probably need to
->>> set the bit during tun_net_close().
->>>
->>> Thanks
->> Looks no need, vhost will poll socket after it see EIO. So we are ok here?
->>
->> Thanks
-> In fact I don't even understand why does this help any longer.
->
+Well at least for me that's a confusion what is a reason to pass direction
+to function which purpose is already known.
 
-We disable tx polling and only enable it on demand for a better rx 
-performance. You may want to have a look at :
+I'd say that XXX_sync_for_device() doesn't need _variable_ direction as an argument,
+otherwise what does that mean if we pass DMA_FROM_DEVICE to that function?
 
-commit feb8892cb441c742d4220cf7ced001e7fa070731
-Author: Jason Wang <jasowang@redhat.com>
-Date:   Mon Nov 13 11:45:34 2017 +0800
+> That being said the existing arc code still looks rather odd as it
+> didn't do the same thing for the scatterlist versions of the calls.
 
-     vhost_net: conditionally enable tx polling
+That might easily be the case so good we caught that now and it will be fixed :)
 
-Thanks
+> I've thrown in a few patches into my new tree to make the sg versions
+> make the normal calls, and to clean up the area a bit.
+
+I'll try your newer series now, thanks!
+
+-Alexey
