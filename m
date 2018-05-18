@@ -1,123 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeERHjt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:39:49 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10669 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751023AbeERHjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:39:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
-   d="scan'208";a="50267879"
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
- <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
- <F6BF3B97-F955-4644-A033-4D20CA7F1922@amacapital.net>
- <15a49a1c-01de-b904-a98b-ecced01b8ddb@linux.intel.com>
-Message-ID: <7bc35ce2-d936-a8bd-c14c-6cd270e2f98d@linux.intel.com>
-Date: Fri, 18 May 2018 10:39:42 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752075AbeERHkB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:40:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49384 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbeERHj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:39:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81546602BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date: Fri, 18 May 2018 13:09:53 +0530
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: Fix deadlock in shutdown ioctl
+Message-ID: <20180518073953.GC6293@codeaurora.org>
+References: <1526544211-26218-1-git-send-email-stummala@codeaurora.org>
+ <b7d045f3-f37b-46da-3c1c-2b6d99efc9e7@huawei.com>
+ <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <15a49a1c-01de-b904-a98b-ecced01b8ddb@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi,
-On 16.05.2018 11:42, Alexey Budankov wrote:
-> Hi,
-> On 15.05.2018 19:30, Andy Lutomirski wrote:
->>
->>> On May 15, 2018, at 1:08 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
->>>
->>>
->>> Hi Andy,
->>>
->>>> On 09.05.2018 17:54, Peter Zijlstra wrote:
->>>>> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
->>>>>
->>>>> Store user space frame-pointer value (BP register) into Perf trace 
->>>>> on a sample for a process so the value becomes available when 
->>>>> unwinding call stacks for functions gaining event samples.
->>>>>
->>>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->>>>> ---
->>>>> arch/x86/kernel/perf_regs.c | 8 +++++++-
->>>>> 1 file changed, 7 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
->>>>> index e47b2dbbdef3..8d68658eff7f 100644
->>>>> --- a/arch/x86/kernel/perf_regs.c
->>>>> +++ b/arch/x86/kernel/perf_regs.c
->>>>> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->>>>
->>>>
->>>>>     * Most system calls don't save these registers, don't report them.
->>>>
->>>> ^^^ that worries me and is the reason for the '-1's below. However I
->>>> think with all the PTI rework this might no longer be true.
->>>>
->>>> The Changelog needs to state that user_regs->bp is in fact valid and
->>>> ideally point to the commits that makes it so. Also this patch should
->>>> update that comment.
->>>>
->>>> Cc Andy who keeps better track of all that than me.
->>>
->>> Are there any thoughts so far? Feedback on the matter above is highly appreciated.
->>
->> Sorry, I missed this. Can you forward the original patch?  I don’t have it.
-
-Just to make sure this and below didn't sneak out of your attention.
-
+On Thu, May 17, 2018 at 06:08:26PM -0700, Jaegeuk Kim wrote:
 > 
-> Store user space frame-pointer value (BP register) into Perf trace 
-> on a sample for a process so the value becomes available when 
-> unwinding call stacks for functions gaining event samples.
+> if (in == F2FS_GOING_DOWN_FULLSYNC) {
+> 	sb = freeze_bdev();
+> 	if (IS_ERR(sb))
+> 		return PTR_ERR(sb);
+> 	if (unlikely(!sb))
+> 		return -EINVAL;
+> }
 > 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  arch/x86/kernel/perf_regs.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-> index e47b2dbbdef3..8d68658eff7f 100644
-> --- a/arch/x86/kernel/perf_regs.c
-> +++ b/arch/x86/kernel/perf_regs.c
-> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->  	 * Most system calls don't save these registers, don't report them.
->  	 */
->  	regs_user_copy->bx = -1;
-> -	regs_user_copy->bp = -1;
-> +	/*
-> +	 * Store user space frame-pointer value on sample
-> +	 * to facilitate stack unwinding for cases when
-> +	 * user space executable code has such support
-> +	 * enabled at compile time;
-> +	 */
-> +	regs_user_copy->bp = user_regs->bp;
->  	regs_user_copy->r12 = -1;
->  	regs_user_copy->r13 = -1;
->  	regs_user_copy->r14 = -1;
->>> These days, system calls should save all registers, but I’m not entirely sure I want to promise that they’ll continue to do so forever.
+> ret = mnt_want_write_file();
 
-Thanks,
-Alexey
+It will be stuck/blocked here as freeze_bdev() now holds the write 
+lock for all the cases including SB_FREEZE_WRITE. As freeze_bdev()
+holds the write lock, I think f2fs_stop_checkpoint() should be safe
+even without mnt_want_write_file().
+
+I have posted v3 as per Chao's comments to exclude mnt_want_write_file()
+for F2FS_GOING_DOWN_FULLSYNC case.
+Please check and let me know if there are any further comments.
+
+> ...
+> switch() {
+> case F2FS_GOING_DOWN_FULLSYNC:
+> 	f2fs_stop_checkpoint();
+> 	dhaw_bdev();
+> 	break;
+> ...
+> }
+> 
+> drop:
+> ...
+> 
+> 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
