@@ -1,310 +1,139 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526626433; cv=none;
+Return-Path: <a13xp0p0v88@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526677972; cv=none;
         d=google.com; s=arc-20160816;
-        b=F1QW5vefZD3NYEZR9hT3ELn/Lqu1hIB3xKN/a55asOGSDc3HCSNW8eLtces4mnb99f
-         TsPDQyBZ2WIFQWuZO+9zErEAfMvN9oLqzq5/YOlnT+8T42PUWJHwW9uymr8gV2ZRRPnY
-         Ry5GBDDjMHvQELrFId7OtH9bv1IjdQJuECQeqhATcIpgVfioJ0Qopvg2Mk9RXqAM1pIr
-         q6qSCIIBt3htfN2pgW6lC/+eqB1wwRX0qTGSfzQzWNUuP7KcZrHycz5+XSNGM0dO6rGH
-         Mt2+UDymLGHrJXLuRF3T5wA62s01fJePaaFUTjE+QvT9pu+7pi4VA76HbJQagm9Cc4MJ
-         7Ikw==
+        b=icxI03SU459Tabs259xVvGXsF4+oLsIqkPwuPlXFgee/jTAkNmzwHOxRbiRlcJJtKh
+         g8FsY3LrtZ6J90xvdpWtWDCspVwn7IFDACQxa189oDHJ/8TtU0IFDdJZHZ71+QY3Xmdt
+         YJ2yoF0Ly1v21aiEfYrkDTibwNK0WY384FYQptetaCIe+5aRfSF0ipJfK71+0ku/DWiq
+         yYWdXoh+AgzUVnOSV/iwUY/hQtqXr7KbnZFdPcOQIGXZ3mlrcOcNshT9IrshjLe+f0zE
+         aZ2zdWEAffrSUKvocAGGScW6o4dk0e4x+W0iRK1IM3hEInxoByBYEXH0R5J3j/MW6KeJ
+         4cCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:reply-to
          :arc-authentication-results;
-        bh=D1+YeNlMta+IWwBJdi2XOvOjbp2xEpIZYd4wDYujxk0=;
-        b=TGNFg0yY7yMkk54hLj+LHN96A6b2fA0FW/okmY78SwofmzX3t2Us29Om+sbEk6PHdw
-         2Us/1aMLvb2YPWF9Ua4Lwo6ynMsdCwyI+Hm/MGb5cjuIDmoQcqeJXk12WectXR9K7gma
-         p7plR74lZxvaCapJn6Ir+c4Gu3BEZGDSrzmN9iKK/gij+6iG4IZZC8uMzk7enmUW6NjT
-         9ES7jDxxk+fwzX2ui20yf4NjCVjp6wbEOYEwwW9SERs3yb0I2Ccrb7Y6W0EQMVatk8ai
-         jz5TXKOVEK+Hwm3Ypcu+rqS/RbqdB394JBUREuCNRUxsh7+MjZFx60Jl6QOC0i2bbA7M
-         8jLw==
+        bh=pMYYeuiwT9No3s+yxjnFgvN49PqNEZ8Qncb/tuY62hQ=;
+        b=QbrNfm+qdeNXXEAin+IDOGIAqpgsahNQFUXJ1AU21F7mP7hAWXIve+9JdxQD3++CVU
+         gCKukUee+qv1Q3QG+RDwYAPQKlWeVOj6IlwUCFKTwmRqmbT/CMe8BiMCW60phc7HYWGt
+         iffQudDR/wB0C3JVxR62zhFC0iKS5X7LU2xvc+OW2nGqxmpvK3pbL2QlJ5mMlWollT/i
+         ZQmpHGS5ofoyq/DMj3oL1x3TJorvy2/EJ3xiYPsk5chfhRFi+AdSyLFWPHe7QtNNzLHG
+         ozCraFDY8+sixC1ozZAIiQun9DRjJ4sPT7Zg9mx+woMNqoGPy6bEov7qYlvb4KsEbjAF
+         aWAA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GRAS4Bdi;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GRAS4Bdi;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZon9VQSGqls0+1hC9hhENNVju9yZgqivtBvVEIM7fMmfOPSnjQPTo/Cpt/cIyTZUA7FLK6P+g==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Fri, 18 May 2018 08:53:49 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Alexander Popov <alex.popov@linux.com>
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+X-Google-Smtp-Source: AB8JxZoxXDJ8u6cujIj/+9KUlxK5itKaYCelv/Cs9RDpTRVYF9xnk3AEzriCvnLYx8AeJpOgPYGxIg==
+Reply-To: alex.popov@linux.com
+Subject: Re: [PATCH v12 2/6] x86/entry: Add STACKLEAK erasing the kernel stack
+ at the end of syscalls
+To: Ingo Molnar <mingo@kernel.org>
 Cc: kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
-	PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>,
-	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-	Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	"Dmitry V . Levin" <ldv@altlinux.org>,
-	Emese Revfy <re.emese@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Thomas Garnier <thgarnie@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Ding Tianhong <dingtianhong@huawei.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Mathias Krause <minipli@googlemail.com>,
-	Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-	Kyle Huey <me@kylehuey.com>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Florian Weimer <fweimer@redhat.com>,
-	Boris Lukashev <blukashev@sempervictus.com>,
-	Andrey Konovalov <andreyknvl@google.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 2/6] x86/entry: Add STACKLEAK erasing the kernel
- stack at the end of syscalls
-Message-ID: <20180518065349.GA10080@gmail.com>
+ PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
+ Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
+ Laura Abbott <labbott@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
+ Richard Sandiford <richard.sandiford@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <a.p.zijlstra@chello.nl>, "Dmitry V . Levin"
+ <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Thomas Garnier <thgarnie@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
+ Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse
+ <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Dominik Brodowski <linux@dominikbrodowski.net>,
+ Juergen Gross <jgross@suse.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Mathias Krause <minipli@googlemail.com>,
+ Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey
+ <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
+ Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Florian Weimer <fweimer@redhat.com>,
+ Boris Lukashev <blukashev@sempervictus.com>,
+ Andrey Konovalov <andreyknvl@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 References: <1526488097-20611-1-git-send-email-alex.popov@linux.com>
  <1526488097-20611-3-git-send-email-alex.popov@linux.com>
+ <20180518065349.GA10080@gmail.com>
+From: Alexander Popov <alex.popov@linux.com>
+Message-ID: <9db6b23e-e2da-8e95-40da-b26951848c8d@linux.com>
+Date: Sat, 19 May 2018 00:12:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526488097-20611-3-git-send-email-alex.popov@linux.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180518065349.GA10080@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600638811678325053?=
-X-GMAIL-MSGID: =?utf-8?q?1600783839189179388?=
+X-GMAIL-MSGID: =?utf-8?q?1600837881260438124?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hello Ingo,
 
-* Alexander Popov <alex.popov@linux.com> wrote:
+Thanks a lot for the review!
+I agree with your points. I'll fix the series and return with v13.
 
-> --- a/arch/x86/entry/calling.h
-> +++ b/arch/x86/entry/calling.h
-> @@ -329,8 +329,22 @@ For 32-bit we have the following conventions - kernel is built with
->  
->  #endif
->  
-> +.macro ERASE_KSTACK_NOCLOBBER
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	PUSH_AND_CLEAR_REGS
-> +	call erase_kstack
-> +	POP_REGS
-> +#endif
-> +.endm
-> +
->  #endif /* CONFIG_X86_64 */
->  
-> +.macro ERASE_KSTACK
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	call erase_kstack
-> +#endif
-> +.endm
+There are some comments/questions below.
 
-Please use a well-organized, common, visually easy to ignore namespace.
+On 18.05.2018 09:53, Ingo Molnar wrote:
+> * Alexander Popov <alex.popov@linux.com> wrote:
+>> +	/*
+>> +	 * It would be nice not to have p and boundary on the stack.
+>> +	 * Setting the register specifier for them is the best we can do.
+>> +	 */
+>> +	register unsigned long p = current->thread.lowest_stack.val;
+>> +	register unsigned long boundary = p & ~(THREAD_SIZE - 1);
+> 
+> Does the 'register' keyword actually have any effect on the generated code?
 
-For example:
+No, for gcc it doesn't give any effect for this code. I used it to show the
+intention.
 
-	STACKLEAK_ERASE_NOCLOBBER
+However, even if the compiler allocates 'p' and 'boundary' on stack, that will
+not break the stack erasing.
 
-> @@ -298,6 +300,7 @@ ENTRY(ret_from_fork)
->  	/* When we fork, we trace the syscall return in the child, too. */
->  	movl    %esp, %eax
->  	call    syscall_return_slowpath
-> +	ERASE_KSTACK
+Should I drop 'register'?
 
-Ditto:
+>> +	unsigned long poison = 0;
+>> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
+>> +							sizeof(unsigned long);
+> 
+> Please don't break lines in such an ugly fashion!
 
-	STACKLEAK_ERASE
+Ok. I'll make it look like that:
 
-etc.
+	const unsigned long check_depth =
+			STACKLEAK_POISON_CHECK_DEPTH / sizeof(unsigned long);
 
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -32,6 +32,7 @@ struct vm86;
->  #include <linux/err.h>
->  #include <linux/irqflags.h>
->  #include <linux/mem_encrypt.h>
-> +#include <linux/stackleak.h>
 
->  	mm_segment_t		addr_limit;
->  
-> +	struct lowest_stack	lowest_stack;
+> Also, 'poison' is a very weird name for something that looks like an index.
+> 
+> Plus since it's bound by "check_depth" is the 'unsigned long' justified,
+> or could it be 32-bit?
 
-This too should be something more organized and more opaque, like:
+Thanks, I can turn both 'check_depth' and 'poison' (which I'll rename) into
+'unsigned int'.
 
-	struct stackleak_info	stackleak_info;
+>> +	/* Reset the lowest_stack value for the next syscall */
+>> +	current->thread.lowest_stack.val = current_top_of_stack() - 256;
+> 
+> Magic, unexplained '256' literal.
 
-And the field name should not be a meaningless 'val', but 'lowest_stack'.
+Here I'm choosing the point from which we'll start the poison search on the next
+syscall in case 'lowest_stack' is not updated in track_stack().
 
-I.e. "p->stackleak_info.lowest_stack", which is so much more informative ...
+Would you like if I use "current_top_of_stack() - THREAD_SIZE / 64" ?
 
-> --- a/arch/x86/kernel/process_32.c
-> +++ b/arch/x86/kernel/process_32.c
-> @@ -136,6 +136,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
->  	p->thread.sp0 = (unsigned long) (childregs+1);
->  	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
->  
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	p->thread.lowest_stack.val = (unsigned long)end_of_stack(p) +
-> +						sizeof(unsigned long);
-> +#endif
-
-This should use an inline helper:
-
-	stackleak_task_init(p);
-
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	p->thread.lowest_stack.val = (unsigned long)end_of_stack(p) +
-> +						sizeof(unsigned long);
-> +#endif
-
-Beyond the lower visual impact this duplication will be removed by the inline 
-helper as well.
-
-> +++ b/kernel/stackleak.c
-> @@ -0,0 +1,72 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * This code fills the used part of the kernel stack with a poison value
-> + * before returning to the userspace. It's a part of the STACKLEAK feature
-> + * ported from grsecurity/PaX.
-> + *
-> + * Author: Alexander Popov <alex.popov@linux.com>
-> + *
-> + * STACKLEAK reduces the information which kernel stack leak bugs can
-> + * reveal and blocks some uninitialized stack variable attacks. Moreover,
-> + * STACKLEAK blocks stack depth overflow caused by alloca (aka Stack Clash
-> + * attack).
-> + */
-
-s/alloca
- /alloca()
-
-> +#include <linux/bug.h>
-> +#include <linux/sched.h>
-> +#include <linux/stackleak.h>
-> +#include <asm/linkage.h>
-
-Yeah, so since processor.h includes stackleak.h I strongly doubt the stackleak.h 
-inclusion is necessary here. Please review every header inclusion line and remove 
-the unnecessary ones.
-
-> +
-> +asmlinkage void erase_kstack(void)
-
-This too should be in the stackleak_*() namespace.
-
-> +{
-> +	/*
-> +	 * It would be nice not to have p and boundary on the stack.
-> +	 * Setting the register specifier for them is the best we can do.
-> +	 */
-> +	register unsigned long p = current->thread.lowest_stack.val;
-> +	register unsigned long boundary = p & ~(THREAD_SIZE - 1);
-
-Does the 'register' keyword actually have any effect on the generated code?
-
-> +	unsigned long poison = 0;
-> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
-> +							sizeof(unsigned long);
-
-Please don't break lines in such an ugly fashion!
-
-Also, 'poison' is a very weird name for something that looks like an index.
-
-Plus since it's bound by "check_depth" is the 'unsigned long' justified,
-or could it be 32-bit?
-
-> +
-> +	/*
-> +	 * Let's search for the poison value in the stack.
-> +	 * Start from the lowest_stack and go to the bottom.
-> +	 */
-> +	while (p > boundary && poison <= check_depth) {
-> +		if (*(unsigned long *)p == STACKLEAK_POISON)
-> +			poison++;
-> +		else
-> +			poison = 0;
-> +
-> +		p -= sizeof(unsigned long);
-> +	}
-
-This comment would be so much easier to read if the initialization was done right 
-before the first use, i.e.:
-
-	/*
-	 * Let's search for the poison value in the stack.
-	 * Start from the lowest_stack and go to the bottom:
-	 */
-
-	p = current->thread.lowest_stack.val;
-	boundary = p & ~(THREAD_SIZE - 1);
-
-	while (p > boundary && poison <= check_depth) {
-		if (*(unsigned long *)p == STACKLEAK_POISON)
-			poison++;
-		else
-			poison = 0;
-	...
-
-> +
-> +	/*
-> +	 * One long int at the bottom of the thread stack is reserved and
-> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
-> +	 */
-> +	if (p == boundary)
-> +		p += sizeof(unsigned long);
-
-Please put types into quotes where it's ambigous. I first read this sentence as 
-"One long ..." and went "wtf". It's a totally unnecessary disruption of the 
-reading flow.
-
-> +	/*
-> +	 * So let's write the poison value to the kernel stack.
-> +	 * Start from the address in p and move up till the new boundary.
-> +	 * We assume that the stack pointer doesn't change when we write poison.
-> +	 */
-
-Here too 'p' is easier to read.
-
-But 'p' is a very weird name: in the kernel it's usually some sort of process 
-pointer. Please rename it to something more descriptive, such as "kstack_ptr" or 
-so.
-
-> +	if (on_thread_stack())
-> +		boundary = current_stack_pointer;
-> +	else
-> +		boundary = current_top_of_stack();
-> +
-> +	BUG_ON(boundary - p >= THREAD_SIZE);
-
-Please make this:
-
-	if ( WARN_ON_ONCE())
-		return;
-
-... or so, so that if this code is buggy we get actual useful user reports, not 
-just "my machine froze, help!"...
-
-> +	/* Reset the lowest_stack value for the next syscall */
-> +	current->thread.lowest_stack.val = current_top_of_stack() - 256;
-
-Magic, unexplained '256' literal.
-
-Thanks,
-
-	Ingo
+Best regards,
+Alexander
