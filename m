@@ -1,105 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753900AbeERIYm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:24:42 -0400
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:31369 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753790AbeERIYi (ORCPT
+        id S1753849AbeERI0H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:26:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35568 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753687AbeERI0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:24:38 -0400
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Mali DP Maintainers <malidp@foss.arm.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        DRI-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Daniel Stone <daniels@collabora.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v7 2/5] drm: mali-dp: Add RGB writeback formats for DP550/DP650
-Date: Fri, 18 May 2018 09:24:20 +0100
-Message-Id: <20180518082423.15500-3-Liviu.Dudau@arm.com>
+        Fri, 18 May 2018 04:26:03 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        tomasz Figa <tfiga@chromium.org>, Sean Paul <seanpaul@google.com>,
+        kernel@collabora.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>,
+        mark.yao@rock-chips.com
+Subject: [RFC PATCH] drm/rockchip: update cursors asynchronously through atomic.
+Date: Fri, 18 May 2018 10:25:48 +0200
+Message-Id: <20180518082548.13450-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518082423.15500-1-Liviu.Dudau@arm.com>
-References: <20180518082423.15500-1-Liviu.Dudau@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Starkey <brian.starkey@arm.com>
+Add support to async updates of cursors by using the new atomic
+interface for that.
 
-Add a layer bit for the SE memory-write, and add it to the pixel format
-matrix for DP550/DP650.
-
-Signed-off-by: Brian Starkey <brian.starkey@arm.com>
-[rebased and fixed conflicts]
-Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- drivers/gpu/drm/arm/malidp_hw.c | 22 +++++++++++-----------
- drivers/gpu/drm/arm/malidp_hw.h |  1 +
- 2 files changed, 12 insertions(+), 11 deletions(-)
+I am sending this as RFC because I still don't have a deep knowledge of
+the hw and I am not sure if the vop_plane_update function can be reused
+in both cases, atomic_updates and atomic_async_updates. I think that
+someone with more knowledge should take a look. The patch was tested on
+a Samsung Chromebook Plus in two ways.
 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 7a0f1ee161feb..455a83689d039 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -47,27 +47,27 @@ static const struct malidp_format_id malidp500_de_formats[] = {
+1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
+tests and see that there is no regression after the patch.
+
+2. Running weston using the atomic API.
+
+Best regards,
+ Enric
+
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 79 ++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 53d4afe15278..a89214541439 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -688,8 +688,7 @@ static void vop_plane_atomic_disable(struct drm_plane *plane,
+ 	spin_unlock(&vop->reg_lock);
+ }
  
- #define MALIDP_COMMON_FORMATS \
- 	/*    fourcc,   layers supporting the format,      internal id   */ \
--	{ DRM_FORMAT_ARGB2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(0, 0) }, \
--	{ DRM_FORMAT_ABGR2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(0, 1) }, \
--	{ DRM_FORMAT_RGBA1010102, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(0, 2) }, \
--	{ DRM_FORMAT_BGRA1010102, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(0, 3) }, \
-+	{ DRM_FORMAT_ARGB2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(0, 0) }, \
-+	{ DRM_FORMAT_ABGR2101010, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(0, 1) }, \
-+	{ DRM_FORMAT_RGBA1010102, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(0, 2) }, \
-+	{ DRM_FORMAT_BGRA1010102, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(0, 3) }, \
- 	{ DRM_FORMAT_ARGB8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(1, 0) }, \
- 	{ DRM_FORMAT_ABGR8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(1, 1) }, \
- 	{ DRM_FORMAT_RGBA8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(1, 2) }, \
- 	{ DRM_FORMAT_BGRA8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(1, 3) }, \
--	{ DRM_FORMAT_XRGB8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(2, 0) }, \
--	{ DRM_FORMAT_XBGR8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(2, 1) }, \
--	{ DRM_FORMAT_RGBX8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(2, 2) }, \
--	{ DRM_FORMAT_BGRX8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART, MALIDP_ID(2, 3) }, \
--	{ DRM_FORMAT_RGB888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(3, 0) }, \
--	{ DRM_FORMAT_BGR888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(3, 1) }, \
-+	{ DRM_FORMAT_XRGB8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART | SE_MEMWRITE, MALIDP_ID(2, 0) }, \
-+	{ DRM_FORMAT_XBGR8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART | SE_MEMWRITE, MALIDP_ID(2, 1) }, \
-+	{ DRM_FORMAT_RGBX8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART | SE_MEMWRITE, MALIDP_ID(2, 2) }, \
-+	{ DRM_FORMAT_BGRX8888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | DE_SMART | SE_MEMWRITE, MALIDP_ID(2, 3) }, \
-+	{ DRM_FORMAT_RGB888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(3, 0) }, \
-+	{ DRM_FORMAT_BGR888, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(3, 1) }, \
- 	{ DRM_FORMAT_RGBA5551, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 0) }, \
- 	{ DRM_FORMAT_ABGR1555, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 1) }, \
- 	{ DRM_FORMAT_RGB565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 2) }, \
- 	{ DRM_FORMAT_BGR565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 3) }, \
- 	{ DRM_FORMAT_YUYV, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 2) },	\
- 	{ DRM_FORMAT_UYVY, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 3) },	\
--	{ DRM_FORMAT_NV12, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 6) },	\
-+	{ DRM_FORMAT_NV12, DE_VIDEO1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(5, 6) },	\
- 	{ DRM_FORMAT_YUV420, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 7) }
+-static void vop_plane_atomic_update(struct drm_plane *plane,
+-		struct drm_plane_state *old_state)
++static void vop_plane_update(struct drm_plane *plane)
+ {
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_crtc *crtc = state->crtc;
+@@ -710,20 +709,6 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+ 	bool rb_swap;
+ 	int format;
  
- static const struct malidp_format_id malidp550_de_formats[] = {
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index 72cc22f828360..a242e97cf6428 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -33,6 +33,7 @@ enum {
- 	DE_GRAPHICS2 = BIT(2), /* used only in DP500 */
- 	DE_VIDEO2 = BIT(3),
- 	DE_SMART = BIT(4),
-+	SE_MEMWRITE = BIT(5),
+-	/*
+-	 * can't update plane when vop is disabled.
+-	 */
+-	if (WARN_ON(!crtc))
+-		return;
+-
+-	if (WARN_ON(!vop->is_enabled))
+-		return;
+-
+-	if (!state->visible) {
+-		vop_plane_atomic_disable(plane, old_state);
+-		return;
+-	}
+-
+ 	obj = rockchip_fb_get_gem_obj(fb, 0);
+ 	rk_obj = to_rockchip_obj(obj);
+ 
+@@ -794,10 +779,72 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+ 	spin_unlock(&vop->reg_lock);
+ }
+ 
++static void vop_plane_atomic_update(struct drm_plane *plane,
++				    struct drm_plane_state *old_state)
++{
++	struct drm_plane_state *state = plane->state;
++	struct vop *vop = to_vop(state->crtc);
++
++	/*
++	 * can't update plane when vop is disabled.
++	 */
++	if (WARN_ON(!state->crtc))
++		return;
++
++	if (WARN_ON(!vop->is_enabled))
++		return;
++
++	if (!state->visible) {
++		vop_plane_atomic_disable(plane, old_state);
++		return;
++	}
++
++	vop_plane_update(plane);
++}
++
++static int vop_plane_atomic_async_check(struct drm_plane *plane,
++					struct drm_plane_state *state)
++{
++	struct drm_crtc_state *crtc_state;
++
++	crtc_state = drm_atomic_get_existing_crtc_state(state->state,
++							state->crtc);
++	if (WARN_ON(!crtc_state))
++		return -EINVAL;
++
++	if (!crtc_state->active)
++		return -EINVAL;
++
++	if (plane->state->crtc != state->crtc ||
++	    plane->state->src_w != state->src_w ||
++	    plane->state->src_h != state->src_h ||
++	    plane->state->crtc_w != state->crtc_w ||
++	    plane->state->crtc_h != state->crtc_h ||
++	    !plane->state->fb ||
++	    plane->state->fb != state->fb)
++		return -EINVAL;
++
++	return 0;
++}
++
++static void vop_plane_atomic_async_update(struct drm_plane *plane,
++					  struct drm_plane_state *new_state)
++{
++	plane->state->src_x = new_state->src_x;
++	plane->state->src_y = new_state->src_y;
++	plane->state->crtc_x = new_state->crtc_x;
++	plane->state->crtc_y = new_state->crtc_y;
++	plane->state->fb = new_state->fb;
++
++	vop_plane_update(plane);
++}
++
+ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ 	.atomic_check = vop_plane_atomic_check,
+ 	.atomic_update = vop_plane_atomic_update,
+ 	.atomic_disable = vop_plane_atomic_disable,
++	.atomic_async_check = vop_plane_atomic_async_check,
++	.atomic_async_update = vop_plane_atomic_async_update,
  };
  
- struct malidp_format_id {
+ static const struct drm_plane_funcs vop_plane_funcs = {
 -- 
 2.17.0
