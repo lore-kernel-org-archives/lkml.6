@@ -1,126 +1,73 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1527095845; cv=none;
+Return-Path: <tsoni@codeaurora.org>
+X-Google-Smtp-Source: AB8JxZoBVPSfWD90nVLpHsaJOTq2wY2AlX8eAZgDO5Tp9Ivt2S7bveoFHhy0IgUng+GdG2ExZWXv
+ARC-Seal: i=1; a=rsa-sha256; t=1526676427; cv=none;
         d=google.com; s=arc-20160816;
-        b=DEtNJniVm840Nn+yP0v4ffEejiwbKM6bK6EvimiugmwoiYxZrsrXorvZZjEOMewiCv
-         uFI/P64vkAjG12LPfbqlJY+Er4tN/m+FUefwIwLPH2Y4MkLUXwN9bj/ofA/RFZgV//r9
-         TH7WWWQ3gntVgyCyipPA6KlWRRf0Ea9wbNTY3uRQ8T4lur/+rWmQD9Z7f9JPjikOLeXh
-         QAjBapquNgEyf2GX7EtJIZ2U0HZmlb66R0FaDwxECmxqRACwx7rbqKyp11vakZsBg9CD
-         TgNaNymuyOvO0uLzaz2d8Hp1Dk1EW+XsnYuXg6fjkG4ZOJlwwG2esGSsKlMkfTAvFw9R
-         +yRg==
+        b=Clt7g1Ydx1axFwNgkdLr0EIWXxl+S/r2Z8Oi2Ne9InrBMak72eQFnFzZCsFFgskJ3L
+         XwsropACNjdmv7MpV1LYXcQGlnCjBClyAZeJd7wWm0Qfkqxmm72Lj7k1HQpC1xp2z/1l
+         3vQ6/qL2YShgCD3m3m25RW1LiGXlPqxGw1K6R5d+TistVnqViII3RiKQsHwbe+wkOXSr
+         7qzofXBVgqvQ7uhhQsAI7hmonE8n/Bfxhk+Bv1jz5/74cZfHDDp4fPFrxeDH0oyX+CIz
+         rPUUA++K7Z06sC0GV4Cqpg2aVte5yN8/31Te1hR1jEZJBMUfdLZvkWXxsf+WafMXU/Qa
+         q4jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=oorM8A5kHnrjtRdvUuQpn7ZcEXEGHm2Dmp5aLTdzLis=;
-        b=dj3IBi7oTAqQSxWIJmCo9XzgTlevkfKE+EMaqxcEhtRCJ0W+8Innjiq1gzVpyu8kA1
-         zZx7W1/WLUYAqHwqZuabiA+O8jFTNnB1j0sJVLvNdBKmUbAI7s4bKVVGYi2ZCeBYTdMk
-         2Yt8vwpv1xgMN2CnTvKp10u/FZyrYxcQsNd/cNIiMqG/YpZ2u7l4uQJEo2C/9W3MlFsC
-         dYDWZWmXqYDM/6dxJq0DWI4xjINtaI9NDwrM9dvP5w5KeROtQBpbff2tTs8pFyib+7ut
-         T6thftpzMpf8ipRqO/YjHSH/TlCymkImbOcjJJL1VN0T2A78mPrL5dXInGKvKI1yZREc
-         XD4g==
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=TnXNtUcbYIGp2btQzOlU9ZzgLj1rh79K0cNmKNLExmo=;
+        b=wloGILK/HbXtgLz19ku7t3DLSms2mVLjajsMMEaEzHejKxPZeaF5P0w/Wyv9N7GWiy
+         b23Ca0+dDBH+VFzSdd4VS+OSQGrUI29IbXSdH4uCCmAvpi2zqaL/cqyUWYaDh2IV2Bsb
+         dIqqO0JP8A2Qi/u7vlpmqrQsY8+ELKKgwU4ZrNDO0Oayjf/as1N22TUDAMx8HMfTp55P
+         79ah7YNSzSA+0UegnruFuANUOHuSPHcF12kdiO1n59ECtAD7V3hN1SPPmn62s7H1OzfC
+         3VH5H2wnkblVWPe3H1o+3x3A+QNI1Xjn3Of9FN+frnHHygpgq28Jg5T28kuNQnXK1MDD
+         XX5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MaDriYv2;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=e9rweFsR;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=e9rweFsR;
+       spf=pass (google.com: domain of tsoni@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=tsoni@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=MaDriYv2;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZr8vdfpg3DlS97cwuAZhB5y4CN3nh0njMLmHcWr+KigLMcBvCyQ0tAXvczx+S0BKktzzOgmqg==
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=e9rweFsR;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=e9rweFsR;
+       spf=pass (google.com: domain of tsoni@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=tsoni@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6E606085F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
 Subject: Re: [PATCH 1/2] slimbus: ngd: dt-bindings: Add slim ngd dt bindings
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, kramasub@codeaurora.org, sdharia@quicinc.com,
- girishm@quicinc.com, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
- bgoswami@codeaurora.org, devicetree@vger.kernel.org, broonie@kernel.org,
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ gregkh@linuxfoundation.org, robh+dt@kernel.org
+Cc: kramasub@codeaurora.org, sdharia@quicinc.com, girishm@quicinc.com,
+ linux-kernel@vger.kernel.org, mark.rutland@arm.com, bgoswami@codeaurora.org,
+ devicetree@vger.kernel.org, broonie@kernel.org,
  linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
 References: <20180516165118.16551-1-srinivas.kandagatla@linaro.org>
  <20180516165118.16551-2-srinivas.kandagatla@linaro.org>
- <20180523164023.GA24671@rob-hp-laptop>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <94271b39-37f4-16c5-db35-782bbbc9d851@linaro.org>
-Date: Wed, 23 May 2018 18:17:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+From: Trilok Soni <tsoni@codeaurora.org>
+Message-ID: <802138cc-77cc-9800-f725-0ab8a9f0467e@codeaurora.org>
+Date: Fri, 18 May 2018 13:47:05 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180523164023.GA24671@rob-hp-laptop>
+In-Reply-To: <20180516165118.16551-2-srinivas.kandagatla@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600640408468818070?=
-X-GMAIL-MSGID: =?utf-8?q?1601276052774940038?=
+X-GMAIL-MSGID: =?utf-8?q?1600836261437536188?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Thanks Rob for review,
+Hi Srinivas
 
-On 23/05/18 17:40, Rob Herring wrote:
-> On Wed, May 16, 2018 at 05:51:17PM +0100, Srinivas Kandagatla wrote:
->> This patch adds bindings for Qualcomm SLIMBus NGD controller found in
->> all new SoCs starting from B family.
->> SLIMBus NGD controller is a light-weight driver responsible for
->> communicating with SLIMBus slaves directly over the bus using messaging
->> interface and communicating with master component residing on ADSP for
->> bandwidth and data-channel management
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../bindings/slimbus/slim-ngd-qcom-ctrl.txt        | 70 ++++++++++++++++++++++
->>   1 file changed, 70 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt b/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
->> new file mode 100644
->> index 000000000000..c948fb098819
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
->> @@ -0,0 +1,70 @@
->> +Qualcomm SLIMBus Non Generic Device (NGD) Controller binding
->> +
->> +SLIMBus NGD controller is a light-weight driver responsible for communicating
->> +with SLIMBus slaves directly over the bus using messaging interface and
->> +communicating with master component residing on ADSP for bandwidth and
->> +data-channel management
->> +
->> +Please refer to slimbus/bus.txt for details of the common SLIMBus bindings.
->> +
->> +- compatible:
->> +	Usage: required
->> +	Value type: <stringlist>
->> +	Definition: must be "qcom,slim-ngd"
-> 
-> SoC specific compatible needed.
+On 5/16/2018 9:51 AM, Srinivas Kandagatla wrote:
+> This patch adds bindings for Qualcomm SLIMBus NGD controller found in
+> all new SoCs starting from B family.
 
-Yes, I will add that in v2.
-> 
->> +
->> +- reg:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: must specify the base address and size of the controller
->> +		    register blocks.
-> 
-> blocks? Is there more than one? If so, how many?
-Its just one. I will fix the text to reflect this.
+"X/Y/Z family" has no meaning here in upstream and just put the 
+processor name from which you are adding the support or tested to start 
+with.
 
-> 
->> +
->> +- reg-names:
->> +	Usage: required
->> +	Value type: <stringlist>
->> +	Definition: must be "ctrl"
-> 
-> reg-names is pointless when there is only 1.
-> 
->> +
->> +- qcom,ngd-id
->> +	Usage: required
->> +	Value type: <u32>
->> +	Definition: ngd instance id in the controller
-> 
-> Why do you need this?
-I have removed this totally in my next version, which I will be posting 
-soon.
 
-Thanks,
-srini
+-- 
+---Trilok Soni
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
