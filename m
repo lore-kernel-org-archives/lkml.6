@@ -1,75 +1,70 @@
-Return-Path: <shuah@kernel.org>
-X-Google-Smtp-Source: AB8JxZpkeLUSXlRhk32n4uk2ndMOraAvaflkT9qkvJY1XBMDSsj/NuXGI5QGjA+Q6CvUVPlAXOVF
-ARC-Seal: i=1; a=rsa-sha256; t=1525800996; cv=none;
+Return-Path: <colin.king@canonical.com>
+X-Google-Smtp-Source: AB8JxZrt/xswFS1ZvXmqDJVUc9XATjTB3IeWBmL0m4cebfYFdAZBgGwjxRTV+Km1pnEmp7XwI3Dz
+ARC-Seal: i=1; a=rsa-sha256; t=1526637841; cv=none;
         d=google.com; s=arc-20160816;
-        b=HgMAIhFx48BJIzkNymfuO5NVKJ6xuE/mXNOpvb7qcA0cRWvGhrB/erBkbyCin11JwU
-         9dtYVZzpxb0y/Fl/KrBiBxABki3chKhyBJXGlyKJUNe00dRwLJYpdJe70XFYCU4pUOtO
-         yzCB1AGeBEyJTSGKHZBZPR7SR37SbRVZmHAOW9MdrhJUdqoM43xEHMq/zJqsQEjbxin7
-         6kurdHGZW1cF7jmf/V8agyxkCnCFubwg5E0qSGnII9qFZaQM1o+o8/y0t0BHbk6WIlWz
-         EWFX5AulVQH/RSSy7D+IzYD99s7hZHufEynF6fDG/9VYhXfS9rAxuefhKjkXFEWozLlK
-         IGog==
+        b=F1gwisqV9u9o8m9utS/aU59g/inC4ybC/GQiujtbixKC56HewbVwGdz63r7tH3U6oM
+         XahsuPvwrEU7XIlc5ECqeRDD4Zco8xCH6AKr7GZzp/SSWo4EexhuJc3vLE95HMEMWw08
+         CbzNPB8UP8cr/MLMwye5HgW7rmO6fpppdmZqfb5Bpb6Ddy7shtf/Z1BsC9FZE2jrAkfn
+         4IUb/nsvDYyDg1k0lrNkom18l4gEIN1+vDB+B9aDJybnBzyyQyJCmiVybXWOXli7+WWc
+         PXU0ibMA3fYPBSVCd4gWL5gFDNpPW/2NIqLBlK/EHMdHDiBJRcZmpo6KrKivo0Ze8zYL
+         omHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=fJGjj3tW/vKTaJPEsRApmUfivnGUU6pLZAwBusKR330=;
-        b=KHp8LCsrh9kPcuDGj1q3GHHbz64vifNt72feyoVFxub/0AS6cjagVmOxEPSzafuKwd
-         wU9AdNdTESLzL+0ADQ/gMOslox4e/K+WlY9faERrahD5rG1snDMGWuuFsN3Tu6F3Mi+c
-         /q2x4vgZ2/FqpabB2+Sq9FCllSVBv0F0OD/USsPSLccF/rcuyq3cwmTobpJhsB5/L2Eh
-         qJvhhj3DBir9fJStPky+5xRAQE43I4DoOIUPTtUAKDhdjPWPiebxXK0riibQLAtySHhN
-         dGGuHNcreNsbZEywzE12zbF0XdQr9+r7oFWLfsUvH6CEmNgzUzFfOtP0Fir9Z2vKm7DC
-         N5xA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=GaO4/HsU+Rv9hg0x7xyG02PPOukitUOoMxC4PLCST0o=;
+        b=adBGef7cd5PybHJrAhPFBUXw4Ash+nHS6UO4jiFBOuUNeLCxpKyrLaKuMqlC86P3Kv
+         IUGkASm1LMRSPLPpKBusDahnP8Er6KHaslsYL07fyF4IjMmf2MWhDswzNMeNq2PjJnuo
+         z8Kv6V1mh/oWEL+jYviFHbpWJwAFjJHX6YloZ/YRm+YhzuuS2iFeZkv+tIb2equSCtFh
+         agqwHobfTdSvVJEpmrsBle+IwLAt12Mf1buqqw+ukEDc9WusXYZaSBnnkRsB/6CSb7Ue
+         Cm7X+XtzE6534pXdX/3dbqAjXkiOlLDqGsFcSa6VBtS1V6yRVCF836IME/fy5ggRC0Rl
+         8txQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Subject: Re: [PATCH 2/2] tools/testing/selftests/x86: fix error: conflicting
- types for 'pkey_get|pkey_set'
-To: Dave Hansen <dave.hansen@intel.com>, Li Zhijian
- <lizhijian@cn.fujitsu.com>, linux-kselftest@vger.kernel.org
-Cc: mingo@kernel.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
- pombredanne@nexb.com, ebiederm@xmission.com, luto@kernel.org,
- linux-kernel@vger.kernel.org, philip.li@intel.com,
- leist.fnst@cn.fujitsu.com, zhijianx.li@intel.com,
- Shuah Khan <shuah@kernel.org>
-References: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
- <1525770870-19067-2-git-send-email-lizhijian@cn.fujitsu.com>
- <125eb810-1d48-394d-9665-40da64326fbb@intel.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <e80c9430-eaed-6a46-bde2-141b2e4266d2@kernel.org>
-Date: Tue, 8 May 2018 11:36:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+From: Colin King <colin.king@canonical.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Christian=20L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+	NeilBrown <neil@brown.name>,
+	devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: mt7621-mmc: fix spelling mistake: "Eanable" -> "Enable"
+Date: Fri, 18 May 2018 11:03:59 +0100
+Message-Id: <20180518100359.28036-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <125eb810-1d48-394d-9665-40da64326fbb@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599886734480796496?=
-X-GMAIL-MSGID: =?utf-8?q?1599918305630160791?=
+X-GMAIL-THRID: =?utf-8?q?1600795801355233684?=
+X-GMAIL-MSGID: =?utf-8?q?1600795801355233684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/08/2018 10:30 AM, Dave Hansen wrote:
-> On 05/08/2018 02:14 AM, Li Zhijian wrote:
->> -u32 pkey_get(int pkey, unsigned long flags)
->> +u32 _pkey_get(int pkey, unsigned long flags)
->>  {
->>  	u32 mask = (PKEY_DISABLE_ACCESS|PKEY_DISABLE_WRITE);
->>  	u32 pkru = __rdpkru();
->> @@ -422,7 +426,7 @@ u32 pkey_get(int pkey, unsigned long flags)
->>  	return masked_pkru;
->>  }
-> 
-> I'm not a huge fan of random underscores for undocumented reasons.  But,
-> oh well.
-> 
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks. Queuing this up for 4.17-rc5
+Trivial fix to spelling mistake in N_MSG message text
 
--- Shuah
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/mt7621-mmc/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index ddac4ce6457b..11bf4b4c3403 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -2032,7 +2032,7 @@ static void msdc_enable_cd_irq(struct msdc_host *host, int enable)
+ 		return;
+ 	}
+ 
+-	N_MSG(CFG, "CD IRQ Eanable(%d)", enable);
++	N_MSG(CFG, "CD IRQ Enable(%d)", enable);
+ 
+ 	if (enable) {
+ 		/* card detection circuit relies on the core power so that the core power
+-- 
+2.17.0
