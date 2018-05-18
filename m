@@ -1,152 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeERBye (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 21:54:34 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37837 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbeERByd (ORCPT
+        id S1752211AbeERBy4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 21:54:56 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41941 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeERByy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 21:54:33 -0400
-X-Google-Smtp-Source: AB8JxZrhX4W8m82eAzJC9leylZ00FdldTBxNVlW145BF+ukXcZhMCs0JY1ydsnjfjYHCDvb0f6UoGQ==
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Todd Kjos <tkjos@google.com>,
-        Erick Reyes <erickreyes@google.com>, Julia Cartwright <julia@ni.com>,
-        kernel-team@android.com
-Subject: [PATCH 2/2] kselftests: ftrace: Add tests for the preemptoff and irqsoff tracers
-Date: Thu, 17 May 2018 18:54:21 -0700
-Message-Id: <20180518015421.129868-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-In-Reply-To: <20180518015421.129868-1-joel@joelfernandes.org>
-References: <20180518015421.129868-1-joel@joelfernandes.org>
+        Thu, 17 May 2018 21:54:54 -0400
+X-Google-Smtp-Source: AB8JxZo/Vw4f+BSfCqaq2M5D1y6Rr5DKmfEUfUeyM2I5d2pfPEPcG0z4kKaHhZUp0IW1q0OC4k9NrQ==
+Date: Fri, 18 May 2018 07:24:50 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v1 03/11] cpufreq: tegra20: Remove EMC clock usage
+Message-ID: <20180518015450.5rcugfepgfzzxljx@vireshk-i7>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-4-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517180056.13336-4-digetx@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here we add unit tests for the preemptoff and irqsoff tracer by using a
-kernel module introduced previously to trigger atomic sections in the
-kernel.
+On 17-05-18, 21:00, Dmitry Osipenko wrote:
+> The EMC driver has been gone 4 years ago, since the commit a7cbe92cef27
+> ("ARM: tegra: remove tegra EMC scaling driver"). Remove the EMC clock
+> usage as it does nothing. We may consider re-implementing the EMC scaling
+> later, probably using PM Memory Bandwidth QoS API.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 22 ----------------------
+>  1 file changed, 22 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index dd8a76a64a8e..693f9067ba8a 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -44,7 +44,6 @@ static struct cpufreq_frequency_table freq_table[] = {
+>  static struct clk *cpu_clk;
+>  static struct clk *pll_x_clk;
+>  static struct clk *pll_p_clk;
+> -static struct clk *emc_clk;
+>  static bool pll_x_prepared;
+>  
+>  static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+> @@ -95,17 +94,6 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
+>  	unsigned int ifreq = clk_get_rate(pll_p_clk) / 1000;
+>  	int ret = 0;
+>  
+> -	/*
+> -	 * Vote on memory bus frequency based on cpu frequency
+> -	 * This sets the minimum frequency, display or avp may request higher
+> -	 */
+> -	if (rate >= 816000)
+> -		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
+> -	else if (rate >= 456000)
+> -		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
+> -	else
+> -		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
+> -
+>  	/*
+>  	 * target freq == pll_p, don't need to take extra reference to pll_x_clk
+>  	 * as it isn't used anymore.
+> @@ -141,14 +129,12 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+>  	if (policy->cpu >= NUM_CPUS)
+>  		return -EINVAL;
+>  
+> -	clk_prepare_enable(emc_clk);
+>  	clk_prepare_enable(cpu_clk);
+>  
+>  	/* FIXME: what's the actual transition time? */
+>  	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
+>  	if (ret) {
+>  		clk_disable_unprepare(cpu_clk);
+> -		clk_disable_unprepare(emc_clk);
+>  		return ret;
+>  	}
+>  
+> @@ -160,7 +146,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+>  static int tegra_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>  	clk_disable_unprepare(cpu_clk);
+> -	clk_disable_unprepare(emc_clk);
+>  	return 0;
+>  }
+>  
+> @@ -192,19 +177,12 @@ static int __init tegra_cpufreq_init(void)
+>  	if (IS_ERR(pll_p_clk))
+>  		return PTR_ERR(pll_p_clk);
+>  
+> -	emc_clk = clk_get_sys("cpu", "emc");
+> -	if (IS_ERR(emc_clk)) {
+> -		clk_put(cpu_clk);
+> -		return PTR_ERR(emc_clk);
+> -	}
+> -
+>  	return cpufreq_register_driver(&tegra_cpufreq_driver);
+>  }
+>  
+>  static void __exit tegra_cpufreq_exit(void)
+>  {
+>  	cpufreq_unregister_driver(&tegra_cpufreq_driver);
+> -	clk_put(emc_clk);
+>  	clk_put(cpu_clk);
+>  }
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zilstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Glexiner <tglx@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Erick Reyes <erickreyes@google.com>
-Cc: Julia Cartwright <julia@ni.com>
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- tools/testing/selftests/ftrace/config         |  3 +
- .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
- 2 files changed, 77 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-index b01924c71c09..29588b328345 100644
---- a/tools/testing/selftests/ftrace/config
-+++ b/tools/testing/selftests/ftrace/config
-@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
- CONFIG_TRACER_SNAPSHOT=y
- CONFIG_STACK_TRACER=y
- CONFIG_HIST_TRIGGERS=y
-+CONFIG_PREEMPT_TRACER=y
-+CONFIG_IRQSOFF_TRACER=y
-+CONFIG_TEST_ATOMIC_SECTIONS=m
-diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-new file mode 100644
-index 000000000000..b76d781c5645
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-@@ -0,0 +1,74 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: test for the preemptirqsoff tracer
-+
-+MOD=test_atomic_sections
-+
-+fail() {
-+    reset_tracer
-+    rmmod $MOD || true
-+    exit_fail
-+}
-+
-+unsup() { #msg
-+    reset_tracer
-+    rmmod $MOD || true
-+    echo $1
-+    exit_unsupported
-+}
-+
-+modprobe $MOD || unsup "$MOD module not available"
-+rmmod $MOD
-+
-+grep "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
-+grep "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
-+
-+reset_tracer
-+
-+# Simulate preemptoff section for half a second couple of times
-+echo preemptoff > current_tracer
-+sleep 1
-+modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+
-+cat trace
-+
-+# Confirm which tracer
-+grep "tracer: preemptoff" trace || fail
-+
-+# Check the end of the section
-+egrep "5.....us : <stack trace>" trace || fail
-+
-+# Check for 500ms of latency
-+egrep "latency: 5..... us" trace || fail
-+
-+reset_tracer
-+
-+# Simulate irqsoff section for half a second couple of times
-+echo irqsoff > current_tracer
-+sleep 1
-+modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-+rmmod test_atomic_sections || fail
-+
-+cat trace
-+
-+# Confirm which tracer
-+grep "tracer: irqsoff" trace || fail
-+
-+# Check the end of the section
-+egrep "5.....us : <stack trace>" trace || fail
-+
-+# Check for 500ms of latency
-+egrep "latency: 5..... us" trace || fail
-+
-+reset_tracer
-+exit 0
-+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+viresh
