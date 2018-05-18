@@ -1,68 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeERNPV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:15:21 -0400
-Received: from mga07.intel.com ([134.134.136.100]:30095 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751435AbeERNPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:15:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,415,1520924400";
-   d="scan'208";a="47678981"
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Hans de Goede <hdegoede@redhat.com>, Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
- <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
- <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
- <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
- <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
- <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <91f87c43-0ae1-00ec-6b3e-819b639aa1b2@linux.intel.com>
-Date: Fri, 18 May 2018 16:15:37 +0300
+        id S1752289AbeERNRS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:17:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751496AbeERNRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:17:17 -0400
+Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+References: <20180516083737.26504-1-tiwei.bie@intel.com>
+ <20180516083737.26504-4-tiwei.bie@intel.com>
+ <2000f635-bc34-71ff-ff51-a711c2e9726d@redhat.com>
+ <20180516123909.GB986@debian>
+ <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
+ <20180516134550.GB4171@debian>
+ <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
+ <20180516143332.GA1957@debian>
+ <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
+ <20180518112950.GA28224@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
+Date: Fri, 18 May 2018 21:17:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
+In-Reply-To: <20180518112950.GA28224@debian>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 10:48 AM, Hans de Goede wrote:
-> Could it be the i2c input clock definition in drivers/mfd/intel-lpss-pci.c
-> is also wrong for Apollo Lake (N3450) ?  There are lots of people having
-> various issues with i2c attached touchpads on Apollo Lake devices, this 
-> bug:
-> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
-> 
-> Is sort of a collection bug for these. Various models laptops, lots of
-> reporters. Note not sure thie is an i2c-designware issue, but it would
-> be good to double check the input clock on Apollo Lake.
-> 
-Does i2c_designware_core.dyndbg=+p and i2c-hid.debug=1 command line 
-arguments give any useful debug information from those machines?
 
--- 
-Jarkko
+
+On 2018年05月18日 19:29, Tiwei Bie wrote:
+> On Thu, May 17, 2018 at 08:01:52PM +0800, Jason Wang wrote:
+>> On 2018年05月16日 22:33, Tiwei Bie wrote:
+>>> On Wed, May 16, 2018 at 10:05:44PM +0800, Jason Wang wrote:
+>>>> On 2018年05月16日 21:45, Tiwei Bie wrote:
+>>>>> On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
+>>>>>> On 2018年05月16日 20:39, Tiwei Bie wrote:
+>>>>>>> On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
+>>>>>>>> On 2018年05月16日 16:37, Tiwei Bie wrote:
+>>> [...]
+>>>>>>>>> +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+>>>>>>>>> +			      unsigned int id, void **ctx)
+>>>>>>>>> +{
+>>>>>>>>> +	struct vring_packed_desc *desc;
+>>>>>>>>> +	unsigned int i, j;
+>>>>>>>>> +
+>>>>>>>>> +	/* Clear data ptr. */
+>>>>>>>>> +	vq->desc_state[id].data = NULL;
+>>>>>>>>> +
+>>>>>>>>> +	i = head;
+>>>>>>>>> +
+>>>>>>>>> +	for (j = 0; j < vq->desc_state[id].num; j++) {
+>>>>>>>>> +		desc = &vq->vring_packed.desc[i];
+>>>>>>>>> +		vring_unmap_one_packed(vq, desc);
+>>>>>>>> As mentioned in previous discussion, this probably won't work for the case
+>>>>>>>> of out of order completion since it depends on the information in the
+>>>>>>>> descriptor ring. We probably need to extend ctx to record such information.
+>>>>>>> Above code doesn't depend on the information in the descriptor
+>>>>>>> ring. The vq->desc_state[] is the extended ctx.
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>> Tiwei Bie
+>>>>>> Yes, but desc is a pointer to descriptor ring I think so
+>>>>>> vring_unmap_one_packed() still depends on the content of descriptor ring?
+>>>>>>
+>>>>> I got your point now. I think it makes sense to reserve
+>>>>> the bits of the addr field. Driver shouldn't try to get
+>>>>> addrs from the descriptors when cleanup the descriptors
+>>>>> no matter whether we support out-of-order or not.
+>>>> Maybe I was wrong, but I remember spec mentioned something like this.
+>>> You're right. Spec mentioned this. I was just repeating
+>>> the spec to emphasize that it does make sense. :)
+>>>
+>>>>> But combining it with the out-of-order support, it will
+>>>>> mean that the driver still needs to maintain a desc/ctx
+>>>>> list that is very similar to the desc ring in the split
+>>>>> ring. I'm not quite sure whether it's something we want.
+>>>>> If it is true, I'll do it. So do you think we also want
+>>>>> to maintain such a desc/ctx list for packed ring?
+>>>> To make it work for OOO backends I think we need something like this
+>>>> (hardware NIC drivers are usually have something like this).
+>>> Which hardware NIC drivers have this?
+>> It's quite common I think, e.g driver track e.g dma addr and page frag
+>> somewhere. e.g the ring->rx_info in mlx4 driver.
+> It seems that I had a misunderstanding on your
+> previous comments. I know it's quite common for
+> drivers to track e.g. DMA addrs somewhere (and
+> I think one reason behind this is that they want
+> to reuse the bits of addr field).
+
+Yes, we may want this for virtio-net as well in the future.
+
+>   But tracking
+> addrs somewhere doesn't means supporting OOO.
+> I thought you were saying it's quite common for
+> hardware NIC drivers to support OOO (i.e. NICs
+> will return the descriptors OOO):
+>
+> I'm not familiar with mlx4, maybe I'm wrong.
+> I just had a quick glance. And I found below
+> comments in mlx4_en_process_rx_cq():
+>
+> ```
+> /* We assume a 1:1 mapping between CQEs and Rx descriptors, so Rx
+>   * descriptor offset can be deduced from the CQE index instead of
+>   * reading 'cqe->index' */
+> index = cq->mcq.cons_index & ring->size_mask;
+> cqe = mlx4_en_get_cqe(cq->buf, index, priv->cqe_size) + factor;
+> ```
+>
+> It seems that although they have a completion
+> queue, they are still using the ring in order.
+
+I guess so (at least from the above bits). Git grep -i "out of order" in 
+drivers/net gives some hints. Looks like there're few deivces do this.
+
+> I guess maybe storage device may want OOO.
+
+Right, some iSCSI did.
+
+But tracking them elsewhere is not only for OOO.
+
+Spec said:
+
+for element address
+
+"
+In a used descriptor, Element Address is unused.
+"
+
+for Next flag:
+
+"
+For example, if descriptors are used in the same order in which they are 
+made available, this will result in
+the used descriptor overwriting the first available descriptor in the 
+list, the used descriptor for the next list
+overwriting the first available descriptor in the next list, etc.
+"
+
+for in order completion:
+
+"
+This will result in the used descriptor overwriting the first available 
+descriptor in the batch, the used descriptor
+for the next batch overwriting the first available descriptor in the 
+next batch, etc.
+"
+
+So:
+
+- It's an alignment to the spec
+- device may (or should) overwrite the descriptor make also make address 
+field useless.
+
+Thanks
+
+>
+> Best regards,
+> Tiwei Bie
+>
+>> Thanks
+>>
+>>>> Not for the patch, but it looks like having a OUT_OF_ORDER feature bit is
+>>>> much more simpler to be started with.
+>>> +1
+>>>
+>>> Best regards,
+>>> Tiwei Bie
