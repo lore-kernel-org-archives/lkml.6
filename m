@@ -1,106 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752454AbeERIHg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:07:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:44590 "EHLO foss.arm.com"
+        id S1752458AbeERIH4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:07:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:54340 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751413AbeERIHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:07:32 -0400
-Subject: Re: [PATCH] arm: bcm2835: Add the PMU to the devicetree.
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180517131727.29263-1-eric@anholt.net>
- <1412187220.62585.1526572780332@email.1und1.de>
- <alpine.DEB.2.21.1805171233500.7984@macbook-air>
- <307323036.63872.1526576126537@email.1und1.de>
- <20180517180758.GK12198@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1805171422450.8529@macbook-air>
- <alpine.DEB.2.21.1805171530080.8529@macbook-air>
- <0a643984-1586-8c56-6627-430f0c2a4ba8@gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <d6b6f632-2051-a239-3e44-4750f2ac89d5@arm.com>
-Date: Fri, 18 May 2018 09:07:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <0a643984-1586-8c56-6627-430f0c2a4ba8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1751363AbeERIGs (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:06:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
+   d="scan'208";a="56375270"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v3 1/3] perf evlist: Create a new function perf_evlist_forced_leader
+Date: Sat, 19 May 2018 00:00:32 +0800
+Message-Id: <1526659234-1556-2-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526659234-1556-1-git-send-email-yao.jin@linux.intel.com>
+References: <1526659234-1556-1-git-send-email-yao.jin@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/05/18 20:59, Florian Fainelli wrote:
-> On 05/17/2018 12:31 PM, Vince Weaver wrote:
->> On Thu, 17 May 2018, Vince Weaver wrote:
->>
->>> On Thu, 17 May 2018, Peter Zijlstra wrote:
->>> with cortex-a7 now, would it be possible to later drop that if proper 
->>> cortex-a53 support is added to the armv7 pmu driver?  Or would that lead 
->>> to all kinds of back-compatability mess?
->>
->> For what it's worth, the pi-foundation kernel bcm2710 device tree file 
->> does:
->>
->> 		arm-pmu {
->> #ifdef RPI364
->> 			compatible = "arm,armv8-pmuv3", "arm,cortex-a7-pmu";
+For non-explicit group, perf report supports a option '--group'
+which can enable group output. We also need to support perf annotate
+with the same '--group'.
 
-Hahaha. Funny that. Not. That's really silly. The DT *must* describe the
-HW, and having contradictory information is not helping. This is going
-to lead to all kind of miscounted events (to take the above example) A7
-and A53 are significantly different, and thus will count events
-differently....
+Create a new function perf_evlist_forced_leader which contains
+common code to force setting the group leader.
 
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/util/evlist.c | 15 +++++++++++++++
+ tools/perf/util/evlist.h |  3 +++
+ 2 files changed, 18 insertions(+)
 
->> #else
->> 			compatible = "arm,cortex-a7-pmu";
->> #endif
->> 			interrupt-parent = <&local_intc>;
->> 			interrupts = <9>;
->> 		};
->>
->>
->> Which is probably where I was getting the arm,armv8-pmuv3 from in my 
->> original patch.
-> 
-> I thought somehow that Marc Z. had unified
-> arch/arm/kernel/perf_event_v7.c and arch/arm64/kernel/perf_event.c into
-> a common driver entry point under drivers/perf/arm_pmu.c but I don't see
-> it and after about 15 minutes looking at it, it does not look as trivial
-> as I though to separate out those files so the ARMv8 PMU description can
-> be moved into a generic location for instance.
-
-I have a pretty simple series[1] which I used to profile 32bit guests on
-an arm64 KVM host. Nobody really cared about it because running a 32bit
-kernel on 64bit HW is a bit odd, to say the least, and I'm probably the
-only one actually running 32bit VMs.
-
-> FWIW, Broadcom STB chips, even when 64-bit capable or often used with an
-> 32-bit ARM kernel, so having the ARMv8 PMUs work under a 32-bit ARM
-> kernel would be great. The downstream solution we have sued thus far is
-> to find the closest compatible string to represent those, which is not
-> great...
-Ah, so you're *really* doing that? I'm not going to ask why, I'm scared
-of the answer... ;-)
-
-Anyway, I can repost that series if that will prevent people from having
-that kind of silly hacks.
-
-Thanks,
-
-	M.
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=kvm-arm/pmuv3-32bit
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index a59281d..6983f6a 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1795,3 +1795,18 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist)
+ 
+ 	return true;
+ }
++
++/*
++ * Events in data file are not collect in groups, but we still want
++ * the group display. Set the artificial group and set the leader's
++ * forced_leader flag to notify the display code.
++ */
++void perf_evlist_forced_leader(struct perf_evlist *evlist)
++{
++	if (!evlist->nr_groups) {
++		struct perf_evsel *leader = perf_evlist__first(evlist);
++
++		perf_evlist__set_leader(evlist);
++		leader->forced_leader = true;
++	}
++}
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 6c41b2f..d77d514 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -309,4 +309,7 @@ struct perf_evsel *perf_evlist__event2evsel(struct perf_evlist *evlist,
+ 					    union perf_event *event);
+ 
+ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
++
++void perf_evlist_forced_leader(struct perf_evlist *evlist);
++
+ #endif /* __PERF_EVLIST_H */
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
