@@ -1,297 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751879AbeERHLi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:11:38 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37889 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERHLg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:11:36 -0400
-X-Google-Smtp-Source: AB8JxZqN0zoswBPfnKXLZb3l7nLxJTL3FvK4l5LjA4FxbAXiY55KC2DTO6YUGxgb+5scP+D2UXMCqQ==
-Date: Fri, 18 May 2018 16:11:35 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: James Morse <james.morse@arm.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 05/11] arm64: kexec_file: load initrd and device-tree
-Message-ID: <20180518071133.GL2737@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-6-takahiro.akashi@linaro.org>
- <c10624c0-9962-af38-1dd5-656902180ace@arm.com>
+        id S1751744AbeERHOu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:14:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49164 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750763AbeERHOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:14:48 -0400
+Date: Fri, 18 May 2018 09:14:36 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Paul Kocialkowski <contact@paulk.fr>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>
+Subject: Re: [PATCH v4 3/3] ARM: dts: sun7i: Add support for the Ainol AW1
+ tablet
+Message-ID: <20180518071436.3vvyllghrdxptsxg@flea>
+References: <20180507220413.21990-1-contact@paulk.fr>
+ <20180507220413.21990-3-contact@paulk.fr>
+ <20180511143647.ici2bfoeeldto3ju@flea>
+ <0da5787f0ce2309a74db88820bc58b3b3501c451.camel@paulk.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nbdmosmxbine5fy7"
 Content-Disposition: inline
-In-Reply-To: <c10624c0-9962-af38-1dd5-656902180ace@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <0da5787f0ce2309a74db88820bc58b3b3501c451.camel@paulk.fr>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
 
-On Tue, May 15, 2018 at 05:20:00PM +0100, James Morse wrote:
-> Hi Akashi,
-> 
-> On 25/04/18 07:26, AKASHI Takahiro wrote:
-> > load_other_segments() is expected to allocate and place all the necessary
-> > memory segments other than kernel, including initrd and device-tree
-> > blob (and elf core header for crash).
-> > While most of the code was borrowed from kexec-tools' counterpart,
-> > users may not be allowed to specify dtb explicitly, instead, the dtb
-> > presented by a boot loader is reused.
-> 
-> (Nit: "a boot loader" -> "the original boot loader")
+--nbdmosmxbine5fy7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK
+On Mon, May 14, 2018 at 10:36:08PM +0200, Paul Kocialkowski wrote:
+> > > +	backlight: backlight {
+> > > +		compatible =3D "pwm-backlight";
+> > > +		pwms =3D <&pwm 0 50000 PWM_POLARITY_INVERTED>;
+> > > +		brightness-levels =3D <  0   1   1   1   1   2   2   2
+> > > +				       2   3   3   3   3   4   4   4
+> > > +				       5   5   5   6   6   6   7   7
+> > > +				       8   8   8   9   9   9  10  10
+> > > +				      10  11  11  12  12  12  13  13
+> > > +				      14  14  14  15  15  16  16  17
+> > > +				      17  17  18  18  19  19  20  20
+> > > +				      21  21  21  22  22  23  23  24
+> > > +				      24  25  25  26  26  27  27  28
+> > > +				      28  29  30  30  31  31  32  32
+> > > +				      33  33  34  35  35  36  36  37
+> > > +				      38  38  39  39  40  41  41  42
+> > > +				      43  43  44  44  45  46  47  47
+> > > +				      48  49  49  50  51  51  52  53
+> > > +				      54  54  55  56  57  57  58  59
+> > > +				      60  61  61  62  63  64  65  65
+> > > +				      66  67  68  69  70  71  71  72
+> > > +				      73  74  75  76  77  78  79  80
+> > > +				      81  82  83  84  85  86  87  88
+> > > +				      89  90  91  92  93  94  95  96
+> > > +				      97  98  99 101 102 103 104 105
+> > > +				     106 108 109 110 111 112 114 115
+> > > +				     116 117 119 120 121 123 124 125
+> > > +				     127 128 129 131 132 133 135 136
+> > > +				     138 139 141 142 144 145 147 148
+> > > +				     150 151 153 154 156 157 159 161
+> > > +				     162 164 166 167 169 171 173 174
+> > > +				     176 178 180 181 183 185 187 189
+> > > +				     191 192 194 196 198 200 202 204
+> > > +				     206 208 210 212 214 216 219 221
+> > > +				     223 225 227 229 232 234 236 238
+> > > +				     241 242 244 246 248 250 253 255>;
+> >=20
+> > You kind of overdid it here :)
+> >=20
+> > What I meant to say before was that if you have 10 elements (and you
+> > really should have something in that magnitude) each step should
+> > increase the perceived brightness by 10%.
+>=20
+> Mhh I think 10 elements would fall too short to really depict the curve
+> with appropriate precision. Given the usual size for brightness cursors
+> in e.g. gnome-shell, it feels like a bigger number would be more
+> appropriate. Let's make it to 100 with values from 0 to 255!
+>=20
+> > In this particular case, I really think having something close to <0 4
+> > 8 16 32 64 128 255> would be enough.
+> >=20
+> > And in general, that kind of odd looking table without any more
+> > context is just screaming for a comment :)
+>=20
+> Noted, I will explain the idea, but probably without the exact formula
+> that's really a nasty hack written down on a piece of paper sitting in
+> my garbage at this point.
 
-> > arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
-> > specific data allocated in load_other_segments().
-> 
-> 
-> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-> > index f9ebf54ca247..b3b9b1725d8a 100644
-> > --- a/arch/arm64/kernel/machine_kexec_file.c
-> > +++ b/arch/arm64/kernel/machine_kexec_file.c
-> > @@ -13,7 +13,26 @@
-> >  #include <linux/ioport.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/kexec.h>
-> > +#include <linux/libfdt.h>
-> >  #include <linux/memblock.h>
-> > +#include <linux/of_fdt.h>
-> > +#include <linux/types.h>
-> > +#include <asm/byteorder.h>
-> > +
-> > +static int __dt_root_addr_cells;
-> > +static int __dt_root_size_cells;
-> 
-> > @@ -55,3 +74,144 @@ int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> >  
-> >  	return ret;
-> >  }
-> > +
-> > +static int setup_dtb(struct kimage *image,
-> > +		unsigned long initrd_load_addr, unsigned long initrd_len,
-> > +		char *cmdline, unsigned long cmdline_len,
-> > +		char **dtb_buf, size_t *dtb_buf_len)
-> > +{
-> > +	char *buf = NULL;
-> > +	size_t buf_size;
-> > +	int nodeoffset;
-> > +	u64 value;
-> > +	int range_len;
-> > +	int ret;
-> > +
-> > +	/* duplicate dt blob */
-> > +	buf_size = fdt_totalsize(initial_boot_params);
-> > +	range_len = (__dt_root_addr_cells + __dt_root_size_cells) * sizeof(u32);
-> 
-> These two cells values are 0 here. Did you want
-> arch_kexec_file_init() in patch 7 in this patch?
-> 
-> Ah, range_len isn't used, so, did you want the cells values and this range_len
-> thing in in patch 7!?
+So no one will ever be able to understand where this sequence comes
+=66rom (yourself-in-two-years included). That sounds like a pretty bad
+idea.
 
-Umm, this problem has long existed since my v1 :)
-I might better re-think about patch order.
+Maxime
 
-> 
-> > +
-> > +	if (initrd_load_addr)
-> > +		buf_size += fdt_prop_len("linux,initrd-start", sizeof(u64))
-> > +				+ fdt_prop_len("linux,initrd-end", sizeof(u64));
-> > +
-> > +	if (cmdline)
-> > +		buf_size += fdt_prop_len("bootargs", cmdline_len + 1);
-> 
-> I can't find where fdt_prop_len() .... oh, patch 7. fdt_prop_len() doesn't look
-> like the sort of thing that should be created here, but I agree there isn't an
-> existing API to do this.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Will take care of it.
+--nbdmosmxbine5fy7
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> (This must be why powerpc guesses that the fdt won't be more than double in size).
-> 
-> 
-> > +	buf = vmalloc(buf_size);
-> > +	if (!buf) {
-> > +		ret = -ENOMEM;
-> > +		goto out_err;
-> > +	}
-> > +
-> > +	ret = fdt_open_into(initial_boot_params, buf, buf_size);
-> > +	if (ret)
-> > +		goto out_err;
-> > +
-> > +	nodeoffset = fdt_path_offset(buf, "/chosen");
-> > +	if (nodeoffset < 0)
-> > +		goto out_err;
-> > +
-> > +	/* add bootargs */
-> > +	if (cmdline) {
-> > +		ret = fdt_setprop(buf, nodeoffset, "bootargs",
-> > +						cmdline, cmdline_len + 1);
-> 
-> fdt_setprop_string()?
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+fU4ACgkQ0rTAlCFN
+r3S0LBAAlASmQQOKGMJroq5yq9oJiwEjEV3xAuKQMdBNZH/awRSR4woLhbbC/hab
+hWNTj/DRrui6VVBz53L9W7ewPoYf9X73m1NarZ02vA7WZpG46E/AXs7uZV+NC6/4
+2akfQiWdeIArLP/TqTSIZJ33pqIkl/tT2hkpj6K51jqDlaT+iysUbaWN46KXi/mW
+OR3k3JcSIUBbiNa6jM6f6YBOnbFbtK1rpKuQYK0OZMOCcRUW4wZJnwiQDULDKIQu
+QCw59CB/kD/aEDGfG0ZMG13cUP0qPB3Tal56BsTOPpDnrOP54Ty1/8DPawxk4aZ/
++vyT2/e8uNH+vQERdWf4E0Z3iPnTznEjfvvDNGO1QiqVfPVnixcIwrPL5KB74+nD
+aqD/ZUMewCkwc4UC7dkxTLEkt75dk0+egNkVQ+5fLBTGwNbu0WNatxAaFeqjtRlU
+MOh1fBoqzrgt3qlFwMRk+EKZXEzR07ZlYh8XE8iVjGKFzc4TiVyKHv5xAcNxfRRz
+TNwSnXlax/RkLu5ol5De2NebnBzyASwYuh5D3P4TMlUeuX8VcPYMkpCu2WIyztHL
+Pg1WUYA8lFA3IzDBefSPn93Au6l+1sxG4czLVI+zOD2HOsuvnNScEHldioOEwFni
+vPwkfOxk0D7zJqWbGtksGIkEfpxWP0atlDCpQXbMVtRYzsiA5+Q=
+=ZGPN
+-----END PGP SIGNATURE-----
 
-OK
-
-> 
-> > +		if (ret)
-> > +			goto out_err;
-> > +	}
-> > +
-> > +	/* add initrd-* */
-> > +	if (initrd_load_addr) {
-> > +		value = cpu_to_fdt64(initrd_load_addr);
-> > +		ret = fdt_setprop(buf, nodeoffset, "linux,initrd-start",
-> > +				&value, sizeof(value));
-> 
-> sizeof(value) was assumed to be the same as sizeof(u64) earlier.
-> fdt_setprop_u64()?
-
-OK
-
-> 
-> > +		if (ret)
-> > +			goto out_err;
-> > +
-> > +		value = cpu_to_fdt64(initrd_load_addr + initrd_len);
-> > +		ret = fdt_setprop(buf, nodeoffset, "linux,initrd-end",
-> > +				&value, sizeof(value));
-> > +		if (ret)
-> > +			goto out_err;
-> > +	}
-> > +
-> > +	/* trim a buffer */
-> > +	fdt_pack(buf);
-> > +	*dtb_buf = buf;
-> > +	*dtb_buf_len = fdt_totalsize(buf);
-> > +
-> > +	return 0;
-> > +
-> > +out_err:
-> > +	vfree(buf);
-> > +	return ret;
-> > +}
-> 
-> While powerpc has some similar code for updating the initrd and cmdline, it
-> makes different assumptions about the size of the dt, and has different behavior
-> for memreserve. (looks like we don't expect the initramfs to be memreserved).
-> Lets leave unifying that stuff where possible for the future.
-
-Sure
-
-> > +int load_other_segments(struct kimage *image,
-> > +			char *initrd, unsigned long initrd_len,
-> > +			char *cmdline, unsigned long cmdline_len)
-> > +{
-> > +	struct kexec_segment *kern_seg;
-> > +	struct kexec_buf kbuf;
-> > +	unsigned long initrd_load_addr = 0;
-> > +	char *dtb = NULL;
-> > +	unsigned long dtb_len = 0;
-> > +	int ret = 0;
-> > +
-> > +	kern_seg = &image->segment[image->arch.kern_segment];
-> > +	kbuf.image = image;
-> > +	/* not allocate anything below the kernel */
-> > +	kbuf.buf_min = kern_seg->mem + kern_seg->memsz;
-> 
-> > +	/* load initrd */
-> > +	if (initrd) {
-> > +		kbuf.buffer = initrd;
-> > +		kbuf.bufsz = initrd_len;
-> > +		kbuf.memsz = initrd_len;
-> 
-> > +		kbuf.buf_align = 0;
-> 
-> I'm surprised there initrd has no alignment requirement,
-
-MeToo.
-
-> but kexec_add_buffer()
-> rounds this up to PAGE_SIZE.
-
-It seems that kimage_load_segment() requires this, but I'm not sure.
-
-> 
-> > +		/* within 1GB-aligned window of up to 32GB in size */
-> > +		kbuf.buf_max = round_down(kern_seg->mem, SZ_1G)
-> > +						+ (unsigned long)SZ_1G * 32;
-> > +		kbuf.top_down = false;
-> > +
-> > +		ret = kexec_add_buffer(&kbuf);
-> > +		if (ret)
-> > +			goto out_err;
-> > +		initrd_load_addr = kbuf.mem;
-> > +
-> > +		pr_debug("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-> > +				initrd_load_addr, initrd_len, initrd_len);
-> > +	}
-> > +
-> > +	/* load dtb blob */
-> > +	ret = setup_dtb(image, initrd_load_addr, initrd_len,
-> > +				cmdline, cmdline_len, &dtb, &dtb_len);
-> > +	if (ret) {
-> > +		pr_err("Preparing for new dtb failed\n");
-> > +		goto out_err;
-> > +	}
-> > +
-> > +	kbuf.buffer = dtb;
-> > +	kbuf.bufsz = dtb_len;
-> > +	kbuf.memsz = dtb_len;
-> > +	/* not across 2MB boundary */
-> > +	kbuf.buf_align = SZ_2M;
-> > +	kbuf.buf_max = ULONG_MAX;
-> > +	kbuf.top_down = true;
-> > +
-> > +	ret = kexec_add_buffer(&kbuf);
-> > +	if (ret)
-> > +		goto out_err;
-> > +	image->arch.dtb_mem = kbuf.mem;
-> > +	image->arch.dtb_buf = dtb;
-> > +
-> > +	pr_debug("Loaded dtb at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-> > +			kbuf.mem, dtb_len, dtb_len);
-> > +
-> > +	return 0;
-> > +
-> > +out_err:
-> > +	vfree(dtb);
-> > +	image->arch.dtb_buf = NULL;
-> 
-> Won't kimage_file_post_load_cleanup() always be called if we return an error
-> here? Why not leave the free()ing until then?
-
-Right.
-The reason why I left the code here was that we'd better locally clean up
-all the stuff that were locally allocated if we trivially need to (and can)
-do so.
-
-As it's redundant, I will remove it.
-
-Thanks,
--Takahiro AKASHI
-
-> 
-> > +	return ret;
-> > +}
-> 
-> 
-> 
-> Thanks,
-> 
-> James
+--nbdmosmxbine5fy7--
