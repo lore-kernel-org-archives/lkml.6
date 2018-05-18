@@ -1,32 +1,32 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-77256-1526665841-2-2286117045027099846
+X-Cyrus-Session-Id: sloti22d1t05-405191-1526680570-2-14840370217792498964
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='iso-8859-1'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526665839; b=ht2/LZ/MIB9NoyArQZMLEhsC1ZCx/wpzdXgNpHmYSPCXB75ezV
-    jbPPRCwKPvAyZVBRTHaFs+nO91YBEcqny7Z2GvTuluje6rT7ghH1OBNmPr8v9O40
-    bywzkvAijZxX93Zivv1YAMPlYRvsCcki3fFvqv5U3hR6RyJqgmdg6xFazHG8q2jS
-    XMdy1oKfpp/GyO9Rhw51o5HB9VP6UcEDzMNmaWYpN4TDsZQjX0E1Q5j4yQyWBPCX
-    5d/4zoLrfBBaXG3YC/1SWmSDotkRrCDdwlndgFLge5mIXuAWD0XlvK0MJ9f1hA79
-    XpcuPr403f5pWVPXhpr9cmIWTET8yRu7L3sg==
+    1526680569; b=AAaz0BHZBf6yyUAAUtYEsMJxiGJMM5WkFwn/kRCZs4uENvFngz
+    bHVroE6vxKJWqJ6dRQebj5qAr0M13UJfs7BcJ8PNxVvnr4TWSQpMvVUeRKKpvXBc
+    KBtA+8FXpS1uxhG2Zr4yVD7OKqo6PhGPZSgngN5Q94uGHrtldRLJiHldQF+JYXup
+    08U0Se+jS0pVgE+FQJrf0Rwa+vP2arKfbP4sI66adhnOTo+14g6Qz4QLlob+tFjM
+    76WiBfSKcTpF/TAelC7W+99/bFal9Fnv+2iBkUg2L29ixuzuqDRaodMKukORCoGS
+    XwnvrpEXcA34pceF8+eXdx086PBH4Zi3esJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526665839; bh=w26Mcd9/t0aYDyhVFEe2HgthN89vmJ
-    WIhOy1q/AaIfU=; b=h89qqr7x0Y3kboXbXAioCFewoccd5YvYNdI2mg1QFUg1a7
-    gL216fCBhR3F5GITA9t4MsygPH+gFMFJBxulXUHX6JfnwvbkUzOrsUUYUf1Mf1xa
-    qRvhFXC1LGJ/+02pHtHUVpKcTQUeXNSDVAXHqfOzjH595YX0Jg5G2BqPtpIZi8gD
-    KVRpesi4a3TtRH1QVZaynRmOSeUTxd11rrYcuKsfGLf1Vfn2JjTtc34VC/uSvykB
-    Pn1nPJN5/qsoPKHBZrUpjCi/yx/OvJtlcXrjjA+S1lhPPttAIuVXeRa3z7j1ahAY
-    fB+VHLidd/aTHoAzYbZcviODou8vKZbguPRWIVLA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1526680569; bh=YeH6iKSTcFy
+    VKryKyev7q2vPwoXgmSMUa/5s6+wfddQ=; b=RR5bJD4wYLmvEVE3cgT0alzI7yv
+    G8d0IssTIN5+sbsY9YfXDwEaZt0iMRQHUSGp3LVTTgEHF70kMWc5jtK2ZQEWjjOB
+    A5IkuKWe2q+nWIsvO9AN2e3oHaX+6JLvyZe/mzTWNLf27KTKs5a8a/YIL4ft+ftC
+    vRt+A9fEUifWJo/qULNtyMGZpw/YSXEkz24AlB6mi740i6n3lHho+v314Mq8nj4f
+    mt7A6pe08txSie2lti5s2hU0DiLwJKfVgT0EYjyrit6eP6Kjyl4UndcGkbmeQV9H
+    Dqa1sWZn0X9/rwipZC31iBPg0X++/1hZ+vT69EkvWvN4fiGKaieYJtbF7XA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=i17r7MKh
+    header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=glGgdr24
     x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=pandora-2014;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=armlinux.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,10 +40,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=armlinux.org.uk header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=i17r7MKh
+      header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=glGgdr24
       x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=pandora-2014;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=armlinux.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -58,22 +58,23 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEy6l8cUeZ+xl+GUm5beAhOgZQJSRopYR7PquPuJaWYU3R4THMXky8tDKID48SJ9PsCC2U8UORi8ZLD7zAn6Ud8CstPj0cc1LTW91hdbYlxZ7+Ne3+N1
-    2LbJVuwK5+HHmkyBf187UgHoKFMVBI2jR8bJtZBsFy3hS6DwO1aGyQ5FXIX+0sUc5kKOODS6+LgPwki/S73AiJuDD8lbac6XPq5V9RYmZ4Wk1UddPHbT/txK
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=PHq6YzTAAAAA:8 a=PMT70qdeAAAA:8 a=_MWnjJkh09QHyX1phz8A:9
-    a=CjuIK1q_8ugA:10 a=ZKzU8r6zoKMcqsNulkmm:22
+X-CM-Envelope: MS4wfHeHa/ooZYHfu8rIwFUZ29VzoGD0vGVihHVHmpM4Qe+MTp4HA9e46cALOa4QLDYKcosscZpupHD/upQHa+MKQvPZLd3izPX5SHGaI7zj3R92NnYE50qz
+    FqFVvYJ/8ozLS6ywQwCURXTG7CKO72zeyCggeQliRxotFS2/tIssOWbeDASTDUePGj7jUyzZLwGFRAanmQDNVUd4v+POaABn+xXuLNi2SQU5w4N1VNVoUj0T
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=PHq6YzTAAAAA:8 a=PMT70qdeAAAA:8 a=jCWATi_C6axp82XYdEcA:9
+    a=smaLz2DeCvwMbCj1:21 a=UXOCRD85GBLWM3gg:21 a=wPNLvfGTeEIA:10
+    a=ZKzU8r6zoKMcqsNulkmm:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751851AbeERRuf (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 13:50:35 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51906 "EHLO
+        id S1751606AbeERV4F (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 17:56:05 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:54836 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752422AbeERRub (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 18 May 2018 13:50:31 -0400
-Date: Fri, 18 May 2018 18:50:04 +0100
+        with ESMTP id S1751458AbeERV4C (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Fri, 18 May 2018 17:56:02 -0400
+Date: Fri, 18 May 2018 22:55:48 +0100
 From: Russell King - ARM Linux <linux@armlinux.org.uk>
 To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
@@ -102,15 +103,18 @@ Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: dma_sync_*_for_cpu and direction=TO_DEVICE (was Re: [PATCH
  02/20] dma-mapping: provide a generic dma-noncoherent implementation)
-Message-ID: <20180518175004.GF17671@n2100.armlinux.org.uk>
+Message-ID: <20180518215548.GH17671@n2100.armlinux.org.uk>
 References: <20180511075945.16548-1-hch@lst.de>
  <20180511075945.16548-3-hch@lst.de>
  <bad125dff49f6e49c895e818c9d1abb346a46e8e.camel@synopsys.com>
  <5ac5b1e3-9b96-9c7c-4dfe-f65be45ec179@synopsys.com>
+ <20180518175004.GF17671@n2100.armlinux.org.uk>
+ <cecfe6bd-ef1f-1e25-bfcf-992d1f828efb@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5ac5b1e3-9b96-9c7c-4dfe-f65be45ec179@synopsys.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cecfe6bd-ef1f-1e25-bfcf-992d1f828efb@synopsys.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
@@ -118,51 +122,108 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 18, 2018 at 10:20:02AM -0700, Vineet Gupta wrote:
-> I never understood the need for this direction. And if memory serves me
-> right, at that time I was seeing twice the amount of cache flushing !
+On Fri, May 18, 2018 at 01:35:08PM -0700, Vineet Gupta wrote:
+> On 05/18/2018 10:50 AM, Russell King - ARM Linux wrote:
+> >On Fri, May 18, 2018 at 10:20:02AM -0700, Vineet Gupta wrote:
+> >>I never understood the need for this direction. And if memory serves me
+> >>right, at that time I was seeing twice the amount of cache flushing !
+> >It's necessary.  Take a moment to think carefully about this:
+> >
+> >	dma_map_single(, dir)
+> >
+> >	dma_sync_single_for_cpu(, dir)
+> >
+> >	dma_sync_single_for_device(, dir)
+> >
+> >	dma_unmap_single(, dir)
+> 
+> As an aside, do these imply a state machine of sorts - does a driver needs
+> to always call map_single first ?
 
-It's necessary.  Take a moment to think carefully about this:
+Kind-of, but some drivers do omit some of the dma_sync_*() calls.
+For example, if a buffer is written to, then mapped with TO_DEVICE,
+and then the CPU wishes to write to it, it's fairly common that a
+driver omits the dma_sync_single_for_cpu() call.  If you think about
+the cases I gave and what cache operations happen, such a scenario
+practically turns out to be safe.
 
-	dma_map_single(, dir)
+> My original point of contention/confusion is the specific combinations of
+> API and direction, specifically for_cpu(TO_DEV) and for_device(TO_CPU)
 
-	dma_sync_single_for_cpu(, dir)
+Remember that it is expected that all calls for a mapping use the
+same direction argument while that mapping exists.  In other words,
+if you call dma_map_single(TO_DEVICE) and then use any of the other
+functions, the other functions will also use TO_DEVICE.  The DMA
+direction argument describes the direction of the DMA operation
+being performed on the buffer, not on the individual dma_* operation.
 
-	dma_sync_single_for_device(, dir)
+What isn't expected at arch level is for drivers to do:
 
-	dma_unmap_single(, dir)
+	dma_map_single(TO_DEVICE)
+	dma_sync_single_for_cpu(FROM_DEVICE)
 
-In the case of a DMA-incoherent architecture, the operations done at each
-stage depend on the direction argument:
+or vice versa.
 
-	map		for_cpu		for_device	unmap
-TO_DEV	writeback	none		writeback	none
-TO_CPU	invalidate	invalidate*	invalidate	invalidate*
-BIDIR	writeback	invalidate	writeback	invalidate
+> Semantically what does dma_sync_single_for_cpu(TO_DEV) even imply for a non
+> dma coherent arch.
+> 
+> Your tables below have "none" for both, implying it is unlikely to be a real
+> combination (for ARM and ARC atleast).
 
-* - only necessary if the CPU speculatively prefetches.
+Very little for the cases that I've stated (and as I mentioned
+above, some drivers do omit the call in that case.)
 
-The multiple invalidations for the TO_CPU case handles different
-conditions that can result in data corruption, and for some CPUs, all
-four are necessary.
+> The other case, actually @dir TO_CPU, independent of for_{cpu, device} 
+> implies driver intends to touch it after the call, so it would invalidate
+> any stray lines, unconditionally (and not just for speculative prefetch
+> case).
 
-This is what is implemented for 32-bit ARM, depending on the CPU
-capabilities, as we have DMA incoherent devices and we have CPUs that
-speculatively prefetch data, and so may load data into the caches while
-DMA is in operation.
+If you don't have a CPU that speculatively prefetches, and you've
+already had to invalidate the cache lines (to avoid write-backs
+corrupting DMA'd data) then there's no need for the architecture
+to do any work at the for_cpu(TO_CPU) case - the CPU shouldn't
+be touching cache lines that are part of the buffer while it is
+mapped, which means a non-speculating CPU won't pull in any
+cache lines without an explicit access.
 
+Speculating CPUs are different.  The action of the speculation is
+to try and guess what data the program wants to access ahead of
+the program flow.  That causes the CPU to prefetch data into the
+cache.  The point in the program flow that this happens is not
+really determinant to the programmer.  This means that if you try
+to read from the DMA buffer after the DMA operation has complete
+without invalidating the cache between the DMA completing and the
+CPU reading, you have no guarantee that you're reading the data
+that the DMA operation has been written.  The cache may have
+loaded itself with data before the DMA operation completed, and
+the CPU may see that stale data.
 
-Things get more interesting if the implementation behind the DMA API has
-to copy data between the buffer supplied to the mapping and some DMA
-accessible buffer:
+The difference between non-speculating CPUs and speculating CPUs
+is that for non-speculating CPUs, caches work according to explicit
+accesses by the program, and the program is stalled while the data
+is fetched from external memory.  Speculating CPUs try to predict
+ahead of time what data the program will require in the future,
+and attempt to load that data into the caches _before_ the program
+requires it - which means that the program suffers fewer stalls.
 
-	map		for_cpu		for_device	unmap
-TO_DEV	copy to dma	none		copy to dma	none
-TO_CPU	none		copy to cpu	none		copy to cpu
-BIDIR	copy to dma	copy to cpu	copy to dma	copy to cpu
+> >In the case of a DMA-incoherent architecture, the operations done at each
+> >stage depend on the direction argument:
+> >
+> >	map		for_cpu		for_device	unmap
+> >TO_DEV	writeback	none		writeback	none
+> >TO_CPU	invalidate	invalidate*	invalidate	invalidate*
+> >BIDIR	writeback	invalidate	writeback	invalidate
+> >
+> >* - only necessary if the CPU speculatively prefetches.
+> >
+> >The multiple invalidations for the TO_CPU case handles different
+> >conditions that can result in data corruption, and for some CPUs, all
+> >four are necessary.
+> 
+> Can you please explain in some more detail, TO_CPU row, why invalidate is
+> conditional sometimes.
 
-So, in both cases, the value of the direction argument defines what you
-need to do in each call.
+See above - I hope my explanation above is sufficient.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
