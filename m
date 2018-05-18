@@ -1,41 +1,42 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqDFMfgtS/ClY3Lm8YurPP7j5F8VoL+iTfNjHQ9i7W05WvNYQ1neGpaLIrqaXjbHSk+2v8r
-ARC-Seal: i=1; a=rsa-sha256; t=1526631550; cv=none;
+X-Google-Smtp-Source: AB8JxZrGqr/lWkrhVtnTzF3VDVNegspa0Ef4lpEYYUdwGG10JVGPZ4A5nNrNifYi/cSOcJlWGDsE
+ARC-Seal: i=1; a=rsa-sha256; t=1526631547; cv=none;
         d=google.com; s=arc-20160816;
-        b=xtFdbepS9A03FJ8n0q1Ko9Et9M/dsxIznZxT4b5im3bwea3A/BA6wLI6ohhICEvbum
-         KdcLPQeIoj8vMZ1Vo0/qcVgik3BfsdBHYKaJelEz98L+7QiiNv3EUgtGHjUdFVr52nTA
-         ZrTk1bY1XRz5MzB3c3uKP0ZQ9joHzeppFUB5TX+qMzX+oWaw3+9c2YMREAqb6D6C2T4X
-         pIE/etaiRDGqGv4ZSEkk1vqBMThJW60anE+4A037cgudoM3jORpdYQRv4W2lJEhKS0Pt
-         XX5plQPXJLLCyKZHP3Rh38yjPxZHSfBWNHGt25xzpNjpzcQ8+hvCqsFcZ0xdSztlJ2AV
-         lK6g==
+        b=WN0AmBxVlFQOVffE7B80ZZLBUAvdmkNFT1uUI7N5mnsrt/dkj7C7rwRf26Cbcou1Gj
+         L/5+vr6hKmFZqeDIFtWUSNDDHI3HjZJ1yiuZNHZ7d6ZfMdCtu/PP6WnuAtWAxfv7v0Q0
+         S+sfjH9xte7iBkH921UAL4h0Dd+DaQuIxoNE4su5NbwRkPWM/FbCJ+AWw6HokMUkfODD
+         UOIvhjGKAl9Tjw+ukUYjLHHVHTwWITChrS7Oq1MuHtCF6+tJrh5SyukEkNU+EMam+5xB
+         0p/xLjOp18tcq1L5XA1nTdtIVJRkWgUPti1tS0IqR8c3yL8sHF0WSMqNUT6kgNURdk9Q
+         5ykg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ij2wEWtw0YjrCHDJF+bv5VT8BcRwY3lViyi896H/PG8=;
-        b=BGiDsEXf6q/ho5K4IMLQuuYlZ/Pd6isIZB3pr6RCv+sJaDOajHmhTB5oqTDcU1DNSB
-         AwdHhWyN0R7NRviW1b/vQQr5qCVMYZk35ID/BKdUl6hRnfuZpWVak4bDPOgH5FaZ2p/i
-         atk+mhDHrihIWOvsTrpV5Gp9dBgScnsOoVqndnrtnnb/Boi62+VmMIYlrUlu+0X43M8J
-         f2v0Te4hKzbb0DgLKap8HUrB1sdCnCnFzweJSa2AcFKJ7rvVSkGy+haG9UbEt5wAY235
-         rWMcXvehNEMXj6mhW0meOLX5wMD15x/IDjlBRRFWoe+eEtVaOsxqvdXUxbQDTXJ06an9
-         h0nA==
+        bh=2jbYwr55DR8bmi+05T8C/UAg05xfiXFR0/yo4F1SGTQ=;
+        b=NXLwexDd9L6VFmwrZQzo53NB1Cd+8UgZwCH40V69GkoTIZNBcK3gYHVw//MN2J7bPY
+         dumxImY3ohHumWnYX2QVXqfeJYDfr2hEGxpHmIwhiaGfXpaSyPU+gosK34fN+IlMCgiY
+         dKOBQ99bRxSKFpXJLFFPCheh7nS0hf0d+7O4cYvkNMWG8l/60/4H8lkqxTOrtVWLlkIm
+         mUU7YQMgC7F00FgjPFJc/2SZ9hNr+ECchSfjkHtZoU7m4sRQxWom/D8t7yKZHSSQA7+5
+         96TTYuIxPXET9P29rj3itpbatJ0cmxyxhozPQ+Gs2Vdn81gXppHFeobFa6izRSFy3Lig
+         2K2w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dV5qxybn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XijOmVrq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dV5qxybn;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XijOmVrq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Noah Misner <nmisner@us.ibm.com>,
-	Dave Carroll <david.carroll@microsemi.com>,
-	Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
-	Brian King <brking@linux.vnet.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.16 54/55] scsi: aacraid: Correct hba_send to include iu_type
-Date: Fri, 18 May 2018 10:15:50 +0200
-Message-Id: <20180518081459.900263413@linuxfoundation.org>
+	Ursula Braun <ubraun@linux.ibm.com>,
+	syzbot+9045fc589fcd196ef522@syzkaller.appspotmail.com,
+	syzbot+28a2c86cf19c81d871fa@syzkaller.appspotmail.com,
+	syzbot+9605e6cace1b5efd4a0a@syzkaller.appspotmail.com,
+	syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 53/55] net/smc: keep clcsock reference in smc_tcp_listen_work()
+Date: Fri, 18 May 2018 10:15:49 +0200
+Message-Id: <20180518081459.866212728@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789204656420532?=
-X-GMAIL-MSGID: =?utf-8?q?1600789204656420532?=
+X-GMAIL-THRID: =?utf-8?q?1600789201927088797?=
+X-GMAIL-MSGID: =?utf-8?q?1600789201927088797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,55 +55,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Carroll <david.carroll@microsemi.com>
+From: Ursula Braun <ubraun@linux.ibm.com>
 
-commit 7d3af7d96af7b9f51e1ef67b6f4725f545737da2 upstream.
+[ Upstream commit 070204a34884110ac5e19c1e2e036fcfd033f8e3 ]
 
-commit b60710ec7d7a ("scsi: aacraid: enable sending of TMFs from
-aac_hba_send()") allows aac_hba_send() to send scsi commands, and TMF
-requests, but the existing code only updates the iu_type for scsi
-commands. For TMF requests we are sending an unknown iu_type to
-firmware, which causes a fault.
+The internal CLC socket should exist till the SMC-socket is released.
+Function tcp_listen_worker() releases the internal CLC socket of a
+listen socket, if an smc_close_active() is called. This function
+is called for the final release(), but it is called for shutdown
+SHUT_RDWR as well. This opens a door for protection faults, if
+socket calls using the internal CLC socket are called for a
+shutdown listen socket.
 
-Include iu_type prior to determining the validity of the command
+With the changes of
+commit 3d502067599f ("net/smc: simplify wait when closing listen socket")
+there is no need anymore to release the internal CLC socket in
+function tcp_listen_worker((). It is sufficient to release it in
+smc_release().
 
-Reported-by: Noah Misner <nmisner@us.ibm.com>
-Fixes: b60710ec7d7ab ("aacraid: enable sending of TMFs from aac_hba_send()")
-Fixes: 423400e64d377 ("aacraid: Include HBA direct interface")
-Tested-by: Noah Misner <nmisner@us.ibm.com>
-cc: stable@vger.kernel.org
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Reviewed-by: Brian King <brking@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 127f49705823 ("net/smc: release clcsock from tcp_listen_worker")
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Reported-by: syzbot+9045fc589fcd196ef522@syzkaller.appspotmail.com
+Reported-by: syzbot+28a2c86cf19c81d871fa@syzkaller.appspotmail.com
+Reported-by: syzbot+9605e6cace1b5efd4a0a@syzkaller.appspotmail.com
+Reported-by: syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/aacraid/commsup.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/smc/af_smc.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -724,6 +724,8 @@ int aac_hba_send(u8 command, struct fib
- 	int wait;
- 	unsigned long flags = 0;
- 	unsigned long mflags = 0;
-+	struct aac_hba_cmd_req *hbacmd = (struct aac_hba_cmd_req *)
-+			fibptr->hw_fib_va;
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -973,10 +973,6 @@ static void smc_tcp_listen_work(struct w
+ 	}
  
- 	fibptr->flags = (FIB_CONTEXT_FLAG | FIB_CONTEXT_FLAG_NATIVE_HBA);
- 	if (callback) {
-@@ -734,11 +736,9 @@ int aac_hba_send(u8 command, struct fib
- 		wait = 1;
- 
- 
--	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
--		struct aac_hba_cmd_req *hbacmd =
--			(struct aac_hba_cmd_req *)fibptr->hw_fib_va;
-+	hbacmd->iu_type = command;
- 
--		hbacmd->iu_type = command;
-+	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
- 		/* bit1 of request_id must be 0 */
- 		hbacmd->request_id =
- 			cpu_to_le32((((u32)(fibptr - dev->fibs)) << 2) + 1);
+ out:
+-	if (lsmc->clcsock) {
+-		sock_release(lsmc->clcsock);
+-		lsmc->clcsock = NULL;
+-	}
+ 	release_sock(lsk);
+ 	sock_put(&lsmc->sk); /* sock_hold in smc_listen */
+ }
