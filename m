@@ -1,39 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq8Dzw0qvxSreQHgxjREdCl7s4EU851iNwnNUKpgAQ2deSaxaFx3JiqANFhg9Lq5AXcTpBQ
-ARC-Seal: i=1; a=rsa-sha256; t=1526631714; cv=none;
+X-Google-Smtp-Source: AB8JxZqhvwG+DpnL5SBBEz5dwBaCAUSXFTqmyIYBQYiFP1uvwJFXrcuorTnKtfJAeGlnwMJH1LZx
+ARC-Seal: i=1; a=rsa-sha256; t=1526631712; cv=none;
         d=google.com; s=arc-20160816;
-        b=uGE1JYJw/YWDeb3n7eb5vbh08F2pzTQC2Y7Pix1V1zxyFyWQGCJPfpzHFrvwSYfhNp
-         3fKSuPrstm22kCCdSGyJkFpC0S6xc91eyxtKI/BpYAIxjB6SSLbLczI/UvutBSoBT1yq
-         PXjpZSsK7xZkeJm1rgvZxPU4ANKmGUuW8f4jfdYSL3gaKu+9nLxRqot5JDfkoG26GJAx
-         ui1HcyAmUorB37aAcn8a50qKLEmRTxVNbinTW4fsaqyy8f3P2Rv5Q6ZyPIEYxafZchQD
-         EoRiLvMb8nrUBQ+bm9Oy1t9ZBpAcJmHm8jDvKhvS7sI7ku9eO8p10pLllNYeZPhWz5kN
-         SOjQ==
+        b=acxFidnoGpXiYN2O0r49rmBKxJxGD1kAEpseCH1TMC3XlmSpDJmp1TzBGrg976T5lK
+         xguWlz8XNfnKA26ojFOctAhQxd6xxxrv3Djl90PnJVk1xp3/6lAXMaOS/aP/vHJgo9t7
+         8aDmMgekvQU046/pbAFlKaEre7pTBJVk3zl5vywPMd/B3BPekhGRtDTFZZCXC8L3LPRc
+         lx+beIhzgPD6NG+AK88V5koGZFBqSAw1DiNlNHSJfGdAtkizYocqhK2WoOnvoVggFNSe
+         zXUTkuWA8MMnsNoNwbAhjWBgFJsHjx760cp1k9ae8megb4lBITFSku/6OwtxeO1jActO
+         wuXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=AJsFpsgEs5lTeHRmnZImKWqoPuHKbH4k3eBWrpWTvP8=;
-        b=vLh/GBPAQG3SfFmK05MofSc4cOfIY1TY6r3QpslK6UmOeolkkkpB3uS6CJYTII+d5l
-         iQ7pJCHc313xjVBGXF0VN7faQmizJJbvq/xbocyrjfmKrj/VbRAIEofLPyR0CHOckeut
-         qiYwht9rdP9DkkBEspwn35G78S9Im5OgKcqhla/dKaBNKq39Mk81y9NP/azeJnQV8FOg
-         CUcrbXQMkIqI9BiBInnpxHZ64f+cIk3tqjdOZ3mN4pWexlw8Z9G0PQZ0SSWaqDIWHjTv
-         1DMBqWJW5mhMXw+Pnkb2o3FYEvxq2EqXZHGvB+YXFNEg26t41GmqMfwEdI9F9k1zYOuv
-         +bsg==
+        bh=WGyAjFqgrBDmocmKiWMoUWh4IqtahZ2DdbgydzX902I=;
+        b=xqFM60a5XtJ0hVG+UKe2tqMNK1VBNg7RV259GNDvRsPASrzHMhPV0cPik2DDSogUJi
+         WEnc6LeuX9vK9gEJERMkjkh95JuhQjvrOkJQbhk14gim4m9dvWJJEd5plaeQuNifY9rK
+         0NG5Udgn/xTlXroNdaNQEP9MBxkfYyjfFKNP47l/YZvSe1jZW6vGabUHhcCmKyLRiGGI
+         ciDSfMED8aLJ9zF9ySY+KDcT4QCsnCLDHm6Pj6NpcT2NqDI9B/gN4wenknVrHOQFAj+H
+         bVYOBs+EHcLNWX0TsUywJ573KCUMZLJOh2aUXS+fh52yP2ILdlNSE0FLWeyxwjsoK4M7
+         CKeQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D5e/2AXv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XpqX6pmf;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=D5e/2AXv;
+       dkim=pass header.i=@kernel.org header.s=default header.b=XpqX6pmf;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Talat Batheesh <talatb@mellanox.com>,
-	Mark Bloch <markb@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.9 21/33] net/mlx5: Avoid cleaning flow steering table twice during error flow
-Date: Fri, 18 May 2018 10:16:00 +0200
-Message-Id: <20180518081535.945164406@linuxfoundation.org>
+	Debabrata Banerjee <dbanerje@akamai.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 20/33] bonding: do not allow rlb updates to invalid mac
+Date: Fri, 18 May 2018 10:15:59 +0200
+Message-Id: <20180518081535.908070464@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789131160542701?=
-X-GMAIL-MSGID: =?utf-8?q?1600789377256983075?=
+X-GMAIL-THRID: =?utf-8?q?1600789117326053762?=
+X-GMAIL-MSGID: =?utf-8?q?1600789373811186633?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,70 +51,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Talat Batheesh <talatb@mellanox.com>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-[ Upstream commit 9c26f5f89d01ca21560c6b8a8e4054c271cc3a9c ]
+[ Upstream commit 4fa8667ca3989ce14cf66301fa251544fbddbdd0 ]
 
-When we fail to initialize the RX root namespace, we need
-to clean only that and not the entire flow steering.
+Make sure multicast, broadcast, and zero mac's cannot be the output of rlb
+updates, which should all be directed arps. Receive load balancing will be
+collapsed if any of these happen, as the switch will broadcast.
 
-Currently the code may try to clean the flow steering twice
-on error witch leads to null pointer deference.
-Make sure we clean correctly.
-
-Fixes: fba53f7b5719 ("net/mlx5: Introduce mlx5_flow_steering structure")
-Signed-off-by: Talat Batheesh <talatb@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/net/bonding/bond_alb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-@@ -153,6 +153,7 @@ static void del_rule(struct fs_node *nod
- static void del_flow_table(struct fs_node *node);
- static void del_flow_group(struct fs_node *node);
- static void del_fte(struct fs_node *node);
-+static void cleanup_root_ns(struct mlx5_flow_root_namespace *root_ns);
- 
- static void tree_init_node(struct fs_node *node,
- 			   unsigned int refcount,
-@@ -1690,24 +1691,28 @@ static int create_anchor_flow_table(stru
- 
- static int init_root_ns(struct mlx5_flow_steering *steering)
+--- a/drivers/net/bonding/bond_alb.c
++++ b/drivers/net/bonding/bond_alb.c
+@@ -450,7 +450,7 @@ static void rlb_update_client(struct rlb
  {
-+	int err;
+ 	int i;
  
- 	steering->root_ns = create_root_ns(steering, FS_FT_NIC_RX);
- 	if (!steering->root_ns)
--		goto cleanup;
-+		return -ENOMEM;
+-	if (!client_info->slave)
++	if (!client_info->slave || !is_valid_ether_addr(client_info->mac_dst))
+ 		return;
  
--	if (init_root_tree(steering, &root_fs, &steering->root_ns->ns.node))
--		goto cleanup;
-+	err = init_root_tree(steering, &root_fs, &steering->root_ns->ns.node);
-+	if (err)
-+		goto out_err;
- 
- 	set_prio_attrs(steering->root_ns);
- 
--	if (create_anchor_flow_table(steering))
--		goto cleanup;
-+	err = create_anchor_flow_table(steering);
-+	if (err)
-+		goto out_err;
- 
- 	return 0;
- 
--cleanup:
--	mlx5_cleanup_fs(steering->dev);
--	return -ENOMEM;
-+out_err:
-+	cleanup_root_ns(steering->root_ns);
-+	steering->root_ns = NULL;
-+	return err;
- }
- 
- static void clean_tree(struct fs_node *node)
+ 	for (i = 0; i < RLB_ARP_BURST_SIZE; i++) {
