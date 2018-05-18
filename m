@@ -1,54 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeEROkt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:40:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54164 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751957AbeEROjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:39:31 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v3 3/5] ARM: Make CONFIG_CPU_V7 valid for 32bit ARMv8 implementations
-Date: Fri, 18 May 2018 15:39:11 +0100
-Message-Id: <20180518143913.26306-4-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180518143913.26306-1-marc.zyngier@arm.com>
-References: <20180518143913.26306-1-marc.zyngier@arm.com>
+        id S1751542AbeEROqX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:46:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48192 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750882AbeEROqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:46:19 -0400
+Date: Fri, 18 May 2018 17:46:17 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
+Message-ID: <20180518172932-mutt-send-email-mst@kernel.org>
+References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+ <20180518161253-mutt-send-email-mst@kernel.org>
+ <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
+ <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
+ <20180518170155-mutt-send-email-mst@kernel.org>
+ <ac404f5e-22ea-00e7-8415-63116ce4881e@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac404f5e-22ea-00e7-8415-63116ce4881e@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARMv8 is a superset of ARMv7, and all the ARMv8 features are
-discoverable with a set of ID registers. It means that we can
-use CPU_V7 to guard ARMv8 features at compile time.
+On Fri, May 18, 2018 at 10:11:54PM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年05月18日 22:06, Michael S. Tsirkin wrote:
+> > On Fri, May 18, 2018 at 10:00:31PM +0800, Jason Wang wrote:
+> > > 
+> > > On 2018年05月18日 21:26, Jason Wang wrote:
+> > > > 
+> > > > On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
+> > > > > On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
+> > > > > > We return -EIO on device down but can not raise EPOLLOUT after it was
+> > > > > > up. This may confuse user like vhost which expects tuntap to raise
+> > > > > > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
+> > > > > > be easily reproduced by transmitting packets from VM while down and up
+> > > > > > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
+> > > > > > 
+> > > > > > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+> > > > > > Cc: Eric Dumazet <edumazet@google.com>
+> > > > > > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
+> > > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > > > > ---
+> > > > > >    drivers/net/tun.c | 4 +++-
+> > > > > >    1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> > > > > > index d45ac37..1b29761 100644
+> > > > > > --- a/drivers/net/tun.c
+> > > > > > +++ b/drivers/net/tun.c
+> > > > > > @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct
+> > > > > > tun_struct *tun, struct tun_file *tfile,
+> > > > > >        int skb_xdp = 1;
+> > > > > >        bool frags = tun_napi_frags_enabled(tun);
+> > > > > >    -    if (!(tun->dev->flags & IFF_UP))
+> > > > > > +    if (!(tun->dev->flags & IFF_UP)) {
+> > > > > Isn't this racy?  What if flag is cleared at this point?
+> > > > I think you mean "set at this point"? Then yes, so we probably need to
+> > > > set the bit during tun_net_close().
+> > > > 
+> > > > Thanks
+> > > Looks no need, vhost will poll socket after it see EIO. So we are ok here?
+> > > 
+> > > Thanks
+> > In fact I don't even understand why does this help any longer.
+> > 
+> 
+> We disable tx polling and only enable it on demand for a better rx
+> performance. You may want to have a look at :
+> 
+> commit feb8892cb441c742d4220cf7ced001e7fa070731
+> Author: Jason Wang <jasowang@redhat.com>
+> Date:   Mon Nov 13 11:45:34 2017 +0800
+> 
+>     vhost_net: conditionally enable tx polling
+> 
+> Thanks
 
-This commit simply amends the CPU_V7 configuration symbol comment
-to reflect that CPU_V7 also covers ARMv8.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/mm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Question is, what looks at SOCKWQ_ASYNC_NOSPACE.
+I think it's tested when packet is transmitted,
+but there is no guarantee here any packet will
+ever be transmitted.
 
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index 7f14acf67caf..86550040de19 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -402,7 +402,7 @@ config CPU_V6K
- 	select CPU_THUMB_CAPABLE
- 	select CPU_TLB_V6 if MMU
- 
--# ARMv7
-+# ARMv7 and ARMv8 architectures
- config CPU_V7
- 	bool
- 	select CPU_32v6K
 -- 
-2.14.2
+MST
