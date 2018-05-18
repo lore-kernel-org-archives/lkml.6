@@ -1,64 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752289AbeERHbe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:31:34 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:33652 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeERHbd (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:4:1>);
-        Fri, 18 May 2018 03:31:33 -0400
-Message-Id: <5AFE815402000078001C3E50@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Fri, 18 May 2018 01:31:32 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] xen/PVH: Set up GS segment for stack canary
-References: <20180517144723.21585-1-boris.ostrovsky@oracle.com>
- <20180517144723.21585-2-boris.ostrovsky@oracle.com>
- <5AFD999402000078001C3B29@prv1-mh.provo.novell.com>
- <656c5250-3406-a98a-309c-ac3d7e3e4c41@oracle.com>
-In-Reply-To: <656c5250-3406-a98a-309c-ac3d7e3e4c41@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1752225AbeERHeB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:34:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49848 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751488AbeERHd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:33:59 -0400
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: [PATCH net-next] net: mvpp2: Add missing VLAN tag detection
+Date: Fri, 18 May 2018 09:33:39 +0200
+Message-Id: <20180518073339.5353-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 17.05.18 at 19:47, <boris.ostrovsky@oracle.com> wrote:
-> On 05/17/2018 11:02 AM, Jan Beulich wrote:
->>>>> On 17.05.18 at 16:47, <boris.ostrovsky@oracle.com> wrote:
->>> @@ -64,6 +67,9 @@ ENTRY(pvh_start_xen)
->>>  	mov %eax,%es
->>>  	mov %eax,%ss
->>>  
->>> +	mov $PVH_CANARY_SEL,%eax
->>> +	mov %eax,%gs
->> I doubt this is needed for 64-bit (you could equally well load zero or leave
->> in place what's there in that case),
-> 
-> I don't understand this.
+Marvell PPv2 Header Parser sets some bits in the 'result_info' field in
+each lookup iteration, to identify different packet attributes such as
+DSA / VLAN tag, protocol infos, etc. This is used in further
+classification stages in the controller.
 
-The actual selector value doesn't matter on 64-bit. Hence you could
-omit the load altogether, or you could use plain zero. No need for the
-(non-zero) selector, or (by implication) the GDT descriptor.
+It's the DSA tag detection entry that is in charge of detecting when there
+is a single VLAN tag.
 
->>  and loading the selector before setting
->> the base address in the descriptor won't have the intended effect.
-> 
-> 
-> I wasn't sure about this either but then I noticed that
-> secondary_startup_64() does it in the same order (although not using the
-> MSR).
+This commits adds the missing update of the result_info in this case.
 
-Well, for one they load a null selector, which is independent of setting up
-any GDT descriptors. I also don't understand why you say "although not
-using the MSR" when they clearly do. And then, as said above (and also
-in a comment in secondary_startup_64()), the actual selector value (and
-when / if at all it is loaded) doesn't matter on 64-bit. The ordering does
-matter on 32-bit though.
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Jan
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 7ba7e5938c2e..47e582406bd3 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -2130,6 +2130,9 @@ static void mvpp2_prs_dsa_tag_set(struct mvpp2 *priv, int port, bool add,
+ 				mvpp2_prs_sram_ai_update(&pe, 0,
+ 							MVPP2_PRS_SRAM_AI_MASK);
+ 
++			/* Set result info bits to 'single vlan' */
++			mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_SINGLE,
++						 MVPP2_PRS_RI_VLAN_MASK);
+ 			/* If packet is tagged continue check vid filtering */
+ 			mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VID);
+ 		} else {
+-- 
+2.11.0
