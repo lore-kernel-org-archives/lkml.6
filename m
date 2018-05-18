@@ -1,39 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq62HUCM2QLcpjj6eijGCihP/MayGHVK32eDU+Qvk22BeXDUTC2waW+nGFujI8iStnCW7Rw
-ARC-Seal: i=1; a=rsa-sha256; t=1526631517; cv=none;
+X-Google-Smtp-Source: AB8JxZoTQ+zsV/5LbupY5EbDT2srb9AShF3/luU8TEj7ev+9MNVp2yWM70CsTg1m8NApG0Ve3v2R
+ARC-Seal: i=1; a=rsa-sha256; t=1526631514; cv=none;
         d=google.com; s=arc-20160816;
-        b=KrtpLQKkRpsds30LFCQKGrEWq0QjYsn1SK0WsTG0vhNveq/n5gjWar3zavQKH9MOM2
-         TyP1f2NfRTsAoi/bEWkCzoOQEMXp9ovwAMKv/pn2Aap8No7T8ne2/3VsmMqiN3Sl4tlR
-         ue86oks0/tp8k1HhTZeVe7+8hJRnVAlpxix9dbUTknlYdo5IBjlO8TeOKlkbwT1EOz8G
-         n8TYeIofuutijNxulZsJZkFOqQDph84vZ/GlY6xN53wRr+xEMfn45CZ94DL2HGnFyxKC
-         ik9/38MVosS6UqKhovbKz3e/dmVZDByEOl4JlYxqBCmvT04+8TY9EY7OfXt9jIUhwVfj
-         xljg==
+        b=DH6TGYHYggjm24150JoKkanR1D7ERYIfGTdZryC+ymlux2nY3g/ABzYwf5BdfRI9pn
+         E2J+BW+zKCBJEuPle7HbI6BDZRUTquQPYO90qKF+vPBf+i5LfCNh1V3eijFSSxgeqLe7
+         cdarxksRUBo4JQGJjYfbNPKDudWLY9Af4YUJQCnXAyhnfBfiEQiMYgajNx3y8CL0YNix
+         lLyZps6bvzm1YCbn7QhXdaP2dCXFDsB3yYjfjLeulD+YTFCm1DZfH6IFdHC9aXgPFLAN
+         M1KsNJU6+S+O5J5tUBPdVxkzOxIdS7Wrd3RMwpyo/Zc022jQSgz2prPT9ncVU31MkFv1
+         SMsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ktJMDuOhQWGg22sFdN7c8OsSI2t/SE6qkoqEPL/pZZE=;
-        b=BoiIeuo4KqsflaYeVaT1+Zwnz1agJ2d2Mxh0DdQxj5AkSM93y48QTOOx43CXt2F+tH
-         OK+uadgqgnUPLkKhsiguKUGcjz4P+UAWBe6MpYHXltw3K3lxnLMe2PteI4qmSWRGAZAH
-         Hd9xJh1DrHXCd2vrVeZ+9ODCL2dXKAvbWH5wh6PmR3SpVsuUJQBsIRJdCrqHctdRA4ze
-         ruAZSkZP/++F3PkngRUVsWBbfRkrlnam9FK70iQrPAwIiW3SUZKNooXyH1OHwOyrGsY4
-         ZdAoqYD5NoLo3dYcrwS0ntQ3sNJl6zcU4G9L0eluy6nO9Dhsi4DiNwSKN3lbdzbTq4yE
-         HijA==
+        bh=+2wt6PnniHwjYMKklIzG+xJBA4f4VAp1EG6Y4lpN7u4=;
+        b=ciTqm7baJ91lHVAUF87hW9/mKCjKzIOSgHwGvhdP52fsJMzYQaEFmSR/zSzjJQM8WM
+         20yNxws3QZrU+3FVyGn4XNVXusmQXRuxLy+OimPQS7ycSBot4DwiCNQP7qQ9IJYyJ3CQ
+         crydi/tXGnSAYI7lSEWHkFWONWD8Fz6mjIg7prKmB6Uri6H+7idf9n88ClzCseh4T4kQ
+         rgHaukk6C/11LHu0lVFDh4dC78SpelMrqTfwgOWkJaLKEWUcN6/9RlulOLi6NEpLZUdi
+         BnSrEQ3K6izXr+Zbs2boxZsBShrbIa7uCB9w0aeLJFhWxXTgPWtlEdxQMC8I3wEypEJ6
+         fUgA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pHHpCgpi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=TEKI1MzI;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pHHpCgpi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=TEKI1MzI;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mohammed Gamal <mgamal@redhat.com>,
-	Stephen Hemminger <sthemmin@microsoft.com>,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Jon Maloy <jon.maloy@ericsson.com>,
+	Ying Xue <ying.xue@windriver.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 48/55] hv_netvsc: Fix net device attach on older Windows hosts
-Date: Fri, 18 May 2018 10:15:44 +0200
-Message-Id: <20180518081459.671970578@linuxfoundation.org>
+Subject: [PATCH 4.16 47/55] tipc: fix one byte leak in tipc_sk_set_orig_addr()
+Date: Fri, 18 May 2018 10:15:43 +0200
+Message-Id: <20180518081459.635365594@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789169912233667?=
-X-GMAIL-MSGID: =?utf-8?q?1600789169912233667?=
+X-GMAIL-THRID: =?utf-8?q?1600789167345348201?=
+X-GMAIL-MSGID: =?utf-8?q?1600789167345348201?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +54,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohammed Gamal <mgamal@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 55be9f25be1ca5bda75c39808fc77e42691bc07f ]
+[ Upstream commit 09c8b9718a7af674036643fa2e0dbb2f09aba75e ]
 
-On older windows hosts the net_device instance is returned to
-the caller of rndis_filter_device_add() without having the presence
-bit set first. This would cause any subsequent calls to network device
-operations (e.g. MTU change, channel change) to fail after the device
-is detached once, returning -ENODEV.
+sysbot/KMSAN reported an uninit-value in recvmsg() that
+I tracked down to tipc_sk_set_orig_addr(), missing
+srcaddr->member.scope initialization.
 
-Instead of returning the device instabce, we take the exit path where
-we call netif_device_attach()
+This patches moves srcaddr->sock.scope init to follow
+fields order and ease future verifications.
 
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
-Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
+BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
+BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:226
+CPU: 0 PID: 4549 Comm: syz-executor287 Not tainted 4.17.0-rc3+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ kmsan_internal_check_memory+0x135/0x1e0 mm/kmsan/kmsan.c:1157
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:226
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2285
+ __sys_recvmsg net/socket.c:2328 [inline]
+ __do_sys_recvmsg net/socket.c:2338 [inline]
+ __se_sys_recvmsg net/socket.c:2335 [inline]
+ __x64_sys_recvmsg+0x325/0x460 net/socket.c:2335
+ do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4455e9
+RSP: 002b:00007fe3bd36ddb8 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 00000000004455e9
+RDX: 0000000000002002 RSI: 0000000020000400 RDI: 0000000000000003
+RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fff98ce4b6f R14: 00007fe3bd36e9c0 R15: 0000000000000003
+
+Local variable description: ----addr@___sys_recvmsg
+Variable was created at:
+ ___sys_recvmsg+0xd5/0x810 net/socket.c:2246
+ __sys_recvmsg net/socket.c:2328 [inline]
+ __do_sys_recvmsg net/socket.c:2338 [inline]
+ __se_sys_recvmsg net/socket.c:2335 [inline]
+ __x64_sys_recvmsg+0x325/0x460 net/socket.c:2335
+
+Byte 19 of 32 is uninitialized
+
+Fixes: 31c82a2d9d51 ("tipc: add second source address to recvmsg()/recvfrom()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Ying Xue <ying.xue@windriver.com>
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/rndis_filter.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/socket.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1282,7 +1282,7 @@ struct netvsc_device *rndis_filter_devic
- 		   rndis_device->link_state ? "down" : "up");
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -1518,10 +1518,10 @@ static void tipc_sk_set_orig_addr(struct
  
- 	if (net_device->nvsp_version < NVSP_PROTOCOL_VERSION_5)
--		return net_device;
-+		goto out;
+ 	srcaddr->sock.family = AF_TIPC;
+ 	srcaddr->sock.addrtype = TIPC_ADDR_ID;
++	srcaddr->sock.scope = 0;
+ 	srcaddr->sock.addr.id.ref = msg_origport(hdr);
+ 	srcaddr->sock.addr.id.node = msg_orignode(hdr);
+ 	srcaddr->sock.addr.name.domain = 0;
+-	srcaddr->sock.scope = 0;
+ 	m->msg_namelen = sizeof(struct sockaddr_tipc);
  
- 	rndis_filter_query_link_speed(rndis_device, net_device);
- 
+ 	if (!msg_in_group(hdr))
+@@ -1530,6 +1530,7 @@ static void tipc_sk_set_orig_addr(struct
+ 	/* Group message users may also want to know sending member's id */
+ 	srcaddr->member.family = AF_TIPC;
+ 	srcaddr->member.addrtype = TIPC_ADDR_NAME;
++	srcaddr->member.scope = 0;
+ 	srcaddr->member.addr.name.name.type = msg_nametype(hdr);
+ 	srcaddr->member.addr.name.name.instance = TIPC_SKB_CB(skb)->orig_member;
+ 	srcaddr->member.addr.name.domain = 0;
