@@ -1,67 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeERLE3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:04:29 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:56835 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752100AbeERLE1 (ORCPT
+        id S1752383AbeERLI1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:08:27 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36492 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751446AbeERLIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:04:27 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4IB47kI024751
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: AB8JxZobtO8EI2PNVJxSFiwefly3w4aDbafkaNSlx9dRUskRh65qVXWEkjmWsukusbtevVT6sFhiVobYSKDbHIt0plM=
+        Fri, 18 May 2018 07:08:25 -0400
+Date: Fri, 18 May 2018 13:08:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+Subject: Re: [PATCH 04/10] locking: export osq_lock()/osq_unlock()
+Message-ID: <20180518110808.GH12217@hirez.programming.kicks-ass.net>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+ <20180518074918.13816-9-kent.overstreet@gmail.com>
+ <20180518095204.GF12217@hirez.programming.kicks-ass.net>
+ <20180518101804.GB15403@kmo-pixel>
 MIME-Version: 1.0
-In-Reply-To: <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
-References: <20180518062553.kodjjrlrosrg7vfq@gmail.com> <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
- <20180518093131.7g5m4mu3mtrgb7so@gmail.com> <CAK7LNATYiKYzD11anXzCqjWaqeezHo4R1db+qAdCAAJLkvuf9A@mail.gmail.com>
- <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 18 May 2018 20:03:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
-Message-ID: <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
-Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS generation
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518101804.GB15403@kmo-pixel>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-18 18:58 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
-> On Fri, May 18, 2018 at 06:52:48PM +0900, Masahiro Yamada wrote:
->> Why is 'paste' necessary?
->
-> Without it newlines from find are retained from the find
-> output (at least in bash when I tested it). Though it doesn't
-> really matter here since we are feeding it to a for loop, I
-> just wanted to be sure this didn't surprise someone in the
-> future by squeezing the newlines into spaces.
->
+On Fri, May 18, 2018 at 06:18:04AM -0400, Kent Overstreet wrote:
+> On Fri, May 18, 2018 at 11:52:04AM +0200, Peter Zijlstra wrote:
+> > On Fri, May 18, 2018 at 03:49:06AM -0400, Kent Overstreet wrote:
+> > 
+> > No.. and most certainly not without a _very_ good reason.
+> 
+> Ok, can I ask why?
 
-Hmm, I would personally get upset about that code.
+Because it is an internal helper for lock implementations that want to
+do optimistic spinning, it isn't a lock on its own and lacks several
+things you would expect.
 
+Using it is tricky and I don't trust random module authors to get 1+1
+right, let alone use this thing correctly (no judgement on your code,
+just in general).
 
-Does this work?
-ALLSOURCE_ARCHS=$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
--printf ' %f')
+> Here's what it's for:
 
-It would leave one leading space, but I do not think it is a big deal.
-
-
-It would be possible to chop it like follows, but I wonder if it is worth doing.
-ALLSOURCE_ARCHS=$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
--printf ' %f' | cut -c2-)
-
-
-> --
-> Cheers,
-> Joey Pabalinas
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+I'll try and have a look soon :-) But does that really _have_ to live in
+a module?
