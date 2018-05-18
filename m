@@ -1,41 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq+q2caL4yy49Vwz+EZUibYKOG2kRZTEDNdcqm2SXydJsv9TZqi0CiNQV+SJMviyKxNAs/W
-ARC-Seal: i=1; a=rsa-sha256; t=1526631552; cv=none;
+X-Google-Smtp-Source: AB8JxZqDFMfgtS/ClY3Lm8YurPP7j5F8VoL+iTfNjHQ9i7W05WvNYQ1neGpaLIrqaXjbHSk+2v8r
+ARC-Seal: i=1; a=rsa-sha256; t=1526631550; cv=none;
         d=google.com; s=arc-20160816;
-        b=fti2Nl1FW9HUrU2IwBHlXvuzHqrxYrLSA+KDiwUN1FzXQmKcgL7sG9wj2ZD83YTvEe
-         sR6/RIipqDHjjOmRZ+iCLaM4NnHSxOygN81sTNLt2G8x6IR6vouJeWe6fQGA5sBrL+H7
-         qgu7UOt8WCVvX/SFd5uGKu0QK69lnOSO1shhqdi0hAAXT1oInHbd3E/6yYL+yRoBayOP
-         5bSbVO+LcHvqObwHjZ4J53yf124vRhIT13FxKr8id9MHDF/oGG8BOvh0E8qNd5omnrvM
-         Co9Mx8zlv6F/DRhCsdO/VSPKV3ZS70asvM8W/hPrsbejuqsqr4LRk9w2ZYpDTEEl0sjz
-         DMqQ==
+        b=xtFdbepS9A03FJ8n0q1Ko9Et9M/dsxIznZxT4b5im3bwea3A/BA6wLI6ohhICEvbum
+         KdcLPQeIoj8vMZ1Vo0/qcVgik3BfsdBHYKaJelEz98L+7QiiNv3EUgtGHjUdFVr52nTA
+         ZrTk1bY1XRz5MzB3c3uKP0ZQ9joHzeppFUB5TX+qMzX+oWaw3+9c2YMREAqb6D6C2T4X
+         pIE/etaiRDGqGv4ZSEkk1vqBMThJW60anE+4A037cgudoM3jORpdYQRv4W2lJEhKS0Pt
+         XX5plQPXJLLCyKZHP3Rh38yjPxZHSfBWNHGt25xzpNjpzcQ8+hvCqsFcZ0xdSztlJ2AV
+         lK6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ed4r2mVrQSflaRcQBKZZSO4EAgv1DDK23ZWECronqh4=;
-        b=LXGd0ocUWF3l02l2f1jqy/zKw8BD+BQLb9GJXMOKfqri9uGj8uaxM71N0k3BGIYpdV
-         sQglQQAOhDJX1WbKkHjP0hW+ttThrvOVZhfdIwnyS0gqnOePNLayoJFI2lrKW8BSk4Yv
-         s3ZRWpGnG8E8lV8VcyKYE6uo7u52CemDpn06u8jvqv8Bk5YDq3kvSFA5iuSvGbXUojeK
-         sL27CQYYCYma4QCR4shuQkOdWTmapFtQIiTx8NYx4xI4cKpR8C0oznQXmSJWlwX2NF/Y
-         HSDcWNZi9dyz/RKyXrzMPyJ34t/nw3wUkcVZQuKwDB31s+g5RurN7gh4mgzxTq5x1KRf
-         wyRw==
+        bh=ij2wEWtw0YjrCHDJF+bv5VT8BcRwY3lViyi896H/PG8=;
+        b=BGiDsEXf6q/ho5K4IMLQuuYlZ/Pd6isIZB3pr6RCv+sJaDOajHmhTB5oqTDcU1DNSB
+         AwdHhWyN0R7NRviW1b/vQQr5qCVMYZk35ID/BKdUl6hRnfuZpWVak4bDPOgH5FaZ2p/i
+         atk+mhDHrihIWOvsTrpV5Gp9dBgScnsOoVqndnrtnnb/Boi62+VmMIYlrUlu+0X43M8J
+         f2v0Te4hKzbb0DgLKap8HUrB1sdCnCnFzweJSa2AcFKJ7rvVSkGy+haG9UbEt5wAY235
+         rWMcXvehNEMXj6mhW0meOLX5wMD15x/IDjlBRRFWoe+eEtVaOsxqvdXUxbQDTXJ06an9
+         h0nA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tSEvrWdy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dV5qxybn;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tSEvrWdy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dV5qxybn;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Qualys Security Advisory <qsa@qualys.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Willy Tarreau <w@1wt.eu>
-Subject: [PATCH 4.16 55/55] proc: do not access cmdline nor environ from file-backed areas
-Date: Fri, 18 May 2018 10:15:51 +0200
-Message-Id: <20180518081459.936065670@linuxfoundation.org>
+	Noah Misner <nmisner@us.ibm.com>,
+	Dave Carroll <david.carroll@microsemi.com>,
+	Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
+	Brian King <brking@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.16 54/55] scsi: aacraid: Correct hba_send to include iu_type
+Date: Fri, 18 May 2018 10:15:50 +0200
+Message-Id: <20180518081459.900263413@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789207110759992?=
-X-GMAIL-MSGID: =?utf-8?q?1600789207110759992?=
+X-GMAIL-THRID: =?utf-8?q?1600789204656420532?=
+X-GMAIL-MSGID: =?utf-8?q?1600789204656420532?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,100 +54,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willy Tarreau <w@1wt.eu>
+From: Dave Carroll <david.carroll@microsemi.com>
 
-commit 7f7ccc2ccc2e70c6054685f5e3522efa81556830 upstream.
+commit 7d3af7d96af7b9f51e1ef67b6f4725f545737da2 upstream.
 
-proc_pid_cmdline_read() and environ_read() directly access the target
-process' VM to retrieve the command line and environment. If this
-process remaps these areas onto a file via mmap(), the requesting
-process may experience various issues such as extra delays if the
-underlying device is slow to respond.
+commit b60710ec7d7a ("scsi: aacraid: enable sending of TMFs from
+aac_hba_send()") allows aac_hba_send() to send scsi commands, and TMF
+requests, but the existing code only updates the iu_type for scsi
+commands. For TMF requests we are sending an unknown iu_type to
+firmware, which causes a fault.
 
-Let's simply refuse to access file-backed areas in these functions.
-For this we add a new FOLL_ANON gup flag that is passed to all calls
-to access_remote_vm(). The code already takes care of such failures
-(including unmapped areas). Accesses via /proc/pid/mem were not
-changed though.
+Include iu_type prior to determining the validity of the command
 
-This was assigned CVE-2018-1120.
-
-Note for stable backports: the patch may apply to kernels prior to 4.11
-but silently miss one location; it must be checked that no call to
-access_remote_vm() keeps zero as the last argument.
-
-Reported-by: Qualys Security Advisory <qsa@qualys.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Noah Misner <nmisner@us.ibm.com>
+Fixes: b60710ec7d7ab ("aacraid: enable sending of TMFs from aac_hba_send()")
+Fixes: 423400e64d377 ("aacraid: Include HBA direct interface")
+Tested-by: Noah Misner <nmisner@us.ibm.com>
+cc: stable@vger.kernel.org
+Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Reviewed-by: Brian King <brking@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/base.c     |    8 ++++----
- include/linux/mm.h |    1 +
- mm/gup.c           |    3 +++
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/scsi/aacraid/commsup.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -264,7 +264,7 @@ static ssize_t proc_pid_cmdline_read(str
- 	 * Inherently racy -- command line shares address space
- 	 * with code and data.
- 	 */
--	rv = access_remote_vm(mm, arg_end - 1, &c, 1, 0);
-+	rv = access_remote_vm(mm, arg_end - 1, &c, 1, FOLL_ANON);
- 	if (rv <= 0)
- 		goto out_free_page;
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -724,6 +724,8 @@ int aac_hba_send(u8 command, struct fib
+ 	int wait;
+ 	unsigned long flags = 0;
+ 	unsigned long mflags = 0;
++	struct aac_hba_cmd_req *hbacmd = (struct aac_hba_cmd_req *)
++			fibptr->hw_fib_va;
  
-@@ -282,7 +282,7 @@ static ssize_t proc_pid_cmdline_read(str
- 			int nr_read;
+ 	fibptr->flags = (FIB_CONTEXT_FLAG | FIB_CONTEXT_FLAG_NATIVE_HBA);
+ 	if (callback) {
+@@ -734,11 +736,9 @@ int aac_hba_send(u8 command, struct fib
+ 		wait = 1;
  
- 			_count = min3(count, len, PAGE_SIZE);
--			nr_read = access_remote_vm(mm, p, page, _count, 0);
-+			nr_read = access_remote_vm(mm, p, page, _count, FOLL_ANON);
- 			if (nr_read < 0)
- 				rv = nr_read;
- 			if (nr_read <= 0)
-@@ -328,7 +328,7 @@ static ssize_t proc_pid_cmdline_read(str
- 				bool final;
  
- 				_count = min3(count, len, PAGE_SIZE);
--				nr_read = access_remote_vm(mm, p, page, _count, 0);
-+				nr_read = access_remote_vm(mm, p, page, _count, FOLL_ANON);
- 				if (nr_read < 0)
- 					rv = nr_read;
- 				if (nr_read <= 0)
-@@ -946,7 +946,7 @@ static ssize_t environ_read(struct file
- 		max_len = min_t(size_t, PAGE_SIZE, count);
- 		this_len = min(max_len, this_len);
+-	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
+-		struct aac_hba_cmd_req *hbacmd =
+-			(struct aac_hba_cmd_req *)fibptr->hw_fib_va;
++	hbacmd->iu_type = command;
  
--		retval = access_remote_vm(mm, (env_start + src), page, this_len, 0);
-+		retval = access_remote_vm(mm, (env_start + src), page, this_len, FOLL_ANON);
- 
- 		if (retval <= 0) {
- 			ret = retval;
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2441,6 +2441,7 @@ static inline struct page *follow_page(s
- #define FOLL_MLOCK	0x1000	/* lock present pages */
- #define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
- #define FOLL_COW	0x4000	/* internal GUP flag */
-+#define FOLL_ANON	0x8000	/* don't do file mappings */
- 
- static inline int vm_fault_to_errno(int vm_fault, int foll_flags)
- {
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -544,6 +544,9 @@ static int check_vma_flags(struct vm_are
- 	if (vm_flags & (VM_IO | VM_PFNMAP))
- 		return -EFAULT;
- 
-+	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
-+		return -EFAULT;
-+
- 	if (write) {
- 		if (!(vm_flags & VM_WRITE)) {
- 			if (!(gup_flags & FOLL_FORCE))
+-		hbacmd->iu_type = command;
++	if (command == HBA_IU_TYPE_SCSI_CMD_REQ) {
+ 		/* bit1 of request_id must be 0 */
+ 		hbacmd->request_id =
+ 			cpu_to_le32((((u32)(fibptr - dev->fibs)) << 2) + 1);
