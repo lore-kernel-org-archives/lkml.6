@@ -1,38 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZowzxJsdcCSx9VRl1ustImCrCIn0ywXZV0AOM1UaXMERZxX1ZR/JVMNq8jWAttsZPjl82uY
-ARC-Seal: i=1; a=rsa-sha256; t=1526631571; cv=none;
+X-Google-Smtp-Source: AB8JxZqccV8GatrQI8bhattcrrIjjQ2XaiXUJLt8jyKmLHH3OJZ8bChI8uBg+MkMhJmroSfsvMkf
+ARC-Seal: i=1; a=rsa-sha256; t=1526631568; cv=none;
         d=google.com; s=arc-20160816;
-        b=iZhY2Em1zYJvl/ruO8v9DrkiMXn0LA+RnJIzcAFwE8hCMW3zwWIJ5mE/YX5f0HIqfe
-         lRXLAA8OV0cBOJ0iDQPvO6Ps0Igq2h/bSDpnR6ye9NJcLkilpFMTF9A8Xe17soAH4uVl
-         h9kmbTcc+7TeigRbhpey8+bh1F3rUox96VS416z/NHkO/i0lvyev8EHZ/eHURPirwO/H
-         kNzpswUVZx49Erixs2ddzrrAleOgLjZbcbyUtjmBxL1ZAzcwWn8nh3YuEomtBlMjA5rC
-         f8npFDikoN5GnYjsmpYQYTrAEjrBnolcv9yADbKGJEoiEJyC+PfkjNqzNfL9IXXQ2Thw
-         eH2A==
+        b=1Gi34cegd8f1ko6RXV2lXBKdnQzSuJWmFayB9GAgvnplZKAxjMMo2CrnWOe7150+wf
+         HTXtZg/EJOKq6PnGY3LekX92nYkVEAmBPvRpsDjvgGA5LANM0cBW6j86IqMkGXAvYhcS
+         EUOe5R4hAtjOJJtd53aVW7IprxopBsrv5GBoG7xvzDFI84OwW7xFILs05Y85uBvvZvjR
+         74LYQnmH3lReUoYkht3CwqzPTvrSv6/502pNyeJWd9VjxShJWfMHcorTruXKcp+TdA2l
+         JpTjC5nsjsRsWelLVqAIYkZaVe10Tiep045l998zglctOHrTX4EpOnjcsVVAOmEr967P
+         Q19g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=LNLFk6MIRMgICrBK9LMjbO4xG6B6bmOxtCIE4i8C404=;
-        b=dIFe9bCQu/uJUNFKNrozIg+/tNR2WJafBUwAFMBcKEVtILCxTbGa4alewLMmOlJi6P
-         Xjpdd1K4247yGCjImogbYAnqEylHV6TWYaMbPm4tGtvhfA/8jpJ9KmN7eLWDECjWg8VV
-         sZ+5eELaSwf02W6FHHpSSc3PU0cJa8W+JpSXBpese39miDvHxWyGUxTljee1UAxYEJl+
-         jETFBuLIpvheXVpxi333MkrH6/vuQNx7wXYW8yc9vsS8pIYXeOvftqZDKDZ3sHpvKuvo
-         t8HQgnBlX1fypF0cJrVMfTHUHRkQMtkXITWyHi7hAfnvAAxIUh+xe+yRDOUbF7CICDL/
-         CqZg==
+        bh=7ejGrVfRSDYlHWRbqGXddUXBAMj8leeqT9O76JvW/Yw=;
+        b=EYjrN2e3bRfchdUEywu28eUo1nU/Kl3YsdZUxLljjRA1U2worItfvrl3Kn7/gsA3no
+         IEM9tybs4qx9THe+hRaa3Dbvzqk9cs8eMTvEY7IR+RzcJZsOaIezObv7k0cR0iz4Km2x
+         Og0rYmUicjeApd6Iq19N0ol7Z8r7TylOJ98rBFr2PdP6FfazmOCD0UjVBmV6Ofmg0Xxa
+         IX6qkNabvbM+CvHyd+gi5tTSmpryIqaglMvW+2U/dpKKlmlltH5NpCOrfS5mvo5Ffcko
+         tDU+yweCtSwfbe6n4/DkcdodxQZZeP6R/ne6vHOx/Bxli7YheRjjII9gpgn8zn5WOfXP
+         eHwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=V7fO1YKg;
+       dkim=pass header.i=@kernel.org header.s=default header.b=HTQSkRuq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=V7fO1YKg;
+       dkim=pass header.i=@kernel.org header.s=default header.b=HTQSkRuq;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
+	Roman Mashak <mrv@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 14/45] net_sched: fq: take care of throttled flows before reuse
-Date: Fri, 18 May 2018 10:15:31 +0200
-Message-Id: <20180518081531.057018934@linuxfoundation.org>
+Subject: [PATCH 4.14 13/45] net sched actions: fix refcnt leak in skbmod
+Date: Fri, 18 May 2018 10:15:30 +0200
+Message-Id: <20180518081530.998937972@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789091707384328?=
-X-GMAIL-MSGID: =?utf-8?q?1600789226585979054?=
+X-GMAIL-THRID: =?utf-8?q?1600789193125725958?=
+X-GMAIL-MSGID: =?utf-8?q?1600789223777255599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,94 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Roman Mashak <mrv@mojatatu.com>
 
-[ Upstream commit 7df40c2673a1307c3260aab6f9d4b9bf97ca8fd7 ]
+[ Upstream commit a52956dfc503f8cc5cfe6454959b7049fddb4413 ]
 
-Normally, a socket can not be freed/reused unless all its TX packets
-left qdisc and were TX-completed. However connect(AF_UNSPEC) allows
-this to happen.
+When application fails to pass flags in netlink TLV when replacing
+existing skbmod action, the kernel will leak refcnt:
 
-With commit fc59d5bdf1e3 ("pkt_sched: fq: clear time_next_packet for
-reused flows") we cleared f->time_next_packet but took no special
-action if the flow was still in the throttled rb-tree.
+$ tc actions get action skbmod index 1
+total acts 0
 
-Since f->time_next_packet is the key used in the rb-tree searches,
-blindly clearing it might break rb-tree integrity. We need to make
-sure the flow is no longer in the rb-tree to avoid this problem.
+        action order 0: skbmod pipe set smac 00:11:22:33:44:55
+         index 1 ref 1 bind 0
 
-Fixes: fc59d5bdf1e3 ("pkt_sched: fq: clear time_next_packet for reused flows")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+For example, at this point a buggy application replaces the action with
+index 1 with new smac 00:aa:22:33:44:55, it fails because of zero flags,
+however refcnt gets bumped:
+
+$ tc actions get actions skbmod index 1
+total acts 0
+
+        action order 0: skbmod pipe set smac 00:11:22:33:44:55
+         index 1 ref 2 bind 0
+$
+
+Tha patch fixes this by calling tcf_idr_release() on existing actions.
+
+Fixes: 86da71b57383d ("net_sched: Introduce skbmod action")
+Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_fq.c |   37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
+ net/sched/act_skbmod.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_fq.c
-+++ b/net/sched/sch_fq.c
-@@ -128,6 +128,28 @@ static bool fq_flow_is_detached(const st
- 	return f->next == &detached;
- }
+--- a/net/sched/act_skbmod.c
++++ b/net/sched/act_skbmod.c
+@@ -131,8 +131,11 @@ static int tcf_skbmod_init(struct net *n
+ 	if (exists && bind)
+ 		return 0;
  
-+static bool fq_flow_is_throttled(const struct fq_flow *f)
-+{
-+	return f->next == &throttled;
-+}
-+
-+static void fq_flow_add_tail(struct fq_flow_head *head, struct fq_flow *flow)
-+{
-+	if (head->first)
-+		head->last->next = flow;
-+	else
-+		head->first = flow;
-+	head->last = flow;
-+	flow->next = NULL;
-+}
-+
-+static void fq_flow_unset_throttled(struct fq_sched_data *q, struct fq_flow *f)
-+{
-+	rb_erase(&f->rate_node, &q->delayed);
-+	q->throttled_flows--;
-+	fq_flow_add_tail(&q->old_flows, f);
-+}
-+
- static void fq_flow_set_throttled(struct fq_sched_data *q, struct fq_flow *f)
- {
- 	struct rb_node **p = &q->delayed.rb_node, *parent = NULL;
-@@ -155,15 +177,6 @@ static void fq_flow_set_throttled(struct
+-	if (!lflags)
++	if (!lflags) {
++		if (exists)
++			tcf_idr_release(*a, bind);
+ 		return -EINVAL;
++	}
  
- static struct kmem_cache *fq_flow_cachep __read_mostly;
- 
--static void fq_flow_add_tail(struct fq_flow_head *head, struct fq_flow *flow)
--{
--	if (head->first)
--		head->last->next = flow;
--	else
--		head->first = flow;
--	head->last = flow;
--	flow->next = NULL;
--}
- 
- /* limit number of collected flows per round */
- #define FQ_GC_MAX 8
-@@ -267,6 +280,8 @@ static struct fq_flow *fq_classify(struc
- 				     f->socket_hash != sk->sk_hash)) {
- 				f->credit = q->initial_quantum;
- 				f->socket_hash = sk->sk_hash;
-+				if (fq_flow_is_throttled(f))
-+					fq_flow_unset_throttled(q, f);
- 				f->time_next_packet = 0ULL;
- 			}
- 			return f;
-@@ -438,9 +453,7 @@ static void fq_check_throttled(struct fq
- 			q->time_next_delayed_flow = f->time_next_packet;
- 			break;
- 		}
--		rb_erase(p, &q->delayed);
--		q->throttled_flows--;
--		fq_flow_add_tail(&q->old_flows, f);
-+		fq_flow_unset_throttled(q, f);
- 	}
- }
- 
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
