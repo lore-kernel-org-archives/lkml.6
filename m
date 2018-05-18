@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-463584-1526685427-2-9599840371530967336
+X-Cyrus-Session-Id: sloti22d1t05-501620-1526685978-2-11387615709854036747
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526685426; b=h3qPLjc8pvy4UMWsw8FrUIY4OE0iC38t4MjPax9zJy9RX+ysHF
-    gyqHNUgxFMtadN4A0l+zkwesv/42CQxOJR0v5WXnQTnHoNrnO9pSFPH24NWHkThb
-    SZEvCOJmmy7KC5rnRFccx4QWXZPoM2XiEJkwfqqpdRp95BP4FJC/Q37lkA6LfvHD
-    PVImCa0kIHcMHlW6rhm5IBCR9bV54F46YmGebreJ4zHCbI2EyRv6m0oEkTXxBSfo
-    ufTsDsjYwRWP95qh73S4WcN7clRfqO7471xNkg3/bHcRfUDcbRatcG0ifw0uRfcm
-    X0riUofN/qUF5FhfkDBuHiWAA+3s6czUeFuw==
+    1526685978; b=XucqOreA0n9OEhrSRhw2Fdhy/AeX1wbC78cDdJlAonupYSh4em
+    zvJ8fn6W6y+FyVgxqh2UsduTdJIgoO6+KTe/Bme1sfITk9xXKnIB/17PTJ0DfmDg
+    vXhS7jyamkbcKRWNWDdYl3+Xn/xlzEEkOB3tTBNh+a3l7eGGqRzABHhmwk1e848S
+    TFa7T2g1wl73dt1OIT12rlETPT+V4WSxqmh4USKBPsCIrTEnagcYMJeeRGz36Cio
+    IHyzoljnQrfRMtnmQzrlrvHyhgSwtxnK62lScTIsYRgrD5CFj9hSBIf5U4N+dV2u
+    PfQB2+2ymiHJ0w81TT6LANBSUw7ySgL5kqOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526685426; bh=ExLrQIymnLyO6E0eE+eCBprLfAYJBJ5lYN8YrECCQE
-    k=; b=k7k5XlZ3cw8b5umeMkcq+dD2SXUllQEjxbM6MmsOaGRaZLALc7D2MNfsnv
-    ebXqLb5XokcKX6qLKXwtXWQKds4dwAoGwDYMhBM4tEr5bb48GduLaCsCNlIRjBAA
-    maGFjpMDhhIE6du6bjTgmitkQOGEZewQaCmEkPinu0NlIEeGXE7lUpEJPSnwea/G
-    pt45aH9rlStDq5urvfpznrjbvWj33Jf4GWAx27h/ih0PwVePYdgF4/Reo7QPgq06
-    FcFQjISEaZ11bUe1qqP/2si7zPathxRdLHpC5tAzvnORJNjCCECy+P0i3Pg1wkVr
-    VZsMJXG21ESNSRFzhxYiqJXASYKQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    fm2; t=1526685978; bh=mPTfCc9gEXvIucLUHTWc3Yen3ZdFxgKv59nmjxXewH
+    M=; b=RMCQnKrnHyb4oBxKvlBKy+9iT9UOoJvAA/SVAq1XCbzkfBd2q3Q268PFiD
+    zrT5+Fm2mqqa9iMkQynx363jGF9ayU37oZsKHLvnvT7jjJcpRLsiMoM12SzNl6mV
+    fqqroGp1DZbWvkY+Woo9fFZkXWQzoLS7ktp79OySfAP3koW5B7FxUxEV+1Qx+v6U
+    aW/cMWZF5IgBzNN947PnyChE2OzsaPVfgnrMsjzcp7YPV89LiAysCYO91a90GvJE
+    hMKQ3Aki2F/DydI7rOeVIkPL1ay0fm4erQEsRt4OipQYBJJpLN1DpQJzOe6zXg9N
+    QO06kyI7lcvVhu2B+XtP/YDjNIxQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=ibOZxchG x-bits=2048 x-keytype=rsa
+    header.i=@gmail.com header.b=sLbJaqTl x-bits=2048 x-keytype=rsa
     x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,16 +40,16 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=PjFMCoK+;
+    header.i=@1e100.net header.b=ahCw5Xuc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=ibOZxchG x-bits=2048 x-keytype=rsa
+      header.i=@gmail.com header.b=sLbJaqTl x-bits=2048 x-keytype=rsa
       x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -58,36 +58,37 @@ Authentication-Results: mx3.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=PjFMCoK+;
+      header.i=@1e100.net header.b=ahCw5Xuc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFI7W3TnA4R2B31f8gv7arRucM9VKmVWKm7H+Ub7njds+rujVbf+8Foo3fJOYUuJAmFmAPoz9TbVuXQ3+Nnhcz1trYcLjuNk9dYD65BTrLHXt//12mds
-    hwRtYduqyzjG8N2l+TYjrBt9zh7bUp5QU1JaFNiWF/buovAe/SuChX/FF5lDg5B4WfohrMduDNTMThh6JYoHZo2xVlsyKs/mEqXUt6wb0z34xsftCfe0hEe8
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGgPIzAypp+cJIDlTdPpjTYqczBDmbaoS55F1FJKs+ptILADpz6CVMapdVtlldh8Uebf7MVsFypedZn3BKAmdvubpf7VjnYtAQdh534Kf0BtxS4DlG8w
+    fzIGgeBghHfudGuTu0EKhpO+kHysRBnM/jnmSRilwRNMysOk3CiwlQKkOLds26clo/kYyeKSqy+fmavig8VonAp3czuG7bU2vUctHLo+aLRiyDv+nSDQo0Mc
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=wijiZ99obDcA:10 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=ZDQ4JU7le8R4Ckc1zZoA:9
-    a=QEXdDO2ut3YA:10
+    a=wijiZ99obDcA:10 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8
+    a=LXqzIYo6XijtM2lLOFUA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeERXRE (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 19:17:04 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55935 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeERXRD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 19:17:03 -0400
-X-Google-Smtp-Source: AB8JxZqXc1NLIK/Eo63keT9b9E52DbWaw9ORFGRLapxCuKqK7y6OMW08+cJ6gADQulg0jy52nNuFdQWs/+wStyT0dcY=
+        id S1752271AbeERX0F (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 19:26:05 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46896 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752253AbeERX0F (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 19:26:05 -0400
+X-Google-Smtp-Source: AB8JxZqsoS5nYQd1h4x1qy3x9CTEj67oJGWEWp4Rhighz+B0yqOo8mkRYrfyfZGOxUkq6KKeuVk59O04tF+yQfLmAKM=
 MIME-Version: 1.0
-In-Reply-To: <CAJwJo6ZwEZiQYDQqLkfP0+mRgmc+X=H02M=fFZZykWN4A3s-FQ@mail.gmail.com>
+In-Reply-To: <CAJwJo6Y1+Zrriox6WTZtFhDuUkMRed3FXv8Nte=YLgkQd3p9vw@mail.gmail.com>
 References: <20180517233510.24996-1-dima@arista.com> <1526600442.28243.39.camel@arista.com>
- <CALCETrUDX=4FHU0e8SZ9Rr_AnAes+5jjzKCrrVmS1mddHQyeVQ@mail.gmail.com> <CAJwJo6ZwEZiQYDQqLkfP0+mRgmc+X=H02M=fFZZykWN4A3s-FQ@mail.gmail.com>
+ <CALCETrUDX=4FHU0e8SZ9Rr_AnAes+5jjzKCrrVmS1mddHQyeVQ@mail.gmail.com>
+ <CAJwJo6ZwEZiQYDQqLkfP0+mRgmc+X=H02M=fFZZykWN4A3s-FQ@mail.gmail.com> <CAJwJo6Y1+Zrriox6WTZtFhDuUkMRed3FXv8Nte=YLgkQd3p9vw@mail.gmail.com>
 From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Sat, 19 May 2018 00:16:42 +0100
-Message-ID: <CAJwJo6Y1+Zrriox6WTZtFhDuUkMRed3FXv8Nte=YLgkQd3p9vw@mail.gmail.com>
+Date: Sat, 19 May 2018 00:25:44 +0100
+Message-ID: <CAJwJo6aUp-SyVkJH0CEQ7sVNE2gX2eagGJ6JGvWa8Ar5rM6sQg@mail.gmail.com>
 Subject: Re: [PATCH] x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
 To: Andy Lutomirski <luto@kernel.org>
 Cc: Dmitry Safonov <dima@arista.com>,
@@ -107,40 +108,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-05-19 0:10 GMT+01:00 Dmitry Safonov <0x7f454c46@gmail.com>:
-> Sure.
-> I'm on Intel actually:
-> cpu family    : 6
-> model        : 142
-> model name    : Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
+2018-05-19 0:16 GMT+01:00 Dmitry Safonov <0x7f454c46@gmail.com>:
+> 2018-05-19 0:10 GMT+01:00 Dmitry Safonov <0x7f454c46@gmail.com>:
+>> Sure.
+>> I'm on Intel actually:
+>> cpu family    : 6
+>> model        : 142
+>> model name    : Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
+>>
+>> But I usually test kernels in VM. So, I use virt-manager as it's
+>> easier to manage
+>> multiple VMs. The thing is that I've chosen "Copy host CPU configuration"
+>> and for some reason, I don't quite follow virt-manager makes model "Opteron_G4".
+>> I'm on Fedora 27, virt-manager 1.4.3, qemu 2.9.1(qemu-2.9.1-2.fc26).
 >
-> But I usually test kernels in VM. So, I use virt-manager as it's
-> easier to manage
-> multiple VMs. The thing is that I've chosen "Copy host CPU configuration"
-> and for some reason, I don't quite follow virt-manager makes model "Opteron_G4".
-> I'm on Fedora 27, virt-manager 1.4.3, qemu 2.9.1(qemu-2.9.1-2.fc26).
+> Hmm, the reason it chooses AMD emulation looks like a bug in virt-manager:
+> When I try IvyBridge CPU, it gives the following error:
+>> Error starting domain: the CPU is incompatible with host CPU: Host CPU does not
+>> provide required features: vme, x2apic, tsc-deadline, avx, f16c, rdrand
+>
+> Which to my naive mind is by the reason that "tsc-deadline" is not written with
+> a dash in cpuinfo:
+> flags        : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
+> mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe
+> syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts
+> rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq
+> pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma
+> cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt
+> tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
+> cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept
+> vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx
+> rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves
+> ibpb ibrs stibp dtherm ida arat pln pts hwp hwp_notify hwp_act_window
+> hwp_epp
+>
+> But that just my naive suppose.
 
-Hmm, the reason it chooses AMD emulation looks like a bug in virt-manager:
-When I try IvyBridge CPU, it gives the following error:
-> Error starting domain: the CPU is incompatible with host CPU: Host CPU does not
-> provide required features: vme, x2apic, tsc-deadline, avx, f16c, rdrand
-
-Which to my naive mind is by the reason that "tsc-deadline" is not written with
-a dash in cpuinfo:
-flags        : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
-mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe
-syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts
-rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq
-pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma
-cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt
-tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
-cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept
-vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx
-rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves
-ibpb ibrs stibp dtherm ida arat pln pts hwp hwp_notify hwp_act_window
-hwp_epp
-
-But that just my naive suppose.
+Yeah, so they use cpuid there and I guess this one wasn't fixed for me:
+https://bugzilla.redhat.com/show_bug.cgi?id=1467599
 
 Thanks,
              Dmitry
