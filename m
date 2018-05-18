@@ -1,54 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeERQyO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:54:14 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:46646 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752083AbeERQyK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:54:10 -0400
-X-Google-Smtp-Source: AB8JxZpqggsgi0sT/wplvtdPmBrCnMCH0mzQllBUBoOU9NWUz9JPpUFvxnfA7xTXDSQbkaR40APbzw==
-Date: Fri, 18 May 2018 11:54:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: dmitry.torokhov@gmail.com, mark.rutland@arm.com, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaotong.lu@spreadtrum.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: input: Add Add Spreadtrum SC27xx
- vibrator documentation
-Message-ID: <20180518165408.GA31804@rob-hp-laptop>
-References: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752765AbeERQzB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:55:01 -0400
+Received: from vern.gendns.com ([206.190.152.46]:56866 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751323AbeERQu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 12:50:29 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v11 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
+Date: Fri, 18 May 2018 11:48:16 -0500
+Message-Id: <20180518164829.27052-15-david@lechnology.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 01:08:33PM +0800, Baolin Wang wrote:
-> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> 
-> This patch adds the binding documentation for Spreadtrum SC27xx series
-> vibrator device.
-> 
-> Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes since v3:
->  - Change compatible string to explicit Soc name.
->  - Add parent MFD node.
-> 
-> Changes since v2:
->  - No updates.
-> 
-> Changes since v1:
->   - No updates.
-> ---
->  .../bindings/input/sprd,sc27xx-vibra.txt           |   23 ++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
+This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
+the kernel.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
+
+v11 changes:
+- none
+
+v10 changes:
+- none
+
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- none
+
+
+ arch/arm/configs/davinci_all_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index 21b2d7791df4..f83ea4131df2 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
+ CONFIG_MACH_OMAPL138_HAWKBOARD=y
+ CONFIG_DAVINCI_MUX_DEBUG=y
+ CONFIG_DAVINCI_MUX_WARNINGS=y
+-CONFIG_DAVINCI_RESET_CLOCKS=y
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_CMA=y
+-- 
+2.17.0
