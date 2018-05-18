@@ -1,58 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeERJHJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:07:09 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44797 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752321AbeERJHD (ORCPT
+        id S1753158AbeERITv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:19:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47792 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752931AbeERITq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:07:03 -0400
-X-Google-Smtp-Source: AB8JxZqWRYnl6CuNy0KVEouM531+j4/MxgI3Z14qeiI+I1zJ/UfgQ9/RyuMxx7rTW6+lWyziPifxUPw5HF6jztVa6Tc=
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0ikXsWdXq-h8rWLd-vfzi-gFmxyHmOGvRvDUoJHC3L2XA@mail.gmail.com>
-References: <1526633329-31729-1-git-send-email-ulf.hansson@linaro.org> <CAJZ5v0ikXsWdXq-h8rWLd-vfzi-gFmxyHmOGvRvDUoJHC3L2XA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 18 May 2018 11:07:02 +0200
-Message-ID: <CAPDyKFphMCQ_S5aBVToGUL=Rvd0cBQ4O3Top3AYPdM79Ak_LzA@mail.gmail.com>
-Subject: Re: [PATCH] PM / runtime: Fixup reference counting of device link
- suppliers at probe
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 May 2018 04:19:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9407D60C65
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V7 01/12] ARM: dts: ipq4019: Add a default chosen node
+Date: Fri, 18 May 2018 13:49:14 +0530
+Message-Id: <1526631565-9972-2-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+References: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 May 2018 at 10:58, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, May 18, 2018 at 10:48 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> In the driver core, before it invokes really_probe() it runtime resumes the
->> suppliers for the device via calling pm_runtime_get_suppliers(), which also
->> increases the runtime PM usage count for each of the available supplier.
->>
->> This makes sense, as to be able to allow the consumer device to be probed
->> by its driver. However, if the driver decides to add a new supplier link
->> during ->probe(), hence updating the list of suppliers,
->
-> Do any of the existing drivers do that?
+Add a 'chosen' node to select the serial console.
+This is needed when bootloaders do not pass the
+'console=' bootargs.
 
-Yes.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 8 ++++++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-At least these, but possibly even more...
-
-drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-drivers/gpu/drm/tegra/dc.c
-drivers/gpu/ipu-v3/ipu-prg.c
-drivers/pci/dwc/pci-dra7xx.c
-
->
->> the following call to pm_runtime_put_suppliers(), invoked after really_probe()
->> in the driver core, we get into trouble.
-
-Kind regards
-Uffe
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+index e413b21e..ef8d8c8 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+@@ -20,6 +20,14 @@
+ 	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK01.1";
+ 	compatible = "qcom,ipq4019";
+ 
++	aliases {
++		serial0 = &blsp1_uart1;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	soc {
+ 		rng@22000 {
+ 			status = "ok";
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index 10d112a..ea9202a 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -256,7 +256,7 @@
+                         regulator;
+                 };
+ 
+-		serial@78af000 {
++		blsp1_uart1: serial@78af000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x78af000 0x200>;
+ 			interrupts = <0 107 0>;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
