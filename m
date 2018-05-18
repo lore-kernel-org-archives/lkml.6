@@ -1,39 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoD2dut2ji5oaYkiuab+lcl9WdBGKOzABle8mMdO2AFQBSdUajnZ+rqrzCF7WQOgg7EUHum
-ARC-Seal: i=1; a=rsa-sha256; t=1526631506; cv=none;
+X-Google-Smtp-Source: AB8JxZrI5H916ZqvTZbwN2OIR5nRRz1OZeXqaQJEPRnuE8xn0bKqgY1yFzJ6BRO5LbFicxGtpIFH
+ARC-Seal: i=1; a=rsa-sha256; t=1526631504; cv=none;
         d=google.com; s=arc-20160816;
-        b=CNC8ZXa6FtzesevdhNje6CCoVXRgd19YAUOk1Sw+M9MoP+4cS/zFd6FUAe0Qs4e5pP
-         Xe6MUFRcXWMEtqIWEyIqqlaI1y+5KcuHQS9uz3rw6LGC7n5QKrRRq+o6G40CckY5w8UI
-         U1eS3Rs62eIpJGhx63C8eGh4lv0byyXS+OMk8JGRHl6HQnp8E2o/PQlnRrJoRIGxF+UN
-         e6u3MxvUysth8MSYjbPYc34K2LhGiXjniQth9UfxCCP4r4FZQjSod7d+yX4RR2wSWab/
-         4cL8yBtgaxCzA1rO4veEHJJc2zpTVzEcNZMJbVSR5rDCm9ozQY/uJHEhH/XnS7IeKR87
-         dMEA==
+        b=hC22SfLKDfumHFx/iSoQ9bEvSCi+ZsjU6VLN4FEkQUwhXiM+7AR2DZ+RRqKBMv7Wc1
+         Fwv/Tyfh0KgLtrTlhZv79fnzIXnAtJMnIgHsRlSWdadV4RkeIUIns6/rMxzJ0Nvdr25F
+         GS+z0nBx081mGkMMLEmzqxjtAkt9XvzGezi9RZelgYlIPZqMaJhjrGYEQ2/yRy8t/v8Y
+         TaL0h01thWpc95b83y0HMyhw8m/fHjmy33YoPi9pcFoC7o9ar7GFpjoehzaPCjLgJk/4
+         EDKAXdqSEKd8tMeEPVM60yw/8GLKlQa3hiCkWVeDx82SEhN+WxkTVulNf7RwEA72Xjea
+         +xfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=oEvmKvYc+Fiulf7pB83+xTC6UrZ5aAhHpCUmA1kUwoc=;
-        b=Dl8sXd+rmQVeO6rIn2yN6fidEvZDKnIiDOQ0SZkEEMZgoOAYiKP5DcXYwzAlV3gn/D
-         w+s8Yr6fslj9enQGzyoKtO9nnPwDIDyBvH62f38sCPy/F6HQD5buX4AXcGgCvNFpvZpl
-         MbqXRzrtkwxQqhtjMSfLSP4fp3uLlSHfr0+YjL3dQjnIZtZS1gkWj84CzqWAuvjLjEQc
-         wnMT8v5jRgce1AjuqWUTLgtZbgaXHJ34syc77hgJUF4wxhqVmueFvVju53WvlBGGojL7
-         MyYCqDpS5WYJ85I4Fr/Q16onTK1yje97NYsXa47md/vs6XKXhtWT+yadp82qjRSuCKIY
-         s8WQ==
+        bh=RX+Th33rBkTq+w7K2294SFcxPrXNMfEKJPrvOocx5y4=;
+        b=KEVn4SEEskWcdwzNWTkUkxZlcQl/Ib8oidg3MmwmkKnPyE4Em1bukR2BEXlzgrVa51
+         33yjA1G8NZ32mBs3xkcf5o8Vt4ff64MfATKTrrK3tNU8gwAeAG1zqFCZoHXa69liLcnP
+         Y+Q2Ycx+Z66wqf0x4iI9eRG9OVxsvgWQXjmOtnE3NqyqasRCZXomFcPCMXuh8JwOHKjG
+         vl7jnT962OwHD5igV4vwYQLzBUTXtFiQnpmLlCDF62u/akPFNtTGHA+HGH4UQRr0yxaj
+         jaWJYRtDOs7aaIaJGJPItdy4zICB4bI1EV1PFyRgG4qV+QwbBrGscqMgoKaTxLtL9g4+
+         3lrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=qxF/z9C/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rYfM4vme;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=qxF/z9C/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rYfM4vme;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	John Hurley <john.hurley@netronome.com>,
-	Jakub Kicinski <jakub.kicinski@netronome.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 44/55] nfp: flower: set tunnel ttl value to net default
-Date: Fri, 18 May 2018 10:15:40 +0200
-Message-Id: <20180518081459.505511475@linuxfoundation.org>
+Subject: [PATCH 4.16 43/55] net: systemport: Correclty disambiguate driver instances
+Date: Fri, 18 May 2018 10:15:39 +0200
+Message-Id: <20180518081459.462766164@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789158968081367?=
-X-GMAIL-MSGID: =?utf-8?q?1600789158968081367?=
+X-GMAIL-THRID: =?utf-8?q?1600789155954752152?=
+X-GMAIL-MSGID: =?utf-8?q?1600789155954752152?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,84 +52,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Hurley <john.hurley@netronome.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 50a5852a657f793a8482fe3af4a141b460d3499e ]
+[ Upstream commit 1f3ccc3c3fc26468be00392ef0b2c215f9c9d054 ]
 
-Firmware requires that the ttl value for an encapsulating ipv4 tunnel
-header be included as an action field. Prior to the support of Geneve
-tunnel encap (when ttl set was removed completely), ttl value was
-extracted from the tunnel key. However, tests have shown that this can
-still produce a ttl of 0.
+While adding the DSA notifier, we will be sending DSA notifications with
+info->master that is going to point to a particular net_device instance.
 
-Fix the issue by setting the namespace default value for each new tunnel.
-Follow up patch for net-next will do a full route lookup.
+Our logic in bcm_sysport_map_queues() correctly disambiguates net_device
+instances that are not covered by our own driver, but it will not make
+sure that info->master points to a particular driver instance that we
+are interested in. In a system where e.g: two or more SYSTEMPORT
+instances are registered, this would lead in programming two or more
+times the queue mapping, completely messing with the logic which does
+the queue/port allocation and tracking.
 
-Fixes: 3ca3059dc3a9 ("nfp: flower: compile Geneve encap actions")
-Fixes: b27d6a95a70d ("nfp: compile flower vxlan tunnel set actions")
-Signed-off-by: John Hurley <john.hurley@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fix this by looking at the notifier_block pointer which is unique per
+instance and allows us to go back to our driver private structure, and
+in turn to the backing net_device instance.
+
+Fixes: d156576362c0 ("net: systemport: Establish lower/upper queue mapping")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/action.c |   10 ++++++++--
- drivers/net/ethernet/netronome/nfp/flower/cmsg.h   |    5 ++++-
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/action.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/action.c
-@@ -183,17 +183,21 @@ static int
- nfp_fl_set_ipv4_udp_tun(struct nfp_fl_set_ipv4_udp_tun *set_tun,
- 			const struct tc_action *action,
- 			struct nfp_fl_pre_tunnel *pre_tun,
--			enum nfp_flower_tun_type tun_type)
-+			enum nfp_flower_tun_type tun_type,
-+			struct net_device *netdev)
- {
- 	size_t act_size = sizeof(struct nfp_fl_set_ipv4_udp_tun);
- 	struct ip_tunnel_info *ip_tun = tcf_tunnel_info(action);
- 	u32 tmp_set_ip_tun_type_index = 0;
- 	/* Currently support one pre-tunnel so index is always 0. */
- 	int pretun_idx = 0;
-+	struct net *net;
- 
- 	if (ip_tun->options_len)
- 		return -EOPNOTSUPP;
- 
-+	net = dev_net(netdev);
-+
- 	set_tun->head.jump_id = NFP_FL_ACTION_OPCODE_SET_IPV4_TUNNEL;
- 	set_tun->head.len_lw = act_size >> NFP_FL_LW_SIZ;
- 
-@@ -204,6 +208,7 @@ nfp_fl_set_ipv4_udp_tun(struct nfp_fl_se
- 
- 	set_tun->tun_type_index = cpu_to_be32(tmp_set_ip_tun_type_index);
- 	set_tun->tun_id = ip_tun->key.tun_id;
-+	set_tun->ttl = net->ipv4.sysctl_ip_default_ttl;
- 
- 	/* Complete pre_tunnel action. */
- 	pre_tun->ipv4_dst = ip_tun->key.u.ipv4.dst;
-@@ -511,7 +516,8 @@ nfp_flower_loop_action(const struct tc_a
- 		*a_len += sizeof(struct nfp_fl_pre_tunnel);
- 
- 		set_tun = (void *)&nfp_fl->action_data[*a_len];
--		err = nfp_fl_set_ipv4_udp_tun(set_tun, a, pre_tun, *tun_type);
-+		err = nfp_fl_set_ipv4_udp_tun(set_tun, a, pre_tun, *tun_type,
-+					      netdev);
- 		if (err)
- 			return err;
- 		*a_len += sizeof(struct nfp_fl_set_ipv4_udp_tun);
---- a/drivers/net/ethernet/netronome/nfp/flower/cmsg.h
-+++ b/drivers/net/ethernet/netronome/nfp/flower/cmsg.h
-@@ -178,7 +178,10 @@ struct nfp_fl_set_ipv4_udp_tun {
- 	__be16 reserved;
- 	__be64 tun_id __packed;
- 	__be32 tun_type_index;
--	__be32 extra[3];
-+	__be16 reserved2;
-+	u8 ttl;
-+	u8 reserved3;
-+	__be32 extra[2];
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -2052,14 +2052,21 @@ static const struct net_device_ops bcm_s
+ 	.ndo_select_queue	= bcm_sysport_select_queue,
  };
  
- /* Metadata with L2 (1W/4B)
+-static int bcm_sysport_map_queues(struct net_device *dev,
++static int bcm_sysport_map_queues(struct notifier_block *nb,
+ 				  struct dsa_notifier_register_info *info)
+ {
+-	struct bcm_sysport_priv *priv = netdev_priv(dev);
+ 	struct bcm_sysport_tx_ring *ring;
++	struct bcm_sysport_priv *priv;
+ 	struct net_device *slave_dev;
+ 	unsigned int num_tx_queues;
+ 	unsigned int q, start, port;
++	struct net_device *dev;
++
++	priv = container_of(nb, struct bcm_sysport_priv, dsa_notifier);
++	if (priv->netdev != info->master)
++		return 0;
++
++	dev = info->master;
+ 
+ 	/* We can't be setting up queue inspection for non directly attached
+ 	 * switches
+@@ -2082,6 +2089,7 @@ static int bcm_sysport_map_queues(struct
+ 	if (priv->is_lite)
+ 		netif_set_real_num_tx_queues(slave_dev,
+ 					     slave_dev->num_tx_queues / 2);
++
+ 	num_tx_queues = slave_dev->real_num_tx_queues;
+ 
+ 	if (priv->per_port_num_tx_queues &&
+@@ -2109,7 +2117,7 @@ static int bcm_sysport_map_queues(struct
+ 	return 0;
+ }
+ 
+-static int bcm_sysport_dsa_notifier(struct notifier_block *unused,
++static int bcm_sysport_dsa_notifier(struct notifier_block *nb,
+ 				    unsigned long event, void *ptr)
+ {
+ 	struct dsa_notifier_register_info *info;
+@@ -2119,7 +2127,7 @@ static int bcm_sysport_dsa_notifier(stru
+ 
+ 	info = ptr;
+ 
+-	return notifier_from_errno(bcm_sysport_map_queues(info->master, info));
++	return notifier_from_errno(bcm_sysport_map_queues(nb, info));
+ }
+ 
+ #define REV_FMT	"v%2x.%02x"
