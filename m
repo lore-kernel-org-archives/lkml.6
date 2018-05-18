@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeERVKN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:10:13 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39068 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbeERVKE (ORCPT
+        id S1752532AbeERVLN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:11:13 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43463 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752168AbeERVKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:10:04 -0400
-X-Google-Smtp-Source: AB8JxZpuZe1VD1NyOVLRB/2ywuNN2LMdZIcO9AnKLVGsiIuXKOLU3E2/xKZrxx+nn8/F0Myw4rnS8g==
+        Fri, 18 May 2018 17:10:11 -0400
+X-Google-Smtp-Source: AB8JxZrkVRW7+IY5gjeTcDQ4H1FwsSeE73QGDuuT+HEeaaOO1AE0RKGDbyhTSFx0H0idsnz9SLUumg==
 From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To: Tony Lindgren <tony@atomide.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 2/6] Input: ams_delta_serio: use GPIO lookup table
-Date: Fri, 18 May 2018 23:09:50 +0200
-Message-Id: <20180518210954.29044-2-jmkrzyszt@gmail.com>
+Subject: [PATCH 4/6] fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+Date: Fri, 18 May 2018 23:09:52 +0200
+Message-Id: <20180518210954.29044-4-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
 References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
@@ -38,7 +38,9 @@ GPIO numbers to GPIO descriptors and use the table to locate required
 GPIO pins.
 
 Declare static variables for storing GPIO descriptors and replace
-gpio_ functions with their gpiod_ equivalents.
+gpio_ functions with their gpiod_ equivalents. Move GPIO lookup
+to the driver probe function so device initialization can be postponed
+instead of aborted if the GPIO pin is not yet available.
 
 Pin naming used by the driver should be followed while respective GPIO
 lookup table is initialized by a board init code.
@@ -48,174 +50,118 @@ OMAP1: ams-delta: add GPIO lookup tables"
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- drivers/input/serio/ams_delta_serio.c | 98 +++++++++++++++++++----------------
- 1 file changed, 53 insertions(+), 45 deletions(-)
+ drivers/video/fbdev/omap/lcd_ams_delta.c | 59 ++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
-index 3df501c3421b..dd1f8f118c08 100644
---- a/drivers/input/serio/ams_delta_serio.c
-+++ b/drivers/input/serio/ams_delta_serio.c
-@@ -20,14 +20,13 @@
-  * However, when used with the E3 mailboard that producecs non-standard
-  * scancodes, a custom key table must be prepared and loaded from userspace.
-  */
--#include <linux/gpio.h>
+diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
+index a4ee947006c7..19b6425b54be 100644
+--- a/drivers/video/fbdev/omap/lcd_ams_delta.c
++++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
+@@ -24,11 +24,10 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/delay.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/irq.h>
- #include <linux/serio.h>
- #include <linux/slab.h>
- #include <linux/module.h>
+ #include <linux/lcd.h>
+-#include <linux/gpio.h>
  
- #include <asm/mach-types.h>
+ #include <mach/hardware.h>
 -#include <mach/board-ams-delta.h>
  
- #include <mach/ams-delta-fiq.h>
+ #include "omapfb.h"
  
-@@ -36,6 +35,10 @@ MODULE_DESCRIPTION("AMS Delta (E3) keyboard port driver");
- MODULE_LICENSE("GPL");
+@@ -41,6 +40,8 @@
+ /* LCD class device section */
  
- static struct serio *ams_delta_serio;
-+static struct gpio_desc *gpiod_data;
-+static struct gpio_desc *gpiod_clock;
-+static struct gpio_desc *gpiod_power;
-+static struct gpio_desc *gpiod_dataout;
+ static int ams_delta_lcd;
++static struct gpio_desc *gpiod_vblen;
++static struct gpio_desc *gpiod_ndisp;
  
- static int check_data(int data)
+ static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
  {
-@@ -92,7 +95,7 @@ static irqreturn_t ams_delta_serio_interrupt(int irq, void *dev_id)
- static int ams_delta_serio_open(struct serio *serio)
- {
- 	/* enable keyboard */
--	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 1);
-+	gpiod_set_value(gpiod_power, 1);
+@@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
  
- 	return 0;
- }
-@@ -100,32 +103,9 @@ static int ams_delta_serio_open(struct serio *serio)
- static void ams_delta_serio_close(struct serio *serio)
- {
- 	/* disable keyboard */
--	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 0);
-+	gpiod_set_value(gpiod_power, 0);
- }
+ /* omapfb panel section */
  
--static const struct gpio ams_delta_gpios[] __initconst_or_module = {
+-static const struct gpio _gpios[] = {
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
--		.flags	= GPIOF_DIR_IN,
--		.label	= "serio-data",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
--		.flags	= GPIOF_DIR_IN,
--		.label	= "serio-clock",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_PWR,
+-		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
 -		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "serio-power",
+-		.label	= "lcd_vblen",
 -	},
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_DATAOUT,
+-		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
 -		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "serio-dataout",
+-		.label	= "lcd_ndisp",
 -	},
 -};
 -
- static int __init ams_delta_serio_init(void)
+-static int ams_delta_panel_init(struct lcd_panel *panel,
+-		struct omapfb_device *fbdev)
+-{
+-	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
+-}
+-
+-static void ams_delta_panel_cleanup(struct lcd_panel *panel)
+-{
+-	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
+-}
+-
+ static int ams_delta_panel_enable(struct lcd_panel *panel)
  {
- 	int err;
-@@ -145,36 +125,62 @@ static int __init ams_delta_serio_init(void)
- 	strlcpy(ams_delta_serio->phys, "GPIO/serio0",
- 			sizeof(ams_delta_serio->phys));
- 
--	err = gpio_request_array(ams_delta_gpios,
--				ARRAY_SIZE(ams_delta_gpios));
--	if (err) {
--		pr_err("ams_delta_serio: Couldn't request gpio pins\n");
-+	gpiod_data = gpiod_get(NULL, "data", GPIOD_IN);
-+	if (IS_ERR(gpiod_data)) {
-+		err = PTR_ERR(gpiod_data);
-+		pr_err("%s: 'data' GPIO request failed (%d)\n", __func__,
-+		       err);
- 		goto serio;
- 	}
-+	gpiod_clock = gpiod_get(NULL, "clock", GPIOD_IN);
-+	if (IS_ERR(gpiod_clock)) {
-+		err = PTR_ERR(gpiod_clock);
-+		pr_err("%s: 'clock' GPIO request failed (%d)\n", __func__,
-+		       err);
-+		goto gpio_data;
-+	}
-+	gpiod_power = gpiod_get(NULL, "power", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_power)) {
-+		err = PTR_ERR(gpiod_power);
-+		pr_err("%s: 'power' GPIO request failed (%d)\n", __func__,
-+		       err);
-+		goto gpio_clock;
-+	}
-+	gpiod_dataout = gpiod_get(NULL, "dataout", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_dataout)) {
-+		err = PTR_ERR(gpiod_dataout);
-+		pr_err("%s: 'dataout' GPIO request failed (%d)\n",
-+		       __func__, err);
-+		goto gpio_power;
-+	}
- 
--	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
--			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
--			"ams-delta-serio", 0);
-+	err = request_irq(gpiod_to_irq(gpiod_clock),
-+			  ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
-+			  "ams-delta-serio", 0);
- 	if (err < 0) {
--		pr_err("ams_delta_serio: couldn't request gpio interrupt %d\n",
--				gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK));
--		goto gpio;
-+		pr_err("%s: 'clock' GPIO interrupt request failed (%d)\n",
-+		       __func__, err);
-+		goto gpio_dataout;
- 	}
- 	/*
- 	 * Since GPIO register handling for keyboard clock pin is performed
- 	 * at FIQ level, switch back from edge to simple interrupt handler
- 	 * to avoid bad interaction.
- 	 */
--	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
--			handle_simple_irq);
-+	irq_set_handler(gpiod_to_irq(gpiod_clock), handle_simple_irq);
- 
- 	serio_register_port(ams_delta_serio);
- 	dev_info(&ams_delta_serio->dev, "%s\n", ams_delta_serio->name);
- 
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
++	gpiod_set_value(gpiod_ndisp, 1);
++	gpiod_set_value(gpiod_vblen, 1);
  	return 0;
--gpio:
--	gpio_free_array(ams_delta_gpios,
--			ARRAY_SIZE(ams_delta_gpios));
-+gpio_dataout:
-+	gpiod_put(gpiod_dataout);
-+gpio_power:
-+	gpiod_put(gpiod_power);
-+gpio_clock:
-+	gpiod_put(gpiod_clock);
-+gpio_data:
-+	gpiod_put(gpiod_data);
- serio:
- 	kfree(ams_delta_serio);
- 	return err;
-@@ -184,8 +190,10 @@ module_init(ams_delta_serio_init);
- static void __exit ams_delta_serio_exit(void)
- {
- 	serio_unregister_port(ams_delta_serio);
--	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
--	gpio_free_array(ams_delta_gpios,
--			ARRAY_SIZE(ams_delta_gpios));
-+	free_irq(gpiod_to_irq(gpiod_clock), 0);
-+	gpiod_put(gpiod_dataout);
-+	gpiod_put(gpiod_power);
-+	gpiod_put(gpiod_clock);
-+	gpiod_put(gpiod_data);
  }
- module_exit(ams_delta_serio_exit);
+ 
+ static void ams_delta_panel_disable(struct lcd_panel *panel)
+ {
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
++	gpiod_set_value(gpiod_vblen, 0);
++	gpiod_set_value(gpiod_ndisp, 0);
+ }
+ 
+ static struct lcd_panel ams_delta_panel = {
+@@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
+ 	.pcd		= 0,
+ 	.acb		= 37,
+ 
+-	.init		= ams_delta_panel_init,
+-	.cleanup	= ams_delta_panel_cleanup,
+ 	.enable		= ams_delta_panel_enable,
+ 	.disable	= ams_delta_panel_disable,
+ };
+@@ -166,9 +141,27 @@ static struct lcd_panel ams_delta_panel = {
+ static int ams_delta_panel_probe(struct platform_device *pdev)
+ {
+ 	struct lcd_device *lcd_device = NULL;
+-#ifdef CONFIG_LCD_CLASS_DEVICE
+ 	int ret;
+ 
++	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_vblen)) {
++		ret = PTR_ERR(gpiod_vblen);
++		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
++		if (ret == -ENODEV || ret == -ENOENT)
++			ret = -EPROBE_DEFER;
++		return ret;
++	}
++
++	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ndisp)) {
++		ret = PTR_ERR(gpiod_ndisp);
++		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
++		if (ret == -ENODEV || ret == -ENOENT)
++			ret = -EPROBE_DEFER;
++		return ret;
++	}
++
++#ifdef CONFIG_LCD_CLASS_DEVICE
+ 	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
+ 						&ams_delta_lcd_ops);
+ 
 -- 
 2.16.1
