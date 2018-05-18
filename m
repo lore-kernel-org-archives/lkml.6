@@ -1,98 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeERTVJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:21:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeERTVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:21:06 -0400
-Date: Fri, 18 May 2018 16:21:02 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        ravi.bangoria@linux.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
-        tmricht@linux.ibm.com
-Subject: Re: [PATCH] perf tests: Fix regex for record+probe_libc_inet_pton.sh
-Message-ID: <20180518192102.GB5001@kernel.org>
-References: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
+        id S1752065AbeERTVR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:21:17 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35753 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751768AbeERTVM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:21:12 -0400
+X-Google-Smtp-Source: AB8JxZos99Q2lRvkRHF+cY/SrJ3rXEAIOjBc49CBXGnfA9VWZy75/3rt+2txJf8QZqEmfYJ6eCTRi4gPLc4O+t9GJew=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com>
+ <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
+ <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com>
+ <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com>
+ <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
+ <CA+55aFysH5iiJWCVFu1J6GQfN2G1AbMcHyc4RhpnrnPjtM3L0Q@mail.gmail.com> <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com>
+In-Reply-To: <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 18 May 2018 12:21:00 -0700
+Message-ID: <CA+55aFz4vKF-xC+A=DOozkPMVyLHPC5xMqW+y6pg9D7W-c2BQw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
+To: namit@vmware.com
+Cc: Peter Anvin <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4IJLKcv014650
 
-Em Fri, May 18, 2018 at 12:54:17PM +0530, Sandipan Das escreveu:
-> This test currently fails because the regular expressions for
-> matching the output of perf script do not consider the symbol
-> offsets to be part of the output.
-> 
-> The symbol offsets are seen because of the default behaviour
-> introduced by commit 4140d2ea74b3 ("perf script: Show symbol
-> offsets by default").
-> 
-> Before applying this patch:
-> 
->   # perf test -v "probe libc's inet_pton & backtrace it with ping"
-> 
->   62: probe libc's inet_pton & backtrace it with ping       :
->   --- start ---
->   test child forked, pid 30389
->   ping 30406 [002] 307144.280983: probe_libc:inet_pton: (7f4117adf220)
->   7f4117adf220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)
->   FAIL: expected backtrace entry 1 ".*inet_pton[[:space:]]\(/usr/lib64/libc-2.25.so|inlined\)$" got "7f4117adf220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)"
->   test child finished with -1
->   ---- end ----
->   probe libc's inet_pton & backtrace it with ping: FAILED!
-> 
-> After applying this patch:
-> 
->   # perf test -v "probe libc's inet_pton & backtrace it with ping"
-> 
->   62: probe libc's inet_pton & backtrace it with ping       :
->   --- start ---
->   test child forked, pid 30539
->   ping 30556 [003] 307254.313217: probe_libc:inet_pton: (7fe19ab10220)
->   7fe19ab10220 __GI___inet_pton+0x0 (/usr/lib64/libc-2.25.so)
->   7fe19aad5ebd getaddrinfo+0x11d (/usr/lib64/libc-2.25.so)
->   56351e3c1c71 main+0x891 (/usr/bin/ping)
->   test child finished with 0
->   ---- end ----
->   probe libc's inet_pton & backtrace it with ping: Ok
+On Fri, May 18, 2018 at 12:18 PM Nadav Amit <namit@vmware.com> wrote:
 
-Here it went from failing with:
+> Gnu ASM manual says: "Each time you run as it assembles exactly one source
+> program. The source program is made up of one or more files.”
 
-[root@seventh ~]# perf test -v pton
-64: probe libc's inet_pton & backtrace it with ping       :
---- start ---
-test child forked, pid 22590
-ping 22607 [001] 12782.425689: probe_libc:inet_pton: (7f8686da4e40)
-7f8686da4e40 __GI___inet_pton+0x0 (/usr/lib64/libc-2.26.so)
-FAIL: expected backtrace entry 1 ".*inet_pton[[:space:]]\(/usr/lib64/libc-2.26.so|inlined\)$" got "7f8686da4e40 __GI___inet_pton+0x0 (/usr/lib64/libc-2.26.so)"
-test child finished with -1
----- end ----
-probe libc's inet_pton & backtrace it with ping: FAILED!
-[root@seventh ~]# 
+Ok, that counts as documentation, although it's confusing as hell. Is it
+one source program or multiple files again? I see what they are trying to
+say, but it really could be phrased more clearly ;)
 
-To failing with:
-
-[root@seventh ~]# perf test -v pton
-64: probe libc's inet_pton & backtrace it with ping       :
---- start ---
-test child forked, pid 28954
-ping 28971 [002] 14277.711200: probe_libc:inet_pton: (7fc9d66e3e40)
-7fc9d66e3e40 __GI___inet_pton+0x0 (/usr/lib64/libc-2.26.so)
-7fc9d66b02b4 getaddrinfo+0x124 (/usr/lib64/libc-2.26.so)
-56075cb98f40 [unknown] (/usr/bin/ping)
-FAIL: expected backtrace entry 3 ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" got "56075cb98f40 [unknown] (/usr/bin/ping)"
-test child finished with -1
----- end ----
-probe libc's inet_pton & backtrace it with ping: FAILED!
-[root@seventh ~]# 
-
-Trying to figure this out...
-
-- Arnaldo
+                     Linus
