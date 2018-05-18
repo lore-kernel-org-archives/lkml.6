@@ -1,84 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752419AbeERNlP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:41:15 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41652 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751560AbeERNlM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:41:12 -0400
-X-Google-Smtp-Source: AB8JxZpuzd7HbEDfrOpFX39HKyCqfcItsen2XsQx00BLO1N5YcxsFOfg793IA3ErM31O45tJWvODdKcEBkgeZ/EAhoE=
-MIME-Version: 1.0
-In-Reply-To: <1526648704-16873-5-git-send-email-narmstrong@baylibre.com>
-References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com> <1526648704-16873-5-git-send-email-narmstrong@baylibre.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Fri, 18 May 2018 15:41:10 +0200
-Message-ID: <CAFqH_539y6jGjfvY4rc0-dzz_z9VSf75igRmf3zNUz1sGgWYuw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] mfd: cros_ec_dev: Add CEC sub-device registration
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: David Airlie <airlied@linux.ie>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>,
-        Sean Paul <seanpaul@google.com>, sadolfsson@google.com,
-        Felix Ekblom <felixe@google.com>, Benson Leung <bleung@google.com>,
-        darekm@google.com,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752520AbeERNmX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:42:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752141AbeERNmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:42:22 -0400
+Date: Fri, 18 May 2018 22:42:18 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH -tip v3 5/7] x86: kprobes: Ignore break_handler
+Message-Id: <20180518224218.2050525a24682a8d32a0b135@kernel.org>
+In-Reply-To: <20180518062638.GD27960@gmail.com>
+References: <152651499561.25583.14488389770693278906.stgit@devbox>
+        <152651514451.25583.15475048007255467863.stgit@devbox>
+        <20180518062638.GD27960@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-18 15:05 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
-> The EC can expose a CEC bus, thus add the cros-ec-cec MFD sub-device
-> when the CEC feature bit is present.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 1d6dc5c..272969e 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -383,6 +383,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->         kfree(msg);
->  }
->
-> +static const struct mfd_cell cros_ec_cec_cells[] = {
-> +       { .name = "cros-ec-cec" }
-> +};
-> +
->  static const struct mfd_cell cros_ec_rtc_cells[] = {
->         { .name = "cros-ec-rtc" }
->  };
-> @@ -426,6 +430,18 @@ static int ec_device_probe(struct platform_device *pdev)
->         if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->                 cros_ec_sensors_register(ec);
->
-> +       /* Check whether this EC instance has CEC host command support */
-> +       if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
-> +               retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-> +                                        cros_ec_cec_cells,
-> +                                        ARRAY_SIZE(cros_ec_cec_cells),
-> +                                        NULL, 0, NULL);
-> +               if (retval)
-> +                       dev_err(ec->dev,
-> +                               "failed to add cros-ec-cec device: %d\n",
-> +                               retval);
-> +       }
-> +
->         /* Check whether this EC instance has RTC host command support */
->         if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
->                 retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-> --
-> 2.7.4
->
+On Fri, 18 May 2018 08:26:38 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Remove break_handler related code since that was used
+> > only for jprobe and jprobe is removed now.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  arch/x86/kernel/kprobes/common.h |   10 ----------
+> >  arch/x86/kernel/kprobes/core.c   |   13 ++-----------
+> >  arch/x86/kernel/kprobes/ftrace.c |   16 ++--------------
+> >  3 files changed, 4 insertions(+), 35 deletions(-)
+> 
+> Even after this change there's a stale reference to ->break_handler():
+> 
+>   arch/x86/include/asm/kprobes.h:  * a post_handler or break_handler).
+> 
+> Please use 'git grep'!
 
-Thanks,
- Enric
+Oops, I missed it. Thank you, I'll use git-grep next time.
+
+> 
+> Also, there's no reason to send an incomplete series: please remove _all_ 
+> ->break_handler() references so that it's 100% gone! The pain of having and not 
+> having ->break_handler() is completely unnecessary.
+
+Would you mean a single patch for all arch?
+I'm currently has arch-separated patches for removing it. Should I fold those?
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
