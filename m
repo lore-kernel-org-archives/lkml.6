@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeERUDM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:03:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33660 "EHLO mail.bootlin.com"
+        id S1752168AbeERUDq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:03:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33690 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751452AbeERUDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:03:11 -0400
-Date: Fri, 18 May 2018 22:02:59 +0200
+        id S1751156AbeERUDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 16:03:44 -0400
+Date: Fri, 18 May 2018 22:03:32 +0200
 From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Nicholas Mc Guire <der.herr@hofr.at>,
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
         Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
         Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH V2 RFC] mtd: spi-nor: intel: provide a range for
- poll_timout
-Message-ID: <20180518220259.04a85a05@bbrezillon>
-In-Reply-To: <20170214094724.GB15721@lahna.fi.intel.com>
-References: <1486973622-1072-1-git-send-email-der.herr@hofr.at>
-        <20170214094724.GB15721@lahna.fi.intel.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 043/102] mtd: spi-nor: stm32-quadspi: explicitly request
+ exclusive reset control
+Message-ID: <20180518220332.37da2602@bbrezillon>
+In-Reply-To: <20170719152646.25903-44-p.zabel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+        <20170719152646.25903-44-p.zabel@pengutronix.de>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -30,19 +32,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Feb 2017 11:47:24 +0200
-Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+On Wed, 19 Jul 2017 17:25:47 +0200
+Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-> On Mon, Feb 13, 2017 at 09:13:42AM +0100, Nicholas Mc Guire wrote:
-> > The overall poll time here is INTEL_SPI_TIMEOUT * 1000 which is
-> > 5000 * 1000 - so 5seconds and it is coded as a tight loop here delay_us
-> > to readl_poll_timeout() is set to 0. As this is never called in an atomic
-> > context sleeping should be no issue and there is no reasons for the
-> > tight-loop here.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>  
+> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+> reset lines") started to transition the reset control request API calls
+> to explicitly state whether the driver needs exclusive or shared reset
+> control behavior. Convert all drivers requesting exclusive resets to the
+> explicit API call so the temporary transition helpers can be removed.
 > 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> No functional changes.
+> 
+> Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: linux-mtd@lists.infradead.org
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
 Queued to spi-nor/next.
 
@@ -50,10 +60,23 @@ Thanks,
 
 Boris
 
+> ---
+>  drivers/mtd/spi-nor/stm32-quadspi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> diff --git a/drivers/mtd/spi-nor/stm32-quadspi.c b/drivers/mtd/spi-nor/stm32-quadspi.c
+> index 86c0931543c53..a367c56deb3cc 100644
+> --- a/drivers/mtd/spi-nor/stm32-quadspi.c
+> +++ b/drivers/mtd/spi-nor/stm32-quadspi.c
+> @@ -633,7 +633,7 @@ static int stm32_qspi_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	rstc = devm_reset_control_get(dev, NULL);
+> +	rstc = devm_reset_control_get_exclusive(dev, NULL);
+>  	if (!IS_ERR(rstc)) {
+>  		reset_control_assert(rstc);
+>  		udelay(2);
 
 
 
