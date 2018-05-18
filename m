@@ -1,97 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751429AbeERFYh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 01:24:37 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51455 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750763AbeERFYg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 01:24:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=renzhen@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T1Coz38_1526621058;
-From: Eric Ren <renzhen@linux.alibaba.com>
-To: x86@kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, kan.liang@intel.com,
-        ak@linux.intel.com, linux-kernel@vger.kernel.org,
-        renzhen@linux.alibaba.com
-Subject: [PATCH] perf/x86/intel/uncore: allocate pmu index for pci device dynamically
-Date: Fri, 18 May 2018 13:23:59 +0800
-Message-Id: <20180518052359.48756-1-renzhen@linux.alibaba.com>
-X-Mailer: git-send-email 2.14.3 (Apple Git-98)
+        id S1751496AbeERF1j (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 01:27:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57305 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750951AbeERF1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 01:27:38 -0400
+Date: Thu, 17 May 2018 22:11:35 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, manfred@colorfullife.com,
+        ebiederm@xmission.com, linux@dominikbrodowski.net,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] ipc: Adding new return type vm_fault_t
+Message-ID: <20180518051135.npd3dmhz6kk32f6d@linux-n805>
+References: <20180425043413.GA21467@jordon-HP-15-Notebook-PC>
+ <CAFqt6zai16qZ--L9aAh0dtD9XTfu-vpUpO4CWgOHKavxH5AU1Q@mail.gmail.com>
+ <CAFqt6zYLDsQ+LRPMJF+H-9hKt03HwGPaj1eaxPGMuu039a8j2g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zYLDsQ+LRPMJF+H-9hKt03HwGPaj1eaxPGMuu039a8j2g@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some boxes/devices of uncore are exported as pcie devices. However,
-the box number is different on different micro-architecture. For
-example, the max memory channels for Broadwell is up to 8. However,
-there are only 2 channels for Broadwell-DE, 4 channels for Broadwell-EP,
-and 8 channels for Broadwell-EX.
+On Wed, 16 May 2018, Souptick Joarder wrote:
 
-The current code allocates pmu index statically so that on Broadwell-EP
-machine "perf list|grep uncore" shows discontinuous iMC number, which
-doesn't look nice:
+>On Thu, May 10, 2018 at 7:34 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> On Wed, Apr 25, 2018 at 10:04 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>>> Use new return type vm_fault_t for fault handler. For
+>>> now, this is just documenting that the function returns
+>>> a VM_FAULT value rather than an errno. Once all instances
+>>> are converted, vm_fault_t will become a distinct type.
+>>>
+>>> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>>
+>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-Test on Broadwell-EP using "ls /sys/devices | grep -i imc":
-
-Without this patch,
-    uncore_imc_0
-    uncore_imc_1
-    uncore_imc_4
-    uncore_imc_5
-
-To maintain pmu index dynamically, move index allocation logic to
-uncore_pci_probe(). As a result, we can get continuous index of iMC
-devices under /sys/devices directory:
-
-Applied this patch:,
-    uncore_imc_0
-    uncore_imc_1
-    uncore_imc_2
-    uncore_imc_3
-
-Signed-off-by: Shanpei Chen <shanpeic@linux.alibaba.com>
-Signed-off-by: Eric Ren <renzhen@linux.alibaba.com>
----
- arch/x86/events/intel/uncore.c | 7 ++++++-
- arch/x86/events/intel/uncore.h | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index a7956fc..88d390e 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -818,7 +818,9 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
- 
- 	for (i = 0; i < type->num_boxes; i++) {
- 		pmus[i].func_id	= setid ? i : -1;
--		pmus[i].pmu_idx	= i;
-+		/* The pmu idx will be decided at probe for pci device. */
-+		if (setid)
-+			pmus[i].pmu_idx	= i;
- 		pmus[i].type	= type;
- 		pmus[i].boxes	= kzalloc(size, GFP_KERNEL);
- 		if (!pmus[i].boxes)
-@@ -957,6 +959,9 @@ static int uncore_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 	if (atomic_inc_return(&pmu->activeboxes) > 1)
- 		return 0;
- 
-+	/*  Count the real number of pmus for pci uncore device */
-+	pmu->pmu_idx = type->num_pmus++;
-+
- 	/* First active box registers the pmu */
- 	ret = uncore_pmu_register(pmu);
- 	if (ret) {
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index 414dc7e..c4f54fb 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -40,6 +40,7 @@ struct intel_uncore_type {
- 	const char *name;
- 	int num_counters;
- 	int num_boxes;
-+	int num_pmus; /* for pci uncore device */
- 	int perf_ctr_bits;
- 	int fixed_ctr_bits;
- 	unsigned perf_ctr;
--- 
-1.8.3.1
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
