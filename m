@@ -1,166 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752457AbeERHzb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:55:31 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42742 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752016AbeERHz3 (ORCPT
+        id S1752532AbeERHz4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:55:56 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35979 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751999AbeERHtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:55:29 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [RFC] platform: detach from PM domains on shutdown
-Date: Fri, 18 May 2018 09:54:54 +0200
-Message-ID: <1580300.sK9GS2NB4b@aspire.rjw.lan>
-In-Reply-To: <HE1PR04MB3004EF83E7AE2250E44C49A088910@HE1PR04MB3004.eurprd04.prod.outlook.com>
-References: <20180515090110.26820-1-peng.fan@nxp.com> <CAJZ5v0ibwRXqaGJW0vFcy+YqMEc_ao9itBErP_w1YjLQWVVtQg@mail.gmail.com> <HE1PR04MB3004EF83E7AE2250E44C49A088910@HE1PR04MB3004.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 May 2018 03:49:53 -0400
+X-Google-Smtp-Source: AB8JxZqKNx62Uqqw3xpT3b0ATG/7ErzRuArSgKnx6YOuZv47972PNddi5iTGs6Xn41B3pp/K0RCUWQ==
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH 02/10] block: Convert bio_set to mempool_init()
+Date: Fri, 18 May 2018 03:49:01 -0400
+Message-Id: <20180518074918.13816-4-kent.overstreet@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 17, 2018 2:37:31 PM CEST Peng Fan wrote:
-> 
-> > -----Original Message-----
-> > From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of Rafael
-> > J. Wysocki
-> > Sent: 2018年5月17日 16:01
-> > To: Peng Fan <peng.fan@nxp.com>
-> > Cc: Rafael J. Wysocki <rafael@kernel.org>; Ulf Hansson
-> > <ulf.hansson@linaro.org>; Rafael J. Wysocki <rafael.j.wysocki@intel.com>;
-> > Fabio Estevam <fabio.estevam@nxp.com>; Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org>; Linux Kernel Mailing List
-> > <linux-kernel@vger.kernel.org>; Linux PM <linux-pm@vger.kernel.org>;
-> > dl-linux-imx <linux-imx@nxp.com>
-> > Subject: Re: [RFC] platform: detach from PM domains on shutdown
-> > 
-> > On Thu, May 17, 2018 at 4:33 AM, Peng Fan <peng.fan@nxp.com> wrote:
-> > >
-> > >
-> > >> -----Original Message-----
-> > >> From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of
-> > >> Rafael J. Wysocki
-> > >> Sent: 2018年5月17日 5:35
-> > >> To: Ulf Hansson <ulf.hansson@linaro.org>
-> > >> Cc: Peng Fan <peng.fan@nxp.com>; Rafael J. Wysocki
-> > >> <rafael.j.wysocki@intel.com>; Fabio Estevam <fabio.estevam@nxp.com>;
-> > >> Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Linux Kernel Mailing
-> > >> List <linux-kernel@vger.kernel.org>; Linux PM
-> > >> <linux-pm@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
-> > >> Subject: Re: [RFC] platform: detach from PM domains on shutdown
-> > >>
-> > >> On Wed, May 16, 2018 at 11:52 AM, Ulf Hansson
-> > >> <ulf.hansson@linaro.org>
-> > >> wrote:
-> > >> > On 15 May 2018 at 11:01, Peng Fan <peng.fan@nxp.com> wrote:
-> > >> >> When reboot Linux, the PM domains attached to a device are not
-> > >> >> shutdown. To SoCs which relys on reset the whole SoC, there is no
-> > >> >> need to shutdown PM domains, but to Linux running in a virtual
-> > >> >> machine with devices pass-through, we could not reset the whole SoC.
-> > >> >> Currently we need Linux to shutdown its PM domains when reboot.
-> > >> >
-> > >> > I am not sure I understand exactly why the PM domain needs to be
-> > >> > shutdown for these cases, could you please elaborate a bit on that.
-> > >> >
-> > >> > BTW, what platform are you running on and also what PM domains are
-> > >> > being
-> > >> used?
-> > >> >
-> > >> > Anyway, it seems like there may be need for certain cases, but
-> > >> > certainly not all - especially since it may slow down the shutdown
-> > >> > process, when not needed.
-> > >> >
-> > >> > Can we make this runtime configurable, via sysfs or whatever that
-> > >> > makes
-> > >> sense!?
-> > >> >
-> > >> >>
-> > >> >> commit 2d30bb0b3889 ("platform: Do not detach from PM domains on
-> > >> >> shutdown"), removes what this patch tries to add, because of a warning.
-> > >> >> commit e79aee49bcf9 ("PM: Avoid false-positive warnings in
-> > >> >> dev_pm_domain_set()") already fixes the false alarm warning. So
-> > >> >> let's detach the power domain to shutdown PM domains after driver
-> > shutdown.
-> > >> >>
-> > >> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > >> >> ---
-> > >> >>
-> > >> >> I do not find a better place to shutdown power domain when reboot
-> > >> >> Linux, so add back the line that commit 2d30bb0b3889 removes,
-> > >> >> because it is a false alarm warning as commit e79aee49bcf9 describes.
-> > >> >>
-> > >> >>  drivers/base/platform.c | 1 +
-> > >> >>  1 file changed, 1 insertion(+)
-> > >> >>
-> > >> >> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > >> >> index 8075ddc70a17..a5929f24dc3c 100644
-> > >> >> --- a/drivers/base/platform.c
-> > >> >> +++ b/drivers/base/platform.c
-> > >> >> @@ -616,6 +616,7 @@ static void platform_drv_shutdown(struct
-> > >> >> device
-> > >> >> *_dev)
-> > >> >>
-> > >> >>         if (drv->shutdown)
-> > >> >>                 drv->shutdown(dev);
-> > >> >> +       dev_pm_domain_detach(_dev, true);
-> > >> >
-> > >> > This would somewhat work, but only for platform devices. To make
-> > >> > this fully work, we need to call dev_pm_domain_detach() from amba,
-> > >> > spi, etc as well.
-> > >> >
-> > >> > Perhaps another option to manage this more generally, an without
-> > >> > having detach devices, could be to extend the struct dev_pm_domain
-> > >> > with a new callback, "->shutdown()" and then make the driver core
-> > >> > call it from device_shutdown().
-> > >>
-> > >> I'm sensing a possible ordering slippery slope with this (it will
-> > >> only work if all of the drivers/bus types etc do the right thing in
-> > >> their
-> > >> ->shutdown callbacks so nothing depends on the domain going forward).
-> > >>
-> > >> > Typically, for genpd, I would probably count the number of calls
-> > >> > being made to ->shutdown() per PM domain, then when it reaches the
-> > >> > number of attached devices to it, allow to power off it.
-> > >> >
-> > >> > Let's see what Rafael thinks about it.
-> > >>
-> > >> I'm not sure about the use case.  The hypervisor should be able to
-> > >> take care of turning power domains off on the client OS reboot in
-> > >> theory.  If the client OS leaving the hypervisor needs to worry about
-> > >> what state it leaves behind, the design of the hypervisor is sort of
-> > questionable IMO.
-> > >
-> > > This is valid concern. But moving the power domain logic into
-> > > hypervisor mostly micro-kernel design will introduce more complexity and
-> > make certification harder.
-> > > Currently, Let Linux shutdown it's power domain is the easiest way to
-> > > me and make things work well after reboot.
-> > 
-> > Well, to put it bluntly, if your hypervisor depends on the guest to do the right
-> > thing on exit, it doesn't do its job.  I wouldn't have certified it for you if that was
-> > my decision.
-> 
-> It is guest os not work well after guest os reboot. The hypervisor is not affected.
-> 
-> Thinking another case without hypervisor, M4 core run RTOS, A35 Core run Linux, when Linux rebooting,
-> RTOS should not be affected. After Linux reboot itself, because its power domain is not
-> paired with open/shutdown, some devices not function well.
+Minor performance improvement by getting rid of pointer indirections
+from allocation/freeing fastpaths.
 
-The question boils down to whether or not devices should be detached from
-PM domains on shutdown IMO.
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ block/bio-integrity.c | 29 ++++++++++++++---------------
+ block/bio.c           | 36 +++++++++++++++++-------------------
+ include/linux/bio.h   | 10 +++++-----
+ 3 files changed, 36 insertions(+), 39 deletions(-)
 
-They are detached from PM domains on driver removal, so I guess one answer is
-"yes, in analogy with that".  However, the point about performace brought up
-by Ulf seems to be valid too.
-
-In any case, the change should be made for all of the bus types using PM
-domains, not just one.
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index 9cfdd6c83b..add7c7c853 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -56,12 +56,12 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+ 	struct bio_set *bs = bio->bi_pool;
+ 	unsigned inline_vecs;
+ 
+-	if (!bs || !bs->bio_integrity_pool) {
++	if (!bs || !mempool_initialized(&bs->bio_integrity_pool)) {
+ 		bip = kmalloc(sizeof(struct bio_integrity_payload) +
+ 			      sizeof(struct bio_vec) * nr_vecs, gfp_mask);
+ 		inline_vecs = nr_vecs;
+ 	} else {
+-		bip = mempool_alloc(bs->bio_integrity_pool, gfp_mask);
++		bip = mempool_alloc(&bs->bio_integrity_pool, gfp_mask);
+ 		inline_vecs = BIP_INLINE_VECS;
+ 	}
+ 
+@@ -74,7 +74,7 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+ 		unsigned long idx = 0;
+ 
+ 		bip->bip_vec = bvec_alloc(gfp_mask, nr_vecs, &idx,
+-					  bs->bvec_integrity_pool);
++					  &bs->bvec_integrity_pool);
+ 		if (!bip->bip_vec)
+ 			goto err;
+ 		bip->bip_max_vcnt = bvec_nr_vecs(idx);
+@@ -90,7 +90,7 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+ 
+ 	return bip;
+ err:
+-	mempool_free(bip, bs->bio_integrity_pool);
++	mempool_free(bip, &bs->bio_integrity_pool);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ EXPORT_SYMBOL(bio_integrity_alloc);
+@@ -111,10 +111,10 @@ static void bio_integrity_free(struct bio *bio)
+ 		kfree(page_address(bip->bip_vec->bv_page) +
+ 		      bip->bip_vec->bv_offset);
+ 
+-	if (bs && bs->bio_integrity_pool) {
+-		bvec_free(bs->bvec_integrity_pool, bip->bip_vec, bip->bip_slab);
++	if (bs && mempool_initialized(&bs->bio_integrity_pool)) {
++		bvec_free(&bs->bvec_integrity_pool, bip->bip_vec, bip->bip_slab);
+ 
+-		mempool_free(bip, bs->bio_integrity_pool);
++		mempool_free(bip, &bs->bio_integrity_pool);
+ 	} else {
+ 		kfree(bip);
+ 	}
+@@ -465,16 +465,15 @@ EXPORT_SYMBOL(bio_integrity_clone);
+ 
+ int bioset_integrity_create(struct bio_set *bs, int pool_size)
+ {
+-	if (bs->bio_integrity_pool)
++	if (mempool_initialized(&bs->bio_integrity_pool))
+ 		return 0;
+ 
+-	bs->bio_integrity_pool = mempool_create_slab_pool(pool_size, bip_slab);
+-	if (!bs->bio_integrity_pool)
++	if (mempool_init_slab_pool(&bs->bio_integrity_pool,
++				   pool_size, bip_slab))
+ 		return -1;
+ 
+-	bs->bvec_integrity_pool = biovec_create_pool(pool_size);
+-	if (!bs->bvec_integrity_pool) {
+-		mempool_destroy(bs->bio_integrity_pool);
++	if (biovec_init_pool(&bs->bvec_integrity_pool, pool_size)) {
++		mempool_exit(&bs->bio_integrity_pool);
+ 		return -1;
+ 	}
+ 
+@@ -484,8 +483,8 @@ EXPORT_SYMBOL(bioset_integrity_create);
+ 
+ void bioset_integrity_free(struct bio_set *bs)
+ {
+-	mempool_destroy(bs->bio_integrity_pool);
+-	mempool_destroy(bs->bvec_integrity_pool);
++	mempool_exit(&bs->bio_integrity_pool);
++	mempool_exit(&bs->bvec_integrity_pool);
+ }
+ EXPORT_SYMBOL(bioset_integrity_free);
+ 
+diff --git a/block/bio.c b/block/bio.c
+index e1708db482..360e9bcea5 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -254,7 +254,7 @@ static void bio_free(struct bio *bio)
+ 	bio_uninit(bio);
+ 
+ 	if (bs) {
+-		bvec_free(bs->bvec_pool, bio->bi_io_vec, BVEC_POOL_IDX(bio));
++		bvec_free(&bs->bvec_pool, bio->bi_io_vec, BVEC_POOL_IDX(bio));
+ 
+ 		/*
+ 		 * If we have front padding, adjust the bio pointer before freeing
+@@ -262,7 +262,7 @@ static void bio_free(struct bio *bio)
+ 		p = bio;
+ 		p -= bs->front_pad;
+ 
+-		mempool_free(p, bs->bio_pool);
++		mempool_free(p, &bs->bio_pool);
+ 	} else {
+ 		/* Bio was allocated by bio_kmalloc() */
+ 		kfree(bio);
+@@ -454,7 +454,8 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+ 		inline_vecs = nr_iovecs;
+ 	} else {
+ 		/* should not use nobvec bioset for nr_iovecs > 0 */
+-		if (WARN_ON_ONCE(!bs->bvec_pool && nr_iovecs > 0))
++		if (WARN_ON_ONCE(!mempool_initialized(&bs->bvec_pool) &&
++				 nr_iovecs > 0))
+ 			return NULL;
+ 		/*
+ 		 * generic_make_request() converts recursion to iteration; this
+@@ -483,11 +484,11 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+ 		    bs->rescue_workqueue)
+ 			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
+ 
+-		p = mempool_alloc(bs->bio_pool, gfp_mask);
++		p = mempool_alloc(&bs->bio_pool, gfp_mask);
+ 		if (!p && gfp_mask != saved_gfp) {
+ 			punt_bios_to_rescuer(bs);
+ 			gfp_mask = saved_gfp;
+-			p = mempool_alloc(bs->bio_pool, gfp_mask);
++			p = mempool_alloc(&bs->bio_pool, gfp_mask);
+ 		}
+ 
+ 		front_pad = bs->front_pad;
+@@ -503,11 +504,11 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+ 	if (nr_iovecs > inline_vecs) {
+ 		unsigned long idx = 0;
+ 
+-		bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, bs->bvec_pool);
++		bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, &bs->bvec_pool);
+ 		if (!bvl && gfp_mask != saved_gfp) {
+ 			punt_bios_to_rescuer(bs);
+ 			gfp_mask = saved_gfp;
+-			bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, bs->bvec_pool);
++			bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, &bs->bvec_pool);
+ 		}
+ 
+ 		if (unlikely(!bvl))
+@@ -524,7 +525,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+ 	return bio;
+ 
+ err_free:
+-	mempool_free(p, bs->bio_pool);
++	mempool_free(p, &bs->bio_pool);
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(bio_alloc_bioset);
+@@ -1848,11 +1849,11 @@ EXPORT_SYMBOL_GPL(bio_trim);
+  * create memory pools for biovec's in a bio_set.
+  * use the global biovec slabs created for general use.
+  */
+-mempool_t *biovec_create_pool(int pool_entries)
++int biovec_init_pool(mempool_t *pool, int pool_entries)
+ {
+ 	struct biovec_slab *bp = bvec_slabs + BVEC_POOL_MAX;
+ 
+-	return mempool_create_slab_pool(pool_entries, bp->slab);
++	return mempool_init_slab_pool(pool, pool_entries, bp->slab);
+ }
+ 
+ void bioset_free(struct bio_set *bs)
+@@ -1860,8 +1861,8 @@ void bioset_free(struct bio_set *bs)
+ 	if (bs->rescue_workqueue)
+ 		destroy_workqueue(bs->rescue_workqueue);
+ 
+-	mempool_destroy(bs->bio_pool);
+-	mempool_destroy(bs->bvec_pool);
++	mempool_exit(&bs->bio_pool);
++	mempool_exit(&bs->bvec_pool);
+ 
+ 	bioset_integrity_free(bs);
+ 	bio_put_slab(bs);
+@@ -1913,15 +1914,12 @@ struct bio_set *bioset_create(unsigned int pool_size,
+ 		return NULL;
+ 	}
+ 
+-	bs->bio_pool = mempool_create_slab_pool(pool_size, bs->bio_slab);
+-	if (!bs->bio_pool)
++	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
+ 		goto bad;
+ 
+-	if (flags & BIOSET_NEED_BVECS) {
+-		bs->bvec_pool = biovec_create_pool(pool_size);
+-		if (!bs->bvec_pool)
+-			goto bad;
+-	}
++	if ((flags & BIOSET_NEED_BVECS) &&
++	    biovec_init_pool(&bs->bvec_pool, pool_size))
++		goto bad;
+ 
+ 	if (!(flags & BIOSET_NEED_RESCUER))
+ 		return bs;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index ce547a25e8..720f7261d0 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -412,7 +412,7 @@ enum {
+ 	BIOSET_NEED_RESCUER = BIT(1),
+ };
+ extern void bioset_free(struct bio_set *);
+-extern mempool_t *biovec_create_pool(int pool_entries);
++extern int biovec_init_pool(mempool_t *pool, int pool_entries);
+ 
+ extern struct bio *bio_alloc_bioset(gfp_t, unsigned int, struct bio_set *);
+ extern void bio_put(struct bio *);
+@@ -722,11 +722,11 @@ struct bio_set {
+ 	struct kmem_cache *bio_slab;
+ 	unsigned int front_pad;
+ 
+-	mempool_t *bio_pool;
+-	mempool_t *bvec_pool;
++	mempool_t bio_pool;
++	mempool_t bvec_pool;
+ #if defined(CONFIG_BLK_DEV_INTEGRITY)
+-	mempool_t *bio_integrity_pool;
+-	mempool_t *bvec_integrity_pool;
++	mempool_t bio_integrity_pool;
++	mempool_t bvec_integrity_pool;
+ #endif
+ 
+ 	/*
+-- 
+2.17.0
