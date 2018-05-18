@@ -1,1180 +1,212 @@
-Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrwRf0bCPRs6xe1awbR4UPQALJqx0q97Fb+3uoHfUUOtOLvVA89C47JvpM9Nyyp2HhbZLXq
-ARC-Seal: i=1; a=rsa-sha256; t=1526631754; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bg7aH3Y3esg1CpzQeSng4HHdKISZu/L/7PnhgvyMWauN6vkEKljcCdbfIWWYO2mzSe
-         tKimu32NQxE1aUiEyPOysr+l07XiQMNQdERENgzdDsbeN/OFi5dzqpvoI8fGRVaR51mK
-         dfT+YgbjmgHMvQ4q7vnIfxpZAqiWuY8buMRrB7udvGULxzBL6TtiUwMHk09ud6zLCUIF
-         SdOO3K8zuyiCSAIA7kq2CxW/V7V5IUmJtyI0NrzR/NAkTiEHpcAtjWGRfCYIlYdtIXFy
-         hVmgg/KrICjx2VPr9Hn+ALqNsPVw7jqca+EGZ2Ygfw/azNr406DPP3/jgUSq+57vmaFT
-         xtcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=5OgzCPtegSGUzxhz6ldPgBpazVTlJ48eXrvREOD248E=;
-        b=J2tBKJFNG2jF9NUoIK8d3fyBXEsgrhOGD4tfAA9TWkeEckRHkLBhDAWh7OnVV/Nzbo
-         wUtpvwt04cu76jSNh3NLlTFWGeMSngSu4QLBm/cuXq5hWlnp0A5o1Ji8snqdVON3ak65
-         t0/LXcXTJfQF+0iXlHr8W+7fvOITc8jSezrf05EP+9X3XAwnmLCHYlas1xNQ5gxXVBpF
-         Xn5zCDoJJw+eOs0h8xUJpQhZnBKC030Nw29tZgyfGGY6/tLszGbc2qqp6+Ixn0z+boG/
-         RxAdpvbWis97G2/wffX1ZSxcWXKMfM1bTMIU4fTLugJusGzcZmVix39FWmDW//4a3m+f
-         agqw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ODSJM5Ar;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ODSJM5Ar;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jiri Slaby <jslaby@suse.cz>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	"Darren Hart (VMware)" <dvhart@infradead.org>,
-	linux-mips@linux-mips.org,
-	Rich Felker <dalias@libc.org>,
-	linux-ia64@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	peterz@infradead.org,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Paul Mackerras <paulus@samba.org>,
-	sparclinux@vger.kernel.org,
-	Jonas Bonn <jonas@southpole.se>,
-	linux-s390@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-hexagon@vger.kernel.org,
-	Helge Deller <deller@gmx.de>,
-	"James E.J. Bottomley" <jejb@parisc-linux.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	linux-snps-arc@lists.infradead.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-xtensa@linux-xtensa.org,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	openrisc@lists.librecores.org,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Stafford Horne <shorne@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Richard Henderson <rth@twiddle.net>,
-	Chris Zankel <chris@zankel.net>,
-	Michal Simek <monstr@monstr.eu>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-parisc@vger.kernel.org,
-	Vineet Gupta <vgupta@synopsys.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Richard Kuo <rkuo@codeaurora.org>,
-	linux-alpha@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 27/33] futex: Remove duplicated code and fix undefined behaviour
-Date: Fri, 18 May 2018 10:16:06 +0200
-Message-Id: <20180518081536.166573281@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3608381-1526632248-2-17664452133305615258
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526632248; b=DiruFo9aqizl3z+eaIxSobj1PanziBYpm0k77BeVGLbj/gsdRj
+    7n7yRUMo9b4qGkVy/RICmXZhMLUEBzqdxv+XjNAsvlyDi1TSjTd6/0bzjZICsAdo
+    yN2hEC6CZPG4+7DVTuC4/07hCsNnFAr6P1MzGDxghT0ZefAA6I9Ek6Yd0064CmVJ
+    DnxoqARQQbpDpzz8bdEqz8JOzFV+cCP6Wp3MkBXAY/rd2mWi1MiHMGCrTK0nVZ2B
+    f0tMTEaIsa25BDPzWYiUf9NcJC+GgDclBXXHoFevjbHXOQcgrV113+GN29FQKq1J
+    j3wLhJEIXvP9/B4ZArA1rTmFkuLC0OtnDExA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526632248;
+    bh=f7vhh1qAPDkYLRbFEbibXTE52a0P1jEGntLoIsq/WpY=; b=RkODC+5JaNUy
+    qz20NIjyRoCsQ0F8B6RFH6JtVKhdiTjl0Uhxksb6lA+2cUq0wL+uTDE9llhW5GpW
+    hyIaEs2hk+KDGleHHU7V/yKL4v4qJrpTRnYXRZJvOlD9OevECFfX0/mwPlqxEQwe
+    g3lKEUAThZ8gaqL4wJNtZPOTUwfcA3aXSWK5YSqm0AvhLUqRVYVEUuiDOAj8zmZp
+    NiZa2pNpb+layyT/0qqxFi4MGRmk5wE9hWlNywEByjzxxjmm7uRBRZBW3MKCqzeu
+    oB00RperCZKE8JkReD0xnOubtA24rLSpSdUanxHY1xH9HoY7zEMPfDi5CGT1ov4Z
+    QHglzx4NDA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=ZAc6QDhz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=ZAc6QDhz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOThdAoLw+2y1nlyLRX234FUi6p3gDWT63LsTimg2ROYfY3p9ujNDarffkXSE4q8VDIS4SlzzgfKXWnWdRBd6xCVXiJh+gOd1DE02+WjvMrhyRWZ7WT7
+    nuEo0OxwgHgj6wUO6Lth3GSgjDpu6M6cyucAoY/6k00WTf9codY76afDy3c/KAgQa+Rc7jR7iBxk+6puz8sIthkuaIJUQLQbxg0oT+zscsS4cl+OOdU+SniO
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10 a=Q4a_aMnkceNq7SBB-DsA:9 a=QEXdDO2ut3YA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751117AbeERIao (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 04:30:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37547 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753828AbeERIaa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 04:30:30 -0400
+X-Google-Smtp-Source: AB8JxZpNsejPa6o4d/o8a5aTdlYzL2xT/z57P1NDjcwkrNsLacWBNoaxAH3TK+C4HWOJ9cvqJ1WJeg==
+Subject: Re: [PATCH 4.9 27/33] futex: Remove duplicated code and fix undefined
+ behaviour
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>,
+        linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org,
+        peterz@infradead.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>, linux-s390@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-hexagon@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Matt Turner <mattst88@gmail.com>,
+        linux-snps-arc@lists.infradead.org,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-xtensa@linux-xtensa.org,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Stafford Horne <shorne@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Henderson <rth@twiddle.net>,
+        Chris Zankel <chris@zankel.net>,
+        Michal Simek <monstr@monstr.eu>,
+        Tony Luck <tony.luck@intel.com>, linux-parisc@vger.kernel.org,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-alpha@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
 References: <20180518081535.096308218@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+ <20180518081536.166573281@linuxfoundation.org>
+From: Jiri Slaby <jslaby@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e8dc5f94-3b52-dcf0-3b5e-b442bde7d803@suse.cz>
+Date: Fri, 18 May 2018 10:30:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180518081536.166573281@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789417852232797?=
-X-GMAIL-MSGID: =?utf-8?q?1600789417852232797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 05/18/2018, 10:16 AM, Greg Kroah-Hartman wrote:
+> 4.9-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Jiri Slaby <jslaby@suse.cz>
+> 
+> commit 30d6e0a4190d37740e9447e4e4815f06992dd8c3 upstream.
+...
+> --- a/kernel/futex.c
+> +++ b/kernel/futex.c
+> @@ -1458,6 +1458,45 @@ out:
+>  	return ret;
+>  }
+>  
+> +static int futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
+> +{
+> +	unsigned int op =	  (encoded_op & 0x70000000) >> 28;
+> +	unsigned int cmp =	  (encoded_op & 0x0f000000) >> 24;
+> +	int oparg = sign_extend32((encoded_op & 0x00fff000) >> 12, 12);
+> +	int cmparg = sign_extend32(encoded_op & 0x00000fff, 12);
 
-------------------
+12 is wrong here – wherever you apply this, you need also a follow-up fix:
+commit d70ef22892ed6c066e51e118b225923c9b74af34
+Author: Jiri Slaby <jslaby@suse.cz>
+Date:   Thu Nov 30 15:35:44 2017 +0100
 
-From: Jiri Slaby <jslaby@suse.cz>
+    futex: futex_wake_op, fix sign_extend32 sign bits
 
-commit 30d6e0a4190d37740e9447e4e4815f06992dd8c3 upstream.
-
-There is code duplicated over all architecture's headers for
-futex_atomic_op_inuser. Namely op decoding, access_ok check for uaddr,
-and comparison of the result.
-
-Remove this duplication and leave up to the arches only the needed
-assembly which is now in arch_futex_atomic_op_inuser.
-
-This effectively distributes the Will Deacon's arm64 fix for undefined
-behaviour reported by UBSAN to all architectures. The fix was done in
-commit 5f16a046f8e1 (arm64: futex: Fix undefined behaviour with
-FUTEX_OP_OPARG_SHIFT usage). Look there for an example dump.
-
-And as suggested by Thomas, check for negative oparg too, because it was
-also reported to cause undefined behaviour report.
-
-Note that s390 removed access_ok check in d12a29703 ("s390/uaccess:
-remove pointless access_ok() checks") as access_ok there returns true.
-We introduce it back to the helper for the sake of simplicity (it gets
-optimized away anyway).
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com> [s390]
-Acked-by: Chris Metcalf <cmetcalf@mellanox.com> [for tile]
-Reviewed-by: Darren Hart (VMware) <dvhart@infradead.org>
-Reviewed-by: Will Deacon <will.deacon@arm.com> [core/arm64]
-Cc: linux-mips@linux-mips.org
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-ia64@vger.kernel.org
-Cc: linux-sh@vger.kernel.org
-Cc: peterz@infradead.org
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: sparclinux@vger.kernel.org
-Cc: Jonas Bonn <jonas@southpole.se>
-Cc: linux-s390@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-hexagon@vger.kernel.org
-Cc: Helge Deller <deller@gmx.de>
-Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-xtensa@linux-xtensa.org
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: openrisc@lists.librecores.org
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Stafford Horne <shorne@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Michal Simek <monstr@monstr.eu>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-parisc@vger.kernel.org
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: linux-alpha@vger.kernel.org
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: "David S. Miller" <davem@davemloft.net>
-Link: http://lkml.kernel.org/r/20170824073105.3901-1-jslaby@suse.cz
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/alpha/include/asm/futex.h      |   26 +++---------------
- arch/arc/include/asm/futex.h        |   40 +++-------------------------
- arch/arm/include/asm/futex.h        |   26 ++----------------
- arch/arm64/include/asm/futex.h      |   27 ++-----------------
- arch/frv/include/asm/futex.h        |    3 +-
- arch/frv/kernel/futex.c             |   27 ++-----------------
- arch/hexagon/include/asm/futex.h    |   38 ++-------------------------
- arch/ia64/include/asm/futex.h       |   25 ++----------------
- arch/microblaze/include/asm/futex.h |   38 ++-------------------------
- arch/mips/include/asm/futex.h       |   25 ++----------------
- arch/parisc/include/asm/futex.h     |   26 ++----------------
- arch/powerpc/include/asm/futex.h    |   26 +++---------------
- arch/s390/include/asm/futex.h       |   23 +++-------------
- arch/sh/include/asm/futex.h         |   26 ++----------------
- arch/sparc/include/asm/futex_64.h   |   26 +++---------------
- arch/tile/include/asm/futex.h       |   40 +++-------------------------
- arch/x86/include/asm/futex.h        |   40 +++-------------------------
- arch/xtensa/include/asm/futex.h     |   27 +++----------------
- include/asm-generic/futex.h         |   50 ++++++------------------------------
- kernel/futex.c                      |   39 ++++++++++++++++++++++++++++
- 20 files changed, 126 insertions(+), 472 deletions(-)
-
---- a/arch/alpha/include/asm/futex.h
-+++ b/arch/alpha/include/asm/futex.h
-@@ -29,18 +29,10 @@
- 	:	"r" (uaddr), "r"(oparg)				\
- 	:	"memory")
- 
--static inline int futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -66,17 +58,9 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/arc/include/asm/futex.h
-+++ b/arch/arc/include/asm/futex.h
-@@ -73,20 +73,11 @@
- 
- #endif
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
--		return -EFAULT;
--
- #ifndef CONFIG_ARC_HAS_LLSC
- 	preempt_disable();	/* to guarantee atomic r-m-w of futex op */
- #endif
-@@ -118,30 +109,9 @@ static inline int futex_atomic_op_inuser
- 	preempt_enable();
- #endif
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ:
--			ret = (oldval == cmparg);
--			break;
--		case FUTEX_OP_CMP_NE:
--			ret = (oldval != cmparg);
--			break;
--		case FUTEX_OP_CMP_LT:
--			ret = (oldval < cmparg);
--			break;
--		case FUTEX_OP_CMP_GE:
--			ret = (oldval >= cmparg);
--			break;
--		case FUTEX_OP_CMP_LE:
--			ret = (oldval <= cmparg);
--			break;
--		case FUTEX_OP_CMP_GT:
--			ret = (oldval > cmparg);
--			break;
--		default:
--			ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/arm/include/asm/futex.h
-+++ b/arch/arm/include/asm/futex.h
-@@ -128,20 +128,10 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- #endif /* !SMP */
- 
- static inline int
--futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret, tmp;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
--
- #ifndef CONFIG_SMP
- 	preempt_disable();
- #endif
-@@ -172,17 +162,9 @@ futex_atomic_op_inuser (int encoded_op,
- 	preempt_enable();
- #endif
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -51,20 +51,9 @@
- 	: "memory")
- 
- static inline int
--futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *_uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (int)(encoded_op << 8) >> 20;
--	int cmparg = (int)(encoded_op << 20) >> 20;
- 	int oldval = 0, ret, tmp;
--	u32 __user *uaddr = __uaccess_mask_ptr(_uaddr);
--
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1U << (oparg & 0x1f);
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -95,17 +84,9 @@ futex_atomic_op_inuser(unsigned int enco
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/frv/include/asm/futex.h
-+++ b/arch/frv/include/asm/futex.h
-@@ -7,7 +7,8 @@
- #include <asm/errno.h>
- #include <asm/uaccess.h>
- 
--extern int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr);
-+extern int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr);
- 
- static inline int
- futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
---- a/arch/frv/kernel/futex.c
-+++ b/arch/frv/kernel/futex.c
-@@ -186,20 +186,10 @@ static inline int atomic_futex_op_xchg_x
- /*
-  * do the futex operations
-  */
--int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+int arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
--
- 	pagefault_disable();
- 
- 	switch (op) {
-@@ -225,18 +215,9 @@ int futex_atomic_op_inuser(int encoded_o
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS; break;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
- 
- 	return ret;
- 
--} /* end futex_atomic_op_inuser() */
-+} /* end arch_futex_atomic_op_inuser() */
---- a/arch/hexagon/include/asm/futex.h
-+++ b/arch/hexagon/include/asm/futex.h
-@@ -31,18 +31,9 @@
- 
- 
- static inline int
--futex_atomic_op_inuser(int encoded_op, int __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -72,30 +63,9 @@ futex_atomic_op_inuser(int encoded_op, i
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ:
--			ret = (oldval == cmparg);
--			break;
--		case FUTEX_OP_CMP_NE:
--			ret = (oldval != cmparg);
--			break;
--		case FUTEX_OP_CMP_LT:
--			ret = (oldval < cmparg);
--			break;
--		case FUTEX_OP_CMP_GE:
--			ret = (oldval >= cmparg);
--			break;
--		case FUTEX_OP_CMP_LE:
--			ret = (oldval <= cmparg);
--			break;
--		case FUTEX_OP_CMP_GT:
--			ret = (oldval > cmparg);
--			break;
--		default:
--			ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/ia64/include/asm/futex.h
-+++ b/arch/ia64/include/asm/futex.h
-@@ -45,18 +45,9 @@ do {									\
- } while (0)
- 
- static inline int
--futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (! access_ok (VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -84,17 +75,9 @@ futex_atomic_op_inuser (int encoded_op,
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/microblaze/include/asm/futex.h
-+++ b/arch/microblaze/include/asm/futex.h
-@@ -29,18 +29,9 @@
- })
- 
- static inline int
--futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -66,30 +57,9 @@ futex_atomic_op_inuser(int encoded_op, u
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ:
--			ret = (oldval == cmparg);
--			break;
--		case FUTEX_OP_CMP_NE:
--			ret = (oldval != cmparg);
--			break;
--		case FUTEX_OP_CMP_LT:
--			ret = (oldval < cmparg);
--			break;
--		case FUTEX_OP_CMP_GE:
--			ret = (oldval >= cmparg);
--			break;
--		case FUTEX_OP_CMP_LE:
--			ret = (oldval <= cmparg);
--			break;
--		case FUTEX_OP_CMP_GT:
--			ret = (oldval > cmparg);
--			break;
--		default:
--			ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/mips/include/asm/futex.h
-+++ b/arch/mips/include/asm/futex.h
-@@ -83,18 +83,9 @@
- }
- 
- static inline int
--futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (! access_ok (VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -125,17 +116,9 @@ futex_atomic_op_inuser(int encoded_op, u
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/parisc/include/asm/futex.h
-+++ b/arch/parisc/include/asm/futex.h
-@@ -32,22 +32,12 @@ _futex_spin_unlock_irqrestore(u32 __user
- }
- 
- static inline int
--futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
- {
- 	unsigned long int flags;
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval, ret;
- 	u32 tmp;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(*uaddr)))
--		return -EFAULT;
--
- 	_futex_spin_lock_irqsave(uaddr, &flags);
- 	pagefault_disable();
- 
-@@ -85,17 +75,9 @@ out_pagefault_enable:
- 	pagefault_enable();
- 	_futex_spin_unlock_irqrestore(uaddr, &flags);
- 
--	if (ret == 0) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/powerpc/include/asm/futex.h
-+++ b/arch/powerpc/include/asm/futex.h
-@@ -31,18 +31,10 @@
- 	: "b" (uaddr), "i" (-EFAULT), "r" (oparg) \
- 	: "cr0", "memory")
- 
--static inline int futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (! access_ok (VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -68,17 +60,9 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/s390/include/asm/futex.h
-+++ b/arch/s390/include/asm/futex.h
-@@ -21,17 +21,12 @@
- 		: "0" (-EFAULT), "d" (oparg), "a" (uaddr),		\
- 		  "m" (*uaddr) : "cc");
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, newval, ret;
- 
- 	load_kernel_asce();
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
- 
- 	pagefault_disable();
- 	switch (op) {
-@@ -60,17 +55,9 @@ static inline int futex_atomic_op_inuser
- 	}
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/sh/include/asm/futex.h
-+++ b/arch/sh/include/asm/futex.h
-@@ -27,21 +27,12 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 	return atomic_futex_op_cmpxchg_inatomic(uval, uaddr, oldval, newval);
- }
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	u32 oparg = (encoded_op << 8) >> 20;
--	u32 cmparg = (encoded_op << 20) >> 20;
- 	u32 oldval, newval, prev;
- 	int ret;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
--
- 	pagefault_disable();
- 
- 	do {
-@@ -80,17 +71,8 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = ((int)oldval < (int)cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = ((int)oldval >= (int)cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = ((int)oldval <= (int)cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = ((int)oldval > (int)cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
- 
- 	return ret;
- }
---- a/arch/sparc/include/asm/futex_64.h
-+++ b/arch/sparc/include/asm/futex_64.h
-@@ -29,22 +29,14 @@
- 	: "r" (uaddr), "r" (oparg), "i" (-EFAULT)	\
- 	: "memory")
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret, tem;
- 
--	if (unlikely(!access_ok(VERIFY_WRITE, uaddr, sizeof(u32))))
--		return -EFAULT;
- 	if (unlikely((((unsigned long) uaddr) & 0x3UL)))
- 		return -EINVAL;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
- 	pagefault_disable();
- 
- 	switch (op) {
-@@ -69,17 +61,9 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/tile/include/asm/futex.h
-+++ b/arch/tile/include/asm/futex.h
-@@ -106,12 +106,9 @@
- 	lock = __atomic_hashed_lock((int __force *)uaddr)
- #endif
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int uninitialized_var(val), ret;
- 
- 	__futex_prolog();
-@@ -119,12 +116,6 @@ static inline int futex_atomic_op_inuser
- 	/* The 32-bit futex code makes this assumption, so validate it here. */
- 	BUILD_BUG_ON(sizeof(atomic_t) != sizeof(int));
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
--
- 	pagefault_disable();
- 	switch (op) {
- 	case FUTEX_OP_SET:
-@@ -148,30 +139,9 @@ static inline int futex_atomic_op_inuser
- 	}
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ:
--			ret = (val == cmparg);
--			break;
--		case FUTEX_OP_CMP_NE:
--			ret = (val != cmparg);
--			break;
--		case FUTEX_OP_CMP_LT:
--			ret = (val < cmparg);
--			break;
--		case FUTEX_OP_CMP_GE:
--			ret = (val >= cmparg);
--			break;
--		case FUTEX_OP_CMP_LE:
--			ret = (val <= cmparg);
--			break;
--		case FUTEX_OP_CMP_GT:
--			ret = (val > cmparg);
--			break;
--		default:
--			ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = val;
-+
- 	return ret;
- }
- 
---- a/arch/x86/include/asm/futex.h
-+++ b/arch/x86/include/asm/futex.h
-@@ -41,20 +41,11 @@
- 		       "+m" (*uaddr), "=&r" (tem)		\
- 		     : "r" (oparg), "i" (-EFAULT), "1" (0))
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret, tem;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
--
- 	pagefault_disable();
- 
- 	switch (op) {
-@@ -80,30 +71,9 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ:
--			ret = (oldval == cmparg);
--			break;
--		case FUTEX_OP_CMP_NE:
--			ret = (oldval != cmparg);
--			break;
--		case FUTEX_OP_CMP_LT:
--			ret = (oldval < cmparg);
--			break;
--		case FUTEX_OP_CMP_GE:
--			ret = (oldval >= cmparg);
--			break;
--		case FUTEX_OP_CMP_LE:
--			ret = (oldval <= cmparg);
--			break;
--		case FUTEX_OP_CMP_GT:
--			ret = (oldval > cmparg);
--			break;
--		default:
--			ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/arch/xtensa/include/asm/futex.h
-+++ b/arch/xtensa/include/asm/futex.h
-@@ -44,18 +44,10 @@
- 	: "r" (uaddr), "I" (-EFAULT), "r" (oparg)	\
- 	: "memory")
- 
--static inline int futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
-+		u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- #if !XCHAL_HAVE_S32C1I
- 	return -ENOSYS;
-@@ -89,19 +81,10 @@ static inline int futex_atomic_op_inuser
- 
- 	pagefault_enable();
- 
--	if (ret)
--		return ret;
--
--	switch (cmp) {
--	case FUTEX_OP_CMP_EQ: return (oldval == cmparg);
--	case FUTEX_OP_CMP_NE: return (oldval != cmparg);
--	case FUTEX_OP_CMP_LT: return (oldval < cmparg);
--	case FUTEX_OP_CMP_GE: return (oldval >= cmparg);
--	case FUTEX_OP_CMP_LE: return (oldval <= cmparg);
--	case FUTEX_OP_CMP_GT: return (oldval > cmparg);
--	}
-+	if (!ret)
-+		*oval = oldval;
- 
--	return -ENOSYS;
-+	return ret;
- }
- 
- static inline int
---- a/include/asm-generic/futex.h
-+++ b/include/asm-generic/futex.h
-@@ -13,7 +13,7 @@
-  */
- 
- /**
-- * futex_atomic_op_inuser() - Atomic arithmetic operation with constant
-+ * arch_futex_atomic_op_inuser() - Atomic arithmetic operation with constant
-  *			  argument and comparison of the previous
-  *			  futex value with another constant.
-  *
-@@ -25,18 +25,11 @@
-  * <0 - On error
-  */
- static inline int
--futex_atomic_op_inuser(int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval, ret;
- 	u32 tmp;
- 
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
- 	preempt_disable();
- 	pagefault_disable();
- 
-@@ -74,17 +67,9 @@ out_pagefault_enable:
- 	pagefault_enable();
- 	preempt_enable();
- 
--	if (ret == 0) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (ret == 0)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
-@@ -126,18 +111,9 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 
- #else
- static inline int
--futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval, u32 __user *uaddr)
- {
--	int op = (encoded_op >> 28) & 7;
--	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
- 	int oldval = 0, ret;
--	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
--
--	if (! access_ok (VERIFY_WRITE, uaddr, sizeof(u32)))
--		return -EFAULT;
- 
- 	pagefault_disable();
- 
-@@ -153,17 +129,9 @@ futex_atomic_op_inuser (int encoded_op,
- 
- 	pagefault_enable();
- 
--	if (!ret) {
--		switch (cmp) {
--		case FUTEX_OP_CMP_EQ: ret = (oldval == cmparg); break;
--		case FUTEX_OP_CMP_NE: ret = (oldval != cmparg); break;
--		case FUTEX_OP_CMP_LT: ret = (oldval < cmparg); break;
--		case FUTEX_OP_CMP_GE: ret = (oldval >= cmparg); break;
--		case FUTEX_OP_CMP_LE: ret = (oldval <= cmparg); break;
--		case FUTEX_OP_CMP_GT: ret = (oldval > cmparg); break;
--		default: ret = -ENOSYS;
--		}
--	}
-+	if (!ret)
-+		*oval = oldval;
-+
- 	return ret;
- }
- 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1458,6 +1458,45 @@ out:
- 	return ret;
- }
- 
-+static int futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
-+{
-+	unsigned int op =	  (encoded_op & 0x70000000) >> 28;
-+	unsigned int cmp =	  (encoded_op & 0x0f000000) >> 24;
-+	int oparg = sign_extend32((encoded_op & 0x00fff000) >> 12, 12);
-+	int cmparg = sign_extend32(encoded_op & 0x00000fff, 12);
-+	int oldval, ret;
-+
-+	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28)) {
-+		if (oparg < 0 || oparg > 31)
-+			return -EINVAL;
-+		oparg = 1 << oparg;
-+	}
-+
-+	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
-+		return -EFAULT;
-+
-+	ret = arch_futex_atomic_op_inuser(op, oparg, &oldval, uaddr);
-+	if (ret)
-+		return ret;
-+
-+	switch (cmp) {
-+	case FUTEX_OP_CMP_EQ:
-+		return oldval == cmparg;
-+	case FUTEX_OP_CMP_NE:
-+		return oldval != cmparg;
-+	case FUTEX_OP_CMP_LT:
-+		return oldval < cmparg;
-+	case FUTEX_OP_CMP_GE:
-+		return oldval >= cmparg;
-+	case FUTEX_OP_CMP_LE:
-+		return oldval <= cmparg;
-+	case FUTEX_OP_CMP_GT:
-+		return oldval > cmparg;
-+	default:
-+		return -ENOSYS;
-+	}
-+}
-+
- /*
-  * Wake up all waiters hashed on the physical page that is mapped
-  * to this virtual address:
+thanks,
+-- 
+js
+suse labs
