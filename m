@@ -1,57 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeERXCM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 19:02:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751888AbeERXCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 19:02:11 -0400
-From: sboyd@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.17-rc5
-Date: Fri, 18 May 2018 16:02:09 -0700
-Message-Id: <20180518230209.260757-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        id S1752149AbeERXP3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 19:15:29 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42368 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeERXPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 19:15:25 -0400
+X-Google-Smtp-Source: AB8JxZq6XV8B2A7SrVNIV/gNpuGldDRmEv9sFeeoOWlmIYFo/5O332rZl78m0u0IAKLsQLCU69hhoA==
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        linux-fbdev@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Sat, 19 May 2018 01:15:30 +0200
+Message-ID: <3427199.r4OBoDP6Xz@z50>
+In-Reply-To: <CAHp75VdNUW6KoM6oupyQ80A1WVRk7vewwDt6WEZOyjrAUifqRg@mail.gmail.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <20180518210954.29044-5-jmkrzyszt@gmail.com> <CAHp75VdNUW6KoM6oupyQ80A1WVRk7vewwDt6WEZOyjrAUifqRg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+On Friday, May 18, 2018 11:21:14 PM CEST Andy Shevchenko wrote:
+> On Sat, May 19, 2018 at 12:09 AM, Janusz Krzysztofik
+> 
+> <jmkrzyszt@gmail.com> wrote:
+> > +       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
+> > +       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> 
+> So, is it optional or not at the end?
+> If it is, why do we check for NULL?
 
-The following changes since commit c964cfc612b59910593fa10ee1c2673db274c9c7:
+As far as I can understand, nand_chip->dev_ready() callback is optional. 
+That's why I decided to use the _optional variant of devm_gpiod_get(). In case 
+of ams-delta, the dev_ready() callback depends on availability of the 'rdy' 
+GPIO pin. As a consequence, I'm checking for both NULL and ERR in order to 
+decide if dev_ready() will be supported.
 
-  Merge tag 'meson-clk-fixes-4.17-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2018-05-01 14:44:16 -0700)
+I can pretty well replace it with the standard form and check for ERR only if 
+the purpose of the _optional form is different.
 
-are available in the Git repository at:
+> >                 this->dev_ready = ams_delta_nand_ready;
+> >         
+> >         } else {
+> >         
+> >                 this->dev_ready = NULL;
+> >                 pr_notice("Couldn't request gpio for Delta NAND
+> >                 ready.\n");
+> 
+> dev_notice() ?
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Sure, but maybe in a separate patch? That's not a new code just being added 
+but an existing one, not the merit of the change.
 
-for you to fetch changes up to 9a160601f3fb6ffa196b87d1b5643646be486405:
+> >         }
+> > 
+> > +err_gpiod:
+> > +       if (err == -ENODEV || err == -ENOENT)
+> > +               err = -EPROBE_DEFER;
+> 
+> Hmm...
 
-  clk: stm32: fix: stm32 clock drivers are not compiled by default (2018-05-15 15:47:03 -0700)
+Amstrad Delta uses gpio-mmio driver. Unfortunatelty that driver is not 
+availble before device init phase, unlike other crucial GPIO drivers which are 
+initialized earlier, e.g. during the postcore or at latetst the subsys phase. 
+Hence, devices which depend on GPIO pins provided by gpio-mmio must either be 
+declared late or fail softly so they get another chance of being probed 
+succesfully.
 
-----------------------------------------------------------------
-A modified revert of a patch that made new choices come out for a couple
-stm32 clk drivers that really always need to be there when that
-particular machine is compiled in and boot fix on i.MX for Stefan who
-noticed odd behavior from the critical flag patch that came in during
-the merge window.
+I thought of replacing the gpio-mmio platform driver with bgpio functions it 
+exports but for now I haven't implemented it, not even shared the idea.
 
-----------------------------------------------------------------
-Gabriel Fernandez (1):
-      clk: stm32: fix: stm32 clock drivers are not compiled by default
+Does it really hurt to return -EPROBE_DEFER if a GPIO pin can't be obtained?
 
-Stefan Agner (1):
-      clk: imx6ull: use OSC clock during AXI rate change
-
- drivers/clk/Kconfig          | 6 ++----
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
--- 
-Sent by a computer through tubes
+Thanks,
+Janusz
