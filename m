@@ -1,126 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752516AbeERRvL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:51:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57684 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751458AbeERRvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:51:09 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: TSUKADA Koutaro <tsukada@ascade.co.jp>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] memcg: use compound_order rather than hpage_nr_pages
-References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
-        <262267fe-d98c-0b25-9013-3dafb52e8679@ascade.co.jp>
-        <87wow0zwja.fsf@e105922-lin.cambridge.arm.com>
-Date: Fri, 18 May 2018 18:51:07 +0100
-In-Reply-To: <87wow0zwja.fsf@e105922-lin.cambridge.arm.com> (Punit Agrawal's
-        message of "Fri, 18 May 2018 18:46:49 +0100")
-Message-ID: <87sh6ozwc4.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1752530AbeERRvo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:51:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55079 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeERRvl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:51:41 -0400
+X-Google-Smtp-Source: AB8JxZqTUSjjQMKcCc+OKOKCpy30dpX3/v8CCZI6pphz0cJYrQAcOPPUr4/rKhNrd8qbMcqflSN3+A==
+Date: Fri, 18 May 2018 20:51:36 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Anvin <h.peter.anvin@intel.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>
+Subject: Re: [PATCH] objtool: Detect assembly code falling through to INT3
+ padding
+Message-ID: <20180518175136.GB2055@avx2>
+References: <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
+ <20180515214337.GA18021@avx2>
+ <20180515222211.ods5hzne46hozojq@treble>
+ <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com>
+ <20180515224354.zmygmsnlqj5lrdbo@treble>
+ <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com>
+ <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com>
+ <20180516033044.odb74pdgcn5nacwb@treble>
+ <20180517134934.eog2fgoby5azq5a7@treble>
+ <20180518071814.GB26358@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180518071814.GB26358@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Punit Agrawal <punit.agrawal@arm.com> writes:
+On Fri, May 18, 2018 at 09:18:14AM +0200, Ingo Molnar wrote:
+> The concept of built-in kernel tooling working at the machine code level is just 
+> so powerful - we should have added our own KCC compiler 20 years ago.
 
-> Tsukada-san,
->
-> I am not familiar with memcg so can't comment about whether the patchset
-> is the right way to solve the problem outlined in the cover letter but
-> had a couple of comments about this patch.
->
-> TSUKADA Koutaro <tsukada@ascade.co.jp> writes:
->
->> The current memcg implementation assumes that the compound page is THP.
->> In order to be able to charge surplus hugepage, we use compound_order.
->>
->> Signed-off-by: TSUKADA Koutaro <tsukada@ascade.co.jp>
->
-> Please move this before Patch 1/7. This is to prevent wrong accounting
-> of pages to memcg for size != PMD_SIZE.
+...for two very serious reasons
 
-I just noticed that the default state is off so the change isn't enabled
-until the sysfs node is exposed in the next patch. Please ignore this
-comment.
+* C as a language moves very slowly, last help from the comittee were
+  C99 intializers which are OK, but, say, memory model was explictly
+  rejected. However the project expands and becomes more complex much
+  faster than C working group sets up meetings. Compiler authors help
+  with extensions but ultimately can not be relied on (see "inline" saga).
 
-One below still applies.
+  Recently everyone was celebrating new and improved min() and max()
+  macros admiring creativity and knowledge of intricate language details
+  (me too, don't get this wrong).
 
->
->> ---
->>  memcontrol.c |   10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 2bd3df3..a8f1ff8 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -4483,7 +4483,7 @@ static int mem_cgroup_move_account(struct page *page,
->>  				   struct mem_cgroup *to)
->>  {
->>  	unsigned long flags;
->> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
->> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
->
-> Instead of replacing calls to hpage_nr_pages(), is it possible to modify
-> it to do the calculation?
->
-> Thanks,
-> Punit
->
->>  	int ret;
->>  	bool anon;
->>
->> @@ -5417,7 +5417,7 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
->>  			  bool compound)
->>  {
->>  	struct mem_cgroup *memcg = NULL;
->> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
->> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
->>  	int ret = 0;
->>
->>  	if (mem_cgroup_disabled())
->> @@ -5478,7 +5478,7 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
->>  void mem_cgroup_commit_charge(struct page *page, struct mem_cgroup *memcg,
->>  			      bool lrucare, bool compound)
->>  {
->> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
->> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
->>
->>  	VM_BUG_ON_PAGE(!page->mapping, page);
->>  	VM_BUG_ON_PAGE(PageLRU(page) && !lrucare, page);
->> @@ -5522,7 +5522,7 @@ void mem_cgroup_commit_charge(struct page *page, struct mem_cgroup *memcg,
->>  void mem_cgroup_cancel_charge(struct page *page, struct mem_cgroup *memcg,
->>  		bool compound)
->>  {
->> -	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
->> +	unsigned int nr_pages = compound ? (1 << compound_order(page)) : 1;
->>
->>  	if (mem_cgroup_disabled())
->>  		return;
->> @@ -5729,7 +5729,7 @@ void mem_cgroup_migrate(struct page *oldpage, struct page *newpage)
->>
->>  	/* Force-charge the new page. The old one will be freed soon */
->>  	compound = PageTransHuge(newpage);
->> -	nr_pages = compound ? hpage_nr_pages(newpage) : 1;
->> +	nr_pages = compound ? (1 << compound_order(newpage)) : 1;
->>
->>  	page_counter_charge(&memcg->memory, nr_pages);
->>  	if (do_memsw_account())
+  Now this is how it can be done in a language which is not stupid:
+
+	constexpr int min(int a, int b)
+	{
+		return a < b ? a : b;
+	}
+
+  That's literally all. And you can also do
+
+	template<typename T>
+	void min(T a, char b) = delete;
+
+	template<typename T>
+	void min(char a, T b) = delete;
+
+  because "char" is char.
+
+  Having control over compiler things like that can be addded more
+  quickly.
+
+
+* insulating the project from the whims of compiler authors who every
+  once in a while use "undefined behaviour" or other kinds of language
+  lawyering to do strange things.
+
+  Other serious projects do this too. Database people use O_DIRECT
+  to insulate themselves from kernel people for the very same reasons.
