@@ -1,90 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752597AbeERKOT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:14:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44032 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeERKOR (ORCPT
+        id S1752532AbeERKOA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:14:00 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36925 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751744AbeERKN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:14:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE7D6601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v11 0/4] iommu/arm-smmu: Add runtime pm/sleep support
-To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Tomasz Figa <tfiga@chromium.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, joro@8bytes.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Clark <robdclark@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>, Lukas Wunner <lukas@wunner.de>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20180322102204.14760-1-vivek.gautam@codeaurora.org>
- <CAAFQd5CDY5p8oBz4QC5f6GsKiiYqdenCHGCqKhuWn10JwKjOpw@mail.gmail.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <8bda01d5-61aa-d163-3b25-e8b055d54644@codeaurora.org>
-Date: Fri, 18 May 2018 15:44:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 18 May 2018 06:13:58 -0400
+X-Google-Smtp-Source: AB8JxZp8KJ2mlEoj5pVZ5WMnSpsZlG+NXYfzJPuqfdpVgcgKi3DBZGrlCvsO8d9gv/ZX9oNjlkmwFA==
+Date: Fri, 18 May 2018 06:13:53 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+Subject: Re: [PATCH 03/10] locking: bring back lglocks
+Message-ID: <20180518101353.GA15403@kmo-pixel>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+ <20180518074918.13816-7-kent.overstreet@gmail.com>
+ <20180518095102.GE12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5CDY5p8oBz4QC5f6GsKiiYqdenCHGCqKhuWn10JwKjOpw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518095102.GE12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Fri, May 18, 2018 at 11:51:02AM +0200, Peter Zijlstra wrote:
+> On Fri, May 18, 2018 at 03:49:04AM -0400, Kent Overstreet wrote:
+> > bcachefs makes use of them - also, add a proper lg_lock_init()
+> 
+> Why?! lglocks are horrid things, we got rid of them for a reason. They
+> have terrifying worst case preemption off latencies.
 
+Ah. That was missing from your commit message.
 
-On 4/9/2018 9:52 AM, Tomasz Figa wrote:
-> Hi Will, Robin,
->
-> On Thu, Mar 22, 2018 at 7:22 PM Vivek Gautam <vivek.gautam@codeaurora.org>
-> wrote:
->
->> This series provides the support for turning on the arm-smmu's
->> clocks/power domains using runtime pm. This is done using the
->> recently introduced device links patches, which lets the smmu's
->> runtime to follow the master's runtime pm, so the smmu remains
->> powered only when the masters use it.
->> As not all implementations support clock/power gating, we are checking
->> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
->> power management for such smmu implementations that can support it.
->> This series also adds support for Qcom's arm-smmu-v2 variant that
->> has different clocks and power requirements.
->> Took some reference from the exynos runtime patches [1].
->> With conditional runtime pm now, we avoid touching dev->power.lock
->> in fastpaths for smmu implementations that don't need to do anything
->> useful with pm_runtime.
->> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
->> calls in map/unmap callbacks so that the clients do not have to
->> worry about handling any of the arm-smmu's power.
->> Previous version of this patch series is @ [5].
->> [v11]
->>      * Some more cleanups for device link. We don't need an explicit
->>        delete for device link from the driver, but just set the flag
->>        DL_FLAG_AUTOREMOVE.
->>        device_link_add() API description says -
->>        "If the DL_FLAG_AUTOREMOVE is set, the link will be removed
->>        automatically when the consumer device driver unbinds."
->>      * Addressed the comments for 'smmu' in arm_smmu_map/unmap().
->>      * Dropped the patch [10] that introduced device_link_del_dev() API.
-> As far as I can see, this version addresses all the earlier comments. Do
-> you think this is something that you could apply?
->
-> Best regards,
-> Tomasz
+> Why can't you use something like per-cpu rwsems?
 
-Gentle ping. Are we picking this series for 4.18?
+Well,
 
-Regards
-Vivek
+ a) in my use case, lg_global_lock() pretty much isn't used in normal operation,
+    it's only called when starting mark and sweep gc (which is not needed
+    anymore and disabled by default, it'll eventually get rolled into online
+    fsck) and for device resize
+
+ b) I'm using it in conjection with percpu counters, and technically yes I
+    certainly _could_ use per-cpu sleepable locks (mutexes would make more sense
+    for me than rwsems), there's a bit of a clash there and it's going to be a
+    bit ugly and messy and it's more work for me. (this_cpu_ptr() no longer
+    makes any sense in that case, so it'd mean auditing and converting all the
+    code that touches the relevant data structures).
+
+If you're really that dead set against lglocks I might just come up with a new
+lock with similar semantics, that doesn't break this_cpu_ptr() but sleeps if the
+global lock is held...
