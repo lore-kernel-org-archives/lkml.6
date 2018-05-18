@@ -1,41 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751846AbeERSf7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:35:59 -0400
-Received: from smtprelay0149.hostedemail.com ([216.40.44.149]:59330 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751117AbeERSf4 (ORCPT
+        id S1752112AbeERSg1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 14:36:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33424 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeERSgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:35:56 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:599:960:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3653:3865:3867:3868:3870:4321:5007:10004:10400:10848:11658:11914:12043:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: pain29_50e6655309d40
-X-Filterd-Recvd-Size: 1511
-Message-ID: <072f46c8ec88511000126831b4ebea494e93fb9b.camel@perches.com>
-Subject: Re: seq_putc is preferable to seq_puts
-From: Joe Perches <joe@perches.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 18 May 2018 11:35:53 -0700
-In-Reply-To: <33bbe7e9c0f41ee0ef73ffd5bbca1e9c84c259ec.camel@perches.com>
-References: <20180518140957.GB6361@bombadil.infradead.org>
-         <33bbe7e9c0f41ee0ef73ffd5bbca1e9c84c259ec.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 14:36:24 -0400
+X-Google-Smtp-Source: AB8JxZoK0lNhpnwEZ/o3wIbo4sCmmXKLIpi4t55pObidqb2pwrSP4Sz0GsM2iv+oWG/TFiUend2SAg==
+Date: Fri, 18 May 2018 11:36:23 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
+        byungchul.park@lge.com, mathieu.desnoyers@efficios.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+Subject: Tasks RCU vs Preempt RCU
+Message-ID: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-18 at 10:50 -0700, Joe Perches wrote:
-> and a trivial script to convert them all treewide
-> 
-> $ git grep -P --name-only '\b(?:seq_puts|seq_printf)\s*\(\s*[^,]+,\s*"(?:\\.|.)"\s*\)\s*;' | \
->   xargs perl -i -e 'local $/; while (<>) { s/\b(?:seq_puts|seq_printf)\s*\(\s*([^,]+),\s*"(\\.|.)"\s*\)\s*;/seq_putc(\1, '"'\2'"')/g; print;}'
+Hi,
 
-Hmm, pity this was missing a trailing semicolon in the substitution
+I was thinking about tasks-RCU and why its needed. Since preempt-RCU allows
+tasks to be preempted in read-sections, can we not just reuse that mechanism
+for the trampolines since we track all preempted tasks so we would wait on
+all tasks preempted within a trampoline?
 
-$ git grep -P --name-only '\b(?:seq_puts|seq_printf)\s*\(\s*[^,]+,\s*"(?:\\.|.)"\s*\)\s*;' | \
-  xargs perl -i -e 'local $/; while (<>) { s/\b(?:seq_puts|seq_printf)\s*\(\s*([^,]+),\s*"(\\.|.)"\s*\)\s*;/seq_putc(\1, '"'\2'"');/g; print;}'
+I am trying to understand what will _not_ work if we did that.. I'm guessing
+the answer is that that would mean the trampoline has to be wrapped with
+rcu_read_{lock,unlock} which may add some overhead, but please let me know
+if I'm missing something else..
+
+The advantage I guess is possible elimination of an RCU variant, and also
+possibly eliminating the tasks RCU thread that monitors.. Anyway I was
+thinking more in terms of the effort of reduction of the RCU flavors etc and
+reducing complexity ideas.
+
+thanks!
+
+- Joel
