@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeERJsA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:48:00 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38546 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752386AbeERJr4 (ORCPT
+        id S1752967AbeERJsL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:48:11 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35095 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752876AbeERJsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:47:56 -0400
-X-Google-Smtp-Source: AB8JxZp2pIvzH5C6WdFK23eOxmzPJGWaUAWlmOJkuEsKWCd60aU9a92aDHJ7KPs6K41wsn5aW+ZKXw==
+        Fri, 18 May 2018 05:48:07 -0400
+X-Google-Smtp-Source: AB8JxZqTd1YedepyFPnjVHe+VvVtaNFAklgVkelJ1OIqW9Bv39RbmYpWfnawuRZtKrSq4/vkVgSvWA==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 17/26] arm64: dts: allwinner: a64: Add HDMI support
-Date: Fri, 18 May 2018 15:15:27 +0530
-Message-Id: <20180518094536.17201-18-jagan@amarulasolutions.com>
+Subject: [PATCH v2 19/26] arm64: dts: allwinner: a64: Add HDMI pipeline
+Date: Fri, 18 May 2018 15:15:29 +0530
+Message-Id: <20180518094536.17201-20-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
 References: <20180518094536.17201-1-jagan@amarulasolutions.com>
@@ -32,58 +32,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HDMI on Allwinner A64 has similar behaviour like H3/H5/A83T, so
-reuse the same dts node details for A64 with A83T compatible
-as fallback.
+HDMI pipeline on Allwinner A64 has similar behavior like A83T
+where tcon1 is connected to HDMI.
 
-HDMI PHY on Allwinner A64 has two clock parents so add them
-as pll-0 and pll-1 in CCU clock phadles.
+Setup the pipeline according to that.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v2:
-- Change compatibles and other based on previous patch changes
+- none
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 9c1452ee8027..4ffd4787acd2 100644
+index 4ffd4787acd2..8ec6559d10cc 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -705,6 +705,33 @@
- 			#interrupt-cells = <3>;
+@@ -257,6 +257,10 @@
+ 					#size-cells = <0>;
+ 					reg = <1>;
+ 
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -719,6 +723,23 @@
+ 			phys = <&hdmi_phy>;
+ 			phy-names = "hdmi-phy";
+ 			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint {
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
  		};
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun50i-a64-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun50i-a64-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_PLL_VIDEO0>, <&ccu CLK_PLL_VIDEO1>;
-+			clock-names = "bus", "mod", "pll-0", "pll-1";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
+ 		hdmi_phy: hdmi-phy@1ef0000 {
 -- 
 2.14.3
