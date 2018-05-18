@@ -1,173 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751296AbeERMPD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 08:15:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43780 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750763AbeERMPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 08:15:02 -0400
-Date: Fri, 18 May 2018 20:14:55 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
-        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
-        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
- pages when do physical randomization
-Message-ID: <20180518121455.GT24627@MiWiFi-R3L-srv>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180518070046.GA18660@gmail.com>
- <20180518074359.GR24627@MiWiFi-R3L-srv>
- <20180518081919.GB11379@gmail.com>
- <20180518112836.GS24627@MiWiFi-R3L-srv>
+        id S1751497AbeERMPN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 08:15:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59207 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751384AbeERMPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 08:15:09 -0400
+Date: Fri, 18 May 2018 14:15:06 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        dvyukov@google.com, sergey.senozhatsky@gmail.com,
+        syzkaller@googlegroups.com, rostedt@goodmis.org,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
+References: <20180511014515.GA895@jagdpanzerIV>
+ <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+ <20180511062151.GA18160@jagdpanzerIV>
+ <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+ <20180511095004.GA6575@jagdpanzerIV>
+ <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
+ <20180517112135.GB20796@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180518112836.GS24627@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180517112135.GB20796@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/18 at 07:28pm, Baoquan He wrote:
-> On 05/18/18 at 10:19am, Ingo Molnar wrote:
-> > 
-> > * Baoquan He <bhe@redhat.com> wrote:
-> > 
-> > > OK, I realized my saying above is misled because I didn't explain the
-> > > background clearly. Let me add it:
-> > > 
-> > > Previously, FJ reported the movable_node issue that KASLR will put
-> > > kernel into movable_node. That cause those movable_nodes can't be hot
-> > > plugged any more. So finally we plannned to solve it by adding a new
-> > > kernel parameter :
-> > > 
-> > > 	kaslr_boot_mem=nn[KMG]@ss[KMG]
-> > > 
-> > > We want customer to specify memory regions which KASLR can make use to
-> > > randomize kernel into.
-> > 
-> > *WHY* should the "customer" care?
-> > 
-> > This is a _bug_: movable, hotpluggable zones of physical memory should not be 
-> > randomized into.
+On Thu 2018-05-17 20:21:35, Sergey Senozhatsky wrote:
+> On (05/11/18 20:58), Tetsuo Handa wrote:
+> > @@ -1820,6 +1860,9 @@ static size_t log_output(int facility, int level, enum log_flags lflags, const c
+> >  			return text_len;
+> >  	}
+> >  
+> > +	/* Inject caller info. */
+> > +	text = printk_inject_caller_info(text, &text_len);
+> > +
+> >  	/* Store it in the record log */
+> >  	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
+> >  }
 > 
-> Yes, for movable zones, agreed.
+> [..]
 > 
-> But for huge pages, it's only related to memory layout.
-> 
-> > 
-> > > [...] Outside of the specified regions, we need avoid to put kernel into those 
-> > > regions even though they are also available RAM. As for movable_node issue, we 
-> > > can add immovable regions into kaslr_boot_mem=nn[KMG]@ss[KMG].
-> > > 
-> > > During this hotplug issue reviewing, Luiz's team reported this 1GB hugepages
-> > > regression bug, I reproduced the bug and found out the root cause, then
-> > > realized that I can utilize kaslr_boot_mem=nn[KMG]@ss[KMG] parameter to
-> > > fix it too. E.g the KVM guest with 4GB RAM, we have a good 1GB huge
-> > > page, then we can add "kaslr_boot_mem=1G@0, kaslr_boot_mem=3G@2G" to
-> > > kernel command-line, then the good 1GB region [1G, 2G) won't be taken
-> > > into account for kernel physical randomization.
-> > > 
-> > > Later, you pointed out that 'kaslr_boot_mem=' way need user to specify
-> > > memory region manually, it's not good, suggested to solve them by
-> > > getting information and solving them in KASLR boot code. So they are two
-> > > issues now, for the movable_node issue, we need get hotplug information
-> > > from SRAT table and then avoid them; for this 1GB hugepage issue, we
-> > > need get information from kernel command-line, then avoid them.
-> > > 
-> > > This patch is for the hugepage issue only. Since FJ reported the hotplug
-> > > issue and they assigned engineers to work on it, I would like to wait
-> > > for them to post according to your suggestion.
-> > 
-> > All of this is handling it the wrong way about. This is *not* primarily about 
-> > KASLR at all, and the user should not be required to specify some weird KASLR 
-> > parameters.
-> > 
-> > This is a basic _memory map enumeration_ problem in both cases:
-> > 
-> >  - in the hotplug case KASLR doesn't know that it's a movable zone and relocates 
-> >    into it,
-> 
-> Yes, in boot KASLR, we haven't parsed ACPI table to get hotplug
-> information. If decide to read SRAT table, we can get if memory region
-> is hotpluggable, then avoid them. This can be consistent with the later
-> code after entering kernel.
-> 
-> > 
-> >  - and in the KVM case KASLR doesn't know that it's a valuable 1GB page that
-> >    shouldn't be broken up.
-> > 
-> > Note that it's not KASLR specific: if we had some other kernel feature that tried 
-> > to allocate a piece of memory from what appears to be perfectly usable generic RAM 
-> > we'd have the same problems!
-> 
-> Hmm, this may not be the situation for 1GB huge pages. For 1GB huge
-> pages, the bug is that on KVM guest with 4GB ram, when user adds
-> 'default_hugepagesz=1G hugepagesz=1G hugepages=1' to kernel
-> command-line, if 'nokaslr' is specified, they can get 1GB huge page
-> allocated successfully. If remove 'nokaslr', namely KASLR is enabled,
-> the 1GB huge page allocation failed.
-> 
-> In hugetlb_nrpages_setup(), you can see that the current huge page code
-> relies on memblock to get 1GB huge pages. Below is the e820 memory
-> map from Luiz's bug report. In fact there are two good 1GB huge pages,
-> one is [0x40000000, 0x7fffffff], the 2nd one is
-> [0x100000000, 0x13fffffff]. by default memblock will allocate top-down
-> if movable_node is set, then [0x100000000, 0x13fffffff] will be broken
-		    ~not
-Sorry, missed 'not'. 
+> I think this is slightly intrusive. I understand that you want to avoid
+> struct printk_log modification, let's try to see if we have any other
+> options.
 
-void __init setup_arch(char **cmdline_p)
-{
-	...
-#ifdef CONFIG_MEMORY_HOTPLUG
-        if (movable_node_is_enabled())
-                memblock_set_bottom_up(true);
-#endif
-	...
-}
+I agree with Sergey that it is intrusive. We should keep the
+information separate from the original string and format it
+according to the selected output format (syslog, /dev/kmsg,
+console) like we do it with the other metadata, e.g. timestamp,
+loglevel, dict).
 
-> when system initialization goes into hugetlb_nrpages_setup() invocation.
-> So normally huge page can only get one good 1GB huge page, whether KASLR
-> is enanled or not. This is not bug, but decided by the current huge page
-> implementation. In this case, KASLR boot code can see two good 1GB huge
-> pages, and try to avoid them. Besides, if it's a good 1GB huge page,
-> it's not defined in memory map and also not attribute. It's only decided
-> by the memory layout and also decided by the memory usage situation in
-> the running system. If want to keep all good 1GB huge pages untouched,
-> we may need to adjust the current memblock allocation code, to avoid
-> any possibility to step into good 1GB huge pages before huge page
-> allocation. However this comes to the improvement area of huge pages
-> implementation, not related to KASLR.
-> 
-> [  +0.000000] e820: BIOS-provided physical RAM map:
-> [  +0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-> [  +0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> [  +0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> [  +0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff] usable
-> [  +0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff] reserved
-> [  +0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-> [  +0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-> [  +0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
-> 
-> Furthermore, on bare-metal with large memory, e.g with 100GB memory, if
-> user specifies 'default_hugepagesz=1G hugepagesz=1G hugepages=2' to only
-> expect two 1GB huge pages reserved, if we save all those tens of good
-> 1GB huge pages untouched, it seems to be over reactive.
-> 
-> Not sure if I understand your point correctly, this is my thought about
-> the huge page issue, please help to point out anything wrong if any.
-> 
-> Thanks
-> Baoquan
-> > 
-> > We need to fix the real root problem, which is lack of knowledge about crutial 
-> > attributes of physical memory. Once that knowledge is properly represented at this 
-> > early boot stage both KASLR and other memory allocators can make use of it to 
-> > avoid those regions.
-> > 
-> > Thanks,
-> > 
-> > 	Ingo
+
+> Dunno...
+> For instance, can we store context tracking info as a extended record
+> data? We have that dict/dict_len thing. So may we can store tracking
+> info there? Extended records will appear on the serial console /* if
+> console supports extended data */ or can be read in via devkmsg_read().
+> Any other options?
+
+This sounds interesting. Well, we would need to handle different dict
+items different ways. I still wonder if we really need these "hacks".
+
+Another option would be to store the metadata into a separate table
+indexed by log_seq number. But it still look unnecessarily complicated.
+
+IMHO, we could change struct printk_log if we provide related
+patches for crashdump and crash utilities.
+
+
+Important:
+
+First, we should ask what we expect from this feature. Different
+information might be needed in different situations. In general,
+people might want to know:
+
+  + CPUid even in task context
+  + exact interrupt context (soft, hard, NMI)
+  + whether preemption or interrupts are enabled
+
+It still looks bearable. But what if people want more,
+e.g. context switch counts, task state, pending signals,
+mem usage, cgroup stuff.
+
+Is this information useful for all messages or only
+selected ones?
+
+Is it acceptable when message prefix is longer than, let's
+say 40 characters?
+
+Is the extended output worth having even on slow consoles?
+
+
+By other words, I wonder if you wanted similar feature in many
+situations in the past and could provide more use cases.
+
+
+Note:
+
+The proposed patch enabled the extra info with a config option
+=> you need to rebuild the kernel => you could just modify
+the problematic message. We could just add some printk_ helpers
+to make it easier.
+
+Alternatively, I wonder if it might be enough to add a tracepoint
+into printk() and get the extra info via
+/sys/kernel/debug/tracing/events/. We would need to prevent
+recursion when trace buffer is flushed by printk() but...
+
+Best Regards,
+Petr
