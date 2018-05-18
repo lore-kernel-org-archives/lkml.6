@@ -1,41 +1,40 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqeHhBWvI1fFYe3Pcl12mieCTOzUpHwGnMw1jVaY37mwNQd23ccLr6c2bdKpvI6lINZps6v
-ARC-Seal: i=1; a=rsa-sha256; t=1526631584; cv=none;
+X-Google-Smtp-Source: AB8JxZpsP7HdgbiTMWZ7XLCB29sy/eeYFNOXF7dF+qq1Sk6LFVx9EBrr/s9YfbzD8DjdNXSvNn+6
+ARC-Seal: i=1; a=rsa-sha256; t=1526631581; cv=none;
         d=google.com; s=arc-20160816;
-        b=hmX0WKpKfKZIQWEBovk868+el8U1H8plx7yby7SRZgHWs8kFUsQmk8Zo9fo/MbPi6X
-         V55L25+hHj8SJ5ZWwYK6aW9Wqdu3oSJQyzYerJ5IS9emRl4ES2Pv+rFaWVD871neF2R2
-         eYnNkP2TXeI/vqH0Gkrc17Tl7YM273pKMzvvBeZ2bf6tmrqhgAnW84tGKTCcExsJZI4/
-         R/bjZ+bY9WGJsO9C1Ej1pKDOT/UE2owBbrKFwocLWlTolnfHw8AQQSnxD91YPQyImx4J
-         e33Tk56L2yU19gcnTac0QDeRjLWTMmzLirkrlj94WCl8rNkk3C5W1clhj35uk2S08s+5
-         OKdA==
+        b=abwabO0G8074xnaZHdpSlsG416ShUPM58K5hbm9GnowUuo6ipQLY20xZBgnSNR4Gvq
+         x91W7EbI6NiolCSKbCzORXAtu0MhfKRpIR2pSbo2rTu7usPnE6Va1XQjvLsnq88ENsPc
+         SCtWHc3oPlkkoeXt0ilrgAemI2Dj7c0U41JyR79M3yXqz//2GoUeC9B2TWGMejlD1Jym
+         WXGGlYYlsRE2Epa4v6FQAPWIyqGM1M/E95ums7+0XEAWgR807CtfcIlpaWbbjR2fxRce
+         tDlq2y77EgWVCjloLPbfQMy6caDCgZL4+1pwR4auEEOcQu+R+BgYJ1FoxKI517sf749B
+         5NJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Bfk+JHPujLMU6mrM+QBcRtYQy39l8roJSttJqVTxZTA=;
-        b=g4d+teViuaaS1P/ejh+whukGFmHHRPHx4WHipCpgzianN64fDrC/k9JWWjwqIaFFX0
-         IqK28NBLWJY2Q1jLXEdKGSMjNuatuQbqw0qdCtYlzWM2GzJrGkwJ3MnT8CrVXnC8Jq0E
-         /XTikVlImMDS7kcWqK1ki83pEo93MM3U3UiMl+doHpUqW66dkjjpckefxkzhlGHGMulo
-         29FJPLelkozBqWyPgfOjpaF2y5/B/0wuqnsiC85B8Y2rFuAQ0lf+filgdSDv1jZ22l0l
-         QRaDg0DI1uIo5eQsbDqd2KQyMjby1Opajc2tjvkw/wv9CihAX5hytEg37Vuqe/z4nJ/L
-         mn+g==
+        bh=nLdXspPE+4VxcFW4sb0oJnCtGRI/VlPDNfZH6m71chU=;
+        b=GBQ8DwlRA4T4cgylQnd8hs5vzL0YBXiLlSa+0PSSz3KKjrgh8Wcce/HTcbLFrL4edl
+         fFYZQy4e63de5PeVJX/lAwekLQqXQl10toiguDK26sOXUe0FYyMJNpxF2PCH71p3gQhX
+         PEvnGrJrrAgy0qPeKHAhHm/ThvzNVTWiMU/wfRc0fwiL67NgQMD/DSED1bdqcStETyKS
+         W98qmUm86SlqmUPjsM9JsuhQfFfkLR6xy01tq7bppNsFPjw63na4GWmVVnQhRVLCB2iR
+         46Ns7ZYgc8vRAQpUwqSG8pzbLq+2J293kT48fEQZvofXeQAd7S4OVppUUjE7I+NUe3aa
+         ZR9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tZN4Fi3G;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tqtgF5mg;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=tZN4Fi3G;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tqtgF5mg;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Gerrit Renker <gerrit@erg.abdn.ac.uk>,
-	dccp@vger.kernel.org,
+	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 03/45] dccp: fix tasklet usage
-Date: Fri, 18 May 2018 10:15:20 +0200
-Message-Id: <20180518081530.496930122@linuxfoundation.org>
+Subject: [PATCH 4.14 02/45] bridge: check iface upper dev when setting master via ioctl
+Date: Fri, 18 May 2018 10:15:19 +0200
+Message-Id: <20180518081530.441456191@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789069560147522?=
-X-GMAIL-MSGID: =?utf-8?q?1600789240061276893?=
+X-GMAIL-THRID: =?utf-8?q?1600789066927104198?=
+X-GMAIL-MSGID: =?utf-8?q?1600789237125478308?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,112 +53,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit a8d7aa17bbc970971ccdf71988ea19230ab368b1 ]
+[ Upstream commit e8238fc2bd7b4c3c7554fa2df067e796610212fc ]
 
-syzbot reported a crash in tasklet_action_common() caused by dccp.
+When we set a bond slave's master to bridge via ioctl, we only check
+the IFF_BRIDGE_PORT flag. Although we will find the slave's real master
+at netdev_master_upper_dev_link() later, it already does some settings
+and allocates some resources. It would be better to return as early
+as possible.
 
-dccp needs to make sure socket wont disappear before tasklet handler
-has completed.
+v1 -> v2:
+use netdev_master_upper_dev_get() instead of netdev_has_any_upper_dev()
+to check if we have a master, because not all upper devs are masters,
+e.g. vlan device.
 
-This patch takes a reference on the socket when arming the tasklet,
-and moves the sock_put() from dccp_write_xmit_timer() to dccp_write_xmitlet()
-
-kernel BUG at kernel/softirq.c:514!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 17 Comm: ksoftirqd/1 Not tainted 4.17.0-rc3+ #30
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:tasklet_action_common.isra.19+0x6db/0x700 kernel/softirq.c:515
-RSP: 0018:ffff8801d9b3faf8 EFLAGS: 00010246
-dccp_close: ABORT with 65423 bytes unread
-RAX: 1ffff1003b367f6b RBX: ffff8801daf1f3f0 RCX: 0000000000000000
-RDX: ffff8801cf895498 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffff8801d9b3fc40 R08: ffffed0039f12a95 R09: ffffed0039f12a94
-dccp_close: ABORT with 65423 bytes unread
-R10: ffffed0039f12a94 R11: ffff8801cf8954a3 R12: 0000000000000000
-R13: ffff8801d9b3fc18 R14: dffffc0000000000 R15: ffff8801cf895490
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2bc28000 CR3: 00000001a08a9000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- tasklet_action+0x1d/0x20 kernel/softirq.c:533
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-dccp_close: ABORT with 65423 bytes unread
- run_ksoftirqd+0x86/0x100 kernel/softirq.c:646
- smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
- kthread+0x345/0x410 kernel/kthread.c:238
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Code: 48 8b 85 e8 fe ff ff 48 8b 95 f0 fe ff ff e9 94 fb ff ff 48 89 95 f0 fe ff ff e8 81 53 6e 00 48 8b 95 f0 fe ff ff e9 62 fb ff ff <0f> 0b 48 89 cf 48 89 8d e8 fe ff ff e8 64 53 6e 00 48 8b 8d e8
-RIP: tasklet_action_common.isra.19+0x6db/0x700 kernel/softirq.c:515 RSP: ffff8801d9b3faf8
-
-Fixes: dc841e30eaea ("dccp: Extend CCID packet dequeueing interface")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
-Cc: dccp@vger.kernel.org
+Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccids/ccid2.c |   14 ++++++++++++--
- net/dccp/timer.c       |    2 +-
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ net/bridge/br_if.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/dccp/ccids/ccid2.c
-+++ b/net/dccp/ccids/ccid2.c
-@@ -126,6 +126,16 @@ static void ccid2_change_l_seq_window(st
- 						  DCCPF_SEQ_WMAX));
- }
+--- a/net/bridge/br_if.c
++++ b/net/bridge/br_if.c
+@@ -503,8 +503,8 @@ int br_add_if(struct net_bridge *br, str
+ 	if (dev->netdev_ops->ndo_start_xmit == br_dev_xmit)
+ 		return -ELOOP;
  
-+static void dccp_tasklet_schedule(struct sock *sk)
-+{
-+	struct tasklet_struct *t = &dccp_sk(sk)->dccps_xmitlet;
-+
-+	if (!test_and_set_bit(TASKLET_STATE_SCHED, &t->state)) {
-+		sock_hold(sk);
-+		__tasklet_schedule(t);
-+	}
-+}
-+
- static void ccid2_hc_tx_rto_expire(unsigned long data)
- {
- 	struct sock *sk = (struct sock *)data;
-@@ -166,7 +176,7 @@ static void ccid2_hc_tx_rto_expire(unsig
+-	/* Device is already being bridged */
+-	if (br_port_exists(dev))
++	/* Device has master upper dev */
++	if (netdev_master_upper_dev_get(dev))
+ 		return -EBUSY;
  
- 	/* if we were blocked before, we may now send cwnd=1 packet */
- 	if (sender_was_blocked)
--		tasklet_schedule(&dccp_sk(sk)->dccps_xmitlet);
-+		dccp_tasklet_schedule(sk);
- 	/* restart backed-off timer */
- 	sk_reset_timer(sk, &hc->tx_rtotimer, jiffies + hc->tx_rto);
- out:
-@@ -706,7 +716,7 @@ static void ccid2_hc_tx_packet_recv(stru
- done:
- 	/* check if incoming Acks allow pending packets to be sent */
- 	if (sender_was_blocked && !ccid2_cwnd_network_limited(hc))
--		tasklet_schedule(&dccp_sk(sk)->dccps_xmitlet);
-+		dccp_tasklet_schedule(sk);
- 	dccp_ackvec_parsed_cleanup(&hc->tx_av_chunks);
- }
- 
---- a/net/dccp/timer.c
-+++ b/net/dccp/timer.c
-@@ -230,12 +230,12 @@ static void dccp_write_xmitlet(unsigned
- 	else
- 		dccp_write_xmit(sk);
- 	bh_unlock_sock(sk);
-+	sock_put(sk);
- }
- 
- static void dccp_write_xmit_timer(unsigned long data)
- {
- 	dccp_write_xmitlet(data);
--	sock_put((struct sock *)data);
- }
- 
- void dccp_init_xmit_timers(struct sock *sk)
+ 	/* No bridging devices that dislike that (e.g. wireless) */
