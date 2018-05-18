@@ -1,45 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeERTVR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:21:17 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35753 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751768AbeERTVM (ORCPT
+        id S1752175AbeERTVp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:21:45 -0400
+Received: from gateway20.websitewelcome.com ([192.185.49.40]:35922 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751768AbeERTVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:21:12 -0400
-X-Google-Smtp-Source: AB8JxZos99Q2lRvkRHF+cY/SrJ3rXEAIOjBc49CBXGnfA9VWZy75/3rt+2txJf8QZqEmfYJ6eCTRi4gPLc4O+t9GJew=
-MIME-Version: 1.0
-References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com>
- <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
- <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com>
- <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com>
- <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
- <CA+55aFysH5iiJWCVFu1J6GQfN2G1AbMcHyc4RhpnrnPjtM3L0Q@mail.gmail.com> <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com>
-In-Reply-To: <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 18 May 2018 12:21:00 -0700
-Message-ID: <CA+55aFz4vKF-xC+A=DOozkPMVyLHPC5xMqW+y6pg9D7W-c2BQw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
-To: namit@vmware.com
-Cc: Peter Anvin <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+        Fri, 18 May 2018 15:21:43 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180515030038.GA11822@embeddedor.com>
+ <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
+ <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
+ <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
+ <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+Message-ID: <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+Date: Fri, 18 May 2018 14:21:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fJkwg-000PBG-Fe
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.172.56.86]:53050
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4IJLKcv014650
 
-On Fri, May 18, 2018 at 12:18 PM Nadav Amit <namit@vmware.com> wrote:
 
-> Gnu ASM manual says: "Each time you run as it assembles exactly one source
-> program. The source program is made up of one or more files.”
 
-Ok, that counts as documentation, although it's confusing as hell. Is it
-one source program or multiple files again? I see what they are trying to
-say, but it really could be phrased more clearly ;)
+On 05/18/2018 02:04 PM, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 05/15/2018 05:57 PM, Dan Williams wrote:
+>> On Tue, May 15, 2018 at 3:29 PM, Thomas Gleixner <tglx@linutronix.de> 
+>> wrote:
+>>> On Tue, 15 May 2018, Andrew Morton wrote:
+>>>> On Mon, 14 May 2018 22:00:38 -0500 "Gustavo A. R. Silva" 
+>>>> <gustavo@embeddedor.com> wrote:
+>>>>
+>>>>> resource can be controlled by user-space, hence leading to a
+>>>>> potential exploitation of the Spectre variant 1 vulnerability.
+>>>>>
+>>>>> This issue was detected with the help of Smatch:
+>>>>>
+>>>>> kernel/sys.c:1474 __do_compat_sys_old_getrlimit() warn: potential
+>>>>> spectre issue 'get_current()->signal->rlim' (local cap)
+>>>>> kernel/sys.c:1455 __do_sys_old_getrlimit() warn: potential spectre 
+>>>>> issue
+>>>>> 'get_current()->signal->rlim' (local cap)
+>>>>>
+>>>>> Fix this by sanitizing *resource* before using it to index
+>>>>> current->signal->rlim
+>>>>>
+>>>>> Notice that given that speculation windows are large, the policy is
+>>>>> to kill the speculation on the first load and not worry if it can be
+>>>>> completed with a dependent load/store [1].
+>>>>
+>>>> hm.  Not my area, but I'm always willing to learn ;)
+>>>>
+>>>>> --- a/kernel/sys.c
+>>>>> +++ b/kernel/sys.c
+>>>>> @@ -69,6 +69,9 @@
+>>>>>   #include <asm/io.h>
+>>>>>   #include <asm/unistd.h>
+>>>>>
+>>>>> +/* Hardening for Spectre-v1 */
+>>>>> +#include <linux/nospec.h>
+>>>>> +
+>>>>>   #include "uid16.h"
+>>>>>
+>>>>>   #ifndef SET_UNALIGN_CTL
+>>>>> @@ -1451,6 +1454,7 @@ SYSCALL_DEFINE2(old_getrlimit, unsigned int, 
+>>>>> resource,
+>>>>>      if (resource >= RLIM_NLIMITS)
+>>>>>              return -EINVAL;
+>>>>>
+>>>>> +   resource = array_index_nospec(resource, RLIM_NLIMITS);
+>>>>>      task_lock(current->group_leader);
+>>>>>      x = current->signal->rlim[resource];
+>>>>
+>>>> Can the speculation proceed past the task_lock()?  Or is the policy to
+>>>> ignore such happy happenstances even if they are available?
+>>>
+>>> Locks are not in the way of speculation. Speculation has almost no 
+>>> limits
+>>> except serializing instructions. At least they respect the magic AND
+>>> limitation in array_index_nospec().
+>>
+>> I'd say it another way, because they don't respect the magic AND, we
+>> just make the result in the speculation path safe. So, it's controlled
+>> speculation.
+>>
+> 
+> Dan,
+> 
+> What do you think about adding the following function to the nospec API:
+> 
+> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+> index e791ebc..81e9a77 100644
+> --- a/include/linux/nospec.h
+> +++ b/include/linux/nospec.h
+> @@ -55,4 +55,17 @@ static inline unsigned long 
+> array_index_mask_nospec(unsigned long index,
+>                                                                          \
+>          (typeof(_i)) (_i & _mask);                                      \
+>   })
+> +
+> +
+> +#ifndef sanitize_index_nospec
+> +inline bool sanitize_index_nospec(unsigned long index,
+> +                                 unsigned long size)
+> +{
+> +       if (index >= size)
+> +               return false;
+> +       index = array_index_nospec(index, size);
+> +
+> +       return true;
+> +}
+> +#endif
+>   #endif /* _LINUX_NOSPEC_H */
+> 
 
-                     Linus
+Oops, it seems I sent the wrong patch. The function would look like this:
+
+#ifndef sanitize_index_nospec
+inline bool sanitize_index_nospec(unsigned long *index,
+                                   unsigned long size)
+{
+         if (*index >= size)
+                 return false;
+         *index = array_index_nospec(*index, size);
+
+         return true;
+}
+#endif
+
+Thanks
+--
+Gustavo
