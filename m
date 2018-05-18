@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeERKhk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:37:40 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41366 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752266AbeERKhh (ORCPT
+        id S1752713AbeERKjO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:39:14 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34783 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeERKjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:37:37 -0400
-X-Google-Smtp-Source: AB8JxZoqEaBe0eXgsQ2/MKMzXIuYufzlU4hib7XhCu2YTu16AVzZ+4FMo+9mn/CxAx76tNT9I+eofw==
-Date: Fri, 18 May 2018 12:37:33 +0200
+        Fri, 18 May 2018 06:39:12 -0400
+X-Google-Smtp-Source: AB8JxZoCiBNJAhBjI//mCDyboFWZZgv7Z7QzAbyBmy2psE9AQMKRM0+HXelGhg11fVFL0LVQSE/GwQ==
+Date: Fri, 18 May 2018 12:39:08 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>,
@@ -20,95 +20,79 @@ Cc: Jonathan Hunter <jonathanh@nvidia.com>,
         Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Restore ULPI USB on Tegra20
-Message-ID: <20180518103733.GE5312@ulmo>
+Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+Message-ID: <20180518103908.GF5312@ulmo>
 References: <20180508162607.3500-1-digetx@gmail.com>
+ <20180508162607.3500-3-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PGNNI9BzQDUtgA2J"
+        protocol="application/pgp-signature"; boundary="z+pzSjdB7cqptWpS"
 Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
+In-Reply-To: <20180508162607.3500-3-digetx@gmail.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---PGNNI9BzQDUtgA2J
+--z+pzSjdB7cqptWpS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 08, 2018 at 07:26:02PM +0300, Dmitry Osipenko wrote:
-> Hello,
+On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
+> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+> that main clk-controller driver could get an actual parent clock for the
+> CDEV1/2 clocks.
 >=20
-> This series of patches fixes ULPI USB on Tegra20. The original problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
-ly
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
-er,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
-EV2
-> (aka MCLK2) is the actual clock source for "ulpi-link".
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marc Dietrich <marvin24@gmx.de>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
 >=20
 > Changelog:
 >=20
 > v3:
-> 	- Use clk DT ID's instead of comparing clk names and make
-> 	  custom of_src_onecell_get specific to Tegra20 clk provider
-> 	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
-> 	  as was suggested by Peter De Schrijver for v2.
+> 	- No change.
 >=20
 > v2:
-> 	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
-> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
-> 	  are available, i.e. resolves potential issue with CDEV-user driver
-> 	  vs pinctrl driver probe order.
+> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
 >=20
-> 	- Factored out "pinctrl" patch from the patchset as was requested by
-> 	  Linus Walleij.
->=20
-> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
-> 	  made DEV1/2 divs read-only, etc minor changes.
->=20
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   clk: tegra20: Correct parents of CDEV1/2 clocks
->   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  3 files changed, 40 insertions(+), 12 deletions(-)
 
-Patches 1-3 applied, thanks.
+Linus,
 
-Thierry
+were you going to pick this up for v4.18? There's a runtime dependency
+on this from some clock patches that I'd like to get into v4.18.
 
---PGNNI9BzQDUtgA2J
+I see I never gave my Acked-by on this particular patch, so here goes:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--z+pzSjdB7cqptWpS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rO0ACgkQ3SOs138+
-s6H60RAAiCLfvdhXE4xAETzkyCF5yZp9N2b/3dMIC6gxAhvXoHZqS7Ko7cgEfJL0
-o+KxTf71EdOvIOZxNNvvLI/kiZBBrqdezvVUw0JkjTdrU2cRq1RPIC61Rvcpaq9F
-Mz0pURAsunOr5GxysB710BqFU6IyYWMctOpiyRLZc0o4W6UuMagSEvG0savopXMD
-MdWvEEmBA22TT4k1RtmB4vFgaCTya8pZYy0+Zq6DdcYUBNCT/tNazpFGjZ9Na4aM
-AfBwCb64Hp1YtAEhg6dAODjy6c0cetFeE2W/8mIb44+RqFjlu/wtDwpS4Uf8BYA6
-z7TUBWdfDD/HIbkdqh/rRCNu0vsNo36GpWGb0NqUWrNvkUfyyn42VLUHK3dd0LQM
-omnVup0NIsdk6Tfi+N0iMe4qVLNP4JbW6FPvr0+wpphee8TygPVJ2H7Ijk5qjG30
-5N165HgODS0Rr9KrjM5p1iqUVBpOx1AHxmTKazYPi5QI8OTAv9DWN3FWmZr9x50E
-XlVqJA05H7m078yy0mACNwmXvumzPaYRWwt498cxiLTUHQ4tBG9jyKx5AxSpSzog
-L3q+HKx70CPhBa/Ym31In2m9Zf94DIhwmGPz+8vP5fGLfJc1xKDASy+YybUTU+NS
-tlvQ8VSCePRcJv9EkBeUNqYDS/mNGABgiWgMhjSp1oo1CDuu8XY=
-=+hZo
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rUwACgkQ3SOs138+
+s6F4Zg/+PiE7355bzPMINxgk/9Q+qcq1ME2JselWa8MQtM5FT5RcXkLY5OlkNk9+
+Nf+1BlqOI2cEzUQK7OfB0Qi/Ev0eDaEcLyVt+R41QUkd5QH5Cf+k5/7Xc1BS6E3q
+qQjPgLPk/DGBUl3Rv97Z08x6JZsTfw/Qzubz1l9l9baCIPSrpBq6ou7T2zbG/6B8
+bh7qYQlZFieFPuFQGqKw6l28mNBqV6HWTsunBSjpbLISs/LmXSKkjEQvYuUn3PIx
+HGFoMOtHBlbCQ93/kjL/6+ZjELSJhYgcJ+x4Fy6FWLMVWkUkk3/wjitzYN3ZyS/R
+MwWfhDBuT3fuaPiFQj8ZrD+B8lCiKm5rWBeao0g8fTNzSIGfXFqCC0byS8MzN+CV
+96BbSB8zRww4+TTAIRIVXIExqsBtHmQK9b/IjOIEPQ20UD3nWiIp0B9jBgWTOrUT
+wvncljX+VoZgYWAHUhZnp5ylC5KpPv8u8PyI323DICI1PkIVi4C6YYWSgUw8oIMZ
++t1TYLeJlcPPZ0aRTjX5kda6ivwULV/lsbebKA8cMxfWm2ufb70Bqc6Gp3I+Inzz
+aVph7jGViUNZnWWt8AO9XvXDka+Otrk8YzLn6F2pjnHoL3Dk+UykUx6kDKSTDZWT
+ep17CM2hrXFXBSVbZ1mjT9rILYKfdmwf7A2X5NLbUDKL6ATD1RU=
+=Or8C
 -----END PGP SIGNATURE-----
 
---PGNNI9BzQDUtgA2J--
+--z+pzSjdB7cqptWpS--
