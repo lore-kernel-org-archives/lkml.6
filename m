@@ -1,52 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752558AbeERPZa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:25:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:45190 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbeERPZ0 (ORCPT
+        id S1752528AbeERPZR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:25:17 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54162 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750882AbeERPZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:25:26 -0400
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] Fix UFS and devfreq interaction
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180518062638.31777-1-bjorn.andersson@linaro.org>
-Date: Fri, 18 May 2018 11:25:12 -0400
-In-Reply-To: <20180518062638.31777-1-bjorn.andersson@linaro.org> (Bjorn
-        Andersson's message of "Thu, 17 May 2018 23:26:35 -0700")
-Message-ID: <yq136ypgf53.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 18 May 2018 11:25:10 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <lee.jones@linaro.org>, <thierry.reding@gmail.com>
+CC: <rdunlap@infradead.org>, <sfr@canb.auug.org.au>, <gerald.baeza@st.com>,
+        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
+        <linux-next@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: [PATCH 0/2] Fix STM32 PWM capture build with COMPILE_TEST
+Date: Fri, 18 May 2018 17:24:02 +0200
+Message-ID: <1526657044-14879-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8897 signatures=668699
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=513
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805180168
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Build issue has been identified when COMPILE_TEST=y and MFD_STM32_TIMERS=n:
+https://lkml.org/lkml/2018/5/17/825
+- First patch introduces a stub routine in mfd header file
+- Sub-sequent patch solves warning in pwm-stm32 with these configs
 
-Bjorn,
+Fabrice Gasnier (2):
+  mfd: stm32-timers: fix pwm-stm32 linker issue with COMPILE_TEST
+  pwm: stm32: initialize raw local variables
 
-> With the introduction of f1d981eaecf8 ("PM / devfreq: Use the
-> available min/max frequency") the UFS host controller driver (UFSHCD)
-> stopped probing for platforms that supports frequency scaling,
-> e.g. all modern Qualcomm platforms.
-
-Applied to 4.18/scsi-queue. Thank you!
+ drivers/pwm/pwm-stm32.c          |  2 +-
+ include/linux/mfd/stm32-timers.h | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+1.9.1
