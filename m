@@ -1,65 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeEROXn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:23:43 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:35574 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeEROXi (ORCPT
+        id S1752206AbeEROYW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:24:22 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44306 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbeEROYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:23:38 -0400
-X-Google-Smtp-Source: AB8JxZp0Ln2PEL6Nl4p+OhOBbcxg5gyI3VJM4yqKVPG1PxjC9yDXTpB5VdzsHRP9l30z1CN2zsjcWoJStLK1s84vRj8=
+        Fri, 18 May 2018 10:24:19 -0400
+X-Google-Smtp-Source: AB8JxZpQd6eSOgC0E1yNifB3MaS7ju5h3wR5TUit0htRlIYsczPHsNpBrrHQUWv3ltnCyyK3wCYkfg==
+Date: Fri, 18 May 2018 09:24:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 24/27] dt-bindings: timer: new bindings for TI
+ DaVinci timer
+Message-ID: <20180518142418.GA2298@rob-hp-laptop>
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-25-david@lechnology.com>
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-8-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-8-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@google.com>
-Date: Fri, 18 May 2018 23:23:25 +0900
-Message-ID: <CAAFQd5Ck1x1voV3=G_3yJEh_0S-4kYkx13P00kyMRbhJ4=sSCA@mail.gmail.com>
-Subject: Re: [PATCH v2 07/29] venus: hfi_venus: add halt AXI support for Venus 4xx
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509172606.29387-25-david@lechnology.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 5:12 PM Stanimir Varbanov <
-stanimir.varbanov@linaro.org> wrote:
-
-> Add AXI halt support for version 4xx by using venus wrapper
-> registers.
-
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+On Wed, May 09, 2018 at 12:26:03PM -0500, David Lechner wrote:
+> This adds new device tree bindings for the timer IP block of TI
+> DaVinci-like SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
->   drivers/media/platform/qcom/venus/hfi_venus.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
+> 
+> v10 changes:
+> - changed compatible to "ti,da830-timer"
+> - added interrupts and interrupt-names properties
+> - fixed grammatical error
+> 
+> v9 changes:
+> - new patch in v9
+> 
+> 
+>  .../bindings/timer/ti,davinci-timer.txt       | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c
-b/drivers/media/platform/qcom/venus/hfi_venus.c
-> index 734ce11b0ed0..53546174aab8 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-> @@ -532,6 +532,23 @@ static int venus_halt_axi(struct venus_hfi_device
-*hdev)
->          u32 val;
->          int ret;
-
-> +       if (hdev->core->res->hfi_version == HFI_VERSION_4XX) {
-> +               val = venus_readl(hdev, WRAPPER_CPU_AXI_HALT);
-> +               val |= BIT(16);
-
-Can we have the bit defined?
-
-> +               venus_writel(hdev, WRAPPER_CPU_AXI_HALT, val);
-> +
-> +               ret = readl_poll_timeout(base +
-WRAPPER_CPU_AXI_HALT_STATUS,
-> +                                        val, val & BIT(24),
-
-Ditto.
-
-Best regards,
-Tomasz
+Reviewed-by: Rob Herring <robh@kernel.org>
