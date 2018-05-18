@@ -1,131 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeERNeA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:34:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53126 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752441AbeERNd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:33:58 -0400
-Date: Fri, 18 May 2018 14:33:53 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
- frequency invariant accounting
-Message-ID: <20180518133353.GO30654@e110439-lin>
-References: <20180516163105.GP28366@localhost.localdomain>
- <20180517105907.GC22493@localhost.localdomain>
- <20180517150418.GF22493@localhost.localdomain>
- <1526571692.11765.10.camel@linux.intel.com>
- <20180517161649.GX12217@hirez.programming.kicks-ass.net>
- <1526575358.11765.14.camel@linux.intel.com>
- <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
- <20180517182803.GY12217@hirez.programming.kicks-ass.net>
- <20180518105742.GN30654@e110439-lin>
- <20180518112919.GI12217@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518112919.GI12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752277AbeERNiM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:38:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751496AbeERNiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:38:08 -0400
+Date: Fri, 18 May 2018 22:38:03 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH -tip v3 4/7] kprobes: Ignore break_handler
+Message-Id: <20180518223803.b120da47fd2908fe4c9785ad@kernel.org>
+In-Reply-To: <20180518061635.GA27960@gmail.com>
+References: <152651499561.25583.14488389770693278906.stgit@devbox>
+        <152651511510.25583.17622383189254834099.stgit@devbox>
+        <20180518061635.GA27960@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-May 13:29, Peter Zijlstra wrote:
-> On Fri, May 18, 2018 at 11:57:42AM +0100, Patrick Bellasi wrote:
-> > Thus, my simple (maybe dumb) questions are:
-> > - why can't we just fold turbo boost frequency into the existing concepts?
-> > - what are the limitations of such a "simple" approach?
+On Fri, 18 May 2018 08:16:36 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
+
 > 
-> Perhaps... but does this not further complicate the whole capacity vs
-> util thing we already have in say the misfit patches?
+> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Ignore break_handler related code because it was only
+> > used by jprobe and jprobe is removed.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  Documentation/kprobes.txt |    2 +-
+> >  kernel/kprobes.c          |   39 +++++----------------------------------
+> >  2 files changed, 6 insertions(+), 35 deletions(-)
+> 
+> Even after all these changes there's quite a bit of ->break_handler() use:
+> 
+> triton:~/tip> git grep -w break_handler
+> arch/arc/kernel/kprobes.c:              if (p->break_handler && p->break_handler(p, regs)) {
+> arch/arm/probes/kprobes/core.c:                  * for calling the break_handler below on re-entry,
+> arch/arm/probes/kprobes/core.c:         if (cur->break_handler && cur->break_handler(cur, regs)) {
+> arch/arm64/kernel/probes/kprobes.c:                      * for calling the break_handler below on re-entry,
+> arch/arm64/kernel/probes/kprobes.c:             if (cur_kprobe->break_handler  &&
+> arch/arm64/kernel/probes/kprobes.c:                  cur_kprobe->break_handler(cur_kprobe, regs)) {
+> arch/ia64/kernel/kprobes.c:                     if (p->break_handler && p->break_handler(p, regs)) {
+> arch/mips/kernel/kprobes.c:                     if (p->break_handler && p->break_handler(p, regs))
+> arch/powerpc/kernel/kprobes.c:                  if (p->break_handler && p->break_handler(p, regs)) {
+> arch/s390/kernel/kprobes.c:                      * for calling the break_handler below on re-entry
+> arch/s390/kernel/kprobes.c:             if (p->break_handler && p->break_handler(p, regs)) {
+> arch/s390/kernel/kprobes.c:                      * break_handler "returns" to the original
+> arch/sh/kernel/kprobes.c:                       if (p->break_handler && p->break_handler(p, regs)) {
+> arch/sh/kernel/kprobes.c:                                       if (p->break_handler &&
+> arch/sh/kernel/kprobes.c:                                           p->break_handler(p, args->regs))
+> arch/sparc/kernel/kprobes.c:                    if (p->break_handler && p->break_handler(p, regs))
+> arch/x86/include/asm/kprobes.h:  * a post_handler or break_handler).
+> include/linux/kprobes.h:        kprobe_break_handler_t break_handler;
+> 
+> Nothing appears to be actually _setting_ the break_handler, so all of this is 
+> stale code as well which should be removed?
 
-Not sure about that...
+Yes, break_handler() is only for jprobe, not for user-defined handler.
+I already have a series of those patches, but I think I need to send it
+to each arch maintainer.
 
-> And the  util_fits_capacity() thing from the EAS ones.
+Thank you,
 
-In this case instead, if we can track somehow (not saying we can)
-what is the currently available "transient maximum capacity"...
-then a util_fits_capacity() should just look at that.
+> 
+> Thanks,
+> 
+> 	Ingo
 
-If the transient capacity is already folded into cpu_capacity, as it
-is now for RT and IRQ pressure, then likely we don't have to change
-anything.
-
-> The thing is, we either need to dynamically scale the util or the
-> capacity or both. I think for Thermal there are patches out there that
-> drop the capacity.
-
-Not sure... but I would feel more comfortable by something which caps
-the maximum capacity. Meaning, eventually you can fill up the maximum
-possible capacity only "up to" a given value, because of thermal or other
-reasons most of the scheduler maybe doesn't even have to know why?
-
-> But we'd then have to do the same for turbo/vector and all the other
-> stuff as well. Otherwise we risk things like running at low U with 0%
-> idle and not triggering the tipping point between eas and regular
-> balancing.
-
-Interacting with the tipping point and/or OPP changes is indeed an
-interesting side of the problem I was not considering so far...
-
-But again, the tipping point could not be defined as a delta
-with respect to the "transient maximum capacity" ?
-
-> So either way around we need to know the 'true' max, either to fudge
-> util or to fudge capacity.
-
-Right, but what I see from a concepts standpoint is something like:
-
-     +--+--+   cpu_capacity_orig (CONSTANT at boot time)
-     |  |  |
-     |  |  |       HW generated constraints
-     |  v  |
-     +-----+   cpu_capacity_max (depending on thermal/turbo boost)
-     |  |  |
-     |  |  |       SW generated constraints
-     |  v  |
-     +-----+   cpu_capacity (depending on RT/IRQ pressure)
-     |  |  |
-     |  |  |       tipping point delta
-     +--v--+
-     |     |   Energy Aware mode available capacity
-     +-----+
-
-Where all the wkp/lb heuristics are updated to properly consider the
-cpu_capacity_max metrics whenever it comes to know what is the max
-speed we can reach now on a CPU.
-
-> And I'm not sure we can know in some of these cases :/
-
-Right, this schema will eventually work only under the hypothesis that
-"somehow" we can update cpu_capacity_max from HW events.
-
-Not entirely sure that's possible and/or at which time granularity on
-all different platforms.
-
-> And while Vincent's patches might have been inspired by another problem,
-> they do have the effect of always allowing util to go to 1, which is
-> nice for this.
-
-Sure, that's a nice point, but still I have the feeling that always
-reaching u=1 can defeat other interesting properties of a task,
-For example, comparing task requirements in different CPUs and/or at
-different times, which plays a big role for energy aware task
-placement decisions.
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Masami Hiramatsu <mhiramat@kernel.org>
