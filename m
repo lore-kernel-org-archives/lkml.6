@@ -1,96 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeERHV5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:21:57 -0400
-Received: from mga18.intel.com ([134.134.136.126]:15400 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751466AbeERHV4 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:21:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
-   d="scan'208";a="40931554"
-Subject: Re: [PATCH v2 2/3] perf report: Use perf_evlist_forced_leader to
- support '--group'
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1526648260-30540-1-git-send-email-yao.jin@linux.intel.com>
- <1526648260-30540-3-git-send-email-yao.jin@linux.intel.com>
- <20180518070441.GB30793@krava>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <2079e88e-7c15-9589-3ce8-9fe831bf60f1@linux.intel.com>
-Date: Fri, 18 May 2018 15:21:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752165AbeERHXQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:23:16 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751506AbeERHXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:23:14 -0400
+Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
+ hip08
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
+ <20180517151459.GD10842@ziepe.ca> <5AFE484B.2080206@huawei.com>
+ <20180518041502.GS10842@ziepe.ca>
+CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5AFE7F54.9030201@huawei.com>
+Date: Fri, 18 May 2018 15:23:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180518070441.GB30793@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180518041502.GS10842@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 5/18/2018 3:04 PM, Jiri Olsa wrote:
-> On Fri, May 18, 2018 at 08:57:39PM +0800, Jin Yao wrote:
->> Since we have created a new function perf_evlist_forced_leader,
->> so now remove the old code and use perf_evlist_forced_leader
->> instead.
+On 2018/5/18 12:15, Jason Gunthorpe wrote:
+> On Fri, May 18, 2018 at 11:28:11AM +0800, Wei Hu (Xavier) wrote:
 >>
->> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
->> ---
->>   tools/perf/builtin-report.c | 8 ++------
->>   1 file changed, 2 insertions(+), 6 deletions(-)
->>
->> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
->> index 4c931af..63fe776 100644
->> --- a/tools/perf/builtin-report.c
->> +++ b/tools/perf/builtin-report.c
->> @@ -202,12 +202,8 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
-> 
-> there's comment in this place, which no longer applies in here:
-> 
-> 
-> /*
->   * Events in data file are not collect in groups, but we still want
->   * the group display. Set the artificial group and set the leader's
->   * forced_leader flag to notify the display code.
->   */
-> 
-> could you please move/change/apply it to perf_evlist_forced_leader
-> 
-> thanks,
-> jirka
-> 
+>> On 2018/5/17 23:14, Jason Gunthorpe wrote:
+>>> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>> index 86ef15f..e1c44a6 100644
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+>>>>  	int ret = 0;
+>>>>  	int ntc;
+>>>>  
+>>>> +	if (hr_dev->is_reset)
+>>>> +		return 0;
+>>>> +
+>>>>  	spin_lock_bh(&csq->lock);
+>>>>  
+>>>>  	if (num > hns_roce_cmq_space(csq)) {
+>>>> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+>>>>  	return 0;
+>>>>  
+>>>>  error_failed_get_cfg:
+>>>> +	handle->priv = NULL;
+>>>>  	kfree(hr_dev->priv);
+>>>>  
+>>>>  error_failed_kzalloc:
+>>>> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>>>>  {
+>>>>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+>>>>  
+>>>> +	if (!hr_dev)
+>>>> +		return;
+>>>> +
+>>>>  	hns_roce_exit(hr_dev);
+>>>> +	handle->priv = NULL;
+>>>>  	kfree(hr_dev->priv);
+>>>>  	ib_dealloc_device(&hr_dev->ib_dev);
+>>>>  }
+>>> Why are these hunks here? If init fails then uninit should not be
+>>> called, so why meddle with priv?
+>> In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
+>> hr_dev,
+>> We want clear the value in hns_roce_hw_v2_uninit_instance function.
+>> So we can ensure no problem in RoCE driver.
+> What problem could happen?
+>
+> I keep removing unnecessary sets to null and checks of null, so please
+> don't add them if they cannot happen.
+>
+> Eg uninit should never be called with a null priv, that is a serious
+> logic mis-design someplace if it happens.
+>
+> Jason
+NIC driver call the registered reset_notify() function to finish the
+part of RoCE reset process.
+In RoCE driver,  when hnae3_reset_notify_type is HNAE3_UNINIT_CLIENT,
+we call hns_roce_hw_v2_uninit_instance(handle, false) to release the
+resources.
+when hnae3_reset_notify_type is HNAE3_INIT_CLIENT, we call
+hns_roce_hw_v2_init_instance.
+if hns_roce_hw_v2_init_instance failed, we should ensure no problem in
+the other callback
+function registered by RoCE driver.
+ 
+The related RoCE driver:
+static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
+{
+    msleep(100);
+    hns_roce_hw_v2_uninit_instance(handle, false);
+    return 0;
+}
 
-Oh, yes, I should move the comment to perf_evlist_forced_leader.
+static int hns_roce_hw_v2_reset_notify(struct hnae3_handle *handle,
+                       enum hnae3_reset_notify_type type)
+{
+    int ret = 0;
 
-I will do it in next version.
+    switch (type) {
+    case HNAE3_DOWN_CLIENT:
+        ret = hns_roce_hw_v2_reset_notify_down(handle);
+        break;
+    case HNAE3_INIT_CLIENT:
+        ret = hns_roce_hw_v2_init_instance(handle);
+        break;
+    case HNAE3_UNINIT_CLIENT:
+        ret = hns_roce_hw_v2_reset_notify_uninit(handle);
+        break;
+    default:
+        break;
+    }
 
-Thanks
-Jin Yao
+    return ret;
+}
 
->>   static void setup_forced_leader(struct report *report,
->>   				struct perf_evlist *evlist)
-> 
->>   {
->> -	if (report->group_set && !evlist->nr_groups) {
->> -		struct perf_evsel *leader = perf_evlist__first(evlist);
->> -
->> -		perf_evlist__set_leader(evlist);
->> -		leader->forced_leader = true;
->> -	}
->> +	if (report->group_set)
->> +		perf_evlist_forced_leader(evlist);
->>   }
->>   
->>   static int process_feature_event(struct perf_tool *tool,
->> -- 
->> 2.7.4
->>
+The related NIC driver:
+
+static int hclge_notify_roce_client(struct hclge_dev *hdev,
+                    enum hnae3_reset_notify_type type)
+{
+    struct hnae3_client *client = hdev->roce_client;
+    struct hnae3_handle *handle;
+    int ret = 0;
+    u16 i;
+
+    if (!client)
+        return 0;
+
+    if (!client->ops->reset_notify)
+        return -EOPNOTSUPP;
+
+    for (i = 0; i < hdev->num_vmdq_vport + 1; i++) {
+        handle = &hdev->vport[i].roce;
+        ret = client->ops->reset_notify(handle, type);
+        if (ret) {
+            dev_err(&hdev->pdev->dev,
+                "notify roce client failed %d", ret);
+            return ret;
+        }
+    }
+
+    return ret;
+}
+
+static void hclge_reset(struct hclge_dev *hdev)
+{
+    struct hnae3_handle *handle;
+
+    /* perform reset of the stack & ae device for a client */
+    handle = &hdev->vport[0].nic;
+
+    hclge_notify_roce_client(hdev, HNAE3_DOWN_CLIENT);
+    hclge_notify_roce_client(hdev, HNAE3_UNINIT_CLIENT);
+
+    rtnl_lock();
+    hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
+
+    if (!hclge_reset_wait(hdev)) {
+        hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
+        hclge_reset_ae_dev(hdev->ae_dev);
+        hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
+
+        hclge_clear_reset_cause(hdev);
+    } else {
+        /* schedule again to check pending resets later */
+        set_bit(hdev->reset_type, &hdev->reset_pending);
+        hclge_reset_task_schedule(hdev);
+    }
+
+    hclge_notify_client(hdev, HNAE3_UP_CLIENT);
+    handle->last_reset_time = jiffies;
+    rtnl_unlock();
+
+    hclge_notify_roce_client(hdev, HNAE3_INIT_CLIENT);
+    hclge_notify_roce_client(hdev, HNAE3_UP_CLIENT);
+}
+
+Thanks, Jason
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
