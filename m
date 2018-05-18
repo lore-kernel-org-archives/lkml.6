@@ -1,163 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeERI0H (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:26:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35568 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753687AbeERI0D (ORCPT
+        id S1753916AbeERIZB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:25:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbeERIY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:26:03 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        tomasz Figa <tfiga@chromium.org>, Sean Paul <seanpaul@google.com>,
-        kernel@collabora.com,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>,
-        mark.yao@rock-chips.com
-Subject: [RFC PATCH] drm/rockchip: update cursors asynchronously through atomic.
-Date: Fri, 18 May 2018 10:25:48 +0200
-Message-Id: <20180518082548.13450-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 18 May 2018 04:24:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68E8160F74
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+From: Saravana Kannan <skannan@codeaurora.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Saravana Kannan <skannan@codeaurora.org>,
+        Rajendra Nayak <rjendra@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Revert "cpufreq: Remove policy create/remove notifiers"
+Date: Fri, 18 May 2018 01:24:47 -0700
+Message-Id: <1526631889-5084-2-git-send-email-skannan@codeaurora.org>
+X-Mailer: git-send-email 1.8.2.1
+In-Reply-To: <1526631889-5084-1-git-send-email-skannan@codeaurora.org>
+References: <1526631889-5084-1-git-send-email-skannan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to async updates of cursors by using the new atomic
-interface for that.
+This reverts commit f9f41e3ef99ac9d4e91b07634362e393fb929aad.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Change-Id: Iddde3ef56c9e5b14dcb14f8737899b85e56f5b43
 ---
-I am sending this as RFC because I still don't have a deep knowledge of
-the hw and I am not sure if the vop_plane_update function can be reused
-in both cases, atomic_updates and atomic_async_updates. I think that
-someone with more knowledge should take a look. The patch was tested on
-a Samsung Chromebook Plus in two ways.
+ drivers/cpufreq/cpufreq.c | 16 +++++++++++-----
+ include/linux/cpufreq.h   |  3 +++
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
-tests and see that there is no regression after the patch.
-
-2. Running weston using the atomic API.
-
-Best regards,
- Enric
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 79 ++++++++++++++++-----
- 1 file changed, 63 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 53d4afe15278..a89214541439 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -688,8 +688,7 @@ static void vop_plane_atomic_disable(struct drm_plane *plane,
- 	spin_unlock(&vop->reg_lock);
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 075d18f..f790686 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1129,11 +1129,15 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
+ 	return NULL;
  }
  
--static void vop_plane_atomic_update(struct drm_plane *plane,
--		struct drm_plane_state *old_state)
-+static void vop_plane_update(struct drm_plane *plane)
+-static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
++static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy, bool notify)
  {
- 	struct drm_plane_state *state = plane->state;
- 	struct drm_crtc *crtc = state->crtc;
-@@ -710,20 +709,6 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	bool rb_swap;
- 	int format;
+ 	struct kobject *kobj;
+ 	struct completion *cmp;
  
--	/*
--	 * can't update plane when vop is disabled.
--	 */
--	if (WARN_ON(!crtc))
--		return;
--
--	if (WARN_ON(!vop->is_enabled))
--		return;
--
--	if (!state->visible) {
--		vop_plane_atomic_disable(plane, old_state);
--		return;
--	}
--
- 	obj = rockchip_fb_get_gem_obj(fb, 0);
- 	rk_obj = to_rockchip_obj(obj);
- 
-@@ -794,10 +779,72 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	spin_unlock(&vop->reg_lock);
++	if (notify)
++		blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
++					     CPUFREQ_REMOVE_POLICY, policy);
++
+ 	down_write(&policy->rwsem);
+ 	cpufreq_stats_free_table(policy);
+ 	kobj = &policy->kobj;
+@@ -1151,7 +1155,7 @@ static void cpufreq_policy_put_kobj(struct cpufreq_policy *policy)
+ 	pr_debug("wait complete\n");
  }
  
-+static void vop_plane_atomic_update(struct drm_plane *plane,
-+				    struct drm_plane_state *old_state)
-+{
-+	struct drm_plane_state *state = plane->state;
-+	struct vop *vop = to_vop(state->crtc);
-+
-+	/*
-+	 * can't update plane when vop is disabled.
-+	 */
-+	if (WARN_ON(!state->crtc))
-+		return;
-+
-+	if (WARN_ON(!vop->is_enabled))
-+		return;
-+
-+	if (!state->visible) {
-+		vop_plane_atomic_disable(plane, old_state);
-+		return;
-+	}
-+
-+	vop_plane_update(plane);
-+}
-+
-+static int vop_plane_atomic_async_check(struct drm_plane *plane,
-+					struct drm_plane_state *state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+
-+	crtc_state = drm_atomic_get_existing_crtc_state(state->state,
-+							state->crtc);
-+	if (WARN_ON(!crtc_state))
-+		return -EINVAL;
-+
-+	if (!crtc_state->active)
-+		return -EINVAL;
-+
-+	if (plane->state->crtc != state->crtc ||
-+	    plane->state->src_w != state->src_w ||
-+	    plane->state->src_h != state->src_h ||
-+	    plane->state->crtc_w != state->crtc_w ||
-+	    plane->state->crtc_h != state->crtc_h ||
-+	    !plane->state->fb ||
-+	    plane->state->fb != state->fb)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static void vop_plane_atomic_async_update(struct drm_plane *plane,
-+					  struct drm_plane_state *new_state)
-+{
-+	plane->state->src_x = new_state->src_x;
-+	plane->state->src_y = new_state->src_y;
-+	plane->state->crtc_x = new_state->crtc_x;
-+	plane->state->crtc_y = new_state->crtc_y;
-+	plane->state->fb = new_state->fb;
-+
-+	vop_plane_update(plane);
-+}
-+
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
- 	.atomic_check = vop_plane_atomic_check,
- 	.atomic_update = vop_plane_atomic_update,
- 	.atomic_disable = vop_plane_atomic_disable,
-+	.atomic_async_check = vop_plane_atomic_async_check,
-+	.atomic_async_update = vop_plane_atomic_async_update,
- };
+-static void cpufreq_policy_free(struct cpufreq_policy *policy)
++static void cpufreq_policy_free(struct cpufreq_policy *policy, bool notify)
+ {
+ 	unsigned long flags;
+ 	int cpu;
+@@ -1164,7 +1168,7 @@ static void cpufreq_policy_free(struct cpufreq_policy *policy)
+ 		per_cpu(cpufreq_cpu_data, cpu) = NULL;
+ 	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
  
- static const struct drm_plane_funcs vop_plane_funcs = {
+-	cpufreq_policy_put_kobj(policy);
++	cpufreq_policy_put_kobj(policy, notify);
+ 	free_cpumask_var(policy->real_cpus);
+ 	free_cpumask_var(policy->related_cpus);
+ 	free_cpumask_var(policy->cpus);
+@@ -1296,6 +1300,8 @@ static int cpufreq_online(unsigned int cpu)
+ 			goto out_destroy_policy;
+ 
+ 		cpufreq_stats_create_table(policy);
++		blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
++				CPUFREQ_CREATE_POLICY, policy);
+ 
+ 		write_lock_irqsave(&cpufreq_driver_lock, flags);
+ 		list_add(&policy->policy_list, &cpufreq_policy_list);
+@@ -1334,7 +1340,7 @@ static int cpufreq_online(unsigned int cpu)
+ 		cpufreq_driver->exit(policy);
+ 
+ out_free_policy:
+-	cpufreq_policy_free(policy);
++	cpufreq_policy_free(policy, !new_policy);
+ 	return ret;
+ }
+ 
+@@ -1447,7 +1453,7 @@ static void cpufreq_remove_dev(struct device *dev, struct subsys_interface *sif)
+ 	remove_cpu_dev_symlink(policy, dev);
+ 
+ 	if (cpumask_empty(policy->real_cpus))
+-		cpufreq_policy_free(policy);
++		cpufreq_policy_free(policy, true);
+ }
+ 
+ /**
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 87f48dd..b6209b3 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -437,6 +437,9 @@ static inline void cpufreq_resume(void) {}
+ /* Policy Notifiers  */
+ #define CPUFREQ_ADJUST			(0)
+ #define CPUFREQ_NOTIFY			(1)
++#define CPUFREQ_START			(2)
++#define CPUFREQ_CREATE_POLICY		(3)
++#define CPUFREQ_REMOVE_POLICY		(4)
+ 
+ #ifdef CONFIG_CPU_FREQ
+ int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list);
 -- 
-2.17.0
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
