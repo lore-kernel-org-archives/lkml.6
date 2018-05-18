@@ -1,39 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqqOVV5yyvhaWRoPpE9u0APWMSp/fz2qhrpS7rdBibz93j1hJkTQe9xeS7mkI/SxVDGndz4
-ARC-Seal: i=1; a=rsa-sha256; t=1526631472; cv=none;
+X-Google-Smtp-Source: AB8JxZosd3TLqMoZbI7hf0DMk5raHaPm/q8yO219DBh5IqFjuBBO614kkGBf6RzWTV/YVN1pOVQ9
+ARC-Seal: i=1; a=rsa-sha256; t=1526631469; cv=none;
         d=google.com; s=arc-20160816;
-        b=KxtSABldvxfO82kYORqfJAEdAbpsKUAbIiWhEMQmgutUS0y1+ukX9KUQ9rQBbDcvHk
-         pZ69jhQ2JK7EE3n727HhjwTVTJxszM5NXvxI6PWaRvNUBfy17L/NLwu3WfcOsksV0A7+
-         LQFXB077b1G6ULdA4CK9zYY9PuH6a1u0T3uoVIhltjJD1u+97mY/681qd6faTlLkAF3H
-         RHkqaF2oSYH1PhazrDIHEJ2jXmRiL1HdrDOFvf6SjWjwc5tirReiJlKl9DmboSXo+yg6
-         gEdCKcWYx24+A4zF1sMlDX50NbvBYST0RbgYA4aJ7dPmGU16cGQ03rDSn4NFmuO9+oXr
-         h7dw==
+        b=CXhXi1U1WsF9z/4Y6MjSqRblyV0ftRhq3FiDuao2rX2lomS5YKuPTZOkx35wvLGto0
+         Z3SFpYq68b8X31+4Qujf7E+4gd28byYUk8vdfWGB9t9MrjKH8rSUyGZDvRV5uSR6wL2u
+         bhsIfCxrWicwYiYNi/Dm6FXyZCMQG76esObk93HK3N6NlBw1djGcDCnQnb5kUl3xPq2Q
+         vNHM0F18kXhRvDfHRhAkvEk4F6fBc5tz2dvgebPLLZ9YjM22dHK3FSaLHjcYL0XNnlka
+         e9O9xBdvX2HoN0zRkilIX5ySiNpw7Zr315h8XFH2BB7Muii522EqDx7bt2u9qcs1q4S6
+         i54w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=+1aN0g0XzyOrPSYVrRQxGm1J4D6PaMzcI5NPIouOCBk=;
-        b=iPtjSHjmL8fhckkFQK9axaXUZTBQMMKscPDzIqmw41+ceuYxz6Y9tm1WOLdq6/xx04
-         57pnKFoa/yKhkK1fviBh1y1wdm0IfQNBulTRX7DY5irhC/r6vgMaOF8hVilrFpYmk2mS
-         cXgwOpp9ISWTeVtAW/OVj+oUiB/yykX9YcklyXrBn/D6cLWVbPQ7ndQ9GQyTjwtjx+mt
-         qzGWvu06ij8Ogk1rldeEdcUBNAyWS/Fzwe1dknrOnO5tAgVV2tqmZPikn0Ua5XzzYrTA
-         U8TW4+VcmHXhouQ+7HDNPU2fuOrwHl3drzYdXQnytUATwwiO1V4pl5s646K6PI9eYdEV
-         Z23A==
+        bh=rDpD96VqyMtGE6aVOIVgEa3YS47pLyr9WUi7koH0R0E=;
+        b=xlUUzm9PNCaUSLB4BjBcFyT4SnofktaYmOH3Es6GFLsl9OTZYYkSz7pnjntqnkyy3h
+         6WqnxbrjknXaKI24xV6f5inoOlXry/5qnzyrCg7ftJbOSrnxJSwV7BAMTHa8BHs/AULT
+         uS0C+3a17+XcQXB0OJw+ENpfmONj5+zrqRikzsuD9g9InGa2ITnIly2bwWaTKVudw650
+         4rYtsbxX9Pvcm2YqANxIxSpABY8qVsEIp/+44M4rDknB7r1lk0s4UsVSc965G9C/nr9x
+         Tm27Wf9lEvEdFBjqeffB2/eyBuH6Jt77lFFSs7XjYgdxrJElNrvIW51uAz3xKUcgM61k
+         IemA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YFBaC1Mk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=X5++4T9D;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=YFBaC1Mk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=X5++4T9D;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ursula Braun <ubraun@linux.ibm.com>,
-	syzbot+03faa2dc16b8b64be396@syzkaller.appspotmail.com,
+	Debabrata Banerjee <dbanerje@akamai.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 15/55] net/smc: restrict non-blocking connect finish
-Date: Fri, 18 May 2018 10:15:11 +0200
-Message-Id: <20180518081458.215956909@linuxfoundation.org>
+Subject: [PATCH 4.16 32/55] bonding: send learning packets for vlans on slave
+Date: Fri, 18 May 2018 10:15:28 +0200
+Message-Id: <20180518081459.004685744@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789123047137185?=
-X-GMAIL-MSGID: =?utf-8?q?1600789123047137185?=
+X-GMAIL-THRID: =?utf-8?q?1600789120269895465?=
+X-GMAIL-MSGID: =?utf-8?q?1600789120269895465?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ursula Braun <ubraun@linux.ibm.com>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-[ Upstream commit 784813aed6ba24a1f24e7e11d9d0f208cee37a7d ]
+[ Upstream commit 21706ee8a47d3ede7fdae0be6d7c0a0e31a83229 ]
 
-The smc_poll code tries to finish connect() if the socket is in
-state SMC_INIT and polling of the internal CLC-socket returns with
-EPOLLOUT. This makes sense for a select/poll call following a connect
-call, but not without preceding connect().
-With this patch smc_poll starts connect logic only, if the CLC-socket
-is no longer in its initial state TCP_CLOSE.
+There was a regression at some point from the intended functionality of
+commit f60c3704e87d ("bonding: Fix alb mode to only use first level
+vlans.")
 
-In addition, a poll error on the internal CLC-socket is always
-propagated to the SMC socket.
+Given the return value vlan_get_encap_level() we need to store the nest
+level of the bond device, and then compare the vlan's encap level to
+this. Without this, this check always fails and learning packets are
+never sent.
 
-With this patch the code path mentioned by syzbot
-https://syzkaller.appspot.com/bug?extid=03faa2dc16b8b64be396
-is no longer possible.
+In addition, this same commit caused a regression in the behavior of
+balance_alb, which requires learning packets be sent for all interfaces
+using the slave's mac in order to load balance properly. For vlan's
+that have not set a user mac, we can send after checking one bit.
+Otherwise we need send the set mac, albeit defeating rx load balancing
+for that vlan.
 
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Reported-by: syzbot+03faa2dc16b8b64be396@syzkaller.appspotmail.com
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/smc/af_smc.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/bonding/bond_alb.c  |   13 ++++++++-----
+ drivers/net/bonding/bond_main.c |    2 ++
+ include/net/bonding.h           |    1 +
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -1165,13 +1165,15 @@ static __poll_t smc_poll(struct file *fi
- 		/* delegate to CLC child sock */
- 		release_sock(sk);
- 		mask = smc->clcsock->ops->poll(file, smc->clcsock, wait);
--		/* if non-blocking connect finished ... */
- 		lock_sock(sk);
--		if ((sk->sk_state == SMC_INIT) && (mask & EPOLLOUT)) {
--			sk->sk_err = smc->clcsock->sk->sk_err;
--			if (sk->sk_err) {
--				mask |= EPOLLERR;
--			} else {
-+		sk->sk_err = smc->clcsock->sk->sk_err;
-+		if (sk->sk_err) {
-+			mask |= EPOLLERR;
+--- a/drivers/net/bonding/bond_alb.c
++++ b/drivers/net/bonding/bond_alb.c
+@@ -943,6 +943,10 @@ static void alb_send_lp_vid(struct slave
+ 	skb->priority = TC_PRIO_CONTROL;
+ 	skb->dev = slave->dev;
+ 
++	netdev_dbg(slave->bond->dev,
++		   "Send learning packet: dev %s mac %pM vlan %d\n",
++		   slave->dev->name, mac_addr, vid);
++
+ 	if (vid)
+ 		__vlan_hwaccel_put_tag(skb, vlan_proto, vid);
+ 
+@@ -965,14 +969,13 @@ static int alb_upper_dev_walk(struct net
+ 	u8 *mac_addr = data->mac_addr;
+ 	struct bond_vlan_tag *tags;
+ 
+-	if (is_vlan_dev(upper) && vlan_get_encap_level(upper) == 0) {
+-		if (strict_match &&
+-		    ether_addr_equal_64bits(mac_addr,
+-					    upper->dev_addr)) {
++	if (is_vlan_dev(upper) &&
++	    bond->nest_level == vlan_get_encap_level(upper) - 1) {
++		if (upper->addr_assign_type == NET_ADDR_STOLEN) {
+ 			alb_send_lp_vid(slave, mac_addr,
+ 					vlan_dev_vlan_proto(upper),
+ 					vlan_dev_vlan_id(upper));
+-		} else if (!strict_match) {
 +		} else {
-+			/* if non-blocking connect finished ... */
-+			if (sk->sk_state == SMC_INIT &&
-+			    mask & EPOLLOUT &&
-+			    smc->clcsock->sk->sk_state != TCP_CLOSE) {
- 				rc = smc_connect_rdma(smc);
- 				if (rc < 0)
- 					mask |= EPOLLERR;
+ 			alb_send_lp_vid(slave, upper->dev_addr,
+ 					vlan_dev_vlan_proto(upper),
+ 					vlan_dev_vlan_id(upper));
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1738,6 +1738,8 @@ int bond_enslave(struct net_device *bond
+ 	if (bond_mode_uses_xmit_hash(bond))
+ 		bond_update_slave_arr(bond, NULL);
+ 
++	bond->nest_level = dev_get_nest_level(bond_dev);
++
+ 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
+ 		    slave_dev->name,
+ 		    bond_is_active_slave(new_slave) ? "an active" : "a backup",
+--- a/include/net/bonding.h
++++ b/include/net/bonding.h
+@@ -198,6 +198,7 @@ struct bonding {
+ 	struct   slave __rcu *primary_slave;
+ 	struct   bond_up_slave __rcu *slave_arr; /* Array of usable slaves */
+ 	bool     force_primary;
++	u32      nest_level;
+ 	s32      slave_cnt; /* never change this value outside the attach/detach wrappers */
+ 	int     (*recv_probe)(const struct sk_buff *, struct bonding *,
+ 			      struct slave *);
