@@ -1,88 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeERRTG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:19:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36920 "EHLO mx1.redhat.com"
+        id S1751588AbeERRYb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:24:31 -0400
+Received: from mail-sn1nam02on0084.outbound.protection.outlook.com ([104.47.36.84]:2304
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751906AbeERRTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:19:02 -0400
-Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
-To: Eduardo Habkost <ehabkost@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org
-References: <1526568841-35372-1-git-send-email-mst@redhat.com>
- <20180517184658.GA1543@localhost.localdomain>
- <20180517225316-mutt-send-email-mst@kernel.org>
- <20180518160431.GX25013@localhost.localdomain>
- <20180518195139-mutt-send-email-mst@kernel.org>
- <20180518171311.GB25013@localhost.localdomain>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0764c230-3f84-36a5-ad89-fc8dd318d1e4@redhat.com>
-Date: Fri, 18 May 2018 19:18:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180518171311.GB25013@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
+        id S1750957AbeERRY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:24:29 -0400
+From: Nadav Amit <namit@vmware.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Anvin <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
+Thread-Topic: [PATCH 2/6] x86: bug: prevent gcc distortions
+Thread-Index: AQHT7jbL50o+w3m6PkeKHm2HX6GyP6Q1H7KAgACNMgCAABDSAA==
+Date: Fri, 18 May 2018 17:24:27 +0000
+Message-ID: <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com>
+References: <20180517161402.78089-1-namit@vmware.com>
+ <20180517161402.78089-3-namit@vmware.com>
+ <20180518075853.GD12217@hirez.programming.kicks-ass.net>
+ <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
+In-Reply-To: <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com;
+x-originating-ip: [208.91.2.2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN2PR05MB2430;7:irGpEoEhqeLjj8EAZndbf3bWOKL+qkacEFBcJB5RvybNiAwj/TZ9e8mYo4arNn6i6MYNu5XaMp2oG7JQNOwMWLnLknigN3F2FNyFn+Ethk5H92pV/padUkzVie+izzqL4GUjWp/BL1dFmc6fVsHDRaCVOs3dMRtsciN9Gtu8Br9J4YnOAyDgqT1VTxtj8F1oR4CeVKOZvUytzpAQeZP60ZJ4AC8m1Xq32Dq/UNmKW2kvSx4fAH0pXbpC4Qd9NnzB;20:g/Yq/7XEwYDGx6Lmyv0iHkd2GRz4XsQkpyCXj5o29FvjLuuyLWLnI4jkvAQ+PExAoKbgkHmEXkDMUwbJXJqifG6Cn3ZoFhCKA7o5aUGiJDf457txNZCeAMiSfxcfj/HzymgBOzrr9uOC1LPuY6BE4KmOB6Al8/FbVpY91EfVSPs=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN2PR05MB2430;
+x-ms-traffictypediagnostic: SN2PR05MB2430:
+x-microsoft-antispam-prvs: <SN2PR05MB2430F2D61953B244B4B4BA58D0900@SN2PR05MB2430.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN2PR05MB2430;BCL:0;PCL:0;RULEID:;SRVR:SN2PR05MB2430;
+x-forefront-prvs: 0676F530A9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(39380400002)(396003)(366004)(199004)(189003)(54094003)(105586002)(186003)(68736007)(106356001)(3280700002)(6436002)(11346002)(446003)(3660700001)(25786009)(14454004)(26005)(486006)(102836004)(6486002)(476003)(2616005)(2900100001)(6512007)(76176011)(66066001)(93886005)(478600001)(86362001)(3846002)(305945005)(6116002)(2906002)(97736004)(4326008)(99286004)(6246003)(33656002)(53936002)(54906003)(316002)(5250100002)(6916009)(53546011)(8936002)(6506007)(229853002)(81166006)(82746002)(81156014)(8676002)(7736002)(36756003)(83716003)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR05MB2430;H:SN2PR05MB2654.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: O6YRJ3Khc90mDQaw8eoHS/NcJ5rmL7l+uCSDszioZyIuXTSePtZtJMOCYPcy4drBCGWG+Ea2X91xKeUdNXtGXkVyowTykJTTBoi47+ahfhvkzQZjIXjfOhCt7KbyG/fYxuuvIR4O9BkxaaMSX0WTBExD+YENMDSn7KL3hPh/f1ce7RHgFSshhCNfynQut5AZ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <76F269CE351B7A46961F46628903A64F@namprd05.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 1f1f18a1-c1a2-46ad-d9f8-08d5bce43543
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f1f18a1-c1a2-46ad-d9f8-08d5bce43543
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2018 17:24:27.4060
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR05MB2430
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4IHObBN006891
 
-On 18/05/2018 19:13, Eduardo Habkost wrote:
->> As much as we'd like to be helpful and validate input, you need a real
->> time host too. I'm not sure how we'd find out - I suggest we do not
->> bother for now.
-> I'm worried that people will start enabling the flag in all kinds
-> of scenarios where the guarantees can't be kept, and make the
-> meaning of the flag in practice completely different from its
-> documented meaning.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-I don't think we should try to detect anything.  As far as QEMU is
-concerned, it's mostly garbage in, garbage out when it comes to invalid
-configurations.  It's just a bit, and using it in invalid configurations
-is okay if you're doing it (for example) for debugging.
+> On Fri, May 18, 2018 at 12:59 AM Peter Zijlstra <peterz@infradead.org>
+> wrote:
+> 
+>> This is an awesome hack, but is there really nothing we can do to make
+>> it more readable? Esp, that global asm doing the macro definition is a
+>> pain to read.
+> 
+> I actually find that macro to be *more* legible than what we do now,
+> although I'm not enamored with the pseudo-operation name ("__BUG_FLAGS").
+> 
+> That said, the C header code itself I don't love.
+> 
+> I wonder if we should just introduce a new assembler header file, and get
+> it included when processing compiler-generated asm. We already do that for
+> our _real_ *.S files, with a number of our header files having constants
+> and code for the asm case too, not just C.
+> 
+> But we could have an <asm/asm-macro.h> header file that has these kinds of
+> macros (or "pseudo-instructions") for assembly language cases, and then we
+> could just rely on them in inline asm.
 
-Paolo
+Will it be ok just to use a global inline asm to set an “.include” directive
+that gas would later process? (I can probably wrap it in a C macro so it
+won’t be too disgusting)
