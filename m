@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeERRzA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:55:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:8267 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeERRy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:54:57 -0400
-Date: Fri, 18 May 2018 14:54:51 -0300
-From: Eduardo Habkost <ehabkost@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org
-Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
-Message-ID: <20180518175451.GD25013@localhost.localdomain>
-References: <1526568841-35372-1-git-send-email-mst@redhat.com>
- <20180517184658.GA1543@localhost.localdomain>
- <20180517225316-mutt-send-email-mst@kernel.org>
- <20180518160431.GX25013@localhost.localdomain>
- <20180518195139-mutt-send-email-mst@kernel.org>
- <20180518171311.GB25013@localhost.localdomain>
- <0764c230-3f84-36a5-ad89-fc8dd318d1e4@redhat.com>
+        id S1752236AbeERR4b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:56:31 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:38853 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752060AbeERR4a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:56:30 -0400
+X-Google-Smtp-Source: AB8JxZrGErdGOB87f9FMQSjcRCwC1UBMUe1D4S/BmZfD0luyTL8TWGijHol4v5IyR26bFp6AkTOM4r3YACAHaBgE4/k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0764c230-3f84-36a5-ad89-fc8dd318d1e4@redhat.com>
-X-Fnord: you can see the fnord
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180518170202.11458-1-samitolvanen@google.com>
+ <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+ <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com>
+In-Reply-To: <8c7be44f-086d-65e3-9969-8182261ce82f@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 18 May 2018 10:56:18 -0700
+Message-ID: <CAKwvOd=XZqg5=mkXZb-cxq3i_AGoJGAbmF=Fwc7Q98oi0tbN9g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+To: marc.zyngier@arm.com
+Cc: Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 07:18:57PM +0200, Paolo Bonzini wrote:
-> On 18/05/2018 19:13, Eduardo Habkost wrote:
-> >> As much as we'd like to be helpful and validate input, you need a real
-> >> time host too. I'm not sure how we'd find out - I suggest we do not
-> >> bother for now.
-> > I'm worried that people will start enabling the flag in all kinds
-> > of scenarios where the guarantees can't be kept, and make the
-> > meaning of the flag in practice completely different from its
-> > documented meaning.
-> 
-> I don't think we should try to detect anything.  As far as QEMU is
-> concerned, it's mostly garbage in, garbage out when it comes to invalid
-> configurations.  It's just a bit, and using it in invalid configurations
-> is okay if you're doing it (for example) for debugging.
++ Andrey
 
-In this case, I'd like the requirements and recommendations to be
-included in QEMU documentation.  Especially to point out the most
-obvious and more likely mistakes (like not ensuring memory is
-pinned at all, or letting the vCPU threads be interrupted).
+On Fri, May 18, 2018 at 10:45 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 18/05/18 18:40, Nick Desaulniers wrote:
+> > On Fri, May 18, 2018 at 10:30 AM Marc Zyngier <marc.zyngier@arm.com>
+wrote:
+> >> I'm going to ask the question I've asked before when this patch cropped
+> >> up (must be the 4th time now):
 
-So, is there a known list of steps required to configure a host
-to enable kvm-hints-realtime safely, already?  I'd like the
-documentation to be better than "you should fiddle with the CPU
-affinity on your system and also ensure memory will be pinned;
-good luck".
+The previous threads for context:
+https://patchwork.kernel.org/patch/10060381/
+https://lkml.org/lkml/2018/3/16/434
 
+> >> Is it guaranteed that this is the only case where LLVM/clang is going
+to
+> >> generate absolute addresses instead of using relative addressing?
+> >
+> > It seems like if there's requirements that only relative addressing be
+> > used, then the compiler should be told explicitly about this
+restriction,
+> > no?
+
+> Certainly. What's the rune?
+
+It seems like -fno-jump-tables covers all known issues and unblocks people
+from doing further work.  It sounds like you'd like some kind of stronger
+guarantee? Wont those cases still "crop up" as far as needing to annotate
+either the code, or build scripts?
 -- 
-Eduardo
+Thanks,
+~Nick Desaulniers
