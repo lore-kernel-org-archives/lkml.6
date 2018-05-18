@@ -1,40 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqjFydU5Aa0oZz3/5KPty2Nlx36jaJGF+Y6vvQp5VcnaMuv6kKvAYg0o71LKV8YoaZrFZla
-ARC-Seal: i=1; a=rsa-sha256; t=1526631701; cv=none;
+X-Google-Smtp-Source: AB8JxZo+18GWxhd0714kmc9ZBPwRGTKQfwAukOZPdi4PnIXkj//g6xasXsCiyaCL/4Def85fZ10R
+ARC-Seal: i=1; a=rsa-sha256; t=1526631699; cv=none;
         d=google.com; s=arc-20160816;
-        b=wCHlijaWZqGe3Nf1G6sfgURzU8qqLx6qdnQqDqlnm694Ajjmjj/Bq39bjqt4NTI4wJ
-         GzZJZaOBETqnrHNnbbFD/X7wumqTv0X1NgLFT+WFP2Bz5GKvTYU83NOPdbYOofketkCB
-         JncUfZE5sN+VADzwsg83rD21oRCoEVhtp9PGpe17BEq6BYyB7YpGbx/Xy6uGM9QZMjt7
-         ZoRmG0Ewd4RcjRbFltI6vKWTFIaJMoBwhXlF2HdZNjdvc6Rc9ccsbx6mUXqFNk0rNGf9
-         rpOp91AhVmISLzc9p0StkNV1rM1iSDuuChdxxk2emGPsQE9Pbd0+pzVBrVSuWPAnurWu
-         Xc+g==
+        b=KvUG38AqffZymrfZkiruZNGAhLZt1ya+XLMKKq9kuMP6SNgtbeGbbHirU5jBOyrqUM
+         tkN0GDVlY2v6p0slnjPAvATKbFlsmgF3sVFAfvmx44RVMAjOQufjNXxagIOpqcxrmiBA
+         Pz5Pil/SwqWLE0H0pHTzJbKAXToprJKabKYEgFctdCR73nq/g95HNSd0Dt8aKhXzHnyw
+         LN3jTpAHn91A9xQiTNpzeGnsfB7P//60erdmZ+Ij43SijGdL2/HDY+nilKeOhaCSA46W
+         Zj5Y9QorAxAn09OV0UqscVNN4FByHW8yXLMow+j/f1PY1/A808GNzvFrz+r1wA2OzFxW
+         VbxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=zEQ3ASLjE1F+in1hFglugtCZb8Lj41T0C3rOg+7eRiw=;
-        b=bhRQ4wE8nyyrVLyagJv3LEihxxBdTnL2ARvCUw0wozebZFNH3ypE/bd3BT+MKv8mc4
-         lDAe97erahaIRnJOUSbp7gHzYOJS0/iW6KM0oWipjbR+wTPtJ9JQ32bnofyLCGusOxi3
-         KAuLhUlFOM6IgU3ypZDwJgvnh1Vt+zhJi7mtt1EYuBxYI0EMf2Z1/nS9uZE6hLE0c07H
-         q87wBqm36zmA8HptXSRXzHms/AiyQOGwulQNVgg6MOqADmtqqDr8Y/8pp8H8TjKUNf7y
-         M14BZYGlBWSfwWAJUsxYcJwWgG4SWWK2H1oK2FR5nAXIY+OJTssWun/zTxWxVYiTcr8l
-         gCZg==
+        bh=7sDV/pp5D2+lVmas4h+Ahl71kbwK60bvhAKDRbGdMmY=;
+        b=FKkpBnOkBSLnxRpE/NfAiYyAdFQ0AbqLKuGL8QUHeqWBHkHaTXmWyKX9AtQmiMejqV
+         IPLMgxJJ7N78ntDrmLRLhKuLaeErXpddmWolYGtV34DTYiGeHSj7xvg7jTLkrzVwxxrK
+         ++Z3xhlDVyIV9yKT7srncMQ3v8A05lv13pUNHvIj2YrJnNaqVjHD/F6J6w8q8oulPBdg
+         52Jbdrk7oBoc7/zwiQvq5uexGqUNfjUQijRa82vpwvXbePUYL93jJhm1ZgQTf7tevavZ
+         Zu0OsFYhdtgzbgK5SKnBBaAAQXTMx1YzGQt5m34EL2kdMQPP1BSed6TA8qA5Es6mjiiA
+         auRw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=KFJeorpo;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dH5jCcA+;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=KFJeorpo;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dH5jCcA+;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com,
 	Xin Long <lucien.xin@gmail.com>,
 	Neil Horman <nhorman@tuxdriver.com>,
 	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 17/33] sctp: use the old asoc when making the cookie-ack chunk in dupcook_d
-Date: Fri, 18 May 2018 10:15:56 +0200
-Message-Id: <20180518081535.796055426@linuxfoundation.org>
+Subject: [PATCH 4.9 16/33] sctp: remove sctp_chunk_put from fail_mark err path in sctp_ulpevent_make_rcvmsg
+Date: Fri, 18 May 2018 10:15:55 +0200
+Message-Id: <20180518081535.758371040@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789105798675271?=
-X-GMAIL-MSGID: =?utf-8?q?1600789363054731955?=
+X-GMAIL-THRID: =?utf-8?q?1600789103167895925?=
+X-GMAIL-MSGID: =?utf-8?q?1600789360583571306?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,36 +56,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 46e16d4b956867013e0bbd7f2bad206f4aa55752 ]
+[ Upstream commit 6910e25de2257e2c82c7a2d126e3463cd8e50810 ]
 
-When processing a duplicate cookie-echo chunk, for case 'D', sctp will
-not process the param from this chunk. It means old asoc has nothing
-to be updated, and the new temp asoc doesn't have the complete info.
+In Commit 1f45f78f8e51 ("sctp: allow GSO frags to access the chunk too"),
+it held the chunk in sctp_ulpevent_make_rcvmsg to access it safely later
+in recvmsg. However, it also added sctp_chunk_put in fail_mark err path,
+which is only triggered before holding the chunk.
 
-So there's no reason to use the new asoc when creating the cookie-ack
-chunk. Otherwise, like when auth is enabled for cookie-ack, the chunk
-can not be set with auth, and it will definitely be dropped by peer.
+syzbot reported a use-after-free crash happened on this err path, where
+it shouldn't call sctp_chunk_put.
 
-This issue is there since very beginning, and we fix it by using the
-old asoc instead.
+This patch simply removes this call.
 
+Fixes: 1f45f78f8e51 ("sctp: allow GSO frags to access the chunk too")
+Reported-by: syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/sm_statefuns.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sctp/ulpevent.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -1959,7 +1959,7 @@ static sctp_disposition_t sctp_sf_do_dup
- 		}
- 	}
+--- a/net/sctp/ulpevent.c
++++ b/net/sctp/ulpevent.c
+@@ -723,7 +723,6 @@ struct sctp_ulpevent *sctp_ulpevent_make
+ 	return event;
  
--	repl = sctp_make_cookie_ack(new_asoc, chunk);
-+	repl = sctp_make_cookie_ack(asoc, chunk);
- 	if (!repl)
- 		goto nomem;
- 
+ fail_mark:
+-	sctp_chunk_put(chunk);
+ 	kfree_skb(skb);
+ fail:
+ 	return NULL;
