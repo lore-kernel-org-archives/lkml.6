@@ -1,81 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeERHSs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:18:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37108 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751320AbeERHSq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:18:46 -0400
+        id S1752259AbeERHVS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:21:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751296AbeERHVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:21:16 -0400
+Date: Fri, 18 May 2018 12:51:12 +0530
+From: Vinod <vkoul@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Message-ID: <20180518072112.GG2932@vkoul-mobl>
+References: <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
+ <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+ <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
+ <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl>
+ <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+ <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
+ <20180518040349.GB2932@vkoul-mobl>
+ <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 18 May 2018 12:48:44 +0530
-From: Vikash Garodia <vgarodia@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: hverkuil@xs4all.nl, mchehab@kernel.org, andy.gross@linaro.org,
-        stanimir.varbanov@linaro.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, acourbot@google.com,
-        linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH 1/4] soc: qcom: mdt_loader: Add check to make scm calls
-In-Reply-To: <20180518052844.GP14924@minitux>
-References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
- <1526556740-25494-2-git-send-email-vgarodia@codeaurora.org>
- <20180518052844.GP14924@minitux>
-Message-ID: <5c3934858f7e48b0de13f12d40d126f1@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On 18-05-18, 08:28, Marek Szyprowski wrote:
+> Hi Vinod,
+> 
+> Okay, I see that in theory, there are some tricky bits in implementing DMA
+> support in UART drivers. On the other hand there are already drivers 
+> with seems
+> to be working fine. This discussion is about revert of the feature 
+> present in
+> pl330 driver, which is required by other in-kernel driver without proper 
+> fix to
+> them.
+> 
+> Can we drop it for now and discuss what and how should be implemented to 
+> make
+> everyone happy, without any regressions?
 
-On 2018-05-18 10:58, Bjorn Andersson wrote:
-> On Thu 17 May 04:32 PDT 2018, Vikash Garodia wrote:
-> 
->> In order to invoke scm calls, ensure that the platform
->> has the required support to invoke the scm calls in
->> secure world.
->> 
->> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->> ---
->>  drivers/soc/qcom/mdt_loader.c | 21 +++++++++++++--------
->>  1 file changed, 13 insertions(+), 8 deletions(-)
->> 
->> diff --git a/drivers/soc/qcom/mdt_loader.c 
->> b/drivers/soc/qcom/mdt_loader.c
->> index 17b314d..db55d53 100644
->> --- a/drivers/soc/qcom/mdt_loader.c
->> +++ b/drivers/soc/qcom/mdt_loader.c
->> @@ -121,10 +121,12 @@ int qcom_mdt_load(struct device *dev, const 
->> struct firmware *fw,
->>  	if (!fw_name)
->>  		return -ENOMEM;
->> 
->> -	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
->> -	if (ret) {
->> -		dev_err(dev, "invalid firmware metadata\n");
->> -		goto out;
->> +	if (qcom_scm_is_available()) {
-> 
-> qcom_scm_is_available() tells you if the qcom_scm driver has been
-> probed, not if your platform implements PAS.
-> 
-> Please add a DT property to tell the driver if it should require PAS or
-> not (the absence of such property should indicate PAS is required, for
-> backwards compatibility purposes). For the MDT loader we need to merge
-> the following patch to make this work:
-> 
-> https://patchwork.kernel.org/patch/10397889/
+Sure am dropping the revert, we can always bring it back if it is required
 
-Thanks for your inputs. I have already added a child node in video DT 
-node
-to tell the driver if PAS is not needed.
-I will drop this patch as use 
-https://patchwork.kernel.org/patch/10397889
-and update the driver to call new api qcom_mdt_load_no_init.
-
-> Regards,
-> Bjorn
+-- 
+~Vinod
