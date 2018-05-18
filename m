@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751994AbeERHtu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:49:50 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40878 "EHLO
+        id S1752130AbeERHt4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:49:56 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40889 "EHLO
         mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeERHtr (ORCPT
+        with ESMTP id S1751112AbeERHtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:49:47 -0400
-X-Google-Smtp-Source: AB8JxZp9DMnGsSeThwGXMQ6V2n4pulrZompt9s1bI1y5sNK2Ndmayej/0lF/VYlqijke5R1GRCVJXw==
+        Fri, 18 May 2018 03:49:51 -0400
+X-Google-Smtp-Source: AB8JxZqRkWT5mjyzzbuwmvDNqxY9jRYFQ4uCRfOlNmVDEIMWdgGRgdohJl6I+IH7PD1mq6LFWiN8Kg==
 From: Kent Overstreet <kent.overstreet@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc: Kent Overstreet <kent.overstreet@gmail.com>,
@@ -15,135 +15,251 @@ Cc: Kent Overstreet <kent.overstreet@gmail.com>,
         Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
         tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
         viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
-Subject: [PATCH 00/10] RFC: assorted bcachefs patches
-Date: Fri, 18 May 2018 03:48:58 -0400
-Message-Id: <20180518074918.13816-1-kent.overstreet@gmail.com>
+Subject: [PATCH 01/10] mm: pagecache add lock
+Date: Fri, 18 May 2018 03:49:00 -0400
+Message-Id: <20180518074918.13816-3-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are all the remaining patches in my bcachefs tree that touch stuff outside
-fs/bcachefs. Not all of them are suitable for inclusion as is, I wanted to get
-some discussion first.
+Add a per address space lock around adding pages to the pagecache - making it
+possible for fallocate INSERT_RANGE/COLLAPSE_RANGE to work correctly, and also
+hopefully making truncate and dio a bit saner.
 
- * pagecache add lock
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ fs/inode.c            |  1 +
+ include/linux/fs.h    | 23 +++++++++++
+ include/linux/sched.h |  4 ++
+ init/init_task.c      |  1 +
+ mm/filemap.c          | 91 ++++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 115 insertions(+), 5 deletions(-)
 
-This is the only one that touches existing code in nontrivial ways.  The problem
-it's solving is that there is no existing general mechanism for shooting down
-pages in the page and keeping them removed, which is a real problem if you're
-doing anything that modifies file data and isn't buffered writes.
-
-Historically, the only problematic case has been direct IO, and people have been
-willing to say "well, if you mix buffered and direct IO you get what you
-deserve", and that's probably not unreasonable. But now we have fallocate insert
-range and collapse range, and those are broken in ways I frankly don't want to
-think about if they can't ensure consistency with the page cache.
-
-Also, the mechanism truncate uses (i_size and sacrificing a goat) has
-historically been rather fragile, IMO it might be a good think if we switched it
-to a more general rigorous mechanism.
-
-I need this solved for bcachefs because without this mechanism, the page cache
-inconsistencies lead to various assertions popping (primarily when we didn't
-think we need to get a disk reservation going by page cache state, but then do
-the actual write and disk space accounting says oops, we did need one). And
-having to reason about what can happen without a locking mechanism for this is
-not something I care to spend brain cycles on.
-
-That said, my patch is kind of ugly, and it requires filesystem changes for
-other filesystems to take advantage of it. And unfortunately, since one of the
-code paths that needs locking is readahead, I don't see any realistic way of
-implementing the locking within just bcachefs code.
-
-So I'm hoping someone has an idea for something cleaner (I think I recall
-Matthew Wilcox saying he had an idea for how to use xarray to solve this), but
-if not I'll polish up my pagecache add lock patch and see what I can do to make
-it less ugly, and hopefully other people find it palatable or at least useful.
-
- * lglocks
-
-They were removed by Peter Zijlstra when the last in kernel user was removed,
-but I've found them useful. His commit message seems to imply he doesn't think
-people should be using them, but I'm not sure why. They are a bit niche though,
-I can move them to fs/bcachefs if people would prefer. 
-
- * Generic radix trees
-
-This is a very simple radix tree implementation that can store types of
-arbitrary size, not just pointers/unsigned long. It could probably replace
-flex arrays.
-
- * Dynamic fault injection
-
-I've actually had this code sitting in my tree since forever... I know we have
-an existing fault injection framework, but I think this one is quite a bit nicer
-to actually use.
-
-It works very much like the dynamic debug infrastructure - for those who aren't
-familiar, dynamic debug makes it so you can list and individually enable/disable
-every pr_debug() callsite in debugfs.
-
-So to add a fault injection site with this, you just stick a call to
-dynamic_fault("foobar") somewhere in your code - dynamic_fault() returns true if
-you should fail whatever it is you're testing. And then it'll show up in
-debugfs, where you can enable/disable faults by file/linenumber, module, name,
-etc.
-
-The patch then also adds macros that wrap all the various memory allocation
-functions and fail if dynamic_fault("memory") returns true - which means you can
-see in debugfs every place you're allocating memory and fail all of them or just
-individually (I have tests that iterate over all the faults and flip them on one
-by one). I also use it in bcachefs to add fault injection points for uncommon
-error paths in the filesystem startup/recovery path, and for various hard to
-test slowpaths that only happen if we race in weird ways (race_fault()).
-
-Kent Overstreet (10):
-  mm: pagecache add lock
-  mm: export find_get_pages()
-  locking: bring back lglocks
-  locking: export osq_lock()/osq_unlock()
-  don't use spin_lock_irqsave() unnecessarily
-  Generic radix trees
-  bcache: optimize continue_at_nobarrier()
-  bcache: move closures to lib/
-  closures: closure_wait_event()
-  Dynamic fault injection
-
- drivers/md/bcache/Kconfig                     |  10 +-
- drivers/md/bcache/Makefile                    |   6 +-
- drivers/md/bcache/bcache.h                    |   2 +-
- drivers/md/bcache/super.c                     |   1 -
- drivers/md/bcache/util.h                      |   3 +-
- fs/inode.c                                    |   1 +
- include/asm-generic/vmlinux.lds.h             |   4 +
- .../md/bcache => include/linux}/closure.h     |  50 +-
- include/linux/dynamic_fault.h                 | 117 +++
- include/linux/fs.h                            |  23 +
- include/linux/generic-radix-tree.h            | 131 +++
- include/linux/lglock.h                        |  97 +++
- include/linux/sched.h                         |   4 +
- init/init_task.c                              |   1 +
- kernel/locking/Makefile                       |   1 +
- kernel/locking/lglock.c                       | 105 +++
- kernel/locking/osq_lock.c                     |   2 +
- lib/Kconfig                                   |   3 +
- lib/Kconfig.debug                             |  14 +
- lib/Makefile                                  |   7 +-
- {drivers/md/bcache => lib}/closure.c          |  17 +-
- lib/dynamic_fault.c                           | 760 ++++++++++++++++++
- lib/generic-radix-tree.c                      | 167 ++++
- mm/filemap.c                                  |  92 ++-
- mm/page-writeback.c                           |   5 +-
- 25 files changed, 1577 insertions(+), 46 deletions(-)
- rename {drivers/md/bcache => include/linux}/closure.h (92%)
- create mode 100644 include/linux/dynamic_fault.h
- create mode 100644 include/linux/generic-radix-tree.h
- create mode 100644 include/linux/lglock.h
- create mode 100644 kernel/locking/lglock.c
- rename {drivers/md/bcache => lib}/closure.c (95%)
- create mode 100644 lib/dynamic_fault.c
- create mode 100644 lib/generic-radix-tree.c
-
+diff --git a/fs/inode.c b/fs/inode.c
+index ef362364d3..e7aaa39adb 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -350,6 +350,7 @@ void address_space_init_once(struct address_space *mapping)
+ {
+ 	memset(mapping, 0, sizeof(*mapping));
+ 	INIT_RADIX_TREE(&mapping->page_tree, GFP_ATOMIC | __GFP_ACCOUNT);
++	pagecache_lock_init(&mapping->add_lock);
+ 	spin_lock_init(&mapping->tree_lock);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c6baf76761..18d2886a44 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -388,9 +388,32 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
+ 				loff_t pos, unsigned len, unsigned copied,
+ 				struct page *page, void *fsdata);
+ 
++/*
++ * Two-state lock - can be taken for add or block - both states are shared,
++ * like read side of rwsem, but conflict with other state:
++ */
++struct pagecache_lock {
++	atomic_long_t		v;
++	wait_queue_head_t	wait;
++};
++
++static inline void pagecache_lock_init(struct pagecache_lock *lock)
++{
++	atomic_long_set(&lock->v, 0);
++	init_waitqueue_head(&lock->wait);
++}
++
++void pagecache_add_put(struct pagecache_lock *);
++void pagecache_add_get(struct pagecache_lock *);
++void __pagecache_block_put(struct pagecache_lock *);
++void __pagecache_block_get(struct pagecache_lock *);
++void pagecache_block_put(struct pagecache_lock *);
++void pagecache_block_get(struct pagecache_lock *);
++
+ struct address_space {
+ 	struct inode		*host;		/* owner: inode, block_device */
+ 	struct radix_tree_root	page_tree;	/* radix tree of all pages */
++	struct pagecache_lock	add_lock;	/* protects adding new pages */
+ 	spinlock_t		tree_lock;	/* and lock protecting it */
+ 	atomic_t		i_mmap_writable;/* count VM_SHARED mappings */
+ 	struct rb_root_cached	i_mmap;		/* tree of private and shared mappings */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b161ef8a90..e58465f61a 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -40,6 +40,7 @@ struct io_context;
+ struct mempolicy;
+ struct nameidata;
+ struct nsproxy;
++struct pagecache_lock;
+ struct perf_event_context;
+ struct pid_namespace;
+ struct pipe_inode_info;
+@@ -865,6 +866,9 @@ struct task_struct {
+ 	unsigned int			in_ubsan;
+ #endif
+ 
++	/* currently held lock, for avoiding recursing in fault path: */
++	struct pagecache_lock *pagecache_lock;
++
+ 	/* Journalling filesystem info: */
+ 	void				*journal_info;
+ 
+diff --git a/init/init_task.c b/init/init_task.c
+index 3ac6e754cf..308d46eef9 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -106,6 +106,7 @@ struct task_struct init_task
+ 	},
+ 	.blocked	= {{0}},
+ 	.alloc_lock	= __SPIN_LOCK_UNLOCKED(init_task.alloc_lock),
++	.pagecache_lock = NULL,
+ 	.journal_info	= NULL,
+ 	INIT_CPU_TIMERS(init_task)
+ 	.pi_lock	= __RAW_SPIN_LOCK_UNLOCKED(init_task.pi_lock),
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 693f62212a..31dd888785 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -111,6 +111,73 @@
+  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
+  */
+ 
++static void __pagecache_lock_put(struct pagecache_lock *lock, long i)
++{
++	BUG_ON(atomic_long_read(&lock->v) == 0);
++
++	if (atomic_long_sub_return_release(i, &lock->v) == 0)
++		wake_up_all(&lock->wait);
++}
++
++static bool __pagecache_lock_tryget(struct pagecache_lock *lock, long i)
++{
++	long v = atomic_long_read(&lock->v), old;
++
++	do {
++		old = v;
++
++		if (i > 0 ? v < 0 : v > 0)
++			return false;
++	} while ((v = atomic_long_cmpxchg_acquire(&lock->v,
++					old, old + i)) != old);
++	return true;
++}
++
++static void __pagecache_lock_get(struct pagecache_lock *lock, long i)
++{
++	wait_event(lock->wait, __pagecache_lock_tryget(lock, i));
++}
++
++void pagecache_add_put(struct pagecache_lock *lock)
++{
++	__pagecache_lock_put(lock, 1);
++}
++EXPORT_SYMBOL(pagecache_add_put);
++
++void pagecache_add_get(struct pagecache_lock *lock)
++{
++	__pagecache_lock_get(lock, 1);
++}
++EXPORT_SYMBOL(pagecache_add_get);
++
++void __pagecache_block_put(struct pagecache_lock *lock)
++{
++	__pagecache_lock_put(lock, -1);
++}
++EXPORT_SYMBOL(__pagecache_block_put);
++
++void __pagecache_block_get(struct pagecache_lock *lock)
++{
++	__pagecache_lock_get(lock, -1);
++}
++EXPORT_SYMBOL(__pagecache_block_get);
++
++void pagecache_block_put(struct pagecache_lock *lock)
++{
++	BUG_ON(current->pagecache_lock != lock);
++	current->pagecache_lock = NULL;
++	__pagecache_lock_put(lock, -1);
++}
++EXPORT_SYMBOL(pagecache_block_put);
++
++void pagecache_block_get(struct pagecache_lock *lock)
++{
++	__pagecache_lock_get(lock, -1);
++	BUG_ON(current->pagecache_lock);
++	current->pagecache_lock = lock;
++}
++EXPORT_SYMBOL(pagecache_block_get);
++
+ static int page_cache_tree_insert(struct address_space *mapping,
+ 				  struct page *page, void **shadowp)
+ {
+@@ -834,18 +901,21 @@ static int __add_to_page_cache_locked(struct page *page,
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
+ 
++	if (current->pagecache_lock != &mapping->add_lock)
++		pagecache_add_get(&mapping->add_lock);
++
+ 	if (!huge) {
+ 		error = mem_cgroup_try_charge(page, current->mm,
+ 					      gfp_mask, &memcg, false);
+ 		if (error)
+-			return error;
++			goto err;
+ 	}
+ 
+ 	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg, false);
+-		return error;
++		goto err;
+ 	}
+ 
+ 	get_page(page);
+@@ -865,7 +935,11 @@ static int __add_to_page_cache_locked(struct page *page,
+ 	if (!huge)
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+ 	trace_mm_filemap_add_to_page_cache(page);
+-	return 0;
++err:
++	if (current->pagecache_lock != &mapping->add_lock)
++		pagecache_add_put(&mapping->add_lock);
++
++	return error;
+ err_insert:
+ 	page->mapping = NULL;
+ 	/* Leave page->index set: truncation relies upon it */
+@@ -873,7 +947,7 @@ static int __add_to_page_cache_locked(struct page *page,
+ 	if (!huge)
+ 		mem_cgroup_cancel_charge(page, memcg, false);
+ 	put_page(page);
+-	return error;
++	goto err;
+ }
+ 
+ /**
+@@ -2511,7 +2585,14 @@ int filemap_fault(struct vm_fault *vmf)
+ 	 * Do we have something in the page cache already?
+ 	 */
+ 	page = find_get_page(mapping, offset);
+-	if (likely(page) && !(vmf->flags & FAULT_FLAG_TRIED)) {
++	if (unlikely(current->pagecache_lock == &mapping->add_lock)) {
++		/*
++		 * fault from e.g. dio -> get_user_pages() - _don't_ want to do
++		 * readahead, only read in page we need:
++		 */
++		if (!page)
++			goto no_cached_page;
++	} else if (likely(page) && !(vmf->flags & FAULT_FLAG_TRIED)) {
+ 		/*
+ 		 * We found the page, so try async readahead before
+ 		 * waiting for the lock.
 -- 
 2.17.0
