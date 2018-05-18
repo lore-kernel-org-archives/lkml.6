@@ -1,109 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeERNJf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:09:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39979 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752243AbeERNJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:09:32 -0400
-X-Google-Smtp-Source: AB8JxZp7hVFe6SmvyG1OF7pUaCmf5ap4FububtnRS1BvROyjHPOQte5FGc55nu0WdWUohxFT8Y6LXw==
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
- <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
- <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
- <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
- <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
- <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
- <822d5f47cad46ca308d511f7f24cdbc5f4af38b9.camel@linux.intel.com>
- <cabb42db7aec59f0b795a16809b0ccfaeddb2679.camel@linux.intel.com>
- <9fd4cd99-5a4f-2d9e-88ba-18575e951490@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <9e49fc42-75be-3bd5-dfa4-9cc61348d501@redhat.com>
-Date: Fri, 18 May 2018 15:09:29 +0200
+        id S1752326AbeERNKk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:10:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:52794 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751971AbeERNKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:10:37 -0400
+Subject: Re: [PATCH 1/6] arm_pmu: Refactor maximum period handling
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-2-git-send-email-suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <c657d966-f7c1-a41c-eac2-73248fee6fdc@arm.com>
+Date: Fri, 18 May 2018 14:10:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <9fd4cd99-5a4f-2d9e-88ba-18575e951490@linux.intel.com>
+In-Reply-To: <1526638943-2110-2-git-send-email-suzuki.poulose@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Suzuki,
 
-On 18-05-18 12:58, Jarkko Nikula wrote:
-> On 05/18/2018 01:20 PM, Andy Shevchenko wrote:
->> On Fri, 2018-05-18 at 11:37 +0300, Andy Shevchenko wrote:
->>> On Fri, 2018-05-18 at 09:48 +0200, Hans de Goede wrote:
->>>
->>>
->>>> Could it be the i2c input clock definition in drivers/mfd/intel-
->>>> lpss-
->>>> pci.c
->>>> is also wrong for Apollo Lake (N3450) ?  There are lots of people
->>>> having
->>>> various issues with i2c attached touchpads on Apollo Lake devices,
->>>> this bug:
->>>> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
->>>>
->>>> Is sort of a collection bug for these. Various models laptops, lots
->>>> of
->>>> reporters. Note not sure thie is an i2c-designware issue, but it
->>>> would
->>>> be good to double check the input clock on Apollo Lake.
->>>>
->>>> I've checked the datasheet and the datasheet mentions 133MHz as
->>>> "serial input clk" in the lpio_bxt_regs Registers Summary, which is
->>>> also part of the LPSS, no clk is mentioned in the "Summary of
->>>> DW_apb_i2c_mem_map_DW_apb_i2c_addr_block1 Registers".
->>>
->>> The internal datasheet we have access to mentioned in this case for
->>> Broxton and Cannonlake together. So, your assumption might be quite
->>> close to the truth and the issue is inherited from Broxton.
->>>
->>
-> Nope. The specification I have mention the I2C input clock in Broxton is fixed 133 MHz but in Cannon Lake it is derived through non-SW visible divider.
+On 18/05/18 11:22, Suzuki K Poulose wrote:
+> Each PMU defines their max_period of the counter as the maximum
+> value that can be counted. In order to support chaining of the
+> counters, change this parameter to indicate the counter width
+> to deduce the max_period. This will be useful to compute the
+> max_period for chained counters.
 > 
->> Hans, can your reporters try the following patch? Depending on the
->> result I may send it out ASAP.
->>
->> --- a/drivers/mfd/intel-lpss-pci.c
->> +++ b/drivers/mfd/intel-lpss-pci.c
->> @@ -120,7 +120,7 @@ static struct property_entry apl_i2c_properties[] =
->> {
->>   };
->>   static const struct intel_lpss_platform_info apl_i2c_info = {
->> -       .clk_rate = 133000000,
->> +       .clk_rate = 216000000,
->>          .properties = apl_i2c_properties,
->>   };
->>
-> Nack. The Apollo Lake HW here shows expected I2C bus clock on oscilloscope so it is indeed clocked at 133 MHz.
+> No functional changes.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arch/arm/kernel/perf_event_v6.c     |  4 ++--
+>   arch/arm/kernel/perf_event_v7.c     |  2 +-
+>   arch/arm/kernel/perf_event_xscale.c |  4 ++--
+>   arch/arm64/kernel/perf_event.c      |  2 +-
+>   drivers/perf/arm_pmu.c              | 16 ++++++++++++----
+>   include/linux/perf/arm_pmu.h        |  2 +-
+>   6 files changed, 19 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
+> index 1d7061a..d52a3fa 100644
+> --- a/arch/arm/kernel/perf_event_v6.c
+> +++ b/arch/arm/kernel/perf_event_v6.c
+> @@ -497,7 +497,7 @@ static void armv6pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->stop		= armv6pmu_stop;
+>   	cpu_pmu->map_event	= armv6_map_event;
+>   	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+> +	cpu_pmu->counter_width	= 32;
+>   }
+>   
+>   static int armv6_1136_pmu_init(struct arm_pmu *cpu_pmu)
+> @@ -548,7 +548,7 @@ static int armv6mpcore_pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->stop		= armv6pmu_stop;
+>   	cpu_pmu->map_event	= armv6mpcore_map_event;
+>   	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+> +	cpu_pmu->counter_width  = 32;
+>   
+>   	return 0;
+>   }
+> diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
+> index 870b66c..3d8ec6a 100644
+> --- a/arch/arm/kernel/perf_event_v7.c
+> +++ b/arch/arm/kernel/perf_event_v7.c
+> @@ -1171,7 +1171,7 @@ static void armv7pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->start		= armv7pmu_start;
+>   	cpu_pmu->stop		= armv7pmu_stop;
+>   	cpu_pmu->reset		= armv7pmu_reset;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+> +	cpu_pmu->counter_width	= 32;
+>   };
+>   
+>   static void armv7_read_num_pmnc_events(void *info)
+> diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
+> index fcf218d..6eb0e21 100644
+> --- a/arch/arm/kernel/perf_event_xscale.c
+> +++ b/arch/arm/kernel/perf_event_xscale.c
+> @@ -375,7 +375,7 @@ static int xscale1pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->stop		= xscale1pmu_stop;
+>   	cpu_pmu->map_event	= xscale_map_event;
+>   	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+> +	cpu_pmu->counter_width	= 32;
+>   
+>   	return 0;
+>   }
+> @@ -745,7 +745,7 @@ static int xscale2pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->stop		= xscale2pmu_stop;
+>   	cpu_pmu->map_event	= xscale_map_event;
+>   	cpu_pmu->num_events	= 5;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+> +	cpu_pmu->counter_width	= 32;
+>   
+>   	return 0;
+>   }
+> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+> index 85a251b..408f92c 100644
+> --- a/arch/arm64/kernel/perf_event.c
+> +++ b/arch/arm64/kernel/perf_event.c
+> @@ -961,7 +961,7 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
+>   	cpu_pmu->start			= armv8pmu_start,
+>   	cpu_pmu->stop			= armv8pmu_stop,
+>   	cpu_pmu->reset			= armv8pmu_reset,
+> -	cpu_pmu->max_period		= (1LLU << 32) - 1,
+> +	cpu_pmu->counter_width		= 32;
 
-Ok, thank you for checking this.
+Given that none of the 6 instances above differ, this looks suspiciously 
+redundant. AFAICS max_period has been there from the very beginning with 
+no explicit justification, so I can only assume it was anticipating more 
+future variability than actually turned out. With 8 years of hindsight 
+now, I think it would be reasonable to assume that counters are 32-bit 
+except in certain special cases where they might be 64-bit; since that 
+can't be described by a single "counter size" value anyway, and by the 
+end of this series we have the means to handle it correctly via flags, I 
+propose that we just get rid of this and hard-code 32 in 
+arm_pmu_max_period().
 
-Regards,
+>   	cpu_pmu->set_event_filter	= armv8pmu_set_event_filter;
+>   
+>   	return 0;
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 1a0d340..e23e1a1 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -28,6 +28,11 @@
+>   static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+>   static DEFINE_PER_CPU(int, cpu_irq);
+>   
+> +static inline u64 arm_pmu_max_period(struct arm_pmu *pmu)
+> +{
+> +	return (((u64)1) << (pmu->counter_width)) - 1;
 
-Hans
+Nit: "1ULL << ..."
+
+Otherwise, looks fine to me.
+
+Robin.
+
+> +}
+> +
+>   static int
+>   armpmu_map_cache_event(const unsigned (*cache_map)
+>   				      [PERF_COUNT_HW_CACHE_MAX]
+> @@ -114,8 +119,10 @@ int armpmu_event_set_period(struct perf_event *event)
+>   	struct hw_perf_event *hwc = &event->hw;
+>   	s64 left = local64_read(&hwc->period_left);
+>   	s64 period = hwc->sample_period;
+> +	u64 max_period;
+>   	int ret = 0;
+>   
+> +	max_period = arm_pmu_max_period(armpmu);
+>   	if (unlikely(left <= -period)) {
+>   		left = period;
+>   		local64_set(&hwc->period_left, left);
+> @@ -136,8 +143,8 @@ int armpmu_event_set_period(struct perf_event *event)
+>   	 * effect we are reducing max_period to account for
+>   	 * interrupt latency (and we are being very conservative).
+>   	 */
+> -	if (left > (armpmu->max_period >> 1))
+> -		left = armpmu->max_period >> 1;
+> +	if (left > (max_period >> 1))
+> +		left = (max_period >> 1);
+>   
+>   	local64_set(&hwc->prev_count, (u64)-left);
+>   
+> @@ -153,6 +160,7 @@ u64 armpmu_event_update(struct perf_event *event)
+>   	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+>   	struct hw_perf_event *hwc = &event->hw;
+>   	u64 delta, prev_raw_count, new_raw_count;
+> +	u64 max_period = arm_pmu_max_period(armpmu);
+>   
+>   again:
+>   	prev_raw_count = local64_read(&hwc->prev_count);
+> @@ -162,7 +170,7 @@ u64 armpmu_event_update(struct perf_event *event)
+>   			     new_raw_count) != prev_raw_count)
+>   		goto again;
+>   
+> -	delta = (new_raw_count - prev_raw_count) & armpmu->max_period;
+> +	delta = (new_raw_count - prev_raw_count) & max_period;
+>   
+>   	local64_add(delta, &event->count);
+>   	local64_sub(delta, &hwc->period_left);
+> @@ -402,7 +410,7 @@ __hw_perf_event_init(struct perf_event *event)
+>   		 * is far less likely to overtake the previous one unless
+>   		 * you have some serious IRQ latency issues.
+>   		 */
+> -		hwc->sample_period  = armpmu->max_period >> 1;
+> +		hwc->sample_period  = arm_pmu_max_period(armpmu) >> 1;
+>   		hwc->last_period    = hwc->sample_period;
+>   		local64_set(&hwc->period_left, hwc->sample_period);
+>   	}
+> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> index 40036a5..c8c31cf 100644
+> --- a/include/linux/perf/arm_pmu.h
+> +++ b/include/linux/perf/arm_pmu.h
+> @@ -94,7 +94,7 @@ struct arm_pmu {
+>   	void		(*reset)(void *);
+>   	int		(*map_event)(struct perf_event *event);
+>   	int		num_events;
+> -	u64		max_period;
+> +	u8		counter_width;
+>   	bool		secure_access; /* 32-bit ARM only */
+>   #define ARMV8_PMUV3_MAX_COMMON_EVENTS 0x40
+>   	DECLARE_BITMAP(pmceid_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
+> 
