@@ -1,39 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrbWXiWJf6ReF854PxAskuL8NP8exZZCGWotjRVOIQ8xSvYCHG7WMZucvxjEqU+6awEbAXL
-ARC-Seal: i=1; a=rsa-sha256; t=1526631730; cv=none;
+X-Google-Smtp-Source: AB8JxZpMZ2/TmYpnvwYLs2Vh1jLQHaF91Xx7ESf3R98ytFryZaZguUc4gbsgcuBnCkAVRoSPssvS
+ARC-Seal: i=1; a=rsa-sha256; t=1526631728; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fh7EzXFz+NMZHCuPGzrfukmeBBEzQK7+8OZ14yoGppXGkddQ8ulguNx5uHNFmzT1Vn
-         hF5VObU264vNQXclK/Qg5i96jQbUZrPCzEaOqLRhVyyy39EQ6Di2n+dbCsNAbhGz5+sl
-         pzQXdM3cjtK6jeCKAeGrt/hiHcNTNy+sMTAPbExP2xwBBygVYaA5cybSo4CPVsoXTixv
-         szbHL2EBpx9fbYlOBGCBUcXAyT04aPbd+QZpjo3NI5j48jtyaEDP3aTVLNzSd+xpaxZp
-         716ktg2YDFdlHcysj0wS7LKxCrKXn3uqOnzhPl1CI05l4hQ9WBMzpM3OpOBK/pQT9/Xq
-         OemQ==
+        b=sEue1WBjoRF0kuPXexbxyQ1Akn1ndLt0J+ySdve8VWybySowMAdMt/+utGF+fRNrnO
+         ZMsGEvYKpJjI1x1l5TLRUyGK2Pjf8ReBRD1NmJaUUHsL2KVwhYNM7+i4tIywSeA8tagP
+         0kSutkPD+Hcw7uCL+UbhIKDHHZmcECNsZxVUdMlKts1LBLQ2M2NrxPdBCydMDMemZCob
+         8WPl60EwFZnEx86su5JDjLOXkdhRGzd55M/rrlnrcGTAdlTbMR/zEKFft4NKpMuhb0AJ
+         PqoWOUlzqdaLZNrRhbUOKaNwHtmGEcW5N08nUaCfA9jU2ttewBInQ+sRqPOub5+hnYh9
+         MwoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/B+GpvFTmOpG0wMYk4fLljlk2xzANvIvtftQuU2AcrE=;
-        b=mhyqR9ZNoUV7nqZOLuy2zgltKu63PT+3EmqLxXGnv4bzISh+e1BOmUmfx5Df6xDKKB
-         2nCdEYXiRwQwclqszuPQwI2mebzbO0ecQIzUInmSz5RjSvOCfb++fxt4yooX5Y5TTg+M
-         94XjAnoMHbpaEJW6vNKVg41QoHmQ/ndWjXnMSDgBQn8QSUyIgcE9QxlfaJaBwjbuQoG0
-         i/kjV5f6+wN3U8aIzg5Gy+BmXsph/mJ5NBn4V5T4DqUp9/hCMyPLVee7uvX5xez+WR4H
-         rAkpAr+Z5Flrrb/O/9Fi7sHNiJW5Di9ph4bB6MTNqa8E8HlUWXk0CQ5rs9koMsMlgjQY
-         fZDQ==
+        bh=K2xYnlxMC+1X/BHXuEK/CLThbVmhcV9am5RDBhGKUJ4=;
+        b=t45e/HjrK5rT6jsb8Khx1j2pUH+3TOwChWf+LI3sRkz2sm1AN2YOhiFnfRIh3nZGSo
+         JSZ2cMz7gHdScVZCF1qot6brPtG4tcDQPvp97fMWsFQbib877bo0swdD4Icre6sNixcm
+         Mxwcje9WWfd+4vKD/qA3aTShlEyIwyrlrTIW1038BaMaGsR3nYOPFjlptCAKlsJd4erU
+         pNJ1NNHbIAiljI2ZoHMGkUEwSD+ie67HgK5m3MgNcQd9GTet5uolCRuJebY/yCSlHa3S
+         IRBcr/AulV//z2s8wPro820cm6o5sUZVat2nKuqFjl9JjoZ1ug+kxXlArwesJ/0ZH3f7
+         e9UA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nxiO0xM7;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j8X6V53y;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nxiO0xM7;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j8X6V53y;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Moshe Shemesh <moshe@mellanox.com>,
-	Tariq Toukan <tariqt@mellanox.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 08/33] net/mlx4_en: Verify coalescing parameters are in range
-Date: Fri, 18 May 2018 10:15:47 +0200
-Message-Id: <20180518081535.422987125@linuxfoundation.org>
+Subject: [PATCH 4.9 07/33] net: ethernet: ti: cpsw: fix packet leaking in dual_mac mode
+Date: Fri, 18 May 2018 10:15:46 +0200
+Message-Id: <20180518081535.385224973@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789059023166362?=
-X-GMAIL-MSGID: =?utf-8?q?1600789393126151128?=
+X-GMAIL-THRID: =?utf-8?q?1600789083638521342?=
+X-GMAIL-MSGID: =?utf-8?q?1600789390652163935?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,77 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Moshe Shemesh <moshe@mellanox.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 6ad4e91c6d796b38a7f0e724db1de28eeb122bad ]
+[ Upstream commit 5e5add172ea81152d518b161ec5706503ad3d799 ]
 
-Add check of coalescing parameters received through ethtool are within
-range of values supported by the HW.
-Driver gets the coalescing rx/tx-usecs and rx/tx-frames as set by the
-users through ethtool. The ethtool support up to 32 bit value for each.
-However, mlx4 modify cq limits the coalescing time parameter and
-coalescing frames parameters to 16 bits.
-Return out of range error if user tries to set these parameters to
-higher values.
-Change type of sample-interval and adaptive_rx_coal parameters in mlx4
-driver to u32 as the ethtool holds them as u32 and these parameters are
-not limited due to mlx4 HW.
+In dual_mac mode packets arrived on one port should not be forwarded by
+switch hw to another port. Only Linux Host can forward packets between
+ports. The below test case (reported in [1]) shows that packet arrived on
+one port can be leaked to anoter (reproducible with dual port evms):
+ - connect port 1 (eth0) to linux Host 0 and run tcpdump or Wireshark
+ - connect port 2 (eth1) to linux Host 1 with vlan 1 configured
+ - ping <IPx> from Host 1 through vlan 1 interface.
+ARP packets will be seen on Host 0.
 
-Fixes: c27a02cd94d6 ('mlx4_en: Add driver for Mellanox ConnectX 10GbE NIC')
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Issue happens because dual_mac mode is implemnted using two vlans: 1 (Port
+1+Port 0) and 2 (Port 2+Port 0), so there are vlan records created for for
+each vlan. By default, the ALE will find valid vlan record in its table
+when vlan 1 tagged packet arrived on Port 2 and so forwards packet to all
+ports which are vlan 1 members (like Port.
+
+To avoid such behaviorr the ALE VLAN ID Ingress Check need to be enabled
+for each external CPSW port (ALE_PORTCTLn.VID_INGRESS_CHECK) so ALE will
+drop ingress packets if Rx port is not VLAN member.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |   16 ++++++++++++++++
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h    |    7 +++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ti/cpsw.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -970,6 +970,22 @@ static int mlx4_en_set_coalesce(struct n
- 	if (!coal->tx_max_coalesced_frames_irq)
- 		return -EINVAL;
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -1141,6 +1141,8 @@ static inline void cpsw_add_dual_emac_de
+ 	cpsw_ale_add_ucast(cpsw->ale, priv->mac_addr,
+ 			   HOST_PORT_NUM, ALE_VLAN |
+ 			   ALE_SECURE, slave->port_vlan);
++	cpsw_ale_control_set(cpsw->ale, slave_port,
++			     ALE_PORT_DROP_UNKNOWN_VLAN, 1);
+ }
  
-+	if (coal->tx_coalesce_usecs > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs_low > MLX4_EN_MAX_COAL_TIME ||
-+	    coal->rx_coalesce_usecs_high > MLX4_EN_MAX_COAL_TIME) {
-+		netdev_info(dev, "%s: maximum coalesce time supported is %d usecs\n",
-+			    __func__, MLX4_EN_MAX_COAL_TIME);
-+		return -ERANGE;
-+	}
-+
-+	if (coal->tx_max_coalesced_frames > MLX4_EN_MAX_COAL_PKTS ||
-+	    coal->rx_max_coalesced_frames > MLX4_EN_MAX_COAL_PKTS) {
-+		netdev_info(dev, "%s: maximum coalesced frames supported is %d\n",
-+			    __func__, MLX4_EN_MAX_COAL_PKTS);
-+		return -ERANGE;
-+	}
-+
- 	priv->rx_frames = (coal->rx_max_coalesced_frames ==
- 			   MLX4_EN_AUTO_CONF) ?
- 				MLX4_EN_RX_COAL_TARGET :
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-@@ -141,6 +141,9 @@ enum {
- #define MLX4_EN_TX_COAL_PKTS	16
- #define MLX4_EN_TX_COAL_TIME	0x10
- 
-+#define MLX4_EN_MAX_COAL_PKTS	U16_MAX
-+#define MLX4_EN_MAX_COAL_TIME	U16_MAX
-+
- #define MLX4_EN_RX_RATE_LOW		400000
- #define MLX4_EN_RX_COAL_TIME_LOW	0
- #define MLX4_EN_RX_RATE_HIGH		450000
-@@ -543,8 +546,8 @@ struct mlx4_en_priv {
- 	u16 rx_usecs_low;
- 	u32 pkt_rate_high;
- 	u16 rx_usecs_high;
--	u16 sample_interval;
--	u16 adaptive_rx_coal;
-+	u32 sample_interval;
-+	u32 adaptive_rx_coal;
- 	u32 msg_enable;
- 	u32 loopback_ok;
- 	u32 validate_loopback;
+ static void soft_reset_slave(struct cpsw_slave *slave)
