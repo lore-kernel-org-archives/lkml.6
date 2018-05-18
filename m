@@ -1,9 +1,31 @@
-Date: Thu, 17 May 2018 09:06:43 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Return-Path: <kim.phillips@arm.com>
+X-Google-Smtp-Source: AB8JxZrbSAgyTWwmxIGleSF9JvU9q13vG9La1F8mCnjrkA8NFkU8sXleuboeuferKNH96nVxCGTw
+ARC-Seal: i=1; a=rsa-sha256; t=1526606465; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZkdyitjH+ZbtN7vDhsbJ4gxejSdPfjVfzP+55rh6Rq/q5xj8dtN/rYV1eHoVraBjmc
+         5WBYJ+8m8lSVQzT/qqpbBuR4vLf0nc3Ql0w5YFlgxwYF7ycZksECbZxOinMy2M6JQw6w
+         d3awrLRgjKuDSP9QLXARlVz6tEy5rZ2ORn6bFaxZNUfhr5Z+btXfsvK64sArt7Ugtuou
+         ZGPKgcpVjBYYd4Q4jxG0NeJYG3M/cAlQKaKzdgL4zo622QST9lVfuSMSIxs8AZSYOJ+T
+         PGxK7Jy2WdAA8xnRn3jSM43USceEcnpZr+GwGmuFIowPRVzj7eHe4EhOlRYU9e6BNINg
+         fSxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=3Mcv6EvYSab+wfHdoJPUgg0/1xIKwPWynBvaKsUsXu4=;
+        b=iJFtl3+oAd6V8nwzK313U/fugER3WYYZTFVqX2EpHzcxNASYJjIZNv9EcY/XWZuafE
+         a2oPLeox5YEuzDY22TeNZYOkhA+wDmUnm8VYw0QBEFyVbIf2qqtwuqHUtFqYzsQAHF6a
+         JuqbbnfBgT5xikYlHjEeMa2PZpQBcNLVKlFJ7oLisJOmT6vLoB0HCrVnmbCqzFkJbsvE
+         5Tg9xen0/6No8Q7bw68KFGcI52ylNn4ZC5aqmaZRFg4jrVDVQDJ832PKZzWJ1YuQyyAK
+         FpDJocw+JIrhIANyfBDJGWbiI5Pb1OMgcQ5wSybyP79Ctde+Y1j7Uen4dn31656Xhfm+
+         0u3w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kim.phillips@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=kim.phillips@arm.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kim.phillips@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=kim.phillips@arm.com
+From: Kim Phillips <kim.phillips@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 	Alex Williamson <alex.williamson@redhat.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	David Howells <dhowells@redhat.com>,
@@ -16,60 +38,97 @@ Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Mike Rapoport <rppt@linux.vnet.ibm.com>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+	Rik van Riel <riel@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
 	Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] coresight: allow to build as modules
-Message-ID: <20180517070643.GC13919@kroah.com>
-References: <20180508140650.c070e6aa0eb1a6690e6d9607@arm.com>
- <f299d0be-f1a6-46ca-3d8a-13d7d89a007d@infradead.org>
- <20180508153756.09f6fa8066bc23a0d11ec670@arm.com>
- <3826d737-c180-7b9e-8013-be54f6d7302d@infradead.org>
- <20180516143322.0eaecaa72f8a65f19fd7dabf@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516143322.0eaecaa72f8a65f19fd7dabf@arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+	Thierry Reding <treding@nvidia.com>,
+	Todd Kjos <tkjos@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kim Phillips <kim.phillips@arm.com>
+Subject: [PATCH 1/6] coresight: remove CORESIGHT_LINKS_AND_SINKS dependencies and selections
+Date: Thu, 17 May 2018 20:20:19 -0500
+Message-Id: <20180518012024.22645-1-kim.phillips@arm.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180517070643.GC13919@kroah.com>
+References: <20180517070643.GC13919@kroah.com>
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600762901299441866?=
+X-GMAIL-MSGID: =?utf-8?q?1600762901299441866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 16, 2018 at 02:33:22PM -0500, Kim Phillips wrote:
-> Allow to build coresight as modules.  This greatly enhances developer
-> efficiency by allowing the development to take place exclusively on the
-> target, and without needing to reboot in between changes.
-> 
-> - Kconfig bools become tristates, to allow =m
-> 
-> - MODULE_* macros added:  Please correct me if I'm wrong:
->   - assume LICENSE is "GPL v2"
->   - tried to get as close to original authors for MODULE_AUTHOR
-> 
-> - The 'select' Kconfig statements are replaced with 'depends on'
->   clauses, to specify the dependencies between the modules including
->   other fixes, e.g., coresight-stm unconditionally calls
->   stm_register_device, it therefore depends on STM.
-> 
-> - use -objs to denote merge object directives in Makefile, adds a
->   coresight-core nomenclature for the base module.
-> 
-> - add a coresight_exit() that unregisters the coresight bus, add remove
->   fns for most others.
-> 
-> - fix up modules with ID tables for autoloading on boot, add missing
->   __exit attributes
-> 
-> - move coresight_vpid_to_pid to an externed, single instance in
->   coresight-core, to be used by all submodules.
+A coresight topology doesn't need to include links, i.e., a source can
+be directly connected to a sink.  As such, selecting and/or depending on
+LINKS_AND_SINKS is no longer needed.
 
-That's a ton of different things to be doing all at once in this patch.
-Please break it up into logical steps (like you describe here!) which
-will make it much easier and trivial to review.
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+---
+ drivers/hwtracing/coresight/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
 
-As it is, I'm not even going to look at the mess-of-a-diff that I
-imagine the above results in :)
-
-thanks,
-
-greg k-h
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index ef9cb3c164e1..83fb78651ef9 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -23,7 +23,6 @@ config CORESIGHT_LINKS_AND_SINKS
+ 
+ config CORESIGHT_LINK_AND_SINK_TMC
+ 	bool "Coresight generic TMC driver"
+-	depends on CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This enables support for the Trace Memory Controller driver.
+ 	  Depending on its configuration the device can act as a link (embedded
+@@ -33,7 +32,6 @@ config CORESIGHT_LINK_AND_SINK_TMC
+ 
+ config CORESIGHT_SINK_TPIU
+ 	bool "Coresight generic TPIU driver"
+-	depends on CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This enables support for the Trace Port Interface Unit driver,
+ 	  responsible for bridging the gap between the on-chip coresight
+@@ -44,7 +42,6 @@ config CORESIGHT_SINK_TPIU
+ 
+ config CORESIGHT_SINK_ETBV10
+ 	bool "Coresight ETBv1.0 driver"
+-	depends on CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This enables support for the Embedded Trace Buffer version 1.0 driver
+ 	  that complies with the generic implementation of the component without
+@@ -53,7 +50,6 @@ config CORESIGHT_SINK_ETBV10
+ config CORESIGHT_SOURCE_ETM3X
+ 	bool "CoreSight Embedded Trace Macrocell 3.x driver"
+ 	depends on !ARM64
+-	select CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This driver provides support for processor ETM3.x and PTM1.x modules,
+ 	  which allows tracing the instructions that a processor is executing
+@@ -63,7 +59,6 @@ config CORESIGHT_SOURCE_ETM3X
+ config CORESIGHT_SOURCE_ETM4X
+ 	bool "CoreSight Embedded Trace Macrocell 4.x driver"
+ 	depends on ARM64
+-	select CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This driver provides support for the ETM4.x tracer module, tracing the
+ 	  instructions that a processor is executing. This is primarily useful
+@@ -72,7 +67,6 @@ config CORESIGHT_SOURCE_ETM4X
+ 
+ config CORESIGHT_DYNAMIC_REPLICATOR
+ 	bool "CoreSight Programmable Replicator driver"
+-	depends on CORESIGHT_LINKS_AND_SINKS
+ 	help
+ 	  This enables support for dynamic CoreSight replicator link driver.
+ 	  The programmable ATB replicator allows independent filtering of the
+@@ -81,7 +75,6 @@ config CORESIGHT_DYNAMIC_REPLICATOR
+ config CORESIGHT_STM
+ 	bool "CoreSight System Trace Macrocell driver"
+ 	depends on (ARM && !(CPU_32v3 || CPU_32v4 || CPU_32v4T)) || ARM64
+-	select CORESIGHT_LINKS_AND_SINKS
+ 	select STM
+ 	help
+ 	  This driver provides support for hardware assisted software
+-- 
+2.17.0
