@@ -1,23 +1,23 @@
 Return-Path: <zohar@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZoN4A9rFoa7JgNohDSTQU8iow4wM6Qab0xkIg5gle38S1CejYRBTSiyJgYdhr5yW7lNYJ7V
-ARC-Seal: i=1; a=rsa-sha256; t=1526666155; cv=none;
+X-Google-Smtp-Source: AB8JxZobT9OgaGOuS70mVg+9iDdzn2gmz5YnJJsUkPC1WJWFG4Eptpnt9pldr+RDHiQaxJK+LrZI
+ARC-Seal: i=1; a=rsa-sha256; t=1526643072; cv=none;
         d=google.com; s=arc-20160816;
-        b=RaEe0kALj+5npdNItOa+szN91yK4PRAkb2gsihQCgFUDKXCDlrrUqWjaZXhAiup/bt
-         WlfSWFu8ASoJWI854bYOT1993roKJhYvMfTIELwtNa7UHAft963GOwlTONm8PNg7FYRQ
-         7IJ7d4fPpQPtvhQ2J5uzK1Q9Qrt3mZ+MVQbLFF2+vyO3xx3YpNGBlePIZrE+Iky9zeCr
-         WE5+P3XYqVlOU9a3Onx1aHJugOjIHjlebm1I1/GH/ScfKquCxkJCHQIbiEQwOtP+xPK4
-         9Yst1Jof/aLCfwwoAJSS4udK2iz8HH+KUSKBcZhD8CMzRtNVmXYrnKuD5etEpfTBEold
-         15/Q==
+        b=qR3NPT9WttS8cBzam5+owiTgfotMEpfr6f1u12wlAYnI20OdHkq3ZcNGfxGqfpdoqr
+         zBdx9gffLvVjiGum/wxFlUWwfRyEXlAeP/Bm8/wclTyW67kk7nm7fKBWEaXbTTJDqOmA
+         NHypL8sTdTfNlm5mmUkZhpuk8rYiXAcVMMm5bSFFC5neraUVgXXikBRqJ75mfNzErbJ/
+         F6VkfM5vaO7ObM8eiWSAB/mMhOaFHGiaHT0NTazzRVHcQP8A+uH/S5bELx3L0j6C9Swh
+         gFJ9+oX09TbdKwbntAZdr6VODlqvvHBCmID6ZB7TuDe6SDMTK8g0/cM7WOxOsog1y1A7
+         m4+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:content-transfer-encoding:mime-version:references
          :in-reply-to:date:cc:to:from:subject:arc-authentication-results;
-        bh=WtYPgqJTJGWFe+92TVR8voWfkbn9JJD9YukTAHT7aKs=;
-        b=q7Kiogso3W9ZqLp3WSs5lLSNA0ggpQBU3P+A0SbSSWTGLQ7xH5icr+4OX1XLJ7Xz6H
-         l5G9YOQdoCFqQu+5BqSrDcFGf8GT7RapoHQRB8yT/ijZWKut2R2DwfAaqun84K57GrHt
-         JMjY05Xp14Za0LL/zZwiEE21H9ARadFEb5WMAQrFjq9YdfNZIvVWOs19Wk2AgkoCwBns
-         RJfWqyJEfEZOIyC/65547DDiSZHgbjiy2q0I5iBxPl5Rx4iRTSdIUzJtBiJz0ptC+OeD
-         i1pVm4O1sLH0IAqbZ+XzgbjsQLW7Cbf2LMY7djs31yluB1icov0NufWt9O3GR3fUOKYm
-         +jAw==
+        bh=PnvUUV9+iPyBbarM/Si0aVEAMHhT+s34E6du0CM0G5c=;
+        b=j+r7hRfTaE6A4UL1wWw7bkJPmx1Ph1/ctf4RYHvT+A7HmnoemaRLcOfqalKbRzRE3S
+         uF7Lc/JDNfTtkpTdE6t6ywI+Hnz0Ils5rNwp73c75CNntadxBufXVW09vK+jTpifJ3jC
+         FhOtxG7X/wwEGqaw5cbOXvKEBGRPvDpvzyurRsVOhI9nEa7G6nrN5OjdWC9Tqn7if9se
+         n+uBTtPMx+I10emcf1idNizs0OjZmsxdKlz6VOw7frtr85AL1oEW8IOOYY43tIjLPwo/
+         u2h2J79IvmW1B4qQ7uIfh2vWPB+Nv5gC1uP5vmK2PBmbcJ754ykM0DwFiX45DwpXPF5Y
+         gMZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
@@ -27,12 +27,11 @@ Authentication-Results: mx.google.com;
 Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob()
  wrapper
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>,
-        "Eric W. Biederman"
-	 <ebiederm@xmission.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Casey Schaufler
+	 <casey@schaufler-ca.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
         "Luis R
  . Rodriguez" <mcgrof@kernel.org>, kexec@lists.infradead.org,
         Andres
@@ -40,71 +39,96 @@ Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-integrity@vger.kernel.org,
         Greg Kroah-Hartman
  <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-Date: Fri, 18 May 2018 13:55:33 -0400
-In-Reply-To: <alpine.LRH.2.21.1805190303100.26396@namei.org>
+        Kees Cook <keescook@chromium.org>, Stephen Smalley <sds@tycho.nsa.gov>
+Date: Fri, 18 May 2018 07:30:50 -0400
+In-Reply-To: <87y3ghhbws.fsf@xmission.com>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
 	 <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
 	 <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
 	 <87y3ghhbws.fsf@xmission.com>
-	 <alpine.LRH.2.21.1805190303100.26396@namei.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18051817-0040-0000-0000-0000045AF81B
+x-cbid: 18051811-0040-0000-0000-0000045AD902
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051817-0041-0000-0000-000020FF3A38
-Message-Id: <1526666133.3404.67.camel@linux.vnet.ibm.com>
+x-cbparentid: 18051811-0041-0000-0000-000020FF17AC
+Message-Id: <1526643050.3632.127.camel@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805180191
+ definitions=main-1805180128
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600723179870285580?=
-X-GMAIL-MSGID: =?utf-8?q?1600825490993096475?=
+X-GMAIL-MSGID: =?utf-8?q?1600801286649365632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, 2018-05-19 at 03:13 +1000, James Morris wrote:
-> On Thu, 17 May 2018, Eric W. Biederman wrote:
+On Thu, 2018-05-17 at 22:37 -0500, Eric W. Biederman wrote:
+> Casey Schaufler <casey@schaufler-ca.com> writes:
 > 
-> > Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> > 
-> > Nack on this sharing nonsense.  These two interfaces do not share any
-> > code in their implementations other than the if statement to distinguish
-> > between the two cases.
+> > On 5/17/2018 7:48 AM, Mimi Zohar wrote:
+> >> In order for LSMs and IMA-appraisal to differentiate between the original
+> >> and new syscalls (eg. kexec, kernel modules, firmware), both the original
+> >> and new syscalls must call an LSM hook.
+> >>
+> >> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
+> >> introduced calling security_kernel_module_from_file() in both the original
+> >> and new syscalls.  Commit a1db74209483 ("module: replace
+> >> copy_module_from_fd with kernel version") replaced these LSM calls with
+> >> security_kernel_read_file().
+> >>
+> >> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
+> >> with kernel version") and commit b804defe4297  ("kexec: replace call to
+> >> copy_file_from_fd() with kernel version") replaced their own version of
+> >> reading a file from the kernel with the generic
+> >> kernel_read_file_from_path/fd() versions, which call the pre and post
+> >> security_kernel_read_file LSM hooks.
+> >>
+> >> Missing are LSM calls in the original kexec syscall and firmware sysfs
+> >> fallback method.  From a technical perspective there is no justification
+> >> for defining a new LSM hook, as the existing security_kernel_read_file()
+> >> works just fine.  The original syscalls, however, do not read a file, so
+> >> the security hook name is inappropriate.  Instead of defining a new LSM
+> >> hook, this patch defines security_kernel_read_blob() as a wrapper for
+> >> the existing LSM security_kernel_file_read() hook.
+> >
+> > What a marvelous opportunity to bikeshed!
+> >
+> > I really dislike adding another security_ interface just because
+> > the name isn't quite right. Especially a wrapper, which is just
+> > code and execution overhead. Why not change security_kernel_read_file()
+> > to security_kernel_read_blob() everywhere and be done?
 > 
-> Hmm, it's not even doing that.
+> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 > 
-> There's already an if(!file && read_id == X) { } check and this is another 
-> one being added.
+> Nack on this sharing nonsense.  These two interfaces do not share any
+> code in their implementations other than the if statement to distinguish
+> between the two cases.
 > 
-> > If we want comprehensible and maintainable code in the security modules
-> > we need to split these two pieces of functionality apart.
+> Casey you are wrong.  We need something different here.
 > 
-> All ima_read is doing in both the old and new case is checking if there's 
-> no file then if it's a certain operation, returning an error.
+> Mimi a wrapper does not cut it.   The code is not shared.  Despite using
+> a single function call today.
 > 
-> To echo Eric and Casey's suggestions, how about changing the name of the 
-> hook to security_kernel_read_data() ?
+> If we want comprehensible and maintainable code in the security modules
+> we need to split these two pieces of functionality apart.
 
-Thanks, James.  Somehow I missed this option.  Renaming the existing
-hook, would be the easiest solution.  Eric, are you in agreement with
-James' naming suggestion/solution?
+kernel_read_file() is a common, generic method of reading a file from
+the kernel, which is being called from a number of places.  The
+kernel_read_file_id enumeration is needed to differentiate between the
+callers.  The purpose of the new security_kernel_read_file() calls is
+not for the kernel to read a file, but as a method of identifying the
+original buffer based methods containing a file.
 
-> Then ima_read_file() can be changed to ima_read_data(), and then instead 
-> of two if (!file && read_id == X) checks, have:
-> 
-> 	if (!file) {
-> 		switch (read_id) {
-> 		}
-> 	}
-> 
-> 
-> 
-> 
+Having to define a separate LSM hook for each of the original, non
+kernel_read_file(), buffer based method callers, kind of makes sense,
+as the callers themselves are specific, but is it really necessary?
+Could we define a new, generic LSM hook named
+security_kernel_buffer_data() for this purpose?
+
+Mimi
