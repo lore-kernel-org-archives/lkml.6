@@ -1,38 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrIlWEq32bcfKhZBbYECcssfc4vs0+6i5wBIHj1NjE0gwbUFotOG1qQK3Wn2fUchCcGvIb2
-ARC-Seal: i=1; a=rsa-sha256; t=1526631432; cv=none;
+X-Google-Smtp-Source: AB8JxZqMviP3BUr6Ie2E9igdA6kK32caRuRBZULKQdwSA1e2XPbS3rlUtMIhqw+rjacA6pjNZHiT
+ARC-Seal: i=1; a=rsa-sha256; t=1526631429; cv=none;
         d=google.com; s=arc-20160816;
-        b=Pbgg0hAtD73YHH7ExEE/VqBMVNABmsQ6YsHNvXVqJKNQAIaNJcyyc2Vq8EXJUHr53c
-         hS5DsJvKVYolBd3IOn9/wUv+esDn6mVo22hkZIfA39+mIkYLw8ZNkF2PMjBBZOVlX9WM
-         0fcM5wLXBmwEquLUz/tx/bQ7VaTsglXHvBgG0V6yVFxagvZoM923WzDWbPMOL7acBKyw
-         XJJPjvNngMrspPDs0zFFlEJoY/ppp59sxsxT9Fe2fOhXatH1J52VF/PofApOuuhC6wLI
-         QZO84YQGEqhFsntBM9KoiEWy/7r+s5+lCTM1vp8tFW77f5b6K9uUduV7pwLjl5bu6Nza
-         8q8w==
+        b=UTuJg7t1mzzHcFcToN9jH4Dh6lbyE39Y1ypN8yXs0exVs/49w4DgMn5ECyHKXegHmX
+         i+q1bU50ECdQ+MJPIuP7DrbZftP/sxnX7mFXS3J5PULm40cHHoERjMgultruckcHnVYQ
+         vIEhgKqxBz/igw9203Ubo1sm3cCbMTYSazbYpsa4zXZmXimS1gsw3eBzR/jHmB45OMOl
+         tlvxTqh49/svZsR0OrSRw1gIz8aOkYIcvCRdAAzzT8Qrmruoa8b2T1Zg5L++mtdw4g9E
+         ZHdR/5kxWakhQ+B5LLRPsiWYrkdCcZgvpNuVacpiehN+RbfsY+MkdfImuRc/o14dK+5x
+         iDGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fRCE7k95KbYE0yqUZ2irr0usY2SXze/e+UWVyh5MYAs=;
-        b=Ud4yHTA531uk24SdOvecn0OeqJxDyqTMgsN9xExkrj4x+s76nBd+dYkULDG6AwxHsQ
-         ++cRb8wRHq5hSTorSAVI2ITlBN1nDCnSK40+gtbHLat/eABcOmt8C2D3fk2sKsO5wdU7
-         oV0KbUM/04Ipe974hcV1kMb2mCJRSTt7FLeNGDkgrmg7ifDlRiovUzv1+K6OrUOQGsdB
-         bjwXjB96SBsH2szA4jFp2Dqo5bCHdYwcFtMAy/ckp6sOVPp3LmMJiEH3oYScZNt7ayVC
-         +2E2YqGQijTPYl6TYTTEM2wiFyGQV9WwzkNPqBdzqbsQOrzG7m5lW87+K3p92DFxZAG6
-         yNNQ==
+        bh=KBqJ/1GCY51MhKQCJeZGqZOElknidhSgWikxpSfUYww=;
+        b=dBJhgzgICDuarTUsxTLmiND+TiICpDylLyzCZTwU+5Ttxp5WZzz1TvXCwBFIJu7Jhz
+         +HnMqDL25bf8aS0npVcVNysq+bGuaTNI4s9GI7Tlk2fLNKwx+2Qq/lwovhu+3OLCWvB5
+         1FwpnNokbX6CG+ARZCTgABQuukhL1hx7V86ji43WnoR+hR42t3tuTB9Q2jbyQ95kg23S
+         XfZHD+xhfgblTcKMxW3shI2kO8zV5vB/XUbBbXONsa3ZykDOqDJdjgeu38QYB5junGrc
+         2SPCBiL+18GUV974uHLciO24WPcRouiGgWqg9lFYmFgAgMsjSk51K8EE+UUqgGUtGhXH
+         o2UA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0HpeI5ci;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ltA4VwaD;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0HpeI5ci;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ltA4VwaD;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rob Taglang <rob@taglang.io>,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 07/55] net: ethernet: sun: niu set correct packet size in skb
-Date: Fri, 18 May 2018 10:15:03 +0200
-Message-Id: <20180518081457.724870892@linuxfoundation.org>
+Subject: [PATCH 4.16 06/55] llc: better deal with too small mtu
+Date: Fri, 18 May 2018 10:15:02 +0200
+Message-Id: <20180518081457.687895688@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789080586007484?=
-X-GMAIL-MSGID: =?utf-8?q?1600789080586007484?=
+X-GMAIL-THRID: =?utf-8?q?1600789077943106120?=
+X-GMAIL-MSGID: =?utf-8?q?1600789077943106120?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,56 +52,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rob Taglang <rob@taglang.io>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 14224923c3600bae2ac4dcae3bf0c3d4dc2812be ]
+[ Upstream commit 2c5d5b13c6eb79f5677e206b8aad59b3a2097f60 ]
 
-Currently, skb->len and skb->data_len are set to the page size, not
-the packet size. This causes the frame check sequence to not be
-located at the "end" of the packet resulting in ethernet frame check
-errors. The driver does work currently, but stricter kernel facing
-networking solutions like OpenVSwitch will drop these packets as
-invalid.
+syzbot loves to set very small mtu on devices, since it brings joy.
+We must make llc_ui_sendmsg() fool proof.
 
-These changes set the packet size correctly so that these errors no
-longer occur. The length does not include the frame check sequence, so
-that subtraction was removed.
+usercopy: Kernel memory overwrite attempt detected to wrapped address (offset 0, size 18446612139802320068)!
 
-Tested on Oracle/SUN Multithreaded 10-Gigabit Ethernet Network
-Controller [108e:abcd] and validated in wireshark.
+kernel BUG at mm/usercopy.c:100!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 17464 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #36
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:88
+RSP: 0018:ffff8801868bf800 EFLAGS: 00010282
+RAX: 000000000000006c RBX: ffffffff87d2fb00 RCX: 0000000000000000
+RDX: 000000000000006c RSI: ffffffff81610731 RDI: ffffed0030d17ef6
+RBP: ffff8801868bf858 R08: ffff88018daa4200 R09: ffffed003b5c4fb0
+R10: ffffed003b5c4fb0 R11: ffff8801dae27d87 R12: ffffffff87d2f8e0
+R13: ffffffff87d2f7a0 R14: ffffffff87d2f7a0 R15: ffffffff87d2f7a0
+FS:  00007f56a14ac700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2bc21000 CR3: 00000001abeb1000 CR4: 00000000001426f0
+DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000030602
+Call Trace:
+ check_bogus_address mm/usercopy.c:153 [inline]
+ __check_object_size+0x5d9/0x5d9 mm/usercopy.c:256
+ check_object_size include/linux/thread_info.h:108 [inline]
+ check_copy_size include/linux/thread_info.h:139 [inline]
+ copy_from_iter_full include/linux/uio.h:121 [inline]
+ memcpy_from_msg include/linux/skbuff.h:3305 [inline]
+ llc_ui_sendmsg+0x4b1/0x1530 net/llc/af_llc.c:941
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:639
+ __sys_sendto+0x3d7/0x670 net/socket.c:1789
+ __do_sys_sendto net/socket.c:1801 [inline]
+ __se_sys_sendto net/socket.c:1797 [inline]
+ __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1797
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455979
+RSP: 002b:00007f56a14abc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f56a14ac6d4 RCX: 0000000000455979
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000018
+RBP: 000000000072bea0 R08: 00000000200012c0 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000548 R14: 00000000006fbf60 R15: 0000000000000000
+Code: 55 c0 e8 c0 55 bb ff ff 75 c8 48 8b 55 c0 4d 89 f9 ff 75 d0 4d 89 e8 48 89 d9 4c 89 e6 41 56 48 c7 c7 80 fa d2 87 e8 a0 0b a3 ff <0f> 0b e8 95 55 bb ff e8 c0 a8 f7 ff 8b 95 14 ff ff ff 4d 89 e8
+RIP: usercopy_abort+0xbb/0xbd mm/usercopy.c:88 RSP: ffff8801868bf800
 
-Signed-off-by: Rob Taglang <rob@taglang.io>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sun/niu.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ net/llc/af_llc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -3443,7 +3443,7 @@ static int niu_process_rx_pkt(struct nap
- 
- 		len = (val & RCR_ENTRY_L2_LEN) >>
- 			RCR_ENTRY_L2_LEN_SHIFT;
--		len -= ETH_FCS_LEN;
-+		append_size = len + ETH_HLEN + ETH_FCS_LEN;
- 
- 		addr = (val & RCR_ENTRY_PKT_BUF_ADDR) <<
- 			RCR_ENTRY_PKT_BUF_ADDR_SHIFT;
-@@ -3453,7 +3453,6 @@ static int niu_process_rx_pkt(struct nap
- 					 RCR_ENTRY_PKTBUFSZ_SHIFT];
- 
- 		off = addr & ~PAGE_MASK;
--		append_size = rcr_size;
- 		if (num_rcr == 1) {
- 			int ptype;
- 
-@@ -3466,7 +3465,7 @@ static int niu_process_rx_pkt(struct nap
- 			else
- 				skb_checksum_none_assert(skb);
- 		} else if (!(val & RCR_ENTRY_MULTI))
--			append_size = len - skb->len;
-+			append_size = append_size - skb->len;
- 
- 		niu_rx_skb_append(skb, page, off, append_size, rcr_size);
- 		if ((page->index + rp->rbr_block_size) - rcr_size == addr) {
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -930,6 +930,9 @@ static int llc_ui_sendmsg(struct socket
+ 	if (size > llc->dev->mtu)
+ 		size = llc->dev->mtu;
+ 	copied = size - hdrlen;
++	rc = -EINVAL;
++	if (copied < 0)
++		goto release;
+ 	release_sock(sk);
+ 	skb = sock_alloc_send_skb(sk, size, noblock, &rc);
+ 	lock_sock(sk);
