@@ -1,160 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeERXyQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 19:54:16 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53849 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbeERXyK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 19:54:10 -0400
-X-Google-Smtp-Source: AB8JxZos294+e2kuDkmMoRDEk4FYGzlJOOmB1RAHegHzSgnje+wHVkGC92TLx92l4rjhelMzUSPR1w==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] gpu: host1x: Utilize IOMMU mapping for firewall-copied buffers
-Date: Sat, 19 May 2018 02:52:31 +0300
-Message-Id: <20180518235231.9274-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752168AbeERX6y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 19:58:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751722AbeERX6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 19:58:51 -0400
+Date: Sat, 19 May 2018 08:58:48 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] uprobes/x86: remove the wrong WARN_ON() in
+ uprobe_init_insn()
+Message-Id: <20180519085848.e2b0be1ed752e3e35b7ba0ab@kernel.org>
+In-Reply-To: <20180518162739.GA5559@redhat.com>
+References: <000000000000b759cf056c2b3c12@google.com>
+        <20180518162739.GA5559@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Map firewall-copied buffers into Host1x's IOVA space, otherwise Host1x
-CDMA can't access the command buffers and all submitted jobs fail if IOMMU
-and Host1x firewall are enabled in the kernels config.
+On Fri, 18 May 2018 18:27:39 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/host1x/job.c | 58 +++++++++++++++++++++++++++++++++++-----
- include/linux/host1x.h   |  4 ++-
- 2 files changed, 55 insertions(+), 7 deletions(-)
+> insn_get_length() has the side-effect of processing the entire instruction
+> but only if it was decoded successfully, otherwise insn_complete() can fail
+> and in this case we need to just return an error without warning.
+> 
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index e2f4a4d93d20..57384a5b5059 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -449,10 +449,13 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 
- static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- {
-+	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
- 	struct host1x_firewall fw;
-+	dma_addr_t dma_addr;
- 	size_t size = 0;
- 	size_t offset = 0;
- 	unsigned int i;
-+	int err;
- 
- 	fw.job = job;
- 	fw.dev = dev;
-@@ -466,23 +469,55 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- 		size += g->words * sizeof(u32);
- 	}
- 
-+	if (host->domain)
-+		size = iova_align(&host->iova, size);
-+
- 	/*
- 	 * Try a non-blocking allocation from a higher priority pools first,
- 	 * as awaiting for the allocation here is a major performance hit.
- 	 */
--	job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
--					       GFP_NOWAIT);
-+	job->gather_copy_mapped = dma_alloc_wc(dev, size,
-+					       &job->gather_copy_phys,
-+ 					       GFP_NOWAIT);
- 
- 	/* the higher priority allocation failed, try the generic-blocking */
- 	if (!job->gather_copy_mapped)
- 		job->gather_copy_mapped = dma_alloc_wc(dev, size,
--						       &job->gather_copy,
-+						       &job->gather_copy_phys,
- 						       GFP_KERNEL);
- 	if (!job->gather_copy_mapped)
- 		return -ENOMEM;
- 
- 	job->gather_copy_size = size;
- 
-+	if (host->domain) {
-+		unsigned long shift;
-+
-+		shift = iova_shift(&host->iova);
-+		job->gather_copy_iova_alloc = alloc_iova(
-+					&host->iova, size >> shift,
-+					host->iova_end >> shift, true);
-+		if (!job->gather_copy_iova_alloc)
-+			return -ENOMEM;
-+
-+		job->gather_copy_iova = iova_dma_addr(
-+				&host->iova, job->gather_copy_iova_alloc);
-+
-+		err = iommu_map(host->domain,
-+				job->gather_copy_iova,
-+				job->gather_copy_phys,
-+				size, IOMMU_READ);
-+		if (err) {
-+			__free_iova(&host->iova, job->gather_copy_iova_alloc);
-+			job->gather_copy_iova_alloc = NULL;
-+			return err;
-+		}
-+
-+		dma_addr = job->gather_copy_iova;
-+	} else {
-+		dma_addr = job->gather_copy_phys;
-+	}
-+
- 	for (i = 0; i < job->num_gathers; i++) {
- 		struct host1x_job_gather *g = &job->gathers[i];
- 		void *gather;
-@@ -494,7 +529,7 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- 		host1x_bo_munmap(g->bo, gather);
- 
- 		/* Store the location in the buffer */
--		g->base = job->gather_copy;
-+		g->base = dma_addr;
- 		g->offset = offset;
- 
- 		/* Validate the job */
-@@ -582,9 +617,20 @@ void host1x_job_unpin(struct host1x_job *job)
- 
- 	job->num_unpins = 0;
- 
--	if (job->gather_copy_size)
-+	if (job->gather_copy_size) {
- 		dma_free_wc(job->channel->dev, job->gather_copy_size,
--			    job->gather_copy_mapped, job->gather_copy);
-+			    job->gather_copy_mapped, job->gather_copy_phys);
-+
-+		if (job->gather_copy_iova_alloc) {
-+			iommu_unmap(host->domain,
-+				    job->gather_copy_iova,
-+				    job->gather_copy_size);
-+
-+			__free_iova(&host->iova, job->gather_copy_iova_alloc);
-+
-+			job->gather_copy_iova_alloc = NULL;
-+		}
-+	}
- }
- EXPORT_SYMBOL(host1x_job_unpin);
- 
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 57d26406bdfd..536a678f81d4 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -235,8 +235,10 @@ struct host1x_job {
- 	unsigned int num_slots;
- 
- 	/* Copy of gathers */
-+	struct iova *gather_copy_iova_alloc;
- 	size_t gather_copy_size;
--	dma_addr_t gather_copy;
-+	dma_addr_t gather_copy_iova;
-+	dma_addr_t gather_copy_phys;
- 	u8 *gather_copy_mapped;
- 
- 	/* Check if register is marked as an address reg */
+This looks good to me.
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
+> Reported-by: syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  arch/x86/kernel/uprobes.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index 85c7ef2..efd7ee9 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -293,7 +293,7 @@ static int uprobe_init_insn(struct arch_uprobe *auprobe, struct insn *insn, bool
+>  	insn_init(insn, auprobe->insn, sizeof(auprobe->insn), x86_64);
+>  	/* has the side-effect of processing the entire instruction */
+>  	insn_get_length(insn);
+> -	if (WARN_ON_ONCE(!insn_complete(insn)))
+> +	if (!insn_complete(insn))
+>  		return -ENOEXEC;
+>  
+>  	if (is_prefix_bad(insn))
+> -- 
+> 2.5.0
+> 
+> 
+
+
 -- 
-2.17.0
+Masami Hiramatsu <mhiramat@kernel.org>
