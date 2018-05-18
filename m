@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-501620-1526685978-2-11387615709854036747
+X-Cyrus-Session-Id: sloti22d1t05-3455337-1526628042-2-13190635391574274167
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,30 +8,30 @@ X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.00
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526685978; b=XucqOreA0n9OEhrSRhw2Fdhy/AeX1wbC78cDdJlAonupYSh4em
-    zvJ8fn6W6y+FyVgxqh2UsduTdJIgoO6+KTe/Bme1sfITk9xXKnIB/17PTJ0DfmDg
-    vXhS7jyamkbcKRWNWDdYl3+Xn/xlzEEkOB3tTBNh+a3l7eGGqRzABHhmwk1e848S
-    TFa7T2g1wl73dt1OIT12rlETPT+V4WSxqmh4USKBPsCIrTEnagcYMJeeRGz36Cio
-    IHyzoljnQrfRMtnmQzrlrvHyhgSwtxnK62lScTIsYRgrD5CFj9hSBIf5U4N+dV2u
-    PfQB2+2ymiHJ0w81TT6LANBSUw7ySgL5kqOw==
+    1526628042; b=P7PW2KoQp4TQsqnmbmrdgQCX3l4qGXA2ntOCP2KeP+8fb+zqTU
+    BGQffHRk252AMuJ5vbjWn7hPO/7ZZjZzhcMn9SxWalMT6Y5b6yKslVhYqRIp7TkO
+    +1XjiJ6u8cS+tnzkmNpX2iketqND6oWDkoZrnzs4TGPHZP4ulnKXoXXdVfCCC8cU
+    cQG1dBXk7Dqmu8FEksJDsOeLXYmmvS7sYXUIlaJV1xhYnEvKcXv4MTaZ+OD2H226
+    hL9OF41PLZU7jMXGOTJptp1sO3OuCezl7lVZmjaMENay5fx61S9subAuGhFR6oZw
+    l7MX87l3YZikTqUgLX9qtUO0cHda82iktsoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526685978; bh=mPTfCc9gEXvIucLUHTWc3Yen3ZdFxgKv59nmjxXewH
-    M=; b=RMCQnKrnHyb4oBxKvlBKy+9iT9UOoJvAA/SVAq1XCbzkfBd2q3Q268PFiD
-    zrT5+Fm2mqqa9iMkQynx363jGF9ayU37oZsKHLvnvT7jjJcpRLsiMoM12SzNl6mV
-    fqqroGp1DZbWvkY+Woo9fFZkXWQzoLS7ktp79OySfAP3koW5B7FxUxEV+1Qx+v6U
-    aW/cMWZF5IgBzNN947PnyChE2OzsaPVfgnrMsjzcp7YPV89LiAysCYO91a90GvJE
-    hMKQ3Aki2F/DydI7rOeVIkPL1ay0fm4erQEsRt4OipQYBJJpLN1DpQJzOe6zXg9N
-    QO06kyI7lcvVhu2B+XtP/YDjNIxQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526628042; bh=rhCiMGhYcHNcPPWmaaTlyd18zyH42t
+    0pF03IGFVqYuk=; b=isOf4fSQlCQgEmvQNaLsIDwfPrCtJ8ALflHEKWdUiZoRrt
+    jD4NLGqIqslMdFFXxVM6Q28IqTKm3L0OANM1ntoWmajcW2RozyAVSNJkQWcel/EY
+    XnSA/CMHlUXMzsUzkOL0GVT2GuS95Mw8fe2nPVrBdBnX11cTbVmm/flx+yA84HDP
+    SHTaLUHUQoYNjBofdukJnSN2TCBo36UAf4FlldlBW/ZmLT+jOvJ89ODAa8TH+bEn
+    a/U3R6YYRrhU7KuZsWRkA9si7glp3Lx6HCHosoEugzK3Avc1qiovrL4Ut3skD96X
+    EcMZR+Fbuc0QZuWxNI+1TdQSD1ckeF3AeS/nA55Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=sLbJaqTl x-bits=2048 x-keytype=rsa
+    header.i=@gmail.com header.b=vVHnojPl x-bits=2048 x-keytype=rsa
     x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,16 +40,16 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=ahCw5Xuc;
+    header.i=@1e100.net header.b=Va8qZo1l;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=sLbJaqTl x-bits=2048 x-keytype=rsa
+      header.i=@gmail.com header.b=vVHnojPl x-bits=2048 x-keytype=rsa
       x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -58,94 +58,138 @@ Authentication-Results: mx1.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=ahCw5Xuc;
+      header.i=@1e100.net header.b=Va8qZo1l;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGgPIzAypp+cJIDlTdPpjTYqczBDmbaoS55F1FJKs+ptILADpz6CVMapdVtlldh8Uebf7MVsFypedZn3BKAmdvubpf7VjnYtAQdh534Kf0BtxS4DlG8w
-    fzIGgeBghHfudGuTu0EKhpO+kHysRBnM/jnmSRilwRNMysOk3CiwlQKkOLds26clo/kYyeKSqy+fmavig8VonAp3czuG7bU2vUctHLo+aLRiyDv+nSDQo0Mc
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=wijiZ99obDcA:10 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8
-    a=LXqzIYo6XijtM2lLOFUA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfLY3UnuQXmZ8lrdlR55A0+EABuTfJAF74XKC10uglTlT33gJSuH1190sgKETBtRto0yRWEVrZs0mnTn9nWoVZCTkQJDMNgTIRQBndTvwSUpciK3Wbs4e
+    8DRJMvNS12U+0165iIyRodHLS6NKPK9h7fFM/lCq+3b4DMGVmFbudbpjACFig0WrW00cjkhYpz9j8s8hbFBRwazDK4IPvHFpW6lSJ52wtqX6VQg2Qj2+8BOB
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=2Djirvd6ItAA:10 a=VUJBJC2UJ8kA:10 a=6rqHouBjAAAA:8 a=pGLkceISAAAA:8
+    a=oGMlB6cnAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=37rDS-QxAAAA:8
+    a=VwQbUJbxAAAA:8 a=xjQjg--fAAAA:8 a=n2GhSfulAAAA:8 a=8WYiZWZhN1W3HIF0KK4A:9
+    a=CjuIK1q_8ugA:10 a=Hx1yvPaMooE3kwe23bt7:22 a=NdAtdrkLVvyUPsUoGJp4:22
+    a=k1Nq6YrhK2t884LQW06G:22 a=AjGcO6oz07-iQ99wixmX:22 a=L4vkcYpMSA5nFlNZ2tk3:22
+    a=9NqWk_7B-uqI6kdQTXIl:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeERX0F (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 19:26:05 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46896 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752253AbeERX0F (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 19:26:05 -0400
-X-Google-Smtp-Source: AB8JxZqsoS5nYQd1h4x1qy3x9CTEj67oJGWEWp4Rhighz+B0yqOo8mkRYrfyfZGOxUkq6KKeuVk59O04tF+yQfLmAKM=
-MIME-Version: 1.0
-In-Reply-To: <CAJwJo6Y1+Zrriox6WTZtFhDuUkMRed3FXv8Nte=YLgkQd3p9vw@mail.gmail.com>
-References: <20180517233510.24996-1-dima@arista.com> <1526600442.28243.39.camel@arista.com>
- <CALCETrUDX=4FHU0e8SZ9Rr_AnAes+5jjzKCrrVmS1mddHQyeVQ@mail.gmail.com>
- <CAJwJo6ZwEZiQYDQqLkfP0+mRgmc+X=H02M=fFZZykWN4A3s-FQ@mail.gmail.com> <CAJwJo6Y1+Zrriox6WTZtFhDuUkMRed3FXv8Nte=YLgkQd3p9vw@mail.gmail.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Sat, 19 May 2018 00:25:44 +0100
-Message-ID: <CAJwJo6aUp-SyVkJH0CEQ7sVNE2gX2eagGJ6JGvWa8Ar5rM6sQg@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dima@arista.com>,
-        LKML <linux-kernel@vger.kernel.org>, izbyshev@ispras.ru,
+        id S1751909AbeERHUi (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 03:20:38 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40414 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751958AbeERHUd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 18 May 2018 03:20:33 -0400
+X-Google-Smtp-Source: AB8JxZrS0G2+GnNNVyTk+kb4AqgrVeCbvxg6QoQ0YVRCyIPxbL/yEBV1z7+ktJ+eGxrGSl4DmBMVog==
+Date: Fri, 18 May 2018 10:20:26 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Dmitry Safonov <dima@arista.com>
+Cc: linux-kernel@vger.kernel.org, Alexey Izbyshev <izbyshev@ispras.ru>,
         Alexander Monakov <amonakov@ispras.ru>,
+        Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@suse.de>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        x86@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
+Message-ID: <20180518072026.GY31735@uranus>
+References: <20180517233510.24996-1-dima@arista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517233510.24996-1-dima@arista.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-05-19 0:16 GMT+01:00 Dmitry Safonov <0x7f454c46@gmail.com>:
-> 2018-05-19 0:10 GMT+01:00 Dmitry Safonov <0x7f454c46@gmail.com>:
->> Sure.
->> I'm on Intel actually:
->> cpu family    : 6
->> model        : 142
->> model name    : Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
->>
->> But I usually test kernels in VM. So, I use virt-manager as it's
->> easier to manage
->> multiple VMs. The thing is that I've chosen "Copy host CPU configuration"
->> and for some reason, I don't quite follow virt-manager makes model "Opteron_G4".
->> I'm on Fedora 27, virt-manager 1.4.3, qemu 2.9.1(qemu-2.9.1-2.fc26).
->
-> Hmm, the reason it chooses AMD emulation looks like a bug in virt-manager:
-> When I try IvyBridge CPU, it gives the following error:
->> Error starting domain: the CPU is incompatible with host CPU: Host CPU does not
->> provide required features: vme, x2apic, tsc-deadline, avx, f16c, rdrand
->
-> Which to my naive mind is by the reason that "tsc-deadline" is not written with
-> a dash in cpuinfo:
-> flags        : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
-> mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe
-> syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts
-> rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq
-> pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma
-> cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt
-> tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
-> cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept
-> vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx
-> rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves
-> ibpb ibrs stibp dtherm ida arat pln pts hwp hwp_notify hwp_act_window
-> hwp_epp
->
-> But that just my naive suppose.
+On Fri, May 18, 2018 at 12:35:10AM +0100, Dmitry Safonov wrote:
+> The x86 mmap() code selects the mmap base for an allocation depending on
+> the bitness of the syscall. For 64bit sycalls it select mm->mmap_base and
+> for 32bit mm->mmap_compat_base.
+> 
+> exec() calls mmap() which in turn uses in_compat_syscall() to check whether
+> the mapping is for a 32bit or a 64bit task. The decision is made on the
+> following criteria:
+> 
+>   ia32    child->thread.status & TS_COMPAT
+>    x32    child->pt_regs.orig_ax & __X32_SYSCALL_BIT
+>   ia64    !ia32 && !x32
+> 
+> __set_personality_x32() was dropping TS_COMPAT flag, but
+> set_personality_64bit() has kept compat syscall flag making
+> in_compat_syscall() return true during the first exec() syscall.
+> 
+> Which in result has user-visible effects, mentioned by Alexey:
+> 1) It breaks ASAN
+> $ gcc -fsanitize=address wrap.c -o wrap-asan
+> $ ./wrap32 ./wrap-asan true
+> ==1217==Shadow memory range interleaves with an existing memory mapping. ASan cannot proceed correctly. ABORTING.
+> ==1217==ASan shadow was supposed to be located in the [0x00007fff7000-0x10007fff7fff] range.
+> ==1217==Process memory map follows:
+>         0x000000400000-0x000000401000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+>         0x000000600000-0x000000601000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+>         0x000000601000-0x000000602000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+>         0x0000f7dbd000-0x0000f7de2000   /lib64/ld-2.27.so
+>         0x0000f7fe2000-0x0000f7fe3000   /lib64/ld-2.27.so
+>         0x0000f7fe3000-0x0000f7fe4000   /lib64/ld-2.27.so
+>         0x0000f7fe4000-0x0000f7fe5000
+>         0x7fed9abff000-0x7fed9af54000
+>         0x7fed9af54000-0x7fed9af6b000   /lib64/libgcc_s.so.1
+> [snip]
+> 
+> 2) It doesn't seem to be great for security if an attacker always knows
+> that ld.so is going to be mapped into the first 4GB in this case
+> (the same thing happens for PIEs as well).
+> 
+> The testcase:
+> $ cat wrap.c
+> 
+> int main(int argc, char *argv[]) {
+>   execvp(argv[1], &argv[1]);
+>   return 127;
+> }
+> 
+> $ gcc wrap.c -o wrap
+> $ LD_SHOW_AUXV=1 ./wrap ./wrap true |& grep AT_BASE
+> AT_BASE:         0x7f63b8309000
+> AT_BASE:         0x7faec143c000
+> AT_BASE:         0x7fbdb25fa000
+> 
+> $ gcc -m32 wrap.c -o wrap32
+> $ LD_SHOW_AUXV=1 ./wrap32 ./wrap true |& grep AT_BASE
+> AT_BASE:         0xf7eff000
+> AT_BASE:         0xf7cee000
+> AT_BASE:         0x7f8b9774e000
+> 
+> Fixes:
+> commit 1b028f784e8c ("x86/mm: Introduce mmap_compat_base() for 32-bit mmap()")
+> commit ada26481dfe6 ("x86/mm: Make in_compat_syscall() work during exec")
+> 
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Cyrill Gorcunov <gorcunov@openvz.org>
+> Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: <linux-mm@kvack.org>
+> Cc: <x86@kernel.org>
+> Cc: <stable@vger.kernel.org> # v4.12+
+> Reported-by: Alexey Izbyshev <izbyshev@ispras.ru>
+> Bisected-by: Alexander Monakov <amonakov@ispras.ru>
+> Investigated-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+Reviewed-by: Cyrill Gorcunov <gorcunov@openvz.org>
 
-Yeah, so they use cpuid there and I guess this one wasn't fixed for me:
-https://bugzilla.redhat.com/show_bug.cgi?id=1467599
-
-Thanks,
-             Dmitry
+Thanks a lot! (At first I had to scratch my head for a second
+to realize that the key moment is executing 64 bit application
+from inside of a compat process :-)
