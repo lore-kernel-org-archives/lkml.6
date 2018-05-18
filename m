@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752894AbeERKgK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:36:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24835 "EHLO mga07.intel.com"
+        id S1752868AbeERKgJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:36:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:23570 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752579AbeERKfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752059AbeERKfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 May 2018 06:35:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,414,1520924400";
-   d="scan'208";a="229629450"
+   d="scan'208";a="229720725"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 2/7] x86/mm: Unify pgtable_l5_enabled usage in early boot code
-Date: Fri, 18 May 2018 13:35:23 +0300
-Message-Id: <20180518103528.59260-3-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 4/7] x86/mm: Introduce 'no5lvl' kernel parameter
+Date: Fri, 18 May 2018 13:35:25 +0300
+Message-Id: <20180518103528.59260-5-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518103528.59260-1-kirill.shutemov@linux.intel.com>
 References: <20180518103528.59260-1-kirill.shutemov@linux.intel.com>
@@ -26,152 +26,144 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Usually pgtable_l5_enabled is defined using cpu_feature_enabled().
-cpu_feature_enabled() is not available in early boot code. We use
-several different preprocessor tricks to get around it. It's messy.
+The kernel parameter allows to force kernel to use 4-level paging even
+if hardware and kernel support 5-level paging.
 
-Unify them all.
-
-If cpu_feature_enabled() is not yet available, USE_EARLY_PGTABLE_L5 can
-be defined before all includes. It makes pgtable_l5_enabled rely on
-__pgtable_l5_enabled variable instead. This approach fits all early
-users.
+The option may be useful to workaround regressions related to 5-level
+paging.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/boot/compressed/kaslr.c        |  4 ++--
- arch/x86/boot/compressed/misc.h         |  6 ++----
- arch/x86/include/asm/pgtable_64_types.h | 13 ++++++++++---
- arch/x86/kernel/head64.c                | 12 +++++-------
- arch/x86/mm/kasan_init_64.c             |  6 ++----
- 5 files changed, 21 insertions(+), 20 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ arch/x86/boot/compressed/cmdline.c              |  2 +-
+ arch/x86/boot/compressed/head_64.S              |  1 +
+ arch/x86/boot/compressed/pgtable_64.c           | 12 ++++++++++--
+ arch/x86/kernel/cpu/common.c                    | 15 +++++++++++++++
+ arch/x86/kernel/head64.c                        |  9 +++++----
+ 6 files changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index a0a50b91ecef..b87a7582853d 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -47,7 +47,7 @@
- #include <linux/decompress/mm.h>
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..364a33c1534d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2600,6 +2600,9 @@
+ 			emulation library even if a 387 maths coprocessor
+ 			is present.
  
- #ifdef CONFIG_X86_5LEVEL
--unsigned int pgtable_l5_enabled __ro_after_init;
-+unsigned int __pgtable_l5_enabled;
- unsigned int pgdir_shift __ro_after_init = 39;
- unsigned int ptrs_per_p4d __ro_after_init = 1;
- #endif
-@@ -734,7 +734,7 @@ void choose_random_location(unsigned long input,
- 
- #ifdef CONFIG_X86_5LEVEL
- 	if (__read_cr4() & X86_CR4_LA57) {
--		pgtable_l5_enabled = 1;
-+		__pgtable_l5_enabled = 1;
- 		pgdir_shift = 48;
- 		ptrs_per_p4d = 512;
- 	}
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index 9e11be4cae19..a423bdb42686 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -12,10 +12,8 @@
- #undef CONFIG_PARAVIRT_SPINLOCKS
- #undef CONFIG_KASAN
- 
--#ifdef CONFIG_X86_5LEVEL
--/* cpu_feature_enabled() cannot be used that early */
--#define pgtable_l5_enabled __pgtable_l5_enabled
--#endif
-+/* cpu_feature_enabled() cannot be used this early */
-+#define USE_EARLY_PGTABLE_L5
- 
- #include <linux/linkage.h>
- #include <linux/screen_info.h>
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index adb47552e6bb..c14a4116a693 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -22,12 +22,19 @@ typedef struct { pteval_t pte; } pte_t;
- 
- #ifdef CONFIG_X86_5LEVEL
- extern unsigned int __pgtable_l5_enabled;
--#ifndef pgtable_l5_enabled
++	no5lvl		[X86-64] Disable 5-level paging mode. Forces
++			kernel to use 4-level paging instead.
 +
-+#ifdef USE_EARLY_PGTABLE_L5
-+/*
-+ * cpu_feature_enabled() is not available in early boot code.
-+ * Use variable instead.
-+ */
-+#define pgtable_l5_enabled __pgtable_l5_enabled
-+#else
- #define pgtable_l5_enabled cpu_feature_enabled(X86_FEATURE_LA57)
--#endif
-+#endif /* USE_EARLY_PGTABLE_L5 */
- #else
- #define pgtable_l5_enabled 0
--#endif
-+#endif /* CONFIG_X86_5LEVEL */
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index 0cb325734cfb..af6cda0b7900 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
  
- extern unsigned int pgdir_shift;
- extern unsigned int ptrs_per_p4d;
+-#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE
++#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
+ 
+ static unsigned long fs;
+ static inline void set_fs(unsigned long seg)
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 8169e8b7a4dc..64037895b085 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -365,6 +365,7 @@ ENTRY(startup_64)
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	movq	%rsi, %rdi		/* real mode address */
+ 	call	paging_prepare
+ 	popq	%rsi
+ 
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 23707e1da1ff..8c5107545251 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -31,16 +31,23 @@ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+  */
+ unsigned long *trampoline_32bit __section(.data);
+ 
+-struct paging_config paging_prepare(void)
++extern struct boot_params *boot_params;
++int cmdline_find_option_bool(const char *option);
++
++struct paging_config paging_prepare(void *rmode)
+ {
+ 	struct paging_config paging_config = {};
+ 	unsigned long bios_start, ebda_start;
+ 
++	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
++	boot_params = rmode;
++
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+ 	 *
+-	 * There are two parts to the check:
++	 * There are several parts to the check:
+ 	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
++	 *   - if user asked to disable 5-level paging: no5lvl in cmdline
+ 	 *   - if the machine supports 5-level paging:
+ 	 *     + CPUID leaf 7 is supported
+ 	 *     + the leaf has the feature bit set
+@@ -48,6 +55,7 @@ struct paging_config paging_prepare(void)
+ 	 * That's substitute for boot_cpu_has() in early boot code.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
++			!cmdline_find_option_bool("no5lvl") &&
+ 			native_cpuid_eax(0) >= 7 &&
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
+ 		paging_config.l5_required = 1;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index ce243f7d2d4e..a32f3c02327f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1008,6 +1008,21 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	setup_clear_cpu_cap(X86_FEATURE_PCID);
+ #endif
++
++	/*
++	 * Later in the boot process pgtable_l5_enabled() relies on
++	 * cpu_feature_enabled(X86_FEATURE_LA57). If 5-level paging is not
++	 * enabled by this point we need to clear the feature bit to avoid
++	 * false-positives at the later stage.
++	 *
++	 * pgtable_l5_enabled() can be false here for several reasons:
++	 *  - 5-level paging is disabled compile-time;
++	 *  - it's 32-bit kernel;
++	 *  - machine doesn't support 5-level paging;
++	 *  - user specified 'no5lvl' in kernel command line.
++	 */
++	if (!pgtable_l5_enabled())
++		setup_clear_cpu_cap(X86_FEATURE_LA57);
+ }
+ 
+ void __init early_cpu_init(void)
 diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 0c408f8c4ed4..ef629f2bcd61 100644
+index ac470e1ea102..43b009a97f23 100644
 --- a/arch/x86/kernel/head64.c
 +++ b/arch/x86/kernel/head64.c
-@@ -6,6 +6,10 @@
-  */
+@@ -80,10 +80,11 @@ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
  
- #define DISABLE_BRANCH_PROFILING
-+
-+/* cpu_feature_enabled() cannot be used this early */
-+#define USE_EARLY_PGTABLE_L5
-+
- #include <linux/init.h>
- #include <linux/linkage.h>
- #include <linux/types.h>
-@@ -32,11 +36,6 @@
- #include <asm/microcode.h>
- #include <asm/kasan.h>
- 
--#ifdef CONFIG_X86_5LEVEL
--#undef pgtable_l5_enabled
--#define pgtable_l5_enabled __pgtable_l5_enabled
--#endif
+ static bool __head check_la57_support(unsigned long physaddr)
+ {
+-	if (native_cpuid_eax(0) < 7)
+-		return false;
 -
- /*
-  * Manage page tables very early on.
-  */
-@@ -46,7 +45,6 @@ pmdval_t early_pmd_flags = __PAGE_KERNEL_LARGE & ~(_PAGE_GLOBAL | _PAGE_NX);
- 
- #ifdef CONFIG_X86_5LEVEL
- unsigned int __pgtable_l5_enabled __ro_after_init;
--EXPORT_SYMBOL(__pgtable_l5_enabled);
- unsigned int pgdir_shift __ro_after_init = 39;
- EXPORT_SYMBOL(pgdir_shift);
- unsigned int ptrs_per_p4d __ro_after_init = 1;
-@@ -88,7 +86,7 @@ static bool __head check_la57_support(unsigned long physaddr)
- 	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
+-	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
++	/*
++	 * 5-level paging is detected and enabled at kernel decomression
++	 * stage. Only check if it has been enabled there.
++	 */
++	if (!(native_read_cr4() & X86_CR4_LA57))
  		return false;
  
--	*fixup_int(&pgtable_l5_enabled, physaddr) = 1;
-+	*fixup_int(&__pgtable_l5_enabled, physaddr) = 1;
- 	*fixup_int(&pgdir_shift, physaddr) = 48;
- 	*fixup_int(&ptrs_per_p4d, physaddr) = 512;
- 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 980dbebd0ca7..340bb9b32e01 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -2,10 +2,8 @@
- #define DISABLE_BRANCH_PROFILING
- #define pr_fmt(fmt) "kasan: " fmt
- 
--#ifdef CONFIG_X86_5LEVEL
--/* Too early to use cpu_feature_enabled() */
--#define pgtable_l5_enabled __pgtable_l5_enabled
--#endif
-+/* cpu_feature_enabled() cannot be used this early */
-+#define USE_EARLY_PGTABLE_L5
- 
- #include <linux/bootmem.h>
- #include <linux/kasan.h>
+ 	*fixup_int(&__pgtable_l5_enabled, physaddr) = 1;
 -- 
 2.17.0
