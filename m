@@ -1,51 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeERPLu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:11:50 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41224 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeERPLp (ORCPT
+        id S1752199AbeERPL7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:11:59 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40730 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeERPLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:11:45 -0400
-X-Google-Smtp-Source: AB8JxZpLmD7eIfAGIBaTcTtkd8ID9gLXS8DPeksShv8UUiG/VfJP7IZDiYZhPiZ/TpyT7Hi9sTQ2Rw==
-Date: Fri, 18 May 2018 10:11:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dan Murphy <dmurphy@ti.com>
-Cc: mark.rutland@arm.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-Message-ID: <20180518151143.GA13110@rob-hp-laptop>
-References: <20180515154352.20263-1-dmurphy@ti.com>
+        Fri, 18 May 2018 11:11:55 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, horms@verge.net.au, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] arm64: dts: renesas: draak: Describe CVBS input
+Date: Fri, 18 May 2018 18:12:15 +0300
+Message-ID: <1569661.saMqNra8vc@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1526654878-11143-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org> <1526654878-11143-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515154352.20263-1-dmurphy@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4IFC5VE029397
 
-On Tue, May 15, 2018 at 10:43:51AM -0500, Dan Murphy wrote:
-> Introduce the device tree bindings for the lm3601x
-> family of LED torch, flash and IR drivers.
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Friday, 18 May 2018 17:47:57 EEST Jacopo Mondi wrote:
+> Describe CVBS video input through analog video decoder ADV7180
+> connected to video input interface VIN4.
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> The video input signal path is shared with HDMI video input, and
+> selected by on-board switches SW-53 and SW-54 with CVBS input selected
+> by the default switches configuration.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
 > ---
+> v2 -> v3:
+> - Add comment to describe the shared input video path
+> - Add my SoB and Niklas' R-b tags
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 42 +++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
-> v6 - Removed multiple led child nodes, fixed example to display micro ranges
-> for corresponding child nodes and added led-sources to define the current driver -
-> https://patchwork.kernel.org/patch/10392121/
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index 9d73de8..95745fc
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -142,6 +142,11 @@
+>  		groups = "usb0";
+>  		function = "usb0";
+>  	};
+> +
+> +	vin4_pins_cvbs: vin4 {
+> +		groups = "vin4_data8", "vin4_sync", "vin4_clk";
+> +		function = "vin4";
+> +	};
+>  };
 > 
-> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
-> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
-> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
-> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
-> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-> 
->  .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>  &i2c0 {
+> @@ -154,6 +159,23 @@
+>  		reg = <0x50>;
+>  		pagesize = <8>;
+>  	};
+> +
+> +	analog-video@20 {
+> +		compatible = "adi,adv7180";
+> +		reg = <0x20>;
+> +
+> +		port {
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The adv7180 DT bindings document the output port as 3 or 6 (respectively for 
+the CP and ST versions of the chip). You should thus number the port. Apart 
+from that the patch looks good.
+
+> +			/*
+> +			 * The VIN4 video input path is shared between
+> +			 * CVBS and HDMI inputs through SW[49-54] switches.
+> +			 *
+> +			 * CVBS is the default selection, link it to VIN4 here.
+> +			 */
+> +			adv7180_out: endpoint {
+> +				remote-endpoint = <&vin4_in>;
+> +			};
+> +		};
+> +	};
+>  };
+> 
+>  &i2c1 {
+> @@ -246,3 +268,23 @@
+>  	timeout-sec = <60>;
+>  	status = "okay";
+>  };
+> +
+> +&vin4 {
+> +	pinctrl-0 = <&vin4_pins_cvbs>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			vin4_in: endpoint {
+> +				remote-endpoint = <&adv7180_out>;
+> +			};
+> +		};
+> +	};
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
