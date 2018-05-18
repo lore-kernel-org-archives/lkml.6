@@ -1,64 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeEROOZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:14:25 -0400
-Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:47012 "EHLO
-        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751197AbeEROOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:14:21 -0400
-Date: Fri, 18 May 2018 14:14:20 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Boaz Harrosh <boazh@netapp.com>
-cc: Matthew Wilcox <willy@infradead.org>, Jeff Moyer <jmoyer@redhat.com>,
+        id S1752375AbeEROOg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:14:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751384AbeEROOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:14:32 -0400
+Date: Fri, 18 May 2018 23:14:28 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Amit Golander <Amit.Golander@netapp.com>
-Subject: Re: [PATCH] mm: Add new vma flag VM_LOCAL_CPU
-In-Reply-To: <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
-Message-ID: <010001637399f796-3ffe3ed2-2fb1-4d43-84f0-6a65b6320d66-000000@email.amazonses.com>
-References: <0efb5547-9250-6b6c-fe8e-cf4f44aaa5eb@netapp.com> <20180514191551.GA27939@bombadil.infradead.org> <7ec6fa37-8529-183d-d467-df3642bcbfd2@netapp.com> <20180515004137.GA5168@bombadil.infradead.org> <f3a66d8b-b9dc-b110-08aa-a63f0c309fb2@netapp.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH -tip v3 4/7] kprobes: Ignore break_handler
+Message-Id: <20180518231428.e11eac5fe4d825b3ece37590@kernel.org>
+In-Reply-To: <20180518062034.GB27960@gmail.com>
+References: <152651499561.25583.14488389770693278906.stgit@devbox>
+        <152651511510.25583.17622383189254834099.stgit@devbox>
+        <20180518062034.GB27960@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.18-54.240.9.112
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018, Boaz Harrosh wrote:
+On Fri, 18 May 2018 08:20:34 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-> > I don't think page tables work the way you think they work.
-> >
-> > +               err = vm_insert_pfn_prot(zt->vma, zt_addr, pfn, prot);
-> >
-> > That doesn't just insert it into the local CPU's page table.  Any CPU
-> > which directly accesses or even prefetches that address will also get
-> > the translation into its cache.
-> >
->
-> Yes I know, but that is exactly the point of this flag. I know that this
-> address is only ever accessed from a single core. Because it is an mmap (vma)
-> of an O_TMPFILE-exclusive file created in a core-pinned thread and I allow
-> only that thread any kind of access to this vma. Both the filehandle and the
-> mmaped pointer are kept on the thread stack and have no access from outside.
->
-> So the all point of this flag is the kernel driver telling mm that this
-> address is enforced to only be accessed from one core-pinned thread.
+> 
+> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Ignore break_handler related code because it was only
+> > used by jprobe and jprobe is removed.
+> 
+> I changed this description to:
+> 
+>  ============
+>  Subject: kprobes: Don't call the ->break_handler() in generic kprobes code
+> 
+>  Don't call the ->break_handler() from the core kprobes code, because it was only 
+>  used by jprobes which got removed.
+> 
+>  ( In a followup patch we'll remove the remaining calls in low level 
+>    arch handlers as well and remove the callback altogether. )
+>  ============
+> 
+> Please try to be a lot less vague in changelogs when it's possible and relevant!
+> 
+> I.e. saying "Ignore break_handler related code" is annoyingly vague, it doesn't 
+> explain things well at all. Saying "Don't call the ->break_handler()" is just as 
+> compact, yet it also makes it very clear what's done in the patch...
 
-But there are no provisions for probhiting accesses from other cores?
+OK, I'll try to describe more concretely and straightforwardly.
 
-This means that a casual accidental write from a thread executing on
-another core can lead to arbitrary memory corruption because the cache
-flushing has been bypassed.
+Thank you for telling me your advice!!
+
+> 
+> Thanks,
+> 
+> 	Ingo
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
