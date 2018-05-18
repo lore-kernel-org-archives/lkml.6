@@ -1,76 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeERI5f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:57:35 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46740 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeERI52 (ORCPT
+        id S1753561AbeERI5o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:57:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51032 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751965AbeERI5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:57:28 -0400
-X-Google-Smtp-Source: AB8JxZq0hOVGItC/jsH1cCdaJ7bnKo+QZHlDjnkvvCF3sSgtrLRGrBUE+GIMJLxm6OMvtvYVAfPKMw==
-From: Lei YU <mine260309@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lei YU <mine260309@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Add 24MHz fixed clock
-Date: Fri, 18 May 2018 16:57:02 +0800
-Message-Id: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 18 May 2018 04:57:40 -0400
+X-Google-Smtp-Source: AB8JxZq290IcHiOpiZUNCHUnIW7aRI2EznTjjM9Cr4ILWrYn8Y8DQouTyZgOzNtsdNa36VghO+6x/w==
+Date: Fri, 18 May 2018 10:57:37 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v1 06/11] cpufreq: tegra20: Remove unneeded check in
+ tegra_cpu_init
+Message-ID: <20180518085737.GF14500@ulmo>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-7-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="w3uUfsyyY1Pqa/ej"
+Content-Disposition: inline
+In-Reply-To: <20180517180056.13336-7-digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a 24MHz fixed clock.
-This clock will be used for certain devices, e.g. pwm.
 
-Signed-off-by: Lei YU <mine260309@gmail.com>
----
- drivers/clk/clk-aspeed.c                 | 9 ++++++++-
- include/dt-bindings/clock/aspeed-clock.h | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
+--w3uUfsyyY1Pqa/ej
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 5eb50c3..4664088 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -14,7 +14,7 @@
- 
- #include <dt-bindings/clock/aspeed-clock.h>
- 
--#define ASPEED_NUM_CLKS		35
-+#define ASPEED_NUM_CLKS		36
- 
- #define ASPEED_RESET_CTRL	0x04
- #define ASPEED_CLK_SELECTION	0x08
-@@ -474,6 +474,13 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/* Fixed 24MHz clock */
-+	hw = clk_hw_register_fixed_rate(NULL, "fixed-24m", "clkin",
-+					0, 24000000);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
-+
- 	/*
- 	 * TODO: There are a number of clocks that not included in this driver
- 	 * as more information is required:
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index d3558d8..ff29d8e 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -38,6 +38,7 @@
- #define ASPEED_CLK_MAC			32
- #define ASPEED_CLK_BCLK			33
- #define ASPEED_CLK_MPLL			34
-+#define ASPEED_CLK_24M			35
- 
- #define ASPEED_RESET_XDMA		0
- #define ASPEED_RESET_MCTP		1
--- 
-2.7.4
+On Thu, May 17, 2018 at 09:00:51PM +0300, Dmitry Osipenko wrote:
+> Remove checking of the CPU number for consistency as it won't ever fail
+> unless there is a severe bug in the cpufreq core.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/tegra20-cpufreq.c | 5 -----
+>  1 file changed, 5 deletions(-)
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--w3uUfsyyY1Pqa/ej
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+lYEACgkQ3SOs138+
+s6FCXA//e3o9EQLf8AXy4zLm2AdX1fPol4HziGLearqZXulBm7LFjk+q8JhuITXD
+pk0/froyjqxioHIdeYATbym1DuNO9Q3ZA0vcobpWakgN1HciS/HKbSKaVLLia4cc
+q73q9sIyqr41oQ3ych9hXtlxBkTKzmCET+IzbVJVoLrEvTc0jQEBPNJlO6Zpo0Ys
+hAHhfebmLBmTQ8YuAxf6XU/PIEsAEz5SENIccHNXNSqiR4mxBjjTbst4WVWEV4uh
+GFVRIQ2ooPIrDxswB2ZXpxFFSdSrE9P75odgoLoOb6hnyW8dTn3S9e57GdzKcZeE
+EXg08e206VRuk/vO1A4jFdqWnqZ2oZ4ZyKftDjpKB9jhC/hQg3FAan6CBeLWsuBY
+ACmjnMDL8+XJSZyqaJVHqQCceOQ1ZBe4zBAhx8C/X1Z0pbfAhlFDeuOpZoMxfj0X
+046X0aMqCykC+vQZ1A3psD5PjEdCoDXlV/ItrFjwnOTQCByW+rdJF/4v5q8HHLSc
+NJVRZlcUATtPu3GEmHl69EgCXZxSON1cVwqhNiVZ84GNttVOCaJDmMrYo9NoKoXY
+dYBMhyujklF8eTEdlV6DxTF91V4C6IK+Qsyyfe9qRNR+0sXVwr2rsHsL6R5xt38L
+IMijA/V3p/zRITaWFEF3YC1YosMgKd//lBQKnmP+5XOjO8seggI=
+=SAKT
+-----END PGP SIGNATURE-----
+
+--w3uUfsyyY1Pqa/ej--
