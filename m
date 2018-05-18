@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751577AbeERRRx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:17:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58930 "EHLO mx1.redhat.com"
+        id S1751980AbeERRTG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:19:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750975AbeERRRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:17:50 -0400
+        id S1751906AbeERRTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:19:02 -0400
 Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
 To: Eduardo Habkost <ehabkost@redhat.com>,
         "Michael S. Tsirkin" <mst@redhat.com>
@@ -19,6 +19,8 @@ References: <1526568841-35372-1-git-send-email-mst@redhat.com>
  <20180517184658.GA1543@localhost.localdomain>
  <20180517225316-mutt-send-email-mst@kernel.org>
  <20180518160431.GX25013@localhost.localdomain>
+ <20180518195139-mutt-send-email-mst@kernel.org>
+ <20180518171311.GB25013@localhost.localdomain>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -56,12 +58,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <9d528020-87f6-a600-9d08-02c88d20b18c@redhat.com>
-Date: Fri, 18 May 2018 19:17:43 +0200
+Message-ID: <0764c230-3f84-36a5-ad89-fc8dd318d1e4@redhat.com>
+Date: Fri, 18 May 2018 19:18:57 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180518160431.GX25013@localhost.localdomain>
+In-Reply-To: <20180518171311.GB25013@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,22 +71,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/05/2018 18:04, Eduardo Habkost wrote:
->> Without mlock you should always use pv spinlocks.
->>
->> Otherwise you risk blocking on a lock taken by
->> a VCPU that is in turn blocked on IO, where the IO
->> is not completing because CPU is being used up
->> spinning.
->
-> So the stronger guarantee seems necessary.
-> 
-> Now what should host userspace do if the user is trying to run an
-> existing configuration where the CPUID hint was set but memory is
-> not pinned?
+On 18/05/2018 19:13, Eduardo Habkost wrote:
+>> As much as we'd like to be helpful and validate input, you need a real
+>> time host too. I'm not sure how we'd find out - I suggest we do not
+>> bother for now.
+> I'm worried that people will start enabling the flag in all kinds
+> of scenarios where the guarantees can't be kept, and make the
+> meaning of the flag in practice completely different from its
+> documented meaning.
 
-As mentioned elsewhere in the thread, there are many ways to pin memory,
-and mlock is not always necessary.  However, I agree with Michael in
-making the hint provide a stronger guarantee.
+I don't think we should try to detect anything.  As far as QEMU is
+concerned, it's mostly garbage in, garbage out when it comes to invalid
+configurations.  It's just a bit, and using it in invalid configurations
+is okay if you're doing it (for example) for debugging.
 
 Paolo
