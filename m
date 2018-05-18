@@ -1,93 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeERDu3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 23:50:29 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50953 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751698AbeERDu0 (ORCPT
+        id S1752139AbeERDwn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 23:52:43 -0400
+Received: from regular1.263xmail.com ([211.150.99.138]:41098 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751698AbeERDwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 23:50:26 -0400
-X-ME-Proxy: <xmx:gU3-WrxeKbUF4UXn97gcoZErmigVBcQNWVqyvqmvdR9u_ZEVPHHZTw>
-X-ME-Proxy: <xmx:gU3-WiU5czn79Gfwo9henz3odjPo12OvZCUeq7so7XUZqvIkwROzMw>
-X-ME-Proxy: <xmx:gU3-WrhQD1OUmrzaIBu8zA5eRBFbrvlpBkxBhT81zTgp74ipbpf2CA>
-X-ME-Proxy: <xmx:gU3-WiDMk47-YVthlv8u05uembl1kGs2SxG5OwkhygQm6xoASkwPew>
-X-ME-Proxy: <xmx:gU3-Whs4EZQQ3pUFMBGDZlbf77GURxfrheViHO0EEzy4dQA4isOb7w>
-X-ME-Proxy: <xmx:gk3-Wm_teS41AeYqVY-wZEVILm4oOugYdCiaohwYBp57l0_9OdW2wg>
-X-ME-Sender: <xms:gU3-Wnmw4dk3K8K7YDbXaUtPkyyN5nV9NHKVq3fNrag6A0AqzrjCxQ>
-Subject: Re: mmotm 2018-05-17-16-26 uploaded (autofs)
-To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-References: <20180517232639.sD6Cz%akpm@linux-foundation.org>
- <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
-From: Ian Kent <raven@themaw.net>
-Message-ID: <49acf718-da2e-73dc-a3bf-c41d7546576e@themaw.net>
-Date: Fri, 18 May 2018 11:50:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 17 May 2018 23:52:42 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 183.57.25.242
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <da6d839a98717e1ce41dd0878e1494b8>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: djw@t-chip.com.cn
+To: linux-rockchip@lists.infradead.org
+Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] gpio: syscon: allow fetching syscon from parent node
+Date: Fri, 18 May 2018 11:52:04 +0800
+Message-Id: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/05/18 08:21, Randy Dunlap wrote:
-> On 05/17/2018 04:26 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2018-05-17-16-26 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
->> You will need quilt to apply these patches to the latest Linus release (4.x
->> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->> http://ozlabs.org/~akpm/mmotm/series
->>
->> The file broken-out.tar.gz contains two datestamp files: .DATE and
->> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->> followed by the base kernel version against which this patch series is to
->> be applied.
->>
->> This tree is partially included in linux-next.  To see which patches are
->> included in linux-next, consult the `series' file.  Only the patches
->> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->> linux-next.
->>
->> A git tree which contains the memory management portion of this tree is
->> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
->> by Michal Hocko.  It contains the patches which are between the
->> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
->> file, http://www.ozlabs.org/~akpm/mmotm/series.
->>
->>
->> A full copy of the full kernel tree with the linux-next and mmotm patches
->> already applied is available through git within an hour of the mmotm
->> release.  Individual mmotm releases are tagged.  The master branch always
->> points to the latest release, so it's constantly rebasing.
-> 
-> 
-> on x86_64: with (randconfig):
-> CONFIG_AUTOFS_FS=y
-> CONFIG_AUTOFS4_FS=y
+From: Heiko Stuebner <heiko@sntech.de>
 
-Oh right, I need to make these exclusive.
+Syscon nodes can be a simple-mfd and the syscon-users then be declared
+as children of this node. That way the parent-child structure can be
+better represented for devices that are fully embedded in the syscon.
 
-I seem to remember trying to do that along the way, can't remember why
-I didn't do it in the end.
+Therefore allow getting the syscon from the parent if neither
+a special compatible nor a gpio,syscon-dev property is defined.
 
-Any suggestions about potential problems when doing it?
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Levin Du <djw@t-chip.com.cn>
+---
 
-Thanks,
-Ian
+Changes in v2: None
+Changes in v1:
+- New: allow fetching syscon from parent node in gpio-syscon driver
+
+ drivers/gpio/gpio-syscon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7..7325b86 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -205,6 +205,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	} else {
+ 		priv->syscon =
+ 			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
++		if (IS_ERR(priv->syscon) && np->parent)
++			priv->syscon = syscon_node_to_regmap(np->parent);
+ 		if (IS_ERR(priv->syscon))
+ 			return PTR_ERR(priv->syscon);
+ 
+-- 
+2.7.4
