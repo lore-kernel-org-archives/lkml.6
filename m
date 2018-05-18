@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeERTKd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:10:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:31556 "EHLO mx1.redhat.com"
+        id S1752219AbeERTKm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:10:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49958 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751693AbeERTKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:10:30 -0400
-Subject: [PATCH v4 1/2] vfio/mdev: Check globally for duplicate devices
+        id S1751606AbeERTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:10:38 -0400
+Subject: [PATCH v4 2/2] vfio/mdev: Re-order sysfs attribute creation
 From: Alex Williamson <alex.williamson@redhat.com>
 To: kwankhede@nvidia.com
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         alex.williamson@redhat.com, cohuck@redhat.com, pasic@linux.ibm.com
-Date: Fri, 18 May 2018 13:10:25 -0600
-Message-ID: <20180518191025.3187.29141.stgit@gimli.home>
+Date: Fri, 18 May 2018 13:10:35 -0600
+Message-ID: <20180518191035.3187.77957.stgit@gimli.home>
 In-Reply-To: <20180518190145.3187.7620.stgit@gimli.home>
 References: <20180518190145.3187.7620.stgit@gimli.home>
 User-Agent: StGit/0.18-102-gdf9f
@@ -23,278 +23,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we create an mdev device, we check for duplicates against the
-parent device and return -EEXIST if found, but the mdev device
-namespace is global since we'll link all devices from the bus.  We do
-catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-with it comes a kernel warning and stack trace for trying to create
-duplicate sysfs links, which makes it an undesirable response.
-
-Therefore we should really be looking for duplicates across all mdev
-parent devices, or as implemented here, against our mdev device list.
-Using mdev_list to prevent duplicates means that we can remove
-mdev_parent.lock, but in order not to serialize mdev device creation
-and removal globally, we add mdev_device.active which allows UUIDs to
-be reserved such that we can drop the mdev_list_lock before the mdev
-device is fully in place.
-
-Two behavioral notes; first, mdev_parent.lock had the side-effect of
-serializing mdev create and remove ops per parent device.  This was
-an implementation detail, not an intentional guarantee provided to
-the mdev vendor drivers.  Vendor drivers can trivially provide this
-serialization internally if necessary.  Second, review comments note
-the new -EAGAIN behavior when the device, and in particular the remove
-attribute, becomes visible in sysfs.  If a remove is triggered prior
-to completion of mdev_device_create() the user will see a -EAGAIN
-error.  While the errno is different, receiving an error during this
-period is not, the previous implementation returned -ENODEV for the
-same condition.  Furthermore, the consistency to the user is improved
-in the case where mdev_device_remove_ops() returns error.  Previously
-concurrent calls to mdev_device_remove() could see the device
-disappear with -ENODEV and return in the case of error.  Now a user
-would see -EAGAIN while the device is in this transitory state.
+There exists a gap at the end of mdev_device_create() where the device
+is visible to userspace, but we're not yet ready to handle removal, as
+triggered through the 'remove' attribute.  We handle this properly in
+mdev_device_remove() with an -EAGAIN return, but we can marginally
+reduce this gap by adding this attribute as a final step of our sysfs
+setup.
 
 Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- Documentation/vfio-mediated-device.txt |    5 ++
- drivers/vfio/mdev/mdev_core.c          |  102 +++++++++++---------------------
- drivers/vfio/mdev/mdev_private.h       |    2 -
- 3 files changed, 42 insertions(+), 67 deletions(-)
+ drivers/vfio/mdev/mdev_sysfs.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/vfio-mediated-device.txt b/Documentation/vfio-mediated-device.txt
-index 1b3950346532..c3f69bcaf96e 100644
---- a/Documentation/vfio-mediated-device.txt
-+++ b/Documentation/vfio-mediated-device.txt
-@@ -145,6 +145,11 @@ The functions in the mdev_parent_ops structure are as follows:
- * create: allocate basic resources in a driver for a mediated device
- * remove: free resources in a driver when a mediated device is destroyed
- 
-+(Note that mdev-core provides no implicit serialization of create/remove
-+callbacks per mdev parent device, per mdev type, or any other categorization.
-+Vendor drivers are expected to be fully asynchronous in this respect or
-+provide their own internal resource protection.)
-+
- The callbacks in the mdev_parent_ops structure are as follows:
- 
- * open: open callback of mediated device
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index 126991046eb7..0212f0ee8aea 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *mdev)
- }
- EXPORT_SYMBOL(mdev_uuid);
- 
--static int _find_mdev_device(struct device *dev, void *data)
--{
--	struct mdev_device *mdev;
--
--	if (!dev_is_mdev(dev))
--		return 0;
--
--	mdev = to_mdev_device(dev);
--
--	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
--		return 1;
--
--	return 0;
--}
--
--static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
--{
--	struct device *dev;
--
--	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
--	if (dev) {
--		put_device(dev);
--		return true;
--	}
--
--	return false;
--}
--
- /* Should be called holding parent_list_lock */
- static struct mdev_parent *__find_parent_device(struct device *dev)
- {
-@@ -221,7 +193,6 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- 	}
- 
- 	kref_init(&parent->ref);
--	mutex_init(&parent->lock);
- 
- 	parent->dev = dev;
- 	parent->ops = ops;
-@@ -297,6 +268,10 @@ static void mdev_device_release(struct device *dev)
- {
- 	struct mdev_device *mdev = to_mdev_device(dev);
- 
-+	mutex_lock(&mdev_list_lock);
-+	list_del(&mdev->next);
-+	mutex_unlock(&mdev_list_lock);
-+
- 	dev_dbg(&mdev->dev, "MDEV: destroying\n");
- 	kfree(mdev);
- }
-@@ -304,7 +279,7 @@ static void mdev_device_release(struct device *dev)
- int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
+diff --git a/drivers/vfio/mdev/mdev_sysfs.c b/drivers/vfio/mdev/mdev_sysfs.c
+index 802df210929b..249472f05509 100644
+--- a/drivers/vfio/mdev/mdev_sysfs.c
++++ b/drivers/vfio/mdev/mdev_sysfs.c
+@@ -257,24 +257,24 @@ int  mdev_create_sysfs_files(struct device *dev, struct mdev_type *type)
  {
  	int ret;
--	struct mdev_device *mdev;
-+	struct mdev_device *mdev, *tmp;
- 	struct mdev_parent *parent;
- 	struct mdev_type *type = to_mdev_type(kobj);
  
-@@ -312,21 +287,28 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	if (!parent)
- 		return -EINVAL;
- 
--	mutex_lock(&parent->lock);
-+	mutex_lock(&mdev_list_lock);
- 
- 	/* Check for duplicate */
--	if (mdev_device_exist(parent, uuid)) {
--		ret = -EEXIST;
--		goto create_err;
-+	list_for_each_entry(tmp, &mdev_list, next) {
-+		if (!uuid_le_cmp(tmp->uuid, uuid)) {
-+			mutex_unlock(&mdev_list_lock);
-+			ret = -EEXIST;
-+			goto mdev_fail;
-+		}
- 	}
- 
- 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
- 	if (!mdev) {
-+		mutex_unlock(&mdev_list_lock);
- 		ret = -ENOMEM;
--		goto create_err;
-+		goto mdev_fail;
- 	}
- 
- 	memcpy(&mdev->uuid, &uuid, sizeof(uuid_le));
-+	list_add(&mdev->next, &mdev_list);
-+	mutex_unlock(&mdev_list_lock);
-+
- 	mdev->parent = parent;
- 	kref_init(&mdev->ref);
- 
-@@ -338,35 +320,28 @@ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- 	ret = device_register(&mdev->dev);
- 	if (ret) {
- 		put_device(&mdev->dev);
--		goto create_err;
-+		goto mdev_fail;
- 	}
- 
- 	ret = mdev_device_create_ops(kobj, mdev);
+-	ret = sysfs_create_files(&dev->kobj, mdev_device_attrs);
+-	if (ret)
+-		return ret;
+-
+ 	ret = sysfs_create_link(type->devices_kobj, &dev->kobj, dev_name(dev));
  	if (ret)
--		goto create_failed;
-+		goto create_fail;
+-		goto device_link_failed;
++		return ret;
  
- 	ret = mdev_create_sysfs_files(&mdev->dev, type);
- 	if (ret) {
- 		mdev_device_remove_ops(mdev, true);
--		goto create_failed;
-+		goto create_fail;
- 	}
+ 	ret = sysfs_create_link(&dev->kobj, &type->kobj, "mdev_type");
+ 	if (ret)
+ 		goto type_link_failed;
  
- 	mdev->type_kobj = kobj;
-+	mdev->active = true;
- 	dev_dbg(&mdev->dev, "MDEV: created\n");
++	ret = sysfs_create_files(&dev->kobj, mdev_device_attrs);
++	if (ret)
++		goto create_files_failed;
++
+ 	return ret;
  
--	mutex_unlock(&parent->lock);
--
--	mutex_lock(&mdev_list_lock);
--	list_add(&mdev->next, &mdev_list);
--	mutex_unlock(&mdev_list_lock);
--
--	return ret;
-+	return 0;
- 
--create_failed:
-+create_fail:
- 	device_unregister(&mdev->dev);
--
--create_err:
--	mutex_unlock(&parent->lock);
-+mdev_fail:
- 	mdev_put_parent(parent);
++create_files_failed:
++	sysfs_remove_link(&dev->kobj, "mdev_type");
+ type_link_failed:
+ 	sysfs_remove_link(type->devices_kobj, dev_name(dev));
+-device_link_failed:
+-	sysfs_remove_files(&dev->kobj, mdev_device_attrs);
  	return ret;
  }
-@@ -377,44 +352,39 @@ int mdev_device_remove(struct device *dev, bool force_remove)
- 	struct mdev_parent *parent;
- 	struct mdev_type *type;
- 	int ret;
--	bool found = false;
  
- 	mdev = to_mdev_device(dev);
- 
- 	mutex_lock(&mdev_list_lock);
- 	list_for_each_entry(tmp, &mdev_list, next) {
--		if (tmp == mdev) {
--			found = true;
-+		if (tmp == mdev)
- 			break;
--		}
- 	}
- 
--	if (found)
--		list_del(&mdev->next);
-+	if (tmp != mdev) {
-+		mutex_unlock(&mdev_list_lock);
-+		return -ENODEV;
-+	}
- 
--	mutex_unlock(&mdev_list_lock);
-+	if (!mdev->active) {
-+		mutex_unlock(&mdev_list_lock);
-+		return -EAGAIN;
-+	}
- 
--	if (!found)
--		return -ENODEV;
-+	mdev->active = false;
-+	mutex_unlock(&mdev_list_lock);
- 
- 	type = to_mdev_type(mdev->type_kobj);
- 	parent = mdev->parent;
--	mutex_lock(&parent->lock);
- 
- 	ret = mdev_device_remove_ops(mdev, force_remove);
- 	if (ret) {
--		mutex_unlock(&parent->lock);
--
--		mutex_lock(&mdev_list_lock);
--		list_add(&mdev->next, &mdev_list);
--		mutex_unlock(&mdev_list_lock);
--
-+		mdev->active = true;
- 		return ret;
- 	}
- 
- 	mdev_remove_sysfs_files(dev, type);
- 	device_unregister(dev);
--	mutex_unlock(&parent->lock);
- 	mdev_put_parent(parent);
- 
- 	return 0;
-diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
-index a9cefd70a705..b5819b7d7ef7 100644
---- a/drivers/vfio/mdev/mdev_private.h
-+++ b/drivers/vfio/mdev/mdev_private.h
-@@ -20,7 +20,6 @@ struct mdev_parent {
- 	struct device *dev;
- 	const struct mdev_parent_ops *ops;
- 	struct kref ref;
--	struct mutex lock;
- 	struct list_head next;
- 	struct kset *mdev_types_kset;
- 	struct list_head type_list;
-@@ -34,6 +33,7 @@ struct mdev_device {
- 	struct kref ref;
- 	struct list_head next;
- 	struct kobject *type_kobj;
-+	bool active;
- };
- 
- #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
