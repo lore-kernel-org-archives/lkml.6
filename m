@@ -1,113 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeERKrD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:47:03 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:39375 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752621AbeERKrB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:47:01 -0400
-X-Google-Smtp-Source: AB8JxZo53ZfFFWup8NhulEfzH5OoX3aoHWSpVqaDQTzv14txyh4vjHmROiNINSHbcLPRiUr9xWdLQDkSTj3KJoSQmns=
+        id S1752221AbeERKxX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:53:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34444 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751534AbeERKxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 06:53:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,414,1520924400";
+   d="scan'208";a="229723619"
+Date: Fri, 18 May 2018 13:53:17 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI / PM: Do not clear state_saved for devices that
+ remain suspended
+Message-ID: <20180518105317.GG15419@lahna.fi.intel.com>
+References: <11415287.ki0m5Bqgns@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org> <1526639490-12167-6-git-send-email-ulf.hansson@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 May 2018 12:46:58 +0200
-X-Google-Sender-Auth: dlg-rO8htCr49nDwSmLI6unnB78
-Message-ID: <CAMuHMdUTF-8_V6kMAE0THNES+yv2HhZGJA3f41Yfpd1Bs6txHg@mail.gmail.com>
-Subject: Re: [PATCH 5/9] PM / Domains: dt: Allow power-domain property to be a
- list of phandles
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11415287.ki0m5Bqgns@aspire.rjw.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+On Fri, May 18, 2018 at 10:17:42AM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The state_saved flag should not be cleared in pci_pm_suspend() if the
+> given device is going to remain suspended, or the device's config
+> space will not be restored properly during the subsequent resume.
+> 
+> Namely, if the device is going to stay in suspend, both the late
+> and noirq callbacks return early for it, so if its state_saved flag
+> is cleared in pci_pm_suspend(), it will remain unset throughout the
+> remaining part of suspend and resume and pci_restore_state() called
+> for the device going forward will return without doing anything.
+> 
+> For this reason, change pci_pm_suspend() to only clear state_saved
+> if the given device is not going to remain suspended.  [This is
+> analogous to what commit ae860a19f37c (PCI / PM: Do not clear
+> state_saved in pci_pm_freeze() when smart suspend is set) did for
+> hibernation.]
+> 
+> Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Fri, May 18, 2018 at 12:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> To be able to describe topologies where devices are partitioned across
-> multiple power domains, let's extend the power-domain property to allow
-> being a list of phandles.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/power/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
-> @@ -111,8 +111,9 @@ Example 3:
->  ==PM domain consumers==
->
->  Required properties:
-> - - power-domains : A phandle and PM domain specifier as defined by bindings of
-> -                   the power controller specified by phandle.
-> + - power-domains : A phandle and PM domain specifier, or a list of phandles, as
-
-A list of PM domain specifiers?
-
-(A PM domain specifier consists of a phandle, and zero or more indices)
-
-> +                  defined by bindings of the power controller specified by
-> +                  phandle.
->
->  Example:
->
-> @@ -122,9 +123,16 @@ Example:
->                 power-domains = <&power 0>;
->         };
->
-> -The node above defines a typical PM domain consumer device, which is located
-> -inside a PM domain with index 0 of a power controller represented by a node
-> -with the label "power".
-> +       leaky-device@12350000 {
-
-I know it's just an example, but this uses the same unit-address and
-reg property
-as the device node above.
-
-There's a similar issue with the two other examples below, but they
-use different
-node names (leaky-device0 and leaky-device1).
-
-> +               compatible = "foo,i-leak-current";
-> +               reg = <0x12350000 0x1000>;
-> +               power-domains = <&power0 0>, <&power1 0> ;
-> +       };
-> +
-> +The first example above defines a typical PM domain consumer device, which is
-> +located inside a PM domain with index 0 of a power controller represented by a
-> +node with the label "power". In the second example the consumer device are
-> +partitioned across two PM domains.
->
->  Optional properties:
->  - required-opps: This contains phandle to an OPP node in another device's OPP
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
