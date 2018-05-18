@@ -1,130 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeEROXF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:23:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53768 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751966AbeEROW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:22:57 -0400
-Date: Fri, 18 May 2018 15:22:53 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Create configfs entry for each
- pci_epf_device_id table entry
-Message-ID: <20180518142253.GB18605@e107981-ln.cambridge.arm.com>
-References: <20180402132935.32008-1-kishon@ti.com>
+        id S1752089AbeEROXT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:23:19 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40909 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeEROXQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:23:16 -0400
+X-Google-Smtp-Source: AB8JxZom1pN2Sq3fCqwhj+SwBcomPYqJFZTRkpFZSAVQ1qT/UQblHclxHXY6kGfr+zMK4IF8Ub/rKQ==
+Date: Fri, 18 May 2018 09:23:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 16/26] dt-bindings: clock: sun50i-a64-ccu: Add
+ PLL_VIDEO[0-1] macros
+Message-ID: <20180518142314.GA826@rob-hp-laptop>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+ <20180518094536.17201-17-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180402132935.32008-1-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180518094536.17201-17-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon, Gustavo,
-
-On Mon, Apr 02, 2018 at 06:59:35PM +0530, Kishon Vijay Abraham I wrote:
-> In order to be able to provide correct driver_data for pci_epf device,
-> a separate configfs entry for each pci_epf_device_id table entry in
-> pci_epf_driver is required.
+On Fri, May 18, 2018 at 03:15:26PM +0530, Jagan Teki wrote:
+> Allwinner A64 has two clock parents PLL_VIDEO0 and PLL_VIDEO1.
 > 
-> Add support to create configfs entry for each pci_epf_device_id
-> table entry here.
+> Include these macros on dt-bindings so-that the same can be
+> used while defining CCU clock phadles.
 > 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  drivers/pci/endpoint/pci-epf-core.c | 23 +++++++++++++++++++++--
->  include/linux/pci-epf.h             |  4 ++--
->  2 files changed, 23 insertions(+), 4 deletions(-)
-
-Do we still need this patch after the recent discussion on the configfs
-interface ?
-
-https://patchwork.ozlabs.org/patch/903494/
-
-Lorenzo
-
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index 59ed29e550e9..d6787f39fd41 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -15,6 +15,8 @@
->  #include <linux/pci-epf.h>
->  #include <linux/pci-ep-cfs.h>
->  
-> +static DEFINE_MUTEX(pci_epf_mutex);
-> +
->  static struct bus_type pci_epf_bus_type;
->  static const struct device_type pci_epf_type;
->  
-> @@ -139,7 +141,13 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
->   */
->  void pci_epf_unregister_driver(struct pci_epf_driver *driver)
->  {
-> -	pci_ep_cfs_remove_epf_group(driver->group);
-> +	struct config_group *group;
-> +
-> +	mutex_lock(&pci_epf_mutex);
-> +	list_for_each_entry(group, &driver->epf_group, group_entry)
-> +		pci_ep_cfs_remove_epf_group(group);
-> +	list_del(&driver->epf_group);
-> +	mutex_unlock(&pci_epf_mutex);
->  	driver_unregister(&driver->driver);
->  }
->  EXPORT_SYMBOL_GPL(pci_epf_unregister_driver);
-> @@ -155,6 +163,8 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
->  			      struct module *owner)
->  {
->  	int ret;
-> +	struct config_group *group;
-> +	const struct pci_epf_device_id *id;
->  
->  	if (!driver->ops)
->  		return -EINVAL;
-> @@ -169,7 +179,16 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
->  	if (ret)
->  		return ret;
->  
-> -	driver->group = pci_ep_cfs_add_epf_group(driver->driver.name);
-> +	INIT_LIST_HEAD(&driver->epf_group);
-> +
-> +	id = driver->id_table;
-> +	while (id->name[0]) {
-> +		group = pci_ep_cfs_add_epf_group(id->name);
-> +		mutex_lock(&pci_epf_mutex);
-> +		list_add_tail(&group->group_entry, &driver->epf_group);
-> +		mutex_unlock(&pci_epf_mutex);
-> +		id++;
-> +	}
->  
->  	return 0;
->  }
-> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> index e897bf076701..a30dcaafa6e8 100644
-> --- a/include/linux/pci-epf.h
-> +++ b/include/linux/pci-epf.h
-> @@ -72,7 +72,7 @@ struct pci_epf_ops {
->   * @driver: PCI EPF driver
->   * @ops: set of function pointers for performing EPF operations
->   * @owner: the owner of the module that registers the PCI EPF driver
-> - * @group: configfs group corresponding to the PCI EPF driver
-> + * @epf_group: list of configfs group corresponding to the PCI EPF driver
->   * @id_table: identifies EPF devices for probing
->   */
->  struct pci_epf_driver {
-> @@ -82,7 +82,7 @@ struct pci_epf_driver {
->  	struct device_driver	driver;
->  	struct pci_epf_ops	*ops;
->  	struct module		*owner;
-> -	struct config_group	*group;
-> +	struct list_head	epf_group;
->  	const struct pci_epf_device_id	*id_table;
->  };
->  
-> -- 
-> 2.16.2
+> Changes for v2:
+> - new patch
 > 
+>  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
+>  1 file changed, 2 insertions(+)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
