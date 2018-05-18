@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-375240-1527092007-2-5422939334238605534
+Return-Path: <linux-security-module-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3455337-1526627339-2-13936589949737704438
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527092007; b=AG1WrC5RCjdPEPwIqV/VAK4s67EMyJKUh3N1XSyaUjlnXOuFQz
-    HIO/zCgxaBBs5FXrHHq4T9eSJjVMpkQa0Q6dyfFAnGmFT7z1daAK8ndoRfdGIpQQ
-    mwdzTyTir9nsubhyr0JzAWBLVmCBTnSb3WRhvoFG6jjTyfOVABqjC/uq6povE0Ba
-    M387uZwXE3YjuKVq6dIkyJSYE+b5EX0FLAWebv07tjJyx2ty9s/wZ1yth1w3+BEA
-    fhn3FIXKdmKCCdXVX223Ye7wvsPPGrwhbfzMKsggQxN5ZyIX0Znxig5ej6io2mJs
-    JmnJg8bki9EF00ovpU7lpHBCadZHxqGpFrdQ==
+    1526627339; b=KfXDq7RUTlZ4ntIBAwryiDIUOb9J+B5jRI+CCsIFcoM/RqMPxY
+    s7ZK1DNp71pldyH4mwgYm2ECinQ4n1lZ+LAJUzcnT11QsiDgHvbHcyFGkDyOiqwM
+    Uww9K5kX3A+rUzGYSMkTkB6+UYeM6UWlPkJ963XMH904+atqLYjg+2Dx4Fn5MUgV
+    egaD0xiSd9eKgJwYG2Tf/2NJuDt/JDJhCvkWLZ68uCf/OBdFKB74ORRSS5E2vRzV
+    HM4EycEBljo4dJ16Q4wl/ZnLtu8vh1TxhUZdOTFSf9qbNwhg9OB+AC1NK0lHNNru
+    cUfQ+VRhnCEQr3RQoYkUCHjQLf9TdsprYPzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527092007; bh=yA6yUOBwnt3TCvQiFhLddP/vlj5/Q6
-    v37b6dBuNu1FM=; b=ezvqFE4cP4SmgHwOq1KJxMZPk6RAeDj+PKV78diIFt6tq7
-    qZe56TOi0jDyd7w99UiTAx8sr56I0ozUCT2HnzXo01/y6ib/4vj87Rz5UMlKU/nq
-    8Aq8y5vOGtdRTCgtxdZlIZ/A0yIryCFT2SJB3l5xiHwJh7FxgYbizGL+emJ0jGrU
-    szzZcNYeHQeJqIFluvHmJmzRk3o1e90e5rYSRFSKocxfCPxCVEUHtk6eDU1ccznB
-    WrZUhqNdMzNZqCu9GT9EOpqcPCyoNj4mxXZF8shDVWWQdAkyW1A9JnuOPGJ2xAAA
-    l08jBVfowZAMRm+I5lCrIW8rOu49poAfTUrPdfvw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :mime-version:content-type:sender:list-id; s=fm2; t=1526627339;
+    bh=j234j9UBbr+2M0L/rjHGiJe9umNPerDHlEKcezgMISU=; b=eqaMxBl8620P
+    qHOGoWJi9mwzau2rHiZP3ZYuNbL0fgcKcqruO7M/vSBL/BlpuZcNVC/YvgoKP3n1
+    eJ+UoX8SLpBAa2+PBExcm0w37oEBRE/SINfa2XDmJWJv86PheHbAXfIZMop8HpWp
+    0Lb/x0PerVHHgK2P0aK6yfXbK3msMGIv94imp9MbSFH4hZOhGcnBEgKqGOSZ06yx
+    6WHrfMUtg69yaRU/GF7BYYXKirHuyLLYw+CxY1euTR3ymGCRoyclUtH152EvRSCd
+    81csTKC3SQNsLRYEZI05R5KbuFOljN6o8/frbEjRaeY8OQBNEza/tByA83W3EbQ2
+    NqrX99/+2w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
@@ -38,13 +38,13 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linux.intel.com header.result=pass
     header_org.domain=intel.com header_org.result=pass
     header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
@@ -54,68 +54,112 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=linux.intel.com header.result=pass
       header_org.domain=intel.com header_org.result=pass
       header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNPInN1spKTkywZO+pCeCHy5omsNZzG462oVpr9NF/fn8e7RFcS5Oh9VYGTaDAVex/kvAUYfJtRcVRRJaZhVu1FtyP2K56bZWNHuE10Be/txAwUgoWe+
-    s4TdS7e6vb8XDiiAZ8WeAUvXphOceRHyCa7TAW6Ja+RBsYKYFxl8prfigCR3nOqiM8/WkYc34abdvx8zAM4yRkCXxA5dfQqcVnOVdI7PIKZCNTaktiKhm/e+
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE6tMrWflUBdowQoEYL2HOoZyhQH2vOUQBSvHmlBhKQW356ZYlDrw9UTRS3fm/uVIN/MZP2ldnHzQ8ruHKJygNbBjHMwRiB0kfy1KEnhMC0Wo3MuOUPd
+    Qa45l3HhKJeSqwMhFX1snuA8JxiBMSNLH+qBtysw1Yxai4jPs4fkX0uWc5k4kbj27IkU+EYIHbTOEX3joDdB+HJgINhLVV1bkP9ohUMOdfMlqvzxb2ZCGDCd
+    aaZNi4r/lDL7makgFSdR+w==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=20KFwNOVAAAA:8 a=tLcInzcBvtUTPvREeMwA:9 a=CjuIK1q_8ugA:10
+    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=y6ZjemeqickuwuxARSAA:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754630AbeEWQNV (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 23 May 2018 12:13:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:43108 "EHLO mga14.intel.com"
+        id S1751644AbeERHI4 (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 03:08:56 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16780 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751646AbeEWQNU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 May 2018 12:13:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1751405AbeERHIz (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Fri, 18 May 2018 03:08:55 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,433,1520924400";
-   d="scan'208";a="51590838"
-Date: Wed, 23 May 2018 10:13:19 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        tony.luck@intel.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 6/9] dax: introduce a ->copy_to_iter dax operation
-Message-ID: <20180523161319.GA29519@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
-        Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org, tony.luck@intel.com,
-        linux-fsdevel@vger.kernel.org
-References: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152539239729.31796.4765429575408958580.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
+   d="scan'208";a="200418858"
+Date: Fri, 18 May 2018 10:08:51 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: jmorris@namei.org
+Cc: linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for v4.18
+Message-ID: <20180518070851.GA11123@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152539239729.31796.4765429575408958580.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 05:06:37PM -0700, Dan Williams wrote:
-> Similar to the ->copy_from_iter() operation, a platform may want to
-> deploy an architecture or device specific routine for handling reads
-> from a dax_device like /dev/pmemX. On x86 this routine will point to a
-> machine check safe version of copy_to_iter(). For now, add the plumbing
-> to device-mapper and the dax core.
-> 
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
 
-Looks good to me.
+  smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
 
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
+
+for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
+
+  tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.18
+
+----------------------------------------------------------------
+Colin Ian King (2):
+      tpm: st33zp24: remove redundant null check on chip
+      tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
+
+Jerry Snitselaar (1):
+      tpm_tis: verify locality released before returning from release_locality
+
+Ji-Hun Kim (2):
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+
+Nayna Jain (3):
+      tpm: move the delay_msec increment after sleep in tpm_transmit()
+      tpm: reduce poll sleep time in tpm_transmit()
+      tpm: reduce polling time to usecs for even finer granularity
+
+Tadeusz Struk (1):
+      tpm: fix use after free in tpm2_load_context()
+
+Thiebaud Weksteen (4):
+      tpm: Add explicit endianness cast
+      tpm: Move eventlog files to a subdirectory
+      tpm: Move shared eventlog functions to common.c
+      tpm: Move eventlog declarations to its own header
+
+Winkler, Tomas (1):
+      tpm: tpm_crb: relinquish locality on error path.
+
+ drivers/char/tpm/Makefile                          |  10 +-
+ .../tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c}   |   3 +-
+ drivers/char/tpm/eventlog/common.c                 | 195 ++++++++++++++++++++
+ drivers/char/tpm/eventlog/common.h                 |  35 ++++
+ .../tpm/{tpm_eventlog_efi.c => eventlog/efi.c}     |   6 +-
+ .../char/tpm/{tpm_eventlog_of.c => eventlog/of.c}  |  11 +-
+ .../char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++-------------------
+ .../char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+ drivers/char/tpm/st33zp24/spi.c                    |   4 +-
+ drivers/char/tpm/st33zp24/st33zp24.c               |   2 -
+ drivers/char/tpm/tpm-interface.c                   |   5 +-
+ drivers/char/tpm/tpm.h                             |  32 +---
+ drivers/char/tpm/tpm2-space.c                      |   3 +-
+ drivers/char/tpm/tpm_crb.c                         |  10 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  58 +++++-
+ 15 files changed, 331 insertions(+), 246 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (98%)
+ create mode 100644 drivers/char/tpm/eventlog/common.c
+ create mode 100644 drivers/char/tpm/eventlog/common.h
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (91%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (91%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
