@@ -1,48 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeERSYZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751452AbeERSYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:24:24 -0400
-Date: Fri, 18 May 2018 15:24:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: Re: [PATCH] perf tests: Fix regex for record+probe_libc_inet_pton.sh
-Message-ID: <20180518182420.GA5001@kernel.org>
-References: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
- <be181700-57a5-e4c8-7cd4-88a88b7a51f1@linux.ibm.com>
- <764aa7ae-dcbe-6311-19fd-3d31b18f1645@linux.vnet.ibm.com>
- <c14a2313-28af-15ef-0989-2ab8544de51b@linux.ibm.com>
- <20180518141445.GB32141@kernel.org>
+        id S1752030AbeERSZp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 14:25:45 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55876 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbeERSZo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 14:25:44 -0400
+X-Google-Smtp-Source: AB8JxZpSBRwtUfu9wcFTimJaTbRrnlwqf+sxTAkXBEp3tbqUeumO2OBHbP+V+xckv6Di2w5tpwHAjAMx348gJtcTPB8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518141445.GB32141@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com>
+ <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
+ <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com>
+In-Reply-To: <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 18 May 2018 11:25:32 -0700
+Message-ID: <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com>
+Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
+To: namit@vmware.com
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Anvin <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4IIPq00011013
 
-Em Fri, May 18, 2018 at 11:14:45AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Fri, May 18, 2018 at 01:09:48PM +0200, Thomas-Mich Richter escreveu:
-> > On 05/18/2018 12:29 PM, Sandipan Das wrote:
-> > > Can you please apply these two patches as well and then re-test?
-> 
-> > > [1] https://lkml.org/lkml/2018/5/17/112
-> > > [2] https://lkml.org/lkml/2018/5/17/113
-> 
-> > Ahhh, yes that helped. Must have missed it. Thanks for the pointer.
-> 
-> Cool, can I take that as a Tested-by: Thomas?
+On Fri, May 18, 2018 at 10:24 AM Nadav Amit <namit@vmware.com> wrote:
 
-Actually I'll fold this patch into the patch that made this test break,
-so that we keep the tree bisectable wrt that specific 'perf test' entry.
+> Will it be ok just to use a global inline asm to set an “.include”
+directive
+> that gas would later process? (I can probably wrap it in a C macro so it
+> won’t be too disgusting)
 
-- Arnaldo
+Maybe. I'd almost prefer it to be the automatic kind of thing that we
+already do for C files using "-include".
+
+                  Linus
