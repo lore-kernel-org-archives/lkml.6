@@ -1,105 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeERVpb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:45:31 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44495 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751009AbeERVp2 (ORCPT
+        id S1751985AbeERVrO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:47:14 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37444 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeERVrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:45:28 -0400
-X-Google-Smtp-Source: AB8JxZoPo3Y6qk85JHuL3ICx0L+QOtEXY5zpKpnuhZK+9V2L0WfyjpVWKZc4KkeWNz1oeEoFmakrCtMPqYyUkohtqCA=
+        Fri, 18 May 2018 17:47:11 -0400
+X-Google-Smtp-Source: AB8JxZp1F9lu+AjWnpEBJfU1Uwt/Jmqe4b8YnJeaDxKcHJrcE/dnAMvTSeHqFmdb1/v/kxEmaQFNaA==
+Date: Fri, 18 May 2018 14:47:08 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Subject: Re: [PATCH v4 5/5] remoteproc: qcom: Always assert and deassert
+ reset signals in SDM845
+Message-ID: <20180518214708.GU14924@minitux>
+References: <20180425150843.26657-1-sibis@codeaurora.org>
+ <20180425150843.26657-6-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <f6be31b7-a6f8-3d7f-f621-09490a1b0489@embeddedor.com>
-References: <20180515030038.GA11822@embeddedor.com> <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
- <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
- <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
- <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com> <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
- <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
- <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com> <f6be31b7-a6f8-3d7f-f621-09490a1b0489@embeddedor.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 18 May 2018 14:45:27 -0700
-Message-ID: <CAPcyv4husQPy601-JKpud7C3YZFcxk4BAJJhcztu_yOeC=7U-w@mail.gmail.com>
-Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425150843.26657-6-sibis@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 2:27 PM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
->
-> On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
->>>>>
->>>>>
->>>>
->>>> Oops, it seems I sent the wrong patch. The function would look like
->>>> this:
->>>>
->>>> #ifndef sanitize_index_nospec
->>>> inline bool sanitize_index_nospec(unsigned long *index,
->>>>                                    unsigned long size)
->>>> {
->>>>          if (*index >= size)
->>>>                  return false;
->>>>          *index = array_index_nospec(*index, size);
->>>>
->>>>          return true;
->>>> }
->>>> #endif
->>>
->>>
->>> I think this is fine in concept, we already do something similar in
->>> mpls_label_ok(). Perhaps call it validate_index_nospec() since
->>> validation is something that can fail, but sanitization in theory is
->>> something that can always succeed.
->>>
->>
->> OK. I got it.
->>
->>> However, the problem is the data type of the index. I expect you would
->>> need to do this in a macro and use typeof() if you wanted this to be
->>> generally useful, and also watch out for multiple usage of a macro
->>> argument. Is it still worth it at that point?
->>>
->>
->> Yeah. I think it is worth it. I'll work on this during the weekend and
->> send a proper patch for review.
->>
->> Thanks for the feedback.
->
->
-> BTW, I'm analyzing other cases, like the following:
->
-> bool foo(int x)
-> {
->          if(!validate_index_nospec(&x))
->                  return false;
->
->          [...]
->
->          return true;
-> }
->
-> int vulnerable(int x)
-> {
->          if (!foo(x))
->                  return -1;
->
->          temp = array[x];
->
->          [...]
->
-> }
->
-> Basically my doubt is how deep this barrier can be placed into the call
-> chain in order to continue working.
+On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
 
-This is broken you would need to pass the address of x into foo()
-otherwise there may be speculation on the return value of foo.
+> SDM845 brings a new reset signal ALT_RESET which is a part of the MSS
+> subsystem hence requires some of the active clks to be enabled before
+> assert/deassert
+> 
+> Reset the modem if the BOOT FSM does timeout
+> 
+> Reset assert/deassert sequence vary across SoCs adding reset, adding
+> start/stop helper functions to handle SoC specific reset sequences
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pil.c | 81 ++++++++++++++++++++++++++++--
+>  1 file changed, 76 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+[..]
+> @@ -349,6 +356,32 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>  	return 0;
+>  }
+>  
+> +static int q6v5_reset_assert(struct q6v5 *qproc)
+> +{
+> +	return reset_control_assert(qproc->mss_restart);
+> +}
+> +
+> +static int q6v5_reset_deassert(struct q6v5 *qproc)
+> +{
+> +	return reset_control_deassert(qproc->mss_restart);
+> +}
+> +
+> +static int q6v5_alt_reset_assert(struct q6v5 *qproc)
+> +{
+> +	return reset_control_reset(qproc->mss_restart);
+> +}
+> +
+> +static int q6v5_alt_reset_deassert(struct q6v5 *qproc)
+> +{
+> +	/* Ensure alt reset is written before restart reg */
+> +	writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
+> +
+> +	reset_control_reset(qproc->mss_restart);
+> +
+> +	writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
+> +	return 0;
+> +}
+> +
+
+Rather than having these four functions and scattering jumps to some
+function pointer in the code I think it will be shorter and cleaner to
+just have the q6v5_reset_{asert,deassert}() functions and in there check
+if has_alt_reset and take appropriate action.
+
+>  static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+>  {
+>  	unsigned long timeout;
+> @@ -424,6 +457,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>  				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
+>  		if (ret) {
+>  			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
+> +			/* Reset the modem so that boot FSM is in reset state */
+> +			qproc->reset_deassert(qproc);
+
+
+A thing like this typically should go into it's own patch, to keep a
+clear record of why it was changed, but as this is simply amending the
+previous patch it indicates that that one wasn't complete.
+
+So if you reorder the two patches you can just put this directly into
+the sdm845 patch, making it "complete".
+
+(This also means that I want to merge the handover vs ready interrupt
+patch before that one, so please include it in the next revision of the
+series).
+
+>  			return ret;
+>  		}
+>  
+> @@ -792,12 +827,20 @@ static int q6v5_start(struct rproc *rproc)
+>  		dev_err(qproc->dev, "failed to enable supplies\n");
+>  		goto disable_proxy_clk;
+>  	}
+> -	ret = reset_control_deassert(qproc->mss_restart);
+> +
+> +	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
+> +			      qproc->reset_clk_count);
+
+Remind me, why can't you always enable the active clock before
+deasserting reset? That way we wouldn't have to split out the iface
+clock handling to be just slightly longer than the active clocks.
+
+>  	if (ret) {
+> -		dev_err(qproc->dev, "failed to deassert mss restart\n");
+> +		dev_err(qproc->dev, "failed to enable reset clocks\n");
+>  		goto disable_vdd;
+>  	}
+>  
+> +	ret = qproc->reset_deassert(qproc);
+> +	if (ret) {
+> +		dev_err(qproc->dev, "failed to deassert mss restart\n");
+> +		goto disable_reset_clks;
+> +	}
+> +
+[..]
+> @@ -1335,8 +1399,11 @@ static const struct rproc_hexagon_res sdm845_mss = {
+>  			"prng",
+>  			NULL
+>  	},
+> -	.active_clk_names = (char*[]){
+> +	.reset_clk_names = (char*[]){
+>  			"iface",
+> +			NULL
+> +	},
+> +	.active_clk_names = (char*[]){
+
+Again, if you reorder your patches to first add the support for
+alt_reset and then introduce sdm845 you don't need to modify the
+previous patch directly to make it work.
+
+>  			"bus",
+>  			"mem",
+>  			"gpll0_mss",
+
+Regards,
+Bjorn
