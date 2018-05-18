@@ -1,162 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeERLai (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:30:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:30913 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeERLag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:30:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,414,1520924400";
-   d="scan'208";a="59721963"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH, RESEND] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
-Date: Fri, 18 May 2018 14:30:28 +0300
-Message-Id: <20180518113028.79825-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752586AbeERLb5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:31:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751458AbeERLb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 07:31:56 -0400
+Subject: Re: [PATCH v7 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+To: Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jgross@suse.com, hpa@zytor.com, mingo@redhat.com,
+        tglx@linutronix.de
+Cc: boris.ostrovsky@oracle.com, bp@suse.de, dave.hansen@linux.intel.com,
+        davem@davemloft.net, gregkh@linuxfoundation.org, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org, mchehab@kernel.org,
+        rdunlap@infradead.org, thomas.lendacky@amd.com, hch@infradead.org,
+        roger.pau@citrix.com, rkrcmar@redhat.com
+References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
+ <505290b7-416f-cc97-35ff-e416ceb532c2@oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <911f4739-1a92-8ad3-4c0c-5541312c39fb@redhat.com>
+Date: Fri, 18 May 2018 13:31:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <505290b7-416f-cc97-35ff-e416ceb532c2@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD SME claims one bit from physical address to indicate whether the
-page is encrypted or not. To achieve that we clear out the bit from
-__PHYSICAL_MASK.
+On 16/05/2018 22:27, Maran Wilson wrote:
+> Friendly ping. I am hopeful one of the x86 and/or KVM maintainers has a
+> few cycles to spare to look this over.
+> 
+> And thanks to everyone who has helped thus far by providing valuable
+> feedback and reviewing.
+> 
+>    https://lkml.org/lkml/2018/4/16/1002
 
-The capability to adjust __PHYSICAL_MASK is required beyond AMD SME.
-For instance for upcoming Intel Multi-Key Total Memory Encryption.
+KVM bits look fine.  This would be the right time to post the QEMU
+patches...
 
-Factor it out into a separate feature with own Kconfig handle.
-
-It also helps with overhead of AMD SME. It saves more than 3k in .text
-on defconfig + AMD_MEM_ENCRYPT:
-
-	add/remove: 3/2 grow/shrink: 5/110 up/down: 189/-3753 (-3564)
-
-We would need to return to this once we have infrastructure to patch
-constants in code. That's good candidate for it.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- arch/x86/Kconfig                    | 4 ++++
- arch/x86/boot/compressed/kaslr_64.c | 5 +++++
- arch/x86/include/asm/page_types.h   | 8 +++++++-
- arch/x86/mm/mem_encrypt_identity.c  | 3 +++
- arch/x86/mm/pgtable.c               | 5 +++++
- 5 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index bcdd3e0e2ef5..8e2d0ee0e366 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -333,6 +333,9 @@ config ARCH_SUPPORTS_UPROBES
- config FIX_EARLYCON_MEM
- 	def_bool y
- 
-+config DYNAMIC_PHYSICAL_MASK
-+	bool
-+
- config PGTABLE_LEVELS
- 	int
- 	default 5 if X86_5LEVEL
-@@ -1504,6 +1507,7 @@ config ARCH_HAS_MEM_ENCRYPT
- config AMD_MEM_ENCRYPT
- 	bool "AMD Secure Memory Encryption (SME) support"
- 	depends on X86_64 && CPU_SUP_AMD
-+	select DYNAMIC_PHYSICAL_MASK
- 	---help---
- 	  Say yes to enable support for the encryption of system memory.
- 	  This requires an AMD processor that supports Secure Memory
-diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
-index 522d11431433..748456c365f4 100644
---- a/arch/x86/boot/compressed/kaslr_64.c
-+++ b/arch/x86/boot/compressed/kaslr_64.c
-@@ -69,6 +69,8 @@ static struct alloc_pgt_data pgt_data;
- /* The top level page table entry pointer. */
- static unsigned long top_level_pgt;
- 
-+phys_addr_t physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+
- /*
-  * Mapping information structure passed to kernel_ident_mapping_init().
-  * Due to relocation, pointers must be assigned at run time not build time.
-@@ -81,6 +83,9 @@ void initialize_identity_maps(void)
- 	/* If running as an SEV guest, the encryption mask is required. */
- 	set_sev_encryption_mask();
- 
-+	/* Exclude the encryption mask from __PHYSICAL_MASK */
-+	physical_mask &= ~sme_me_mask;
-+
- 	/* Init mapping_info with run-time function/buffer pointers. */
- 	mapping_info.alloc_pgt_page = alloc_pgt_page;
- 	mapping_info.context = &pgt_data;
-diff --git a/arch/x86/include/asm/page_types.h b/arch/x86/include/asm/page_types.h
-index 1e53560a84bb..c85e15010f48 100644
---- a/arch/x86/include/asm/page_types.h
-+++ b/arch/x86/include/asm/page_types.h
-@@ -17,7 +17,6 @@
- #define PUD_PAGE_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_PAGE_MASK		(~(PUD_PAGE_SIZE-1))
- 
--#define __PHYSICAL_MASK		((phys_addr_t)(__sme_clr((1ULL << __PHYSICAL_MASK_SHIFT) - 1)))
- #define __VIRTUAL_MASK		((1UL << __VIRTUAL_MASK_SHIFT) - 1)
- 
- /* Cast *PAGE_MASK to a signed type so that it is sign-extended if
-@@ -55,6 +54,13 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#ifdef CONFIG_DYNAMIC_PHYSICAL_MASK
-+extern phys_addr_t physical_mask;
-+#define __PHYSICAL_MASK		physical_mask
-+#else
-+#define __PHYSICAL_MASK		((phys_addr_t)((1ULL << __PHYSICAL_MASK_SHIFT) - 1))
-+#endif
-+
- extern int devmem_is_allowed(unsigned long pagenr);
- 
- extern unsigned long max_low_pfn_mapped;
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 1b2197d13832..7ae36868aed2 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -527,6 +527,7 @@ void __init sme_enable(struct boot_params *bp)
- 		/* SEV state cannot be controlled by a command line option */
- 		sme_me_mask = me_mask;
- 		sev_enabled = true;
-+		physical_mask &= ~sme_me_mask;
- 		return;
- 	}
- 
-@@ -561,4 +562,6 @@ void __init sme_enable(struct boot_params *bp)
- 		sme_me_mask = 0;
- 	else
- 		sme_me_mask = active_by_default ? me_mask : 0;
-+
-+	physical_mask &= ~sme_me_mask;
- }
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 34cda7e0551b..0199b94e6b40 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -7,6 +7,11 @@
- #include <asm/fixmap.h>
- #include <asm/mtrr.h>
- 
-+#ifdef CONFIG_DYNAMIC_PHYSICAL_MASK
-+phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+EXPORT_SYMBOL(physical_mask);
-+#endif
-+
- #define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
- 
- #ifdef CONFIG_HIGHPTE
--- 
-2.17.0
+Paolo
