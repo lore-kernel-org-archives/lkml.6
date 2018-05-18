@@ -1,47 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeERTXN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:23:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38907 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbeERTXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:23:12 -0400
-Date: Fri, 18 May 2018 12:22:50 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CA+55aFz4vKF-xC+A=DOozkPMVyLHPC5xMqW+y6pg9D7W-c2BQw@mail.gmail.com>
-References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com> <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com> <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com> <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com> <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com> <CA+55aFysH5iiJWCVFu1J6GQfN2G1AbMcHyc4RhpnrnPjtM3L0Q@mail.gmail.com> <C481FBCA-2FA6-49B6-84DC-83FF03F539B9@vmware.com> <CA+55aFz4vKF-xC+A=DOozkPMVyLHPC5xMqW+y6pg9D7W-c2BQw@mail.gmail.com>
+        id S1752030AbeERTYU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:24:20 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:60572 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbeERTYS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:24:18 -0400
+Subject: Re: [PATCH v2] selftests/cgroup: memory controller self-tests
+To: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-team@fb.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180510163701.28936-1-guro@fb.com>
+ <20180510183224.GP2368884@devbig577.frc2.facebook.com>
+ <a652ce44-07f9-d229-70d4-4376bfbafa40@kernel.org>
+ <20180511143228.GU2368884@devbig577.frc2.facebook.com>
+ <ae4dc3f9-baa6-b492-7c43-0359734440b3@kernel.org>
+ <20180511162920.GV2368884@devbig577.frc2.facebook.com>
+ <957d089f-7a88-9ff4-733a-8e082339720c@kernel.org>
+ <20180511180342.GA20683@castle>
+ <fb835740-cee8-83f8-880c-ea6eea8c7c63@kernel.org>
+ <20180511200250.GW2368884@devbig577.frc2.facebook.com>
+ <1b9740f8-953a-985d-ba21-551e6064a572@kernel.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <77f5a3b3-4bf1-43bf-2826-e19af96dff75@kernel.org>
+Date: Fri, 18 May 2018 13:24:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
-To: Linus Torvalds <torvalds@linux-foundation.org>, namit@vmware.com
-CC: Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-From: hpa@zytor.com
-Message-ID: <102B8072-91D5-4D28-82C9-64D5AA73802C@zytor.com>
+In-Reply-To: <1b9740f8-953a-985d-ba21-551e6064a572@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 18, 2018 12:21:00 PM PDT, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->On Fri, May 18, 2018 at 12:18 PM Nadav Amit <namit@vmware.com> wrote:
->
->> Gnu ASM manual says: "Each time you run as it assembles exactly one
->source
->> program. The source program is made up of one or more files.”
->
->Ok, that counts as documentation, although it's confusing as hell. Is
->it
->one source program or multiple files again? I see what they are trying
->to
->say, but it really could be phrased more clearly ;)
->
->                     Linus
+On 05/11/2018 02:22 PM, Shuah Khan wrote:
+> On 05/11/2018 02:02 PM, Tejun Heo wrote:
+>> On Fri, May 11, 2018 at 01:33:26PM -0600, Shuah Khan wrote:
+>>> Yeah. I see that. You have a switch for the KSFT_ values. Since there is no
+>>> dependency on the cgroup tree, I would recommend having this patch go through
+>>> kselftest tree which is the normal process for tests anyway.
+>>>
+>>> This version is good and I can apply this to linux-kselftest next. I ran a
+>>> quick test and the Skip case looks good.
+>>>
+>>> TAP version 13
+>>> selftests: cgroup: test_memcontrol
+>>> ========================================
+>>> 1..0 # Skipped: memory controller isn't available
+>>> not ok 1..1 selftests: cgroup: test_memcontrol [SKIP]
+>>>
+>>>
+>>> Tejun! Please send me your Ack.
+>>
+>> Sure, please feel free to add my ack.  I'll revert the original patch
+>> from cgroup tree.
+>>
+>> Thanks.
+>>
+> 
+> Thanks. I will apply this to linux-kselftest next for 4.18-rc1 with
+> you Ack.
+> 
+> thanks,
+> -- Shuah
+> 
 
-At least we have a solution!
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Hi Roman,
+
+Could you please send me the fix for
+
+[bug,report] selftests: cgroup: add memory controller self-tests
+
+It is cc'ed to kselftest mailing list and not to me. Please send
+it directly for me to apply it.
+
+thanks,
+-- Shuah
