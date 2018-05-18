@@ -1,62 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeERA30 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 20:29:26 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44478 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbeERA3Z (ORCPT
+        id S1751965AbeERAky (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 20:40:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47832 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751564AbeERAkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 20:29:25 -0400
-X-Google-Smtp-Source: AB8JxZoROduDFWdpB32094BzyZR4vA0UxgI1PA9wFALoqW7KUHJBSsvHw9WDuwsKG6AuX15CYNAd81HK7YITDqzpSs4=
+        Thu, 17 May 2018 20:40:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4436560881
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
+Subject: Re: [PATCH 4/4] media: venus: add PIL support
+To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        stanimir.varbanov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        acourbot@google.com
+References: <1526556740-25494-1-git-send-email-vgarodia@codeaurora.org>
+ <1526556740-25494-5-git-send-email-vgarodia@codeaurora.org>
+From: Trilok Soni <tsoni@codeaurora.org>
+Message-ID: <e8596e31-42dc-8ac8-16e1-8990d7408bc4@codeaurora.org>
+Date: Thu, 17 May 2018 17:40:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <03014913acdc9dc6fbbee0e16c937170fea86b06.1526577485.git.rgb@redhat.com>
-References: <03014913acdc9dc6fbbee0e16c937170fea86b06.1526577485.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 17 May 2018 20:29:23 -0400
-Message-ID: <CAHC9VhRXGATOiAf1pFT5jJvDEgNHkChwZvoQri5=F7wDTQT_2A@mail.gmail.com>
-Subject: Re: [PATCH ghak81 V3a] fixup! audit: collect audit task parameters
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1526556740-25494-5-git-send-email-vgarodia@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 1:20 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Enable fork.c compilation with audit disabled.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
-> Hi Paul, this one got caught by the 0-day kbuildbot.  Can you squash it
-> down if you haven't merged it yet?
+Hi Vikash,
 
-See my comment in the original patch.  I would just recommend
-squashing this into the original patch the next time you post it.
+On 5/17/2018 4:32 AM, Vikash Garodia wrote:
+> This adds support to load the video firmware
+> and bring ARM9 out of reset. This is useful
+> for platforms which does not have trustzone
+> to reset the ARM9.
 
-> ---
->  kernel/fork.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 92ab849..ff82928 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1713,7 +1713,9 @@ static __latent_entropy struct task_struct *copy_process(
->         p->start_time = ktime_get_ns();
->         p->real_start_time = ktime_get_boot_ns();
->         p->io_context = NULL;
-> +#ifdef CONFIG_AUDITSYSCALL
->         p->audit = NULL;
-> +#endif /* CONFIG_AUDITSYSCALL */
->         cgroup_fork(p);
->  #ifdef CONFIG_NUMA
->         p->mempolicy = mpol_dup(p->mempolicy);
-> --
-> 1.8.3.1
+ARM9 = video core here? May be commit text needs little bit more detail.
+
+>   
+> +static int store_firmware_dev(struct device *dev, void *data)
+> +{
+> +	struct venus_core *core;
+> +
+> +	core = (struct venus_core *)data;
+
+No need of casting.
+
+> +	if (!core)
+> +		return -EINVAL;
+> +
+> +	if (of_device_is_compatible(dev->of_node, "qcom,venus-pil-no-tz"))
+> +		core->fw.dev = dev;
+> +
+> +	return 0;
+> +}
+> +
+
+
+>   
+> -	ret = venus_boot(dev, core->res->fwname);
+> +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +	if (ret)
+> +		goto err_runtime_disable;
+> +
+> +	/* Attempt to register child devices */
+> +	ret = device_for_each_child(dev, core, store_firmware_dev);
+> +
+
+and not ret check needed?
+
+> +	ret = venus_boot(core);
+>   	if (ret)
+>   		goto err_runtime_disable;
+>   
+>   
+>   
 
 -- 
-paul moore
-www.paul-moore.com
+---Trilok Soni
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
