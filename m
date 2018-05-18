@@ -1,76 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeEROG2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:06:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752573AbeEROGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:06:25 -0400
-Date: Fri, 18 May 2018 17:06:23 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
-Message-ID: <20180518170155-mutt-send-email-mst@kernel.org>
-References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
- <20180518161253-mutt-send-email-mst@kernel.org>
- <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
- <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
+        id S1752758AbeEROHl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:07:41 -0400
+Received: from gofer.mess.org ([88.97.38.141]:54477 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752059AbeEROHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 10:07:33 -0400
+From: Sean Young <sean@mess.org>
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: [PATCH v4 1/3] bpf: bpf_prog_array_copy() should return -ENOENT if exclude_prog not found
+Date: Fri, 18 May 2018 15:07:28 +0100
+Message-Id: <36f48c3a4a563bd8cdac18bcf8d48c0d06365863.1526651592.git.sean@mess.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1526651592.git.sean@mess.org>
+References: <cover.1526651592.git.sean@mess.org>
+In-Reply-To: <cover.1526651592.git.sean@mess.org>
+References: <cover.1526651592.git.sean@mess.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 10:00:31PM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年05月18日 21:26, Jason Wang wrote:
-> > 
-> > 
-> > On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
-> > > On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
-> > > > We return -EIO on device down but can not raise EPOLLOUT after it was
-> > > > up. This may confuse user like vhost which expects tuntap to raise
-> > > > EPOLLOUT to re-enable its TX routine after tuntap is down. This could
-> > > > be easily reproduced by transmitting packets from VM while down and up
-> > > > the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
-> > > > 
-> > > > Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-> > > > Cc: Eric Dumazet <edumazet@google.com>
-> > > > Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > ---
-> > > >   drivers/net/tun.c | 4 +++-
-> > > >   1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> > > > index d45ac37..1b29761 100644
-> > > > --- a/drivers/net/tun.c
-> > > > +++ b/drivers/net/tun.c
-> > > > @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct
-> > > > tun_struct *tun, struct tun_file *tfile,
-> > > >       int skb_xdp = 1;
-> > > >       bool frags = tun_napi_frags_enabled(tun);
-> > > >   -    if (!(tun->dev->flags & IFF_UP))
-> > > > +    if (!(tun->dev->flags & IFF_UP)) {
-> > > Isn't this racy?  What if flag is cleared at this point?
-> > 
-> > I think you mean "set at this point"? Then yes, so we probably need to
-> > set the bit during tun_net_close().
-> > 
-> > Thanks
-> 
-> Looks no need, vhost will poll socket after it see EIO. So we are ok here?
-> 
-> Thanks
+This makes is it possible for bpf prog detach to return -ENOENT.
 
-In fact I don't even understand why does this help any longer.
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ kernel/bpf/core.c        | 11 +++++++++--
+ kernel/trace/bpf_trace.c |  2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 2194c6a9df42..198848837783 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -1566,6 +1566,7 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 	int new_prog_cnt, carry_prog_cnt = 0;
+ 	struct bpf_prog **existing_prog;
+ 	struct bpf_prog_array *array;
++	bool found_exclude = false;
+ 	int new_prog_idx = 0;
+ 
+ 	/* Figure out how many existing progs we need to carry over to
+@@ -1574,14 +1575,20 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 	if (old_array) {
+ 		existing_prog = old_array->progs;
+ 		for (; *existing_prog; existing_prog++) {
+-			if (*existing_prog != exclude_prog &&
+-			    *existing_prog != &dummy_bpf_prog.prog)
++			if (*existing_prog == exclude_prog) {
++				found_exclude = true;
++				continue;
++			}
++			if (*existing_prog != &dummy_bpf_prog.prog)
+ 				carry_prog_cnt++;
+ 			if (*existing_prog == include_prog)
+ 				return -EEXIST;
+ 		}
+ 	}
+ 
++	if (exclude_prog && !found_exclude)
++		return -ENOENT;
++
+ 	/* How many progs (not NULL) will be in the new array? */
+ 	new_prog_cnt = carry_prog_cnt;
+ 	if (include_prog)
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index ce2cbbff27e4..daf36acb2a17 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1005,6 +1005,8 @@ void perf_event_detach_bpf_prog(struct perf_event *event)
+ 
+ 	old_array = event->tp_event->prog_array;
+ 	ret = bpf_prog_array_copy(old_array, event->prog, NULL, &new_array);
++	if (ret == -ENOENT)
++		goto unlock;
+ 	if (ret < 0) {
+ 		bpf_prog_array_delete_safe(old_array, event->prog);
+ 	} else {
 -- 
-MST
+2.17.0
