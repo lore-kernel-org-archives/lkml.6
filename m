@@ -1,84 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeERHHm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:07:42 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46592 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeERHHk (ORCPT
+        id S1752042AbeERHJl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:09:41 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:63004 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeERHJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:07:40 -0400
-X-Google-Smtp-Source: AB8JxZqn/+ujSj+0q/DnIgmVUJfMg+sQ1jUjoJwwkwfKBpdFS9x5sDUajNFyaLsCJTZqNujp5NdBZA==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] PCI: qcom: add runtime pm support to pcie_port
-Date: Fri, 18 May 2018 00:07:36 -0700
-Message-Id: <20180518070736.3003-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        Fri, 18 May 2018 03:09:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4I79PMS016924
+X-Nifty-SrcIP: [209.85.217.175]
+X-Google-Smtp-Source: AB8JxZq6yDlLnogKyjwgkBN+HhlRn2iqAd2K+4vckUly1MB1lqVaz983NxHAIUTCIYkQ+CT+tqELVtG+kmdBlJRMhu0=
+MIME-Version: 1.0
+In-Reply-To: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
+References: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 18 May 2018 16:08:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
+Message-ID: <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS generation
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+2018-05-18 15:25 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
+> Parsing `ls` is fragile at best and _will_ fail when $tree
+> contains spaces. Replace this with a glob-generated string
+> and directly assign it to $ALLSOURCE_ARCHS (Kconfig is
+> removed as it isn't an architecture); a subshell is implied
+> by $(), so `cd` doesn't affect the current working directory.
+>
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+>
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/tags.sh b/scripts/tags.sh
+> index 78e546ff689c2d5f40..e4aba2983f6272fc44 100755
+> --- a/scripts/tags.sh
+> +++ b/scripts/tags.sh
+> @@ -29,14 +29,12 @@ fi
+>  ignore="$ignore ( -path ${tree}tools ) -prune -o"
+>
+>  # Find all available archs
+>  find_all_archs()
+>  {
+> -       ALLSOURCE_ARCHS=""
+> -       for arch in `ls ${tree}arch`; do
+> -               ALLSOURCE_ARCHS="${ALLSOURCE_ARCHS} "${arch##\/}
+> -       done
+> +       ALLSOURCE_ARCHS="$(cd "${tree}arch/" && echo *)"
+> +       ALLSOURCE_ARCHS="${ALLSOURCE_ARCHS/Kconfig}"
+>  }
+>
+>  # Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+>  if [ "${ALLSOURCE_ARCHS}" = "" ]; then
+>         ALLSOURCE_ARCHS=${SRCARCH}
+> --
+> 2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+>
 
-This patch is required when the pcie controller sits on a bus with
-its own power domain and clocks which are controlled via a bus driver
-like simple pm bus. As these bus driver have runtime pm enabled, it makes
-sense to update the usage counter so that the runtime pm does not suspend
-the clks or power domain associated with the bus driver.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+I do not like hard-coding the file(s) in arch/.
 
-This patch was posted 18 months ago but was somehow lost. linux-next recently
-enabled PCIe on MSM8996 and DB820c, but the system stalls as the agnoc gdsc
-isn't enabled. This patch still fixes this problem for me.
+Don't you have an idea to list only directories?
+'find -type d' or 'ls -F' or something?
 
- drivers/pci/dwc/pcie-qcom.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-index 5897af7d3355..3f35098b71b1 100644
---- a/drivers/pci/dwc/pcie-qcom.c
-+++ b/drivers/pci/dwc/pcie-qcom.c
-@@ -1088,6 +1088,8 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
- 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
- 	int ret;
- 
-+	pm_runtime_get_sync(pci->dev);
-+
- 	qcom_ep_reset_assert(pcie);
- 
- 	ret = pcie->ops->init(pcie);
-@@ -1124,6 +1126,7 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
- 	phy_power_off(pcie->phy);
- err_deinit:
- 	pcie->ops->deinit(pcie);
-+	pm_runtime_put_sync(pci->dev);
- 
- 	return ret;
- }
-@@ -1204,6 +1207,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 	struct qcom_pcie *pcie;
- 	int ret;
- 
-+
- 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
-@@ -1212,6 +1216,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 	if (!pci)
- 		return -ENOMEM;
- 
-+	pm_runtime_enable(dev);
-+
- 	pci->dev = dev;
- 	pci->ops = &dw_pcie_ops;
- 	pp = &pci->pp;
+For example, the following worked for me, I wonder
+if there is a cleverer way...
+
+
+# Detect if ALLSOURCE_ARCHS is set. If not, we assume SRCARCH
+if [ "${ALLSOURCE_ARCHS}" = "" ]; then
+        ALLSOURCE_ARCHS=${SRCARCH}
+elif [ "${ALLSOURCE_ARCHS}" = "all" ]; then
+        ALLSOURCE_ARCHS="$(cd "${tree}arch" && ls -1 -F | sed -n 's:/$::p')"
+fi
+
+
+
+
+
+
+
 -- 
-2.17.0
+Best Regards
+Masahiro Yamada
