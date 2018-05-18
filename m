@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeERVKl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:10:41 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:32842 "EHLO
+        id S1752214AbeERVKN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:10:13 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39068 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbeERVKP (ORCPT
+        with ESMTP id S1752026AbeERVKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:10:15 -0400
-X-Google-Smtp-Source: AB8JxZrMaJcBfJoq0z8YWmvnXJnYQFGwp7g9NVX+UGIPhFQPIks90s+mnTHBA2mc3uue2QAO6ntibA==
+        Fri, 18 May 2018 17:10:04 -0400
+X-Google-Smtp-Source: AB8JxZpuZe1VD1NyOVLRB/2ywuNN2LMdZIcO9AnKLVGsiIuXKOLU3E2/xKZrxx+nn8/F0Myw4rnS8g==
 From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To: Tony Lindgren <tony@atomide.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-Date: Fri, 18 May 2018 23:09:53 +0200
-Message-Id: <20180518210954.29044-5-jmkrzyszt@gmail.com>
+Subject: [PATCH 2/6] Input: ams_delta_serio: use GPIO lookup table
+Date: Fri, 18 May 2018 23:09:50 +0200
+Message-Id: <20180518210954.29044-2-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
 References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
@@ -38,9 +38,7 @@ GPIO numbers to GPIO descriptors and use the table to locate required
 GPIO pins.
 
 Declare static variables for storing GPIO descriptors and replace
-gpio_ functions with their gpiod_ equivalents. Return -EPROBE_DEFER
-if the GPIO pins are not yet available so device initialization is
-postponed instead of aborted.
+gpio_ functions with their gpiod_ equivalents.
 
 Pin naming used by the driver should be followed while respective GPIO
 lookup table is initialized by a board init code.
@@ -50,211 +48,174 @@ OMAP1: ams-delta: add GPIO lookup tables"
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- drivers/mtd/nand/raw/ams-delta.c | 110 +++++++++++++++++++++------------------
- 1 file changed, 58 insertions(+), 52 deletions(-)
+ drivers/input/serio/ams_delta_serio.c | 98 +++++++++++++++++++----------------
+ 1 file changed, 53 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-index 37a3cc21c7bc..c44be2f5a65c 100644
---- a/drivers/mtd/nand/raw/ams-delta.c
-+++ b/drivers/mtd/nand/raw/ams-delta.c
-@@ -20,23 +20,28 @@
+diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
+index 3df501c3421b..dd1f8f118c08 100644
+--- a/drivers/input/serio/ams_delta_serio.c
++++ b/drivers/input/serio/ams_delta_serio.c
+@@ -20,14 +20,13 @@
+  * However, when used with the E3 mailboard that producecs non-standard
+  * scancodes, a custom key table must be prepared and loaded from userspace.
+  */
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/irq.h>
+ #include <linux/serio.h>
  #include <linux/slab.h>
  #include <linux/module.h>
- #include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
--#include <linux/gpio.h>
- #include <linux/platform_data/gpio-omap.h>
  
- #include <asm/io.h>
- #include <asm/sizes.h>
- 
+ #include <asm/mach-types.h>
 -#include <mach/board-ams-delta.h>
--
- #include <mach/hardware.h>
  
- /*
-  * MTD structure for E3 (Delta)
-  */
- static struct mtd_info *ams_delta_mtd = NULL;
-+static struct gpio_desc *gpiod_rdy;
-+static struct gpio_desc *gpiod_nce;
-+static struct gpio_desc *gpiod_nre;
-+static struct gpio_desc *gpiod_nwp;
-+static struct gpio_desc *gpiod_nwe;
-+static struct gpio_desc *gpiod_ale;
-+static struct gpio_desc *gpiod_cle;
+ #include <mach/ams-delta-fiq.h>
  
- /*
-  * Define partitions for flash devices
-@@ -70,9 +75,9 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+@@ -36,6 +35,10 @@ MODULE_DESCRIPTION("AMS Delta (E3) keyboard port driver");
+ MODULE_LICENSE("GPL");
  
- 	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
- 	writew(byte, this->IO_ADDR_W);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 0);
-+	gpiod_set_value(gpiod_nwe, 0);
- 	ndelay(40);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 1);
-+	gpiod_set_value(gpiod_nwe, 1);
- }
+ static struct serio *ams_delta_serio;
++static struct gpio_desc *gpiod_data;
++static struct gpio_desc *gpiod_clock;
++static struct gpio_desc *gpiod_power;
++static struct gpio_desc *gpiod_dataout;
  
- static u_char ams_delta_read_byte(struct mtd_info *mtd)
-@@ -81,11 +86,11 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
- 	struct nand_chip *this = mtd_to_nand(mtd);
- 	void __iomem *io_base = (void __iomem *)nand_get_controller_data(this);
- 
--	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 0);
-+	gpiod_set_value(gpiod_nre, 0);
- 	ndelay(40);
- 	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
- 	res = readw(this->IO_ADDR_R);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 1);
-+	gpiod_set_value(gpiod_nre, 1);
- 
- 	return res;
- }
-@@ -120,12 +125,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ static int check_data(int data)
  {
- 
- 	if (ctrl & NAND_CTRL_CHANGE) {
--		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NCE,
--				(ctrl & NAND_NCE) == 0);
--		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_CLE,
--				(ctrl & NAND_CLE) != 0);
--		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_ALE,
--				(ctrl & NAND_ALE) != 0);
-+		gpiod_set_value(gpiod_nce, !(ctrl & NAND_NCE));
-+		gpiod_set_value(gpiod_cle, !!(ctrl & NAND_CLE));
-+		gpiod_set_value(gpiod_ale, !!(ctrl & NAND_ALE));
- 	}
- 
- 	if (cmd != NAND_CMD_NONE)
-@@ -134,41 +136,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
- 
- static int ams_delta_nand_ready(struct mtd_info *mtd)
+@@ -92,7 +95,7 @@ static irqreturn_t ams_delta_serio_interrupt(int irq, void *dev_id)
+ static int ams_delta_serio_open(struct serio *serio)
  {
--	return gpio_get_value(AMS_DELTA_GPIO_PIN_NAND_RB);
-+	return gpiod_get_value(gpiod_rdy);
+ 	/* enable keyboard */
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 1);
++	gpiod_set_value(gpiod_power, 1);
+ 
+ 	return 0;
+ }
+@@ -100,32 +103,9 @@ static int ams_delta_serio_open(struct serio *serio)
+ static void ams_delta_serio_close(struct serio *serio)
+ {
+ 	/* disable keyboard */
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_KEYBRD_PWR, 0);
++	gpiod_set_value(gpiod_power, 0);
  }
  
--static const struct gpio _mandatory_gpio[] = {
+-static const struct gpio ams_delta_gpios[] __initconst_or_module = {
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NCE,
--		.flags	= GPIOF_OUT_INIT_HIGH,
--		.label	= "nand_nce",
+-		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
+-		.flags	= GPIOF_DIR_IN,
+-		.label	= "serio-data",
 -	},
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NRE,
--		.flags	= GPIOF_OUT_INIT_HIGH,
--		.label	= "nand_nre",
+-		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
+-		.flags	= GPIOF_DIR_IN,
+-		.label	= "serio-clock",
 -	},
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWP,
--		.flags	= GPIOF_OUT_INIT_HIGH,
--		.label	= "nand_nwp",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWE,
--		.flags	= GPIOF_OUT_INIT_HIGH,
--		.label	= "nand_nwe",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_ALE,
+-		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_PWR,
 -		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "nand_ale",
+-		.label	= "serio-power",
 -	},
 -	{
--		.gpio	= AMS_DELTA_GPIO_PIN_NAND_CLE,
+-		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_DATAOUT,
 -		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "nand_cle",
+-		.label	= "serio-dataout",
 -	},
 -};
+-
+ static int __init ams_delta_serio_init(void)
+ {
+ 	int err;
+@@ -145,36 +125,62 @@ static int __init ams_delta_serio_init(void)
+ 	strlcpy(ams_delta_serio->phys, "GPIO/serio0",
+ 			sizeof(ams_delta_serio->phys));
  
- /*
-  * Main initialization routine
-@@ -216,12 +186,15 @@ static int ams_delta_init(struct platform_device *pdev)
- 	this->write_buf = ams_delta_write_buf;
- 	this->read_buf = ams_delta_read_buf;
- 	this->cmd_ctrl = ams_delta_hwcontrol;
--	if (gpio_request(AMS_DELTA_GPIO_PIN_NAND_RB, "nand_rdy") == 0) {
-+
-+	gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
-+	if (!IS_ERR_OR_NULL(gpiod_rdy)) {
- 		this->dev_ready = ams_delta_nand_ready;
- 	} else {
- 		this->dev_ready = NULL;
- 		pr_notice("Couldn't request gpio for Delta NAND ready.\n");
+-	err = gpio_request_array(ams_delta_gpios,
+-				ARRAY_SIZE(ams_delta_gpios));
+-	if (err) {
+-		pr_err("ams_delta_serio: Couldn't request gpio pins\n");
++	gpiod_data = gpiod_get(NULL, "data", GPIOD_IN);
++	if (IS_ERR(gpiod_data)) {
++		err = PTR_ERR(gpiod_data);
++		pr_err("%s: 'data' GPIO request failed (%d)\n", __func__,
++		       err);
+ 		goto serio;
  	}
-+
- 	/* 25 us command delay time */
- 	this->chip_delay = 30;
- 	this->ecc.mode = NAND_ECC_SOFT;
-@@ -230,7 +203,44 @@ static int ams_delta_init(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, io_base);
++	gpiod_clock = gpiod_get(NULL, "clock", GPIOD_IN);
++	if (IS_ERR(gpiod_clock)) {
++		err = PTR_ERR(gpiod_clock);
++		pr_err("%s: 'clock' GPIO request failed (%d)\n", __func__,
++		       err);
++		goto gpio_data;
++	}
++	gpiod_power = gpiod_get(NULL, "power", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_power)) {
++		err = PTR_ERR(gpiod_power);
++		pr_err("%s: 'power' GPIO request failed (%d)\n", __func__,
++		       err);
++		goto gpio_clock;
++	}
++	gpiod_dataout = gpiod_get(NULL, "dataout", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_dataout)) {
++		err = PTR_ERR(gpiod_dataout);
++		pr_err("%s: 'dataout' GPIO request failed (%d)\n",
++		       __func__, err);
++		goto gpio_power;
++	}
  
- 	/* Set chip enabled, but  */
--	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
-+	gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpiod_nwp)) {
-+		err = PTR_ERR(gpiod_nwp);
-+		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
-+		goto err_gpiod;
-+	}
-+	gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpiod_nce)) {
-+		err = PTR_ERR(gpiod_nce);
-+		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
-+		goto err_gpiod;
-+	}
-+	gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpiod_nre)) {
-+		err = PTR_ERR(gpiod_nre);
-+		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
-+		goto err_gpiod;
-+	}
-+	gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpiod_nwe)) {
-+		err = PTR_ERR(gpiod_nwe);
-+		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
-+		goto err_gpiod;
-+	}
-+	gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_ale)) {
-+		err = PTR_ERR(gpiod_ale);
-+		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
-+		goto err_gpiod;
-+	}
-+	gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_cle)) {
-+		err = PTR_ERR(gpiod_cle);
-+		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
-+	}
-+err_gpiod:
-+	if (err == -ENODEV || err == -ENOENT)
-+		err = -EPROBE_DEFER;
- 	if (err)
- 		goto out_gpio;
+-	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
+-			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
+-			"ams-delta-serio", 0);
++	err = request_irq(gpiod_to_irq(gpiod_clock),
++			  ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
++			  "ams-delta-serio", 0);
+ 	if (err < 0) {
+-		pr_err("ams_delta_serio: couldn't request gpio interrupt %d\n",
+-				gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK));
+-		goto gpio;
++		pr_err("%s: 'clock' GPIO interrupt request failed (%d)\n",
++		       __func__, err);
++		goto gpio_dataout;
+ 	}
+ 	/*
+ 	 * Since GPIO register handling for keyboard clock pin is performed
+ 	 * at FIQ level, switch back from edge to simple interrupt handler
+ 	 * to avoid bad interaction.
+ 	 */
+-	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
+-			handle_simple_irq);
++	irq_set_handler(gpiod_to_irq(gpiod_clock), handle_simple_irq);
  
-@@ -246,9 +256,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 	goto out;
+ 	serio_register_port(ams_delta_serio);
+ 	dev_info(&ams_delta_serio->dev, "%s\n", ams_delta_serio->name);
  
-  out_mtd:
--	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
- out_gpio:
--	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
- 	iounmap(io_base);
- out_free:
- 	kfree(this);
-@@ -266,8 +274,6 @@ static int ams_delta_cleanup(struct platform_device *pdev)
- 	/* Release resources, unregister device */
- 	nand_release(ams_delta_mtd);
- 
--	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
--	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
- 	iounmap(io_base);
- 
- 	/* Free the MTD device structure */
+ 	return 0;
+-gpio:
+-	gpio_free_array(ams_delta_gpios,
+-			ARRAY_SIZE(ams_delta_gpios));
++gpio_dataout:
++	gpiod_put(gpiod_dataout);
++gpio_power:
++	gpiod_put(gpiod_power);
++gpio_clock:
++	gpiod_put(gpiod_clock);
++gpio_data:
++	gpiod_put(gpiod_data);
+ serio:
+ 	kfree(ams_delta_serio);
+ 	return err;
+@@ -184,8 +190,10 @@ module_init(ams_delta_serio_init);
+ static void __exit ams_delta_serio_exit(void)
+ {
+ 	serio_unregister_port(ams_delta_serio);
+-	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
+-	gpio_free_array(ams_delta_gpios,
+-			ARRAY_SIZE(ams_delta_gpios));
++	free_irq(gpiod_to_irq(gpiod_clock), 0);
++	gpiod_put(gpiod_dataout);
++	gpiod_put(gpiod_power);
++	gpiod_put(gpiod_clock);
++	gpiod_put(gpiod_data);
+ }
+ module_exit(ams_delta_serio_exit);
 -- 
 2.16.1
