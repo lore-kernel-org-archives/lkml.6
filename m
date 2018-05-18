@@ -1,35 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeERU1O (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:27:14 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:33968 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbeERU1N (ORCPT
+        id S1752279AbeERU3f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:29:35 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42947 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751897AbeERU3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:27:13 -0400
-Date: Fri, 18 May 2018 16:27:05 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] swiotlb: merge swiotlb_unmap_page and unmap_single
-Message-ID: <20180518202705.GJ23713@char.us.oracle.com>
-References: <20180515180523.3038-1-hch@lst.de>
- <20180515180523.3038-4-hch@lst.de>
+        Fri, 18 May 2018 16:29:34 -0400
+X-Google-Smtp-Source: AB8JxZq8JsVk+E7wxyCSV3WGSTg9gfpukM62rKGRy2I9fDYFBoaHqqLlJJ77ntnHaZQERUXH+aXMc7CDyKIPk4CkC4Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515180523.3038-4-hch@lst.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8897 signatures=668699
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=578
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805180216
+In-Reply-To: <9332d922caf8e25747aa19e573cc3ab82519f6f7.camel@perches.com>
+References: <cover.1525964381.git.joe@perches.com> <deb55d864f0bf266e019a74456612db36f8921a9.1525964383.git.joe@perches.com>
+ <20180518084203.n2etqcigvwxzcanv@pathway.suse.cz> <9332d922caf8e25747aa19e573cc3ab82519f6f7.camel@perches.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 18 May 2018 23:29:33 +0300
+Message-ID: <CAHp75VcaAMM7NxSWEFhrmQfKMOskuzbAHL-+eqi4DQ71cT7=Bg@mail.gmail.com>
+Subject: Re: [PATCH 03/18] printk: Convert pr_fmt from blank define to KBUILD_MODNAME
+To: Joe Perches <joe@perches.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 08:05:20PM +0200, Christoph Hellwig wrote:
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Fri, May 18, 2018 at 12:10 PM, Joe Perches <joe@perches.com> wrote:
+> On Fri, 2018-05-18 at 10:42 +0200, Petr Mladek wrote:
+>> On Thu 2018-05-10 08:45:29, Joe Perches wrote:
 
-Applied.
+>> [    0.000000] libftrace: ftrace: allocating 40753 entries in 160 pages
+>> [    0.004008] apic: APIC: Switch to symmetric I/O mode setup
+>
+> I believe the uppercase APIC: bit should be removed.
+
+I disagree on lowering the case of some prefixes.
+
+In the case when kernel crashes at boot time and only what you have is
+what on your screen it's much better to catch with different cases
+than if everything would be either upper or lower.
+
+-- 
+With Best Regards,
+Andy Shevchenko
