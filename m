@@ -1,70 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753645AbeERI6i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:58:38 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35743 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753616AbeERI6f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:58:35 -0400
-X-Google-Smtp-Source: AB8JxZoGSvRh/QC7Sn54grM6C0yWGBKvoMhx/mVVHv1HiRki9wSOs2n38MVTX3ohAY+P47xRVtMfiA==
-Date: Fri, 18 May 2018 10:58:32 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 08/11] cpufreq: tegra20: Remove unneeded variable
- initialization
-Message-ID: <20180518085832.GH14500@ulmo>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-9-digetx@gmail.com>
+        id S1753691AbeERI6q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:58:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43474 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753616AbeERI6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:58:44 -0400
+Date: Fri, 18 May 2018 10:58:42 +0200
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 03/10] block: Add bioset_init()/bioset_exit()
+Message-ID: <20180518085842.j7cqesm3ojvntkh7@linux-x5ow.site>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+ <20180518074918.13816-6-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y9PDtDHaFrXNoMPU"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-9-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180518074918.13816-6-kent.overstreet@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---y9PDtDHaFrXNoMPU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 17, 2018 at 09:00:53PM +0300, Dmitry Osipenko wrote:
-> Remove unneeded variable initialization solely for consistency.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/tegra20-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---y9PDtDHaFrXNoMPU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+lbgACgkQ3SOs138+
-s6EaqQ/9FM7q0piq9uUjVSU5Tc8btDXggWtn9s/TuoVwXviArgyYpESAPXqPELxn
-2u49WMbyMUwDE6ZpGn8DARE7fT+S8E5Y8bdSd9ZnVP8LE36iPD5ni9+GsG9dxfp8
-XyvFHfMVvmc6ACg8GK7zup5qPHhqk3YBGHWVZjG5hfAluhHXrRT+nyTSH2dgsZfx
-J4xskdJ4mPfWexhFTr8d2lUZ9UGSA8lH6Kw1hYD/ttSgZECc9zx9eYBATcdpdqPD
-bMWD7Nr8XlPe5g4uMFyU1WG8ab2RLdfM/eaNgqtc+6s0Km02cq6AKYbS03NU6OlZ
-UyRMQUOSmiTWee4OGJ/0Ll4QL1bREiX0UXYnEGnp7Gsn5ezpldBCPs08BQfd1B9q
-9lQH1lG/cZ8n7uq4dz6MNBTu7P9xg2CoUnaVdRjzzl8V/14fpzFwIo38+U8EPVWE
-PyqadcB1OYKqXnz4Z6Du89CPOIQGooF2KpVJGuDRk+0hjngKKhrumi3wGwg8bXNs
-evnAXeYQEqvN7YiDdjyGP6z0l4K2rj19vxRsKS1qP5H5it65g8/3NCX6oa9YUdC4
-MxCXODVqyLveYHZWhMzMAqTcEDoIqSCbcelMSZ3VEzZ+/8gAIFBQg9/3Gtzv382c
-sh99CK2r6P0ruhEmVu9pasROdL5aevDmTx0VdL3Tv1avjKIXznU=
-=aSfH
------END PGP SIGNATURE-----
-
---y9PDtDHaFrXNoMPU--
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
