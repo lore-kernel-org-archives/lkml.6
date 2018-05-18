@@ -1,172 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeERVNs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:13:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47838 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERVNo (ORCPT
+        id S1752195AbeERVPU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:15:20 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36127 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751571AbeERVPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:13:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CBB760131
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-Message-ID: <5AFF41F9.6050300@codeaurora.org>
-Date: Fri, 18 May 2018 14:13:29 -0700
-From: Saravana Kannan <skannan@codeaurora.org>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
+        Fri, 18 May 2018 17:15:17 -0400
+X-Google-Smtp-Source: AB8JxZoB1P2+cQH4rtxe4NF5wcpMcdR4yDUPV3u80Pha/ejf8MZEFLi8t3CzCIL4kzCjJMfJnzC6Mg==
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To: grygorii.strashko@ti.com, davem@davemloft.net
+Cc: corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, vinicius.gomes@intel.com, henrik@austad.us,
+        jesus.sanchez-palencia@intel.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [RFC PATCH 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS Qdisc offload
+Date: Sat, 19 May 2018 00:15:04 +0300
+Message-Id: <20180518211510.13341-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-To: "Joel Fernandes (Google.)" <joelaf@google.com>
-CC: linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] schedutil: Allow cpufreq requests to be made even
- when kthread kicked
-References: <20180518185501.173552-1-joel@joelfernandes.org>
-In-Reply-To: <20180518185501.173552-1-joel@joelfernandes.org>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/2018 11:55 AM, Joel Fernandes (Google.) wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->
-> Currently there is a chance of a schedutil cpufreq update request to be
-> dropped if there is a pending update request. This pending request can
-> be delayed if there is a scheduling delay of the irq_work and the wake
-> up of the schedutil governor kthread.
->
-> A very bad scenario is when a schedutil request was already just made,
-> such as to reduce the CPU frequency, then a newer request to increase
-> CPU frequency (even sched deadline urgent frequency increase requests)
-> can be dropped, even though the rate limits suggest that its Ok to
-> process a request. This is because of the way the work_in_progress flag
-> is used.
->
-> This patch improves the situation by allowing new requests to happen
-> even though the old one is still being processed. Note that in this
-> approach, if an irq_work was already issued, we just update next_freq
-> and don't bother to queue another request so there's no extra work being
-> done to make this happen.
->
-> I had brought up this issue at the OSPM conference and Claudio had a
-> discussion RFC with an alternate approach [1]. I prefer the approach as
-> done in the patch below since it doesn't need any new flags and doesn't
-> cause any other extra overhead.
->
-> [1] https://patchwork.kernel.org/patch/10384261/
->
-> LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Luca Abeni <luca.abeni@santannapisa.it>
-> CC: Joel Fernandes <joelaf@google.com>
-> CC: Todd Kjos <tkjos@google.com>
-> CC: claudio@evidence.eu.com
-> CC: kernel-team@android.com
-> CC: linux-pm@vger.kernel.org
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> v1 -> v2: Minor style related changes.
->
->   kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
->   1 file changed, 26 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index e13df951aca7..5c482ec38610 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->   	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->   		return false;
->
-> -	if (sg_policy->work_in_progress)
-> -		return false;
-> -
->   	if (unlikely(sg_policy->need_freq_update)) {
->   		sg_policy->need_freq_update = false;
->   		/*
-> @@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->
->   		policy->cur = next_freq;
->   		trace_cpu_frequency(next_freq, smp_processor_id());
-> -	} else {
-> +	} else if (!sg_policy->work_in_progress) {
+This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
+It potentially can be used in audio video bridging (AVB) and time
+sensitive networking (TSN).
 
-Not really something you added, but if you are modifying it:
-Do we really need this work_in_progress flag? irq_work_queue() already 
-checks if the work is pending and then returns true/false.
+Patchset was tested on AM572x EVM and BBB boards. Last patch from this
+series adds detailed description of configuration with examples. For
+consistency reasons, in role of talker and listener, tools from
+patchset "TSN: Add qdisc based config interface for CBS" were used and
+can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
 
-Wouldn't the issue you are trying to fix be resolved just by dropping 
-this flag check entirely?
+Based on net-next/master
 
->   		sg_policy->work_in_progress = true;
->   		irq_work_queue(&sg_policy->irq_work);
->   	}
-> @@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
->
->   	ignore_dl_rate_limit(sg_cpu, sg_policy);
->
-> +	/*
-> +	 * For slow-switch systems, single policy requests can't run at the
-> +	 * moment if update is in progress, unless we acquire update_lock.
-> +	 */
-> +	if (sg_policy->work_in_progress)
-> +		return;
-> +
->   	if (!sugov_should_update_freq(sg_policy, time))
->   		return;
->
-> @@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
->   static void sugov_work(struct kthread_work *work)
->   {
->   	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> +	unsigned int freq;
-> +	unsigned long flags;
-> +
-> +	/*
-> +	 * Hold sg_policy->update_lock shortly to handle the case where:
-> +	 * incase sg_policy->next_freq is read here, and then updated by
-> +	 * sugov_update_shared just before work_in_progress is set to false
-> +	 * here, we may miss queueing the new update.
-> +	 *
-> +	 * Note: If a work was queued after the update_lock is released,
-> +	 * sugov_work will just be called again by kthread_work code; and the
-> +	 * request will be proceed before the sugov thread sleeps.
-> +	 */
-> +	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-> +	freq = sg_policy->next_freq;
-> +	sg_policy->work_in_progress = false;
-> +	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
->
->   	mutex_lock(&sg_policy->work_lock);
-> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> -				CPUFREQ_RELATION_L);
-> +	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
->   	mutex_unlock(&sg_policy->work_lock);
-> -
-> -	sg_policy->work_in_progress = false;
->   }
->
->   static void sugov_irq_work(struct irq_work *irq_work)
->
+Ivan Khoronzhuk (6):
+  net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
+  net: ethernet: ti: cpdma: fit rated channels in backward order
+  net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
+  net: ethernet: ti: cpsw: add CBS Qdisc offload
+  net: ethernet: ti: cpsw: restore shaper configuration while down/up
+  Documentation: networking: cpsw: add MQPRIO & CBS offload examples
 
--Saravana
+ Documentation/networking/cpsw.txt       | 540 ++++++++++++++++++++++++
+ drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
+ drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
+ 3 files changed, 913 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/networking/cpsw.txt
 
 -- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
