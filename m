@@ -1,149 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeERQCB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:02:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55352 "EHLO
+        id S1752525AbeERQCZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:02:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55366 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751405AbeERQCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:02:00 -0400
-Date: Fri, 18 May 2018 17:01:54 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        id S1752503AbeERQCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 12:02:20 -0400
+Subject: Re: [PATCH v9 05/11] arm64: kexec_file: load initrd and device-tree
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-6-takahiro.akashi@linaro.org>
+ <c10624c0-9962-af38-1dd5-656902180ace@arm.com>
+ <20180518071133.GL2737@linaro.org> <20180518074203.GM2737@linaro.org>
+From: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Create configfs entry for each
- pci_epf_device_id table entry
-Message-ID: <20180518160154.GA20543@e107981-ln.cambridge.arm.com>
-References: <20180402132935.32008-1-kishon@ti.com>
- <20180518142253.GB18605@e107981-ln.cambridge.arm.com>
- <5a4856cb-5680-586f-1826-fa2349a69328@ti.com>
+Message-ID: <59963e4b-968f-7251-4000-5a545dd44628@arm.com>
+Date: Fri, 18 May 2018 16:59:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a4856cb-5680-586f-1826-fa2349a69328@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180518074203.GM2737@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 08:19:20PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Lorenzo,
-> 
-> On Friday 18 May 2018 07:52 PM, Lorenzo Pieralisi wrote:
-> > Hi Kishon, Gustavo,
-> > 
-> > On Mon, Apr 02, 2018 at 06:59:35PM +0530, Kishon Vijay Abraham I wrote:
-> >> In order to be able to provide correct driver_data for pci_epf device,
-> >> a separate configfs entry for each pci_epf_device_id table entry in
-> >> pci_epf_driver is required.
-> >>
-> >> Add support to create configfs entry for each pci_epf_device_id
-> >> table entry here.
-> >>
-> >> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> >> ---
-> >>  drivers/pci/endpoint/pci-epf-core.c | 23 +++++++++++++++++++++--
-> >>  include/linux/pci-epf.h             |  4 ++--
-> >>  2 files changed, 23 insertions(+), 4 deletions(-)
-> > 
-> > Do we still need this patch after the recent discussion on the configfs
-> > interface ?
-> 
-> Yeah, Since we allow multiple pci_epf_device_id entries to be created, I think
-> this patch is still valid.
-> 
-> If someone wants to create a new pci_epf_device_id entry (maybe for configuring
-> the driver in a different way), this would be still required.
+Hi Akashi,
 
-Applied to pci/endpoint for v4.18, thanks.
+On 18/05/18 08:42, AKASHI Takahiro wrote:
+> On Fri, May 18, 2018 at 04:11:35PM +0900, AKASHI Takahiro wrote:
+>> On Tue, May 15, 2018 at 05:20:00PM +0100, James Morse wrote:
+>>> On 25/04/18 07:26, AKASHI Takahiro wrote:
+>>>> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+>>>> index f9ebf54ca247..b3b9b1725d8a 100644
+>>>> --- a/arch/arm64/kernel/machine_kexec_file.c
+>>>> +++ b/arch/arm64/kernel/machine_kexec_file.c
 
-Lorenzo
+>>>> @@ -55,3 +74,144 @@ int arch_kexec_walk_mem(struct kexec_buf *kbuf,
 
-> Thanks
-> Kishon
-> > 
-> > https://patchwork.ozlabs.org/patch/903494/
-> > 
-> > Lorenzo
-> > 
-> >> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> >> index 59ed29e550e9..d6787f39fd41 100644
-> >> --- a/drivers/pci/endpoint/pci-epf-core.c
-> >> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> >> @@ -15,6 +15,8 @@
-> >>  #include <linux/pci-epf.h>
-> >>  #include <linux/pci-ep-cfs.h>
-> >>  
-> >> +static DEFINE_MUTEX(pci_epf_mutex);
-> >> +
-> >>  static struct bus_type pci_epf_bus_type;
-> >>  static const struct device_type pci_epf_type;
-> >>  
-> >> @@ -139,7 +141,13 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
-> >>   */
-> >>  void pci_epf_unregister_driver(struct pci_epf_driver *driver)
-> >>  {
-> >> -	pci_ep_cfs_remove_epf_group(driver->group);
-> >> +	struct config_group *group;
-> >> +
-> >> +	mutex_lock(&pci_epf_mutex);
-> >> +	list_for_each_entry(group, &driver->epf_group, group_entry)
-> >> +		pci_ep_cfs_remove_epf_group(group);
-> >> +	list_del(&driver->epf_group);
-> >> +	mutex_unlock(&pci_epf_mutex);
-> >>  	driver_unregister(&driver->driver);
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(pci_epf_unregister_driver);
-> >> @@ -155,6 +163,8 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
-> >>  			      struct module *owner)
-> >>  {
-> >>  	int ret;
-> >> +	struct config_group *group;
-> >> +	const struct pci_epf_device_id *id;
-> >>  
-> >>  	if (!driver->ops)
-> >>  		return -EINVAL;
-> >> @@ -169,7 +179,16 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
-> >>  	if (ret)
-> >>  		return ret;
-> >>  
-> >> -	driver->group = pci_ep_cfs_add_epf_group(driver->driver.name);
-> >> +	INIT_LIST_HEAD(&driver->epf_group);
-> >> +
-> >> +	id = driver->id_table;
-> >> +	while (id->name[0]) {
-> >> +		group = pci_ep_cfs_add_epf_group(id->name);
-> >> +		mutex_lock(&pci_epf_mutex);
-> >> +		list_add_tail(&group->group_entry, &driver->epf_group);
-> >> +		mutex_unlock(&pci_epf_mutex);
-> >> +		id++;
-> >> +	}
-> >>  
-> >>  	return 0;
-> >>  }
-> >> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> >> index e897bf076701..a30dcaafa6e8 100644
-> >> --- a/include/linux/pci-epf.h
-> >> +++ b/include/linux/pci-epf.h
-> >> @@ -72,7 +72,7 @@ struct pci_epf_ops {
-> >>   * @driver: PCI EPF driver
-> >>   * @ops: set of function pointers for performing EPF operations
-> >>   * @owner: the owner of the module that registers the PCI EPF driver
-> >> - * @group: configfs group corresponding to the PCI EPF driver
-> >> + * @epf_group: list of configfs group corresponding to the PCI EPF driver
-> >>   * @id_table: identifies EPF devices for probing
-> >>   */
-> >>  struct pci_epf_driver {
-> >> @@ -82,7 +82,7 @@ struct pci_epf_driver {
-> >>  	struct device_driver	driver;
-> >>  	struct pci_epf_ops	*ops;
-> >>  	struct module		*owner;
-> >> -	struct config_group	*group;
-> >> +	struct list_head	epf_group;
-> >>  	const struct pci_epf_device_id	*id_table;
-> >>  };
-> >>  
-> >> -- 
-> >> 2.16.2
-> >>
+>>>> +	buf = vmalloc(buf_size);
+>>>> +	if (!buf) {
+>>>> +		ret = -ENOMEM;
+>>>> +		goto out_err;
+>>>> +	}
+>>>> +
+>>>> +	ret = fdt_open_into(initial_boot_params, buf, buf_size);
+>>>> +	if (ret)
+>>>> +		goto out_err;
+>>>> +
+>>>> +	nodeoffset = fdt_path_offset(buf, "/chosen");
+>>>> +	if (nodeoffset < 0)
+>>>> +		goto out_err;
+>>>> +
+>>>> +	/* add bootargs */
+>>>> +	if (cmdline) {
+>>>> +		ret = fdt_setprop(buf, nodeoffset, "bootargs",
+>>>> +						cmdline, cmdline_len + 1);
+>>>
+>>> fdt_setprop_string()?
+>>
+>> OK
+> 
+> cmdline_len is passed by system call, kexec_file_load(), and this means
+> that we can't believe that cmdline is always terminated with '\0'.
+
+Yuck, we expect user-space to tell us how long the string is. It may be worth a
+comment that it isn't necessarily null-terminated, as that is surprising!
+
+(I assume the DT's property length is enough to make that safe for the new
+kernel to read).
+
+
+>>>> +		/* within 1GB-aligned window of up to 32GB in size */
+>>>> +		kbuf.buf_max = round_down(kern_seg->mem, SZ_1G)
+>>>> +						+ (unsigned long)SZ_1G * 32;
+>>>> +		kbuf.top_down = false;
+>>>> +
+>>>> +		ret = kexec_add_buffer(&kbuf);
+>>>> +		if (ret)
+>>>> +			goto out_err;
+>>>> +		initrd_load_addr = kbuf.mem;
+>>>> +
+>>>> +		pr_debug("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>>>> +				initrd_load_addr, initrd_len, initrd_len);
+>>>> +	}
+>>>> +
+>>>> +	/* load dtb blob */
+>>>> +	ret = setup_dtb(image, initrd_load_addr, initrd_len,
+>>>> +				cmdline, cmdline_len, &dtb, &dtb_len);
+>>>> +	if (ret) {
+>>>> +		pr_err("Preparing for new dtb failed\n");
+>>>> +		goto out_err;
+>>>> +	}
+>>>> +
+>>>> +	kbuf.buffer = dtb;
+>>>> +	kbuf.bufsz = dtb_len;
+>>>> +	kbuf.memsz = dtb_len;
+>>>> +	/* not across 2MB boundary */
+>>>> +	kbuf.buf_align = SZ_2M;
+>>>> +	kbuf.buf_max = ULONG_MAX;
+>>>> +	kbuf.top_down = true;
+>>>> +
+>>>> +	ret = kexec_add_buffer(&kbuf);
+>>>> +	if (ret)
+>>>> +		goto out_err;
+>>>> +	image->arch.dtb_mem = kbuf.mem;
+>>>> +	image->arch.dtb_buf = dtb;
+>>>> +
+>>>> +	pr_debug("Loaded dtb at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>>>> +			kbuf.mem, dtb_len, dtb_len);
+>>>> +
+>>>> +	return 0;
+>>>> +
+>>>> +out_err:
+>>>> +	vfree(dtb);
+>>>> +	image->arch.dtb_buf = NULL;
+>>>
+>>> Won't kimage_file_post_load_cleanup() always be called if we return an error
+>>> here? Why not leave the free()ing until then?
+>>
+>> Right.
+>> The reason why I left the code here was that we'd better locally clean up
+>> all the stuff that were locally allocated if we trivially need to (and can)
+>> do so.
+>>
+>> As it's redundant, I will remove it.
+> 
+> will remove only "image->arch.dtb_buf = NULL."
+
+Ah, because you haven't set the arch.dtb_buf pointer yet.
+
+What about in patch 7 where you expect kimage_file_prepare_segments() to call
+arch_kimage_file_post_load_cleanup() to free the arch.elf_headers? I'd expect
+the free()ing to always happen in one place.
+
+
+Thanks,
+
+James
