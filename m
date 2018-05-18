@@ -1,105 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752297AbeERNTU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:19:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751496AbeERNTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:19:15 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm <kvm@vger.kernel.org>,
-        "the arch\/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
-References: <20180516152131.30689-1-vkuznets@redhat.com>
-        <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
-        <87bmddgrex.fsf@vitty.brq.redhat.com>
-        <8736ypgqie.fsf@vitty.brq.redhat.com>
-        <CANRm+Cy5buPHVW-8cLS6dQTGxPK79iy_pj-oqs=N0n5sGGxxHw@mail.gmail.com>
-        <87y3ghf83r.fsf@vitty.brq.redhat.com>
-        <CANRm+CzkgQ1ynLo6h=kWR63FU0-V79akMK16cwMNDYS4_+wX4Q@mail.gmail.com>
-Date: Fri, 18 May 2018 15:19:12 +0200
-In-Reply-To: <CANRm+CzkgQ1ynLo6h=kWR63FU0-V79akMK16cwMNDYS4_+wX4Q@mail.gmail.com>
-        (Wanpeng Li's message of "Fri, 18 May 2018 20:55:24 +0800")
-Message-ID: <87tvr5f6en.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752419AbeERNVZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:21:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:44369 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751601AbeERNVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:21:24 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] powerpc: Detect the presence of big-core with interleaved threads
+In-Reply-To: <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
+References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com> <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
+Date: Fri, 18 May 2018 23:21:22 +1000
+Message-ID: <87h8n5xfot.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wanpeng Li <kernellwp@gmail.com> writes:
+"Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
 
-> 2018-05-18 20:42 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
->> Wanpeng Li <kernellwp@gmail.com> writes:
->>
->>> 2018-05-18 19:19 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
->>>> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
->>>>
->>>>> Wanpeng Li <kernellwp@gmail.com> writes:
->>>>>
->>>>>> Hi Vitaly,
->>>>>> 2018-05-16 23:21 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
->>>>>>> Changes since v3 [Radim Krcmar]:
->>>>>>> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
->>>>>>> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
->>>>>>> - Fix undefined behavior for hv->vp_index >= 64.
->>>>>>> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
->>>>>>> - For -ex case preload all banks with a single kvm_read_guest().
->>>>>>>
->>>>>>> Description:
->>>>>>>
->>>>>>> This is both a new feature and a bugfix.
->>>>>>>
->>>>>>> Bugfix description:
->>>>>>>
->>>>>>> It was found that Windows 2016 guests on KVM crash when they have > 64
->>>>>>> vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
->>>>>>> sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
->>>>>>
->>>>>> We try the below command line, the Windows 2016 guest successfully to
->>>>>> login and there are 80 vCPUs can be observed in the guest w/o the
->>>>>> patchset, why you mentioned the crash and ignore?
->>>>>>
->>>>>> /usr/local/bin/qemu-system-x86_64 -machine  pc-i440fx-rhel7.3.0  -m
->>>>>> 8192 -smp 80,sockets=2,cores=40,threads=1  -device
->>>>>> ide-drive,bus=ide.0,drive=test -drive
->>>>>> id=test,if=none,file=/instanceimage/359b18ab-05bb-460d-9b53-89505bca68ed/359b18ab-05bb-460d-9b53-89505bca68ed_vda_1.qcow2
->>>>>>  -net nic,model=virtio -net user -monitor stdio -usb -usbdevice tablet
->>>>>> --enable-kvm --cpu host -vnc 0.0.0.0:2
->>>>>
->>>>> Crash happens when you manifest yourself as Hyper-V, you can do this by
->>>>> adding any 'hv-*' feature (e.g. try '-cpu host,hv_vpindex').
->>>>
->>>> Oh, and the 'ignore' happens when you pass more than 64 sockets
->>>> (somthing like "-smp 128,sockets=128,cores=1,threads=1") -- and this
->>>> happens regardless of Hyper-V enlightenments. But I guess it's just
->>>> because Windows doesn't support more than 64 sockets.
->>>
->>> Is there an option in the guest to avoid to check pvtlb support in hyperv?
->>>
->>
->> You mean to tell Windows to not use PV TLB flush when it's available? I
->> have no idea. My guess would be that it's left up to the hypervisor: if
->> the feature is available Windows will use it.
->
-> I mean a way to work around Windows guest crash since there is no PV
-> TLB flush enabled in product environment currently.
->
+> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+> index 0af5c11..884dff2 100644
+> --- a/arch/powerpc/kernel/setup-common.c
+> +++ b/arch/powerpc/kernel/setup-common.c
+> @@ -436,8 +438,56 @@ static void __init cpu_init_thread_core_maps(int tpc)
+>  	printk(KERN_DEBUG " (thread shift is %d)\n", threads_shift);
+>  }
+>  
+> -
+>  u32 *cpu_to_phys_id = NULL;
+> +/*
+> + * check_for_interleaved_big_core - Checks if the core represented by
+> + *	 dn is a big-core whose threads are interleavings of the
+> + *	 threads of the component small cores.
+> + *
+> + * @dn: device node corresponding to the core.
+> + *
+> + * Returns true if the core is a interleaved big-core.
+> + * Returns false otherwise.
+> + */
+> +static inline bool check_for_interleaved_big_core(struct device_node *dn)
+> +{
+> +	int len, nr_groups, threads_per_group;
+> +	const __be32 *thread_groups;
+> +	__be32 *thread_list, *first_cpu_idx;
+> +	int cur_cpu, next_cpu, i, j;
+> +
+> +	thread_groups = of_get_property(dn, "ibm,thread-groups", &len);
+> +	if (!thread_groups)
+> +		return false;
 
-Unfortunately I don't know of such option, all real Hyper-V servers
-support it so I think nodoby ever tested how Windows behaves without
-it. I did and oops, it crashes...
+There are better device tree APIs than bare of_get_property() these
+days, can you try to use those?
 
--- 
-  Vitaly
+> +	nr_groups = be32_to_cpu(*(thread_groups + 1));
+> +	if (nr_groups <= 1)
+> +		return false;
+
+eg. this would be of_property_read_u32_index()
+
+> +
+> +	threads_per_group = be32_to_cpu(*(thread_groups + 2));
+> +	thread_list = (__be32 *)thread_groups + 3;
+> +
+> +	/*
+> +	 * In case of an interleaved big-core, the thread-ids of the
+> +	 * big-core can be obtained by interleaving the the thread-ids
+> +	 * of the component small
+> +	 *
+> +	 * Eg: On a 8-thread big-core with two SMT4 small cores, the
+> +	 * threads of the two component small cores will be
+> +	 * {0, 2, 4, 6} and {1, 3, 5, 7}.
+> +	 */
+> +	for (i = 0; i < nr_groups; i++) {
+> +		first_cpu_idx = thread_list + i * threads_per_group;
+> +
+> +		for (j = 0; j < threads_per_group - 1; j++) {
+> +			cur_cpu = be32_to_cpu(*(first_cpu_idx + j));
+> +			next_cpu = be32_to_cpu(*(first_cpu_idx + j + 1));
+> +			if (next_cpu != cur_cpu + nr_groups)
+> +				return false;
+> +		}
+> +	}
+> +	return true;
+> +}
+>  
+>  /**
+>   * setup_cpu_maps - initialize the following cpu maps:
+> @@ -565,7 +615,16 @@ void __init smp_setup_cpu_maps(void)
+>  	vdso_data->processorCount = num_present_cpus();
+>  #endif /* CONFIG_PPC64 */
+>  
+> -        /* Initialize CPU <=> thread mapping/
+> +	dn = of_find_node_by_type(NULL, "cpu");
+> +	if (dn) {
+> +		if (check_for_interleaved_big_core(dn)) {
+> +			has_interleaved_big_core = true;
+> +			pr_info("Detected interleaved big-cores\n");
+> +		}
+> +		of_node_put(dn);
+> +	}
+
+This is a bit untidy, given how unlikely it is that you would have no
+CPUs :)
+
+You should be able to do the lookup of the property and the setting of
+has_interleaved_big_core all inside check_for_interleaved_big_core().
+
+cheers
