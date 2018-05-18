@@ -1,124 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeERRub (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:50:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38204 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeERRu1 (ORCPT
+        id S1752495AbeERRuz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:50:55 -0400
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:51019 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752375AbeERRux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:50:27 -0400
-Date: Fri, 18 May 2018 10:50:25 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] idr: fix invalid ptr dereference on item delete
-Message-ID: <20180518175025.GD6361@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 18 May 2018 13:50:53 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:305:355:379:541:599:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1719:1730:1747:1777:1792:2197:2199:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3868:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:7903:7974:8660:8784:8957:8985:9025:10004:10400:10848:11026:11218:11232:11473:11658:11914:12043:12296:12555:12740:12760:12895:13148:13230:13439:14180:14181:14659:14721:21060:21080:21221:21324:21433:21451:21627:21740:30054:30070:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: art82_7bdd4c402ae56
+X-Filterd-Recvd-Size: 3250
+Message-ID: <33bbe7e9c0f41ee0ef73ffd5bbca1e9c84c259ec.camel@perches.com>
+Subject: Re: seq_putc is preferable to seq_puts
+From: Joe Perches <joe@perches.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Date: Fri, 18 May 2018 10:50:49 -0700
+In-Reply-To: <20180518140957.GB6361@bombadil.infradead.org>
+References: <20180518140957.GB6361@bombadil.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It'd be nice if you cc'd the person who wrote the code you're patching.
-You'd get a response a lot quicker than waiting until I happened to
-notice the email in a different forum.
+On Fri, 2018-05-18 at 07:09 -0700, Matthew Wilcox wrote:
+> Hi Joe,
+> 
+> A nice checkpatch addition would be to look for seq_puts(x, "s")
+> and recommend the author use seq_putc(x, 's') instead.  The primary
+> offender is seq_puts(x, "\n") (a hundred or so, scattered throughout
+> the kernel), but seq_puts(x, " ") has its adherents too.
 
-Thanks for finding the situation that leads to the bug.  Your fix is
-incorrect; it's legitimate to store a NULL value at offset 0, and
-your patch makes it impossible to delete.  Fortunately, the test-suite
-covers that case ;-)
+Firstly, has Markus Elfring left the building?
 
-Andrew, can you take this through your tree for extra testing?
+Here's a grep to find the existing uses:
 
---- >8 ---
+$ git grep -P '\b(?:seq_puts|seq_printf)\s*\(\s*[^,]+,\s*"(?:\\.|.)"\s*\)\s*;' | \
+  wc -l
+326
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+and a trivial script to convert them all treewide
 
-If the radix tree underlying the IDR happens to be full and we attempt
-to remove an id which is larger than any id in the IDR, we will call
-__radix_tree_delete() with an uninitialised 'slot' pointer, at which
-point anything could happen.  This was easiest to hit with a single entry
-at id 0 and attempting to remove a non-0 id, but it could have happened
-with 64 entries and attempting to remove an id >= 64.
+$ git grep -P --name-only '\b(?:seq_puts|seq_printf)\s*\(\s*[^,]+,\s*"(?:\\.|.)"\s*\)\s*;' | \
+  xargs perl -i -e 'local $/; while (<>) { s/\b(?:seq_puts|seq_printf)\s*\(\s*([^,]+),\s*"(\\.|.)"\s*\)\s*;/seq_putc(\1, '"'\2'"')/g; print;}'
 
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
-Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Anyway, I still like a variant of Steven Rostedt's
+trace_puts macro silliness hack that avoids all
+this by allowing seq_printf without format arguments
+to call the appropriate seq_puts/seq_putc invisibly.
 
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index da9e10c827df..4dd4fbc7279c 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -2036,10 +2036,12 @@ void *radix_tree_delete_item(struct radix_tree_root *root,
- 			     unsigned long index, void *item)
- {
- 	struct radix_tree_node *node = NULL;
--	void __rcu **slot;
-+	void __rcu **slot = NULL;
- 	void *entry;
- 
- 	entry = __radix_tree_lookup(root, index, &node, &slot);
-+	if (!slot)
-+		return NULL;
- 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
- 						get_slot_offset(node, slot))))
- 		return NULL;
-diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
-index 1c18617951dd..410ca58bbe9c 100644
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -254,6 +254,13 @@ void idr_checks(void)
- 	idr_remove(&idr, 0xfedcba98U);
- 	idr_remove(&idr, 0);
- 
-+	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
-+	idr_remove(&idr, 1);
-+	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
-+		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
-+	idr_remove(&idr, 1 << 30);
-+	idr_destroy(&idr);
-+
- 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
- 		struct item *item = item_create(i, 0);
- 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
+https://groups.google.com/forum/#!topic/linux.kernel/YGZhTD-n4UA
 
---- original email ---
-
-If an IDR contains a single entry at index==0, the underlying radix tree
-has a single item in its root node, in which case
-__radix_tree_lookup(index!=0) doesn't set its *@nodep argument (in
-addition to returning NULL).
-
-However, the tree itself is not empty, i.e. the tree root doesn't have
-IDR_FREE tag.
-
-As a result, on an attempt to remove an index!=0 entry from such an IDR,
-radix_tree_delete_item doesn't return early and calls
-__radix_tree_delete with invalid parameters which are then dereferenced.
-
-Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
-Signed-off-by: Roman Kagan <rkagan@virtuozzo.com>
+It's relatively easy to expand this for seq_putc, but here's
+an expanded checkpatch rule anyway that seems to work.
 ---
- lib/radix-tree.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index da9e10c827df..10ff1bfae952 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -2040,8 +2040,9 @@ void *radix_tree_delete_item(struct radix_tree_root *root,
- 	void *entry;
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index baddac9379f0..62b36d7bb3af 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5791,11 +5791,23 @@ sub process {
+ 			     "struct spinlock should be spinlock_t\n" . $herecurr);
+ 		}
  
- 	entry = __radix_tree_lookup(root, index, &node, &slot);
--	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
--						get_slot_offset(node, slot))))
-+	if (!entry && (!is_idr(root) || !node ||
-+		       node_tag_get(root, node, IDR_FREE,
-+				    get_slot_offset(node, slot))))
- 		return NULL;
- 
- 	if (item && entry != item)
+-# check for seq_printf uses that could be seq_puts
+-		if ($sline =~ /\bseq_printf\s*\(.*"\s*\)\s*;\s*$/) {
++# check for seq_printf/seq_puts uses that could be seq_puts or seq_putc
++		if ($sline =~ /\b(seq_(?:printf|puts))\s*\(.*"\s*\)\s*;\s*$/) {
++			my $call = $1;
+ 			my $fmt = get_quoted_string($line, $rawline);
++			my $fmt_nq = substr($fmt, 1, length($fmt) - 2); #strip outer quotes
+ 			$fmt =~ s/%%//g;
+-			if ($fmt !~ /%/) {
++
++			if (length($fmt_nq) == 1 ||
++			    (length($fmt_nq) == 2 && ($fmt_nq =~ /^\\/ || $fmt_nq =~ /\%\%/))) {
++				my $fmt_sub = $fmt_nq;
++				$fmt_sub =~ s/\%\%/%/;
++				if (WARN("PREFER_SEQ_PUTC",
++					 "Prefer seq_putc to $call\n" . $herecurr) &&
++				    $fix) {
++					$fixed[$fixlinenr] =~ s/\b$call\s*\(\s*($FuncArg)\s*,\s*"\Q$fmt_nq\E"\s*\)/seq_putc($1, '$fmt_sub')/x;
++				}
++			} elsif ($fmt !~ /%/) {
+ 				if (WARN("PREFER_SEQ_PUTS",
+ 					 "Prefer seq_puts to seq_printf\n" . $herecurr) &&
+ 				    $fix) {
