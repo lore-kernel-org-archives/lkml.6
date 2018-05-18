@@ -1,186 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeERPsY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:48:24 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:44536 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751384AbeERPsV (ORCPT
+        id S1752253AbeERPsk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:48:40 -0400
+Received: from mgwym03.jp.fujitsu.com ([211.128.242.42]:56162 "EHLO
+        mgwym03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeERPsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:48:21 -0400
-X-Google-Smtp-Source: AB8JxZpiR8VL+65p51BDTMQVh6s+T/IVVWpMo8E+R96UZwxM0pLkD8Xtq5+YojDXDBJS4DOx1jlnJg==
-Date: Fri, 18 May 2018 11:48:19 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] media: cec-notifier: Get notifier by device and
- connector name
-Message-ID: <20180518154819.GL3373@art_vandelay>
-References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
- <1526648704-16873-2-git-send-email-narmstrong@baylibre.com>
+        Fri, 18 May 2018 11:48:37 -0400
+From: "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
+To: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>
+CC: "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
+        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] kernfs: fix dentry unexpected skip
+Thread-Topic: [PATCH] kernfs: fix dentry unexpected skip
+Thread-Index: AdPuvebs2fEv/eaSRfWTwq90/56eXQ==
+Date: Fri, 18 May 2018 15:48:31 +0000
+Message-ID: <33710E6CAA200E4583255F4FB666C4E21B5E1D83@G01JPEXMBYT03>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20170217-enc
+x-shieldmailcheckermailid: 90e05ad139a64bbebc26b391736c13bd
+x-originating-ip: [10.124.136.24]
+Content-Type: text/plain; charset="iso-2022-jp"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526648704-16873-2-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 03:05:00PM +0200, Neil Armstrong wrote:
-> In non device-tree world, we can need to get the notifier by the driver
-> name directly and eventually defer probe if not yet created.
-> 
-> This patch adds a variant of the get function by using the device name
-> instead and will not create a notifier if not yet created.
-> 
-> But the i915 driver exposes at least 2 HDMI connectors, this patch also
-> adds the possibility to add a connector name tied to the notifier device
-> to form a tuple and associate different CEC controllers for each HDMI
-> connectors.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+kernfs_dir_next_pos() overlooks the situation that the dentry
+corresponding to a given pos object has already been inactive. Hence,
+when kernfs_dir_pos() returns the dentry with a hash value larger than
+the original one, kernfs_dir_next_pos() returns the dentry next to the
+one returned by kernfs_dir_pos(). As a result, the dentry returned by
+kernfs_dir_pos() is skipped.
 
-Hi Neil,
-Thanks for posting these!
+To fix this issue, try to find a next node only when the returned
+object has a hash value equal to or smaller than the original one.
 
-> ---
->  drivers/media/cec/cec-notifier.c | 11 ++++++++---
->  include/media/cec-notifier.h     | 27 ++++++++++++++++++++++++---
->  2 files changed, 32 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
-> index 16dffa0..dd2078b 100644
-> --- a/drivers/media/cec/cec-notifier.c
-> +++ b/drivers/media/cec/cec-notifier.c
-> @@ -21,6 +21,7 @@ struct cec_notifier {
->  	struct list_head head;
->  	struct kref kref;
->  	struct device *dev;
-> +	const char *conn;
->  	struct cec_adapter *cec_adap;
->  	void (*callback)(struct cec_adapter *adap, u16 pa);
->  
-> @@ -30,13 +31,14 @@ struct cec_notifier {
->  static LIST_HEAD(cec_notifiers);
->  static DEFINE_MUTEX(cec_notifiers_lock);
->  
-> -struct cec_notifier *cec_notifier_get(struct device *dev)
-> +struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
->  {
->  	struct cec_notifier *n;
->  
->  	mutex_lock(&cec_notifiers_lock);
->  	list_for_each_entry(n, &cec_notifiers, head) {
-> -		if (n->dev == dev) {
-> +		if (n->dev == dev &&
-> +		    (!conn || !strcmp(n->conn, conn))) {
->  			kref_get(&n->kref);
->  			mutex_unlock(&cec_notifiers_lock);
->  			return n;
-> @@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->  	if (!n)
->  		goto unlock;
->  	n->dev = dev;
-> +	if (conn)
-> +		n->conn = kstrdup(conn, GFP_KERNEL);
->  	n->phys_addr = CEC_PHYS_ADDR_INVALID;
->  	mutex_init(&n->lock);
->  	kref_init(&n->kref);
-> @@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
->  	mutex_unlock(&cec_notifiers_lock);
->  	return n;
->  }
-> -EXPORT_SYMBOL_GPL(cec_notifier_get);
-> +EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
->  
->  static void cec_notifier_release(struct kref *kref)
->  {
-> @@ -62,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)
->  		container_of(kref, struct cec_notifier, kref);
->  
->  	list_del(&n->head);
-> +	kfree(n->conn);
->  	kfree(n);
->  }
->  
-> diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
-> index cf0add7..814eeef 100644
-> --- a/include/media/cec-notifier.h
-> +++ b/include/media/cec-notifier.h
-> @@ -20,8 +20,10 @@ struct cec_notifier;
->  #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
->  
->  /**
-> - * cec_notifier_get - find or create a new cec_notifier for the given device.
-> + * cec_notifier_get_conn - find or create a new cec_notifier for the given
-> + * device and connector tuple.
->   * @dev: device that sends the events.
-> + * @conn: the connector name from which the event occurs
+Signed-off-by: HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>
+Suggested-by: Toshiyuki Okajima <toshi.okajima@jp.fujitsu.com>
+Cc: Eric W. Biederman <ebiederm@aristanetworks.com>
+---
+ fs/kernfs/dir.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Probably best to use "name" instead of connector, since it doesn't necessarily
-_have_ to be a connector name. So, cec_notifier_get_by_name(dev, name)
-
->   *
->   * If a notifier for device @dev already exists, then increase the refcount
->   * and return that notifier.
-> @@ -31,7 +33,8 @@ struct cec_notifier;
->   *
->   * Return NULL if the memory could not be allocated.
->   */
-> -struct cec_notifier *cec_notifier_get(struct device *dev);
-> +struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-> +					   const char *conn);
->  
->  /**
->   * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
-> @@ -85,7 +88,8 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
->  			       struct cec_notifier *notifier);
->  
->  #else
-> -static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-> +static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
-> +							 const char *conn)
->  {
->  	/* A non-NULL pointer is expected on success */
->  	return (struct cec_notifier *)0xdeadfeed;
-> @@ -121,6 +125,23 @@ static inline void cec_register_cec_notifier(struct cec_adapter *adap,
->  #endif
->  
->  /**
-> + * cec_notifier_get - find or create a new cec_notifier for the given device.
-> + * @dev: device that sends the events.
-> + *
-> + * If a notifier for device @dev already exists, then increase the refcount
-> + * and return that notifier.
-> + *
-> + * If it doesn't exist, then allocate a new notifier struct and return a
-> + * pointer to that new struct.
-
-You might also want to cover the case where you have multiple named notifiers
-for the same device. It looks like it just grabs the first one?
-
-Sean
-
-> + *
-> + * Return NULL if the memory could not be allocated.
-> + */
-> +static inline struct cec_notifier *cec_notifier_get(struct device *dev)
-> +{
-> +	return cec_notifier_get_conn(dev, NULL);
-> +}
-> +
-> +/**
->   * cec_notifier_phys_addr_invalidate() - set the physical address to INVALID
->   *
->   * @n: the CEC notifier
-> -- 
-> 2.7.4
-> 
-
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 89d1dc1..8a2f49c 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1622,7 +1622,7 @@ static int kernfs_dir_fop_release(struct inode *inode, struct file *filp)
+ 	struct kernfs_node *parent, ino_t ino, struct kernfs_node *pos)
+ {
+ 	pos = kernfs_dir_pos(ns, parent, ino, pos);
+-	if (pos) {
++	if (pos && pos->hash <= ino) {
+ 		do {
+ 			struct rb_node *node = rb_next(&pos->rb);
+ 			if (!node)
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+1.7.1
