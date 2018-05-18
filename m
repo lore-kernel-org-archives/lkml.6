@@ -1,47 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeERSg1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:36:27 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33424 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751429AbeERSgY (ORCPT
+        id S1751891AbeERSnY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 14:43:24 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37901 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbeERSnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:36:24 -0400
-X-Google-Smtp-Source: AB8JxZoK0lNhpnwEZ/o3wIbo4sCmmXKLIpi4t55pObidqb2pwrSP4Sz0GsM2iv+oWG/TFiUend2SAg==
-Date: Fri, 18 May 2018 11:36:23 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
-        byungchul.park@lge.com, mathieu.desnoyers@efficios.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com
-Subject: Tasks RCU vs Preempt RCU
-Message-ID: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 18 May 2018 14:43:23 -0400
+X-Google-Smtp-Source: AB8JxZqogBWCPoKXoQVUEPcNdWVcWfnq6b/6BfvaY99OLcDwKydWuSMe6a19pPqVn6t6KGHTzOkGhw==
+Date: Fri, 18 May 2018 11:43:21 -0700 (PDT)
+X-Google-Original-Date: Fri, 18 May 2018 11:43:14 PDT (-0700)
+Subject: Re: [PATCH] locking/atomics: Simplify the op definitions in atomic.h some more
+In-Reply-To: <20180506145726.y4jxhvfolzvbuft5@gmail.com>
+CC: andrea.parri@amarulasolutions.com, mark.rutland@arm.com,
+        peterz@infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        akpm@linux-foundation.org, paulmck@us.ibm.com, a.p.zijlstra@chello.nl,
+        tglx@linutronix.de
+From: Palmer Dabbelt <palmer@sifive.com>
+To: mingo@kernel.org
+Message-ID: <mhng-a03fd04a-0f6e-4e5a-a74a-3395a6f63f3d@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, 06 May 2018 07:57:27 PDT (-0700), mingo@kernel.org wrote:
+>
+> * Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+>
+>> Hi Ingo,
+>>
+>> > From 5affbf7e91901143f84f1b2ca64f4afe70e210fd Mon Sep 17 00:00:00 2001
+>> > From: Ingo Molnar <mingo@kernel.org>
+>> > Date: Sat, 5 May 2018 10:23:23 +0200
+>> > Subject: [PATCH] locking/atomics: Simplify the op definitions in atomic.h some more
+>> >
+>> > Before:
+>> >
+>> >  #ifndef atomic_fetch_dec_relaxed
+>> >  # ifndef atomic_fetch_dec
+>> >  #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
+>> >  #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
+>> >  #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
+>> >  #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
+>> >  # else
+>> >  #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
+>> >  #  define atomic_fetch_dec_acquire		atomic_fetch_dec
+>> >  #  define atomic_fetch_dec_release		atomic_fetch_dec
+>> >  # endif
+>> >  #else
+>> >  # ifndef atomic_fetch_dec_acquire
+>> >  #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+>> >  # endif
+>> >  # ifndef atomic_fetch_dec_release
+>> >  #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+>> >  # endif
+>> >  # ifndef atomic_fetch_dec
+>> >  #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+>> >  # endif
+>> >  #endif
+>> >
+>> > After:
+>> >
+>> >  #ifndef atomic_fetch_dec_relaxed
+>> >  # ifndef atomic_fetch_dec
+>> >  #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
+>> >  #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
+>> >  #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
+>> >  #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
+>> >  # else
+>> >  #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
+>> >  #  define atomic_fetch_dec_acquire		atomic_fetch_dec
+>> >  #  define atomic_fetch_dec_release		atomic_fetch_dec
+>> >  # endif
+>> >  #else
+>> >  # ifndef atomic_fetch_dec
+>> >  #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+>> >  #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+>> >  #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+>> >  # endif
+>> >  #endif
+>> >
+>> > The idea is that because we already group these APIs by certain defines
+>> > such as atomic_fetch_dec_relaxed and atomic_fetch_dec in the primary
+>> > branches - we can do the same in the secondary branch as well.
+>> >
+>> > ( Also remove some unnecessarily duplicate comments, as the API
+>> >   group defines are now pretty much self-documenting. )
+>> >
+>> > No change in functionality.
+>> >
+>> > Cc: Peter Zijlstra <peterz@infradead.org>
+>> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> > Cc: Andrew Morton <akpm@linux-foundation.org>
+>> > Cc: Thomas Gleixner <tglx@linutronix.de>
+>> > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> > Cc: Will Deacon <will.deacon@arm.com>
+>> > Cc: linux-kernel@vger.kernel.org
+>> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+>>
+>> This breaks compilation on RISC-V. (For some of its atomics, the arch
+>> currently defines the _relaxed and the full variants and it relies on
+>> the generic definitions for the _acquire and the _release variants.)
+>
+> I don't have cross-compilation for RISC-V, which is a relatively new arch.
+> (Is there any RISC-V set of cross-compilation tools on kernel.org somewhere?)
 
-I was thinking about tasks-RCU and why its needed. Since preempt-RCU allows
-tasks to be preempted in read-sections, can we not just reuse that mechanism
-for the trampolines since we track all preempted tasks so we would wait on
-all tasks preempted within a trampoline?
+Arnd added RISC-V to the cross compiler list a month or two ago when he updated 
+them all.  I use the "make.cross" script from the Intel test robot, which will 
+fetch the cross compilers for you.  It looks like I made a Git Hub pull request 
+to update the script for RISC-V, it fetches from kernel.org
 
-I am trying to understand what will _not_ work if we did that.. I'm guessing
-the answer is that that would mean the trampoline has to be wrapped with
-rcu_read_{lock,unlock} which may add some overhead, but please let me know
-if I'm missing something else..
+    https://github.com/palmer-dabbelt/lkp-tests/blob/e14f4236ccd0572f4b87ffd480fecefee412dedc/sbin/make.cross
+    http://cdn.kernel.org/pub/tools/crosstool/files/bin/
+    http://cdn.kernel.org/pub/tools/crosstool/files/bin/x86_64/7.3.0/x86_64-gcc-7.3.0-nolibc_riscv64-linux.tar.gz
 
-The advantage I guess is possible elimination of an RCU variant, and also
-possibly eliminating the tasks RCU thread that monitors.. Anyway I was
-thinking more in terms of the effort of reduction of the RCU flavors etc and
-reducing complexity ideas.
+> Could you please send a patch that defines those variants against Linus's tree,
+> like the PowerPC patch that does something similar:
+>
+>   0476a632cb3a: locking/atomics/powerpc: Move cmpxchg helpers to asm/cmpxchg.h and define the full set of cmpxchg APIs
+>
+> ?
+>
+> ... and I'll integrate it into the proper place to make it all bisectable, etc.
 
-thanks!
-
-- Joel
+Sorry, I got buried in email again.  Did this get merged, or is there a current 
+version of the patch set I should look at?
