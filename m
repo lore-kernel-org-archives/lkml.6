@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752297AbeERCch (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 22:32:37 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45935 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeERCce (ORCPT
+        id S1752350AbeERCcs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 22:32:48 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43209 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752319AbeERCcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 22:32:34 -0400
-X-Google-Smtp-Source: AB8JxZoiFVTCOVclp0f8Ed+cCLoOrpV66vclZqs3fzCHZSnxmVpxN4kkENmSxt9JYjZR4AMbvEwgFQ==
+        Thu, 17 May 2018 22:32:43 -0400
+X-Google-Smtp-Source: AB8JxZoOuspZcCRDqmxrxlvQtkDTeDMCCqpBi10kbnbiOoSaXp9jN62lZJPg1/+Qi7hPk/pKKMBTeQ==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,9 +17,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 3/5] arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-Date: Fri, 18 May 2018 08:00:54 +0530
-Message-Id: <20180518023056.7869-4-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/5] pinctrl: actions: Add gpio support for Actions S900 SoC
+Date: Fri, 18 May 2018 08:00:55 +0530
+Message-Id: <20180518023056.7869-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180518023056.7869-1-manivannan.sadhasivam@linaro.org>
 References: <20180518023056.7869-1-manivannan.sadhasivam@linaro.org>
@@ -27,195 +27,378 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio line names to Actions Semi S900 based Bubblegum-96 board.
+Add gpio support to pinctrl driver for Actions Semi S900 SoC.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 175 ++++++++++++++++++++++
- 1 file changed, 175 insertions(+)
+ drivers/pinctrl/actions/Kconfig        |   1 +
+ drivers/pinctrl/actions/pinctrl-owl.c  | 206 +++++++++++++++++++++++++++++++++
+ drivers/pinctrl/actions/pinctrl-owl.h  |  20 ++++
+ drivers/pinctrl/actions/pinctrl-s900.c |  29 ++++-
+ 4 files changed, 255 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index ff043c961d75..d0ba35df9015 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -34,3 +34,178 @@
- 	status = "okay";
- 	clocks = <&cmu CLK_UART5>;
+diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
+index ede97cdbbc12..490927b4ea76 100644
+--- a/drivers/pinctrl/actions/Kconfig
++++ b/drivers/pinctrl/actions/Kconfig
+@@ -4,6 +4,7 @@ config PINCTRL_OWL
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
++	select GPIOLIB
+ 	help
+ 	  Say Y here to enable Actions Semi OWL pinctrl driver
+ 
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index ee090697b1e9..4942e34c8b76 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/err.h>
++#include <linux/gpio/driver.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -31,6 +32,7 @@
+  * struct owl_pinctrl - pinctrl state of the device
+  * @dev: device handle
+  * @pctrldev: pinctrl handle
++ * @chip: gpio chip
+  * @lock: spinlock to protect registers
+  * @soc: reference to soc_data
+  * @base: pinctrl register base address
+@@ -38,6 +40,7 @@
+ struct owl_pinctrl {
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctrldev;
++	struct gpio_chip chip;
+ 	raw_spinlock_t lock;
+ 	struct clk *clk;
+ 	const struct owl_pinctrl_soc_data *soc;
+@@ -536,6 +539,198 @@ static struct pinctrl_desc owl_pinctrl_desc = {
+ 	.owner = THIS_MODULE,
  };
+ 
++static const struct owl_gpio_port *
++owl_gpio_get_port(struct owl_pinctrl *pctrl, unsigned int *pin)
++{
++	unsigned int start = 0, i;
 +
-+/*
-+ * GPIO name legend: proper name = the GPIO line is used as GPIO
-+ *         NC = not connected (pin out but not routed from the chip to
-+ *              anything the board)
-+ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-+ *         LSEC = Low Speed External Connector
-+ *         HSEC = High Speed External Connector
-+ *
-+ * Line names are taken from the schematic "Schematics Bubblegum96"
-+ * version v1.0
-+ *
-+ * For the lines routed to the external connectors the
-+ * lines are named after the 96Boards CE Specification 1.0,
-+ * Appendix "Expansion Connector Signal Description".
-+ *
-+ * When the 96Boards naming of a line and the schematic name of
-+ * the same line are in conflict, the 96Boards specification
-+ * takes precedence, which means that the external UART on the
-+ * LSEC is named UART0 while the schematic and SoC names this
-+ * UART2. Only exception is the I2C lines for which the schematic
-+ * naming has been preferred. This is only for the informational
-+ * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
-+ * are the only ones actually used for GPIO.
++	for (i = 0; i < pctrl->soc->nports; i++) {
++		const struct owl_gpio_port *port = &pctrl->soc->ports[i];
++
++		if (*pin >= start && *pin < start + port->pins) {
++			*pin -= start;
++			return port;
++		}
++
++		start += port->pins;
++	}
++
++	return NULL;
++}
++
++static void owl_gpio_update_reg(void __iomem *base, unsigned int pin, int flag)
++{
++	u32 val;
++
++	val = readl_relaxed(base);
++
++	if (flag)
++		val |= BIT(pin);
++	else
++		val &= ~BIT(pin);
++
++	writel_relaxed(val, base);
++}
++
++static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return -ENODEV;
++
++	gpio_base = pctrl->base + port->offset;
++
++	/*
++	 * GPIOs have higher priority over other modules, so either setting
++	 * them as OUT or IN is sufficient
++	 */
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	owl_gpio_update_reg(gpio_base + port->outen, offset, true);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	return 0;
++}
++
++static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return;
++
++	gpio_base = pctrl->base + port->offset;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	/* disable gpio output */
++	owl_gpio_update_reg(gpio_base + port->outen, offset, false);
++
++	/* disable gpio input */
++	owl_gpio_update_reg(gpio_base + port->inen, offset, false);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++}
++
++static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++	u32 val;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return -ENODEV;
++
++	gpio_base = pctrl->base + port->offset;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	val = readl_relaxed(gpio_base + port->dat);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	return !!(val & BIT(offset));
++}
++
++static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return;
++
++	gpio_base = pctrl->base + port->offset;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	owl_gpio_update_reg(gpio_base + port->dat, offset, value);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++}
++
++static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return -ENODEV;
++
++	gpio_base = pctrl->base + port->offset;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	owl_gpio_update_reg(gpio_base + port->outen, offset, false);
++	owl_gpio_update_reg(gpio_base + port->inen, offset, true);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	return 0;
++}
++
++static int owl_gpio_direction_output(struct gpio_chip *chip,
++				unsigned int offset, int value)
++{
++	struct owl_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct owl_gpio_port *port;
++	void __iomem *gpio_base;
++	unsigned long flags;
++
++	port = owl_gpio_get_port(pctrl, &offset);
++	if (WARN_ON(port == NULL))
++		return -ENODEV;
++
++	gpio_base = pctrl->base + port->offset;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	owl_gpio_update_reg(gpio_base + port->inen, offset, false);
++	owl_gpio_update_reg(gpio_base + port->outen, offset, true);
++	owl_gpio_update_reg(gpio_base + port->dat, offset, value);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	return 0;
++}
++
++static int owl_gpio_init(struct owl_pinctrl *pctrl)
++{
++	struct gpio_chip *chip;
++	int ret;
++
++	chip = &pctrl->chip;
++	chip->base = -1;
++	chip->ngpio = pctrl->soc->ngpios;
++	chip->label = dev_name(pctrl->dev);
++	chip->parent = pctrl->dev;
++	chip->owner = THIS_MODULE;
++	chip->of_node = pctrl->dev->of_node;
++
++	ret = gpiochip_add_data(&pctrl->chip, pctrl);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to register gpiochip\n");
++		return ret;
++	}
++
++	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
++							0, 0, chip->ngpio);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to add pin range\n");
++		gpiochip_remove(&pctrl->chip);
++		return ret;
++	}
++
++	return 0;
++}
++
+ int owl_pinctrl_probe(struct platform_device *pdev,
+ 				struct owl_pinctrl_soc_data *soc_data)
+ {
+@@ -571,6 +766,13 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+ 	owl_pinctrl_desc.pins = soc_data->pins;
+ 	owl_pinctrl_desc.npins = soc_data->npins;
+ 
++	pctrl->chip.direction_input  = owl_gpio_direction_input;
++	pctrl->chip.direction_output = owl_gpio_direction_output;
++	pctrl->chip.get = owl_gpio_get;
++	pctrl->chip.set = owl_gpio_set;
++	pctrl->chip.request = owl_gpio_request;
++	pctrl->chip.free = owl_gpio_free;
++
+ 	pctrl->soc = soc_data;
+ 	pctrl->dev = &pdev->dev;
+ 
+@@ -581,6 +783,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+ 		return PTR_ERR(pctrl->pctrldev);
+ 	}
+ 
++	ret = owl_gpio_init(pctrl);
++	if (ret)
++		return ret;
++
+ 	platform_set_drvdata(pdev, pctrl);
+ 
+ 	return 0;
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
+index 448f81a6db3b..74342378937c 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.h
++++ b/drivers/pinctrl/actions/pinctrl-owl.h
+@@ -114,6 +114,22 @@ struct owl_pinmux_func {
+ 	unsigned int ngroups;
+ };
+ 
++/**
++ * struct owl_gpio_port - Actions GPIO port info
++ * @offset: offset of the GPIO port.
++ * @pins: number of pins belongs to the GPIO port.
++ * @outen: offset of the output enable register.
++ * @inen: offset of the input enable register.
++ * @dat: offset of the data register.
 + */
-+
-+&pinctrl {
-+	gpio-line-names =
-+		"GPIO-A", /* GPIO_0, LSEC pin 23 */
-+		"GPIO-B", /* GPIO_1, LSEC pin 24 */
-+		"GPIO-C", /* GPIO_2, LSEC pin 25 */
-+		"GPIO-D", /* GPIO_3, LSEC pin 26 */
-+		"GPIO-E", /* GPIO_4, LSEC pin 27 */
-+		"GPIO-F", /* GPIO_5, LSEC pin 28 */
-+		"GPIO-G", /* GPIO_6, LSEC pin 29 */
-+		"GPIO-H", /* GPIO_7, LSEC pin 30 */
-+		"GPIO-I", /* GPIO_8, LSEC pin 31 */
-+		"GPIO-J", /* GPIO_9, LSEC pin 32 */
-+		"NC", /* GPIO_10 */
-+		"NC", /* GPIO_11 */
-+		"SIRQ2_1V8", /* GPIO_12 */
-+		"PCM0_OUT", /* GPIO_13 */
-+		"WIFI_LED", /* GPIO_14 */
-+		"PCM0_SYNC", /* GPIO_15 */
-+		"PCM0_CLK", /* GPIO_16 */
-+		"PCM0_IN", /* GPIO_17 */
-+		"BT_LED", /* GPIO_18 */
-+		"LED0", /* GPIO_19 */
-+		"LED1", /* GPIO_20 */
-+		"JTAG_TCK", /* GPIO_21 */
-+		"JTAG_TMS", /* GPIO_22 */
-+		"JTAG_TDI", /* GPIO_23 */
-+		"JTAG_TDO", /* GPIO_24 */
-+		"[UART1_RxD]", /* GPIO_25, LSEC pin 13 */
-+		"NC", /* GPIO_26 */
-+		"[UART1_TxD]", /* GPIO_27, LSEC pin 11 */
-+		"SD0_D0", /* GPIO_28 */
-+		"SD0_D1", /* GPIO_29 */
-+		"SD0_D2", /* GPIO_30 */
-+		"SD0_D3", /* GPIO_31 */
-+		"SD1_D0", /* GPIO_32 */
-+		"SD1_D1", /* GPIO_33 */
-+		"SD1_D2", /* GPIO_34 */
-+		"SD1_D3", /* GPIO_35 */
-+		"SD0_CMD", /* GPIO_36 */
-+		"SD0_CLK", /* GPIO_37 */
-+		"SD1_CMD", /* GPIO_38 */
-+		"SD1_CLK", /* GPIO_39 */
-+		"SPI0_SCLK", /* GPIO_40, LSEC pin 8 */
-+		"SPI0_CS", /* GPIO_41, LSEC pin 12 */
-+		"SPI0_DIN", /* GPIO_42, LSEC pin 10 */
-+		"SPI0_DOUT", /* GPIO_43, LSEC pin 14 */
-+		"I2C5_SDATA", /* GPIO_44, HSEC pin 36 */
-+		"I2C5_SCLK", /* GPIO_45, HSEC pin 38 */
-+		"UART0_RX", /* GPIO_46, LSEC pin 7 */
-+		"UART0_TX", /* GPIO_47, LSEC pin 5 */
-+		"UART0_RTSB", /* GPIO_48, LSEC pin 9 */
-+		"UART0_CTSB", /* GPIO_49, LSEC pin 3 */
-+		"I2C4_SCLK", /* GPIO_50, HSEC pin 32 */
-+		"I2C4_SDATA", /* GPIO_51, HSEC pin 34 */
-+		"I2C0_SCLK", /* GPIO_52 */
-+		"I2C0_SDATA", /* GPIO_53 */
-+		"I2C1_SCLK", /* GPIO_54, LSEC pin 15 */
-+		"I2C1_SDATA", /* GPIO_55, LSEC pin 17 */
-+		"I2C2_SCLK", /* GPIO_56, LSEC pin 19 */
-+		"I2C2_SDATA", /* GPIO_57, LSEC pin 21 */
-+		"CSI0_DN0", /* GPIO_58, HSEC pin 10 */
-+		"CSI0_DP0", /* GPIO_59, HSEC pin 8 */
-+		"CSI0_DN1", /* GPIO_60, HSEC pin 16 */
-+		"CSI0_DP1", /* GPIO_61, HSEC pin 14 */
-+		"CSI0_CN", /* GPIO_62, HSEC pin 4 */
-+		"CSI0_CP", /* GPIO_63, HSEC pin 2 */
-+		"CSI0_DN2", /* GPIO_64, HSEC pin 22 */
-+		"CSI0_DP2", /* GPIO_65, HSEC pin 20 */
-+		"CSI0_DN3", /* GPIO_66, HSEC pin 28 */
-+		"CSI0_DP3", /* GPIO_67, HSEC pin 26 */
-+		"[CLK0]", /* GPIO_68, HSEC pin 15 */
-+		"CSI1_DN0", /* GPIO_69, HSEC pin 44 */
-+		"CSI1_DP0", /* GPIO_70, HSEC pin 42 */
-+		"CSI1_DN1", /* GPIO_71, HSEC pin 50 */
-+		"CSI1_DP1", /* GPIO_72, HSEC pin 48 */
-+		"CSI1_CN", /* GPIO_73, HSEC pin 56 */
-+		"CSI1_CP", /* GPIO_74, HSEC pin 54 */
-+		"[CLK1]", /* GPIO_75, HSEC pin 17 */
-+		"[GPIOD0]", /* GPIO_76 */
-+		"[GPIOD1]", /* GPIO_77 */
-+		"BT_RST_N", /* GPIO_78 */
-+		"EXT_DC_EN", /* GPIO_79 */
-+		"[PCM_DI]", /* GPIO_80, LSEC pin 22 */
-+		"[PCM_DO]", /* GPIO_81, LSEC pin 20 */
-+		"[PCM_CLK]", /* GPIO_82, LSEC pin 18 */
-+		"[PCM_FS]", /* GPIO_83, LSEC pin 16 */
-+		"WAKE_BT", /* GPIO_84 */
-+		"WL_REG_ON", /* GPIO_85 */
-+		"NC", /* GPIO_86 */
-+		"NC", /* GPIO_87 */
-+		"NC", /* GPIO_88 */
-+		"NC", /* GPIO_89 */
-+		"NC", /* GPIO_90 */
-+		"WIFI_WAKE", /* GPIO_91 */
-+		"BT_WAKE", /* GPIO_92 */
-+		"NC", /* GPIO_93 */
-+		"OTG_EN2", /* GPIO_94 */
-+		"OTG_EN", /* GPIO_95 */
-+		"DSI_DP3", /* GPIO_96, HSEC pin 45 */
-+		"DSI_DN3", /* GPIO_97, HSEC pin 47 */
-+		"DSI_DP1", /* GPIO_98, HSEC pin 33 */
-+		"DSI_DN1", /* GPIO_99, HSEC pin 35 */
-+		"DSI_CP", /* GPIO_100, HSEC pin 21 */
-+		"DSI_CN", /* GPIO_101, HSEC pin 23 */
-+		"DSI_DP0", /* GPIO_102, HSEC pin 27 */
-+		"DSI_DN0", /* GPIO_103, HSEC pin 29 */
-+		"DSI_DP2", /* GPIO_104, HSEC pin 39 */
-+		"DSI_DN2", /* GPIO_105, HSEC pin 41 */
-+		"N0_D0", /* GPIO_106 */
-+		"N0_D1", /* GPIO_107 */
-+		"N0_D2", /* GPIO_108 */
-+		"N0_D3", /* GPIO_109 */
-+		"N0_D4", /* GPIO_110 */
-+		"N0_D5", /* GPIO_111 */
-+		"N0_D6", /* GPIO_112 */
-+		"N0_D7", /* GPIO_113 */
-+		"N0_DQS", /* GPIO_114 */
-+		"N0_DQSN", /* GPIO_115 */
-+		"NC", /* GPIO_116 */
-+		"NC", /* GPIO_117 */
-+		"NC", /* GPIO_118 */
-+		"N0_CEB1", /* GPIO_119 */
-+		"CARD_DT", /* GPIO_120 */
-+		"N0_CEB3", /* GPIO_121 */
-+		"SD_DAT0", /* GPIO_122, HSEC pin 1 */
-+		"SD_DAT1", /* GPIO_123, HSEC pin 3 */
-+		"SD_DAT2", /* GPIO_124, HSEC pin 5 */
-+		"SD_DAT3", /* GPIO_125, HSEC pin 7 */
-+		"NC", /* GPIO_126 */
-+		"NC", /* GPIO_127 */
-+		"[PWR_BTN_N]", /* GPIO_128, LSEC pin 4 */
-+		"[RST_BTN_N]", /* GPIO_129, LSEC pin 6 */
-+		"NC", /* GPIO_130 */
-+		"SD_CMD", /* GPIO_131 */
-+		"GPIO-L", /* GPIO_132, LSEC pin 34 */
-+		"GPIO-K", /* GPIO_133, LSEC pin 33 */
-+		"NC", /* GPIO_134 */
-+		"SD_SCLK", /* GPIO_135 */
-+		"NC", /* GPIO_136 */
-+		"JTAG_TRST", /* GPIO_137 */
-+		"I2C3_SCLK", /* GPIO_138 */
-+		"LED2", /* GPIO_139 */
-+		"LED3", /* GPIO_140 */
-+		"I2C3_SDATA", /* GPIO_141 */
-+		"UART3_RX", /* GPIO_142 */
-+		"UART3_TX", /* GPIO_143 */
-+		"UART3_RTSB", /* GPIO_144 */
-+		"UART3_CTSB"; /* GPIO_145 */
++struct owl_gpio_port {
++	unsigned int offset;
++	unsigned int pins;
++	unsigned int outen;
++	unsigned int inen;
++	unsigned int dat;
 +};
++
+ /**
+  * struct owl_pinctrl_soc_data - Actions pin controller driver configuration
+  * @pins: array describing all pins of the pin controller.
+@@ -124,6 +140,8 @@ struct owl_pinmux_func {
+  * @ngroups: number of entries in @groups.
+  * @padinfo: array describing the pad info of this SoC.
+  * @ngpios: number of pingroups the driver should expose as GPIOs.
++ * @port: array describing all GPIO ports of this SoC.
++ * @nports: number of GPIO ports in this SoC.
+  */
+ struct owl_pinctrl_soc_data {
+ 	const struct pinctrl_pin_desc *pins;
+@@ -134,6 +152,8 @@ struct owl_pinctrl_soc_data {
+ 	unsigned int ngroups;
+ 	const struct owl_padinfo *padinfo;
+ 	unsigned int ngpios;
++	const struct owl_gpio_port *ports;
++	unsigned int nports;
+ };
+ 
+ int owl_pinctrl_probe(struct platform_device *pdev,
+diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+index 08d93f8fc086..5503c7945764 100644
+--- a/drivers/pinctrl/actions/pinctrl-s900.c
++++ b/drivers/pinctrl/actions/pinctrl-s900.c
+@@ -33,6 +33,13 @@
+ #define PAD_SR1			(0x0274)
+ #define PAD_SR2			(0x0278)
+ 
++#define OWL_GPIO_PORT_A		0
++#define OWL_GPIO_PORT_B		1
++#define OWL_GPIO_PORT_C		2
++#define OWL_GPIO_PORT_D		3
++#define OWL_GPIO_PORT_E		4
++#define OWL_GPIO_PORT_F		5
++
+ #define _GPIOA(offset)		(offset)
+ #define _GPIOB(offset)		(32 + (offset))
+ #define _GPIOC(offset)		(64 + (offset))
+@@ -1814,6 +1821,24 @@ static struct owl_padinfo s900_padinfo[NUM_PADS] = {
+ 	[SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
+ };
+ 
++#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat)	\
++	[OWL_GPIO_PORT_##port] = {				\
++		.offset = base,					\
++		.pins = count,					\
++		.outen = _outen,				\
++		.inen = _inen,					\
++		.dat = _dat,					\
++	}
++
++static const struct owl_gpio_port s900_gpio_ports[] = {
++	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8),
++	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8),
++	OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8),
++	OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8),
++	OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8),
++	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8)
++};
++
+ static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+ 	.padinfo = s900_padinfo,
+ 	.pins = (const struct pinctrl_pin_desc *)s900_pads,
+@@ -1822,7 +1847,9 @@ static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+ 	.nfunctions = ARRAY_SIZE(s900_functions),
+ 	.groups = s900_groups,
+ 	.ngroups = ARRAY_SIZE(s900_groups),
+-	.ngpios = NUM_GPIOS
++	.ngpios = NUM_GPIOS,
++	.ports = s900_gpio_ports,
++	.nports = ARRAY_SIZE(s900_gpio_ports)
+ };
+ 
+ static int s900_pinctrl_probe(struct platform_device *pdev)
 -- 
 2.14.1
