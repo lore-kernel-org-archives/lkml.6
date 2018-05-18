@@ -1,76 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeERTFv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:05:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33273 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751888AbeERTFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:05:49 -0400
-Date: Fri, 18 May 2018 12:05:28 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
-References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com> <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com> <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com> <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com> <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
+        id S1751977AbeERTKX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:10:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751606AbeERTKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 15:10:20 -0400
+Subject: [PATCH v4 0/2] vfio/mdev: Device namespace protection
+From: Alex Williamson <alex.williamson@redhat.com>
+To: kwankhede@nvidia.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, cohuck@redhat.com, pasic@linux.ibm.com
+Date: Fri, 18 May 2018 13:10:16 -0600
+Message-ID: <20180518190145.3187.7620.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
-To: Nadav Amit <namit@vmware.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-From: hpa@zytor.com
-Message-ID: <0AE4A626-C4E1-47BC-912A-F768643C8689@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 18, 2018 12:02:50 PM PDT, Nadav Amit <namit@vmware.com> wrote:
->hpa@zytor.com wrote:
->
->> On May 18, 2018 11:50:12 AM PDT, Linus Torvalds
-><torvalds@linux-foundation.org> wrote:
->>> On Fri, May 18, 2018 at 11:34 AM <hpa@zytor.com> wrote:
->>> 
->>>> On May 18, 2018 11:25:32 AM PDT, Linus Torvalds <
->>> torvalds@linux-foundation.org> wrote:
->>> 
->>>> Unfortunately gcc doesn't guarantee that global assembly inlines
->will
->>> appear at the top of the file.
->>> 
->>> Yeah. It really would be better to do the "asm version of -inline".
->>> 
->>> We already do something like that for real *.S files on some
->>> architectures
->>> (because their assembly really wants it, eg
->>> 
->>> arch/arm/Makefile:
->>> KBUILD_AFLAGS +=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y)
->>> -include
->>> asm/unified.h -msoft-float
->>> 
->>> but I do want to point out that KBUILD_AFLAGS is *not* used for
->>> compiler-generated assembly, only for actual *.S files.
->>> 
->>> Sadly, I don't actually know any way to make gcc call the 'as' phase
->>> with
->>> particular options. We can use "-Wa,xyzzy" to pass in xyzzy to the
->>> assembler, but there is no "-include" option for GNU as afaik.
->>> 
->>> Can you perhaps define a macro symbol for "--defsym"? Probably not.
->>> 
->>>                      Linus
->> 
->> I looked at this thing a long time ago; it's not there, and the best
->would probably be to get global asm() working properly in gcc.
->
->I can add a -Wa,[filename.s] switch. It works, but sort of
->undocumented.
+v4: Fix the 'create' racing 'remove' gap noted by Kirti by moving
+    removal from mdev_list to mdev_device_release().  Fix missing
+    mdev_put_parent() cases in mdev_device_create(), also noted
+    by Kirti.  Added documention update regarding serialization as
+    noted by Cornelia.  Added additional commit log comment about
+    -EAGAIN vs -ENODEV for 'remove' racing 'create'.  Added second
+    patch to re-order sysfs attributes, with this my targeted
+    scripts can no longer hit the gap where -EAGAIN is regurned.
+    BTW, the gap where the current code returns -ENODEV in this
+    race condition is about 50% easier to hit than it exists in
+    this series with patch 1 alone.
 
-Ah, I thought that would have assembled each file separately. We can request it be documented, that's usually much easier than getting a new feature implemented.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Thanks,
+Alex
+
+---
+
+Alex Williamson (2):
+      vfio/mdev: Check globally for duplicate devices
+      vfio/mdev: Re-order sysfs attribute creation
+
+
+ Documentation/vfio-mediated-device.txt |    5 ++
+ drivers/vfio/mdev/mdev_core.c          |  102 +++++++++++---------------------
+ drivers/vfio/mdev/mdev_private.h       |    2 -
+ drivers/vfio/mdev/mdev_sysfs.c         |   14 ++--
+ 4 files changed, 49 insertions(+), 74 deletions(-)
