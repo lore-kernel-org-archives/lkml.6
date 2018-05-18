@@ -1,45 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeERRld convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:41:33 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42970 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751450AbeERRlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:41:32 -0400
-Date: Fri, 18 May 2018 19:41:11 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2176DA84-C064-487F-A062-03A95884F15E@vmware.com>
-References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com> <20180518075853.GD12217@hirez.programming.kicks-ass.net> <20180518081354.GA11379@gmail.com> <20180518101114.GB17285@pd.tnic> <A0A24A0C-7ED5-40DA-A017-7FE292F57939@vmware.com> <20180518154044.GE17285@pd.tnic> <30EDFE9B-CA25-42EE-A57F-E3054B84223E@vmware.com> <20180518155359.GF17285@pd.tnic> <2176DA84-C064-487F-A062-03A95884F15E@vmware.com>
+        id S1752234AbeERRlk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:41:40 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44862 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbeERRle (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:41:34 -0400
+X-Google-Smtp-Source: AB8JxZqboT7HpysTh1MngZCCderew2MC3ZA39ovrUngfVPhn8WQjO2Snx8T4aA6999jQ/vaWdVOMYOqbe+ZMoS5QVbs=
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
-To: Nadav Amit <namit@vmware.com>
-CC: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Denys Vlasenko <dvlasenk@redhat.com>
-From: Boris Petkov <bp@alien8.de>
-Message-ID: <CF4420A0-C3F9-449B-A136-DF887B491321@alien8.de>
+References: <20180518170202.11458-1-samitolvanen@google.com>
+ <05d14ac7-0feb-63a3-e7ef-b8ca1ae2fd1d@arm.com> <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+In-Reply-To: <CAKwvOdm1kYedukCq=g74AvqJHp6KC03oNoouQy2nkvfo4idoEw@mail.gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 18 May 2018 10:41:22 -0700
+Message-ID: <CAKwvOdnuKda7paw=GZS5JG-0pGn4-+cWr68m4R+Sd6-=48Uy9Q@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kvm: use -fno-jump-tables with clang
+To: marc.zyngier@arm.com
+Cc: Sami Tolvanen <samitolvanen@google.com>, christoffer.dall@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 18, 2018 6:29:59 PM GMT+02:00, Nadav Amit <namit@vmware.com> wrote:
->Funny. I found in my mailbox that you once wrote me: "It is a dumb
->idea, it
->doesn't bring us anything besides some superficial readability which
->you
->don't really need.”
++ Andrey (who reported testing this patch in
+https://github.com/ClangBuiltLinux/linux/issues/11)
+On Fri, May 18, 2018 at 10:40 AM Nick Desaulniers <ndesaulniers@google.com>
+wrote:
 
-How about a proper quotation with the Message-id you're referring to?
+> On Fri, May 18, 2018 at 10:30 AM Marc Zyngier <marc.zyngier@arm.com>
+wrote:
+> > I'm going to ask the question I've asked before when this patch cropped
+> > up (must be the 4th time now):
+
+> > Is it guaranteed that this is the only case where LLVM/clang is going to
+> > generate absolute addresses instead of using relative addressing?
+
+> It seems like if there's requirements that only relative addressing be
+> used, then the compiler should be told explicitly about this restriction,
+> no?
+> --
+> Thanks,
+> ~Nick Desaulniers
+
 
 
 -- 
-Sent from a small device: formatting sux and brevity is inevitable. 
+Thanks,
+~Nick Desaulniers
