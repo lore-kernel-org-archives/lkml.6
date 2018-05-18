@@ -1,32 +1,31 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-142507-1526666180-2-6185724792381904122
+X-Cyrus-Session-Id: sloti22d1t05-3904616-1526646955-2-12746849903046693830
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526666180; b=PPBP9/xjmsnqVsxH+2W72nPpC9k1pOywlo06r2sx2rIbvoOH5r
-    n6CnNwTgG+Ny3xuGYSfkmF8uaKe+3nNximeaIhxNx9Xk/R+WKd4WQfP+XGefjHsh
-    UbB6RsyzYpEe8hZIUQ9o3qxn3diwKDAlkdpYLRFO8/aT0t8yqgFyM38ad88s7O/b
-    tGcU2pJGFZ6U2VR9n7CHmufS375pEh0y6xZ5++nPIzrzH9HNGzSYws9YbyVDXgih
-    ytrHb5IxWUz1oqyQ4sutmNk8RA9Xqod9Hlu5/OVoCm6Q8T9JHWjg582ZYruFkv0g
-    t8K0h0ORyX5DWtt1LHVj79AWeXTBuXqdTm/g==
+    1526646954; b=OaIVMEgM3mouHIaXn+YlNBUMFg3ol6MKyoGXj78P2i9bNeCVbb
+    S4byzbMFKPLRBENJhgkd4GVwYlt7JXReHxmgJjAyebFkWDz/JKl94FQwwTqLoX1y
+    DAlMnQag6DYgIQGntLnqCfSguh99MCePzHB0FWnDcg4cLyr7/joCurn9FhEuvkvd
+    8TBoBQsRshdvDjc/XOVzcqeGi+fu5RnDndxW+vBS81Npg8dGLHV48kuw5kJjLfQf
+    +NqlpcPx7j0kYobZaP06BF+M8bb8OVwu5LYF3yRgg5R/uuF5HQENc7UisOolhKUo
+    VtpDYxdDznvMtOhYeX88UDntEv8B9E5+JAzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526666180;
-    bh=+bpd2VBWoMn3lBXO4LJGm/A9F/b50iHhm9s6U8oOPMQ=; b=FeWAy4U7b3nt
-    Vu+eT2l1UfiMxr6/1u/kJdw9rsQ2hTLZEqGN7SlaV7MlpEJe43qE+8wqZ/VBK9EC
-    zobLSZxpSZYMoEESNJb1Xkc2rkL/XzXVB5bbuVzW62JZOnJrEcsMY8Nj0hvDPQJm
-    Zq+NCXYhL03Ehl8ucLJc+a1hjkt4xYEw5u+U8c2zgxQ+3dV8lCnhB+iBiArEnEdh
-    5rI21rs0IUkcMcElL+gjpXtKesQzKxHrd7Fv7/j5MzCfSSxCSGDlKDc9L13H2JdF
-    tVZZ/3fIaoUOcdRQPxZtEhMvb9JCjM1HMftOcmEqtBBE7Zpxiqx6eSVK0/Oje069
-    9F74kfrMPg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526646954; bh=
+    9loxJXW8WvbYRac/cqaHixXtn456kdRUi1BnoIBtu0U=; b=FH5r+rVrA7rVA2Jn
+    6jfHs9/dTgeaLmJ7mLXVi2D/uTs03W0Gm3HeHVW4bYQ57Tw+2zWs3l3Lvpp273o6
+    Esgyhhs88YjeDuKb08egQKOrLwfKjAr1DKMHv/mlLGAVLT8ZK4R5DQO1ZlDCG/uV
+    LKCk3r/CtGa2kn2wtHISmQMhcwUxO285pMgQk2ElStzsxN75JjcGEv/MxXX9z4TW
+    EFJLxjaPeFxkLHVNYrQv7gYsk3hOgv9FTapYWM8PmBTbM9sy16L8CAr/21kRl7np
+    KhWArA5NP2UznJ2uobqhCRgL/KZ1x3ziM2tB/kXCR/LGNDNe/ADKaQWy0MPk5i40
+    CifDEA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=NS5NimSt x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=bmZC863n x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,11 +37,11 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=NS5NimSt x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=bmZC863n x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -54,93 +53,61 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHXphLO5a2QHqrxd9BfYUzHxECEGriVDh3nb/vquQ4SLjKW2UdEiDYxclclSEXcZ0rE8myzS0SUKD6zwMzLwsnvTQphH+SoZcSz9iQ1cFyx53uHRJk8X
-    2Mu1KjzcPXu6MOyYiLVef5LI9zHlBYE7/rM0zjWwgxkhMoHL+VmfD2WStS9zWSd317JtuX3cJ070fM2xE3WfqC3b8IMHTNwBMxRq17RHLkk2xoJDekfdSTd0
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=LtpHWJk-x2IrBlcYkBMA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfLNt8ytoHDw734kFXJK/Y25HLdiCXnP9qC9t2iKqFY20sqzvzMlCinD9VSSPL5JIB2hV18v9l3T0VfTg+lW4GULu9Gn/bBkxvYkLuqiEhr6kavQsIszy
+    tpxW+rQyTINE5OC/gQbNSANnqmwJ8ujlONzANqyXxKHJ5gB0VH643+WcujJ6Vtk61U5F+DfSbcnwcXOuZKjOoc5Cu+MwkB0xCn+B/19cgtPNxE5WNAZlPvlJ
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=cqVuzkrYcYAoY6c874QA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeERR4Q (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 13:56:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37928 "EHLO mail.kernel.org"
+        id S1752406AbeERMfv (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 08:35:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751197AbeERR4P (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 May 2018 13:56:15 -0400
-Message-ID: <750c0197e6891caf348c4766396fb569db4f3e1f.camel@kernel.org>
-Subject: Re: [RFC PATCH 01/11] vfs: push __sync_blockdev calls down into
- sync_fs routines
+        id S1751995AbeERMeY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 May 2018 08:34:24 -0400
 From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@ZenIV.linux.org.uk, willy@infradead.org, andres@anarazel.de
-Date: Fri, 18 May 2018 13:56:07 -0400
-In-Reply-To: <20180518155636.GB16931@infradead.org>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, willy@infradead.org, andres@anarazel.de
+Subject: [RFC PATCH 07/11] ext4: have sync_fs op report writeback errors when passed a since pointer
+Date: Fri, 18 May 2018 08:34:11 -0400
+Message-Id: <20180518123415.28181-8-jlayton@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518123415.28181-1-jlayton@kernel.org>
 References: <20180518123415.28181-1-jlayton@kernel.org>
-         <20180518123415.28181-2-jlayton@kernel.org>
-         <20180518155636.GB16931@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-05-18 at 08:56 -0700, Christoph Hellwig wrote:
-> > --- a/fs/xfs/xfs_super.c
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -1097,7 +1097,7 @@ xfs_fs_sync_fs(
-> >  	 * Doing anything during the async pass would be counterproductive.
-> >  	 */
-> >  	if (!wait)
-> > -		return 0;
-> > +		goto out;
-> >  
-> >  	xfs_log_force(mp, XFS_LOG_SYNC);
-> >  	if (laptop_mode) {
-> > @@ -1108,8 +1108,8 @@ xfs_fs_sync_fs(
-> >  		 */
-> >  		flush_delayed_work(&mp->m_log->l_work);
-> >  	}
-> > -
-> > -	return 0;
-> > +out:
-> > +	return __sync_blockdev(sb->s_bdev, wait);
-> 
-> XFS never uses the block device mapping for anything, so this is
-> not needed.
-> 
+From: Jeff Layton <jlayton@redhat.com>
 
-Thanks, I wasn't sure about xfs. I'll drop this hunk.
+When ext4_sync_fs gets a non-NULL since pointer, use it to report
+errors vs. the errseq_t in the super_block. This allows us to
+properly report an error to sync_fs when any inode has failed writeback
+since we last checked for it.
 
-FWIW, I think pushing this call down into the sync_fs routines is still
-probably the right thing to do, regardless of the state of the later
-patches.
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/ext4/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> > +/*
-> > + * Many legacy filesystems don't have a sync_fs op. For them, we just flush
-> > + * the block device (if there is one).
-> > + */
-> > +static inline int call_sync_fs(struct super_block *sb, int wait)
-> > +{
-> > +	if (sb->s_op->sync_fs)
-> > +		return sb->s_op->sync_fs(sb, wait);
-> > +	return __sync_blockdev(sb->s_bdev, wait);
-> > +}
-> 
-> The proper name for this would be vfs_sync_fs.  And I don't think it
-> warrants an inline.
-
-I patterned the name after the call_mmap (and now-defunct call_fsync)
-helpers. I'll rename it and change it to be non-inlined.
-
-Thanks,
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 896ddf8c3421..a5f41d31611f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4898,6 +4898,8 @@ static int ext4_sync_fs(struct super_block *sb, int wait, errseq_t *since)
+ 	}
+ out:
+ 	ret2 = __sync_blockdev(sb->s_bdev, wait);
++	if (since)
++		ret2 = errseq_check_and_advance(&sb->s_wb_err, since);
+ 	return ret ? ret : ret2;
+ }
+ 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.17.0
