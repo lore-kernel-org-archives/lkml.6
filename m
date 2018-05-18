@@ -1,40 +1,39 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqLeQh1+9P+6WFWFaJAzytcO+3YhkJ6YcmX+5F05dtFpn8PJ1sKWQA5BsaDfVaJuv1MfXF0
-ARC-Seal: i=1; a=rsa-sha256; t=1526631688; cv=none;
+X-Google-Smtp-Source: AB8JxZoZAYWC4AgIWVudtus3gT9jbwA5PYCfrZJyqPORjrwlwYwLKW2OwQjjdLcXYTufrtbv0hQ0
+ARC-Seal: i=1; a=rsa-sha256; t=1526631685; cv=none;
         d=google.com; s=arc-20160816;
-        b=eqQBGkUyOVAIaTYTMtLNe2eIuCOxnOQ4Hc4BVJ2IoyvaZlrAD/cLyYR41biTb7j2rd
-         YbPSAZuWos3hkZ0VlPh7Tjd9bnYPTPaxo3XsPqRUIBUZW+JAhSoWOe0+K8RblfDAnN2N
-         yD8lnw/78Keqn4LZqo2/PrmEX+M43S+NoctJE3nIb2GnC5+K8xp/FUJK7y58cHmelJe8
-         WxQ8fCDPwYyOl+lGZUqgbSEV9Zz1gUpdjH7U6O42nBVjHjnHyekGTharxeSu6AkePGS7
-         09SfEWZj1UJNgj9by7WEaaIDwfEj2TCy5QX+qiOTWsIoIyOprj+hlDGAFjsfIIlI9SHm
-         8vlw==
+        b=Eu8i7uad8UmkdSjJId7Y/DbAgZjD/r5LbcE5VuzpCQCrxzl1C4/BXqErQGCAQysSMZ
+         9Ml1ndBbZfUyu4SnzDQ6AnWKU6ATYtoJK8Npk3xUJmg45pU9O8ZGWFCMwxoI9zZAe/lZ
+         IMKxtDXQghAQ84FEe3SV5phlbZEjWBw+1jn+am6KCqQjSCqGekkDvskt25ebG0+un9mu
+         IzPcFtoPvXEMRWuHaw43OEmv8pXvV9q/gXqPczZjdsBrP6HZLKP+Hz1uAxu1sfr9WwGy
+         79beswH3bIyDnNMOtkpQxr2rLbneCzNInF6qJUNld6U003cE+Gra+TXNrXjrBBlox6AR
+         zVWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=CI2ts6MvHRPABVWAyErR6x/c/DfNzQHDOOBDj5HweEU=;
-        b=vwKJ0UkV6iCzgB+R/KlsKkMZFDBAbN+Q2DdhZWRQ0TASB64Kr50UltHAsoRRrYvfxR
-         GxfZhbtAiNk0xEnWWca7ANIaiOFIursdzwsf75a/Uf0rgfYRK23QKLkAiLHxh+5twb+Q
-         8UBbYuNvxoflDjMi7LO+3al5dvxD3P/z+2JphtWgiFxfxEmd8iJ14IIiirVmSs7rA+En
-         UApilv7gBoAjna2D33SN5rI/uA/nvfhg+YtvGDhf6Uw6Z0Lz3SYgkxSxGcIsDMMg9W7v
-         r3no9bshD6KTQlQeoeTjnVMctt4U7S9TpD/HO+St93YErsPfYF9Li4enie9IkgM4OOBb
-         18dQ==
+        bh=Sm56K+BPCfNnBweoxrsNfFWiV7n/UvqbTLcTxVRl73k=;
+        b=nKiLyjc78JSBT++BwOBvoaxKGGqnYXSE8tVk1CpMuRlkxSo5ZefDIh+GABHCvPViSF
+         MkKoZFG5rXdaKIkeNrrYE23etqhPxHnszPXfU2nOb3CqwiDycNXBZ8GVPlo8a0d/Fn9R
+         gZxSos0LT75bRCslGAh0rC4R291OBa24ugjdLBGLJyPezYtF1/quwfm2BD0TXBYYjxZ0
+         HNQb+1Ex+NIYyIDxsNdhrZYlEwxKXW/hPvjIMt098Hu39VewvtpSqk2ynvh9+Z9ufTEV
+         aqao9Fku+lCQMMlaij63dfYxsjDnrfj9NzwtziaXSxkTV+bPHwaz65q3N256ddxFOePW
+         fOkA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SbBie/if;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bGEMpZ7U;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SbBie/if;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bGEMpZ7U;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
+	Gopal RajagopalSai <gopalsr83@gmail.com>,
+	Lance Richardson <lance.richardson.net@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 12/33] openvswitch: Dont swap table in nlattr_set() after OVS_ATTR_NESTED is found
-Date: Fri, 18 May 2018 10:15:51 +0200
-Message-Id: <20180518081535.574311488@linuxfoundation.org>
+Subject: [PATCH 4.9 11/33] net: support compat 64-bit time in {s,g}etsockopt
+Date: Fri, 18 May 2018 10:15:50 +0200
+Message-Id: <20180518081535.531582496@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789181042788147?=
-X-GMAIL-MSGID: =?utf-8?q?1600789349566103903?=
+X-GMAIL-THRID: =?utf-8?q?1600789153242990673?=
+X-GMAIL-MSGID: =?utf-8?q?1600789346435697474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,108 +52,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Lance Richardson <lance.richardson.net@gmail.com>
 
-[ Upstream commit 72f17baf2352ded6a1d3f4bb2d15da8c678cd2cb ]
+[ Upstream commit 988bf7243e03ef69238381594e0334a79cef74a6 ]
 
-If an OVS_ATTR_NESTED attribute type is found while walking
-through netlink attributes, we call nlattr_set() recursively
-passing the length table for the following nested attributes, if
-different from the current one.
+For the x32 ABI, struct timeval has two 64-bit fields. However
+the kernel currently interprets the user-space values used for
+the SO_RCVTIMEO and SO_SNDTIMEO socket options as having a pair
+of 32-bit fields.
 
-However, once we're done with those sub-nested attributes, we
-should continue walking through attributes using the current
-table, instead of using the one related to the sub-nested
-attributes.
+When the seconds portion of the requested timeout is less than 2**32,
+the seconds portion of the effective timeout is correct but the
+microseconds portion is zero.  When the seconds portion of the
+requested timeout is zero and the microseconds portion is non-zero,
+the kernel interprets the timeout as zero (never timeout).
 
-For example, given this sequence:
+Fix by using 64-bit time for SO_RCVTIMEO/SO_SNDTIMEO as required
+for the ABI.
 
-1  OVS_KEY_ATTR_PRIORITY
-2  OVS_KEY_ATTR_TUNNEL
-3	OVS_TUNNEL_KEY_ATTR_ID
-4	OVS_TUNNEL_KEY_ATTR_IPV4_SRC
-5	OVS_TUNNEL_KEY_ATTR_IPV4_DST
-6	OVS_TUNNEL_KEY_ATTR_TTL
-7	OVS_TUNNEL_KEY_ATTR_TP_SRC
-8	OVS_TUNNEL_KEY_ATTR_TP_DST
-9  OVS_KEY_ATTR_IN_PORT
-10 OVS_KEY_ATTR_SKB_MARK
-11 OVS_KEY_ATTR_MPLS
+The code included below demonstrates the problem.
 
-we switch to the 'ovs_tunnel_key_lens' table on attribute #3,
-and we don't switch back to 'ovs_key_lens' while setting
-attributes #9 to #11 in the sequence. As OVS_KEY_ATTR_MPLS
-evaluates to 21, and the array size of 'ovs_tunnel_key_lens' is
-15, we also get this kind of KASan splat while accessing the
-wrong table:
+Results before patch:
+    $ gcc -m64 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 2.008181 seconds
+    send time: 2.015985 seconds
 
-[ 7654.586496] ==================================================================
-[ 7654.594573] BUG: KASAN: global-out-of-bounds in nlattr_set+0x164/0xde9 [openvswitch]
-[ 7654.603214] Read of size 4 at addr ffffffffc169ecf0 by task handler29/87430
-[ 7654.610983]
-[ 7654.612644] CPU: 21 PID: 87430 Comm: handler29 Kdump: loaded Not tainted 3.10.0-866.el7.test.x86_64 #1
-[ 7654.623030] Hardware name: Dell Inc. PowerEdge R730/072T6D, BIOS 2.1.7 06/16/2016
-[ 7654.631379] Call Trace:
-[ 7654.634108]  [<ffffffffb65a7c50>] dump_stack+0x19/0x1b
-[ 7654.639843]  [<ffffffffb53ff373>] print_address_description+0x33/0x290
-[ 7654.647129]  [<ffffffffc169b37b>] ? nlattr_set+0x164/0xde9 [openvswitch]
-[ 7654.654607]  [<ffffffffb53ff812>] kasan_report.part.3+0x242/0x330
-[ 7654.661406]  [<ffffffffb53ff9b4>] __asan_report_load4_noabort+0x34/0x40
-[ 7654.668789]  [<ffffffffc169b37b>] nlattr_set+0x164/0xde9 [openvswitch]
-[ 7654.676076]  [<ffffffffc167ef68>] ovs_nla_get_match+0x10c8/0x1900 [openvswitch]
-[ 7654.684234]  [<ffffffffb61e9cc8>] ? genl_rcv+0x28/0x40
-[ 7654.689968]  [<ffffffffb61e7733>] ? netlink_unicast+0x3f3/0x590
-[ 7654.696574]  [<ffffffffc167dea0>] ? ovs_nla_put_tunnel_info+0xb0/0xb0 [openvswitch]
-[ 7654.705122]  [<ffffffffb4f41b50>] ? unwind_get_return_address+0xb0/0xb0
-[ 7654.712503]  [<ffffffffb65d9355>] ? system_call_fastpath+0x1c/0x21
-[ 7654.719401]  [<ffffffffb4f41d79>] ? update_stack_state+0x229/0x370
-[ 7654.726298]  [<ffffffffb4f41d79>] ? update_stack_state+0x229/0x370
-[ 7654.733195]  [<ffffffffb53fe4b5>] ? kasan_unpoison_shadow+0x35/0x50
-[ 7654.740187]  [<ffffffffb53fe62a>] ? kasan_kmalloc+0xaa/0xe0
-[ 7654.746406]  [<ffffffffb53fec32>] ? kasan_slab_alloc+0x12/0x20
-[ 7654.752914]  [<ffffffffb53fe711>] ? memset+0x31/0x40
-[ 7654.758456]  [<ffffffffc165bf92>] ovs_flow_cmd_new+0x2b2/0xf00 [openvswitch]
+    $ gcc -m32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 2.016763 seconds
+    send time: 2.016062 seconds
 
-[snip]
+    $ gcc -mx32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
+    recv time: 1.007239 seconds
+    send time: 1.023890 seconds
 
-[ 7655.132484] The buggy address belongs to the variable:
-[ 7655.138226]  ovs_tunnel_key_lens+0xf0/0xffffffffffffd400 [openvswitch]
-[ 7655.145507]
-[ 7655.147166] Memory state around the buggy address:
-[ 7655.152514]  ffffffffc169eb80: 00 00 00 00 00 00 00 00 00 00 fa fa fa fa fa fa
-[ 7655.160585]  ffffffffc169ec00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[ 7655.168644] >ffffffffc169ec80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fa fa
-[ 7655.176701]                                                              ^
-[ 7655.184372]  ffffffffc169ed00: fa fa fa fa 00 00 00 00 fa fa fa fa 00 00 00 05
-[ 7655.192431]  ffffffffc169ed80: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
-[ 7655.200490] ==================================================================
+Results after patch:
+    $ gcc -m64 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.010062 seconds
+    send time: 2.015836 seconds
 
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Fixes: 982b52700482 ("openvswitch: Fix mask generation for nested attributes.")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
+    $ gcc -m32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.013974 seconds
+    send time: 2.015981 seconds
+
+    $ gcc -mx32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
+    recv time: 2.030257 seconds
+    send time: 2.013383 seconds
+
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/socket.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
+
+ void checkrc(char *str, int rc)
+ {
+         if (rc >= 0)
+                 return;
+
+         perror(str);
+         exit(1);
+ }
+
+ static char buf[1024];
+ int main(int argc, char **argv)
+ {
+         int rc;
+         int socks[2];
+         struct timeval tv;
+         struct timeval start, end, delta;
+
+         rc = socketpair(AF_UNIX, SOCK_STREAM, 0, socks);
+         checkrc("socketpair", rc);
+
+         /* set timeout to 1.999999 seconds */
+         tv.tv_sec = 1;
+         tv.tv_usec = 999999;
+         rc = setsockopt(socks[0], SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+         rc = setsockopt(socks[0], SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
+         checkrc("setsockopt", rc);
+
+         /* measure actual receive timeout */
+         gettimeofday(&start, NULL);
+         rc = recv(socks[0], buf, sizeof buf, 0);
+         gettimeofday(&end, NULL);
+         timersub(&end, &start, &delta);
+
+         printf("recv time: %ld.%06ld seconds\n",
+                (long)delta.tv_sec, (long)delta.tv_usec);
+
+         /* fill send buffer */
+         do {
+                 rc = send(socks[0], buf, sizeof buf, 0);
+         } while (rc > 0);
+
+         /* measure actual send timeout */
+         gettimeofday(&start, NULL);
+         rc = send(socks[0], buf, sizeof buf, 0);
+         gettimeofday(&end, NULL);
+         timersub(&end, &start, &delta);
+
+         printf("send time: %ld.%06ld seconds\n",
+                (long)delta.tv_sec, (long)delta.tv_usec);
+         exit(0);
+ }
+
+Fixes: 515c7af85ed9 ("x32: Use compat shims for {g,s}etsockopt")
+Reported-by: Gopal RajagopalSai <gopalsr83@gmail.com>
+Signed-off-by: Lance Richardson <lance.richardson.net@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/flow_netlink.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/compat.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -1296,13 +1296,10 @@ static void nlattr_set(struct nlattr *at
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -372,7 +372,8 @@ static int compat_sock_setsockopt(struct
+ 	    optname == SO_ATTACH_REUSEPORT_CBPF)
+ 		return do_set_attach_filter(sock, level, optname,
+ 					    optval, optlen);
+-	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
++	if (!COMPAT_USE_64BIT_TIME &&
++	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
+ 		return do_set_sock_timeout(sock, level, optname, optval, optlen);
  
- 	/* The nlattr stream should already have been validated */
- 	nla_for_each_nested(nla, attr, rem) {
--		if (tbl[nla_type(nla)].len == OVS_ATTR_NESTED) {
--			if (tbl[nla_type(nla)].next)
--				tbl = tbl[nla_type(nla)].next;
--			nlattr_set(nla, val, tbl);
--		} else {
-+		if (tbl[nla_type(nla)].len == OVS_ATTR_NESTED)
-+			nlattr_set(nla, val, tbl[nla_type(nla)].next ? : tbl);
-+		else
- 			memset(nla_data(nla), val, nla_len(nla));
--		}
- 
- 		if (nla_type(nla) == OVS_KEY_ATTR_CT_STATE)
- 			*(u32 *)nla_data(nla) &= CT_SUPPORTED_MASK;
+ 	return sock_setsockopt(sock, level, optname, optval, optlen);
+@@ -437,7 +438,8 @@ static int do_get_sock_timeout(struct so
+ static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
+ 				char __user *optval, int __user *optlen)
+ {
+-	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
++	if (!COMPAT_USE_64BIT_TIME &&
++	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
+ 		return do_get_sock_timeout(sock, level, optname, optval, optlen);
+ 	return sock_getsockopt(sock, level, optname, optval, optlen);
+ }
