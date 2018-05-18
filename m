@@ -1,98 +1,346 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeERKjO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:39:14 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34783 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbeERKjM (ORCPT
+        id S1752742AbeERKj3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:39:29 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36128 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752342AbeERKj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:39:12 -0400
-X-Google-Smtp-Source: AB8JxZoCiBNJAhBjI//mCDyboFWZZgv7Z7QzAbyBmy2psE9AQMKRM0+HXelGhg11fVFL0LVQSE/GwQ==
-Date: Fri, 18 May 2018 12:39:08 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Message-ID: <20180518103908.GF5312@ulmo>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com>
+        Fri, 18 May 2018 06:39:27 -0400
+X-Google-Smtp-Source: AB8JxZp2ERZzh/FgDIWs/bKWbUPIoOHeylUgUf5nylAADDvdH3Y4R/gh8tPfDiBpCzWnHuD/ukIWOg==
+Date: Fri, 18 May 2018 19:39:26 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 07/11] arm64: kexec_file: add crash dump support
+Message-ID: <20180518103925.GP2737@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-8-takahiro.akashi@linaro.org>
+ <f8d8305d-42f5-e1e2-20c4-733cb38cbb8d@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z+pzSjdB7cqptWpS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-3-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <f8d8305d-42f5-e1e2-20c4-733cb38cbb8d@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 15, 2018 at 06:11:15PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 25/04/18 07:26, AKASHI Takahiro wrote:
+> > Enabling crash dump (kdump) includes
+> > * prepare contents of ELF header of a core dump file, /proc/vmcore,
+> >   using crash_prepare_elf64_headers(), and
+> > * add two device tree properties, "linux,usable-memory-range" and
+> >   "linux,elfcorehdr", which represent repsectively a memory range
+> 
+> (Nit: respectively)
 
---z+pzSjdB7cqptWpS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will fix.
 
-On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->=20
-> Changelog:
->=20
-> v3:
-> 	- No change.
->=20
-> v2:
-> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->=20
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  3 files changed, 40 insertions(+), 12 deletions(-)
+> 
+> >   to be used by crash dump kernel and the header's location
+> 
+> >  arch/arm64/include/asm/kexec.h         |   4 +
+> >  arch/arm64/kernel/kexec_image.c        |   9 +-
+> >  arch/arm64/kernel/machine_kexec_file.c | 202 +++++++++++++++++++++++++
+> 
+> In this patch, machine_kexec_file.c gains its own private fdt array encoder.
 
-Linus,
+See below.
 
-were you going to pick this up for v4.18? There's a runtime dependency
-on this from some clock patches that I'd like to get into v4.18.
+> 
+> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > index 37c0a9dc2e47..ec674f4d267c 100644
+> > --- a/arch/arm64/kernel/machine_kexec_file.c
+> > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > @@ -76,6 +81,78 @@ int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> >  	return ret;
+> >  }
+> >  
+> > +static int __init arch_kexec_file_init(void)
+> > +{
+> > +	/* Those values are used later on loading the kernel */
+> > +	__dt_root_addr_cells = dt_root_addr_cells;
+> > +	__dt_root_size_cells = dt_root_size_cells;
+> > +
+> > +	return 0;
+> > +}
+> > +late_initcall(arch_kexec_file_init);
+> 
+> If we need these is it worth taking them out of __initdata? I note they've been
+> 'temporary' for quite a long time.
 
-I see I never gave my Acked-by on this particular patch, so here goes:
+I think that I had some reason that I didn't do that, but don't remember now.
+If there's no problem, I will take your suggestion.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> > +
+> > +#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
+> > +#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
+> > +
+> > +static int fdt_prop_len(const char *prop_name, int len)
+> > +{
+> > +	return (strlen(prop_name) + 1) +
+> > +		sizeof(struct fdt_property) +
+> > +		FDT_TAGALIGN(len);
+> > +}
+> 
+> This stuff should really be in libfdt.h  Those macros come from
+> libfdt_internal.h, so we're probably doing something wrong here.
+> 
+> 
+> > +static bool cells_size_fitted(unsigned long base, unsigned long size)
+> > +{
+> > +	/* if *_cells >= 2, cells can hold 64-bit values anyway */
+> > +	if ((__dt_root_addr_cells == 1) && (base >= (1ULL << 32)))
+> > +		return false;
+> > +
+> > +	if ((__dt_root_size_cells == 1) && (size >= (1ULL << 32)))
+> > +		return false;
+> 
+> Using '> U32_MAX' here may be more readable.
 
---z+pzSjdB7cqptWpS
-Content-Type: application/pgp-signature; name="signature.asc"
+OK
 
------BEGIN PGP SIGNATURE-----
+> 
+> > +	return true;
+> > +}
+> > +
+> > +static void fill_property(void *buf, u64 val64, int cells)
+> > +{
+> > +	u32 val32;
+> > +
+> > +	if (cells == 1) {
+> > +		val32 = cpu_to_fdt32((u32)val64);
+> > +		memcpy(buf, &val32, sizeof(val32));
+> > +	} else {
+> 
+> > +		memset(buf, 0, cells * sizeof(u32) - sizeof(u64));
+> > +		buf += cells * sizeof(u32) - sizeof(u64);
+> 
+> Is this trying to clear the 'top' cells and shuffle the pointer to point at the
+> 'bottom' 2? I'm pretty sure this isn't endian safe.
+> 
+> Do we really expect a system to have #address-cells > 2?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rUwACgkQ3SOs138+
-s6F4Zg/+PiE7355bzPMINxgk/9Q+qcq1ME2JselWa8MQtM5FT5RcXkLY5OlkNk9+
-Nf+1BlqOI2cEzUQK7OfB0Qi/Ev0eDaEcLyVt+R41QUkd5QH5Cf+k5/7Xc1BS6E3q
-qQjPgLPk/DGBUl3Rv97Z08x6JZsTfw/Qzubz1l9l9baCIPSrpBq6ou7T2zbG/6B8
-bh7qYQlZFieFPuFQGqKw6l28mNBqV6HWTsunBSjpbLISs/LmXSKkjEQvYuUn3PIx
-HGFoMOtHBlbCQ93/kjL/6+ZjELSJhYgcJ+x4Fy6FWLMVWkUkk3/wjitzYN3ZyS/R
-MwWfhDBuT3fuaPiFQj8ZrD+B8lCiKm5rWBeao0g8fTNzSIGfXFqCC0byS8MzN+CV
-96BbSB8zRww4+TTAIRIVXIExqsBtHmQK9b/IjOIEPQ20UD3nWiIp0B9jBgWTOrUT
-wvncljX+VoZgYWAHUhZnp5ylC5KpPv8u8PyI323DICI1PkIVi4C6YYWSgUw8oIMZ
-+t1TYLeJlcPPZ0aRTjX5kda6ivwULV/lsbebKA8cMxfWm2ufb70Bqc6Gp3I+Inzz
-aVph7jGViUNZnWWt8AO9XvXDka+Otrk8YzLn6F2pjnHoL3Dk+UykUx6kDKSTDZWT
-ep17CM2hrXFXBSVbZ1mjT9rILYKfdmwf7A2X5NLbUDKL6ATD1RU=
-=Or8C
------END PGP SIGNATURE-----
+I don't know, but just for safety.
 
---z+pzSjdB7cqptWpS--
+> 
+> > +		val64 = cpu_to_fdt64(val64);
+> > +		memcpy(buf, &val64, sizeof(val64));
+> > +	}
+> > +}
+> > +
+> > +static int fdt_setprop_range(void *fdt, int nodeoffset, const char *name,
+> > +				unsigned long addr, unsigned long size)
+> 
+> (the device-tree spec describes a 'ranges' property, which had me confused. This
+> is encoding a prop-encoded-array)
+
+Should we rename it to, say, fdt_setprop_reg()?
+
+
+> > +{
+> > +	void *buf, *prop;
+> > +	size_t buf_size;
+> > +	int result;
+> > +
+> > +	buf_size = (__dt_root_addr_cells + __dt_root_size_cells) * sizeof(u32);
+> > +	prop = buf = vmalloc(buf_size);
+> 
+> virtual memory allocation for something less than PAGE_SIZE?
+
+I've never cared about that. Let me think again.
+
+> 
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > +
+> > +	fill_property(prop, addr, __dt_root_addr_cells);
+> > +	prop += __dt_root_addr_cells * sizeof(u32);
+> > +
+> > +	fill_property(prop, size, __dt_root_size_cells);
+> > +
+> > +	result = fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
+> > +
+> > +	vfree(buf);
+> > +
+> > +	return result;
+> > +}
+> 
+> Doesn't this stuff belong in libfdt? I guess there is no 'add array element' api
+> because this the first time we've wanted to create a node with more than
+> key=fixed-size-value.
+> 
+> I don't think this belongs in arch C code. Do we have a plan for getting libfdt
+> to support encoding prop-arrays? Can we put it somewhere anyone else duplicating
+> this will find it, until we can (re)move it?
+
+I will temporarily move all fdt-related stuff to a separate file, but
+
+> I have no idea how that happens... it looks like the devicetree list is the
+> place to ask.
+
+should we always sync with the original dtc/libfdt repository?
+
+> 
+> >  static int setup_dtb(struct kimage *image,
+> >  		unsigned long initrd_load_addr, unsigned long initrd_len,
+> >  		char *cmdline, unsigned long cmdline_len,
+> > @@ -88,10 +165,26 @@ static int setup_dtb(struct kimage *image,
+> >  	int range_len;
+> >  	int ret;
+> >  
+> > +	/* check ranges against root's #address-cells and #size-cells */
+> > +	if (image->type == KEXEC_TYPE_CRASH &&
+> > +		(!cells_size_fitted(image->arch.elf_load_addr,
+> > +				image->arch.elf_headers_sz) ||
+> > +		 !cells_size_fitted(crashk_res.start,
+> > +				crashk_res.end - crashk_res.start + 1))) {
+> > +		pr_err("Crash memory region doesn't fit into DT's root cell sizes.\n");
+> > +		ret = -EINVAL;
+> > +		goto out_err;
+> > +	}
+> 
+> To check I've understood this properly: This can happen if the firmware provided
+> a DTB with 32bit address/size cells, but at least some of the memory requires 64
+> bit address/size cells. This could only happen on a UEFI system where the
+> firmware-DTB doesn't describe memory. ACPI-only systems would have the EFIstub DT.
+
+Probably, yes. I assumed the case where #address-cells and #size-cells
+were just missing in fdt.
+
+> 
+> >  	/* duplicate dt blob */
+> >  	buf_size = fdt_totalsize(initial_boot_params);
+> >  	range_len = (__dt_root_addr_cells + __dt_root_size_cells) * sizeof(u32);
+> >  
+> > +	if (image->type == KEXEC_TYPE_CRASH)
+> > +		buf_size += fdt_prop_len("linux,elfcorehdr", range_len)
+> > +				+ fdt_prop_len("linux,usable-memory-range",
+> > +								range_len);
+
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+> > +
+> >  	if (initrd_load_addr)
+> >  		buf_size += fdt_prop_len("linux,initrd-start", sizeof(u64))
+> >  				+ fdt_prop_len("linux,initrd-end", sizeof(u64));
+> > @@ -113,6 +206,23 @@ static int setup_dtb(struct kimage *image,
+> >  	if (nodeoffset < 0)
+> >  		goto out_err;
+> >  
+> > +	if (image->type == KEXEC_TYPE_CRASH) {
+> > +		/* add linux,elfcorehdr */
+> > +		ret = fdt_setprop_range(buf, nodeoffset, "linux,elfcorehdr",
+> > +				image->arch.elf_load_addr,
+> > +				image->arch.elf_headers_sz);
+> > +		if (ret)
+> > +			goto out_err;
+> > +
+> > +		/* add linux,usable-memory-range */
+> > +		ret = fdt_setprop_range(buf, nodeoffset,
+> > +				"linux,usable-memory-range",
+> > +				crashk_res.start,
+> > +				crashk_res.end - crashk_res.start + 1);
+> 
+> Don't you need to add "linux,usable-memory-range" to the buf_size estimate?
+
+I think the code exists. See above.
+
+> 
+> > +		if (ret)
+> > +			goto out_err;
+> > +	}
+> 
+> > @@ -148,17 +258,109 @@ static int setup_dtb(struct kimage *image,
+> 
+> > +static struct crash_mem *get_crash_memory_ranges(void)
+> > +{
+> > +	unsigned int nr_ranges;
+> > +	struct crash_mem *cmem;
+> > +
+> > +	nr_ranges = 1; /* for exclusion of crashkernel region */
+> > +	walk_system_ram_res(0, -1, &nr_ranges, get_nr_ranges_callback);
+> > +
+> > +	cmem = vmalloc(sizeof(struct crash_mem) +
+> > +			sizeof(struct crash_mem_range) * nr_ranges);
+> > +	if (!cmem)
+> > +		return NULL;
+> > +
+> > +	cmem->max_nr_ranges = nr_ranges;
+> > +	cmem->nr_ranges = 0;
+> > +	walk_system_ram_res(0, -1, cmem, add_mem_range_callback);
+> > +
+> > +	/* Exclude crashkernel region */
+> > +	if (crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end)) {
+> > +		vfree(cmem);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	return cmem;
+> > +}
+> 
+> Could this function be included in prepare_elf_headers() so that the alloc() and
+> free() occur together.
+
+
+Or aiming that arm64 and x86 have similar-look code?
+
+> 
+> > +static int prepare_elf_headers(void **addr, unsigned long *sz)
+> > +{
+> > +	struct crash_mem *cmem;
+> > +	int ret = 0;
+> > +
+> > +	cmem = get_crash_memory_ranges();
+> > +	if (!cmem)
+> > +		return -ENOMEM;
+> > +
+> > +	ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
+> > +
+> > +	vfree(cmem);
+> 
+> > +	return ret;
+> > +}
+> 
+> All this is moving memory-range information from core-code's
+> walk_system_ram_res() into core-code's struct crash_mem, and excluding
+> crashk_res, which again is accessible to the core code.
+> 
+> It looks like this is duplicated in arch/x86 and arch/arm64 because arm64
+> doesn't have a second 'crashk_low_res' region, and always wants elf64, instead
+> of when IS_ENABLED(CONFIG_X86_64).
+> If we can abstract just those two, more of this could be moved to core code
+> where powerpc can make use of it if they want to support kdump with
+> kexec_file_load().
+> 
+> But, its getting late for cross-architecture dependencies, lets put that on the
+> for-later list. (assuming there isn't a powerpc-kdump series out there adding a
+> third copy of this)
+
+Sure. X86 code has so many exceptional lines in the code :)
+
+Thanks,
+-Takahiro AKASHI
+
+
+> 
+> Thanks,
+> 
+> James
