@@ -1,84 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeERGGf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:06:35 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:17064 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERGGc (ORCPT
+        id S1751858AbeERGKA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:10:00 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43677 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750957AbeERGJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:06:32 -0400
-Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-26-david@lechnology.com>
- <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
- <1162de58-00bc-fdfa-eef1-48a094834ac3@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c7064bee-d385-4496-c19e-1b72853b01f1@ti.com>
-Date: Fri, 18 May 2018 11:35:18 +0530
+        Fri, 18 May 2018 02:09:58 -0400
+X-ME-Proxy: <xmx:NW7-Wpuj2Z4PYS5hd1JgwBV-SAveOLUIVlE21xbqKS_xEsglqSbQZQ>
+X-ME-Proxy: <xmx:NW7-WlEqgfz0XHDvOGi0NR1EORNniEFPzfEZrC_Bqqhv92ZRs98__g>
+X-ME-Proxy: <xmx:NW7-WsR4ySkULRPNNibfTQTrjBZoxjbJNmFBTTnnLkbB0MAvm20nFg>
+X-ME-Proxy: <xmx:NW7-Whh3fsn8mEbaPFYDVxJI65uc-727nqxBfUt_cfHkj4aa0xvMrQ>
+X-ME-Proxy: <xmx:NW7-WoZrauc1Fd5-hmPspUjXR1qHzFtkCCkOJsVEUNgcM9UKTSNZlQ>
+X-ME-Proxy: <xmx:NW7-WpZYE-kuAfHvY70FSXlEeASWlS4z67yJ5VXsg0wwi-hLrdNEIQ>
+X-ME-Sender: <xms:NW7-WkWFQ-ELsRCllN_YXJmBew6-d0uYEEiuPsVlrVAIBdgCwyyPEQ>
+Subject: Re: mmotm 2018-05-17-16-26 uploaded (autofs)
+From: Ian Kent <raven@themaw.net>
+To: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+References: <20180517232639.sD6Cz%akpm@linux-foundation.org>
+ <19926e1e-6dba-3b9f-fd97-d9eb88bfb7dd@infradead.org>
+ <49acf718-da2e-73dc-a3bf-c41d7546576e@themaw.net>
+ <9e3dfece-46a0-8ab2-2c7e-3edf956703a8@infradead.org>
+ <6441e45b-6216-a20a-5b1d-6f5663d701dd@themaw.net>
+Message-ID: <80c2dcf5-b9a9-3d75-7f6f-d0e9c1a11fb9@themaw.net>
+Date: Fri, 18 May 2018 14:09:51 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1162de58-00bc-fdfa-eef1-48a094834ac3@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <6441e45b-6216-a20a-5b1d-6f5663d701dd@themaw.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 17 May 2018 08:39 PM, David Lechner wrote:
-> On 05/17/2018 09:35 AM, Sekhar Nori wrote:
->> Hi David,
->>
->> On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
->>> This adds device tree support to the davinci timer so that when clocks
->>> are moved to device tree, the timer will still work.
+On 18/05/18 12:38, Ian Kent wrote:
+> On 18/05/18 12:23, Randy Dunlap wrote:
+>> On 05/17/2018 08:50 PM, Ian Kent wrote:
+>>> On 18/05/18 08:21, Randy Dunlap wrote:
+>>>> On 05/17/2018 04:26 PM, akpm@linux-foundation.org wrote:
+>>>>> The mm-of-the-moment snapshot 2018-05-17-16-26 has been uploaded to
+>>>>>
+>>>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>>>
+>>>>> mmotm-readme.txt says
+>>>>>
+>>>>> README for mm-of-the-moment:
+>>>>>
+>>>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>>>
+>>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>>>> more than once a week.
+>>>>>
+>>>>> You will need quilt to apply these patches to the latest Linus release (4.x
+>>>>> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>>>> http://ozlabs.org/~akpm/mmotm/series
+>>>>>
+>>>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>>>> followed by the base kernel version against which this patch series is to
+>>>>> be applied.
+>>>>>
+>>>>> This tree is partially included in linux-next.  To see which patches are
+>>>>> included in linux-next, consult the `series' file.  Only the patches
+>>>>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+>>>>> linux-next.
+>>>>>
+>>>>> A git tree which contains the memory management portion of this tree is
+>>>>> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+>>>>> by Michal Hocko.  It contains the patches which are between the
+>>>>> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+>>>>> file, http://www.ozlabs.org/~akpm/mmotm/series.
+>>>>>
+>>>>>
+>>>>> A full copy of the full kernel tree with the linux-next and mmotm patches
+>>>>> already applied is available through git within an hour of the mmotm
+>>>>> release.  Individual mmotm releases are tagged.  The master branch always
+>>>>> points to the latest release, so it's constantly rebasing.
+>>>>
+>>>>
+>>>> on x86_64: with (randconfig):
+>>>> CONFIG_AUTOFS_FS=y
+>>>> CONFIG_AUTOFS4_FS=y
 >>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
+>>> Oh right, I need to make these exclusive.
+>>>
+>>> I seem to remember trying to do that along the way, can't remember why
+>>> I didn't do it in the end.
+>>>
+>>> Any suggestions about potential problems when doing it?
 >>
->>> +static int __init of_davinci_timer_init(struct device_node *np)
->>> +{
->>> +    struct clk *clk;
->>> +
->>> +    clk = of_clk_get(np, 0);
->>> +    if (IS_ERR(clk)) {
->>> +        struct of_phandle_args clkspec;
->>> +
->>> +        /*
->>> +         * Fall back to using ref_clk if the actual clock is not
->>> +         * available. There will be problems later if the real clock
->>> +         * source is disabled.
->>> +         */
->>> +
->>> +        pr_warn("%s: falling back to ref_clk\n", __func__);
->>> +
->>> +        clkspec.np = of_find_node_by_name(NULL, "ref_clk");
->>> +        if (IS_ERR(clkspec.np)) {
->>> +            pr_err("%s: No clock available for timer!\n", __func__);
->>> +            return PTR_ERR(clkspec.np);
->>> +        }
->>> +        clk = of_clk_get_from_provider(&clkspec);
->>> +        of_node_put(clkspec.np);
->>> +    }
->>
->> Do we need this error path now?
->>
->> Thanks,
->> Sekhar
+>> I think that just using "depends on" for each of them will cause kconfig to
+>> complain about circular dependencies, so probably using "choice" will be
+>> needed.  Or (since this is just temporary?) just say "don't do that."
 >>
 > 
-> No, not really.
+> No doubt that was what happened, unfortunately I forgot to return to it.
+> 
+> Right, a conditional with a message should work .... thanks.
 
-Then lets just print an error and return the error number.
+It looks like adding:
+depends on AUTOFS_FS = n && AUTOFS_FS != m
 
-Thanks,
-Sekhar
+to autofs4/Kconfig results in autofs4 appearing under the autofs entry
+if AUTOFS_FS is not set which should call attention to it.
+
+It also results in AUTOFS4_FS=n for any setting of AUTOFS_FS except n.
+
+Together with some words about it in the AUTOFS4_FS help it should be
+enough to raise awareness of the change.
+
+Ian
