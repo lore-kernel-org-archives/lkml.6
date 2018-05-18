@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752554AbeERHve (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:51:34 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33514 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752445AbeERHuV (ORCPT
+        id S1752569AbeERHwF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:52:05 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36043 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752438AbeERHuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:50:21 -0400
-X-Google-Smtp-Source: AB8JxZqhYHFhnYlhyPTfBouIvaIsRmbrqI/84W16vZiMh12FQpbylxHaT1Eub+S5Btf3KlbzPvWNig==
+        Fri, 18 May 2018 03:50:19 -0400
+X-Google-Smtp-Source: AB8JxZoHK/E0vev1xIMhyFJRsgZsS0exT6REF5M+9o57sIHq4fTBsYOykGI80Ca7O8eSXp2XftqsUQ==
 From: Kent Overstreet <kent.overstreet@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
         Ingo Molnar <mingo@kernel.org>
 Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 09/10] block: Export bio check/set pages_dirty
-Date: Fri, 18 May 2018 03:49:15 -0400
-Message-Id: <20180518074918.13816-18-kent.overstreet@gmail.com>
+Subject: [PATCH 08/10] block: Add warning for bi_next not NULL in bio_endio()
+Date: Fri, 18 May 2018 03:49:14 -0400
+Message-Id: <20180518074918.13816-17-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
 References: <20180518074918.13816-1-kent.overstreet@gmail.com>
@@ -23,30 +23,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Recently found a bug where a driver left bi_next not NULL and then
+called bio_endio(), and then the submitter of the bio used
+bio_copy_data() which was treating src and dst as lists of bios.
+
+Fixed that bug by splitting out bio_list_copy_data(), but in case other
+things are depending on bi_next in weird ways, add a warning to help
+avoid more bugs like that in the future.
+
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ block/bio.c      | 3 +++
+ block/blk-core.c | 8 +++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 5c81391100..6689102f5d 100644
+index ce8e259f9a..5c81391100 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1610,6 +1610,7 @@ void bio_set_pages_dirty(struct bio *bio)
- 			set_page_dirty_lock(page);
- 	}
- }
-+EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
+@@ -1775,6 +1775,9 @@ void bio_endio(struct bio *bio)
+ 	if (!bio_integrity_endio(bio))
+ 		return;
  
- static void bio_release_pages(struct bio *bio)
- {
-@@ -1693,6 +1694,7 @@ void bio_check_pages_dirty(struct bio *bio)
- 		bio_put(bio);
- 	}
- }
-+EXPORT_SYMBOL_GPL(bio_check_pages_dirty);
++	if (WARN_ONCE(bio->bi_next, "driver left bi_next not NULL"))
++		bio->bi_next = NULL;
++
+ 	/*
+ 	 * Need to have a real endio function for chained bios, otherwise
+ 	 * various corner cases will break (like stacking block devices that
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 66f24798ef..f3cf79198a 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -204,6 +204,10 @@ static void req_bio_endio(struct request *rq, struct bio *bio,
+ 	bio_advance(bio, nbytes);
  
- void generic_start_io_acct(struct request_queue *q, int rw,
- 			   unsigned long sectors, struct hd_struct *part)
+ 	/* don't actually finish bio if it's part of flush sequence */
++	/*
++	 * XXX this code looks suspicious - it's not consistent with advancing
++	 * req->bio in caller
++	 */
+ 	if (bio->bi_iter.bi_size == 0 && !(rq->rq_flags & RQF_FLUSH_SEQ))
+ 		bio_endio(bio);
+ }
+@@ -2982,8 +2986,10 @@ bool blk_update_request(struct request *req, blk_status_t error,
+ 		struct bio *bio = req->bio;
+ 		unsigned bio_bytes = min(bio->bi_iter.bi_size, nr_bytes);
+ 
+-		if (bio_bytes == bio->bi_iter.bi_size)
++		if (bio_bytes == bio->bi_iter.bi_size) {
+ 			req->bio = bio->bi_next;
++			bio->bi_next = NULL;
++		}
+ 
+ 		/* Completion has already been traced */
+ 		bio_clear_flag(bio, BIO_TRACE_COMPLETION);
 -- 
 2.17.0
