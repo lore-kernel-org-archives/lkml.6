@@ -1,72 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeERLAM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:00:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751221AbeERLAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:00:10 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm <kvm@vger.kernel.org>,
-        "the arch\/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
-References: <20180516152131.30689-1-vkuznets@redhat.com>
-        <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
-Date: Fri, 18 May 2018 13:00:06 +0200
-In-Reply-To: <CANRm+Czbc61d+bHw1oTwUT3-MBNCU42NWD8=+GyrXATDyDzYEQ@mail.gmail.com>
-        (Wanpeng Li's message of "Fri, 18 May 2018 15:00:24 +0800")
-Message-ID: <87bmddgrex.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752453AbeERLE3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:04:29 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:56835 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeERLE1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 07:04:27 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4IB47kI024751
+X-Nifty-SrcIP: [209.85.217.171]
+X-Google-Smtp-Source: AB8JxZobtO8EI2PNVJxSFiwefly3w4aDbafkaNSlx9dRUskRh65qVXWEkjmWsukusbtevVT6sFhiVobYSKDbHIt0plM=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
+References: <20180518062553.kodjjrlrosrg7vfq@gmail.com> <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
+ <20180518093131.7g5m4mu3mtrgb7so@gmail.com> <CAK7LNATYiKYzD11anXzCqjWaqeezHo4R1db+qAdCAAJLkvuf9A@mail.gmail.com>
+ <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 18 May 2018 20:03:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
+Message-ID: <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for $ALLSOURCE_ARCHS generation
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wanpeng Li <kernellwp@gmail.com> writes:
-
-> Hi Vitaly,
-> 2018-05-16 23:21 GMT+08:00 Vitaly Kuznetsov <vkuznets@redhat.com>:
->> Changes since v3 [Radim Krcmar]:
->> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
->> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
->> - Fix undefined behavior for hv->vp_index >= 64.
->> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
->> - For -ex case preload all banks with a single kvm_read_guest().
->>
->> Description:
->>
->> This is both a new feature and a bugfix.
->>
->> Bugfix description:
->>
->> It was found that Windows 2016 guests on KVM crash when they have > 64
->> vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
->> sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
+2018-05-18 18:58 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
+> On Fri, May 18, 2018 at 06:52:48PM +0900, Masahiro Yamada wrote:
+>> Why is 'paste' necessary?
 >
-> We try the below command line, the Windows 2016 guest successfully to
-> login and there are 80 vCPUs can be observed in the guest w/o the
-> patchset, why you mentioned the crash and ignore?
+> Without it newlines from find are retained from the find
+> output (at least in bash when I tested it). Though it doesn't
+> really matter here since we are feeding it to a for loop, I
+> just wanted to be sure this didn't surprise someone in the
+> future by squeezing the newlines into spaces.
 >
-> /usr/local/bin/qemu-system-x86_64 -machine  pc-i440fx-rhel7.3.0  -m
-> 8192 -smp 80,sockets=2,cores=40,threads=1  -device
-> ide-drive,bus=ide.0,drive=test -drive
-> id=test,if=none,file=/instanceimage/359b18ab-05bb-460d-9b53-89505bca68ed/359b18ab-05bb-460d-9b53-89505bca68ed_vda_1.qcow2
->  -net nic,model=virtio -net user -monitor stdio -usb -usbdevice tablet
-> --enable-kvm --cpu host -vnc 0.0.0.0:2
 
-Crash happens when you manifest yourself as Hyper-V, you can do this by
-adding any 'hv-*' feature (e.g. try '-cpu host,hv_vpindex'). 
+Hmm, I would personally get upset about that code.
+
+
+Does this work?
+ALLSOURCE_ARCHS=$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
+-printf ' %f')
+
+It would leave one leading space, but I do not think it is a big deal.
+
+
+It would be possible to chop it like follows, but I wonder if it is worth doing.
+ALLSOURCE_ARCHS=$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
+-printf ' %f' | cut -c2-)
+
+
+> --
+> Cheers,
+> Joey Pabalinas
+
+
 
 -- 
-  Vitaly
+Best Regards
+Masahiro Yamada
