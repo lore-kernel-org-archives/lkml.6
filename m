@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeERDwx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 23:52:53 -0400
-Received: from regular1.263xmail.com ([211.150.99.139]:45108 "EHLO
+        id S1752260AbeERDxB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 23:53:01 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:56540 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbeERDwt (ORCPT
+        with ESMTP id S1752199AbeERDwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 23:52:49 -0400
+        Thu, 17 May 2018 23:52:55 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,7 +16,7 @@ X-RL-SENDER: djw@t-chip.com.cn
 X-FST-TO: linux-rockchip@lists.infradead.org
 X-SENDER-IP: 183.57.25.242
 X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <e4b177d0c14a711bef79d8cc6468f63a>
+X-UNIQUE-TAG: <466b15a17f5934a1fda2f94fa937f5aa>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: djw@t-chip.com.cn
@@ -25,14 +25,15 @@ Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
         Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
         David Wu <david.wu@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
         William Wu <william.wu@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Joseph Chen <chenjh@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v2 4/5] arm64: dts: rockchip: Add io-domain to roc-rk3328-cc
-Date: Fri, 18 May 2018 11:52:07 +0800
-Message-Id: <1526615528-9707-4-git-send-email-djw@t-chip.com.cn>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 5/5] arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
+Date: Fri, 18 May 2018 11:52:08 +0800
+Message-Id: <1526615528-9707-5-git-send-email-djw@t-chip.com.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
 References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
@@ -43,42 +44,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Levin Du <djw@t-chip.com.cn>
 
-It is necessary for the io domain setting of the SoC to match
-the voltage supplied by the regulators.
+In roc-rk3328-cc board, the signal voltage of sdmmc is supplied by
+the vcc_sdio regulator, which is a mux between 1.8V and 3.3V,
+controlled by a special output only gpio pin labeled
+"gpiomut_pmuio_iout", corresponding bit 1 of the syscon GRF_SOC_CON10.
+
+This special pin can now be reference as <&gpio_mute 1>, thanks
+to the gpio-syscon driver, which makes writing regulator-gpio possible.
+
+If the signal voltage changes, the io domain needs to change
+correspondingly.
+
+To use this feature, the following options are required in kernel config:
+ - CONFIG_GPIO_SYSCON=y
+ - CONFIG_POWER_AVS=y
+ - CONFIG_ROCKCHIP_IODOMAIN=y
 
 Signed-off-by: Levin Du <djw@t-chip.com.cn>
 
 ---
 
-Changes in v2: None
-Changes in v1:
-- Split from V0.
+Changes in v2:
+- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
 
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Changes in v1:
+- Split into small patches
+- Sort dts properties in sdmmc node
+
+ arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-index 246c317..b983abd 100644
+index b983abd..e3162bb 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-@@ -208,6 +208,18 @@
+@@ -41,6 +41,19 @@
+ 		vin-supply = <&vcc_io>;
  	};
+ 
++	vcc_sdio: sdmmcio-regulator {
++		compatible = "regulator-gpio";
++		gpios = <&gpio_mute 1 GPIO_ACTIVE_HIGH>;
++		states = <1800000 0x1
++			  3300000 0x0>;
++		regulator-name = "vcc_sdio";
++		regulator-type = "voltage";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
+ 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+@@ -213,7 +226,7 @@
+ 
+ 	vccio1-supply = <&vcc_io>;
+ 	vccio2-supply = <&vcc18_emmc>;
+-	vccio3-supply = <&vcc_io>;
++	vccio3-supply = <&vcc_sdio>;
+ 	vccio4-supply = <&vcc_18>;
+ 	vccio5-supply = <&vcc_io>;
+ 	vccio6-supply = <&vcc_io>;
+@@ -242,7 +255,12 @@
+ 	max-frequency = <150000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdmmc0_clk &sdmmc0_cmd &sdmmc0_dectn &sdmmc0_bus4>;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	vmmc-supply = <&vcc_sd>;
++	vqmmc-supply = <&vcc_sdio>;
+ 	status = "okay";
  };
  
-+&io_domains {
-+	status = "okay";
-+
-+	vccio1-supply = <&vcc_io>;
-+	vccio2-supply = <&vcc18_emmc>;
-+	vccio3-supply = <&vcc_io>;
-+	vccio4-supply = <&vcc_18>;
-+	vccio5-supply = <&vcc_io>;
-+	vccio6-supply = <&vcc_io>;
-+	pmuio-supply = <&vcc_io>;
-+};
-+
- &pinctrl {
- 	pmic {
- 		pmic_int_l: pmic-int-l {
 -- 
 2.7.4
