@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeERJXO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:23:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45485 "EHLO mx2.suse.de"
+        id S1753162AbeERJRk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:17:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45372 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753132AbeERJRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:17:45 -0400
+        id S1753099AbeERJRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:30 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: [PATCH v6 17/28] x86/asm: use SYM_INNER_LABEL instead of GLOBAL
-Date: Fri, 18 May 2018 11:17:10 +0200
-Message-Id: <20180518091721.7604-18-jslaby@suse.cz>
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v6 04/28] x86/asm: annotate relocate_kernel
+Date: Fri, 18 May 2018 11:16:57 +0200
+Message-Id: <20180518091721.7604-5-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
 References: <20180518091721.7604-1-jslaby@suse.cz>
@@ -22,197 +21,143 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GLOBAL had several meanings and is going away. In this patch, convert
-all the inner function labels marked with GLOBAL to use SYM_INNER_LABEL
-instead.
+There are functions in relocate_kernel which are not annotated. This
+makes automatic annotations rather hard. So annotate all the functions
+now.
 
-Note that retint_user needs not be global, perhaps since commit
-2ec67971facc ("x86/entry/64/compat: Remove most of the fast system call
-machinery"), where entry_64_compat's caller was removed. So mark the
-label as LOCAL.
+Note that these are not C-like functions, so we do not use FUNC, but
+CODE markers. Also they are not aligned, so we use the NOALIGN versions:
+- SYM_CODE_START_NOALIGN
+- SYM_CODE_START_LOCAL_NOALIGN
+- SYM_CODE_END
+
+In return, we get:
+  0000   108 NOTYPE  GLOBAL DEFAULT    1 relocate_kernel
+  006c   165 NOTYPE  LOCAL  DEFAULT    1 identity_mapped
+  0146   127 NOTYPE  LOCAL  DEFAULT    1 swap_pages
+  0111    53 NOTYPE  LOCAL  DEFAULT    1 virtual_mapped
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Andy Lutomirski <luto@amacapital.net>
 ---
- arch/x86/entry/entry_64.S                |  8 ++++----
- arch/x86/entry/entry_64_compat.S         |  4 ++--
- arch/x86/entry/vdso/vdso32/system_call.S |  2 +-
- arch/x86/kernel/ftrace_32.S              |  2 +-
- arch/x86/kernel/ftrace_64.S              | 16 ++++++++--------
- arch/x86/realmode/rm/reboot.S            |  2 +-
- 6 files changed, 17 insertions(+), 17 deletions(-)
+ arch/x86/kernel/relocate_kernel_32.S | 13 ++++++++-----
+ arch/x86/kernel/relocate_kernel_64.S | 13 ++++++++-----
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index e0798c044055..d55228508e80 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -225,7 +225,7 @@ ENTRY(entry_SYSCALL_64)
- 	pushq	%r11				/* pt_regs->flags */
- 	pushq	$__USER_CS			/* pt_regs->cs */
- 	pushq	%rcx				/* pt_regs->ip */
--GLOBAL(entry_SYSCALL_64_after_hwframe)
-+SYM_INNER_LABEL(entry_SYSCALL_64_after_hwframe, SYM_L_GLOBAL)
- 	pushq	%rax				/* pt_regs->orig_ax */
+diff --git a/arch/x86/kernel/relocate_kernel_32.S b/arch/x86/kernel/relocate_kernel_32.S
+index 77630d57e7bf..74d7891fc026 100644
+--- a/arch/x86/kernel/relocate_kernel_32.S
++++ b/arch/x86/kernel/relocate_kernel_32.S
+@@ -37,8 +37,7 @@
+ #define CP_PA_BACKUP_PAGES_MAP	DATA(0x1c)
  
- 	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
-@@ -653,12 +653,12 @@ ret_from_intr:
- 	jz	retint_kernel
+ 	.text
+-	.globl relocate_kernel
+-relocate_kernel:
++SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	/* Save the CPU context, used for jumping back */
  
- 	/* Interrupt came from user space */
--GLOBAL(retint_user)
-+SYM_INNER_LABEL(retint_user, SYM_L_LOCAL)
- 	mov	%rsp,%rdi
- 	call	prepare_exit_to_usermode
- 	TRACE_IRQS_IRETQ
+ 	pushl	%ebx
+@@ -95,8 +94,9 @@ relocate_kernel:
+ 	addl    $(identity_mapped - relocate_kernel), %eax
+ 	pushl   %eax
+ 	ret
++SYM_CODE_END(relocate_kernel)
  
--GLOBAL(swapgs_restore_regs_and_return_to_usermode)
-+SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
- #ifdef CONFIG_DEBUG_ENTRY
- 	/* Assert that pt_regs indicates user mode. */
- 	testb	$3, CS(%rsp)
-@@ -717,7 +717,7 @@ retint_kernel:
- 	 */
- 	TRACE_IRQS_IRETQ
+-identity_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* set return address to 0 if not preserving context */
+ 	pushl	$0
+ 	/* store the start address on the stack */
+@@ -193,8 +193,9 @@ identity_mapped:
+ 	addl	$(virtual_mapped - relocate_kernel), %eax
+ 	pushl	%eax
+ 	ret
++SYM_CODE_END(identity_mapped)
  
--GLOBAL(restore_regs_and_return_to_kernel)
-+SYM_INNER_LABEL(restore_regs_and_return_to_kernel, SYM_L_GLOBAL)
- #ifdef CONFIG_DEBUG_ENTRY
- 	/* Assert that pt_regs indicates kernel mode. */
- 	testb	$3, CS(%rsp)
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 2d10f72697f3..d0880bef86c3 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -146,7 +146,7 @@ ENTRY(entry_SYSENTER_compat)
- 	pushq	$X86_EFLAGS_FIXED
- 	popfq
- 	jmp	.Lsysenter_flags_fixed
--GLOBAL(__end_entry_SYSENTER_compat)
-+SYM_INNER_LABEL(__end_entry_SYSENTER_compat, SYM_L_GLOBAL)
- ENDPROC(entry_SYSENTER_compat)
+-virtual_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
+ 	movl	CR4(%edi), %eax
+ 	movl	%eax, %cr4
+ 	movl	CR3(%edi), %eax
+@@ -210,9 +211,10 @@ virtual_mapped:
+ 	popl	%esi
+ 	popl	%ebx
+ 	ret
++SYM_CODE_END(virtual_mapped)
  
- /*
-@@ -215,7 +215,7 @@ ENTRY(entry_SYSCALL_compat)
- 	pushq	%r11			/* pt_regs->flags */
- 	pushq	$__USER32_CS		/* pt_regs->cs */
- 	pushq	%rcx			/* pt_regs->ip */
--GLOBAL(entry_SYSCALL_compat_after_hwframe)
-+SYM_INNER_LABEL(entry_SYSCALL_compat_after_hwframe, SYM_L_GLOBAL)
- 	movl	%eax, %eax		/* discard orig_ax high bits */
- 	pushq	%rax			/* pt_regs->orig_ax */
- 	pushq	%rdi			/* pt_regs->di */
-diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
-index 263d7433dea8..de1fff7188aa 100644
---- a/arch/x86/entry/vdso/vdso32/system_call.S
-+++ b/arch/x86/entry/vdso/vdso32/system_call.S
-@@ -62,7 +62,7 @@ __kernel_vsyscall:
+ 	/* Do the copies */
+-swap_pages:
++SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	movl	8(%esp), %edx
+ 	movl	4(%esp), %ecx
+ 	pushl	%ebp
+@@ -272,6 +274,7 @@ swap_pages:
+ 	popl	%ebx
+ 	popl	%ebp
+ 	ret
++SYM_CODE_END(swap_pages)
  
- 	/* Enter using int $0x80 */
- 	int	$0x80
--GLOBAL(int80_landing_pad)
-+SYM_INNER_LABEL(int80_landing_pad, SYM_L_GLOBAL)
- 
+ 	.globl kexec_control_code_size
+ .set kexec_control_code_size, . - relocate_kernel
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 11eda21eb697..beb78767a5b3 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -40,8 +40,7 @@
+ 	.text
+ 	.align PAGE_SIZE
+ 	.code64
+-	.globl relocate_kernel
+-relocate_kernel:
++SYM_CODE_START_NOALIGN(relocate_kernel)
  	/*
- 	 * Restore EDX and ECX in case they were clobbered.  EBP is not
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..0206fc7e86b0 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -141,7 +141,7 @@ ENTRY(ftrace_regs_caller)
- 	movl	function_trace_op, %ecx		/* Save ftrace_pos in 3rd parameter */
- 	pushl	%esp				/* Save pt_regs as 4th parameter */
+ 	 * %rdi indirection_page
+ 	 * %rsi page_list
+@@ -105,8 +104,9 @@ relocate_kernel:
+ 	addq	$(identity_mapped - relocate_kernel), %r8
+ 	pushq	%r8
+ 	ret
++SYM_CODE_END(relocate_kernel)
  
--GLOBAL(ftrace_regs_call)
-+SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
- 	call	ftrace_stub
+-identity_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* set return address to 0 if not preserving context */
+ 	pushq	$0
+ 	/* store the start address on the stack */
+@@ -211,8 +211,9 @@ identity_mapped:
+ 	movq	$virtual_mapped, %rax
+ 	pushq	%rax
+ 	ret
++SYM_CODE_END(identity_mapped)
  
- 	addl	$4, %esp			/* Skip pt_regs */
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 91b2cff4b79a..14df6cf07b7e 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -158,14 +158,14 @@ ENTRY(ftrace_caller)
- 	/* save_mcount_regs fills in first two parameters */
- 	save_mcount_regs
+-virtual_mapped:
++SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
+ 	movq	RSP(%r8), %rsp
+ 	movq	CR4(%r8), %rax
+ 	movq	%rax, %cr4
+@@ -230,9 +231,10 @@ virtual_mapped:
+ 	popq	%rbp
+ 	popq	%rbx
+ 	ret
++SYM_CODE_END(virtual_mapped)
  
--GLOBAL(ftrace_caller_op_ptr)
-+SYM_INNER_LABEL(ftrace_caller_op_ptr, SYM_L_GLOBAL)
- 	/* Load the ftrace_ops into the 3rd parameter */
- 	movq function_trace_op(%rip), %rdx
+ 	/* Do the copies */
+-swap_pages:
++SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	movq	%rdi, %rcx 	/* Put the page_list in %rcx */
+ 	xorl	%edi, %edi
+ 	xorl	%esi, %esi
+@@ -285,6 +287,7 @@ swap_pages:
+ 	jmp	0b
+ 3:
+ 	ret
++SYM_CODE_END(swap_pages)
  
- 	/* regs go into 4th parameter (but make it NULL) */
- 	movq $0, %rcx
- 
--GLOBAL(ftrace_call)
-+SYM_INNER_LABEL(ftrace_call, SYM_L_GLOBAL)
- 	call ftrace_stub
- 
- 	restore_mcount_regs
-@@ -178,10 +178,10 @@ GLOBAL(ftrace_call)
- 	 * think twice before adding any new code or changing the
- 	 * layout here.
- 	 */
--GLOBAL(ftrace_epilogue)
-+SYM_INNER_LABEL(ftrace_epilogue, SYM_L_GLOBAL)
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--GLOBAL(ftrace_graph_call)
-+SYM_INNER_LABEL(ftrace_graph_call, SYM_L_GLOBAL)
- 	jmp ftrace_stub
- #endif
- 
-@@ -198,7 +198,7 @@ ENTRY(ftrace_regs_caller)
- 	save_mcount_regs 8
- 	/* save_mcount_regs fills in first two parameters */
- 
--GLOBAL(ftrace_regs_caller_op_ptr)
-+SYM_INNER_LABEL(ftrace_regs_caller_op_ptr, SYM_L_GLOBAL)
- 	/* Load the ftrace_ops into the 3rd parameter */
- 	movq function_trace_op(%rip), %rdx
- 
-@@ -225,7 +225,7 @@ GLOBAL(ftrace_regs_caller_op_ptr)
- 	/* regs go into 4th parameter */
- 	leaq (%rsp), %rcx
- 
--GLOBAL(ftrace_regs_call)
-+SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
- 	call ftrace_stub
- 
- 	/* Copy flags back to SS, to restore them */
-@@ -255,7 +255,7 @@ GLOBAL(ftrace_regs_call)
- 	 * The trampoline will add the code to jump
- 	 * to the return.
- 	 */
--GLOBAL(ftrace_regs_caller_end)
-+SYM_INNER_LABEL(ftrace_regs_caller_end, SYM_L_GLOBAL)
- 
- 	jmp ftrace_epilogue
- 
-@@ -277,7 +277,7 @@ fgraph_trace:
- 	jnz ftrace_graph_caller
- #endif
- 
--GLOBAL(ftrace_stub)
-+SYM_INNER_LABEL(ftrace_stub, SYM_L_GLOBAL)
- 	retq
- 
- trace:
-diff --git a/arch/x86/realmode/rm/reboot.S b/arch/x86/realmode/rm/reboot.S
-index cd2f97b9623b..f91425a01f8f 100644
---- a/arch/x86/realmode/rm/reboot.S
-+++ b/arch/x86/realmode/rm/reboot.S
-@@ -33,7 +33,7 @@ ENTRY(machine_real_restart_asm)
- 	movl	%eax, %cr0
- 	ljmpl	$__KERNEL32_CS, $pa_machine_real_restart_paging_off
- 
--GLOBAL(machine_real_restart_paging_off)
-+SYM_INNER_LABEL(machine_real_restart_paging_off, SYM_L_GLOBAL)
- 	xorl	%eax, %eax
- 	xorl	%edx, %edx
- 	movl	$MSR_EFER, %ecx
+ 	.globl kexec_control_code_size
+ .set kexec_control_code_size, . - relocate_kernel
 -- 
 2.16.3
