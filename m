@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeERNGd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:06:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:34489 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752662AbeERNGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:06:00 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Gautham R Shenoy <ego@linux.vnet.ibm.com>,
-        Michael Neuling <mikey@neuling.org>
-Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] powerpc: Enable ASYM_SMT on interleaved big-core systems
-In-Reply-To: <20180516050508.GB14826@in.ibm.com>
-References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com> <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com> <1526268127.30369.21.camel@neuling.org> <20180516050508.GB14826@in.ibm.com>
-Date: Fri, 18 May 2018 23:05:57 +1000
-Message-ID: <87muwxxgei.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1752231AbeERNF0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:05:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35420 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeERNFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:05:16 -0400
+X-Google-Smtp-Source: AB8JxZqYmjGqCDkg9y3bOovXOCEYX8+Bq5ItUQOOeLCS1pQbd/SmiW084kBiMATuODQLiDhlXDi4Mw==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com, eballetbo@gmail.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/5] mfd: cros_ec_dev: Add CEC sub-device registration
+Date: Fri, 18 May 2018 15:05:03 +0200
+Message-Id: <1526648704-16873-5-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
+The EC can expose a CEC bus, thus add the cros-ec-cec MFD sub-device
+when the CEC feature bit is present.
 
-> On Mon, May 14, 2018 at 01:22:07PM +1000, Michael Neuling wrote:
->> On Fri, 2018-05-11 at 16:47 +0530, Gautham R. Shenoy wrote:
->> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
->> > 
->> > Each of the SMT4 cores forming a fused-core are more or less
->> > independent units. Thus when multiple tasks are scheduled to run on
->> > the fused core, we get the best performance when the tasks are spread
->> > across the pair of SMT4 cores.
->> > 
->> > Since the threads in the pair of SMT4 cores of an interleaved big-core
->> > are numbered {0,2,4,6} and {1,3,5,7} respectively, enable ASYM_SMT on
->> > such interleaved big-cores that will bias the load-balancing of tasks
->> > on smaller numbered threads, which will automatically result in
->> > spreading the tasks uniformly across the associated pair of SMT4
->> > cores.
->> > 
->> > Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
->> > ---
->> >  arch/powerpc/kernel/smp.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > 
->> > diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
->> > index 9ca7148..0153f01 100644
->> > --- a/arch/powerpc/kernel/smp.c
->> > +++ b/arch/powerpc/kernel/smp.c
->> > @@ -1082,7 +1082,7 @@ static int powerpc_smt_flags(void)
->> >  {
->> >  	int flags = SD_SHARE_CPUCAPACITY | SD_SHARE_PKG_RESOURCES;
->> >  
->> > -	if (cpu_has_feature(CPU_FTR_ASYM_SMT)) {
->> > +	if (cpu_has_feature(CPU_FTR_ASYM_SMT) || has_interleaved_big_core) {
->> 
->> Shouldn't we just set CPU_FTR_ASYM_SMT and leave this code
-> unchanged?
->
-> Yes, that would have the same effect. I refrained from doing that
-> since I thought CPU_FTR_ASYM_SMT has the "lower numbered threads
-> expedite thread-folding" connotation from the POWER7 generation.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-The above code is the only use of the feature, so I don't think we need
-to worry about any other connotations.
-
-> If it is ok to overload CPU_FTR_ASYM_SMT, we can do what you suggest
-> and have all the changes in setup-common.c
-
-Yeah let's do that.
-
-cheers
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 1d6dc5c..272969e 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -383,6 +383,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+ 	kfree(msg);
+ }
+ 
++static const struct mfd_cell cros_ec_cec_cells[] = {
++	{ .name = "cros-ec-cec" }
++};
++
+ static const struct mfd_cell cros_ec_rtc_cells[] = {
+ 	{ .name = "cros-ec-rtc" }
+ };
+@@ -426,6 +430,18 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+ 		cros_ec_sensors_register(ec);
+ 
++	/* Check whether this EC instance has CEC host command support */
++	if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
++		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
++					 cros_ec_cec_cells,
++					 ARRAY_SIZE(cros_ec_cec_cells),
++					 NULL, 0, NULL);
++		if (retval)
++			dev_err(ec->dev,
++				"failed to add cros-ec-cec device: %d\n",
++				retval);
++	}
++
+ 	/* Check whether this EC instance has RTC host command support */
+ 	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
+ 		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
+-- 
+2.7.4
