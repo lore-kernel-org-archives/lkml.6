@@ -1,101 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeERXZF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 19:25:05 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:54418 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751888AbeERXZE (ORCPT
+        id S1752173AbeERXgS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 19:36:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33410 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbeERXgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 19:25:04 -0400
-X-Google-Smtp-Source: AB8JxZr2HIOeT46EPWOpW4QK+raoZNCZ8PrktR/kBb4wJMPQje0YAwYPWZ74ThcnapU6UjENaggYF/Lx/iNy1dQ3M5sobQu3SCBK
+        Fri, 18 May 2018 19:36:15 -0400
+Date: Fri, 18 May 2018 16:36:12 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 4.17-3
+Message-ID: <20180518233612.GA17384@fury>
 MIME-Version: 1.0
-Date: Fri, 18 May 2018 16:25:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f4f194056c8342d1@google.com>
-Subject: general protection fault in smc_ioctl
-From: syzbot <syzbot+e6714328fda813fc670f@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Linus,
 
-syzbot found the following crash on:
+DELL_WMI had a lingering "select DELL_SMBIOS" leading to possible
+misconfiguration. This removes the last of the "select DELL_SMBIOS"
+lines in the Kconfig.
 
-HEAD commit:    1f7455c3912d tcp: tcp_rack_reo_wnd() can be static
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=171a1337800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=e6714328fda813fc670f
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15782d57800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108711a7800000
+Obviously this has been an unacceptable sequence of failures. I will be
+adding some contextual fuzz testing for this Kconfig to try and catch
+more of this - and of course I've learned a few things to look out for
+as well.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e6714328fda813fc670f@syzkaller.appspotmail.com
+Thanks,
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4559 Comm: syz-executor292 Not tainted 4.17.0-rc4+ #50
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:smc_ioctl+0x3dc/0x9f0 net/smc/af_smc.c:1499
-RSP: 0018:ffff8801ad22f770 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff8801ad0df7c0 RCX: ffffffff8741188f
-RDX: 0000000000000004 RSI: ffffffff8741189e RDI: 0000000000000020
-RBP: ffff8801ad22f9d0 R08: ffff8801ae87e6c0 R09: ffffed00363e1818
-R10: ffffed00363e1818 R11: ffff8801b1f0c0c3 R12: 1ffff10035a45ef1
-R13: 0000000020000080 R14: 0000000000000000 R15: 0000000000000000
-FS:  00000000017b7880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd1f18f038 CR3: 00000001ad044000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  sock_do_ioctl+0xe4/0x3e0 net/socket.c:957
-  sock_ioctl+0x30d/0x680 net/socket.c:1081
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fca9
-RSP: 002b:00007ffd1f073588 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fca9
-RDX: 0000000020000080 RSI: 0000000000005411 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004015d0
-R13: 0000000000401660 R14: 0000000000000000 R15: 0000000000000000
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 7d 05 00 00 4c 8b b3 90 04 00 00 48  
-b8 00 00 00 00 00 fc ff df 49 8d 7e 20 48 89 fa 48 c1 ea 03 <0f> b6 04 02  
-84 c0 74 08 3c 03 0f 8e 47 05 00 00 45 8b 7e 20 4c
-RIP: smc_ioctl+0x3dc/0x9f0 net/smc/af_smc.c:1499 RSP: ffff8801ad22f770
----[ end trace b586e1eb098f7714 ]---
+Darren Hart
+VMware Open Source Technology Center
 
+The following changes since commit 7fe3fa3b5ec8e75389cce4bf5d052a52e6198d59:
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+  platform/x86: Kconfig: Fix dell-laptop dependency chain. (2018-05-04 22:20:14 +0200)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.17-3
+
+for you to fetch changes up to 54940fa60ad3728c592f62dadb558165495a6938:
+
+  platform/x86: DELL_WMI use depends on instead of select for DELL_SMBIOS (2018-05-18 15:49:26 -0700)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v4.17-3
+
+Remove the last of the "select DELL_SMBIOS" references in the Kconfig.
+
+The following is an automated git shortlog:
+
+DELL_WMI use depends on instead of select for DELL_SMBIOS
+
+----------------------------------------------------------------
+Darren Hart (1):
+      platform/x86: DELL_WMI use depends on instead of select for DELL_SMBIOS
+
+ drivers/platform/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
