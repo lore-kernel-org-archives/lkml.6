@@ -1,173 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753344AbeERJDg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:03:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49354 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752899AbeERIU0 (ORCPT
+        id S1753439AbeERJEZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:04:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53814 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751506AbeERJEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:20:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D034360F8D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH V7 04/12] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-Date: Fri, 18 May 2018 13:49:17 +0530
-Message-Id: <1526631565-9972-5-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
-References: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+        Fri, 18 May 2018 05:04:22 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: wm8904: fix spelling mistake: "Caputure" -> "Capture"
+Date: Fri, 18 May 2018 10:04:07 +0100
+Message-Id: <20180518090407.13560-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the common parts for the dk04 boards.
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Trivial fix to spelling mistake in SOC_ENUM literal string
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi | 111 ++++++++++++++++++++++++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi           |   2 +-
- 2 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+ sound/soc/codecs/wm8904.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
-new file mode 100644
-index 0000000..7c1eb19
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include "qcom-ipq4019.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1";
-+
-+	aliases {
-+		serial0 = &blsp1_uart1;
-+		serial1 = &blsp1_uart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>; /* 256MB */
-+	};
-+
-+	soc {
-+		pinctrl@1000000 {
-+			serial_0_pins: serial0-pinmux {
-+				pins = "gpio16", "gpio17";
-+				function = "blsp_uart0";
-+				bias-disable;
-+			};
-+
-+			serial_1_pins: serial1-pinmux {
-+				pins = "gpio8", "gpio9",
-+					"gpio10", "gpio11";
-+				function = "blsp_uart1";
-+				bias-disable;
-+			};
-+
-+			spi_0_pins: spi-0-pinmux {
-+				pinmux {
-+					function = "blsp_spi0";
-+					pins = "gpio13", "gpio14", "gpio15";
-+					bias-disable;
-+				};
-+				pinmux_cs {
-+					function = "gpio";
-+					pins = "gpio12";
-+					bias-disable;
-+					output-high;
-+				};
-+			};
-+
-+			i2c_0_pins: i2c-0-pinmux {
-+				pins = "gpio20", "gpio21";
-+				function = "blsp_i2c0";
-+				bias-disable;
-+			};
-+
-+			nand_pins: nand-pins {
-+				pins = "gpio53", "gpio55", "gpio56",
-+					"gpio57", "gpio58", "gpio59",
-+					"gpio60", "gpio62", "gpio63",
-+					"gpio64", "gpio65", "gpio66",
-+					"gpio67", "gpio68", "gpio69";
-+				function = "qpic";
-+			};
-+		};
-+
-+		serial@78af000 {
-+			pinctrl-0 = <&serial_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		serial@78b0000 {
-+			pinctrl-0 = <&serial_1_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+
-+		dma@7884000 {
-+			status = "ok";
-+		};
-+
-+		spi@78b5000 { /* BLSP1 QUP1 */
-+			pinctrl-0 = <&spi_0_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+			cs-gpios = <&tlmm 12 0>;
-+
-+			m25p80@0 {
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				reg = <0>;
-+				compatible = "n25q128a11";
-+				spi-max-frequency = <24000000>;
-+			};
-+		};
-+
-+		pci@40000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 38 0x1>;
-+		};
-+
-+		qpic-nand@79b0000 {
-+			pinctrl-0 = <&nand_pins>;
-+			pinctrl-names = "default";
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 2c4ad7d..815c912 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -307,7 +307,7 @@
- 			dma-names = "rx", "tx";
- 		};
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index 20fdcae06c6b..f13ef334c0d7 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -596,7 +596,7 @@ static const struct snd_kcontrol_new wm8904_adc_snd_controls[] = {
+ SOC_DOUBLE_R_TLV("Digital Capture Volume", WM8904_ADC_DIGITAL_VOLUME_LEFT,
+ 		 WM8904_ADC_DIGITAL_VOLUME_RIGHT, 1, 119, 0, digital_tlv),
  
--		serial@78b0000 {
-+		blsp1_uart2: serial@78b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78b0000 0x200>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-SOC_ENUM("Left Caputure Mode", lin_mode),
++SOC_ENUM("Left Capture Mode", lin_mode),
+ SOC_ENUM("Right Capture Mode", rin_mode),
+ 
+ /* No TLV since it depends on mode */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.17.0
