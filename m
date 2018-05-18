@@ -1,139 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753146AbeERJdF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:33:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46875 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752238AbeERJc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:32:59 -0400
-Date: Fri, 18 May 2018 11:32:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, lurodriguez@suse.de,
-        willy@infradead.org
-Subject: Re: [PATCH v3] vfs: avoid dereferencing pointers in iterate_supers
- callbacks
-Message-ID: <20180518093257.ug6idj2w4bpnxell@quack2.suse.cz>
-References: <20180517154646.18751-1-jlayton@kernel.org>
- <20180517215420.1810-1-jlayton@kernel.org>
+        id S1753110AbeERJgs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:36:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752677AbeERJgp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:36:45 -0400
+Date: Fri, 18 May 2018 11:36:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        yuyang.du@intel.com, pjt@google.com, bsegall@google.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v3] sched/fair: update scale invariance of PELT
+Message-ID: <20180518093638.GL12198@hirez.programming.kicks-ass.net>
+References: <1493389435-2525-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180517215420.1810-1-jlayton@kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1493389435-2525-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-05-18 17:54:20, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
-> 
-> All of the callback functions for iterate_supers either ignore the
-> opaque argument, or dereference the pointer only to fetch the int
-> to which it points.
-> 
-> Change quota_sync_one to just cast the int from the pointer,
-> and change sync_fs_one_sb to just use a NULL/non-NULL pointer as a
-> flag.
-> 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
 
-As much as I have a feeling "why do we bother", the patch looks correct :).
-So feel free to add:
+Replying to the latest version available; given the current interest I
+figure I'd re-read some of the old threads and look at this stuff again.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Fri, Apr 28, 2017 at 04:23:55PM +0200, Vincent Guittot wrote:
 
-								Honza
-
-> ---
->  fs/quota/quota.c |  4 ++--
->  fs/sync.c        | 20 +++++++++++---------
->  2 files changed, 13 insertions(+), 11 deletions(-)
-> 
-> v3: reinstate wait/nowait variables for clarity
-> 
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 860bfbe7a07a..8dc76d5f87c7 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -48,7 +48,7 @@ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
->  
->  static void quota_sync_one(struct super_block *sb, void *arg)
->  {
-> -	int type = *(int *)arg;
-> +	int type = (unsigned long)arg;
->  
->  	if (sb->s_qcop && sb->s_qcop->quota_sync &&
->  	    (sb->s_quota_types & (1 << type)))
-> @@ -63,7 +63,7 @@ static int quota_sync_all(int type)
->  		return -EINVAL;
->  	ret = security_quotactl(Q_SYNC, type, 0, NULL);
->  	if (!ret)
-> -		iterate_supers(quota_sync_one, &type);
-> +		iterate_supers(quota_sync_one, (void *)((unsigned long)type));
->  	return ret;
->  }
->  
-> diff --git a/fs/sync.c b/fs/sync.c
-> index b54e0541ad89..a863cd2490ce 100644
-> --- a/fs/sync.c
-> +++ b/fs/sync.c
-> @@ -76,8 +76,10 @@ static void sync_inodes_one_sb(struct super_block *sb, void *arg)
->  
->  static void sync_fs_one_sb(struct super_block *sb, void *arg)
->  {
-> +	int wait = arg ? 1 : 0;
-> +
->  	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
-> -		sb->s_op->sync_fs(sb, *(int *)arg);
-> +		sb->s_op->sync_fs(sb, wait);
->  }
->  
->  static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
-> @@ -107,12 +109,12 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 0978fb7..f8dde36 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -313,6 +313,7 @@ struct load_weight {
 >   */
->  void ksys_sync(void)
->  {
-> -	int nowait = 0, wait = 1;
-> +	void *nowait = NULL, *wait = (void *)1UL;
->  
->  	wakeup_flusher_threads(WB_REASON_SYNC);
->  	iterate_supers(sync_inodes_one_sb, NULL);
-> -	iterate_supers(sync_fs_one_sb, &nowait);
-> -	iterate_supers(sync_fs_one_sb, &wait);
-> +	iterate_supers(sync_fs_one_sb, nowait);
-> +	iterate_supers(sync_fs_one_sb, wait);
->  	iterate_bdevs(fdatawrite_one_bdev, NULL);
->  	iterate_bdevs(fdatawait_one_bdev, NULL);
->  	if (unlikely(laptop_mode))
-> @@ -127,17 +129,17 @@ SYSCALL_DEFINE0(sync)
->  
->  static void do_sync_work(struct work_struct *work)
->  {
-> -	int nowait = 0;
-> +	void *nowait = NULL;
->  
->  	/*
->  	 * Sync twice to reduce the possibility we skipped some inodes / pages
->  	 * because they were temporarily locked
->  	 */
-> -	iterate_supers(sync_inodes_one_sb, &nowait);
-> -	iterate_supers(sync_fs_one_sb, &nowait);
-> +	iterate_supers(sync_inodes_one_sb, NULL);
-> +	iterate_supers(sync_fs_one_sb, nowait);
->  	iterate_bdevs(fdatawrite_one_bdev, NULL);
-> -	iterate_supers(sync_inodes_one_sb, &nowait);
-> -	iterate_supers(sync_fs_one_sb, &nowait);
-> +	iterate_supers(sync_inodes_one_sb, NULL);
-> +	iterate_supers(sync_fs_one_sb, nowait);
->  	iterate_bdevs(fdatawrite_one_bdev, NULL);
->  	printk("Emergency Sync complete\n");
->  	kfree(work);
-> -- 
-> 2.17.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  struct sched_avg {
+>  	u64				last_update_time;
+> +	u64				stolen_idle_time;
+>  	u64				load_sum;
+>  	u32				util_sum;
+>  	u32				period_contrib;
+
+Right, so sadly Patrick stole that space with the util_est bits.
+
+Also, given the comment here:
+
+  https://marc.info/?l=linux-kernel&m=149373232422941&w=2
+
+this should be a u32, right? Which might be slightly easier finding a
+hole for.
+
+>  /*
+> + * Scale the time to reflect the effective amount of computation done during
+> + * this delta time.
+
+I would much appreciate a more extended comment here. One that includes
+pictures of the of the moving window edges, as in:
+
+  https://marc.info/?l=linux-kernel&m=149200866116792&w=2
+  https://marc.info/?l=linux-kernel&m=149201190517985&w=2
+
+> + */
+> +static __always_inline u64
+> +scale_time(u64 delta, int cpu, struct sched_avg *sa,
+> +		unsigned long weight, int running)
+> +{
+> +	if (running) {
+> +		/*
+> +		 * When an entity runs at a lower compute capacity, it will
+> +		 * need more time to do the same amount of work than at max
+> +		 * capacity. In order to be invariant, we scale the delta to
+> +		 * reflect how much work has been really done.
+> +		 * Running at lower capacity also means running longer to do
+> +		 * the same amount of work and this results in stealing some
+> +		 * idle time that will disturbed the load signal compared to
+> +		 * max capacity; We also track this amount of stolen time to
+> +		 * reflect it when the entity will go back to sleep.
+> +		 *
+> +		 * stolen time = (current run time) - (effective time at max
+> +		 * capacity)
+> +		 */
+> +		sa->stolen_idle_time += delta;
+> +
+> +		/*
+> +		 * scale the elapsed time to reflect the real amount of
+> +		 * computation
+> +		 */
+> +		delta = cap_scale(delta, arch_scale_freq_capacity(NULL, cpu));
+> +		delta = cap_scale(delta, arch_scale_cpu_capacity(NULL, cpu));
+> +
+> +		/*
+> +		 * Track the amount of stolen idle time due to running at
+> +		 * lower capacity
+> +		 */
+> +		sa->stolen_idle_time -= delta;
+> +	} else if (!weight) {
+> +		/*
+> +		 * Entity is sleeping so both utilization and load will decay
+> +		 * and we can safely add the stolen time. Reflecting some
+> +		 * stolen time make sense only if this idle phase would be
+> +		 * present at max capacity. As soon as the utilization of an
+> +		 * entity has reached the maximum value, it is considered as
+> +		 * an always runnnig entity without idle time to steal.
+> +		 */
+> +		if (sa->util_avg < (SCHED_CAPACITY_SCALE - 1)) {
+> +			/*
+> +			 * Add the idle time stolen by running at lower compute
+> +			 * capacity
+> +			 */
+> +			delta += sa->stolen_idle_time;
+> +		}
+> +		sa->stolen_idle_time = 0;
+> +	}
+
+What happened to the proposed changes here:
+
+  https://marc.info/?l=linux-kernel&m=149383148721909&w=2
+
+to deal with the load scaling issues?
+
+> +
+> +	return delta;
+> +}
