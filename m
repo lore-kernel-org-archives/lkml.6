@@ -1,150 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeERSzZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:55:25 -0400
-Received: from mail-pg0-f53.google.com ([74.125.83.53]:38785 "EHLO
-        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751693AbeERSzW (ORCPT
+        id S1752200AbeERS4o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 14:56:44 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39556 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751197AbeERS4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:55:22 -0400
-X-Google-Smtp-Source: AB8JxZpQjPazoOQxBobMRQw5uXxwNpiZO9GmNiJ7scQ1ghvHiLBXGAxGuFPWNHRhNyE0BYenQL6v5A==
-From: "Joel Fernandes (Google.)" <joelaf@google.com>
-X-Google-Original-From: "Joel Fernandes (Google.)" <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>, Todd Kjos <tkjos@google.com>,
-        claudio@evidence.eu.com, kernel-team@android.com,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2] schedutil: Allow cpufreq requests to be made even when kthread kicked
-Date: Fri, 18 May 2018 11:55:01 -0700
-Message-Id: <20180518185501.173552-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Fri, 18 May 2018 14:56:40 -0400
+X-Google-Smtp-Source: AB8JxZp5b8ftShUTr/jGWMDAqO8pCBkdlpU2wenF2xlnq4oYd3DDkizUxElwvTzvTRJsB7XzBOkpEyJC49oy2YqM4qA=
+MIME-Version: 1.0
+In-Reply-To: <20180518040349.GB2932@vkoul-mobl>
+References: <CAJz5OpcGX_3u5POExdhnBbRu-T-m7KodGAvk50BOfZWKeH--kg@mail.gmail.com>
+ <182f50b9-55b6-c9ce-07fb-718a1d22e9c8@samsung.com> <CAJz5Opfqbj6waPrJ3gQsM50=StH_HHvsYySj7sqgeQcKtAVrHQ@mail.gmail.com>
+ <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com> <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
+ <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com> <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl> <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+ <20180518040349.GB2932@vkoul-mobl>
+From: Frank Mori Hess <fmh6jj@gmail.com>
+Date: Fri, 18 May 2018 14:56:39 -0400
+Message-ID: <CAJz5OpfSanwNS7Z=3FapR97XZzjWF_J23HqVouxVnPn2HwkKLw@mail.gmail.com>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+To: Vinod <vkoul@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On Fri, May 18, 2018 at 12:03 AM, Vinod <vkoul@kernel.org> wrote:
+>
+> You are simply mixing things up!
 
-Currently there is a chance of a schedutil cpufreq update request to be
-dropped if there is a pending update request. This pending request can
-be delayed if there is a scheduling delay of the irq_work and the wake
-up of the schedutil governor kthread.
+It certainly feels like I'm mixed up.  If I have to resolve this, I'd
+like to be a little less mixed up before I submit more patches which
+are going to inevitably result in subtly broken code suddenly becoming
+prominently and unignorably broken code.  Unfortunately I get the
+impression I'm exhausting your patience to answer my questions, and
+I've failed to fully communicate what the question is.
 
-A very bad scenario is when a schedutil request was already just made,
-such as to reduce the CPU frequency, then a newer request to increase
-CPU frequency (even sched deadline urgent frequency increase requests)
-can be dropped, even though the rate limits suggest that its Ok to
-process a request. This is because of the way the work_in_progress flag
-is used.
 
-This patch improves the situation by allowing new requests to happen
-even though the old one is still being processed. Note that in this
-approach, if an irq_work was already issued, we just update next_freq
-and don't bother to queue another request so there's no extra work being
-done to make this happen.
+> On Pause we don't expect data loss, as user can
+> resume the transfer. This means as you rightly guessed, the DMA HW should not drop
+> any data, nor should SW.
+>
+> Now if you want to read residue at this point it is perfectly valid. But if you
+> decide to terminate the channel (yes it is terminate_all API), we abort and don't
+> have context to report back!
 
-I had brought up this issue at the OSPM conference and Claudio had a
-discussion RFC with an alternate approach [1]. I prefer the approach as
-done in the patch below since it doesn't need any new flags and doesn't
-cause any other extra overhead.
+I understand the residue can't be read after terminate, that's why
+reading the residue is step 2 in pause/residue/terminate.  My question
+was whether the entire sequence pause/residue/terminate taken as a
+whole can or cannot lose data.  Saying that individual steps can or
+can't lose data is not enough, context is required.  The key point is
+whether pause flushes in-flight data to its destination or not.  If it
+does, and our residue is accurate, the terminate cannot cause data
+loss.  If pause doesn't flush, an additional step of flush_sync as
+Lars suggested is required.  So pause/flush_sync/residue/terminate
+would be the safe sequence that cannot lose data.
 
-[1] https://patchwork.kernel.org/patch/10384261/
 
-LGTMed-by: Viresh Kumar <viresh.kumar@linaro.org>
-LGTMed-by: Juri Lelli <juri.lelli@redhat.com>
-CC: Viresh Kumar <viresh.kumar@linaro.org>
-CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Patrick Bellasi <patrick.bellasi@arm.com>
-CC: Juri Lelli <juri.lelli@redhat.com>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-CC: Joel Fernandes <joelaf@google.com>
-CC: Todd Kjos <tkjos@google.com>
-CC: claudio@evidence.eu.com
-CC: kernel-team@android.com
-CC: linux-pm@vger.kernel.org
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
-v1 -> v2: Minor style related changes.
+> As Lars rightly pointed out, residue calculation are very tricky, DMA fifo may
+> have data, some data may be in device FIFO, so residue is always from DMA point
+> of view and may differ from device view (more or less depending upon direction)
+>
+> Now if you require to add more features for your usecase, please do feel free to
+> send a patch. The framework can always be improved, we haven't solved world
+> hunger yet!
 
- kernel/sched/cpufreq_schedutil.c | 34 ++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+World hunger?  I don't see how asking questions about a dma engine's
+data integrity guarantees is either unreasonable or out of scope.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index e13df951aca7..5c482ec38610 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
- 	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
- 		return false;
- 
--	if (sg_policy->work_in_progress)
--		return false;
--
- 	if (unlikely(sg_policy->need_freq_update)) {
- 		sg_policy->need_freq_update = false;
- 		/*
-@@ -128,7 +125,7 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
- 
- 		policy->cur = next_freq;
- 		trace_cpu_frequency(next_freq, smp_processor_id());
--	} else {
-+	} else if (!sg_policy->work_in_progress) {
- 		sg_policy->work_in_progress = true;
- 		irq_work_queue(&sg_policy->irq_work);
- 	}
-@@ -291,6 +288,13 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 
- 	ignore_dl_rate_limit(sg_cpu, sg_policy);
- 
-+	/*
-+	 * For slow-switch systems, single policy requests can't run at the
-+	 * moment if update is in progress, unless we acquire update_lock.
-+	 */
-+	if (sg_policy->work_in_progress)
-+		return;
-+
- 	if (!sugov_should_update_freq(sg_policy, time))
- 		return;
- 
-@@ -382,13 +386,27 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
- static void sugov_work(struct kthread_work *work)
- {
- 	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-+	unsigned int freq;
-+	unsigned long flags;
-+
-+	/*
-+	 * Hold sg_policy->update_lock shortly to handle the case where:
-+	 * incase sg_policy->next_freq is read here, and then updated by
-+	 * sugov_update_shared just before work_in_progress is set to false
-+	 * here, we may miss queueing the new update.
-+	 *
-+	 * Note: If a work was queued after the update_lock is released,
-+	 * sugov_work will just be called again by kthread_work code; and the
-+	 * request will be proceed before the sugov thread sleeps.
-+	 */
-+	raw_spin_lock_irqsave(&sg_policy->update_lock, flags);
-+	freq = sg_policy->next_freq;
-+	sg_policy->work_in_progress = false;
-+	raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
- 
- 	mutex_lock(&sg_policy->work_lock);
--	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
--				CPUFREQ_RELATION_L);
-+	__cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
- 	mutex_unlock(&sg_policy->work_lock);
--
--	sg_policy->work_in_progress = false;
- }
- 
- static void sugov_irq_work(struct irq_work *irq_work)
 -- 
-2.17.0.441.gb46fe60e1d-goog
+Frank
