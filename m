@@ -1,57 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753349AbeERJEw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:04:52 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38268 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbeERJEt (ORCPT
+        id S1753296AbeERJF5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:05:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48220 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752939AbeERIT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:04:49 -0400
-X-Google-Smtp-Source: AB8JxZqkDetk18Mc6s6gAqjxdOf/RYThld8+dXSwo2Zo2SPd5cQ5g56sOjYJzWtMxtN0o3rcMw25gg==
-Date: Fri, 18 May 2018 14:34:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 10/11] cpufreq: tegra20: Wrap cpufreq into platform
- driver
-Message-ID: <20180518090445.g7aeufyu7agawofa@vireshk-i7>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-11-digetx@gmail.com>
- <20180518020730.byftoaodycccze3m@vireshk-i7>
- <6127765f-e953-ce28-9994-43ffbe98703d@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6127765f-e953-ce28-9994-43ffbe98703d@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Fri, 18 May 2018 04:19:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BAB27602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V7 03/12] ARM: dts: ipq4019: Change the max opp frequency
+Date: Fri, 18 May 2018 13:49:16 +0530
+Message-Id: <1526631565-9972-4-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+References: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-05-18, 11:09, Dmitry Osipenko wrote:
-> On 18.05.2018 05:07, Viresh Kumar wrote:
-> > On 17-05-18, 21:00, Dmitry Osipenko wrote:
-> >> -static int __init tegra_cpufreq_init(void)
-> >> +static int tegra20_cpufreq_probe(struct platform_device *pdev)
-> >>  {
-> >> +	struct tegra20_cpufreq_data *data;
-> >>  	int err;
-> >>  
-> >> -	if (!of_machine_is_compatible("nvidia,tegra20"))
-> >> -		return -ENODEV;
-> > 
-> > So this stuff wasn't really required as you are getting rid of that in
-> > the same series. Should we really add it then ? Maybe ..
-> > 
-> 
-> It's not strictly needed, but I'd prefer to keep that stuff for clarity as it
-> kinda shows the way that led to the final result.
+The max opp frequency is 716MHZ. So update that.
 
-Okay.
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq4019.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index 1541e18..2c4ad7d 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -47,7 +47,7 @@
+ 				48000	1100000
+ 				200000	1100000
+ 				500000	1100000
+-				666000	1100000
++				716000  1100000
+ 			>;
+ 			clock-latency = <256000>;
+ 		};
 -- 
-viresh
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
