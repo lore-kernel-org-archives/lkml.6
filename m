@@ -1,97 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeERXXD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 19:23:03 -0400
-Received: from imap.thunk.org ([74.207.234.97]:48110 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751722AbeERXXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 19:23:00 -0400
-Date: Fri, 18 May 2018 19:22:56 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Trent Piepho <tpiepho@impinj.com>
-Cc: "jannh@google.com" <jannh@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sultanxda@gmail.com" <sultanxda@gmail.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180518232256.GA23628@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Trent Piepho <tpiepho@impinj.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sultanxda@gmail.com" <sultanxda@gmail.com>
-References: <20180427201036.GL5965@thunk.org>
- <1526606822.30073.64.camel@impinj.com>
- <20180518023209.GD15263@thunk.org>
- <1526684178.31570.26.camel@impinj.com>
+        id S1752218AbeERXZF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 19:25:05 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:54418 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeERXZE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 19:25:04 -0400
+X-Google-Smtp-Source: AB8JxZr2HIOeT46EPWOpW4QK+raoZNCZ8PrktR/kBb4wJMPQje0YAwYPWZ74ThcnapU6UjENaggYF/Lx/iNy1dQ3M5sobQu3SCBK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526684178.31570.26.camel@impinj.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Date: Fri, 18 May 2018 16:25:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f4f194056c8342d1@google.com>
+Subject: general protection fault in smc_ioctl
+From: syzbot <syzbot+e6714328fda813fc670f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 10:56:18PM +0000, Trent Piepho wrote:
-> 
-> I feel like "fix" might overstate the result a bit.
-> 
-> This ends up taking a full second to make each UUID.  Having gone to
-> great effort to make an iMX25 complete userspace startup in 250 ms, a
-> full second, per UUID, in early startup is pretty appalling.
-> 
-> Let's look at what we're doing after this fix:
-> Want non-cryptographic random data for UUID, ask kernel for it.
-> Kernel has non-cryptographic random data, won't give it to us.
-> Wait one second for cryptographic random data, which we didn't need.
-> Give up and create our own random data, which is non-cryptographic and
-> even worse than what the kernel could have given us from the start.
-> 
-> util-linux falls back to rand() seeded with the pid, uid, tv_sec, and
-> tv_usec from gettimeofday().  Pretty bad on an embedded system with no
-> RTC and worse than what the kernel in crng_init 1 state can give us.
+Hello,
 
-So what util-linux's libuuid could do is fall back to using
-/dev/urandom instead.  Whether or not you retry for a second before
-you fall back to /dev/urandom really depends on how important the
-second U in UUID ("unique") is to you.  If you use lower quality
-randomness, you can potentially risk getting non-unique UUID's.
+syzbot found the following crash on:
 
-If you don't worry leaking your computer's identity and the time when
-the UUID was generated, the application could also use the time-based
-UUID's.  There are privacy implications for doing so, it's not
-something we can do automatically (or at least I can't recommend it).
-Also, if you don't have the clock sequence file and/or you don't have
-a writable root, you might need some randomness anyway to protect
-against non-monotonically increasing system time.
+HEAD commit:    1f7455c3912d tcp: tcp_rack_reo_wnd() can be static
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=171a1337800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6714328fda813fc670f
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15782d57800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108711a7800000
 
-> It would seem to be a fact that there will be users of non-
-> cryptographic random data in early boot.  What is the best practice for
-> that?  To fall back to each user trying "to find randomly-looking
-> things on an 1990s Unix."  That doesn't seem good to me.  But what's
-> the better way?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e6714328fda813fc670f@syzkaller.appspotmail.com
 
-We could add a new flag to getrandom(2), but application authors can
-just as easily fall back to using /dev/urandom.  The real concern I
-have is application authors that actually *really* need cryptographic
-randomness, but they're too lazy to figure out a way to defer key
-generation until the last possible moment.
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4559 Comm: syz-executor292 Not tainted 4.17.0-rc4+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:smc_ioctl+0x3dc/0x9f0 net/smc/af_smc.c:1499
+RSP: 0018:ffff8801ad22f770 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8801ad0df7c0 RCX: ffffffff8741188f
+RDX: 0000000000000004 RSI: ffffffff8741189e RDI: 0000000000000020
+RBP: ffff8801ad22f9d0 R08: ffff8801ae87e6c0 R09: ffffed00363e1818
+R10: ffffed00363e1818 R11: ffff8801b1f0c0c3 R12: 1ffff10035a45ef1
+R13: 0000000020000080 R14: 0000000000000000 R15: 0000000000000000
+FS:  00000000017b7880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd1f18f038 CR3: 00000001ad044000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  sock_do_ioctl+0xe4/0x3e0 net/socket.c:957
+  sock_ioctl+0x30d/0x680 net/socket.c:1081
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43fca9
+RSP: 002b:00007ffd1f073588 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fca9
+RDX: 0000000020000080 RSI: 0000000000005411 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004015d0
+R13: 0000000000401660 R14: 0000000000000000 R15: 0000000000000000
+Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 7d 05 00 00 4c 8b b3 90 04 00 00 48  
+b8 00 00 00 00 00 fc ff df 49 8d 7e 20 48 89 fa 48 c1 ea 03 <0f> b6 04 02  
+84 c0 74 08 3c 03 0f 8e 47 05 00 00 45 8b 7e 20 4c
+RIP: smc_ioctl+0x3dc/0x9f0 net/smc/af_smc.c:1499 RSP: ffff8801ad22f770
+---[ end trace b586e1eb098f7714 ]---
 
-There are other things we can do to add support in the bootloader to
-read an entropy state file and inject it into the kernel alongside the
-initrd and boot command line.  But that doesn't completely solve the
-problem; you still have to deal with the "frest from the factory,
-first time out of box" experience.  And if you have trusted random
-number generation hardware, and are reasonably certain you don't have
-to worry about a state-sponsored agency from intercepting hardware
-shipments and gimmicking your hardware, that can be a solution as
-well.
 
-So there are things we can do to improve some of the scenarios.
-Unfortunately, there is no silver bullet that will address all of
-them.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-					- Ted
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
