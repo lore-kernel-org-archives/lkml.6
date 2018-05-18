@@ -1,124 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751768AbeERV11 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:27:27 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.253]:38256 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750763AbeERV10 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:27:26 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20180515030038.GA11822@embeddedor.com>
- <20180515150859.1bccbd8d4543848b30fea859@linux-foundation.org>
- <alpine.DEB.2.21.1805160027260.1605@nanos.tec.linutronix.de>
- <CAPcyv4iksLzZ=eMjWw6Wi87F2OSXHd16gKRLExgGhx=Mdr+AwQ@mail.gmail.com>
- <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
- <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
- <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
- <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
-Message-ID: <f6be31b7-a6f8-3d7f-f621-09490a1b0489@embeddedor.com>
-Date: Fri, 18 May 2018 16:27:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.93
-X-Source-L: No
-X-Exim-ID: 1fJmuL-001wJ3-9m
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-93.static.axtel.net ([192.168.15.106]) [187.162.252.93]:50836
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1752149AbeERV2D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:28:03 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:38938 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751985AbeERV2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 17:28:00 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
+        Peter Melnichenko <melnichenko@ispras.ru>
+Subject: [PATCH] aic94xx: don't return zero on failure paths in aic94xx_init()
+Date: Sat, 19 May 2018 00:27:18 +0300
+Message-Id: <1526678838-31469-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If sas_domain_attach_transport() fails in aic94xx_init(),
+it breaks off initialization, deallocates all resources, but returns zero.
 
+The patch adds -ENOMEM as return value in this case.
 
-On 05/18/2018 03:44 PM, Gustavo A. R. Silva wrote:
->>>>
->>>
->>> Oops, it seems I sent the wrong patch. The function would look like 
->>> this:
->>>
->>> #ifndef sanitize_index_nospec
->>> inline bool sanitize_index_nospec(unsigned long *index,
->>>                                    unsigned long size)
->>> {
->>>          if (*index >= size)
->>>                  return false;
->>>          *index = array_index_nospec(*index, size);
->>>
->>>          return true;
->>> }
->>> #endif
->>
->> I think this is fine in concept, we already do something similar in
->> mpls_label_ok(). Perhaps call it validate_index_nospec() since
->> validation is something that can fail, but sanitization in theory is
->> something that can always succeed.
->>
-> 
-> OK. I got it.
-> 
->> However, the problem is the data type of the index. I expect you would
->> need to do this in a macro and use typeof() if you wanted this to be
->> generally useful, and also watch out for multiple usage of a macro
->> argument. Is it still worth it at that point?
->>
-> 
-> Yeah. I think it is worth it. I'll work on this during the weekend and 
-> send a proper patch for review.
-> 
-> Thanks for the feedback.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-BTW, I'm analyzing other cases, like the following:
+Signed-off-by: Peter Melnichenko <melnichenko@ispras.ru>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/scsi/aic94xx/aic94xx_init.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-bool foo(int x)
-{
-          if(!validate_index_nospec(&x))
-                  return false;
-
-          [...]
-
-          return true;
-}
-
-int vulnerable(int x)
-{
-          if (!foo(x))
-                  return -1;
-
-          temp = array[x];
-
-          [...]
-
-}
-
-Basically my doubt is how deep this barrier can be placed into the call 
-chain in order to continue working.
-
-Thanks
---
-Gustavo
+diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
+index 6c838865ac5a..4a4746cc6745 100644
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -1030,8 +1030,10 @@ static int __init aic94xx_init(void)
+ 
+ 	aic94xx_transport_template =
+ 		sas_domain_attach_transport(&aic94xx_transport_functions);
+-	if (!aic94xx_transport_template)
++	if (!aic94xx_transport_template) {
++		err = -ENOMEM;
+ 		goto out_destroy_caches;
++	}
+ 
+ 	err = pci_register_driver(&aic94xx_pci_driver);
+ 	if (err)
+-- 
+2.7.4
