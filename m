@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeERVKF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 17:10:05 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34045 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbeERVKB (ORCPT
+        id S1752290AbeERVKR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:10:17 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42070 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751942AbeERVKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 17:10:01 -0400
-X-Google-Smtp-Source: AB8JxZoDO8l3+yNRv8iqnstxFMus3A891SucT5Ok5+rhjFqpyksqAZze9P0sad0zEGhd+krtepIaTg==
+        Fri, 18 May 2018 17:10:08 -0400
+X-Google-Smtp-Source: AB8JxZrOVCvO3UlXR2idRfWpBj+jbpEsVmwqoGiFb5Ag2WwuJjA3jPg/sefZpSkWRrSC7/Z6WMYNtw==
 From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To: Tony Lindgren <tony@atomide.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -23,211 +23,173 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
         alsa-devel@alsa-project.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
-Date: Fri, 18 May 2018 23:09:49 +0200
-Message-Id: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+Subject: [PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
+Date: Fri, 18 May 2018 23:09:51 +0200
+Message-Id: <20180518210954.29044-3-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Scope of the change is limited to GPIO pins used by board specific
-device drivers which will be updated by follow-up patches of the
-series. Those are some OMAP GPIO (gpio-0-15) and most of Amstrad Delta
-latch2 GPIO bank pins. Remaining pins of those banks, as well as
-Amstrad Delta latch1 pins, will be addressed later.
+Now as the Amstrad Delta board provides GPIO lookup tables, switch from
+GPIO numbers to GPIO descriptors and use the table to locate required
+GPIO pins.
 
-Assign a label ("latch2") to the bank, enumerate its pins and put that
-information, together with OMAP GPIO bank pins, in GPIO lookup tables.
-Assign lookup tables to devices as soon as those devices are registered
-and their names can be obtained.
+The card uses two pins, one for jack and the other for voice modem
+codec DAI control.
 
-A step froward in:
-- removal of hard-coded GPIO numbers from drivers,
-- removal of board mach includes from drivers,
-- switching to dynamically assigned GPIO numbers.
+For jack pin, remove hardcoded GPIO number and use GPIO descriptor
+based variant of jack GPIO initialization.
 
-Created and compile tested agains linux-4.17-rc3
+For modem_codec pin, declare static variable for storing its GPIO
+descriptor, obtain it on card initialization and replace obsolete
+ams_delta_latch2_write() with gpiod_set_value().  For that to work,
+don't request the modem_codec pin from the board init code anymore.
+
+If the modem_codec GPIO lookup fails, skip initialization of
+functionality of the card which depends on its availability.
+
+Pin naming used by the driver should be followed while respective GPIO
+lookup table is initialized by a board init code.
+
+Created and tested against linux-4.17-rc3, on top of patch 1/6 "ARM:
+OMAP1: ams-delta: add GPIO lookup tables"
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- arch/arm/mach-omap1/board-ams-delta.c | 102 ++++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+ arch/arm/mach-omap1/board-ams-delta.c |  5 -----
+ sound/soc/omap/ams-delta.c            | 38 +++++++++++++++++++----------------
+ 2 files changed, 21 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 52e8e53ca154..4b78e73f8bf7 100644
+index 4b78e73f8bf7..80f54cb54276 100644
 --- a/arch/arm/mach-omap1/board-ams-delta.c
 +++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -12,6 +12,7 @@
-  * published by the Free Software Foundation.
+@@ -259,11 +259,6 @@ static const struct gpio latch_gpios[] __initconst = {
+ 		.flags	= GPIOF_OUT_INIT_LOW,
+ 		.label	= "scard_cmdvcc",
+ 	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_MODEM_CODEC,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "modem_codec",
+-	},
+ 	{
+ 		.gpio	= AMS_DELTA_LATCH2_GPIO_BASE + 14,
+ 		.flags	= GPIOF_OUT_INIT_LOW,
+diff --git a/sound/soc/omap/ams-delta.c b/sound/soc/omap/ams-delta.c
+index 77a30f0f0c96..4dce494dfbd3 100644
+--- a/sound/soc/omap/ams-delta.c
++++ b/sound/soc/omap/ams-delta.c
+@@ -22,7 +22,7 @@
+  *
   */
- #include <linux/gpio/driver.h>
-+#include <linux/gpio/machine.h>
- #include <linux/gpio.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -202,7 +203,10 @@ static struct resource latch2_resources[] = {
- 	},
- };
  
-+#define LATCH2_LABEL	"latch2"
-+
- static struct bgpio_pdata latch2_pdata = {
-+	.label	= LATCH2_LABEL,
- 	.base	= AMS_DELTA_LATCH2_GPIO_BASE,
- 	.ngpio	= AMS_DELTA_LATCH2_NGPIO,
- };
-@@ -217,6 +221,23 @@ static struct platform_device latch2_gpio_device = {
- 	},
- };
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/spinlock.h>
+ #include <linux/tty.h>
+ #include <linux/module.h>
+@@ -32,7 +32,6 @@
  
-+#define LATCH2_PIN_LCD_VBLEN		0
-+#define LATCH2_PIN_LCD_NDISP		1
-+#define LATCH2_PIN_NAND_NCE		2
-+#define LATCH2_PIN_NAND_NRE		3
-+#define LATCH2_PIN_NAND_NWP		4
-+#define LATCH2_PIN_NAND_NWE		5
-+#define LATCH2_PIN_NAND_ALE		6
-+#define LATCH2_PIN_NAND_CLE		7
-+#define LATCH2_PIN_KEYBRD_PWR		8
-+#define LATCH2_PIN_KEYBRD_DATAOUT	9
-+#define LATCH2_PIN_SCARD_RSTIN		10
-+#define LATCH2_PIN_SCARD_CMDVCC		11
-+#define LATCH2_PIN_MODEM_NRESET		12
-+#define LATCH2_PIN_MODEM_CODEC		13
-+#define LATCH2_PIN_HOOKFLASH1		14
-+#define LATCH2_PIN_HOOKFLASH2		15
-+
- static const struct gpio latch_gpios[] __initconst = {
+ #include <asm/mach-types.h>
+ 
+-#include <mach/board-ams-delta.h>
+ #include <linux/platform_data/asoc-ti-mcbsp.h>
+ 
+ #include "omap-mcbsp.h"
+@@ -213,7 +212,6 @@ static const struct snd_kcontrol_new ams_delta_audio_controls[] = {
+ static struct snd_soc_jack ams_delta_hook_switch;
+ static struct snd_soc_jack_gpio ams_delta_hook_switch_gpios[] = {
  	{
- 		.gpio	= LATCH1_GPIO_BASE + 6,
-@@ -323,6 +344,22 @@ static struct platform_device ams_delta_nand_device = {
- 	.resource	= ams_delta_nand_resources,
- };
+-		.gpio = 4,
+ 		.name = "hook_switch",
+ 		.report = SND_JACK_HEADSET,
+ 		.invert = 1,
+@@ -259,6 +257,7 @@ static struct timer_list cx81801_timer;
+ static bool cx81801_cmd_pending;
+ static bool ams_delta_muted;
+ static DEFINE_SPINLOCK(ams_delta_lock);
++static struct gpio_desc *gpiod_modem_codec;
  
-+#define OMAP_GPIO_LABEL	"gpio-0-15"
-+
-+static struct gpiod_lookup_table ams_delta_nand_gpio_table = {
-+	.table = {
-+		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_NAND_RB, "rdy",
-+			    0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NCE, "nce", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NRE, "nre", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NWP, "nwp", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_NWE, "nwe", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_ALE, "ale", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_NAND_CLE, "cle", 0),
-+		{ },
-+	},
-+};
-+
- static struct resource ams_delta_kp_resources[] = {
- 	[0] = {
- 		.start	= INT_KEYBOARD,
-@@ -358,6 +395,14 @@ static struct platform_device ams_delta_lcd_device = {
- 	.id	= -1,
- };
- 
-+static struct gpiod_lookup_table ams_delta_lcd_gpio_table = {
-+	.table = {
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_LCD_VBLEN, "vblen", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_LCD_NDISP, "ndisp", 0),
-+		{ },
-+	},
-+};
-+
- static const struct gpio_led gpio_leds[] __initconst = {
- 	{
- 		.name		 = "camera",
-@@ -449,11 +494,35 @@ static struct platform_device ams_delta_audio_device = {
- 	.id     = -1,
- };
- 
-+static struct gpiod_lookup_table ams_delta_audio_gpio_table = {
-+	.table = {
-+		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_HOOK_SWITCH,
-+			    "hook_switch", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_MODEM_CODEC,
-+			    "modem_codec", 0),
-+		{ },
-+	},
-+};
-+
- static struct platform_device cx20442_codec_device = {
- 	.name   = "cx20442-codec",
- 	.id     = -1,
- };
- 
-+static struct gpiod_lookup_table ams_delta_serio_gpio_table = {
-+	.table = {
-+		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
-+			    "data", 0),
-+		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
-+			    "clock", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_PWR,
-+			    "power", 0),
-+		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT,
-+			    "dataout", 0),
-+		{ },
-+	},
-+};
-+
- static struct platform_device *ams_delta_devices[] __initdata = {
- 	&latch1_gpio_device,
- 	&latch2_gpio_device,
-@@ -468,6 +537,16 @@ static struct platform_device *late_devices[] __initdata = {
- 	&cx20442_codec_device,
- };
- 
-+static struct gpiod_lookup_table *ams_delta_gpio_tables[] __initdata = {
-+	&ams_delta_audio_gpio_table,
-+	&ams_delta_serio_gpio_table,
-+};
-+
-+static struct gpiod_lookup_table *late_gpio_tables[] __initdata = {
-+	&ams_delta_lcd_gpio_table,
-+	&ams_delta_nand_gpio_table,
-+};
-+
- static void __init ams_delta_init(void)
+ static void cx81801_timeout(struct timer_list *unused)
  {
- 	/* mux pins for uarts */
-@@ -500,6 +579,20 @@ static void __init ams_delta_init(void)
- 	gpio_led_register_device(-1, &leds_pdata);
- 	platform_add_devices(ams_delta_devices, ARRAY_SIZE(ams_delta_devices));
+@@ -272,7 +271,7 @@ static void cx81801_timeout(struct timer_list *unused)
+ 	/* Reconnect the codec DAI back from the modem to the CPU DAI
+ 	 * only if digital mute still off */
+ 	if (!muted)
+-		ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_CODEC, 0);
++		gpiod_set_value(gpiod_modem_codec, 0);
+ }
  
-+	/*
-+	 * As soon as devices have been registered, assign their dev_names
-+	 * to respective GPIO lookup tables before they are added.
-+	 */
-+	ams_delta_audio_gpio_table.dev_id =
-+			dev_name(&ams_delta_audio_device.dev);
-+	/*
-+	 * No device name is assigned to GPIO lookup table for serio device
-+	 * as long as serio driver is not converted to platform device driver.
-+	 */
-+
-+	gpiod_add_lookup_tables(ams_delta_gpio_tables,
-+				ARRAY_SIZE(ams_delta_gpio_tables));
-+
- 	ams_delta_init_fiq();
+ /* Line discipline .open() */
+@@ -381,8 +380,7 @@ static void cx81801_receive(struct tty_struct *tty,
+ 		/* Apply config pulse by connecting the codec to the modem
+ 		 * if not already done */
+ 		if (apply)
+-			ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_CODEC,
+-						AMS_DELTA_LATCH2_MODEM_CODEC);
++			gpiod_set_value(gpiod_modem_codec, 1);
+ 		break;
+ 	}
+ }
+@@ -432,8 +430,7 @@ static int ams_delta_digital_mute(struct snd_soc_dai *dai, int mute)
+ 	spin_unlock_bh(&ams_delta_lock);
  
- 	omap_writew(omap_readw(ARM_RSTCT1) | 0x0004, ARM_RSTCT1);
-@@ -570,6 +663,15 @@ static int __init late_init(void)
+ 	if (apply)
+-		ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_CODEC,
+-				mute ? AMS_DELTA_LATCH2_MODEM_CODEC : 0);
++		gpiod_set_value(gpiod_modem_codec, !!mute);
+ 	return 0;
+ }
  
- 	platform_add_devices(late_devices, ARRAY_SIZE(late_devices));
+@@ -469,14 +466,6 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
+ 	/* Store a pointer to the codec structure for tty ldisc use */
+ 	cx20442_codec = rtd->codec_dai->component;
  
-+	/*
-+	 * As soon as devices have been registered, assign their dev_names
-+	 * to respective GPIO lookup tables before they are added.
-+	 */
-+	ams_delta_lcd_gpio_table.dev_id = dev_name(&ams_delta_lcd_device.dev);
-+	ams_delta_nand_gpio_table.dev_id = dev_name(&ams_delta_nand_device.dev);
+-	/* Set up digital mute if not provided by the codec */
+-	if (!codec_dai->driver->ops) {
+-		codec_dai->driver->ops = &ams_delta_dai_ops;
+-	} else {
+-		ams_delta_ops.startup = ams_delta_startup;
+-		ams_delta_ops.shutdown = ams_delta_shutdown;
+-	}
+-
+ 	/* Add hook switch - can be used to control the codec from userspace
+ 	 * even if line discipline fails */
+ 	ret = snd_soc_card_jack_new(card, "hook_switch", SND_JACK_HEADSET,
+@@ -486,7 +475,7 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
+ 				"Failed to allocate resources for hook switch, "
+ 				"will continue without one.\n");
+ 	else {
+-		ret = snd_soc_jack_add_gpios(&ams_delta_hook_switch,
++		ret = snd_soc_jack_add_gpiods(card->dev, &ams_delta_hook_switch,
+ 					ARRAY_SIZE(ams_delta_hook_switch_gpios),
+ 					ams_delta_hook_switch_gpios);
+ 		if (ret)
+@@ -495,6 +484,21 @@ static int ams_delta_cx20442_init(struct snd_soc_pcm_runtime *rtd)
+ 				"will continue with hook switch inactive.\n");
+ 	}
+ 
++	gpiod_modem_codec = devm_gpiod_get(card->dev, "modem_codec",
++					   GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_modem_codec)) {
++		dev_warn(card->dev, "Failed to obtain modem_codec GPIO\n");
++		return 0;
++	}
 +
-+	gpiod_add_lookup_tables(late_gpio_tables, ARRAY_SIZE(late_gpio_tables));
++	/* Set up digital mute if not provided by the codec */
++	if (!codec_dai->driver->ops) {
++		codec_dai->driver->ops = &ams_delta_dai_ops;
++	} else {
++		ams_delta_ops.startup = ams_delta_startup;
++		ams_delta_ops.shutdown = ams_delta_shutdown;
++	}
 +
- 	err = platform_device_register(&modem_nreset_device);
- 	if (err) {
- 		pr_err("Couldn't register the modem regulator device\n");
+ 	/* Register optional line discipline for over the modem control */
+ 	ret = tty_register_ldisc(N_V253, &cx81801_ops);
+ 	if (ret) {
 -- 
 2.16.1
