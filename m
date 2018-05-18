@@ -1,91 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeERS7l (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 14:59:41 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38663 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751320AbeERS7j (ORCPT
+        id S1752056AbeERTAC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:00:02 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:39009 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751940AbeERTAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 14:59:39 -0400
-X-Google-Smtp-Source: AB8JxZoM0R9lC84yLnIPFpzUC+qcTNBxmOuDDZTlgO+/Zbbx/eSadwQQc27YJjV5myFAw+5E5Eq0tg==
-Date: Fri, 18 May 2018 11:59:38 -0700 (PDT)
-X-Google-Original-Date: Fri, 18 May 2018 11:58:04 PDT (-0700)
-Subject: Re: [PATCH] riscv: Fix the bug in memory access fixup code
-In-Reply-To: <1525748373-3841-1-git-send-email-alankao@andestech.com>
-CC: albert@sifive.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alankao@andestech.com,
-        greentime@andestech.com, zong@andestech.com, vincentc@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: alankao@andestech.com
-Message-ID: <mhng-d1f2e76a-ac6d-41ba-a9fd-959c9b4fd8fc@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 18 May 2018 15:00:00 -0400
+X-Google-Smtp-Source: AB8JxZoLvTbjSSPT7S/hbDOverk7dMgY70QPJfDwDduFiTf41WBZ7fBVZhd7Py+lvL2AkWuX1q28v1B5ac8ueuVvORE=
+MIME-Version: 1.0
+In-Reply-To: <CAF=yD-+QLz63Z6h5OpC-ar+nHvpCpkVi79h9Vtn=7fzmHCK8Lg@mail.gmail.com>
+References: <20180518120826.GA19515@dragonet.kaist.ac.kr> <293d029c-b14c-a625-3703-97a5754e99f1@gmail.com>
+ <20180518.114433.390752642781753429.davem@davemloft.net> <CAF=yD-Kb4ZfJ3sMAnWEOB_s9Y=TTnLbRZxrDPiGZLO=trPjY5Q@mail.gmail.com>
+ <CAF=yD-LvZk+gdyf_Kq1j+hoJBmFnTKgR=DResvMAC7tEJCgGJw@mail.gmail.com> <CAF=yD-+QLz63Z6h5OpC-ar+nHvpCpkVi79h9Vtn=7fzmHCK8Lg@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Fri, 18 May 2018 14:59:18 -0400
+Message-ID: <CAF=yD-+Ai35L2=dGZzpjYYavBmBGNFXd-q9ju93WrPuewnhELg@mail.gmail.com>
+Subject: Re: WARNING in ip_recv_error
+To: David Miller <davem@davemloft.net>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        DaeLyong Jeong <threeearcat@gmail.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Byoungyoung Lee <byoungyoung@purdue.edu>,
+        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 07 May 2018 19:59:33 PDT (-0700), alankao@andestech.com wrote:
-> A piece of fixup code is currently shared by __copy_user and
-> __clear_user.  It first disables the access to user-space memory
-> and then returns the "n" argument, which represents #(bytes not processed).
-> However,__copy_user's "n" is in register a2, while __clear_user's in a1,
-> and thus it causes errors for programs like setdomainname02 testcase in LTP.
+On Fri, May 18, 2018 at 2:46 PM, Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Fri, May 18, 2018 at 2:44 PM, Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+>> On Fri, May 18, 2018 at 1:09 PM, Willem de Bruijn
+>> <willemdebruijn.kernel@gmail.com> wrote:
+>>> On Fri, May 18, 2018 at 11:44 AM, David Miller <davem@davemloft.net> wrote:
+>>>> From: Eric Dumazet <eric.dumazet@gmail.com>
+>>>> Date: Fri, 18 May 2018 08:30:43 -0700
+>>>>
+>>>>> We probably need to revert Willem patch (7ce875e5ecb8562fd44040f69bda96c999e38bbc)
+>>>>
+>>>> Is it really valid to reach ip_recv_err with an ipv6 socket?
+>>>
+>>> I guess the issue is that setsockopt IPV6_ADDRFORM is not an
+>>> atomic operation, so that the socket is neither fully ipv4 nor fully
+>>> ipv6 by the time it reaches ip_recv_error.
+>>>
+>>>   sk->sk_socket->ops = &inet_dgram_ops;
+>>>   < HERE >
+>>>   sk->sk_family = PF_INET;
+>>>
+>>> Even calling inet_recv_error to demux would not necessarily help.
+>>>
+>>> Safest would be to look up by skb->protocol, similar to what
+>>> ipv6_recv_error does to handle v4-mapped-v6.
+>>>
+>>> Or to make that function safe with PF_INET and swap the order
+>>> of the above two operations.
+>>>
+>>> All sound needlessly complicated for this rare socket option, but
+>>> I don't have a better idea yet. Dropping on the floor is not nice,
+>>> either.
+>>
+>> Ensuring that ip_recv_error correctly handles packets from either
+>> socket and removing the warning should indeed be good.
+>>
+>> It is robust against v4-mapped packets from an AF_INET6 socket,
+>> but see caveat on reconnect below.
+>>
+>> The code between ipv6_recv_error for v4-mapped addresses and
+>> ip_recv_error is essentially the same, the main difference being
+>> whether to return network headers as sockaddr_in with SOL_IP
+>> or sockaddr_in6 with SOL_IPV6.
+>>
+>> There are very few other locations in the stack that explicitly test
+>> sk_family in this way and thus would be vulnerable to races with
+>> IPV6_ADDRFORM.
+>>
+>> I'm not sure whether it is possible for a udpv6 socket to queue a
+>> real ipv6 packet on the error queue, disconnect, connect to an
+>> ipv4 address, call IPV6_ADDRFORM and then call ip_recv_error
+>> on a true ipv6 packet. That would return buggy data, e.g., in
+>> msg_name.
 >
-> This patch fixes this issue by separating their fixup code and returning
-> the right value for the kernel to handle a relative fault properly.
->
-> Signed-off-by: Alan Kao <alankao@andestech.com>
-> Cc: Greentime Hu <greentime@andestech.com>
-> Cc: Zong Li <zong@andestech.com>
-> Cc: Vincent Chen <vincentc@andestech.com>
-> ---
->  arch/riscv/lib/uaccess.S | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
-> index 58fb2877c865..0173ea296baa 100644
-> --- a/arch/riscv/lib/uaccess.S
-> +++ b/arch/riscv/lib/uaccess.S
-> @@ -84,7 +84,7 @@ ENTRY(__clear_user)
->  	bgeu t0, t1, 2f
->  	bltu a0, t0, 4f
->  1:
-> -	fixup REG_S, zero, (a0), 10f
-> +	fixup REG_S, zero, (a0), 11f
->  	addi a0, a0, SZREG
->  	bltu a0, t1, 1b
->  2:
-> @@ -96,12 +96,12 @@ ENTRY(__clear_user)
->  	li a0, 0
->  	ret
->  4: /* Edge case: unalignment */
-> -	fixup sb, zero, (a0), 10f
-> +	fixup sb, zero, (a0), 11f
->  	addi a0, a0, 1
->  	bltu a0, t0, 4b
->  	j 1b
->  5: /* Edge case: remainder */
-> -	fixup sb, zero, (a0), 10f
-> +	fixup sb, zero, (a0), 11f
->  	addi a0, a0, 1
->  	bltu a0, a3, 5b
->  	j 3b
-> @@ -109,9 +109,14 @@ ENDPROC(__clear_user)
->
->  	.section .fixup,"ax"
->  	.balign 4
-> +	/* Fixup code for __copy_user(10) and __clear_user(11) */
->  10:
->  	/* Disable access to user memory */
->  	csrs sstatus, t6
-> -	sub a0, a3, a0
-> +	mv a0, a2
-> +	ret
-> +11:
-> +	csrs sstatus, t6
-> +	mv a0, a1
->  	ret
->  	.previous
+> In do_ipv6_setsockopt IPV6_ADDRFORM we can test that the
+> error queue is empty, and then take its lock for the duration of the
+> operation.
 
-Thanks!
+Actually, no reason to hold the lock. This setsockopt holds the socket
+lock, which connect would need, too. So testing that the queue
+is empty after testing that it is connected to a v4 address is
+sufficient to ensure that no ipv6 packets are queued for reception.
+
+diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
+index 4d780c7f0130..a975d6311341 100644
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -199,6 +199,11 @@ static int do_ipv6_setsockopt(struct sock *sk,
+int level, int optname,
+
+                        if (ipv6_only_sock(sk) ||
+                            !ipv6_addr_v4mapped(&sk->sk_v6_daddr)) {
+                                retv = -EADDRNOTAVAIL;
+                                break;
+                        }
+
++                       if (!skb_queue_empty(&sk->sk_error_queue)) {
++                               retv = -EBUSY;
++                               break;
++                       }
++
+                        fl6_free_socklist(sk);
+                        __ipv6_sock_mc_close(sk);
+
+After this it should be safe to remove the warning in ip_recv_error.
