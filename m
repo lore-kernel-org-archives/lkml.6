@@ -1,33 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751942AbeERRGH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:06:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33962 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERRGG (ORCPT
+        id S1751815AbeERRKX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:10:23 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33947 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeERRKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:06:06 -0400
-Date: Fri, 18 May 2018 10:06:05 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Simon Que <sque@chromium.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Should new code have forward declarations of static functions or
- not?
-Message-ID: <20180518170605.GA22641@infradead.org>
-References: <CANV8Hs3Rc1q_Qcp05jGfuVwqTFg0c9UhNebk24UYGkkGiHpPRA@mail.gmail.com>
+        Fri, 18 May 2018 13:10:19 -0400
+X-Google-Smtp-Source: AB8JxZppq56UC/YnRra0bJXX/PMwytmmreIKft0wRTo3QIBdO4JJv+bc+sr8cHVPBFrXjTXCmpai5MVpSqB6+OvR704=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANV8Hs3Rc1q_Qcp05jGfuVwqTFg0c9UhNebk24UYGkkGiHpPRA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180518.114433.390752642781753429.davem@davemloft.net>
+References: <20180518120826.GA19515@dragonet.kaist.ac.kr> <293d029c-b14c-a625-3703-97a5754e99f1@gmail.com>
+ <20180518.114433.390752642781753429.davem@davemloft.net>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Fri, 18 May 2018 13:09:37 -0400
+Message-ID: <CAF=yD-Kb4ZfJ3sMAnWEOB_s9Y=TTnLbRZxrDPiGZLO=trPjY5Q@mail.gmail.com>
+Subject: Re: WARNING in ip_recv_error
+To: David Miller <davem@davemloft.net>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        DaeLyong Jeong <threeearcat@gmail.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Byoungyoung Lee <byoungyoung@purdue.edu>,
+        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 12:44:31PM -0400, Simon Que wrote:
-> Is it preferred to have forward declarations of static funcs, or to omit
-> them altogether?
+On Fri, May 18, 2018 at 11:44 AM, David Miller <davem@davemloft.net> wrote:
+> From: Eric Dumazet <eric.dumazet@gmail.com>
+> Date: Fri, 18 May 2018 08:30:43 -0700
+>
+>> We probably need to revert Willem patch (7ce875e5ecb8562fd44040f69bda96c999e38bbc)
+>
+> Is it really valid to reach ip_recv_err with an ipv6 socket?
 
-There are cases where you need them.  But in general if you do not
-absolutely need them try to avoid them.
+I guess the issue is that setsockopt IPV6_ADDRFORM is not an
+atomic operation, so that the socket is neither fully ipv4 nor fully
+ipv6 by the time it reaches ip_recv_error.
+
+  sk->sk_socket->ops = &inet_dgram_ops;
+  < HERE >
+  sk->sk_family = PF_INET;
+
+Even calling inet_recv_error to demux would not necessarily help.
+
+Safest would be to look up by skb->protocol, similar to what
+ipv6_recv_error does to handle v4-mapped-v6.
+
+Or to make that function safe with PF_INET and swap the order
+of the above two operations.
+
+All sound needlessly complicated for this rare socket option, but
+I don't have a better idea yet. Dropping on the floor is not nice,
+either.
