@@ -1,59 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeERCBA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 22:01:00 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42528 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbeERCA6 (ORCPT
+        id S1752450AbeERCBN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 22:01:13 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37255 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752433AbeERCBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 22:00:58 -0400
-X-Google-Smtp-Source: AB8JxZpDqSCtotJuIqMRCNSOLR0BYL/Jw0i3eWxGnBX6jbg3oWlcOSCIcGkKgWxFyVDPpFB+JUpH4Q==
-Date: Fri, 18 May 2018 07:30:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 09/11] cpufreq: tegra20: Allow cpufreq driver to be
- built as loadable module
-Message-ID: <20180518020055.nvdgarf4xj6v7e7j@vireshk-i7>
-References: <20180517180056.13336-1-digetx@gmail.com>
- <20180517180056.13336-10-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517180056.13336-10-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Thu, 17 May 2018 22:01:10 -0400
+X-Google-Smtp-Source: AB8JxZoswBBQC3GFo0IWFE7MPnZTsZBT7RlHcuNGEjEu8bqwQTG4HvtjZi53jEiZbkZau+aiXUBKgg==
+From: Li Qiang <liq3ea@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Li Qiang <liq3ea@gmail.com>
+Subject: [PATCH] fs.h: fix outdated comment about file flags
+Date: Thu, 17 May 2018 19:01:03 -0700
+Message-Id: <1526608863-4701-1-git-send-email-liq3ea@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-05-18, 21:00, Dmitry Osipenko wrote:
-> Nothing prevents Tegra20 CPUFreq module to be unloaded, hence allow it to
-> be built as a non-builtin kernel module.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/Kconfig.arm | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 96b35b8b3606..a8a2e210c624 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -264,7 +264,7 @@ config ARM_TANGO_CPUFREQ
->  	default y
->  
->  config ARM_TEGRA20_CPUFREQ
-> -	bool "Tegra20 CPUFreq support"
-> +	tristate "Tegra20 CPUFreq support"
->  	depends on ARCH_TEGRA
->  	default y
->  	help
+The __dentry_open function was removed in
+commit <2a027e7a18738>("fold __dentry_open() into its sole caller").
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Li Qiang <liq3ea@gmail.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 760d8da1b6c7..7f07977bdfd7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -94,7 +94,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ 
+ /*
+  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+- * to O_WRONLY and O_RDWR via the strange trick in __dentry_open()
++ * to O_WRONLY and O_RDWR via the strange trick in do_dentry_open()
+  */
+ 
+ /* file is open for reading */
 -- 
-viresh
+2.16.3
