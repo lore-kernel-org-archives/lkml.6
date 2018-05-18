@@ -1,159 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeERItD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:49:03 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42678 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeERItA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:49:00 -0400
-X-Google-Smtp-Source: AB8JxZqcg9jWbo1shP/53S6oiTTG7Ki3/e9XZ14ZCEyDytdg8wkvka7CDjJYlyL80WW2CakZxL3hlA==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] PM / runtime: Fixup reference counting of device link suppliers at probe
-Date: Fri, 18 May 2018 10:48:49 +0200
-Message-Id: <1526633329-31729-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S1753537AbeERIvQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:51:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51155 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753441AbeERIVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:21:00 -0400
+Date: Fri, 18 May 2018 10:20:58 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joe Perches <joe@perches.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next ] net: mscc: Add SPDX identifier
+Message-ID: <20180518082058.GG6828@piout.net>
+References: <20180517192305.17517-1-alexandre.belloni@bootlin.com>
+ <53ccb8c58e4c3e224ba694c0628096d0c041ba1a.camel@perches.com>
+ <20180517193900.GE6828@piout.net>
+ <ba4f4d2279b5f71e698136272637b42eeca05c54.camel@perches.com>
+ <20180518075227.GF6828@piout.net>
+ <77d0d8ff4cb9984ac20546842292aafd9e3b2e25.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77d0d8ff4cb9984ac20546842292aafd9e3b2e25.camel@perches.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the driver core, before it invokes really_probe() it runtime resumes the
-suppliers for the device via calling pm_runtime_get_suppliers(), which also
-increases the runtime PM usage count for each of the available supplier.
+On 18/05/2018 01:14:25-0700, Joe Perches wrote:
+> Mostly, it's a question of what the original
+> license is.  As far as I can tell, microsemi
+> publishes their code only under an MIT license.
+> 
 
-This makes sense, as to be able to allow the consumer device to be probed
-by its driver. However, if the driver decides to add a new supplier link
-during ->probe(), hence updating the list of suppliers, the following call
-to pm_runtime_put_suppliers(), invoked after really_probe() in the driver
-core, we get into trouble.
+This code didn't exist until I wrote it. The original license is the one
+from the SPDX identifier.
 
-More precisely, pm_runtime_put() gets called also for the new supplier(s),
-which is wrong as the driver core, didn't trigger pm_runtime_get_sync() to
-be called for it in the first place. In other words, the new supplier may
-be runtime suspended even in cases when it shouldn't.
+> The MIT license does allow sublicensing, so
+> it does seem you can choose what additional
+> license restrictions you can assert as long
+> as the original MIT license is also followed.
+> 
 
-Fix this behaviour, by runtime resume suppliers according to the same
-conditions as managed by the runtime PM core, when runtime resume callbacks
-are being invoked.
+Then all is good.
 
-Additionally, don't try to runtime suspend any of the suppliers after
-really_probe(), but instead rely on that to happen via the consumer device,
-when it becomes runtime suspended.
 
-Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-
-An optional solution (requires to add code, rather than remove), in case we
-think it's not suffient to rely on the consumer device to be runtime suspended
-after probe.
-
-This could be done via adding a new bool member to the struct device_link, and
-set it from pm_runtime_get_suppliers(). Check it at pm_runtime_put_suppliers(),
-and only call pm_runtime_put() on those suppliers that has it set.
-
----
- drivers/base/dd.c            |  3 +--
- drivers/base/power/runtime.c | 27 +++------------------------
- include/linux/pm_runtime.h   |  6 ++----
- 3 files changed, 6 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 10454fe..a41c91b 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -580,7 +580,7 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
- 	pr_debug("bus: '%s': %s: matched device %s with driver %s\n",
- 		 drv->bus->name, __func__, dev_name(dev), drv->name);
- 
--	pm_runtime_get_suppliers(dev);
-+	pm_runtime_resume_suppliers(dev);
- 	if (dev->parent)
- 		pm_runtime_get_sync(dev->parent);
- 
-@@ -591,7 +591,6 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
- 	if (dev->parent)
- 		pm_runtime_put(dev->parent);
- 
--	pm_runtime_put_suppliers(dev);
- 	return ret;
- }
- 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 8bef3cb..6f4f50e 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1563,37 +1563,16 @@ void pm_runtime_clean_up_links(struct device *dev)
- }
- 
- /**
-- * pm_runtime_get_suppliers - Resume and reference-count supplier devices.
-+ * pm_runtime_resume_suppliers - Resume supplier devices.
-  * @dev: Consumer device.
-  */
--void pm_runtime_get_suppliers(struct device *dev)
-+void pm_runtime_resume_suppliers(struct device *dev)
- {
--	struct device_link *link;
- 	int idx;
- 
- 	idx = device_links_read_lock();
- 
--	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
--		if (link->flags & DL_FLAG_PM_RUNTIME)
--			pm_runtime_get_sync(link->supplier);
--
--	device_links_read_unlock(idx);
--}
--
--/**
-- * pm_runtime_put_suppliers - Drop references to supplier devices.
-- * @dev: Consumer device.
-- */
--void pm_runtime_put_suppliers(struct device *dev)
--{
--	struct device_link *link;
--	int idx;
--
--	idx = device_links_read_lock();
--
--	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
--		if (link->flags & DL_FLAG_PM_RUNTIME)
--			pm_runtime_put(link->supplier);
-+	rpm_get_suppliers(dev);
- 
- 	device_links_read_unlock(idx);
- }
-diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-index f0fc470..db5dbbf 100644
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -56,8 +56,7 @@ extern void pm_runtime_update_max_time_suspended(struct device *dev,
- 						 s64 delta_ns);
- extern void pm_runtime_set_memalloc_noio(struct device *dev, bool enable);
- extern void pm_runtime_clean_up_links(struct device *dev);
--extern void pm_runtime_get_suppliers(struct device *dev);
--extern void pm_runtime_put_suppliers(struct device *dev);
-+extern void pm_runtime_resume_suppliers(struct device *dev);
- extern void pm_runtime_new_link(struct device *dev);
- extern void pm_runtime_drop_link(struct device *dev);
- 
-@@ -173,8 +172,7 @@ static inline unsigned long pm_runtime_autosuspend_expiration(
- static inline void pm_runtime_set_memalloc_noio(struct device *dev,
- 						bool enable){}
- static inline void pm_runtime_clean_up_links(struct device *dev) {}
--static inline void pm_runtime_get_suppliers(struct device *dev) {}
--static inline void pm_runtime_put_suppliers(struct device *dev) {}
-+static inline void pm_runtime_resume_suppliers(struct device *dev) {}
- static inline void pm_runtime_new_link(struct device *dev) {}
- static inline void pm_runtime_drop_link(struct device *dev) {}
- 
 -- 
-2.7.4
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
