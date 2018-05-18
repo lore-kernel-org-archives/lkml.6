@@ -1,123 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752419AbeERNVZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:21:25 -0400
-Received: from ozlabs.org ([203.11.71.1]:44369 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751601AbeERNVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:21:24 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] powerpc: Detect the presence of big-core with interleaved threads
-In-Reply-To: <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
-References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com> <1526037444-22876-2-git-send-email-ego@linux.vnet.ibm.com>
-Date: Fri, 18 May 2018 23:21:22 +1000
-Message-ID: <87h8n5xfot.fsf@concordia.ellerman.id.au>
+        id S1752503AbeERNWR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:22:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52990 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752455AbeERNWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:22:09 -0400
+Subject: Re: [PATCH 3/6] arm_pmu: Add support for long event counters
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com
+References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
+ <1526638943-2110-4-git-send-email-suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <72bfd236-65de-6477-7f76-2f10d8bceb99@arm.com>
+Date: Fri, 18 May 2018 14:22:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1526638943-2110-4-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+On 18/05/18 11:22, Suzuki K Poulose wrote:
+> Each PMU has a set of fixed width event counters. But in some
+> special cases, the events could be counted using a counter which
+> effectively has twice the normal width of a coutner.
+> e.g, Arm V8 PMUv3 has a 64 bit cycle counter which can count
+> only the CPU cylces. Also, the PMU can chain the event counters
+> to effectively count as a 64bit counter.
 
-> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-> index 0af5c11..884dff2 100644
-> --- a/arch/powerpc/kernel/setup-common.c
-> +++ b/arch/powerpc/kernel/setup-common.c
-> @@ -436,8 +438,56 @@ static void __init cpu_init_thread_core_maps(int tpc)
->  	printk(KERN_DEBUG " (thread shift is %d)\n", threads_shift);
->  }
->  
-> -
->  u32 *cpu_to_phys_id = NULL;
-> +/*
-> + * check_for_interleaved_big_core - Checks if the core represented by
-> + *	 dn is a big-core whose threads are interleavings of the
-> + *	 threads of the component small cores.
-> + *
-> + * @dn: device node corresponding to the core.
-> + *
-> + * Returns true if the core is a interleaved big-core.
-> + * Returns false otherwise.
-> + */
-> +static inline bool check_for_interleaved_big_core(struct device_node *dn)
+Nit: a few typos in that paragraph.
+
+> Add support for tracking the events that uses double the normal
+> counter size. This only affects the periods set for each counter.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   drivers/perf/arm_pmu.c       | 25 ++++++++++++++++++++++---
+>   include/linux/perf/arm_pmu.h |  6 ++++++
+>   2 files changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index e23e1a1..1adabb5 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -33,6 +33,21 @@ static inline u64 arm_pmu_max_period(struct arm_pmu *pmu)
+>   	return (((u64)1) << (pmu->counter_width)) - 1;
+>   }
+>   
+> +static inline u64 arm_pmu_get_event_max_period(struct arm_pmu *pmu,
+
+The "get_" here seems a bit at odds with arm_pmu_max_period() - I'd be 
+inlined to go for slightly more consistent naming (with a slight 
+personal preference towards removing it here rather than adding it there)
+
+> +					       struct perf_event *event)
 > +{
-> +	int len, nr_groups, threads_per_group;
-> +	const __be32 *thread_groups;
-> +	__be32 *thread_list, *first_cpu_idx;
-> +	int cur_cpu, next_cpu, i, j;
-> +
-> +	thread_groups = of_get_property(dn, "ibm,thread-groups", &len);
-> +	if (!thread_groups)
-> +		return false;
-
-There are better device tree APIs than bare of_get_property() these
-days, can you try to use those?
-
-> +	nr_groups = be32_to_cpu(*(thread_groups + 1));
-> +	if (nr_groups <= 1)
-> +		return false;
-
-eg. this would be of_property_read_u32_index()
-
-> +
-> +	threads_per_group = be32_to_cpu(*(thread_groups + 2));
-> +	thread_list = (__be32 *)thread_groups + 3;
+> +	u64 period = arm_pmu_max_period(pmu);
 > +
 > +	/*
-> +	 * In case of an interleaved big-core, the thread-ids of the
-> +	 * big-core can be obtained by interleaving the the thread-ids
-> +	 * of the component small
-> +	 *
-> +	 * Eg: On a 8-thread big-core with two SMT4 small cores, the
-> +	 * threads of the two component small cores will be
-> +	 * {0, 2, 4, 6} and {1, 3, 5, 7}.
+> +	 * To prevent shift-counter-overflow warning, create the
+> +	 * mask, by shift + OR sequence.
 > +	 */
-> +	for (i = 0; i < nr_groups; i++) {
-> +		first_cpu_idx = thread_list + i * threads_per_group;
+> +	if (event->hw.flags & ARMPMU_EVT_LONG)
+> +		period = (period << pmu->counter_width) | period;
 > +
-> +		for (j = 0; j < threads_per_group - 1; j++) {
-> +			cur_cpu = be32_to_cpu(*(first_cpu_idx + j));
-> +			next_cpu = be32_to_cpu(*(first_cpu_idx + j + 1));
-> +			if (next_cpu != cur_cpu + nr_groups)
-> +				return false;
-> +		}
-> +	}
-> +	return true;
+> +	return period;
 > +}
->  
->  /**
->   * setup_cpu_maps - initialize the following cpu maps:
-> @@ -565,7 +615,16 @@ void __init smp_setup_cpu_maps(void)
->  	vdso_data->processorCount = num_present_cpus();
->  #endif /* CONFIG_PPC64 */
->  
-> -        /* Initialize CPU <=> thread mapping/
-> +	dn = of_find_node_by_type(NULL, "cpu");
-> +	if (dn) {
-> +		if (check_for_interleaved_big_core(dn)) {
-> +			has_interleaved_big_core = true;
-> +			pr_info("Detected interleaved big-cores\n");
-> +		}
-> +		of_node_put(dn);
-> +	}
+> +
+>   static int
+>   armpmu_map_cache_event(const unsigned (*cache_map)
+>   				      [PERF_COUNT_HW_CACHE_MAX]
+> @@ -122,7 +137,7 @@ int armpmu_event_set_period(struct perf_event *event)
+>   	u64 max_period;
+>   	int ret = 0;
+>   
+> -	max_period = arm_pmu_max_period(armpmu);
+> +	max_period = arm_pmu_get_event_max_period(armpmu, event);
+>   	if (unlikely(left <= -period)) {
+>   		left = period;
+>   		local64_set(&hwc->period_left, left);
+> @@ -148,7 +163,7 @@ int armpmu_event_set_period(struct perf_event *event)
+>   
+>   	local64_set(&hwc->prev_count, (u64)-left);
+>   
+> -	armpmu->write_counter(event, (u64)(-left) & 0xffffffff);
+> +	armpmu->write_counter(event, (u64)(-left) & max_period);
+>   
+>   	perf_event_update_userpage(event);
+>   
+> @@ -160,7 +175,7 @@ u64 armpmu_event_update(struct perf_event *event)
+>   	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+>   	struct hw_perf_event *hwc = &event->hw;
+>   	u64 delta, prev_raw_count, new_raw_count;
+> -	u64 max_period = arm_pmu_max_period(armpmu);
+> +	u64 max_period = arm_pmu_get_event_max_period(armpmu, event);
+>   
+>   again:
+>   	prev_raw_count = local64_read(&hwc->prev_count);
+> @@ -368,6 +383,7 @@ __hw_perf_event_init(struct perf_event *event)
+>   	struct hw_perf_event *hwc = &event->hw;
+>   	int mapping;
+>   
+> +	hwc->flags = 0;
+>   	mapping = armpmu->map_event(event);
+>   
+>   	if (mapping < 0) {
+> @@ -670,6 +686,9 @@ static void cpu_pm_pmu_setup(struct arm_pmu *armpmu, unsigned long cmd)
+>   			continue;
+>   
+>   		event = hw_events->events[idx];
+> +		/* Chained events could use multiple counters */
+> +		if (!event)
+> +			continue;
 
-This is a bit untidy, given how unlikely it is that you would have no
-CPUs :)
+This hunk looks a little out of place; does it perhaps belong to patch #6?
 
-You should be able to do the lookup of the property and the setting of
-has_interleaved_big_core all inside check_for_interleaved_big_core().
+Robin.
 
-cheers
+>   
+>   		switch (cmd) {
+>   		case CPU_PM_ENTER:
+> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> index 705e8c3..ed7e3f7 100644
+> --- a/include/linux/perf/arm_pmu.h
+> +++ b/include/linux/perf/arm_pmu.h
+> @@ -25,6 +25,12 @@
+>    */
+>   #define ARMPMU_MAX_HWEVENTS		32
+>   
+> +/*
+> + * ARM PMU hw_event flags
+> + */
+> +/* Event uses a counter with double the normal width */
+> +#define ARMPMU_EVT_LONG			1
+> +
+>   #define HW_OP_UNSUPPORTED		0xFFFF
+>   #define C(_x)				PERF_COUNT_HW_CACHE_##_x
+>   #define CACHE_OP_UNSUPPORTED		0xFFFF
+> 
