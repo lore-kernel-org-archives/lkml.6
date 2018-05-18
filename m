@@ -1,84 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeERTYU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:24:20 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:60572 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751009AbeERTYS (ORCPT
+        id S1752253AbeERT0e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:26:34 -0400
+Received: from mta-p4.oit.umn.edu ([134.84.196.204]:33170 "EHLO
+        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbeERT0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:24:18 -0400
-Subject: Re: [PATCH v2] selftests/cgroup: memory controller self-tests
-To: Roman Gushchin <guro@fb.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-team@fb.com,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180510163701.28936-1-guro@fb.com>
- <20180510183224.GP2368884@devbig577.frc2.facebook.com>
- <a652ce44-07f9-d229-70d4-4376bfbafa40@kernel.org>
- <20180511143228.GU2368884@devbig577.frc2.facebook.com>
- <ae4dc3f9-baa6-b492-7c43-0359734440b3@kernel.org>
- <20180511162920.GV2368884@devbig577.frc2.facebook.com>
- <957d089f-7a88-9ff4-733a-8e082339720c@kernel.org>
- <20180511180342.GA20683@castle>
- <fb835740-cee8-83f8-880c-ea6eea8c7c63@kernel.org>
- <20180511200250.GW2368884@devbig577.frc2.facebook.com>
- <1b9740f8-953a-985d-ba21-551e6064a572@kernel.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <77f5a3b3-4bf1-43bf-2826-e19af96dff75@kernel.org>
-Date: Fri, 18 May 2018 13:24:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 18 May 2018 15:26:30 -0400
+X-Google-Smtp-Source: AB8JxZrbkJKR9LRsIDTSGw/ZwUA21mlVZzSgdMntvyuhDhydUiQXejOZCUSgYAhV49iaaOuuYGMa/FLPtcqxdb/ndC4=
 MIME-Version: 1.0
-In-Reply-To: <1b9740f8-953a-985d-ba21-551e6064a572@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ac843580-884e-b0fc-60af-8d73ba099100@axentia.se>
+References: <1525525030-9805-1-git-send-email-wang6495@umn.edu>
+ <20180510111737.b6g7s2nnf6froote@ninjato> <ac843580-884e-b0fc-60af-8d73ba099100@axentia.se>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Fri, 18 May 2018 14:25:48 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7cvVW-LDY6PuHKVTaj5unp90JH4mxP2kFxfOO2OAcGkgw@mail.gmail.com>
+Message-ID: <CAAa=b7cvVW-LDY6PuHKVTaj5unp90JH4mxP2kFxfOO2OAcGkgw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] i2c: core-smbus: fix a potential uninitialization bug
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Peter Rosin <peda@axentia.se>, Kangjie Lu <kjlu@umn.edu>,
+        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 02:22 PM, Shuah Khan wrote:
-> On 05/11/2018 02:02 PM, Tejun Heo wrote:
->> On Fri, May 11, 2018 at 01:33:26PM -0600, Shuah Khan wrote:
->>> Yeah. I see that. You have a switch for the KSFT_ values. Since there is no
->>> dependency on the cgroup tree, I would recommend having this patch go through
->>> kselftest tree which is the normal process for tests anyway.
+Yes, this patch does not aim to "fix" all potential driver bugs but
+adds an additional protection in case the implementation of
+.master_xfer is incorrect.
+
+>From this perspective, it is still necessary to apply this patch, as
+pointed out by Peter.
+
+Thanks,
+Wenwen
+
+On Mon, May 14, 2018 at 3:31 PM, Peter Rosin <peda@axentia.se> wrote:
+> On 2018-05-10 13:17, Wolfram Sang wrote:
+>> On Sat, May 05, 2018 at 07:57:10AM -0500, Wenwen Wang wrote:
+>>> In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
+>>> which are used to save a series of messages, as mentioned in the comment.
+>>> According to the value of the variable 'size', msgbuf0 is initialized to
+>>> various values. In contrast, msgbuf1 is left uninitialized until the
+>>> function i2c_transfer() is invoked. However, msgbuf1 is not always
+>>> initialized on all possible execution paths (implementation) of
+>>> i2c_transfer(). Thus, it is possible that msgbuf1 may still be
+>>> uninitialized even after the invocation of the function i2c_transfer(),
+>>> especially when the return value of ic2_transfer() is not checked properly.
+>>> In the following execution, the uninitialized msgbuf1 will be used, such as
+>>> for security checks. Since uninitialized values can be random and
+>>> arbitrary, this will cause undefined behaviors or even check bypass. For
+>>> example, it is expected that if the value of 'size' is
+>>> I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
+>>> than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
+>>> value read from msgbuf1 is assigned to data->block[0], which can
+>>> potentially lead to invalid block write size, as demonstrated in the error
+>>> message.
 >>>
->>> This version is good and I can apply this to linux-kselftest next. I ran a
->>> quick test and the Skip case looks good.
+>>> This patch initializes the first byte of msgbuf1 with 0 to avoid such
+>>> undefined behaviors or security issues.
 >>>
->>> TAP version 13
->>> selftests: cgroup: test_memcontrol
->>> ========================================
->>> 1..0 # Skipped: memory controller isn't available
->>> not ok 1..1 selftests: cgroup: test_memcontrol [SKIP]
->>>
->>>
->>> Tejun! Please send me your Ack.
+>>> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 >>
->> Sure, please feel free to add my ack.  I'll revert the original patch
->> from cgroup tree.
->>
->> Thanks.
->>
-> 
-> Thanks. I will apply this to linux-kselftest next for 4.18-rc1 with
-> you Ack.
-> 
-> thanks,
-> -- Shuah
-> 
-
-Hi Roman,
-
-Could you please send me the fix for
-
-[bug,report] selftests: cgroup: add memory controller self-tests
-
-It is cc'ed to kselftest mailing list and not to me. Please send
-it directly for me to apply it.
-
-thanks,
--- Shuah
+>> From what I can tell, this patch is not needed anymore after patch 2 is
+>> applied. Correct?
+>
+> AFAIU, it is only needed if there are bugs elsewhere. I.e. it's for extra
+> protection. If all drivers implement .master_xfer correctly, msgbuf1 will
+> be filled in and the return value will be the number of messages (i.e. 2)
+> OR you get a negative return value and the msgbuf1 content will not matter.
+>
+> The patch does not magically fix all possible driver bugs, so in that
+> sense this patch is still "needed".
+>
+> Also - again AFAIU - there is no known bug that actually gets caught by
+> this extra check.
+>
+> Cheers,
+> Peter
