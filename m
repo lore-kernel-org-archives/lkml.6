@@ -1,57 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeERDHj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 23:07:39 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44085 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbeERDHi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 23:07:38 -0400
-X-Google-Smtp-Source: AB8JxZqHnJ+rFU4acyx6JOjhHdwjiKxH7AQS2njWn8u82TNXsbP88J/9arOr3EaehWohJpSvUCmPeg==
-From: ufo19890607 <ufo19890607@gmail.com>
-To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yuzhoujian <yuzhoujian@didichuxing.com>
-Subject: [PATCH v2] Print the memcg's name when system-wide OOM happened
-Date: Fri, 18 May 2018 04:07:14 +0100
-Message-Id: <1526612834-8898-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752112AbeERD2g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 23:28:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53863 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751698AbeERD2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 23:28:35 -0400
+Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
+ hip08
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
+ <20180517151459.GD10842@ziepe.ca>
+CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5AFE484B.2080206@huawei.com>
+Date: Fri, 18 May 2018 11:28:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180517151459.GD10842@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-The dump_header does not print the memcg's name when the system
-oom happened. So users cannot locate the certain container which
-contains the task that has been killed by the oom killer. System
-oom report will contain the memcg's name after this patch.
 
-Changes since v1:
-- replace adding mem_cgroup_print_oom_info with printing the memcg's
-  name only.
+On 2018/5/17 23:14, Jason Gunthorpe wrote:
+> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> index 86ef15f..e1c44a6 100644
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+>>  	int ret = 0;
+>>  	int ntc;
+>>  
+>> +	if (hr_dev->is_reset)
+>> +		return 0;
+>> +
+>>  	spin_lock_bh(&csq->lock);
+>>  
+>>  	if (num > hns_roce_cmq_space(csq)) {
+>> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+>>  	return 0;
+>>  
+>>  error_failed_get_cfg:
+>> +	handle->priv = NULL;
+>>  	kfree(hr_dev->priv);
+>>  
+>>  error_failed_kzalloc:
+>> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>>  {
+>>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+>>  
+>> +	if (!hr_dev)
+>> +		return;
+>> +
+>>  	hns_roce_exit(hr_dev);
+>> +	handle->priv = NULL;
+>>  	kfree(hr_dev->priv);
+>>  	ib_dealloc_device(&hr_dev->ib_dev);
+>>  }
+> Why are these hunks here? If init fails then uninit should not be
+> called, so why meddle with priv?
+In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
+hr_dev,
+We want clear the value in hns_roce_hw_v2_uninit_instance function.
+So we can ensure no problem in RoCE driver.
 
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
----
- mm/oom_kill.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 8ba6cb88cf58..b0abb5930232 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -433,6 +433,9 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 	if (is_memcg_oom(oc))
- 		mem_cgroup_print_oom_info(oc->memcg, p);
- 	else {
-+		pr_info("Task in ");
-+		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-+		pr_cont(" killed as a result of limit of ");
- 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
- 		if (is_dump_unreclaim_slabs())
- 			dump_unreclaimable_slab();
--- 
-2.14.1
+static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+{
+    struct hns_roce_dev *hr_dev;
+    int ret;
+
+    hr_dev = (struct hns_roce_dev *)ib_alloc_device(sizeof(*hr_dev));
+    if (!hr_dev)
+        return -ENOMEM;
+
+   ...// other code
+
+    handle->priv = hr_dev;
+
+    ....// other code
+
+    return 0;
+
+error_xxx:
+    handle->priv = NULL;
+    ...// other code
+
+error_yyyy:
+    ib_dealloc_device(&hr_dev->ib_dev);
+
+    return ret;
+}
+
+static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+                       bool reset)
+{
+    struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+
+    if (!hr_dev)
+        return;
+
+    hns_roce_exit(hr_dev);
+    handle->priv = NULL;
+    kfree(hr_dev->priv);
+    ib_dealloc_device(&hr_dev->ib_dev);
+}
+
+>
+> Jason
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
