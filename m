@@ -1,41 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqckcoENv+7/MztsHmEnIORqasBXEyF0ngi1W9QzvNytDUeWeeLWp7t43CQ3j3Bn3OR1DJv
-ARC-Seal: i=1; a=rsa-sha256; t=1526631670; cv=none;
+X-Google-Smtp-Source: AB8JxZrJpo9QktmrpuGzjM4tfRjRSkEBeeJQK1+ROtx3+2MQxXQEj0o6p6Bx/YyaOn0KNY1iztav
+ARC-Seal: i=1; a=rsa-sha256; t=1526631667; cv=none;
         d=google.com; s=arc-20160816;
-        b=ggGNrwWd9++gJbeSltloxTLIoQaqX9t1p4dVL6M6kvptV2S9dm6usjl+6Ipk7c1oLC
-         teO4fpnMG9zpsyQBwohzCjH6s7KlEFQ15MZ9RN8lB4BsdC3f6D5TXL2AfFC+lHVe4ZHT
-         layoQexe9XgxNFtIOXsFH/z8umfsjUXcZHau3OFozDQ8DJntY0U/shJUnRBIhAn6ht90
-         DB26NFy48auyBaQwnPusgABNNfYs9FwoKqegGi67GIb8SoNqu/01/hSctdVMKorNgPM4
-         am660JwQEqY2Uw0yWjNAclapuv2oPZvyOfoCRNdD4ykacz071FC5u2wFZ7JS/Ol7o/uz
-         aqYQ==
+        b=jRdte/eiFsHENs/2+3kM2IXlj/JH2BMPxTDQ0/sZNBHjIa3KDLqSQdh9TxFyZjYmIu
+         3cUpEySHHjD3dwHlC4vlBGxo8aqx3CwM8m7zFYEPzpS/Y9EhH6ocWOoVzgcQcMRKroPu
+         jEAtXEne3S+5XKUkAlohWthJMuKmhg+bUOL4b1YYwrIcNVxhQ4S3RcHgaFkxJc4Y8HsM
+         A4gxT08Sapm6fYu35qq4MLDVmGXylWZ8vSdV+HiWEMrK523HxQvQwXlOJ5nZA4LPdR/A
+         I9n69+LiRxlu8omSEDpFuNIk5FSUIrtvkT4zOm+DY6/k/8JDEJ4v8D8/u0Cl7jGn5rXa
+         kt0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=QVI/hOX8OoKsUP+gtUZrP6MixWhGsPGE4DmdA0mSPuQ=;
-        b=UMtGY5kQNJsG3F6DrP+hPmI13OBkFG9c5PHISF0RLDCL+Og/jkjqB7EJpqC+gG8WLA
-         RoOCPvPcLD3yxwDAOw5yBU45X6uZclG4LGWjQE7r8SQ6U5BC/cdnYvI4DU70xBga4G9S
-         MfQ/mqg6XSZb2l/yX/9ZA+WLmwRfQ/6pH89JAb9O8WK7/+NxLtGVEN0fajDfoD7AlKY0
-         YQeaWqHAY18lh2YxyWf+QWdoYP4S3CE/U+op8+9T/ColrQaQVbBsUiMQVacXoDm9eb0t
-         jCjLT8cf7d8X4XXRuMux8jHv8K7vK0K1QQ3xCE63NZn7zsorAM+Ow269R46dkL6m0STD
-         Z98w==
+        bh=x9PO3IZDkqGgWiPVEHshe7L4H1CwO/hjXmGQojuN03g=;
+        b=y5yA2OVnLNlxcenU2d5rvpckFd6Wh0gzzNP9FtwFdD9B7JGztZ5+YNqiUPmzTYnQ4X
+         v12gPs73ZfTOsepKQPaTG96B3F96gemNyZ5FmoTopxCQafEIHJztAS25i+dUxg6ih9/8
+         EsHVuuRHEayGLOENGoV6waLXMq0PEfWSQQrtmGyeWgASNTydKsksdYItBrEGfi8U8CUt
+         zDtB/LACc3mURy+KBC+y8Jl5YCK4vY3hOXpA+CBMmNbL8luO0AqgncKp1ALg4gYFCc26
+         hiNdR8BIiaz0AXCDiLZs4PXYiAeYkPA39JgmIK/ykdTCf5w4v8Z/Gu6aGsIazv/cRUHo
+         rWpA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NfbUJtK6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VM2rVZSf;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NfbUJtK6;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VM2rVZSf;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com,
+	syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com,
 	Xin Long <lucien.xin@gmail.com>,
 	Neil Horman <nhorman@tuxdriver.com>,
 	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 25/45] sctp: remove sctp_chunk_put from fail_mark err path in sctp_ulpevent_make_rcvmsg
-Date: Fri, 18 May 2018 10:15:42 +0200
-Message-Id: <20180518081531.619661054@linuxfoundation.org>
+Subject: [PATCH 4.14 24/45] sctp: handle two v4 addrs comparison in sctp_inet6_cmp_addr
+Date: Fri, 18 May 2018 10:15:41 +0200
+Message-Id: <20180518081531.566075673@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789103167895925?=
-X-GMAIL-MSGID: =?utf-8?q?1600789330229525800?=
+X-GMAIL-THRID: =?utf-8?q?1600789099921166414?=
+X-GMAIL-MSGID: =?utf-8?q?1600789327107718393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,36 +56,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 6910e25de2257e2c82c7a2d126e3463cd8e50810 ]
+[ Upstream commit d625329b06e46bd20baf9ee40847d11982569204 ]
 
-In Commit 1f45f78f8e51 ("sctp: allow GSO frags to access the chunk too"),
-it held the chunk in sctp_ulpevent_make_rcvmsg to access it safely later
-in recvmsg. However, it also added sctp_chunk_put in fail_mark err path,
-which is only triggered before holding the chunk.
+Since sctp ipv6 socket also supports v4 addrs, it's possible to
+compare two v4 addrs in pf v6 .cmp_addr, sctp_inet6_cmp_addr.
 
-syzbot reported a use-after-free crash happened on this err path, where
-it shouldn't call sctp_chunk_put.
+However after Commit 1071ec9d453a ("sctp: do not check port in
+sctp_inet6_cmp_addr"), it no longer calls af1->cmp_addr, which
+in this case is sctp_v4_cmp_addr, but calls __sctp_v6_cmp_addr
+where it handles them as two v6 addrs. It would cause a out of
+bounds crash.
 
-This patch simply removes this call.
+syzbot found this crash when trying to bind two v4 addrs to a
+v6 socket.
 
-Fixes: 1f45f78f8e51 ("sctp: allow GSO frags to access the chunk too")
-Reported-by: syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com
+This patch fixes it by adding the process for two v4 addrs in
+sctp_inet6_cmp_addr.
+
+Fixes: 1071ec9d453a ("sctp: do not check port in sctp_inet6_cmp_addr")
+Reported-by: syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ulpevent.c |    1 -
- 1 file changed, 1 deletion(-)
+ net/sctp/ipv6.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sctp/ulpevent.c
-+++ b/net/sctp/ulpevent.c
-@@ -717,7 +717,6 @@ struct sctp_ulpevent *sctp_ulpevent_make
- 	return event;
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -865,6 +865,9 @@ static int sctp_inet6_cmp_addr(const uni
+ 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
+ 		return 1;
  
- fail_mark:
--	sctp_chunk_put(chunk);
- 	kfree_skb(skb);
- fail:
- 	return NULL;
++	if (addr1->sa.sa_family == AF_INET && addr2->sa.sa_family == AF_INET)
++		return addr1->v4.sin_addr.s_addr == addr2->v4.sin_addr.s_addr;
++
+ 	return __sctp_v6_cmp_addr(addr1, addr2);
+ }
+ 
