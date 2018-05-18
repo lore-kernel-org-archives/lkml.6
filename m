@@ -1,114 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeERHgx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:36:53 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37060 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752273AbeERHgs (ORCPT
+        id S1752096AbeERHhb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:37:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39975 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbeERHh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:36:48 -0400
-X-Google-Smtp-Source: AB8JxZp8uJ4ejfCdbq47MiUXkwZZR7ZZ4yGy7K86Ef9BTJzkSC5SgMkRwl+y1YnyRVgctQKxfmqXpA==
-Date: Fri, 18 May 2018 09:36:44 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: tglx@linutronix.de, Peter Anvin <h.peter.anvin@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>,
-        torvalds@linux-foundation.org, x86@kernel.org
-Subject: Re: [PATCH v2] x86/asm: Pad assembly functions with INT3 instructions
-Message-ID: <20180518073644.GA8593@gmail.com>
-References: <20180515080033.GA7714@yexl-desktop>
- <20180515210757.GA12225@avx2>
- <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
- <20180515214337.GA18021@avx2>
- <CA+55aFy6_fJkmuWDZC=d_WE+_oYHtXXCbb=R31jyC1qDKZ8HJw@mail.gmail.com>
- <20180515225028.GA21902@avx2>
- <20180515225845.GB21902@avx2>
+        Fri, 18 May 2018 03:37:29 -0400
+Date: Fri, 18 May 2018 00:36:50 -0700
+From: tip-bot for Mathieu Malaterre <tipbot@zytor.com>
+Message-ID: <tip-f6a3463063f42d9fb2c78f386437a822e0ad1792@git.kernel.org>
+Cc: mingo@kernel.org, srikar@linux.vnet.ibm.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de, malat@debian.org,
+        peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, malat@debian.org,
+        peterz@infradead.org, mingo@kernel.org, srikar@linux.vnet.ibm.com
+In-Reply-To: <20180516195348.30426-1-malat@debian.org>
+References: <20180516195348.30426-1-malat@debian.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/debug: Move the print_rt_rq() and
+ print_dl_rq() declarations to kernel/sched/sched.h
+Git-Commit-ID: f6a3463063f42d9fb2c78f386437a822e0ad1792
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180515225845.GB21902@avx2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  f6a3463063f42d9fb2c78f386437a822e0ad1792
+Gitweb:     https://git.kernel.org/tip/f6a3463063f42d9fb2c78f386437a822e0ad1792
+Author:     Mathieu Malaterre <malat@debian.org>
+AuthorDate: Wed, 16 May 2018 21:53:47 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 18 May 2018 09:05:14 +0200
 
-* Alexey Dobriyan <adobriyan@gmail.com> wrote:
+sched/debug: Move the print_rt_rq() and print_dl_rq() declarations to kernel/sched/sched.h
 
-> Use INT3 instead of NOP. All that padding between functions is
-> an illegal area, no legitimate code should jump into it.
-> 
-> I've checked x86_64 allyesconfig disassembly, all changes looks sane:
-> INT3 is only used after RET or unconditional JMP.
-> 
-> On i386:
-> * promote ret_from_exception into ENTRY as it has corresponding END,
-> * demote "resume_userspace" -- unused,
-> * delete ALIGN directive in page_fault. It is leftover from x86 assembly
->   cleanups.
-> 
->     commit d211af055d0c12dc3416c2886e6fbdc6eb74a381
->     i386: get rid of the use of KPROBE_ENTRY / KPROBE_END
-> 
->   has ALIGN directive before branch target which makes sense.
->   All the code after ALIGN disappeared later.
-> 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
-> 
->  arch/x86/entry/entry_32.S      |    6 +-----
->  arch/x86/include/asm/linkage.h |    2 +-
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -320,8 +320,7 @@ END(ret_from_fork)
->   */
->  
->  	# userspace resumption stub bypassing syscall exit tracing
-> -	ALIGN
-> -ret_from_exception:
-> +ENTRY(ret_from_exception)
->  	preempt_stop(CLBR_ANY)
->  ret_from_intr:
->  #ifdef CONFIG_VM86
-> @@ -337,8 +336,6 @@ ret_from_intr:
->  #endif
->  	cmpl	$USER_RPL, %eax
->  	jb	resume_kernel			# not returning to v8086 or userspace
-> -
-> -ENTRY(resume_userspace)
->  	DISABLE_INTERRUPTS(CLBR_ANY)
->  	TRACE_IRQS_OFF
->  	movl	%esp, %eax
-> @@ -910,7 +907,6 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
->  ENTRY(page_fault)
->  	ASM_CLAC
->  	pushl	$do_page_fault
-> -	ALIGN
->  	jmp common_exception
->  END(page_fault)
->  
-> --- a/arch/x86/include/asm/linkage.h
-> +++ b/arch/x86/include/asm/linkage.h
-> @@ -18,7 +18,7 @@
->  	name:
->  
->  #if defined(CONFIG_X86_64) || defined(CONFIG_X86_ALIGNMENT_16)
-> -#define __ALIGN		.p2align 4, 0x90
-> +#define __ALIGN		.p2align 4, 0xCC
->  #define __ALIGN_STR	__stringify(__ALIGN)
->  #endif
+In the following commit:
 
-So the question is, without objtool support, how will we find INT3-padding related 
-crash bugs on 32-bit kernels?
+  6b55c9654fcc ("sched/debug: Move print_cfs_rq() declaration to kernel/sched/sched.h")
 
-Thanks,
+the print_cfs_rq() prototype was added to <kernel/sched/sched.h>,
+right next to the prototypes for print_cfs_stats(), print_rt_stats()
+and print_dl_stats().
 
-	Ingo
+Finish this previous commit and also move related prototypes for
+print_rt_rq() and print_dl_rq().
+
+Remove existing extern declarations now that they not needed anymore.
+
+Silences the following GCC warning, triggered by W=1:
+
+  kernel/sched/debug.c:573:6: warning: no previous prototype for ‘print_rt_rq’ [-Wmissing-prototypes]
+  kernel/sched/debug.c:603:6: warning: no previous prototype for ‘print_dl_rq’ [-Wmissing-prototypes]
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180516195348.30426-1-malat@debian.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/deadline.c | 2 --
+ kernel/sched/rt.c       | 2 --
+ kernel/sched/sched.h    | 5 +++--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index e7b3008b85bb..d6196bc6cbb5 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2731,8 +2731,6 @@ bool dl_cpu_busy(unsigned int cpu)
+ #endif
+ 
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+-
+ void print_dl_stats(struct seq_file *m, int cpu)
+ {
+ 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 7aef6b4e885a..ef3c4e6f5345 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2701,8 +2701,6 @@ int sched_rr_handler(struct ctl_table *table, int write,
+ }
+ 
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
+-
+ void print_rt_stats(struct seq_file *m, int cpu)
+ {
+ 	rt_rq_iter_t iter;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 15750c222ca2..1f0a4bc6a39d 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2025,8 +2025,9 @@ extern bool sched_debug_enabled;
+ extern void print_cfs_stats(struct seq_file *m, int cpu);
+ extern void print_rt_stats(struct seq_file *m, int cpu);
+ extern void print_dl_stats(struct seq_file *m, int cpu);
+-extern void
+-print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
++extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+ #ifdef CONFIG_NUMA_BALANCING
+ extern void
+ show_numa_stats(struct task_struct *p, struct seq_file *m);
