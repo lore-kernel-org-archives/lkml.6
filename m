@@ -1,74 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeERI5Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:57:24 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:36135 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752221AbeERI5U (ORCPT
+        id S1753574AbeERI6T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:58:19 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34595 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752121AbeERI6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:57:20 -0400
-X-Google-Smtp-Source: AB8JxZpYoM7e+PCY7QANmUMDQ/88ogyNrSFA0OWuJEz0oHbg7WBbsON4XMT3m+nqVud/krwJw8tZ9Q==
+        Fri, 18 May 2018 04:58:16 -0400
+X-Google-Smtp-Source: AB8JxZprwKVadAWc5EMZ3vB4jXXjnd8DETb4J/gegBTxqd/4ly8v/RmvwfqtH/SuxIzV7vaC5XJhLQ==
+Date: Fri, 18 May 2018 10:58:13 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH v1 07/11] cpufreq: tegra20: Check if this is Tegra20
+ machine
+Message-ID: <20180518085813.GG14500@ulmo>
+References: <20180517180056.13336-1-digetx@gmail.com>
+ <20180517180056.13336-8-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-2-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-2-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 18 May 2018 17:57:06 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C+S0admv8qVc-e+xBGwxku8+jF7WXKmt2qzD1NEtq8yA@mail.gmail.com>
-Message-ID: <CAAFQd5C+S0admv8qVc-e+xBGwxku8+jF7WXKmt2qzD1NEtq8yA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/29] venus: hfi_msgs: correct pointer increment
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Qf1oXS95uex85X0R"
+Content-Disposition: inline
+In-Reply-To: <20180517180056.13336-8-digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 5:13 PM Stanimir Varbanov <
-stanimir.varbanov@linaro.org> wrote:
 
-> Data pointer should be incremented by size of the structure not
-> the size of a pointer, correct the mistake.
+--Qf1oXS95uex85X0R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+On Thu, May 17, 2018 at 09:00:52PM +0300, Dmitry Osipenko wrote:
+> Don't even try to request the clocks during of module initialization on
+> non-Tegra20 machines (this is the case for a multi-platform kernel) for
+> consistency.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->   drivers/media/platform/qcom/venus/hfi_msgs.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/cpufreq/tegra20-cpufreq.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c
-b/drivers/media/platform/qcom/venus/hfi_msgs.c
-> index 90c93d9603dc..589e1a6b36a9 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_msgs.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
-> @@ -60,14 +60,14 @@ static void event_seq_changed(struct venus_core
-*core, struct venus_inst *inst,
->                          frame_sz = (struct hfi_framesize *)data_ptr;
->                          event.width = frame_sz->width;
->                          event.height = frame_sz->height;
-> -                       data_ptr += sizeof(frame_sz);
-> +                       data_ptr += sizeof(*frame_sz);
->                          break;
->                  case HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT:
->                          data_ptr += sizeof(u32);
->                          profile_level = (struct hfi_profile_level
-*)data_ptr;
->                          event.profile = profile_level->profile;
->                          event.level = profile_level->level;
-> -                       data_ptr += sizeof(profile_level);
-> +                       data_ptr += sizeof(*profile_level);
->                          break;
->                  default:
->                          break;
-> --
-> 2.14.1
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--Qf1oXS95uex85X0R
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(Posted to v1 originally, since I missed v2.)
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+laUACgkQ3SOs138+
+s6HFcA//aK/hiIfIrFe2Rtv7UWHEMxSWLuJG37fb1wlxp8UjewTpJkio/5BGiqzx
+k+l1fJdlO/C2UHck6JQQXhRJNhyOZGrabVel/q+giufB+mJjzIzeEMQ8zbGZ4DI4
+mwaAnvEG+vklgRSQe7EOhH7M+ukC+plB2Sw1zBLhLPi69liompbjvsspRDJwHORx
+FV9AYziFNR62RinfU2MlQe1Jamxduy6xelMjqKr9QTC5pr51P4guu6CyY5kD89mm
+q849rExxtXhhh5lVTREYouY0nyGu2MRCwxsKYDXmMrLpDusMkmlv/3Xld0SLuAbq
+moIIqj0/mArMv978BnxqPSZvlcumHMw/Ucj3mPIppsL6qBMMnWzCvYvT15AW9ztL
+nIR/kbKodKjpVD3hwCddmWf/gZOG+HKRZaBK6zQN87vfUgC69cfpSe/IfesHFEv9
+pniiqgbxPCVQaqn+vrs99FLmn844eY4xPAHknSzzFUiOM8B5+k2LsRp+46oU9P8l
+E2gG1tar5PONzWPhhJYEeILkBnvpNVMDIbG12Sy5CKF88OL1EhbUm0U3LXDJFflU
+DvUrmY1yCPn8PZNcpWzi+gtVCo/J+/i1/eO5tUYf0ZgZcUKle8aewp0dfS3yDJTK
+eMXf9iQaGJFxJIU6Ia23C8pTP3Is6RJzxJKy3qQmdbjCE4fiF3U=
+=RTGP
+-----END PGP SIGNATURE-----
 
-Best regards,
-Tomasz
+--Qf1oXS95uex85X0R--
