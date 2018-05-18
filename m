@@ -1,547 +1,366 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AB8JxZqUKXhedFijufPgZQBWC/bOSunhq93Oivp+cvmRdt3yr5xHSjvuF+ex6Hu+I6ph/piFoN1Y
-ARC-Seal: i=1; a=rsa-sha256; t=1526917646; cv=none;
+Return-Path: <srinivas.kandagatla@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526648336; cv=none;
         d=google.com; s=arc-20160816;
-        b=XDo7f5lPNLbPkzAIy6VGFmMUe7ZQvvLdAFUBkr3NbNUturAXDJiUURFaSikqWwQNrN
-         l+nvOqXOC/VDsUcJJAn26A2Zd+bo/wZyBDLCyhcBxttYydwDs7No1FfUNh2A/OzdkSZC
-         wkD2Ss2/3QqXaebmLSOeADfVWGm3uzoyisbMpnx5Xcyd0rSaLF4TB3bNZPFAKFl79M7L
-         G990UEpC8NybUzIqVWATyJoyQd1mIWfxom09wqZ/4Xg4AP1CJldPkicOZN6LDpcwjqah
-         GwluUnx3MULWUrCRKNGaza+AB56iokrd+HpLGR9vCt0iMPzaLyU+DUiCTdmO3FbWCz09
-         UrUA==
+        b=PODamQPRExcLcg9q4ZjJUsDMZFkPs6h4DUYaKCs0TeO6bPhcQPOnTocUI9hRlQH+3m
+         5UAtinmPBKzMD+jg6N2kFehPmpl39cbePLWU2YrWuezide2leWkxas+maZNP1uxXHx5J
+         FniBNgj9APH0CoW1wcvZB3hGzcj6fMs+3f7GT+LJzHcDK+4fCVwPjXQtAG5sdrzTFqG7
+         xcAtHF/Piy8FdTUUCI7qW21X30SzB2vHXGEyDO2dLOX/IymIfMLT/sgR/blxm744Tn6c
+         gyQ3/mRbmoAFBDxi/8GfvbrZsG31UD81KOGMl52pqHywT+sZW7VdQG8uoMpMMaOUP/06
+         OQuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=gpieBACx3/46Cy4T6dOgzPc+jgEQkGcT3odvVvVy39g=;
-        b=RClSNn43vq2ntPNaew3vZMKO9sZMXSwKbMjVxPHjULPNEHxx/lY3WS3vM/cA5q7r3K
-         48RMKa9JMvaEfQ8NCbyKsT890to/OfDbUVwolgUdUN6Nur5zUYCHZ9038IK/ir+TqWQs
-         +507JzTgxi8re3qyoO9wREEQt/bQ9GYYl3IigL7PFEJVgxC/fLEMNQvzc2+22oTkkz7T
-         TCBo81wEfB+MI2Qv8B1hDDsvxt70MRBdlJhRVpeBK5pWQj6QMzHEyfLZ9GruLR9Z4NHr
-         JjEPBxA14mnSHA4hhq9hB+aWxKVdvDPNndm2tTG3q4phrDyy4SVAsS/MMsdShtEhptho
-         SqMQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=uHDANnwKRCQYe/vXiaw+Vr+9LLesAapc457Ky6dGrxg=;
+        b=eyOt39YVqs6uarF2GS04yWnnDlsnaxN79tkgLeOnBDNFuTD1/C7V9aSP1HjFHzmy6y
+         JwGa5iCtCB8cxNyvan4bdh5W591Vi8oikFkiu4khuQJnPTks3HRyvFi0FBqvoO/Ugyzq
+         lBiA3/zZtScYIYsTJsA+W12hO9WBZCylLERsFjQlAfcs6udMq9onLOojJS5NVnnM0Dr2
+         QmOnDEM+Bf+eoWIKYvn5FSrsnPdUa4VFnSKuNbUkIpdgSMOMnKps9dpt4qVBHBSwPdl3
+         ARo4V7cg/ow2lqRo1GAqYWL4hXs1w6DgWxNz7dub5X+2oPeqF6VbmnHPct7ZNmAXXgdC
+         nsBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=kLlT5zjM;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=JE43rFob;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=kLlT5zjM;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com, david.brown@linaro.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6routing: Add q6routing driver" to the asoc tree
-In-Reply-To: <20180518125610.26200-10-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fKn1x-00077V-7q@debutante>
-Date: Mon, 21 May 2018 16:47:25 +0100
+       dkim=pass header.i=@linaro.org header.s=google header.b=JE43rFob;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZqSPBBXbfKUrNg1HbKzi61ck7G6rMlJauLi+URMV0Ve3YSrqE1D8TWXLPJvt5LWq2JveWFSAg==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	bgoswami@codeaurora.org
+Cc: robh+dt@kernel.org,
+	gregkh@linuxfoundation.org,
+	david.brown@linaro.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	plai@codeaurora.org,
+	tiwai@suse.com,
+	perex@perex.cz,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v9 15/15] ASoC: qcom: apq8096: Add db820c machine driver
+Date: Fri, 18 May 2018 13:56:10 +0100
+Message-Id: <20180518125610.26200-16-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
+References: <20180518125610.26200-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601089198147550453?=
-X-GMAIL-MSGID: =?utf-8?q?1601089198147550453?=
+X-GMAIL-THRID: =?utf-8?q?1600806805846351162?=
+X-GMAIL-MSGID: =?utf-8?q?1600806805846351162?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
-
-   ASoC: qdsp6: q6routing: Add q6routing driver
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e3a33673e845f609977970d147d5f8e094c52c73 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 18 May 2018 13:56:04 +0100
-Subject: [PATCH] ASoC: qdsp6: q6routing: Add q6routing driver
-
-This patch adds support to q6 routing driver which configures route
-between ASM and AFE module using ADM apis.
-
-This driver uses dapm widgets to setup the matrix between AFE ports and
-ASM streams.
+This patch adds support to DB820c machine driver.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/Kconfig           |   4 +
- sound/soc/qcom/qdsp6/Makefile    |   1 +
- sound/soc/qcom/qdsp6/q6routing.c | 400 +++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6routing.h |   9 +
- 4 files changed, 414 insertions(+)
- create mode 100644 sound/soc/qcom/qdsp6/q6routing.c
- create mode 100644 sound/soc/qcom/qdsp6/q6routing.h
+ sound/soc/qcom/Kconfig   |   9 ++
+ sound/soc/qcom/Makefile  |   2 +
+ sound/soc/qcom/apq8096.c | 255 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 266 insertions(+)
+ create mode 100644 sound/soc/qcom/apq8096.c
 
 diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 941774abd94f..43f9ed85efa8 100644
+index 85bb7dd11fd9..87838fa27997 100644
 --- a/sound/soc/qcom/Kconfig
 +++ b/sound/soc/qcom/Kconfig
-@@ -53,6 +53,9 @@ config SND_SOC_QDSP6_AFE
- config SND_SOC_QDSP6_ADM
- 	tristate
- 
-+config SND_SOC_QDSP6_ROUTING
-+	tristate
+@@ -81,3 +81,12 @@ config SND_SOC_QDSP6
+ 	 This will enable sound soc platform specific
+ 	 audio drivers. This includes q6asm, q6adm,
+ 	 q6afe interfaces to DSP using apr.
 +
- config SND_SOC_QDSP6_ASM
- 	tristate
++config SND_SOC_MSM8996
++	tristate "SoC Machine driver for MSM8996 and APQ8096 boards"
++	depends on QCOM_APR
++	select SND_SOC_QDSP6
++	help
++          Support for Qualcomm Technologies LPASS audio block in
++          APQ8096 SoC-based systems.
++          Say Y if you want to use audio device on this SoCs
+diff --git a/sound/soc/qcom/Makefile b/sound/soc/qcom/Makefile
+index 0276717917c0..206945bb9ba1 100644
+--- a/sound/soc/qcom/Makefile
++++ b/sound/soc/qcom/Makefile
+@@ -13,9 +13,11 @@ obj-$(CONFIG_SND_SOC_LPASS_APQ8016) += snd-soc-lpass-apq8016.o
+ # Machine
+ snd-soc-storm-objs := storm.o
+ snd-soc-apq8016-sbc-objs := apq8016_sbc.o
++snd-soc-apq8096-objs := apq8096.o
  
-@@ -63,6 +66,7 @@ config SND_SOC_QDSP6
- 	select SND_SOC_QDSP6_CORE
- 	select SND_SOC_QDSP6_AFE
- 	select SND_SOC_QDSP6_ADM
-+	select SND_SOC_QDSP6_ROUTING
- 	select SND_SOC_QDSP6_ASM
- 	help
- 	 To add support for MSM QDSP6 Soc Audio.
-diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
-index 01d9dcf3375c..0e8e2febb7ec 100644
---- a/sound/soc/qcom/qdsp6/Makefile
-+++ b/sound/soc/qcom/qdsp6/Makefile
-@@ -2,4 +2,5 @@ obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
- obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
- obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
- obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o
-+obj-$(CONFIG_SND_SOC_QDSP6_ROUTING) += q6routing.o
- obj-$(CONFIG_SND_SOC_QDSP6_ASM) += q6asm.o
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+ obj-$(CONFIG_SND_SOC_STORM) += snd-soc-storm.o
+ obj-$(CONFIG_SND_SOC_APQ8016_SBC) += snd-soc-apq8016-sbc.o
++obj-$(CONFIG_SND_SOC_MSM8996) += snd-soc-apq8096.o
+ 
+ #DSP lib
+ obj-$(CONFIG_SND_SOC_QDSP6) += qdsp6/
+diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
 new file mode 100644
-index 000000000000..1d7a4088a435
+index 000000000000..561cd429e6f2
 --- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -0,0 +1,400 @@
++++ b/sound/soc/qcom/apq8096.c
+@@ -0,0 +1,255 @@
 +// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
 +// Copyright (c) 2018, Linaro Limited
 +
-+#include <linux/init.h>
-+#include <linux/err.h>
++#include <linux/soc/qcom/apr.h>
 +#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/bitops.h>
 +#include <linux/component.h>
-+#include <linux/mutex.h>
++#include <linux/platform_device.h>
 +#include <linux/of_device.h>
-+#include <linux/slab.h>
-+#include <sound/core.h>
 +#include <sound/soc.h>
 +#include <sound/soc-dapm.h>
 +#include <sound/pcm.h>
-+#include <sound/control.h>
-+#include <sound/asound.h>
-+#include <sound/pcm_params.h>
-+#include "q6afe.h"
-+#include "q6asm.h"
-+#include "q6adm.h"
-+#include "q6routing.h"
 +
-+#define DRV_NAME "q6routing-component"
-+
-+struct session_data {
-+	int state;
-+	int port_id;
-+	int path_type;
-+	int app_type;
-+	int acdb_id;
-+	int sample_rate;
-+	int bits_per_sample;
-+	int channels;
-+	int perf_mode;
-+	int numcopps;
-+	int fedai_id;
-+	unsigned long copp_map;
-+	struct q6copp *copps[MAX_COPPS_PER_PORT];
-+};
-+
-+struct msm_routing_data {
-+	struct session_data sessions[MAX_SESSIONS];
-+	struct session_data port_data[AFE_MAX_PORTS];
-+	struct device *dev;
-+	struct mutex lock;
-+};
-+
-+static struct msm_routing_data *routing_data;
-+
-+/**
-+ * q6routing_stream_open() - Register a new stream for route setup
-+ *
-+ * @fedai_id: Frontend dai id.
-+ * @perf_mode: Performance mode.
-+ * @stream_id: ASM stream id to map.
-+ * @stream_type: Direction of stream
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+int q6routing_stream_open(int fedai_id, int perf_mode,
-+			   int stream_id, int stream_type)
++static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
++				      struct snd_pcm_hw_params *params)
 +{
-+	int j, topology, num_copps = 0;
-+	struct route_payload payload;
-+	struct q6copp *copp;
-+	int copp_idx;
-+	struct session_data *session, *pdata;
++	struct snd_interval *rate = hw_param_interval(params,
++					SNDRV_PCM_HW_PARAM_RATE);
++	struct snd_interval *channels = hw_param_interval(params,
++					SNDRV_PCM_HW_PARAM_CHANNELS);
 +
-+	if (!routing_data) {
-+		pr_err("Routing driver not yet ready\n");
-+		return -EINVAL;
-+	}
-+
-+	session = &routing_data->sessions[stream_id - 1];
-+	pdata = &routing_data->port_data[session->port_id];
-+
-+	mutex_lock(&routing_data->lock);
-+	session->fedai_id = fedai_id;
-+
-+	session->path_type = pdata->path_type;
-+	session->sample_rate = pdata->sample_rate;
-+	session->channels = pdata->channels;
-+	session->bits_per_sample = pdata->bits_per_sample;
-+
-+	payload.num_copps = 0; /* only RX needs to use payload */
-+	topology = NULL_COPP_TOPOLOGY;
-+	copp = q6adm_open(routing_data->dev, session->port_id,
-+			      session->path_type, session->sample_rate,
-+			      session->channels, topology, perf_mode,
-+			      session->bits_per_sample, 0, 0);
-+
-+	if (!copp) {
-+		mutex_unlock(&routing_data->lock);
-+		return -EINVAL;
-+	}
-+
-+	copp_idx = q6adm_get_copp_id(copp);
-+	set_bit(copp_idx, &session->copp_map);
-+	session->copps[copp_idx] = copp;
-+
-+	for_each_set_bit(j, &session->copp_map, MAX_COPPS_PER_PORT) {
-+		payload.port_id[num_copps] = session->port_id;
-+		payload.copp_idx[num_copps] = j;
-+		num_copps++;
-+	}
-+
-+	if (num_copps) {
-+		payload.num_copps = num_copps;
-+		payload.session_id = stream_id;
-+		q6adm_matrix_map(routing_data->dev, session->path_type,
-+				 payload, perf_mode);
-+	}
-+	mutex_unlock(&routing_data->lock);
++	rate->min = rate->max = 48000;
++	channels->min = channels->max = 2;
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(q6routing_stream_open);
 +
-+static struct session_data *get_session_from_id(struct msm_routing_data *data,
-+						int fedai_id)
++static int apq8096_sbc_parse_of(struct snd_soc_card *card)
 +{
-+	int i;
++	struct device_node *np;
++	struct device_node *codec = NULL;
++	struct device_node *platform = NULL;
++	struct device_node *cpu = NULL;
++	struct device *dev = card->dev;
++	struct snd_soc_dai_link *link;
++	int ret, num_links;
 +
-+	for (i = 0; i < MAX_SESSIONS; i++) {
-+		if (fedai_id == data->sessions[i].fedai_id)
-+			return &data->sessions[i];
++	ret = snd_soc_of_parse_card_name(card, "qcom,model");
++	if (ret) {
++		dev_err(dev, "Error parsing card name: %d\n", ret);
++		return ret;
 +	}
 +
-+	return NULL;
++	/* DAPM routes */
++	if (of_property_read_bool(dev->of_node, "qcom,audio-routing")) {
++		ret = snd_soc_of_parse_audio_routing(card,
++					"qcom,audio-routing");
++		if (ret)
++			return ret;
++	}
++
++	/* Populate links */
++	num_links = of_get_child_count(dev->of_node);
++
++	/* Allocate the DAI link array */
++	card->dai_link = kcalloc(num_links, sizeof(*link), GFP_KERNEL);
++	if (!card->dai_link)
++		return -ENOMEM;
++
++	card->num_links	= num_links;
++	link = card->dai_link;
++
++	for_each_child_of_node(dev->of_node, np) {
++		cpu = of_get_child_by_name(np, "cpu");
++		if (!cpu) {
++			dev_err(dev, "Can't find cpu DT node\n");
++			ret = -EINVAL;
++			goto err;
++		}
++
++		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
++		if (!link->cpu_of_node) {
++			dev_err(card->dev, "error getting cpu phandle\n");
++			ret = -EINVAL;
++			goto err;
++		}
++
++		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
++		if (ret) {
++			dev_err(card->dev, "error getting cpu dai name\n");
++			goto err;
++		}
++
++		platform = of_get_child_by_name(np, "platform");
++		codec = of_get_child_by_name(np, "codec");
++		if (codec && platform) {
++			link->platform_of_node = of_parse_phandle(platform,
++								  "sound-dai",
++								   0);
++			if (!link->platform_of_node) {
++				dev_err(card->dev, "platform dai not found\n");
++				ret = -EINVAL;
++				goto err;
++			}
++
++			ret = snd_soc_of_get_dai_link_codecs(dev, codec, link);
++			if (ret < 0) {
++				dev_err(card->dev, "codec dai not found\n");
++				goto err;
++			}
++			link->no_pcm = 1;
++			link->ignore_pmdown_time = 1;
++			link->be_hw_params_fixup = apq8096_be_hw_params_fixup;
++		} else {
++			link->platform_of_node = link->cpu_of_node;
++			link->codec_dai_name = "snd-soc-dummy-dai";
++			link->codec_name = "snd-soc-dummy";
++			link->dynamic = 1;
++		}
++
++		link->ignore_suspend = 1;
++		ret = of_property_read_string(np, "link-name", &link->name);
++		if (ret) {
++			dev_err(card->dev, "error getting codec dai_link name\n");
++			goto err;
++		}
++
++		link->dpcm_playback = 1;
++		link->dpcm_capture = 1;
++		link->stream_name = link->name;
++		link++;
++	}
++
++	return 0;
++err:
++	of_node_put(cpu);
++	of_node_put(codec);
++	of_node_put(platform);
++	kfree(card->dai_link);
++	return ret;
 +}
-+/**
-+ * q6routing_stream_close() - Deregister a stream
-+ *
-+ * @fedai_id: Frontend dai id.
-+ * @stream_type: Direction of stream
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+void q6routing_stream_close(int fedai_id, int stream_type)
++
++static int apq8096_bind(struct device *dev)
 +{
-+	struct session_data *session;
-+	int idx;
++	struct snd_soc_card *card;
++	int ret;
 +
-+	session = get_session_from_id(routing_data, fedai_id);
-+	if (!session)
-+		return;
++	card = kzalloc(sizeof(*card), GFP_KERNEL);
++	if (!card)
++		return -ENOMEM;
 +
-+	for_each_set_bit(idx, &session->copp_map, MAX_COPPS_PER_PORT) {
-+		if (session->copps[idx]) {
-+			q6adm_close(routing_data->dev, session->copps[idx]);
-+			session->copps[idx] = NULL;
++	component_bind_all(dev, card);
++	card->dev = dev;
++	ret = apq8096_sbc_parse_of(card);
++	if (ret) {
++		dev_err(dev, "Error parsing OF data\n");
++		goto err;
++	}
++
++	ret = snd_soc_register_card(card);
++	if (ret)
++		goto err;
++
++	return 0;
++
++err:
++	component_unbind_all(dev, card);
++	kfree(card);
++	return ret;
++}
++
++static void apq8096_unbind(struct device *dev)
++{
++	struct snd_soc_card *card = dev_get_drvdata(dev);
++
++	snd_soc_unregister_card(card);
++	component_unbind_all(dev, card);
++	kfree(card->dai_link);
++	kfree(card);
++}
++
++static const struct component_master_ops apq8096_ops = {
++	.bind = apq8096_bind,
++	.unbind = apq8096_unbind,
++};
++
++static int apq8016_compare_of(struct device *dev, void *data)
++{
++	return dev->of_node == data;
++}
++
++static void apq8016_release_of(struct device *dev, void *data)
++{
++	of_node_put(data);
++}
++
++static int add_audio_components(struct device *dev,
++				struct component_match **matchptr)
++{
++	struct device_node *np, *platform, *cpu, *node, *dai_node;
++
++	node = dev->of_node;
++
++	for_each_child_of_node(node, np) {
++		cpu = of_get_child_by_name(np, "cpu");
++		if (cpu) {
++			dai_node = of_parse_phandle(cpu, "sound-dai", 0);
++			of_node_get(dai_node);
++			component_match_add_release(dev, matchptr,
++						    apq8016_release_of,
++						    apq8016_compare_of,
++						    dai_node);
++		}
++
++		platform = of_get_child_by_name(np, "platform");
++		if (platform) {
++			dai_node = of_parse_phandle(platform, "sound-dai", 0);
++			component_match_add_release(dev, matchptr,
++						    apq8016_release_of,
++						    apq8016_compare_of,
++						    dai_node);
 +		}
 +	}
 +
-+	session->fedai_id = -1;
-+	session->copp_map = 0;
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(q6routing_stream_close);
 +
-+static int msm_routing_get_audio_mixer(struct snd_kcontrol *kcontrol,
-+				       struct snd_ctl_elem_value *ucontrol)
++static int apq8096_platform_probe(struct platform_device *pdev)
 +{
-+	struct snd_soc_dapm_context *dapm =
-+	    snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct soc_mixer_control *mc =
-+	    (struct soc_mixer_control *)kcontrol->private_value;
-+	int session_id = mc->shift;
-+	struct snd_soc_component *c = snd_soc_dapm_to_component(dapm);
-+	struct msm_routing_data *priv = dev_get_drvdata(c->dev);
-+	struct session_data *session = &priv->sessions[session_id];
++	struct component_match *match = NULL;
++	int ret;
 +
-+	if (session->port_id == mc->reg)
-+		ucontrol->value.integer.value[0] = 1;
-+	else
-+		ucontrol->value.integer.value[0] = 0;
++	ret = add_audio_components(&pdev->dev, &match);
++	if (ret)
++		return ret;
++
++	return component_master_add_with_match(&pdev->dev, &apq8096_ops, match);
++}
++
++static int apq8096_platform_remove(struct platform_device *pdev)
++{
++	component_master_del(&pdev->dev, &apq8096_ops);
 +
 +	return 0;
 +}
 +
-+static int msm_routing_put_audio_mixer(struct snd_kcontrol *kcontrol,
-+				       struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_dapm_context *dapm =
-+				    snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct snd_soc_component *c = snd_soc_dapm_to_component(dapm);
-+	struct msm_routing_data *data = dev_get_drvdata(c->dev);
-+	struct soc_mixer_control *mc =
-+		    (struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_dapm_update *update = NULL;
-+	int be_id = mc->reg;
-+	int session_id = mc->shift;
-+	struct session_data *session = &data->sessions[session_id];
-+
-+	if (ucontrol->value.integer.value[0]) {
-+		session->port_id = be_id;
-+		snd_soc_dapm_mixer_update_power(dapm, kcontrol, 1, update);
-+	} else {
-+		session->port_id = -1;
-+		snd_soc_dapm_mixer_update_power(dapm, kcontrol, 0, update);
-+	}
-+
-+	return 1;
-+}
-+
-+static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia5", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia6", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia7", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia8", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
++static const struct of_device_id msm_snd_apq8096_dt_match[] = {
++	{.compatible = "qcom,apq8096-sndcard"},
++	{}
 +};
 +
-+static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
-+	/* Frontend AIF */
-+	SND_SOC_DAPM_AIF_IN("MM_DL1", "MultiMedia1 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL2", "MultiMedia2 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL3", "MultiMedia3 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL4", "MultiMedia4 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL5", "MultiMedia5 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL6", "MultiMedia6 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL7", "MultiMedia7 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL8", "MultiMedia8 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL1", "MultiMedia1 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL2", "MultiMedia2 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL3", "MultiMedia3 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL4", "MultiMedia4 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL5", "MultiMedia5 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL6", "MultiMedia6 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL7", "MultiMedia7 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL8", "MultiMedia8 Capture", 0, 0, 0, 0),
++MODULE_DEVICE_TABLE(of, msm_snd_apq8096_dt_match);
 +
-+	/* Mixer definitions */
-+	SND_SOC_DAPM_MIXER("HDMI Mixer", SND_SOC_NOPM, 0, 0,
-+			   hdmi_mixer_controls,
-+			   ARRAY_SIZE(hdmi_mixer_controls)),
-+};
-+
-+static const struct snd_soc_dapm_route intercon[] = {
-+	{"HDMI Mixer", "MultiMedia1", "MM_DL1"},
-+	{"HDMI Mixer", "MultiMedia2", "MM_DL2"},
-+	{"HDMI Mixer", "MultiMedia3", "MM_DL3"},
-+	{"HDMI Mixer", "MultiMedia4", "MM_DL4"},
-+	{"HDMI Mixer", "MultiMedia5", "MM_DL5"},
-+	{"HDMI Mixer", "MultiMedia6", "MM_DL6"},
-+	{"HDMI Mixer", "MultiMedia7", "MM_DL7"},
-+	{"HDMI Mixer", "MultiMedia8", "MM_DL8"},
-+	{"HDMI_RX", NULL, "HDMI Mixer"},
-+};
-+
-+static int routing_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_component *c = snd_soc_rtdcom_lookup(rtd, DRV_NAME);
-+	struct msm_routing_data *data = dev_get_drvdata(c->dev);
-+	unsigned int be_id = rtd->cpu_dai->id;
-+	struct session_data *session;
-+	int path_type;
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		path_type = ADM_PATH_PLAYBACK;
-+	else
-+		path_type = ADM_PATH_LIVE_REC;
-+
-+	if (be_id > AFE_MAX_PORTS)
-+		return -EINVAL;
-+
-+	session = &data->port_data[be_id];
-+
-+	mutex_lock(&data->lock);
-+
-+	session->path_type = path_type;
-+	session->sample_rate = params_rate(params);
-+	session->channels = params_channels(params);
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+			session->bits_per_sample = 16;
-+		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+			session->bits_per_sample = 24;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	mutex_unlock(&data->lock);
-+	return 0;
-+}
-+
-+static struct snd_pcm_ops q6pcm_routing_ops = {
-+	.hw_params = routing_hw_params,
-+};
-+
-+static int msm_routing_probe(struct snd_soc_component *c)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAX_SESSIONS; i++)
-+		routing_data->sessions[i].port_id = -1;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_component_driver msm_soc_routing_component = {
-+	.ops = &q6pcm_routing_ops,
-+	.probe = msm_routing_probe,
-+	.name = DRV_NAME,
-+	.dapm_widgets = msm_qdsp6_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(msm_qdsp6_widgets),
-+	.dapm_routes = intercon,
-+	.num_dapm_routes = ARRAY_SIZE(intercon),
-+};
-+
-+static int q6routing_dai_bind(struct device *dev, struct device *master,
-+			      void *data)
-+{
-+	routing_data = kzalloc(sizeof(*routing_data), GFP_KERNEL);
-+	if (!routing_data)
-+		return -ENOMEM;
-+
-+	routing_data->dev = dev;
-+
-+	mutex_init(&routing_data->lock);
-+	dev_set_drvdata(dev, routing_data);
-+
-+	return snd_soc_register_component(dev, &msm_soc_routing_component,
-+					  NULL, 0);
-+}
-+
-+static void q6routing_dai_unbind(struct device *dev, struct device *master,
-+				 void *d)
-+{
-+	struct msm_routing_data *data = dev_get_drvdata(dev);
-+
-+	snd_soc_unregister_component(dev);
-+
-+	kfree(data);
-+
-+	routing_data = NULL;
-+}
-+
-+static const struct component_ops q6routing_dai_comp_ops = {
-+	.bind   = q6routing_dai_bind,
-+	.unbind = q6routing_dai_unbind,
-+};
-+
-+static int q6pcm_routing_probe(struct platform_device *pdev)
-+{
-+	return component_add(&pdev->dev, &q6routing_dai_comp_ops);
-+}
-+
-+static int q6pcm_routing_remove(struct platform_device *pdev)
-+{
-+	component_del(&pdev->dev, &q6routing_dai_comp_ops);
-+	return 0;
-+}
-+
-+static struct platform_driver q6pcm_routing_platform_driver = {
++static struct platform_driver msm_snd_apq8096_driver = {
++	.probe  = apq8096_platform_probe,
++	.remove = apq8096_platform_remove,
 +	.driver = {
-+		.name = "q6routing",
++		.name = "msm-snd-apq8096",
++		.owner = THIS_MODULE,
++		.of_match_table = msm_snd_apq8096_dt_match,
 +	},
-+	.probe = q6pcm_routing_probe,
-+	.remove = q6pcm_routing_remove,
 +};
-+module_platform_driver(q6pcm_routing_platform_driver);
-+
-+MODULE_DESCRIPTION("Q6 Routing platform");
++module_platform_driver(msm_snd_apq8096_driver);
++MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org");
++MODULE_DESCRIPTION("APQ8096 ASoC Machine Driver");
 +MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/qcom/qdsp6/q6routing.h b/sound/soc/qcom/qdsp6/q6routing.h
-new file mode 100644
-index 000000000000..35514e651130
---- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6routing.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _Q6_PCM_ROUTING_H
-+#define _Q6_PCM_ROUTING_H
-+
-+int q6routing_stream_open(int fedai_id, int perf_mode,
-+			   int stream_id, int stream_type);
-+void q6routing_stream_close(int fedai_id, int stream_type);
-+
-+#endif /*_Q6_PCM_ROUTING_H */
 -- 
-2.17.0
+2.16.2
