@@ -1,671 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752462AbeERUwP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:52:15 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:45806 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751768AbeERUwL (ORCPT
+        id S1752417AbeERUy1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:54:27 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33180 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbeERUyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:52:11 -0400
-X-Google-Smtp-Source: AB8JxZrEEUHcGUMFhWOCKLoMuxq3adVUaFMp/tLEC7H0/j7HwJ9LLp4pxq4rjPw6WgbDkoFkdiJBdczcak67W3m+KOE=
-MIME-Version: 1.0
-In-Reply-To: <CAH3MdRW=-fwgRzfePvg_f_n81yenvEGBwB_E2FRT4f9ah04xUg@mail.gmail.com>
-References: <cover.1526651592.git.sean@mess.org> <7e961c6fcea8130e8cb69849cd64077fed6e835a.1526651592.git.sean@mess.org>
- <CAH3MdRW=-fwgRzfePvg_f_n81yenvEGBwB_E2FRT4f9ah04xUg@mail.gmail.com>
-From: Y Song <ys114321@gmail.com>
-Date: Fri, 18 May 2018 13:51:29 -0700
-Message-ID: <CAH3MdRX_s+Pq6GcqZ3RKiesvesY3ZJT6m_00uNbcbHCUx=MHBg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] bpf: add selftest for lirc_mode2 type program
-To: Sean Young <sean@mess.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 May 2018 16:54:23 -0400
+X-Google-Smtp-Source: AB8JxZpVxSnBWIAykIZV2cZT2hv4Kl8Chgx+gPOI9ROHqP4Q6WHu/R+fGKL67b9cZSfzAwuyUlQkkQ==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <ECD5447C-811E-409B-ACBD-702E86C78C06@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_FE2FFAF4-8F19-49C1-B9BD-6486E8CE283D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 10/10] Dynamic fault injection
+Date: Fri, 18 May 2018 14:54:18 -0600
+In-Reply-To: <20180518191040.GG31737@kmo-pixel>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
+To: Kent Overstreet <kent.overstreet@gmail.com>
+References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+ <20180518074918.13816-21-kent.overstreet@gmail.com>
+ <905DA1CC-63F8-4020-A1D7-1F59ABDF3448@dilger.ca>
+ <20180518191040.GG31737@kmo-pixel>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 1:17 PM, Y Song <ys114321@gmail.com> wrote:
-> On Fri, May 18, 2018 at 7:07 AM, Sean Young <sean@mess.org> wrote:
->> This is simple test over rc-loopback.
->>
->> Signed-off-by: Sean Young <sean@mess.org>
->
-> Acked-by: Yonghong Song <yhs@fb.com>
 
-Just one minor thing. You need to add "test_lirc_mode2_user"
-in tools/testing/selftests/bpf/.gitignore
-so it will not show up when you do "git status".
+--Apple-Mail=_FE2FFAF4-8F19-49C1-B9BD-6486E8CE283D
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-If the patch needs respin, you can add this in the new revision.
-Otherwise, I think a followup patch to fix this should be fine.
+On May 18, 2018, at 1:10 PM, Kent Overstreet <kent.overstreet@gmail.com> =
+wrote:
+>=20
+> On Fri, May 18, 2018 at 01:05:20PM -0600, Andreas Dilger wrote:
+>> On May 18, 2018, at 1:49 AM, Kent Overstreet =
+<kent.overstreet@gmail.com> wrote:
+>>>=20
+>>> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+>>=20
+>> I agree with Christoph that even if there was some explanation in the =
+cover
+>> letter, there should be something at least as good in the patch =
+itself.  The
+>> cover letter is not saved, but the commit stays around forever, and =
+should
+>> explain how this should be added to code, and how to use it from =
+userspace.
+>>=20
+>>=20
+>> That said, I think this is a useful functionality.  We have something =
+similar
+>> in Lustre (OBD_FAIL_CHECK() and friends) that is necessary for being =
+able to
+>> test a distributed filesystem, which is just a CPP macro with an =
+unlikely()
+>> branch, while this looks more sophisticated.  This looks like it has =
+some
+>> added functionality like having more than one fault enabled at a =
+time.
+>> If this lands we could likely switch our code over to using this.
+>=20
+> This is pretty much what I was looking for, I just wanted to know if =
+this
+> patch was interesting enough to anyone that I should spend more time =
+on it
+> or just drop it :) Agreed on documentation. I think it's also worth
+> factoring out the functionality for the elf section trick that dynamic
+> debug uses too.
+>=20
+>> Some things that are missing from this patch that is in our code:
+>>=20
+>> - in addition to the basic "enabled" and "oneshot" mechanisms, we =
+have:
+>>  - timeout: sleep for N msec to simulate network/disk/locking delays
+>>  - race: wait with one thread until a second thread hits matching =
+check
+>>=20
+>> We also have a "fail_val" that allows making the check conditional =
+(e.g.
+>> only operation on server "N" should fail, only RPC opcode "N", etc).
+>=20
+> Those all sound like good ideas... fail_val especially, I think with =
+that
+> we'd have all the functionality the existing fault injection framework =
+has
+> (which is way too heavyweight to actually get used, imo)
 
->
->> ---
->>  tools/bpf/bpftool/prog.c                      |   1 +
->>  tools/include/uapi/linux/bpf.h                |  53 ++++-
->>  tools/include/uapi/linux/lirc.h               | 217 ++++++++++++++++++
->>  tools/lib/bpf/libbpf.c                        |   1 +
->>  tools/testing/selftests/bpf/Makefile          |   8 +-
->>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
->>  .../testing/selftests/bpf/test_lirc_mode2.sh  |  28 +++
->>  .../selftests/bpf/test_lirc_mode2_kern.c      |  23 ++
->>  .../selftests/bpf/test_lirc_mode2_user.c      | 154 +++++++++++++
->>  9 files changed, 487 insertions(+), 4 deletions(-)
->>  create mode 100644 tools/include/uapi/linux/lirc.h
->>  create mode 100755 tools/testing/selftests/bpf/test_lirc_mode2.sh
->>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_kern.c
->>  create mode 100644 tools/testing/selftests/bpf/test_lirc_mode2_user.c
->>
->> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
->> index 9bdfdf2d3fbe..07f1ace39a46 100644
->> --- a/tools/bpf/bpftool/prog.c
->> +++ b/tools/bpf/bpftool/prog.c
->> @@ -71,6 +71,7 @@ static const char * const prog_type_name[] = {
->>         [BPF_PROG_TYPE_SK_MSG]          = "sk_msg",
->>         [BPF_PROG_TYPE_RAW_TRACEPOINT]  = "raw_tracepoint",
->>         [BPF_PROG_TYPE_CGROUP_SOCK_ADDR] = "cgroup_sock_addr",
->> +       [BPF_PROG_TYPE_LIRC_MODE2]      = "lirc_mode2",
->>  };
->>
->>  static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
->> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
->> index d94d333a8225..8227832b713e 100644
->> --- a/tools/include/uapi/linux/bpf.h
->> +++ b/tools/include/uapi/linux/bpf.h
->> @@ -141,6 +141,7 @@ enum bpf_prog_type {
->>         BPF_PROG_TYPE_SK_MSG,
->>         BPF_PROG_TYPE_RAW_TRACEPOINT,
->>         BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
->> +       BPF_PROG_TYPE_LIRC_MODE2,
->>  };
->>
->>  enum bpf_attach_type {
->> @@ -158,6 +159,7 @@ enum bpf_attach_type {
->>         BPF_CGROUP_INET6_CONNECT,
->>         BPF_CGROUP_INET4_POST_BIND,
->>         BPF_CGROUP_INET6_POST_BIND,
->> +       BPF_LIRC_MODE2,
->>         __MAX_BPF_ATTACH_TYPE
->>  };
->>
->> @@ -1902,6 +1904,53 @@ union bpf_attr {
->>   *             egress otherwise). This is the only flag supported for now.
->>   *     Return
->>   *             **SK_PASS** on success, or **SK_DROP** on error.
->> + *
->> + * int bpf_rc_keydown(void *ctx, u32 protocol, u64 scancode, u32 toggle)
->> + *     Description
->> + *             This helper is used in programs implementing IR decoding, to
->> + *             report a successfully decoded key press with *scancode*,
->> + *             *toggle* value in the given *protocol*. The scancode will be
->> + *             translated to a keycode using the rc keymap, and reported as
->> + *             an input key down event. After a period a key up event is
->> + *             generated. This period can be extended by calling either
->> + *             **bpf_rc_keydown** () with the same values, or calling
->> + *             **bpf_rc_repeat** ().
->> + *
->> + *             Some protocols include a toggle bit, in case the button
->> + *             was released and pressed again between consecutive scancodes
->> + *
->> + *             The *ctx* should point to the lirc sample as passed into
->> + *             the program.
->> + *
->> + *             The *protocol* is the decoded protocol number (see
->> + *             **enum rc_proto** for some predefined values).
->> + *
->> + *             This helper is only available is the kernel was compiled with
->> + *             the **CONFIG_BPF_LIRC_MODE2** configuration option set to
->> + *             "**y**".
->> + *
->> + *     Return
->> + *             0
->> + *
->> + * int bpf_rc_repeat(void *ctx)
->> + *     Description
->> + *             This helper is used in programs implementing IR decoding, to
->> + *             report a successfully decoded repeat key message. This delays
->> + *             the generation of a key up event for previously generated
->> + *             key down event.
->> + *
->> + *             Some IR protocols like NEC have a special IR message for
->> + *             repeating last button, for when a button is held down.
->> + *
->> + *             The *ctx* should point to the lirc sample as passed into
->> + *             the program.
->> + *
->> + *             This helper is only available is the kernel was compiled with
->> + *             the **CONFIG_BPF_LIRC_MODE2** configuration option set to
->> + *             "**y**".
->> + *
->> + *     Return
->> + *             0
->>   */
->>  #define __BPF_FUNC_MAPPER(FN)          \
->>         FN(unspec),                     \
->> @@ -1976,7 +2025,9 @@ union bpf_attr {
->>         FN(fib_lookup),                 \
->>         FN(sock_hash_update),           \
->>         FN(msg_redirect_hash),          \
->> -       FN(sk_redirect_hash),
->> +       FN(sk_redirect_hash),           \
->> +       FN(rc_repeat),                  \
->> +       FN(rc_keydown),
->>
->>  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
->>   * function eBPF program intends to call
->> diff --git a/tools/include/uapi/linux/lirc.h b/tools/include/uapi/linux/lirc.h
->> new file mode 100644
->> index 000000000000..f189931042a7
->> --- /dev/null
->> +++ b/tools/include/uapi/linux/lirc.h
->> @@ -0,0 +1,217 @@
->> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->> +/*
->> + * lirc.h - linux infrared remote control header file
->> + * last modified 2010/07/13 by Jarod Wilson
->> + */
->> +
->> +#ifndef _LINUX_LIRC_H
->> +#define _LINUX_LIRC_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/ioctl.h>
->> +
->> +#define PULSE_BIT       0x01000000
->> +#define PULSE_MASK      0x00FFFFFF
->> +
->> +#define LIRC_MODE2_SPACE     0x00000000
->> +#define LIRC_MODE2_PULSE     0x01000000
->> +#define LIRC_MODE2_FREQUENCY 0x02000000
->> +#define LIRC_MODE2_TIMEOUT   0x03000000
->> +
->> +#define LIRC_VALUE_MASK      0x00FFFFFF
->> +#define LIRC_MODE2_MASK      0xFF000000
->> +
->> +#define LIRC_SPACE(val) (((val)&LIRC_VALUE_MASK) | LIRC_MODE2_SPACE)
->> +#define LIRC_PULSE(val) (((val)&LIRC_VALUE_MASK) | LIRC_MODE2_PULSE)
->> +#define LIRC_FREQUENCY(val) (((val)&LIRC_VALUE_MASK) | LIRC_MODE2_FREQUENCY)
->> +#define LIRC_TIMEOUT(val) (((val)&LIRC_VALUE_MASK) | LIRC_MODE2_TIMEOUT)
->> +
->> +#define LIRC_VALUE(val) ((val)&LIRC_VALUE_MASK)
->> +#define LIRC_MODE2(val) ((val)&LIRC_MODE2_MASK)
->> +
->> +#define LIRC_IS_SPACE(val) (LIRC_MODE2(val) == LIRC_MODE2_SPACE)
->> +#define LIRC_IS_PULSE(val) (LIRC_MODE2(val) == LIRC_MODE2_PULSE)
->> +#define LIRC_IS_FREQUENCY(val) (LIRC_MODE2(val) == LIRC_MODE2_FREQUENCY)
->> +#define LIRC_IS_TIMEOUT(val) (LIRC_MODE2(val) == LIRC_MODE2_TIMEOUT)
->> +
->> +/* used heavily by lirc userspace */
->> +#define lirc_t int
->> +
->> +/*** lirc compatible hardware features ***/
->> +
->> +#define LIRC_MODE2SEND(x) (x)
->> +#define LIRC_SEND2MODE(x) (x)
->> +#define LIRC_MODE2REC(x) ((x) << 16)
->> +#define LIRC_REC2MODE(x) ((x) >> 16)
->> +
->> +#define LIRC_MODE_RAW                  0x00000001
->> +#define LIRC_MODE_PULSE                0x00000002
->> +#define LIRC_MODE_MODE2                0x00000004
->> +#define LIRC_MODE_SCANCODE             0x00000008
->> +#define LIRC_MODE_LIRCCODE             0x00000010
->> +
->> +
->> +#define LIRC_CAN_SEND_RAW              LIRC_MODE2SEND(LIRC_MODE_RAW)
->> +#define LIRC_CAN_SEND_PULSE            LIRC_MODE2SEND(LIRC_MODE_PULSE)
->> +#define LIRC_CAN_SEND_MODE2            LIRC_MODE2SEND(LIRC_MODE_MODE2)
->> +#define LIRC_CAN_SEND_LIRCCODE         LIRC_MODE2SEND(LIRC_MODE_LIRCCODE)
->> +
->> +#define LIRC_CAN_SEND_MASK             0x0000003f
->> +
->> +#define LIRC_CAN_SET_SEND_CARRIER      0x00000100
->> +#define LIRC_CAN_SET_SEND_DUTY_CYCLE   0x00000200
->> +#define LIRC_CAN_SET_TRANSMITTER_MASK  0x00000400
->> +
->> +#define LIRC_CAN_REC_RAW               LIRC_MODE2REC(LIRC_MODE_RAW)
->> +#define LIRC_CAN_REC_PULSE             LIRC_MODE2REC(LIRC_MODE_PULSE)
->> +#define LIRC_CAN_REC_MODE2             LIRC_MODE2REC(LIRC_MODE_MODE2)
->> +#define LIRC_CAN_REC_SCANCODE          LIRC_MODE2REC(LIRC_MODE_SCANCODE)
->> +#define LIRC_CAN_REC_LIRCCODE          LIRC_MODE2REC(LIRC_MODE_LIRCCODE)
->> +
->> +#define LIRC_CAN_REC_MASK              LIRC_MODE2REC(LIRC_CAN_SEND_MASK)
->> +
->> +#define LIRC_CAN_SET_REC_CARRIER       (LIRC_CAN_SET_SEND_CARRIER << 16)
->> +#define LIRC_CAN_SET_REC_DUTY_CYCLE    (LIRC_CAN_SET_SEND_DUTY_CYCLE << 16)
->> +
->> +#define LIRC_CAN_SET_REC_DUTY_CYCLE_RANGE 0x40000000
->> +#define LIRC_CAN_SET_REC_CARRIER_RANGE    0x80000000
->> +#define LIRC_CAN_GET_REC_RESOLUTION       0x20000000
->> +#define LIRC_CAN_SET_REC_TIMEOUT          0x10000000
->> +#define LIRC_CAN_SET_REC_FILTER           0x08000000
->> +
->> +#define LIRC_CAN_MEASURE_CARRIER          0x02000000
->> +#define LIRC_CAN_USE_WIDEBAND_RECEIVER    0x04000000
->> +
->> +#define LIRC_CAN_SEND(x) ((x)&LIRC_CAN_SEND_MASK)
->> +#define LIRC_CAN_REC(x) ((x)&LIRC_CAN_REC_MASK)
->> +
->> +#define LIRC_CAN_NOTIFY_DECODE            0x01000000
->> +
->> +/*** IOCTL commands for lirc driver ***/
->> +
->> +#define LIRC_GET_FEATURES              _IOR('i', 0x00000000, __u32)
->> +
->> +#define LIRC_GET_SEND_MODE             _IOR('i', 0x00000001, __u32)
->> +#define LIRC_GET_REC_MODE              _IOR('i', 0x00000002, __u32)
->> +#define LIRC_GET_REC_RESOLUTION        _IOR('i', 0x00000007, __u32)
->> +
->> +#define LIRC_GET_MIN_TIMEOUT           _IOR('i', 0x00000008, __u32)
->> +#define LIRC_GET_MAX_TIMEOUT           _IOR('i', 0x00000009, __u32)
->> +
->> +/* code length in bits, currently only for LIRC_MODE_LIRCCODE */
->> +#define LIRC_GET_LENGTH                _IOR('i', 0x0000000f, __u32)
->> +
->> +#define LIRC_SET_SEND_MODE             _IOW('i', 0x00000011, __u32)
->> +#define LIRC_SET_REC_MODE              _IOW('i', 0x00000012, __u32)
->> +/* Note: these can reset the according pulse_width */
->> +#define LIRC_SET_SEND_CARRIER          _IOW('i', 0x00000013, __u32)
->> +#define LIRC_SET_REC_CARRIER           _IOW('i', 0x00000014, __u32)
->> +#define LIRC_SET_SEND_DUTY_CYCLE       _IOW('i', 0x00000015, __u32)
->> +#define LIRC_SET_TRANSMITTER_MASK      _IOW('i', 0x00000017, __u32)
->> +
->> +/*
->> + * when a timeout != 0 is set the driver will send a
->> + * LIRC_MODE2_TIMEOUT data packet, otherwise LIRC_MODE2_TIMEOUT is
->> + * never sent, timeout is disabled by default
->> + */
->> +#define LIRC_SET_REC_TIMEOUT           _IOW('i', 0x00000018, __u32)
->> +
->> +/* 1 enables, 0 disables timeout reports in MODE2 */
->> +#define LIRC_SET_REC_TIMEOUT_REPORTS   _IOW('i', 0x00000019, __u32)
->> +
->> +/*
->> + * if enabled from the next key press on the driver will send
->> + * LIRC_MODE2_FREQUENCY packets
->> + */
->> +#define LIRC_SET_MEASURE_CARRIER_MODE  _IOW('i', 0x0000001d, __u32)
->> +
->> +/*
->> + * to set a range use LIRC_SET_REC_CARRIER_RANGE with the
->> + * lower bound first and later LIRC_SET_REC_CARRIER with the upper bound
->> + */
->> +#define LIRC_SET_REC_CARRIER_RANGE     _IOW('i', 0x0000001f, __u32)
->> +
->> +#define LIRC_SET_WIDEBAND_RECEIVER     _IOW('i', 0x00000023, __u32)
->> +
->> +/*
->> + * struct lirc_scancode - decoded scancode with protocol for use with
->> + *     LIRC_MODE_SCANCODE
->> + *
->> + * @timestamp: Timestamp in nanoseconds using CLOCK_MONOTONIC when IR
->> + *     was decoded.
->> + * @flags: should be 0 for transmit. When receiving scancodes,
->> + *     LIRC_SCANCODE_FLAG_TOGGLE or LIRC_SCANCODE_FLAG_REPEAT can be set
->> + *     depending on the protocol
->> + * @rc_proto: see enum rc_proto
->> + * @keycode: the translated keycode. Set to 0 for transmit.
->> + * @scancode: the scancode received or to be sent
->> + */
->> +struct lirc_scancode {
->> +       __u64   timestamp;
->> +       __u16   flags;
->> +       __u16   rc_proto;
->> +       __u32   keycode;
->> +       __u64   scancode;
->> +};
->> +
->> +/* Set if the toggle bit of rc-5 or rc-6 is enabled */
->> +#define LIRC_SCANCODE_FLAG_TOGGLE      1
->> +/* Set if this is a nec or sanyo repeat */
->> +#define LIRC_SCANCODE_FLAG_REPEAT      2
->> +
->> +/**
->> + * enum rc_proto - the Remote Controller protocol
->> + *
->> + * @RC_PROTO_UNKNOWN: Protocol not known
->> + * @RC_PROTO_OTHER: Protocol known but proprietary
->> + * @RC_PROTO_RC5: Philips RC5 protocol
->> + * @RC_PROTO_RC5X_20: Philips RC5x 20 bit protocol
->> + * @RC_PROTO_RC5_SZ: StreamZap variant of RC5
->> + * @RC_PROTO_JVC: JVC protocol
->> + * @RC_PROTO_SONY12: Sony 12 bit protocol
->> + * @RC_PROTO_SONY15: Sony 15 bit protocol
->> + * @RC_PROTO_SONY20: Sony 20 bit protocol
->> + * @RC_PROTO_NEC: NEC protocol
->> + * @RC_PROTO_NECX: Extended NEC protocol
->> + * @RC_PROTO_NEC32: NEC 32 bit protocol
->> + * @RC_PROTO_SANYO: Sanyo protocol
->> + * @RC_PROTO_MCIR2_KBD: RC6-ish MCE keyboard
->> + * @RC_PROTO_MCIR2_MSE: RC6-ish MCE mouse
->> + * @RC_PROTO_RC6_0: Philips RC6-0-16 protocol
->> + * @RC_PROTO_RC6_6A_20: Philips RC6-6A-20 protocol
->> + * @RC_PROTO_RC6_6A_24: Philips RC6-6A-24 protocol
->> + * @RC_PROTO_RC6_6A_32: Philips RC6-6A-32 protocol
->> + * @RC_PROTO_RC6_MCE: MCE (Philips RC6-6A-32 subtype) protocol
->> + * @RC_PROTO_SHARP: Sharp protocol
->> + * @RC_PROTO_XMP: XMP protocol
->> + * @RC_PROTO_CEC: CEC protocol
->> + * @RC_PROTO_IMON: iMon Pad protocol
->> + */
->> +enum rc_proto {
->> +       RC_PROTO_UNKNOWN        = 0,
->> +       RC_PROTO_OTHER          = 1,
->> +       RC_PROTO_RC5            = 2,
->> +       RC_PROTO_RC5X_20        = 3,
->> +       RC_PROTO_RC5_SZ         = 4,
->> +       RC_PROTO_JVC            = 5,
->> +       RC_PROTO_SONY12         = 6,
->> +       RC_PROTO_SONY15         = 7,
->> +       RC_PROTO_SONY20         = 8,
->> +       RC_PROTO_NEC            = 9,
->> +       RC_PROTO_NECX           = 10,
->> +       RC_PROTO_NEC32          = 11,
->> +       RC_PROTO_SANYO          = 12,
->> +       RC_PROTO_MCIR2_KBD      = 13,
->> +       RC_PROTO_MCIR2_MSE      = 14,
->> +       RC_PROTO_RC6_0          = 15,
->> +       RC_PROTO_RC6_6A_20      = 16,
->> +       RC_PROTO_RC6_6A_24      = 17,
->> +       RC_PROTO_RC6_6A_32      = 18,
->> +       RC_PROTO_RC6_MCE        = 19,
->> +       RC_PROTO_SHARP          = 20,
->> +       RC_PROTO_XMP            = 21,
->> +       RC_PROTO_CEC            = 22,
->> +       RC_PROTO_IMON           = 23,
->> +};
->> +
->> +#endif
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index 3dbe217bf23e..01e514479f6b 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -1461,6 +1461,7 @@ static bool bpf_prog_type__needs_kver(enum bpf_prog_type type)
->>         case BPF_PROG_TYPE_CGROUP_DEVICE:
->>         case BPF_PROG_TYPE_SK_MSG:
->>         case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
->> +       case BPF_PROG_TYPE_LIRC_MODE2:
->>                 return false;
->>         case BPF_PROG_TYPE_UNSPEC:
->>         case BPF_PROG_TYPE_KPROBE:
->> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
->> index 1eb0fa2aba92..ee6d49f18be5 100644
->> --- a/tools/testing/selftests/bpf/Makefile
->> +++ b/tools/testing/selftests/bpf/Makefile
->> @@ -24,7 +24,7 @@ urandom_read: urandom_read.c
->>  # Order correspond to 'make run_tests' order
->>  TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
->>         test_align test_verifier_log test_dev_cgroup test_tcpbpf_user \
->> -       test_sock test_btf test_sockmap
->> +       test_sock test_btf test_sockmap test_lirc_mode2_user
->>
->>  TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test_obj_id.o \
->>         test_pkt_md_access.o test_xdp_redirect.o test_xdp_meta.o sockmap_parse_prog.o     \
->> @@ -33,7 +33,8 @@ TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test
->>         sample_map_ret0.o test_tcpbpf_kern.o test_stacktrace_build_id.o \
->>         sockmap_tcp_msg_prog.o connect4_prog.o connect6_prog.o test_adjust_tail.o \
->>         test_btf_haskv.o test_btf_nokv.o test_sockmap_kern.o test_tunnel_kern.o \
->> -       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o
->> +       test_get_stack_rawtp.o test_sockmap_kern.o test_sockhash_kern.o \
->> +       test_lirc_mode2_kern.o
->>
->>  # Order correspond to 'make run_tests' order
->>  TEST_PROGS := test_kmod.sh \
->> @@ -42,7 +43,8 @@ TEST_PROGS := test_kmod.sh \
->>         test_xdp_meta.sh \
->>         test_offload.py \
->>         test_sock_addr.sh \
->> -       test_tunnel.sh
->> +       test_tunnel.sh \
->> +       test_lirc_mode2.sh
->>
->>  # Compile but not part of 'make run_tests'
->>  TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr
->> diff --git a/tools/testing/selftests/bpf/bpf_helpers.h b/tools/testing/selftests/bpf/bpf_helpers.h
->> index 8f143dfb3700..a6864827ed34 100644
->> --- a/tools/testing/selftests/bpf/bpf_helpers.h
->> +++ b/tools/testing/selftests/bpf/bpf_helpers.h
->> @@ -114,6 +114,12 @@ static int (*bpf_get_stack)(void *ctx, void *buf, int size, int flags) =
->>  static int (*bpf_fib_lookup)(void *ctx, struct bpf_fib_lookup *params,
->>                              int plen, __u32 flags) =
->>         (void *) BPF_FUNC_fib_lookup;
->> +static int (*bpf_rc_repeat)(void *ctx) =
->> +       (void *) BPF_FUNC_rc_repeat;
->> +static int (*bpf_rc_keydown)(void *ctx, unsigned int protocol,
->> +                            unsigned long long scancode, unsigned int toggle) =
->> +       (void *) BPF_FUNC_rc_keydown;
->> +
->>
->>  /* llvm builtin functions that eBPF C program may use to
->>   * emit BPF_LD_ABS and BPF_LD_IND instructions
->> diff --git a/tools/testing/selftests/bpf/test_lirc_mode2.sh b/tools/testing/selftests/bpf/test_lirc_mode2.sh
->> new file mode 100755
->> index 000000000000..ce2e15e4f976
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/test_lirc_mode2.sh
->> @@ -0,0 +1,28 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +GREEN='\033[0;92m'
->> +RED='\033[0;31m'
->> +NC='\033[0m' # No Color
->> +
->> +modprobe rc-loopback
->> +
->> +for i in /sys/class/rc/rc*
->> +do
->> +       if grep -q DRV_NAME=rc-loopback $i/uevent
->> +       then
->> +               LIRCDEV=$(grep DEVNAME= $i/lirc*/uevent | sed sQDEVNAME=Q/dev/Q)
->> +       fi
->> +done
->> +
->> +if [ -n $LIRCDEV ];
->> +then
->> +       TYPE=lirc_mode2
->> +       ./test_lirc_mode2_user $LIRCDEV
->> +       ret=$?
->> +       if [ $ret -ne 0 ]; then
->> +               echo -e ${RED}"FAIL: $TYPE"${NC}
->> +       else
->> +               echo -e ${GREEN}"PASS: $TYPE"${NC}
->> +       fi
->> +fi
->> diff --git a/tools/testing/selftests/bpf/test_lirc_mode2_kern.c b/tools/testing/selftests/bpf/test_lirc_mode2_kern.c
->> new file mode 100644
->> index 000000000000..ba26855563a5
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/test_lirc_mode2_kern.c
->> @@ -0,0 +1,23 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// test ir decoder
->> +//
->> +// Copyright (C) 2018 Sean Young <sean@mess.org>
->> +
->> +#include <linux/bpf.h>
->> +#include <linux/lirc.h>
->> +#include "bpf_helpers.h"
->> +
->> +SEC("lirc_mode2")
->> +int bpf_decoder(unsigned int *sample)
->> +{
->> +       if (LIRC_IS_PULSE(*sample)) {
->> +               unsigned int duration = LIRC_VALUE(*sample);
->> +
->> +               if (duration & 0x10000)
->> +                       bpf_rc_keydown(sample, 0x40, duration & 0xffff, 0);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +char _license[] SEC("license") = "GPL";
->> diff --git a/tools/testing/selftests/bpf/test_lirc_mode2_user.c b/tools/testing/selftests/bpf/test_lirc_mode2_user.c
->> new file mode 100644
->> index 000000000000..bd77688c8277
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/test_lirc_mode2_user.c
->> @@ -0,0 +1,154 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// test ir decoder
->> +//
->> +// Copyright (C) 2018 Sean Young <sean@mess.org>
->> +
->> +// A lirc chardev is a device representing a consumer IR (cir) device which
->> +// can receive infrared signals from remote control (and/or transmit IR)
->> +//
->> +// IR is sent as a series of pulses and space somewhat like morse code. The
->> +// BPF program can decode this into scancodes so that rc-core can translate
->> +// this into input key codes using the rc keymap
->> +//
->> +// This test works by sending IR over rc-loopback, so the IR is processed by
->> +// BPF and then decoded into scancodes. The/ lirc chardev must be the one
->> +// associated with rc-loopback, see the output of ir-keytable(1)".
->> +//
->> +// The following CONFIG options must be enabled for the test to succeed:
->> +// CONFIG_RC_CORE=y
->> +// CONFIG_BPF_RAWIR_EVENT=y
->> +// CONFIG_RC_LOOPBACK=y
->> +
->> +// Steps:
->> +// 1. Open the /dev/lircN device for rc-loopback (given on command line)
->> +// 2. Attach bpf_lirc_mode2 program which decodes some IR.
->> +// 3. Send some IR to the same IR device; since it is loopback, this will
->> +//    end up in the bpf program
->> +// 4. bpf program should decode IR and report keycode
->> +// 5. We can read keycode from same /dev/lirc device
->> +
->> +#include <linux/bpf.h>
->> +#include <linux/lirc.h>
->> +#include <assert.h>
->> +#include <errno.h>
->> +#include <signal.h>
->> +#include <stdio.h>
->> +#include <stdlib.h>
->> +#include <stdbool.h>
->> +#include <string.h>
->> +#include <unistd.h>
->> +#include <poll.h>
->> +#include <libgen.h>
->> +#include <sys/resource.h>
->> +#include <sys/types.h>
->> +#include <sys/ioctl.h>
->> +#include <sys/stat.h>
->> +#include <fcntl.h>
->> +
->> +#include "bpf_util.h"
->> +#include <bpf/bpf.h>
->> +#include <bpf/libbpf.h>
->> +
->> +int main(int argc, char **argv)
->> +{
->> +       struct bpf_object *obj;
->> +       int ret, lircfd, progfd, mode;
->> +       int testir = 0x1dead;
->> +       u32 prog_ids[10], prog_flags[10], prog_cnt;
->> +
->> +       if (argc != 2) {
->> +               printf("Usage: %s /dev/lircN\n", argv[0]);
->> +               return 2;
->> +       }
->> +
->> +       ret = bpf_prog_load("test_lirc_mode2_kern.o",
->> +                           BPF_PROG_TYPE_LIRC_MODE2, &obj, &progfd);
->> +       if (ret) {
->> +               printf("Failed to load bpf program\n");
->> +               return 1;
->> +       }
->> +
->> +       lircfd = open(argv[1], O_RDWR | O_NONBLOCK);
->> +       if (lircfd == -1) {
->> +               printf("failed to open lirc device %s: %m\n", argv[1]);
->> +               return 1;
->> +       }
->> +
->> +       /* Let's try detach it before it was ever attached */
->> +       ret = bpf_prog_detach2(progfd, lircfd, BPF_LIRC_MODE2);
->> +       if (ret != -1 || errno != ENOENT) {
->> +               printf("bpf_prog_detach2 not attached should fail: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       mode = LIRC_MODE_SCANCODE;
->> +       if (ioctl(lircfd, LIRC_SET_REC_MODE, &mode)) {
->> +               printf("failed to set rec mode: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       prog_cnt = 10;
->> +       ret = bpf_prog_query(lircfd, BPF_LIRC_MODE2, 0, prog_flags, prog_ids,
->> +                            &prog_cnt);
->> +       if (ret) {
->> +               printf("Failed to query bpf programs on lirc device: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       if (prog_cnt != 0) {
->> +               printf("Expected nothing to be attached\n");
->> +               return 1;
->> +       }
->> +
->> +       ret = bpf_prog_attach(progfd, lircfd, BPF_LIRC_MODE2, 0);
->> +       if (ret) {
->> +               printf("Failed to attach bpf to lirc device: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       /* Write raw IR */
->> +       ret = write(lircfd, &testir, sizeof(testir));
->> +       if (ret != sizeof(testir)) {
->> +               printf("Failed to send test IR message: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       struct pollfd pfd = { .fd = lircfd, .events = POLLIN };
->> +       struct lirc_scancode lsc;
->> +
->> +       poll(&pfd, 1, 100);
->> +
->> +       /* Read decoded IR */
->> +       ret = read(lircfd, &lsc, sizeof(lsc));
->> +       if (ret != sizeof(lsc)) {
->> +               printf("Failed to read decoded IR: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       if (lsc.scancode != 0xdead || lsc.rc_proto != 64) {
->> +               printf("Incorrect scancode decoded\n");
->> +               return 1;
->> +       }
->> +
->> +       prog_cnt = 10;
->> +       ret = bpf_prog_query(lircfd, BPF_LIRC_MODE2, 0, prog_flags, prog_ids,
->> +                            &prog_cnt);
->> +       if (ret) {
->> +               printf("Failed to query bpf programs on lirc device: %m\n");
->> +               return 1;
->> +       }
->> +
->> +       if (prog_cnt != 1) {
->> +               printf("Expected one program to be attached\n");
->> +               return 1;
->> +       }
->> +
->> +       /* Let's try detaching it now it is actually attached */
->> +       ret = bpf_prog_detach2(progfd, lircfd, BPF_LIRC_MODE2);
->> +       if (ret) {
->> +               printf("bpf_prog_detach2: returned %m\n");
->> +               return 1;
->> +       }
->> +
->> +       return 0;
->> +}
->> --
->> 2.17.0
->>
+The other thing that we have that is slightly orthogonal to your modes,
+which is possible because we just have a __u32 for the fault location,
+is that the "oneshot" mode is just a mask added to the fault location
+together with "fail_val" is that we can add other masks "fail N times",
+"fail randomly 1/N times", or "pass N times before failure".  The other
+mask is set in the kernel when the fault was actually hit, so that test
+scripts can poll until that happens, and then continue running.
+
+The "fail randomly 1/N times" was useful for detecting memory allocation
+failure handling under load, but that has been superseded by the same
+functionality in kmalloc(), and it sounds like your fault injection can
+do this deterministically for every allocation?
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_FE2FFAF4-8F19-49C1-B9BD-6486E8CE283D
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlr/PXoACgkQcqXauRfM
+H+DdRQ/+KUz1HI3KOGg9OyrM1tcKHlrTNWjy4CTiNxN1xWcuMCbynur5WhiY/vvr
+xbCooFEWoxAbyZC8l3Tkt0J4Z9bnb7E/BlEpLHBaYc7HNhfF3gi3dsTZGHfSla1M
+1xhpsDM97PaaLNbh/9pSg5JjyxbpHdlaelZM46W8ZySSAYUwR3wRjqR1Ppuu98cD
+CmLUlIkvFURmuofr25WzKe4+VTVMjTROrsmyRkhPfyxGe95tOxmud/s2QpxHsm6k
+pHs0oK2gXDr9f+BC1T44dWQa2Q5R7hGpP1zpB6pDNIbIyUTvCmeAUc/KIGJDhKBz
+8w126dgyVYYepaygyVnVSSZQYV8naFHCY5/eqzrfDsugydtKrv02GF8CUarJqHmz
+Usc5EkXpAs14jQDguSIhgT0mJvGL+krBN4CyOAeAu2dQh29pXzjvMa7EiVDKPcMu
+TKgqHXMkN+azTFgft20Gx5Sa/WMpvru4OzEAUUor/27PNRyt2kinI33HCvedmckd
+bKrun2zhbDOF2F0HuoPfNx5V34g14fgU+CGga/nFmdIck8U+4C5AjyDM3XKT65xm
+h/iTfXik2Saj74yk3o7EtT224BWIsqAw1BnUgZgWqMPeb/qtxL6cjjO65HKyD7OI
+1z/6tdroVcdGzw1PETdzvt1qPZbFSSP5agxG90GWF7SOheY2fQo=
+=FNyV
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_FE2FFAF4-8F19-49C1-B9BD-6486E8CE283D--
