@@ -1,61 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeERG0o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:26:44 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44212 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbeERG0m (ORCPT
+        id S1752226AbeERG1E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:27:04 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38708 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752133AbeERG0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:26:42 -0400
-X-Google-Smtp-Source: AB8JxZpFKdBBiTgBnM9xiocq+Dqb+HwW4c/K6qMOXW5vOASg4mDtUk0cJ/XBxu9Edz/Fa/kkOdr8AQ==
-Date: Fri, 18 May 2018 08:26:38 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH -tip v3 5/7] x86: kprobes: Ignore break_handler
-Message-ID: <20180518062638.GD27960@gmail.com>
-References: <152651499561.25583.14488389770693278906.stgit@devbox>
- <152651514451.25583.15475048007255467863.stgit@devbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152651514451.25583.15475048007255467863.stgit@devbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 18 May 2018 02:26:44 -0400
+X-Google-Smtp-Source: AB8JxZoALqbHYV00ooEvU5sIRrpQFvq5i4P3lfNk9SzfGSYTq144vb2zTbB2jWDpWIvD3VqAAscNNA==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v3 2/3] scsi: ufs: Use freq table with devfreq
+Date: Thu, 17 May 2018 23:26:37 -0700
+Message-Id: <20180518062638.31777-3-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180518062638.31777-1-bjorn.andersson@linaro.org>
+References: <20180518062638.31777-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+devfreq requires that the client operates on actual frequencies, not
+only 0 and UMAX_INT and as such UFS brok with the introduction of
+f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency").
 
-* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+This patch registers the frequencies of the first clock with devfreq and
+use these to determine if we're trying to step up or down.
 
-> Remove break_handler related code since that was used
-> only for jprobe and jprobe is removed now.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  arch/x86/kernel/kprobes/common.h |   10 ----------
->  arch/x86/kernel/kprobes/core.c   |   13 ++-----------
->  arch/x86/kernel/kprobes/ftrace.c |   16 ++--------------
->  3 files changed, 4 insertions(+), 35 deletions(-)
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com> [for devfreq & OPP part]
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Even after this change there's a stale reference to ->break_handler():
+Changes since v2:
+- Picked up R-b from Chanwoo and Subhash
 
-  arch/x86/include/asm/kprobes.h:  * a post_handler or break_handler).
+Chances since v1:
+- Register min_freq and max_freq as opp levels.
+- Unregister opp levels on removal, to make e.g. probe defer working
 
-Please use 'git grep'!
+ drivers/scsi/ufs/ufshcd.c | 47 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 7 deletions(-)
 
-Also, there's no reason to send an incomplete series: please remove _all_ 
-->break_handler() references so that it's 100% gone! The pain of having and not 
-having ->break_handler() is completely unnecessary.
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index f04902a066cb..3d46a70ed41d 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -1200,16 +1200,13 @@ static int ufshcd_devfreq_target(struct device *dev,
+ 	struct ufs_hba *hba = dev_get_drvdata(dev);
+ 	ktime_t start;
+ 	bool scale_up, sched_clk_scaling_suspend_work = false;
++	struct list_head *clk_list = &hba->clk_list_head;
++	struct ufs_clk_info *clki;
+ 	unsigned long irq_flags;
+ 
+ 	if (!ufshcd_is_clkscaling_supported(hba))
+ 		return -EINVAL;
+ 
+-	if ((*freq > 0) && (*freq < UINT_MAX)) {
+-		dev_err(hba->dev, "%s: invalid freq = %lu\n", __func__, *freq);
+-		return -EINVAL;
+-	}
+-
+ 	spin_lock_irqsave(hba->host->host_lock, irq_flags);
+ 	if (ufshcd_eh_in_progress(hba)) {
+ 		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
+@@ -1219,7 +1216,13 @@ static int ufshcd_devfreq_target(struct device *dev,
+ 	if (!hba->clk_scaling.active_reqs)
+ 		sched_clk_scaling_suspend_work = true;
+ 
+-	scale_up = (*freq == UINT_MAX) ? true : false;
++	if (list_empty(clk_list)) {
++		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
++		goto out;
++	}
++
++	clki = list_first_entry(&hba->clk_list_head, struct ufs_clk_info, list);
++	scale_up = (*freq == clki->max_freq) ? true : false;
+ 	if (!ufshcd_is_devfreq_scaling_required(hba, scale_up)) {
+ 		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
+ 		ret = 0;
+@@ -1289,16 +1292,29 @@ static struct devfreq_dev_profile ufs_devfreq_profile = {
+ 
+ static int ufshcd_devfreq_init(struct ufs_hba *hba)
+ {
++	struct list_head *clk_list = &hba->clk_list_head;
++	struct ufs_clk_info *clki;
+ 	struct devfreq *devfreq;
+ 	int ret;
+ 
+-	devfreq = devm_devfreq_add_device(hba->dev,
++	/* Skip devfreq if we don't have any clocks in the list */
++	if (list_empty(clk_list))
++		return 0;
++
++	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
++	dev_pm_opp_add(hba->dev, clki->min_freq, 0);
++	dev_pm_opp_add(hba->dev, clki->max_freq, 0);
++
++	devfreq = devfreq_add_device(hba->dev,
+ 			&ufs_devfreq_profile,
+ 			DEVFREQ_GOV_SIMPLE_ONDEMAND,
+ 			NULL);
+ 	if (IS_ERR(devfreq)) {
+ 		ret = PTR_ERR(devfreq);
+ 		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
++
++		dev_pm_opp_remove(hba->dev, clki->min_freq);
++		dev_pm_opp_remove(hba->dev, clki->max_freq);
+ 		return ret;
+ 	}
+ 
+@@ -1307,6 +1323,22 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
+ 	return 0;
+ }
+ 
++static void ufshcd_devfreq_remove(struct ufs_hba *hba)
++{
++	struct list_head *clk_list = &hba->clk_list_head;
++	struct ufs_clk_info *clki;
++
++	if (!hba->devfreq)
++		return;
++
++	devfreq_remove_device(hba->devfreq);
++	hba->devfreq = NULL;
++
++	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
++	dev_pm_opp_remove(hba->dev, clki->min_freq);
++	dev_pm_opp_remove(hba->dev, clki->max_freq);
++}
++
+ static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
+ {
+ 	unsigned long flags;
+@@ -7005,6 +7037,7 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
+ 			if (hba->devfreq)
+ 				ufshcd_suspend_clkscaling(hba);
+ 			destroy_workqueue(hba->clk_scaling.workq);
++			ufshcd_devfreq_remove(hba);
+ 		}
+ 		ufshcd_setup_clocks(hba, false);
+ 		ufshcd_setup_hba_vreg(hba, false);
+-- 
+2.17.0
