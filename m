@@ -1,39 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoKLl3Cmgm/bbmHfYkROjlJq/BEID5TxR1Mqd6lDu10u9usfHreeDhzvT/dKbsAzPeqyRES
-ARC-Seal: i=1; a=rsa-sha256; t=1526631625; cv=none;
+X-Google-Smtp-Source: AB8JxZqy9WqCZDf4BIi+KIWi0zA4qy8OIXBMKDvYRO1tr3sicikwRmFpHesRc+zJUXcTxKcdgqRX
+ARC-Seal: i=1; a=rsa-sha256; t=1526631622; cv=none;
         d=google.com; s=arc-20160816;
-        b=OmiGSoFpM1mRsuMjV5fs/nt7J9Vck4E7jE8f9xiryKe6e+Vvc7T85mJ7Lu4HTyscWN
-         6hHZt2wM+uc7TUovfWHdN8nMN4B6JYWEPBVBCOugYyyY/U5+vTbRwlSp1EB4KH19gJ9z
-         km8D02xT6g9MMDszcWEHXRdX5uSmy1SLKy3K1kHED3ZnGf1W0kSr4QgKhuTlUncMm5gp
-         hS9vWRr6B8D67cBZYerNEwzzsdd4xwwgYTp2/95qD1h7T3rpFa7zCDQNAZDb3Oie+r4n
-         hNaABe1sCB3vJats7rwkawOQp5O1z5RQk2IM513d+1FKgrZGzHr80clu0iJCEXOHc/IR
-         3lDA==
+        b=MeKOsjtMqE6VpPmOg3v6NJYnGvo4GWjFIBuB1CghbsdlnVcJQyWT08jD4BslLtQpvK
+         jXtHN+GAL/6vXxaLOVjHWVhX+SYlFofgCuwSgN5Hzi+hhkY5KO/wEVkeTXazRZr6ydb3
+         ZNCt4mc1QFAgawV+0rWkJoQ7Qz6MPo2EYqbOcpUUPWaGH3WbWpQY0k70GiG3o4yWNZV/
+         YiwhF+FpzdR40t0DGjfpXvOKiK0jYgxilfyLiEndQrVphz8eYD/8JGj9AKlWNaEaouKy
+         tB9vezIZZwYypCEyuTFIMCEAj1AcPYGBvC4YsnI9sCdQMYimla6r3jukgzq9vJtDfZB/
+         C6JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=3TKUZSCgCJeZi0o0Mci9dhDJ/bPvdPcVyIkPLZZXkQs=;
-        b=CS2gdAEyxFmNDvXhvUNRfx+LpvWEB1YCpyT8XjuHZVsMZOXF0i621psS9tndI+vLPR
-         ZVlAjIUL/rLQgBSu/ta4Jz26aWW90X1NkKf9RmxK9bwD1JSlNva/1wT7TcVqbY3yUVuW
-         IsfBFiRcAY0TYEhMmFfDZcA6VNqm6DU423IVsoqXkfmxcSEJ31rlgCJqW907cI+HynfM
-         VdkFrcIvOWyMPo/zfstYNS0tXYUtrAFQJ3VzrLFKEU/jkH+clAtvY0/tbQgsw28mwAuY
-         n/49J2vX0O0Ge4hHa4ZCf5oJ5w1QfIz3SwIS1zjtYTtUvSegMHFiUlYsRue/JIjR05OS
-         O7sQ==
+        bh=2qUqH7SPCG/3tpSVy7d1g7qZ83QmpagqTjGpEXRWbgg=;
+        b=nxdaH1ZI/HeCcNQ/jvB8PVtAefu5jzC3qEJLFjwm4Z2/cx9PSJ38kD1MmcK8w+iKs3
+         /fDwyY5VTBkk+F6LeLwCfndgJbU6FpTQVnmg2MPm2vGTHYzja2dWTkXDXFwqZIJikzqW
+         lrW18VSRA37VKjjzbc1eBi/4way90TVZGiiPncDwF+5SjxsaMHT7lmwams0SMryyASvs
+         zpUXHJXYSQ2rpAy4aWuPcQec0hpbkJIVdEaFWE80QjVItC3cwVXsN/XgIDf4QshZd2G7
+         1F0cwJbZgXsNBZp9EQAkGqvvHx/piz0ZyXnV0RiR2V5cbYW1/Nqq3t8EONN0Bc1qLmsj
+         kS1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XS8dKfyq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=J+2I5IlB;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XS8dKfyq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=J+2I5IlB;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Talat Batheesh <talatb@mellanox.com>,
-	Mark Bloch <markb@mellanox.com>,
+	Tariq Toukan <tariqt@mellanox.com>,
 	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 34/45] net/mlx5: Avoid cleaning flow steering table twice during error flow
-Date: Fri, 18 May 2018 10:15:51 +0200
-Message-Id: <20180518081532.105503583@linuxfoundation.org>
+Subject: [PATCH 4.14 33/45] net/mlx5e: TX, Use correct counter in dma_map error flow
+Date: Fri, 18 May 2018 10:15:50 +0200
+Message-Id: <20180518081532.063699617@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789131160542701?=
-X-GMAIL-MSGID: =?utf-8?q?1600789283491612392?=
+X-GMAIL-THRID: =?utf-8?q?1600789128304951847?=
+X-GMAIL-MSGID: =?utf-8?q?1600789279588497698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,70 +51,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Talat Batheesh <talatb@mellanox.com>
+From: Tariq Toukan <tariqt@mellanox.com>
 
-[ Upstream commit 9c26f5f89d01ca21560c6b8a8e4054c271cc3a9c ]
+[ Upstream commit d9a96ec362e3da878c378854e25321c85bac52c2 ]
 
-When we fail to initialize the RX root namespace, we need
-to clean only that and not the entire flow steering.
+In case of a dma_mapping_error, do not use wi->num_dma
+as a parameter for dma unmap function because it's yet
+to be set, and holds an out-of-date value.
+Use actual value (local variable num_dma) instead.
 
-Currently the code may try to clean the flow steering twice
-on error witch leads to null pointer deference.
-Make sure we clean correctly.
-
-Fixes: fba53f7b5719 ("net/mlx5: Introduce mlx5_flow_steering structure")
-Signed-off-by: Talat Batheesh <talatb@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
+Fixes: 34802a42b352 ("net/mlx5e: Do not modify the TX SKB")
+Fixes: e586b3b0baee ("net/mlx5: Ethernet Datapath files")
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |   23 +++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-@@ -174,6 +174,7 @@ static void del_flow_group(struct fs_nod
- static void del_fte(struct fs_node *node);
- static bool mlx5_flow_dests_cmp(struct mlx5_flow_destination *d1,
- 				struct mlx5_flow_destination *d2);
-+static void cleanup_root_ns(struct mlx5_flow_root_namespace *root_ns);
- static struct mlx5_flow_rule *
- find_flow_rule(struct fs_fte *fte,
- 	       struct mlx5_flow_destination *dest);
-@@ -2041,23 +2042,27 @@ static int create_anchor_flow_table(stru
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+@@ -234,7 +234,7 @@ mlx5e_txwqe_build_dsegs(struct mlx5e_txq
+ 		dma_addr = dma_map_single(sq->pdev, skb_data, headlen,
+ 					  DMA_TO_DEVICE);
+ 		if (unlikely(dma_mapping_error(sq->pdev, dma_addr)))
+-			return -ENOMEM;
++			goto dma_unmap_wqe_err;
  
- static int init_root_ns(struct mlx5_flow_steering *steering)
- {
-+	int err;
+ 		dseg->addr       = cpu_to_be64(dma_addr);
+ 		dseg->lkey       = sq->mkey_be;
+@@ -252,7 +252,7 @@ mlx5e_txwqe_build_dsegs(struct mlx5e_txq
+ 		dma_addr = skb_frag_dma_map(sq->pdev, frag, 0, fsz,
+ 					    DMA_TO_DEVICE);
+ 		if (unlikely(dma_mapping_error(sq->pdev, dma_addr)))
+-			return -ENOMEM;
++			goto dma_unmap_wqe_err;
+ 
+ 		dseg->addr       = cpu_to_be64(dma_addr);
+ 		dseg->lkey       = sq->mkey_be;
+@@ -264,6 +264,10 @@ mlx5e_txwqe_build_dsegs(struct mlx5e_txq
+ 	}
+ 
+ 	return num_dma;
 +
- 	steering->root_ns = create_root_ns(steering, FS_FT_NIC_RX);
- 	if (!steering->root_ns)
--		goto cleanup;
-+		return -ENOMEM;
- 
--	if (init_root_tree(steering, &root_fs, &steering->root_ns->ns.node))
--		goto cleanup;
-+	err = init_root_tree(steering, &root_fs, &steering->root_ns->ns.node);
-+	if (err)
-+		goto out_err;
- 
- 	set_prio_attrs(steering->root_ns);
--
--	if (create_anchor_flow_table(steering))
--		goto cleanup;
-+	err = create_anchor_flow_table(steering);
-+	if (err)
-+		goto out_err;
- 
- 	return 0;
- 
--cleanup:
--	mlx5_cleanup_fs(steering->dev);
--	return -ENOMEM;
-+out_err:
-+	cleanup_root_ns(steering->root_ns);
-+	steering->root_ns = NULL;
-+	return err;
++dma_unmap_wqe_err:
++	mlx5e_dma_unmap_wqe_err(sq, num_dma);
++	return -ENOMEM;
  }
  
- static void clean_tree(struct fs_node *node)
+ static inline void
+@@ -355,17 +359,15 @@ static netdev_tx_t mlx5e_sq_xmit(struct
+ 	num_dma = mlx5e_txwqe_build_dsegs(sq, skb, skb_data, headlen,
+ 					  (struct mlx5_wqe_data_seg *)cseg + ds_cnt);
+ 	if (unlikely(num_dma < 0))
+-		goto dma_unmap_wqe_err;
++		goto err_drop;
+ 
+ 	mlx5e_txwqe_complete(sq, skb, opcode, ds_cnt + num_dma,
+ 			     num_bytes, num_dma, wi, cseg);
+ 
+ 	return NETDEV_TX_OK;
+ 
+-dma_unmap_wqe_err:
++err_drop:
+ 	sq->stats.dropped++;
+-	mlx5e_dma_unmap_wqe_err(sq, wi->num_dma);
+-
+ 	dev_kfree_skb_any(skb);
+ 
+ 	return NETDEV_TX_OK;
+@@ -594,17 +596,15 @@ netdev_tx_t mlx5i_sq_xmit(struct mlx5e_t
+ 	num_dma = mlx5e_txwqe_build_dsegs(sq, skb, skb_data, headlen,
+ 					  (struct mlx5_wqe_data_seg *)cseg + ds_cnt);
+ 	if (unlikely(num_dma < 0))
+-		goto dma_unmap_wqe_err;
++		goto err_drop;
+ 
+ 	mlx5e_txwqe_complete(sq, skb, opcode, ds_cnt + num_dma,
+ 			     num_bytes, num_dma, wi, cseg);
+ 
+ 	return NETDEV_TX_OK;
+ 
+-dma_unmap_wqe_err:
++err_drop:
+ 	sq->stats.dropped++;
+-	mlx5e_dma_unmap_wqe_err(sq, wi->num_dma);
+-
+ 	dev_kfree_skb_any(skb);
+ 
+ 	return NETDEV_TX_OK;
