@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3608381-1526631873-2-13335267269224016440
+X-Cyrus-Session-Id: sloti22d1t05-3608381-1526631862-2-17607123531603607479
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526631872; b=cBrKhD0Ghv49leZ9+7pi8nQ5Qd83m167bL+dxPsDVDjYD5tfQJ
-    Z4Pnci53qV7IWqFgV3NdPJCPRdujUzvJE6bsYmhTerTk0NjW/CpvF8jlyEYDtpFH
-    kSBtHk9IP0cPIgsggCCo0mtP00LINm7WqGxka+t9PeK8rzYepa3Tm0xnBeik43m8
-    rfy3Vj6HzrQ6U2wUXN4nFh1IGzdiSGcQwU4cf4HQybor+M/Qh5lbfsg1qRiFlnvc
-    Ruml88XWoLMkBH/muNBCjOvuTza7T2phabcHa+yQ7Q5oinLfuWNAFLk9IYifDi1u
-    j+0wJ9cBsPL6RpeCAgCZ9IF1eYmaRvzDc0ng==
+    1526631861; b=UUl8UGc5jhFSgVREIbJbtAddoNqQWy3H5Fz5UCWX0u0o2yMBAw
+    /KSkTLWgpOjiZPyh1V1oIDTRrJ+STu0maHOoqsayvBnlosIU9fmgqs0MDWQ889eS
+    +j0v7GgfIcrOZmpVwSXOwLlo2ceLz27QaO3YGpg55JmbaeZ7sAHoJp2DpH9j/CLm
+    MibYYI1oemxC5T4pE7Mfq7mG7CNEUO4X9OwLHjgT8SOKQT66nw4+qd01KNUFz8JF
+    TUKUA128QDGDGiktBCNfr1SKSB5gC1om87HqmBYrROn0OG00XKi9H0HMZHgCuSeU
+    GXndRfdrJKuliTFbyvt/6VmNW8NPKKIBmbUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526631872; bh=NF19W3ORBuo+NgmqXoD8zOrmbKuvbP
-    K0qP78zTmM5NQ=; b=kWZxK5LHpN3R5fMGF+4cVizcw7mwKjquTsmVkt5Zy8duYh
-    6PpB4X7wkIgcwX9TI/tL/AbvQ1R7adjjIquFzn7GnolVhz9+gjIYXXNOYUWpfd9x
-    WLNRCcRaNqGZpsdCBhtfS+hTuvzhCdg10ncYprJbeVWXxlTsg89RK31pJMw9Au0+
-    O4ph08nP9NYXqSpjmfyTPHs50Cv+Zo+J5Wuk/mCFj6QVAShzAKgTYXosN3OxYZkJ
-    mX6XrkMVBFiE2c+7N/gj/sm9icPqUq7lK3ttW2yrzROTdg02dk6q8Yx7Uczm3W7w
-    i8T6ZgI7SlVIVXsNg6la3I7hoOvTIpVzwlTYn/Jw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526631861; bh=5mytDNm0n+HobZtZWmJKKleVFIcw5t
+    H1sa5xWX2LV/I=; b=UyQZqt/nKMaUMKuDz5Fvh0qPT9vg6gw4EMwUgGm9kRn8fF
+    c7dvbMXI1hrnBvRuzT1FPoM/Eyx+bWWIR7+kkV7CZxhdGwioYbk3QazPT38Yi2DL
+    pCLusmu026tXpkgMS7es4uh7wD1LfBzLoxTt/ns8+oI2Ff7V+kP6zgxANlCHfk0n
+    fxi5rRclP/yMHFWNe6xNINh+VhTqjlrKl0LpoD4b1QzygH3zKtDcXJWv+c5QaATY
+    /RTpJy70oM1LUgQy+6D/Ml8MibNWF/yAWi4ZPMwtzKqdpuaCg0v+KyxupyJNQVEZ
+    sIfWDK/vo2JYRdnsOrI1MzUjpTTZuwAZcm/lrqrw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=XQFIKckq x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=tFD95QYV x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=XQFIKckq x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=tFD95QYV x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +65,31 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLHHgSGGM3WZxD0wUQ0pxgeyfgoV0wNDeqLjkF0pz+VFw23EjDoU+3Zn9x5Umo789In6Q3lon//ZEMOibP+cveEChrsL686AE6CuS5rhPjCSKDd/+4Lr
-    G6pZuCvBX3M8IjkvcRfBAKiZVpkvZ1c3xy9/XxynkLUB28D8a/G2EElWU8ZsvCan9wQXlTyIBPOWuXppZumA4TqaSpmVkpJsLTkpyHqIgmZ1WJY0Si4dxJVc
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNBl3V5dWozMSRnCi5tHp34LKcMCceJaID23n7s7FxtA2ARWQxvGFQ1jGD2epx6WdOIkvh4ZBgrE1rKeH3IBawUZK6iNMPVr4o37LeVEMB9R4fLXgvXY
+    kV8At0NopDeZgXoSMYH4iQ1AirW0Uk0RByJG3m6J5jB79gZ6UgkK1/8BfGHp0UMT95HC0uSMFnbso0VJaXjqmd9NRn25BWGKfp3Ett2eulIEJuHW7bJWjH7F
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=1EsaE_6oAAAA:8
-    a=ag1SF4gXAAAA:8 a=kYNcxVwlaozHNDceCMsA:9 a=QEXdDO2ut3YA:10
-    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=3ZumFrijQQ-2J9H5h8ct:22
+    a=9-efGfXaAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=MLiVjpLBtXPEc2nvV38A:9
+    a=QEXdDO2ut3YA:10 a=76mzCeYM3W7A2q4738_3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeERIWn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 04:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        id S1753509AbeERIYB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 04:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753790AbeERIWj (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 18 May 2018 04:22:39 -0400
+        id S1753790AbeERIWo (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 18 May 2018 04:22:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 29/33] lockd: lost rollback of set_grace_period() in lockd_down_net()
-Date: Fri, 18 May 2018 10:16:08 +0200
-Message-Id: <20180518081536.257191555@linuxfoundation.org>
+        stable@vger.kernel.org, James Chapman <jchapman@katalix.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume Nault <g.nault@alphalink.fr>
+Subject: [PATCH 4.9 31/33] l2tp: revert "l2tp: fix missing print session offset info"
+Date: Fri, 18 May 2018 10:16:10 +0200
+Message-Id: <20180518081536.355813338@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -107,40 +107,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: James Chapman <jchapman@katalix.com>
 
-commit 3a2b19d1ee5633f76ae8a88da7bc039a5d1732aa upstream.
+commit de3b58bc359a861d5132300f53f95e83f71954b3 upstream.
 
-Commit efda760fe95ea ("lockd: fix lockd shutdown race") is incorrect,
-it removes lockd_manager and disarm grace_period_end for init_net only.
+Revert commit 820da5357572 ("l2tp: fix missing print session offset
+info").  The peer_offset parameter is removed.
 
-If nfsd was started from another net namespace lockd_up_net() calls
-set_grace_period() that adds lockd_manager into per-netns list
-and queues grace_period_end delayed work.
-
-These action should be reverted in lockd_down_net().
-Otherwise it can lead to double list_add on after restart nfsd in netns,
-and to use-after-free if non-disarmed delayed work will be executed after netns destroy.
-
-Fixes: efda760fe95e ("lockd: fix lockd shutdown race")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: James Chapman <jchapman@katalix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/lockd/svc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/l2tp/l2tp_netlink.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/lockd/svc.c
-+++ b/fs/lockd/svc.c
-@@ -274,6 +274,8 @@ static void lockd_down_net(struct svc_se
- 	if (ln->nlmsvc_users) {
- 		if (--ln->nlmsvc_users == 0) {
- 			nlm_shutdown_hosts_net(net);
-+			cancel_delayed_work_sync(&ln->grace_period_end);
-+			locks_end_grace(&ln->lockd_manager);
- 			svc_shutdown_net(serv, net);
- 			dprintk("lockd_down_net: per-net data destroyed; net=%p\n", net);
- 		}
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -750,8 +750,6 @@ static int l2tp_nl_session_send(struct s
+ 
+ 	if ((session->ifname[0] &&
+ 	     nla_put_string(skb, L2TP_ATTR_IFNAME, session->ifname)) ||
+-	    (session->offset &&
+-	     nla_put_u16(skb, L2TP_ATTR_OFFSET, session->offset)) ||
+ 	    (session->cookie_len &&
+ 	     nla_put(skb, L2TP_ATTR_COOKIE, session->cookie_len,
+ 		     &session->cookie[0])) ||
