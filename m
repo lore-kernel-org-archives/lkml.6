@@ -1,67 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeERTKw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 15:10:52 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:38345 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeERTKp (ORCPT
+        id S1752375AbeERTLQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 15:11:16 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40365 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752348AbeERTLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 15:10:45 -0400
-X-Google-Smtp-Source: AB8JxZr9WewopHhFMQWfobsFF7aDRHnp8/9vtho2fgbZo/SXdTbpvqV7L5Tc0PYk65kMvvQiWddSFg==
-Date: Fri, 18 May 2018 15:10:40 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
-        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
-Subject: Re: [PATCH 10/10] Dynamic fault injection
-Message-ID: <20180518191040.GG31737@kmo-pixel>
-References: <20180518074918.13816-1-kent.overstreet@gmail.com>
- <20180518074918.13816-21-kent.overstreet@gmail.com>
- <905DA1CC-63F8-4020-A1D7-1F59ABDF3448@dilger.ca>
+        Fri, 18 May 2018 15:11:13 -0400
+X-Google-Smtp-Source: AB8JxZqw0IM5Cdf0GhWDUSppoXRV/u/+dk2guyRWS2Q16Rl0VMkpxikbCwwaj/JAIgi+KTdsEIwCtFcuPUY9UVzKCdc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <905DA1CC-63F8-4020-A1D7-1F59ABDF3448@dilger.ca>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20180517161402.78089-1-namit@vmware.com> <20180517161402.78089-3-namit@vmware.com>
+ <20180518075853.GD12217@hirez.programming.kicks-ass.net> <CA+55aFwA7K0urWTy1CQysnNt8j5Njvz+76o2CuomucNA7mOymQ@mail.gmail.com>
+ <6DB0E0C2-CCD2-4FCE-BD8B-5E340E308FF7@vmware.com> <CA+55aFzbWA1XJTitwX6DvHxr7EqDa-tEjpedn5yfYpC1edYQog@mail.gmail.com>
+ <BF0C5636-3EFC-4D57-9019-3EB209E56D2C@zytor.com> <CA+55aFzLhG1L0WXvJiUSWrAN5ghzn4XFAK64wgFoyVAHTHZH-A@mail.gmail.com>
+ <2F760FAE-C19C-4BC3-A8CC-7D17CEF3B116@zytor.com> <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
+In-Reply-To: <6A3E90AA-7838-4C2A-B628-908F34902B75@vmware.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 18 May 2018 12:11:01 -0700
+Message-ID: <CA+55aFysH5iiJWCVFu1J6GQfN2G1AbMcHyc4RhpnrnPjtM3L0Q@mail.gmail.com>
+Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
+To: namit@vmware.com
+Cc: Peter Anvin <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 01:05:20PM -0600, Andreas Dilger wrote:
-> On May 18, 2018, at 1:49 AM, Kent Overstreet <kent.overstreet@gmail.com> wrote:
-> > 
-> > Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> 
-> I agree with Christoph that even if there was some explanation in the cover
-> letter, there should be something at least as good in the patch itself.  The
-> cover letter is not saved, but the commit stays around forever, and should
-> explain how this should be added to code, and how to use it from userspace.
-> 
-> 
-> That said, I think this is a useful functionality.  We have something similar
-> in Lustre (OBD_FAIL_CHECK() and friends) that is necessary for being able to
-> test a distributed filesystem, which is just a CPP macro with an unlikely()
-> branch, while this looks more sophisticated.  This looks like it has some
-> added functionality like having more than one fault enabled at a time.
-> If this lands we could likely switch our code over to using this.
+On Fri, May 18, 2018 at 12:02 PM Nadav Amit <namit@vmware.com> wrote:
 
-This is pretty much what I was looking for, I just wanted to know if this patch
-was interesting enough to anyone that I should spend more time on it or just
-drop it :) Agreed on documentation. I think it's also worth factoring out the
-functionality for the elf section trick that dynamic debug uses too.
+> I can add a -Wa,[filename.s] switch. It works, but sort of undocumented.
 
-> Some things that are missing from this patch that is in our code:
-> 
-> - in addition to the basic "enabled" and "oneshot" mechanisms, we have:
->   - timeout: sleep for N msec to simulate network/disk/locking delays
->   - race: wait with one thread until a second thread hits matching check
-> 
-> We also have a "fail_val" that allows making the check conditional (e.g.
-> only operation on server "N" should fail, only RPC opcode "N", etc).
+Oh, if it assembles things together, then that sounds optimal.
 
-Those all sound like good ideas... fail_val especially, I think with that we'd
-have all the functionality the existing fault injection framework has (which is
-way to heavyweight to actually get used, imo)
+And yes, like hpa says, we should make sure that behavior is acknowledged
+by the GNU as people, so that they then don't come back and say "hey, now
+we assemble things as separate units".
+
+That said, the "separate units" model really doesn't make much sense now
+that I think about it, because 'as' supports only one output file. So I
+guess the as people wouldn't have any issues with just accepting the
+"concatenate all input files" syntax.
+
+              Linus
