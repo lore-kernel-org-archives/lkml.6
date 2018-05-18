@@ -1,94 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeERXP3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 19:15:29 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42368 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeERXPZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 19:15:25 -0400
-X-Google-Smtp-Source: AB8JxZq6XV8B2A7SrVNIV/gNpuGldDRmEv9sFeeoOWlmIYFo/5O332rZl78m0u0IAKLsQLCU69hhoA==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Mark Brown <broonie@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Richard Weinberger <richard@nod.at>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        linux-fbdev@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-Date: Sat, 19 May 2018 01:15:30 +0200
-Message-ID: <3427199.r4OBoDP6Xz@z50>
-In-Reply-To: <CAHp75VdNUW6KoM6oupyQ80A1WVRk7vewwDt6WEZOyjrAUifqRg@mail.gmail.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <20180518210954.29044-5-jmkrzyszt@gmail.com> <CAHp75VdNUW6KoM6oupyQ80A1WVRk7vewwDt6WEZOyjrAUifqRg@mail.gmail.com>
+        id S1752129AbeERXXD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 19:23:03 -0400
+Received: from imap.thunk.org ([74.207.234.97]:48110 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751722AbeERXXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 19:23:00 -0400
+Date: Fri, 18 May 2018 19:22:56 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Trent Piepho <tpiepho@impinj.com>
+Cc: "jannh@google.com" <jannh@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sultanxda@gmail.com" <sultanxda@gmail.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180518232256.GA23628@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Trent Piepho <tpiepho@impinj.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sultanxda@gmail.com" <sultanxda@gmail.com>
+References: <20180427201036.GL5965@thunk.org>
+ <1526606822.30073.64.camel@impinj.com>
+ <20180518023209.GD15263@thunk.org>
+ <1526684178.31570.26.camel@impinj.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526684178.31570.26.camel@impinj.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, May 18, 2018 11:21:14 PM CEST Andy Shevchenko wrote:
-> On Sat, May 19, 2018 at 12:09 AM, Janusz Krzysztofik
+On Fri, May 18, 2018 at 10:56:18PM +0000, Trent Piepho wrote:
 > 
-> <jmkrzyszt@gmail.com> wrote:
-> > +       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
-> > +       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> I feel like "fix" might overstate the result a bit.
 > 
-> So, is it optional or not at the end?
-> If it is, why do we check for NULL?
-
-As far as I can understand, nand_chip->dev_ready() callback is optional. 
-That's why I decided to use the _optional variant of devm_gpiod_get(). In case 
-of ams-delta, the dev_ready() callback depends on availability of the 'rdy' 
-GPIO pin. As a consequence, I'm checking for both NULL and ERR in order to 
-decide if dev_ready() will be supported.
-
-I can pretty well replace it with the standard form and check for ERR only if 
-the purpose of the _optional form is different.
-
-> >                 this->dev_ready = ams_delta_nand_ready;
-> >         
-> >         } else {
-> >         
-> >                 this->dev_ready = NULL;
-> >                 pr_notice("Couldn't request gpio for Delta NAND
-> >                 ready.\n");
+> This ends up taking a full second to make each UUID.  Having gone to
+> great effort to make an iMX25 complete userspace startup in 250 ms, a
+> full second, per UUID, in early startup is pretty appalling.
 > 
-> dev_notice() ?
-
-Sure, but maybe in a separate patch? That's not a new code just being added 
-but an existing one, not the merit of the change.
-
-> >         }
-> > 
-> > +err_gpiod:
-> > +       if (err == -ENODEV || err == -ENOENT)
-> > +               err = -EPROBE_DEFER;
+> Let's look at what we're doing after this fix:
+> Want non-cryptographic random data for UUID, ask kernel for it.
+> Kernel has non-cryptographic random data, won't give it to us.
+> Wait one second for cryptographic random data, which we didn't need.
+> Give up and create our own random data, which is non-cryptographic and
+> even worse than what the kernel could have given us from the start.
 > 
-> Hmm...
+> util-linux falls back to rand() seeded with the pid, uid, tv_sec, and
+> tv_usec from gettimeofday().  Pretty bad on an embedded system with no
+> RTC and worse than what the kernel in crng_init 1 state can give us.
 
-Amstrad Delta uses gpio-mmio driver. Unfortunatelty that driver is not 
-availble before device init phase, unlike other crucial GPIO drivers which are 
-initialized earlier, e.g. during the postcore or at latetst the subsys phase. 
-Hence, devices which depend on GPIO pins provided by gpio-mmio must either be 
-declared late or fail softly so they get another chance of being probed 
-succesfully.
+So what util-linux's libuuid could do is fall back to using
+/dev/urandom instead.  Whether or not you retry for a second before
+you fall back to /dev/urandom really depends on how important the
+second U in UUID ("unique") is to you.  If you use lower quality
+randomness, you can potentially risk getting non-unique UUID's.
 
-I thought of replacing the gpio-mmio platform driver with bgpio functions it 
-exports but for now I haven't implemented it, not even shared the idea.
+If you don't worry leaking your computer's identity and the time when
+the UUID was generated, the application could also use the time-based
+UUID's.  There are privacy implications for doing so, it's not
+something we can do automatically (or at least I can't recommend it).
+Also, if you don't have the clock sequence file and/or you don't have
+a writable root, you might need some randomness anyway to protect
+against non-monotonically increasing system time.
 
-Does it really hurt to return -EPROBE_DEFER if a GPIO pin can't be obtained?
+> It would seem to be a fact that there will be users of non-
+> cryptographic random data in early boot.  What is the best practice for
+> that?  To fall back to each user trying "to find randomly-looking
+> things on an 1990s Unix."  That doesn't seem good to me.  But what's
+> the better way?
 
-Thanks,
-Janusz
+We could add a new flag to getrandom(2), but application authors can
+just as easily fall back to using /dev/urandom.  The real concern I
+have is application authors that actually *really* need cryptographic
+randomness, but they're too lazy to figure out a way to defer key
+generation until the last possible moment.
+
+There are other things we can do to add support in the bootloader to
+read an entropy state file and inject it into the kernel alongside the
+initrd and boot command line.  But that doesn't completely solve the
+problem; you still have to deal with the "frest from the factory,
+first time out of box" experience.  And if you have trusted random
+number generation hardware, and are reasonably certain you don't have
+to worry about a state-sponsored agency from intercepting hardware
+shipments and gimmicking your hardware, that can be a solution as
+well.
+
+So there are things we can do to improve some of the scenarios.
+Unfortunately, there is no silver bullet that will address all of
+them.
+
+					- Ted
