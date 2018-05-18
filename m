@@ -1,39 +1,95 @@
-Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrzoBP0OXV/SG/MlgoYUReL7unIS/FrsTms4nnFMx1EDo3x7U7jeDd4sb6/NZ2d60/toXcr
-ARC-Seal: i=1; a=rsa-sha256; t=1526631573; cv=none;
-        d=google.com; s=arc-20160816;
-        b=X/TcRI3RVlWdr+ato4qT2se+7xjI25zu8or4I+8jcavKiesp/0yqoNolArrwRx32sm
-         a2V69blndmxMNDSfsBw4ZFoq9sfBgi9yc0khCt6DptKgDk5prJlwbQkwr/ZW6omWoYfv
-         /AgCDPVEk3diUAm/RRm2iX9W40BqkJ6BbaV6voyGEt6hz0gaIIoSoGe1PnQuj2vooZfe
-         NMnLqmE3zlGXt//NGdGesl+Hs0r6Uk3nE8CNS71h8zX5iu9KJR0MjCEijh3asOrZDYbt
-         c9qx8LDWzE31KPfxZkkDY6PwmihEMwJ2JpHSnqGL8yxIZAA1Un0hJezIzgCGtrcjCVBO
-         2Fpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=iBXdG9cTroEnr9t1V4ZROUc9BWe+Ceu2rePv7vJKI1o=;
-        b=JXESUfihMHXZ54fg5A6BA7Vozn5gNPpbCYtCqONNfTWnXMgKKkw+XrV+h0GHAhfLN6
-         CQ/21F86u8K2BJD6Veg5bLgZN3G0vaF9V9M3ARkib31fzi/CE/FlSDYVt1Yy3i1ETp2b
-         yHzyzFbHsvJkrWopLgFLOvCrMuXJPFAJ5DO4mvvDsb5eRX6ohgZoWNsjzjYm6xXOpUmq
-         YYdwwJNeKXq62uF4eZRUqnlz7MOjqgIm1aOgVRVp9QFzUEwYO1NO7HGp5OJ6Bn9Ep+tw
-         wYzNAiUGwd8l/jWY96oBTCcrp7T3ehlBG9aFcWeFeKh/cIVFj1unvgMyd3PEKRKqLrnr
-         vFGA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fCzmJlAf;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fCzmJlAf;
-       spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3571199-1526631572-2-3475764771796987164
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526631572; b=O3c8ardujlSWtK32CHxaAJshW+3e+3ZT6nO/IBZOUZC2EdptD+
+    GTqrvx0jFDp7UDEPyeUDPnXFHmwj5O0bITsIWvTG90rTHutVIZEIiQTBQqZ1L3dr
+    BLz7K3Y0l6rPGgQRTHGergzo80k+qwbYfyVYoVWzNXjqt4flfCBCUwKDETxjq2Ui
+    QNHPGkKG09o00XTwwh5TBOhrrEdDHDRUW/pd0PWyK5dllxMyHV5DAhXfxB7qEfhS
+    7gdHC1iBbevOtrz0LaJuJfsnS3Usrs5MI6/X7VAoYmbyywIhK4eqHp0kjeEPh3FD
+    xk8VCxQQHAB8eVKW884VnqxK5o2cchW+1mTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526631572; bh=8Kqqq13W0UoZ9FZ1dzzKTaxSiN22Qy
+    pxqxH33CcJ2xQ=; b=bpRDs2OD+O02vv6u0Unegsw0QYPMicpcfZawfU2w2mOtu6
+    fbBlOz99D4sHBAJ4UZ1iRRub7HFWVFEU6fEBMTy8FUS/xPL7AzK1MUeQjr48nok1
+    ncLMJGNrmxwyf3oL7T72c1TNJCxgJ98qbfzsE6+IsP60BYVf0m5UmR/d08+xlWJn
+    agGcMaM6dzlvaU8x5UbN61GEk2aPrUBQjaZbiXFtl2GalmbMLEZHRllpDXXU5wMr
+    f3rzJim+UHY+wTNCOMUw/0noVbChjNDalJLihG7SVWy8las+6t9MBenz4GZFvitU
+    0nUrGN1L2LF8ro7gFlhF3nYv90ntSstQAQD3zR7g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=phHW7zUS x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=phHW7zUS x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfClU2Llj+pX3uawNzLmFZfZdBWc8BD5yn/n2XDn+8ACAZMUTQ5E0HQQu5vK1WKoltSBd4DEB/Uir5C1JCWrpiwGTX9tm6+FTqN6OvNOiCh9NHkrj0KD5
+    q9uzgy1Q8i7sRPp+OVjWgds0z1xOGT6u4f6SQd/74G8yiQW+KTO+/uMgo7MWDF5zxg1k1Ro5V1fLbOJhn0rznH96jKUdeeznCXjzpnpkJcaS8+4nR2A9RBRR
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=CbDCq_QkAAAA:8 a=ag1SF4gXAAAA:8 a=bu8f3Q09rVqL7knDnFgA:9 a=QEXdDO2ut3YA:10
+    a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753058AbeERIT1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 04:19:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753054AbeERITZ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 18 May 2018 04:19:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Gopal RajagopalSai <gopalsr83@gmail.com>,
-	Lance Richardson <lance.richardson.net@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 15/45] net: support compat 64-bit time in {s,g}etsockopt
-Date: Fri, 18 May 2018 10:15:32 +0200
-Message-Id: <20180518081531.107440474@linuxfoundation.org>
+        stable@vger.kernel.org, Adi Nissim <adin@mellanox.com>,
+        Ariel Almog <ariela@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 12/45] net/mlx5: E-Switch, Include VF RDMA stats in vport statistics
+Date: Fri, 18 May 2018 10:15:29 +0200
+Message-Id: <20180518081530.952272038@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -41,10 +97,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789153242990673?=
-X-GMAIL-MSGID: =?utf-8?q?1600789228983206019?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,138 +107,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lance Richardson <lance.richardson.net@gmail.com>
+From: Adi Nissim <adin@mellanox.com>
 
-[ Upstream commit 988bf7243e03ef69238381594e0334a79cef74a6 ]
+[ Upstream commit 88d725bbb43cd63a40c8ef70dd373f1d38ead2e3 ]
 
-For the x32 ABI, struct timeval has two 64-bit fields. However
-the kernel currently interprets the user-space values used for
-the SO_RCVTIMEO and SO_SNDTIMEO socket options as having a pair
-of 32-bit fields.
+The host side reporting of VF vport statistics didn't include the VF
+RDMA traffic.
 
-When the seconds portion of the requested timeout is less than 2**32,
-the seconds portion of the effective timeout is correct but the
-microseconds portion is zero.  When the seconds portion of the
-requested timeout is zero and the microseconds portion is non-zero,
-the kernel interprets the timeout as zero (never timeout).
-
-Fix by using 64-bit time for SO_RCVTIMEO/SO_SNDTIMEO as required
-for the ABI.
-
-The code included below demonstrates the problem.
-
-Results before patch:
-    $ gcc -m64 -Wall -O2 -o socktmo socktmo.c && ./socktmo
-    recv time: 2.008181 seconds
-    send time: 2.015985 seconds
-
-    $ gcc -m32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
-    recv time: 2.016763 seconds
-    send time: 2.016062 seconds
-
-    $ gcc -mx32 -Wall -O2 -o socktmo socktmo.c && ./socktmo
-    recv time: 1.007239 seconds
-    send time: 1.023890 seconds
-
-Results after patch:
-    $ gcc -m64 -O2 -Wall -o socktmo socktmo.c && ./socktmo
-    recv time: 2.010062 seconds
-    send time: 2.015836 seconds
-
-    $ gcc -m32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
-    recv time: 2.013974 seconds
-    send time: 2.015981 seconds
-
-    $ gcc -mx32 -O2 -Wall -o socktmo socktmo.c && ./socktmo
-    recv time: 2.030257 seconds
-    send time: 2.013383 seconds
-
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/socket.h>
- #include <sys/types.h>
- #include <sys/time.h>
-
- void checkrc(char *str, int rc)
- {
-         if (rc >= 0)
-                 return;
-
-         perror(str);
-         exit(1);
- }
-
- static char buf[1024];
- int main(int argc, char **argv)
- {
-         int rc;
-         int socks[2];
-         struct timeval tv;
-         struct timeval start, end, delta;
-
-         rc = socketpair(AF_UNIX, SOCK_STREAM, 0, socks);
-         checkrc("socketpair", rc);
-
-         /* set timeout to 1.999999 seconds */
-         tv.tv_sec = 1;
-         tv.tv_usec = 999999;
-         rc = setsockopt(socks[0], SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
-         rc = setsockopt(socks[0], SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
-         checkrc("setsockopt", rc);
-
-         /* measure actual receive timeout */
-         gettimeofday(&start, NULL);
-         rc = recv(socks[0], buf, sizeof buf, 0);
-         gettimeofday(&end, NULL);
-         timersub(&end, &start, &delta);
-
-         printf("recv time: %ld.%06ld seconds\n",
-                (long)delta.tv_sec, (long)delta.tv_usec);
-
-         /* fill send buffer */
-         do {
-                 rc = send(socks[0], buf, sizeof buf, 0);
-         } while (rc > 0);
-
-         /* measure actual send timeout */
-         gettimeofday(&start, NULL);
-         rc = send(socks[0], buf, sizeof buf, 0);
-         gettimeofday(&end, NULL);
-         timersub(&end, &start, &delta);
-
-         printf("send time: %ld.%06ld seconds\n",
-                (long)delta.tv_sec, (long)delta.tv_usec);
-         exit(0);
- }
-
-Fixes: 515c7af85ed9 ("x32: Use compat shims for {g,s}etsockopt")
-Reported-by: Gopal RajagopalSai <gopalsr83@gmail.com>
-Signed-off-by: Lance Richardson <lance.richardson.net@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3b751a2a418a ("net/mlx5: E-Switch, Introduce get vf statistics")
+Signed-off-by: Adi Nissim <adin@mellanox.com>
+Reported-by: Ariel Almog <ariela@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/compat.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -377,7 +377,8 @@ static int compat_sock_setsockopt(struct
- 	    optname == SO_ATTACH_REUSEPORT_CBPF)
- 		return do_set_attach_filter(sock, level, optname,
- 					    optval, optlen);
--	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
-+	if (!COMPAT_USE_64BIT_TIME &&
-+	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
- 		return do_set_sock_timeout(sock, level, optname, optval, optlen);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -2054,26 +2054,35 @@ int mlx5_eswitch_get_vport_stats(struct
+ 	memset(vf_stats, 0, sizeof(*vf_stats));
+ 	vf_stats->rx_packets =
+ 		MLX5_GET_CTR(out, received_eth_unicast.packets) +
++		MLX5_GET_CTR(out, received_ib_unicast.packets) +
+ 		MLX5_GET_CTR(out, received_eth_multicast.packets) +
++		MLX5_GET_CTR(out, received_ib_multicast.packets) +
+ 		MLX5_GET_CTR(out, received_eth_broadcast.packets);
  
- 	return sock_setsockopt(sock, level, optname, optval, optlen);
-@@ -442,7 +443,8 @@ static int do_get_sock_timeout(struct so
- static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
- 				char __user *optval, int __user *optlen)
- {
--	if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO)
-+	if (!COMPAT_USE_64BIT_TIME &&
-+	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
- 		return do_get_sock_timeout(sock, level, optname, optval, optlen);
- 	return sock_getsockopt(sock, level, optname, optval, optlen);
- }
+ 	vf_stats->rx_bytes =
+ 		MLX5_GET_CTR(out, received_eth_unicast.octets) +
++		MLX5_GET_CTR(out, received_ib_unicast.octets) +
+ 		MLX5_GET_CTR(out, received_eth_multicast.octets) +
++		MLX5_GET_CTR(out, received_ib_multicast.octets) +
+ 		MLX5_GET_CTR(out, received_eth_broadcast.octets);
+ 
+ 	vf_stats->tx_packets =
+ 		MLX5_GET_CTR(out, transmitted_eth_unicast.packets) +
++		MLX5_GET_CTR(out, transmitted_ib_unicast.packets) +
+ 		MLX5_GET_CTR(out, transmitted_eth_multicast.packets) +
++		MLX5_GET_CTR(out, transmitted_ib_multicast.packets) +
+ 		MLX5_GET_CTR(out, transmitted_eth_broadcast.packets);
+ 
+ 	vf_stats->tx_bytes =
+ 		MLX5_GET_CTR(out, transmitted_eth_unicast.octets) +
++		MLX5_GET_CTR(out, transmitted_ib_unicast.octets) +
+ 		MLX5_GET_CTR(out, transmitted_eth_multicast.octets) +
++		MLX5_GET_CTR(out, transmitted_ib_multicast.octets) +
+ 		MLX5_GET_CTR(out, transmitted_eth_broadcast.octets);
+ 
+ 	vf_stats->multicast =
+-		MLX5_GET_CTR(out, received_eth_multicast.packets);
++		MLX5_GET_CTR(out, received_eth_multicast.packets) +
++		MLX5_GET_CTR(out, received_ib_multicast.packets);
+ 
+ 	vf_stats->broadcast =
+ 		MLX5_GET_CTR(out, received_eth_broadcast.packets);
