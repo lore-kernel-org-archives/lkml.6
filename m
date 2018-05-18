@@ -1,169 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeERPcs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 11:32:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750975AbeERPcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 11:32:46 -0400
-Date: Sat, 19 May 2018 00:32:41 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Todd Kjos <tkjos@google.com>,
-        Erick Reyes <erickreyes@google.com>, Julia Cartwright <julia@ni.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH 2/2] kselftests: ftrace: Add tests for the preemptoff
- and irqsoff tracers
-Message-Id: <20180519003241.928109adf305c24f9881215b@kernel.org>
-In-Reply-To: <20180518015421.129868-3-joel@joelfernandes.org>
-References: <20180518015421.129868-1-joel@joelfernandes.org>
-        <20180518015421.129868-3-joel@joelfernandes.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751545AbeERPfd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:35:33 -0400
+Received: from mailout11.siol.net ([213.250.19.138]:58079 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750763AbeERPfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 11:35:30 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY clock parents
+Date: Fri, 18 May 2018 17:34:48 +0200
+Message-ID: <3855913.NIurOIk8c1@jernej-laptop>
+In-Reply-To: <20180518152651.lfymc3kj7npj5tww@flea>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com> <4909574.Q3IFWM0xt6@jernej-laptop> <20180518152651.lfymc3kj7npj5tww@flea>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joel,
+Hi,
 
-55ty jmnOn Thu, 17 May 2018 18:54:21 -0700
-"Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
-
-> Here we add unit tests for the preemptoff and irqsoff tracer by using a
-> kernel module introduced previously to trigger atomic sections in the
-> kernel.
+Dne petek, 18. maj 2018 ob 17:26:51 CEST je Maxime Ripard napisal(a):
+> On Fri, May 18, 2018 at 04:46:41PM +0200, Jernej Škrabec wrote:
+> > > And this is a bit sloppy, since if phy_clk_num == 3, you won't try to
+> > > lookup pll-2 either.
+> > 
+> > It is highly unlikely this will be higher than 2, at least for this HDMI
+> > PHY, since it has only 1 bit reserved for parent selection. But since I
+> > have to fix it, I'll add ">= 2"
 > 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Peter Zilstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Glexiner <tglx@linutronix.de>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Erick Reyes <erickreyes@google.com>
-> Cc: Julia Cartwright <julia@ni.com>
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  tools/testing/selftests/ftrace/config         |  3 +
->  .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
->  2 files changed, 77 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+> If we're only going to have two parents at most, ever, why don't we
+> had just a single other boolean. This would be less intrusive, and we
+> wouldn't have to check for those corner cases.
+
+That works for me too. And since it's only the code, it can always be reworked 
+if there is the need.
+
+Best regards,
+Jernej
+
 > 
-> diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-> index b01924c71c09..29588b328345 100644
-> --- a/tools/testing/selftests/ftrace/config
-> +++ b/tools/testing/selftests/ftrace/config
-> @@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
->  CONFIG_TRACER_SNAPSHOT=y
->  CONFIG_STACK_TRACER=y
->  CONFIG_HIST_TRIGGERS=y
-> +CONFIG_PREEMPT_TRACER=y
-> +CONFIG_IRQSOFF_TRACER=y
-> +CONFIG_TEST_ATOMIC_SECTIONS=m
-> diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-> new file mode 100644
-> index 000000000000..b76d781c5645
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-> @@ -0,0 +1,74 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: test for the preemptirqsoff tracer
-> +
-> +MOD=test_atomic_sections
-> +
-> +fail() {
-> +    reset_tracer
-> +    rmmod $MOD || true
-> +    exit_fail
-> +}
-> +
-> +unsup() { #msg
-> +    reset_tracer
-> +    rmmod $MOD || true
-> +    echo $1
-> +    exit_unsupported
-> +}
-> +
-> +modprobe $MOD || unsup "$MOD module not available"
-> +rmmod $MOD
-> +
-> +grep "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
-> +grep "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
-
-Could you pass "-q" for all grep command in this script if it just for checking the pattern exists?
-
-Thank you,
-
-> +
-> +reset_tracer
-> +
-> +# Simulate preemptoff section for half a second couple of times
-> +echo preemptoff > current_tracer
-> +sleep 1
-> +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +
-> +cat trace
-> +
-> +# Confirm which tracer
-> +grep "tracer: preemptoff" trace || fail
-> +
-> +# Check the end of the section
-> +egrep "5.....us : <stack trace>" trace || fail
-> +
-> +# Check for 500ms of latency
-> +egrep "latency: 5..... us" trace || fail
-> +
-> +reset_tracer
-> +
-> +# Simulate irqsoff section for half a second couple of times
-> +echo irqsoff > current_tracer
-> +sleep 1
-> +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
-> +rmmod test_atomic_sections || fail
-> +
-> +cat trace
-> +
-> +# Confirm which tracer
-> +grep "tracer: irqsoff" trace || fail
-> +
-> +# Check the end of the section
-> +egrep "5.....us : <stack trace>" trace || fail
-> +
-> +# Check for 500ms of latency
-> +egrep "latency: 5..... us" trace || fail
-> +
-> +reset_tracer
-> +exit 0
-> +
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
+> > BTW, I'll resend fixed version of this patch for my R40 HDMI series, since
+> > there is nothing to hold it back, unlike for this.
 > 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> Awesome, thanks!
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
