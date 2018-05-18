@@ -1,41 +1,38 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpE+dSqB+TMD9swFoeY3LHez7LiD1TwZQostluJyxIxPNj2xDTVktUWpOEN+IHaxzLbc99J
-ARC-Seal: i=1; a=rsa-sha256; t=1526631607; cv=none;
+X-Google-Smtp-Source: AB8JxZonscUWgf5gNGfaUFIACaujCzdWzJqiFxdUOihMwj2Gbdi/3RpO/V2eQWLpgudB46Zcc6LG
+ARC-Seal: i=1; a=rsa-sha256; t=1526631605; cv=none;
         d=google.com; s=arc-20160816;
-        b=tBNumbZyGGlGpPtyesq9l3Pf3G1vvo3+HWMVDLewT0GGUfix6RT8Vn/wYf2neeOD0W
-         nVM+yNd/aB43P5mEQuM9o3GVDC0XFBkvDjg9dM57R6Kv+k+RTFRaJJxNJaUWFBf/3A5F
-         Zw0LIJVSnGtdDdoaPRbihHW1mNb8PxTLOzpwEka7JRIHNEMlG6trljYhK3rVGuT3Hi1e
-         Poi6e+BjU+WaHxWKnDPW9dmIiWGKUVrG9lsqxTovbr3MZF7bikrZnwWGY4q8x8gzy+kl
-         mtm4Y8A6hToXByz5e8s2ovmyqTjxT7k/gNt1u8fe5kM1+sCO4Agb1C22HWePZyXPv90t
-         FuaQ==
+        b=bq+2NefI/ObGYL+BMgy1HV4TguIvufL84VvnIQ2H76u/7SkCbmyvc5lFBK5N1nZHfa
+         iuaq4rMHWc9NwP9nSKv8dtzOh9r/4B+IwDXVJBZFI6T0MbpfeVmph/VHSN9TdfLvJRuj
+         w0Q3ajjDWphJa48yjJ8+XCq7KAev1bT6muJMpKqzvtHpa5QTqzgAWV2PNS0h7YMjBO0v
+         rkNcI+sumJQaDLyytzXjvgimZg8JduhHBz99tVebCtIEJ4rSyRW0lDQytx2VpXyZYsWn
+         bgVUrQgBs1jUt+qsrDQWTciYRozNG5Lv8P78W3YPJsZL+JadqX+qP9TrlhSDU9bcVdNE
+         jhaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=9+GMQqOoUY2yF8KIK2FRs3NzrWGaRkRMHnluVV8aGsg=;
-        b=H1dghVhxTDgs9frHiWPkpeMw2Tq5AJHSZIeygY2RMrhRr/RuyEomPXRPVzmVFwJ+Ov
-         E272N/a87N/25rzF7x848TBdlLZsWHMK4gJfOtHTO4nod9jMR4dN6TDHNVJReevAxcmU
-         HpNghiEgGyf6DYKVBPg6M5tS9OXlNhvbf9UhFPGnhrmOVy0YKClnrY1Fni0ed4ZXzSF/
-         ZY4bP3I19as0o2+U4RKWnjoyP0UJlURcgTyHXi0tPoQl61IEF7x2Vq/reDCd2rKQWIL4
-         p4RuasjmVMR5rIftSRZPdFBMuypqPIyuThU9OWNuAlKTj8g5TC2u/tPCMA3rFXsPyP/1
-         k7yg==
+        bh=EQxYNP7cNU7XYe1ZDto5Zl3SfdARWchblfVCeoqVs0w=;
+        b=tzn6cZdrUgBxTa+g+SHY+yJgI8zk4yeCMrJ8pkU4iKFI6yjrNx2dphKSak3nN1uv+I
+         4wex/8Ll1K75XHHO/Affxi8IIKgolLipkBQuM41tLEKmtq9mxlp3B8OdaHXdoBQaUzD6
+         5FXY3NfQFH+fETpi1Rk0ofY8U8KbtIguAXLF1CpkgleSRoJhF0VW90AyxaItT29xUzlH
+         m6X3lDZLJp++nAr0lXGrQ+ZcIW8arIgMv5b+DTAtQFo+/afXs/AqvK2p1Ys2mhK188j5
+         LaR5Rr6WN45m53JPnN3sSNn2oBOYpj/GrIFGQsGds0ckbg01oEl46/memn+4VFUYsDSI
+         H23w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=V0bg6zT4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=C9rlpVsw;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=V0bg6zT4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=C9rlpVsw;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>,
-	Yuchung Cheng <ycheng@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	Eric Dumazet <edumazet@google.com>,
+	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 28/45] tcp: ignore Fast Open on repair mode
-Date: Fri, 18 May 2018 10:15:45 +0200
-Message-Id: <20180518081531.774261127@linuxfoundation.org>
+Subject: [PATCH 4.14 19/45] qmi_wwan: do not steal interfaces from class drivers
+Date: Fri, 18 May 2018 10:15:36 +0200
+Message-Id: <20180518081531.306696848@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081530.331586165@linuxfoundation.org>
 References: <20180518081530.331586165@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789110988167227?=
-X-GMAIL-MSGID: =?utf-8?q?1600789264367558429?=
+X-GMAIL-THRID: =?utf-8?q?1600789183753332981?=
+X-GMAIL-MSGID: =?utf-8?q?1600789261600140183?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,44 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: "Bjørn Mork" <bjorn@mork.no>
 
-[ Upstream commit 16ae6aa1705299789f71fdea59bfb119c1fbd9c0 ]
+[ Upstream commit 5697db4a696c41601a1d15c1922150b4dbf5726c ]
 
-The TCP repair sequence of operation is to first set the socket in
-repair mode, then inject the TCP stats into the socket with repair
-socket options, then call connect() to re-activate the socket. The
-connect syscall simply returns and set state to ESTABLISHED
-mode. As a result Fast Open is meaningless for TCP repair.
+The USB_DEVICE_INTERFACE_NUMBER matching macro assumes that
+the { vendorid, productid, interfacenumber } set uniquely
+identifies one specific function.  This has proven to fail
+for some configurable devices. One example is the Quectel
+EM06/EP06 where the same interface number can be either
+QMI or MBIM, without the device ID changing either.
 
-However allowing sendto() system call with MSG_FASTOPEN flag half-way
-during the repair operation could unexpectedly cause data to be
-sent, before the operation finishes changing the internal TCP stats
-(e.g. MSS).  This in turn triggers TCP warnings on inconsistent
-packet accounting.
+Fix by requiring the vendor-specific class for interface number
+based matching.  Functions of other classes can and should use
+class based matching instead.
 
-The fix is to simply disallow Fast Open operation once the socket
-is in the repair mode.
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Reviewed-by: Neal Cardwell <ncardwell@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: 03304bcb5ec4 ("net: qmi_wwan: use fixed interface number matching")
+Signed-off-by: BjÃ¸rn Mork <bjorn@mork.no>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/qmi_wwan.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1194,7 +1194,8 @@ int tcp_sendmsg_locked(struct sock *sk,
- 			uarg->zerocopy = 0;
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1338,6 +1338,18 @@ static int qmi_wwan_probe(struct usb_int
+ 		id->driver_info = (unsigned long)&qmi_wwan_info;
  	}
  
--	if (unlikely(flags & MSG_FASTOPEN || inet_sk(sk)->defer_connect)) {
-+	if (unlikely(flags & MSG_FASTOPEN || inet_sk(sk)->defer_connect) &&
-+	    !tp->repair) {
- 		err = tcp_sendmsg_fastopen(sk, msg, &copied_syn, size);
- 		if (err == -EINPROGRESS && copied_syn > 0)
- 			goto out;
++	/* There are devices where the same interface number can be
++	 * configured as different functions. We should only bind to
++	 * vendor specific functions when matching on interface number
++	 */
++	if (id->match_flags & USB_DEVICE_ID_MATCH_INT_NUMBER &&
++	    desc->bInterfaceClass != USB_CLASS_VENDOR_SPEC) {
++		dev_dbg(&intf->dev,
++			"Rejecting interface number match for class %02x\n",
++			desc->bInterfaceClass);
++		return -ENODEV;
++	}
++
+ 	/* Quectel EC20 quirk where we've QMI on interface 4 instead of 0 */
+ 	if (quectel_ec20_detected(intf) && desc->bInterfaceNumber == 0) {
+ 		dev_dbg(&intf->dev, "Quectel EC20 quirk, skipping interface 0\n");
