@@ -1,38 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753856AbeERInK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:43:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41733 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753575AbeERInI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:43:08 -0400
-Date: Fri, 18 May 2018 10:43:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Joe Perches <joe@perches.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/18] printk: Remove pr_fmt duplicate logging prefixes
-Message-ID: <20180518084306.akhmxfbxl5bk5vsj@pathway.suse.cz>
-References: <cover.1525964381.git.joe@perches.com>
- <fdcd68ac1b1c8d5e51fa04e65862c838767c04c3.1525964385.git.joe@perches.com>
+        id S1753788AbeERIrq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:47:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55018 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753610AbeERIrm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 04:47:42 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdcd68ac1b1c8d5e51fa04e65862c838767c04c3.1525964385.git.joe@perches.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 18 May 2018 01:47:40 -0700
+From: skannan@codeaurora.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rajendra Nayak <rjendra@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rjwysocki@gmail.com
+Subject: Re: [PATCH 1/2] Revert "cpufreq: Remove policy create/remove
+ notifiers"
+In-Reply-To: <CAJZ5v0i_nCj=sBSwrTjxCbL74Q-AwXJb5L2fV1e9SEMYACZC=g@mail.gmail.com>
+References: <1526631889-5084-1-git-send-email-skannan@codeaurora.org>
+ <1526631889-5084-2-git-send-email-skannan@codeaurora.org>
+ <CAJZ5v0geHvVUfL=+x-XNMQt4ygpt8QumOaWSjG268Sbtw9oeKw@mail.gmail.com>
+ <1a66e15a401b2e1602f26cff5e904f12@codeaurora.org>
+ <CAJZ5v0i_nCj=sBSwrTjxCbL74Q-AwXJb5L2fV1e9SEMYACZC=g@mail.gmail.com>
+Message-ID: <e86a168756927b9fe4fb1c6bcc4eb198@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-05-10 08:45:39, Joe Perches wrote:
-> Converting pr_fmt from a simple define to use KBUILD_MODNAME added
-> some duplicate logging prefixes to existing uses.
+On 2018-05-18 01:33, Rafael J. Wysocki wrote:
+> On Fri, May 18, 2018 at 10:31 AM,  <skannan@codeaurora.org> wrote:
+>> On 2018-05-18 01:29, Rafael J. Wysocki wrote:
+>>> 
+>>> On Fri, May 18, 2018 at 10:24 AM, Saravana Kannan
+>>> <skannan@codeaurora.org> wrote:
+>>>> 
+>>>> This reverts commit f9f41e3ef99ac9d4e91b07634362e393fb929aad.
+>>> 
+>>> 
+>>> No explanation, no cake. :-)
+>>> 
+>>>> Change-Id: Iddde3ef56c9e5b14dcb14f8737899b85e56f5b43
+>>> 
+>>> 
+>>> S-o-b missing.
+>> 
+>> 
+>> Sorry, forgot the S-o-b. But there's a long explanation in the cover 
+>> letter
+>> :)
 > 
-> Remove them.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> Cover letters don't go into git repositories, so please move it to the
+> patch itself.
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+Will do. Do you have any opposition to what the series is trying to do?
 
-Best Regards,
-Petr
+Thanks,
+Saravana
