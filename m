@@ -1,116 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751672AbeERHoG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:44:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37158 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750882AbeERHoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:44:05 -0400
-Date: Fri, 18 May 2018 15:43:59 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
-        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
-        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
- pages when do physical randomization
-Message-ID: <20180518074359.GR24627@MiWiFi-R3L-srv>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180518070046.GA18660@gmail.com>
+        id S1751661AbeERHs2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:48:28 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34094 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751049AbeERHsZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:48:25 -0400
+X-Google-Smtp-Source: AB8JxZoeo5IbvILMI0zHqDO5Ytv/Fn0DQWJMszh0XrVoTUN8APtpdkA4AvnfbpoJ7UtVUn68aTJWcw==
+Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Chris Chiu <chiu@endlessm.com>
+Cc: Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Adrian Salido <salidoa@google.com>,
+        Jason Gerecke <killertofu@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
+ <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
+ <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
+ <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
+ <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
+ <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
+ <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
+ <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
+ <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
+Date: Fri, 18 May 2018 09:48:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518070046.GA18660@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/18/18 at 09:00am, Ingo Molnar wrote:
+Hi Jarkko, et.al.,
+
+On 17-05-18 09:48, Jarkko Nikula wrote:
+> Hi
 > 
-> * Baoquan He <bhe@redhat.com> wrote:
+> On 05/15/2018 01:20 PM, Jarkko Nikula wrote:
+>> On 05/15/2018 06:22 AM, Chris Chiu wrote:
+>>> What if I change the 120MHz to 180MHz and then make sure that the I2C operates
+>>> in target FS mode frequency 400kHz via scope? Would there be any side effect?
+>>> Maybe some other busses frequency could be also affected and causing some other
+>>> component malfunction?
+>>>
+>> Should be safe. It is only clock rate information when registering a fixed clock with known rate in intel-lpss.c and i2c-designware uses that info when calculating the timing parameters. I.e. it doesn't change any internal clocks.
+>>
+>> I'm trying to find a contact who can confirm what is the expected rate of I2C input clock and is it common to all Cannon Lake HW.
+>>
+> I got confirmation that input clock is actually even higher 216 Mhz.
 > 
-> > This is a regression bug fix. Luiz's team reported that 1GB huge page
-> > allocation will get one less 1GB page randomly when KASLR is enabled. On
-> > their KVM guest with 4GB RAM, which only has one good 1GB huge page,
-> > they found the 1GB huge page allocation sometime failed with below
-> > kernel option adding.
-> > 
-> >   default_hugepagesz=1G hugepagesz=1G hugepages=1
-> > 
-> > This is because kernel may be randomized into those good 1GB huge pages.
-> > 
-> > I ever thought to solve this by specifying available memory regions
-> > which kernel KASLR can be randomized into to avoid those good 1GB huge
-> > pages. Chao's patches can be used to fix it:
-> > https://lkml.org/lkml/2018/2/28/217
-> > 
-> > Later, Ingo suggested avoiding them in boot KASLR code.
-> > https://lkml.org/lkml/2018/3/12/312
-> 
-> Yes, but these patches don't appear to implement what I suggested:
-> 
-> > So there's apparently a mis-design here:
-> >
-> > - KASLR needs to be done very early on during bootup: - it's not realistic to 
-> >   expect KASLR to be done with a booted up kernel, because pointers to various 
-> >   KASLR-ed objects are already widely spread out in memory.
-> >
-> > - But for some unfathomable reason the memory hotplug attribute of memory
-> >   regions is not part of the regular memory map but part of late-init ACPI data
-> >   structures.
-> >
-> > The right solution would be _not_ to fudge the KASLR location, but to provide 
-> > the memory hotplug information to early code, preferably via the primary memory 
-> > map. KASLR can then make use of it and avoid those regions, just like it avoids 
-> > other memory regions already.
-> >
-> > In addition to that hardware makers (including virtualized hardware) should also 
-> > fix their systems to provide memory hotplug information to early code.
-> 
-> So my question: why don't we pass in the information that these are hotplug pages 
-> that should not be KASLR randomized into?
-> 
-> If that attribute of memory regions was present then KASLR could simply skip the 
-> hotplug regions!
+> While checking does it cover all of those CNL CNL-LP and CNL-H PCI IDs may I add your Jian-Hong, Chris and Daniel email addresses to Repored-by tags in a fix patch?
 
-OK, I realized my saying above is misled because I didn't explain the
-background clearly. Let me add it:
+Could it be the i2c input clock definition in drivers/mfd/intel-lpss-pci.c
+is also wrong for Apollo Lake (N3450) ?  There are lots of people having
+various issues with i2c attached touchpads on Apollo Lake devices, this bug:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
 
-Previously, FJ reported the movable_node issue that KASLR will put
-kernel into movable_node. That cause those movable_nodes can't be hot
-plugged any more. So finally we plannned to solve it by adding a new
-kernel parameter :
+Is sort of a collection bug for these. Various models laptops, lots of
+reporters. Note not sure thie is an i2c-designware issue, but it would
+be good to double check the input clock on Apollo Lake.
 
-	kaslr_boot_mem=nn[KMG]@ss[KMG]
+I've checked the datasheet and the datasheet mentions 133MHz as
+"serial input clk" in the lpio_bxt_regs Registers Summary, which is
+also part of the LPSS, no clk is mentioned in the "Summary of
+DW_apb_i2c_mem_map_DW_apb_i2c_addr_block1 Registers".
 
-We want customer to specify memory regions which KASLR can make use to
-randomize kernel into. Outside of the specified regions, we need avoid
-to put kernel into those regions even though they are also available
-RAM. As for movable_node issue, we can add immovable regions into
-kaslr_boot_mem=nn[KMG]@ss[KMG].
+Regards,
 
-During this hotplug issue reviewing, Luiz's team reported this 1GB hugepages
-regression bug, I reproduced the bug and found out the root cause, then
-realized that I can utilize kaslr_boot_mem=nn[KMG]@ss[KMG] parameter to
-fix it too. E.g the KVM guest with 4GB RAM, we have a good 1GB huge
-page, then we can add "kaslr_boot_mem=1G@0, kaslr_boot_mem=3G@2G" to
-kernel command-line, then the good 1GB region [1G, 2G) won't be taken
-into account for kernel physical randomization.
-
-Later, you pointed out that 'kaslr_boot_mem=' way need user to specify
-memory region manually, it's not good, suggested to solve them by
-getting information and solving them in KASLR boot code. So they are two
-issues now, for the movable_node issue, we need get hotplug information
-from SRAT table and then avoid them; for this 1GB hugepage issue, we
-need get information from kernel command-line, then avoid them.
-
-This patch is for the hugepage issue only. Since FJ reported the hotplug
-issue and they assigned engineers to work on it, I would like to wait
-for them to post according to your suggestion.
-
-I will add this to cover letter of v2 post.
-
-Thanks
-Baoquan
+Hans
