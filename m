@@ -1,248 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752304AbeERH4g (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:56:36 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33911 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeERHtt (ORCPT
+        id S1752016AbeERH7E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:59:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44284 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeERH7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:49:49 -0400
-X-Google-Smtp-Source: AB8JxZoOAlgwuItTMHrmbyK+qvJ0oGWMMyth7XlJnA/zgkkjM+mc0X0zlFZEUlKWB3EbJsEg2LWLDA==
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 01/10] mempool: Add mempool_init()/mempool_exit()
-Date: Fri, 18 May 2018 03:48:59 -0400
-Message-Id: <20180518074918.13816-2-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180518074918.13816-1-kent.overstreet@gmail.com>
-References: <20180518074918.13816-1-kent.overstreet@gmail.com>
+        Fri, 18 May 2018 03:59:00 -0400
+Date: Fri, 18 May 2018 09:58:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nadav Amit <namit@vmware.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, nadav.amit@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 2/6] x86: bug: prevent gcc distortions
+Message-ID: <20180518075853.GD12217@hirez.programming.kicks-ass.net>
+References: <20180517161402.78089-1-namit@vmware.com>
+ <20180517161402.78089-3-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517161402.78089-3-namit@vmware.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allows mempools to be embedded in other structs, getting rid of a
-pointer indirection from allocation fastpaths.
+On Thu, May 17, 2018 at 09:13:58AM -0700, Nadav Amit wrote:
+> +asm(".macro __BUG_FLAGS ins:req file:req line:req flags:req size:req\n"
+> +    "1:\t \\ins\n\t"
+> +    ".pushsection __bug_table,\"aw\"\n"
+> +    "2:\t "__BUG_REL(1b)		"\t# bug_entry::bug_addr\n\t"
+> +    __BUG_REL(\\file)			"\t# bug_entry::file\n\t"
+> +    ".word \\line"			"\t# bug_entry::line\n\t"
+> +    ".word \\flags"			"\t# bug_entry::flags\n\t"
+> +    ".org 2b+\\size\n\t"
+> +    ".popsection\n\t"
+> +    ".endm");
+> +
+> +#define _BUG_FLAGS(ins, flags)                                          \
+>  do {									\
+> +	asm volatile("__BUG_FLAGS \"" ins "\" %c0 %c1 %c2 %c3"		\
+> +		     : : "i" (__FILE__), "i" (__LINE__),                \
+> +			 "i" (flags),                                   \
+>  			 "i" (sizeof(struct bug_entry)));		\
+>  } while (0)
 
-mempool_exit() is safe to call on an uninitialized but zeroed mempool.
+This is an awesome hack, but is there really nothing we can do to make
+it more readable? Esp, that global asm doing the macro definition is a
+pain to read.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- include/linux/mempool.h |  34 +++++++++++++
- mm/mempool.c            | 108 ++++++++++++++++++++++++++++++----------
- 2 files changed, 115 insertions(+), 27 deletions(-)
-
-diff --git a/include/linux/mempool.h b/include/linux/mempool.h
-index b51f5c430c..0c964ac107 100644
---- a/include/linux/mempool.h
-+++ b/include/linux/mempool.h
-@@ -25,6 +25,18 @@ typedef struct mempool_s {
- 	wait_queue_head_t wait;
- } mempool_t;
- 
-+static inline bool mempool_initialized(mempool_t *pool)
-+{
-+	return pool->elements != NULL;
-+}
-+
-+void mempool_exit(mempool_t *pool);
-+int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		      mempool_free_t *free_fn, void *pool_data,
-+		      gfp_t gfp_mask, int node_id);
-+int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		 mempool_free_t *free_fn, void *pool_data);
-+
- extern mempool_t *mempool_create(int min_nr, mempool_alloc_t *alloc_fn,
- 			mempool_free_t *free_fn, void *pool_data);
- extern mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
-@@ -43,6 +55,14 @@ extern void mempool_free(void *element, mempool_t *pool);
-  */
- void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data);
- void mempool_free_slab(void *element, void *pool_data);
-+
-+static inline int
-+mempool_init_slab_pool(mempool_t *pool, int min_nr, struct kmem_cache *kc)
-+{
-+	return mempool_init(pool, min_nr, mempool_alloc_slab,
-+			    mempool_free_slab, (void *) kc);
-+}
-+
- static inline mempool_t *
- mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
- {
-@@ -56,6 +76,13 @@ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
-  */
- void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data);
- void mempool_kfree(void *element, void *pool_data);
-+
-+static inline int mempool_init_kmalloc_pool(mempool_t *pool, int min_nr, size_t size)
-+{
-+	return mempool_init(pool, min_nr, mempool_kmalloc,
-+			    mempool_kfree, (void *) size);
-+}
-+
- static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
- {
- 	return mempool_create(min_nr, mempool_kmalloc, mempool_kfree,
-@@ -68,6 +95,13 @@ static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
-  */
- void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data);
- void mempool_free_pages(void *element, void *pool_data);
-+
-+static inline int mempool_init_page_pool(mempool_t *pool, int min_nr, int order)
-+{
-+	return mempool_init(pool, min_nr, mempool_alloc_pages,
-+			    mempool_free_pages, (void *)(long)order);
-+}
-+
- static inline mempool_t *mempool_create_page_pool(int min_nr, int order)
- {
- 	return mempool_create(min_nr, mempool_alloc_pages, mempool_free_pages,
-diff --git a/mm/mempool.c b/mm/mempool.c
-index 5c9dce3471..df90ace400 100644
---- a/mm/mempool.c
-+++ b/mm/mempool.c
-@@ -137,6 +137,28 @@ static void *remove_element(mempool_t *pool, gfp_t flags)
- 	return element;
- }
- 
-+/**
-+ * mempool_destroy - exit a mempool initialized with mempool_init()
-+ * @pool:      pointer to the memory pool which was initialized with
-+ *             mempool_init().
-+ *
-+ * Free all reserved elements in @pool and @pool itself.  This function
-+ * only sleeps if the free_fn() function sleeps.
-+ *
-+ * May be called on a zeroed but uninitialized mempool (i.e. allocated with
-+ * kzalloc()).
-+ */
-+void mempool_exit(mempool_t *pool)
-+{
-+	while (pool->curr_nr) {
-+		void *element = remove_element(pool, GFP_KERNEL);
-+		pool->free(element, pool->pool_data);
-+	}
-+	kfree(pool->elements);
-+	pool->elements = NULL;
-+}
-+EXPORT_SYMBOL(mempool_exit);
-+
- /**
-  * mempool_destroy - deallocate a memory pool
-  * @pool:      pointer to the memory pool which was allocated via
-@@ -150,15 +172,65 @@ void mempool_destroy(mempool_t *pool)
- 	if (unlikely(!pool))
- 		return;
- 
--	while (pool->curr_nr) {
--		void *element = remove_element(pool, GFP_KERNEL);
--		pool->free(element, pool->pool_data);
--	}
--	kfree(pool->elements);
-+	mempool_exit(pool);
- 	kfree(pool);
- }
- EXPORT_SYMBOL(mempool_destroy);
- 
-+int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		      mempool_free_t *free_fn, void *pool_data,
-+		      gfp_t gfp_mask, int node_id)
-+{
-+	spin_lock_init(&pool->lock);
-+	pool->min_nr	= min_nr;
-+	pool->pool_data = pool_data;
-+	pool->alloc	= alloc_fn;
-+	pool->free	= free_fn;
-+	init_waitqueue_head(&pool->wait);
-+
-+	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
-+					    gfp_mask, node_id);
-+	if (!pool->elements)
-+		return -ENOMEM;
-+
-+	/*
-+	 * First pre-allocate the guaranteed number of buffers.
-+	 */
-+	while (pool->curr_nr < pool->min_nr) {
-+		void *element;
-+
-+		element = pool->alloc(gfp_mask, pool->pool_data);
-+		if (unlikely(!element)) {
-+			mempool_exit(pool);
-+			return -ENOMEM;
-+		}
-+		add_element(pool, element);
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(mempool_init_node);
-+
-+/**
-+ * mempool_init - initialize a memory pool
-+ * @min_nr:    the minimum number of elements guaranteed to be
-+ *             allocated for this pool.
-+ * @alloc_fn:  user-defined element-allocation function.
-+ * @free_fn:   user-defined element-freeing function.
-+ * @pool_data: optional private data available to the user-defined functions.
-+ *
-+ * Like mempool_create(), but initializes the pool in (i.e. embedded in another
-+ * structure).
-+ */
-+int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		 mempool_free_t *free_fn, void *pool_data)
-+{
-+	return mempool_init_node(pool, min_nr, alloc_fn, free_fn,
-+				 pool_data, GFP_KERNEL, NUMA_NO_NODE);
-+
-+}
-+EXPORT_SYMBOL(mempool_init);
-+
- /**
-  * mempool_create - create a memory pool
-  * @min_nr:    the minimum number of elements guaranteed to be
-@@ -186,35 +258,17 @@ mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
- 			       gfp_t gfp_mask, int node_id)
- {
- 	mempool_t *pool;
-+
- 	pool = kzalloc_node(sizeof(*pool), gfp_mask, node_id);
- 	if (!pool)
- 		return NULL;
--	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
--				      gfp_mask, node_id);
--	if (!pool->elements) {
-+
-+	if (mempool_init_node(pool, min_nr, alloc_fn, free_fn, pool_data,
-+			      gfp_mask, node_id)) {
- 		kfree(pool);
- 		return NULL;
- 	}
--	spin_lock_init(&pool->lock);
--	pool->min_nr = min_nr;
--	pool->pool_data = pool_data;
--	init_waitqueue_head(&pool->wait);
--	pool->alloc = alloc_fn;
--	pool->free = free_fn;
- 
--	/*
--	 * First pre-allocate the guaranteed number of buffers.
--	 */
--	while (pool->curr_nr < pool->min_nr) {
--		void *element;
--
--		element = pool->alloc(gfp_mask, pool->pool_data);
--		if (unlikely(!element)) {
--			mempool_destroy(pool);
--			return NULL;
--		}
--		add_element(pool, element);
--	}
- 	return pool;
- }
- EXPORT_SYMBOL(mempool_create_node);
--- 
-2.17.0
+Also, can we pretty please used named operands in 'new' code?
