@@ -1,128 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeERQgC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 12:36:02 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:40854 "EHLO gloria.sntech.de"
+        id S1751565AbeERQji (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 12:39:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:56004 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752271AbeERQf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 12:35:59 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, hl <hl@rock-chips.com>,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-        Chris Zhong <zyw@rock-chips.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v5 4/4] drm/rockchip: support dp training outside dp firmware
-Date: Fri, 18 May 2018 18:35:49 +0200
-Message-ID: <5918781.MvJIhHKAbg@phil>
-In-Reply-To: <20180518153656.GK3373@art_vandelay>
-References: <1526548680-2552-1-git-send-email-hl@rock-chips.com> <11928313.3EhRqhFFHB@phil> <20180518153656.GK3373@art_vandelay>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1750763AbeERQjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 12:39:35 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
+        coresight@lists.linaro.org, mark.rutland@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 00/11] coresight: tmc-etr Transparent buffer management
+Date: Fri, 18 May 2018 17:39:16 +0100
+Message-Id: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 18. Mai 2018, 17:36:56 CEST schrieb Sean Paul:
-> On Fri, May 18, 2018 at 10:52:17AM +0200, Heiko Stuebner wrote:
-> > Am Freitag, 18. Mai 2018, 03:45:46 CEST schrieb Brian Norris:
-> > > On Thu, May 17, 2018 at 6:41 PM, hl <hl@rock-chips.com> wrote:
-> > > > On Thursday, May 17, 2018 09:51 PM, Sean Paul wrote:
-> > > >> On Thu, May 17, 2018 at 05:18:00PM +0800, Lin Huang wrote:
-> > > >>> DP firmware uses fixed phy config values to do training, but some
-> > > >>> boards need to adjust these values to fit for their unique hardware
-> > > >>> design. So get phy config values from dts and use software link training
-> > > >>> instead of relying on firmware, if software training fail, keep firmware
-> > > >>> training as a fallback if sw training fails.
-> > > >>>
-> > > >>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> > > >>> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> > > >>> ---
-> > > >>> Changes in v2:
-> > > >>> - update patch following Enric suggest
-> > > >>> Changes in v3:
-> > > >>> - use variable fw_training instead sw_training_success
-> > > >>> - base on DP SPCE, if training fail use lower link rate to retry training
-> > > >>> Changes in v4:
-> > > >>> - improve cdn_dp_get_lower_link_rate() and cdn_dp_software_train_link() follow Sean suggest
-> > > >>> Changes in v5:
-> > > >>> - fix some whitespcae issue
-> > > >>>
-> > > >>>   drivers/gpu/drm/rockchip/Makefile               |   3 +-
-> > > >>>   drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
-> > > >>>   drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
-> > > >>>   drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 420 ++++++++++++++++++++++++
-> > > >>>   drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  31 +-
-> > > >>>   drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
-> > > >>>   6 files changed, 505 insertions(+), 13 deletions(-)
-> > > >>>   create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> > > >>>
-> > > ...
-> > > >>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-link-training.c b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> > > >>> new file mode 100644
-> > > >>> index 0000000..73c3290
-> > > >>> --- /dev/null
-> > > >>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> > > >>> @@ -0,0 +1,420 @@
-> > > >>> +// SPDX-License-Identifier: GPL-2.0
-> > > >>> +/*
-> > > >>> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> > > >>> + * Author: Chris Zhong <zyw@rock-chips.com>
-> > > >>> + */
-> > > >>> +
-> > > >>> +#include <linux/device.h>
-> > > >>> +#include <linux/delay.h>
-> > > >>> +#include <linux/phy/phy.h>
-> > > >>> +#include <soc/rockchip/rockchip_phy_typec.h>
-> > > >>> +
-> > > >>> +#include "cdn-dp-core.h"
-> > > >>> +#include "cdn-dp-reg.h"
-> > > >>> +
-> > > >>> +static void cdn_dp_set_signal_levels(struct cdn_dp_device *dp)
-> > > >>> +{
-> > > >>> +       struct cdn_dp_port *port = dp->port[dp->active_port];
-> > > >>> +       struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
-> > > >>
-> > > >> You ignored Brian's comment on the previous patch:
-> > > >>    This is still antithetical to the PHY framework; you're assuming that
-> > > >>    this is a particular type of PHY here.
-> > > >>
-> > > >> FWIW, the mediatek drm driver also assumes a certain PHY type. A quick grep of
-> > > >> drivers/ shows that the only other non-phy/ driver using this function
-> > > >> (pinctrl-tegra-xusb.c) also casts it.
-> > > >>
-> > > >> Sean
-> > > >
-> > > > Thanks Sean, except phy framework have new API to handle it, i have not
-> > > > idea how to do it in a better way.
-> > > 
-> > > Well, if Mediatek can do it for their MIPI and HDMI, then maybe we just do it...
-> > 
-> > I'd think so too. This is in Rockchip-specific code so it will always be
-> > possible to easily get the soc-type and thus phy-type, if that combination
-> > really changes down the road.
-> > 
-> 
-> So in the absence of a better solution, and with prior art,
-> 
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> 
-> 
-> We just need some eyes on the dt and phy changes in this set. Heiko, can you
-> help out with that?
+This series is split of the Coresight ETR perf support patches posted
+here [0]. The CATU support and perf backend support will be posted as
+separate series for better management and review of the patches.
 
-done, but both the binding + phy changes should also get Acks from
-Rob (dt) and Kishon (phy). Especially as the binding change is a bit more
-than a new simple property.
+This series adds the support for TMC ETR Scatter-Gather mode to allow
+using physical non-contiguous buffer for holding the trace data. It
+also adds a layer to handle the buffer management in a transparent
+manner, independent of the underlying mode used by the TMC ETR.
+The layer chooses the ETR mode based on different parameters (size,
+re-using a set of pages, presence of an SMMU etc.).
 
+Finally we add a sysfs parameter to tune the buffer size for ETR in
+sysfs-mode.
 
-Heiko
+During the testing, we found out that if the TMC ETR is not properly
+connected to the memory subsystem, the ETR could lock-up the system
+while waiting for the "read" transactions to complete in scatter-gather
+mode. So, we do not use the mode on a system unless it is safe to do
+so. This is specified by a DT property "arm,scatter-gather".
+
+Applies on v4.17-rc4
+
+Changes since v2 in [0] :
+ - Split the series in [0]
+ - Address comments on v2
+ - Rename DT property "scatter-gather" to "arm,scatter-gather"
+ - Add ETM PID for Cortex-A35, use macros to make the listing easier
+
+[0] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
+
+Suzuki K Poulose (11):
+  coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
+  coresight: tmc: Hide trace buffer handling for file read
+  coresight: tmc-etr: Do not clean trace buffer
+  coresight: tmc-etr: Disallow perf mode
+  coresight: Add helper for inserting synchronization packets
+  dts: bindings: Restrict coresight tmc-etr scatter-gather mode
+  dts: juno: Add scatter-gather support for all revisions
+  coresight: Add generic TMC sg table framework
+  coresight: Add support for TMC ETR SG unit
+  coresight: tmc-etr: Add transparent buffer management
+  coresight: tmc: Add configuration support for trace buffer size
+
+ .../ABI/testing/sysfs-bus-coresight-devices-tmc    |    8 +
+ .../devicetree/bindings/arm/coresight.txt          |    5 +-
+ arch/arm64/boot/dts/arm/juno-base.dtsi             |    1 +
+ drivers/hwtracing/coresight/coresight-etb10.c      |   12 +-
+ drivers/hwtracing/coresight/coresight-etm4x.c      |   32 +-
+ drivers/hwtracing/coresight/coresight-priv.h       |   10 +-
+ drivers/hwtracing/coresight/coresight-tmc-etf.c    |   45 +-
+ drivers/hwtracing/coresight/coresight-tmc-etr.c    | 1032 ++++++++++++++++++--
+ drivers/hwtracing/coresight/coresight-tmc.c        |   83 +-
+ drivers/hwtracing/coresight/coresight-tmc.h        |  111 ++-
+ drivers/hwtracing/coresight/coresight.c            |    3 +-
+ 11 files changed, 1169 insertions(+), 173 deletions(-)
+
+-- 
+2.7.4
