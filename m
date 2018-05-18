@@ -1,88 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeERNdi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:33:38 -0400
-Received: from gofer.mess.org ([88.97.38.141]:58891 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbeERNdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:33:32 -0400
-Date: Fri, 18 May 2018 14:33:30 +0100
-From: Sean Young <sean@mess.org>
-To: Quentin Monnet <quentin.monnet@netronome.com>
-Cc: Y Song <ys114321@gmail.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>
-Subject: Re: [PATCH v3 2/2] bpf: add selftest for rawir_event type program
-Message-ID: <20180518133329.fafkew5nkr2bmzah@gofer.mess.org>
-References: <cover.1526504511.git.sean@mess.org>
- <78945f2bf82e9f16695f72bed3930d1302d38e29.1526504511.git.sean@mess.org>
- <CAH3MdRUhrBzHXKgcu1htSHTqeKVWnci+ADrTriCqjXLHUezB+w@mail.gmail.com>
- <20180517210140.ck225yuckq6onheb@gofer.mess.org>
- <86ffb16c-9b4e-c826-ecd2-82266e7b8c2e@netronome.com>
+        id S1752498AbeERNeA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:34:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53126 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752441AbeERNd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:33:58 -0400
+Date: Fri, 18 May 2018 14:33:53 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/RFT] [PATCH 02/10] cpufreq: intel_pstate: Conditional
+ frequency invariant accounting
+Message-ID: <20180518133353.GO30654@e110439-lin>
+References: <20180516163105.GP28366@localhost.localdomain>
+ <20180517105907.GC22493@localhost.localdomain>
+ <20180517150418.GF22493@localhost.localdomain>
+ <1526571692.11765.10.camel@linux.intel.com>
+ <20180517161649.GX12217@hirez.programming.kicks-ass.net>
+ <1526575358.11765.14.camel@linux.intel.com>
+ <CAJZ5v0j82sm94iCpLOVMBwoSksKx1Y49RfJv=nhhJiKhenZykg@mail.gmail.com>
+ <20180517182803.GY12217@hirez.programming.kicks-ass.net>
+ <20180518105742.GN30654@e110439-lin>
+ <20180518112919.GI12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86ffb16c-9b4e-c826-ecd2-82266e7b8c2e@netronome.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180518112919.GI12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 11:13:07AM +0100, Quentin Monnet wrote:
-> 2018-05-17 22:01 UTC+0100 ~ Sean Young <sean@mess.org>
-> > On Thu, May 17, 2018 at 10:17:59AM -0700, Y Song wrote:
-> >> On Wed, May 16, 2018 at 2:04 PM, Sean Young <sean@mess.org> wrote:
-> >>> This is simple test over rc-loopback.
-> >>>
-> >>> Signed-off-by: Sean Young <sean@mess.org>
-> >>> ---
-> >>>  tools/bpf/bpftool/prog.c                      |   1 +
-> >>>  tools/include/uapi/linux/bpf.h                |  57 +++++++-
-> >>>  tools/lib/bpf/libbpf.c                        |   1 +
-> >>>  tools/testing/selftests/bpf/Makefile          |   8 +-
-> >>>  tools/testing/selftests/bpf/bpf_helpers.h     |   6 +
-> >>>  tools/testing/selftests/bpf/test_rawir.sh     |  37 +++++
-> >>>  .../selftests/bpf/test_rawir_event_kern.c     |  26 ++++
-> >>>  .../selftests/bpf/test_rawir_event_user.c     | 130 ++++++++++++++++++
-> >>>  8 files changed, 261 insertions(+), 5 deletions(-)
-> >>>  create mode 100755 tools/testing/selftests/bpf/test_rawir.sh
-> >>>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_kern.c
-> >>>  create mode 100644 tools/testing/selftests/bpf/test_rawir_event_user.c
+On 18-May 13:29, Peter Zijlstra wrote:
+> On Fri, May 18, 2018 at 11:57:42AM +0100, Patrick Bellasi wrote:
+> > Thus, my simple (maybe dumb) questions are:
+> > - why can't we just fold turbo boost frequency into the existing concepts?
+> > - what are the limitations of such a "simple" approach?
 > 
-> [...]
-> 
-> >> Most people probably not really familiar with lircN device. It would be
-> >> good to provide more information about how to enable this, e.g.,
-> >>   CONFIG_RC_CORE=y
-> >>   CONFIG_BPF_RAWIR_EVENT=y
-> >>   CONFIG_RC_LOOPBACK=y
-> >>   ......
-> > 
-> > Good point. I'll add some words explaining what is and how to make it work.
-> > 
-> > Thanks
-> > Sean
-> 
-> 
-> By the way, shouldn't the two eBPF helpers bpf_rc_keydown() and
-> bpf_rc_repeat() be compiled out in patch 1 if e.g.
-> CONFIG_BPF_RAWIR_EVENT is not set? There are some other helpers that are
-> compiled only if relevant config options are set (bpf_get_xfrm_state()
-> for example).
+> Perhaps... but does this not further complicate the whole capacity vs
+> util thing we already have in say the misfit patches?
 
-So if CONFIG_BPF_RAWIR_EVENT is not set, then bpf-rawir-event.c is not
-compiled. Stubs are created in include/linux/bpf_rcdev.h, so this is
-already the case if I understand your correctly.
- 
-> (If you were to change that, please also update helper documentations to
-> indicate what configuration options are required to be able to use the
-> helpers.)
+Not sure about that...
 
-Ok, I'll add that.
+> And the  util_fits_capacity() thing from the EAS ones.
 
-Thanks again!
+In this case instead, if we can track somehow (not saying we can)
+what is the currently available "transient maximum capacity"...
+then a util_fits_capacity() should just look at that.
 
-Sean
+If the transient capacity is already folded into cpu_capacity, as it
+is now for RT and IRQ pressure, then likely we don't have to change
+anything.
+
+> The thing is, we either need to dynamically scale the util or the
+> capacity or both. I think for Thermal there are patches out there that
+> drop the capacity.
+
+Not sure... but I would feel more comfortable by something which caps
+the maximum capacity. Meaning, eventually you can fill up the maximum
+possible capacity only "up to" a given value, because of thermal or other
+reasons most of the scheduler maybe doesn't even have to know why?
+
+> But we'd then have to do the same for turbo/vector and all the other
+> stuff as well. Otherwise we risk things like running at low U with 0%
+> idle and not triggering the tipping point between eas and regular
+> balancing.
+
+Interacting with the tipping point and/or OPP changes is indeed an
+interesting side of the problem I was not considering so far...
+
+But again, the tipping point could not be defined as a delta
+with respect to the "transient maximum capacity" ?
+
+> So either way around we need to know the 'true' max, either to fudge
+> util or to fudge capacity.
+
+Right, but what I see from a concepts standpoint is something like:
+
+     +--+--+   cpu_capacity_orig (CONSTANT at boot time)
+     |  |  |
+     |  |  |       HW generated constraints
+     |  v  |
+     +-----+   cpu_capacity_max (depending on thermal/turbo boost)
+     |  |  |
+     |  |  |       SW generated constraints
+     |  v  |
+     +-----+   cpu_capacity (depending on RT/IRQ pressure)
+     |  |  |
+     |  |  |       tipping point delta
+     +--v--+
+     |     |   Energy Aware mode available capacity
+     +-----+
+
+Where all the wkp/lb heuristics are updated to properly consider the
+cpu_capacity_max metrics whenever it comes to know what is the max
+speed we can reach now on a CPU.
+
+> And I'm not sure we can know in some of these cases :/
+
+Right, this schema will eventually work only under the hypothesis that
+"somehow" we can update cpu_capacity_max from HW events.
+
+Not entirely sure that's possible and/or at which time granularity on
+all different platforms.
+
+> And while Vincent's patches might have been inspired by another problem,
+> they do have the effect of always allowing util to go to 1, which is
+> nice for this.
+
+Sure, that's a nice point, but still I have the feeling that always
+reaching u=1 can defeat other interesting properties of a task,
+For example, comparing task requirements in different CPUs and/or at
+different times, which plays a big role for energy aware task
+placement decisions.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
