@@ -1,149 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeERNWR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:22:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52990 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752455AbeERNWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:22:09 -0400
-Subject: Re: [PATCH 3/6] arm_pmu: Add support for long event counters
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com
-References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
- <1526638943-2110-4-git-send-email-suzuki.poulose@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <72bfd236-65de-6477-7f76-2f10d8bceb99@arm.com>
-Date: Fri, 18 May 2018 14:22:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752223AbeERNYP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:24:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:39498 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751298AbeERNYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:24:10 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,415,1520924400";
+   d="scan'208";a="50327978"
+Date: Fri, 18 May 2018 16:24:03 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
+        felixe@google.com, marcheu@chromium.org, bleung@google.com,
+        darekm@google.com, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] drm/i915: hdmi: add CEC notifier to intel_hdmi
+Message-ID: <20180518132403.GW23723@intel.com>
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+ <1526648704-16873-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <1526638943-2110-4-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526648704-16873-3-git-send-email-narmstrong@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/05/18 11:22, Suzuki K Poulose wrote:
-> Each PMU has a set of fixed width event counters. But in some
-> special cases, the events could be counted using a counter which
-> effectively has twice the normal width of a coutner.
-> e.g, Arm V8 PMUv3 has a 64 bit cycle counter which can count
-> only the CPU cylces. Also, the PMU can chain the event counters
-> to effectively count as a 64bit counter.
-
-Nit: a few typos in that paragraph.
-
-> Add support for tracking the events that uses double the normal
-> counter size. This only affects the periods set for each counter.
+On Fri, May 18, 2018 at 03:05:01PM +0200, Neil Armstrong wrote:
+> This patchs adds the cec_notifier feature to the intel_hdmi part
+> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+> between each HDMI ports.
+> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+> to an eventual CEC adapter.
 > 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->   drivers/perf/arm_pmu.c       | 25 ++++++++++++++++++++++---
->   include/linux/perf/arm_pmu.h |  6 ++++++
->   2 files changed, 28 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/i915/Kconfig         |  1 +
+>  drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/i915/intel_drv.h     |  2 ++
+>  drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
+>  4 files changed, 36 insertions(+)
 > 
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index e23e1a1..1adabb5 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -33,6 +33,21 @@ static inline u64 arm_pmu_max_period(struct arm_pmu *pmu)
->   	return (((u64)1) << (pmu->counter_width)) - 1;
->   }
->   
-> +static inline u64 arm_pmu_get_event_max_period(struct arm_pmu *pmu,
-
-The "get_" here seems a bit at odds with arm_pmu_max_period() - I'd be 
-inlined to go for slightly more consistent naming (with a slight 
-personal preference towards removing it here rather than adding it there)
-
-> +					       struct perf_event *event)
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index dfd9588..2d65d56 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -23,6 +23,7 @@ config DRM_I915
+>  	select SYNC_FILE
+>  	select IOSF_MBI
+>  	select CRC32
+> +	select CEC_CORE if CEC_NOTIFIER
+>  	help
+>  	  Choose this option if you have a system that has "Intel Graphics
+>  	  Media Accelerator" or "HD Graphics" integrated graphics,
+> diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
+> index 4e7418b..c68d1c8 100644
+> --- a/drivers/gpu/drm/i915/intel_display.h
+> +++ b/drivers/gpu/drm/i915/intel_display.h
+> @@ -126,6 +126,26 @@ enum port {
+>  
+>  #define port_name(p) ((p) + 'A')
+>  
+> +static inline const char *port_identifier(enum port port)
 > +{
-> +	u64 period = arm_pmu_max_period(pmu);
-> +
-> +	/*
-> +	 * To prevent shift-counter-overflow warning, create the
-> +	 * mask, by shift + OR sequence.
-> +	 */
-> +	if (event->hw.flags & ARMPMU_EVT_LONG)
-> +		period = (period << pmu->counter_width) | period;
-> +
-> +	return period;
+> +	switch (port) {
+> +	case PORT_A:
+> +		return "Port A";
+> +	case PORT_B:
+> +		return "Port B";
+> +	case PORT_C:
+> +		return "Port C";
+> +	case PORT_D:
+> +		return "Port D";
+> +	case PORT_E:
+> +		return "Port E";
+> +	case PORT_F:
+> +		return "Port F";
+> +	default:
+> +		return "<invalid>";
+> +	}
 > +}
+
+I don't think we need this in the header. A static function will do.
+
+And I was actually thinking something a bit fancier like:
+snprintf("%s/port-%s", dev_name(dev), port_id(port));
+
+Oh, I see you already pass the device in so I guess we don't need
+that in the port id?
+
 > +
->   static int
->   armpmu_map_cache_event(const unsigned (*cache_map)
->   				      [PERF_COUNT_HW_CACHE_MAX]
-> @@ -122,7 +137,7 @@ int armpmu_event_set_period(struct perf_event *event)
->   	u64 max_period;
->   	int ret = 0;
->   
-> -	max_period = arm_pmu_max_period(armpmu);
-> +	max_period = arm_pmu_get_event_max_period(armpmu, event);
->   	if (unlikely(left <= -period)) {
->   		left = period;
->   		local64_set(&hwc->period_left, left);
-> @@ -148,7 +163,7 @@ int armpmu_event_set_period(struct perf_event *event)
->   
->   	local64_set(&hwc->prev_count, (u64)-left);
->   
-> -	armpmu->write_counter(event, (u64)(-left) & 0xffffffff);
-> +	armpmu->write_counter(event, (u64)(-left) & max_period);
->   
->   	perf_event_update_userpage(event);
->   
-> @@ -160,7 +175,7 @@ u64 armpmu_event_update(struct perf_event *event)
->   	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
->   	struct hw_perf_event *hwc = &event->hw;
->   	u64 delta, prev_raw_count, new_raw_count;
-> -	u64 max_period = arm_pmu_max_period(armpmu);
-> +	u64 max_period = arm_pmu_get_event_max_period(armpmu, event);
->   
->   again:
->   	prev_raw_count = local64_read(&hwc->prev_count);
-> @@ -368,6 +383,7 @@ __hw_perf_event_init(struct perf_event *event)
->   	struct hw_perf_event *hwc = &event->hw;
->   	int mapping;
->   
-> +	hwc->flags = 0;
->   	mapping = armpmu->map_event(event);
->   
->   	if (mapping < 0) {
-> @@ -670,6 +686,9 @@ static void cpu_pm_pmu_setup(struct arm_pmu *armpmu, unsigned long cmd)
->   			continue;
->   
->   		event = hw_events->events[idx];
-> +		/* Chained events could use multiple counters */
-> +		if (!event)
-> +			continue;
+>  enum dpio_channel {
+>  	DPIO_CH0,
+>  	DPIO_CH1
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index d436858..b50e51b 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -39,6 +39,7 @@
+>  #include <drm/drm_dp_mst_helper.h>
+>  #include <drm/drm_rect.h>
+>  #include <drm/drm_atomic.h>
+> +#include <media/cec-notifier.h>
+>  
+>  /**
+>   * __wait_for - magic wait macro
+> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
+>  	bool has_audio;
+>  	bool rgb_quant_range_selectable;
+>  	struct intel_connector *attached_connector;
+> +	struct cec_notifier *notifier;
 
-This hunk looks a little out of place; does it perhaps belong to patch #6?
+I was wondering if we need any ifdefs around this stuff, but I guess not
+since it's just a pointer and all the functions seem to have empty
+static inlines for the CEC=n case.
 
-Robin.
-
->   
->   		switch (cmd) {
->   		case CPU_PM_ENTER:
-> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-> index 705e8c3..ed7e3f7 100644
-> --- a/include/linux/perf/arm_pmu.h
-> +++ b/include/linux/perf/arm_pmu.h
-> @@ -25,6 +25,12 @@
->    */
->   #define ARMPMU_MAX_HWEVENTS		32
->   
-> +/*
-> + * ARM PMU hw_event flags
-> + */
-> +/* Event uses a counter with double the normal width */
-> +#define ARMPMU_EVT_LONG			1
+>  };
+>  
+>  struct intel_dp_mst_encoder;
+> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+> index 1baef4a..d522b5b 100644
+> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+>  		connected = true;
+>  	}
+>  
+> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
 > +
->   #define HW_OP_UNSUPPORTED		0xFFFF
->   #define C(_x)				PERF_COUNT_HW_CACHE_##_x
->   #define CACHE_OP_UNSUPPORTED		0xFFFF
+>  	return connected;
+>  }
+>  
+> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  {
+>  	enum drm_connector_status status;
+>  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
+> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+>  
+>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+>  		      connector->base.id, connector->name);
+> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  
+>  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
+>  
+> +	if (status != connector_status_connected)
+> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
+> +
+>  	return status;
+>  }
+>  
+> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
+>  
+>  static void intel_hdmi_destroy(struct drm_connector *connector)
+>  {
+> +	if (intel_attached_hdmi(connector)->notifier)
+> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
+>  	kfree(to_intel_connector(connector)->detect_edid);
+>  	drm_connector_cleanup(connector);
+>  	kfree(connector);
+> @@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+>  	}
+> +
+> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
+> +						     port_identifier(port));
+> +	if (!intel_hdmi->notifier)
+> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
+>  }
+>  
+>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+> -- 
+> 2.7.4
 > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Ville Syrjälä
+Intel
