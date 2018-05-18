@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753157AbeERJ0D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:26:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45379 "EHLO mx2.suse.de"
+        id S1753224AbeERJ0m (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:26:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45352 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753100AbeERJRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:17:30 -0400
+        id S1753081AbeERJR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:29 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH v6 05/28] x86/asm/entry: annotate THUNKs
-Date: Fri, 18 May 2018 11:16:58 +0200
-Message-Id: <20180518091721.7604-6-jslaby@suse.cz>
+        Jiri Slaby <jslaby@suse.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v6 02/28] x86/asm/suspend: drop ENTRY from local data
+Date: Fri, 18 May 2018 11:16:55 +0200
+Message-Id: <20180518091721.7604-3-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
 References: <20180518091721.7604-1-jslaby@suse.cz>
@@ -21,91 +23,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Place SYM_CODE_START_NOALIGN and SYM_CODE_END around the THUNK macro
-body, given it generates:
-1) non-C-like functions, and
-2) was not marked as aligned.
+ENTRY was intended for functions and shall be paired with ENDPROC.
+ENTRY also aligns symbols which creates unnecessary holes here between
+data.
 
-The common tail .L_restore is put inside SYM_CODE_START_LOCAL_NOALIGN
-and SYM_CODE_END too.
+So drop ENTRY from saved_eip in wakeup_32 and many saved_* in wakeup_64,
+as these symbols are local only.
 
-The result:
- Value  Size Type    Bind   Vis      Ndx Name
-  0000    28 NOTYPE  GLOBAL DEFAULT    1 trace_hardirqs_on_thunk
-  001c    28 NOTYPE  GLOBAL DEFAULT    1 trace_hardirqs_off_thunk
-  0038    24 NOTYPE  GLOBAL DEFAULT    1 lockdep_sys_exit_thunk
-  0050    24 NOTYPE  GLOBAL DEFAULT    1 ___preempt_schedule
-  0068    24 NOTYPE  GLOBAL DEFAULT    1 ___preempt_schedule_notrace
+We could use SYM_DATA_LOCAL for these symbols, but it was discouraged
+earlier [1].
+
+[1] https://lkml.org/lkml/2017/4/27/244
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
+Cc: x86@kernel.org
+Cc: linux-pm@vger.kernel.org
 ---
- arch/x86/entry/thunk_32.S | 4 ++--
- arch/x86/entry/thunk_64.S | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/acpi/wakeup_32.S |  2 +-
+ arch/x86/kernel/acpi/wakeup_64.S | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/entry/thunk_32.S b/arch/x86/entry/thunk_32.S
-index fee6bc79b987..422354b204f4 100644
---- a/arch/x86/entry/thunk_32.S
-+++ b/arch/x86/entry/thunk_32.S
-@@ -10,8 +10,7 @@
+diff --git a/arch/x86/kernel/acpi/wakeup_32.S b/arch/x86/kernel/acpi/wakeup_32.S
+index 0c26b1b44e51..4203d4f0c68d 100644
+--- a/arch/x86/kernel/acpi/wakeup_32.S
++++ b/arch/x86/kernel/acpi/wakeup_32.S
+@@ -90,7 +90,7 @@ ret_point:
+ .data
+ ALIGN
+ ENTRY(saved_magic)	.long	0
+-ENTRY(saved_eip)	.long	0
++saved_eip:		.long 0
  
- 	/* put return address in eax (arg1) */
- 	.macro THUNK name, func, put_ret_addr_in_eax=0
--	.globl \name
--\name:
-+SYM_CODE_START_NOALIGN(\name)
- 	pushl %eax
- 	pushl %ecx
- 	pushl %edx
-@@ -27,6 +26,7 @@
- 	popl %eax
- 	ret
- 	_ASM_NOKPROBE(\name)
-+SYM_CODE_END(\name)
- 	.endm
+ # saved registers
+ saved_idt:	.long	0,0
+diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+index 50b8ed0317a3..510fa12aab73 100644
+--- a/arch/x86/kernel/acpi/wakeup_64.S
++++ b/arch/x86/kernel/acpi/wakeup_64.S
+@@ -125,12 +125,12 @@ ENTRY(do_suspend_lowlevel)
+ ENDPROC(do_suspend_lowlevel)
  
- #ifdef CONFIG_TRACE_IRQFLAGS
-diff --git a/arch/x86/entry/thunk_64.S b/arch/x86/entry/thunk_64.S
-index be36bf4e0957..ea5e2b0e6611 100644
---- a/arch/x86/entry/thunk_64.S
-+++ b/arch/x86/entry/thunk_64.S
-@@ -12,9 +12,7 @@
+ .data
+-ENTRY(saved_rbp)	.quad	0
+-ENTRY(saved_rsi)	.quad	0
+-ENTRY(saved_rdi)	.quad	0
+-ENTRY(saved_rbx)	.quad	0
++saved_rbp:		.quad	0
++saved_rsi:		.quad	0
++saved_rdi:		.quad	0
++saved_rbx:		.quad	0
  
- 	/* rdi:	arg1 ... normal C conventions. rax is saved/restored. */
- 	.macro THUNK name, func, put_ret_addr_in_rdi=0
--	.globl \name
--	.type \name, @function
--\name:
-+SYM_CODE_START_NOALIGN(\name)
- 	pushq %rbp
- 	movq %rsp, %rbp
+-ENTRY(saved_rip)	.quad	0
+-ENTRY(saved_rsp)	.quad	0
++saved_rip:		.quad	0
++saved_rsp:		.quad	0
  
-@@ -36,6 +34,7 @@
- 	call \func
- 	jmp  .L_restore
- 	_ASM_NOKPROBE(\name)
-+SYM_CODE_END(\name)
- 	.endm
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
-@@ -57,7 +56,7 @@
- #if defined(CONFIG_TRACE_IRQFLAGS) \
-  || defined(CONFIG_DEBUG_LOCK_ALLOC) \
-  || defined(CONFIG_PREEMPT)
--.L_restore:
-+SYM_CODE_START_LOCAL_NOALIGN(.L_restore)
- 	popq %r11
- 	popq %r10
- 	popq %r9
-@@ -70,4 +69,5 @@
- 	popq %rbp
- 	ret
- 	_ASM_NOKPROBE(.L_restore)
-+SYM_CODE_END(.L_restore)
- #endif
+ ENTRY(saved_magic)	.quad	0
 -- 
 2.16.3
