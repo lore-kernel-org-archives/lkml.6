@@ -1,100 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752365AbeERUdR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:33:17 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45402 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbeERUdP (ORCPT
+        id S1752296AbeERUfa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 16:35:30 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:59177 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeERUfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:33:15 -0400
-X-Google-Smtp-Source: AB8JxZpQmDcJhfeuKZRHfwMXIzMxXdPFGaRzDKaOyqHjaOQTYDmqw8637ys/paCad41e1OcALWT2Fg==
-Date: Fri, 18 May 2018 13:33:13 -0700 (PDT)
-X-Google-Original-Date: Fri, 18 May 2018 13:26:06 PDT (-0700)
-Subject: Re: [PATCH v10 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
-In-Reply-To: <20180515225124.20428-2-bart.vanassche@wdc.com>
-CC: axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        bart.vanassche@wdc.com, catalin.marinas@arm.com,
-        Will Deacon <will.deacon@arm.com>, tony.luck@intel.com,
-        fenghua.yu@intel.com, geert@linux-m68k.org, jejb@parisc-linux.org,
-        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>, corbet@lwn.net
-From: Palmer Dabbelt <palmer@sifive.com>
-To: bart.vanassche@wdc.com
-Message-ID: <mhng-26ddbf89-8276-47a4-9235-e900f91fa575@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 18 May 2018 16:35:24 -0400
+Subject: Re: dma_sync_*_for_cpu and direction=TO_DEVICE (was Re: [PATCH 02/20]
+ dma-mapping: provide a generic dma-noncoherent implementation)
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+CC: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@vger.kernel.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "green.hu@gmail.com" <green.hu@gmail.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180511075945.16548-1-hch@lst.de>
+ <20180511075945.16548-3-hch@lst.de>
+ <bad125dff49f6e49c895e818c9d1abb346a46e8e.camel@synopsys.com>
+ <5ac5b1e3-9b96-9c7c-4dfe-f65be45ec179@synopsys.com>
+ <20180518175004.GF17671@n2100.armlinux.org.uk>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <cecfe6bd-ef1f-1e25-bfcf-992d1f828efb@synopsys.com>
+Date: Fri, 18 May 2018 13:35:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180518175004.GF17671@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.10.161.52]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 May 2018 15:51:20 PDT (-0700), bart.vanassche@wdc.com wrote:
-> The next patch in this series introduces a call to cmpxchg64()
-> in the block layer core for those architectures on which this
-> functionality is available. Make it possible to test whether
-> cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
+On 05/18/2018 10:50 AM, Russell King - ARM Linux wrote:
+> On Fri, May 18, 2018 at 10:20:02AM -0700, Vineet Gupta wrote:
+>> I never understood the need for this direction. And if memory serves me
+>> right, at that time I was seeing twice the amount of cache flushing !
+> It's necessary.  Take a moment to think carefully about this:
 >
-> Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> ---
->  .../features/locking/cmpxchg64/arch-support.txt    | 33 ++++++++++++++++++++++
->  arch/Kconfig                                       |  3 ++
->  arch/alpha/Kconfig                                 |  1 +
->  arch/arm/Kconfig                                   |  1 +
->  arch/arm64/Kconfig                                 |  1 +
->  arch/ia64/Kconfig                                  |  1 +
->  arch/m68k/Kconfig                                  |  1 +
->  arch/mips/Kconfig                                  |  1 +
->  arch/parisc/Kconfig                                |  1 +
->  arch/powerpc/Kconfig                               |  1 +
->  arch/riscv/Kconfig                                 |  1 +
->  arch/s390/Kconfig                                  |  1 +
->  arch/sparc/Kconfig                                 |  1 +
->  arch/x86/Kconfig                                   |  1 +
->  arch/xtensa/Kconfig                                |  1 +
->  15 files changed, 49 insertions(+)
->  create mode 100644 Documentation/features/locking/cmpxchg64/arch-support.txt
+> 	dma_map_single(, dir)
+>
+> 	dma_sync_single_for_cpu(, dir)
+>
+> 	dma_sync_single_for_device(, dir)
+>
+> 	dma_unmap_single(, dir)
 
-[...]
+As an aside, do these imply a state machine of sorts - does a driver needs to 
+always call map_single first ?
 
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -8,6 +8,7 @@ config RISCV
->  	select OF
->  	select OF_EARLY_FLATTREE
->  	select OF_IRQ
-> +	select ARCH_HAVE_CMPXCHG64
->  	select ARCH_WANT_FRAME_POINTERS
->  	select CLONE_BACKWARDS
->  	select COMMON_CLK
+My original point of contention/confusion is the specific combinations of API and 
+direction, specifically for_cpu(TO_DEV) and for_device(TO_CPU)
 
-If I understand correctly, we should only have ARCH_HAVE_CMPXCHG64 on 64-bit 
-RISC-V systems so this should look something like
+Semantically what does dma_sync_single_for_cpu(TO_DEV) even imply for a non dma 
+coherent arch.
+Your tables below have "none" for both, implying it is unlikely to be a real 
+combination (for ARM and ARC atleast).
 
-   select ARCH_HAVE_CMPXCHG64 if 64BIT
+The other case, actually @dir TO_CPU, independent of for_{cpu, device}  implies 
+driver intends to touch it after the call, so it would invalidate any stray lines, 
+unconditionally (and not just for speculative prefetch case).
 
-Of course, the RV32I port is broken right now so it's not a big deal, but we're 
-working through making it less broken...
+
+> In the case of a DMA-incoherent architecture, the operations done at each
+> stage depend on the direction argument:
+>
+> 	map		for_cpu		for_device	unmap
+> TO_DEV	writeback	none		writeback	none
+> TO_CPU	invalidate	invalidate*	invalidate	invalidate*
+> BIDIR	writeback	invalidate	writeback	invalidate
+>
+> * - only necessary if the CPU speculatively prefetches.
+>
+> The multiple invalidations for the TO_CPU case handles different
+> conditions that can result in data corruption, and for some CPUs, all
+> four are necessary.
+
+Can you please explain in some more detail, TO_CPU row, why invalidate is 
+conditional sometimes.
