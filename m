@@ -1,104 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeERK3D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:29:03 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:52222 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeERK3C (ORCPT
+        id S1752482AbeERK3X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:29:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44772 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752389AbeERK3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:29:02 -0400
-X-Google-Smtp-Source: AB8JxZrDgD6aiKvdgfO/88nrGnUW7Iy8i0hoSbLPVy08IG86DICI682kI1nskhZPyRVy6rJ0EY3ENoQVSgSJNdBxN1arVMhFYrmw
+        Fri, 18 May 2018 06:29:22 -0400
+Subject: Re: [PATCH] perf tests: Fix regex for record+probe_libc_inet_pton.sh
+To: Thomas-Mich Richter <tmricht@linux.ibm.com>, acme@kernel.org,
+        jolsa@redhat.com
+Cc: linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+References: <20180518072417.1498-1-sandipan@linux.vnet.ibm.com>
+ <be181700-57a5-e4c8-7cd4-88a88b7a51f1@linux.ibm.com>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Date: Fri, 18 May 2018 15:59:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Date: Fri, 18 May 2018 03:29:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ab6f84056c786b93@google.com>
-Subject: WARNING in tracepoint_probe_register_prio (3)
-From: syzbot <syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
-        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <be181700-57a5-e4c8-7cd4-88a88b7a51f1@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051810-0008-0000-0000-000004F7DF04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051810-0009-0000-0000-00001E8C5A16
+Message-Id: <764aa7ae-dcbe-6311-19fd-3d31b18f1645@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805180116
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Thomas,
 
-syzbot found the following crash on:
+On 05/18/2018 03:51 PM, Thomas-Mich Richter wrote:
+[...]
+> 
+> This patch fails on s390. I used 4.17.0rc5 + fedora 27 and I get this output:
+> 
+> 
+> [root@p23lp27 perf]# ./perf test 59
+> 59: probe libc's inet_pton & backtrace it with ping       : Ok
+> [root@p23lp27 linux]# cd ~/linux; patch -p1 < ../inet_pton1 
+> (Stripping trailing CRs from patch; use --binary to disable.)
+> patching file tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> [root@p23lp27 linux]# cd -; 
+> [root@p23lp27 perf]# ./perf test 59
+> 59: probe libc's inet_pton & backtrace it with ping       : FAILED!
+> [root@p23lp27 perf]#
+> 
+> Debugging revealed this line as cause of failure:
+> 
+> 
+> FAIL: expected backtrace entry 2 "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\(/usr/lib64/libc-2.26.so|inlined\)$" got "fdcb1 gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)"
+> 
+> Here is the output of the trace file
+> 
+> [root@p23lp27 perf]# perf script 
+> ping 87291 [001] 96936.231618: probe_libc:inet_pton: (3ff96342378)
+>                   142378 __inet_pton (inlined)
+>                    fdcb1 gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+>                   100189 __GI_getaddrinfo (inlined)
+>                     398d main (/usr/bin/ping)
+>                    2303d __libc_start_main (/usr/lib64/libc-2.26.so)
+>                     457b [unknown] (/usr/bin/ping)
+> 
+> [root@p23lp27 perf]# 
+> 
+> Hope this helps
+> 
 
-HEAD commit:    a78622932c27 bpf: sockmap, fix double-free
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1305ba77800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=774fddf07b7ab29a1e55
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Can you please apply these two patches as well and then re-test?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+[1] https://lkml.org/lkml/2018/5/17/112
+[2] https://lkml.org/lkml/2018/5/17/113
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com
-
-WARNING: CPU: 0 PID: 11734 at kernel/tracepoint.c:210 tracepoint_add_func  
-kernel/tracepoint.c:210 [inline]
-WARNING: CPU: 0 PID: 11734 at kernel/tracepoint.c:210  
-tracepoint_probe_register_prio+0x3b4/0xa50 kernel/tracepoint.c:282
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 11734 Comm: syz-executor1 Not tainted 4.17.0-rc4+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:tracepoint_add_func kernel/tracepoint.c:210 [inline]
-RIP: 0010:tracepoint_probe_register_prio+0x3b4/0xa50 kernel/tracepoint.c:282
-RSP: 0018:ffff8801c7977438 EFLAGS: 00010216
-RAX: 0000000000040000 RBX: ffff8801c7977518 RCX: ffffc900080f9000
-RDX: 00000000000012a1 RSI: ffffffff817a9d34 RDI: ffff8801c29ddab0
-RBP: ffff8801c7977540 R08: ffff880197448700 R09: fffffbfff11b803c
-R10: ffff8801c7977428 R11: ffffffff88dc01e7 R12: 00000000ffffffef
-R13: 00000000ffffffff R14: ffffffff81516c90 R15: 0000000000000001
-  tracepoint_probe_register+0x2a/0x40 kernel/tracepoint.c:303
-  trace_event_reg+0x19a/0x350 kernel/trace/trace_events.c:305
-  perf_trace_event_reg kernel/trace/trace_event_perf.c:123 [inline]
-  perf_trace_event_init+0x4fe/0x990 kernel/trace/trace_event_perf.c:198
-  perf_trace_init+0x186/0x250 kernel/trace/trace_event_perf.c:222
-  perf_tp_event_init+0xa6/0x120 kernel/events/core.c:8337
-  perf_try_init_event+0x137/0x2f0 kernel/events/core.c:9734
-  perf_init_event kernel/events/core.c:9772 [inline]
-  perf_event_alloc.part.91+0x1248/0x3090 kernel/events/core.c:10038
-  perf_event_alloc kernel/events/core.c:10394 [inline]
-  __do_sys_perf_event_open+0xa8a/0x2fa0 kernel/events/core.c:10495
-  __se_sys_perf_event_open kernel/events/core.c:10384 [inline]
-  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10384
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455a09
-RSP: 002b:00007f136b4f5c68 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 00007f136b4f66d4 RCX: 0000000000455a09
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000002001d000
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 0000000000000014
-R13: 000000000000050c R14: 00000000006fb9c0 R15: 0000000000000003
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+- Sandipan
