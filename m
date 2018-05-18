@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeERG1B (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 02:27:01 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43101 "EHLO
+        id S1752271AbeERG1e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 02:27:34 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42322 "EHLO
         mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeERG0p (ORCPT
+        with ESMTP id S1752022AbeERG0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 02:26:45 -0400
-X-Google-Smtp-Source: AB8JxZrAVDhIX4EUSs8wNXq/ClDgUVMfER9kNCyB2NRMp45xU7yU4waUgXbuIxLzrCre6tz/waYHfw==
+        Fri, 18 May 2018 02:26:43 -0400
+X-Google-Smtp-Source: AB8JxZoG59+qyP3fkIHNIBVvfa/z5/fr6+rA0Dtv15uX32HFgb6W2lNqn+NFMh95QJWj+KLOCWGzIQ==
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] arm64: dts: qcom: msm8996: Add ufs related nodes
-Date: Thu, 17 May 2018 23:26:38 -0700
-Message-Id: <20180518062638.31777-4-bjorn.andersson@linaro.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH v3 1/3] scsi: ufs: Extract devfreq registration
+Date: Thu, 17 May 2018 23:26:36 -0700
+Message-Id: <20180518062638.31777-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518062638.31777-1-bjorn.andersson@linaro.org>
 References: <20180518062638.31777-1-bjorn.andersson@linaro.org>
@@ -26,129 +28,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the UFS QMP phy node and the UFS host controller node, now that we
-have working UFS and the necessary clocks in place.
+Failing to register with devfreq leaves hba->devfreq assigned, which
+causes the error path to dereference the ERR_PTR(). Rather than bolting
+on more conditionals, move the call of devm_devfreq_add_device() into
+it's own function and only update hba->devfreq once it's successfully
+registered.
 
+The subsequent patch builds upon this to make UFS actually work again,
+as it's been broken since f1d981eaecf8 ("PM / devfreq: Use the available
+min/max frequency")
+
+Also switch to use DEVFREQ_GOV_SIMPLE_ONDEMAND constant.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |  8 ++
- arch/arm64/boot/dts/qcom/msm8996.dtsi        | 85 ++++++++++++++++++++
- 2 files changed, 93 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 8be666ea92bd..00e3ecd1180a 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -122,6 +122,14 @@
- 			status = "okay";
- 		};
+Changes since v2:
+- Use DEVFREQ_GOV_SIMPLE_ONDEMAND, per Chanwoo's recommendation
+- Picked up Chanwoo's R-b
+
+Changes since v1:
+- None
+
+ drivers/scsi/ufs/ufshcd.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 00e79057f870..f04902a066cb 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -1287,6 +1287,26 @@ static struct devfreq_dev_profile ufs_devfreq_profile = {
+ 	.get_dev_status	= ufshcd_devfreq_get_dev_status,
+ };
  
-+		phy@627000 {
-+			status = "okay";
-+		};
++static int ufshcd_devfreq_init(struct ufs_hba *hba)
++{
++	struct devfreq *devfreq;
++	int ret;
 +
-+		ufshc@624000 {
-+			status = "okay";
-+		};
++	devfreq = devm_devfreq_add_device(hba->dev,
++			&ufs_devfreq_profile,
++			DEVFREQ_GOV_SIMPLE_ONDEMAND,
++			NULL);
++	if (IS_ERR(devfreq)) {
++		ret = PTR_ERR(devfreq);
++		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
++		return ret;
++	}
 +
- 		phy@34000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 37b7152cb064..221bb3d383c5 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -633,6 +633,91 @@
- 			#interrupt-cells = <4>;
- 		};
- 
-+		ufsphy: phy@627000 {
-+			compatible = "qcom,msm8996-ufs-phy-qmp-14nm";
-+			reg = <0x627000 0xda8>;
-+			reg-names = "phy_mem";
-+			#phy-cells = <0>;
++	hba->devfreq = devfreq;
 +
-+			vdda-phy-supply = <&pm8994_l28>;
-+			vdda-pll-supply = <&pm8994_l12>;
++	return 0;
++}
 +
-+			vdda-phy-max-microamp = <18380>;
-+			vdda-pll-max-microamp = <9440>;
-+
-+			vddp-ref-clk-supply = <&pm8994_l25>;
-+			vddp-ref-clk-max-microamp = <100>;
-+			vddp-ref-clk-always-on;
-+
-+			clock-names = "ref_clk_src", "ref_clk";
-+			clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
-+				 <&gcc GCC_UFS_CLKREF_CLK>;
-+			status = "disabled";
-+
-+			power-domains = <&gcc UFS_GDSC>;
-+		};
-+
-+		ufshc@624000 {
-+			compatible = "qcom,ufshc";
-+			reg = <0x624000 0x2500>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			phys = <&ufsphy>;
-+			phy-names = "ufsphy";
-+
-+			vcc-supply = <&pm8994_l20>;
-+			vccq-supply = <&pm8994_l25>;
-+			vccq2-supply = <&pm8994_s4>;
-+
-+			vcc-max-microamp = <600000>;
-+			vccq-max-microamp = <450000>;
-+			vccq2-max-microamp = <450000>;
-+
-+			clock-names =
-+				"core_clk_src",
-+				"core_clk",
-+				"bus_clk",
-+				"bus_aggr_clk",
-+				"iface_clk",
-+				"core_clk_unipro_src",
-+				"core_clk_unipro",
-+				"core_clk_ice",
-+				"ref_clk",
-+				"tx_lane0_sync_clk",
-+				"rx_lane0_sync_clk";
-+			clocks =
-+				<&gcc UFS_AXI_CLK_SRC>,
-+				<&gcc GCC_UFS_AXI_CLK>,
-+				<&gcc GCC_SYS_NOC_UFS_AXI_CLK>,
-+				<&gcc GCC_AGGRE2_UFS_AXI_CLK>,
-+				<&gcc GCC_UFS_AHB_CLK>,
-+				<&gcc UFS_ICE_CORE_CLK_SRC>,
-+				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
-+				<&gcc GCC_UFS_ICE_CORE_CLK>,
-+				<&rpmcc RPM_SMD_LN_BB_CLK>,
-+				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>;
-+			freq-table-hz =
-+				<100000000 200000000>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<150000000 300000000>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>;
-+
-+			lanes-per-direction = <1>;
-+			status = "disabled";
-+
-+			ufs_variant {
-+				compatible = "qcom,ufs_variant";
-+			};
-+		};
-+
- 		mmcc: clock-controller@8c0000 {
- 			compatible = "qcom,mmcc-msm8996";
- 			#clock-cells = <1>;
+ static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
+ {
+ 	unsigned long flags;
+@@ -6439,16 +6459,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 				sizeof(struct ufs_pa_layer_attr));
+ 			hba->clk_scaling.saved_pwr_info.is_valid = true;
+ 			if (!hba->devfreq) {
+-				hba->devfreq = devm_devfreq_add_device(hba->dev,
+-							&ufs_devfreq_profile,
+-							"simple_ondemand",
+-							NULL);
+-				if (IS_ERR(hba->devfreq)) {
+-					ret = PTR_ERR(hba->devfreq);
+-					dev_err(hba->dev, "Unable to register with devfreq %d\n",
+-							ret);
++				ret = ufshcd_devfreq_init(hba);
++				if (ret)
+ 					goto out;
+-				}
+ 			}
+ 			hba->clk_scaling.is_allowed = true;
+ 		}
 -- 
 2.17.0
