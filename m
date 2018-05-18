@@ -1,86 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751661AbeERHs2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:48:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34094 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751049AbeERHsZ (ORCPT
+        id S1751994AbeERHtu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:49:50 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40878 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbeERHtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:48:25 -0400
-X-Google-Smtp-Source: AB8JxZoeo5IbvILMI0zHqDO5Ytv/Fn0DQWJMszh0XrVoTUN8APtpdkA4AvnfbpoJ7UtVUn68aTJWcw==
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
- <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
- <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
- <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
- <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
- <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
- <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
- <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
-Date: Fri, 18 May 2018 09:48:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 03:49:47 -0400
+X-Google-Smtp-Source: AB8JxZp9DMnGsSeThwGXMQ6V2n4pulrZompt9s1bI1y5sNK2Ndmayej/0lF/VYlqijke5R1GRCVJXw==
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>, darrick.wong@oracle.com,
+        tytso@mit.edu, linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org, peterz@infradead.org
+Subject: [PATCH 00/10] RFC: assorted bcachefs patches
+Date: Fri, 18 May 2018 03:48:58 -0400
+Message-Id: <20180518074918.13816-1-kent.overstreet@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarkko, et.al.,
+These are all the remaining patches in my bcachefs tree that touch stuff outside
+fs/bcachefs. Not all of them are suitable for inclusion as is, I wanted to get
+some discussion first.
 
-On 17-05-18 09:48, Jarkko Nikula wrote:
-> Hi
-> 
-> On 05/15/2018 01:20 PM, Jarkko Nikula wrote:
->> On 05/15/2018 06:22 AM, Chris Chiu wrote:
->>> What if I change the 120MHz to 180MHz and then make sure that the I2C operates
->>> in target FS mode frequency 400kHz via scope? Would there be any side effect?
->>> Maybe some other busses frequency could be also affected and causing some other
->>> component malfunction?
->>>
->> Should be safe. It is only clock rate information when registering a fixed clock with known rate in intel-lpss.c and i2c-designware uses that info when calculating the timing parameters. I.e. it doesn't change any internal clocks.
->>
->> I'm trying to find a contact who can confirm what is the expected rate of I2C input clock and is it common to all Cannon Lake HW.
->>
-> I got confirmation that input clock is actually even higher 216 Mhz.
-> 
-> While checking does it cover all of those CNL CNL-LP and CNL-H PCI IDs may I add your Jian-Hong, Chris and Daniel email addresses to Repored-by tags in a fix patch?
+ * pagecache add lock
 
-Could it be the i2c input clock definition in drivers/mfd/intel-lpss-pci.c
-is also wrong for Apollo Lake (N3450) ?  There are lots of people having
-various issues with i2c attached touchpads on Apollo Lake devices, this bug:
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
+This is the only one that touches existing code in nontrivial ways.  The problem
+it's solving is that there is no existing general mechanism for shooting down
+pages in the page and keeping them removed, which is a real problem if you're
+doing anything that modifies file data and isn't buffered writes.
 
-Is sort of a collection bug for these. Various models laptops, lots of
-reporters. Note not sure thie is an i2c-designware issue, but it would
-be good to double check the input clock on Apollo Lake.
+Historically, the only problematic case has been direct IO, and people have been
+willing to say "well, if you mix buffered and direct IO you get what you
+deserve", and that's probably not unreasonable. But now we have fallocate insert
+range and collapse range, and those are broken in ways I frankly don't want to
+think about if they can't ensure consistency with the page cache.
 
-I've checked the datasheet and the datasheet mentions 133MHz as
-"serial input clk" in the lpio_bxt_regs Registers Summary, which is
-also part of the LPSS, no clk is mentioned in the "Summary of
-DW_apb_i2c_mem_map_DW_apb_i2c_addr_block1 Registers".
+Also, the mechanism truncate uses (i_size and sacrificing a goat) has
+historically been rather fragile, IMO it might be a good think if we switched it
+to a more general rigorous mechanism.
 
-Regards,
+I need this solved for bcachefs because without this mechanism, the page cache
+inconsistencies lead to various assertions popping (primarily when we didn't
+think we need to get a disk reservation going by page cache state, but then do
+the actual write and disk space accounting says oops, we did need one). And
+having to reason about what can happen without a locking mechanism for this is
+not something I care to spend brain cycles on.
 
-Hans
+That said, my patch is kind of ugly, and it requires filesystem changes for
+other filesystems to take advantage of it. And unfortunately, since one of the
+code paths that needs locking is readahead, I don't see any realistic way of
+implementing the locking within just bcachefs code.
+
+So I'm hoping someone has an idea for something cleaner (I think I recall
+Matthew Wilcox saying he had an idea for how to use xarray to solve this), but
+if not I'll polish up my pagecache add lock patch and see what I can do to make
+it less ugly, and hopefully other people find it palatable or at least useful.
+
+ * lglocks
+
+They were removed by Peter Zijlstra when the last in kernel user was removed,
+but I've found them useful. His commit message seems to imply he doesn't think
+people should be using them, but I'm not sure why. They are a bit niche though,
+I can move them to fs/bcachefs if people would prefer. 
+
+ * Generic radix trees
+
+This is a very simple radix tree implementation that can store types of
+arbitrary size, not just pointers/unsigned long. It could probably replace
+flex arrays.
+
+ * Dynamic fault injection
+
+I've actually had this code sitting in my tree since forever... I know we have
+an existing fault injection framework, but I think this one is quite a bit nicer
+to actually use.
+
+It works very much like the dynamic debug infrastructure - for those who aren't
+familiar, dynamic debug makes it so you can list and individually enable/disable
+every pr_debug() callsite in debugfs.
+
+So to add a fault injection site with this, you just stick a call to
+dynamic_fault("foobar") somewhere in your code - dynamic_fault() returns true if
+you should fail whatever it is you're testing. And then it'll show up in
+debugfs, where you can enable/disable faults by file/linenumber, module, name,
+etc.
+
+The patch then also adds macros that wrap all the various memory allocation
+functions and fail if dynamic_fault("memory") returns true - which means you can
+see in debugfs every place you're allocating memory and fail all of them or just
+individually (I have tests that iterate over all the faults and flip them on one
+by one). I also use it in bcachefs to add fault injection points for uncommon
+error paths in the filesystem startup/recovery path, and for various hard to
+test slowpaths that only happen if we race in weird ways (race_fault()).
+
+Kent Overstreet (10):
+  mm: pagecache add lock
+  mm: export find_get_pages()
+  locking: bring back lglocks
+  locking: export osq_lock()/osq_unlock()
+  don't use spin_lock_irqsave() unnecessarily
+  Generic radix trees
+  bcache: optimize continue_at_nobarrier()
+  bcache: move closures to lib/
+  closures: closure_wait_event()
+  Dynamic fault injection
+
+ drivers/md/bcache/Kconfig                     |  10 +-
+ drivers/md/bcache/Makefile                    |   6 +-
+ drivers/md/bcache/bcache.h                    |   2 +-
+ drivers/md/bcache/super.c                     |   1 -
+ drivers/md/bcache/util.h                      |   3 +-
+ fs/inode.c                                    |   1 +
+ include/asm-generic/vmlinux.lds.h             |   4 +
+ .../md/bcache => include/linux}/closure.h     |  50 +-
+ include/linux/dynamic_fault.h                 | 117 +++
+ include/linux/fs.h                            |  23 +
+ include/linux/generic-radix-tree.h            | 131 +++
+ include/linux/lglock.h                        |  97 +++
+ include/linux/sched.h                         |   4 +
+ init/init_task.c                              |   1 +
+ kernel/locking/Makefile                       |   1 +
+ kernel/locking/lglock.c                       | 105 +++
+ kernel/locking/osq_lock.c                     |   2 +
+ lib/Kconfig                                   |   3 +
+ lib/Kconfig.debug                             |  14 +
+ lib/Makefile                                  |   7 +-
+ {drivers/md/bcache => lib}/closure.c          |  17 +-
+ lib/dynamic_fault.c                           | 760 ++++++++++++++++++
+ lib/generic-radix-tree.c                      | 167 ++++
+ mm/filemap.c                                  |  92 ++-
+ mm/page-writeback.c                           |   5 +-
+ 25 files changed, 1577 insertions(+), 46 deletions(-)
+ rename {drivers/md/bcache => include/linux}/closure.h (92%)
+ create mode 100644 include/linux/dynamic_fault.h
+ create mode 100644 include/linux/generic-radix-tree.h
+ create mode 100644 include/linux/lglock.h
+ create mode 100644 kernel/locking/lglock.c
+ rename {drivers/md/bcache => lib}/closure.c (95%)
+ create mode 100644 lib/dynamic_fault.c
+ create mode 100644 lib/generic-radix-tree.c
+
+-- 
+2.17.0
