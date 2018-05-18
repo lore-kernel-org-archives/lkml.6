@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-797182-1526912247-2-6289326590129365672
+X-Cyrus-Session-Id: sloti22d1t05-3687130-1526635053-2-12715234323824967685
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,24 +7,24 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526912247; b=XfD0OGMixNkZd4i77RAOsWisuQ/O/aFS3EH000OdWzRkkA3QPR
-    oi9dTEzYdcTGXoHfIAZP9tJfHDxmYRqAjExJZziBY0TmnMenVGEocajvUjUsdh9B
-    MLsRRsS8xNkUHAXrLAEdbDCWUHlUbWc1mawk7rAwGCEbTvluuoq0K5Y6q9bWZmsz
-    tq+v+dhqxdU8iSTidUNB/DmaYlnhDP9vGvldUd18nKs0xXQJH7TRLGu+clEUaxqU
-    /wgc008K8ol6V/9ywmd4hHhGbTlxct5NOOpiLn7i/PV+CX86bhEdODRnyDwcAWBB
-    IW4uo2Y2CE+kjqrhYngWxaPrIAAPNvAwUOFg==
+    1526635052; b=N20iy667xQiIrmQN4l7od0n+bm6+tgprJpRdah7IyQgH26w7fm
+    KrqIp99LPysj74HDb21Lvk/OUvN72/nNF7YgERgxbNZlM4cGv3UUUh7CG9Pn+9R2
+    b0cJ0NMWo/Bv8cCLo/n4sj9vw0HJSXI9GCA0tWGemGIrEYG87i5LTmjQjDWD/X1f
+    IbZg7HUhMRpy8gIWrKr/pPsLNVrFbrAj5eEXC74nOsiVrKTKGXnhOJnFQzds3dfR
+    UuFC0JSlq4oMTtRgoyoqzG+qGkLWEuTvQ1Q0vRnmb6a3tQkIrvRXu+mZvk0jR1g/
+    P0PgTjSAHBy39CqnQR6VKzn6/IcYnzWMYexA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526912247; bh=SYpWCD/zVR2fr2AN6ayHF0XfkoxETL
-    eBM+V6NwghpN0=; b=k62VlaOlTJ8gemytTBIF7bs8qXEsSPby4oHX1ys8d+WT3L
-    06yHmc6DIW0UQXDgdpZqPz7yjTZHH68KH0PjnYmI+2+eLAH1CdDgemgmx0a2CeNR
-    IXyoKegtH4dACO79CArZSWJOHCzWRttDyWSigamMNLnaoMkPjWnbzXlurVd+F9HG
-    co8OEoz32ZKpXMmxznhtoing5/16kN/pnuM+R9B0Rfju6ewSQ7vbUPtB4XseyHiN
-    f0vQejpr4brEy+P51pHRZCxBMP2yv698Nw8O12ZrpWqDbJsNC/Km7RXyPUvyCBsu
-    lts5B4bFfe8PQZM5hUoB4YoehV5dZlUYP3bvylfg==
+    :list-id; s=fm2; t=1526635052; bh=KH/chlDuFyAsUunyyJzF2MlH6RtRk6
+    wIwHqGXjW8Y3c=; b=SgMP+LBP8XxA8akNkDT3loRdf+yGUu0VX41w715jUnYH6D
+    Ykl+wdx28hYHeMFddOHVApl/kj2U/jqff37Rxye4KVhRWIze8Jn4mIVcBbDyHAKK
+    XroT0JmdFzMPcevzob8gr7NUzWdl0fGsVN5raFgG1oKyrr5aF4w2bbRfYwWgDSsB
+    58SLnjZ5QauIBoElnxU6E3jTGLDjlYSrhg8wgTyPhcVNnaVWFwG+YwVaHO6corxY
+    gr5e4F7A0C3EqQX63ifxsM1YeEDIx69CtQKiLw/UkpXsLh/1F93QHP5NysWyjCJU
+    92jnCpTMT/yZk7BT3FczlXnYNJ6KugG/CPr+/3QQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -33,12 +33,12 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -47,144 +47,216 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPOGZQXUQsa+YNOh+xBfaYGymuKftcmTnoELdugbBFbncV0MbCSIXH3w00NltcKSkGsjaYBYyLLvorQkF4AU+hCiFQkJLFCqZfNm7kZbHauaw5ZU9Ssp
-    yz+DRo/e7Qkb5cLXo8tEKuWz5YvhW8FxCTP3Ej64w/3aVPbMytKbGkPf5JJXULMsRn4+bfaKLev85syjUhl4zqlBX6zUP9sLKAmVWWwGBJu9p2GvQu19s1K4
+X-CM-Envelope: MS4wfHxwGyARXwLNVgqlEtV9rv6FiyCH1cZtqMCmFix/Q87QzOBVlWiUb76VUTqw7K0nD+OQ2jmiDKbCqQlXp8/2HUeDoz9g2GgLzoC3QmoXRiJhMaURoUje
+    rnMaALx7DbPvdJPsoHXRUCuAtvYbrtGGGOsYBa1u33aU0zTdqMltWxg0Ekcuk2BgR7fA2cYSiacYcsTxlbUMKCf4IGysUChCGpNsAod6rc5Okcbmw+lNBq7x
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
-    a=pk9vOewVUvBdo0IRyQ4A:9 a=I7Fl0iNTEZgA:10 a=G5WYf6J1rTwA:10 a=d0Eap3aq__YA:10
-    a=aXqy-N0K3ocA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=D19gQVrFAAAA:8
+    a=AVp4oGAeJcCDcb0J010A:9 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751265AbeEUORZ (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 10:17:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50292 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751039AbeEUORY (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 21 May 2018 10:17:24 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: linux-arm-kernel@lists.infradead.org,
-        Christoffer Dall <cdall@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v9 00/16] KVM: arm64: Optimise FPSIMD context switching
-Date: Mon, 21 May 2018 15:17:01 +0100
-Message-Id: <1526912237-25308-1-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S1753092AbeERJR2 (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 05:17:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45325 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753056AbeERJRZ (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:25 -0400
+From: Jiri Slaby <jslaby@suse.cz>
+To: mingo@redhat.com
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH v6 00/28] New macros for assembler symbols
+Date: Fri, 18 May 2018 11:16:53 +0200
+Message-Id: <20180518091721.7604-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Note: Most of these patches are Arm-specific.  People not Cc'd on the
-whole series can find it in the linux-arm-kernel archive [2].
+This series introduces new macros for assembly as was discussed [1].
+The macros are introduced in the first patch of the series. The rest
+of patches start using these new macros in x86, converting *all* uses
+of the old macros to the new ones throughout the last patch. With
+every last user of some old macro, the macro is immediatelly made
+forbidden for x86.
 
-This series aims to improve the way FPSIMD context is handled by KVM.
-Only minor changes have been made since the previous v8 [1], though
-this posting does apply a couple of fixes.
+When this settles down, conversion of other architectures can be done
+too.
 
-This is a minor update to fix a couple of build breaks introduced late
-in the evolution of the series. [3] [4]
+For introduction, documentation, use and examples, please see
+Documentation/asm-annotations.rst from the first patch of the series.
 
-There is also an unexplained NULL-dereference bug observed by Marc on
-ESPRESSOBin [5] that I need to look into.  We've not been able to
-reproduce this so far.
-
-In the meantime, this post will give people an opportunity to look over
-the current changes.
+[1] https://lkml.org/lkml/2017/3/1/742
 
 
-The changes are summarised in the individual patches.
+Jiri Slaby (28):
+  linkage: new macros for assembler symbols
+  x86/asm/suspend: drop ENTRY from local data
+  x86/asm/suspend: use SYM_DATA for data
+  x86/asm: annotate relocate_kernel
+  x86/asm/entry: annotate THUNKs
+  x86/asm: annotate local pseudo-functions
+  x86/asm/crypto: annotate local functions
+  x86/boot/compressed: annotate local functions
+  x86/asm: annotate aliases
+  x86/asm/entry: annotate interrupt symbols properly
+  x86/asm/head: annotate data appropriatelly
+  x86/boot/compressed: annotate data appropriatelly
+  um: annotate data appropriatelly
+  xen/pvh: annotate data appropriatelly
+  x86/asm/purgatory: start using annotations
+  x86/asm: do not annotate functions by GLOBAL
+  x86/asm: use SYM_INNER_LABEL instead of GLOBAL
+  x86/asm/realmode: use SYM_DATA_* instead of GLOBAL
+  x86/asm: kill the last GLOBAL user and remove the macro
+  x86/asm: make some functions local
+  x86/asm/ftrace: mark function_hook as function
+  x86_64/asm: add ENDs to some functions and relabel with SYM_CODE_*
+  x86_64/asm: change all ENTRY+END to SYM_CODE_*
+  x86_64/asm: change all ENTRY+ENDPROC to SYM_FUNC_*
+  x86_32/asm: add ENDs to some functions and relabel with SYM_CODE_*
+  x86_32/asm: change all ENTRY+END to SYM_CODE_*
+  x86_32/asm: change all ENTRY+ENDPROC to SYM_FUNC_*
+  x86/asm: replace WEAK uses by SYM_INNER_LABEL
 
-Reviewers please note:
-
- * **Only patches 8 and 12** have changed since v8.
-
- * I have stripped tags from patch 12 due to the introduction of a new
-   source file, which may not be the best approach.
-
-   If Christoffer, Marc and Catalin could take another look that
-   would be much appreciated.
-
-Cheers
----Dave
-
-[1] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
-lists.infradead.org/pipermail/linux-arm-kernel/2018-May/578184.html
-
-[2] linux-arm-kernel archive
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/thread.html
-
-[3] [kvmarm:queue 9/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:783:3: error: implicit declaration of function 'kvm_arch_vcpu_ctxsync_fp'; did you mean 'kvm_arch_vcpu_put_fp'?
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579400.html
-
-[4] [kvmarm:queue 13/29] arch/arm/kvm/../../../virt/kvm/arm/arm.c:1598:6: error: implicit declaration of function 'system_supports_sve'
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579399.html
-
-[5] [PULL v8] KVM: arm64: Optimise FPSIMD context switching
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579353.html
-
-
-Christoffer Dall (1):
-  KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
-
-Dave Martin (15):
-  thread_info: Add update_thread_flag() helpers
-  arm64: Use update{,_tsk}_thread_flag()
-  KVM: arm64: Convert lazy FPSIMD context switch trap to C
-  arm64: fpsimd: Generalise context saving for non-task contexts
-  arm64/sve: Refactor user SVE trap maintenance for external use
-  KVM: arm64: Repurpose vcpu_arch.debug_flags for general-purpose flags
-  KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
-  arm64/sve: Move read_zcr_features() out of cpufeature.h
-  arm64/sve: Switch sve_pffr() argument from task to thread
-  arm64/sve: Move sve_pffr() to fpsimd.h and make inline
-  KVM: arm64: Save host SVE context as appropriate
-  KVM: arm64: Remove eager host SVE state saving
-  KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
-  KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
-  KVM: arm64: Invoke FPSIMD context switch trap from C
-
- arch/arm/include/asm/kvm_host.h     |  10 ++-
- arch/arm64/Kconfig                  |   7 ++
- arch/arm64/include/asm/cpufeature.h |  29 -------
- arch/arm64/include/asm/fpsimd.h     |  21 ++++++
- arch/arm64/include/asm/kvm_asm.h    |   3 -
- arch/arm64/include/asm/kvm_host.h   |  33 +++++---
- arch/arm64/include/asm/processor.h  |   2 +
- arch/arm64/kernel/fpsimd.c          | 147 +++++++++++++++++++-----------------
- arch/arm64/kernel/ptrace.c          |   1 +
- arch/arm64/kvm/Kconfig              |   1 +
- arch/arm64/kvm/Makefile             |   4 +-
- arch/arm64/kvm/debug.c              |   8 +-
- arch/arm64/kvm/fpsimd.c             | 111 +++++++++++++++++++++++++++
- arch/arm64/kvm/hyp/debug-sr.c       |   6 +-
- arch/arm64/kvm/hyp/entry.S          |  43 -----------
- arch/arm64/kvm/hyp/hyp-entry.S      |  19 -----
- arch/arm64/kvm/hyp/switch.c         | 124 ++++++++++++++++++++----------
- arch/arm64/kvm/hyp/sysreg-sr.c      |   4 +-
- arch/arm64/kvm/init.c               |  33 ++++++++
- arch/arm64/kvm/sys_regs.c           |   9 +--
- include/linux/kvm_host.h            |   9 +++
- include/linux/sched.h               |   6 ++
- include/linux/thread_info.h         |  11 +++
- virt/kvm/Kconfig                    |   3 +
- virt/kvm/arm/arm.c                  |  13 +++-
- virt/kvm/kvm_main.c                 |   7 +-
- 26 files changed, 430 insertions(+), 234 deletions(-)
- create mode 100644 arch/arm64/kvm/fpsimd.c
- create mode 100644 arch/arm64/kvm/init.c
+ Documentation/asm-annotations.rst                  | 217 ++++++++++++++++++
+ arch/x86/boot/compressed/efi_stub_32.S             |   4 +-
+ arch/x86/boot/compressed/efi_thunk_64.S            |  33 +--
+ arch/x86/boot/compressed/head_32.S                 |  15 +-
+ arch/x86/boot/compressed/head_64.S                 |  60 ++---
+ arch/x86/boot/compressed/mem_encrypt.S             |  14 +-
+ arch/x86/boot/copy.S                               |  16 +-
+ arch/x86/boot/pmjump.S                             |   8 +-
+ arch/x86/crypto/aes-i586-asm_32.S                  |   8 +-
+ arch/x86/crypto/aes-x86_64-asm_64.S                |   4 +-
+ arch/x86/crypto/aes_ctrby8_avx-x86_64.S            |  12 +-
+ arch/x86/crypto/aesni-intel_asm.S                  | 114 +++++-----
+ arch/x86/crypto/aesni-intel_avx-x86_64.S           |  24 +-
+ arch/x86/crypto/blowfish-x86_64-asm_64.S           |  16 +-
+ arch/x86/crypto/camellia-aesni-avx-asm_64.S        |  44 ++--
+ arch/x86/crypto/camellia-aesni-avx2-asm_64.S       |  44 ++--
+ arch/x86/crypto/camellia-x86_64-asm_64.S           |  16 +-
+ arch/x86/crypto/cast5-avx-x86_64-asm_64.S          |  24 +-
+ arch/x86/crypto/cast6-avx-x86_64-asm_64.S          |  32 +--
+ arch/x86/crypto/chacha20-avx2-x86_64.S             |   4 +-
+ arch/x86/crypto/chacha20-ssse3-x86_64.S            |   8 +-
+ arch/x86/crypto/crc32-pclmul_asm.S                 |   4 +-
+ arch/x86/crypto/crc32c-pcl-intel-asm_64.S          |   4 +-
+ arch/x86/crypto/crct10dif-pcl-asm_64.S             |   4 +-
+ arch/x86/crypto/des3_ede-asm_64.S                  |   8 +-
+ arch/x86/crypto/ghash-clmulni-intel_asm.S          |  12 +-
+ arch/x86/crypto/poly1305-avx2-x86_64.S             |   4 +-
+ arch/x86/crypto/poly1305-sse2-x86_64.S             |   8 +-
+ arch/x86/crypto/salsa20-i586-asm_32.S              |   4 +-
+ arch/x86/crypto/salsa20-x86_64-asm_64.S            |   4 +-
+ arch/x86/crypto/serpent-avx-x86_64-asm_64.S        |  32 +--
+ arch/x86/crypto/serpent-avx2-asm_64.S              |  32 +--
+ arch/x86/crypto/serpent-sse2-i586-asm_32.S         |   8 +-
+ arch/x86/crypto/serpent-sse2-x86_64-asm_64.S       |   8 +-
+ arch/x86/crypto/sha1-mb/sha1_mb_mgr_flush_avx2.S   |   8 +-
+ arch/x86/crypto/sha1-mb/sha1_mb_mgr_submit_avx2.S  |   4 +-
+ arch/x86/crypto/sha1-mb/sha1_x8_avx2.S             |   4 +-
+ arch/x86/crypto/sha1_avx2_x86_64_asm.S             |   4 +-
+ arch/x86/crypto/sha1_ni_asm.S                      |   4 +-
+ arch/x86/crypto/sha1_ssse3_asm.S                   |   4 +-
+ arch/x86/crypto/sha256-avx-asm.S                   |   4 +-
+ arch/x86/crypto/sha256-avx2-asm.S                  |   4 +-
+ .../crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S    |   8 +-
+ .../crypto/sha256-mb/sha256_mb_mgr_submit_avx2.S   |   4 +-
+ arch/x86/crypto/sha256-mb/sha256_x8_avx2.S         |   4 +-
+ arch/x86/crypto/sha256-ssse3-asm.S                 |   4 +-
+ arch/x86/crypto/sha256_ni_asm.S                    |   4 +-
+ arch/x86/crypto/sha512-avx-asm.S                   |   4 +-
+ arch/x86/crypto/sha512-avx2-asm.S                  |   4 +-
+ .../crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S    |   8 +-
+ .../crypto/sha512-mb/sha512_mb_mgr_submit_avx2.S   |   4 +-
+ arch/x86/crypto/sha512-mb/sha512_x4_avx2.S         |   4 +-
+ arch/x86/crypto/sha512-ssse3-asm.S                 |   4 +-
+ arch/x86/crypto/twofish-avx-x86_64-asm_64.S        |  32 +--
+ arch/x86/crypto/twofish-i586-asm_32.S              |   8 +-
+ arch/x86/crypto/twofish-x86_64-asm_64-3way.S       |   8 +-
+ arch/x86/crypto/twofish-x86_64-asm_64.S            |   8 +-
+ arch/x86/entry/entry_32.S                          | 155 ++++++-------
+ arch/x86/entry/entry_64.S                          | 107 ++++-----
+ arch/x86/entry/entry_64_compat.S                   |  16 +-
+ arch/x86/entry/thunk_32.S                          |   4 +-
+ arch/x86/entry/thunk_64.S                          |   8 +-
+ arch/x86/entry/vdso/vdso32/system_call.S           |   2 +-
+ arch/x86/include/asm/linkage.h                     |   4 -
+ arch/x86/kernel/acpi/wakeup_32.S                   |  11 +-
+ arch/x86/kernel/acpi/wakeup_64.S                   |  25 ++-
+ arch/x86/kernel/ftrace_32.S                        |  23 +-
+ arch/x86/kernel/ftrace_64.S                        |  42 ++--
+ arch/x86/kernel/head_32.S                          |  60 ++---
+ arch/x86/kernel/head_64.S                          | 106 ++++-----
+ arch/x86/kernel/relocate_kernel_32.S               |  13 +-
+ arch/x86/kernel/relocate_kernel_64.S               |  13 +-
+ arch/x86/kernel/verify_cpu.S                       |   4 +-
+ arch/x86/lib/atomic64_386_32.S                     |   4 +-
+ arch/x86/lib/atomic64_cx8_32.S                     |  32 +--
+ arch/x86/lib/checksum_32.S                         |  16 +-
+ arch/x86/lib/clear_page_64.S                       |  12 +-
+ arch/x86/lib/cmpxchg16b_emu.S                      |   4 +-
+ arch/x86/lib/cmpxchg8b_emu.S                       |   4 +-
+ arch/x86/lib/copy_page_64.S                        |   8 +-
+ arch/x86/lib/copy_user_64.S                        |  16 +-
+ arch/x86/lib/csum-copy_64.S                        |   4 +-
+ arch/x86/lib/getuser.S                             |  24 +-
+ arch/x86/lib/hweight.S                             |   8 +-
+ arch/x86/lib/iomap_copy_64.S                       |   4 +-
+ arch/x86/lib/memcpy_64.S                           |  20 +-
+ arch/x86/lib/memmove_64.S                          |   8 +-
+ arch/x86/lib/memset_64.S                           |  16 +-
+ arch/x86/lib/msr-reg.S                             |   8 +-
+ arch/x86/lib/putuser.S                             |  20 +-
+ arch/x86/lib/retpoline.S                           |   4 +-
+ arch/x86/lib/rwsem.S                               |  24 +-
+ arch/x86/math-emu/div_Xsig.S                       |   4 +-
+ arch/x86/math-emu/div_small.S                      |   4 +-
+ arch/x86/math-emu/mul_Xsig.S                       |  12 +-
+ arch/x86/math-emu/polynom_Xsig.S                   |   4 +-
+ arch/x86/math-emu/reg_norm.S                       |   8 +-
+ arch/x86/math-emu/reg_round.S                      |   4 +-
+ arch/x86/math-emu/reg_u_add.S                      |   4 +-
+ arch/x86/math-emu/reg_u_div.S                      |   4 +-
+ arch/x86/math-emu/reg_u_mul.S                      |   4 +-
+ arch/x86/math-emu/reg_u_sub.S                      |   4 +-
+ arch/x86/math-emu/round_Xsig.S                     |   8 +-
+ arch/x86/math-emu/shr_Xsig.S                       |   4 +-
+ arch/x86/math-emu/wm_shrx.S                        |   8 +-
+ arch/x86/math-emu/wm_sqrt.S                        |   4 +-
+ arch/x86/mm/mem_encrypt_boot.S                     |   8 +-
+ arch/x86/platform/efi/efi_stub_32.S                |   4 +-
+ arch/x86/platform/efi/efi_stub_64.S                |   4 +-
+ arch/x86/platform/efi/efi_thunk_64.S               |  16 +-
+ arch/x86/platform/olpc/xo1-wakeup.S                |   3 +-
+ arch/x86/power/hibernate_asm_32.S                  |   6 +-
+ arch/x86/power/hibernate_asm_64.S                  |  14 +-
+ arch/x86/purgatory/entry64.S                       |  21 +-
+ arch/x86/purgatory/setup-x86_64.S                  |  14 +-
+ arch/x86/purgatory/stack.S                         |   7 +-
+ arch/x86/realmode/rm/header.S                      |   8 +-
+ arch/x86/realmode/rm/reboot.S                      |  13 +-
+ arch/x86/realmode/rm/stack.S                       |  14 +-
+ arch/x86/realmode/rm/trampoline_32.S               |  16 +-
+ arch/x86/realmode/rm/trampoline_64.S               |  29 +--
+ arch/x86/realmode/rm/trampoline_common.S           |   4 +-
+ arch/x86/realmode/rm/wakeup_asm.S                  |  15 +-
+ arch/x86/realmode/rmpiggy.S                        |  10 +-
+ arch/x86/um/vdso/vdso.S                            |   6 +-
+ arch/x86/xen/xen-asm.S                             |  20 +-
+ arch/x86/xen/xen-asm_32.S                          |   7 +-
+ arch/x86/xen/xen-asm_64.S                          |  34 +--
+ arch/x86/xen/xen-head.S                            |   8 +-
+ arch/x86/xen/xen-pvh.S                             |  15 +-
+ include/linux/linkage.h                            | 247 ++++++++++++++++++++-
+ 131 files changed, 1459 insertions(+), 982 deletions(-)
+ create mode 100644 Documentation/asm-annotations.rst
 
 -- 
-2.1.4
+2.16.3
