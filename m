@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeERJrc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:47:32 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42425 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeERJr2 (ORCPT
+        id S1752306AbeERJqH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:46:07 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46934 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbeERJqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:47:28 -0400
-X-Google-Smtp-Source: AB8JxZqk2ASrrzyFmkNPP1C6EW0CpCtjqs/fGP2zTLhHbMc7462bIAVjAHZdLRAGmkF18ew4GEgs0Q==
+        Fri, 18 May 2018 05:46:04 -0400
+X-Google-Smtp-Source: AB8JxZqayJtiGSZj/ep3pZjmtbvzaeyuBcBRyZrYMFL2WHWVxLynbgppZVIY8izAWwvgu7vZ6+NKog==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ To: Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 13/26] drm/sun4i: Add support for A64 HDMI PHY
-Date: Fri, 18 May 2018 15:15:23 +0530
-Message-Id: <20180518094536.17201-14-jagan@amarulasolutions.com>
+Subject: [PATCH v2 01/26] dt-bindings: clock: Add compatible for A64 DE2 CCU
+Date: Fri, 18 May 2018 15:15:11 +0530
+Message-Id: <20180518094536.17201-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
 References: <20180518094536.17201-1-jagan@amarulasolutions.com>
@@ -32,47 +32,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+Allwinner A64 has DE2 CCU is similar to H3/H5 SoC.
 
-PHY is the same as in H3, except it can select between two clock parent.
+So add compatible for A64 which is fallback compatible
+for H5, so update fallback binding.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes for v2:
-- new patch
+- Add fallback compatible
 
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 0eadf087fc46..39fbf7257fce 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -392,6 +392,13 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 	.name		= "phy"
- };
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+index f2fa87c4765c..e3ffe0bcd0a0 100644
+--- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -7,6 +7,7 @@ Required properties :
+ 		- "allwinner,sun8i-h3-de2-clk"
+ 		- "allwinner,sun8i-v3s-de2-clk"
+ 		- "allwinner,sun50i-h5-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk", "allwinner,sun50i-h5-de2-clk"
  
-+static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
-+	.phy_clk_num = 2,
-+	.phy_init = &sun8i_hdmi_phy_init_h3,
-+	.phy_disable = &sun8i_hdmi_phy_disable_h3,
-+	.phy_config = &sun8i_hdmi_phy_config_h3,
-+};
-+
- static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
- 	.phy_init = &sun8i_hdmi_phy_init_a83t,
- 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
-@@ -406,6 +413,10 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
- };
- 
- static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun50i-a64-hdmi-phy",
-+		.data = &sun50i_a64_hdmi_phy,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
- 		.data = &sun8i_a83t_hdmi_phy,
+ - reg: Must contain the registers base address and length
+ - clocks: phandle to the clocks feeding the display engine subsystem.
 -- 
 2.14.3
