@@ -1,126 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeERD2g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 17 May 2018 23:28:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53863 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751698AbeERD2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 May 2018 23:28:35 -0400
-Subject: Re: [PATCH rdma-next 4/5] RDMA/hns: Add reset process for RoCE in
- hip08
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
- <1526544173-106587-5-git-send-email-xavier.huwei@huawei.com>
- <20180517151459.GD10842@ziepe.ca>
-CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
-        <lijun_nudt@163.com>
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5AFE484B.2080206@huawei.com>
-Date: Fri, 18 May 2018 11:28:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20180517151459.GD10842@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+        id S1752173AbeERD3h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 17 May 2018 23:29:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48316 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751698AbeERD3g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 May 2018 23:29:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5580260131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=hpuranik@codeaurora.org
+From: Hemanth Puranik <hpuranik@codeaurora.org>
+To: netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Timur Tabi <timur@codeaurora.org>,
+        Hemanth Puranik <hpuranik@codeaurora.org>
+Subject: [PATCH v2] net: qcom/emac: Allocate buffers from local node
+Date: Fri, 18 May 2018 08:59:29 +0530
+Message-Id: <1526614169-9586-1-git-send-email-hpuranik@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently we use non-NUMA aware allocation for TPD and RRD buffers,
+this patch modifies to use NUMA friendly allocation.
 
+Signed-off-by: Hemanth Puranik <hpuranik@codeaurora.org>
+---
+Change since v1:
+- Addressed comments related to ordering
 
-On 2018/5/17 23:14, Jason Gunthorpe wrote:
-> On Thu, May 17, 2018 at 04:02:52PM +0800, Wei Hu (Xavier) wrote:
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> index 86ef15f..e1c44a6 100644
->> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> @@ -774,6 +774,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
->>  	int ret = 0;
->>  	int ntc;
->>  
->> +	if (hr_dev->is_reset)
->> +		return 0;
->> +
->>  	spin_lock_bh(&csq->lock);
->>  
->>  	if (num > hns_roce_cmq_space(csq)) {
->> @@ -4790,6 +4793,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
->>  	return 0;
->>  
->>  error_failed_get_cfg:
->> +	handle->priv = NULL;
->>  	kfree(hr_dev->priv);
->>  
->>  error_failed_kzalloc:
->> @@ -4803,14 +4807,70 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>  {
->>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->>  
->> +	if (!hr_dev)
->> +		return;
->> +
->>  	hns_roce_exit(hr_dev);
->> +	handle->priv = NULL;
->>  	kfree(hr_dev->priv);
->>  	ib_dealloc_device(&hr_dev->ib_dev);
->>  }
-> Why are these hunks here? If init fails then uninit should not be
-> called, so why meddle with priv?
-In hns_roce_hw_v2_init_instance function, we evaluate handle->priv with 
-hr_dev,
-We want clear the value in hns_roce_hw_v2_uninit_instance function.
-So we can ensure no problem in RoCE driver.
+ drivers/net/ethernet/qualcomm/emac/emac-mac.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
-{
-    struct hns_roce_dev *hr_dev;
-    int ret;
-
-    hr_dev = (struct hns_roce_dev *)ib_alloc_device(sizeof(*hr_dev));
-    if (!hr_dev)
-        return -ENOMEM;
-
-   ...// other code
-
-    handle->priv = hr_dev;
-
-    ....// other code
-
-    return 0;
-
-error_xxx:
-    handle->priv = NULL;
-    ...// other code
-
-error_yyyy:
-    ib_dealloc_device(&hr_dev->ib_dev);
-
-    return ret;
-}
-
-static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-                       bool reset)
-{
-    struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-
-    if (!hr_dev)
-        return;
-
-    hns_roce_exit(hr_dev);
-    handle->priv = NULL;
-    kfree(hr_dev->priv);
-    ib_dealloc_device(&hr_dev->ib_dev);
-}
-
->
-> Jason
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac-mac.c b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
+index 092718a..031f6e6 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac-mac.c
++++ b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
+@@ -683,10 +683,11 @@ static int emac_tx_q_desc_alloc(struct emac_adapter *adpt,
+ 				struct emac_tx_queue *tx_q)
+ {
+ 	struct emac_ring_header *ring_header = &adpt->ring_header;
++	int node = dev_to_node(adpt->netdev->dev.parent);
+ 	size_t size;
+ 
+ 	size = sizeof(struct emac_buffer) * tx_q->tpd.count;
+-	tx_q->tpd.tpbuff = kzalloc(size, GFP_KERNEL);
++	tx_q->tpd.tpbuff = kzalloc_node(size, GFP_KERNEL, node);
+ 	if (!tx_q->tpd.tpbuff)
+ 		return -ENOMEM;
+ 
+@@ -723,11 +724,12 @@ static void emac_rx_q_bufs_free(struct emac_adapter *adpt)
+ static int emac_rx_descs_alloc(struct emac_adapter *adpt)
+ {
+ 	struct emac_ring_header *ring_header = &adpt->ring_header;
++	int node = dev_to_node(adpt->netdev->dev.parent);
+ 	struct emac_rx_queue *rx_q = &adpt->rx_q;
+ 	size_t size;
+ 
+ 	size = sizeof(struct emac_buffer) * rx_q->rfd.count;
+-	rx_q->rfd.rfbuff = kzalloc(size, GFP_KERNEL);
++	rx_q->rfd.rfbuff = kzalloc_node(size, GFP_KERNEL, node);
+ 	if (!rx_q->rfd.rfbuff)
+ 		return -ENOMEM;
+ 
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
