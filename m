@@ -1,193 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeERM3x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 08:29:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38680 "EHLO mail.kernel.org"
+        id S1751980AbeERMeV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 08:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeERM3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 08:29:50 -0400
-Date: Fri, 18 May 2018 17:59:46 +0530
-From: Vinod <vkoul@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, sibis@codeaurora.org
-Subject: Re: [PATCH V6 5/5] remoteproc: qcom: Add q6v5-wcss rproc ops
-Message-ID: <20180518122946.GC31996@vkoul-mobl>
-References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
- <1526294812-23390-6-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526294812-23390-6-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1750977AbeERMeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 08:34:18 -0400
+From: Jeff Layton <jlayton@kernel.org>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, willy@infradead.org, andres@anarazel.de
+Subject: [RFC PATCH 00/11] vfs: have syncfs return an error when inode writeback fails
+Date: Fri, 18 May 2018 08:34:04 -0400
+Message-Id: <20180518123415.28181-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-05-18, 16:16, Sricharan R wrote:
+From: Jeff Layton <jlayton@redhat.com>
 
-> +static int q6v5_wcss_start(struct rproc *rproc)
-> +{
-> +	struct q6v5 *qproc = rproc->priv;
-> +	int ret = 0;
+Currently, syncfs does not return errors when one of the inodes fails
+to be written back. It will return errors based on the legacy AS_EIO
+and AS_ENOSPC flags when syncing out the block device fails, but that's
+not particularly helpful for filesystems that aren't backed by a
+blockdev and more granular errors are often not caught.
 
-Superfluous initialization
+At LSF/MM this year, we had a discussion about tracking writeback
+errors on a per-sb basis to help remedy this. This patchset is an inital
+foray into doing that:
 
-> +
-> +	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
-> +			      qproc->active_clk_count);
-> +	if (ret) {
-> +		dev_err(qproc->dev, "failed to enable clocks\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Release Q6 and WCSS reset */
-> +	ret = reset_control_deassert(qproc->wcss_reset);
-> +	if (ret)
-> +		dev_err(qproc->dev, "wcss_reset failed\n");
-> +
-> +	ret = reset_control_deassert(qproc->wcss_q6_reset);
-> +	if (ret)
-> +		dev_err(qproc->dev, "wcss_q6_reset failed\n");
+The basic idea is to add a new errseq_t to struct super_block, and use
+that to track writeback errors for the filesystem as a whole.
 
-shouldn't we abort on these two errors?
+Because syncfs is not a common operation, it's not desirable to grow
+struct file in order to house an errseq_t cursor for it. Willy's
+suggestion was to reuse file->f_wb_err, but only when the file is opened
+with O_PATH. fsync always returns an error on an O_PATH fd, so this
+should be safe, and seems semantically sane, given that syncfs operates
+on the whole filesystem.
 
-> +
-> +	/* Lithium configuration - clock gating and bus arbitration */
-> +	ret = regmap_update_bits(qproc->halt_map,
-> +				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
-> +				 0x1F, 0x14);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(qproc->halt_map,
-> +				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
-> +				 1, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
-> +	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
-> +
-> +	ret = q6v5_reset(qproc);
-> +	if (ret)
-> +		return ret;
+The patchset starts by pushing the __sync_blockdev calls down into the
+various sync_fs operations. It then plumbs in an extra errseq_t pointer
+into the sync_fs ops, and the relevant callers. It then adds the new
+errseq_t field to struct super_block, and adds the machinery to handle
+syncfs on an O_PATH open correctly. Lastly, it has some filesystems
+return stored writeback errors in sync_fs ops when they are passed a
+non-NULL errseq_t pointer.
 
-all these returns, aren't we leaving device in some dangling state?
+This is just a start (more filesystems will need similar patches to the
+later ones in the pile). This all works vs. the fstests testcase I have.
+I haven't submitted that testcase yet, as I want to get consensus about
+the interface. Does it make sense to treat O_PATH opens specially like
+this?
 
-> +static int q6v5_wcss_powerdown(struct q6v5 *qproc)
-> +{
-> +	unsigned int val = 0;
+Another thing on the wishlist for this is to expose the per-sb errseq_t
+via another interface so that applications could periodically check to
+see whether there has been a writeback error without syncing out the
+whole fs. This patch doesn't add that yet, but once sb->s_wb_err is in
+place and tracking errors it should be simple to do (possibly via a new
+generic filesystem ioctl).
 
-superfluous initialization
+Jeff Layton (11):
+  vfs: push __sync_blockdev calls down into sync_fs routines
+  vfs: add a new errseq_t pointer to sync_fs prototype
+  vfs: add an errseq_t pointer to sync_filesystem
+  vfs: add errseq_t pointer to __sync_filesystem
+  fs: track per-sb writeback errors and report them to syncfs
+  buffer: record blockdev write errors in super_block that backs them
+  ext4: have sync_fs op report writeback errors when passed a since
+    pointer
+  xfs: have sync_fs op report writeback errors when passed a since
+    pointer
+  btrfs: have sync_fs op report writeback errors when passed a since
+    pointer
+  ext2: have sync_fs op report writeback errors when passed a since
+    pointer
+  vfs: have call_sync_fs op report writeback errors when passed a since
+    pointer
 
-> +	int ret;
-> +
-> +	/* 1 - Assert WCSS/Q6 HALTREQ */
-> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-> +
-> +	/* 2 - Enable WCSSAON_CONFIG */
-> +	val = readl(qproc->rmb_base + SSCAON_CONFIG);
-> +	val |= SSCAON_ENABLE;
-> +	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-> +
-> +	/* 3 - Set SSCAON_CONFIG */
-> +	val |= BIT(15);
-> +	val &= ~BIT(16);
-> +	val &= ~BIT(17);
-> +	val &= ~BIT(18);
+ drivers/staging/ncpfs/inode.c |  2 +-
+ fs/adfs/super.c               |  2 +-
+ fs/affs/super.c               |  6 +++---
+ fs/befs/linuxvfs.c            |  2 +-
+ fs/block_dev.c                |  3 ++-
+ fs/btrfs/ctree.h              |  2 +-
+ fs/btrfs/ioctl.c              |  2 +-
+ fs/btrfs/super.c              | 28 +++++++++++++++++++---------
+ fs/buffer.c                   |  2 ++
+ fs/cachefiles/interface.c     |  2 +-
+ fs/ceph/super.c               |  2 +-
+ fs/cifs/cifsfs.c              |  2 +-
+ fs/coda/inode.c               |  2 +-
+ fs/cramfs/inode.c             |  2 +-
+ fs/debugfs/inode.c            |  2 +-
+ fs/efs/super.c                |  2 +-
+ fs/exofs/super.c              |  2 +-
+ fs/ext2/super.c               | 19 +++++++++++++------
+ fs/ext4/super.c               | 19 +++++++++++--------
+ fs/f2fs/f2fs.h                |  2 +-
+ fs/f2fs/file.c                |  6 +++---
+ fs/f2fs/namei.c               | 16 ++++++++--------
+ fs/f2fs/segment.c             |  2 +-
+ fs/f2fs/super.c               | 19 +++++++++++--------
+ fs/fat/inode.c                |  2 +-
+ fs/freevxfs/vxfs_super.c      |  2 +-
+ fs/fuse/inode.c               |  2 +-
+ fs/gfs2/super.c               |  8 +++++---
+ fs/hfs/super.c                |  6 +++---
+ fs/hfsplus/super.c            | 10 +++++-----
+ fs/hpfs/super.c               |  2 +-
+ fs/internal.h                 |  7 -------
+ fs/isofs/inode.c              |  2 +-
+ fs/jffs2/super.c              |  4 ++--
+ fs/jfs/super.c                |  7 +++----
+ fs/minix/inode.c              |  2 +-
+ fs/nfs/super.c                |  2 +-
+ fs/nilfs2/super.c             |  9 +++++----
+ fs/ntfs/super.c               |  2 +-
+ fs/ocfs2/super.c              |  8 ++++----
+ fs/open.c                     |  6 +++---
+ fs/openpromfs/inode.c         |  2 +-
+ fs/overlayfs/super.c          |  4 ++--
+ fs/proc/root.c                |  2 +-
+ fs/pstore/inode.c             |  2 +-
+ fs/qnx4/inode.c               |  2 +-
+ fs/qnx6/inode.c               |  2 +-
+ fs/quota/dquot.c              | 11 ++++-------
+ fs/reiserfs/super.c           |  8 ++++----
+ fs/romfs/super.c              |  2 +-
+ fs/squashfs/super.c           |  2 +-
+ fs/super.c                    |  4 ++--
+ fs/sync.c                     | 28 +++++++++++++++++-----------
+ fs/sysv/inode.c               |  7 +++----
+ fs/tracefs/inode.c            |  2 +-
+ fs/ubifs/super.c              |  4 ++--
+ fs/udf/super.c                |  6 +++---
+ fs/ufs/super.c                |  6 +++---
+ fs/xfs/xfs_super.c            | 18 +++++++++++++-----
+ include/linux/fs.h            | 35 +++++++++++++++++++++++++++++++++--
+ include/linux/pagemap.h       |  5 ++++-
+ 61 files changed, 223 insertions(+), 158 deletions(-)
 
-shouldn't bit 15 thru 18 be defined on what they mean?
-
-> +static int q6v5_q6_powerdown(struct q6v5 *qproc)
-> +{
-> +	int i = 0, ret;
-> +	unsigned int val = 0;
-> +
-> +	/* 1 - Halt Q6 bus interface */
-> +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-> +
-> +	/* 2 - Disable Q6 Core clock */
-> +	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-> +	val &= ~Q6SS_CLK_ENABLE;
-> +	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-> +
-> +	/* 3 - Clamp I/O */
-> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +	val |= Q6SS_CLAMP_IO;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +	/* 4 - Clamp WL */
-> +	val |= QDSS_BHS_ON;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +	/* 5 - Clear Erase standby */
-> +	val &= ~Q6SS_L2DATA_STBY_N;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +	/* 6 - Clear Sleep RTN */
-> +	val &= ~Q6SS_SLP_RET_N;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
-> +	for (i = 0; i < 20; i++) {
-> +		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-> +		val &= ~BIT(i);
-> +		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-> +		mdelay(1);
-> +	}
-> +	/* 8 - Assert QMC memory RTN */
-> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +	val |= QDSP6v56_CLAMP_QMC_MEM;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +	/* 9 - Turn off BHS */
-> +	val &= ~QDSP6v56_BHS_ON;
-> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +	udelay(1);
-> +	/* 10 - Wait till BHS Reset is done */
-
-would help in readability if you can be consistent and add empty lines after each
-step as done for rest of the routine
-
-> +static int q6v5_wcss_stop(struct rproc *rproc)
-> +{
-> +	struct q6v5 *qproc = rproc->priv;
-> +	int ret = 0;
-
-this one too, I think if you run with sparse, it should warn you about these
-
-> +
-> +	qproc->running = false;
-> +
-> +	/* WCSS powerdown */
-> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
-> +				    BIT(qproc->stop_bit));
-> +
-> +	ret = wait_for_completion_timeout(&qproc->stop_done,
-> +					  msecs_to_jiffies(5000));
-> +	if (ret == 0) {
-> +		dev_err(qproc->dev, "timed out on wait\n");
-> +		return -ETIMEDOUT;
-> +	}
-> +
-> +	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
-> +
-> +	ret = q6v5_wcss_powerdown(qproc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Q6 Power down */
-> +	ret = q6v5_q6_powerdown(qproc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-this could be optimized to:
-        return q6v5_q6_powerdown()
 -- 
-~Vinod
+2.17.0
