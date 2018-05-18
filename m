@@ -1,81 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeERJWc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:22:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34100 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752991AbeERJW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:22:26 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: wm8904: fix spelling mistake: "Caputure" -> "Capture"" to the asoc tree
-In-Reply-To: <20180518090407.13560-1-colin.king@canonical.com>
-Message-Id: <E1fJbaR-0007vC-C2@debutante>
-Date: Fri, 18 May 2018 10:22:07 +0100
+        id S1753070AbeERJXO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:23:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45485 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753132AbeERJRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:45 -0400
+From: Jiri Slaby <jslaby@suse.cz>
+To: mingo@redhat.com
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: [PATCH v6 17/28] x86/asm: use SYM_INNER_LABEL instead of GLOBAL
+Date: Fri, 18 May 2018 11:17:10 +0200
+Message-Id: <20180518091721.7604-18-jslaby@suse.cz>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
+References: <20180518091721.7604-1-jslaby@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+GLOBAL had several meanings and is going away. In this patch, convert
+all the inner function labels marked with GLOBAL to use SYM_INNER_LABEL
+instead.
 
-   ASoC: wm8904: fix spelling mistake: "Caputure" -> "Capture"
+Note that retint_user needs not be global, perhaps since commit
+2ec67971facc ("x86/entry/64/compat: Remove most of the fast system call
+machinery"), where entry_64_compat's caller was removed. So mark the
+label as LOCAL.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ecd63313706221bb049c06c52d3f9112d9b2a4fe Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 18 May 2018 10:04:07 +0100
-Subject: [PATCH] ASoC: wm8904: fix spelling mistake: "Caputure" -> "Capture"
-
-Trivial fix to spelling mistake in SOC_ENUM literal string
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
 ---
- sound/soc/codecs/wm8904.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S                |  8 ++++----
+ arch/x86/entry/entry_64_compat.S         |  4 ++--
+ arch/x86/entry/vdso/vdso32/system_call.S |  2 +-
+ arch/x86/kernel/ftrace_32.S              |  2 +-
+ arch/x86/kernel/ftrace_64.S              | 16 ++++++++--------
+ arch/x86/realmode/rm/reboot.S            |  2 +-
+ 6 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index 20fdcae06c6b..f13ef334c0d7 100644
---- a/sound/soc/codecs/wm8904.c
-+++ b/sound/soc/codecs/wm8904.c
-@@ -596,7 +596,7 @@ static const struct snd_kcontrol_new wm8904_adc_snd_controls[] = {
- SOC_DOUBLE_R_TLV("Digital Capture Volume", WM8904_ADC_DIGITAL_VOLUME_LEFT,
- 		 WM8904_ADC_DIGITAL_VOLUME_RIGHT, 1, 119, 0, digital_tlv),
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index e0798c044055..d55228508e80 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -225,7 +225,7 @@ ENTRY(entry_SYSCALL_64)
+ 	pushq	%r11				/* pt_regs->flags */
+ 	pushq	$__USER_CS			/* pt_regs->cs */
+ 	pushq	%rcx				/* pt_regs->ip */
+-GLOBAL(entry_SYSCALL_64_after_hwframe)
++SYM_INNER_LABEL(entry_SYSCALL_64_after_hwframe, SYM_L_GLOBAL)
+ 	pushq	%rax				/* pt_regs->orig_ax */
  
--SOC_ENUM("Left Caputure Mode", lin_mode),
-+SOC_ENUM("Left Capture Mode", lin_mode),
- SOC_ENUM("Right Capture Mode", rin_mode),
+ 	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
+@@ -653,12 +653,12 @@ ret_from_intr:
+ 	jz	retint_kernel
  
- /* No TLV since it depends on mode */
+ 	/* Interrupt came from user space */
+-GLOBAL(retint_user)
++SYM_INNER_LABEL(retint_user, SYM_L_LOCAL)
+ 	mov	%rsp,%rdi
+ 	call	prepare_exit_to_usermode
+ 	TRACE_IRQS_IRETQ
+ 
+-GLOBAL(swapgs_restore_regs_and_return_to_usermode)
++SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	/* Assert that pt_regs indicates user mode. */
+ 	testb	$3, CS(%rsp)
+@@ -717,7 +717,7 @@ retint_kernel:
+ 	 */
+ 	TRACE_IRQS_IRETQ
+ 
+-GLOBAL(restore_regs_and_return_to_kernel)
++SYM_INNER_LABEL(restore_regs_and_return_to_kernel, SYM_L_GLOBAL)
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	/* Assert that pt_regs indicates kernel mode. */
+ 	testb	$3, CS(%rsp)
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 2d10f72697f3..d0880bef86c3 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -146,7 +146,7 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	$X86_EFLAGS_FIXED
+ 	popfq
+ 	jmp	.Lsysenter_flags_fixed
+-GLOBAL(__end_entry_SYSENTER_compat)
++SYM_INNER_LABEL(__end_entry_SYSENTER_compat, SYM_L_GLOBAL)
+ ENDPROC(entry_SYSENTER_compat)
+ 
+ /*
+@@ -215,7 +215,7 @@ ENTRY(entry_SYSCALL_compat)
+ 	pushq	%r11			/* pt_regs->flags */
+ 	pushq	$__USER32_CS		/* pt_regs->cs */
+ 	pushq	%rcx			/* pt_regs->ip */
+-GLOBAL(entry_SYSCALL_compat_after_hwframe)
++SYM_INNER_LABEL(entry_SYSCALL_compat_after_hwframe, SYM_L_GLOBAL)
+ 	movl	%eax, %eax		/* discard orig_ax high bits */
+ 	pushq	%rax			/* pt_regs->orig_ax */
+ 	pushq	%rdi			/* pt_regs->di */
+diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
+index 263d7433dea8..de1fff7188aa 100644
+--- a/arch/x86/entry/vdso/vdso32/system_call.S
++++ b/arch/x86/entry/vdso/vdso32/system_call.S
+@@ -62,7 +62,7 @@ __kernel_vsyscall:
+ 
+ 	/* Enter using int $0x80 */
+ 	int	$0x80
+-GLOBAL(int80_landing_pad)
++SYM_INNER_LABEL(int80_landing_pad, SYM_L_GLOBAL)
+ 
+ 	/*
+ 	 * Restore EDX and ECX in case they were clobbered.  EBP is not
+diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
+index 4c8440de3355..0206fc7e86b0 100644
+--- a/arch/x86/kernel/ftrace_32.S
++++ b/arch/x86/kernel/ftrace_32.S
+@@ -141,7 +141,7 @@ ENTRY(ftrace_regs_caller)
+ 	movl	function_trace_op, %ecx		/* Save ftrace_pos in 3rd parameter */
+ 	pushl	%esp				/* Save pt_regs as 4th parameter */
+ 
+-GLOBAL(ftrace_regs_call)
++SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
+ 	call	ftrace_stub
+ 
+ 	addl	$4, %esp			/* Skip pt_regs */
+diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
+index 91b2cff4b79a..14df6cf07b7e 100644
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -158,14 +158,14 @@ ENTRY(ftrace_caller)
+ 	/* save_mcount_regs fills in first two parameters */
+ 	save_mcount_regs
+ 
+-GLOBAL(ftrace_caller_op_ptr)
++SYM_INNER_LABEL(ftrace_caller_op_ptr, SYM_L_GLOBAL)
+ 	/* Load the ftrace_ops into the 3rd parameter */
+ 	movq function_trace_op(%rip), %rdx
+ 
+ 	/* regs go into 4th parameter (but make it NULL) */
+ 	movq $0, %rcx
+ 
+-GLOBAL(ftrace_call)
++SYM_INNER_LABEL(ftrace_call, SYM_L_GLOBAL)
+ 	call ftrace_stub
+ 
+ 	restore_mcount_regs
+@@ -178,10 +178,10 @@ GLOBAL(ftrace_call)
+ 	 * think twice before adding any new code or changing the
+ 	 * layout here.
+ 	 */
+-GLOBAL(ftrace_epilogue)
++SYM_INNER_LABEL(ftrace_epilogue, SYM_L_GLOBAL)
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-GLOBAL(ftrace_graph_call)
++SYM_INNER_LABEL(ftrace_graph_call, SYM_L_GLOBAL)
+ 	jmp ftrace_stub
+ #endif
+ 
+@@ -198,7 +198,7 @@ ENTRY(ftrace_regs_caller)
+ 	save_mcount_regs 8
+ 	/* save_mcount_regs fills in first two parameters */
+ 
+-GLOBAL(ftrace_regs_caller_op_ptr)
++SYM_INNER_LABEL(ftrace_regs_caller_op_ptr, SYM_L_GLOBAL)
+ 	/* Load the ftrace_ops into the 3rd parameter */
+ 	movq function_trace_op(%rip), %rdx
+ 
+@@ -225,7 +225,7 @@ GLOBAL(ftrace_regs_caller_op_ptr)
+ 	/* regs go into 4th parameter */
+ 	leaq (%rsp), %rcx
+ 
+-GLOBAL(ftrace_regs_call)
++SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
+ 	call ftrace_stub
+ 
+ 	/* Copy flags back to SS, to restore them */
+@@ -255,7 +255,7 @@ GLOBAL(ftrace_regs_call)
+ 	 * The trampoline will add the code to jump
+ 	 * to the return.
+ 	 */
+-GLOBAL(ftrace_regs_caller_end)
++SYM_INNER_LABEL(ftrace_regs_caller_end, SYM_L_GLOBAL)
+ 
+ 	jmp ftrace_epilogue
+ 
+@@ -277,7 +277,7 @@ fgraph_trace:
+ 	jnz ftrace_graph_caller
+ #endif
+ 
+-GLOBAL(ftrace_stub)
++SYM_INNER_LABEL(ftrace_stub, SYM_L_GLOBAL)
+ 	retq
+ 
+ trace:
+diff --git a/arch/x86/realmode/rm/reboot.S b/arch/x86/realmode/rm/reboot.S
+index cd2f97b9623b..f91425a01f8f 100644
+--- a/arch/x86/realmode/rm/reboot.S
++++ b/arch/x86/realmode/rm/reboot.S
+@@ -33,7 +33,7 @@ ENTRY(machine_real_restart_asm)
+ 	movl	%eax, %cr0
+ 	ljmpl	$__KERNEL32_CS, $pa_machine_real_restart_paging_off
+ 
+-GLOBAL(machine_real_restart_paging_off)
++SYM_INNER_LABEL(machine_real_restart_paging_off, SYM_L_GLOBAL)
+ 	xorl	%eax, %eax
+ 	xorl	%edx, %edx
+ 	movl	$MSR_EFER, %ecx
 -- 
-2.17.0
+2.16.3
