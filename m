@@ -1,39 +1,41 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrltXO02PMAzM8J51swceeNqlRbv8JJbX1zAABUTMZpsfvTsB/StFhCSrzbE5ZfWEfeKU/j
-ARC-Seal: i=1; a=rsa-sha256; t=1526631463; cv=none;
+X-Google-Smtp-Source: AB8JxZrP9pbMv/mr4nXQQ+965CXXJMV+I0RCg4an0LcDJAY5Y+F6/w4wQy00i/KUvYnXQWFFQupc
+ARC-Seal: i=1; a=rsa-sha256; t=1526631461; cv=none;
         d=google.com; s=arc-20160816;
-        b=i47txzldM1pmSDVzXVmZlLtWk8xyr9gMj9VaiD3Z/wqh8vkN0bQQrSgH12XrDuQe0C
-         coGCfYoq/6bYWB6qrKCB9MwiUpUzclabcYvqhzRsal3L/Jm7vGbrmn+eWpPL58tnXUkg
-         YVhyQt6aU64eCqhGYs6YP+adLL5bwDT5GcOU4hDjGbCkTH9UAX1V93FfxpenWXZBdndE
-         5cIy6d9/S6PMwx1/6ghpBX6Pql49QSU38lykCBHo0dKkzS/8Va5DuUU6rqRPCm3EZlIr
-         5KUfiOKlKubVwfaifVWGrWZA/P6WVEfsegI6pNqovRXTNNxr7wQA2dLkbkQMSQkpxMvM
-         gUmg==
+        b=TYSfna7detd6wMX/HLEGK7IaYigzHc0stcUlySK7WCrCTBOujz7prqmpkKzmXQogvU
+         fyqTIrP9tTGyuwE26YOSOwF/uZI3i1PVq/KaNrR+3h2eGaqFFVZuDlHSQm++nP2ZWFdo
+         lK8UEhLxPJsyV5zJxxDVi9AFLdNsY5XoCOlHtlbG6hTn6+omBLOm6WFS8FhrjJ1XLR4m
+         Gwr7ZX0fIf2nwD4DNhYCf1PcLcR6B2lxAF92nZ3G1mH5CvOQqhHO9X4vADzn6ufuF/H3
+         a7Bf9KYlueDRtQr5BlCrG+l/eNlXi7TAUWOXL0EykDtVjyCre3v6AvVKA+8aBaxPlVKP
+         LAaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=QRzEVSyVCNd1DHsU58OQLHTYZw7pUB0gJ9aM5Ncz0U0=;
-        b=jjTUrZUNSFfDRh5N2pi0ZTkr9ztW3ozHqJNr7H2yrB7XWGZrk5oXWOtOTXbVLv8sLz
-         44rrE/WOwTX6UundoxDl3xVMXcFxXuX0o7cDvJjLfEZ+iicKQM0m+k57XHKgaTy1vdhB
-         U2lQwd1oyCAx88IsdXBJZa1Fsqc0e7FQfphERELixT80oyaRH1YneBKeR8tMnUIaWj8Y
-         3bMsQDDTnwh8bx5CFuLILtPYdT9sdT4ggb5oE8iCo0lN9YxKRFitl0cay2vQyCmNvSX1
-         tYGxYu+ELxkwhqyah8GYPxSX1RlOqzO8toSERGNJxGfJnrDpeD2aT7Y9E+DJ+PwYCCts
-         D5AA==
+        bh=smcLnP9/I4CMYocvjyjppDELZXC5zexd9aNRV7h46g4=;
+        b=01p8pFAQunFv84S7ntUCZlsMlAbIWIVQKnNjymzSCKTPiNxm+iow5KA49c/+g9hVrg
+         8eJ8pEwtGhGoZwPbDLIrej9MS1FCbTDC8Tg6uOsRGEaQDTYoHpNTot4nHiyZG/TXLX7a
+         rfStzm3we4Unulk+3iGxL5OWqYFUKsDKwLmeuEr4nAWgdQcKXxXGINs6Il+hey9UMEy/
+         rqKEqxkIqbQDIGhqmyL8to+QGPIeV3tgq+IiBpcsVZPEQ/BTgFulm0wEFCu3LTIiuuyc
+         8IT4U7BcpGP76texSUBAE1ANpz9O0LdjPXQL2oFOR617OxXrVSvZ+GqulikA9s3/3rIA
+         oUbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dk8gO9/E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fH3W1Pqx;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dk8gO9/E;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fH3W1Pqx;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zumeng Chen <zumeng.chen@gmail.com>,
-	Michael Chan <michael.chan@broadcom.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Yuchung Cheng <ycheng@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 30/55] tg3: Fix vunmap() BUG_ON() triggered from tg3_free_consistent().
-Date: Fri, 18 May 2018 10:15:26 +0200
-Message-Id: <20180518081458.916839224@linuxfoundation.org>
+Subject: [PATCH 4.16 29/55] tcp: ignore Fast Open on repair mode
+Date: Fri, 18 May 2018 10:15:25 +0200
+Message-Id: <20180518081458.875332555@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789113551716291?=
-X-GMAIL-MSGID: =?utf-8?q?1600789113551716291?=
+X-GMAIL-THRID: =?utf-8?q?1600789110988167227?=
+X-GMAIL-MSGID: =?utf-8?q?1600789110988167227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +54,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit d89a2adb8bfe6f8949ff389acdb9fa298b6e8e12 ]
+[ Upstream commit 16ae6aa1705299789f71fdea59bfb119c1fbd9c0 ]
 
-tg3_free_consistent() calls dma_free_coherent() to free tp->hw_stats
-under spinlock and can trigger BUG_ON() in vunmap() because vunmap()
-may sleep.  Fix it by removing the spinlock and relying on the
-TG3_FLAG_INIT_COMPLETE flag to prevent race conditions between
-tg3_get_stats64() and tg3_free_consistent().  TG3_FLAG_INIT_COMPLETE
-is always cleared under tp->lock before tg3_free_consistent()
-and therefore tg3_get_stats64() can safely access tp->hw_stats
-under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
+The TCP repair sequence of operation is to first set the socket in
+repair mode, then inject the TCP stats into the socket with repair
+socket options, then call connect() to re-activate the socket. The
+connect syscall simply returns and set state to ESTABLISHED
+mode. As a result Fast Open is meaningless for TCP repair.
 
-Fixes: f5992b72ebe0 ("tg3: Fix race condition in tg3_get_stats64().")
-Reported-by: Zumeng Chen <zumeng.chen@gmail.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+However allowing sendto() system call with MSG_FASTOPEN flag half-way
+during the repair operation could unexpectedly cause data to be
+sent, before the operation finishes changing the internal TCP stats
+(e.g. MSS).  This in turn triggers TCP warnings on inconsistent
+packet accounting.
+
+The fix is to simply disallow Fast Open operation once the socket
+is in the repair mode.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Reviewed-by: Neal Cardwell <ncardwell@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ net/ipv4/tcp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -8733,14 +8733,15 @@ static void tg3_free_consistent(struct t
- 	tg3_mem_rx_release(tp);
- 	tg3_mem_tx_release(tp);
- 
--	/* Protect tg3_get_stats64() from reading freed tp->hw_stats. */
--	tg3_full_lock(tp, 0);
-+	/* tp->hw_stats can be referenced safely:
-+	 *     1. under rtnl_lock
-+	 *     2. or under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
-+	 */
- 	if (tp->hw_stats) {
- 		dma_free_coherent(&tp->pdev->dev, sizeof(struct tg3_hw_stats),
- 				  tp->hw_stats, tp->stats_mapping);
- 		tp->hw_stats = NULL;
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1210,7 +1210,8 @@ int tcp_sendmsg_locked(struct sock *sk,
+ 			uarg->zerocopy = 0;
  	}
--	tg3_full_unlock(tp);
- }
  
- /*
-@@ -14178,7 +14179,7 @@ static void tg3_get_stats64(struct net_d
- 	struct tg3 *tp = netdev_priv(dev);
- 
- 	spin_lock_bh(&tp->lock);
--	if (!tp->hw_stats) {
-+	if (!tp->hw_stats || !tg3_flag(tp, INIT_COMPLETE)) {
- 		*stats = tp->net_stats_prev;
- 		spin_unlock_bh(&tp->lock);
- 		return;
+-	if (unlikely(flags & MSG_FASTOPEN || inet_sk(sk)->defer_connect)) {
++	if (unlikely(flags & MSG_FASTOPEN || inet_sk(sk)->defer_connect) &&
++	    !tp->repair) {
+ 		err = tcp_sendmsg_fastopen(sk, msg, &copied_syn, size);
+ 		if (err == -EINPROGRESS && copied_syn > 0)
+ 			goto out;
