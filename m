@@ -1,156 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752237AbeERWbO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 18:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751790AbeERWbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 18:31:09 -0400
-Subject: [PATCH] PCI: Remove host driver Kconfig selection of
- CONFIG_PCIEPORTBUS
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Jianguo Sun <sunjianguo1@huawei.com>, Shawn Guo <shawn.guo@linaro.org>,
-        Tanmay Inamdar <tinamdar@apm.com>, Ryder Lee <ryder.lee@mediatek.com>,
-        linux-kernel@vger.kernel.org
-Date: Fri, 18 May 2018 17:31:07 -0500
-Message-ID: <152668266782.118010.15462515170612275250.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        id S1752428AbeERWbl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 18:31:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49290 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752393AbeERWbk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 18:31:40 -0400
+Date: Fri, 18 May 2018 15:31:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Roman Kagan <rkagan@virtuozzo.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] idr: fix invalid ptr dereference on item delete
+Message-Id: <20180518153138.459c78a83c6bada41b4b187d@linux-foundation.org>
+In-Reply-To: <20180518175025.GD6361@bombadil.infradead.org>
+References: <20180518175025.GD6361@bombadil.infradead.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Fri, 18 May 2018 10:50:25 -0700 Matthew Wilcox <willy@infradead.org> wrote:
 
-Host bridge drivers do not use the portdrv interfaces (struct pcie_device,
-struct pcie_port_service_driver, pcie_port_service_register(), etc), and
-they should not select CONFIG_PCIEPORTBUS.
+> If the radix tree underlying the IDR happens to be full and we attempt
+> to remove an id which is larger than any id in the IDR, we will call
+> __radix_tree_delete() with an uninitialised 'slot' pointer, at which
+> point anything could happen.  This was easiest to hit with a single entry
+> at id 0 and attempting to remove a non-0 id, but it could have happened
+> with 64 entries and attempting to remove an id >= 64.
+> 
+> Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
+> Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
+> Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-If users need the portdrv services, they can select CONFIG_PCIEPORTBUS just
-like all other PCI users.
+Neither of the changelogs I'm seeing attempt to describe the end-user
+impact of the bug.  People like to know that so they can decide which
+kernel version(s) need patching, so please always remember it.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/dwc/Kconfig  |   10 ----------
- drivers/pci/host/Kconfig |    2 --
- 2 files changed, 12 deletions(-)
-
-diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
-index 2f3f5c50aa48..678390a77ba1 100644
---- a/drivers/pci/dwc/Kconfig
-+++ b/drivers/pci/dwc/Kconfig
-@@ -68,7 +68,6 @@ config PCI_EXYNOS
- 	depends on PCI
- 	depends on SOC_EXYNOS5440
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 
- config PCI_IMX6
-@@ -76,7 +75,6 @@ config PCI_IMX6
- 	depends on PCI
- 	depends on SOC_IMX6Q
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 
- config PCIE_SPEAR13XX
-@@ -84,7 +82,6 @@ config PCIE_SPEAR13XX
- 	depends on PCI
- 	depends on ARCH_SPEAR13XX
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
- 	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
-@@ -94,7 +91,6 @@ config PCI_KEYSTONE
- 	depends on PCI
- 	depends on ARCH_KEYSTONE
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
- 	  Say Y here if you want to enable PCI controller support on Keystone
-@@ -117,7 +113,6 @@ config PCI_HISI
- 	bool "HiSilicon Hip05 and Hip06 SoCs PCIe controllers"
- 	depends on PCI
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	select PCI_HOST_COMMON
- 	help
-@@ -129,7 +124,6 @@ config PCIE_QCOM
- 	depends on PCI
- 	depends on ARCH_QCOM && OF
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
- 	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
-@@ -141,7 +135,6 @@ config PCIE_ARMADA_8K
- 	depends on PCI
- 	depends on ARCH_MVEBU
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
- 	  Say Y here if you want to enable PCIe controller support on
-@@ -156,7 +149,6 @@ config PCIE_ARTPEC6_HOST
- 	bool "Axis ARTPEC-6 PCIe controller Host Mode"
- 	depends on MACH_ARTPEC6
- 	depends on PCI && PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	select PCIE_ARTPEC6
- 	help
-@@ -178,7 +170,6 @@ config PCIE_KIRIN
- 	bool "HiSilicon Kirin series SoCs PCIe controllers"
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	depends on PCI
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
- 	  Say Y here if you want PCIe controller support
-@@ -189,7 +180,6 @@ config PCIE_HISI_STB
- 	depends on ARCH_HISI
- 	depends on PCI
- 	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIEPORTBUS
- 	select PCIE_DW_HOST
- 	help
-           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
-diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-index 0d0177ce436c..90f0cc9dfd95 100644
---- a/drivers/pci/host/Kconfig
-+++ b/drivers/pci/host/Kconfig
-@@ -83,7 +83,6 @@ config PCI_XGENE
- 	bool "X-Gene PCIe controller"
- 	depends on ARM64
- 	depends on OF || (ACPI && PCI_QUIRKS)
--	select PCIEPORTBUS
- 	help
- 	  Say Y here if you want internal PCI support on APM X-Gene SoC.
- 	  There are 5 internal PCIe ports available. Each port is GEN3 capable
-@@ -194,7 +193,6 @@ config PCIE_MEDIATEK
- 	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
- 	depends on OF
- 	depends on PCI
--	select PCIEPORTBUS
- 	help
- 	  Say Y here if you want to enable PCIe controller support on
- 	  MediaTek SoCs.
+Looknig at the sysbot report, the impact is at least "privileged user
+can trigger a WARN", but I assume there could be worse,
+as-yet-undiscovered impacts.  So I'm thinking a cc:stable is needed,
+yes?
