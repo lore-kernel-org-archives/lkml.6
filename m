@@ -1,119 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752633AbeERNCl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:02:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752498AbeERNC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:02:28 -0400
-Date: Fri, 18 May 2018 08:02:24 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, tglx@linutronix.de,
-        Peter Anvin <h.peter.anvin@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Anvin <hpa@zytor.com>, tipbuild@zytor.com, LKP <lkp@01.org>,
-        torvalds@linux-foundation.org, x86@kernel.org
-Subject: Re: [PATCH v2] x86/asm: Pad assembly functions with INT3 instructions
-Message-ID: <20180518130224.4bmp6s6wnjucypml@treble>
-References: <20180515080033.GA7714@yexl-desktop>
- <20180515210757.GA12225@avx2>
- <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com>
- <20180515214337.GA18021@avx2>
- <CA+55aFy6_fJkmuWDZC=d_WE+_oYHtXXCbb=R31jyC1qDKZ8HJw@mail.gmail.com>
- <20180515225028.GA21902@avx2>
- <20180515225845.GB21902@avx2>
- <20180518073644.GA8593@gmail.com>
+        id S1752546AbeERNDy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:03:54 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:60132 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbeERNDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 09:03:50 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180518073644.GA8593@gmail.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Fri, 18 May 2018 15:03:48 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
+        Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] clk: imx7d: correct enet phy ref clock gates
+In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <66f3e8827e41338291c3e2298cbc87cc@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[15];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:36:44AM +0200, Ingo Molnar wrote:
+On 18.05.2018 03:01, Anson Huang wrote:
+> IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY directly,
+> there is no clock gate after it, rename it to
+> IMX7D_ENET_PHY_REF_ROOT_CLK to avoid device tree change.
 > 
-> * Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
+
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> > Use INT3 instead of NOP. All that padding between functions is
-> > an illegal area, no legitimate code should jump into it.
-> > 
-> > I've checked x86_64 allyesconfig disassembly, all changes looks sane:
-> > INT3 is only used after RET or unconditional JMP.
-> > 
-> > On i386:
-> > * promote ret_from_exception into ENTRY as it has corresponding END,
-> > * demote "resume_userspace" -- unused,
-> > * delete ALIGN directive in page_fault. It is leftover from x86 assembly
-> >   cleanups.
-> > 
-> >     commit d211af055d0c12dc3416c2886e6fbdc6eb74a381
-> >     i386: get rid of the use of KPROBE_ENTRY / KPROBE_END
-> > 
-> >   has ALIGN directive before branch target which makes sense.
-> >   All the code after ALIGN disappeared later.
-> > 
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > ---
-> > 
-> >  arch/x86/entry/entry_32.S      |    6 +-----
-> >  arch/x86/include/asm/linkage.h |    2 +-
-> >  2 files changed, 2 insertions(+), 6 deletions(-)
-> > 
-> > --- a/arch/x86/entry/entry_32.S
-> > +++ b/arch/x86/entry/entry_32.S
-> > @@ -320,8 +320,7 @@ END(ret_from_fork)
-> >   */
-> >  
-> >  	# userspace resumption stub bypassing syscall exit tracing
-> > -	ALIGN
-> > -ret_from_exception:
-> > +ENTRY(ret_from_exception)
-> >  	preempt_stop(CLBR_ANY)
-> >  ret_from_intr:
-> >  #ifdef CONFIG_VM86
-> > @@ -337,8 +336,6 @@ ret_from_intr:
-> >  #endif
-> >  	cmpl	$USER_RPL, %eax
-> >  	jb	resume_kernel			# not returning to v8086 or userspace
-> > -
-> > -ENTRY(resume_userspace)
-> >  	DISABLE_INTERRUPTS(CLBR_ANY)
-> >  	TRACE_IRQS_OFF
-> >  	movl	%esp, %eax
-> > @@ -910,7 +907,6 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
-> >  ENTRY(page_fault)
-> >  	ASM_CLAC
-> >  	pushl	$do_page_fault
-> > -	ALIGN
-> >  	jmp common_exception
-> >  END(page_fault)
-> >  
-> > --- a/arch/x86/include/asm/linkage.h
-> > +++ b/arch/x86/include/asm/linkage.h
-> > @@ -18,7 +18,7 @@
-> >  	name:
-> >  
-> >  #if defined(CONFIG_X86_64) || defined(CONFIG_X86_ALIGNMENT_16)
-> > -#define __ALIGN		.p2align 4, 0x90
-> > +#define __ALIGN		.p2align 4, 0xCC
-> >  #define __ALIGN_STR	__stringify(__ALIGN)
-> >  #endif
-> 
-> So the question is, without objtool support, how will we find INT3-padding related 
-> crash bugs on 32-bit kernels?
-
-Is the INT3 padding really worth it, even on x86-64?  What problem are
-we trying to solve?
-
-I've seen cases with GCC functions falling through, but with asm code,
-falling through could just be working as designed.
-
--- 
-Josh
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 975a20d..23d5090a 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -738,7 +738,7 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_ENET1_TIME_ROOT_DIV] =
+> imx_clk_divider2("enet1_time_post_div", "enet1_time_pre_div", base +
+> 0xa780, 0, 6);
+>  	clks[IMX7D_ENET2_REF_ROOT_DIV] =
+> imx_clk_divider2("enet2_ref_post_div", "enet2_ref_pre_div", base +
+> 0xa800, 0, 6);
+>  	clks[IMX7D_ENET2_TIME_ROOT_DIV] =
+> imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base +
+> 0xa880, 0, 6);
+> -	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] =
+> imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base
+> + 0xa900, 0, 6);
+> +	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
+> imx_clk_divider2("enet_phy_ref_root_clk", "enet_phy_ref_pre_div", base
+> + 0xa900, 0, 6);
+>  	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div",
+> "eim_pre_div", base + 0xa980, 0, 6);
+>  	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk",
+> "nand_pre_div", base + 0xaa00, 0, 6);
+>  	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div",
+> "qspi_pre_div", base + 0xaa80, 0, 6);
+> @@ -816,7 +816,6 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
+> 0x44f0, 0);
+>  	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
+> "enet2_ref_post_div", base + 0x4500, 0);
+>  	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
+> 0x4510, 0);
+> -	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
+> imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
+> 0x4520, 0);
+>  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
+> "eim_post_div", base + 0x4160, 0);
+>  	clks[IMX7D_NAND_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
+> 0x4140, 0, &share_count_nand);
+>  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
+> base + 0x4140, 0, &share_count_nand);
