@@ -1,83 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752422AbeERNFY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 09:05:24 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33462 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752265AbeERNFR (ORCPT
+        id S1752574AbeERNJL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 09:09:11 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37465 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751496AbeERNFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 09:05:17 -0400
-X-Google-Smtp-Source: AB8JxZr7SghTW55qth6AuyU075w63ZOFuGhPXA4x27h0oD0GdnmMgt4sfSfiycueZ83xVRQ94qlplw==
-Subject: Re: [PATCH v2 2/2] KVM: arm/arm64: harden unmap_stage2_ptes in case
- end is not PAGE_SIZE aligned
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: Suzuki.Poulose@arm.com, linux-kernel@vger.kernel.org,
-        jia.he@hxt-semitech.com
-References: <1526635630-18917-1-git-send-email-hejianet@gmail.com>
- <1526635630-18917-2-git-send-email-hejianet@gmail.com>
- <2185a61e-c157-e177-9bad-83b6f27fd784@arm.com>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <50c98169-1606-48bf-0489-124adefd2a54@gmail.com>
-Date: Fri, 18 May 2018 21:04:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <2185a61e-c157-e177-9bad-83b6f27fd784@arm.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 09:05:12 -0400
+X-Google-Smtp-Source: AB8JxZpSn7gladoroyvtF5eLYVdKGBe+K0epyFgz+6fK4ASYqrnBsD/Wp6f78FmWnDaOIQ7wDyR/rw==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] media: cec-notifier: Get notifier by device and connector name
+Date: Fri, 18 May 2018 15:05:00 +0200
+Message-Id: <1526648704-16873-2-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
+References: <1526648704-16873-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In non device-tree world, we can need to get the notifier by the driver
+name directly and eventually defer probe if not yet created.
 
+This patch adds a variant of the get function by using the device name
+instead and will not create a notifier if not yet created.
 
-On 5/18/2018 5:48 PM, Marc Zyngier Wrote:
-> On 18/05/18 10:27, Jia He wrote:
->> If it passes addr=0x202920000,size=0xfe00 to unmap_stage2_range->
->> ...->unmap_stage2_ptes, unmap_stage2_ptes will get addr=0x202920000,
->> end=0x20292fe00. After first while loop addr=0x202930000, end=0x20292fe00,
->> then addr!=end. Thus it will touch another pages by put_pages() in the
->> 2nd loop.
->>
->> This patch fixes it by hardening the break condition of while loop.
->>
->> Signed-off-by: jia.he@hxt-semitech.com
->> ---
->> v2: newly added
->>
->>  virt/kvm/arm/mmu.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 8dac311..45cd040 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -217,7 +217,7 @@ static void unmap_stage2_ptes(struct kvm *kvm, pmd_t *pmd,
->>  
->>  			put_page(virt_to_page(pte));
->>  		}
->> -	} while (pte++, addr += PAGE_SIZE, addr != end);
->> +	} while (pte++, addr += PAGE_SIZE, addr < end);
->>  
->>  	if (stage2_pte_table_empty(start_pte))
->>  		clear_stage2_pmd_entry(kvm, pmd, start_addr);
->>
-> 
-> I don't think this change is the right thing to do. You get that failure
-> because you're being passed a size that is not a multiple of PAGE_SIZE.
-> That's the mistake.
-> 
-> You should ensure that this never happens, rather than changing the page
-> table walkers (which are consistent with the way this kind of code is
-> written in other places of the kernel). As you mentioned in your first
-> patch, the real issue is that KSM is broken, and this is what should be
-> fixed.
-> 
-Got it, thanks
-Should I resend the patch 1/2 without any changes after droping patch 2/2?
+But the i915 driver exposes at least 2 HDMI connectors, this patch also
+adds the possibility to add a connector name tied to the notifier device
+to form a tuple and associate different CEC controllers for each HDMI
+connectors.
 
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/media/cec/cec-notifier.c | 11 ++++++++---
+ include/media/cec-notifier.h     | 27 ++++++++++++++++++++++++---
+ 2 files changed, 32 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+index 16dffa0..dd2078b 100644
+--- a/drivers/media/cec/cec-notifier.c
++++ b/drivers/media/cec/cec-notifier.c
+@@ -21,6 +21,7 @@ struct cec_notifier {
+ 	struct list_head head;
+ 	struct kref kref;
+ 	struct device *dev;
++	const char *conn;
+ 	struct cec_adapter *cec_adap;
+ 	void (*callback)(struct cec_adapter *adap, u16 pa);
+ 
+@@ -30,13 +31,14 @@ struct cec_notifier {
+ static LIST_HEAD(cec_notifiers);
+ static DEFINE_MUTEX(cec_notifiers_lock);
+ 
+-struct cec_notifier *cec_notifier_get(struct device *dev)
++struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
+ {
+ 	struct cec_notifier *n;
+ 
+ 	mutex_lock(&cec_notifiers_lock);
+ 	list_for_each_entry(n, &cec_notifiers, head) {
+-		if (n->dev == dev) {
++		if (n->dev == dev &&
++		    (!conn || !strcmp(n->conn, conn))) {
+ 			kref_get(&n->kref);
+ 			mutex_unlock(&cec_notifiers_lock);
+ 			return n;
+@@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	if (!n)
+ 		goto unlock;
+ 	n->dev = dev;
++	if (conn)
++		n->conn = kstrdup(conn, GFP_KERNEL);
+ 	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+ 	mutex_init(&n->lock);
+ 	kref_init(&n->kref);
+@@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	mutex_unlock(&cec_notifiers_lock);
+ 	return n;
+ }
+-EXPORT_SYMBOL_GPL(cec_notifier_get);
++EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+ 
+ static void cec_notifier_release(struct kref *kref)
+ {
+@@ -62,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)
+ 		container_of(kref, struct cec_notifier, kref);
+ 
+ 	list_del(&n->head);
++	kfree(n->conn);
+ 	kfree(n);
+ }
+ 
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+index cf0add7..814eeef 100644
+--- a/include/media/cec-notifier.h
++++ b/include/media/cec-notifier.h
+@@ -20,8 +20,10 @@ struct cec_notifier;
+ #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
+ 
+ /**
+- * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * cec_notifier_get_conn - find or create a new cec_notifier for the given
++ * device and connector tuple.
+  * @dev: device that sends the events.
++ * @conn: the connector name from which the event occurs
+  *
+  * If a notifier for device @dev already exists, then increase the refcount
+  * and return that notifier.
+@@ -31,7 +33,8 @@ struct cec_notifier;
+  *
+  * Return NULL if the memory could not be allocated.
+  */
+-struct cec_notifier *cec_notifier_get(struct device *dev);
++struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++					   const char *conn);
+ 
+ /**
+  * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+@@ -85,7 +88,8 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+ 			       struct cec_notifier *notifier);
+ 
+ #else
+-static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++							 const char *conn)
+ {
+ 	/* A non-NULL pointer is expected on success */
+ 	return (struct cec_notifier *)0xdeadfeed;
+@@ -121,6 +125,23 @@ static inline void cec_register_cec_notifier(struct cec_adapter *adap,
+ #endif
+ 
+ /**
++ * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * @dev: device that sends the events.
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
++
++/**
+  * cec_notifier_phys_addr_invalidate() - set the physical address to INVALID
+  *
+  * @n: the CEC notifier
 -- 
-Cheers,
-Jia
+2.7.4
