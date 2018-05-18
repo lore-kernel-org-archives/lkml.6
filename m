@@ -1,88 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751442AbeERLwL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 07:52:11 -0400
-Received: from mail-pl0-f51.google.com ([209.85.160.51]:33115 "EHLO
-        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeERLwI (ORCPT
+        id S1751565AbeERLxM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 07:53:12 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:29603 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbeERLxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 07:52:08 -0400
-X-Google-Smtp-Source: AB8JxZpchVZJQ9k3m0oRrKf2PVC9ElewVFJfqY95vJ2g76Koq+kgoeKTXNTqQjl5bsdkvE18ZVkITA==
-Date: Fri, 18 May 2018 01:52:04 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v3] scripts/tags.sh: don't parse `ls` for
- $ALLSOURCE_ARCHS generation
-Message-ID: <20180518115204.fvz24hdytdh6qgt7@gmail.com>
-References: <20180518062553.kodjjrlrosrg7vfq@gmail.com>
- <CAK7LNAQaR6bLCL8cu4qbqB=oonr7kD_8XuLdG_ntRr_W_rfKUg@mail.gmail.com>
- <20180518093131.7g5m4mu3mtrgb7so@gmail.com>
- <CAK7LNATYiKYzD11anXzCqjWaqeezHo4R1db+qAdCAAJLkvuf9A@mail.gmail.com>
- <20180518095833.kua6rcsrvz3vb4qv@gmail.com>
- <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
+        Fri, 18 May 2018 07:53:07 -0400
+Subject: Re: [PATCH 1/3] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <bcousson@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <paul@pwsan.com>,
+        <lokeshvutla@ti.com>, <linux@armlinux.org.uk>
+References: <1523181542-3770-1-git-send-email-faiz_abbas@ti.com>
+ <1523181542-3770-2-git-send-email-faiz_abbas@ti.com>
+ <20180517210931.GQ98604@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <96794128-c107-9b04-aed5-5dd9caa7a605@ti.com>
+Date: Fri, 18 May 2018 17:24:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hqjldhauj7dntyvd"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQbJKYkmZgE_0bZxff9L0RY8K4W_hndpqKS2d110ArduA@mail.gmail.com>
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <20180517210931.GQ98604@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tony,
 
---hqjldhauj7dntyvd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Friday 18 May 2018 02:39 AM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180408 09:59]:
+>> From: Lokesh Vutla <lokeshvutla@ti.com>
+>>
+>> Add MCAN hwmod data and register it for dra762 silicons.
+>>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> ---
+>>  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++++++++++
+>>  1 file changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> index 62352d1..a2cd7f8 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> @@ -1356,6 +1356,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+>>  };
+>>  
+>>  /*
+>> + * 'mcan' class
+>> + *
+>> + */
+>> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
+>> +	.name	= "mcan",
+>> +};
+>> +
+>> +/* mcan */
+>> +static struct omap_hwmod dra76x_mcan_hwmod = {
+>> +	.name		= "mcan",
+>> +	.class		= &dra76x_mcan_hwmod_class,
+>> +	.clkdm_name	= "wkupaon_clkdm",
+>> +	.main_clk	= "mcan_clk",
+>> +	.prcm = {
+>> +		.omap4 = {
+>> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
+>> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
+>> +			.modulemode   = MODULEMODE_SWCTRL,
+>> +		},
+>> +	},
+>> +};
+> 
+> So based on the ti-sysc related dts comments, this patch should
+> work except you should be able to just leave out the clocks here
+> with the dts changes.
+> 
+>> +/*
+>>   * 'mcspi' class
+>>   *
+>>   */
+>> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+>>  	.user		= OCP_USER_MPU,
+>>  };
+>>  
+>> +/* l3_main_1 -> mcan */
+>> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
+>> +	.master		= &dra7xx_l3_main_1_hwmod,
+>> +	.slave		= &dra76x_mcan_hwmod,
+>> +	.clk		= "l3_iclk_div",
+>> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
+>> +};
+>> +
+>>  static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
+>>  	&dra7xx_l3_main_1__dmm,
+>>  	&dra7xx_l3_main_2__l3_instr,
+>> @@ -3958,6 +3989,7 @@ static struct omap_hwmod_ocp_if *dra7xx_gp_hwmod_ocp_ifs[] __initdata = {
+>>  /* SoC variant specific hwmod links */
+>>  static struct omap_hwmod_ocp_if *dra76x_hwmod_ocp_ifs[] __initdata = {
+>>  	&dra7xx_l4_per3__usb_otg_ss4,
+>> +	&dra76x_l3_main_1__mcan,
+>>  	NULL,
+>>  };
+> 
+> So the omap_hwmod_class, omap_hwmod_ocp_if and entry on the
+> dra76x_hwmod_ocp_ifs list are still needed with ti-sysc for a
+> while. Eventually that data will just come from the dts interconnect
+> hierarchy. For struct omap_hwmod_class_sysconfig, ti-sysc will
+> allocate and it based on the dts data.
+> 
 
-On Fri, May 18, 2018 at 08:03:26PM +0900, Masahiro Yamada wrote:
-> Does this work?
-> ALLSOURCE_ARCHS=3D$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
-> -printf ' %f')
+Thanks for the detailed pointers. I will figure out the ti-sysc node
+that needs to be added and post a v2.
 
-Aha, that actually works perfectly.
-
-> It would leave one leading space, but I do not think it is a big deal.
->=20
->=20
-> It would be possible to chop it like follows, but I wonder if it is worth=
- doing.
-> ALLSOURCE_ARCHS=3D$(find "${tree}"arch -mindepth 1 -maxdepth 1 -type d
-> -printf ' %f' | cut -c2-)
-
-Yeah, the leading space isn't really something that is worth worrying
-about here in my opinion either.
-
-I'll use this in my v4 then, thanks.
-
---=20
-Cheers,
-Joey Pabalinas
-
---hqjldhauj7dntyvd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlr+vmQACgkQruvLfWhy
-VBkh8hAAjuzMmHGTcMOGcx4nZDzJT9t73wv00VFIBIHjR3l4vdP5+j5jKiDsFHO5
-LENF5XM9ICXINhjUSV8GMBqHea4nefx8hl3yWFFKNOZZ3GgifxW2VaonxpoIW6Ik
-j9EHfeEe+7j6QiNFkkB1rj+/b1oNCaOuA1jWaAsYFlhhP4A+elR+v7zmummgpNNd
-699e35aB2sOmHwdLgVzh6kcHvHp/c207aVno6pZkqFBmSzXam3Zkiq98tI4w+DUP
-RwkINojoG0Z7DnFCLivjEz0gRKTFEtOCW4B86suyGjOUOJ8oM1/bdBSwhpAWaD8E
-A//lOZSDJNkelhi0fn3p1Z0K35CZ+0+7y7U5ms4jOs1pAUZxQPq+tiOZIZTPgy2K
-FaA9ofqet4347mBexxpcOjmT5HM7+u8JypO9aZJL0w0VTypeyu71xLHCJEQgVsei
-qB7gvVoHY0cAGIlHEJXUMueedkpd1tChDckhWePUNSQlOtkfhBBcClwixLykgMsU
-an+vhIz9D5K7UMWf9ULuMsNx+/Fg0rHByXj0YtOcOY13qndmEjtqj/dBknodxhdR
-hmFrztJ/N983p5mnZn6pBJgJNYe31WUR8ROO/zcpXfucIV7AeGQhorgHoHNEsuJZ
-VlJz06S5KbuELV/jJ2Ymlu49gqgaors8ZSE874T3dIgaj6Sf+MY=
-=uVbM
------END PGP SIGNATURE-----
-
---hqjldhauj7dntyvd--
+Thanks,
+Faiz
