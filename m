@@ -1,54 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752322AbeERKGf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 06:06:35 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:47006 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751540AbeERKGd (ORCPT
+        id S1752266AbeERKJ3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 06:09:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55038 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeERKJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 06:06:33 -0400
-X-Google-Smtp-Source: AB8JxZqb9dDce3eNWUSmxnPMsORJgjA5TuQcjirhZ5TU6TNhA2xsBl6MeTAPwfTsTai9almYiGuDH6GjctTFg49fUP0=
+        Fri, 18 May 2018 06:09:27 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jes Sorensen <jes@trained-monkey.org>,
+        "David S . Miller" <davem@davemloft.net>, linux-hippi@sunsite.dk,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hippi: fix spelling mistake: "Framming" -> "Framing"
+Date: Fri, 18 May 2018 11:09:22 +0100
+Message-Id: <20180518100922.28790-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <58c8d2d16995e80f5527370e224045e2@codeaurora.org>
-References: <20180517113250.16517-1-ramon.fried@linaro.org> <58c8d2d16995e80f5527370e224045e2@codeaurora.org>
-From: Ramon Fried <ramon.fried@linaro.org>
-Date: Fri, 18 May 2018 13:06:31 +0300
-Message-ID: <CAODu4NqG9aTtoOx70cNk3=z3L-AKcrvxRPBO1xc9=vpWvqw-XA@mail.gmail.com>
-Subject: Re: [PATCH] wcn36xx: Add support for Factory Test Mode (FTM)
-To: Jeff Johnson <jjohnson@codeaurora.org>
-Cc: kvalo@codeaurora.org, linux-kernel@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, Eyal Ilsar <eilsar@codeaurora.org>,
-        linux-wireless-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 May 2018 at 21:37, Jeff Johnson <jjohnson@codeaurora.org> wrote:
-> On 2018-05-17 04:32, Ramon Fried wrote:
->>
->> From: Eyal Ilsar <eilsar@codeaurora.org>
->
-> ...
->>
->> +int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
->> +                               struct ieee80211_vif *vif, void *ptt_msg,
->> size_t len,
->> +               void **ptt_rsp_msg)
->> +{
->> +       struct wcn36xx_hal_process_ptt_msg_req_msg *p_msg_body;
->> +       int ret = 0;
->> +
->> +       mutex_lock(&wcn->hal_mutex);
->> +       p_msg_body = kmalloc(
->> +               sizeof(struct wcn36xx_hal_process_ptt_msg_req_msg) + len,
->> +               GFP_ATOMIC);
->
->
-> NULL check required?
->
->> +       INIT_HAL_PTT_MSG(p_msg_body, len);
->> +
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Jeff. will fix it and send again :)
+Trivial fix to spelling mistake in printk message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/hippi/rrunner.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+index 1ab97d99b9ba..f41116488079 100644
+--- a/drivers/net/hippi/rrunner.c
++++ b/drivers/net/hippi/rrunner.c
+@@ -867,7 +867,7 @@ static u32 rr_handle_event(struct net_device *dev, u32 prodidx, u32 eidx)
+ 			       dev->name);
+ 			goto drop;
+ 		case E_FRM_ERR:
+-			printk(KERN_WARNING "%s: Framming Error\n",
++			printk(KERN_WARNING "%s: Framing Error\n",
+ 			       dev->name);
+ 			goto drop;
+ 		case E_FLG_SYN_ERR:
+-- 
+2.17.0
