@@ -1,100 +1,309 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753085AbeERITc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 04:19:32 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36000 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753046AbeERITY (ORCPT
+        id S1753208AbeERIT7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 04:19:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48012 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753168AbeERITx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 04:19:24 -0400
-X-Google-Smtp-Source: AB8JxZpqWNrmi9m626+XMruiaOzZzMsNDTdcdQHsVTtWvv8Idk1ytVWP8e1d0a+C5QfEq1OvVQUVBg==
-Date: Fri, 18 May 2018 10:19:19 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, lcapitulino@redhat.com,
-        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
-        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
- pages when do physical randomization
-Message-ID: <20180518081919.GB11379@gmail.com>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180518070046.GA18660@gmail.com>
- <20180518074359.GR24627@MiWiFi-R3L-srv>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518074359.GR24627@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 18 May 2018 04:19:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D6BE60C66
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
+        sricharan@codeaurora.org
+Subject: [PATCH V7 02/12] ARM: dts: ipq4019: Add a few peripheral nodes
+Date: Fri, 18 May 2018 13:49:15 +0530
+Message-Id: <1526631565-9972-3-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
+References: <1526631565-9972-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now with the driver updates for some peripherals being there,
+add i2c, spi, pcie, bam, qpic-nand, scm nodes to enhance the available
+peripheral support.
 
-* Baoquan He <bhe@redhat.com> wrote:
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi |   2 +-
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 156 ++++++++++++++++++++++++--
+ 2 files changed, 146 insertions(+), 12 deletions(-)
 
-> OK, I realized my saying above is misled because I didn't explain the
-> background clearly. Let me add it:
-> 
-> Previously, FJ reported the movable_node issue that KASLR will put
-> kernel into movable_node. That cause those movable_nodes can't be hot
-> plugged any more. So finally we plannned to solve it by adding a new
-> kernel parameter :
-> 
-> 	kaslr_boot_mem=nn[KMG]@ss[KMG]
-> 
-> We want customer to specify memory regions which KASLR can make use to
-> randomize kernel into.
-
-*WHY* should the "customer" care?
-
-This is a _bug_: movable, hotpluggable zones of physical memory should not be 
-randomized into.
-
-> [...] Outside of the specified regions, we need avoid to put kernel into those 
-> regions even though they are also available RAM. As for movable_node issue, we 
-> can add immovable regions into kaslr_boot_mem=nn[KMG]@ss[KMG].
-> 
-> During this hotplug issue reviewing, Luiz's team reported this 1GB hugepages
-> regression bug, I reproduced the bug and found out the root cause, then
-> realized that I can utilize kaslr_boot_mem=nn[KMG]@ss[KMG] parameter to
-> fix it too. E.g the KVM guest with 4GB RAM, we have a good 1GB huge
-> page, then we can add "kaslr_boot_mem=1G@0, kaslr_boot_mem=3G@2G" to
-> kernel command-line, then the good 1GB region [1G, 2G) won't be taken
-> into account for kernel physical randomization.
-> 
-> Later, you pointed out that 'kaslr_boot_mem=' way need user to specify
-> memory region manually, it's not good, suggested to solve them by
-> getting information and solving them in KASLR boot code. So they are two
-> issues now, for the movable_node issue, we need get hotplug information
-> from SRAT table and then avoid them; for this 1GB hugepage issue, we
-> need get information from kernel command-line, then avoid them.
-> 
-> This patch is for the hugepage issue only. Since FJ reported the hotplug
-> issue and they assigned engineers to work on it, I would like to wait
-> for them to post according to your suggestion.
-
-All of this is handling it the wrong way about. This is *not* primarily about 
-KASLR at all, and the user should not be required to specify some weird KASLR 
-parameters.
-
-This is a basic _memory map enumeration_ problem in both cases:
-
- - in the hotplug case KASLR doesn't know that it's a movable zone and relocates 
-   into it,
-
- - and in the KVM case KASLR doesn't know that it's a valuable 1GB page that
-   shouldn't be broken up.
-
-Note that it's not KASLR specific: if we had some other kernel feature that tried 
-to allocate a piece of memory from what appears to be perfectly usable generic RAM 
-we'd have the same problems!
-
-We need to fix the real root problem, which is lack of knowledge about crutial 
-attributes of physical memory. Once that knowledge is properly represented at this 
-early boot stage both KASLR and other memory allocators can make use of it to 
-avoid those regions.
-
-Thanks,
-
-	Ingo
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+index ef8d8c8..418f9a0 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+@@ -69,7 +69,7 @@
+ 			status = "ok";
+ 		};
+ 
+-		spi_0: spi@78b5000 {
++		spi@78b5000 {
+ 			pinctrl-0 = <&spi_0_pins>;
+ 			pinctrl-names = "default";
+ 			status = "ok";
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index ea9202a..1541e18 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -24,8 +24,10 @@
+ 	interrupt-parent = <&intc>;
+ 
+ 	aliases {
+-		spi0 = &spi_0;
+-		i2c0 = &i2c_0;
++		spi0 = &blsp1_spi1;
++		spi1 = &blsp1_spi2;
++		i2c0 = &blsp1_i2c3;
++		i2c1 = &blsp1_i2c4;
+ 	};
+ 
+ 	cpus {
+@@ -104,6 +106,12 @@
+ 		};
+ 	};
+ 
++	firmware {
++		scm {
++			compatible = "qcom,scm-ipq4019";
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <1 2 0xf08>,
+@@ -149,13 +157,13 @@
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+-			interrupts = <0 208 0>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		blsp_dma: dma@7884000 {
+ 			compatible = "qcom,bam-v1.7.0";
+ 			reg = <0x07884000 0x23000>;
+-			interrupts = <GIC_SPI 238 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
+ 			clock-names = "bam_clk";
+ 			#dma-cells = <1>;
+@@ -163,7 +171,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		spi_0: spi@78b5000 {
++		blsp1_spi1: spi@78b5000 { /* BLSP1 QUP1 */
+ 			compatible = "qcom,spi-qup-v2.2.1";
+ 			reg = <0x78b5000 0x600>;
+ 			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+@@ -172,10 +180,26 @@
+ 			clock-names = "core", "iface";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			dmas = <&blsp_dma 5>, <&blsp_dma 4>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		blsp1_spi2: spi@78b6000 { /* BLSP1 QUP2 */
++			compatible = "qcom,spi-qup-v2.2.1";
++			reg = <0x78b6000 0x600>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_QUP2_SPI_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			dmas = <&blsp_dma 7>, <&blsp_dma 6>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+-		i2c_0: i2c@78b7000 {
++		blsp1_i2c3: i2c@78b7000 { /* BLSP1 QUP3 */
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0x78b7000 0x600>;
+ 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+@@ -184,14 +208,29 @@
+ 			clock-names = "iface", "core";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
++		blsp1_i2c4: i2c@78b8000 { /* BLSP1 QUP4 */
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x78b8000 0x600>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
++				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
++			clock-names = "iface", "core";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			dmas = <&blsp_dma 11>, <&blsp_dma 10>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
+ 
+ 		cryptobam: dma@8e04000 {
+ 			compatible = "qcom,bam-v1.7.0";
+ 			reg = <0x08e04000 0x20000>;
+-			interrupts = <GIC_SPI 207 0>;
++			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_CRYPTO_AHB_CLK>;
+ 			clock-names = "bam_clk";
+ 			#dma-cells = <1>;
+@@ -259,7 +298,7 @@
+ 		blsp1_uart1: serial@78af000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x78af000 0x200>;
+-			interrupts = <0 107 0>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
+ 				<&gcc GCC_BLSP1_AHB_CLK>;
+@@ -271,7 +310,7 @@
+ 		serial@78b0000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x78b0000 0x200>;
+-			interrupts = <0 108 0>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
+ 				<&gcc GCC_BLSP1_AHB_CLK>;
+@@ -293,6 +332,101 @@
+ 			reg = <0x4ab000 0x4>;
+ 		};
+ 
++		pcie0: pci@40000000 {
++			compatible = "qcom,pcie-ipq4019", "snps,dw-pcie";
++			reg =  <0x40000000 0xf1d
++				0x40000f20 0xa8
++				0x80000 0x2000
++				0x40100000 0x1000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
++				  0x82000000 0 0x48000000 0x48000000 0 0x10000000>;
++
++			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++			clocks = <&gcc GCC_PCIE_AHB_CLK>,
++				 <&gcc GCC_PCIE_AXI_M_CLK>,
++				 <&gcc GCC_PCIE_AXI_S_CLK>;
++			clock-names = "aux",
++				      "master_bus",
++				      "slave_bus";
++
++			resets = <&gcc PCIE_AXI_M_ARES>,
++				 <&gcc PCIE_AXI_S_ARES>,
++				 <&gcc PCIE_PIPE_ARES>,
++				 <&gcc PCIE_AXI_M_VMIDMT_ARES>,
++				 <&gcc PCIE_AXI_S_XPU_ARES>,
++				 <&gcc PCIE_PARF_XPU_ARES>,
++				 <&gcc PCIE_PHY_ARES>,
++				 <&gcc PCIE_AXI_M_STICKY_ARES>,
++				 <&gcc PCIE_PIPE_STICKY_ARES>,
++				 <&gcc PCIE_PWR_ARES>,
++				 <&gcc PCIE_AHB_ARES>,
++				 <&gcc PCIE_PHY_AHB_ARES>;
++			reset-names = "axi_m",
++				      "axi_s",
++				      "pipe",
++				      "axi_m_vmid",
++				      "axi_s_xpu",
++				      "parf",
++				      "phy",
++				      "axi_m_sticky",
++				      "pipe_sticky",
++				      "pwr",
++				      "ahb",
++				      "phy_ahb";
++
++			status = "disabled";
++		};
++
++		qpic_bam: dma@7984000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x7984000 0x1a000>;
++			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_QPIC_CLK>;
++			clock-names = "bam_clk";
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++			status = "disabled";
++		};
++
++		nand: qpic-nand@79b0000 {
++			compatible = "qcom,ipq4019-nand";
++			reg = <0x79b0000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&gcc GCC_QPIC_CLK>,
++				 <&gcc GCC_QPIC_AHB_CLK>;
++			clock-names = "core", "aon";
++
++			dmas = <&qpic_bam 0>,
++			       <&qpic_bam 1>,
++			       <&qpic_bam 2>;
++			dma-names = "tx", "rx", "cmd";
++			status = "disabled";
++
++			nand@0 {
++				reg = <0>;
++
++				nand-ecc-strength = <4>;
++				nand-ecc-step-size = <512>;
++				nand-bus-width = <8>;
++			};
++		};
++
+ 		wifi0: wifi@a000000 {
+ 			compatible = "qcom,ipq4019-wifi";
+ 			reg = <0xa000000 0x200000>;
+@@ -326,7 +460,7 @@
+ 				     <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 47 IRQ_TYPE_EDGE_RISING>,
+-				     <GIC_SPI 168 IRQ_TYPE_NONE>;
++				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
+ 					   "msi4",  "msi5",  "msi6",  "msi7",
+ 					   "msi8",  "msi9", "msi10", "msi11",
+@@ -368,7 +502,7 @@
+ 				     <GIC_SPI 61 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 62 IRQ_TYPE_EDGE_RISING>,
+ 				     <GIC_SPI 63 IRQ_TYPE_EDGE_RISING>,
+-				     <GIC_SPI 169 IRQ_TYPE_NONE>;
++				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
+ 					   "msi4",  "msi5",  "msi6",  "msi7",
+ 					   "msi8",  "msi9", "msi10", "msi11",
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
