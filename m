@@ -1,64 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeERO5K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:57:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:54520 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750975AbeERO5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:57:09 -0400
-Subject: Re: [PATCH 6/6] arm64: perf: Add support for chaining counters
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com
-References: <1526638943-2110-1-git-send-email-suzuki.poulose@arm.com>
- <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5ff704da-b767-33d7-68c4-7aa02f83ac0a@arm.com>
-Date: Fri, 18 May 2018 15:57:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751452AbeERPBI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 11:01:08 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41674 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeERPBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 11:01:03 -0400
+X-Google-Smtp-Source: AB8JxZq8KWMf4a5Qt0cAMHDfTkR92R7lotwDx1qXaXaeDcqZxtrOd4Ph9uYEkGDDRMCoWlA8HBGFlra1Ze/2a4gl17s=
 MIME-Version: 1.0
-In-Reply-To: <1526638943-2110-7-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1520970710-19732-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1520970710-19732-1-git-send-email-s.mesoraca16@gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 18 May 2018 08:00:59 -0700
+X-Google-Sender-Auth: J1LXFt_oJQIJ0EhFfUuuFHzDcA0
+Message-ID: <CAGXu5jKJj5rrjX28kqOnavyRXYGu95ZzpV5tZbHvTSJVAz4YBw@mail.gmail.com>
+Subject: Re: [PATCH] ocfs2: drop a VLA in ocfs2_orphan_del()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@versity.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One more thing now that I've actually looked at the Arm ARM...
+On Tue, Mar 13, 2018 at 12:51 PM, Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Avoid a VLA[1] by using a real constant expression instead of a variable.
+> The compiler should be able to optimize the original code and avoid using
+> an actual VLA. Anyway this change is useful because it will avoid a false
+> positive with -Wvla, it might also help the compiler generating better
+> code.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 
-On 18/05/18 11:22, Suzuki K Poulose wrote:
-[...]
-> +static inline void armv8pmu_write_event_type(struct perf_event *event)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	int idx = hwc->idx;
-> +
-> +	/*
-> +	 * For chained events, write the high counter event type
-> +	 * followed by the low counter.
-> +	 */
-> +	if (armv8pmu_event_is_chained(event)) {
-> +		u32 chain_evt = ARMV8_PMUV3_PERFCTR_CHAIN;
-> +
-> +		/* Set the filters as that of the main event for chain */
-> +		chain_evt |= hwc->config_base & ~ARMV8_PMU_EVTYPE_EVENT;
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-The description of the chain event says that the filtering must only be 
-set on the lower counter, and that the chain event itself should be set 
-to count everything.
+Andrew, can you take this? It seems the most recent patch to ocfs2
+went through your tree...
 
-> +		armv8pmu_write_evtype(idx, chain_evt);
-> +		isb();
-> +		idx--;
-> +	}
-> +
-> +	armv8pmu_write_evtype(idx, hwc->config_base);
+-Kees
 
-It also says that the 'real' event should be set up first and the chain 
-event second, with the rather ominous warning of "If software does not 
-program the event in this way, the count becomes UNPREDICTABLE."
+> ---
+>  fs/ocfs2/namei.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+> index c801edd..41ef356 100644
+> --- a/fs/ocfs2/namei.c
+> +++ b/fs/ocfs2/namei.c
+> @@ -2332,8 +2332,7 @@ int ocfs2_orphan_del(struct ocfs2_super *osb,
+>                      struct buffer_head *orphan_dir_bh,
+>                      bool dio)
+>  {
+> -       const int namelen = OCFS2_DIO_ORPHAN_PREFIX_LEN + OCFS2_ORPHAN_NAMELEN;
+> -       char name[namelen + 1];
+> +       char name[OCFS2_DIO_ORPHAN_PREFIX_LEN + OCFS2_ORPHAN_NAMELEN + 1];
+>         struct ocfs2_dinode *orphan_fe;
+>         int status = 0;
+>         struct ocfs2_dir_lookup_result lookup = { NULL, };
+> --
+> 1.9.1
+>
 
-Robin.
+
+
+-- 
+Kees Cook
+Pixel Security
