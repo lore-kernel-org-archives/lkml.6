@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3571199-1526631809-2-1354137060223874847
+X-Cyrus-Session-Id: sloti22d1t05-3608381-1526631770-2-15635788785160387983
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526631808; b=Lar5KYNjlgQjg4gnAgIkSq1fw1Xptk/pBucrSGZKKUpRFJzmbk
-    4IN3OogYD0JPBZCb/cBMWQUbeUHJM4a7dLpqXe/3ZzenyH9gqIQE+5a5L+xBa+h0
-    zpqXh4UU9IPL8NO32DJ7Cm55yHCsdT4DA8V6eXz0On0K0cp5dm7trVHIhwUPwHE1
-    6BY9mQfVJxnlkKaeVKEnsrCoUvkf6W6KukJJPHM7qSAa8TiGlrkQ4E3bux+TvEL0
-    ctQQSQ8o6ZbrULPD0O6rp42iSQrBD4iGNpxJD8Gone7WCLP5eoNUKPr8ETy7JJrF
-    dWLAzS6m3PnKYr8T35qF75ipXjqhY170z+Ww==
+    1526631769; b=a2IwCuzpqZQrpK41QlchH5ysNWMl+CYQWBYBOUUxMHdDJgL1YM
+    0j1uy1bSmq1LAfAU3FavqG49ajNjpf4HUgavYEMMCxbih+MgONnzuXl77yB6MdDY
+    fJst36+3G3VbFnShgJ8csUHXB2oa0jw6w9QXYj2MM0BY/5GsuqGRMpWYwdAM1cZ0
+    f0QIJMoLidMgUEtjaKkOJEvfPVPb9UExunFHPMevjP2woFNQkOfTFnhj4myr7tdK
+    Vp6wZ0GdrKguzeQq8ZLiGjLLOrqnVwImsSn6LA/mxn/taXtDo39DT4BYMRiYsZAs
+    b/LK8c+gSIcux9Yb0WAyARGN7yF+QKnEK7WA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526631808; bh=7A+MVNxzfAPypwBhsHsMiE/LgLnBng
-    UJ3x+L8rBe5YE=; b=kcFGp6Cw7i+A9+AsoXYMIJTBCX5vYOcejBMscwiImozM9l
-    U7tZyrIvkfMIaGAZD9boOgPzN0VN52ucVhJvRADUlpUXwSdHH58J+RdxX2kKcB4X
-    dspFu+Uxui2nelGQ9A9icOURxrI3/k0k2TpsSetvX35DrnXkmDg0Hlv/SQDQxV0g
-    Ypb1kqUFsVCAe7NfEsJ80u3z7M88yFwY5KIvIfXb5ZnHsvmfHcwame7lg7Cz22Q7
-    otX14Ox+lxRFmV+dJTvCsqIfF2BCRInxSgRwiAoV3+lGEjletLf9wIFyJlyxkqKQ
-    j6sV9Cc9XIvZpoh7homZAsJLdEDQbseQt7a9C2EA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526631769; bh=lxS2af+VfRUPejHzrGD4dbu6gCFvZl
+    6GmWKMW+idrVE=; b=aKJq5rQSWT6zMEfRd5anFpzFIJJtxsdE5u/mkgKOkdxLxJ
+    o0ojBSFgjJSH1p5Is+XHLZIbLUu6AP90xRMu+YQxrbx/fDcnmEYXIUsbIqtdfBpa
+    GkjFNT6wjDeyR9ZD8bn7AyBQmXPJnl0VYgP/dbnN14Il6jnWEMF2xhpAfBKlbpUc
+    PD5WqsmResoHLoSvYw2NeRMNLNR7L4SR29Yq2bkSgCYsTCDft0HoTK54OU9NrpQ2
+    4wcCKhTMWF/v5MFf3HJtqNk/yhRJOE+fHmAn5OQZhJg6F8FFdRE18az00umIXdyN
+    imDqe4JVOr3SuwNZOYGoE+wJwgCmTpy8SHUNi/ww==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=jKYpbDEx x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=LBr4anp5 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=jKYpbDEx x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=LBr4anp5 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,34 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMkQyU7zc9qPBhEVZbIBoEjZ64cKg1r7BfDyOx4GAISESb2GqxfkXeYiiY/LRuqFSvC4zriGxwYtYh5NrW/9myqYMly7WrSO9aCcjw3bkLlApEb4v/rt
-    /+hu9rPsyIzAfSfLA/8y9wqDmG/uIZcfyHrRN60DyLWGAhT0jhNa/pWhAbSfzHNS5d+NLwcI6/CHNOVOd4b9exESryvGM7REF2JUkvFrOO04w9GIXidJKxf/
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBXaX5rwb17Nk85YRIXHkUTisEwsMN58MxQTQrZ179x17Ed/ylqYS5XUvmeOBvW5hhRkfzVh9UZvTjeK7anMZjN8ARrs72Yo69yQHIOxD6K4HDbjkw96
+    QhJ5v8Atg65AiV09dub6kDmBweJJ+a4A2iWxcgG6+ijtPpLv0GA09Msmb/xYhDMjl2Gu8SwMsfY0pyVUQi9xjknTBrKjjO44PdAh83ZpLSZ92oXaemznGpDC
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=X7Ea-ya5AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=G2dbtSLBsSqn76GcjF8A:9
-    a=QEXdDO2ut3YA:10 a=f3QdawHiMRSDlnPgGXNW:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=ag1SF4gXAAAA:8 a=8AirrxEcAAAA:8 a=1EsaE_6oAAAA:8 a=VwQbUJbxAAAA:8
+    a=yMhMjlubAAAA:8 a=fs2a0GfmMcxWNEDwrTwA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=ST-jHhOKWsTCqRlWije3:22 a=3ZumFrijQQ-2J9H5h8ct:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753139AbeERIXH (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 18 May 2018 04:23:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33066 "EHLO mail.kernel.org"
+        id S1753825AbeERIWp (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 18 May 2018 04:22:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753839AbeERIWr (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 18 May 2018 04:22:47 -0400
+        id S1753084AbeERIWm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 18 May 2018 04:22:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 22/33] bonding: send learning packets for vlans on slave
-Date: Fri, 18 May 2018 10:16:01 +0200
-Message-Id: <20180518081535.982853490@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 30/33] Revert "ARM: dts: imx6qdl-wandboard: Fix audio channel swap"
+Date: Fri, 18 May 2018 10:16:09 +0200
+Message-Id: <20180518081536.310837274@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081535.096308218@linuxfoundation.org>
 References: <20180518081535.096308218@linuxfoundation.org>
@@ -105,85 +109,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Debabrata Banerjee <dbanerje@akamai.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit 21706ee8a47d3ede7fdae0be6d7c0a0e31a83229 ]
+This reverts commit c53c4ad96242e868da492f424535bf4b45f80503 which was
+commit 79935915300c5eb88a0e94fa9148a7505c14a02a upstream.
 
-There was a regression at some point from the intended functionality of
-commit f60c3704e87d ("bonding: Fix alb mode to only use first level
-vlans.")
+As Ben points out:
+	This depends on:
 
-Given the return value vlan_get_encap_level() we need to store the nest
-level of the bond device, and then compare the vlan's encap level to
-this. Without this, this check always fails and learning packets are
-never sent.
+	commit 570c70a60f53ca737ead4e5966c446bf0d39fac9
+	Author: Fabio Estevam <fabio.estevam@nxp.com>
+	Date:   Wed Apr 5 11:32:34 2017 -0300
 
-In addition, this same commit caused a regression in the behavior of
-balance_alb, which requires learning packets be sent for all interfaces
-using the slave's mac in order to load balance properly. For vlan's
-that have not set a user mac, we can send after checking one bit.
-Otherwise we need send the set mac, albeit defeating rx load balancing
-for that vlan.
+	    ASoC: sgtl5000: Allow LRCLK pad drive strength to be changed
 
-Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+which did not show up until 4.13, so this makes no sense to have in this
+stable branch.
+
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_alb.c  |   13 ++++++++-----
- drivers/net/bonding/bond_main.c |    2 ++
- include/net/bonding.h           |    1 +
- 3 files changed, 11 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/bonding/bond_alb.c
-+++ b/drivers/net/bonding/bond_alb.c
-@@ -944,6 +944,10 @@ static void alb_send_lp_vid(struct slave
- 	skb->priority = TC_PRIO_CONTROL;
- 	skb->dev = slave->dev;
+--- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+@@ -88,7 +88,6 @@
+ 		clocks = <&clks IMX6QDL_CLK_CKO>;
+ 		VDDA-supply = <&reg_2p5v>;
+ 		VDDIO-supply = <&reg_3p3v>;
+-		lrclk-strength = <3>;
+ 	};
+ };
  
-+	netdev_dbg(slave->bond->dev,
-+		   "Send learning packet: dev %s mac %pM vlan %d\n",
-+		   slave->dev->name, mac_addr, vid);
-+
- 	if (vid)
- 		__vlan_hwaccel_put_tag(skb, vlan_proto, vid);
- 
-@@ -966,14 +970,13 @@ static void alb_send_learning_packets(st
- 	 */
- 	rcu_read_lock();
- 	netdev_for_each_all_upper_dev_rcu(bond->dev, upper, iter) {
--		if (is_vlan_dev(upper) && vlan_get_encap_level(upper) == 0) {
--			if (strict_match &&
--			    ether_addr_equal_64bits(mac_addr,
--						    upper->dev_addr)) {
-+		if (is_vlan_dev(upper) &&
-+		    bond->nest_level == vlan_get_encap_level(upper) - 1) {
-+			if (upper->addr_assign_type == NET_ADDR_STOLEN) {
- 				alb_send_lp_vid(slave, mac_addr,
- 						vlan_dev_vlan_proto(upper),
- 						vlan_dev_vlan_id(upper));
--			} else if (!strict_match) {
-+			} else {
- 				alb_send_lp_vid(slave, upper->dev_addr,
- 						vlan_dev_vlan_proto(upper),
- 						vlan_dev_vlan_id(upper));
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1732,6 +1732,8 @@ int bond_enslave(struct net_device *bond
- 	if (bond_mode_uses_xmit_hash(bond))
- 		bond_update_slave_arr(bond, NULL);
- 
-+	bond->nest_level = dev_get_nest_level(bond_dev);
-+
- 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
- 		    slave_dev->name,
- 		    bond_is_active_slave(new_slave) ? "an active" : "a backup",
---- a/include/net/bonding.h
-+++ b/include/net/bonding.h
-@@ -197,6 +197,7 @@ struct bonding {
- 	struct   slave __rcu *primary_slave;
- 	struct   bond_up_slave __rcu *slave_arr; /* Array of usable slaves */
- 	bool     force_primary;
-+	u32      nest_level;
- 	s32      slave_cnt; /* never change this value outside the attach/detach wrappers */
- 	int     (*recv_probe)(const struct sk_buff *, struct bonding *,
- 			      struct slave *);
