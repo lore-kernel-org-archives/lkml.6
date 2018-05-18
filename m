@@ -1,71 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752416AbeERHiO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:38:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35401 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbeERHiN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:38:13 -0400
-Date: Fri, 18 May 2018 00:37:54 -0700
-From: tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-cd33d8803bfa3f5e6e5d7a4bb03fc8cc32c40fb6@git.kernel.org>
-Cc: bigeasy@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, pjt@google.com
-Reply-To: mingo@kernel.org, peterz@infradead.org, bigeasy@linutronix.de,
-        torvalds@linux-foundation.org, pjt@google.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20180515165328.24899-1-bigeasy@linutronix.de>
-References: <20180515165328.24899-1-bigeasy@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/fair: Fix documentation file path
-Git-Commit-ID: cd33d8803bfa3f5e6e5d7a4bb03fc8cc32c40fb6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752002AbeERHjt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:39:49 -0400
+Received: from mga02.intel.com ([134.134.136.20]:10669 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751023AbeERHjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:39:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
+   d="scan'208";a="50267879"
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
+ sample
+To: Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
+ <20180509145436.GV12217@hirez.programming.kicks-ass.net>
+ <eb83a97a-2e62-9c18-b738-a92b2f4dee23@linux.intel.com>
+ <F6BF3B97-F955-4644-A033-4D20CA7F1922@amacapital.net>
+ <15a49a1c-01de-b904-a98b-ecced01b8ddb@linux.intel.com>
+Message-ID: <7bc35ce2-d936-a8bd-c14c-6cd270e2f98d@linux.intel.com>
+Date: Fri, 18 May 2018 10:39:42 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <15a49a1c-01de-b904-a98b-ecced01b8ddb@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd33d8803bfa3f5e6e5d7a4bb03fc8cc32c40fb6
-Gitweb:     https://git.kernel.org/tip/cd33d8803bfa3f5e6e5d7a4bb03fc8cc32c40fb6
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Tue, 15 May 2018 18:53:28 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 18 May 2018 09:05:28 +0200
 
-sched/fair: Fix documentation file path
+Hi,
+On 16.05.2018 11:42, Alexey Budankov wrote:
+> Hi,
+> On 15.05.2018 19:30, Andy Lutomirski wrote:
+>>
+>>> On May 15, 2018, at 1:08 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+>>>
+>>>
+>>> Hi Andy,
+>>>
+>>>> On 09.05.2018 17:54, Peter Zijlstra wrote:
+>>>>> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
+>>>>>
+>>>>> Store user space frame-pointer value (BP register) into Perf trace 
+>>>>> on a sample for a process so the value becomes available when 
+>>>>> unwinding call stacks for functions gaining event samples.
+>>>>>
+>>>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>>>>> ---
+>>>>> arch/x86/kernel/perf_regs.c | 8 +++++++-
+>>>>> 1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
+>>>>> index e47b2dbbdef3..8d68658eff7f 100644
+>>>>> --- a/arch/x86/kernel/perf_regs.c
+>>>>> +++ b/arch/x86/kernel/perf_regs.c
+>>>>> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+>>>>
+>>>>
+>>>>>     * Most system calls don't save these registers, don't report them.
+>>>>
+>>>> ^^^ that worries me and is the reason for the '-1's below. However I
+>>>> think with all the PTI rework this might no longer be true.
+>>>>
+>>>> The Changelog needs to state that user_regs->bp is in fact valid and
+>>>> ideally point to the commits that makes it so. Also this patch should
+>>>> update that comment.
+>>>>
+>>>> Cc Andy who keeps better track of all that than me.
+>>>
+>>> Are there any thoughts so far? Feedback on the matter above is highly appreciated.
+>>
+>> Sorry, I missed this. Can you forward the original patch?  I don’t have it.
 
-The 'tip' prefix probably referred to the -tip tree and is not required,
-remove it.
+Just to make sure this and below didn't sneak out of your attention.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180515165328.24899-1-bigeasy@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Store user space frame-pointer value (BP register) into Perf trace 
+> on a sample for a process so the value becomes available when 
+> unwinding call stacks for functions gaining event samples.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+>  arch/x86/kernel/perf_regs.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
+> index e47b2dbbdef3..8d68658eff7f 100644
+> --- a/arch/x86/kernel/perf_regs.c
+> +++ b/arch/x86/kernel/perf_regs.c
+> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+>  	 * Most system calls don't save these registers, don't report them.
+>  	 */
+>  	regs_user_copy->bx = -1;
+> -	regs_user_copy->bp = -1;
+> +	/*
+> +	 * Store user space frame-pointer value on sample
+> +	 * to facilitate stack unwinding for cases when
+> +	 * user space executable code has such support
+> +	 * enabled at compile time;
+> +	 */
+> +	regs_user_copy->bp = user_regs->bp;
+>  	regs_user_copy->r12 = -1;
+>  	regs_user_copy->r13 = -1;
+>  	regs_user_copy->r14 = -1;
+>>> These days, system calls should save all registers, but I’m not entirely sure I want to promise that they’ll continue to do so forever.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index f013afc74b11..18b151f0ddc1 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -738,7 +738,7 @@ config CFS_BANDWIDTH
- 	  tasks running within the fair group scheduler.  Groups with no limit
- 	  set are considered to be unconstrained and will run with no
- 	  restriction.
--	  See tip/Documentation/scheduler/sched-bwc.txt for more information.
-+	  See Documentation/scheduler/sched-bwc.txt for more information.
- 
- config RT_GROUP_SCHED
- 	bool "Group scheduling for SCHED_RR/FIFO"
+Thanks,
+Alexey
