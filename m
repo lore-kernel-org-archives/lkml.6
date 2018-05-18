@@ -1,257 +1,155 @@
-Return-Path: <kent.overstreet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1527038326; cv=none;
+Return-Path: <daniel@zonque.org>
+X-Google-Smtp-Source: AB8JxZqOuYQFzoYJ8ot4wTaHxcrEkRHK59ekO8unqSLI8LWnS6wpm42oFfbY+YSFixvWLd5UEs/v
+ARC-Seal: i=1; a=rsa-sha256; t=1526679065; cv=none;
         d=google.com; s=arc-20160816;
-        b=ivOrCz1NyUe1FLnL4qHsecmRV8KHd3kovOY5gAj6p2yBdZSApcdrsZp0sHxgVqgPbg
-         j9e2B9oyCF9+WvMg7lrLft8s2/T8s+PXCXtbzmuAK6NA+rvTvdwq5iuPwP3cX3HmqcF5
-         wIHsJP/4jZnCElZ+wERxfyBRSpbLYa5Xwuiec9SxEvdnn+P4xXtEsPIg2hgaQ4jvry9x
-         uYjf+tEoHVYMcHGPrwbFP+svMSiZMEw4b8haFzW0CvMbGFXyEvljcNTd7bhFnkShWO/N
-         gsovZMn+48AFmxhWdetYwCVI4Pj/2+8zni9FxmrUr5L7HGDXKvluYxpddwEdQ81+AqEx
-         2RyA==
+        b=FR4x2sXFYBjG44zMt2zt+tdjnoMmZNMacQKGUQh3u0eBhdQt8I67D+haRIru4i5hE0
+         NwbQuo/GMLLzhjm+ef5nsmIPQxtECh9j2sBjcsSSr2skvxihou//Z0beqfylrVfoEZ6w
+         05YLOgTp2+pzPBJEt48o7fMFclkTIoyWGIV8MoMaFi+EnKfQB3zx7a0AZw7VvBr9vaRa
+         Ow2sB3XiYHGYrAruNai+St4qqy3zUkTlaGfViQJmQ+aaRnxUCwtUx4CARscRXPGPyrnm
+         2eGgnO5kyWYw8rV1GlDXMitpnVT9M5vFz8+JZw153GkDgoel733QdERkYG4T4k2jzObn
+         Gz3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=aAylj390SzpurFM70TLaaWr6yaijN8/amlAfF5yOrvQ=;
-        b=BvGGXEciVQnUl9D5wKYH0nBOaz8BQZB0ncdEfbFWhWng9lGWB/ZynHjni20VKa2g1N
-         tEb8XDSkWRaUmFr6mgVpoNEm8MdlvbqMCfKwO38ifJYsHE13nmH9BDbXcMQ8P4ESqQyA
-         lDJmcmwkp217vm3keow/SqTCEO2GIzvtBQCDcbX3eUzV36vnt0e06AbhJEIJ7dO3c3BR
-         zxq3+6vChiwceWtVzty/qY/6E8jJaMV71nZE0MoFo3HVgM8KPhWMoP1kKgeDzNgDZJW2
-         KuG19q5Fj7VnWdclAz7yIOMbXFBT346nqG4Eo6Wu9IuuAjqvZ+VqchGTdAyGTLlC7/LA
-         Q+Bg==
+        h=content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:arc-authentication-results;
+        bh=MooH3a2xJ31/NYZhAat7GN2TIAHzVCgoA37Bn+O/SMo=;
+        b=gKhzINZiHBeZ8ZFvOeKnxkNNJI1qA1LugCGAideDQI24wQiKVIfB7OalzOJtcuFliI
+         7tOTOR1c+mGP0CSyNGtgZcO3yAOaIFexGhu2dvsFWBkf29QVv0ZrycKyTn37JvZOYQ72
+         iV+6NaZycjwuZ2Cy8rcRxhogYQFXwHkTlc36JsFfFBasKxtX5iqEWFqdJI+oRGB1WJ0c
+         jkX47+0S6qydFRYaou5Jd2B1jFfdm1iz/JgF7fFWgy/Wt2uGWBqpCArtp+EVismJkFF7
+         ivvT3EeWO72CPuxHYXaaH1IKdW0cJ4nVCoyhWwuol0XEzbVjZ2SzIbGLotcrI05EQcqs
+         b0xg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FiWvqlct;
-       spf=pass (google.com: domain of kent.overstreet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kent.overstreet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of daniel@zonque.org designates 46.23.86.59 as permitted sender) smtp.mailfrom=daniel@zonque.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FiWvqlct;
-       spf=pass (google.com: domain of kent.overstreet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kent.overstreet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZpT+riuVqsulHp1BPRApa7t1nRlJ9zVG0TEf0M0RjONNVL9K+rCfS2mqBo9fs3bpfHRDXe11Q==
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org,
-	willy@infradead.org,
-	gregkh@linuxfoundation.org,
-	linux-security-module@vger.kernel.org,
-	selinux@tycho.nsa.gov,
-	dev@openvswitch.org,
-	shli@kernel.org,
-	linux-raid@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 3/6] md: convert to genradix
-Date: Tue, 22 May 2018 21:18:18 -0400
-Message-Id: <20180523011821.12165-3-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180523011821.12165-1-kent.overstreet@gmail.com>
-References: <20180523011821.12165-1-kent.overstreet@gmail.com>
+       spf=pass (google.com: domain of daniel@zonque.org designates 46.23.86.59 as permitted sender) smtp.mailfrom=daniel@zonque.org
+Subject: Re: [PATCH 05/15] mtd: nand: pxa3xx: remove the dmaengine compat need
+To: Robert Jarzmik <robert.jarzmik@free.fr>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Brian Norris <computersforpeace@gmail.com>,
+ Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+ Nicolas Pitre <nico@fluxnic.net>, Samuel Ortiz <samuel@sortiz.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+ devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+ Robert Jarzmik <robert.jarzmik@renault.com>
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+ <20180402142656.26815-6-robert.jarzmik@free.fr>
+From: Daniel Mack <daniel@zonque.org>
+Message-ID: <a09d80dc-e8fd-1e9a-1878-8875ddc83134@zonque.org>
+Date: Fri, 18 May 2018 23:31:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180402142656.26815-6-robert.jarzmik@free.fr>
+Content-Type: multipart/mixed;
+ boundary="------------39EE53F47ACFCC5932325DF0"
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601215739753654643?=
-X-GMAIL-MSGID: =?utf-8?q?1601215739753654643?=
+X-GMAIL-THRID: =?utf-8?q?1596644931360963410?=
+X-GMAIL-MSGID: =?utf-8?q?1600839027353381994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-the new generic radix trees have a simpler API and implementation, and
-no limitations on number of elements, so all flex_array users are being
-converted
+This is a multi-part message in MIME format.
+--------------39EE53F47ACFCC5932325DF0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Hi Robert,
+
+Thanks for this series.
+
+On Monday, April 02, 2018 04:26 PM, Robert Jarzmik wrote:
+> From: Robert Jarzmik <robert.jarzmik@renault.com>
+> 
+> As the pxa architecture switched towards the dmaengine slave map, the
+> old compatibility mechanism to acquire the dma requestor line number and
+> priority are not needed anymore.
+> 
+> This patch simplifies the dma resource acquisition, using the more
+> generic function dma_request_slave_channel().
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+>   drivers/mtd/nand/pxa3xx_nand.c | 10 +---------
+
+This driver was replaced by drivers/mtd/nand/raw/marvell_nand.c 
+recently, so this patch can be dropped. I attached a version for the new 
+driver which you can pick instead.
+
+
+Thanks,
+Daniel
+
+--------------39EE53F47ACFCC5932325DF0
+Content-Type: text/x-patch;
+ name="0001-mtd-rawnand-marvell-remove-dmaengine-compat-code.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-mtd-rawnand-marvell-remove-dmaengine-compat-code.patch"
+
+>From c63bc40bdfe2d596e42919235840109a2f1b2776 Mon Sep 17 00:00:00 2001
+From: Daniel Mack <daniel@zonque.org>
+Date: Sat, 12 May 2018 21:50:13 +0200
+Subject: [PATCH] mtd: rawnand: marvell: remove dmaengine compat code
+
+As the pxa architecture switched towards the dmaengine slave map, the
+old compatibility mechanism to acquire the dma requestor line number and
+priority are not needed anymore.
+
+This patch simplifies the dma resource acquisition, using the more
+generic function dma_request_slave_channel().
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/md/raid5-ppl.c |  5 ++-
- drivers/md/raid5.c     | 77 ++++++++++++++++++++----------------------
- drivers/md/raid5.h     |  4 ++-
- 3 files changed, 42 insertions(+), 44 deletions(-)
+ drivers/mtd/nand/raw/marvell_nand.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-index 42890a0837..ffb4ae0679 100644
---- a/drivers/md/raid5-ppl.c
-+++ b/drivers/md/raid5-ppl.c
-@@ -16,7 +16,6 @@
- #include <linux/blkdev.h>
- #include <linux/slab.h>
- #include <linux/crc32c.h>
--#include <linux/flex_array.h>
- #include <linux/async_tx.h>
- #include <linux/raid/md_p.h>
- #include "md.h"
-@@ -165,7 +164,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
- 		       struct dma_async_tx_descriptor *tx)
- {
- 	int disks = sh->disks;
--	struct page **srcs = flex_array_get(percpu->scribble, 0);
-+	struct page **srcs = __genradix_ptr(&percpu->scribble, 0);
- 	int count = 0, pd_idx = sh->pd_idx, i;
- 	struct async_submit_ctl submit;
+diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+index ebb1d141b900..30017cd7d91c 100644
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -2612,8 +2612,6 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+ 						    dev);
+ 	struct dma_slave_config config = {};
+ 	struct resource *r;
+-	dma_cap_mask_t mask;
+-	struct pxad_param param;
+ 	int ret;
  
-@@ -196,7 +195,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 	if (!IS_ENABLED(CONFIG_PXA_DMA)) {
+@@ -2632,14 +2630,7 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+ 		return -ENXIO;
  	}
  
- 	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
--			  NULL, sh, flex_array_get(percpu->scribble, 0)
-+			  NULL, sh, __genradix_ptr(&percpu->scribble, 0)
- 			  + sizeof(struct page *) * (sh->disks + 2));
- 
- 	if (count == 1)
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index b5d2601483..31f88db83c 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -54,7 +54,6 @@
- #include <linux/slab.h>
- #include <linux/ratelimit.h>
- #include <linux/nodemask.h>
--#include <linux/flex_array.h>
- 
- #include <trace/events/block.h>
- #include <linux/list_sort.h>
-@@ -1396,7 +1395,9 @@ static addr_conv_t *to_addr_conv(struct stripe_head *sh,
- {
- 	void *addr;
- 
--	addr = flex_array_get(percpu->scribble, i);
-+	addr = __genradix_ptr(&percpu->scribble,
-+			 __idx_to_offset(i, percpu->scribble_obj_size));
-+
- 	return addr + sizeof(struct page *) * (sh->disks + 2);
- }
- 
-@@ -1405,7 +1406,8 @@ static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
- {
- 	void *addr;
- 
--	addr = flex_array_get(percpu->scribble, i);
-+	addr = __genradix_ptr(&percpu->scribble,
-+			 __idx_to_offset(i, percpu->scribble_obj_size));
- 	return addr;
- }
- 
-@@ -2235,21 +2237,21 @@ static int grow_stripes(struct r5conf *conf, int num)
-  * calculate over all devices (not just the data blocks), using zeros in place
-  * of the P and Q blocks.
-  */
--static struct flex_array *scribble_alloc(int num, int cnt, gfp_t flags)
-+static int scribble_alloc(struct raid5_percpu *percpu,
-+			  int num, int cnt, gfp_t flags)
- {
--	struct flex_array *ret;
--	size_t len;
-+	size_t obj_size =
-+		sizeof(struct page *) * (num+2) +
-+		sizeof(addr_conv_t) * (num+2);
-+	int ret;
- 
--	len = sizeof(struct page *) * (num+2) + sizeof(addr_conv_t) * (num+2);
--	ret = flex_array_alloc(len, cnt, flags);
--	if (!ret)
--		return NULL;
--	/* always prealloc all elements, so no locking is required */
--	if (flex_array_prealloc(ret, 0, cnt, flags)) {
--		flex_array_free(ret);
--		return NULL;
--	}
--	return ret;
-+	ret = __genradix_prealloc(&percpu->scribble,
-+			 __idx_to_offset(cnt + 1, obj_size), flags);
-+	if (ret)
-+		return ret;
-+
-+	percpu->scribble_obj_size = obj_size;
-+	return 0;
- }
- 
- static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
-@@ -2267,23 +2269,18 @@ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
- 		return 0;
- 	mddev_suspend(conf->mddev);
- 	get_online_cpus();
-+
- 	for_each_present_cpu(cpu) {
- 		struct raid5_percpu *percpu;
--		struct flex_array *scribble;
- 
- 		percpu = per_cpu_ptr(conf->percpu, cpu);
--		scribble = scribble_alloc(new_disks,
--					  new_sectors / STRIPE_SECTORS,
--					  GFP_NOIO);
--
--		if (scribble) {
--			flex_array_free(percpu->scribble);
--			percpu->scribble = scribble;
--		} else {
--			err = -ENOMEM;
-+		err = scribble_alloc(percpu, new_disks,
-+				     new_sectors / STRIPE_SECTORS,
-+				     GFP_NOIO);
-+		if (err)
- 			break;
--		}
- 	}
-+
- 	put_online_cpus();
- 	mddev_resume(conf->mddev);
- 	if (!err) {
-@@ -6716,25 +6713,25 @@ raid5_size(struct mddev *mddev, sector_t sectors, int raid_disks)
- static void free_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
- {
- 	safe_put_page(percpu->spare_page);
--	if (percpu->scribble)
--		flex_array_free(percpu->scribble);
- 	percpu->spare_page = NULL;
--	percpu->scribble = NULL;
-+	__genradix_free(&percpu->scribble);
- }
- 
- static int alloc_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
- {
--	if (conf->level == 6 && !percpu->spare_page)
-+	if (conf->level == 6 && !percpu->spare_page) {
- 		percpu->spare_page = alloc_page(GFP_KERNEL);
--	if (!percpu->scribble)
--		percpu->scribble = scribble_alloc(max(conf->raid_disks,
--						      conf->previous_raid_disks),
--						  max(conf->chunk_sectors,
--						      conf->prev_chunk_sectors)
--						   / STRIPE_SECTORS,
--						  GFP_KERNEL);
--
--	if (!percpu->scribble || (conf->level == 6 && !percpu->spare_page)) {
-+		if (!percpu->spare_page)
-+			return -ENOMEM;
-+	}
-+
-+	if (scribble_alloc(percpu,
-+			   max(conf->raid_disks,
-+			       conf->previous_raid_disks),
-+			   max(conf->chunk_sectors,
-+			       conf->prev_chunk_sectors)
-+			   / STRIPE_SECTORS,
-+			   GFP_KERNEL)) {
- 		free_scratch_buffer(conf, percpu);
- 		return -ENOMEM;
- 	}
-diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
-index 3f8da26032..2c39bfce32 100644
---- a/drivers/md/raid5.h
-+++ b/drivers/md/raid5.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/raid/xor.h>
- #include <linux/dmaengine.h>
-+#include <linux/generic-radix-tree.h>
- 
- /*
-  *
-@@ -637,10 +638,11 @@ struct r5conf {
- 	/* per cpu variables */
- 	struct raid5_percpu {
- 		struct page	*spare_page; /* Used when checking P/Q in raid6 */
--		struct flex_array *scribble;   /* space for constructing buffer
-+		struct __genradix scribble;  /* space for constructing buffer
- 					      * lists and performing address
- 					      * conversions
- 					      */
-+		int scribble_obj_size;
- 	} __percpu *percpu;
- 	int scribble_disks;
- 	int scribble_sectors;
+-	param.drcmr = r->start;
+-	param.prio = PXAD_PRIO_LOWEST;
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-	nfc->dma_chan =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &param, nfc->dev,
+-						 "data");
++	nfc->dma_chan = dma_request_slave_channel(nfc->dev, "data");
+ 	if (!nfc->dma_chan) {
+ 		dev_err(nfc->dev,
+ 			"Unable to request data DMA channel\n");
 -- 
-2.17.0
+2.14.3
+
+
+--------------39EE53F47ACFCC5932325DF0--
