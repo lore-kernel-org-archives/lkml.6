@@ -1,165 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeERHEO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 03:04:14 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54223 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751201AbeERHEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 03:04:12 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,413,1520924400";
-   d="scan'208";a="229679429"
-Date: Fri, 18 May 2018 10:04:08 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
-Subject: Re: [PATCH v3] tpm: check selftest status before retrying full
- selftest
-Message-ID: <20180518070408.GA9461@linux.intel.com>
-References: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
+        id S1752103AbeERHEV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 03:04:21 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10080 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751966AbeERHES (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 03:04:18 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 18 May 2018 00:04:17 -0700
+Subject: Re: [PATCH v3] vfio/mdev: Check globally for duplicate devices
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Cornelia Huck <cohuck@redhat.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        "Halil Pasic" <pasic@linux.ibm.com>
+References: <20180517031746.32242.17768.stgit@gimli.home>
+ <20180517100928.5949b11e.cohuck@redhat.com>
+ <50191254-4437-8ff3-06db-8d6b2df20b65@nvidia.com>
+ <20180517102000.50656267@w520.home>
+ <3ab0fe44-9290-8c29-5e4c-2599ba0de373@nvidia.com>
+ <20180517153737.74028a17@w520.home>
+X-Nvconfidentiality: public
+From: Kirti Wankhede <kwankhede@nvidia.com>
+Message-ID: <b07fa7ec-cdb5-ffdb-a969-db14a740d94a@nvidia.com>
+Date: Fri, 18 May 2018 12:34:03 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180515071712.9331-1-nayna@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180517153737.74028a17@w520.home>
+X-Originating-IP: [10.24.70.199]
+X-ClientProxiedBy: BGMAIL102.nvidia.com (10.25.59.11) To bgmail102.nvidia.com
+ (10.25.59.11)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 12:47:12PM +0530, Nayna Jain wrote:
-> TPM 2.0 supports TPM2_GetTestResult[1], which can be used to check the
-> selftest status. This patch implements the tpm2_get_selftest_result()
-> function to check the selftest status before trying full selftest.
+
+
+On 5/18/2018 3:07 AM, Alex Williamson wrote:
+> On Fri, 18 May 2018 01:56:50 +0530
+> Kirti Wankhede <kwankhede@nvidia.com> wrote:
 > 
-> [1] As per TCG Specification, Trusted Platform Module Library,
-> Part 2 - Commands, Section 10.4:
+>> On 5/17/2018 9:50 PM, Alex Williamson wrote:
+>>> On Thu, 17 May 2018 21:25:22 +0530
+>>> Kirti Wankhede <kwankhede@nvidia.com> wrote:
+>>>   
+>>>> On 5/17/2018 1:39 PM, Cornelia Huck wrote:  
+>>>>> On Wed, 16 May 2018 21:30:19 -0600
+>>>>> Alex Williamson <alex.williamson@redhat.com> wrote:
+>>>>>     
+>>>>>> When we create an mdev device, we check for duplicates against the
+>>>>>> parent device and return -EEXIST if found, but the mdev device
+>>>>>> namespace is global since we'll link all devices from the bus.  We do
+>>>>>> catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
+>>>>>> with it comes a kernel warning and stack trace for trying to create
+>>>>>> duplicate sysfs links, which makes it an undesirable response.
+>>>>>>
+>>>>>> Therefore we should really be looking for duplicates across all mdev
+>>>>>> parent devices, or as implemented here, against our mdev device list.
+>>>>>> Using mdev_list to prevent duplicates means that we can remove
+>>>>>> mdev_parent.lock, but in order not to serialize mdev device creation
+>>>>>> and removal globally, we add mdev_device.active which allows UUIDs to
+>>>>>> be reserved such that we can drop the mdev_list_lock before the mdev
+>>>>>> device is fully in place.
+>>>>>>
+>>>>>> NB. there was never intended to be any serialization guarantee
+>>>>>> provided by the mdev core with respect to creation and removal of mdev
+>>>>>> devices, mdev_parent.lock provided this only as a side-effect of the
+>>>>>> implementation for locking the namespace per parent.  That
+>>>>>> serialization is now removed.    
+>>>>>     
+>>>>
+>>>> mdev_parent.lock is to serialize create and remove of that mdev device,
+>>>> that handles race condition that Cornelia mentioned below.  
+>>>
+>>> Previously it was stated:
+>>>
+>>> On Thu, 17 May 2018 01:01:40 +0530
+>>> Kirti Wankhede <kwankhede@nvidia.com> wrote:  
+>>>> Here lock is not for create/remove routines of vendor driver, its about
+>>>> mdev device creation and device registration, which is a common code
+>>>> path, and so is part of mdev core module.  
+>>>
+>>> So the race condition was handled previously, but as a side-effect of
+>>> protecting the namespace, aiui.  I'm trying to state above that the
+>>> serialization of create/remove was never intended as a guarantee
+>>> provided to mdev vendor drivers.  I don't see that there's a need to
+>>> protect "mdev device creation and device registration" beyond conflicts
+>>> in the UUID namespace, which is done here.  Are there others?
+>>>   
+>>
+>> Sorry not being elaborative in my earlier response to
+>>
+>>> If we can
+>>> show that vendor drivers handle the create/remove paths themselves,
+>>> perhaps we can refine the locking granularity.  
+>>
+>> mdev_device_create() function does :
+>> - create mdev device
+>> - register device
+>> - call vendor driver->create
+>> - create sysfs files.
+>>
+>> mdev_device_remove() removes sysfs files, unregister device and delete
+>> device.
+>>
+>> There is common code in mdev_device_create() and mdev_device_remove()
+>> independent of what vendor driver does in its create()/remove()
+>> callback. Moving this code to each vendor driver to handle create/remove
+>> themselves doesn't make sense to me.
 > 
-> "This command(TPM2_GetTestResult) returns manufacturer-specific information
-> regarding the results of a self-test and an indication of the test status.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-> Tested-by: Stefan Berger <stefanb@linux.vnet.ibm.com> (With QEMU with
-> swtpm TPM 2.0)
-> ---
-> 
-> Changelog:
-> 
-> v3:
-> * modified to check the selftest status before full selftest command is run
-> * fixed the patch description
-> * includes Jarkko's feedbacks
-> 
-> v2:
-> * changed the subject and updated patch description
-> * removed the logs
-> 
->  drivers/char/tpm/tpm.h      |  2 ++
->  drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index af3bb87d3ea1..1de4240b52c4 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -114,6 +114,7 @@ enum tpm2_return_codes {
->  	TPM2_RC_FAILURE		= 0x0101,
->  	TPM2_RC_DISABLED	= 0x0120,
->  	TPM2_RC_COMMAND_CODE    = 0x0143,
-> +	TPM2_RC_NEEDS_TEST      = 0x0153,
->  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
->  	TPM2_RC_REFERENCE_H0	= 0x0910,
->  	TPM2_RC_RETRY		= 0x0922,
-> @@ -144,6 +145,7 @@ enum tpm2_command_codes {
->  	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
->  	TPM2_CC_GET_CAPABILITY	= 0x017A,
->  	TPM2_CC_GET_RANDOM	= 0x017B,
-> +	TPM2_CC_GET_TEST_RESULT = 0x017C,
->  	TPM2_CC_PCR_READ	= 0x017E,
->  	TPM2_CC_PCR_EXTEND	= 0x0182,
->  	TPM2_CC_LAST		= 0x018F,
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 96c77c8e7f40..811bcf221208 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -825,6 +825,43 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> I don't see where anyone is suggesting that, I'm not.
 >  
->  /**
-> + * tpm2_get_selftest_result() - get the status of selftest
-> + * @chip: TPM chip to use
-> + *
-> + * Return: TPM return code, errno otherwise
-
-* Return:
-*  TPM return code,
-*  -errno otherwise
-
-> + */
-> +static int tpm2_get_selftest_result(struct tpm_chip *chip)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +	int test_result;
-> +	uint16_t data_size;
-> +	int len;
-> +	const struct tpm_output_header *header;
-> +
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-> +	if (rc)
-> +		return rc;
-> +
-> +	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-> +	if (len <  0)
-> +		return len;
-> +
-> +	header = (struct tpm_output_header *)buf.data;
-> +
-> +	rc = be32_to_cpu(header->return_code);
-> +	if (rc)
-> +		return rc;
-> +
-> +	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-> +
-> +	test_result = be32_to_cpup((__be32 *)
-> +			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
-
-Why you can't just use rc here like is done in every other function?
-Sorry, did missed this in the previous review.
-
-> +
-> +	return test_result;
-> +}
-> +
-> +/**
->   * tpm2_do_selftest() - ensure that all self tests have passed
->   *
->   * @chip: TPM chip to use
-> @@ -857,6 +894,13 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->  			rc = TPM2_RC_SUCCESS;
->  		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
->  			return rc;
-> +
-> +		rc = tpm2_get_selftest_result(chip);
-> +		dev_dbg(&chip->dev, "self test result is %04x\n", rc);
-
-Please remove this dev_dbg() (also this one).
-
-> +
-> +		if (rc == TPM2_RC_TESTING || rc == TPM2_RC_SUCCESS)
-> +			return TPM2_RC_SUCCESS;
-> +
->  	}
->  
->  	return rc;
-> -- 
-> 2.13.6
+>> mdev_parent.lock here does take care of race conditions that could occur
+>> during mdev device creation and deletion in this common code path.
+> 
+> Exactly what races in the common code path is mdev_parent.lock
+> preventing?  mdev_device_create() calls:
+> 
+> device_register()
+> mdev_device_create_ops()
+>   parent->ops->create()
+>   sysfs_create_groups()
+> mdev_create_sysfs_files()
+>   sysfs_create_files()
+>   sysfs_create_link()
+>   sysfs_create_link()
+> 
+> mdev_parent.lock is certainly not serializing all calls across the
+> entire kernel to device_register and sysfs_create_{groups,files,link}
+> so what is it protecting other than serializing parent->ops->create()?
+> Locks protect data, not code.  The data we're protecting is the shared
+> mdev_list, there is no shared data once mdev_device_create() has its
+> mdev_device with uuid reservation placed into that list.
 > 
 
-/Jarkko
+This lock prevents race condition that could occur due to sysfs entries
+1. between write on 'create' and 'remove' sysfs file of mdev device
+  As per current code without lock, mdev_create_sysfs_files() creates
+'remove' sysfs, but before adding this mdev device to mdev_list, if
+'remove' is called, that would return -ENODEV even if the device is seen
+in sysfs
+
+2. between write on 'remove' and 'create' sysfs file
+  If 'remove' of a device is in progress (device is removed from
+mdev_list but sysfs entries are not yet removed) and again 'create' of
+same device with same parent is called, will hit duplicate entries error
+for sysfs.
+
+3. between multiple writes on 'create' with same uuid
+ current code doesn't handle the case you are fixing here, if same uuid
+is used to create mdev device on different parents.
+
+Your change handles #1 and #3, but still there is a small gap for #2.
+Even its a very small gap, but if such conditions are it in production
+environment, it becomes difficult to debug.
+
+>> What is the urge to remove mdev_parent.lock if that handles all race
+>> conditions without bothering user to handle -EAGAIN?
+> 
+> Can you say why -EAGAIN is undesirable?  Note that the user is only
+> going to see this error if they attempt to remove the device in the
+> minuscule gap between the sysfs remove file being created and the
+> completion of the write to the create sysfs file.  It seems like you're
+> asking that I decrease the locking granularity, but not too much
+> because mdev_parent.lock protects "things".  If the -EAGAIN is really
+> so terrible, we can avoid it by spinning until the mdev_device is
+> either not found in the list or becomes active, we don't need
+> mdev_parent.lock to solve that, but I don't think that's the best
+> solution and there's no concrete statement to back -EAGAIN being a
+> problem. 
+
+Does libvirt handles -EAGAIN error case? I don't know, may be someone
+from libvirt can comment.
+
+Thanks,
+Kirti
