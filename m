@@ -1,49 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751569AbeEROUh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 10:20:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeEROUc (ORCPT
+        id S1751907AbeEROUq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 10:20:46 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:41090 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751450AbeEROUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 10:20:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54931601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] efi/fb: Convert PCI bus address to resource if translated
- by the bridge
-To: Robin Murphy <robin.murphy@arm.com>, linux-pci@vger.kernel.org,
-        timur@codeaurora.org, ard.biesheuvel@linaro.org
-Cc: "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
-        Peter Jones <pjones@redhat.com>, linux-arm-kernel@lists.infradead.org
-References: <1526563343-28721-1-git-send-email-okaya@codeaurora.org>
- <36cf3f12-bfe8-1c38-4d2c-b785fc64a3f6@arm.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <733101d0-9051-a5a6-ef64-162d8d1e10a1@codeaurora.org>
-Date: Fri, 18 May 2018 10:20:29 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 18 May 2018 10:20:36 -0400
+X-Google-Smtp-Source: AB8JxZqwqiRy9JX8N4Y/ojbMqV6jr4aj8DLeAvqE4o7WQVDUS+XSRQpgDWEb409HTXdMZO/QiNv2FQ==
+Date: Fri, 18 May 2018 09:20:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: jic23@kernel.org, ludovic.desroches@microchip.com,
+        alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        nicolas.ferre@microchip.com, dmitry.torokhov@gmail.com
+Subject: Re: [PATCH v5 4/9] dt-bindings: input: touchscreen:
+ resistive-adc-touch: create bindings
+Message-ID: <20180518142033.GA28077@rob-hp-laptop>
+References: <1525949114-29263-1-git-send-email-eugen.hristev@microchip.com>
+ <1525949114-29263-5-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <36cf3f12-bfe8-1c38-4d2c-b785fc64a3f6@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525949114-29263-5-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/18/2018 6:42 AM, Robin Murphy wrote:
+On Thu, May 10, 2018 at 01:45:09PM +0300, Eugen Hristev wrote:
+> Added bindings for generic resistive touchscreen ADC.
 > 
-> FWIW, now that I've actually gone and looked, it appears you could simplify the whole function quite a bit by getting rid of these and just using the new local resource directly, especially since the only actual use of size is an open-coded resource_contains().
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+> Changes in v5:
+>  - changed property name touchscreen-threshold-pressure to
+> touchscreen-min-pressure
+> 
+> Changes in v3:
+>  - renamed file and compatible to exclude "generic" keyword
+>  - removed the pressure threshold property, added it as a common
+> touchscreen property in the touchscreen common bindings in a separate
+> commit.
+> 
+> Changes in v2:
+>  - modified bindings to have a generic resistive touchscreen adc driver
+> instead of specific architecture one.
+> 
+> 
+>  .../input/touchscreen/resistive-adc-touch.txt      | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/resistive-adc-touch.txt
 
-Posted V2 a minute ago. I did the simplification on a prior patch in order not to
-mix the issues.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Reviewed-by: Rob Herring <robh@kernel.org>
