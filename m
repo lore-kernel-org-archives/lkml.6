@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3702976-1526635253-2-3547621158449056908
+X-Cyrus-Session-Id: sloti22d1t05-3687130-1526635074-2-6393908760248694639
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,23 +7,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526635253; b=kv0O/HCoqSWijHBpjn9jdBkJm5mVS1vJFN07pLwNHpbvx/Iw1W
-    AVhVEU2D5TbAaj+fNvrNEMXczs3a5fMWsmvu8yA0CQmGrKZIUc6PY7M5aQZydKD8
-    WH9SMEGBerbXZDrexAq/nB1URFq8nr+yZW6w54kekUTev3nFsWVIboaCusYUpcUQ
-    +grPJt/zEuHY011rlbyIhSQgG+N7tfmmyBFPqJPHJwVIkLnNK/mvuNPF/JoGPz2X
-    u09ShhGU4GptDlrIBlYAKRcL0GTnBJlLsfUWTLZhnWcUGt1+kTvOXdtT74J2+s5i
-    zqoPnZ5mHOw+KEi6QzufjuBAAuhWR/bfEnvA==
+    1526635074; b=FfE15vHeZ70MOyycB3EISikpg+BeEKU8o8imjVS+6GYfcHQEtS
+    zG66B1DAvYGZe0QLbFFVFk6AZBoR/mXkyG7AIUandvWfIHbED4NqZFytACU+GBR/
+    b4JEKM490nY8DzjuKKUX1Z8i+XdaMpa6aRI8n5FMAum6dlO7nRojjVZKOn2La2ts
+    wsyc9UGBxoVCxereW9OZDdRpx0yufAuCM/UaPZYaS9e7jxQe5IH+Lccdz57LwwzS
+    xYQQE6xoTCkvxisNsLA1Avv+QjJHnyRojoAuYmKOpOxY6GJjLh1f7b7MDAKUIlqh
+    zogtitHsz55psZMF1gdFN8J8yM7n9WaurKHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526635253; bh=
-    NyD99NnMuvPy8RLrWIpHe3OAuBF9T0ovxPGHUPz8TLA=; b=ftCOc+dEeDZHen0Q
-    7apJzRGLEd9NzAK/IXcbzX7z5mk/Lf++Y/Ij714PdxtU0CluNBMpTaqdDCkxX6UK
-    K/ky0uSA8Q01mneR/HRI01qtaL6g3j+z3+xMdMJJSOwx+hMoIqVZeIS9MpFz3Iwr
-    7JEtH5653TvdkrihFgUL4hElXfWg3en0oScm/uGjF9Xec4lMXBNzUOHneedcTMji
-    o5dLhxRdvAzHihkcUkxy9bme14sQuCzy9X2cliMQ8XUzmN6lPck+huO0LZAsrVsh
-    mnpsEhXQ3D9O73NhxEY/X+VufBLBPzwq6yyKq5AyldfvXdtCPsFMGhXBFDkW/Rta
-    3iVjsg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526635074; bh=
+    Q5X3Qpi5Xw7YFBhAbTU0t/VIhy3q+hhHCEwQirIYb1Q=; b=CHMEJusPLRVem1zv
+    N2WQ9rOe442LJk0eULwQIYvxMwFMlrYS6wBUGtCnEhuKjLfN9j8fjj0KLX8ej5ZA
+    pdXfSqh6XcRjOD+QRWAAvF3lrSGNiPupAya7M0Kh2lm7owUdo/7OmR7d49nePmDx
+    YU02rPD5nWrEea5xePQhtKfyISxmMbqe9BpgKFEOBpc+mKJKE+I9OdnSwyjtk8k+
+    0CUH66x0iHMeRZExAZHMRbzh/llErx6vSHB7338/qb8CtWmOJdBNUz2qMDMTxauE
+    94zyun9uuzrZCNjcK2SScweh0n4Jc/xNYfkLb8P+cuPh4RHXS+P2zgO0YaIs2tgT
+    4TgBCQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -35,8 +35,8 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
@@ -49,36 +49,32 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCotqBQDLQSfAXRNxcN5L4wDkccpgHyXqreVaSqPyambTdKRvr9On31hrwNYUkKDuFdgrLeTLnWNAOJJ0lmqzqXJ7xeFQWtSK0NW2y45zE10thrUfSx9
-    LhGH2+d1x7zjDkNtb/vDXmSLPZ2aFjKx9YDT4e+G8Cd84KceBgpjjgy5YDZlWCdT/5MMWPsHN1VcQMfr8N8zhROcJvyqs6V3TKmWbYf7n83YD5Q9KRGI5PIu
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=yPCof4ZbAAAA:8
-    a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
-    a=cWRNjhkoAAAA:8 a=Igk_yR56EeXDu0iMxRUA:9 a=tbt29n-23PNWv1OF:21
-    a=xxOcM8tnHT7eoenY:21 a=NdAtdrkLVvyUPsUoGJp4:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=sVa6W5Aao32NNC1mekxh:22
+X-CM-Envelope: MS4wfJ40817F/ukOCKhyvY2E5iuJLfN7VYWIxsrzxGIekzIsoG5WQH/Tav6l48tWiDYAVVid8h5dMjHPz4rbGkFXiBRumcNUxVyScZ+JVtt6QDRLqNOZ83Gh
+    U1IDzZMZcu3V6IGaVS+AHN3BRpzYN+rSNhwEj1K1l8I79ixeF0e5WarOgc79UVr13imf0HUCLT6A1QCc6CPevT2WgRrfYHZYxJaJkhKGL9eaBuoQgPgucg42
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=oGMlB6cnAAAA:8 a=VwQbUJbxAAAA:8 a=7S8H7V3pDoY91oZkGvcA:9
+    a=NdAtdrkLVvyUPsUoGJp4:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeERJUv (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 05:20:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45438 "EHLO mx2.suse.de"
+        id S1752835AbeERJRv (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 18 May 2018 05:17:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45467 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752168AbeERJRt (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Fri, 18 May 2018 05:17:49 -0400
+        id S1753165AbeERJRm (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 18 May 2018 05:17:42 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jiri Slaby <jslaby@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org
-Subject: [PATCH v6 23/28] x86_64/asm: change all ENTRY+END to SYM_CODE_*
-Date: Fri, 18 May 2018 11:17:16 +0200
-Message-Id: <20180518091721.7604-24-jslaby@suse.cz>
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v6 15/28] x86/asm/purgatory: start using annotations
+Date: Fri, 18 May 2018 11:17:08 +0200
+Message-Id: <20180518091721.7604-16-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180518091721.7604-1-jslaby@suse.cz>
 References: <20180518091721.7604-1-jslaby@suse.cz>
@@ -88,373 +84,153 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Here, we change all assembly code which is marked using END (and not
-ENDPROC). We switch all these to appropriate new markings SYM_CODE_START
-and SYM_CODE_END.
+purgatory used no annotations at all. So include linux/linkage.h and
+annotate everything:
+* code by SYM_CODE_*
+* data by SYM_DATA_*
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com> [xen bits]
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: xen-devel@lists.xenproject.org
 ---
- arch/x86/entry/entry_64.S        | 56 ++++++++++++++++++++--------------------
- arch/x86/entry/entry_64_compat.S |  8 +++---
- arch/x86/kernel/ftrace_64.S      |  4 +--
- arch/x86/xen/xen-asm_64.S        |  8 +++---
- arch/x86/xen/xen-head.S          |  8 +++---
- 5 files changed, 42 insertions(+), 42 deletions(-)
+ arch/x86/purgatory/entry64.S      | 21 ++++++++++++---------
+ arch/x86/purgatory/setup-x86_64.S | 14 ++++++++------
+ arch/x86/purgatory/stack.S        |  7 ++++---
+ 3 files changed, 24 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index d2e2de100b16..6f85f43a4877 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -46,11 +46,11 @@
- .section .entry.text, "ax"
- 
- #ifdef CONFIG_PARAVIRT
--ENTRY(native_usergs_sysret64)
-+SYM_CODE_START(native_usergs_sysret64)
- 	UNWIND_HINT_EMPTY
- 	swapgs
- 	sysretq
--END(native_usergs_sysret64)
-+SYM_CODE_END(native_usergs_sysret64)
- #endif /* CONFIG_PARAVIRT */
- 
- .macro TRACE_IRQS_FLAGS flags:req
-@@ -163,7 +163,7 @@ END(native_usergs_sysret64)
- #define RSP_SCRATCH	CPU_ENTRY_AREA_entry_stack + \
- 			SIZEOF_entry_stack - 8 + CPU_ENTRY_AREA
- 
--ENTRY(entry_SYSCALL_64_trampoline)
-+SYM_CODE_START(entry_SYSCALL_64_trampoline)
- 	UNWIND_HINT_EMPTY
- 	swapgs
- 
-@@ -193,17 +193,17 @@ ENTRY(entry_SYSCALL_64_trampoline)
- 	pushq	%rdi
- 	movq	$entry_SYSCALL_64_stage2, %rdi
- 	JMP_NOSPEC %rdi
--END(entry_SYSCALL_64_trampoline)
-+SYM_CODE_END(entry_SYSCALL_64_trampoline)
- 
- 	.popsection
- 
--ENTRY(entry_SYSCALL_64_stage2)
-+SYM_CODE_START(entry_SYSCALL_64_stage2)
- 	UNWIND_HINT_EMPTY
- 	popq	%rdi
- 	jmp	entry_SYSCALL_64_after_hwframe
--END(entry_SYSCALL_64_stage2)
-+SYM_CODE_END(entry_SYSCALL_64_stage2)
- 
--ENTRY(entry_SYSCALL_64)
-+SYM_CODE_START(entry_SYSCALL_64)
- 	UNWIND_HINT_EMPTY
- 	/*
- 	 * Interrupts are off on entry.
-@@ -336,13 +336,13 @@ syscall_return_via_sysret:
- 	popq	%rdi
- 	popq	%rsp
- 	USERGS_SYSRET64
--END(entry_SYSCALL_64)
-+SYM_CODE_END(entry_SYSCALL_64)
- 
- /*
-  * %rdi: prev task
-  * %rsi: next task
+diff --git a/arch/x86/purgatory/entry64.S b/arch/x86/purgatory/entry64.S
+index d1a4291d3568..c51e3c999e38 100644
+--- a/arch/x86/purgatory/entry64.S
++++ b/arch/x86/purgatory/entry64.S
+@@ -10,13 +10,13 @@
+  * Version 2.  See the file COPYING for more details.
   */
--ENTRY(__switch_to_asm)
-+SYM_CODE_START(__switch_to_asm)
- 	UNWIND_HINT_FUNC
- 	/*
- 	 * Save callee-saved registers
-@@ -384,7 +384,7 @@ ENTRY(__switch_to_asm)
- 	popq	%rbp
  
- 	jmp	__switch_to
--END(__switch_to_asm)
-+SYM_CODE_END(__switch_to_asm)
++#include <linux/linkage.h>
++
+ 	.text
+ 	.balign 16
+ 	.code64
+-	.globl entry64, entry64_regs
+-
  
- /*
-  * A newly forked process directly context switches into this address.
-@@ -393,7 +393,7 @@ END(__switch_to_asm)
-  * rbx: kernel thread func (NULL for user thread)
-  * r12: kernel thread arg
+-entry64:
++SYM_CODE_START(entry64)
+ 	/* Setup a gdt that should be preserved */
+ 	lgdt gdt(%rip)
+ 
+@@ -56,10 +56,11 @@ new_cs_exit:
+ 
+ 	/* Jump to the new code... */
+ 	jmpq	*rip(%rip)
++SYM_CODE_END(entry64)
+ 
+ 	.section ".rodata"
+ 	.balign 4
+-entry64_regs:
++SYM_DATA_START(entry64_regs)
+ rax:	.quad 0x0
+ rcx:	.quad 0x0
+ rdx:	.quad 0x0
+@@ -77,12 +78,12 @@ r13:	.quad 0x0
+ r14:	.quad 0x0
+ r15:	.quad 0x0
+ rip:	.quad 0x0
+-	.size entry64_regs, . - entry64_regs
++SYM_DATA_END(entry64_regs)
+ 
+ 	/* GDT */
+ 	.section ".rodata"
+ 	.balign 16
+-gdt:
++SYM_DATA_START_LOCAL(gdt)
+ 	/* 0x00 unusable segment
+ 	 * 0x08 unused
+ 	 * so use them as gdt ptr
+@@ -96,6 +97,8 @@ gdt:
+ 
+ 	/* 0x18 4GB flat data segment */
+ 	.word 0xFFFF, 0x0000, 0x9200, 0x00CF
+-gdt_end:
+-stack:	.quad   0, 0
+-stack_init:
++SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
++
++SYM_DATA_START_LOCAL(stack)
++	.quad   0, 0
++SYM_DATA_END_LABEL(stack, SYM_L_LOCAL, stack_init)
+diff --git a/arch/x86/purgatory/setup-x86_64.S b/arch/x86/purgatory/setup-x86_64.S
+index dfae9b9e60b5..f0de104d3f3a 100644
+--- a/arch/x86/purgatory/setup-x86_64.S
++++ b/arch/x86/purgatory/setup-x86_64.S
+@@ -9,14 +9,14 @@
+  * This source code is licensed under the GNU General Public License,
+  * Version 2.  See the file COPYING for more details.
   */
--ENTRY(ret_from_fork)
-+SYM_CODE_START(ret_from_fork)
- 	UNWIND_HINT_EMPTY
- 	movq	%rax, %rdi
- 	call	schedule_tail			/* rdi: 'prev' task parameter */
-@@ -419,14 +419,14 @@ ENTRY(ret_from_fork)
++#include <linux/linkage.h>
+ #include <asm/purgatory.h>
+ 
+ 	.text
+-	.globl purgatory_start
+ 	.balign 16
+-purgatory_start:
+ 	.code64
+ 
++SYM_CODE_START(purgatory_start)
+ 	/* Load a gdt so I know what the segment registers are */
+ 	lgdt	gdt(%rip)
+ 
+@@ -34,10 +34,12 @@ purgatory_start:
+ 	/* Call the C code */
+ 	call purgatory
+ 	jmp	entry64
++SYM_CODE_END(purgatory_start)
+ 
+ 	.section ".rodata"
+ 	.balign 16
+-gdt:	/* 0x00 unusable segment
++SYM_DATA_START_LOCAL(gdt)
++	/* 0x00 unusable segment
+ 	 * 0x08 unused
+ 	 * so use them as the gdt ptr
  	 */
- 	movq	$0, RAX(%rsp)
- 	jmp	2b
--END(ret_from_fork)
-+SYM_CODE_END(ret_from_fork)
+@@ -50,10 +52,10 @@ gdt:	/* 0x00 unusable segment
  
- /*
-  * Build the entry stubs with some assembler magic.
-  * We pack 1 stub into every 8-byte block.
+ 	/* 0x18 4GB flat data segment */
+ 	.word	0xFFFF, 0x0000, 0x9200, 0x00CF
+-gdt_end:
++SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
+ 
+ 	.bss
+ 	.balign 4096
+-lstack:
++SYM_DATA_START_LOCAL(lstack)
+ 	.skip 4096
+-lstack_end:
++SYM_DATA_END_LABEL(lstack, SYM_L_LOCAL, lstack_end)
+diff --git a/arch/x86/purgatory/stack.S b/arch/x86/purgatory/stack.S
+index 50a4147f91fb..987e6510a960 100644
+--- a/arch/x86/purgatory/stack.S
++++ b/arch/x86/purgatory/stack.S
+@@ -7,13 +7,14 @@
+  * Version 2.  See the file COPYING for more details.
   */
- 	.align 8
--ENTRY(irq_entries_start)
-+SYM_CODE_START(irq_entries_start)
-     vector=FIRST_EXTERNAL_VECTOR
-     .rept (FIRST_SYSTEM_VECTOR - FIRST_EXTERNAL_VECTOR)
- 	UNWIND_HINT_IRET_REGS
-@@ -435,7 +435,7 @@ ENTRY(irq_entries_start)
- 	.align	8
- 	vector=vector+1
-     .endr
--END(irq_entries_start)
-+SYM_CODE_END(irq_entries_start)
  
- .macro DEBUG_ENTRY_ASSERT_IRQS_OFF
- #ifdef CONFIG_DEBUG_ENTRY
-@@ -561,7 +561,7 @@ END(irq_entries_start)
-  * | return address					|
-  * +----------------------------------------------------+
-  */
--ENTRY(interrupt_entry)
-+SYM_CODE_START(interrupt_entry)
- 	UNWIND_HINT_FUNC
- 	ASM_CLAC
- 	cld
-@@ -627,7 +627,7 @@ ENTRY(interrupt_entry)
- 	TRACE_IRQS_OFF
- 
- 	ret
--END(interrupt_entry)
-+SYM_CODE_END(interrupt_entry)
- 
- 
- /* Interrupt entry/exit. */
-@@ -832,7 +832,7 @@ SYM_CODE_END(common_interrupt)
-  * APIC interrupts.
-  */
- .macro apicinterrupt3 num sym do_sym
--ENTRY(\sym)
-+SYM_CODE_START(\sym)
- 	UNWIND_HINT_IRET_REGS
- 	pushq	$~(\num)
- .Lcommon_\sym:
-@@ -840,7 +840,7 @@ ENTRY(\sym)
- 	UNWIND_HINT_REGS indirect=1
- 	call	\do_sym	/* rdi points to pt_regs */
- 	jmp	ret_from_intr
--END(\sym)
-+SYM_CODE_END(\sym)
- .endm
- 
- /* Make sure APIC interrupt handlers end up in the irqentry section: */
-@@ -902,7 +902,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
- #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
- 
- .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
--ENTRY(\sym)
-+SYM_CODE_START(\sym)
- 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
- 
- 	/* Sanity check */
-@@ -985,7 +985,7 @@ ENTRY(\sym)
- 
- 	jmp	error_exit			/* %ebx: no swapgs flag */
- 	.endif
--END(\sym)
-+SYM_CODE_END(\sym)
- .endm
- 
- idtentry divide_error			do_divide_error			has_error_code=0
-@@ -1102,7 +1102,7 @@ SYM_CODE_END(xen_do_hypervisor_callback)
-  * We distinguish between categories by comparing each saved segment register
-  * with its current contents: any discrepancy means we in category 1.
-  */
--ENTRY(xen_failsafe_callback)
-+SYM_CODE_START(xen_failsafe_callback)
- 	UNWIND_HINT_EMPTY
- 	movl	%ds, %ecx
- 	cmpw	%cx, 0x10(%rsp)
-@@ -1132,7 +1132,7 @@ ENTRY(xen_failsafe_callback)
- 	PUSH_AND_CLEAR_REGS
- 	ENCODE_FRAME_POINTER
- 	jmp	error_exit
--END(xen_failsafe_callback)
-+SYM_CODE_END(xen_failsafe_callback)
- 
- apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
- 	xen_hvm_callback_vector xen_evtchn_do_upcall
-@@ -1340,7 +1340,7 @@ SYM_CODE_END(error_exit)
-  *	%r14: Used to save/restore the CR3 of the interrupted context
-  *	      when PAGE_TABLE_ISOLATION is in use.  Do not clobber.
-  */
--ENTRY(nmi)
-+SYM_CODE_START(nmi)
- 	UNWIND_HINT_IRET_REGS
- 
- 	/*
-@@ -1673,15 +1673,15 @@ nmi_restore:
- 	 * about espfix64 on the way back to kernel mode.
++#include <linux/linkage.h>
++
+ 	/* A stack for the loaded kernel.
+ 	 * Separate and in the data section so it can be prepopulated.
  	 */
- 	iretq
--END(nmi)
-+SYM_CODE_END(nmi)
+ 	.data
+ 	.balign 4096
+-	.globl stack, stack_end
  
--ENTRY(ignore_sysret)
-+SYM_CODE_START(ignore_sysret)
- 	UNWIND_HINT_EMPTY
- 	mov	$-ENOSYS, %eax
- 	sysret
--END(ignore_sysret)
-+SYM_CODE_END(ignore_sysret)
- 
--ENTRY(rewind_stack_do_exit)
-+SYM_CODE_START(rewind_stack_do_exit)
- 	UNWIND_HINT_FUNC
- 	/* Prevent any naive code from trying to unwind to our caller. */
- 	xorl	%ebp, %ebp
-@@ -1691,4 +1691,4 @@ ENTRY(rewind_stack_do_exit)
- 	UNWIND_HINT_FUNC sp_offset=PTREGS_SIZE
- 
- 	call	do_exit
--END(rewind_stack_do_exit)
-+SYM_CODE_END(rewind_stack_do_exit)
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index d0880bef86c3..d03ddfc959e6 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -196,7 +196,7 @@ ENDPROC(entry_SYSENTER_compat)
-  * esp  user stack
-  * 0(%esp) arg6
-  */
--ENTRY(entry_SYSCALL_compat)
-+SYM_CODE_START(entry_SYSCALL_compat)
- 	/* Interrupts are off on entry. */
- 	swapgs
- 
-@@ -311,7 +311,7 @@ sysret32_from_system_call:
- 	xorl	%r10d, %r10d
- 	swapgs
- 	sysretl
--END(entry_SYSCALL_compat)
-+SYM_CODE_END(entry_SYSCALL_compat)
- 
- /*
-  * 32-bit legacy system call entry.
-@@ -339,7 +339,7 @@ END(entry_SYSCALL_compat)
-  * edi  arg5
-  * ebp  arg6
-  */
--ENTRY(entry_INT80_compat)
-+SYM_CODE_START(entry_INT80_compat)
- 	/*
- 	 * Interrupts are off on entry.
- 	 */
-@@ -414,4 +414,4 @@ ENTRY(entry_INT80_compat)
- 	/* Go back to user mode. */
- 	TRACE_IRQS_ON
- 	jmp	swapgs_restore_regs_and_return_to_usermode
--END(entry_INT80_compat)
-+SYM_CODE_END(entry_INT80_compat)
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 14df6cf07b7e..51970806c2df 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -319,7 +319,7 @@ ENTRY(ftrace_graph_caller)
- 	retq
- ENDPROC(ftrace_graph_caller)
- 
--ENTRY(return_to_handler)
-+SYM_CODE_START(return_to_handler)
- 	UNWIND_HINT_EMPTY
- 	subq  $24, %rsp
- 
-@@ -335,5 +335,5 @@ ENTRY(return_to_handler)
- 	movq (%rsp), %rax
- 	addq $24, %rsp
- 	JMP_NOSPEC %rdi
--END(return_to_handler)
-+SYM_CODE_END(return_to_handler)
- #endif
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index a69a171f7cea..5a3f5c18cd0c 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -19,11 +19,11 @@
- #include <linux/linkage.h>
- 
- .macro xen_pv_trap name
--ENTRY(xen_\name)
-+SYM_CODE_START(xen_\name)
- 	pop %rcx
- 	pop %r11
- 	jmp  \name
--END(xen_\name)
-+SYM_CODE_END(xen_\name)
- .endm
- 
- xen_pv_trap divide_error
-@@ -56,7 +56,7 @@ xen_pv_trap entry_INT80_compat
- xen_pv_trap hypervisor_callback
- 
- 	__INIT
--ENTRY(xen_early_idt_handler_array)
-+SYM_CODE_START(xen_early_idt_handler_array)
- 	i = 0
- 	.rept NUM_EXCEPTION_VECTORS
- 	pop %rcx
-@@ -65,7 +65,7 @@ ENTRY(xen_early_idt_handler_array)
- 	i = i + 1
- 	.fill xen_early_idt_handler_array + i*XEN_EARLY_IDT_HANDLER_SIZE - ., 1, 0xcc
- 	.endr
--END(xen_early_idt_handler_array)
-+SYM_CODE_END(xen_early_idt_handler_array)
- 	__FINIT
- 
- hypercall_iret = hypercall_page + __HYPERVISOR_iret * 32
-diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
-index 5077ead5e59c..32606eeec053 100644
---- a/arch/x86/xen/xen-head.S
-+++ b/arch/x86/xen/xen-head.S
-@@ -22,7 +22,7 @@
- 
- #ifdef CONFIG_XEN_PV
- 	__INIT
--ENTRY(startup_xen)
-+SYM_CODE_START(startup_xen)
- 	UNWIND_HINT_EMPTY
- 	cld
- 
-@@ -52,13 +52,13 @@ ENTRY(startup_xen)
- #endif
- 
- 	jmp xen_start_kernel
--END(startup_xen)
-+SYM_CODE_END(startup_xen)
- 	__FINIT
- #endif
- 
- .pushsection .text
- 	.balign PAGE_SIZE
--ENTRY(hypercall_page)
-+SYM_CODE_START(hypercall_page)
- 	.rept (PAGE_SIZE / 32)
- 		UNWIND_HINT_EMPTY
- 		.skip 32
-@@ -69,7 +69,7 @@ ENTRY(hypercall_page)
- 	.type xen_hypercall_##n, @function; .size xen_hypercall_##n, 32
- #include <asm/xen-hypercalls.h>
- #undef HYPERCALL
--END(hypercall_page)
-+SYM_CODE_END(hypercall_page)
- .popsection
- 
- 	ELFNOTE(Xen, XEN_ELFNOTE_GUEST_OS,       .asciz "linux")
+-stack:
++SYM_DATA_START(stack)
+ 	.skip 4096
+-stack_end:
++SYM_DATA_END_LABEL(stack, SYM_L_GLOBAL, stack_end)
 -- 
 2.16.3
