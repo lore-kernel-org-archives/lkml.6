@@ -1,60 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeERRKX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 13:10:23 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33947 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbeERRKT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 13:10:19 -0400
-X-Google-Smtp-Source: AB8JxZppq56UC/YnRra0bJXX/PMwytmmreIKft0wRTo3QIBdO4JJv+bc+sr8cHVPBFrXjTXCmpai5MVpSqB6+OvR704=
+        id S1751700AbeERRNR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 13:13:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750957AbeERRNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 13:13:15 -0400
+Date: Fri, 18 May 2018 14:13:11 -0300
+From: Eduardo Habkost <ehabkost@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org
+Subject: Re: [PATCH] kvm: rename HINTS_DEDICATED to KVM_HINTS_REALTIME
+Message-ID: <20180518171311.GB25013@localhost.localdomain>
+References: <1526568841-35372-1-git-send-email-mst@redhat.com>
+ <20180517184658.GA1543@localhost.localdomain>
+ <20180517225316-mutt-send-email-mst@kernel.org>
+ <20180518160431.GX25013@localhost.localdomain>
+ <20180518195139-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180518.114433.390752642781753429.davem@davemloft.net>
-References: <20180518120826.GA19515@dragonet.kaist.ac.kr> <293d029c-b14c-a625-3703-97a5754e99f1@gmail.com>
- <20180518.114433.390752642781753429.davem@davemloft.net>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Fri, 18 May 2018 13:09:37 -0400
-Message-ID: <CAF=yD-Kb4ZfJ3sMAnWEOB_s9Y=TTnLbRZxrDPiGZLO=trPjY5Q@mail.gmail.com>
-Subject: Re: WARNING in ip_recv_error
-To: David Miller <davem@davemloft.net>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        DaeLyong Jeong <threeearcat@gmail.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Byoungyoung Lee <byoungyoung@purdue.edu>,
-        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu,
-        Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180518195139-mutt-send-email-mst@kernel.org>
+X-Fnord: you can see the fnord
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 11:44 AM, David Miller <davem@davemloft.net> wrote:
-> From: Eric Dumazet <eric.dumazet@gmail.com>
-> Date: Fri, 18 May 2018 08:30:43 -0700
->
->> We probably need to revert Willem patch (7ce875e5ecb8562fd44040f69bda96c999e38bbc)
->
-> Is it really valid to reach ip_recv_err with an ipv6 socket?
+On Fri, May 18, 2018 at 08:01:49PM +0300, Michael S. Tsirkin wrote:
+> On Fri, May 18, 2018 at 01:04:31PM -0300, Eduardo Habkost wrote:
+> > CCing qemu-devel, as I'm now discussing userspace.
+> > 
+> > On Thu, May 17, 2018 at 10:55:33PM +0300, Michael S. Tsirkin wrote:
+> > > On Thu, May 17, 2018 at 03:46:58PM -0300, Eduardo Habkost wrote:
+> > > > On Thu, May 17, 2018 at 05:54:24PM +0300, Michael S. Tsirkin wrote:
+> > > > > HINTS_DEDICATED seems to be somewhat confusing:
+> > > > > 
+> > > > > Guest doesn't really care whether it's the only task running on a host
+> > > > > CPU as long as it's not preempted.
+> > > > > 
+> > > > > And there are more reasons for Guest to be preempted than host CPU
+> > > > > sharing, for example, with memory overcommit it can get preempted on a
+> > > > > memory access, post copy migration can cause preemption, etc.
+> > > > > 
+> > > > > Let's call it KVM_HINTS_REALTIME which seems to better
+> > > > > match what guests expect.
+> > > > > 
+> > > > > Also, the flag most be set on all vCPUs - current guests assume th.
+> > > > > Note so in the documentation.
+> > > > > 
+> > > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > > > > ---
+> > > > >  Documentation/virtual/kvm/cpuid.txt  | 6 +++---
+> > > > >  arch/x86/include/uapi/asm/kvm_para.h | 2 +-
+> > > > >  arch/x86/kernel/kvm.c                | 8 ++++----
+> > > > >  3 files changed, 8 insertions(+), 8 deletions(-)
+> > > > > 
+> > > > > diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+> > > > > index d4f33eb8..ab022dc 100644
+> > > > > --- a/Documentation/virtual/kvm/cpuid.txt
+> > > > > +++ b/Documentation/virtual/kvm/cpuid.txt
+> > > > > @@ -72,8 +72,8 @@ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+> > > > >  
+> > > > >  flag                               || value || meaning
+> > > > >  ==================================================================================
+> > > > > -KVM_HINTS_DEDICATED                ||     0 || guest checks this feature bit to
+> > > > > -                                   ||       || determine if there is vCPU pinning
+> > > > > -                                   ||       || and there is no vCPU over-commitment,
+> > > > > +KVM_HINTS_REALTIME                 ||     0 || guest checks this feature bit to
+> > > > > +                                   ||       || determine that vCPUs are never
+> > > > > +                                   ||       || preempted for an unlimited time,
+> > > > >                                     ||       || allowing optimizations
+> > > > 
+> > > > My understanding of the original patch is that the intention is
+> > > > to tell the guest that it is very unlikely to be preempted,
+> > > > so it
+> > > > can choose a more appropriate spinlock implementation.  This
+> > > > description implies that the guest will never be preempted, which
+> > > > is much stronger guarantee.
+> > > 
+> > > Note:
+> > > 
+> > > ...  for an unlimited time.
+> > 
+> > Which still sounds like a stronger guarantee than the original
+> > description.  But:
+> > 
+> > > 
+> > > > 
+> > > > Isn't this new description incompatible with existing usage of
+> > > > the hint, which might include people who just use vCPU pinning
+> > > > but no mlock?
+> > > 
+> > > Without mlock you should always use pv spinlocks.
+> > > 
+> > > Otherwise you risk blocking on a lock taken by
+> > > a VCPU that is in turn blocked on IO, where the IO
+> > > is not completing because CPU is being used up
+> > > spinning.
+> > 
+> > So the stronger guarantee seems necessary.
+> > 
+> > Now what should host userspace do if the user is trying to run an
+> > existing configuration where the CPUID hint was set but memory is
+> > not pinned?
+> 
+> As much as we'd like to be helpful and validate input, you need a real
+> time host too. I'm not sure how we'd find out - I suggest we do not
+> bother for now.
 
-I guess the issue is that setsockopt IPV6_ADDRFORM is not an
-atomic operation, so that the socket is neither fully ipv4 nor fully
-ipv6 by the time it reaches ip_recv_error.
+I'm worried that people will start enabling the flag in all kinds
+of scenarios where the guarantees can't be kept, and make the
+meaning of the flag in practice completely different from its
+documented meaning.
 
-  sk->sk_socket->ops = &inet_dgram_ops;
-  < HERE >
-  sk->sk_family = PF_INET;
+So I'd like to either detect cases where it's obviously wrong to
+enable the flag, or document the requirements very clearly on
+QEMU documentation.
 
-Even calling inet_recv_error to demux would not necessarily help.
-
-Safest would be to look up by skb->protocol, similar to what
-ipv6_recv_error does to handle v4-mapped-v6.
-
-Or to make that function safe with PF_INET and swap the order
-of the above two operations.
-
-All sound needlessly complicated for this rare socket option, but
-I don't have a better idea yet. Dropping on the floor is not nice,
-either.
+-- 
+Eduardo
