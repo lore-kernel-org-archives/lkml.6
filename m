@@ -1,41 +1,40 @@
 Return-Path: <SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrmIEcc1MQZ72KaMW+URE30Zv46qur7Ufm+MdOm1650KZymZry6MBmy/iqYQnunPYwRHNN/
-ARC-Seal: i=1; a=rsa-sha256; t=1526631450; cv=none;
+X-Google-Smtp-Source: AB8JxZr5jjHnWQOm+BjYJjuD/tpMYUv5mB3JfTf23Fs+SV2AMjh1qCIgzE8H5+SjM8QF5IxfdHvy
+ARC-Seal: i=1; a=rsa-sha256; t=1526631447; cv=none;
         d=google.com; s=arc-20160816;
-        b=p3nKfKfQgRBIW+igE0iwq71Oct3R96JZ9Xwf9isZESr2aqm22x+4YpNXXdjlf22rF2
-         dlGMDVBeC4COusCQDax4gQWDBqskH2UAVixdPEnsz39m4dmLBfUWD8wIUlI1rmStSKhM
-         HVv2RYPjMH3IGM+UmjjHesM7FsfXCtgpkp4w7zDZicv7CcA+sXivpK7y6Lr617bZJwHz
-         UpBPL33H0cnu3H5f26800midyqc/0DkMLmkvp6DaLGP0k331zZh5FR3JhfJldIHalCTI
-         ULkq/lDGaxlJKGoY6uga764oVHwwuZgj5GVAShMRV9Mkl3R1K8X3Y9yRR65x5nRKkv42
-         fTpQ==
+        b=YzRAIV+omx3QaBpCuUGujvYIM0re80obFDR4Wq5KqshPvY0Jo1z1JsYMSy21aJT5Q4
+         Z4WABgTqBMfj6cH9B5LtZxtGKaUEknRco3ea97Gy7lbrRUuWV9DoVEFxmglBSREqzf5v
+         yqZAA+C+N4rdgg/A5vFpcyj1JCHRG4+2kaVoDWYseSl0pJOke30Sy7UmoGKKh4ege6P5
+         kLAixvYavgOomtApbILmxsKqfAJC6tSWCk5If05WZ1gswoWrjoA+4qhsb1dIJeTG8vM6
+         JLKXHuzYqeE0DB2ltDF+Du6V1gLiVVfkuNj/yGwDTx99C0vE31tK9KbWYYgKHq4+z2ZL
+         eg4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=T4FTk2cKW8DSPuryTL41JMJns8eso7fNPWsoYz+sqj8=;
-        b=Pjv5eCi8LqdVMN47vayqpOtrJAJXZNeVP99+DAERkAp0dioftyTjELp9P8Sic4lVPX
-         O0+s3P1f5Z1Ab54ycVZ4i9wFBNQ4/bLrOVgGkpj6VJOmZwbTSSt0dz2Tn38z6ZQDEzAk
-         JrBVVi55cXWUvF8au5fW7PEpfnrJJ4PmxYKiQ3N+WP89YaN92tPI0FdTsI5/X6ElMy+I
-         bLrcf7eFQ7KD9BmXeNEeh5vol6ZeGUG/Z8lh4d8H7ePybT5PaFN5thILSLuy0rl3jt/u
-         IjenI8dvl5Rw7OH2pUEl7P3vfwA5j7vl2Fk14qj1lJGsD4iGh5LoaoU/spRaQlbCzZuw
-         WOVw==
+        bh=SftyBSJd5ZCYA/Bkb7KwkOX1ivtlnGHBDRvSn9Y0ONs=;
+        b=xK36+7xRHXf7lHz0kz0RvuFXu2k8d2laNrEttktwQF/lkU7g4TRhxuwcTYfxpsPBA5
+         WGyWgydRnAC2B35sj26A8OxcAcrA+l89pZc1bcORNPpdDLOnTnPOFbmeNeKhK316qoNc
+         I2SX/jy3Ym90k+C2prmlRCMOi0OwJ/js5X7PpO3AWHUMhLjrZL/WToHeAA35y82dTTnK
+         oxRNfay8dWiy7P+Z/vhclTMAdba53or+X54GFGorO+1SCKPrBtFDE8U02nnaeXh3TFfj
+         d2QEwGG+qJjB0HMP+NfUnsHTNeoQABuLX68DWPwJZ7pvav6B3SyaAitLV3qjIOZBPK9C
+         2XJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=xaJvZzzW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IKhwRwmQ;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=xaJvZzzW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IKhwRwmQ;
        spf=pass (google.com: domain of srs0=xuy6=if=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=XuY6=IF=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com,
 	Xin Long <lucien.xin@gmail.com>,
 	Neil Horman <nhorman@tuxdriver.com>,
 	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 25/55] sctp: handle two v4 addrs comparison in sctp_inet6_cmp_addr
-Date: Fri, 18 May 2018 10:15:21 +0200
-Message-Id: <20180518081458.712382412@linuxfoundation.org>
+Subject: [PATCH 4.16 24/55] sctp: fix the issue that the cookie-ack with auth cant get processed
+Date: Fri, 18 May 2018 10:15:20 +0200
+Message-Id: <20180518081458.656369961@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180518081457.428920292@linuxfoundation.org>
 References: <20180518081457.428920292@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600789099921166414?=
-X-GMAIL-MSGID: =?utf-8?q?1600789099921166414?=
+X-GMAIL-THRID: =?utf-8?q?1600789097237819464?=
+X-GMAIL-MSGID: =?utf-8?q?1600789097237819464?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,43 +55,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit d625329b06e46bd20baf9ee40847d11982569204 ]
+[ Upstream commit ce402f044e4e432c296f90eaabb8dbe8f3624391 ]
 
-Since sctp ipv6 socket also supports v4 addrs, it's possible to
-compare two v4 addrs in pf v6 .cmp_addr, sctp_inet6_cmp_addr.
+When auth is enabled for cookie-ack chunk, in sctp_inq_pop, sctp
+processes auth chunk first, then continues to the next chunk in
+this packet if chunk_end + chunk_hdr size < skb_tail_pointer().
+Otherwise, it will go to the next packet or discard this chunk.
 
-However after Commit 1071ec9d453a ("sctp: do not check port in
-sctp_inet6_cmp_addr"), it no longer calls af1->cmp_addr, which
-in this case is sctp_v4_cmp_addr, but calls __sctp_v6_cmp_addr
-where it handles them as two v6 addrs. It would cause a out of
-bounds crash.
+However, it missed the fact that cookie-ack chunk's size is equal
+to chunk_hdr size, which couldn't match that check, and thus this
+chunk would not get processed.
 
-syzbot found this crash when trying to bind two v4 addrs to a
-v6 socket.
+This patch fixes it by changing the check to chunk_end + chunk_hdr
+size <= skb_tail_pointer().
 
-This patch fixes it by adding the process for two v4 addrs in
-sctp_inet6_cmp_addr.
-
-Fixes: 1071ec9d453a ("sctp: do not check port in sctp_inet6_cmp_addr")
-Reported-by: syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com
+Fixes: 26b87c788100 ("net: sctp: fix remote memory pressure from excessive queueing")
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/sctp/inqueue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -866,6 +866,9 @@ static int sctp_inet6_cmp_addr(const uni
- 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
- 		return 1;
+--- a/net/sctp/inqueue.c
++++ b/net/sctp/inqueue.c
+@@ -217,7 +217,7 @@ new_skb:
+ 	skb_pull(chunk->skb, sizeof(*ch));
+ 	chunk->subh.v = NULL; /* Subheader is no longer valid.  */
  
-+	if (addr1->sa.sa_family == AF_INET && addr2->sa.sa_family == AF_INET)
-+		return addr1->v4.sin_addr.s_addr == addr2->v4.sin_addr.s_addr;
-+
- 	return __sctp_v6_cmp_addr(addr1, addr2);
- }
- 
+-	if (chunk->chunk_end + sizeof(*ch) < skb_tail_pointer(chunk->skb)) {
++	if (chunk->chunk_end + sizeof(*ch) <= skb_tail_pointer(chunk->skb)) {
+ 		/* This is not a singleton */
+ 		chunk->singleton = 0;
+ 	} else if (chunk->chunk_end > skb_tail_pointer(chunk->skb)) {
