@@ -1,206 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeERJpL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 05:45:11 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33133 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751446AbeERJpJ (ORCPT
+        id S1752189AbeERJqA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 05:46:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33579 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeERJp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 05:45:09 -0400
-X-Google-Smtp-Source: AB8JxZowKIHZn4uI7RmFFHCu2137dIXDNzbuy/rQINshgnyUWC8vqHfxHVSaSlFFGzUlcofYDPLARA==
-MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-3-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-3-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 18 May 2018 18:44:54 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Ddfrj7Gh5KAkUxEjiT_LPaYqyzxOd53eCcG5Q7weMEmw@mail.gmail.com>
-Message-ID: <CAAFQd5Ddfrj7Gh5KAkUxEjiT_LPaYqyzxOd53eCcG5Q7weMEmw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/29] venus: hfi: preparation to support venus 4xx
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 May 2018 05:45:57 -0400
+X-Google-Smtp-Source: AB8JxZpqX1iJzKquBy5OdYUYH0se5DFhZwtOx6LTE71UNwA3Ipbg0E25uQvv9SfvU39wn9EpUo8Jrw==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 00/26] arm64: allwinner: Add A64 DE2 HDMI support
+Date: Fri, 18 May 2018 15:15:10 +0530
+Message-Id: <20180518094536.17201-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
+Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
 
-On Tue, May 15, 2018 at 5:14 PM Stanimir Varbanov <
-stanimir.varbanov@linaro.org> wrote:
+A64 behaviour similar to Allwinner A83T where
+Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
+Mixer1 => TCON1 => HDMI
+as per Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
 
-> This covers the differences between 1xx,3xx and 4xx.
+This is second patch-set followed with previous RFC[1] and first series[2]
+and merely concentrated on HDMI pipeline through TCON1 and rest will add eventually.
 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->    drivers/media/platform/qcom/venus/core.h         |  4 ++
->    drivers/media/platform/qcom/venus/helpers.c      | 37 +++++++----
->    drivers/media/platform/qcom/venus/hfi_helper.h   | 84
-++++++++++++++++++++++--
->    drivers/media/platform/qcom/venus/hfi_venus_io.h | 24 +++++++
->    drivers/media/platform/qcom/venus/vdec.c         |  5 +-
->    drivers/media/platform/qcom/venus/venc.c         |  5 +-
->    6 files changed, 137 insertions(+), 22 deletions(-)
+This series fixed previous version comments
+- about documenting fallback compatibles
+- adding new compatible for mixer1
+- support for multiple DW HDMI PHY clock parents (thanks, to Jernej)
 
-Please see my comments inline.
+Note:
+Pine64 boards are unable to get edid by default like other A64 boards,
+but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
+create edid with display on penel.
 
-[snip]
+Log:
+[    1.613196] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
+[    1.620764] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
+[    1.628612] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
+[    1.637677] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_ph
+y)
+[    1.647699] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+[    1.656090] [drm] forcing HDMI-A-1 connector on
+[    1.660664] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
+[    1.668063] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    1.674684] [drm] No driver support for vblank timestamp query.
+[    2.497502] Console: switching to colour frame buffer device 240x67
+[    2.551795] sun4i-drm display-engine: fb0:  frame buffer device
+[    2.558166] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
 
-> @@ -257,12 +273,11 @@ static int load_scale_clocks(struct venus_core
-*core)
+[2] https://lkml.org/lkml/2018/4/30/288
+[1] https://lkml.org/lkml/2018/4/24/547
 
->    set_freq:
+Icenowy Zheng (1):
+  drm: sun4i: add support for HVCC regulator for DWC HDMI glue
 
-> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
-> -               ret = clk_set_rate(clk, freq);
-> +       ret = clk_set_rate(clk, freq);
-> +
-> +       if (IS_V3(core) || IS_V4(core)) {
->                   ret |= clk_set_rate(core->core0_clk, freq);
->                   ret |= clk_set_rate(core->core1_clk, freq);
-> -       } else {
-> -               ret = clk_set_rate(clk, freq);
->           }
+Jagan Teki (22):
+  dt-bindings: clock: Add compatible for A64 DE2 CCU
+  arm64: dts: allwinner: a64: Add DE2 CCU
+  clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+  clk: sunxi-ng: a64: Add minimal rate for video PLLs
+  drm/sun4i: Add support for A64 mixer1
+  dt-bindings: display: Add compatible for A64 DE2 tcon1 blocks
+  drm/sun4i: Add support for A64 display engine
+  arm64: dts: allwinner: a64: Add DE2 tcon1 pipeline
+  drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+  arm64: defconfig: Enable CONFIG_DRM_SUN4I
+  dt-bindings: display: Add compatible for A64 HDMI
+  dt-bindings: display: Add compatible for A64 HDMI PHY
+  dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO[0-1] macros
+  arm64: dts: allwinner: a64: Add HDMI support
+  drm/sun4i: Enable DesignWare HDMI for SUN8I and SUN50I
+  arm64: dts: allwinner: a64: Add HDMI pipeline
+  arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+  arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+  arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
+  arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+  arm64: dts: allwinner: a64: pine64: Enable HDMI output
+  arm64: dts: allwinner: a64: sopine: Enable HDMI output
 
-nit: The clock API defines NULL clock as a special no-op value and so
-clk_set_rate(NULL, ...) would return 0 instantly. Maybe it would just make
-sense to have core0_clk and core1_clk set to NULL for V1 and remove the
-condition here?
+Jernej Skrabec (3):
+  drm/sun4i: DE2 mixer: Add index quirk
+  drm/sun4i: Add support for multiple DW HDMI PHY clock parents
+  drm/sun4i: Add support for A64 HDMI PHY
 
->           if (ret) {
-> diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h
-b/drivers/media/platform/qcom/venus/hfi_helper.h
-> index 55d8eb21403a..1bc5aab1ce6b 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_helper.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-> @@ -121,6 +121,7 @@
->    #define HFI_EXTRADATA_METADATA_FILLER                  0x7fe00002
+ .../devicetree/bindings/clock/sun8i-de2.txt        |   1 +
+ .../bindings/display/sunxi/sun4i-drm.txt           |   5 +
+ .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |  26 +++++
+ .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   |  26 +++++
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    |  26 +++++
+ .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts |  26 +++++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  26 +++++
+ .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  |  26 +++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 124 +++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   2 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c              |  46 ++++----
+ drivers/gpu/drm/sun4i/Kconfig                      |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              |  14 +++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  11 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             |  44 ++++++--
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c         |  89 +++++++++++----
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  17 ++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.h                |   2 +
+ include/dt-bindings/clock/sun50i-a64-ccu.h         |   2 +
+ 21 files changed, 458 insertions(+), 60 deletions(-)
 
->    #define HFI_INDEX_EXTRADATA_INPUT_CROP                 0x0700000e
-> +#define HFI_INDEX_EXTRADATA_OUTPUT_CROP                        0x0700000f
-
-nit: Would it make sense to suffix this _4XX, so that reader could know
-that it was introduced in this version? Similarly for other newly added
-definitions.
-
->    #define HFI_INDEX_EXTRADATA_DIGITAL_ZOOM               0x07000010
->    #define HFI_INDEX_EXTRADATA_ASPECT_RATIO               0x7f100003
-
-> @@ -376,13 +377,18 @@
->    #define HFI_BUFFER_OUTPUT2                     0x3
->    #define HFI_BUFFER_INTERNAL_PERSIST            0x4
->    #define HFI_BUFFER_INTERNAL_PERSIST_1          0x5
-> -#define HFI_BUFFER_INTERNAL_SCRATCH            0x1000001
-> -#define HFI_BUFFER_EXTRADATA_INPUT             0x1000002
-> -#define HFI_BUFFER_EXTRADATA_OUTPUT            0x1000003
-> -#define HFI_BUFFER_EXTRADATA_OUTPUT2           0x1000004
-> -#define HFI_BUFFER_INTERNAL_SCRATCH_1          0x1000005
-> -#define HFI_BUFFER_INTERNAL_SCRATCH_2          0x1000006
-> -
-> +#define HFI_BUFFER_INTERNAL_SCRATCH(ver)       \
-> +       (((ver) == HFI_VERSION_4XX) ? 0x6 : 0x1000001)
-> +#define HFI_BUFFER_INTERNAL_SCRATCH_1(ver)     \
-> +       (((ver) == HFI_VERSION_4XX) ? 0x7 : 0x1000005)
-> +#define HFI_BUFFER_INTERNAL_SCRATCH_2(ver)     \
-> +       (((ver) == HFI_VERSION_4XX) ? 0x8 : 0x1000006)
-> +#define HFI_BUFFER_EXTRADATA_INPUT(ver)                \
-> +       (((ver) == HFI_VERSION_4XX) ? 0xc : 0x1000002)
-> +#define HFI_BUFFER_EXTRADATA_OUTPUT(ver)       \
-> +       (((ver) == HFI_VERSION_4XX) ? 0xa : 0x1000003)
-> +#define HFI_BUFFER_EXTRADATA_OUTPUT2(ver)      \
-> +       (((ver) == HFI_VERSION_4XX) ? 0xb : 0x1000004)
-
-nit: Does it make sense to add an argument, rather than simply defining
-separate HFI_BUFFER_INTERNAL_SCRATCH_1XX and
-HFI_BUFFER_INTERNAL_SCRATCH_4XX? In my subjective opinion, the argument
-just makes it harder to read, as it's not clear how it is used inside the
-macro from reading just the call to it. Also it would get messy when adding
-further variants in future.
-
-[snip]
-
-> +/* HFI 4XX reorder the fields, use these macros */
-> +#define HFI_BUFREQ_HOLD_COUNT(bufreq, ver)     \
-> +       ((ver) == HFI_VERSION_4XX ? 0 : (bufreq)->hold_count)
-> +#define HFI_BUFREQ_COUNT_MIN(bufreq, ver)      \
-> +       ((ver) == HFI_VERSION_4XX ? (bufreq)->hold_count :
-(bufreq)->count_min)
-> +#define HFI_BUFREQ_COUNT_MIN_HOST(bufreq, ver) \
-> +       ((ver) == HFI_VERSION_4XX ? (bufreq)->count_min : 0)
-> +
-
-Hmm, this is a bit messy. The macro is supposed to return count_min, but it
-returns hold_count. Shouldn't we define a separate
-hfi_buffer_requirements_4xx struct for 4XX?
-
-Even though this seems to simplify the code eventually, I think it might be
-quite confusing for anyone working with the driver in the future.
-
-Also HFI_BUFREQ_HOLD_COUNT and HFI_BUFREQ_COUNT_MIN_HOST don't seem to be
-used anywhere.
-
-[snip]
-
-> +/* vcodec noc error log registers */
-> +#define VCODEC_CORE0_VIDEO_NOC_BASE_OFFS               0x4000
-> +#define VCODEC_CORE1_VIDEO_NOC_BASE_OFFS               0xc000
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_SWID_LOW_OFFS       0x500
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_SWID_HIGH_OFFS      0x504
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_MAINCTL_LOW_OFFS    0x508
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRVLD_LOW_OFFS     0x510
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRCLR_LOW_OFFS     0x518
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG0_LOW_OFFS    0x520
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG0_HIGH_OFFS   0x524
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG1_LOW_OFFS    0x528
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG1_HIGH_OFFS   0x52c
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG2_LOW_OFFS    0x530
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG2_HIGH_OFFS   0x534
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG3_LOW_OFFS    0x538
-> +#define VCODEC_COREX_VIDEO_NOC_ERR_ERRLOG3_HIGH_OFFS   0x53c
-
-What are these offsets from?
-
-nit: Other registers seem to be defined as (xxx_BASE + offset). Is there
-any reason to define these in another way?
-
-> +
->    #endif
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c
-b/drivers/media/platform/qcom/venus/vdec.c
-> index 49bbd1861d3a..261a51adeef2 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -689,6 +689,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
-
->    static int vdec_verify_conf(struct venus_inst *inst)
->    {
-> +       enum hfi_version ver = inst->core->res->hfi_version;
->           struct hfi_buffer_requirements bufreq;
->           int ret;
-
-> @@ -700,14 +701,14 @@ static int vdec_verify_conf(struct venus_inst *inst)
->                   return ret;
-
->           if (inst->num_output_bufs < bufreq.count_actual ||
-> -           inst->num_output_bufs < bufreq.count_min)
-> +           inst->num_output_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
->                   return -EINVAL;
-
->           ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
->           if (ret)
->                   return ret;
-
-> -       if (inst->num_input_bufs < bufreq.count_min)
-> +       if (inst->num_input_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
->                   return -EINVAL;
-
-Back to the point I raised above, maybe we could make
-venus_helper_get_bufreq() untangle the order of fields for 4XX? It seems to
-do a memcpy anyway, so doing it field by field for such small struct
-shouldn't really matter.
-
-Best regards,
-Tomasz
+-- 
+2.14.3
