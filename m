@@ -1,100 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeERU6N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 16:58:13 -0400
-Received: from mail-cys01nam02on0109.outbound.protection.outlook.com ([104.47.37.109]:35376
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751298AbeERU6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 16:58:10 -0400
-From: Long Li <longli@microsoft.com>
-To: Steve French <smfrench@gmail.com>
-CC: Christoph Hellwig <hch@infradead.org>,
-        Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: RE: [RFC PATCH 09/09] Introduce cache=rdma moutning option
-Thread-Topic: [RFC PATCH 09/09] Introduce cache=rdma moutning option
-Thread-Index: AQHT7j52S1OAMuhyN0W+dltAndCFj6Q1FpiAgADBiMCAAB19AIAAASJw
-Date: Fri, 18 May 2018 20:58:08 +0000
-Message-ID: <MWHPR2101MB0729D163B903A0198A85AB4BCE900@MWHPR2101MB0729.namprd21.prod.outlook.com>
-References: <20180518002214.5657-1-longli@linuxonhyperv.com>
- <20180518002214.5657-10-longli@linuxonhyperv.com>
- <20180518072631.GA19250@infradead.org>
- <MWHPR2101MB07297B07D495D66A1C9416FACE900@MWHPR2101MB0729.namprd21.prod.outlook.com>
- <CAH2r5mtzUJUakbPr_kzrDcqVPC9QuS7K8MXejNz7F=Uii6K5Kg@mail.gmail.com>
-In-Reply-To: <CAH2r5mtzUJUakbPr_kzrDcqVPC9QuS7K8MXejNz7F=Uii6K5Kg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8:e::2e0]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2101MB0812;7:xmOGkwyeyiMJoowka/VMY6sDW7s59pam69Flbg5ncw7tM2bhRUtXJw7ls7Yb6400dGUtCkg5bIpJC9Tr2dewQtCs4Y0wx27PPRvWfVnLgQjuflsXI1CxTUy/wxrG6n6UrQJvYXxz16hd3OkwF7rkgASCjiyYDRUZmJeGC9YtmIPajkxEMeZfoszGDWsmfQ4t2U0NuWuhlZvaXOo2pY/zIJ4GN6PTvGFPNs9ljxZ5PKLqyudQP38psNX0ZtAdGSHF;20:2b+OeZB+hq2WzAdwFMWunfA9peY76Kpdbc+h0mZusFYs/d6oyjWiqrGTAPtX2NWnmOGIplVEaI5c2NSYFrJLuydZTC7GF6QITt9GTMzAg4szaawkwoiL3oQ2FIOUxRaK0Jvyvkyk4Wrx+izzZBHuDGJjloXKgtPVR4t1A/IcSCA=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7193020);SRVR:MWHPR2101MB0812;
-x-ms-traffictypediagnostic: MWHPR2101MB0812:
-x-microsoft-antispam-prvs: <MWHPR2101MB08127728BCB52DEBB71502FACE900@MWHPR2101MB0812.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(2018427008)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR2101MB0812;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2101MB0812;
-x-forefront-prvs: 0676F530A9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(39380400002)(39860400002)(396003)(189003)(199004)(53546011)(102836004)(6506007)(76176011)(7696005)(22452003)(93886005)(316002)(97736004)(99286004)(186003)(6346003)(8676002)(3280700002)(3660700001)(25786009)(81166006)(81156014)(10090500001)(8936002)(4326008)(2906002)(2900100001)(8990500004)(54906003)(5250100002)(86612001)(10290500003)(6916009)(5660300001)(478600001)(33656002)(6246003)(105586002)(106356001)(86362001)(39060400002)(229853002)(68736007)(305945005)(7736002)(46003)(14454004)(446003)(11346002)(1411001)(6436002)(6116002)(486006)(55016002)(9686003)(74316002)(476003)(53936002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2101MB0812;H:MWHPR2101MB0729.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=longli@microsoft.com;
-x-microsoft-antispam-message-info: kWzVwclyFK8SsoF2Pi3B1dnVx9Nvm81p/HTHcQMc4GmjhK5AjHBNlDtsZqAk5vpJQ3VRG08YOLoUa53KpyLeduSfCl2MtfnchJsK/wtcP1+PHoLq6t3ISH7yZCejf5LEkbhJPXnD52PNFGgOO/QfSCaWOXmJO2/CEMP3pIEQnNwAc18xsi0QzXhGGK7Mvcol
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751750AbeERVBa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 17:01:30 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34928 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeERVBZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 17:01:25 -0400
+X-Google-Smtp-Source: AB8JxZok/7Zu5GUIdin18Dwk+BdiJLmQc62K282HMEwWH4+BxJbaHrY4z7w0wq3qGByrtdD4CfR/7RopPu+eNtkDQPE=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 37d31709-4534-420b-cf1a-08d5bd020efe
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37d31709-4534-420b-cf1a-08d5bd020efe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2018 20:58:08.0376
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2101MB0812
+In-Reply-To: <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
+References: <1526492623-20527-1-git-send-email-rishabhb@codeaurora.org> <1526492623-20527-3-git-send-email-rishabhb@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 19 May 2018 00:01:24 +0300
+Message-ID: <CAHp75VdO7+u-PQ+RBH71sxHHG0WkAyEVxv0BNPaycbcRnrZang@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] drivers: soc: Add LLCC driver
+To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm@lists.infradead.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, evgreen@chromium.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4IKwKog021933
 
-> Subject: Re: [RFC PATCH 09/09] Introduce cache=rdma moutning option
-> 
-> On Fri, May 18, 2018 at 12:00 PM, Long Li via samba-technical <samba-
-> technical@lists.samba.org> wrote:
-> >> Subject: Re: [RFC PATCH 09/09] Introduce cache=rdma moutning option
-> >>
-> >> On Thu, May 17, 2018 at 05:22:14PM -0700, Long Li wrote:
-> >> > From: Long Li <longli@microsoft.com>
-> >> >
-> >> > When cache=rdma is enabled on mount options, CIFS do not allocate
-> >> > internal data buffer pages for I/O, data is read/writen directly to
-> >> > user
-> >> memory via RDMA.
-> >>
-> >> I don't think this should be an option.  For direct I/O without
-> >> signing or encryption CIFS should always use get_user_pages, with or
-> without RDMA.
-> >
-> > Yes this should be done for all transport. If there are no objections, I'll send
-> patches to change this.
-> 
-> Would this help/change performance much?
+On Wed, May 16, 2018 at 8:43 PM, Rishabh Bhatnagar
+<rishabhb@codeaurora.org> wrote:
+> LLCC (Last Level Cache Controller) provides additional cache memory
+> in the system. LLCC is partitioned into multiple slices and each
+> slice gets its own priority, size, ID and other config parameters.
+> LLCC driver programs these parameters for each slice. Clients that
+> are assigned to use LLCC need to get information such size & ID of the
+> slice they get and activate or deactivate the slice as needed. LLCC driver
+> provides API for the clients to perform these operations.
 
-On RDMA, it helps with I/O latency and reduces CPU usage on certain I/O patterns.
+> +static const struct of_device_id sdm845_qcom_llcc_of_match[] = {
+> +       { .compatible = "qcom,sdm845-llcc", },
 
-But I haven't tested on TCP. Maybe it will help a little bit.
+> +       { },
 
-> 
-> 
-> 
-> --
-> Thanks,
-> 
-> Steve
+Slightly better w/o comma
+
+> +};
+
+> +static struct platform_driver sdm845_qcom_llcc_driver = {
+> +       .driver = {
+> +               .name = "sdm845-llcc",
+
+> +               .owner = THIS_MODULE,
+
+No need. See below.
+
+> +               .of_match_table = sdm845_qcom_llcc_of_match,
+> +       },
+> +       .probe = sdm845_qcom_llcc_probe,
+> +};
+
+> +
+> +static int __init sdm845_init_qcom_llcc_init(void)
+> +{
+> +       return platform_driver_register(&sdm845_qcom_llcc_driver);
+> +}
+> +module_init(sdm845_init_qcom_llcc_init);
+> +
+> +static void __exit sdm845_exit_qcom_llcc_exit(void)
+> +{
+> +       platform_driver_unregister(&sdm845_qcom_llcc_driver);
+> +}
+> +module_exit(sdm845_exit_qcom_llcc_exit);
+
+Why not to use module_platform_driver() macro?
+
+> +#define ACTIVATE                      0x1
+> +#define DEACTIVATE                    0x2
+> +#define ACT_CTRL_OPCODE_ACTIVATE      0x1
+> +#define ACT_CTRL_OPCODE_DEACTIVATE    0x2
+> +#define ACT_CTRL_ACT_TRIG             0x1
+
+Are these bits? Perhaps BIT() ?
+
+> +#define ACT_CTRL_OPCODE_SHIFT         0x1
+> +#define ATTR1_PROBE_TARGET_WAYS_SHIFT 0x2
+> +#define ATTR1_FIXED_SIZE_SHIFT        0x3
+> +#define ATTR1_PRIORITY_SHIFT          0x4
+> +#define ATTR1_MAX_CAP_SHIFT           0x10
+
+Better to use fixed size pattern, i.e. 0x01, 0x02, 0x03, 0x04, 0x10.
+
+> +#define ATTR0_RES_WAYS_MASK           0x00000fff
+> +#define ATTR0_BONUS_WAYS_MASK         0x0fff0000
+
+GENMASK()
+
+> +#define LLCC_LB_CNT_MASK               0xf0000000
+
+Ditto.
+
+> +#define MAX_CAP_TO_BYTES(n) (n * 1024)
+
+(n * SZ_1K) ?
+
+> +#define LLCC_TRP_ACT_CTRLn(n) (n * 0x1000)
+
+SZ_4K ?
+
+> +#define LLCC_TRP_STATUSn(n)   (4 + n * 0x1000)
+
+Ditto.
+
+> +struct llcc_slice_desc *llcc_slice_getd(u32 uid)
+> +{
+> +       const struct llcc_slice_config *cfg;
+> +       struct llcc_slice_desc *desc;
+> +       u32 sz, count = 0;
+> +
+> +       cfg = drv_data->cfg;
+> +       sz = drv_data->cfg_size;
+> +
+
+> +       while (cfg && count < sz) {
+> +               if (cfg->usecase_id == uid)
+> +                       break;
+> +               cfg++;
+> +               count++;
+> +       }
+> +       if (cfg == NULL || count == sz)
+> +               return ERR_PTR(-ENODEV);
+
+if (!cfg)
+          return ERR_PTR(-ENODEV);
+
+while (cfg->... != uid) {
+  cfg++;
+  count++;
+}
+
+if (count == sz)
+ return ...
+
+Though I would rather put it to for () loop.
+
+> +static int llcc_update_act_ctrl(u32 sid,
+> +                               u32 act_ctrl_reg_val, u32 status)
+> +{
+> +       u32 act_ctrl_reg;
+> +       u32 status_reg;
+> +       u32 slice_status;
+
+> +       int ret = 0;
+
+Useless assignment. Check entire patch series for a such.
+
+> +       ret = regmap_read_poll_timeout(drv_data->regmap, status_reg,
+> +       slice_status, !(slice_status & status), 0, LLCC_STATUS_READ_DELAY);
+
+Wrong indentation.
+
+> +       return ret;
+> +}
+
+> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
+> +                                 DEACTIVATE);
+
+Perhaps one line (~83 characters here is OK) ?
+
+> +       ret = llcc_update_act_ctrl(desc->slice_id, act_ctrl_val,
+> +                                 ACTIVATE);
+
+Ditto.
+
+> +               attr1_cfg = bcast_off +
+> +                               LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
+> +               attr0_cfg = bcast_off +
+> +                               LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
+
+Ditto.
+
+> +               attr1_val |= llcc_table[i].probe_target_ways <<
+> +                               ATTR1_PROBE_TARGET_WAYS_SHIFT;
+> +               attr1_val |= llcc_table[i].fixed_size <<
+> +                               ATTR1_FIXED_SIZE_SHIFT;
+> +               attr1_val |= llcc_table[i].priority << ATTR1_PRIORITY_SHIFT;
+
+foo |=
+  bar << SHIFT;
+
+would look slightly better.
+
+> +int qcom_llcc_probe(struct platform_device *pdev,
+> +                     const struct llcc_slice_config *llcc_cfg, u32 sz)
+> +{
+
+> +       drv_data->offsets = devm_kzalloc(dev, num_banks * sizeof(u32),
+> +                                                       GFP_KERNEL);
+> +       if (!drv_data->offsets)
+> +               return -ENOMEM;
+
+devm_kcalloc() ?
+
+> +
+> +       for (i = 0; i < num_banks; i++)
+> +               drv_data->offsets[i] = (i * BANK_OFFSET_STRIDE);
+
+Pointless parens.
+
+> +       drv_data->bitmap = devm_kcalloc(dev,
+> +       BITS_TO_LONGS(drv_data->max_slices), sizeof(unsigned long),
+> +                                               GFP_KERNEL);
+> +       if (!drv_data->bitmap)
+> +               return -ENOMEM;
+
+Perhaps at some point someone will add
+bitmap_alloc()
+devm_bitmap_alloc()
+
+> +       bitmap_zero(drv_data->bitmap, drv_data->max_slices);
+
+Pointless
+
+-- 
+With Best Regards,
+Andy Shevchenko
