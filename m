@@ -1,59 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752366AbeESMRI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 08:17:08 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55665 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752277AbeESMRG (ORCPT
+        id S1752211AbeESMVx (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 08:21:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34759 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbeESMVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 08:17:06 -0400
-Date: Sat, 19 May 2018 14:17:00 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-cc: KY Srinivasan <kys@microsoft.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/8] x86/hyper-v: move struct hv_flush_pcpu{,ex}
- definitions to common header
-In-Reply-To: <87d0xuiwx5.fsf@vitty.brq.redhat.com>
-Message-ID: <alpine.DEB.2.21.1805191415240.1599@nanos.tec.linutronix.de>
-References: <20180516152131.30689-1-vkuznets@redhat.com> <20180516152131.30689-2-vkuznets@redhat.com> <MW2PR2101MB1113225D3DBAF5A62FAA990AA0920@MW2PR2101MB1113.namprd21.prod.outlook.com> <87d0xuiwx5.fsf@vitty.brq.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 19 May 2018 08:21:51 -0400
+Date: Sat, 19 May 2018 05:21:44 -0700
+From: tip-bot for Colin Ian King <tipbot@zytor.com>
+Message-ID: <tip-844ea8f62619ac2a5e47d13e3449ac197067b414@git.kernel.org>
+Cc: mingo@kernel.org, jikos@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        colin.king@canonical.com, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, colin.king@canonical.com,
+        linux-kernel@vger.kernel.org, jikos@kernel.org, mingo@kernel.org,
+        hpa@zytor.com
+In-Reply-To: <20180428092448.6493-1-colin.king@canonical.com>
+References: <20180428092448.6493-1-colin.king@canonical.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/apm: Fix spelling mistake: "caculate" ->
+ "calculate"
+Git-Commit-ID: 844ea8f62619ac2a5e47d13e3449ac197067b414
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 May 2018, Vitaly Kuznetsov wrote:
-> KY Srinivasan <kys@microsoft.com> writes:
-> > We should  coordinate on this; I have patches in flight that conflict with
-> > the changes here.
-> 
-> I see you also fixed 'HV_GENERIC_SET_SPARCE_4K' typo. I don't think it's
-> a big deal as we fix it in the same way :-)
-> 
-> I see you also altered hv_flush_pcpu_ex definition but kept it in mmu.c:
-> I think my patches should be applied on top of yours, I only need to
-> move it to hyperv-tlfs.h header and get rid of _pcpu suffix.
-> 
-> I hope Thomas will merge your patches very soon. In case Paolo/Radim
-> decide that my series is ready too we'll ask their guidance on how to
-> resolve the conflict (topic branch?). It should be relatively easy.
+Commit-ID:  844ea8f62619ac2a5e47d13e3449ac197067b414
+Gitweb:     https://git.kernel.org/tip/844ea8f62619ac2a5e47d13e3449ac197067b414
+Author:     Colin Ian King <colin.king@canonical.com>
+AuthorDate: Sat, 28 Apr 2018 10:24:48 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 19 May 2018 14:18:59 +0200
 
-I've applied KY's series to tip/x86/hyperv. It has no other changes in
-there. So it could be pulled into KVM if necessary w/o pulling other stuff.
+x86/apm: Fix spelling mistake: "caculate" -> "calculate"
 
-Thanks,
+Trivial fix to spelling mistake in module parameter description text
 
-	tglx
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: kernel-janitors@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20180428092448.6493-1-colin.king@canonical.com
+
+---
+ arch/x86/kernel/apm_32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index dfcbe6924eaf..6b345f35f023 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -2446,7 +2446,7 @@ MODULE_PARM_DESC(idle_threshold,
+ 	"System idle percentage above which to make APM BIOS idle calls");
+ module_param(idle_period, int, 0444);
+ MODULE_PARM_DESC(idle_period,
+-	"Period (in sec/100) over which to caculate the idle percentage");
++	"Period (in sec/100) over which to calculate the idle percentage");
+ module_param(smp, bool, 0444);
+ MODULE_PARM_DESC(smp,
+ 	"Set this to enable APM use on an SMP platform. Use with caution on older systems");
