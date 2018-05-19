@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeESLXv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:23:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60025 "EHLO
+        id S1752404AbeESLYW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:24:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35681 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752191AbeESLXu (ORCPT
+        with ESMTP id S1752112AbeESLYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:23:50 -0400
-Date: Sat, 19 May 2018 04:23:45 -0700
+        Sat, 19 May 2018 07:24:21 -0400
+Date: Sat, 19 May 2018 04:24:15 -0700
 From: tip-bot for Vikas Shivappa <tipbot@zytor.com>
-Message-ID: <tip-ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+Message-ID: <tip-de73f38f768021610bd305cf74ef3702fcf6a1eb@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@kernel.org, vikas.shivappa@linux.intel.com
+Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
         linux-kernel@vger.kernel.org, vikas.shivappa@linux.intel.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        vikas.shivappa@linux.intel.com, mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com>
-References: <1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com>
+In-Reply-To: <1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com>
+References: <1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Prepare for feedback loop
-Git-Commit-ID: ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
+Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Feedback loop to dynamically
+ update mem bandwidth
+Git-Commit-ID: de73f38f768021610bd305cf74ef3702fcf6a1eb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,20 +32,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
-Gitweb:     https://git.kernel.org/tip/ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
+Commit-ID:  de73f38f768021610bd305cf74ef3702fcf6a1eb
+Gitweb:     https://git.kernel.org/tip/de73f38f768021610bd305cf74ef3702fcf6a1eb
 Author:     Vikas Shivappa <vikas.shivappa@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:36:20 -0700
+AuthorDate: Fri, 20 Apr 2018 15:36:21 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 19 May 2018 13:16:44 +0200
 
-x86/intel_rdt/mba_sc: Prepare for feedback loop
+x86/intel_rdt/mba_sc: Feedback loop to dynamically update mem bandwidth
 
-This is a preparatory patch for the mba feedback loop. Add support to
-measure the "bandwidth in MBps" and the "delta bandwidth". Measure it by
-reading the MBM IA32_QM_CTR MSRs and calculating the amount of "bytes"
-moved. There is no user space interface for this and will only be used by
-the feedback loop patch.
+mba_sc is a feedback loop where we periodically read MBM counters and
+try to restrict the bandwidth below a max value so the below is always
+true:
+
+  "current bandwidth(cur_bw) < user specified bandwidth(user_bw)"
+
+The frequency of these checks is currently 1s and we just tag along the
+MBM overflow timer to do the updates. Doing it once in a second also
+makes the calculation of bandwidth easy. The steps of increase or
+decrease of bandwidth is the minimum granularity specified by the
+hardware.
+
+Although the MBA's goal is to restrict the bandwidth below a maximum,
+there may be a need to even increase the bandwidth. Since MBA controls
+the L2 external bandwidth where as MBM measures the L3 external
+bandwidth, we may end up restricting some rdtgroups unnecessarily. This
+may happen in the sequence where rdtgroup (set of jobs) had high
+"L3 <-> memory traffic" in initial phases -> mba_sc kicks in and reduced
+bandwidth percentage values -> but after some it has mostly "L2 <-> L3"
+traffic. In this scenario mba_sc increases the bandwidth percentage when
+there is lesser memory traffic.
 
 Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -54,110 +71,203 @@ Cc: fenghua.yu@intel.com
 Cc: vikas.shivappa@intel.com
 Cc: ak@linux.intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com
+Link: https://lkml.kernel.org/r/1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.h         | 10 ++++++++
- arch/x86/kernel/cpu/intel_rdt_monitor.c | 44 ++++++++++++++++++++++++++++-----
- 2 files changed, 48 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c         |   3 +-
+ arch/x86/kernel/cpu/intel_rdt.h         |   2 +
+ arch/x86/kernel/cpu/intel_rdt_monitor.c | 126 +++++++++++++++++++++++++++++++-
+ 3 files changed, 128 insertions(+), 3 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index ad03d975883e..24bfa63e86cf 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -33,7 +33,6 @@
+ #include <asm/intel_rdt_sched.h>
+ #include "intel_rdt.h"
+ 
+-#define MAX_MBA_BW	100u
+ #define MBA_IS_LINEAR	0x4
+ #define MBA_MAX_MBPS	U32_MAX
+ 
+@@ -350,7 +349,7 @@ static int get_cache_id(int cpu, int level)
+  * that can be written to QOS_MSRs.
+  * There are currently no SKUs which support non linear delay values.
+  */
+-static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
++u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
+ {
+ 	if (r->membw.delay_linear)
+ 		return MAX_MBA_BW - bw;
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 91cc31087e8a..66a0ba37a8a3 100644
+index 66a0ba37a8a3..39752825e376 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -180,10 +180,20 @@ struct rftype {
-  * struct mbm_state - status for each MBM counter in each domain
-  * @chunks:	Total data moved (multiply by rdt_group.mon_scale to get bytes)
-  * @prev_msr	Value of IA32_QM_CTR for this RMID last time we read it
-+ * @chunks_bw	Total local data moved. Used for bandwidth calculation
-+ * @prev_bw_msr:Value of previous IA32_QM_CTR for bandwidth counting
-+ * @prev_bw	The most recent bandwidth in MBps
-+ * @delta_bw	Difference between the current and previous bandwidth
-+ * @delta_comp	Indicates whether to compute the delta_bw
-  */
- struct mbm_state {
- 	u64	chunks;
- 	u64	prev_msr;
-+	u64	chunks_bw;
-+	u64	prev_bw_msr;
-+	u32	prev_bw;
-+	u32	delta_bw;
-+	bool	delta_comp;
- };
+@@ -28,6 +28,7 @@
  
- /**
+ #define MBM_CNTR_WIDTH			24
+ #define MBM_OVERFLOW_INTERVAL		1000
++#define MAX_MBA_BW			100u
+ 
+ #define RMID_VAL_ERROR			BIT_ULL(63)
+ #define RMID_VAL_UNAVAIL		BIT_ULL(62)
+@@ -461,6 +462,7 @@ void mbm_setup_overflow_handler(struct rdt_domain *dom,
+ void mbm_handle_overflow(struct work_struct *work);
+ bool is_mba_sc(struct rdt_resource *r);
+ void setup_default_ctrlval(struct rdt_resource *r, u32 *dc, u32 *dm);
++u32 delay_bw_map(unsigned long bw, struct rdt_resource *r);
+ void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
+ void cqm_handle_limbo(struct work_struct *work);
+ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-index 681450eee428..7690402c42b7 100644
+index 7690402c42b7..b0f3aed76b75 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-@@ -225,10 +225,18 @@ void free_rmid(u32 rmid)
- 		list_add_tail(&entry->list, &rmid_free_lru);
- }
- 
-+static u64 mbm_overflow_count(u64 prev_msr, u64 cur_msr)
-+{
-+	u64 shift = 64 - MBM_CNTR_WIDTH, chunks;
-+
-+	chunks = (cur_msr << shift) - (prev_msr << shift);
-+	return chunks >>= shift;
-+}
-+
- static int __mon_event_count(u32 rmid, struct rmid_read *rr)
- {
--	u64 chunks, shift, tval;
- 	struct mbm_state *m;
-+	u64 chunks, tval;
- 
- 	tval = __rmid_read(rmid, rr->evtid);
- 	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL)) {
-@@ -254,14 +262,12 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
+@@ -329,6 +329,118 @@ void mon_event_count(void *info)
  	}
- 
- 	if (rr->first) {
--		m->prev_msr = tval;
--		m->chunks = 0;
-+		memset(m, 0, sizeof(struct mbm_state));
-+		m->prev_bw_msr = m->prev_msr = tval;
- 		return 0;
- 	}
- 
--	shift = 64 - MBM_CNTR_WIDTH;
--	chunks = (tval << shift) - (m->prev_msr << shift);
--	chunks >>= shift;
-+	chunks = mbm_overflow_count(m->prev_msr, tval);
- 	m->chunks += chunks;
- 	m->prev_msr = tval;
- 
-@@ -269,6 +275,32 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
- 	return 0;
  }
  
 +/*
-+ * Supporting function to calculate the memory bandwidth
-+ * and delta bandwidth in MBps.
++ * Feedback loop for MBA software controller (mba_sc)
++ *
++ * mba_sc is a feedback loop where we periodically read MBM counters and
++ * adjust the bandwidth percentage values via the IA32_MBA_THRTL_MSRs so
++ * that:
++ *
++ *   current bandwdith(cur_bw) < user specified bandwidth(user_bw)
++ *
++ * This uses the MBM counters to measure the bandwidth and MBA throttle
++ * MSRs to control the bandwidth for a particular rdtgrp. It builds on the
++ * fact that resctrl rdtgroups have both monitoring and control.
++ *
++ * The frequency of the checks is 1s and we just tag along the MBM overflow
++ * timer. Having 1s interval makes the calculation of bandwidth simpler.
++ *
++ * Although MBA's goal is to restrict the bandwidth to a maximum, there may
++ * be a need to increase the bandwidth to avoid uncecessarily restricting
++ * the L2 <-> L3 traffic.
++ *
++ * Since MBA controls the L2 external bandwidth where as MBM measures the
++ * L3 external bandwidth the following sequence could lead to such a
++ * situation.
++ *
++ * Consider an rdtgroup which had high L3 <-> memory traffic in initial
++ * phases -> mba_sc kicks in and reduced bandwidth percentage values -> but
++ * after some time rdtgroup has mostly L2 <-> L3 traffic.
++ *
++ * In this case we may restrict the rdtgroup's L2 <-> L3 traffic as its
++ * throttle MSRs already have low percentage values.  To avoid
++ * unnecessarily restricting such rdtgroups, we also increase the bandwidth.
 + */
-+static void mbm_bw_count(u32 rmid, struct rmid_read *rr)
++static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_domain *dom_mbm)
 +{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3];
-+	struct mbm_state *m = &rr->d->mbm_local[rmid];
-+	u64 tval, cur_bw, chunks;
++	u32 closid, rmid, cur_msr, cur_msr_val, new_msr_val;
++	struct mbm_state *pmbm_data, *cmbm_data;
++	u32 cur_bw, delta_bw, user_bw;
++	struct rdt_resource *r_mba;
++	struct rdt_domain *dom_mba;
++	struct list_head *head;
++	struct rdtgroup *entry;
 +
-+	tval = __rmid_read(rmid, rr->evtid);
-+	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL))
++	r_mba = &rdt_resources_all[RDT_RESOURCE_MBA];
++	closid = rgrp->closid;
++	rmid = rgrp->mon.rmid;
++	pmbm_data = &dom_mbm->mbm_local[rmid];
++
++	dom_mba = get_domain_from_cpu(smp_processor_id(), r_mba);
++	if (!dom_mba) {
++		pr_warn_once("Failure to get domain for MBA update\n");
 +		return;
++	}
 +
-+	chunks = mbm_overflow_count(m->prev_bw_msr, tval);
-+	m->chunks_bw += chunks;
-+	m->chunks = m->chunks_bw;
-+	cur_bw = (chunks * r->mon_scale) >> 20;
++	cur_bw = pmbm_data->prev_bw;
++	user_bw = dom_mba->mbps_val[closid];
++	delta_bw = pmbm_data->delta_bw;
++	cur_msr_val = dom_mba->ctrl_val[closid];
 +
-+	if (m->delta_comp)
-+		m->delta_bw = abs(cur_bw - m->prev_bw);
-+	m->delta_comp = false;
-+	m->prev_bw = cur_bw;
-+	m->prev_bw_msr = tval;
++	/*
++	 * For Ctrl groups read data from child monitor groups.
++	 */
++	head = &rgrp->mon.crdtgrp_list;
++	list_for_each_entry(entry, head, mon.crdtgrp_list) {
++		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
++		cur_bw += cmbm_data->prev_bw;
++		delta_bw += cmbm_data->delta_bw;
++	}
++
++	/*
++	 * Scale up/down the bandwidth linearly for the ctrl group.  The
++	 * bandwidth step is the bandwidth granularity specified by the
++	 * hardware.
++	 *
++	 * The delta_bw is used when increasing the bandwidth so that we
++	 * dont alternately increase and decrease the control values
++	 * continuously.
++	 *
++	 * For ex: consider cur_bw = 90MBps, user_bw = 100MBps and if
++	 * bandwidth step is 20MBps(> user_bw - cur_bw), we would keep
++	 * switching between 90 and 110 continuously if we only check
++	 * cur_bw < user_bw.
++	 */
++	if (cur_msr_val > r_mba->membw.min_bw && user_bw < cur_bw) {
++		new_msr_val = cur_msr_val - r_mba->membw.bw_gran;
++	} else if (cur_msr_val < MAX_MBA_BW &&
++		   (user_bw > (cur_bw + delta_bw))) {
++		new_msr_val = cur_msr_val + r_mba->membw.bw_gran;
++	} else {
++		return;
++	}
++
++	cur_msr = r_mba->msr_base + closid;
++	wrmsrl(cur_msr, delay_bw_map(new_msr_val, r_mba));
++	dom_mba->ctrl_val[closid] = new_msr_val;
++
++	/*
++	 * Delta values are updated dynamically package wise for each
++	 * rdtgrp everytime the throttle MSR changes value.
++	 *
++	 * This is because (1)the increase in bandwidth is not perfectly
++	 * linear and only "approximately" linear even when the hardware
++	 * says it is linear.(2)Also since MBA is a core specific
++	 * mechanism, the delta values vary based on number of cores used
++	 * by the rdtgrp.
++	 */
++	pmbm_data->delta_comp = true;
++	list_for_each_entry(entry, head, mon.crdtgrp_list) {
++		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
++		cmbm_data->delta_comp = true;
++	}
 +}
 +
- /*
-  * This is called via IPI to read the CQM/MBM counters
-  * on a domain.
+ static void mbm_update(struct rdt_domain *d, int rmid)
+ {
+ 	struct rmid_read rr;
+@@ -346,7 +458,16 @@ static void mbm_update(struct rdt_domain *d, int rmid)
+ 	}
+ 	if (is_mbm_local_enabled()) {
+ 		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
+-		__mon_event_count(rmid, &rr);
++
++		/*
++		 * Call the MBA software controller only for the
++		 * control groups and when user has enabled
++		 * the software controller explicitly.
++		 */
++		if (!is_mba_sc(NULL))
++			__mon_event_count(rmid, &rr);
++		else
++			mbm_bw_count(rmid, &rr);
+ 	}
+ }
+ 
+@@ -417,6 +538,9 @@ void mbm_handle_overflow(struct work_struct *work)
+ 		head = &prgrp->mon.crdtgrp_list;
+ 		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
+ 			mbm_update(d, crgrp->mon.rmid);
++
++		if (is_mba_sc(NULL))
++			update_mba_bw(prgrp, d);
+ 	}
+ 
+ 	schedule_delayed_work_on(cpu, &d->mbm_over, delay);
