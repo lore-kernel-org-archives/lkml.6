@@ -1,209 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeESP52 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 11:57:28 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:43132 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeESP5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 11:57:23 -0400
-X-Google-Smtp-Source: AB8JxZpVB2viLjfpHxo3eisdbuDvkDLC+orUwbSqnyj8swJxaRwTzI46Zy/Zf+FRkq7PKk+LNLRh6w==
-Subject: Re: INFO: rcu detected stall in is_bpf_text_address
-To: syzbot <syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com>,
-        ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-References: <0000000000006d7517056c911740@google.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <4b65142a-cf3b-05d7-d66b-018ff8da7ccc@gmail.com>
-Date: Sat, 19 May 2018 08:57:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752522AbeESQIS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 12:08:18 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:58232 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752370AbeESQIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 12:08:15 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 01/26] drm/bridge: allow optionally specifying an owner .odev device
+Date: Sat, 19 May 2018 18:07:33 +0200
+Message-ID: <21812146.Dm3JJO5T5a@phil>
+In-Reply-To: <20180516101510.13215-2-peda@axentia.se>
+References: <20180516101510.13215-1-peda@axentia.se> <20180516101510.13215-2-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <0000000000006d7517056c911740@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SCTP experts, please take a look.
+Hi Peter,
 
-On 05/19/2018 08:55 AM, syzbot wrote:
-> Hello,
+Am Mittwoch, 16. Mai 2018, 12:14:45 CEST schrieb Peter Rosin:
+> Bridge drivers can now (temporarily, in a transition phase) select if
+> they want to provide a full owner device or keep just providing an
+> of_node.
 > 
-> syzbot found the following crash on:
+> By providing a full owner device, the bridge drivers no longer need
+> to provide an of_node since that node is available via the owner
+> device.
 > 
-> HEAD commit:    73fcb1a370c7 Merge branch 'akpm' (patches from Andrew)
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1462ec0f800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3dcd59a1f907245f891f
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1079cf8f800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156daf97800000
+> When all bridge drivers provide an owner device, that will become
+> mandatory and the .of_node member will be removed.
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com
+> There is an interaction with the rockchip lvds driver, since that
+> driver peeks into somewhat private parts of the bridge struct in
+> order to find out things about the remote bridge. When there are
+> now two ways to get to the remote bridge, the rockchip lvds driver
+> has to adapt. That said, the correct thing to do for the rockchip
+> lvds driver is to use some other way than DT to find things out
+> about the remote bridge, but that is orthogonal to this patch.
 > 
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> INFO: rcu_sched self-detected stall on CPU
->     0-...!: (124998 ticks this GP) idle=0be/1/4611686018427387908 softirq=15234/15234 fqs=59
->      (t=125000 jiffies g=7610 c=7609 q=351640)
-> rcu_sched kthread starved for 124739 jiffies! g7610 c7609 f0x2 RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
-> RCU grace-period kthread stack dump:
-> rcu_sched       R  running task    23896     9      2 0x80000000
-> Call Trace:
->  context_switch kernel/sched/core.c:2859 [inline]
->  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
->  schedule+0xef/0x430 kernel/sched/core.c:3545
->  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
->  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
->  kthread+0x345/0x410 kernel/kthread.c:240
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 6381 Comm: sh Not tainted 4.17.0-rc5+ #58
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
->  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
->  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
->  __rcu_pending kernel/rcu/tree.c:3356 [inline]
->  rcu_pending kernel/rcu/tree.c:3401 [inline]
->  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
->  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
->  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
->  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
->  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
->  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
->  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783 [inline]
-> RIP: 0010:lock_acquire+0x257/0x520 kernel/locking/lockdep.c:3923
-> RSP: 0000:ffff8801dae06b60 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: dffffc0000000000 RBX: 1ffff1003b5c0d71 RCX: 0000000000000000
-> RDX: 1ffffffff11a30e5 RSI: ffff8801c7b54c38 RDI: 0000000000000286
-> RBP: ffff8801dae06c50 R08: 0000000000000008 R09: 0000000000000003
-> R10: ffff8801c7b54cb0 R11: ffff8801c7b54400 R12: ffff8801c7b54400
-> R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
->  rcu_lock_acquire include/linux/rcupdate.h:246 [inline]
->  rcu_read_lock include/linux/rcupdate.h:632 [inline]
->  is_bpf_text_address+0x3b/0x170 kernel/bpf/core.c:478
->  kernel_text_address+0x79/0xf0 kernel/extable.c:152
->  __kernel_text_address+0xd/0x40 kernel/extable.c:107
->  unwind_get_return_address+0x61/0xa0 arch/x86/kernel/unwind_frame.c:18
->  __save_stack_trace+0x7e/0xd0 arch/x86/kernel/stacktrace.c:45
->  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
->  slab_post_alloc_hook mm/slab.h:444 [inline]
->  slab_alloc_node mm/slab.c:3335 [inline]
->  kmem_cache_alloc_node+0x131/0x780 mm/slab.c:3642
->  __alloc_skb+0x111/0x780 net/core/skbuff.c:193
->  alloc_skb include/linux/skbuff.h:987 [inline]
->  _sctp_make_chunk+0x58/0x280 net/sctp/sm_make_chunk.c:1417
->  sctp_make_control net/sctp/sm_make_chunk.c:1464 [inline]
->  sctp_make_heartbeat+0x8f/0x430 net/sctp/sm_make_chunk.c:1177
->  sctp_sf_heartbeat.isra.23+0x26/0x180 net/sctp/sm_statefuns.c:1005
->  sctp_sf_sendbeat_8_3+0x38e/0x550 net/sctp/sm_statefuns.c:1049
->  sctp_do_sm+0x1ab/0x7160 net/sctp/sm_sideeffect.c:1188
->  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
->  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
->  expire_timers kernel/time/timer.c:1363 [inline]
->  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
->  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
->  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->  invoke_softirq kernel/softirq.c:365 [inline]
->  irq_exit+0x1d1/0x200 kernel/softirq.c:405
->  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
->  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
->  </IRQ>
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
-> RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:22 [inline]
-> RIP: 0010:rcu_dynticks_curr_cpu_in_eqs kernel/rcu/tree.c:349 [inline]
-> RIP: 0010:rcu_is_watching+0xc4/0x140 kernel/rcu/tree.c:1075
-> RSP: 0000:ffff8801c957f398 EFLAGS: 00000a06 ORIG_RAX: ffffffffffffff13
-> RAX: 00000000000130be RBX: 1ffff100392afe74 RCX: 1ffff100392afe78
-> RDX: 0000000000000004 RSI: 0000000000000004 RDI: ffff8801dae23610
-> RBP: ffff8801c957f428 R08: ffffed003b5c46c3 R09: ffffed003b5c46c2
-> R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff8801c957f3c0
-> R13: ffff8801dae23610 R14: ffff8801c957f400 R15: dffffc0000000000
->  rcu_read_lock_sched_held+0x8d/0x120 kernel/rcu/update.c:112
->  trace_kmem_cache_alloc include/trace/events/kmem.h:54 [inline]
->  kmem_cache_alloc+0x5fa/0x760 mm/slab.c:3555
->  anon_vma_alloc mm/rmap.c:81 [inline]
->  __anon_vma_prepare+0x3b3/0x700 mm/rmap.c:189
->  anon_vma_prepare include/linux/rmap.h:153 [inline]
->  wp_page_copy+0xdf1/0x1440 mm/memory.c:2481
->  do_wp_page+0x425/0x1990 mm/memory.c:2776
->  handle_pte_fault mm/memory.c:3979 [inline]
->  __handle_mm_fault+0x2996/0x4310 mm/memory.c:4087
->  handle_mm_fault+0x53a/0xc70 mm/memory.c:4124
->  __do_page_fault+0x60b/0xe40 arch/x86/mm/fault.c:1399
->  do_page_fault+0xee/0x8a7 arch/x86/mm/fault.c:1474
->  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
-> RIP: 0033:0x7f4232a6d1fb
-> RSP: 002b:00007fff2aeebd28 EFLAGS: 00010246
-> RAX: 000000000000000d RBX: 00000000756e6547 RCX: 000000006c65746e
-> RDX: 0000000049656e69 RSI: 0000000000000025 RDI: 0000000000000002
-> RBP: 00007fff2aeebe20 R08: 0000000000000001 R09: 000000000000002f
-> R10: 00007f4232a6caf0 R11: 00007fff2aeebb70 R12: 00007f4232a4e000
-> R13: 00007f4232dd5038 R14: 00007f4232a6cac0 R15: 00007f4232dd5d98
-> BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 126s!
-> BUG: workqueue lockup - pool cpus=0-1 flags=0x4 nice=0 stuck for 125s!
-> Showing busy workqueues and worker pools:
-> workqueue events: flags=0x0
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=7/256
->     pending: defense_work_handler, defense_work_handler, defense_work_handler, defense_work_handler, defense_work_handler, vmstat_shepherd, cache_reap
-> workqueue events_power_efficient: flags=0x80
->   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/256
->     in-flight: 2107:neigh_periodic_work
-> workqueue mm_percpu_wq: flags=0x8
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
->     pending: vmstat_update
-> workqueue writeback: flags=0x4e
->   pwq 4: cpus=0-1 flags=0x4 nice=0 active=1/256
->     in-flight: 4784:wb_workfn
-> workqueue ib_addr: flags=0xa0002
-> workqueue dm_bufio_cache: flags=0x8
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
->     pending: work_fn
-> workqueue ipv6_addrconf: flags=0x40008
->   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/1
->     pending: addrconf_dad_work
->     delayed: addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_verify_work
->   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
->     pending: addrconf_dad_work
->     delayed: addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work
-> pool 2: cpus=1 node=0 flags=0x0 nice=0 hung=0s workers=4 idle: 4707 24 4924
-> pool 4: cpus=0-1 flags=0x4 nice=0 hung=0s workers=4 idle: 44 4846 6
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> index 4bd94b167d2c..557e0079c98d 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -377,8 +377,10 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+>  	}
+>  	if (lvds->panel)
+>  		remote = lvds->panel->dev->of_node;
+> -	else
+> +	else if (lvds->bridge->of_node)
+>  		remote = lvds->bridge->of_node;
+> +	else
+> +		remote = lvds->bridge->odev->of_node;
+>  	if (of_property_read_string(dev->of_node, "rockchip,output", &name))
+>  		/* default set it as output rgb */
+>  		lvds->output = DISPLAY_OUTPUT_RGB;
+
+for the Rockchip-part
+Acked-by: Heiko Stuebner <heiko@sntech.de>
