@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750864AbeESGN0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 02:13:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33839 "EHLO
+        id S1751888AbeESGNy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 02:13:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53451 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeESGNY (ORCPT
+        with ESMTP id S1750769AbeESGNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 02:13:24 -0400
-Date: Fri, 18 May 2018 23:12:52 -0700
-From: tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-4f74d72aa7067e75af92fbab077e6d7d0210be66@git.kernel.org>
-Cc: mingo@kernel.org, mark.rutland@arm.com, kim.phillips@arm.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, kim.phillips@arm.com, mark.rutland@arm.com,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        ard.biesheuvel@linaro.org
-In-Reply-To: <20180518140841.9731-2-ard.biesheuvel@linaro.org>
-References: <20180518140841.9731-2-ard.biesheuvel@linaro.org>
+        Sat, 19 May 2018 02:13:53 -0400
+Date: Fri, 18 May 2018 23:13:25 -0700
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-7dec80ccbe310fb7e225bf21c48c672bb780ce7b@git.kernel.org>
+Cc: lkp@intel.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jpoimboe@redhat.com, peterz@infradead.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, lkp@intel.com,
+        peterz@infradead.org, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com>
+References: <f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] efi/libstub/arm64: Handle randomized TEXT_OFFSET
-Git-Commit-ID: 4f74d72aa7067e75af92fbab077e6d7d0210be66
+Subject: [tip:core/urgent] objtool: Detect RIP-relative switch table
+ references, part 2
+Git-Commit-ID: 7dec80ccbe310fb7e225bf21c48c672bb780ce7b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,65 +34,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4f74d72aa7067e75af92fbab077e6d7d0210be66
-Gitweb:     https://git.kernel.org/tip/4f74d72aa7067e75af92fbab077e6d7d0210be66
-Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Fri, 18 May 2018 16:08:41 +0200
+Commit-ID:  7dec80ccbe310fb7e225bf21c48c672bb780ce7b
+Gitweb:     https://git.kernel.org/tip/7dec80ccbe310fb7e225bf21c48c672bb780ce7b
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Fri, 18 May 2018 15:10:34 -0500
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 19 May 2018 08:07:56 +0200
+CommitDate: Sat, 19 May 2018 08:10:04 +0200
 
-efi/libstub/arm64: Handle randomized TEXT_OFFSET
+objtool: Detect RIP-relative switch table references, part 2
 
-When CONFIG_RANDOMIZE_TEXT_OFFSET=y, TEXT_OFFSET is an arbitrary
-multiple of PAGE_SIZE in the interval [0, 2MB).
+With the following commit:
 
-The EFI stub does not account for the potential misalignment of
-TEXT_OFFSET relative to EFI_KIMG_ALIGN, and produces a randomized
-physical offset which is always a round multiple of EFI_KIMG_ALIGN.
-This may result in statically allocated objects whose alignment exceeds
-PAGE_SIZE to appear misaligned in memory. This has been observed to
-result in spurious stack overflow reports and failure to make use of
-the IRQ stacks, and theoretically could result in a number of other
-issues.
+  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
 
-We can OR in the low bits of TEXT_OFFSET to ensure that we have the
-necessary offset (and hence preserve the misalignment of TEXT_OFFSET
-relative to EFI_KIMG_ALIGN), so let's do that.
+I added a "can't find switch jump table" warning, to stop covering up
+silent failures if add_switch_table() can't find anything.
 
-Reported-by: Kim Phillips <kim.phillips@arm.com>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
-[ardb: clarify comment and commit log, drop unneeded parens]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+That warning found yet another bug in the objtool switch table detection
+logic.  For cases 1 and 2 (as described in the comments of
+find_switch_table()), the find_symbol_containing() check doesn't adjust
+the offset for RIP-relative switch jumps.
+
+Incidentally, this bug was already fixed for case 3 with:
+
+  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
+
+However, that commit missed the fix for cases 1 and 2.
+
+The different cases are now starting to look more and more alike.  So
+fix the bug by consolidating them into a single case, by checking the
+original dynamic jump instruction in the case 3 loop.
+
+This also simplifies the code and makes it more robust against future
+switch table detection issues -- of which I'm sure there will be many...
+
+Switch table detection has been the most fragile area of objtool, by
+far.  I long for the day when we'll have a GCC plugin for annotating
+switch tables.  Linus asked me to delay such a plugin due to the
+flakiness of the plugin infrastructure in older versions of GCC, so this
+rickety code is what we're stuck with for now.  At least the code is now
+a little simpler than it was.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 6f26b3671184c36d ("arm64: kaslr: increase randomization granularity")
-Link: http://lkml.kernel.org/r/20180518140841.9731-2-ard.biesheuvel@linaro.org
+Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/libstub/arm64-stub.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ tools/objtool/check.c | 37 ++++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
-index b9bd827caa22..1b4d465cc5d9 100644
---- a/drivers/firmware/efi/libstub/arm64-stub.c
-+++ b/drivers/firmware/efi/libstub/arm64-stub.c
-@@ -97,6 +97,16 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
- 		u32 offset = !IS_ENABLED(CONFIG_DEBUG_ALIGN_RODATA) ?
- 			     (phys_seed >> 32) & mask : TEXT_OFFSET;
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index f4bbce838433..3a31b238f885 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -905,40 +905,19 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 	struct instruction *orig_insn = insn;
+ 	unsigned long table_offset;
  
-+		/*
-+		 * With CONFIG_RANDOMIZE_TEXT_OFFSET=y, TEXT_OFFSET may not
-+		 * be a multiple of EFI_KIMG_ALIGN, and we must ensure that
-+		 * we preserve the misalignment of 'offset' relative to
-+		 * EFI_KIMG_ALIGN so that statically allocated objects whose
-+		 * alignment exceeds PAGE_SIZE appear correctly aligned in
-+		 * memory.
-+		 */
-+		offset |= TEXT_OFFSET % EFI_KIMG_ALIGN;
+-	/* case 1 & 2 */
+-	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+-	if (text_rela && text_rela->sym == file->rodata->sym &&
+-	    !find_symbol_containing(file->rodata, text_rela->addend)) {
+-
+-		table_offset = text_rela->addend;
+-		if (text_rela->type == R_X86_64_PC32) {
+-			/* case 2 */
+-			table_offset += 4;
+-			file->ignore_unreachables = true;
+-		}
+-
+-		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (!rodata_rela)
+-			return NULL;
+-
+-		return rodata_rela;
+-	}
+-
+-	/* case 3 */
+ 	/*
+ 	 * Backward search using the @first_jump_src links, these help avoid
+ 	 * much of the 'in between' code. Which avoids us getting confused by
+ 	 * it.
+ 	 */
+-	for (insn = list_prev_entry(insn, list);
+-
++	for (;
+ 	     &insn->list != &file->insn_list &&
+ 	     insn->sec == func->sec &&
+ 	     insn->offset >= func->offset;
+ 
+ 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
+ 
+-		if (insn->type == INSN_JUMP_DYNAMIC)
++		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
+ 			break;
+ 
+ 		/* allow small jumps within the range */
+@@ -965,10 +944,18 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		/* mov [rodata addr], %reg */
+ 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (rodata_rela)
++		if (rodata_rela) {
++			/*
++			 * Use of RIP-relative switch jumps is quite rare, and
++			 * indicates a rare GCC quirk/bug which can leave dead
++			 * code behind.
++			 */
++			if (text_rela->type == R_X86_64_PC32)
++				file->ignore_unreachables = true;
 +
- 		/*
- 		 * If KASLR is enabled, and we have some randomness available,
- 		 * locate the kernel at a randomized offset in physical memory.
+ 			return rodata_rela;
++		}
+ 	}
+ 
+ 	return NULL;
