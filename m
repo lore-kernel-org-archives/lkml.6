@@ -1,46 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752533AbeESWfx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:35:53 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36956 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeESWfv (ORCPT
+        id S1752566AbeESWf7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 18:35:59 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37753 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbeESWf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 18:35:51 -0400
-X-Google-Smtp-Source: AB8JxZp4oHJJ2K5cA+jnIaIXaUcqPY89vFidWU0k8NDItfBEb+VdzoFLIxkGGYgbUhAayFODjxYHaA==
-Date: Sat, 19 May 2018 19:35:46 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Vlad Buslov <vladbu@mellanox.com>, netdev@vger.kernel.org,
-        davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kliteyn@mellanox.com
-Subject: Re: [PATCH 12/14] net: sched: retry action check-insert on
- concurrent modification
-Message-ID: <20180519223546.GG5488@localhost.localdomain>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-13-git-send-email-vladbu@mellanox.com>
- <20180516095953.GI1972@nanopsycho>
- <vbf4lj724th.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180516122600.GM1972@nanopsycho>
- <vbfwow322k1.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
- <20180516132135.GN1972@nanopsycho>
+        Sat, 19 May 2018 18:35:56 -0400
+X-Google-Smtp-Source: AB8JxZp2rqL9S143oT/zPk1sD0zqcsmtSo5e4UbEcr0YxME+TT/eOWUj40jVYyNPcKRlo8GfBQfSEeLgtMXW7G6qyU8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516132135.GN1972@nanopsycho>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180410183210.28052-1-andrew.smirnov@gmail.com>
+References: <20180410183210.28052-1-andrew.smirnov@gmail.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Sat, 19 May 2018 15:35:55 -0700
+Message-ID: <CAHQ1cqGCG0rwPcpoY+bnjcyupg18x1TvULJzvAjRxSkL6z1U_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] soc: imx: gpcv2: Do not pass static memory as
+ platform data
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <l.stach@pengutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 03:21:35PM +0200, Jiri Pirko wrote:
-...
-> int tcf_idr_check_alloc(struct tc_action_net *tn, u32 *index,
-> 			struct tc_action **a, int bind)
+On Tue, Apr 10, 2018 at 11:32 AM, Andrey Smirnov
+<andrew.smirnov@gmail.com> wrote:
+> Platform device core assumes the ownership of dev.platform_data as
+> well as that it is dynamically allocated and it will try to kfree it
+> as a part of platform_device_release(). Change the code to use
+> platform_device_add_data() n instead of a pointer to a static memory
+> to avoid causing a BUG() when calling platform_device_put().
+>
+> The problem can be reproduced by artificially enabling the error path
+> of platform_device_add() call (around line 357).
+>
+> Note that this change also allows us to constify imx7_pgc_domains,
+> since we no longer need to be able to modify it.
+>
 
-Considering we don't have any other variant of it, maybe just
-"tcf_idr_alloc()" instead?
+Shawn,
+
+What's the status of these two patches? Do I need to change anything
+or are they good to go?
+
+Thanks,
+Andrey Smirnov
