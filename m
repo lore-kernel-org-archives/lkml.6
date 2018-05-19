@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeESDUk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 23:20:40 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:37559 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeESDUh (ORCPT
+        id S1752112AbeESDdv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 23:33:51 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37274 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751816AbeESDdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 23:20:37 -0400
-X-Google-Smtp-Source: AB8JxZqO96vT3LsLXAvoyC0Oo/+PMwK8/3N+OtJizV52zP02cLY8dCy+xiIlyPSWdBdcdN7xOuJD+AmGF3z6f125/Go=
+        Fri, 18 May 2018 23:33:49 -0400
+X-Google-Smtp-Source: AB8JxZr6vQRT6zUnAUl76DQvK3024y9vJ4l+QReexqk/9Q9dD4lDBA8ckmkpeRXnRl9XwzSFAqxZhQ6pWTPeqY7A+EE=
 MIME-Version: 1.0
 References: <cover.thread-4f3684.your-ad-here.call-01526696764-ext-9375@work.hours>
  <patch-1.thread-4f3684.git-4f3684ca2aad.your-ad-here.call-01526696764-ext-9375@work.hours>
-In-Reply-To: <patch-1.thread-4f3684.git-4f3684ca2aad.your-ad-here.call-01526696764-ext-9375@work.hours>
+ <CA+55aFxJb9P2TMCc2Pao-uXcVACK-CTBHmzObAQu=rvs87itvw@mail.gmail.com>
+In-Reply-To: <CA+55aFxJb9P2TMCc2Pao-uXcVACK-CTBHmzObAQu=rvs87itvw@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 18 May 2018 20:20:26 -0700
-Message-ID: <CA+55aFxJb9P2TMCc2Pao-uXcVACK-CTBHmzObAQu=rvs87itvw@mail.gmail.com>
+Date: Fri, 18 May 2018 20:33:37 -0700
+Message-ID: <CA+55aFwxEiiAC+dMMVqQ4igqb7rmn23Bq=BM8fqU=MFRWF1JSw@mail.gmail.com>
 Subject: Re: [PATCH] procfs: fix mmap() for /proc/vmcore
 To: gor@linux.ibm.com
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -26,23 +27,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 8:15 PM Vasily Gorbik <gor@linux.ibm.com> wrote:
+On Fri, May 18, 2018 at 8:20 PM Linus Torvalds <
+torvalds@linux-foundation.org> wrote:
 
-> Commit be83bbf80682 ("mmap: introduce sane default mmap limits")
-> introduced "pgoff" limits checks for mmap, considering fs max file size
-> as upper limit, which made it impossible to mmap /proc/vmcore file
-> contents above 2Gb (/proc/vmcore appears to be the only procfs file
-> supporting mmap).
+> I'd *much* rather just set FMODE_UNSIGNED_OFFSET for /proc/vmcore _only_,
+> rather than open up all proc files to issues with 4G+ offsets.
 
-> Reuse MAX_LFS_FILESIZE as procfs s_maxbytes value.
+Hmm. I was going to point to the s_maxbytes check in rw_verify_area() and
+ask you how that ever worked for that file, but it's not there, the
+s_maxbyte checks are only in lseek and in do_splice().
 
-Ugh. /proc is where a lot of problems *have* been.
+So apparently we protect against llseek + read/write, but we don't protect
+against pread64/pwrite64 having offset overflows..
 
-Admittedly not as much as random drivers, but still. If proc doesn't set
-s_maxbytes, then we should not raise it here magically, there might be
-various /proc files that get offset accounting wrong.
+That's crazy. That makes all the s_maxbytes protection much less effective
+than it should be. Filesystems that don't get the 64-bit case right will
+screw up pread64 and friends.
 
-I'd *much* rather just set FMODE_UNSIGNED_OFFSET for /proc/vmcore _only_,
-rather than open up all proc files to issues with 4G+ offsets.
+Al, I'm missing something. Did we always have this gaping hole where we
+didn't actually check s_maxbytes against read/write, only
+generic_file_llseek? Apparently.
 
-                Linus
+               Linus
