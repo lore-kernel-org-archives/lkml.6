@@ -1,118 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752326AbeESLj0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:39:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59094 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752129AbeESLjY (ORCPT
+        id S1752488AbeESLkC (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:40:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53373 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbeESLkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:39:24 -0400
-Date: Sat, 19 May 2018 13:39:14 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH] procfs: fix mmap() for /proc/vmcore
-References: <cover.thread-4f3684.your-ad-here.call-01526696764-ext-9375@work.hours>
- <patch-1.thread-4f3684.git-4f3684ca2aad.your-ad-here.call-01526696764-ext-9375@work.hours>
- <CA+55aFxJb9P2TMCc2Pao-uXcVACK-CTBHmzObAQu=rvs87itvw@mail.gmail.com>
- <CA+55aFwxEiiAC+dMMVqQ4igqb7rmn23Bq=BM8fqU=MFRWF1JSw@mail.gmail.com>
- <20180519034338.GV30522@ZenIV.linux.org.uk>
- <CA+55aFyHLFnGv8yFJs7-vGVe6tDeDAbSJ6=09iTqsegRZN_nGw@mail.gmail.com>
+        Sat, 19 May 2018 07:40:00 -0400
+Date: Sat, 19 May 2018 04:39:46 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-4bo45k6ivsmbxpfpdte4orsg@git.kernel.org>
+Cc: jolsa@kernel.org, acme@redhat.com, treeze.taeung@gmail.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        wangnan0@huawei.com, dsahern@gmail.com, mingo@kernel.org,
+        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
+Reply-To: jolsa@kernel.org, acme@redhat.com, treeze.taeung@gmail.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        dsahern@gmail.com, mingo@kernel.org, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, adrian.hunter@intel.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf config: Call perf_config__init() lazily
+Git-Commit-ID: d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CA+55aFyHLFnGv8yFJs7-vGVe6tDeDAbSJ6=09iTqsegRZN_nGw@mail.gmail.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051911-0008-0000-0000-000004F83B63
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051911-0009-0000-0000-00001E8CBCAD
-Message-Id: <your-ad-here.call-01526729953-ext-6746@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805190112
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 09:12:56PM -0700, Linus Torvalds wrote:
-> On Fri, May 18, 2018 at 8:43 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> 
-> > Not quite.  The things like
-> >          if (unlikely(*ppos >= inode->i_sb->s_maxbytes))
-> >                  return 0;
-> >          iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
-> > protect most of the regular files (see mm/filemap.c).  And for devices
-> (which is
-> > where the majority of crap ->read()/->write() is) it's obviously not
-> applicable -
-> > ->s_maxbytes of *what*?
-> 
-> Yeah that "s_maxbytes of what" is I think the real issue. We should never
-> have made s_maxbytes be super-block specific: we should have made it be
-> per-inode, and then have inode_init_always() initialize it using something
-> like the file_mmap_size_max() logic.
-> 
-> (So we'd still have a "sb_maxbytes" that filesystems would fill in, but it
-> would only be used as a "fill in inode value for regular files for this
-> superblock").
-> 
-> Then we could actually protect read/write properly, because many of the
-> nasty bugs have been in character device drivers.
-> 
-> Oh well. It would still be a good thing to do some day, I suspect, but it's
-> clearly not the case now, and so s_maxbytes actually has much less coverage
-> than I was hoping for.
-> 
-> (And thus also the problems with /proc/vmcore - it never saw s_maxbytes
-> limits before).
-> 
-> Oh, well. The lack of any meaningful s_maxbytes coverage for proc obviously
-> means that my objections against Vasily's patch are mostly invalid. Even if
-> /proc does use "generic_file_llseek()" a lot and that should limit things
-> to 4G offsets, you can just use pread64/pwrite64 to see if you can screw up
-> the offset.
-> 
-> I'd still prefer to limit the damage to just "vmcore".
-> 
-> Something like the below COMPLETELY UNTESTED patch? Vasily?
+Commit-ID:  d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
+Gitweb:     https://git.kernel.org/tip/d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 16 May 2018 16:09:08 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 16 May 2018 16:11:09 -0300
 
-Would work, but file_mmap_size_max first checks
-	if (S_ISREG(inode->i_mode))
-		return inode->i_sb->s_maxbytes;
-before
-	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
-		return 0;
-so, as it is this patch does not fix the issue.
+perf config: Call perf_config__init() lazily
 
->              Linus
->
->  fs/proc/vmcore.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index a45f0af22a60..83278c547127 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -491,7 +491,15 @@ static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
->  }
->  #endif
->  
-> +/* Mark vmcore as being able and willing to do 64-bit mmaps */
-> +static int vmcore_open(struct inode *inode, struct file *file)
-> +{
-> +	file->f_mode |= FMODE_UNSIGNED_OFFSET;
-> +	return 0;
-> +}
-> +
->  static const struct file_operations proc_vmcore_operations = {
-> +	.open		= vmcore_open,
->  	.read		= read_vmcore,
->  	.llseek		= default_llseek,
->  	.mmap		= mmap_vmcore,
+We check what perf_config__init() does at each perf_config() call,
+namely if the static perf_config instance was created, so instead of
+bailing out in that case, try to allocate it, bailing if it fails.
+
+Now to get the perf_config() call out of the start of perf's main()
+function, doing it also lazily.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-4bo45k6ivsmbxpfpdte4orsg@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/perf.c        |  1 -
+ tools/perf/util/config.c | 16 +++++++++-------
+ tools/perf/util/config.h |  1 -
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 20a08cb32332..cd6ea55d4b0c 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -458,7 +458,6 @@ int main(int argc, const char **argv)
+ 
+ 	srandom(time(NULL));
+ 
+-	perf_config__init();
+ 	err = perf_config(perf_default_config, NULL);
+ 	if (err)
+ 		return err;
+diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
+index 84eb9393c7db..5ac157056cdf 100644
+--- a/tools/perf/util/config.c
++++ b/tools/perf/util/config.c
+@@ -707,6 +707,14 @@ struct perf_config_set *perf_config_set__new(void)
+ 	return set;
+ }
+ 
++static int perf_config__init(void)
++{
++	if (config_set == NULL)
++		config_set = perf_config_set__new();
++
++	return config_set == NULL;
++}
++
+ int perf_config(config_fn_t fn, void *data)
+ {
+ 	int ret = 0;
+@@ -714,7 +722,7 @@ int perf_config(config_fn_t fn, void *data)
+ 	struct perf_config_section *section;
+ 	struct perf_config_item *item;
+ 
+-	if (config_set == NULL)
++	if (config_set == NULL && perf_config__init())
+ 		return -1;
+ 
+ 	perf_config_set__for_each_entry(config_set, section, item) {
+@@ -735,12 +743,6 @@ int perf_config(config_fn_t fn, void *data)
+ 	return ret;
+ }
+ 
+-void perf_config__init(void)
+-{
+-	if (config_set == NULL)
+-		config_set = perf_config_set__new();
+-}
+-
+ void perf_config__exit(void)
+ {
+ 	perf_config_set__delete(config_set);
+diff --git a/tools/perf/util/config.h b/tools/perf/util/config.h
+index baf82bf227ac..bd0a5897c76a 100644
+--- a/tools/perf/util/config.h
++++ b/tools/perf/util/config.h
+@@ -38,7 +38,6 @@ struct perf_config_set *perf_config_set__new(void);
+ void perf_config_set__delete(struct perf_config_set *set);
+ int perf_config_set__collect(struct perf_config_set *set, const char *file_name,
+ 			     const char *var, const char *value);
+-void perf_config__init(void);
+ void perf_config__exit(void);
+ void perf_config__refresh(void);
+ 
