@@ -1,132 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752526AbeESWmJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:42:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49304 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752280AbeESWmG (ORCPT
+        id S1752529AbeESWp4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 18:45:56 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35561 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeESWpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 18:42:06 -0400
-Subject: Re: [PATCH v2] kbuild: check for pkg-config on make
- {menu,n,g,x}config
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>
-References: <9e9438b0-568a-8dc0-dad6-d29b6e39e53a@infradead.org>
- <CAK7LNAQxcVRvhJn6GQVdLLuEq0sJEUcfwkbMpmx9j9nbjscQRg@mail.gmail.com>
- <3ce8f87d-69fa-231a-b51c-9805e6525032@infradead.org>
- <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d5bf517b-fb51-043c-737e-28e00354e630@infradead.org>
-Date: Sat, 19 May 2018 15:42:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 19 May 2018 18:45:54 -0400
+X-Google-Smtp-Source: AB8JxZoa9OMTkm4bqw0GZvnys2rogyS1TNTXVWo8UTuG+1S+U+JCvfQ3X/r83C/wH2i1ayZci9jeGQ==
+Date: Sat, 19 May 2018 19:45:49 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+        davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        kliteyn@mellanox.com
+Subject: Re: [PATCH 14/14] net: sched: implement delete for all actions
+Message-ID: <20180519224549.GH5488@localhost.localdomain>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-15-git-send-email-vladbu@mellanox.com>
+ <20180516094850.GF1972@nanopsycho>
+ <vbf7eo32a7l.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vbf7eo32a7l.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/17/18 22:10, Masahiro Yamada wrote:
-> Hi Randy,
-> 
-> 2018-04-07 6:37 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->> On 03/14/2018 10:50 PM, Masahiro Yamada wrote:
->>> 2018-03-13 11:30 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->>>> From: Randy Dunlap <rdunlap@infradead.org>
->>>>
->>>> Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
->>>> that other required files are present, but none of these check that
->>>> pkg-config itself is present.  Add a check for all 4 of these targets.
->>>>
->>>> Fixes kernel bugzilla #77511:
->>>> https://bugzilla.kernel.org/show_bug.cgi?id=77511
->>>>
->>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>>> ---
->>>> v2: use 'command -v' instead of 'which'
->>>>
->>>> I'm also OK with just documenting the pkg-config requirement in
->>>> Documentation/Changes (= Documentation/process/changes.rst).
->>>>
->>>>  scripts/kconfig/Makefile           |   15 ++++++++++++++-
->>>>  scripts/kconfig/check-pkgconfig.sh |   12 ++++++++++++
->>>>  2 files changed, 26 insertions(+), 1 deletion(-)
->>>>
->>>> --- lnx-416-rc3.orig/scripts/kconfig/Makefile
->>>> +++ lnx-416-rc3/scripts/kconfig/Makefile
->>>> @@ -160,6 +160,9 @@ help:
->>>>         @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
->>>>         @echo  '  tinyconfig      - Configure the tiniest possible kernel'
->>>>
->>>> +# pkg-config check
->>>> +check-pkgconfig  := $(srctree)/$(src)/check-pkgconfig.sh
->>>> +
->>>>  # lxdialog stuff
->>>>  check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
->>>>
->>>> @@ -205,7 +208,17 @@ $(addprefix $(obj)/, mconf.o $(lxdialog)
->>>>  $(obj)/dochecklxdialog:
->>>>         $(Q)$(CONFIG_SHELL) $(check-lxdialog) -check $(HOSTCC) $(HOST_EXTRACFLAGS) $(HOSTLOADLIBES_mconf)
->>>>
->>>> -always := dochecklxdialog
->>>> +# Check that we have pkg-config (used by each of menu/n/g/xconfig)
->>>> +PHONY += $(obj)/docheckpkgconfig
->>>> +$(addprefix $(obj)/, mconf.o): $(obj)/docheckpkgconfig
->>>> +$(addprefix $(obj)/, nconf.o): $(obj)/docheckpkgconfig
->>>> +$(addprefix $(obj)/, gconf.o): $(obj)/docheckpkgconfig
->>>> +$(addprefix $(obj)/, qconf.o): $(obj)/docheckpkgconfig
->>>> +
->>>> +$(obj)/docheckpkgconfig:
->>>> +       $(Q)$(CONFIG_SHELL) $(check-pkgconfig)
->>>> +
->>>> +always := docheckpkgconfig dochecklxdialog
->>>
->>>
->>> I did not test this patch, but does this check work as expected?
->>>
->>> Probably we want to run 'docheckpkgconfig'
->>> before 'dochecklxdiag', '.tmp_gtkcheck', '.tmp_qtcheck', etc.
->>> But, I do not see such dependencies.
->>>
->>>
->>> Also, if we make 'pkg-config' mandatory,
->>> should we entirely drop fall-back logics like follows?
->>>
->>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L10
->>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L29
->>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/Makefile#L230
->>>
->>>
->>> What do you think?
->>>
->>
->> Hi,
->>
->> I'm willing to keep patching/testing on this, but both pkg-config and depmod
->> (for depmod, see: https://bugzilla.kernel.org/show_bug.cgi?id=198965)
->> are basic requirements IMO, so just documenting their requirements is good
->> enough to me, but might not be good enough for some users.
->>
->> Comments?
-> 
-> Sorry for late comments.
-> 
-> OK, I am fine with making pkg-config a requirement.
-> (and it should be documented)
-> 
-> But, I'd like to clean-up scripts/kconfig/Makefile first.
-> It is already cluttered, and hesitate to add new code based on that.
-> I posted the patches.
-> 
-> Could you send v3 after the cleaning work is done?
+On Wed, May 16, 2018 at 12:58:38PM +0300, Vlad Buslov wrote:
+>
+> On Wed 16 May 2018 at 09:48, Jiri Pirko <jiri@resnulli.us> wrote:
+> > Mon, May 14, 2018 at 04:27:15PM CEST, vladbu@mellanox.com wrote:
+> >>Implement delete function that is required to delete actions without
+> >>holding rtnl lock. Use action API function that atomically deletes action
+> >>only if it is still in action idr. This implementation prevents concurrent
+> >>threads from deleting same action twice.
+> >>
+> >>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+> >>---
+> >> net/sched/act_bpf.c        |  8 ++++++++
+> >> net/sched/act_connmark.c   |  8 ++++++++
+> >> net/sched/act_csum.c       |  8 ++++++++
+> >> net/sched/act_gact.c       |  8 ++++++++
+> >> net/sched/act_ife.c        |  8 ++++++++
+> >> net/sched/act_ipt.c        | 16 ++++++++++++++++
+> >> net/sched/act_mirred.c     |  8 ++++++++
+> >> net/sched/act_nat.c        |  8 ++++++++
+> >> net/sched/act_pedit.c      |  8 ++++++++
+> >> net/sched/act_police.c     |  8 ++++++++
+> >> net/sched/act_sample.c     |  8 ++++++++
+> >> net/sched/act_simple.c     |  8 ++++++++
+> >> net/sched/act_skbedit.c    |  8 ++++++++
+> >> net/sched/act_skbmod.c     |  8 ++++++++
+> >> net/sched/act_tunnel_key.c |  8 ++++++++
+> >> net/sched/act_vlan.c       |  8 ++++++++
+> >> 16 files changed, 136 insertions(+)
+> >>
+> >>diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+> >>index 0bf4ecf..36f7f66 100644
+> >>--- a/net/sched/act_bpf.c
+> >>+++ b/net/sched/act_bpf.c
+> >>@@ -394,6 +394,13 @@ static int tcf_bpf_search(struct net *net, struct tc_action **a, u32 index,
+> >> 	return tcf_idr_search(tn, a, index);
+> >> }
+> >>
+> >>+static int tcf_bpf_delete(struct net *net, u32 index)
+> >>+{
+> >>+	struct tc_action_net *tn = net_generic(net, bpf_net_id);
+> >>+
+> >>+	return tcf_idr_find_delete(tn, index);
+> >>+}
+> >>+
+> >> static struct tc_action_ops act_bpf_ops __read_mostly = {
+> >> 	.kind		=	"bpf",
+> >> 	.type		=	TCA_ACT_BPF,
+> >>@@ -404,6 +411,7 @@ static struct tc_action_ops act_bpf_ops __read_mostly = {
+> >> 	.init		=	tcf_bpf_init,
+> >> 	.walk		=	tcf_bpf_walker,
+> >> 	.lookup		=	tcf_bpf_search,
+> >>+	.delete		=	tcf_bpf_delete,
+> >
+> > I wonder, right before this patch, how the idr index got removed?
+> > delete op is NULL and I didn't find anyone else to do it.
 
-Sure, I'll give it a try.
+AFAICT this also means it is leaking idr's till this patch is applied.
+Maybe I missed something.
 
-thanks.
--- 
-~Randy
+> >
+> > Also, after this patch, does it make sense to have following check in
+> > tcf_action_del_1()?
+> >
+> >        if (ops->delete)
+> > 	       err = ops->delete(net, index);
+> >
+> > Looks like ops->delete is non-null for all.
+> >
+> > Seems to me that you need to introduce this patch filling up the delete
+> > op in all acts and only after that introduce a code that actually calls
+> > it.
+>
+> Already moved this for V2 patchset to:
+>   - Add delete callback to ops and implement it for all actions in single
+>   patch.
+>   - Move this patch before delete first use.
+>
+> Will now remove the conditional as well.
+>
+> >
+> > [...]
+>
