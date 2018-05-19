@@ -1,86 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeESIUS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 04:20:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46405 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751888AbeESIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 04:20:13 -0400
-Date: Sat, 19 May 2018 01:18:59 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180518175136.GB2055@avx2>
-References: <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com> <20180515214337.GA18021@avx2> <20180515222211.ods5hzne46hozojq@treble> <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com> <20180515224354.zmygmsnlqj5lrdbo@treble> <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com> <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com> <20180516033044.odb74pdgcn5nacwb@treble> <20180517134934.eog2fgoby5azq5a7@treble> <20180518071814.GB26358@gmail.com> <20180518175136.GB2055@avx2>
+        id S1752304AbeESI0G (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 04:26:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751878AbeESI0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 04:26:01 -0400
+Subject: Re: [PATCH rdma-next 1/5] RDMA/hns: Implement the
+ disassociate_ucontext API
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <1526544173-106587-1-git-send-email-xavier.huwei@huawei.com>
+ <1526544173-106587-2-git-send-email-xavier.huwei@huawei.com>
+ <20180517150019.GB10842@ziepe.ca>
+CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xavier.huwei@tom.com>,
+        <lijun_nudt@163.com>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5AFFDF48.9010805@huawei.com>
+Date: Sat, 19 May 2018 16:24:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] objtool: Detect assembly code falling through to INT3 padding
-To: Alexey Dobriyan <adobriyan@gmail.com>, Ingo Molnar <mingo@kernel.org>
-CC: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Anvin <h.peter.anvin@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tipbuild@zytor.com, LKP <lkp@01.org>
-From: hpa@zytor.com
-Message-ID: <84F157C1-AD98-473D-9CF6-2A26A499DECF@zytor.com>
+In-Reply-To: <20180517150019.GB10842@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 18, 2018 10:51:36 AM PDT, Alexey Dobriyan <adobriyan@gmail.com> wrote:
->On Fri, May 18, 2018 at 09:18:14AM +0200, Ingo Molnar wrote:
->> The concept of built-in kernel tooling working at the machine code
->level is just 
->> so powerful - we should have added our own KCC compiler 20 years ago.
->
->...for two very serious reasons
->
->* C as a language moves very slowly, last help from the comittee were
->  C99 intializers which are OK, but, say, memory model was explictly
->  rejected. However the project expands and becomes more complex much
->  faster than C working group sets up meetings. Compiler authors help
->with extensions but ultimately can not be relied on (see "inline"
->saga).
->
->  Recently everyone was celebrating new and improved min() and max()
-> macros admiring creativity and knowledge of intricate language details
->  (me too, don't get this wrong).
->
->  Now this is how it can be done in a language which is not stupid:
->
->	constexpr int min(int a, int b)
->	{
->		return a < b ? a : b;
->	}
->
->  That's literally all. And you can also do
->
->	template<typename T>
->	void min(T a, char b) = delete;
->
->	template<typename T>
->	void min(char a, T b) = delete;
->
->  because "char" is char.
->
->  Having control over compiler things like that can be addded more
->  quickly.
->
->
->* insulating the project from the whims of compiler authors who every
->  once in a while use "undefined behaviour" or other kinds of language
->  lawyering to do strange things.
->
->  Other serious projects do this too. Database people use O_DIRECT
->  to insulate themselves from kernel people for the very same reasons.
 
-Sounds like you are proposing switching to C++ more than anything else.
 
-*Steps aside and grabs popcorn*
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+On 2018/5/17 23:00, Jason Gunthorpe wrote:
+> On Thu, May 17, 2018 at 04:02:49PM +0800, Wei Hu (Xavier) wrote:
+>> This patch Implements the IB core disassociate_ucontext API.
+>>
+>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>>  drivers/infiniband/hw/hns/hns_roce_main.c | 36 +++++++++++++++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+>> index 96fb6a9..7fafe9d 100644
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+>> @@ -33,6 +33,9 @@
+>>  #include <linux/acpi.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/module.h>
+>> +#include <linux/sched.h>
+>> +#include <linux/sched/mm.h>
+>> +#include <linux/sched/task.h>
+>>  #include <rdma/ib_addr.h>
+>>  #include <rdma/ib_smi.h>
+>>  #include <rdma/ib_user_verbs.h>
+>> @@ -422,6 +425,38 @@ static int hns_roce_port_immutable(struct ib_device *ib_dev, u8 port_num,
+>>  	return 0;
+>>  }
+>>  
+>> +static void hns_roce_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>> +{
+>> +	struct task_struct *process;
+>> +	struct mm_struct   *mm;
+>> +
+>> +	process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>> +	if (!process)
+>> +		return;
+>> +
+>> +	mm = get_task_mm(process);
+>> +	if (!mm) {
+>> +		pr_info("no mm, disassociate ucontext is pending task termination\n");
+>> +		while (1) {
+>> +			put_task_struct(process);
+>> +			usleep_range(1000, 2000);
+>> +			process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>> +			if (!process || process->state == TASK_DEAD) {
+>> +				pr_info("disassociate ucontext done, task was terminated\n");
+>> +				/* if task was dead, need to release the task
+>> +				 * struct.
+>> +				 */
+>> +				if (process)
+>> +					put_task_struct(process);
+>> +				return;
+>> +			}
+>> +		}
+>> +	}
+> I don't want to see this boilerplate code copied into every
+> driver. Hoist it into the core code, have the disassociate driver callback
+> accept a mm_struct parameter, and refactor the other drivers using this.
+
+When the userspace RDMA application process is suspended for some reason
+without executing ibv_close_device function,
+There will be calltrace as follows when rmmod roce kernel driver ko in
+the current version.
+It looks like a common problem to every driver and the code segment
+above is suitable for every driver.
+Pardon me for asking, but if you have any plan to do this?
+
+root@(none)# rmmod
+../ko/hns-roce-hw-v2.ko                                                                                         
+
+[ 1222.676069] INFO: task rmmod:1996 blocked for more than 120
+seconds.                                                            
+[ 1222.682423]       Not tainted 4.16.0-rc1-29112-ge237d0c-dirty
+#15                                                               
+[ 1222.688507] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.                                           
+[ 1222.696327] rmmod           D    0  1996   1951
+0x00000000                                                                      
+
+[ 1222.701807] Call
+trace:                                                                                                         
+
+[ 1222.704252] 
+__switch_to+0x9c/0xd8                                                                                              
+
+[ 1222.707644] 
+__schedule+0x1d8/0x854                                                                                             
+
+[ 1222.711125] 
+schedule+0x3c/0x9c                                                                                                 
+
+[ 1222.714258] 
+schedule_timeout+0x1dc/0x3f8                                                                                       
+
+[ 1222.718260] 
+wait_for_common+0x120/0x1e0                                                                                        
+
+[ 1222.722174] 
+wait_for_completion+0x28/0x34                                                                                      
+
+[ 1222.726264] 
+ib_uverbs_remove_one+0x29c/0x2bc                                                                                   
+
+[ 1222.730614] 
+ib_unregister_device+0xe8/0x198                                                                                    
+
+[ 1222.734888]  hns_roce_exit+0xb4/0xc4
+[hns_roce]                                                                                 
+
+[ 1222.739414]  hns_roce_hw_v2_uninit_instance+0x24/0x40
+[hns_roce_hw_v2]                                                          
+[ 1222.745934] 
+hclge_uninit_client_instance+0x88/0xb8                                                                             
+
+[ 1222.750803] 
+hnae3_match_n_instantiate+0xbc/0xd0                                                                                
+
+[ 1222.755411] 
+hnae3_unregister_client+0x50/0xb0                                                                                  
+
+[ 1222.759850]  hns_roce_hw_v2_exit+0x10/0xd48
+[hns_roce_hw_v2]                                                                    
+
+[ 1222.765501] 
+SyS_delete_module+0x1e8/0x238                                                                                      
+
+[ 1222.769589] 
+el0_svc_naked+0x30/0x34                                                                                            
+
+   
+Thanks, Jason
+
+>> +	mmput(mm);
+>> +	put_task_struct(process);
+>> +}
+> This can't be right, disassociate requires the driver to replace all
+> the mmaps it make to user space with the 0 page, I see hns does use
+> mmaps, so it must zap them here.
+Ok, got it.
+>
+> Jason
+>
+> .
+>
