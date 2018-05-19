@@ -1,383 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeESOAf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 10:00:35 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:48121 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752285AbeESOAd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 10:00:33 -0400
-Subject: Re: [PATCH 3/3] drm/tinydrm: new driver for ILI9341 display panels
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        David Lechner <david@lechnology.com>
-Cc: dri-devel@lists.freedesktop.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180515014349.26226-1-david@lechnology.com>
- <20180515014349.26226-4-david@lechnology.com>
- <CAHp75VekNQyJa4KrezVq6dpr7NG3--mdZS9qka6CZjH9BdJxXQ@mail.gmail.com>
-From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <d0de831b-a7a3-eab3-2508-da50c346edae@tronnes.org>
-Date: Sat, 19 May 2018 16:00:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VekNQyJa4KrezVq6dpr7NG3--mdZS9qka6CZjH9BdJxXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1752466AbeESOKK (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 10:10:10 -0400
+Received: from mout.gmx.net ([212.227.17.22]:41733 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752317AbeESOKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 10:10:07 -0400
+Message-ID: <1526738996.5365.1.camel@gmx.de>
+Subject: Re: [PATCH] x86: UV: raw_spinlock conversion
+From: Mike Galbraith <gleep@gmx.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Date: Sat, 19 May 2018 16:09:56 +0200
+In-Reply-To: <20180507073928.shmtfpqyhgxya53b@linutronix.de>
+References: <20180504111459.24825-1-bigeasy@linutronix.de>
+         <20180504111459.24825-2-bigeasy@linutronix.de>
+         <alpine.DEB.2.21.1805061225550.1685@nanos.tec.linutronix.de>
+         <1525604359.28142.3.camel@gmx.de>
+         <20180507073928.shmtfpqyhgxya53b@linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:4iExFV1RY4vPjPkV23iNzmGwhJ4R5aTw4Z7722JhKqiJG+ncYlk
+ feuu9Fa7frSKA6+rKg7O4gQA4E2xSkAftMhQx8wIPgVPPjYOcL5dGn+1P4LYhYWpOZdVfTj
+ qbmQqJUS51vqiyzU0V6yusnKFL7tSlWe+3hFzBIvlGBv01GPWIPsqz0qc2+6+/h3Mvws4uP
+ zVMlm5MSgZEpnqjtDdFsQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8pNJfSQQWY8=:anZUNizViUI6kM+YROB9iF
+ moLWJMjsrHMPrl0Y06iU1AQqAWf9FmalpFFpaiNjwnE9X79JbNt99oHHYi3fmQs2FpdaEA6Sk
+ +3M6qqZcHMYcSgksO4QonAwIvZ7VDUhT/gew9t9rc61fFU0PgczTdvQJpO2+mwk5YIW3NVEpY
+ GUdfMEnjujFQyX0u0q0vurWTqaIH5CjBzdqV8GthE7y95J6Isg/+qtFkhYnG1TArhNuLdHwz7
+ 0MKHvcvvtxck4+NbZBEl6xPh3+OWlIJ/KhFRRMuchBEMDMGu9ZoxTl3SCALdHnMc9Ruf4snBd
+ RVVgeLCsg/U9g57mfv6HNMEWrYXU7SsdYZ15XjSvNOncwEdyMTBXxuquu6m59e6tyeqAwwZpo
+ TT494ur783+0f8SQbV5UQD1Luu/4SDEBLqxrdpTYb0TnlgUfUSM7ei9vEWxbmX6q7iDfWLgPT
+ Yf6zhRO43RBaUcS4d9OwwMNQgfDJmXlP1i+qwx7C8C547ZOmjz3L0vRIkFoiB2W3UKbq9Ktqk
+ 5otYBUkWHGQcdwYvUcbf+91d3vh2ckvGJ1qJY2HZiEbQ9Ijb489m/Yr/Xl6yEVA8vDIGlb2lX
+ my7S/2+C9bboi2DKW4e9zWGeFdLKaNYUI3cdJz7PVnXdDB+S9HHLrltqnd6UhEm9ggZYrKyY3
+ evLTHgrhndPVdh2wits4FNSOSZuEGwk4hr90xNe4dRFtddutaI21dlgor3pB1Eq+nLqQXPLkd
+ HnzDql6AURNI6Zf6BzcoPkAVQKI5p5dh7dtCLBr+FEc0Qd/Xry4yVlLoA0cVOsWYNKyayv7Iw
+ weA2god
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-05-07 at 09:39 +0200, Sebastian Andrzej Siewior wrote:
+> On 2018-05-06 12:59:19 [+0200], Mike Galbraith wrote:
+> > On Sun, 2018-05-06 at 12:26 +0200, Thomas Gleixner wrote:
+> > > On Fri, 4 May 2018, Sebastian Andrzej Siewior wrote:
+> > > 
+> > > > From: Mike Galbraith <umgwanakikbuti@gmail.com>
+> > > > 
+> > > > Shrug.  Lots of hobbyists have a beast in their basement, right?
+> > > 
+> > > This hardly qualifies as a proper changelog ...
+> > 
+> > Hm, that wasn't intended to be a changelog.
+> > 
+> > This patch may not be current either, I haven't tested RT on a UV box
+> > in quite some time.
+> 
+> That last hunk looks like something that would be required even for !RT. 
+> Would you mind to check that patch and write a changelog? If it doesn't
+> work for RT there is no need to carry this in -RT.
 
-Den 15.05.2018 23.43, skrev Andy Shevchenko:
-> On Tue, May 15, 2018 at 4:43 AM, David Lechner <david@lechnology.com> wrote:
->> This adds a new driver for display panels that use the Ilitek ILI9341
->> controller. It currently supports a single display panel, namely
->> the YX240QV29-T (e.g. Adafruit 2.4" TFT).
->>
->> The init sequence is from the Adafruit Python library for the ILI9341
->> controller. https://github.com/adafruit/Adafruit_Python_ILI9341
-> Some minor style nitpicks, otherwise LGTM
->
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>   MAINTAINERS                       |   6 +
->>   drivers/gpu/drm/tinydrm/Kconfig   |  10 ++
->>   drivers/gpu/drm/tinydrm/Makefile  |   1 +
->>   drivers/gpu/drm/tinydrm/ili9341.c | 239 ++++++++++++++++++++++++++++++
->>   4 files changed, 256 insertions(+)
->>   create mode 100644 drivers/gpu/drm/tinydrm/ili9341.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index bc219de9cbee..ffa099abbd79 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -4480,6 +4480,12 @@ S:       Maintained
->>   F:     drivers/gpu/drm/tinydrm/ili9225.c
->>   F:     Documentation/devicetree/bindings/display/ilitek,ili9225.txt
->>
->> +DRM DRIVER FOR ILITEK ILI9341 PANELS
->> +M:     David Lechner <david@lechnology.com>
->> +S:     Maintained
->> +F:     drivers/gpu/drm/tinydrm/ili9341.c
->> +F:     Documentation/devicetree/bindings/display/ilitek,ili9341.txt
->> +
->>   DRM DRIVER FOR INTEL I810 VIDEO CARDS
->>   S:     Orphan / Obsolete
->>   F:     drivers/gpu/drm/i810/
->> diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
->> index 4592a5e3f20b..7a8008b0783f 100644
->> --- a/drivers/gpu/drm/tinydrm/Kconfig
->> +++ b/drivers/gpu/drm/tinydrm/Kconfig
->> @@ -20,6 +20,16 @@ config TINYDRM_ILI9225
->>
->>            If M is selected the module will be called ili9225.
->>
->> +config TINYDRM_ILI9341
->> +       tristate "DRM support for ILI9341 display panels"
->> +       depends on DRM_TINYDRM && SPI
-> Can't we do something like
->
-> if SPI
->
-> ...
->
-> endif
->
-> ?
->
->> +       select TINYDRM_MIPI_DBI
->> +       help
->> +         DRM driver for the following Ilitek ILI9341 panels:
->> +         * YX240QV29-T 2.4" 240x320 TFT (Adafruit 2.4")
->> +
->> +         If M is selected the module will be called ili9341.
->> +
->>   config TINYDRM_MI0283QT
->>          tristate "DRM support for MI0283QT"
->>          depends on DRM_TINYDRM && SPI
->> diff --git a/drivers/gpu/drm/tinydrm/Makefile b/drivers/gpu/drm/tinydrm/Makefile
->> index 49a111929724..14d99080665a 100644
->> --- a/drivers/gpu/drm/tinydrm/Makefile
->> +++ b/drivers/gpu/drm/tinydrm/Makefile
->> @@ -5,6 +5,7 @@ obj-$(CONFIG_TINYDRM_MIPI_DBI)          += mipi-dbi.o
->>
->>   # Displays
->>   obj-$(CONFIG_TINYDRM_ILI9225)          += ili9225.o
->> +obj-$(CONFIG_TINYDRM_ILI9341)          += ili9341.o
->>   obj-$(CONFIG_TINYDRM_MI0283QT)         += mi0283qt.o
->>   obj-$(CONFIG_TINYDRM_REPAPER)          += repaper.o
->>   obj-$(CONFIG_TINYDRM_ST7586)           += st7586.o
->> diff --git a/drivers/gpu/drm/tinydrm/ili9341.c b/drivers/gpu/drm/tinydrm/ili9341.c
->> new file mode 100644
->> index 000000000000..2ce4244a68c3
->> --- /dev/null
->> +++ b/drivers/gpu/drm/tinydrm/ili9341.c
->> @@ -0,0 +1,239 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * DRM driver for Ilitek ILI9341 panels
->> + *
->> + * Copyright 2018 David Lechner <david@lechnology.com>
->> + *
->> + * Based on mi0283qt.c:
->> + * Copyright 2016 Noralf Trønnes
->> + */
->> +
->> +#include <linux/backlight.h>
->> +#include <linux/delay.h>
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/module.h>
->> +#include <linux/property.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/spi/spi.h>
->> +
->> +#include <drm/drm_fb_helper.h>
->> +#include <drm/drm_modeset_helper.h>
->> +#include <drm/drm_gem_framebuffer_helper.h>
-> Can it be in order?
->
->> +#include <drm/tinydrm/mipi-dbi.h>
->> +#include <drm/tinydrm/tinydrm-helpers.h>
->> +#include <video/mipi_display.h>
->> +
->> +#define ILI9341_FRMCTR1                0xb1
->> +#define ILI9341_DISCTRL                0xb6
->> +#define ILI9341_ETMOD          0xb7
->> +
->> +#define ILI9341_PWCTRL1                0xc0
->> +#define ILI9341_PWCTRL2                0xc1
->> +#define ILI9341_VMCTRL1                0xc5
->> +#define ILI9341_VMCTRL2                0xc7
->> +#define ILI9341_PWCTRLA                0xcb
->> +#define ILI9341_PWCTRLB                0xcf
->> +
->> +#define ILI9341_PGAMCTRL       0xe0
->> +#define ILI9341_NGAMCTRL       0xe1
->> +#define ILI9341_DTCTRLA                0xe8
->> +#define ILI9341_DTCTRLB                0xea
->> +#define ILI9341_PWRSEQ         0xed
->> +
->> +#define ILI9341_EN3GAM         0xf2
->> +#define ILI9341_PUMPCTRL       0xf7
->> +
->> +#define ILI9341_MADCTL_BGR     BIT(3)
->> +#define ILI9341_MADCTL_MV      BIT(5)
->> +#define ILI9341_MADCTL_MX      BIT(6)
->> +#define ILI9341_MADCTL_MY      BIT(7)
->> +
->> +static void yx240qv29_enable(struct drm_simple_display_pipe *pipe,
->> +                            struct drm_crtc_state *crtc_state,
->> +                            struct drm_plane_state *plane_state)
->> +{
->> +       struct tinydrm_device *tdev = pipe_to_tinydrm(pipe);
->> +       struct mipi_dbi *mipi = mipi_dbi_from_tinydrm(tdev);
->> +       u8 addr_mode;
->> +       int ret;
->> +
->> +       DRM_DEBUG_KMS("\n");
->> +
->> +       ret = mipi_dbi_poweron_conditional_reset(mipi);
->> +       if (ret < 0)
->> +               return;
->> +       if (ret == 1)
->> +               goto out_enable;
->> +
->> +       mipi_dbi_command(mipi, MIPI_DCS_SET_DISPLAY_OFF);
->> +
->> +       mipi_dbi_command(mipi, ILI9341_PWCTRLB, 0x00, 0xc1, 0x30);
->> +       mipi_dbi_command(mipi, ILI9341_PWRSEQ, 0x64, 0x03, 0x12, 0x81);
->> +       mipi_dbi_command(mipi, ILI9341_DTCTRLA, 0x85, 0x00, 0x78);
->> +       mipi_dbi_command(mipi, ILI9341_PWCTRLA, 0x39, 0x2c, 0x00, 0x34, 0x02);
->> +       mipi_dbi_command(mipi, ILI9341_PUMPCTRL, 0x20);
->> +       mipi_dbi_command(mipi, ILI9341_DTCTRLB, 0x00, 0x00);
->> +
->> +       /* Power Control */
->> +       mipi_dbi_command(mipi, ILI9341_PWCTRL1, 0x23);
->> +       mipi_dbi_command(mipi, ILI9341_PWCTRL2, 0x10);
->> +       /* VCOM */
->> +       mipi_dbi_command(mipi, ILI9341_VMCTRL1, 0x3e, 0x28);
->> +       mipi_dbi_command(mipi, ILI9341_VMCTRL2, 0x86);
->> +
->> +       /* Memory Access Control */
->> +       mipi_dbi_command(mipi, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_16BIT);
->> +
->> +       /* Frame Rate */
->> +       mipi_dbi_command(mipi, ILI9341_FRMCTR1, 0x00, 0x1b);
->> +
->> +       /* Gamma */
->> +       mipi_dbi_command(mipi, ILI9341_EN3GAM, 0x00);
->> +       mipi_dbi_command(mipi, MIPI_DCS_SET_GAMMA_CURVE, 0x01);
->> +       mipi_dbi_command(mipi, ILI9341_PGAMCTRL,
->> +                        0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
->> +                        0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00);
->> +       mipi_dbi_command(mipi, ILI9341_NGAMCTRL,
->> +                        0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
->> +                        0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f);
->> +
->> +       /* DDRAM */
->> +       mipi_dbi_command(mipi, ILI9341_ETMOD, 0x07);
->> +
->> +       /* Display */
->> +       mipi_dbi_command(mipi, ILI9341_DISCTRL, 0x08, 0x82, 0x27, 0x00);
->> +       mipi_dbi_command(mipi, MIPI_DCS_EXIT_SLEEP_MODE);
->> +       msleep(100);
->> +
->> +       mipi_dbi_command(mipi, MIPI_DCS_SET_DISPLAY_ON);
->> +       msleep(100);
->> +
->> +out_enable:
->> +       switch (mipi->rotation) {
->> +       default:
->> +               addr_mode = ILI9341_MADCTL_MX;
->> +               break;
->> +       case 90:
->> +               addr_mode = ILI9341_MADCTL_MV;
->> +               break;
->> +       case 180:
->> +               addr_mode = ILI9341_MADCTL_MY;
->> +               break;
->> +       case 270:
->> +               addr_mode = ILI9341_MADCTL_MV | ILI9341_MADCTL_MY |
->> +                           ILI9341_MADCTL_MX;
->> +               break;
->> +       }
->> +       addr_mode |= ILI9341_MADCTL_BGR;
->> +       mipi_dbi_command(mipi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
->> +       mipi_dbi_enable_flush(mipi, crtc_state, plane_state);
->> +}
->> +
->> +static const struct drm_simple_display_pipe_funcs ili9341_pipe_funcs = {
->> +       .enable = yx240qv29_enable,
->> +       .disable = mipi_dbi_pipe_disable,
->> +       .update = tinydrm_display_pipe_update,
->> +       .prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
->> +};
->> +
->> +static const struct drm_display_mode yx240qv29_mode = {
->> +       TINYDRM_MODE(240, 320, 37, 49),
->> +};
->> +
->> +DEFINE_DRM_GEM_CMA_FOPS(ili9341_fops);
->> +
->> +static struct drm_driver ili9341_driver = {
->> +       .driver_features        = DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME |
->> +                                 DRIVER_ATOMIC,
-> I would rather keep one per line, or all at one line disregard 80
-> character limit.
+None of that patch is needed for a UV3000, but the below is.  It's
+likely still valid for now ancient UV boxen, but the UV100 the patch
+was originally written for (2011/2.6.33-rt) has apparently wandered off
+to become a beer keg or something meanwhile, so I can't test.
 
-I prefer on one line. I've started to use 100 character limit when it
-makes sense, because all these linebreaks makes the code harder to read
-(checkpatch.pl --max-line-length=100).
+UV: Fix uv_bau_init() check_preemption_disabled() gripeage
 
-Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
+[    2.851947] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+[    2.851951] caller is uv_bau_init+0x28/0xb62
+[    2.851954] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc5-0.g3e3e37b-rt_debug
+[    2.851956] Hardware name: SGI UV3000/UV3000, BIOS SGI UV 3000 series BIOS 01/15/2015
+[    2.851957] Call Trace:
+[    2.851964]  dump_stack+0x85/0xcb
+[    2.851969]  check_preemption_disabled+0x10c/0x120
+[    2.851972]  ? init_per_cpu+0x88c/0x88c
+[    2.851974]  uv_bau_init+0x28/0xb62
+[    2.851979]  ? lapic_cal_handler+0xbb/0xbb
+[    2.851982]  ? rt_mutex_unlock+0x35/0x50
+[    2.851985]  ? init_per_cpu+0x88c/0x88c
+[    2.851988]  ? set_debug_rodata+0x11/0x11
+[    2.851991]  do_one_initcall+0x46/0x249
+[    2.851995]  kernel_init_freeable+0x207/0x29c
+[    2.851999]  ? rest_init+0xd0/0xd0
+[    2.852000]  kernel_init+0xa/0x110
+[    2.852000]  ret_from_fork+0x3a/0x50
 
-Noralf.
+(gdb) list *uv_bau_init+0x28
+0xffffffff824a4d96 is in uv_bau_init (./arch/x86/include/asm/uv/uv_hub.h:212).
+207             return (struct uv_hub_info_s *)__uv_hub_info_list[node];
+208     }
+209
+210     static inline struct uv_hub_info_s *_uv_hub_info(void)
+211     {
+212             return (struct uv_hub_info_s *)uv_cpu_info->p_uv_hub_info;
+213     }
+214     #define uv_hub_info     _uv_hub_info()
+215
+216     static inline struct uv_hub_info_s *uv_cpu_hub_info(int cpu)
+(gdb)
 
->> +       .fops                   = &ili9341_fops,
->> +       TINYDRM_GEM_DRIVER_OPS,
->> +       .lastclose              = drm_fb_helper_lastclose,
->> +       .debugfs_init           = mipi_dbi_debugfs_init,
->> +       .name                   = "ili9341",
->> +       .desc                   = "Ilitek ILI9341",
->> +       .date                   = "20180514",
->> +       .major                  = 1,
->> +       .minor                  = 0,
->> +};
->> +
->> +static const struct of_device_id ili9341_of_match[] = {
->> +       { .compatible = "noname,yx240qv29" },
->> +       {},
-> Terminators better w/o comma.
->
->> +};
->> +MODULE_DEVICE_TABLE(of, ili9341_of_match);
->> +
->> +static const struct spi_device_id ili9341_id[] = {
->> +       { "yx240qv29", 0 },
->> +       { },
-> Ditto.
->
->> +};
->> +MODULE_DEVICE_TABLE(spi, ili9341_id);
->> +
->> +static int ili9341_probe(struct spi_device *spi)
->> +{
->> +       struct device *dev = &spi->dev;
->> +       struct mipi_dbi *mipi;
->> +       struct gpio_desc *dc;
->> +       u32 rotation = 0;
->> +       int ret;
->> +
->> +       mipi = devm_kzalloc(dev, sizeof(*mipi), GFP_KERNEL);
->> +       if (!mipi)
->> +               return -ENOMEM;
->> +
->> +       mipi->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->> +       if (IS_ERR(mipi->reset)) {
->> +               DRM_DEV_ERROR(dev, "Failed to get gpio 'reset'\n");
->> +               return PTR_ERR(mipi->reset);
->> +       }
->> +
->> +       dc = devm_gpiod_get_optional(dev, "dc", GPIOD_OUT_LOW);
->> +       if (IS_ERR(dc)) {
->> +               DRM_DEV_ERROR(dev, "Failed to get gpio 'dc'\n");
->> +               return PTR_ERR(dc);
->> +       }
->> +
->> +       mipi->regulator = devm_regulator_get(dev, "power");
->> +       if (IS_ERR(mipi->regulator))
->> +               return PTR_ERR(mipi->regulator);
->> +
->> +       mipi->backlight = devm_of_find_backlight(dev);
->> +       if (IS_ERR(mipi->backlight))
->> +               return PTR_ERR(mipi->backlight);
->> +
->> +       device_property_read_u32(dev, "rotation", &rotation);
->
->> +
->> +       ret = mipi_dbi_spi_init(spi, mipi, dc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = mipi_dbi_init(&spi->dev, mipi, &ili9341_pipe_funcs,
->> +                           &ili9341_driver, &yx240qv29_mode, rotation);
->> +       if (ret)
->> +               return ret;
->> +
->> +       spi_set_drvdata(spi, mipi);
->> +
->> +       return devm_tinydrm_register(&mipi->tinydrm);
->> +}
->> +
->> +static void ili9341_shutdown(struct spi_device *spi)
->> +{
->> +       struct mipi_dbi *mipi = spi_get_drvdata(spi);
->> +
->> +       tinydrm_shutdown(&mipi->tinydrm);
->> +}
->> +
->> +static struct spi_driver ili9341_spi_driver = {
->> +       .driver = {
->> +               .name = "ili9341",
->> +               .of_match_table = ili9341_of_match,
->> +       },
->> +       .id_table = ili9341_id,
->> +       .probe = ili9341_probe,
->> +       .shutdown = ili9341_shutdown,
->> +};
->> +module_spi_driver(ili9341_spi_driver);
->> +
->> +MODULE_DESCRIPTION("Ilitek ILI9341 DRM driver");
->> +MODULE_AUTHOR("David Lechner <david@lechnology.com>");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.17.0
->>
->
->
+arch/x86/include/asm/uv/uv_hub.h:
+197 #define uv_cpu_info             this_cpu_ptr(&__uv_cpu_info)
+
+This and other substitutions make uv_bau_init() annoying for a PREEMPT
+kernel, but PREEMPT_RT can silence the lot with one migrate_disable().
+
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ arch/x86/platform/uv/tlb_uv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -2213,6 +2213,8 @@ static int __init uv_bau_init(void)
+ 	if (!is_uv_system())
+ 		return 0;
+ 
++	migrate_disable();
++
+ 	if (is_uv4_hub())
+ 		ops = uv4_bau_ops;
+ 	else if (is_uv3_hub())
+@@ -2269,6 +2271,8 @@ static int __init uv_bau_init(void)
+ 		}
+ 	}
+ 
++	migrate_enable();
++
+ 	return 0;
+ 
+ err_bau_disable:
+@@ -2276,6 +2280,7 @@ static int __init uv_bau_init(void)
+ 	for_each_possible_cpu(cur_cpu)
+ 		free_cpumask_var(per_cpu(uv_flush_tlb_mask, cur_cpu));
+ 
++	migrate_enable();
+ 	set_bau_off();
+ 	nobau_perm = 1;
+ 
