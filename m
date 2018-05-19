@@ -1,128 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752285AbeESBFs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 21:05:48 -0400
-Received: from p3plsmtpa08-10.prod.phx3.secureserver.net ([173.201.193.111]:52058
-        "EHLO p3plsmtpa08-10.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750957AbeESBFp (ORCPT
+        id S1752193AbeESBHm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 21:07:42 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41810 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbeESBHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 21:05:45 -0400
-Subject: Re: [RFC PATCH 00/09] Implement direct user I/O interfaces for RDMA
-To: Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-References: <20180518002214.5657-1-longli@linuxonhyperv.com>
- <d5eaf67d-4b0d-9206-a016-67cb3b5a0df8@talpey.com>
- <MWHPR2101MB0729BFF8F0A397805087C3A4CE900@MWHPR2101MB0729.namprd21.prod.outlook.com>
-From: Tom Talpey <tom@talpey.com>
-Message-ID: <d7ff714d-22ac-b011-915c-ed1cc52326ef@talpey.com>
-Date: Fri, 18 May 2018 17:58:25 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <MWHPR2101MB0729BFF8F0A397805087C3A4CE900@MWHPR2101MB0729.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfGTSZtpi1OP/9wvjFW6mVj8RfAxJrvnjzzlmMsBDvnOGFD35qwoCFlt8Ndz8bea7zdN1E/Rky43uYUiq5W97rlt7vPhPikFxap97xjoPSuQ8zU6potTn
- bmI+ytT5q2zpVGrYWd/gamYjpqw3R9o6PFhZwNvRIwXARj5v0CzBjVBqTevGM9Vla84ipTF86uHfxfO41lMzmye5FPVksckkM2yw/VrFf5cqfh8oxwqD4Yng
- vXg2/QMjstU+NRw8CCkoLUrV9B5QaMffQuGNln7fi97ZYNFgwoV10yayoy1xHcVYtdzRqjYpIKEsjXlr6xgUFfVA586peiNpl01Xv+uKR5mR0Kit0CZmt1Mg
- sYySEHpQ
+        Fri, 18 May 2018 21:07:37 -0400
+X-Google-Smtp-Source: AB8JxZp4ui0x3yrmRvUyJPDZpiZyQ1pF2w6bVpO6IwDs8VaXfA8X2gktPXP8OALNa1TW3RJQTzeUuw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] gpu: host1x: Skip IOMMU initialization if firewall is enabled
+Date: Sat, 19 May 2018 04:07:10 +0300
+Message-Id: <20180519010710.11693-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/2018 11:03 PM, Long Li wrote:
->> Subject: Re: [RFC PATCH 00/09] Implement direct user I/O interfaces for
->> RDMA
->>
->> On 5/17/2018 8:22 PM, Long Li wrote:
->>> From: Long Li <longli@microsoft.com>
->>>
->>> This patchset implements direct user I/O through RDMA.
->>>
->>> In normal code path (even with cache=none), CIFS copies I/O data from
->>> user-space to kernel-space for security reasons.
->>>
->>> With this patchset, a new mounting option is introduced to have CIFS
->>> pin the user-space buffer into memory and performs I/O through RDMA.
->>> This avoids memory copy, at the cost of added security risk.
->>
->> What's the security risk? This type of direct i/o behavior is not uncommon,
->> and can certainly be made safe, using the appropriate memory registration
->> and protection domains. Any risk needs to be stated explicitly, and mitigation
->> provided, or at least described.
-> 
-> I think it's an assumption that user-mode buffer can't be trusted, so CIFS always copies them into internal buffers, and calculate signature and encryption based on protocol used.
-> 
-> With the direct buffer, the user can potentially modify the buffer when signature or encryption is in progress or after they are done.
+Host1x's CDMA can't access the command buffers if IOMMU and Host1x
+firewall are enabled in the kernels config because firewall doesn't map
+the copied buffer into IOVA space. Fix this by skipping IOMMU
+initialization if firewall is enabled as firewall merges sparse cmdbufs
+into a single contiguous buffer and hence IOMMU isn't needed in this case.
 
-I don't agree that the legacy copying behavior is because the buffer is
-"untrusted". The buffer is the user's data, there's no trust issue here.
-If the user application modifies the buffer while it's being sent, it's
-a violation of the API contract, and the only victim is the application
-itself. Same applies for receiving data. And as pointed out, most all
-storage layers, file and block both, use this strategy for direct i/o.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/host1x/dev.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Regarding signing, if the application alters the data then the integrity
-hash will simply do its job and catch the application in the act. Again,
-nothing suffers but the application.
-
-Regarding encryption, I assume you're proposing to encrypt and decrypt
-the data in a kernel buffer, effectively a copy. So in fact, in the
-encryption case there's no need to pin and map the user buffer at all.
-
-I'll mention however that Windows takes the path of not performing
-RDMA placement when encrypting data. It saves nothing, and even adds
-some overhead, because of the need to touch the buffer anyway to
-manage the encryption/decryption.
-
-Bottom line - no security implication for using user buffers directly.
-
-Tom.
-
-
-> I also want to point out that, I choose to implement .read_iter and .write_iter from file_operations to implement direct I/O (CIFS is already doing this for O_DIRECT, so following this code path will avoid a big mess up).  The ideal choice is to implement .direct_IO from address_space_operations that I think eventually we want to move to.
-> 
->>
->> Tom.
->>
->>>
->>> This patchset is RFC. The work is in progress, do not merge.
->>>
->>>
->>> Long Li (9):
->>>     Introduce offset for the 1st page in data transfer structures
->>>     Change wdata alloc to support direct pages
->>>     Change rdata alloc to support direct pages
->>>     Change function to support offset when reading pages
->>>     Change RDMA send to regonize page offset in the 1st page
->>>     Change RDMA recv to support offset in the 1st page
->>>     Support page offset in memory regsitrations
->>>     Implement no-copy file I/O interfaces
->>>     Introduce cache=rdma moutning option
->>>
->>>
->>>    fs/cifs/cifs_fs_sb.h      |   2 +
->>>    fs/cifs/cifsfs.c          |  19 +++
->>>    fs/cifs/cifsfs.h          |   3 +
->>>    fs/cifs/cifsglob.h        |   6 +
->>>    fs/cifs/cifsproto.h       |   4 +-
->>>    fs/cifs/cifssmb.c         |  10 +-
->>>    fs/cifs/connect.c         |  13 +-
->>>    fs/cifs/dir.c             |   5 +
->>>    fs/cifs/file.c            | 351
->> ++++++++++++++++++++++++++++++++++++++++++----
->>>    fs/cifs/inode.c           |   4 +-
->>>    fs/cifs/smb2ops.c         |   2 +-
->>>    fs/cifs/smb2pdu.c         |  22 ++-
->>>    fs/cifs/smbdirect.c       | 132 ++++++++++-------
->>>    fs/cifs/smbdirect.h       |   2 +-
->>>    fs/read_write.c           |   7 +
->>>    include/linux/ratelimit.h |   2 +-
->>>    16 files changed, 489 insertions(+), 95 deletions(-)
->>>
-> N�����r��y���b�X��ǧv�^�)޺{.n�+����{��ٚ�{ay�ʇڙ�,j��f���h���z��w������j:+v���w�j�m��������zZ+�����ݢj"��!tml=
-> 
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index f1d5f76e9c33..d88073e7d22d 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -218,6 +218,9 @@ static int host1x_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
++		goto skip_iommu;
++
+ 	host->group = iommu_group_get(&pdev->dev);
+ 	if (host->group) {
+ 		struct iommu_domain_geometry *geometry;
+-- 
+2.17.0
