@@ -1,103 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeESKNG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:13:06 -0400
-Received: from mail-eopbgr10041.outbound.protection.outlook.com ([40.107.1.41]:19808
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752103AbeESKNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:13:04 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vladbu@mellanox.com;
-References: <1526658324-6570-1-git-send-email-vladbu@mellanox.com> <CAM_iQpUKjFPKAONSW42_6Mdp-VTTvaOx-GPDH2bJqW7LW1QYBw@mail.gmail.com>
-User-agent: mu4e 0.9.16; emacs 25.3.50.2
-From: Vlad Buslov <vladbu@mellanox.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: sched: don't disable bh when accessing action idr
-In-reply-to: <CAM_iQpUKjFPKAONSW42_6Mdp-VTTvaOx-GPDH2bJqW7LW1QYBw@mail.gmail.com>
-Date: Sat, 19 May 2018 13:12:49 +0300
-Message-ID: <vbflgcgnece.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
+        id S1752193AbeESKZU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:25:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36317 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeESKZP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 06:25:15 -0400
+Date: Sat, 19 May 2018 03:24:48 -0700
+From: tip-bot for Dmitry Safonov <tipbot@zytor.com>
+Message-ID: <tip-5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194@git.kernel.org>
+Cc: mingo@kernel.org, 0x7f454c46@gmail.com, dima@arista.com,
+        kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@suse.de,
+        luto@kernel.org, izbyshev@ispras.ru, gorcunov@openvz.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, amonakov@ispras.ru
+Reply-To: dima@arista.com, kirill.shutemov@linux.intel.com,
+        0x7f454c46@gmail.com, mingo@kernel.org, izbyshev@ispras.ru,
+        gorcunov@openvz.org, bp@suse.de, tglx@linutronix.de, luto@kernel.org,
+        amonakov@ispras.ru, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180517233510.24996-1-dima@arista.com>
+References: <20180517233510.24996-1-dima@arista.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
+Git-Commit-ID: 5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [37.142.13.130]
-X-ClientProxiedBy: VI1PR07CA0175.eurprd07.prod.outlook.com
- (2603:10a6:802:3e::23) To HE1PR05MB4700.eurprd05.prod.outlook.com
- (2603:10a6:7:9a::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB4700;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;3:27HngoUnW1hwP4gCo9rr0vLjC3CcT73CSsPPHrcEPemcvPitc1FfKQR0F4TmaDnX2rK57f0/Quf3yd+2/vKoVoHnC9+Wh+2PTr4mW+aLPq7Nc7cxYpp8tEka9kp1qcOFdaqziVsYj4C4hq2zrYHLIBx6Yi/iqi8H3yG0CC5HU7wW7kkWAiXSMHQOoy/bivM2UaDI+dvZGvns7vcFVI6hW+5ecEZ8kWWmxlvuPFV9dxnodH4ltY13fUALWXwIUHTB;25:Ne66hKjGh9d4iS0tgbAL3PFZLdLvQHVZ98kVoiwla6tr0NtZPk1rzA7ZorCuHdLhfmxefBQimI90H3kw78WFAsLKmrAhF5KHExFh5L/FFGpVlnQRlpyjSXiQ2LuoljrRRdAhhUyTW5mGC0q95ouWfKEOSebUp69RwVOOZjMXVE0UdlZMtKRo80hrkzOD3qUMl+E8zHVmwPPtctnV0OjLqvgC+XBP2HntNhxhO5nIRbMgWJlDkQVgyitns1kKgjnhVsPWNiTuDz7oqgWhvz6SoS4y8XLk8Iy+arvrFRUGI4SH1UGbmkK1AyhFHS/95khDcUdL51pMWBVPfzHx3zBseA==;31:jrecqavWa0cnW1SIWoHksOoEYrUNJ1PV7Rwxna/81R1Xp+JZFDoV287mDU8LxPMyYD7Um/xpx+p62ermVbQxuQ3YIWNZJv7g4x3vtUFwFOyjWaUmV2a2ibeuqGCoFQ+h4rKlCmHtkTh2073tGsGN+8SzaSeXe3OoaYEpMfDMq4Xc4XDfnYTAQsySzBjJD1V+D1bUtIOTYJvwZDzgyeBxDV/UzAposfs++/Fzke6s/jk=
-X-MS-TrafficTypeDiagnostic: HE1PR05MB4700:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;20:7mt+lAiKvNX5SNOWMLNBlbdZVIT5b+pRqSgf32aKSd6nVYRC0JNKiMTe6APlfAyEQmcDvxHHHlX6cbCzkTjEukGvLztgjkOgt1uzWi1T+N7TcD7/pllwFOyLQz+sci3C2RHc51wx/vn84jUtAPXBFKwaMT4/IZYIAikJE8ZsCNugFcGVxyVVacDpf2jo2ZNO3LJn5VKFQY+jQd7O9gz/2M2qHB/O2Ct3DJ9YJkcDu8SVHd0OldT/kMv1zaTBEuirR+crlVDvKtGVGyCWd2thCJbhBWoNUolQu9eyRxTyer7XSfQnUZj7zzYUSJxfQMdt5hHKUScGIsWZK+XzbJzTauKLP1vqWWBAdrHH5O2eo8r5LFDPwSx+UtKGT6xegPRddxSX0Zpi8tzZo5t2IbrkV/gmIncNbsvCZtSIDIeeW+qZ3uzrs0U0JRUftw7ZwkMc5AGa9utdrvql/6xPB6WdLvEiPjJfhSQiNF6n2EM/jmNmtK/SmpQ0HxxP/i6V8VBT;4:iR8cspbjigW0Y5tFAh65o3aQ41HrAhPppGrACzUsG7TXBkNhUQAET0yFw3AiNBVqP3nXBu04p1Cx9FQEeO5J74ZZ9u0bhDYk/I0TSCwS+iEmYNxpjD3qbhzlFCk8TH8K+qbg6GhHTV4ihO0guN1DwxVLgA7QhCaIA48NuFqSJi+dC/526jGHMao9S9tdCrsqM8ewMjaAUsirEP3SxoSfe7xV4K4MaIf0XrfsSzlj1LvDYeJy8C+z8UC/hoNtqc/oOY4aIIjO+stMYfiVjEGXyz74rdQLMr6KmQYgICv8p76ZCmZ5/WZQ6KLZzEsAqU9Q42WeWjwBEQFyfEV7w56EjQ==
-X-Microsoft-Antispam-PRVS: <HE1PR05MB4700C05DF770ADB8A1B665F5AD970@HE1PR05MB4700.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(788757137089);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR05MB4700;BCL:0;PCL:0;RULEID:;SRVR:HE1PR05MB4700;
-X-Forefront-PRVS: 0677FFABBF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(346002)(396003)(366004)(189003)(199004)(48376002)(97736004)(68736007)(16586007)(478600001)(50466002)(8936002)(5660300001)(11346002)(446003)(54906003)(316002)(58126008)(476003)(486006)(86362001)(956004)(25786009)(6666003)(26005)(305945005)(53546011)(6246003)(229853002)(6486002)(386003)(66066001)(7736002)(4326008)(51416003)(106356001)(76176011)(53936002)(39060400002)(52116002)(2906002)(7696005)(16526019)(186003)(81156014)(8676002)(3846002)(81166006)(6116002)(47776003)(6512007)(9686003)(6916009)(105586002)(4226002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB4700;H:reg-r-vrt-018-180.mtr.labs.mlnx.mellanox.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR05MB4700;23:aX56ZF2Ir5iEeUeXDQr0I4fULlXl7470dZrWnPpcF?=
- =?us-ascii?Q?bL5AEjxdccCjKtyCj3QjWqjEHhEE7cgNBelpdxrX1LkCGV1kJ7yP1o5ysU9D?=
- =?us-ascii?Q?ueHZi6oPUTAKp6wnVhR5mujHWBs2HhZABGQym8U9Aah9fovhTcSMRg/NP+Pb?=
- =?us-ascii?Q?exYd11tTuAdSUeu2Oa8qpgp4uguCHXJQJ7u8m42RP6MUQgSJ8sf8dFUfpaR7?=
- =?us-ascii?Q?C700DrhvlJ0fF2797eK1TAQSpiAjAhpR7wjIw+tVNo/aF1K1FHtULN6LA48t?=
- =?us-ascii?Q?oFpbFdbcP5ddiCUgmablANi+FEurkbKKwon5Rb+t9CLFhW1c4Zu2qXsJbyuj?=
- =?us-ascii?Q?pTSmBtf7IeahIpnzJY2uBZuEQ2DhbJY4BcQeqxVwdj7DXwF3tTmK2QIMH1AB?=
- =?us-ascii?Q?HsSLxOLsmpsPDbcQEwNhwgIHsEn2adxU+mCm4Z7eOCP5M4WKSchxPHPPJseF?=
- =?us-ascii?Q?Z+d7L4xZ4xZRKpOMgDflrxATtDc4ku2Go741RoOJGaw8RDBcg3NOcjCnSNyE?=
- =?us-ascii?Q?juYY5lF58UfyvYYsOHarGF64NYQoIgz1PAEeah+Dm2Daf9ydZm3DzmwYHgXm?=
- =?us-ascii?Q?WwKPhjbf5mREmUDou44v9CMO3IGU0WfOoWnQj8Fojj+kBfWKzPt4b1b9D3xy?=
- =?us-ascii?Q?tdlOUIo18bvEDCLaK/1kQXVwcjOdnWW9wGj1hNG3Y3gf7lEXsd/28yzqPMfk?=
- =?us-ascii?Q?A+8xYFw1zC8A032yDibgzKDS1TUPl87iBJx0vGBX5ORbbS/nJwtltwU9Hesf?=
- =?us-ascii?Q?D+2kQWd9We1d4h6E9Xn05Fiacf5RBoO8u49C9vmFnTWY5rnOZKZ6eDPZsgmg?=
- =?us-ascii?Q?F41cOAo7J1yF6vVOPvTQ15l5FtcXzGpl/XvBayOvI2FiXh7di9mLLmxWxSUg?=
- =?us-ascii?Q?MGJj6SZ3FoycHEVImmEi/3GfS8G3n/f7ZiUtORBVHfR7Srm+YPFU0TkjcoGX?=
- =?us-ascii?Q?0Bty1eD1Su/3BweoF0DPYDyPqYfwyKcFSw9ACM1aZL2EFX7cmulwPjNz/eO3?=
- =?us-ascii?Q?RL83LTS7Dh4gNQnToPZOWjFa8Xo3AsWecYlB1Dv8srl2X7DE+YPmzEjt+WSY?=
- =?us-ascii?Q?spKh+KKuZYe3OFuVbd/Cj0JqOcH/POH3fDoVKBL48bf0gcwu17BKznP+Tdlt?=
- =?us-ascii?Q?Au/IfxrqTwLZcTq2dvX4U+57qi4Ok3/zN09B4degfVYU6iS+VyI7MBm3y3iH?=
- =?us-ascii?Q?LoTONfcSCpom9An1ZtGd0mCJpy0G+x7ZzMYhTwTCoBO+mWI1fWctL+jQEZz3?=
- =?us-ascii?Q?eLS/oZWA8PodG+JMadNWTluqhZI75sgrFXi0uZ69ffMTc9V26c7kP5alPyoG?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Antispam-Message-Info: zuDDGi3ANd6I4T443Xr0xKc1FPMqWqJQPG/cusYSQfAl4P2g4eAwLLxLWvw46ihUcvdq3xSt4D7WyGVmmOYuPFWLmWI7N67k9EhkfbCA5HIkvGnH6kKEb92C2GVAzky+YSzy+WGWZNJwXPOFFZmgm0/dH3Y4TRbLQzaou+pSmYig15mHOt9rz0qihLV/jxMv
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;6:hFG6cbHbIZmN10sNpRWJIj5x6vKSTazNaDdeI9EBsT/mpNTYRqjhtkdB3FY+KD5I+vD9BGqDC2UlHwc+1PCaA8jJESaYasVzvoTKMlEcyoQouR4xsWwH73SxOxq9Ne1E8dVVbjTIv8Jz0hVEsH1LvZ6KhFMDzT6vTcfoy78ox8iptbZeqRCxJzUj9hr0DzHfkyVaZtfK6YKsLGz2UaGJH5yrsE4PNxyFdmSVpRx7LU5cTHEoWOQR8y+UdrHwcXb0c7TPy7CQn2ZOmJMypAxQyu6QNjk7EHxhVNZEa10KO16/8svs0AG7NnNcclIPXjF7L9xS4wChJcG2EIxhfs4MS27M0Rw+x2QphWScVZzAdJuPa5mSWsOwj8id2eH1ICQK5Trmhv1wN4wzW8GDKG1TdXmsR6v5zRJtO2PypqSveRhXCTV4LpSPVFUhLoNvLOfgZVwnFGh1I+2clqzgdkeUmg==;5:EkrdRP1VKS3DhGvwJ/VFznsgZ5rR1URI0i5rf5nXzLv9budDEtz+sTzH0ZFWLnEVJFpJO7vUhqf8JMESCWpxdjZd977B3SDTMA2RdxRQrJM++0kc9bgu97NY5Dj/2pdBIczwpzoK0wI4RkNR/O3niepUgDquStqN0ojItjam688=;24:Vwa/GTgwHxDBiMmYG1NrkevSsbKlmpR8vFn9ulxz2R67dH7j2MpM8LwRc+d0ACbb1MRqFg9cXKSPzBqsmw0EXwGO7M16gknxKPF5KHiqek4=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR05MB4700;7:bcdKxVVVcvSJmPECNnV0Z8Q1RbZR4FGFaWpRbbr5yVoLuKomxuoZhYKOyh6ARhrlaUdE/NaGvnlEwqlQ3HavDHYcGcconp1oxYzSfpSj1sMn6pl8JKQObzLK0of37wkH9Tgn8Pk7MnbTYDi5sjTblNo8Bi2xtp2+OwHzXejHTJCUyOXBbnZ9BiWfxp51dlEoW5mWesoPdkRrLBliIYXacjmloZljG30KAZjea812Sv6GAJkTNnk9vj2ReX+xvmAL
-X-MS-Office365-Filtering-Correlation-Id: 9fcc7ca9-21d3-4757-5bd5-08d5bd711833
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2018 10:12:56.4172 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fcc7ca9-21d3-4757-5bd5-08d5bd711833
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB4700
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
+Gitweb:     https://git.kernel.org/tip/5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
+Author:     Dmitry Safonov <dima@arista.com>
+AuthorDate: Fri, 18 May 2018 00:35:10 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 19 May 2018 12:22:24 +0200
 
-On Sat 19 May 2018 at 02:59, Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> On Fri, May 18, 2018 at 8:45 AM, Vlad Buslov <vladbu@mellanox.com> wrote:
->> Underlying implementation of action map has changed and doesn't require
->> disabling bh anymore. Replace all action idr spinlock usage with regular
->> calls that do not disable bh.
->
-> Please explain explicitly why it is not required, don't let people
-> dig, this would save everyone's time.
+x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
 
-Underlying implementation of actions lookup has changed from hashtable
-to idr. Every current action implementation just calls act_api lookup
-function instead of implementing its own lookup. I asked author of idr
-change if there is a reason to continue to use _bh versions and he
-replied that he just left them as-is.
+The x86 mmap() code selects the mmap base for an allocation depending on
+the bitness of the syscall. For 64bit sycalls it select mm->mmap_base and
+for 32bit mm->mmap_compat_base.
 
->
-> Also, this should be targeted for net-next, right?
+exec() calls mmap() which in turn uses in_compat_syscall() to check whether
+the mapping is for a 32bit or a 64bit task. The decision is made on the
+following criteria:
 
-Right.
+  ia32    child->thread.status & TS_COMPAT
+   x32    child->pt_regs.orig_ax & __X32_SYSCALL_BIT
+  ia64    !ia32 && !x32
 
->
-> Thanks.
+__set_personality_x32() was dropping TS_COMPAT flag, but
+set_personality_64bit() has kept compat syscall flag making
+in_compat_syscall() return true during the first exec() syscall.
+
+Which in result has user-visible effects, mentioned by Alexey:
+1) It breaks ASAN
+$ gcc -fsanitize=address wrap.c -o wrap-asan
+$ ./wrap32 ./wrap-asan true
+==1217==Shadow memory range interleaves with an existing memory mapping. ASan cannot proceed correctly. ABORTING.
+==1217==ASan shadow was supposed to be located in the [0x00007fff7000-0x10007fff7fff] range.
+==1217==Process memory map follows:
+        0x000000400000-0x000000401000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+        0x000000600000-0x000000601000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+        0x000000601000-0x000000602000   /home/izbyshev/test/gcc/asan-exec-from-32bit/wrap-asan
+        0x0000f7dbd000-0x0000f7de2000   /lib64/ld-2.27.so
+        0x0000f7fe2000-0x0000f7fe3000   /lib64/ld-2.27.so
+        0x0000f7fe3000-0x0000f7fe4000   /lib64/ld-2.27.so
+        0x0000f7fe4000-0x0000f7fe5000
+        0x7fed9abff000-0x7fed9af54000
+        0x7fed9af54000-0x7fed9af6b000   /lib64/libgcc_s.so.1
+[snip]
+
+2) It doesn't seem to be great for security if an attacker always knows
+that ld.so is going to be mapped into the first 4GB in this case
+(the same thing happens for PIEs as well).
+
+The testcase:
+$ cat wrap.c
+
+int main(int argc, char *argv[]) {
+  execvp(argv[1], &argv[1]);
+  return 127;
+}
+
+$ gcc wrap.c -o wrap
+$ LD_SHOW_AUXV=1 ./wrap ./wrap true |& grep AT_BASE
+AT_BASE:         0x7f63b8309000
+AT_BASE:         0x7faec143c000
+AT_BASE:         0x7fbdb25fa000
+
+$ gcc -m32 wrap.c -o wrap32
+$ LD_SHOW_AUXV=1 ./wrap32 ./wrap true |& grep AT_BASE
+AT_BASE:         0xf7eff000
+AT_BASE:         0xf7cee000
+AT_BASE:         0x7f8b9774e000
+
+Fixes: 1b028f784e8c ("x86/mm: Introduce mmap_compat_base() for 32-bit mmap()")
+Fixes: ada26481dfe6 ("x86/mm: Make in_compat_syscall() work during exec")
+Reported-by: Alexey Izbyshev <izbyshev@ispras.ru>
+Bisected-by: Alexander Monakov <amonakov@ispras.ru>
+Investigated-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Alexander Monakov <amonakov@ispras.ru>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: stable@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180517233510.24996-1-dima@arista.com
+
+---
+ arch/x86/kernel/process_64.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 4b100fe0f508..12bb445fb98d 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -542,6 +542,7 @@ void set_personality_64bit(void)
+ 	clear_thread_flag(TIF_X32);
+ 	/* Pretend that this comes from a 64bit execve */
+ 	task_pt_regs(current)->orig_ax = __NR_execve;
++	current_thread_info()->status &= ~TS_COMPAT;
+ 
+ 	/* Ensure the corresponding mm is not marked. */
+ 	if (current->mm)
