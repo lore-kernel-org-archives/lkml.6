@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeESLYW (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:24:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35681 "EHLO
+        id S1752253AbeESL2D (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:28:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41479 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeESLYV (ORCPT
+        with ESMTP id S1751891AbeESL2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:24:21 -0400
-Date: Sat, 19 May 2018 04:24:15 -0700
-From: tip-bot for Vikas Shivappa <tipbot@zytor.com>
-Message-ID: <tip-de73f38f768021610bd305cf74ef3702fcf6a1eb@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, vikas.shivappa@linux.intel.com
-Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, vikas.shivappa@linux.intel.com
-In-Reply-To: <1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com>
-References: <1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com>
+        Sat, 19 May 2018 07:28:00 -0400
+Date: Sat, 19 May 2018 04:27:52 -0700
+From: "tip-bot for K. Y. Srinivasan" <tipbot@zytor.com>
+Message-ID: <tip-6b48cb5f8347bc0153ff1d7b075db92e6723ffdb@git.kernel.org>
+Cc: kys@microsoft.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        mikelley@microsoft.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: mikelley@microsoft.com, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, kys@microsoft.com
+In-Reply-To: <20180516215334.6547-1-kys@linuxonhyperv.com>
+References: <20180516215334.6547-1-kys@linuxonhyperv.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Feedback loop to dynamically
- update mem bandwidth
-Git-Commit-ID: de73f38f768021610bd305cf74ef3702fcf6a1eb
+Subject: [tip:x86/hyperv] X86/Hyper-V: Enlighten APIC access
+Git-Commit-ID: 6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,242 +31,206 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  de73f38f768021610bd305cf74ef3702fcf6a1eb
-Gitweb:     https://git.kernel.org/tip/de73f38f768021610bd305cf74ef3702fcf6a1eb
-Author:     Vikas Shivappa <vikas.shivappa@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:36:21 -0700
+Commit-ID:  6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
+Gitweb:     https://git.kernel.org/tip/6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
+Author:     K. Y. Srinivasan <kys@microsoft.com>
+AuthorDate: Wed, 16 May 2018 14:53:30 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 19 May 2018 13:16:44 +0200
+CommitDate: Sat, 19 May 2018 13:23:17 +0200
 
-x86/intel_rdt/mba_sc: Feedback loop to dynamically update mem bandwidth
+X86/Hyper-V: Enlighten APIC access
 
-mba_sc is a feedback loop where we periodically read MBM counters and
-try to restrict the bandwidth below a max value so the below is always
-true:
+Hyper-V supports MSR based APIC access; implement
+the enlightenment.
 
-  "current bandwidth(cur_bw) < user specified bandwidth(user_bw)"
-
-The frequency of these checks is currently 1s and we just tag along the
-MBM overflow timer to do the updates. Doing it once in a second also
-makes the calculation of bandwidth easy. The steps of increase or
-decrease of bandwidth is the minimum granularity specified by the
-hardware.
-
-Although the MBA's goal is to restrict the bandwidth below a maximum,
-there may be a need to even increase the bandwidth. Since MBA controls
-the L2 external bandwidth where as MBM measures the L3 external
-bandwidth, we may end up restricting some rdtgroups unnecessarily. This
-may happen in the sequence where rdtgroup (set of jobs) had high
-"L3 <-> memory traffic" in initial phases -> mba_sc kicks in and reduced
-bandwidth percentage values -> but after some it has mostly "L2 <-> L3"
-traffic. In this scenario mba_sc increases the bandwidth percentage when
-there is lesser memory traffic.
-
-Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: ravi.v.shankar@intel.com
-Cc: tony.luck@intel.com
-Cc: fenghua.yu@intel.com
-Cc: vikas.shivappa@intel.com
-Cc: ak@linux.intel.com
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: olaf@aepfle.de
+Cc: sthemmin@microsoft.com
+Cc: gregkh@linuxfoundation.org
+Cc: jasowang@redhat.com
+Cc: Michael.H.Kelley@microsoft.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com
+Cc: apw@canonical.com
+Cc: devel@linuxdriverproject.org
+Cc: vkuznets@redhat.com
+Link: https://lkml.kernel.org/r/20180516215334.6547-1-kys@linuxonhyperv.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.c         |   3 +-
- arch/x86/kernel/cpu/intel_rdt.h         |   2 +
- arch/x86/kernel/cpu/intel_rdt_monitor.c | 126 +++++++++++++++++++++++++++++++-
- 3 files changed, 128 insertions(+), 3 deletions(-)
+ arch/x86/hyperv/Makefile        |   2 +-
+ arch/x86/hyperv/hv_apic.c       | 104 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c       |   5 +-
+ arch/x86/include/asm/mshyperv.h |   4 +-
+ 4 files changed, 112 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index ad03d975883e..24bfa63e86cf 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -33,7 +33,6 @@
- #include <asm/intel_rdt_sched.h>
- #include "intel_rdt.h"
- 
--#define MAX_MBA_BW	100u
- #define MBA_IS_LINEAR	0x4
- #define MBA_MAX_MBPS	U32_MAX
- 
-@@ -350,7 +349,7 @@ static int get_cache_id(int cpu, int level)
-  * that can be written to QOS_MSRs.
-  * There are currently no SKUs which support non linear delay values.
-  */
--static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
-+u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
- {
- 	if (r->membw.delay_linear)
- 		return MAX_MBA_BW - bw;
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 66a0ba37a8a3..39752825e376 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -28,6 +28,7 @@
- 
- #define MBM_CNTR_WIDTH			24
- #define MBM_OVERFLOW_INTERVAL		1000
-+#define MAX_MBA_BW			100u
- 
- #define RMID_VAL_ERROR			BIT_ULL(63)
- #define RMID_VAL_UNAVAIL		BIT_ULL(62)
-@@ -461,6 +462,7 @@ void mbm_setup_overflow_handler(struct rdt_domain *dom,
- void mbm_handle_overflow(struct work_struct *work);
- bool is_mba_sc(struct rdt_resource *r);
- void setup_default_ctrlval(struct rdt_resource *r, u32 *dc, u32 *dm);
-+u32 delay_bw_map(unsigned long bw, struct rdt_resource *r);
- void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
- void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-index 7690402c42b7..b0f3aed76b75 100644
---- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-@@ -329,6 +329,118 @@ void mon_event_count(void *info)
- 	}
- }
- 
+diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
+index 367a8203cfcf..00ce4df01a09 100644
+--- a/arch/x86/hyperv/Makefile
++++ b/arch/x86/hyperv/Makefile
+@@ -1 +1 @@
+-obj-y		:= hv_init.o mmu.o
++obj-y		:= hv_init.o mmu.o hv_apic.o
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+new file mode 100644
+index 000000000000..ca20e31d311c
+--- /dev/null
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++
 +/*
-+ * Feedback loop for MBA software controller (mba_sc)
++ * Hyper-V specific APIC code.
 + *
-+ * mba_sc is a feedback loop where we periodically read MBM counters and
-+ * adjust the bandwidth percentage values via the IA32_MBA_THRTL_MSRs so
-+ * that:
++ * Copyright (C) 2018, Microsoft, Inc.
 + *
-+ *   current bandwdith(cur_bw) < user specified bandwidth(user_bw)
++ * Author : K. Y. Srinivasan <kys@microsoft.com>
 + *
-+ * This uses the MBM counters to measure the bandwidth and MBA throttle
-+ * MSRs to control the bandwidth for a particular rdtgrp. It builds on the
-+ * fact that resctrl rdtgroups have both monitoring and control.
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published
++ * by the Free Software Foundation.
 + *
-+ * The frequency of the checks is 1s and we just tag along the MBM overflow
-+ * timer. Having 1s interval makes the calculation of bandwidth simpler.
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
 + *
-+ * Although MBA's goal is to restrict the bandwidth to a maximum, there may
-+ * be a need to increase the bandwidth to avoid uncecessarily restricting
-+ * the L2 <-> L3 traffic.
-+ *
-+ * Since MBA controls the L2 external bandwidth where as MBM measures the
-+ * L3 external bandwidth the following sequence could lead to such a
-+ * situation.
-+ *
-+ * Consider an rdtgroup which had high L3 <-> memory traffic in initial
-+ * phases -> mba_sc kicks in and reduced bandwidth percentage values -> but
-+ * after some time rdtgroup has mostly L2 <-> L3 traffic.
-+ *
-+ * In this case we may restrict the rdtgroup's L2 <-> L3 traffic as its
-+ * throttle MSRs already have low percentage values.  To avoid
-+ * unnecessarily restricting such rdtgroups, we also increase the bandwidth.
 + */
-+static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_domain *dom_mbm)
++
++#include <linux/types.h>
++#include <linux/version.h>
++#include <linux/vmalloc.h>
++#include <linux/mm.h>
++#include <linux/clockchips.h>
++#include <linux/hyperv.h>
++#include <linux/slab.h>
++#include <linux/cpuhotplug.h>
++#include <asm/hypervisor.h>
++#include <asm/mshyperv.h>
++
++#ifdef CONFIG_X86_64
++#if IS_ENABLED(CONFIG_HYPERV)
++
++static u64 hv_apic_icr_read(void)
 +{
-+	u32 closid, rmid, cur_msr, cur_msr_val, new_msr_val;
-+	struct mbm_state *pmbm_data, *cmbm_data;
-+	u32 cur_bw, delta_bw, user_bw;
-+	struct rdt_resource *r_mba;
-+	struct rdt_domain *dom_mba;
-+	struct list_head *head;
-+	struct rdtgroup *entry;
++	u64 reg_val;
 +
-+	r_mba = &rdt_resources_all[RDT_RESOURCE_MBA];
-+	closid = rgrp->closid;
-+	rmid = rgrp->mon.rmid;
-+	pmbm_data = &dom_mbm->mbm_local[rmid];
++	rdmsrl(HV_X64_MSR_ICR, reg_val);
++	return reg_val;
++}
 +
-+	dom_mba = get_domain_from_cpu(smp_processor_id(), r_mba);
-+	if (!dom_mba) {
-+		pr_warn_once("Failure to get domain for MBA update\n");
-+		return;
-+	}
++static void hv_apic_icr_write(u32 low, u32 id)
++{
++	u64 reg_val;
 +
-+	cur_bw = pmbm_data->prev_bw;
-+	user_bw = dom_mba->mbps_val[closid];
-+	delta_bw = pmbm_data->delta_bw;
-+	cur_msr_val = dom_mba->ctrl_val[closid];
++	reg_val = SET_APIC_DEST_FIELD(id);
++	reg_val = reg_val << 32;
++	reg_val |= low;
 +
-+	/*
-+	 * For Ctrl groups read data from child monitor groups.
-+	 */
-+	head = &rgrp->mon.crdtgrp_list;
-+	list_for_each_entry(entry, head, mon.crdtgrp_list) {
-+		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
-+		cur_bw += cmbm_data->prev_bw;
-+		delta_bw += cmbm_data->delta_bw;
-+	}
++	wrmsrl(HV_X64_MSR_ICR, reg_val);
++}
 +
-+	/*
-+	 * Scale up/down the bandwidth linearly for the ctrl group.  The
-+	 * bandwidth step is the bandwidth granularity specified by the
-+	 * hardware.
-+	 *
-+	 * The delta_bw is used when increasing the bandwidth so that we
-+	 * dont alternately increase and decrease the control values
-+	 * continuously.
-+	 *
-+	 * For ex: consider cur_bw = 90MBps, user_bw = 100MBps and if
-+	 * bandwidth step is 20MBps(> user_bw - cur_bw), we would keep
-+	 * switching between 90 and 110 continuously if we only check
-+	 * cur_bw < user_bw.
-+	 */
-+	if (cur_msr_val > r_mba->membw.min_bw && user_bw < cur_bw) {
-+		new_msr_val = cur_msr_val - r_mba->membw.bw_gran;
-+	} else if (cur_msr_val < MAX_MBA_BW &&
-+		   (user_bw > (cur_bw + delta_bw))) {
-+		new_msr_val = cur_msr_val + r_mba->membw.bw_gran;
-+	} else {
-+		return;
-+	}
++static u32 hv_apic_read(u32 reg)
++{
++	u32 reg_val, hi;
 +
-+	cur_msr = r_mba->msr_base + closid;
-+	wrmsrl(cur_msr, delay_bw_map(new_msr_val, r_mba));
-+	dom_mba->ctrl_val[closid] = new_msr_val;
++	switch (reg) {
++	case APIC_EOI:
++		rdmsr(HV_X64_MSR_EOI, reg_val, hi);
++		return reg_val;
++	case APIC_TASKPRI:
++		rdmsr(HV_X64_MSR_TPR, reg_val, hi);
++		return reg_val;
 +
-+	/*
-+	 * Delta values are updated dynamically package wise for each
-+	 * rdtgrp everytime the throttle MSR changes value.
-+	 *
-+	 * This is because (1)the increase in bandwidth is not perfectly
-+	 * linear and only "approximately" linear even when the hardware
-+	 * says it is linear.(2)Also since MBA is a core specific
-+	 * mechanism, the delta values vary based on number of cores used
-+	 * by the rdtgrp.
-+	 */
-+	pmbm_data->delta_comp = true;
-+	list_for_each_entry(entry, head, mon.crdtgrp_list) {
-+		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
-+		cmbm_data->delta_comp = true;
++	default:
++		return native_apic_mem_read(reg);
 +	}
 +}
 +
- static void mbm_update(struct rdt_domain *d, int rmid)
- {
- 	struct rmid_read rr;
-@@ -346,7 +458,16 @@ static void mbm_update(struct rdt_domain *d, int rmid)
- 	}
- 	if (is_mbm_local_enabled()) {
- 		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
--		__mon_event_count(rmid, &rr);
++static void hv_apic_write(u32 reg, u32 val)
++{
++	switch (reg) {
++	case APIC_EOI:
++		wrmsr(HV_X64_MSR_EOI, val, 0);
++		break;
++	case APIC_TASKPRI:
++		wrmsr(HV_X64_MSR_TPR, val, 0);
++		break;
++	default:
++		native_apic_mem_write(reg, val);
++	}
++}
 +
-+		/*
-+		 * Call the MBA software controller only for the
-+		 * control groups and when user has enabled
-+		 * the software controller explicitly.
-+		 */
-+		if (!is_mba_sc(NULL))
-+			__mon_event_count(rmid, &rr);
-+		else
-+			mbm_bw_count(rmid, &rr);
- 	}
++static void hv_apic_eoi_write(u32 reg, u32 val)
++{
++	wrmsr(HV_X64_MSR_EOI, val, 0);
++}
++
++void __init hv_apic_init(void)
++{
++	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
++		pr_info("Hyper-V: Using MSR based APIC access\n");
++		apic_set_eoi_write(hv_apic_eoi_write);
++		apic->read      = hv_apic_read;
++		apic->write     = hv_apic_write;
++		apic->icr_write = hv_apic_icr_write;
++		apic->icr_read  = hv_apic_icr_read;
++	}
++}
++
++#endif /* CONFIG_HYPERV */
++#endif /* CONFIG_X86_64 */
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index cfecc2272f2d..71e50fc2b7ef 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -242,8 +242,9 @@ static int hv_cpu_die(unsigned int cpu)
+  *
+  * 1. Setup the hypercall page.
+  * 2. Register Hyper-V specific clocksource.
++ * 3. Setup Hyper-V specific APIC entry points.
+  */
+-void hyperv_init(void)
++void __init hyperv_init(void)
+ {
+ 	u64 guest_id, required_msrs;
+ 	union hv_x64_msr_hypercall_contents hypercall_msr;
+@@ -298,6 +299,8 @@ void hyperv_init(void)
+ 
+ 	hyper_alloc_mmu();
+ 
++	hv_apic_init();
++
+ 	/*
+ 	 * Register Hyper-V specific clocksource.
+ 	 */
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index b90e79610cf7..162977b82e2e 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -258,7 +258,7 @@ static inline int hv_cpu_number_to_vp_number(int cpu_number)
+ 	return hv_vp_index[cpu_number];
  }
  
-@@ -417,6 +538,9 @@ void mbm_handle_overflow(struct work_struct *work)
- 		head = &prgrp->mon.crdtgrp_list;
- 		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
- 			mbm_update(d, crgrp->mon.rmid);
-+
-+		if (is_mba_sc(NULL))
-+			update_mba_bw(prgrp, d);
- 	}
- 
- 	schedule_delayed_work_on(cpu, &d->mbm_over, delay);
+-void hyperv_init(void);
++void __init hyperv_init(void);
+ void hyperv_setup_mmu_ops(void);
+ void hyper_alloc_mmu(void);
+ void hyperv_report_panic(struct pt_regs *regs, long err);
+@@ -269,6 +269,7 @@ void hyperv_reenlightenment_intr(struct pt_regs *regs);
+ void set_hv_tscchange_cb(void (*cb)(void));
+ void clear_hv_tscchange_cb(void);
+ void hyperv_stop_tsc_emulation(void);
++void hv_apic_init(void);
+ #else /* CONFIG_HYPERV */
+ static inline void hyperv_init(void) {}
+ static inline bool hv_is_hyperv_initialized(void) { return false; }
+@@ -277,6 +278,7 @@ static inline void hyperv_setup_mmu_ops(void) {}
+ static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
+ static inline void clear_hv_tscchange_cb(void) {}
+ static inline void hyperv_stop_tsc_emulation(void) {};
++static inline void hv_apic_init(void) {}
+ static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
+ {
+ 	return NULL;
