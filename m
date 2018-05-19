@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeESLzE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:55:04 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35626 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeESLzA (ORCPT
+        id S1752255AbeESL7C (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:59:02 -0400
+Received: from mail-wr0-f177.google.com ([209.85.128.177]:36250 "EHLO
+        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeESL66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:55:00 -0400
-Date: Sat, 19 May 2018 12:54:41 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: ilialin@codeaurora.org
-Cc: "'Viresh Kumar'" <viresh.kumar@linaro.org>, mark.rutland@arm.com,
-        nm@ti.com, catalin.marinas@arm.com, mturquette@baylibre.com,
-        will.deacon@arm.com, tfinkel@codeaurora.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        nicolas.dechesne@linaro.org, linux-clk@vger.kernel.org,
-        robh@kernel.org, andy.gross@linaro.org, celster@codeaurora.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, broonie@kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, rjw@rjwysocki.net,
-        lgirdwood@gmail.com, amit.kucheria@linaro.org
-Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180519115441.GK17671@n2100.armlinux.org.uk>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
- <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <20180518014538.duphof6enscpm5vp@vireshk-i7>
- <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
+        Sat, 19 May 2018 07:58:58 -0400
+X-Google-Smtp-Source: AB8JxZoG1eyr2p5HiqqTgtqZdBOw8iSSo839kx1l4LR/sbhWvHciSCmrw1ErxHdAVrHjX9AOrAEAIg==
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Chris Chiu <chiu@endlessm.com>
+Cc: Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Adrian Salido <salidoa@google.com>,
+        Jason Gerecke <killertofu@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
+ <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
+ <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
+ <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
+ <CAB4CAwd0tN7CaS7YZCo3TZH-DPxt0x6wxyO23v7aBW9MOCtHCw@mail.gmail.com>
+ <c1343704-6b1a-14b5-3942-a8a33f73feee@linux.intel.com>
+ <CAB4CAwe6kjJ10s0KtVJrPMSC8UA+YLCiqbnkZ_-oFTKTFPTwCw@mail.gmail.com>
+ <7728da79-8a7a-b87d-d09c-b36978b3032e@linux.intel.com>
+ <a3ce1af5-7b99-38db-fc51-4d580db1e87e@linux.intel.com>
+ <ba99be8e-8e8b-87c1-8607-24ace8a01c64@redhat.com>
+ <91f87c43-0ae1-00ec-6b3e-819b639aa1b2@linux.intel.com>
+Message-ID: <f52aa2eb-0af4-dac5-11d4-40b1379b5f89@redhat.com>
+Date: Sat, 19 May 2018 13:58:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <91f87c43-0ae1-00ec-6b3e-819b639aa1b2@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 02:09:24PM +0300, ilialin@codeaurora.org wrote:
-> +static int __init qcom_cpufreq_kryo_driver_init(void)
-> +{
-> +       struct device *cpu_dev_silver, *cpu_dev_gold;
-> +       struct opp_table *opp_silver, *opp_gold;
-> +       enum _msm8996_version msm8996_version;
-> +       struct nvmem_cell *speedbin_nvmem;
-> +       struct platform_device *pdev;
-> +       struct device_node *np;
-> +       u8 *speedbin;
-> +       u32 versions;
-> +       size_t len;
-> +       int ret;
-> +
-> +       cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> +       if (IS_ERR_OR_NULL(cpu_dev_silver))
-> +               return PTR_ERR(cpu_dev_silver);
-> +
-> +       cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> +       if (IS_ERR_OR_NULL(cpu_dev_gold))
-> +               return PTR_ERR(cpu_dev_gold);
-> +
-> +       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> +       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> +               dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-> +               return -ENODEV;
-> +       }
-> +
-> +       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-> +       if (IS_ERR_OR_NULL(np))
-> +               return PTR_ERR(np);
+Hi,
 
-This function (qcom_cpufreq_kryo_driver_init) returns zero on success.
-You are checking "np" here for being an error pointer, or NULL.
-What value do you think PTR_ERR() returns in the case of PTR_ERR(NULL)?
+On 18-05-18 15:15, Jarkko Nikula wrote:
+> On 05/18/2018 10:48 AM, Hans de Goede wrote:
+>> Could it be the i2c input clock definition in drivers/mfd/intel-lpss-pci.c
+>> is also wrong for Apollo Lake (N3450) ?  There are lots of people having
+>> various issues with i2c attached touchpads on Apollo Lake devices, this bug:
+>> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1728244
+>>
+>> Is sort of a collection bug for these. Various models laptops, lots of
+>> reporters. Note not sure thie is an i2c-designware issue, but it would
+>> be good to double check the input clock on Apollo Lake.
+>>
+> Does i2c_designware_core.dyndbg=+p and i2c-hid.debug=1 command line arguments give any useful debug information from those machines?
 
-IS_ERR_OR_NULL() is considered by some (me included) as being _very_
-harmful because programmers generally fail to look at linux/err.h and
-consider what it means when used as above.
+A first dmesg with these flags has been provided:
+https://launchpadlibrarian.net/370884912/dmesg.log
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Regards,
+
+Hans
