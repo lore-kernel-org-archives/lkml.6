@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752532AbeESIs0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 04:48:26 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55243 "EHLO
+        id S1752326AbeESItL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 04:49:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55251 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752337AbeESIsX (ORCPT
+        with ESMTP id S1752140AbeESItI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 04:48:23 -0400
-Date: Sat, 19 May 2018 10:48:16 +0200 (CEST)
+        Sat, 19 May 2018 04:49:08 -0400
+Date: Sat, 19 May 2018 10:49:01 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] x86/mm: Mark __pgtable_l5_enabled __initdata
-In-Reply-To: <20180518103528.59260-8-kirill.shutemov@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1805191048040.1599@nanos.tec.linutronix.de>
-References: <20180518103528.59260-1-kirill.shutemov@linux.intel.com> <20180518103528.59260-8-kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCHv5 0/7] 5-level paging changes for v4.18
+In-Reply-To: <20180518103528.59260-1-kirill.shutemov@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1805191048340.1599@nanos.tec.linutronix.de>
+References: <20180518103528.59260-1-kirill.shutemov@linux.intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -29,9 +29,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, 18 May 2018, Kirill A. Shutemov wrote:
 
-> __pgtable_l5_enabled shouldn't be needed after system has booted.
-> All preparation is done. We can now mark it as __initdata.
+> Here's several patches that I would like to queue for v4.18. Please review
+> and consider applying.
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> In this version I've addressed Thomas' feedback.
+> 
+> Changing __pgtable_l5_enabled to __initdata is not as trivial as I hoped.
+> It requires few tricks to avoid section mismatch. I'm not sure if it worth
+> the gain. We can keep it __ro_after_init.
+> 
+> If you feel it's too invasive, just drop last three patches.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Well done. Thanks for cleaning it up.
+
+Thanks,
+
+	tglx
