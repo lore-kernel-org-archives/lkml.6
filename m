@@ -1,273 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752238AbeESLfS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:35:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55224 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752119AbeESLfN (ORCPT
+        id S1752572AbeESLfh (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:35:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49419 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752202AbeESLfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:35:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1C32602BC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        rjw@rjwysocki.net, linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Sat, 19 May 2018 14:35:01 +0300
-Message-Id: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+        Sat, 19 May 2018 07:35:32 -0400
+Date: Sat, 19 May 2018 04:35:12 -0700
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-372fddf709041743a93e381556f4c41aad1e28f8@git.kernel.org>
+Cc: kirill.shutemov@linux.intel.com, hpa@zytor.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, mingo@kernel.org, hughd@google.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: kirill.shutemov@linux.intel.com, hpa@zytor.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, mingo@kernel.org, hughd@google.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <20180518103528.59260-5-kirill.shutemov@linux.intel.com>
+References: <20180518103528.59260-5-kirill.shutemov@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/mm: Introduce the 'no5lvl' kernel parameter
+Git-Commit-ID: 372fddf709041743a93e381556f4c41aad1e28f8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+Commit-ID:  372fddf709041743a93e381556f4c41aad1e28f8
+Gitweb:     https://git.kernel.org/tip/372fddf709041743a93e381556f4c41aad1e28f8
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Fri, 18 May 2018 13:35:25 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 19 May 2018 11:56:57 +0200
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+x86/mm: Introduce the 'no5lvl' kernel parameter
+
+This kernel parameter allows to force kernel to use 4-level paging even
+if hardware and kernel support 5-level paging.
+
+The option may be useful to work around regressions related to 5-level
+paging.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180518103528.59260-5-kirill.shutemov@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
- 4 files changed, 178 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ arch/x86/boot/compressed/cmdline.c              |  2 +-
+ arch/x86/boot/compressed/head_64.S              |  1 +
+ arch/x86/boot/compressed/pgtable_64.c           | 12 ++++++++++--
+ arch/x86/kernel/cpu/common.c                    | 15 +++++++++++++++
+ arch/x86/kernel/head64.c                        |  9 +++++----
+ 6 files changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..364a33c1534d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2600,6 +2600,9 @@
+ 			emulation library even if a 387 maths coprocessor
+ 			is present.
  
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
++	no5lvl		[X86-64] Disable 5-level paging mode. Forces
++			kernel to use 4-level paging instead.
 +
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index 0cb325734cfb..af6cda0b7900 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
  
- 	{ .compatible = "nvidia,tegra124", },
+-#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE
++#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
  
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
+ static unsigned long fs;
+ static inline void set_fs(unsigned long seg)
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 8169e8b7a4dc..64037895b085 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -365,6 +365,7 @@ ENTRY(startup_64)
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	movq	%rsi, %rdi		/* real mode address */
+ 	call	paging_prepare
+ 	popq	%rsi
  
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..ae2d1b9
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 23707e1da1ff..8c5107545251 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -31,16 +31,23 @@ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+  */
+ unsigned long *trampoline_32bit __section(.data);
+ 
+-struct paging_config paging_prepare(void)
++extern struct boot_params *boot_params;
++int cmdline_find_option_bool(const char *option);
 +
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
++struct paging_config paging_prepare(void *rmode)
+ {
+ 	struct paging_config paging_config = {};
+ 	unsigned long bios_start, ebda_start;
+ 
++	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
++	boot_params = rmode;
 +
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+ 	 *
+-	 * There are two parts to the check:
++	 * There are several parts to the check:
+ 	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
++	 *   - if user asked to disable 5-level paging: no5lvl in cmdline
+ 	 *   - if the machine supports 5-level paging:
+ 	 *     + CPUID leaf 7 is supported
+ 	 *     + the leaf has the feature bit set
+@@ -48,6 +55,7 @@ struct paging_config paging_prepare(void)
+ 	 * That's substitute for boot_cpu_has() in early boot code.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
++			!cmdline_find_option_bool("no5lvl") &&
+ 			native_cpuid_eax(0) >= 7 &&
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
+ 		paging_config.l5_required = 1;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 39ed2e6ff8a0..27f68d14c962 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1028,6 +1028,21 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	setup_clear_cpu_cap(X86_FEATURE_PCID);
+ #endif
 +
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	struct device *cpu_dev_silver, *cpu_dev_gold;
-+	struct opp_table *opp_silver, *opp_gold;
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
-+
-+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-+	if (IS_ERR_OR_NULL(cpu_dev_silver))
-+		return PTR_ERR(cpu_dev_silver);
-+
-+	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-+	if (IS_ERR_OR_NULL(cpu_dev_gold))
-+		return PTR_ERR(cpu_dev_gold);
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-+	if (IS_ERR_OR_NULL(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-+	if (IS_ERR(opp_silver)) {
-+		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_silver);
-+		goto free_np;
-+	}
-+
-+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-+	if (IS_ERR(opp_gold)) {
-+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_gold);
-+		goto free_opp_silver;
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR_OR_NULL(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-+	dev_pm_opp_put_supported_hw(opp_gold);
-+
-+free_opp_silver:
-+	dev_pm_opp_put_supported_hw(opp_silver);
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
++	/*
++	 * Later in the boot process pgtable_l5_enabled() relies on
++	 * cpu_feature_enabled(X86_FEATURE_LA57). If 5-level paging is not
++	 * enabled by this point we need to clear the feature bit to avoid
++	 * false-positives at the later stage.
++	 *
++	 * pgtable_l5_enabled() can be false here for several reasons:
++	 *  - 5-level paging is disabled compile-time;
++	 *  - it's 32-bit kernel;
++	 *  - machine doesn't support 5-level paging;
++	 *  - user specified 'no5lvl' in kernel command line.
++	 */
++	if (!pgtable_l5_enabled())
++		setup_clear_cpu_cap(X86_FEATURE_LA57);
+ }
+ 
+ void __init early_cpu_init(void)
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 8d372d1c266d..8047379e575a 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -80,10 +80,11 @@ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
+ 
+ static bool __head check_la57_support(unsigned long physaddr)
+ {
+-	if (native_cpuid_eax(0) < 7)
+-		return false;
+-
+-	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
++	/*
++	 * 5-level paging is detected and enabled at kernel decomression
++	 * stage. Only check if it has been enabled there.
++	 */
++	if (!(native_read_cr4() & X86_CR4_LA57))
+ 		return false;
+ 
+ 	*fixup_int(&__pgtable_l5_enabled, physaddr) = 1;
