@@ -1,205 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeESWIL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:08:11 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:49450 "EHLO vps-vb.mhejs.net"
+        id S1752701AbeESWI1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 18:08:27 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:49446 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752596AbeESWHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 18:07:49 -0400
+        id S1752595AbeESWHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 18:07:48 -0400
 From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 To: Borislav Petkov <bp@alien8.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/8] x86/microcode/AMD: Add microcode container data checking functions
-Date: Sun, 20 May 2018 00:07:16 +0200
-Message-Id: <28d0439f64e03e3c8192e1f5280f01a5729698fc.1526767245.git.mail@maciej.szmigiero.name>
+Subject: [PATCH v6 0/8] x86/microcode/AMD: Check microcode file sanity before loading it
+Date: Sun, 20 May 2018 00:07:14 +0200
+Message-Id: <cover.1526767245.git.mail@maciej.szmigiero.name>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1526767245.git.mail@maciej.szmigiero.name>
-References: <cover.1526767245.git.mail@maciej.szmigiero.name>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add verify_container(), verify_equivalence_table(), verify_patch_section()
-and verify_patch() functions to the AMD microcode update driver.
+Currently, it is very easy to make the AMD microcode update driver crash
+or spin on a malformed microcode container file since it does very little
+consistency checking on data loaded from such file.
 
-These functions check whether a passed buffer contains the relevant
-structure, whether it isn't truncated and (for actual microcode patches)
-whether the size of a patch is not too large for a particular CPU family.
-By adding these checks as separate functions the actual microcode loading
-code won't get interspersed with a lot of checks and so will be more
-readable.
+This series introduces various checks, mostly on length-type fields,
+so all corrupted microcode container files are (hopefully) correctly
+rejected instead.
+This largely matches what the Intel microcode update driver already does.
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
- arch/x86/kernel/cpu/microcode/amd.c | 148 +++++++++++++++++++++++++++-
- 1 file changed, 145 insertions(+), 3 deletions(-)
+It also tries to make the behavior consistent between the early and late
+loaders.
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index dc8ea9a9d962..f9485ff7183c 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -73,6 +73,150 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
- 	return 0;
- }
- 
-+/*
-+ * Checks whether there is a valid microcode container file at the beginning
-+ * of a passed buffer @buf of size @size.
-+ * If @early is set this function does not print errors which makes it
-+ * usable by the early microcode loader.
-+ */
-+static bool verify_container(const u8 *buf, size_t buf_size, bool early)
-+{
-+	u32 cont_magic;
-+
-+	if (buf_size <= CONTAINER_HDR_SZ) {
-+		if (!early)
-+			pr_err("Truncated microcode container header.\n");
-+
-+		return false;
-+	}
-+
-+	cont_magic = *(const u32 *)buf;
-+	if (cont_magic != UCODE_MAGIC) {
-+		if (!early)
-+			pr_err("Invalid magic value (0x%08x).\n", cont_magic);
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * Checks whether there is a valid, non-truncated CPU equivalence table
-+ * at the beginning of a passed buffer @buf of size @size.
-+ * If @early is set this function does not print errors which makes it
-+ * usable by the early microcode loader.
-+ */
-+static bool verify_equivalence_table(const u8 *buf, size_t buf_size, bool early)
-+{
-+	const u32 *hdr = (const u32 *)buf;
-+	u32 cont_type, equiv_tbl_len;
-+
-+	if (!verify_container(buf, buf_size, early))
-+		return false;
-+
-+	cont_type = hdr[1];
-+	if (cont_type != UCODE_EQUIV_CPU_TABLE_TYPE) {
-+		if (!early)
-+			pr_err("Wrong microcode container equivalence table type: %u.\n",
-+			       cont_type);
-+
-+		return false;
-+	}
-+
-+	equiv_tbl_len = hdr[2];
-+	if (equiv_tbl_len < sizeof(struct equiv_cpu_entry) ||
-+	    buf_size - CONTAINER_HDR_SZ < equiv_tbl_len) {
-+		if (!early)
-+			pr_err("Truncated equivalence table.\n");
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * Checks whether there is a valid, non-truncated microcode patch section
-+ * at the beginning of a passed buffer @buf of size @size.
-+ * If @early is set this function does not print errors which makes it
-+ * usable by the early microcode loader.
-+ */
-+static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
-+{
-+	const u32 *hdr = (const u32 *)buf;
-+	u32 patch_type, patch_size;
-+
-+	if (buf_size < SECTION_HDR_SIZE) {
-+		if (!early)
-+			pr_err("Truncated patch section.\n");
-+
-+		return false;
-+	}
-+
-+	patch_type = hdr[0];
-+	patch_size = hdr[1];
-+
-+	if (patch_type != UCODE_UCODE_TYPE) {
-+		if (!early)
-+			pr_err("Invalid type field (%u) in container file section header.\n",
-+				patch_type);
-+
-+		return false;
-+	}
-+
-+	if (patch_size < sizeof(struct microcode_header_amd)) {
-+		if (!early)
-+			pr_err("Patch of size %u too short.\n", patch_size);
-+
-+		return false;
-+	}
-+
-+	if (buf_size - SECTION_HDR_SIZE < patch_size) {
-+		if (!early)
-+			pr_err("Patch of size %u truncated.\n", patch_size);
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static unsigned int verify_patch_size(u8 family, u32 patch_size,
-+				      unsigned int size);
-+
-+/*
-+ * Checks whether a microcode patch located at the beginning of a passed
-+ * buffer @buf of size @size is not too large for a particular @family
-+ * and is not truncated.
-+ * If @early is set this function does not print errors which makes it
-+ * usable by the early microcode loader.
-+ */
-+static bool verify_patch(u8 family, const u8 *buf, size_t buf_size, bool early)
-+{
-+	const u32 *hdr = (const u32 *)buf;
-+	u32 patch_size;
-+
-+	if (!verify_patch_section(buf, buf_size, early))
-+		return false;
-+
-+	patch_size = hdr[1];
-+
-+	/*
-+	 * The section header length is not included in this indicated size
-+	 * but is present in the leftover file length so we need to subtract
-+	 * it before passing this value to the function below.
-+	 */
-+	if (!verify_patch_size(family, patch_size, buf_size - SECTION_HDR_SIZE)) {
-+		if (!early)
-+			pr_err("Patch of size %u too large.\n", patch_size);
-+
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- /*
-  * This scans the ucode blob for the proper container as we can have multiple
-  * containers glued together. Returns the equivalence ID from the equivalence
-@@ -494,10 +638,8 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int si
- 		break;
- 	}
- 
--	if (patch_size > min_t(u32, size, max_size)) {
--		pr_err("patch size mismatch\n");
-+	if (patch_size > min_t(u32, size, max_size))
- 		return 0;
--	}
- 
- 	return patch_size;
- }
+Please note that this isn't about verifying the actual microcode update,
+that is, the blob that gets sent to the CPU as the new microcode.
+Such verification is (hopefully) done by the CPU itself.
+
+It is about verifying a driver-specific container file that includes
+many microcode updates for different CPUs of a particular CPU family,
+along with metadata that helps the driver select the right microcode
+update to actually send to the CPU.
+
+There are purposely-corrupted test files available at
+https://pastebin.com/XkKUSmMp
+One has to enable KASAN in the kernel config and rename a particular
+test file to name appropriate to the running CPU family to test its
+loading.
+
+Changes from v1:
+* Capitalize a comment,
+
+* Rename 'eqsize' and 'bufsize' to 'eq_size' and 'buf_size',
+respectively,
+
+* Attach a comment about checking the equivalence table header to its
+first size check,
+
+* Rename 'equiv{_cpu,}_table_size' to 'equiv{_cpu,}_table_entries'.
+
+Changes from v2:
+* Split the patch into separate commits,
+
+* Remove explicit CPU equivalence table size limit,
+
+* Make install_equiv_cpu_table() return a size_t instead of a (signed)
+int so no overflow can occur there,
+
+* Automatically compute the PATCH_MAX_SIZE macro and use it for checking
+a patch size,
+
+* Make the late loader behavior with respect to late parse failures
+consistent with what the early loader does.
+
+Changes from v3:
+* Capitalize patch subject names,
+
+* Add a comment describing why we subtract SECTION_HDR_SIZE from a file
+leftover length before calling verify_patch_size(),
+
+* Don't break a long line containing the above subtraction,
+
+* Move a comment in parse_container() back to where it was in the original
+patch version,
+
+* Add special local vars for container header fields in parse_container(),
+
+* Return the remaining blob size from parse_container() if the equivalence
+table is truncated,
+
+* Split the equivalence table size checks into two patches: one for the
+early loader and one for the late loader,
+
+* Rename an equivalence table length variable in install_equiv_cpu_table()
+for consistency with a similar one in parse_container(),
+
+* Rephrase the error messages in install_equiv_cpu_table() to be more
+descriptive and merge two tests there so they print the same message,
+
+* Change install_equiv_cpu_table() to return an unsigned int while moving
+the job of adding the container header length to this value to its caller,
+
+* Drop automatic computation of the PATCH_MAX_SIZE macro and add a comment
+reminding to do it manually instead,
+
+* Add a local variable patch_type for better code readability in
+verify_and_add_patch() function.
+
+Changes from v4:
+* Update the first patch in series with Borislav's version,
+
+* Use u32-type variables for microcode container header fields,
+
+* Drop the check for zero-length CPU equivalence table,
+
+* Leave size variables in verify_patch_size() as unsigned ints,
+
+* Rewrite the series to use common microcode container data checking
+functions in both the early and the late loader so their code won't get
+interspersed with a lot of checks and so will be more readable.
+
+Changes from v5:
+* Remove "This commit" or "This patch" prefix from commit messages,
+
+* Make sure that every checking function verifies presence of any data
+it accesses so these functions don't have an implicit call order
+requirement,
+
+* Integrate verify_patch_size() into verify_patch() after the late loader
+is converted to no longer call verify_patch_size() directly,
+
+* Make a patch matching check in the early loader more readable,
+
+* Skip just one byte in the early loader when a container cannot be parsed
+successfully so the parser will correctly skip unknown data of any size,
+
+* Move assignment of a pointer to CPU equivalence table header variable
+past this table check in install_equiv_cpu_table(),
+
+* Split returned status value from returned length of data to skip in
+verify_and_add_patch() so we keep the common convention that a function
+zero return value means success while a negative value means an error,
+
+* Don't introduce a new global variable for holding the CPU equivalence
+table size, add a terminating zero entry to this table explicitly instead
+to prevent scanning past its valid data.
+
+
+ arch/x86/include/asm/microcode_amd.h |   1 +
+ arch/x86/kernel/cpu/microcode/amd.c  | 403 +++++++++++++++++++--------
+ 2 files changed, 285 insertions(+), 119 deletions(-)
