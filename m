@@ -1,184 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeESUVM (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 16:21:12 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39920 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752424AbeESUVK (ORCPT
+        id S1752587AbeESUXW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 16:23:22 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:43365 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752532AbeESUXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 16:21:10 -0400
-X-Google-Smtp-Source: AB8JxZrUqPKaPh8jJpYw3x8e45f2AV4xUsNs3e0v9dyiCuqD1MLwCv91NI+6r8qizWl6mjBPgLhBZUHVrvNqQVV7pY8=
+        Sat, 19 May 2018 16:23:16 -0400
+X-Google-Smtp-Source: AB8JxZqLbgwdzgQ3qWfYGh8jCaR1FOWxCTMsHXmnetjhuwyjcE7i3tHUwt2h+dJhEk3nXFrLdZUI+oEqrFqL0Nh5+2A=
 MIME-Version: 1.0
-In-Reply-To: <20180519163735.GX3803@linux.vnet.ibm.com>
-References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
- <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
-From: Roman Penyaev <roman.penyaev@profitbricks.com>
-Date: Sat, 19 May 2018 22:20:48 +0200
-Message-ID: <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
-Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
-To: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        Swapnil Ingle <swapnil.ingle@profitbricks.com>,
-        Danil Kipnis <danil.kipnis@profitbricks.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>, linux-kernel@vger.kernel.org
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Sun, 20 May 2018 01:53:15 +0530
+Message-ID: <CAG=yYwnNYY6YKD8wtnjQD-87N7ipSCnyXr8dzFGm4brE6-cgNw@mail.gmail.com>
+Subject: PROBLEM: found 2 tests failed using "perf test" command
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc: lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 6:37 PM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Fri, May 18, 2018 at 03:03:48PM +0200, Roman Pen wrote:
->> Function is going to be used in transport over RDMA module
->> in subsequent patches.
->>
->> Function returns next element in round-robin fashion,
->> i.e. head will be skipped.  NULL will be returned if list
->> is observed as empty.
->>
->> Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
->> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  include/linux/rculist.h | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
->> index 127f534fec94..b0840d5ab25a 100644
->> --- a/include/linux/rculist.h
->> +++ b/include/linux/rculist.h
->> @@ -339,6 +339,25 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->>  })
->>
->>  /**
->> + * list_next_or_null_rr_rcu - get next list element in round-robin fashion.
->> + * @head:    the head for the list.
->> + * @ptr:        the list head to take the next element from.
->> + * @type:       the type of the struct this is embedded in.
->> + * @memb:       the name of the list_head within the struct.
->> + *
->> + * Next element returned in round-robin fashion, i.e. head will be skipped,
->> + * but if list is observed as empty, NULL will be returned.
->> + *
->> + * This primitive may safely run concurrently with the _rcu list-mutation
->> + * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
->
-> Of course, all the set of list_next_or_null_rr_rcu() invocations that
-> are round-robining a given list must all be under the same RCU read-side
-> critical section.  For example, the following will break badly:
->
->         struct foo *take_rr_step(struct list_head *head, struct foo *ptr)
->         {
->                 struct foo *ret;
->
->                 rcu_read_lock();
->                 ret = list_next_or_null_rr_rcu(head, ptr, struct foo, foolist);
->                 rcu_read_unlock();  /* BUG */
->                 return ret;
->         }
->
-> You need a big fat comment stating this, at the very least.  The resulting
-> bug can be very hard to trigger and even harder to debug.
->
-> And yes, I know that the same restriction applies to list_next_rcu()
-> and friends.  The difference is that if you try to invoke those in an
-> infinite loop, you will be rapped on the knuckles as soon as you hit
-> the list header.  Without that knuckle-rapping, RCU CPU stall warnings
-> might tempt people to do something broken like take_rr_step() above.
-
-Hi Paul,
-
-I need -rr behaviour for doing IO load-balancing when I choose next RDMA
-connection from the list in order to send a request, i.e. my code is
-something like the following:
-
-        static struct conn *get_and_set_next_conn(void)
-        {
-                struct conn *conn;
-
-                conn = rcu_dereferece(rcu_conn);
-                if (unlikely(!conn))
-                    return conn;
-                conn = list_next_or_null_rr_rcu(&conn_list,
-                                                &conn->entry,
-                                                typeof(*conn),
-                                                entry);
-                rcu_assign_pointer(rcu_conn, conn);
-                return conn;
-        }
-
-        rcu_read_lock();
-        conn = get_and_set_next_conn();
-        if (unlikely(!conn)) {
-                /* ... */
-        }
-        err = rdma_io(conn, request);
-        rcu_read_unlock();
-
-i.e. usage of the @next pointer is under an RCU critical section.
-
-> Is it possible to instead do some sort of list_for_each_entry_rcu()-like
-> macro that makes it more obvious that the whole thing need to be under
-> a single RCU read-side critical section?  Such a macro would of course be
-> an infinite loop if the list never went empty, so presumably there would
-> be a break or return statement in there somewhere.
-
-The difference is that I do not need a loop, I take the @next conn pointer,
-save it for the following IO request and do IO for current IO request.
-
-It seems list_for_each_entry_rcu()-like with immediate "break" in the body
-of the loop does not look nice, I personally do not like it, i.e.:
+hello,
 
 
-        static struct conn *get_and_set_next_conn(void)
-        {
-                struct conn *conn;
+i found two tests failed while i did "sudo ./perf test"
 
-                conn = rcu_dereferece(rcu_conn);
-                if (unlikely(!conn))
-                    return conn;
-                list_for_each_entry_rr_rcu(conn, &conn_list,
-                                           entry) {
-                        break;
-                }
-                rcu_assign_pointer(rcu_conn, conn);
-                return conn;
-        }
+--------------------------------------------------------------------------->
+24: Object code reading                                   : FAILED!
+64: probe libc's inet_pton & backtrace it with ping       : FAILED!
+---------------------------------------------------------------------------->
 
+some relevent shell session details from ./sudo perf test -vv 24
+-------------------------------------------------------------------------------------------------------->
+Objdump command is: objdump -z -d --start-address=0xffffffff8132dda7
+--stop-address=0xffffffff8132de27
+/lib/modules/4.17.0-rc5+/build/vmlinux
+Bytes read match those read by objdump
+Reading object code for memory address: 0xfffffe000005e01e
+thread__find_addr_map failed
+test child finished with -1
+---- end ----
+Object code reading: FAILED!
+---------------------------------------------------------------------------------------------------------->
 
-or maybe I did not fully get your idea?
+$sudo ./perf test -vv 64
+64: probe libc's inet_pton & backtrace it with ping       :
+--- start ---
+test child forked, pid 4751
+test child finished with -1
+---- end ----
+probe libc's inet_pton & backtrace it with ping: FAILED!
+$
 
->> + */
->> +#define list_next_or_null_rr_rcu(head, ptr, type, memb) \
->> +({ \
->> +     list_next_or_null_rcu(head, ptr, type, memb) ?: \
->> +             list_next_or_null_rcu(head, READ_ONCE((ptr)->next), type, memb); \
->
-> Are there any uses for this outside of RDMA?  If not, I am with Linus.
-> Define this within RDMA, where a smaller number of people can more
-> easily be kept aware of the restrictions on use.  If it turns out to be
-> more generally useful, we can take a look at exactly what makes sense
-> more globally.
+----------------------------------------------------------------------------------------------------------->
 
-The only one list_for_each_entry_rcu()-like macro I am aware of is used in
-block/blk-mq-sched.c, is called list_for_each_entry_rcu_rr():
+ $awk -f scripts/ver_linux
+If some fields are empty or look unusual you may have an old version.
+Compare to the current minimal requirements in Documentation/Changes.
 
-https://elixir.bootlin.com/linux/v4.17-rc5/source/block/blk-mq-sched.c#L370
+Linux debian 4.17.0-rc5+ #30 SMP Sat May 19 19:59:08 IST 2018 x86_64 GNU/Linux
 
-Does it make sense to implement generic list_next_or_null_rr_rcu() reusing
-my list_next_or_null_rr_rcu() variant?
+GNU Make            4.2.1
+Binutils            2.30
+Util-linux          2.32
+Mount                2.32
+Linux C Library      2.27
+Dynamic linker (ldd) 2.27
+readlink: missing operand
+Try 'readlink --help' for more information.
+Procps              3.3.14
+Kbd                  2.0.4
+Console-tools        2.0.4
+Sh-utils            8.28
+Udev                238
+Modules Loaded      ac acpi_pad acpi_thermal_rel ahci autofs4 battery
+binfmt_misc bluetooth bnep btbcm btintel btrtl btusb button cdrom
+cfg80211 cmac coretemp crc32c_intel crc32_pclmul crct10dif_pclmul
+cryptd drm drm_kms_helper ecdh_generic efi_pstore efivarfs efivars
+ehci_hcd ehci_pci evdev fan fat fuse ghash_clmulni_intel hid
+hp_wireless hp_wmi i2c_algo_bit i2c_hid i2c_i801 i915 int3400_thermal
+int340x_thermal_zone intel_cstate intel_pch_thermal intel_powerclamp
+intel_rapl intel_rapl_perf intel_soc_dts_iosf intel_uncore ip_tables
+irqbypass iTCO_vendor_support iTCO_wdt joydev kvm kvm_intel libahci
+libata loop lp lpc_ich media mei mei_me mfd_core mii nls_ascii
+nls_cp437 parport parport_pc pcspkr ppdev processor_thermal_device
+psmouse r8169 rfcomm rfkill scsi_mod sd_mod serio_raw sg shpchp snd
+snd_hda_codec snd_hda_codec_generic snd_hda_codec_hdmi
+snd_hda_codec_realtek snd_hda_core snd_hda_intel snd_hwdep snd_pcm
+snd_timer soundcore sparse_keymap sr_mod sunrpc thermal usbcore
+uvcvideo vfat video videobuf2_common videobuf2_memops videobuf2_v4l2
+videobuf2_vmalloc videodev wl wmi wmi_bmof x86_pkg_temp_thermal
+xhci_hcd xhci_pci x_tables
+$
 
-> Even within RDMA, I strongly recommend the big fat comment called out above.
-> And the list_for_each_entry_rcu()-like formulation, if that can be made to
-> work within RDMA's code structure.
->
-> Seem reasonable, or am I missing something here?
-
-Thanks for clear explanation.
-
---
-Roman
+-- 
+software engineer
+rajagiri school of engineering and technology
