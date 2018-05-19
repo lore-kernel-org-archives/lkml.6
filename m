@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeESCq0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 22:46:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44574 "EHLO mail.kernel.org"
+        id S1752503AbeESCqi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 22:46:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752361AbeESCqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 22:46:19 -0400
+        id S1752361AbeESCqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 22:46:34 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -25,9 +25,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 04/12] powerpc: Implement hw_breakpoint_arch_parse()
-Date: Sat, 19 May 2018 04:45:41 +0200
-Message-Id: <1526697950-7091-5-git-send-email-frederic@kernel.org>
+Subject: [PATCH 07/12] sh: Remove "struct arch_hw_breakpoint::name" unused field
+Date: Sat, 19 May 2018 04:45:44 +0200
+Message-Id: <1526697950-7091-8-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526697950-7091-1-git-send-email-frederic@kernel.org>
 References: <1526697950-7091-1-git-send-email-frederic@kernel.org>
@@ -35,8 +35,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
-that clumsily mixes up architecture validation and commit
+This field seem to be unused, perhaps a leftover from old code...
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -60,102 +59,39 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- arch/powerpc/include/asm/hw_breakpoint.h |  6 ++++-
- arch/powerpc/kernel/hw_breakpoint.c      | 41 ++++++++++++++++----------------
- 2 files changed, 26 insertions(+), 21 deletions(-)
+ arch/sh/include/asm/hw_breakpoint.h | 1 -
+ arch/sh/kernel/hw_breakpoint.c      | 7 -------
+ 2 files changed, 8 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
-index 4d0b1bf..8f647e6 100644
---- a/arch/powerpc/include/asm/hw_breakpoint.h
-+++ b/arch/powerpc/include/asm/hw_breakpoint.h
-@@ -52,6 +52,7 @@ struct arch_hw_breakpoint {
- #include <asm/reg.h>
- #include <asm/debug.h>
+diff --git a/arch/sh/include/asm/hw_breakpoint.h b/arch/sh/include/asm/hw_breakpoint.h
+index 8a88ed0..dae622d 100644
+--- a/arch/sh/include/asm/hw_breakpoint.h
++++ b/arch/sh/include/asm/hw_breakpoint.h
+@@ -10,7 +10,6 @@
+ #include <linux/types.h>
  
-+struct perf_event_attr;
- struct perf_event;
- struct pmu;
- struct perf_sample_data;
-@@ -61,7 +62,10 @@ struct perf_sample_data;
- extern int hw_breakpoint_slots(int type);
- extern int arch_bp_generic_fields(int type, int *gen_bp_type);
- extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
--extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
-+extern int hw_breakpoint_arch_parse(struct perf_event *bp,
-+				    struct perf_event_attr *attr,
-+				    struct arch_hw_breakpoint *hw);
-+#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 						unsigned long val, void *data);
- int arch_install_hw_breakpoint(struct perf_event *bp);
-diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-index 348cac9..fba6527 100644
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -139,30 +139,31 @@ int arch_bp_generic_fields(int type, int *gen_bp_type)
- /*
-  * Validate the arch-specific HW Breakpoint register settings
-  */
--int arch_validate_hwbkpt_settings(struct perf_event *bp)
-+int hw_breakpoint_arch_parse(struct perf_event *bp,
-+			     struct perf_event_attr *attr,
-+			     struct arch_hw_breakpoint *hw)
- {
- 	int ret = -EINVAL, length_max;
--	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
- 
- 	if (!bp)
- 		return ret;
- 
--	info->type = HW_BRK_TYPE_TRANSLATE;
--	if (bp->attr.bp_type & HW_BREAKPOINT_R)
--		info->type |= HW_BRK_TYPE_READ;
--	if (bp->attr.bp_type & HW_BREAKPOINT_W)
--		info->type |= HW_BRK_TYPE_WRITE;
--	if (info->type == HW_BRK_TYPE_TRANSLATE)
-+	hw->type = HW_BRK_TYPE_TRANSLATE;
-+	if (attr->bp_type & HW_BREAKPOINT_R)
-+		hw->type |= HW_BRK_TYPE_READ;
-+	if (attr->bp_type & HW_BREAKPOINT_W)
-+		hw->type |= HW_BRK_TYPE_WRITE;
-+	if (hw->type == HW_BRK_TYPE_TRANSLATE)
- 		/* must set alteast read or write */
- 		return ret;
--	if (!(bp->attr.exclude_user))
--		info->type |= HW_BRK_TYPE_USER;
--	if (!(bp->attr.exclude_kernel))
--		info->type |= HW_BRK_TYPE_KERNEL;
--	if (!(bp->attr.exclude_hv))
--		info->type |= HW_BRK_TYPE_HYP;
--	info->address = bp->attr.bp_addr;
--	info->len = bp->attr.bp_len;
-+	if (!attr->exclude_user)
-+		hw->type |= HW_BRK_TYPE_USER;
-+	if (!attr->exclude_kernel)
-+		hw->type |= HW_BRK_TYPE_KERNEL;
-+	if (!attr->exclude_hv)
-+		hw->type |= HW_BRK_TYPE_HYP;
-+	hw->address = attr->bp_addr;
-+	hw->len = attr->bp_len;
+ struct arch_hw_breakpoint {
+-	char		*name; /* Contains name of the symbol to set bkpt */
+ 	unsigned long	address;
+ 	u16		len;
+ 	u16		type;
+diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
+index 713699b..3594773 100644
+--- a/arch/sh/kernel/hw_breakpoint.c
++++ b/arch/sh/kernel/hw_breakpoint.c
+@@ -248,13 +248,6 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 	}
  
  	/*
- 	 * Since breakpoint length can be a maximum of HW_BREAKPOINT_LEN(8)
-@@ -176,12 +177,12 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 	if (cpu_has_feature(CPU_FTR_DAWR)) {
- 		length_max = 512 ; /* 64 doublewords */
- 		/* DAWR region can't cross 512 boundary */
--		if ((bp->attr.bp_addr >> 10) != 
--		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
-+		if ((attr->bp_addr >> 10) !=
-+		    ((attr->bp_addr + attr->bp_len - 1) >> 10))
- 			return -EINVAL;
- 	}
--	if (info->len >
--	    (length_max - (info->address & HW_BREAKPOINT_ALIGN)))
-+	if (hw->len >
-+	    (length_max - (hw->address & HW_BREAKPOINT_ALIGN)))
- 		return -EINVAL;
- 	return 0;
- }
+-	 * For kernel-addresses, either the address or symbol name can be
+-	 * specified.
+-	 */
+-	if (info->name)
+-		info->address = (unsigned long)kallsyms_lookup_name(info->name);
+-
+-	/*
+ 	 * Check that the low-order bits of the address are appropriate
+ 	 * for the alignment implied by len.
+ 	 */
 -- 
 2.7.4
