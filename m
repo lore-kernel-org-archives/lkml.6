@@ -1,70 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752290AbeESKH2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:07:28 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:34302 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeESKH0 (ORCPT
+        id S1752322AbeESKMF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:12:05 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45585 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752206AbeESKMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:07:26 -0400
-Date: Sat, 19 May 2018 11:07:08 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Kees Cook <keescook@chromium.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Laura Abbott <labbott@redhat.com>, David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCHv2] drm/i2c: tda998x: Remove VLA usage
-Message-ID: <20180519100707.GI17671@n2100.armlinux.org.uk>
-References: <20180411010330.17866-1-labbott@redhat.com>
- <CAGXu5jK-qTdkDi2bC7DZg-bR-tFjSGOZsNB9_b-F++qMgdcF+Q@mail.gmail.com>
+        Sat, 19 May 2018 06:12:02 -0400
+X-Google-Smtp-Source: AB8JxZrkSxug7lUKke3pe5MYjH9KjoS578KcwQa14SIuCRhdOrfneidRTVDZOsI64PfpFNPryHzyaA==
+Date: Sat, 19 May 2018 15:41:49 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+Subject: Re: [PATCH 4/5] pinctrl: actions: Add gpio support for Actions S900
+ SoC
+Message-ID: <20180519101149.7bq6vjiibyrsedv3@linaro.org>
+References: <20180518023056.7869-1-manivannan.sadhasivam@linaro.org>
+ <20180518023056.7869-5-manivannan.sadhasivam@linaro.org>
+ <12834501.5lBvNSZm06@debian64>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jK-qTdkDi2bC7DZg-bR-tFjSGOZsNB9_b-F++qMgdcF+Q@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <12834501.5lBvNSZm06@debian64>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 11:01:55AM -0700, Kees Cook wrote:
-> On Tue, Apr 10, 2018 at 6:03 PM, Laura Abbott <labbott@redhat.com> wrote:
-> > There's an ongoing effort to remove VLAs[1] from the kernel to eventually
-> > turn on -Wvla. The vla in reg_write_range is based on the length of data
-> > passed. The one use of a non-constant size for this range is bounded by
-> > the size buffer passed to hdmi_infoframe_pack which is a fixed size.
-> > Switch to this upper bound.
-> >
-> > [1] https://lkml.org/lkml/2018/3/7/621
-> >
-> > Signed-off-by: Laura Abbott <labbott@redhat.com>
+Hi Christian,
+
+On Sat, May 19, 2018 at 11:18:53AM +0200, Christian Lamparter wrote:
+> On Friday, May 18, 2018 4:30:55 AM CEST Manivannan Sadhasivam wrote:
+> > Add gpio support to pinctrl driver for Actions Semi S900 SoC.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> > [...]
+> > +static int owl_gpio_init(struct owl_pinctrl *pctrl)
+> > +{
+> > +	struct gpio_chip *chip;
+> > +	int ret;
+> > +
+> > +	chip = &pctrl->chip;
+> > +	chip->base = -1;
+> > +	chip->ngpio = pctrl->soc->ngpios;
+> > +	chip->label = dev_name(pctrl->dev);
+> > +	chip->parent = pctrl->dev;
+> > +	chip->owner = THIS_MODULE;
+> > +	chip->of_node = pctrl->dev->of_node;
+> > +
+> > +	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+> > +	if (ret) {
+> > +		dev_err(pctrl->dev, "failed to register gpiochip\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
+> > +							0, 0, chip->ngpio);
+> > +	if (ret) {
+> > +		dev_err(pctrl->dev, "failed to add pin range\n");
+> > +		gpiochip_remove(&pctrl->chip);
+> > +		return ret;
+> > +	}
+> > +
+> gpiochip_add_pin_range()? That's not going to work with gpio-hogs. 
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Hmmm. Just looked into the gpio-hog mechanism and the patch you have
+implemented for MSM driver. I agree with you on replacing
+gpiochip_add_pin_range() with gpio-ranges property. But I'm curious
+whether we should document it somewhere or not (probably in [1]).
+
+Anyway I will send the v2 incorporating your suggestion.
+
+Thanks,
+Mani
+
+[1] Documentation/devicetree/bindings/gpio/gpio.txt
+
+> But, you can easily test this. Just add a gpio-hog [0] 
+> ( Section 2. gpio-controller nodes) into the Devicetree's
+> pinctrl node.
 > 
-> Same question for this patch: who's best to take this?
-
-I had decided that I'm not taking any tda998x stuff until we get the
-CEC support merged upstream, as that has been hanging around for ages.
-Progress has been slow on that, but it finally got to the point where
-everyone was happy with it, and I sent a pull request to David Airlie
-on April 24th for it.
-
-Unfortunately, that pull request has not been actioned to date.  I've
-sent a chaser, and last night, I checked with David Airlie on IRC.
-It seems David is not aware of my pull request.  David says he'll look
-into this on Monday.
-
-Until David does take it, I can't add anything further to my git tree
-for tda998x development, as that would change what was sent to David
-back in April.
-
-The alternative would be for drm-misc to take it - I don't think it
-will conflict with anything I've already asked David to take, so that
-should be a safe route for _this_ patch.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> something like: (No idea if GPIO1 is already used, but any free
+> gpio will do)
+> | 		[...]
+> |		pinctrl@e01b0000 {
+> |			compatible = "actions,s900-pinctrl";
+> |			reg = <0x0 0xe01b0000 0x0 0x1000>;
+> |			clocks = <&cmu CLK_GPIO>;
+> |			gpio-controller;
+> |			#gpio-cells = <2>;
+> |
+> |			line_b {
+> |				gpio-hog;
+> |				gpios = <1 GPIO_ACTIVE_HIGH>;
+> |				output-low;
+> |				line-name = "foo-bar-gpio";
+> |			};
+> |		};
+> 
+> The pinctrl probe will fail. You can fix this by
+> replacing the gpiochip_add_pin_range() and use
+> the gpio-ranges [0] property to define the range.
+> 
+> [0] <https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/gpio.txt>
+> 
+> 
+> 
