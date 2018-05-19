@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeESK4D (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:56:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43108 "EHLO mail.kernel.org"
+        id S1752628AbeESK4M (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:56:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752560AbeESKz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:55:59 -0400
+        id S1752274AbeESK4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 06:56:08 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/18] perf script: Show symbol offsets by default
-Date: Sat, 19 May 2018 07:55:02 -0300
-Message-Id: <20180519105507.16450-14-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 16/18] perf bpf: Fixup include and examples install messages
+Date: Sat, 19 May 2018 07:55:05 -0300
+Message-Id: <20180519105507.16450-17-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180519105507.16450-1-acme@kernel.org>
 References: <20180519105507.16450-1-acme@kernel.org>
@@ -25,173 +24,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since the ip shown for a symbol is now always a virtual address, it
-becomes difficult to correlate this with objdump output and determine
-the exact instruction address. So, we always show the offset from the
-start of the symbol.
+Before:
 
-This can be verified on a powerpc64le system running Fedora 27 as
-follows:
+  INSTALL  lib
+install include/bpf/*.h '/home/acme/lib/include/perf/bpf'
+  INSTALL  lib
+install examples/bpf/*.c '/home/acme/lib/examples/perf/bpf'
 
-  # perf probe -a sys_write
-  # perf record -e probe:sys_write -g ~/test
+After:
 
-Before applying this patch:
+  INSTALL  lib
+  INSTALL  include/bpf
+  INSTALL  lib
+  INSTALL  examples/bpf
 
-  # perf script
-
-  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
-          c0000000004025b0 sys_write (/lib/modules/4.17.0-rc4+/build/vmlinux)
-          c00000000000b9e0 system_call (/lib/modules/4.17.0-rc4+/build/vmlinux)
-              7fffb70d8234 __GI___libc_write (/usr/lib64/libc-2.26.so)
-              7fffb7052c74 _IO_file_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
-                  5afc1818 [unknown] ([unknown])
-              7fffb7051a60 new_do_write (/usr/lib64/libc-2.26.so)
-              7fffb7054638 _IO_do_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
-              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
-              7fffb7055a24 __overflow (/usr/lib64/libc-2.26.so)
-              7fffb7044548 _IO_puts (/usr/lib64/libc-2.26.so)
-                  10000440 main (/home/sandipan/test)
-              7fffb6fe36a0 generic_start_main.isra.0 (/usr/lib64/libc-2.26.so)
-              7fffb6fe3898 __libc_start_main (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-  ...
-
-After applying this patch:
-
-  # perf script
-
-  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
-          c0000000004025b0 sys_write+0x10 (/lib/modules/4.17.0-rc4+/build/vmlinux)
-          c00000000000b9e0 system_call+0x58 (/lib/modules/4.17.0-rc4+/build/vmlinux)
-              7fffb70d8234 __GI___libc_write+0x24 (/usr/lib64/libc-2.26.so)
-              7fffb7052c74 _IO_file_write@@GLIBC_2.17+0x44 (/usr/lib64/libc-2.26.so)
-                  5afc1818 [unknown] ([unknown])
-              7fffb7051a60 new_do_write+0x90 (/usr/lib64/libc-2.26.so)
-              7fffb7054638 _IO_do_write@@GLIBC_2.17+0x38 (/usr/lib64/libc-2.26.so)
-              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17+0x14c (/usr/lib64/libc-2.26.so)
-              7fffb7055a24 __overflow+0x64 (/usr/lib64/libc-2.26.so)
-              7fffb7044548 _IO_puts+0x218 (/usr/lib64/libc-2.26.so)
-                  10000440 main+0x20 (/home/sandipan/test)
-              7fffb6fe36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fffb6fe3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-  ...
-
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20180517063326.6319-2-sandipan@linux.vnet.ibm.com
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: dd8e4ead6e98 ("perf bpf: Add bpf.h to be used in eBPF proggies")
+Fixes: 8f12a2ff00e5 ("perf bpf: Add 'examples' directories")
+Link: https://lkml.kernel.org/n/tip-icljqe87e8pak8mu6mkki9d4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c                        | 26 ++++++++++++----------
- .../tests/shell/record+probe_libc_inet_pton.sh     | 12 +++++-----
- 2 files changed, 20 insertions(+), 18 deletions(-)
+ tools/perf/Makefile.perf | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index fa2c7a288750..cefc8813e91e 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -153,8 +153,8 @@ static struct {
- 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
- 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
- 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
--			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
--			      PERF_OUTPUT_PERIOD,
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -165,8 +165,9 @@ static struct {
- 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
- 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
- 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
--			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
--			      PERF_OUTPUT_PERIOD | PERF_OUTPUT_BPF_OUTPUT,
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
-+			      PERF_OUTPUT_BPF_OUTPUT,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE,
- 	},
-@@ -185,10 +186,10 @@ static struct {
- 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
- 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
- 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
--			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
--			      PERF_OUTPUT_PERIOD |  PERF_OUTPUT_ADDR |
--			      PERF_OUTPUT_DATA_SRC | PERF_OUTPUT_WEIGHT |
--			      PERF_OUTPUT_PHYS_ADDR,
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
-+			      PERF_OUTPUT_ADDR | PERF_OUTPUT_DATA_SRC |
-+			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -199,8 +200,8 @@ static struct {
- 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
- 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
- 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
--			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
--			      PERF_OUTPUT_PERIOD,
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -211,8 +212,8 @@ static struct {
- 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
- 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
- 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
--			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
--			      PERF_OUTPUT_SYNTH,
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_SYNTH,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -544,6 +545,7 @@ static int perf_session__check_output_opt(struct perf_session *session)
- 			if (attr->sample_type & PERF_SAMPLE_CALLCHAIN) {
- 				output[j].fields |= PERF_OUTPUT_IP;
- 				output[j].fields |= PERF_OUTPUT_SYM;
-+				output[j].fields |= PERF_OUTPUT_SYMOFFSET;
- 				output[j].fields |= PERF_OUTPUT_DSO;
- 				set_print_ip_opts(attr);
- 				goto out;
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index ee86473643be..650b208f700f 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -16,18 +16,18 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
- trace_libc_inet_pton_backtrace() {
- 	idx=0
- 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
--	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
-+	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf,max-stack=4'
--		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
--		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
--		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
-+		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-+		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-+		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
- 		;;
- 	*)
- 		eventattr='max-stack=3'
--		expected[2]="getaddrinfo[[:space:]]\($libc\)$"
--		expected[3]=".*\(.*/bin/ping.*\)$"
-+		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-+		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
- 		;;
- 	esac
- 
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index c63a3971d719..ecc9fc952655 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -770,9 +770,11 @@ endif
+ ifndef NO_LIBBPF
+ 	$(call QUIET_INSTALL, lib) \
+ 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
++	$(call QUIET_INSTALL, include/bpf) \
+ 		$(INSTALL) include/bpf/*.h '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
+ 	$(call QUIET_INSTALL, lib) \
+ 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
++	$(call QUIET_INSTALL, examples/bpf) \
+ 		$(INSTALL) examples/bpf/*.c '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
+ endif
+ 	$(call QUIET_INSTALL, perf-archive) \
 -- 
 2.14.3
