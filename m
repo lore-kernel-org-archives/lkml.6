@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeESK6B (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:58:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42966 "EHLO mail.kernel.org"
+        id S1752453AbeESKzk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:55:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752483AbeESKzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:55:51 -0400
+        id S1752174AbeESKzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 06:55:24 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -13,10 +13,11 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 10/18] perf tools: Read the cache line size lazily
-Date: Sat, 19 May 2018 07:54:59 -0300
-Message-Id: <20180519105507.16450-11-acme@kernel.org>
+        Namhyung Kim <namhyung@kernel.org>,
+        Taeung Song <treeze.taeung@gmail.com>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 01/18] perf config: Call perf_config__init() lazily
+Date: Sat, 19 May 2018 07:54:50 -0300
+Message-Id: <20180519105507.16450-2-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180519105507.16450-1-acme@kernel.org>
 References: <20180519105507.16450-1-acme@kernel.org>
@@ -26,141 +27,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-It is not read as commonly as 'page_size', so it makes sense to read it
-lazily, caching its value when it is first read.
+We check what perf_config__init() does at each perf_config() call,
+namely if the static perf_config instance was created, so instead of
+bailing out in that case, try to allocate it, bailing if it fails.
 
-Less files open unconditionally at startup.
+Now to get the perf_config() call out of the start of perf's main()
+function, doing it also lazily.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-35xhrq91u94uc1djtclek1ie@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-4bo45k6ivsmbxpfpdte4orsg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/perf.c      | 11 -----------
- tools/perf/util/sort.c |  4 ++--
- tools/perf/util/sort.h |  4 ++--
- tools/perf/util/util.c | 21 ++++++++++++++++++++-
- tools/perf/util/util.h |  2 +-
- 5 files changed, 25 insertions(+), 17 deletions(-)
+ tools/perf/perf.c        |  1 -
+ tools/perf/util/config.c | 16 +++++++++-------
+ tools/perf/util/config.h |  1 -
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index d5a0878de816..cefd8f74630c 100644
+index 20a08cb32332..cd6ea55d4b0c 100644
 --- a/tools/perf/perf.c
 +++ b/tools/perf/perf.c
-@@ -421,16 +421,6 @@ void pthread__unblock_sigwinch(void)
- 	pthread_sigmask(SIG_UNBLOCK, &set, NULL);
+@@ -458,7 +458,6 @@ int main(int argc, const char **argv)
+ 
+ 	srandom(time(NULL));
+ 
+-	perf_config__init();
+ 	err = perf_config(perf_default_config, NULL);
+ 	if (err)
+ 		return err;
+diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
+index 84eb9393c7db..5ac157056cdf 100644
+--- a/tools/perf/util/config.c
++++ b/tools/perf/util/config.c
+@@ -707,6 +707,14 @@ struct perf_config_set *perf_config_set__new(void)
+ 	return set;
  }
  
--#ifdef _SC_LEVEL1_DCACHE_LINESIZE
--#define cache_line_size(cacheline_sizep) *cacheline_sizep = sysconf(_SC_LEVEL1_DCACHE_LINESIZE)
--#else
--static void cache_line_size(int *cacheline_sizep)
++static int perf_config__init(void)
++{
++	if (config_set == NULL)
++		config_set = perf_config_set__new();
++
++	return config_set == NULL;
++}
++
+ int perf_config(config_fn_t fn, void *data)
+ {
+ 	int ret = 0;
+@@ -714,7 +722,7 @@ int perf_config(config_fn_t fn, void *data)
+ 	struct perf_config_section *section;
+ 	struct perf_config_item *item;
+ 
+-	if (config_set == NULL)
++	if (config_set == NULL && perf_config__init())
+ 		return -1;
+ 
+ 	perf_config_set__for_each_entry(config_set, section, item) {
+@@ -735,12 +743,6 @@ int perf_config(config_fn_t fn, void *data)
+ 	return ret;
+ }
+ 
+-void perf_config__init(void)
 -{
--	if (sysfs__read_int("devices/system/cpu/cpu0/cache/index0/coherency_line_size", cacheline_sizep))
--		pr_debug("cannot determine cache line size");
+-	if (config_set == NULL)
+-		config_set = perf_config_set__new();
 -}
--#endif
 -
- int main(int argc, const char **argv)
+ void perf_config__exit(void)
  {
- 	int err;
-@@ -444,7 +434,6 @@ int main(int argc, const char **argv)
+ 	perf_config_set__delete(config_set);
+diff --git a/tools/perf/util/config.h b/tools/perf/util/config.h
+index baf82bf227ac..bd0a5897c76a 100644
+--- a/tools/perf/util/config.h
++++ b/tools/perf/util/config.h
+@@ -38,7 +38,6 @@ struct perf_config_set *perf_config_set__new(void);
+ void perf_config_set__delete(struct perf_config_set *set);
+ int perf_config_set__collect(struct perf_config_set *set, const char *file_name,
+ 			     const char *var, const char *value);
+-void perf_config__init(void);
+ void perf_config__exit(void);
+ void perf_config__refresh(void);
  
- 	/* The page_size is placed in util object. */
- 	page_size = sysconf(_SC_PAGE_SIZE);
--	cache_line_size(&cacheline_size);
- 
- 	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
- 		sysctl_perf_event_max_stack = value;
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index e65903a695a6..4058ade352a5 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -2582,7 +2582,7 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
- 		if (sort__mode != SORT_MODE__MEMORY)
- 			return -EINVAL;
- 
--		if (sd->entry == &sort_mem_dcacheline && cacheline_size == 0)
-+		if (sd->entry == &sort_mem_dcacheline && cacheline_size() == 0)
- 			return -EINVAL;
- 
- 		if (sd->entry == &sort_mem_daddr_sym)
-@@ -2628,7 +2628,7 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
- 		if (*tok) {
- 			ret = sort_dimension__add(list, tok, evlist, level);
- 			if (ret == -EINVAL) {
--				if (!cacheline_size && !strncasecmp(tok, "dcacheline", strlen(tok)))
-+				if (!cacheline_size() && !strncasecmp(tok, "dcacheline", strlen(tok)))
- 					pr_err("The \"dcacheline\" --sort key needs to know the cacheline size and it couldn't be determined on this system");
- 				else
- 					pr_err("Invalid --sort key: `%s'", tok);
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 035b62e2c60b..9e6896293bbd 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -186,13 +186,13 @@ static inline float hist_entry__get_percent_limit(struct hist_entry *he)
- static inline u64 cl_address(u64 address)
- {
- 	/* return the cacheline of the address */
--	return (address & ~(cacheline_size - 1));
-+	return (address & ~(cacheline_size() - 1));
- }
- 
- static inline u64 cl_offset(u64 address)
- {
- 	/* return the cacheline of the address */
--	return (address & (cacheline_size - 1));
-+	return (address & (cacheline_size() - 1));
- }
- 
- enum sort_mode {
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 1019bbc5dbd8..99ab52165680 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -38,7 +38,26 @@ void perf_set_multithreaded(void)
- }
- 
- unsigned int page_size;
--int cacheline_size;
-+
-+#ifdef _SC_LEVEL1_DCACHE_LINESIZE
-+#define cache_line_size(cacheline_sizep) *cacheline_sizep = sysconf(_SC_LEVEL1_DCACHE_LINESIZE)
-+#else
-+static void cache_line_size(int *cacheline_sizep)
-+{
-+	if (sysfs__read_int("devices/system/cpu/cpu0/cache/index0/coherency_line_size", cacheline_sizep))
-+		pr_debug("cannot determine cache line size");
-+}
-+#endif
-+
-+int cacheline_size(void)
-+{
-+	static int size;
-+
-+	if (!size)
-+		cache_line_size(&size);
-+
-+	return size;
-+}
- 
- int sysctl_perf_event_max_stack = PERF_MAX_STACK_DEPTH;
- int sysctl_perf_event_max_contexts_per_stack = PERF_MAX_CONTEXTS_PER_STACK;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index c9626c206208..74d21dfe0d29 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -43,7 +43,7 @@ size_t hex_width(u64 v);
- int hex2u64(const char *ptr, u64 *val);
- 
- extern unsigned int page_size;
--extern int cacheline_size;
-+int __pure cacheline_size(void);
- 
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
 -- 
 2.14.3
