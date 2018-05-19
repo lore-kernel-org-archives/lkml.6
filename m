@@ -1,189 +1,141 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3751363-1526637833-2-4401196004058860693
+X-Cyrus-Session-Id: sloti22d1t05-1852109-1526758965-2-10809828528283507208
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526637832; b=WAzfxQQ7Cs24GD3ouqumoLYrY6VdtMDZJkaYLc+xPeerOPMRbr
-    a13lvsz2wEw6kY+KrJ28U4DSDMwyKjYCbq+AS+/TZ9Te3tto+8/tY9n/WOyq3ShY
-    IPfVif3VNYFwFZxrc+7TZZ0S+vFFARn7ITINJxrrNpvSxVPzhFr86byNws4iwbzn
-    jP0XAMiBbfSV8DCuypTNRCjBZXrT96yCify+VfILMRtQppiENQYX5ji5VYbhzV6I
-    l0ZOZzJh3G+hcN3PmeHF6ML0hUD1jK9GMPzYpcdY/mR0e2hFVRVAHOQ5Dz4xwFU4
-    Gv1HD4T+7I8KDJXpeLsHtbiQNyMMbV83qnQQ==
+    1526758965; b=dwhJwDgyuhINY0IsUmDtMWrZzQUWpxAjzGCmkzPTBjVI5bd0fd
+    Dk2HuAbQwVYwxi8XI/K6wQY8M46Cdf2q5JE49I0zzjwGdBZ2juIBT5jPgiI08bx7
+    kFjrThvV/zcWdHl24eWosHeSGHhsNw/0R9Wj7HJXUhKDgCiUm95L4j71BhYMHmbo
+    OiGtloO3KMK88F0j8T4D/qynB1FF3axgr7G7ksiBRLB/InJUm0N+Ua9VOxXfLRJm
+    18KfrnNLkhHwmV5S+VpqtkGMJ871j7S0VK/49VZfdLG8nTq/8jB0B6bI5UUm33v0
+    g1n7fJ7VP/CscCeRdnuAzAlTCMQn2osG/mNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526637832; bh=Bo0O4mTKsbGn+uge+9eNjMKSjMmn3j7OMeQ7vLjMZs
-    E=; b=kV0xRvYGZM1TywH5nN5ehqLzb6+x6Uaxlanqd+G6W/MNo4x+sSZxcbOJKG
-    1A/Pqh1MwYKB+UGQhQMHvXhNT3ilDGVVDNfjdvO+VYwGF6lv50z/kzBrlTrXKo1H
-    q7MWU3Z7e9AY37S7rfPXKPZy+jhl0HMUO5uRMjdrtuO0WFy5eDPyR5WY1cHRJlaJ
-    /vtzdn8587wtXdN+8Ihn2fUnm5GI5JLxFRzr0TmlfU4GQ0nJOzSsTuUgOSPQogLH
-    ZlDGw9aR3vLtDDENpoF9xxeqRiItocOcYKNa2Rw/GPiPQzS3Qvh9INS4OC3NVM2y
-    WZTF9+KybKQlA64q+oy/SfvJplCA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=c+nbiTaF x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526758965; bh=sKh+6j20ehXFRKQBLuLK6Xm53iQR+R
+    /ta57djx52NNc=; b=OGm6fPdYi9yft5t7WAzXCs4DDRvOrl36LDdcbYtobs7KoB
+    F3RHpA7u5xklX5jkbZ4jj98OFoEBSbkZlNnkHVncoLklgQZgM8Ib8VkfgXE5YGpX
+    3BuzTBSgqZUL4f/H46vpjeQI8iLZgy33szcvWHBR5B6RzaG7cclGp40xlWTJXSYm
+    kWmdThkkEUGDpD7rRfpwx7fzriP8IdqdahKd6ycWbzlh7EFfEo6NEmrRqjW40wPt
+    P0FSIdv3Qs+cZ8uR+WhOUnZccdM7xomBH00WL8S1aCRTs5+zjNcgJ8KyY0hxdgJo
+    tBJ1PC1u9D1C5UcSs1w/B4Xy+EqBHESFxe6v2yGA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=PZTLNM6k;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=c+nbiTaF x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=PZTLNM6k;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB5WUV4FaMq/MW699PDTdk9bn+DZ0iv8ReXGeBGFcXs6SzEgjJ5MAdRFc22/NmEko96CPVjZPQUT/VTgFTlwlCZX5i28CoFK0M7XTZH/iFzJv5F00qcx
-    O/Pww3XoTLzPnuuoWdyqFi4v5XSHqPtfQqf1TEOLcIN6+S1FC4WQ78de+TV5o/oq8tAaBMvrcjuMUWOTqY2R39OXDCOTyA7nXzFUkT/FPBUbKrCqO/XHID33
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=p-nOP-kxAAAA:8 a=QyXUC8HyAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8
-    a=VwQbUJbxAAAA:8 a=6aB9zNIcVPSQCmBHzbMA:9 a=QEXdDO2ut3YA:10
-    a=XN2wCei03jY4uMu7D0Wg:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfA7PhitVlPdEnSHoOxw+HbiS2LQ7bk9VzUaFeoRAnnyL93aOugHQ7mmnudIXkTZZMMaFCxIF6r+gCfSuhvwpSeRO77bH9omvsvi6A6q2Dv35fHJ/lCFl
+    hSNTO/U5CGySRxcpKMsGPhBT0MRbr9rdN++245lfjQkBCgaNbcfFvAYopnbiESrtj9fxEKBIBcW9hno1g4XCMchn5OvpSoCuIxoVwG4ixIIVBHCpUpNqURsu
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=D19gQVrFAAAA:8
+    a=p-nOP-kxAAAA:8 a=QyXUC8HyAAAA:8 a=M8rcC2nyAAAA:8 a=RXnXJx7MAAAA:8
+    a=de9RDGvtYYbL8uG3PuQA:9 a=CjuIK1q_8ugA:10 a=0dxXHNIcbWwA:10 a=gA6IeH5FQcgA:10
+    a=NWVoK91CQyQA:10 a=3aiDBLmjz74z7XeKxJ4A:9 a=ONNS8QRKHyMA:10
+    a=W4TVW4IDbPiebHqcZpNg:22 a=XN2wCei03jY4uMu7D0Wg:22 a=K9tzwgKBnWaK51F8Cre1:22
+    a=U_UV0sFCMgXoaKVbI-EZ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeERKDu (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 18 May 2018 06:03:50 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44113 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751589AbeERKDt (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 18 May 2018 06:03:49 -0400
-X-Google-Smtp-Source: AB8JxZrFiTYeQWHjnc2/SWsEYQMwbxB1RO3KGwkNgAbWXBkhsoeThYTZcESlcmE6ftGsF5GuGM6AlkpCjmpOw8v0DA0=
-MIME-Version: 1.0
-In-Reply-To: <20180518091721.7604-4-jslaby@suse.cz>
-References: <20180518091721.7604-1-jslaby@suse.cz> <20180518091721.7604-4-jslaby@suse.cz>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 18 May 2018 12:03:48 +0200
-X-Google-Sender-Auth: DuZVbs_NtOU_VSDakIB85GNA-qs
-Message-ID: <CAJZ5v0gH-Zjd_VWv9wBrtvTjewHdyjEiRhR2GWpSS2huMcWKLw@mail.gmail.com>
-Subject: Re: [PATCH v6 03/28] x86/asm/suspend: use SYM_DATA for data
+        id S1752389AbeESTmk (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 19 May 2018 15:42:40 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58086 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeESTmk (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Sat, 19 May 2018 15:42:40 -0400
+Date: Sat, 19 May 2018 21:42:35 +0200
+From: Pavel Machek <pavel@ucw.cz>
 To: Jiri Slaby <jslaby@suse.cz>
-Cc: Ingo Molnar <mingo@redhat.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc: mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 02/28] x86/asm/suspend: drop ENTRY from local data
+Message-ID: <20180519194235.GA3058@amd>
+References: <20180518091721.7604-1-jslaby@suse.cz>
+ <20180518091721.7604-3-jslaby@suse.cz>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+In-Reply-To: <20180518091721.7604-3-jslaby@suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 18, 2018 at 11:16 AM, Jiri Slaby <jslaby@suse.cz> wrote:
-> Some global data in the suspend code were marked as `ENTRY'. ENTRY was
-> intended for functions and shall be paired with ENDPROC. ENTRY also
-> aligns symbols which creates unnecessary holes here between data. Since
-> we are dropping historical markings, make proper use of newly added
-> SYM_DATA in this code.
->
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri 2018-05-18 11:16:55, Jiri Slaby wrote:
+> ENTRY was intended for functions and shall be paired with ENDPROC.
+> ENTRY also aligns symbols which creates unnecessary holes here between
+> data.
+>=20
+> So drop ENTRY from saved_eip in wakeup_32 and many saved_* in wakeup_64,
+> as these symbols are local only.
+>=20
+> We could use SYM_DATA_LOCAL for these symbols, but it was discouraged
+> earlier [1].
+>=20
+> [1] https://lkml.org/lkml/2017/4/27/244
+>=20
 > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 > Cc: Len Brown <len.brown@intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: linux-pm@vger.kernel.org
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-> ---
->  arch/x86/kernel/acpi/wakeup_32.S | 2 +-
->  arch/x86/kernel/acpi/wakeup_64.S | 2 +-
->  arch/x86/kernel/head_32.S        | 6 ++----
->  arch/x86/kernel/head_64.S        | 5 ++---
->  4 files changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kernel/acpi/wakeup_32.S b/arch/x86/kernel/acpi/wakeup_32.S
-> index 4203d4f0c68d..feac1e5ecba0 100644
-> --- a/arch/x86/kernel/acpi/wakeup_32.S
-> +++ b/arch/x86/kernel/acpi/wakeup_32.S
-> @@ -89,7 +89,7 @@ ret_point:
->
->  .data
->  ALIGN
-> -ENTRY(saved_magic)     .long   0
-> +SYM_DATA(saved_magic,  .long 0)
->  saved_eip:             .long 0
->
->  # saved registers
-> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-> index 510fa12aab73..551758f48eb7 100644
-> --- a/arch/x86/kernel/acpi/wakeup_64.S
-> +++ b/arch/x86/kernel/acpi/wakeup_64.S
-> @@ -133,4 +133,4 @@ saved_rbx:          .quad   0
->  saved_rip:             .quad   0
->  saved_rsp:             .quad   0
->
-> -ENTRY(saved_magic)     .quad   0
-> +SYM_DATA(saved_magic,  .quad   0)
-> diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-> index b59e4fb40fd9..80965fd75fea 100644
-> --- a/arch/x86/kernel/head_32.S
-> +++ b/arch/x86/kernel/head_32.S
-> @@ -507,10 +507,8 @@ GLOBAL(early_recursion_flag)
->
->  __REFDATA
->         .align 4
-> -ENTRY(initial_code)
-> -       .long i386_start_kernel
-> -ENTRY(setup_once_ref)
-> -       .long setup_once
-> +SYM_DATA(initial_code,         .long i386_start_kernel)
-> +SYM_DATA(setup_once_ref,       .long setup_once)
->
->  /*
->   * BSS section
-> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-> index 8344dd2f310a..17543533642d 100644
-> --- a/arch/x86/kernel/head_64.S
-> +++ b/arch/x86/kernel/head_64.S
-> @@ -463,9 +463,8 @@ early_gdt_descr:
->  early_gdt_descr_base:
->         .quad   INIT_PER_CPU_VAR(gdt_page)
->
-> -ENTRY(phys_base)
-> -       /* This must match the first entry in level2_kernel_pgt */
-> -       .quad   0x0000000000000000
-> +/* This must match the first entry in level2_kernel_pgt */
-> +SYM_DATA(phys_base, .quad 0x0000000000000000)
->  EXPORT_SYMBOL(phys_base)
->
->  #include "../../x86/xen/xen-head.S"
-> --
-> 2.16.3
->
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsAfisACgkQMOfwapXb+vJN+gCgi6w02foFsu6Vm9cdugbPgdVl
+5fUAnijCvo6E28F8/GTFkRTmPKy031TJ
+=AUDI
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
