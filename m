@@ -1,50 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeESBHm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 21:07:42 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41810 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbeESBHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 21:07:37 -0400
-X-Google-Smtp-Source: AB8JxZp4ui0x3yrmRvUyJPDZpiZyQ1pF2w6bVpO6IwDs8VaXfA8X2gktPXP8OALNa1TW3RJQTzeUuw==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] gpu: host1x: Skip IOMMU initialization if firewall is enabled
-Date: Sat, 19 May 2018 04:07:10 +0300
-Message-Id: <20180519010710.11693-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752234AbeESBJV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 21:09:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751851AbeESBJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 21:09:17 -0400
+Subject: Re: [PATCH net] tuntap: raise EPOLLOUT on device up
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        Eric Dumazet <edumazet@google.com>
+References: <1526648443-24128-1-git-send-email-jasowang@redhat.com>
+ <20180518161253-mutt-send-email-mst@kernel.org>
+ <e1ecf6b0-c751-52ad-a52e-0e29c3328196@redhat.com>
+ <6159b23e-eeda-1d4b-6a30-63b1a30666eb@redhat.com>
+ <20180518170155-mutt-send-email-mst@kernel.org>
+ <ac404f5e-22ea-00e7-8415-63116ce4881e@redhat.com>
+ <20180518172932-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <e178f169-43c4-8ac4-8334-bc3eba1bd10e@redhat.com>
+Date: Sat, 19 May 2018 09:09:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180518172932-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Host1x's CDMA can't access the command buffers if IOMMU and Host1x
-firewall are enabled in the kernels config because firewall doesn't map
-the copied buffer into IOVA space. Fix this by skipping IOMMU
-initialization if firewall is enabled as firewall merges sparse cmdbufs
-into a single contiguous buffer and hence IOMMU isn't needed in this case.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/host1x/dev.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index f1d5f76e9c33..d88073e7d22d 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -218,6 +218,9 @@ static int host1x_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
-+		goto skip_iommu;
-+
- 	host->group = iommu_group_get(&pdev->dev);
- 	if (host->group) {
- 		struct iommu_domain_geometry *geometry;
--- 
-2.17.0
+On 2018年05月18日 22:46, Michael S. Tsirkin wrote:
+> On Fri, May 18, 2018 at 10:11:54PM +0800, Jason Wang wrote:
+>>
+>> On 2018年05月18日 22:06, Michael S. Tsirkin wrote:
+>>> On Fri, May 18, 2018 at 10:00:31PM +0800, Jason Wang wrote:
+>>>> On 2018年05月18日 21:26, Jason Wang wrote:
+>>>>> On 2018年05月18日 21:13, Michael S. Tsirkin wrote:
+>>>>>> On Fri, May 18, 2018 at 09:00:43PM +0800, Jason Wang wrote:
+>>>>>>> We return -EIO on device down but can not raise EPOLLOUT after it was
+>>>>>>> up. This may confuse user like vhost which expects tuntap to raise
+>>>>>>> EPOLLOUT to re-enable its TX routine after tuntap is down. This could
+>>>>>>> be easily reproduced by transmitting packets from VM while down and up
+>>>>>>> the tap device. Fixing this by set SOCKWQ_ASYNC_NOSPACE on -EIO.
+>>>>>>>
+>>>>>>> Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+>>>>>>> Cc: Eric Dumazet <edumazet@google.com>
+>>>>>>> Fixes: 1bd4978a88ac2 ("tun: honor IFF_UP in tun_get_user()")
+>>>>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>>>>>> ---
+>>>>>>>     drivers/net/tun.c | 4 +++-
+>>>>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>>>>>>> index d45ac37..1b29761 100644
+>>>>>>> --- a/drivers/net/tun.c
+>>>>>>> +++ b/drivers/net/tun.c
+>>>>>>> @@ -1734,8 +1734,10 @@ static ssize_t tun_get_user(struct
+>>>>>>> tun_struct *tun, struct tun_file *tfile,
+>>>>>>>         int skb_xdp = 1;
+>>>>>>>         bool frags = tun_napi_frags_enabled(tun);
+>>>>>>>     -    if (!(tun->dev->flags & IFF_UP))
+>>>>>>> +    if (!(tun->dev->flags & IFF_UP)) {
+>>>>>> Isn't this racy?  What if flag is cleared at this point?
+>>>>> I think you mean "set at this point"? Then yes, so we probably need to
+>>>>> set the bit during tun_net_close().
+>>>>>
+>>>>> Thanks
+>>>> Looks no need, vhost will poll socket after it see EIO. So we are ok here?
+>>>>
+>>>> Thanks
+>>> In fact I don't even understand why does this help any longer.
+>>>
+>> We disable tx polling and only enable it on demand for a better rx
+>> performance. You may want to have a look at :
+>>
+>> commit feb8892cb441c742d4220cf7ced001e7fa070731
+>> Author: Jason Wang <jasowang@redhat.com>
+>> Date:   Mon Nov 13 11:45:34 2017 +0800
+>>
+>>      vhost_net: conditionally enable tx polling
+>>
+>> Thanks
+>
+> Question is, what looks at SOCKWQ_ASYNC_NOSPACE.
+> I think it's tested when packet is transmitted,
+> but there is no guarantee here any packet will
+> ever be transmitted.
+>
+
+Well, actually, I do plan to disable vq polling from the beginning. But 
+looks like you do not want this:
+
+See https://patchwork.kernel.org/patch/10034025/
+
+Thanks
