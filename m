@@ -1,42 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeESLGr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:06:47 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:34699 "EHLO
+        id S1752385AbeESLHq (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:07:46 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:49544 "EHLO
         mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeESLGp (ORCPT
+        with ESMTP id S1752326AbeESLHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:06:45 -0400
-X-Auth-Info: vkwZASQukikWjJQyWviSWuE1UTAsFP5KcVvkFfC6CXY=
-Date: Sat, 19 May 2018 13:05:33 +0200
+        Sat, 19 May 2018 07:07:44 -0400
+X-Auth-Info: TXuRfIU9wOBn9Aq35ye+XVy5xKkyFSIUbyTgiztkyaY=
+Date: Sat, 19 May 2018 13:06:57 +0200
 From: Lukasz Majewski <lukma@denx.de>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] display: panel: Add KOE tx14d24vm1bpa display
- support (320x240)
-Message-ID: <20180519130533.2494bceb@jawa>
-In-Reply-To: <20180509154338.2841-1-lukma@denx.de>
-References: <20180412143715.6828-1-lukma@denx.de>
-        <20180509154338.2841-1-lukma@denx.de>
+Subject: Re: [PATCH v3 RESEND] display: panel: Add AUO g070vvn01 display
+ support (800x480)
+Message-ID: <20180519130657.4904c90f@jawa>
+In-Reply-To: <20180514190849.18723-1-lukma@denx.de>
+References: <20180410102927.17787-1-lukma@denx.de>
+        <20180514190849.18723-1-lukma@denx.de>
 Organization: denx.de
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qJZ+z08F+zccisFmbJee7=n"; protocol="application/pgp-signature"
+ boundary="Sig_/sVwmD4m5W_vB7YzPtVPhSO_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qJZ+z08F+zccisFmbJee7=n
+--Sig_/sVwmD4m5W_vB7YzPtVPhSO_
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
 Hi Thierry,
 
-> This commit adds support for KOE's 5.7" display.
+> This commit adds support for AUO's 7.0" display.
 >=20
 
 Thierry, shall I perform some more work on this code, or is it
@@ -46,23 +46,32 @@ Best regards,
 =C5=81ukasz
 
 > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>=20
 > ---
->  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
-> ++++++++++++++++++++++
-> drivers/gpu/drm/panel/panel-simple.c               | 26
-> ++++++++++++++ 2 files changed, 68 insertions(+) create mode 100644
-> Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> Changes for v3:
+> - Remove not used 'bus-format-override =3D "rgb565";' property
+>=20
+> Changes for v2:
+> - Add *.txt suffix to the auo,g070wn01 file
+> ---
+>  .../bindings/display/panel/auo,g070vvn01.txt       | 29
+> ++++++++++++++++++++
+> drivers/gpu/drm/panel/panel-simple.c               | 31
+> ++++++++++++++++++++++ 2 files changed, 60 insertions(+) create mode
+> 100644
+> Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
 >=20
 > diff --git
-> a/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> new file mode 100644 index 000000000000..be7ac666807b --- /dev/null
+> a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> new file mode 100644 index 000000000000..49e4105378f6 --- /dev/null
 > +++
-> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> @@ -0,0 +1,42 @@ +Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x
-> 240) TFT LCD panel +
+> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> @@ -0,0 +1,29 @@ +AU Optronics Corporation 7.0" FHD (800 x 480) TFT
+> LCD panel +
 > +Required properties:
-> +- compatible: should be "koe,tx14d24vm1bpa"
+> +- compatible: should be "auo,g070vvn01"
 > +- backlight: phandle of the backlight device attached to the panel
 > +- power-supply: single regulator to provide the supply voltage
 > +
@@ -75,12 +84,12 @@ Best regards,
 > +Example:
 > +--------
 > +
-> +Example device-tree definition when connected to iMX53 based board
+> +Example device-tree definition when connected to iMX6Q based board
 > +
 > +	lcd_panel: lcd-panel {
-> +		compatible =3D "koe,tx14d24vm1bpa";
+> +		compatible =3D "auo,g070vvn01";
 > +		backlight =3D <&backlight_lcd>;
-> +		power-supply =3D <&reg_3v3>;
+> +		power-supply =3D <&reg_display>;
 > +
 > +		port {
 > +			lcd_panel_in: endpoint {
@@ -88,63 +97,57 @@ Best regards,
 > +			};
 > +		};
 > +	};
-> +
-> +Then one needs to extend the dispX node:
-> +
-> +	lcd_display: disp1 {
-> +
-> +		port@1 {
-> +			reg =3D <1>;
-> +
-> +			lcd_display_out: endpoint {
-> +				remote-endpoint =3D <&lcd_panel_in>;
-> +			};
-> +		};
-> +	};
 > diff --git a/drivers/gpu/drm/panel/panel-simple.c
 > b/drivers/gpu/drm/panel/panel-simple.c index
-> d9984bdb5bb5..103b43ce7dee 100644 ---
+> cbf1ab404ee7..d9984bdb5bb5 100644 ---
 > a/drivers/gpu/drm/panel/panel-simple.c +++
-> b/drivers/gpu/drm/panel/panel-simple.c @@ -1268,6 +1268,29 @@ static
-> const struct panel_desc innolux_zj070na_01p =3D { },
+> b/drivers/gpu/drm/panel/panel-simple.c @@ -581,6 +581,34 @@ static
+> const struct panel_desc auo_b133htn01 =3D { },
 >  };
 > =20
-> +static const struct display_timing koe_tx14d24vm1bpa_timing =3D {
-> +	.pixelclock =3D { 5580000, 5850000, 6200000 },
-> +	.hactive =3D { 320, 320, 320 },
-> +	.hfront_porch =3D { 30, 30, 30 },
-> +	.hback_porch =3D { 30, 30, 30 },
-> +	.hsync_len =3D { 1, 5, 17 },
-> +	.vactive =3D { 240, 240, 240 },
-> +	.vfront_porch =3D { 6, 6, 6 },
-> +	.vback_porch =3D { 5, 5, 5 },
-> +	.vsync_len =3D { 1, 2, 11 },
-> +	.flags =3D DISPLAY_FLAGS_DE_HIGH,
+> +static const struct display_timing auo_g070vvn01_timings =3D {
+> +	.pixelclock =3D { 33300000, 34209000, 45000000 },
+> +	.hactive =3D { 800, 800, 800 },
+> +	.hfront_porch =3D { 20, 40, 200 },
+> +	.hback_porch =3D { 87, 40, 1 },
+> +	.hsync_len =3D { 1, 48, 87 },
+> +	.vactive =3D { 480, 480, 480 },
+> +	.vfront_porch =3D { 5, 13, 200 },
+> +	.vback_porch =3D { 31, 31, 29 },
+> +	.vsync_len =3D { 1, 1, 3 },
 > +};
 > +
-> +static const struct panel_desc koe_tx14d24vm1bpa =3D {
-> +	.timings =3D &koe_tx14d24vm1bpa_timing,
+> +static const struct panel_desc auo_g070vvn01 =3D {
+> +	.timings =3D &auo_g070vvn01_timings,
 > +	.num_timings =3D 1,
-> +	.bpc =3D 6,
+> +	.bpc =3D 8,
 > +	.size =3D {
-> +		.width =3D 115,
-> +		.height =3D 86,
+> +		.width =3D 152,
+> +		.height =3D 91,
+> +	},
+> +	.delay =3D {
+> +		.prepare =3D 200,
+> +		.enable =3D 50,
+> +		.disable =3D 50,
+> +		.unprepare =3D 1000,
 > +	},
 > +};
 > +
->  static const struct display_timing koe_tx31d200vm0baa_timing =3D {
->  	.pixelclock =3D { 39600000, 43200000, 48000000 },
->  	.hactive =3D { 1280, 1280, 1280 },
-> @@ -2204,6 +2227,9 @@ static const struct of_device_id
-> platform_of_match[] =3D { .compatible =3D "innolux,zj070na-01p",
->  		.data =3D &innolux_zj070na_01p,
+>  static const struct drm_display_mode auo_g104sn02_mode =3D {
+>  	.clock =3D 40000,
+>  	.hdisplay =3D 800,
+> @@ -2095,6 +2123,9 @@ static const struct of_device_id
+> platform_of_match[] =3D { .compatible =3D "auo,b133xtn01",
+>  		.data =3D &auo_b133xtn01,
 >  	}, {
-> +		.compatible =3D "koe,tx14d24vm1bpa",
-> +		.data =3D &koe_tx14d24vm1bpa,
+> +		.compatible =3D "auo,g070vvn01",
+> +		.data =3D &auo_g070vvn01,
 > +	}, {
->  		.compatible =3D "koe,tx31d200vm0baa",
->  		.data =3D &koe_tx31d200vm0baa,
+>  		.compatible =3D "auo,g104sn02",
+>  		.data =3D &auo_g104sn02,
 >  	}, {
+
+
 
 
 Best regards,
@@ -157,20 +160,20 @@ DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
 
---Sig_/qJZ+z08F+zccisFmbJee7=n
+--Sig_/sVwmD4m5W_vB7YzPtVPhSO_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsABP8ACgkQAR8vZIA0
-zr3AwggApXz5ez7l9DvMzcm1WkCVHzlKMGp5Ph2ODpmIOeADEiaufn0KWuZkAFJS
-FTivxrbybPD9DAsjlTxVVsAtmVUNyyncVSQZ/C4+MYt7ywWjrC1Mv9UqgPheU+1e
-SdA/wFomkKP+g2/LmCNY2qfDC/mmbnEg41GDQH7xiiXiL+kIb2PYJDXKsyw2cgaB
-MvKHJ2S7RHsLAYRtwFkZcu1hW0CUwmgIgjAAvKbaviWx3qAGOStbqgSKyAc/RZaB
-JeFF9wkJThw1GH2PmIgY6uZc7YryNh9pRTGSrkq8+8Rbz/rVqbNuyD/rOOSAK+Fe
-25+VtftEM3UxWlMNMlo5SO6Wyov7tA==
-=nyZ/
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsABVEACgkQAR8vZIA0
+zr04pwgAj68uG6voX0WLqqcRaqvIo1Lc/+hVeugNXhyKUXI7DePgJvJR7PKgk+x2
+WBAq9ak2EqMFkXVc34q4Zc+y24URwKtuQm/95SirwEnuO3AbXmFMmOiZbBYDwa4f
+bQNcd74k23vcriPBtxqmrwKma4Uhkh0lHDS4EbX4r/wQCgJ3MojivyZz1Of6+psp
+K9F+AtKa/DrPH6WtnrPTcLT+KGGsDZ+gyy93D8ET7RUnt6sIdWQd4F1Kxxmntlx/
+JzpWY70t0XnZdYVeQobw8Y1fD17+mg4kKDv0Skz92d/L3KPW6qMmUXujFUuc7URX
+luIiFsIp9heqdLFa1EngyH9EWUYr1w==
+=IwAi
 -----END PGP SIGNATURE-----
 
---Sig_/qJZ+z08F+zccisFmbJee7=n--
+--Sig_/sVwmD4m5W_vB7YzPtVPhSO_--
