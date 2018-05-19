@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeESLkC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:40:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53373 "EHLO
+        id S1752525AbeESLk1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:40:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37915 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeESLkA (ORCPT
+        with ESMTP id S1752410AbeESLk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:40:00 -0400
-Date: Sat, 19 May 2018 04:39:46 -0700
+        Sat, 19 May 2018 07:40:26 -0400
+Date: Sat, 19 May 2018 04:40:15 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-4bo45k6ivsmbxpfpdte4orsg@git.kernel.org>
-Cc: jolsa@kernel.org, acme@redhat.com, treeze.taeung@gmail.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        wangnan0@huawei.com, dsahern@gmail.com, mingo@kernel.org,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
-Reply-To: jolsa@kernel.org, acme@redhat.com, treeze.taeung@gmail.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        dsahern@gmail.com, mingo@kernel.org, wangnan0@huawei.com,
-        linux-kernel@vger.kernel.org, adrian.hunter@intel.com
+Message-ID: <tip-p5x29u6mq2ml3mtnbg9844ad@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, dsahern@gmail.com, tglx@linutronix.de,
+        wangnan0@huawei.com, adrian.hunter@intel.com, mingo@kernel.org,
+        jolsa@kernel.org, hpa@zytor.com, namhyung@kernel.org, acme@redhat.com
+Reply-To: dsahern@gmail.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        acme@redhat.com, namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org,
+        mingo@kernel.org, adrian.hunter@intel.com, wangnan0@huawei.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf config: Call perf_config__init() lazily
-Git-Commit-ID: d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
+Subject: [tip:perf/core] tools lib api: The tracing_mnt variable doesn't
+ need to be global
+Git-Commit-ID: 00a6270361c025bfaae1d70ef1b596d182e05e8a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,98 +32,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
-Gitweb:     https://git.kernel.org/tip/d01bd1ac920e98e2a64f6bb5adf907180e0aaac7
+Commit-ID:  00a6270361c025bfaae1d70ef1b596d182e05e8a
+Gitweb:     https://git.kernel.org/tip/00a6270361c025bfaae1d70ef1b596d182e05e8a
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 16 May 2018 16:09:08 -0300
+AuthorDate: Wed, 16 May 2018 16:20:12 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 16 May 2018 16:11:09 -0300
+CommitDate: Wed, 16 May 2018 16:20:12 -0300
 
-perf config: Call perf_config__init() lazily
+tools lib api: The tracing_mnt variable doesn't need to be global
 
-We check what perf_config__init() does at each perf_config() call,
-namely if the static perf_config instance was created, so instead of
-bailing out in that case, try to allocate it, bailing if it fails.
-
-Now to get the perf_config() call out of the start of perf's main()
-function, doing it also lazily.
+Its only used in the file it is defined, so just make it static.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-4bo45k6ivsmbxpfpdte4orsg@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-p5x29u6mq2ml3mtnbg9844ad@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/perf.c        |  1 -
- tools/perf/util/config.c | 16 +++++++++-------
- tools/perf/util/config.h |  1 -
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ tools/lib/api/fs/tracing_path.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 20a08cb32332..cd6ea55d4b0c 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -458,7 +458,6 @@ int main(int argc, const char **argv)
+diff --git a/tools/lib/api/fs/tracing_path.c b/tools/lib/api/fs/tracing_path.c
+index 7b7fd0b18551..4f8ec7d476b8 100644
+--- a/tools/lib/api/fs/tracing_path.c
++++ b/tools/lib/api/fs/tracing_path.c
+@@ -13,8 +13,7 @@
  
- 	srandom(time(NULL));
+ #include "tracing_path.h"
  
--	perf_config__init();
- 	err = perf_config(perf_default_config, NULL);
- 	if (err)
- 		return err;
-diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
-index 84eb9393c7db..5ac157056cdf 100644
---- a/tools/perf/util/config.c
-+++ b/tools/perf/util/config.c
-@@ -707,6 +707,14 @@ struct perf_config_set *perf_config_set__new(void)
- 	return set;
- }
- 
-+static int perf_config__init(void)
-+{
-+	if (config_set == NULL)
-+		config_set = perf_config_set__new();
-+
-+	return config_set == NULL;
-+}
-+
- int perf_config(config_fn_t fn, void *data)
- {
- 	int ret = 0;
-@@ -714,7 +722,7 @@ int perf_config(config_fn_t fn, void *data)
- 	struct perf_config_section *section;
- 	struct perf_config_item *item;
- 
--	if (config_set == NULL)
-+	if (config_set == NULL && perf_config__init())
- 		return -1;
- 
- 	perf_config_set__for_each_entry(config_set, section, item) {
-@@ -735,12 +743,6 @@ int perf_config(config_fn_t fn, void *data)
- 	return ret;
- }
- 
--void perf_config__init(void)
--{
--	if (config_set == NULL)
--		config_set = perf_config_set__new();
--}
 -
- void perf_config__exit(void)
- {
- 	perf_config_set__delete(config_set);
-diff --git a/tools/perf/util/config.h b/tools/perf/util/config.h
-index baf82bf227ac..bd0a5897c76a 100644
---- a/tools/perf/util/config.h
-+++ b/tools/perf/util/config.h
-@@ -38,7 +38,6 @@ struct perf_config_set *perf_config_set__new(void);
- void perf_config_set__delete(struct perf_config_set *set);
- int perf_config_set__collect(struct perf_config_set *set, const char *file_name,
- 			     const char *var, const char *value);
--void perf_config__init(void);
- void perf_config__exit(void);
- void perf_config__refresh(void);
+-char tracing_mnt[PATH_MAX]         = "/sys/kernel/debug";
++static char tracing_mnt[PATH_MAX]  = "/sys/kernel/debug";
+ char tracing_path[PATH_MAX]        = "/sys/kernel/debug/tracing";
+ char tracing_events_path[PATH_MAX] = "/sys/kernel/debug/tracing/events";
  
+@@ -129,7 +128,7 @@ int tracing_path__strerror_open_tp(int err, char *buf, size_t size,
+ 		snprintf(buf, size,
+ 			 "Error:\tNo permissions to read %s/%s\n"
+ 			 "Hint:\tTry 'sudo mount -o remount,mode=755 %s'\n",
+-			 tracing_events_path, filename, tracing_mnt);
++			 tracing_events_path, filename, tracing_path_mount());
+ 	}
+ 		break;
+ 	default:
