@@ -1,70 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeESC1x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 22:27:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751117AbeESC1t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 22:27:49 -0400
-Date: Fri, 18 May 2018 19:29:18 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: rostedt@goodmis.org, byungchul.park@lge.com,
-        mathieu.desnoyers@efficios.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
+        id S1752193AbeESC3T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 22:29:19 -0400
+Received: from mga12.intel.com ([192.55.52.136]:35476 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751117AbeESC3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 22:29:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,417,1520924400";
+   d="scan'208";a="225498268"
+Date: Sat, 19 May 2018 10:29:38 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v4 3/5] virtio_ring: add packed ring support
+Message-ID: <20180519022938.GA18888@debian>
+References: <20180516123909.GB986@debian>
+ <ecb50c84-b412-ff0b-6c52-fd789b6c8a86@redhat.com>
+ <20180516134550.GB4171@debian>
+ <eaf946f1-abab-c4e5-1ab5-ba7912986d58@redhat.com>
+ <20180516143332.GA1957@debian>
+ <bc38e5a1-e920-7055-dc22-49ac98455257@redhat.com>
+ <20180518112950.GA28224@debian>
+ <e247b46a-183f-3959-859b-aebb0bf81c07@redhat.com>
+ <20180518143334.GA4537@debian>
+ <1a661df0-8ca9-b31d-9c17-8684d608a33a@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051902-2213-0000-0000-000002A83448
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009050; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01034362; UDB=6.00528968; IPR=6.00813490;
- MB=3.00021194; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-19 02:27:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051902-2214-0000-0000-00005A2BE355
-Message-Id: <20180519022918.GV3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-18_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805190025
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1a661df0-8ca9-b31d-9c17-8684d608a33a@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 11:36:23AM -0700, Joel Fernandes wrote:
-> Hi,
+On Sat, May 19, 2018 at 09:12:30AM +0800, Jason Wang wrote:
+> On 2018年05月18日 22:33, Tiwei Bie wrote:
+> > On Fri, May 18, 2018 at 09:17:05PM +0800, Jason Wang wrote:
+> > > On 2018年05月18日 19:29, Tiwei Bie wrote:
+> > > > On Thu, May 17, 2018 at 08:01:52PM +0800, Jason Wang wrote:
+> > > > > On 2018年05月16日 22:33, Tiwei Bie wrote:
+> > > > > > On Wed, May 16, 2018 at 10:05:44PM +0800, Jason Wang wrote:
+> > > > > > > On 2018年05月16日 21:45, Tiwei Bie wrote:
+> > > > > > > > On Wed, May 16, 2018 at 08:51:43PM +0800, Jason Wang wrote:
+> > > > > > > > > On 2018年05月16日 20:39, Tiwei Bie wrote:
+> > > > > > > > > > On Wed, May 16, 2018 at 07:50:16PM +0800, Jason Wang wrote:
+> > > > > > > > > > > On 2018年05月16日 16:37, Tiwei Bie wrote:
+> > > > > > [...]
+> > > > > > > > > > > > +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > > > > > > > > > > > +			      unsigned int id, void **ctx)
+> > > > > > > > > > > > +{
+> > > > > > > > > > > > +	struct vring_packed_desc *desc;
+> > > > > > > > > > > > +	unsigned int i, j;
+> > > > > > > > > > > > +
+> > > > > > > > > > > > +	/* Clear data ptr. */
+> > > > > > > > > > > > +	vq->desc_state[id].data = NULL;
+> > > > > > > > > > > > +
+> > > > > > > > > > > > +	i = head;
+> > > > > > > > > > > > +
+> > > > > > > > > > > > +	for (j = 0; j < vq->desc_state[id].num; j++) {
+> > > > > > > > > > > > +		desc = &vq->vring_packed.desc[i];
+> > > > > > > > > > > > +		vring_unmap_one_packed(vq, desc);
+> > > > > > > > > > > As mentioned in previous discussion, this probably won't work for the case
+> > > > > > > > > > > of out of order completion since it depends on the information in the
+> > > > > > > > > > > descriptor ring. We probably need to extend ctx to record such information.
+> > > > > > > > > > Above code doesn't depend on the information in the descriptor
+> > > > > > > > > > ring. The vq->desc_state[] is the extended ctx.
+> > > > > > > > > > 
+> > > > > > > > > > Best regards,
+> > > > > > > > > > Tiwei Bie
+> > > > > > > > > Yes, but desc is a pointer to descriptor ring I think so
+> > > > > > > > > vring_unmap_one_packed() still depends on the content of descriptor ring?
+> > > > > > > > > 
+> > > > > > > > I got your point now. I think it makes sense to reserve
+> > > > > > > > the bits of the addr field. Driver shouldn't try to get
+> > > > > > > > addrs from the descriptors when cleanup the descriptors
+> > > > > > > > no matter whether we support out-of-order or not.
+> > > > > > > Maybe I was wrong, but I remember spec mentioned something like this.
+> > > > > > You're right. Spec mentioned this. I was just repeating
+> > > > > > the spec to emphasize that it does make sense. :)
+> > > > > > 
+> > > > > > > > But combining it with the out-of-order support, it will
+> > > > > > > > mean that the driver still needs to maintain a desc/ctx
+> > > > > > > > list that is very similar to the desc ring in the split
+> > > > > > > > ring. I'm not quite sure whether it's something we want.
+> > > > > > > > If it is true, I'll do it. So do you think we also want
+> > > > > > > > to maintain such a desc/ctx list for packed ring?
+> > > > > > > To make it work for OOO backends I think we need something like this
+> > > > > > > (hardware NIC drivers are usually have something like this).
+> > > > > > Which hardware NIC drivers have this?
+> > > > > It's quite common I think, e.g driver track e.g dma addr and page frag
+> > > > > somewhere. e.g the ring->rx_info in mlx4 driver.
+> > > > It seems that I had a misunderstanding on your
+> > > > previous comments. I know it's quite common for
+> > > > drivers to track e.g. DMA addrs somewhere (and
+> > > > I think one reason behind this is that they want
+> > > > to reuse the bits of addr field).
+> > > Yes, we may want this for virtio-net as well in the future.
+> > > 
+> > > >    But tracking
+> > > > addrs somewhere doesn't means supporting OOO.
+> > > > I thought you were saying it's quite common for
+> > > > hardware NIC drivers to support OOO (i.e. NICs
+> > > > will return the descriptors OOO):
+> > > > 
+> > > > I'm not familiar with mlx4, maybe I'm wrong.
+> > > > I just had a quick glance. And I found below
+> > > > comments in mlx4_en_process_rx_cq():
+> > > > 
+> > > > ```
+> > > > /* We assume a 1:1 mapping between CQEs and Rx descriptors, so Rx
+> > > >    * descriptor offset can be deduced from the CQE index instead of
+> > > >    * reading 'cqe->index' */
+> > > > index = cq->mcq.cons_index & ring->size_mask;
+> > > > cqe = mlx4_en_get_cqe(cq->buf, index, priv->cqe_size) + factor;
+> > > > ```
+> > > > 
+> > > > It seems that although they have a completion
+> > > > queue, they are still using the ring in order.
+> > > I guess so (at least from the above bits). Git grep -i "out of order" in
+> > > drivers/net gives some hints. Looks like there're few deivces do this.
+> > > 
+> > > > I guess maybe storage device may want OOO.
+> > > Right, some iSCSI did.
+> > > 
+> > > But tracking them elsewhere is not only for OOO.
+> > > 
+> > > Spec said:
+> > > 
+> > > for element address
+> > > 
+> > > "
+> > > In a used descriptor, Element Address is unused.
+> > > "
+> > > 
+> > > for Next flag:
+> > > 
+> > > "
+> > > For example, if descriptors are used in the same order in which they are
+> > > made available, this will result in
+> > > the used descriptor overwriting the first available descriptor in the list,
+> > > the used descriptor for the next list
+> > > overwriting the first available descriptor in the next list, etc.
+> > > "
+> > > 
+> > > for in order completion:
+> > > 
+> > > "
+> > > This will result in the used descriptor overwriting the first available
+> > > descriptor in the batch, the used descriptor
+> > > for the next batch overwriting the first available descriptor in the next
+> > > batch, etc.
+> > > "
+> > > 
+> > > So:
+> > > 
+> > > - It's an alignment to the spec
+> > > - device may (or should) overwrite the descriptor make also make address
+> > > field useless.
+> > You didn't get my point...
 > 
-> I was thinking about tasks-RCU and why its needed. Since preempt-RCU allows
-> tasks to be preempted in read-sections, can we not just reuse that mechanism
-> for the trampolines since we track all preempted tasks so we would wait on
-> all tasks preempted within a trampoline?
+> I don't hope so.
 > 
-> I am trying to understand what will _not_ work if we did that.. I'm guessing
-> the answer is that that would mean the trampoline has to be wrapped with
-> rcu_read_{lock,unlock} which may add some overhead, but please let me know
-> if I'm missing something else..
+> > I agreed driver should track the DMA addrs or some
+> > other necessary things from the very beginning. And
+> > I also repeated the spec to emphasize that it does
+> > make sense. And I'd like to do that.
+> > 
+> > What I was saying is that, to support OOO, we may
+> > need to manage these context (which saves DMA addrs
+> > etc) via a list which is similar to the desc list
+> > maintained via `next` in split ring instead of an
+> > array whose elements always can be indexed directly.
 > 
-> The advantage I guess is possible elimination of an RCU variant, and also
-> possibly eliminating the tasks RCU thread that monitors.. Anyway I was
-> thinking more in terms of the effort of reduction of the RCU flavors etc and
-> reducing complexity ideas.
+> My point is these context is a must (not only for OOO).
 
-The problem is that if they are preempted while executing in a trampoline,
-RCU-preempt doesn't queue them nor does it wait on them.
+Yeah, and I have the exactly same point after you
+pointed that I shouldn't get the addrs from descs.
+I do think it makes sense. I'll do it in the next
+version. I don't have any doubt about it. All my
+questions are about the OOO, instead of whether we
+should save context or not. It just seems that you
+thought I don't want to do it, and were trying to
+convince me that I should do it.
 
-And the problem with wrapping them with rcu_read_{lock,unlock} is that
-there would be a point before the trampoline executed rcu_read_lock()
-but while it was on the trampoline.  Nothing good comes from this.  ;-)
+> 
+> > 
+> > The desc ring in split ring is an array, but its
+> > free entries are managed as list via next. I was
+> > just wondering, do we want to manage such a list
+> > because of OOO. It's just a very simple question
+> > that I want to hear your opinion... (It doesn't
+> > means anything, e.g. It doesn't mean I don't want
+> > to support OOO. It's just a simple question...)
+> 
+> So the question is yes. But I admit I don't have better idea other than what
+> you propose here (something like split ring which is a little bit sad).
+> Maybe Michael had.
 
-							Thanx, Paul
+Yeah, that's why I asked this question. It will
+make the packed ring a bit similar to split ring
+at least in the driver part. So I want to draw
+your attention on this to make sure that we're
+on the same page.
+
+Best regards,
+Tiwei Bie
+
+> 
+> Thanks
+> 
+> > 
+> > Best regards,
+> > Tiwei Bie
+> > 
+> > > Thanks
+> > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> > > > 
+> > > > > Thanks
+> > > > > 
+> > > > > > > Not for the patch, but it looks like having a OUT_OF_ORDER feature bit is
+> > > > > > > much more simpler to be started with.
+> > > > > > +1
+> > > > > > 
+> > > > > > Best regards,
+> > > > > > Tiwei Bie
+> 
