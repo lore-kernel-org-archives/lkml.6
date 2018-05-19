@@ -1,63 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeESHoW (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 03:44:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54559 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752119AbeESHoR (ORCPT
+        id S1752129AbeESIIH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 04:08:07 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:41461 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeESIID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 03:44:17 -0400
-X-Google-Smtp-Source: AB8JxZr15TDQYWYg1CGtY4BwCl+YsupzHkEKkqCk7bZ6Z0Zca36xFuiBEEX42G1twwcKJAbm3YshYg==
-Date: Sat, 19 May 2018 09:44:13 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Jiri Slaby <jslaby@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v6 17/28] x86/asm: use SYM_INNER_LABEL instead of GLOBAL
-Message-ID: <20180519074413.GB2952@gmail.com>
-References: <20180518091721.7604-1-jslaby@suse.cz>
- <20180518091721.7604-18-jslaby@suse.cz>
- <CALCETrXwc05073E7A8KG-2dKqNyz=C2zrAQfBqWhjuChfSd5fQ@mail.gmail.com>
+        Sat, 19 May 2018 04:08:03 -0400
+X-Google-Smtp-Source: AB8JxZqPr2NrHdGWQGjfQUAuaiKQQaxF0b0ZhhmlrbUmChUiy1ZEddw2//bMm2WmJvNyL30Yi8xuXN8W6DG/jMNMkJaGh8pEP1pE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXwc05073E7A8KG-2dKqNyz=C2zrAQfBqWhjuChfSd5fQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date: Sat, 19 May 2018 01:08:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000506bcd056c8a91d5@google.com>
+Subject: WARNING in xfrm6_tunnel_net_exit (2)
+From: syzbot <syzbot+e9aebef558e3ed673934@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-* Andy Lutomirski <luto@amacapital.net> wrote:
+syzbot found the following crash on:
 
-> On Fri, May 18, 2018 at 2:17 AM Jiri Slaby <jslaby@suse.cz> wrote:
-> 
-> > GLOBAL had several meanings and is going away. In this patch, convert
-> > all the inner function labels marked with GLOBAL to use SYM_INNER_LABEL
-> > instead.
-> 
-> > Note that retint_user needs not be global, perhaps since commit
-> > 2ec67971facc ("x86/entry/64/compat: Remove most of the fast system call
-> > machinery"), where entry_64_compat's caller was removed. So mark the
-> > label as LOCAL.
-> 
-> 
-> > -GLOBAL(entry_SYSCALL_64_after_hwframe)
-> > +SYM_INNER_LABEL(entry_SYSCALL_64_after_hwframe, SYM_L_GLOBAL)
-> 
-> I've missed all the context here.   I agree that GLOBAL is misleading, and
-> "inner label" is nice.  But this is a rather wordy macro.  Would:
-> 
-> INNER_LABEL_GLOBAL(name)
-> 
-> be better?  (With just INNER_LABEL(name) for the local version?)
+HEAD commit:    2c71d338bef2 Merge tag 'powerpc-4.17-6' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a7bd57800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9aebef558e3ed673934
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17409d57800000
 
-Please keep the SYM_ global namespace for all these symbol macros - but the rest 
-of the name can be shortened.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e9aebef558e3ed673934@syzkaller.appspotmail.com
 
-Thanks,
+bond0: Enslaving bond_slave_1 as an active interface with an up link
+IPv6: ADDRCONF(NETDEV_UP): veth0_to_bond: link is not ready
+IPv6: ADDRCONF(NETDEV_UP): veth1_to_bond: link is not ready
+IPv6: ADDRCONF(NETDEV_UP): veth1_to_bond: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
+WARNING: CPU: 1 PID: 6 at net/ipv6/xfrm6_tunnel.c:348  
+xfrm6_tunnel_net_exit+0x2df/0x510 net/ipv6/xfrm6_tunnel.c:348
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bond: link becomes ready
+Kernel panic - not syncing: panic_on_warn set ...
 
-	Ingo
+CPU: 1 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc5+ #57
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: netns cleanup_net
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bond: link becomes ready
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+IPv6: ADDRCONF(NETDEV_UP): veth0_to_bond: link is not ready
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:xfrm6_tunnel_net_exit+0x2df/0x510 net/ipv6/xfrm6_tunnel.c:348
+RSP: 0018:ffff8801d9a973d8 EFLAGS: 00010293
+RAX: ffff8801d9a88180 RBX: ffff8801b6eda2b8 RCX: ffffffff868ff5f5
+RDX: 0000000000000000 RSI: ffffffff868ff5ff RDI: 0000000000000007
+RBP: ffff8801d9a974f8 R08: ffff8801d9a88180 R09: 0000000000000006
+R10: ffff8801d9a88180 R11: 0000000000000000 R12: 00000000000000ff
+R13: ffffed003b352e82 R14: ffff8801d9a974d0 R15: ffff8801b32f0700
+  ops_exit_list.isra.7+0xb0/0x160 net/core/net_namespace.c:152
+  cleanup_net+0x51d/0xb20 net/core/net_namespace.c:523
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
