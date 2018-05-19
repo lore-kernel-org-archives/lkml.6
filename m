@@ -1,179 +1,425 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752385AbeESLHq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:07:46 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:49544 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeESLHo (ORCPT
+        id S1752344AbeESLJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:09:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47696 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752112AbeESLJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:07:44 -0400
-X-Auth-Info: TXuRfIU9wOBn9Aq35ye+XVy5xKkyFSIUbyTgiztkyaY=
-Date: Sat, 19 May 2018 13:06:57 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND] display: panel: Add AUO g070vvn01 display
- support (800x480)
-Message-ID: <20180519130657.4904c90f@jawa>
-In-Reply-To: <20180514190849.18723-1-lukma@denx.de>
-References: <20180410102927.17787-1-lukma@denx.de>
-        <20180514190849.18723-1-lukma@denx.de>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Sat, 19 May 2018 07:09:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA24160209
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
+Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <mark.rutland@arm.com>, <nm@ti.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <andy.gross@linaro.org>,
+        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <rjw@rjwysocki.net>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <rnayak@codeaurora.org>,
+        <amit.kucheria@linaro.org>, <nicolas.dechesne@linaro.org>,
+        <celster@codeaurora.org>, <tfinkel@codeaurora.org>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org> <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <20180518014538.duphof6enscpm5vp@vireshk-i7>
+In-Reply-To: <20180518014538.duphof6enscpm5vp@vireshk-i7>
+Subject: RE: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Date: Sat, 19 May 2018 14:09:24 +0300
+Message-ID: <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sVwmD4m5W_vB7YzPtVPhSO_"; protocol="application/pgp-signature"
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ4436NnLWh81Iiw1zG4GLOsqluSgF4oTaoAirQgjmiz+EHYA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/sVwmD4m5W_vB7YzPtVPhSO_
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+commit 4abe2cd7176a43c77e9a462e4f6ec51aa7552e73
+Author: Ilia Lin <ilialin@codeaurora.org>
+Date:   Thu May 17 13:55:12 2018 +0300
 
-Hi Thierry,
+    cpufreq: Add Kryo CPU scaling driver
 
-> This commit adds support for AUO's 7.0" display.
->=20
+    In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+    the CPU frequency subset and voltage value of each OPP varies
+    based on the silicon variant in use. Qualcomm Process Voltage Scaling
+Tables
+    defines the voltage and frequency value based on the msm-id in SMEM
+    and speedbin blown in the efuse combination.
+    The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+SoC
+    to provide the OPP framework with required information.
+    This is used to determine the voltage and frequency value for each OPP
+of
+    operating-points-v2 table when it is parsed by the OPP framework.
 
-Thierry, shall I perform some more work on this code, or is it
-eligible for applying to your tree?
+    Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+    Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Best regards,
-=C5=81ukasz
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+        depends on ARCH_OMAP2PLUS
+        default ARCH_OMAP2PLUS
 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
->=20
-> ---
-> Changes for v3:
-> - Remove not used 'bus-format-override =3D "rgb565";' property
->=20
-> Changes for v2:
-> - Add *.txt suffix to the auo,g070wn01 file
-> ---
->  .../bindings/display/panel/auo,g070vvn01.txt       | 29
-> ++++++++++++++++++++
-> drivers/gpu/drm/panel/panel-simple.c               | 31
-> ++++++++++++++++++++++ 2 files changed, 60 insertions(+) create mode
-> 100644
-> Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
->=20
-> diff --git
-> a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
-> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
-> new file mode 100644 index 000000000000..49e4105378f6 --- /dev/null
-> +++
-> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
-> @@ -0,0 +1,29 @@ +AU Optronics Corporation 7.0" FHD (800 x 480) TFT
-> LCD panel +
-> +Required properties:
-> +- compatible: should be "auo,g070vvn01"
-> +- backlight: phandle of the backlight device attached to the panel
-> +- power-supply: single regulator to provide the supply voltage
-> +
-> +Required nodes:
-> +- port: Parallel port mapping to connect this display
-> +
-> +This panel needs single power supply voltage. Its backlight is
-> conntrolled +via PWM signal.
-> +
-> +Example:
-> +--------
-> +
-> +Example device-tree definition when connected to iMX6Q based board
-> +
-> +	lcd_panel: lcd-panel {
-> +		compatible =3D "auo,g070vvn01";
-> +		backlight =3D <&backlight_lcd>;
-> +		power-supply =3D <&reg_display>;
-> +
-> +		port {
-> +			lcd_panel_in: endpoint {
-> +				remote-endpoint =3D <&lcd_display_out>;
-> +			};
-> +		};
-> +	};
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c
-> b/drivers/gpu/drm/panel/panel-simple.c index
-> cbf1ab404ee7..d9984bdb5bb5 100644 ---
-> a/drivers/gpu/drm/panel/panel-simple.c +++
-> b/drivers/gpu/drm/panel/panel-simple.c @@ -581,6 +581,34 @@ static
-> const struct panel_desc auo_b133htn01 =3D { },
->  };
-> =20
-> +static const struct display_timing auo_g070vvn01_timings =3D {
-> +	.pixelclock =3D { 33300000, 34209000, 45000000 },
-> +	.hactive =3D { 800, 800, 800 },
-> +	.hfront_porch =3D { 20, 40, 200 },
-> +	.hback_porch =3D { 87, 40, 1 },
-> +	.hsync_len =3D { 1, 48, 87 },
-> +	.vactive =3D { 480, 480, 480 },
-> +	.vfront_porch =3D { 5, 13, 200 },
-> +	.vback_porch =3D { 31, 31, 29 },
-> +	.vsync_len =3D { 1, 1, 3 },
-> +};
-> +
-> +static const struct panel_desc auo_g070vvn01 =3D {
-> +	.timings =3D &auo_g070vvn01_timings,
-> +	.num_timings =3D 1,
-> +	.bpc =3D 8,
-> +	.size =3D {
-> +		.width =3D 152,
-> +		.height =3D 91,
-> +	},
-> +	.delay =3D {
-> +		.prepare =3D 200,
-> +		.enable =3D 50,
-> +		.disable =3D 50,
-> +		.unprepare =3D 1000,
-> +	},
-> +};
-> +
->  static const struct drm_display_mode auo_g104sn02_mode =3D {
->  	.clock =3D 40000,
->  	.hdisplay =3D 800,
-> @@ -2095,6 +2123,9 @@ static const struct of_device_id
-> platform_of_match[] =3D { .compatible =3D "auo,b133xtn01",
->  		.data =3D &auo_b133xtn01,
->  	}, {
-> +		.compatible =3D "auo,g070vvn01",
-> +		.data =3D &auo_g070vvn01,
-> +	}, {
->  		.compatible =3D "auo,g104sn02",
->  		.data =3D &auo_g104sn02,
->  	}, {
++config ARM_QCOM_CPUFREQ_KRYO
++       bool "Qualcomm Kryo based CPUFreq"
++       depends on QCOM_QFPROM
++       depends on QCOM_SMEM
++       select PM_OPP
++       help
++         This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
++
++         If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+        bool
+        help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)           += mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)    += omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)       += pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)                   += pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)    += qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)      += s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)      += s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)      += s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
+b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
 
+        { .compatible = "nvidia,tegra124", },
 
++       { .compatible = "qcom,apq8096", },
++       { .compatible = "qcom,msm8996", },
++
+        { .compatible = "st,stih407", },
+        { .compatible = "st,stih410", },
 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c
+b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..b024b23
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling
+Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP
+of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM    137
++#define SILVER_LEAD    0
++#define GOLD_LEAD      2
++
++enum _msm_id {
++       MSM8996V3 = 0xF6ul,
++       APQ8096V3 = 0x123ul,
++       MSM8996SG = 0x131ul,
++       APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++       MSM8996_V3,
++       MSM8996_SG,
++       NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++{
++       size_t len;
++       u32 *msm_id;
++       enum _msm8996_version version;
++
++       msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++       /* The first 4 bytes are format, next to them is the actual msm-id
+*/
++       msm_id++;
++
++       switch ((enum _msm_id)*msm_id) {
++       case MSM8996V3:
++       case APQ8096V3:
++               version = MSM8996_V3;
++               break;
++       case MSM8996SG:
++       case APQ8096SG:
++               version = MSM8996_SG;
++               break;
++       default:
++               version = NUM_OF_MSM8996_VERSIONS;
++       }
++
++       return version;
++}
++
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++       struct device *cpu_dev_silver, *cpu_dev_gold;
++       struct opp_table *opp_silver, *opp_gold;
++       enum _msm8996_version msm8996_version;
++       struct nvmem_cell *speedbin_nvmem;
++       struct platform_device *pdev;
++       struct device_node *np;
++       u8 *speedbin;
++       u32 versions;
++       size_t len;
++       int ret;
++
++       cpu_dev_silver = get_cpu_device(SILVER_LEAD);
++       if (IS_ERR_OR_NULL(cpu_dev_silver))
++               return PTR_ERR(cpu_dev_silver);
++
++       cpu_dev_gold = get_cpu_device(SILVER_LEAD);
++       if (IS_ERR_OR_NULL(cpu_dev_gold))
++               return PTR_ERR(cpu_dev_gold);
++
++       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++               dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
++               return -ENODEV;
++       }
++
++       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
++       if (IS_ERR_OR_NULL(np))
++               return PTR_ERR(np);
++
++       if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++               ret = -ENOENT;
++               goto free_np;
++       }
++
++       speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++       if (IS_ERR(speedbin_nvmem)) {
++               ret = PTR_ERR(speedbin_nvmem);
++               dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n",
+ret);
++               goto free_np;
++       }
++
++       speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++       nvmem_cell_put(speedbin_nvmem);
++
++       switch (msm8996_version) {
++       case MSM8996_V3:
++               versions = 1 << (unsigned int)(*speedbin);
++               break;
++       case MSM8996_SG:
++               versions = 1 << ((unsigned int)(*speedbin) + 4);
++               break;
++       default:
++               BUG();
++               break;
++       }
++
++       opp_silver =
+dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
++       if (IS_ERR_OR_NULL(opp_silver)) {
++               dev_err(cpu_dev_silver, "Failed to set supported
+hardware\n");
++               ret = PTR_ERR(opp_silver);
++               goto free_np;
++       }
++
++       opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
++       if (IS_ERR_OR_NULL(opp_gold)) {
++               dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
++               ret = PTR_ERR(opp_gold);
++               goto free_opp_silver;
++       }
++
++       pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++       if (!IS_ERR_OR_NULL(pdev))
++               return 0;
++
++       ret = PTR_ERR(pdev);
++       dev_err(cpu_dev_silver, "Failed to register platform device\n");
++       dev_pm_opp_put_supported_hw(opp_gold);
++
++free_opp_silver:
++       dev_pm_opp_put_supported_hw(opp_silver);
++
++free_np:
++       of_node_put(np);
++
++       return ret;
++}
++late_initcall(qcom_cpufreq_kryo_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/sVwmD4m5W_vB7YzPtVPhSO_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsABVEACgkQAR8vZIA0
-zr04pwgAj68uG6voX0WLqqcRaqvIo1Lc/+hVeugNXhyKUXI7DePgJvJR7PKgk+x2
-WBAq9ak2EqMFkXVc34q4Zc+y24URwKtuQm/95SirwEnuO3AbXmFMmOiZbBYDwa4f
-bQNcd74k23vcriPBtxqmrwKma4Uhkh0lHDS4EbX4r/wQCgJ3MojivyZz1Of6+psp
-K9F+AtKa/DrPH6WtnrPTcLT+KGGsDZ+gyy93D8ET7RUnt6sIdWQd4F1Kxxmntlx/
-JzpWY70t0XnZdYVeQobw8Y1fD17+mg4kKDv0Skz92d/L3KPW6qMmUXujFUuc7URX
-luIiFsIp9heqdLFa1EngyH9EWUYr1w==
-=IwAi
------END PGP SIGNATURE-----
-
---Sig_/sVwmD4m5W_vB7YzPtVPhSO_--
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Friday, May 18, 2018 04:46
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> mark.rutland@arm.com; nm@ti.com; lgirdwood@gmail.com;
+> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; rnayak@codeaurora.org;
+> amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> celster@codeaurora.org; tfinkel@codeaurora.org
+> Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+> 
+> On 17-05-18, 14:19, Ilia Lin wrote:
+> > +static int __init qcom_cpufreq_kryo_driver_init(void)
+> > +{
+> > +	size_t len;
+> > +	int ret = 0;
+> > +	u32 versions;
+> > +	enum _msm8996_version msm8996_version;
+> > +	u8 *speedbin;
+> > +	struct device *cpu_dev_silver, *cpu_dev_gold;
+> > +	struct device_node *np;
+> > +	struct nvmem_cell *speedbin_nvmem;
+> > +	struct platform_device *pdev;
+> > +	struct opp_table *opp_silver = NULL;
+> > +	struct opp_table *opp_gold = NULL;
+> 
+> No need to initialize them and you may want to arrange all above in
+> decreasing order of their length.
+> 
+> > +
+> > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> > +	if (IS_ERR_OR_NULL(cpu_dev_silver))
+> > +		return PTR_ERR(cpu_dev_silver);
+> > +
+> > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> > +	if (IS_ERR_OR_NULL(cpu_dev_gold))
+> > +		return PTR_ERR(cpu_dev_gold);
+> > +
+> > +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> > +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> > +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+> > +	if (IS_ERR_OR_NULL(np))
+> > +		return PTR_ERR(np);
+> > +
+> > +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> > +		ret = -ENOENT;
+> > +		goto free_np;
+> > +	}
+> > +
+> > +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> > +	if (IS_ERR(speedbin_nvmem)) {
+> > +		ret = PTR_ERR(speedbin_nvmem);
+> > +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n",
+> ret);
+> > +		goto free_np;
+> > +	}
+> > +
+> > +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> > +	nvmem_cell_put(speedbin_nvmem);
+> > +
+> > +	switch (msm8996_version) {
+> > +	case MSM8996_V3:
+> > +		versions = 1 << (unsigned int)(*speedbin);
+> > +		break;
+> > +	case MSM8996_SG:
+> > +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> > +		break;
+> > +	default:
+> > +		BUG();
+> > +		break;
+> > +	}
+> > +
+> > +	opp_silver =
+> dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
+> > +	if (IS_ERR_OR_NULL(opp_silver)) {
+> 
+> This API doesn't return NULL and so IS_ERR() would be sufficient.
+> 
+> > +		dev_err(cpu_dev_silver, "Failed to set supported
+> hardware\n");
+> > +		ret = PTR_ERR(opp_silver);
+> > +		goto free_np;
+> > +	}
+> > +
+> > +	opp_gold =
+> dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
+> > +	if (IS_ERR_OR_NULL(opp_gold)) {
+> 
+> same here.
+> 
+> > +		dev_err(cpu_dev_gold, "Failed to set supported
+> hardware\n");
+> > +		ret = PTR_ERR(opp_gold);
+> > +		goto free_opp_silver;
+> > +	}
+> > +
+> > +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> > +	if (!IS_ERR_OR_NULL(pdev))
+> > +		goto out;
+> 
+> Simply return from here and remove the useless label out.
+> 
+> > +
+> > +	ret = PTR_ERR(pdev);
+> > +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
+> > +	dev_pm_opp_put_supported_hw(opp_gold);
+> > +
+> > +free_opp_silver:
+> > +	dev_pm_opp_put_supported_hw(opp_silver);
+> > +
+> > +free_np:
+> > +	of_node_put(np);
+> > +
+> > +out:
+> > +	return ret;
+> > +}
+> > +late_initcall(qcom_cpufreq_kryo_driver_init);
+> 
+> Please resend only this patch now or just paste the new code in a mail
+here
+> so that I can review it quickly and then you can resend the final version.
+Most
+> of the patches aren't changing anyway.
+> 
+> --
+> viresh
