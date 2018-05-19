@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeESWIf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:08:35 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:49444 "EHLO vps-vb.mhejs.net"
+        id S1752733AbeESWIe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 18:08:34 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:49448 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752575AbeESWHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752594AbeESWHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 19 May 2018 18:07:48 -0400
 From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 To: Borislav Petkov <bp@alien8.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/8] x86/microcode/AMD: Integrate verify_patch_size() into verify_patch()
-Date: Sun, 20 May 2018 00:07:20 +0200
-Message-Id: <f702095bdc483923f1090f3d75a1352128a8f459.1526767245.git.mail@maciej.szmigiero.name>
+Subject: [PATCH v6 8/8] x86/microcode/AMD: Don't scan past the CPU equivalence table data
+Date: Sun, 20 May 2018 00:07:22 +0200
+Message-Id: <04a252b1e06673b8a1f62196093d0573d302fc1b.1526767245.git.mail@maciej.szmigiero.name>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1526767245.git.mail@maciej.szmigiero.name>
 References: <cover.1526767245.git.mail@maciej.szmigiero.name>
@@ -21,120 +21,117 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the previous commit converted the late loader to do a full patch
-checking via verify_patch() instead of calling verify_patch_size() directly
-we can integrate the later function into the former because it was its only
-user.
+Currently, the code scanning a CPU equivalence table read from a microcode
+container file assumes that it actually contains a terminating zero entry,
+but if does not then the code will continue the scan past its valid data.
+
+For the late loader this can be improved by always appending a terminating
+zero entry to such table when loading it.
+This way we don't need an extra global variable for holding the table size
+and we don't have to reject such incomplete tables (for backward
+compatibility with the existing code which didn't do so).
+
+For the early loader, since we can't allocate memory and have to work
+in-place, let's pass an explicit size of this table to its scanning
+functions so they will know when to stop.
 
 Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 72 +++++++++++------------------
- 1 file changed, 27 insertions(+), 45 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 46 ++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 3e10a5920f58..764dac82c03f 100644
+index cc38182c76d2..f443aede50d5 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -182,9 +182,6 @@ static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
- 	return true;
- }
+@@ -63,12 +63,18 @@ static u8 amd_ucode_patch[PATCH_MAX_SIZE];
+ static const char
+ ucode_path[] __maybe_unused = "kernel/x86/microcode/AuthenticAMD.bin";
  
--static unsigned int verify_patch_size(u8 family, u32 patch_size,
--				      unsigned int size);
--
- /*
-  * Checks whether a microcode patch located at the beginning of a passed
-  * buffer @buf of size @size is not too large for a particular @family
-@@ -195,19 +192,43 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size,
- static bool verify_patch(u8 family, const u8 *buf, size_t buf_size, bool early)
+-static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
++static u16 find_equiv_id(const struct equiv_cpu_entry *equiv_table,
++			 unsigned int equiv_table_entries, u32 sig)
  {
- 	const u32 *hdr = (const u32 *)buf;
--	u32 patch_size;
-+	u32 patch_size, max_size;
- 
- 	if (!verify_patch_section(buf, buf_size, early))
- 		return false;
- 
- 	patch_size = hdr[1];
- 
-+#define F1XH_MPB_MAX_SIZE 2048
-+#define F14H_MPB_MAX_SIZE 1824
-+#define F15H_MPB_MAX_SIZE 4096
-+#define F16H_MPB_MAX_SIZE 3458
-+#define F17H_MPB_MAX_SIZE 3200
+-	for (; equiv_table && equiv_table->installed_cpu; equiv_table++) {
+-		if (sig == equiv_table->installed_cpu)
+-			return equiv_table->equiv_cpu;
+-	}
++	unsigned int i;
 +
-+	switch (family) {
-+	case 0x14:
-+		max_size = F14H_MPB_MAX_SIZE;
-+		break;
-+	case 0x15:
-+		max_size = F15H_MPB_MAX_SIZE;
-+		break;
-+	case 0x16:
-+		max_size = F16H_MPB_MAX_SIZE;
-+		break;
-+	case 0x17:
-+		max_size = F17H_MPB_MAX_SIZE;
-+		break;
-+	default:
-+		max_size = F1XH_MPB_MAX_SIZE;
-+		break;
-+	}
++	if (!equiv_table)
++		return 0;
 +
- 	/*
- 	 * The section header length is not included in this indicated size
- 	 * but is present in the leftover file length so we need to subtract
--	 * it before passing this value to the function below.
-+	 * it from the leftover file length.
- 	 */
--	if (!verify_patch_size(family, patch_size, buf_size - SECTION_HDR_SIZE)) {
-+	if (patch_size > min_t(u32, max_size, buf_size - SECTION_HDR_SIZE)) {
- 		if (!early)
- 			pr_err("Patch of size %u too large.\n", patch_size);
++	for (i = 0; i < equiv_table_entries && equiv_table[i].installed_cpu;
++	     i++)
++		if (sig == equiv_table[i].installed_cpu)
++			return equiv_table[i].equiv_cpu;
  
-@@ -612,45 +633,6 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
  	return 0;
  }
+@@ -273,7 +279,8 @@ static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
+ 	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
  
--/*
-- * Check whether the passed remaining file @size is large enough to contain a
-- * patch of the indicated @patch_size (and also whether this size does not
-- * exceed the per-family maximum).
-- */
--static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
--{
--	u32 max_size;
--
--#define F1XH_MPB_MAX_SIZE 2048
--#define F14H_MPB_MAX_SIZE 1824
--#define F15H_MPB_MAX_SIZE 4096
--#define F16H_MPB_MAX_SIZE 3458
--#define F17H_MPB_MAX_SIZE 3200
--
--	switch (family) {
--	case 0x14:
--		max_size = F14H_MPB_MAX_SIZE;
--		break;
--	case 0x15:
--		max_size = F15H_MPB_MAX_SIZE;
--		break;
--	case 0x16:
--		max_size = F16H_MPB_MAX_SIZE;
--		break;
--	case 0x17:
--		max_size = F17H_MPB_MAX_SIZE;
--		break;
--	default:
--		max_size = F1XH_MPB_MAX_SIZE;
--		break;
--	}
--
--	if (patch_size > min_t(u32, size, max_size))
--		return 0;
--
--	return patch_size;
--}
--
- static enum ucode_state apply_microcode_amd(int cpu)
+ 	/* Find the equivalence ID of our CPU in this table: */
+-	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
++	eq_id = find_equiv_id(eq, equiv_tbl_len / sizeof(*eq),
++			      desc->cpuid_1_eax);
+ 
+ 	buf  += CONTAINER_HDR_SZ;
+ 	buf  += equiv_tbl_len;
+@@ -540,12 +547,14 @@ void reload_ucode_amd(void)
+ static u16 __find_equiv_id(unsigned int cpu)
  {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+-	return find_equiv_id(equiv_cpu_table, uci->cpu_sig.sig);
++
++	/* install_equiv_cpu_table() guarantees us a terminating entry */
++	return find_equiv_id(equiv_cpu_table, UINT_MAX, uci->cpu_sig.sig);
+ }
+ 
+ static u32 find_cpu_family_by_equiv_cpu(u16 equiv_cpu)
+ {
+-	int i = 0;
++	unsigned int i = 0;
+ 
+ 	BUG_ON(!equiv_cpu_table);
+ 
+@@ -683,20 +692,37 @@ static unsigned int install_equiv_cpu_table(const u8 *buf, size_t buf_size)
+ {
+ 	const u32 *hdr;
+ 	u32 equiv_tbl_len;
++	unsigned int equiv_tbl_entries;
++	const unsigned int equiv_tbl_entries_max =
++		UINT_MAX / sizeof(struct equiv_cpu_entry);
+ 
+ 	if (!verify_equivalence_table(buf, buf_size, false))
+ 		return 0;
+ 
+ 	hdr = (const u32 *)buf;
+ 	equiv_tbl_len = hdr[2];
++	equiv_tbl_entries = equiv_tbl_len / sizeof(struct equiv_cpu_entry);
+ 
+-	equiv_cpu_table = vmalloc(equiv_tbl_len);
++	/*
++	 * Make space for a terminating entry. If there is no space left we
++	 * reuse the last entry instead.
++	 */
++	if (equiv_tbl_entries < equiv_tbl_entries_max)
++		equiv_tbl_entries++;
++
++	equiv_cpu_table = vmalloc(equiv_tbl_entries *
++				  sizeof(struct equiv_cpu_entry));
+ 	if (!equiv_cpu_table) {
+ 		pr_err("failed to allocate equivalent CPU table\n");
+ 		return 0;
+ 	}
+ 
+-	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, equiv_tbl_len);
++	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ,
++	       (equiv_tbl_entries - 1) * sizeof(struct equiv_cpu_entry));
++
++	/* Set up the terminating entry. */
++	memset(&equiv_cpu_table[equiv_tbl_entries - 1], 0,
++	       sizeof(struct equiv_cpu_entry));
+ 
+ 	return equiv_tbl_len;
+ }
