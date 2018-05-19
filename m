@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752520AbeESKzt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:55:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42822 "EHLO mail.kernel.org"
+        id S1752575AbeESK4B (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:56:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752483AbeESKzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:55:42 -0400
+        id S1752523AbeESKzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 06:55:54 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 07/18] tools lib api fs tracing_path: Introduce opendir() method
-Date: Sat, 19 May 2018 07:54:56 -0300
-Message-Id: <20180519105507.16450-8-acme@kernel.org>
+Subject: [PATCH 11/18] perf tools: No need to unconditionally read the max_stack sysctls
+Date: Sat, 19 May 2018 07:55:00 -0300
+Message-Id: <20180519105507.16450-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180519105507.16450-1-acme@kernel.org>
 References: <20180519105507.16450-1-acme@kernel.org>
@@ -26,120 +26,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-That takes care of using the right call to get the tracing_path
-directory, the one that will end up calling tracing_path_set() to figure
-out where tracefs is mounted.
-
-One more step in doing just lazy reading of system structures to reduce
-the number of operations done unconditionaly at 'perf' start.
+Let tools that need to have those variables with the sysctl current
+values use a function that will read them.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-42zzi0f274909bg9mxzl81bu@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-1ljj3oeo5kpt2n1icfd9vowe@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/api/fs/tracing_path.c | 13 +++++++++++++
- tools/lib/api/fs/tracing_path.h |  3 +++
- tools/perf/tests/parse-events.c |  2 +-
- tools/perf/util/parse-events.c  |  8 ++++----
- 4 files changed, 21 insertions(+), 5 deletions(-)
+ tools/perf/builtin-top.c   |  2 +-
+ tools/perf/builtin-trace.c |  2 +-
+ tools/perf/perf.c          |  7 -------
+ tools/perf/util/evsel.c    |  2 +-
+ tools/perf/util/util.c     | 13 +++++++++++++
+ tools/perf/util/util.h     |  2 ++
+ 6 files changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/tools/lib/api/fs/tracing_path.c b/tools/lib/api/fs/tracing_path.c
-index 9cd282425929..9b451af0721c 100644
---- a/tools/lib/api/fs/tracing_path.c
-+++ b/tools/lib/api/fs/tracing_path.c
-@@ -101,6 +101,19 @@ void put_events_file(char *file)
- 	free(file);
- }
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 3c061c57afb6..7a349fcd3864 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1264,7 +1264,7 @@ int cmd_top(int argc, const char **argv)
+ 			.proc_map_timeout    = 500,
+ 			.overwrite	= 1,
+ 		},
+-		.max_stack	     = sysctl_perf_event_max_stack,
++		.max_stack	     = sysctl__max_stack(),
+ 		.sym_pcnt_filter     = 5,
+ 		.nr_threads_synthesize = UINT_MAX,
+ 	};
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c7effcfc40ed..560aed7da36a 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3162,7 +3162,7 @@ int cmd_trace(int argc, const char **argv)
+ 		mmap_pages_user_set = false;
  
-+DIR *tracing_events__opendir(void)
+ 	if (trace.max_stack == UINT_MAX) {
+-		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl_perf_event_max_stack;
++		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl__max_stack();
+ 		max_stack_user_set = false;
+ 	}
+ 
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index cefd8f74630c..51c81509a315 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -426,7 +426,6 @@ int main(int argc, const char **argv)
+ 	int err;
+ 	const char *cmd;
+ 	char sbuf[STRERR_BUFSIZE];
+-	int value;
+ 
+ 	/* libsubcmd init */
+ 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
+@@ -435,12 +434,6 @@ int main(int argc, const char **argv)
+ 	/* The page_size is placed in util object. */
+ 	page_size = sysconf(_SC_PAGE_SIZE);
+ 
+-	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
+-		sysctl_perf_event_max_stack = value;
+-
+-	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
+-		sysctl_perf_event_max_contexts_per_stack = value;
+-
+ 	cmd = extract_argv0_path(argv[0]);
+ 	if (!cmd)
+ 		cmd = "perf-help";
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 4cd2cf93f726..150db5ed7400 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2862,7 +2862,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
+ 			return scnprintf(msg, size,
+ 					 "Not enough memory to setup event with callchain.\n"
+ 					 "Hint: Try tweaking /proc/sys/kernel/perf_event_max_stack\n"
+-					 "Hint: Current value: %d", sysctl_perf_event_max_stack);
++					 "Hint: Current value: %d", sysctl__max_stack());
+ 		break;
+ 	case ENODEV:
+ 		if (target->cpu_list)
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 99ab52165680..eac5b858a371 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -62,6 +62,19 @@ int cacheline_size(void)
+ int sysctl_perf_event_max_stack = PERF_MAX_STACK_DEPTH;
+ int sysctl_perf_event_max_contexts_per_stack = PERF_MAX_CONTEXTS_PER_STACK;
+ 
++int sysctl__max_stack(void)
 +{
-+	DIR *dir = NULL;
-+	char *path = get_tracing_file("events");
++	int value;
 +
-+	if (path) {
-+		dir = opendir(path);
-+		put_events_file(path);
-+	}
++	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
++		sysctl_perf_event_max_stack = value;
 +
-+	return dir;
++	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
++		sysctl_perf_event_max_contexts_per_stack = value;
++
++	return sysctl_perf_event_max_stack;
 +}
 +
- int tracing_path__strerror_open_tp(int err, char *buf, size_t size,
- 				   const char *sys, const char *name)
- {
-diff --git a/tools/lib/api/fs/tracing_path.h b/tools/lib/api/fs/tracing_path.h
-index 3b32fb439f12..904d085b2ae7 100644
---- a/tools/lib/api/fs/tracing_path.h
-+++ b/tools/lib/api/fs/tracing_path.h
-@@ -3,9 +3,12 @@
- #define __API_FS_TRACING_PATH_H
+ bool test_attr__enabled;
  
- #include <linux/types.h>
-+#include <dirent.h>
+ bool perf_host  = true;
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index 74d21dfe0d29..dc58254a2b69 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -45,6 +45,8 @@ int hex2u64(const char *ptr, u64 *val);
+ extern unsigned int page_size;
+ int __pure cacheline_size(void);
  
- extern char tracing_events_path[];
- 
-+DIR *tracing_events__opendir(void);
++int sysctl__max_stack(void);
 +
- void tracing_path_set(const char *mountpoint);
- const char *tracing_path_mount(void);
- 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 6d57d7082637..b9ebe15afb13 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1323,7 +1323,7 @@ static int count_tracepoints(void)
- 	DIR *events_dir;
- 	int cnt = 0;
- 
--	events_dir = opendir(tracing_events_path);
-+	events_dir = tracing_events__opendir();
- 
- 	TEST_ASSERT_VAL("Can't open events dir", events_dir);
- 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 24668300b327..15eec49e71a1 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -191,7 +191,7 @@ struct tracepoint_path *tracepoint_id_to_path(u64 config)
- 	char evt_path[MAXPATHLEN];
- 	char *dir_path;
- 
--	sys_dir = opendir(tracing_events_path);
-+	sys_dir = tracing_events__opendir();
- 	if (!sys_dir)
- 		return NULL;
- 
-@@ -578,7 +578,7 @@ static int add_tracepoint_multi_sys(struct list_head *list, int *idx,
- 	DIR *events_dir;
- 	int ret = 0;
- 
--	events_dir = opendir(tracing_events_path);
-+	events_dir = tracing_events__opendir();
- 	if (!events_dir) {
- 		tracepoint_error(err, errno, sys_name, evt_name);
- 		return -1;
-@@ -2106,7 +2106,7 @@ void print_tracepoint_events(const char *subsys_glob, const char *event_glob,
- 	bool evt_num_known = false;
- 
- restart:
--	sys_dir = opendir(tracing_events_path);
-+	sys_dir = tracing_events__opendir();
- 	if (!sys_dir)
- 		return;
- 
-@@ -2200,7 +2200,7 @@ int is_valid_tracepoint(const char *event_string)
- 	char evt_path[MAXPATHLEN];
- 	char *dir_path;
- 
--	sys_dir = opendir(tracing_events_path);
-+	sys_dir = tracing_events__opendir();
- 	if (!sys_dir)
- 		return 0;
- 
+ int fetch_kernel_version(unsigned int *puint,
+ 			 char *str, size_t str_sz);
+ #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
 -- 
 2.14.3
