@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeESSdn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 14:33:43 -0400
-Received: from mailoutvs2.siol.net ([213.250.19.135]:34856 "EHLO mail.siol.net"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752641AbeESSdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 14:33:03 -0400
+        id S1752785AbeESSeB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 14:34:01 -0400
+Received: from mailout11.siol.net ([213.250.19.138]:34825 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752670AbeESSc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 14:32:58 -0400
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
 Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 14/15] ARM: dts: sun8i: r40: Add HDMI pipeline
-Date: Sat, 19 May 2018 20:31:26 +0200
-Message-Id: <20180519183127.2718-15-jernej.skrabec@siol.net>
+Subject: [PATCH 12/15] drm/sun4i: Add support for second clock parent to DW HDMI PHY clk driver
+Date: Sat, 19 May 2018 20:31:24 +0200
+Message-Id: <20180519183127.2718-13-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
 References: <20180519183127.2718-1-jernej.skrabec@siol.net>
@@ -22,222 +22,254 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add all entries needed for HDMI to function properly.
-
-Since R40 has highly configurable pipeline, both mixers and both TCON
-TVs are added. Board specific DT should then connect them together to
-best fit the purpose of the board.
+Expand HDMI PHY clock driver to support second clock parent.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/sun8i-r40.dtsi | 166 +++++++++++++++++++++++++++++++
- 1 file changed, 166 insertions(+)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |  6 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 29 ++++++-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c | 90 ++++++++++++++++------
+ 3 files changed, 98 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-index 173dcc1652d2..6d5407964997 100644
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -42,8 +42,11 @@
-  */
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 801a17222762..aadbe0a10b0c 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -98,7 +98,8 @@
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
+-#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT	26
+ #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
+@@ -190,6 +191,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
+ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
+ const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-r40-ccu.h>
-+#include <dt-bindings/clock/sun8i-tcon-top.h>
- #include <dt-bindings/reset/sun8i-r40-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
+-int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev);
++int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
++			 bool second_parent);
  
- / {
- 	#address-cells = <1>;
-@@ -99,12 +102,70 @@
- 		};
- 	};
+ #endif /* _SUN8I_DW_HDMI_H_ */
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index deba47ed69d8..7a911f0a3ae3 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *hdmi,
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
+ 			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-r40-display-engine",
-+			     "allwinner,sun8i-h3-display-engine";
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
-+		status = "disabled";
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
++	/*
++	 * NOTE: We have to be careful not to overwrite PHY parent
++	 * clock selection bit and clock divider.
++	 */
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
++			   ~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
++			   pll_cfg1_init);
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
+ 			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
+ 			   pll_cfg2_init);
+@@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
+ 			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
+ 			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
  
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun8i-r40-de2-clk",
-+				     "allwinner,sun8i-h3-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
++	/* reset PLL clock configuration */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, 0);
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, 0);
 +
-+		mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-r40-de2-mixer-0";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER0>,
-+				 <&display_clocks CLK_MIXER0>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_MIXER0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-r40-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		nmi_intc: interrupt-controller@1c00030 {
- 			compatible = "allwinner,sun7i-a20-sc-nmi";
- 			interrupt-controller;
-@@ -451,6 +512,70 @@
- 			#size-cells = <0>;
- 		};
+ 	/* set HW control of CEC pins */
+ 	regmap_write(phy->regs, SUN8I_HDMI_PHY_CEC_REG, 0);
  
-+		tcon_top: tcon-top@1c70000 {
-+			compatible = "allwinner,sun8i-r40-tcon-top";
-+			reg = <0x01c70000 0x1000>;
-+			clocks = <&ccu CLK_BUS_TCON_TOP>;
-+			clock-names = "bus";
-+			resets = <&ccu RST_BUS_TCON_TOP>;
-+			reset-names = "rst";
-+			#clock-cells = <1>;
-+		};
-+
-+		tcon_tv0: lcd-controller@1c73000 {
-+			compatible = "allwinner,sun8i-r40-tcon-tv-0";
-+			reg = <0x01c73000 0x1000>;
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON_TV0>, <&ccu CLK_TCON_TV0>,
-+				 <&tcon_top 1>;
-+			clock-names = "ahb", "tcon-ch1", "tcon-top";
-+			resets = <&ccu RST_BUS_TCON_TV0>;
-+			reset-names = "lcd";
-+			allwinner,tcon-top = <&tcon_top>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon_tv0_in: port@0 {
-+					reg = <0>;
-+				};
-+
-+				tcon_tv0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		tcon_tv1: lcd-controller@1c74000 {
-+			compatible = "allwinner,sun8i-r40-tcon-tv-1";
-+			reg = <0x01c74000 0x1000>;
-+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON_TV1>, <&ccu CLK_TCON_TV1>,
-+				 <&tcon_top 2>;
-+			clock-names = "ahb", "tcon-ch1", "tcon-top";
-+			resets = <&ccu RST_BUS_TCON_TV1>;
-+			reset-names = "lcd";
-+			allwinner,tcon-top = <&tcon_top>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon_tv1_in: port@0 {
-+					reg = <0>;
-+				};
-+
-+				tcon_tv1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		gic: interrupt-controller@1c81000 {
- 			compatible = "arm,gic-400";
- 			reg = <0x01c81000 0x1000>,
-@@ -461,6 +586,47 @@
- 			#interrupt-cells = <3>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
-+
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-r40-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI0>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-r40-hdmi-phy",
-+				     "allwinner,sun50i-a64-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI1>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu 7>, <&ccu 16>;
-+			clock-names = "bus", "mod", "pll-0", "pll-1";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
- 	};
+@@ -481,18 +491,28 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			}
+ 		}
  
- 	timer {
+-		ret = sun8i_phy_clk_create(phy, dev);
++		ret = sun8i_phy_clk_create(phy, dev,
++					   phy->variant->has_second_pll);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+ 			goto err_put_clk_pll1;
+ 		}
++
++		/*
++		 * Even though HDMI PHY clock doesn't have enable/disable
++		 * handlers, we have to enable it. Otherwise it could happen
++		 * that parent PLL is not enabled by clock framework in a
++		 * highly unlikely event when parent PLL is used solely for
++		 * HDMI PHY clock.
++		 */
++		clk_prepare_enable(phy->clk_phy);
+ 	}
+ 
+ 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
+ 	if (IS_ERR(phy->rst_phy)) {
+ 		dev_err(dev, "Could not get phy reset control\n");
+ 		ret = PTR_ERR(phy->rst_phy);
+-		goto err_put_clk_pll1;
++		goto err_disable_clk_phy;
+ 	}
+ 
+ 	ret = reset_control_deassert(phy->rst_phy);
+@@ -523,6 +543,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	reset_control_assert(phy->rst_phy);
+ err_put_rst_phy:
+ 	reset_control_put(phy->rst_phy);
++err_disable_clk_phy:
++	clk_disable_unprepare(phy->clk_phy);
+ err_put_clk_pll1:
+ 	clk_put(phy->clk_pll1);
+ err_put_clk_pll0:
+@@ -541,6 +563,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
+ 
+ 	clk_disable_unprepare(phy->clk_mod);
+ 	clk_disable_unprepare(phy->clk_bus);
++	clk_disable_unprepare(phy->clk_phy);
+ 
+ 	reset_control_assert(phy->rst_phy);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+index faea449812f8..a4d31fe3abff 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+@@ -22,35 +22,45 @@ static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
+ {
+ 	unsigned long rate = req->rate;
+ 	unsigned long best_rate = 0;
++	struct clk_hw *best_parent = NULL;
+ 	struct clk_hw *parent;
+ 	int best_div = 1;
+-	int i;
++	int i, p;
+ 
+-	parent = clk_hw_get_parent(hw);
+-
+-	for (i = 1; i <= 16; i++) {
+-		unsigned long ideal = rate * i;
+-		unsigned long rounded;
+-
+-		rounded = clk_hw_round_rate(parent, ideal);
++	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
++		parent = clk_hw_get_parent_by_index(hw, p);
++		if (!parent)
++			continue;
+ 
+-		if (rounded == ideal) {
+-			best_rate = rounded;
+-			best_div = i;
+-			break;
++		for (i = 1; i <= 16; i++) {
++			unsigned long ideal = rate * i;
++			unsigned long rounded;
++
++			rounded = clk_hw_round_rate(parent, ideal);
++
++			if (rounded == ideal) {
++				best_rate = rounded;
++				best_div = i;
++				best_parent = parent;
++				break;
++			}
++
++			if (!best_rate ||
++			    abs(rate - rounded / i) <
++			    abs(rate - best_rate / best_div)) {
++				best_rate = rounded;
++				best_div = i;
++				best_parent = parent;
++			}
+ 		}
+ 
+-		if (!best_rate ||
+-		    abs(rate - rounded / i) <
+-		    abs(rate - best_rate / best_div)) {
+-			best_rate = rounded;
+-			best_div = i;
+-		}
++		if (best_rate / best_div == rate)
++			break;
+ 	}
+ 
+ 	req->rate = best_rate / best_div;
+ 	req->best_parent_rate = best_rate;
+-	req->best_parent_hw = parent;
++	req->best_parent_hw = best_parent;
+ 
+ 	return 0;
+ }
+@@ -95,22 +105,58 @@ static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static u8 sun8i_phy_clk_get_parent(struct clk_hw *hw)
++{
++	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
++	u32 reg;
++
++	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, &reg);
++	reg = (reg & SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK) >>
++	      SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT;
++
++	return reg;
++}
++
++static int sun8i_phy_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
++
++	if (index > 1)
++		return -EINVAL;
++
++	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
++			   SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
++			   index << SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT);
++
++	return 0;
++}
++
+ static const struct clk_ops sun8i_phy_clk_ops = {
+ 	.determine_rate	= sun8i_phy_clk_determine_rate,
+ 	.recalc_rate	= sun8i_phy_clk_recalc_rate,
+ 	.set_rate	= sun8i_phy_clk_set_rate,
++
++	.get_parent	= sun8i_phy_clk_get_parent,
++	.set_parent	= sun8i_phy_clk_set_parent,
+ };
+ 
+-int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
++int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
++			 bool second_parent)
+ {
+ 	struct clk_init_data init;
+ 	struct sun8i_phy_clk *priv;
+-	const char *parents[1];
++	const char *parents[2];
+ 
+ 	parents[0] = __clk_get_name(phy->clk_pll0);
+ 	if (!parents[0])
+ 		return -ENODEV;
+ 
++	if (second_parent) {
++		parents[1] = __clk_get_name(phy->clk_pll1);
++		if (!parents[1])
++			return -ENODEV;
++	}
++
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+@@ -118,7 +164,7 @@ int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
+ 	init.name = "hdmi-phy-clk";
+ 	init.ops = &sun8i_phy_clk_ops;
+ 	init.parent_names = parents;
+-	init.num_parents = 1;
++	init.num_parents = second_parent ? 2 : 1;
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 
+ 	priv->phy = phy;
 -- 
 2.17.0
