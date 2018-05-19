@@ -1,99 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeESIIH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 04:08:07 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:41461 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751888AbeESIID (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 04:08:03 -0400
-X-Google-Smtp-Source: AB8JxZqPr2NrHdGWQGjfQUAuaiKQQaxF0b0ZhhmlrbUmChUiy1ZEddw2//bMm2WmJvNyL30Yi8xuXN8W6DG/jMNMkJaGh8pEP1pE
+        id S1752060AbeESIUS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 04:20:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46405 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751888AbeESIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 04:20:13 -0400
+Date: Sat, 19 May 2018 01:18:59 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180518175136.GB2055@avx2>
+References: <C40DC70F50313144AB3AF8625D4F407F90689B42@ORSMSX101.amr.corp.intel.com> <20180515214337.GA18021@avx2> <20180515222211.ods5hzne46hozojq@treble> <CA+55aFw1MxjUKtrt-KyiNxmpuKUY273L5uy8ggzOFjBSYMwwog@mail.gmail.com> <20180515224354.zmygmsnlqj5lrdbo@treble> <CA+55aFzTpkn_fokmm+ddi+cgk5K3EOftRmPad+NkUb5W2z0Fqg@mail.gmail.com> <CA+55aFwrT-BAvdujUonX5MvB=8GFopQJT4x6xMhtjNN2G0AxSw@mail.gmail.com> <20180516033044.odb74pdgcn5nacwb@treble> <20180517134934.eog2fgoby5azq5a7@treble> <20180518071814.GB26358@gmail.com> <20180518175136.GB2055@avx2>
 MIME-Version: 1.0
-Date: Sat, 19 May 2018 01:08:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000506bcd056c8a91d5@google.com>
-Subject: WARNING in xfrm6_tunnel_net_exit (2)
-From: syzbot <syzbot+e9aebef558e3ed673934@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] objtool: Detect assembly code falling through to INT3 padding
+To: Alexey Dobriyan <adobriyan@gmail.com>, Ingo Molnar <mingo@kernel.org>
+CC: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Anvin <h.peter.anvin@intel.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tipbuild@zytor.com, LKP <lkp@01.org>
+From: hpa@zytor.com
+Message-ID: <84F157C1-AD98-473D-9CF6-2A26A499DECF@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On May 18, 2018 10:51:36 AM PDT, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>On Fri, May 18, 2018 at 09:18:14AM +0200, Ingo Molnar wrote:
+>> The concept of built-in kernel tooling working at the machine code
+>level is just 
+>> so powerful - we should have added our own KCC compiler 20 years ago.
+>
+>...for two very serious reasons
+>
+>* C as a language moves very slowly, last help from the comittee were
+>  C99 intializers which are OK, but, say, memory model was explictly
+>  rejected. However the project expands and becomes more complex much
+>  faster than C working group sets up meetings. Compiler authors help
+>with extensions but ultimately can not be relied on (see "inline"
+>saga).
+>
+>  Recently everyone was celebrating new and improved min() and max()
+> macros admiring creativity and knowledge of intricate language details
+>  (me too, don't get this wrong).
+>
+>  Now this is how it can be done in a language which is not stupid:
+>
+>	constexpr int min(int a, int b)
+>	{
+>		return a < b ? a : b;
+>	}
+>
+>  That's literally all. And you can also do
+>
+>	template<typename T>
+>	void min(T a, char b) = delete;
+>
+>	template<typename T>
+>	void min(char a, T b) = delete;
+>
+>  because "char" is char.
+>
+>  Having control over compiler things like that can be addded more
+>  quickly.
+>
+>
+>* insulating the project from the whims of compiler authors who every
+>  once in a while use "undefined behaviour" or other kinds of language
+>  lawyering to do strange things.
+>
+>  Other serious projects do this too. Database people use O_DIRECT
+>  to insulate themselves from kernel people for the very same reasons.
 
-syzbot found the following crash on:
+Sounds like you are proposing switching to C++ more than anything else.
 
-HEAD commit:    2c71d338bef2 Merge tag 'powerpc-4.17-6' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a7bd57800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9aebef558e3ed673934
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17409d57800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e9aebef558e3ed673934@syzkaller.appspotmail.com
-
-bond0: Enslaving bond_slave_1 as an active interface with an up link
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bond: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bond: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1_to_bond: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
-WARNING: CPU: 1 PID: 6 at net/ipv6/xfrm6_tunnel.c:348  
-xfrm6_tunnel_net_exit+0x2df/0x510 net/ipv6/xfrm6_tunnel.c:348
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bond: link becomes ready
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc5+ #57
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: netns cleanup_net
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bond: link becomes ready
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-IPv6: ADDRCONF(NETDEV_UP): veth0_to_bond: link is not ready
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:xfrm6_tunnel_net_exit+0x2df/0x510 net/ipv6/xfrm6_tunnel.c:348
-RSP: 0018:ffff8801d9a973d8 EFLAGS: 00010293
-RAX: ffff8801d9a88180 RBX: ffff8801b6eda2b8 RCX: ffffffff868ff5f5
-RDX: 0000000000000000 RSI: ffffffff868ff5ff RDI: 0000000000000007
-RBP: ffff8801d9a974f8 R08: ffff8801d9a88180 R09: 0000000000000006
-R10: ffff8801d9a88180 R11: 0000000000000000 R12: 00000000000000ff
-R13: ffffed003b352e82 R14: ffff8801d9a974d0 R15: ffff8801b32f0700
-  ops_exit_list.isra.7+0xb0/0x160 net/core/net_namespace.c:152
-  cleanup_net+0x51d/0xb20 net/core/net_namespace.c:523
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+*Steps aside and grabs popcorn*
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
