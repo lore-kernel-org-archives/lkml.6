@@ -1,38 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeESC7o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 22:59:44 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46883 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbeESC7l (ORCPT
+        id S1752173AbeESDPb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 23:15:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42300 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751117AbeESDP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 22:59:41 -0400
-X-Google-Smtp-Source: AB8JxZq9J2gjgztKxcs43Eyv7Z6ZSaoe1uLtfrd0xWhkafQdvi8HX0fDdd3HMi7F2I2MdUjUiN6/GPY7zW9RQydmb20=
+        Fri, 18 May 2018 23:15:29 -0400
+Date: Sat, 19 May 2018 05:15:22 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [v4.17-rc5][bisected] be83bbf80682 breaks /proc/vmcore mmap
 MIME-Version: 1.0
-In-Reply-To: <1526658324-6570-1-git-send-email-vladbu@mellanox.com>
-References: <1526658324-6570-1-git-send-email-vladbu@mellanox.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Fri, 18 May 2018 19:59:20 -0700
-Message-ID: <CAM_iQpUKjFPKAONSW42_6Mdp-VTTvaOx-GPDH2bJqW7LW1QYBw@mail.gmail.com>
-Subject: Re: [PATCH] net: sched: don't disable bh when accessing action idr
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051903-0020-0000-0000-0000041EE2C4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051903-0021-0000-0000-000042B40FAD
+Message-Id: <cover.thread-4f3684.your-ad-here.call-01526696764-ext-9375@work.hours>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-19_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805190035
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 8:45 AM, Vlad Buslov <vladbu@mellanox.com> wrote:
-> Underlying implementation of action map has changed and doesn't require
-> disabling bh anymore. Replace all action idr spinlock usage with regular
-> calls that do not disable bh.
+Greetings,
 
-Please explain explicitly why it is not required, don't let people
-dig, this would save everyone's time.
+be83bbf80682 "mmap: introduce sane default mmap limits" introduced a
+problem with mapping /proc/vmcore if it is bigger than 2gb. This
+breaks s390 kernel zfcpdump. But it should be a general problem.
 
-Also, this should be targeted for net-next, right?
+Please consider the following one-liner fix, if it makes sense.
 
-Thanks.
+Vasily Gorbik (1):
+  procfs: fix mmap() for /proc/vmcore
+
+ fs/proc/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+-- 
+⢀⡵⣤⡴⣅  2.17.0
+⠏⢟⡛⣛⠏⠇ space invaders edition
