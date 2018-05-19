@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeESCrC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 22:47:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45178 "EHLO mail.kernel.org"
+        id S1752537AbeESCqv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 22:46:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752562AbeESCq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 22:46:59 -0400
+        id S1752505AbeESCqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 22:46:44 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -25,9 +25,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 12/12] perf/breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
-Date: Sat, 19 May 2018 04:45:49 +0200
-Message-Id: <1526697950-7091-13-git-send-email-frederic@kernel.org>
+Subject: [PATCH 09/12] xtensa: Implement hw_breakpoint_arch_parse()
+Date: Sat, 19 May 2018 04:45:46 +0200
+Message-Id: <1526697950-7091-10-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526697950-7091-1-git-send-email-frederic@kernel.org>
 References: <1526697950-7091-1-git-send-email-frederic@kernel.org>
@@ -35,11 +35,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the dance around old and new attributes. Just don't modify the
-previous breakpoint at all until we have verified everything.
+Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
+that clumsily mixes up architecture validation and commit
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Original-patch-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -62,76 +60,99 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- kernel/events/hw_breakpoint.c | 46 ++++++++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 20 deletions(-)
+ arch/xtensa/include/asm/hw_breakpoint.h |  6 +++++-
+ arch/xtensa/kernel/hw_breakpoint.c      | 33 ++++++++++++---------------------
+ 2 files changed, 17 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 7840746..1af761a 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -461,37 +461,43 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
- }
- EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
+diff --git a/arch/xtensa/include/asm/hw_breakpoint.h b/arch/xtensa/include/asm/hw_breakpoint.h
+index 2525bf6..58632d3 100644
+--- a/arch/xtensa/include/asm/hw_breakpoint.h
++++ b/arch/xtensa/include/asm/hw_breakpoint.h
+@@ -30,13 +30,17 @@ struct arch_hw_breakpoint {
+ 	u16 type;
+ };
  
-+static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
-+				    struct perf_event_attr *from)
-+{
-+	to->bp_addr = from->bp_addr;
-+	to->bp_type = from->bp_type;
-+	to->bp_len  = from->bp_len;
-+	to->disabled = from->disabled;
-+}
-+
- int
- modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
- 			        bool check)
++struct perf_event_attr;
+ struct perf_event;
+ struct pt_regs;
+ struct task_struct;
+ 
+ int hw_breakpoint_slots(int type);
+ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+-int arch_validate_hwbkpt_settings(struct perf_event *bp);
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw);
++#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data);
+ 
+diff --git a/arch/xtensa/kernel/hw_breakpoint.c b/arch/xtensa/kernel/hw_breakpoint.c
+index 6e34c38..a0def44 100644
+--- a/arch/xtensa/kernel/hw_breakpoint.c
++++ b/arch/xtensa/kernel/hw_breakpoint.c
+@@ -47,50 +47,41 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+ /*
+  * Construct an arch_hw_breakpoint from a perf_event.
+  */
+-static int arch_build_bp_info(struct perf_event *bp)
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw)
  {
--	u64 old_addr = bp->attr.bp_addr;
--	u64 old_len  = bp->attr.bp_len;
--	int old_type = bp->attr.bp_type;
--	bool modify  = attr->bp_type != old_type;
- 	struct arch_hw_breakpoint hw;
--	int err = 0;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 -
--	bp->attr.bp_addr = attr->bp_addr;
--	bp->attr.bp_type = attr->bp_type;
--	bp->attr.bp_len  = attr->bp_len;
--
--	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
--		return -EINVAL;
-+	int err;
- 
- 	err = hw_breakpoint_parse(bp, attr, &hw);
--	if (!err && modify)
--		err = modify_bp_slot(bp, old_type, bp->attr.bp_type);
--
--	if (err) {
--		bp->attr.bp_addr = old_addr;
--		bp->attr.bp_type = old_type;
--		bp->attr.bp_len  = old_len;
-+	if (err)
- 		return err;
-+
-+	if (check) {
-+		struct perf_event_attr old_attr;
-+
-+		old_attr = bp->attr;
-+		hw_breakpoint_copy_attr(&old_attr, attr);
-+		if (memcmp(&old_attr, attr, sizeof(*attr)))
-+			return -EINVAL;
-+	}
-+
-+	if (bp->attr.bp_type != attr->bp_type) {
-+		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
-+		if (err)
-+			return err;
+ 	/* Type */
+-	switch (bp->attr.bp_type) {
++	switch (attr->bp_type) {
+ 	case HW_BREAKPOINT_X:
+-		info->type = XTENSA_BREAKPOINT_EXECUTE;
++		hw->type = XTENSA_BREAKPOINT_EXECUTE;
+ 		break;
+ 	case HW_BREAKPOINT_R:
+-		info->type = XTENSA_BREAKPOINT_LOAD;
++		hw->type = XTENSA_BREAKPOINT_LOAD;
+ 		break;
+ 	case HW_BREAKPOINT_W:
+-		info->type = XTENSA_BREAKPOINT_STORE;
++		hw->type = XTENSA_BREAKPOINT_STORE;
+ 		break;
+ 	case HW_BREAKPOINT_RW:
+-		info->type = XTENSA_BREAKPOINT_LOAD | XTENSA_BREAKPOINT_STORE;
++		hw->type = XTENSA_BREAKPOINT_LOAD | XTENSA_BREAKPOINT_STORE;
+ 		break;
+ 	default:
+ 		return -EINVAL;
  	}
  
-+	hw_breakpoint_copy_attr(&bp->attr, attr);
- 	bp->hw.info = hw;
--	bp->attr.disabled = attr->disabled;
+ 	/* Len */
+-	info->len = bp->attr.bp_len;
+-	if (info->len < 1 || info->len > 64 || !is_power_of_2(info->len))
++	hw->len = attr->bp_len;
++	if (hw->len < 1 || hw->len > 64 || !is_power_of_2(hw->len))
+ 		return -EINVAL;
+ 
+ 	/* Address */
+-	info->address = bp->attr.bp_addr;
+-	if (info->address & (info->len - 1))
++	hw->address = attr->bp_addr;
++	if (hw->address & (hw->len - 1))
+ 		return -EINVAL;
  
  	return 0;
  }
+ 
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
+-{
+-	int ret;
+-
+-	/* Build the arch_hw_breakpoint. */
+-	ret = arch_build_bp_info(bp);
+-	return ret;
+-}
+-
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data)
+ {
 -- 
 2.7.4
