@@ -1,69 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeESA66 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 20:58:58 -0400
-Received: from gherkin.frus.com ([192.158.254.49]:43246 "EHLO gherkin.frus.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751816AbeESA64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 20:58:56 -0400
-Date: Fri, 18 May 2018 19:32:59 -0500
-From: Bob Tracy <rct@gherkin.frus.com>
-To: linux-kernel@vger.kernel.org
-Subject: [BUG] 4.17-rcX delays during boot and memory mapping errors
-Message-ID: <20180519003259.GA1114@gherkin.frus.com>
+        id S1752211AbeESBFO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 21:05:14 -0400
+Received: from p3plsmtpa08-01.prod.phx3.secureserver.net ([173.201.193.102]:54808
+        "EHLO p3plsmtpa08-01.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751899AbeESBFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 21:05:12 -0400
+Subject: Re: [RFC PATCH 02/09] Change wdata alloc to support direct pages
+To: longli@microsoft.com, Steve French <sfrench@samba.org>,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20180518002214.5657-1-longli@linuxonhyperv.com>
+ <20180518002214.5657-3-longli@linuxonhyperv.com>
+From: Tom Talpey <tom@talpey.com>
+Message-ID: <e8eba448-542b-2e20-506b-a91dc12335c6@talpey.com>
+Date: Fri, 18 May 2018 18:05:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.6.1 (2016-04-27)
+In-Reply-To: <20180518002214.5657-3-longli@linuxonhyperv.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfF8EnZj8Sa4cZqpp5TZASVxaVg11mXfbPoFvsDXa495Sh1szmYd54nDH5NP7AqBdkscJLLJR2TJtRIl+LZ790ePsIbBPFXFeeYMtOy35irURXxTIJyfT
+ Ju1bFc562WGPqfSYWBTnwD8hiG8DskjjRo2hn3brbnL27GFZdGR5WpJ1ybcehGlhSCSdjLR55Kxs4XGcsT4yUIgRMf1HOhHxY9W9teOqrT28A5VYS3AysE5R
+ 9dWMSOccylJQdpJt6tCzu6HtZDd9HqHhVLCFrIiJPB6UKYYxdtf/kAAN2txeyoYEIXLunSzqzkk5y+uOK8PKRKBXjutCLAA9JBHmUeZGpTusW11ak9M+vI/w
+ 8Dkqtch9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologies for not having more in the way of diagnostic info.
+On 5/17/2018 5:22 PM, Long Li wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> When using direct pages from user space, there is no need to allocate pages.
+> 
+> Just ping those user pages for RDMA.
 
-Every one of the 4.17-rcX series has hung during boot at the point where
-"acpid" starts up.  Beginning with -rc5, the boot actually proceeds to
-completion after an "uncomfortably" long delay.
+Did you mean "pin" those user pages? If so, where does that pinning
+occur, it's not in this patch.
 
-Attempting to run the X11 server results in the following diagnostic
-output in "/var/log/Xorg.0.log":
+Perhaps this should just say "point to" those user pages.
 
-(...)
-[   109.951] (--) Depth 24 pixmap format is 32 bpp
-[   109.951] (II) RADEON(0): [DRI2] Setup complete
-[   109.951] (II) RADEON(0): [DRI2]   DRI driver: r600
-[   109.951] (II) RADEON(0): [DRI2]   VDPAU driver: r600
-[   109.951] Failed to map cursor buffer memory
-[   109.951] Failed to map cursor buffer memory
-[   109.951] Failed to map cursor buffer memory
-[   109.952] Failed to map cursor buffer memory
-[   109.952] Failed to map cursor buffer memory
-[   109.952] Failed to map cursor buffer memory
-[   109.952] (II) RADEON(0): Front buffer size: 8160K
-[   109.952] (II) RADEON(0): VRAM usage limit set to 218167K
-[   109.952] (==) RADEON(0): DRI3 disabled
-[   109.952] (==) RADEON(0): Backing store enabled
-[   109.952] (II) RADEON(0): Direct rendering enabled
-[   109.952] (II) EXA(0): Driver allocated offscreen pixmaps
-[   109.952] (II) EXA(0): Driver registered support for the following
-operations:
-[   109.952] (II)         Solid
-[   109.952] (II)         Copy
-[   109.952] (II)         Composite (RENDER acceleration)
-[   109.952] (II)         UploadToScreen
-[   109.952] (II)         DownloadFromScreen
-[   109.952] (EE) 
-Fatal server error:
-[   109.952] (EE) failed to map shader -75
-[   109.952] (EE) 
-[   109.952] (EE) 
-Please consult the The X.Org Foundation support 
-         at http://wiki.x.org
- for help. 
-[   109.952] (EE) Please also check the log file at "/var/log/Xorg.0.log" for additional information.
-[   109.952] (EE) 
-[   109.971] (EE) Server terminated with error (1). Closing log file.
+I also don't think this is necessarily only "for RDMA". Perhaps
+there are other transport scenarios where this is advantageous.
 
-Everything works normally with a 4.16 kernel.
 
---Bob
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>   fs/cifs/cifsproto.h |  2 +-
+>   fs/cifs/cifssmb.c   | 10 +++++++---
+>   fs/cifs/file.c      |  4 ++--
+>   3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+> index 365a414..94106b9 100644
+> --- a/fs/cifs/cifsproto.h
+> +++ b/fs/cifs/cifsproto.h
+> @@ -523,7 +523,7 @@ int cifs_readv_receive(struct TCP_Server_Info *server, struct mid_q_entry *mid);
+>   int cifs_async_writev(struct cifs_writedata *wdata,
+>   		      void (*release)(struct kref *kref));
+>   void cifs_writev_complete(struct work_struct *work);
+> -struct cifs_writedata *cifs_writedata_alloc(unsigned int nr_pages,
+> +struct cifs_writedata *cifs_writedata_alloc(unsigned int nr_pages, struct page **direct_pages,
+>   						work_func_t complete);
+>   void cifs_writedata_release(struct kref *refcount);
+>   int cifs_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index 1529a08..3b1731d 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -1983,7 +1983,7 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
+>   			tailsz = rest_len - (nr_pages - 1) * PAGE_SIZE;
+>   		}
+>   
+> -		wdata2 = cifs_writedata_alloc(nr_pages, cifs_writev_complete);
+> +		wdata2 = cifs_writedata_alloc(nr_pages, NULL, cifs_writev_complete);
+>   		if (!wdata2) {
+>   			rc = -ENOMEM;
+>   			break;
+> @@ -2067,12 +2067,16 @@ cifs_writev_complete(struct work_struct *work)
+>   }
+>   
+>   struct cifs_writedata *
+> -cifs_writedata_alloc(unsigned int nr_pages, work_func_t complete)
+> +cifs_writedata_alloc(unsigned int nr_pages, struct page **direct_pages, work_func_t complete)
+>   {
+>   	struct cifs_writedata *wdata;
+>   
+>   	/* writedata + number of page pointers */
+> -	wdata = kzalloc(sizeof(*wdata) +
+> +	if (direct_pages) {
+> +		wdata = kzalloc(sizeof(*wdata), GFP_NOFS);
+> +		wdata->direct_pages = direct_pages;
+> +	} else
+> +		wdata = kzalloc(sizeof(*wdata) +
+>   			sizeof(struct page *) * nr_pages, GFP_NOFS);
+>   	if (wdata != NULL) {
+>   		kref_init(&wdata->refcount);
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index 23fd430..a6ec896 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -1965,7 +1965,7 @@ wdata_alloc_and_fillpages(pgoff_t tofind, struct address_space *mapping,
+>   {
+>   	struct cifs_writedata *wdata;
+>   
+> -	wdata = cifs_writedata_alloc((unsigned int)tofind,
+> +	wdata = cifs_writedata_alloc((unsigned int)tofind, NULL,
+>   				     cifs_writev_complete);
+>   	if (!wdata)
+>   		return NULL;
+> @@ -2554,7 +2554,7 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+>   			break;
+>   
+>   		nr_pages = get_numpages(wsize, len, &cur_len);
+> -		wdata = cifs_writedata_alloc(nr_pages,
+> +		wdata = cifs_writedata_alloc(nr_pages, NULL,
+>   					     cifs_uncached_writev_complete);
+>   		if (!wdata) {
+>   			rc = -ENOMEM;
+> 
