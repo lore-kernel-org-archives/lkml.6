@@ -1,163 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeESLaA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:30:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37521 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeESL3z (ORCPT
+        id S1752273AbeESLeG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:34:06 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45711 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752103AbeESLeD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:29:55 -0400
-Date: Sat, 19 May 2018 04:29:48 -0700
-From: "tip-bot for K. Y. Srinivasan" <tipbot@zytor.com>
-Message-ID: <tip-9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, kys@microsoft.com, hpa@zytor.com,
-        mikelley@microsoft.com, linux-kernel@vger.kernel.org
-Reply-To: kys@microsoft.com, tglx@linutronix.de, mingo@kernel.org,
-        mikelley@microsoft.com, hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180516215334.6547-5-kys@linuxonhyperv.com>
-References: <20180516215334.6547-5-kys@linuxonhyperv.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] X86/Hyper-V: Consolidate the allocation of the
- hypercall input page
-Git-Commit-ID: 9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 19 May 2018 07:34:03 -0400
+X-Google-Smtp-Source: AB8JxZrH9HYk9+zM5FqkBWRFwOCnUKbHtn57Jr3AOgw9CMw5KSfwqVZhJ4EWKy/bK6CIcT912VK1ig==
+Date: Sat, 19 May 2018 13:33:58 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Wang Nan <wangnan0@huawei.com>,
+        x86@kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 00/18] perf/core improvements and fixes
+Message-ID: <20180519113358.GA784@gmail.com>
+References: <20180519105507.16450-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180519105507.16450-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
-Gitweb:     https://git.kernel.org/tip/9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
-Author:     K. Y. Srinivasan <kys@microsoft.com>
-AuthorDate: Wed, 16 May 2018 14:53:34 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 19 May 2018 13:23:18 +0200
 
-X86/Hyper-V: Consolidate the allocation of the hypercall input page
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Consolidate the allocation of the hypercall input page.
+> Hi Ingo,
+> 
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 5aafae8d097e2161ee5c6a12ad532100f8885d2b:
+> 
+>   Merge tag 'perf-core-for-mingo-4.18-20180516' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core (2018-05-16 17:56:43 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.18-20180519
+> 
+> for you to fetch changes up to 19422a9f2a3be7f3a046285ffae4cbb571aa853a:
+> 
+>   perf tools: Fix kernel_start for PTI on x86 (2018-05-19 06:42:51 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/core improvements and fixes:
+> 
+> - Record min/max LBR cycles (>= skylake) and add 'perf annotate' TUI
+>   hotkey to show it (c) (Jin Yao)
+> 
+> - Fix machine->kernel_start for PTI on x86 (Adrian Hunter)
+> 
+> - Make machine->env->arch always available, e.g. in 'perf top', not
+>   just when reading that info from perf.data files (Adrian Hunter)
+> 
+> - Reduce the number of files read at 'perf' start, leaving information such as
+>   cacheline size, tracefs mount point determination, max_stack, etc, to be
+>   lazily read as tools needs then (Arnaldo Carvalho de Melo)
+> 
+> - Fixup BPF include and examples install messages (Arnaldo Carvalho de Melo)
+> 
+> - Fixup callchain addresses and symbol offsets in 'perf script', to help
+>   correlating with objdump output (Sandipan Das)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Adrian Hunter (2):
+>       perf machine: Add machine__is() to identify machine arch
+>       perf tools: Fix kernel_start for PTI on x86
+> 
+> Arnaldo Carvalho de Melo (12):
+>       perf config: Call perf_config__init() lazily
+>       tools lib api: The tracing_mnt variable doesn't need to be global
+>       tools lib api: Unexport 'tracing_path' variable
+>       tools lib api fs tracing_path: Introduce get/put_events_file() helpers
+>       perf tools: Reuse the path to the tracepoint /events/ directory
+>       perf parse-events: Use get/put_events_file()
+>       tools lib api fs tracing_path: Introduce opendir() method
+>       tools lib api fs tracing_path: Make tracing_events_path private
+>       tools include compiler-gcc: Add __pure attribute helper
+>       perf tools: Read the cache line size lazily
+>       perf tools: No need to unconditionally read the max_stack sysctls
+>       perf bpf: Fixup include and examples install messages
+> 
+> Jin Yao (2):
+>       perf annotate: Record the min/max cycles
+>       perf annotate: Create hotkey 'c' to show min/max cycles
+> 
+> Sandipan Das (2):
+>       perf script: Show virtual addresses instead of offsets
+>       perf script: Show symbol offsets by default
+> 
+>  tools/include/linux/compiler-gcc.h                 |  3 +
+>  tools/lib/api/fs/tracing_path.c                    | 40 +++++++++---
+>  tools/lib/api/fs/tracing_path.h                    |  9 ++-
+>  tools/perf/Makefile.perf                           |  2 +
+>  tools/perf/builtin-script.c                        | 26 ++++----
+>  tools/perf/builtin-top.c                           |  2 +-
+>  tools/perf/builtin-trace.c                         |  2 +-
+>  tools/perf/perf.c                                  | 24 +------
+>  tools/perf/tests/parse-events.c                    |  9 +--
+>  .../tests/shell/record+probe_libc_inet_pton.sh     | 12 ++--
+>  tools/perf/ui/browsers/annotate.c                  |  8 +++
+>  tools/perf/util/annotate.c                         | 51 ++++++++++++---
+>  tools/perf/util/annotate.h                         | 11 +++-
+>  tools/perf/util/config.c                           | 16 ++---
+>  tools/perf/util/config.h                           |  1 -
+>  tools/perf/util/env.c                              | 18 ++++++
+>  tools/perf/util/env.h                              |  2 +
+>  tools/perf/util/evsel.c                            |  2 +-
+>  tools/perf/util/machine.c                          | 18 +++++-
+>  tools/perf/util/machine.h                          |  2 +
+>  tools/perf/util/parse-events.c                     | 73 +++++++++++++---------
+>  tools/perf/util/probe-file.c                       |  3 +-
+>  tools/perf/util/sort.c                             |  4 +-
+>  tools/perf/util/sort.h                             |  4 +-
+>  tools/perf/util/trace-event-info.c                 | 11 ++--
+>  tools/perf/util/trace-event.c                      |  8 ++-
+>  tools/perf/util/util.c                             | 34 +++++++++-
+>  tools/perf/util/util.h                             |  4 +-
+>  28 files changed, 279 insertions(+), 120 deletions(-)
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: olaf@aepfle.de
-Cc: sthemmin@microsoft.com
-Cc: gregkh@linuxfoundation.org
-Cc: jasowang@redhat.com
-Cc: Michael.H.Kelley@microsoft.com
-Cc: hpa@zytor.com
-Cc: apw@canonical.com
-Cc: devel@linuxdriverproject.org
-Cc: vkuznets@redhat.com
-Link: https://lkml.kernel.org/r/20180516215334.6547-5-kys@linuxonhyperv.com
+Pulled, thanks a lot Arnaldo!
 
----
- arch/x86/hyperv/hv_init.c       |  2 --
- arch/x86/hyperv/mmu.c           | 30 ++++++------------------------
- arch/x86/include/asm/mshyperv.h |  1 -
- 3 files changed, 6 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 6bc90d68ac8b..4c431e1c1eff 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -324,8 +324,6 @@ void __init hyperv_init(void)
- 	hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
- 	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
- 
--	hyper_alloc_mmu();
--
- 	hv_apic_init();
- 
- 	/*
-diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
-index c9cd28f0bae4..5f053d7d1bd9 100644
---- a/arch/x86/hyperv/mmu.c
-+++ b/arch/x86/hyperv/mmu.c
-@@ -32,9 +32,6 @@ struct hv_flush_pcpu_ex {
- /* Each gva in gva_list encodes up to 4096 pages to flush */
- #define HV_TLB_FLUSH_UNIT (4096 * PAGE_SIZE)
- 
--static struct hv_flush_pcpu __percpu **pcpu_flush;
--
--static struct hv_flush_pcpu_ex __percpu **pcpu_flush_ex;
- 
- /*
-  * Fills in gva_list starting from offset. Returns the number of items added.
-@@ -77,7 +74,7 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
- 
- 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
- 
--	if (!pcpu_flush || !hv_hypercall_pg)
-+	if (!hv_hypercall_pg)
- 		goto do_native;
- 
- 	if (cpumask_empty(cpus))
-@@ -85,10 +82,8 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
- 
- 	local_irq_save(flags);
- 
--	flush_pcpu = this_cpu_ptr(pcpu_flush);
--
--	if (unlikely(!*flush_pcpu))
--		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
-+	flush_pcpu = (struct hv_flush_pcpu **)
-+		     this_cpu_ptr(hyperv_pcpu_input_arg);
- 
- 	flush = *flush_pcpu;
- 
-@@ -164,7 +159,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
- 
- 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
- 
--	if (!pcpu_flush_ex || !hv_hypercall_pg)
-+	if (!hv_hypercall_pg)
- 		goto do_native;
- 
- 	if (cpumask_empty(cpus))
-@@ -172,10 +167,8 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
- 
- 	local_irq_save(flags);
- 
--	flush_pcpu = this_cpu_ptr(pcpu_flush_ex);
--
--	if (unlikely(!*flush_pcpu))
--		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
-+	flush_pcpu = (struct hv_flush_pcpu_ex **)
-+		     this_cpu_ptr(hyperv_pcpu_input_arg);
- 
- 	flush = *flush_pcpu;
- 
-@@ -257,14 +250,3 @@ void hyperv_setup_mmu_ops(void)
- 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others_ex;
- 	}
- }
--
--void hyper_alloc_mmu(void)
--{
--	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
--		return;
--
--	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED))
--		pcpu_flush = alloc_percpu(struct hv_flush_pcpu *);
--	else
--		pcpu_flush_ex = alloc_percpu(struct hv_flush_pcpu_ex *);
--}
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 0ee82519957b..9aaa493f5756 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -294,7 +294,6 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
- 
- void __init hyperv_init(void);
- void hyperv_setup_mmu_ops(void);
--void hyper_alloc_mmu(void);
- void hyperv_report_panic(struct pt_regs *regs, long err);
- bool hv_is_hyperv_initialized(void);
- void hyperv_cleanup(void);
+	Ingo
