@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752500AbeESL3a (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:29:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41687 "EHLO
+        id S1752528AbeESLaA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:30:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37521 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752174AbeESL31 (ORCPT
+        with ESMTP id S1752201AbeESL3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:29:27 -0400
-Date: Sat, 19 May 2018 04:29:20 -0700
+        Sat, 19 May 2018 07:29:55 -0400
+Date: Sat, 19 May 2018 04:29:48 -0700
 From: "tip-bot for K. Y. Srinivasan" <tipbot@zytor.com>
-Message-ID: <tip-800b8f03fdc8d66885ff03de531285526a4ca0d4@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, mikelley@microsoft.com, mingo@kernel.org,
-        kys@microsoft.com, hpa@zytor.com, tglx@linutronix.de
-Reply-To: mingo@kernel.org, mikelley@microsoft.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        kys@microsoft.com
-In-Reply-To: <20180516215334.6547-4-kys@linuxonhyperv.com>
-References: <20180516215334.6547-4-kys@linuxonhyperv.com>
+Message-ID: <tip-9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13@git.kernel.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, kys@microsoft.com, hpa@zytor.com,
+        mikelley@microsoft.com, linux-kernel@vger.kernel.org
+Reply-To: kys@microsoft.com, tglx@linutronix.de, mingo@kernel.org,
+        mikelley@microsoft.com, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180516215334.6547-5-kys@linuxonhyperv.com>
+References: <20180516215334.6547-5-kys@linuxonhyperv.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] X86/Hyper-V: Consolidate code for converting
- cpumask to vpset
-Git-Commit-ID: 800b8f03fdc8d66885ff03de531285526a4ca0d4
+Subject: [tip:x86/hyperv] X86/Hyper-V: Consolidate the allocation of the
+ hypercall input page
+Git-Commit-ID: 9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,16 +32,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  800b8f03fdc8d66885ff03de531285526a4ca0d4
-Gitweb:     https://git.kernel.org/tip/800b8f03fdc8d66885ff03de531285526a4ca0d4
+Commit-ID:  9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
+Gitweb:     https://git.kernel.org/tip/9a2d78e291a7dea0ae4b4a06ce6bbbe4f1ab7c13
 Author:     K. Y. Srinivasan <kys@microsoft.com>
-AuthorDate: Wed, 16 May 2018 14:53:33 -0700
+AuthorDate: Wed, 16 May 2018 14:53:34 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 19 May 2018 13:23:18 +0200
 
-X86/Hyper-V: Consolidate code for converting cpumask to vpset
+X86/Hyper-V: Consolidate the allocation of the hypercall input page
 
-Consolidate code for converting cpumask to vpset.
+Consolidate the allocation of the hypercall input page.
 
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -56,77 +55,109 @@ Cc: hpa@zytor.com
 Cc: apw@canonical.com
 Cc: devel@linuxdriverproject.org
 Cc: vkuznets@redhat.com
-Link: https://lkml.kernel.org/r/20180516215334.6547-4-kys@linuxonhyperv.com
+Link: https://lkml.kernel.org/r/20180516215334.6547-5-kys@linuxonhyperv.com
 
 ---
- arch/x86/hyperv/mmu.c | 43 ++-----------------------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
+ arch/x86/hyperv/hv_init.c       |  2 --
+ arch/x86/hyperv/mmu.c           | 30 ++++++------------------------
+ arch/x86/include/asm/mshyperv.h |  1 -
+ 3 files changed, 6 insertions(+), 27 deletions(-)
 
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 6bc90d68ac8b..4c431e1c1eff 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -324,8 +324,6 @@ void __init hyperv_init(void)
+ 	hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
+ 	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+ 
+-	hyper_alloc_mmu();
+-
+ 	hv_apic_init();
+ 
+ 	/*
 diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
-index adee39a7a3f2..c9cd28f0bae4 100644
+index c9cd28f0bae4..5f053d7d1bd9 100644
 --- a/arch/x86/hyperv/mmu.c
 +++ b/arch/x86/hyperv/mmu.c
-@@ -25,11 +25,7 @@ struct hv_flush_pcpu {
- struct hv_flush_pcpu_ex {
- 	u64 address_space;
- 	u64 flags;
--	struct {
--		u64 format;
--		u64 valid_bank_mask;
--		u64 bank_contents[];
--	} hv_vp_set;
-+	struct hv_vpset hv_vp_set;
- 	u64 gva_list[];
- };
+@@ -32,9 +32,6 @@ struct hv_flush_pcpu_ex {
+ /* Each gva in gva_list encodes up to 4096 pages to flush */
+ #define HV_TLB_FLUSH_UNIT (4096 * PAGE_SIZE)
  
-@@ -70,41 +66,6 @@ static inline int fill_gva_list(u64 gva_list[], int offset,
- 	return gva_n - offset;
- }
+-static struct hv_flush_pcpu __percpu **pcpu_flush;
+-
+-static struct hv_flush_pcpu_ex __percpu **pcpu_flush_ex;
  
--/* Return the number of banks in the resulting vp_set */
--static inline int cpumask_to_vp_set(struct hv_flush_pcpu_ex *flush,
--				    const struct cpumask *cpus)
--{
--	int cpu, vcpu, vcpu_bank, vcpu_offset, nr_bank = 1;
--
--	/* valid_bank_mask can represent up to 64 banks */
--	if (hv_max_vp_index / 64 >= 64)
--		return 0;
--
--	/*
--	 * Clear all banks up to the maximum possible bank as hv_flush_pcpu_ex
--	 * structs are not cleared between calls, we risk flushing unneeded
--	 * vCPUs otherwise.
--	 */
--	for (vcpu_bank = 0; vcpu_bank <= hv_max_vp_index / 64; vcpu_bank++)
--		flush->hv_vp_set.bank_contents[vcpu_bank] = 0;
--
--	/*
--	 * Some banks may end up being empty but this is acceptable.
--	 */
--	for_each_cpu(cpu, cpus) {
--		vcpu = hv_cpu_number_to_vp_number(cpu);
--		vcpu_bank = vcpu / 64;
--		vcpu_offset = vcpu % 64;
--		__set_bit(vcpu_offset, (unsigned long *)
--			  &flush->hv_vp_set.bank_contents[vcpu_bank]);
--		if (vcpu_bank >= nr_bank)
--			nr_bank = vcpu_bank + 1;
--	}
--	flush->hv_vp_set.valid_bank_mask = GENMASK_ULL(nr_bank - 1, 0);
--
--	return nr_bank;
--}
--
- static void hyperv_flush_tlb_others(const struct cpumask *cpus,
- 				    const struct flush_tlb_info *info)
- {
-@@ -240,7 +201,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ /*
+  * Fills in gva_list starting from offset. Returns the number of items added.
+@@ -77,7 +74,7 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
  
- 	if (!cpumask_equal(cpus, cpu_present_mask)) {
- 		flush->hv_vp_set.format = HV_GENERIC_SET_SPARSE_4K;
--		nr_bank = cpumask_to_vp_set(flush, cpus);
-+		nr_bank = cpumask_to_vpset(&(flush->hv_vp_set), cpus);
+ 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
+ 
+-	if (!pcpu_flush || !hv_hypercall_pg)
++	if (!hv_hypercall_pg)
+ 		goto do_native;
+ 
+ 	if (cpumask_empty(cpus))
+@@ -85,10 +82,8 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
+ 
+ 	local_irq_save(flags);
+ 
+-	flush_pcpu = this_cpu_ptr(pcpu_flush);
+-
+-	if (unlikely(!*flush_pcpu))
+-		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
++	flush_pcpu = (struct hv_flush_pcpu **)
++		     this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+ 	flush = *flush_pcpu;
+ 
+@@ -164,7 +159,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 
+ 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
+ 
+-	if (!pcpu_flush_ex || !hv_hypercall_pg)
++	if (!hv_hypercall_pg)
+ 		goto do_native;
+ 
+ 	if (cpumask_empty(cpus))
+@@ -172,10 +167,8 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 
+ 	local_irq_save(flags);
+ 
+-	flush_pcpu = this_cpu_ptr(pcpu_flush_ex);
+-
+-	if (unlikely(!*flush_pcpu))
+-		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
++	flush_pcpu = (struct hv_flush_pcpu_ex **)
++		     this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+ 	flush = *flush_pcpu;
+ 
+@@ -257,14 +250,3 @@ void hyperv_setup_mmu_ops(void)
+ 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others_ex;
  	}
+ }
+-
+-void hyper_alloc_mmu(void)
+-{
+-	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
+-		return;
+-
+-	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED))
+-		pcpu_flush = alloc_percpu(struct hv_flush_pcpu *);
+-	else
+-		pcpu_flush_ex = alloc_percpu(struct hv_flush_pcpu_ex *);
+-}
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 0ee82519957b..9aaa493f5756 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -294,7 +294,6 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
  
- 	if (!nr_bank) {
+ void __init hyperv_init(void);
+ void hyperv_setup_mmu_ops(void);
+-void hyper_alloc_mmu(void);
+ void hyperv_report_panic(struct pt_regs *regs, long err);
+ bool hv_is_hyperv_initialized(void);
+ void hyperv_cleanup(void);
