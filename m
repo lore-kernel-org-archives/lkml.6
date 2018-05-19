@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeESSci (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 14:32:38 -0400
-Received: from mailout7.siol.net ([213.250.19.134]:34663 "EHLO mail.siol.net"
+        id S1752706AbeESSfo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 14:35:44 -0400
+Received: from mailout7.siol.net ([213.250.19.134]:34679 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752590AbeESScc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 14:32:32 -0400
+        id S1752451AbeESScf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 14:32:35 -0400
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
 Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 02/15] clk: sunxi-ng: r40: Allow setting parent rate to display related clocks
-Date: Sat, 19 May 2018 20:31:14 +0200
-Message-Id: <20180519183127.2718-3-jernej.skrabec@siol.net>
+Subject: [PATCH 03/15] clk: sunxi-ng: r40: Export video PLLs
+Date: Sat, 19 May 2018 20:31:15 +0200
+Message-Id: <20180519183127.2718-4-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
 References: <20180519183127.2718-1-jernej.skrabec@siol.net>
@@ -22,52 +22,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display related peripherals need precise clocks to operate correctly.
+Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
 
-Allow DE2, TCONs and HDMI to set parent clock.
+Export them.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
+ include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index c16a62a7bdbd..fa5317719684 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -655,7 +655,8 @@ static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+index 0db8e1e97af8..db2a1243f9ff 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+@@ -25,7 +25,9 @@
+ #define CLK_PLL_AUDIO_2X	4
+ #define CLK_PLL_AUDIO_4X	5
+ #define CLK_PLL_AUDIO_8X	6
+-#define CLK_PLL_VIDEO0		7
++
++/* PLL_VIDEO0 is exported */
++
+ #define CLK_PLL_VIDEO0_2X	8
+ #define CLK_PLL_VE		9
+ #define CLK_PLL_DDR0		10
+@@ -34,7 +36,9 @@
+ #define CLK_PLL_PERIPH0_2X	13
+ #define CLK_PLL_PERIPH1		14
+ #define CLK_PLL_PERIPH1_2X	15
+-#define CLK_PLL_VIDEO1		16
++
++/* PLL_VIDEO1 is exported */
++
+ #define CLK_PLL_VIDEO1_2X	17
+ #define CLK_PLL_SATA		18
+ #define CLK_PLL_SATA_OUT	19
+diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+index 4fa5f69fc297..f9e15a235626 100644
+--- a/include/dt-bindings/clock/sun8i-r40-ccu.h
++++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
+@@ -43,6 +43,10 @@
+ #ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
+ #define _DT_BINDINGS_CLK_SUN8I_R40_H_
  
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mp_clk, "mp", de_parents,
- 				 0x108, 0, 4, 24, 3, BIT(31), 0);
++#define CLK_PLL_VIDEO0		7
++
++#define CLK_PLL_VIDEO1		16
++
+ #define CLK_CPU			24
  
-@@ -667,9 +668,11 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
- static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
- 			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
--				 0x11c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x11c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const deinterlace_parents[] = { "pll-periph0",
- 						    "pll-periph1" };
-@@ -699,7 +702,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
- 		      0x154, BIT(31), 0);
+ #define CLK_BUS_MIPI_DSI	29
 -- 
 2.17.0
