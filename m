@@ -1,179 +1,134 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-202972-1526886810-2-5175789480551425467
+X-Cyrus-Session-Id: sloti22d1t05-1852109-1526758981-2-17516936893654037750
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526886810; b=XtwZPxPLRNwUFtpZPZx2SPwD2NM1AInv5e/YRrnJT+RijmSAaP
-    ub+2MFm02HhPrt6KPJt1Yfs2NAbvkw3giYPnE5jAlfD2Gm8e6eJde7qLsMWhZfiX
-    j+Of84seP4qsqCtNpUGyG8ynqNuvVXA11hcI8wGY82JngDwwws19Paruw6IVMEQu
-    Upc3bYZJXoBVotDLw6JrLU7J21oYZFShB0r2OqsD0ncnnIYDtxkXyzEHltrqhm+g
-    ntwa5RL0Rtu1UmslPx95VytvWqsBA5Sysbx5U3mcmIRq4ijr6fYgaddD6/1qoLXL
-    D32zslS8DadaeBDTy3PSZvHRrg2XjYt0T9Ug==
+    1526758980; b=cXzRo3KOQbKD6Qr9U13FFAhfrx2LUpUP6zb1k+pWIcdTSnHABA
+    AK1ICQsGJVKuhK+FlhlHblKCAvgxcvpXLunSfQUlD3k7vDu9Cdn8OSStpWhXpgSZ
+    lF/rWNfW+4WfMzAc8TZ3AskMDQ1utCLLCD8WfcjL+rXhE74cdhM+qGNS9G96Hmv1
+    a2Chzca9R2g8G0T6LSvFOK5k7B5Uvu9pnSznN6kwf+3xSoOtVGss89w1nYY4Yzkr
+    Mr7ey6EfKJp5bkfFK5Mp1bHDK0V1rpvKEZCJ38frYiSlzo2o+hgtZfxhMnJiUkw5
+    w3lYUBU3kfBor4fAQ3mKClkC4p6ljgK6jyfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526886810;
-    bh=psKtkyMAulNLurblpNwoEqe/wlzaUqp2MCfnjrbWEYQ=; b=lTyuc8nZbYT1
-    e0LK365bYOSCT5IfRipSRPESReGnUAk1SDGB83jijgWfGw7yJFv7ybph6Q8XskDc
-    7hPIs+bAXrweh+K4uaFtGqiFB024AB2FLZjUnyM031/A6wtX3kRK56j77InlurDN
-    TlME7IB8gZ4RecF1Lr0isG624+yLyxDsxkf2dsvwGnxUFdmYVfjosYWRTixwH+6A
-    2juKnqRjdDXzYk7VB3C7yoNz641xd2Mu2wGglPaA6f/m8YmbTsc24DY9TsO06yMF
-    ym9J5iC9vsuCZ/i2gDKuXvjbrtKsQo45Wm4ERYEn4uzkS6DhbIfxn1uFJAL57B6l
-    +cEi/o6WDg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526758980; bh=frawXDJ8G/oIeUAAKghmGBfQv+qARZ
+    wXaXYy+0boQPg=; b=Vni9uSBxTaj7nMXuEFa9hVQLYHZ62rUtmaVUyhVvPfQDlG
+    RiahdpIoM6kAbmj4qCsGj7YZj68RFsUQ5aW6S4LbvmBklz3GO6mMg41PIEyudWPZ
+    Jnfk2QE1RpAcgqavx7zXdByTUkSiNdzW8i/7gD1L+YM9fShx8B8YxO2AIP8H79cj
+    yVxE9G2LXx+81sX7OyDEe0Yu28tlMasD9JZxNiOCGhaSr/RmNeXH1kiel0ixibG8
+    os1XxMxdnfkoHygleRHYAw7mpBbGYXzZ/GtEg2z7hy5mkZVu/HJT8/iLZSpIMUDi
+    D/tiv4ueu/morNvxUvySSNrbm+5xUdxovnE4yu1A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=nhSIinUL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=nhSIinUL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGWNbMzBwVzGD1N3s2VqPtj7Vf0bdcf3ZPw2F0hTqRTzluXimnwr/+njYiQTeYNjmU3eBj9ECekSu4kx0Vt7cajEuhSrhMWgI2gLr1TnmtARhpMi9oqw
-    z5WDwVpETpTqIQxuU4lFWmcqbEiPsjoF+xY7PxRHMGonktgOCZc1QQQGCrGiH8cBs9btXUFI/WmPNNr/wTVvJhTQppqzlCcOOklZbDoRY7SaA8pN6mtNOko1
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10 a=M4kjOrPKlBP9xmvOZQUA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfB/it1G3RyHMtdiIQiUCUPRdfJ9lm65oM12GgtNwZetJKIq/b5d5m44raZJIma964qdFq7h8lIkCiG7F9Yj3T0eT2rOrNkYI06MwUQwF+dqvDQGObDLa
+    50nggdDRkGRZT49tkO4tVr1xVwUWC6jSxIFrTCF0U8/eolDdYft9u5jJeB+tpmenhnaIQCADu5ea5a+6tCk/ukMk0qMkVataacB62Z6IMVFm38kICfYAE1I3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=p-nOP-kxAAAA:8
+    a=QyXUC8HyAAAA:8 a=M8rcC2nyAAAA:8 a=RXnXJx7MAAAA:8 a=fX9NJa7i2POBIqeuZDwA:9
+    a=CjuIK1q_8ugA:10 a=0dxXHNIcbWwA:10 a=gA6IeH5FQcgA:10 a=NWVoK91CQyQA:10
+    a=eJpRVcqsjGphjstwKMgA:9 a=ONNS8QRKHyMA:10 a=XN2wCei03jY4uMu7D0Wg:22
+    a=K9tzwgKBnWaK51F8Cre1:22 a=U_UV0sFCMgXoaKVbI-EZ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeEUHN2 (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 03:13:28 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46342 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbeEUHNS (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Mon, 21 May 2018 03:13:18 -0400
-X-Google-Smtp-Source: AB8JxZrHeCSC1b0A1ptyW+IUpNw7Wcej4O95MlDmval4sByu54u6zbPQuLFPl910ixbNLCEQrko/+Q==
-Subject: Re: [PATCH v6 17/28] x86/asm: use SYM_INNER_LABEL instead of GLOBAL
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Ingo Molnar <mingo@redhat.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S1752526AbeESTm5 (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 19 May 2018 15:42:57 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58096 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752322AbeESTmz (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Sat, 19 May 2018 15:42:55 -0400
+Date: Sat, 19 May 2018 21:42:52 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 03/28] x86/asm/suspend: use SYM_DATA for data
+Message-ID: <20180519194252.GB3058@amd>
 References: <20180518091721.7604-1-jslaby@suse.cz>
- <20180518091721.7604-18-jslaby@suse.cz>
- <CALCETrXwc05073E7A8KG-2dKqNyz=C2zrAQfBqWhjuChfSd5fQ@mail.gmail.com>
-From: Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d8afbe9b-96e1-87ee-ba41-1e1dc77809f5@suse.cz>
-Date: Mon, 21 May 2018 09:13:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ <20180518091721.7604-4-jslaby@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXwc05073E7A8KG-2dKqNyz=C2zrAQfBqWhjuChfSd5fQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Content-Disposition: inline
+In-Reply-To: <20180518091721.7604-4-jslaby@suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/18/2018, 09:41 PM, Andy Lutomirski wrote:
-> On Fri, May 18, 2018 at 2:17 AM Jiri Slaby <jslaby@suse.cz> wrote:
-> 
->> GLOBAL had several meanings and is going away. In this patch, convert
->> all the inner function labels marked with GLOBAL to use SYM_INNER_LABEL
->> instead.
-> 
->> Note that retint_user needs not be global, perhaps since commit
->> 2ec67971facc ("x86/entry/64/compat: Remove most of the fast system call
->> machinery"), where entry_64_compat's caller was removed. So mark the
->> label as LOCAL.
-> 
-> 
->> -GLOBAL(entry_SYSCALL_64_after_hwframe)
->> +SYM_INNER_LABEL(entry_SYSCALL_64_after_hwframe, SYM_L_GLOBAL)
-> 
-> I've missed all the context here.   I agree that GLOBAL is misleading, and
-> "inner label" is nice.  But this is a rather wordy macro.  Would:
-> 
-> INNER_LABEL_GLOBAL(name)
-> 
-> be better?  (With just INNER_LABEL(name) for the local version?)
 
-All the macros have SYM_ prefix. Other macros look like this:
-SYM_FUNC_START_LOCAL(name)
-SYM_FUNC_START(name)
+--xgyAXRrhYN0wYx8y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So I can make the inner one:
-SYM_INNER_LABEL_LOCAL(name)
-SYM_INNER_LABEL(name)
+On Fri 2018-05-18 11:16:56, Jiri Slaby wrote:
+> Some global data in the suspend code were marked as `ENTRY'. ENTRY was
+> intended for functions and shall be paired with ENDPROC. ENTRY also
+> aligns symbols which creates unnecessary holes here between data. Since
+> we are dropping historical markings, make proper use of newly added
+> SYM_DATA in this code.
+>=20
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <len.brown@intel.com>
 
-to be consistent with the rest, if that is OK?
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-thanks,
--- 
-js
-suse labs
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--xgyAXRrhYN0wYx8y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsAfjwACgkQMOfwapXb+vIlcwCfYo968n8UL3BKY9XiJ9tEe76z
+LmQAoJxc6Ygb55pjIpQ2Vi6xxx09Dgax
+=FTtg
+-----END PGP SIGNATURE-----
+
+--xgyAXRrhYN0wYx8y--
