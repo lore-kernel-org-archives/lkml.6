@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeESLoy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:44:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53407 "EHLO
+        id S1752584AbeESLpU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:45:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33611 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752175AbeESLou (ORCPT
+        with ESMTP id S1752201AbeESLpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:44:50 -0400
-Date: Sat, 19 May 2018 04:44:40 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-1ljj3oeo5kpt2n1icfd9vowe@git.kernel.org>
-Cc: adrian.hunter@intel.com, dsahern@gmail.com, tglx@linutronix.de,
-        wangnan0@huawei.com, hpa@zytor.com, namhyung@kernel.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        jolsa@kernel.org
-Reply-To: namhyung@kernel.org, hpa@zytor.com, mingo@kernel.org,
-        wangnan0@huawei.com, dsahern@gmail.com, tglx@linutronix.de,
-        adrian.hunter@intel.com, jolsa@kernel.org, acme@redhat.com,
-        linux-kernel@vger.kernel.org
+        Sat, 19 May 2018 07:45:17 -0400
+Date: Sat, 19 May 2018 04:45:09 -0700
+From: tip-bot for Sandipan Das <tipbot@zytor.com>
+Message-ID: <tip-19610184693c547b4c12738df4156589892c4018@git.kernel.org>
+Cc: acme@redhat.com, naveen.n.rao@linux.vnet.ibm.com, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        hpa@zytor.com, ravi.bangoria@linux.ibm.com,
+        sandipan@linux.vnet.ibm.com
+Reply-To: linux-kernel@vger.kernel.org, jolsa@redhat.com, hpa@zytor.com,
+        ravi.bangoria@linux.ibm.com, sandipan@linux.vnet.ibm.com,
+        acme@redhat.com, naveen.n.rao@linux.vnet.ibm.com, tglx@linutronix.de,
+        mingo@kernel.org
+In-Reply-To: <20180517063326.6319-1-sandipan@linux.vnet.ibm.com>
+References: <20180517063326.6319-1-sandipan@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: No need to unconditionally read the
- max_stack sysctls
-Git-Commit-ID: 029c75e5cf166f9c04744d81c798f54a44a8417c
+Subject: [tip:perf/core] perf script: Show virtual addresses instead of
+ offsets
+Git-Commit-ID: 19610184693c547b4c12738df4156589892c4018
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,132 +36,114 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  029c75e5cf166f9c04744d81c798f54a44a8417c
-Gitweb:     https://git.kernel.org/tip/029c75e5cf166f9c04744d81c798f54a44a8417c
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 17 May 2018 16:31:32 -0300
+Commit-ID:  19610184693c547b4c12738df4156589892c4018
+Gitweb:     https://git.kernel.org/tip/19610184693c547b4c12738df4156589892c4018
+Author:     Sandipan Das <sandipan@linux.vnet.ibm.com>
+AuthorDate: Thu, 17 May 2018 12:03:25 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 17 May 2018 16:31:32 -0300
+CommitDate: Thu, 17 May 2018 16:55:29 -0300
 
-perf tools: No need to unconditionally read the max_stack sysctls
+perf script: Show virtual addresses instead of offsets
 
-Let tools that need to have those variables with the sysctl current
-values use a function that will read them.
+When perf data is recorded with the call-graph option enabled, the
+callchain shown by perf script shows the binary offsets of the symbols
+as the ip. This is incorrect for kernel symbols as the ip values are
+always off by a fixed offset depending on the architecture. If the
+offsets from the start of the symbols are printed, they are also
+incorrect for both kernel and userspace symbols.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-1ljj3oeo5kpt2n1icfd9vowe@git.kernel.org
+Without the call-graph option, the callchain shows the virtual addresses
+of the symbols rather than their binary offsets. The offsets printed in
+this case are also correct.
+
+This fixes the inconsistency in perf script's output.
+
+This can be verified on a powerpc64le system running Fedora 27 as
+follows:
+
+  # cat /proc/kallsyms | grep sys_write
+  ...
+  c0000000004025a0 T sys_write
+  c0000000004025a0 T __se_sys_write
+  ...
+
+  # perf probe -a sys_write
+
+Before applying this patch:
+
+  # perf record -e probe:sys_write -g ~/test
+  # perf script -F ip,sym,symoff
+
+                    4125b0 sys_write+0x8000000000008010
+                     1b9e0 system_call+0x8000000000008058
+                    118234 __GI___libc_write+0xffff0000f52c0024
+                     92c74 _IO_file_write@@GLIBC_2.17+0xffff0000f52c0044
+                  5afbfd8a [unknown]
+                     91a60 new_do_write+0xffff0000f52c0090
+                     94638 _IO_do_write@@GLIBC_2.17+0xffff0000f52c0038
+                     94bbc _IO_file_overflow@@GLIBC_2.17+0xffff0000f52c014c
+                     95a24 __overflow+0xffff0000f52c0064
+                     84548 _IO_puts+0xffff0000f52c0218
+                       440 main+0xffffffffe0000020
+                     236a0 generic_start_main.isra.0+0xffff0000f52c0140
+                     23898 __libc_start_main+0xffff0000f52c00b8
+                         0 [unknown]
+  ...
+
+  # perf record -e probe:sys_write ~/test
+  # perf script -F ip,sym,symoff
+
+  c0000000004025b0 sys_write+0x10
+  ...
+
+After applying this patch:
+
+  # perf record -e probe:sys_write -g ~/test
+  # perf script -F ip,sym,symoff
+
+          c0000000004025b0 sys_write+0x10
+          c00000000000b9e0 system_call+0x58
+              7fffb70d8234 __GI___libc_write+0x24
+              7fffb7052c74 _IO_file_write@@GLIBC_2.17+0x44
+                  5afc1818 [unknown]
+              7fffb7051a60 new_do_write+0x90
+              7fffb7054638 _IO_do_write@@GLIBC_2.17+0x38
+              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17+0x14c
+              7fffb7055a24 __overflow+0x64
+              7fffb7044548 _IO_puts+0x218
+                  10000440 main+0x20
+              7fffb6fe36a0 generic_start_main.isra.0+0x140
+              7fffb6fe3898 __libc_start_main+0xb8
+                         0 [unknown]
+  ...
+
+  # perf record -e probe:sys_write ~/test
+  # perf script -F ip,sym,symoff
+
+  c0000000004025b0 sys_write+0x10
+  ...
+
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20180517063326.6319-1-sandipan@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c   |  2 +-
- tools/perf/builtin-trace.c |  2 +-
- tools/perf/perf.c          |  7 -------
- tools/perf/util/evsel.c    |  2 +-
- tools/perf/util/util.c     | 13 +++++++++++++
- tools/perf/util/util.h     |  2 ++
- 6 files changed, 18 insertions(+), 10 deletions(-)
+ tools/perf/util/machine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 3c061c57afb6..7a349fcd3864 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1264,7 +1264,7 @@ int cmd_top(int argc, const char **argv)
- 			.proc_map_timeout    = 500,
- 			.overwrite	= 1,
- 		},
--		.max_stack	     = sysctl_perf_event_max_stack,
-+		.max_stack	     = sysctl__max_stack(),
- 		.sym_pcnt_filter     = 5,
- 		.nr_threads_synthesize = UINT_MAX,
- 	};
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c7effcfc40ed..560aed7da36a 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3162,7 +3162,7 @@ int cmd_trace(int argc, const char **argv)
- 		mmap_pages_user_set = false;
- 
- 	if (trace.max_stack == UINT_MAX) {
--		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl_perf_event_max_stack;
-+		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl__max_stack();
- 		max_stack_user_set = false;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 72a351613d85..7c777cb32806 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1764,7 +1764,7 @@ static int add_callchain_ip(struct thread *thread,
  	}
  
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index cefd8f74630c..51c81509a315 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -426,7 +426,6 @@ int main(int argc, const char **argv)
- 	int err;
- 	const char *cmd;
- 	char sbuf[STRERR_BUFSIZE];
--	int value;
- 
- 	/* libsubcmd init */
- 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
-@@ -435,12 +434,6 @@ int main(int argc, const char **argv)
- 	/* The page_size is placed in util object. */
- 	page_size = sysconf(_SC_PAGE_SIZE);
- 
--	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
--		sysctl_perf_event_max_stack = value;
--
--	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
--		sysctl_perf_event_max_contexts_per_stack = value;
--
- 	cmd = extract_argv0_path(argv[0]);
- 	if (!cmd)
- 		cmd = "perf-help";
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 4cd2cf93f726..150db5ed7400 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2862,7 +2862,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
- 			return scnprintf(msg, size,
- 					 "Not enough memory to setup event with callchain.\n"
- 					 "Hint: Try tweaking /proc/sys/kernel/perf_event_max_stack\n"
--					 "Hint: Current value: %d", sysctl_perf_event_max_stack);
-+					 "Hint: Current value: %d", sysctl__max_stack());
- 		break;
- 	case ENODEV:
- 		if (target->cpu_list)
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 99ab52165680..eac5b858a371 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -62,6 +62,19 @@ int cacheline_size(void)
- int sysctl_perf_event_max_stack = PERF_MAX_STACK_DEPTH;
- int sysctl_perf_event_max_contexts_per_stack = PERF_MAX_CONTEXTS_PER_STACK;
- 
-+int sysctl__max_stack(void)
-+{
-+	int value;
-+
-+	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
-+		sysctl_perf_event_max_stack = value;
-+
-+	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
-+		sysctl_perf_event_max_contexts_per_stack = value;
-+
-+	return sysctl_perf_event_max_stack;
-+}
-+
- bool test_attr__enabled;
- 
- bool perf_host  = true;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 74d21dfe0d29..dc58254a2b69 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -45,6 +45,8 @@ int hex2u64(const char *ptr, u64 *val);
- extern unsigned int page_size;
- int __pure cacheline_size(void);
- 
-+int sysctl__max_stack(void);
-+
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
- #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
+ 	srcline = callchain_srcline(al.map, al.sym, al.addr);
+-	return callchain_cursor_append(cursor, al.addr, al.map, al.sym,
++	return callchain_cursor_append(cursor, ip, al.map, al.sym,
+ 				       branch, flags, nr_loop_iter,
+ 				       iter_cycles, branch_from, srcline);
+ }
