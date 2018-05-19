@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2247758-1526979853-2-6781130176731059451
+X-Cyrus-Session-Id: sloti22d1t05-807590-1526705454-2-3311130338460117768
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,32 +7,31 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MU
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526979852; b=NU0doUQ8tpcjfSfxGfytAdrvxcVIzusPu/Ynajvkt7nr6EEGgo
-    LHFZ2Ow8gYvs4hE5fpzxI2BBVwAEen6ngK6nYNQczH1ubcqZLJd41yR7AYjc0Ebk
-    1ZqTUoq2vr/e7Wuj0uWIP58t/2i8sv6r9MoCsbK2cIbImcCo9VJep3qWc2t1+OyL
-    O1iJV5WMsP1+pkUBXTDYsHzxeMvkTFU2JURyXQx0VByNE2esZuqWiRBJDhgGmEi5
-    Q3I5/FOGoZXTpcDGDR2Bpvj8aKJ5mMhaknbKmHTWkr1pqQoidU3GvoLaAApxyS+S
-    5MdCWR3LB+SogP0QSfH8gg8ubqhXJ5uxdZHg==
+    1526705453; b=SCZERDNg1DHy4ZGzEA30LlUz8wdaMymKiz5EsjHrNEKLsdGlN4
+    jPBrpJWsnq8sZljGoY2XokTPHszeBzGRdzVwQ5/xMMfRneHTE6Xu0elu5Gp1sJJi
+    72MmorFubh4AlFG8FVa4w2boRqhHZkNtFds6dMWifg0+WDj2pye7ZS3BC+C5Xm80
+    MksqTlMw643fOs4WrbfEtrKQkABkEj+IAGiwOYcDV/KASiSe2oXuRXs9pI36T9e9
+    TVBvmAkEDE0iMWYoqk4Dz56vUFG85ry2TRZa+ohOojMmDBKrbMPBdnYyXpXYEn7K
+    njT0Dflv84w8sqTXtz9DMGHOmxsepu36mApA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526979852;
-    bh=8EqG2j4OYsZXLCJU49b5GDn9lOZkJkM2WjoX693E/rY=; b=IBiI3MbBY/Cp
-    +lAQFRPTSAIJ+kMX2hSjEGaKov5RmHkoDI5nlUkSZz6EHORhHrwIK4sWMqCmtmkZ
-    h1+FH8xp5t8aDflorGd2LcMZIQP3UweSW+p8RPfonSX8NUASuIFhvyB2sB3dLxkV
-    OZQEKnxRyuCQXzfrEvGr7DdnWl5M/oV2ElqySGQv36kasdgEGcddz76dq8XxZpra
-    gmTKCwXfr+bSvBi0GujcMYm3tuaKkNvAEXaBJrq9u/EsXS9dylOQuv9IE32s20rx
-    DFa7C4hQdI6khQvlJTclfZ/xrVo1ylSNB11nYEzLvBa1579maYkjVVmN4BR5pxLI
-    o2m8b1vnXA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526705453; bh=
+    vmWagzgzx/uV9obBIJlbNWjzeQHSxPxVWOzbytYErs0=; b=AluTxYwrUfi7L39h
+    U+kNolxWPdcn8n7nrW3sxbYtV2j4C93apQSMmsRnlhienjiPyqxckFk04Nj/SPJg
+    wdw9kjLm0Bii6XY2xffiBvkK09dO1LlXBxTw5dHLH9G6EBwiQETj9HuUhbDdYJ10
+    bkDFfNDS7fJJmupVB90r7JZT6r0igfjYhZLt8407sbC//15FgAHi95LxPDl65y6Z
+    MrKDmwzYMIYwOg0mLF6Qzya0rv4grC2aMIvLEFGGAgV5iHOgmIBXyxgypz3dwD0A
+    iL1lc02q0sgURbWH3HkqM/jnlCHq/kSPS4Gp0DlV+Lbis5bUCAQEvfonCn65VoBK
+    R7tT5w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=godking.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -41,12 +40,12 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=suse.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    header.domain=godking.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=godking.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -55,67 +54,113 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=suse.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=godking.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPbJhyFx2+qCvh0a5j7Y9/bB2Gbuuk9o/kR8VHSVnz6LKe9lpWHidcFKZYh3v/K5agKFga/RBqqNVBpdR0Zzmb+v8IbVScDe4KWvnLiQcoU1SMVcWGPq
-    3cZKCgS+XHNvM1lw0cRbJIKiMg4aVn5Bi8d8xDOvp4U7EZTrl403hTtZqpmJaSEa60iQzLD2bAwDvjX01RcgT9AuE+yO4dy/Ej48tU13O1ceftKGwmhNipt7
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=wa9yNeOZSGM4TNCpDrYA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+X-CM-Envelope: MS4wfDSXI/NHlCALOA3VkK7WkGczCqgMalSbCNGTnNIOr3Ie5Z3gvqIHJUvFV+2jO/CIUOLvfSvoEHuXnH+l+JtyV49bUFz0OSOM9myADMJzP5NtUUzQxgmc
+    qFa4vm6v+HoJLcZsP3ZFitu76rsJ09TEHcMzbd2PI+OxgAfzyuOW1GNTPhyp8k4+vJARjNoBBRWfZudxr/7udny0gnFgni+5HK/m9/SON3es45cuxID44o3O
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=97dSWYl1AAAA:8 a=FXmwvOYqAAAA:8 a=VwQbUJbxAAAA:8 a=9-BEeznyIrX7e9MKCu4A:9
+    a=x8gzFH9gYPwA:10 a=OJayMvquMdr9gCXU5-l_:22 a=kXiaH_QbUnwHKQcifsFq:22
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751229AbeEVJD7 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 05:03:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42042 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751172AbeEVJD6 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 22 May 2018 05:03:58 -0400
-Message-ID: <1526979432.30491.0.camel@suse.com>
-Subject: Re: [usb-storage] Re: [PATCH v2 0/2] Re: usb-storage: Add quirks to
- make G-Technology "G-Drive" work
-From: Oliver Neukum <oneukum@suse.com>
-To: Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Kappner <agk@godking.net>
+        id S1751899AbeESEuf (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 19 May 2018 00:50:35 -0400
+Received: from s18231873.onlinehome-server.info ([217.160.179.168]:42472 "EHLO
+        godking.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750955AbeESEub (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Sat, 19 May 2018 00:50:31 -0400
+From: Alexander Kappner <agk@godking.net>
+To: stern@rowland.harvard.edu, oneukum@suse.com
 Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net, gregkh@linuxfoundation.org
-Date: Tue, 22 May 2018 10:57:12 +0200
-In-Reply-To: <Pine.LNX.4.44L0.1805211346090.1940-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1805211346090.1940-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        usb-storage@lists.one-eyed-alien.net, gregkh@linuxfoundation.org,
+        Alexander Kappner <agk@godking.net>
+Subject: [PATCH v2 2/2] usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
+Date: Fri, 18 May 2018 21:50:16 -0700
+Message-Id: <1526705416-12573-3-git-send-email-agk@godking.net>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526705416-12573-1-git-send-email-agk@godking.net>
+References: <Pine.LNX.4.44L0.1805181634000.1645-100000@iolanthe.rowland.org>
+ <1526705416-12573-1-git-send-email-agk@godking.net>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Am Montag, den 21.05.2018, 13:47 -0400 schrieb Alan Stern:
-> On Fri, 18 May 2018, Alexander Kappner wrote:
-> 
-> > v2 of this patch implements the FL_ALWAYS_SYNC flag in the UAS driver, and then
-> > adds the flag as quirks for the device at issue. This allows the G-Drive to work
-> > under both UAS and usb-storage.
-> > 
-> > Alexander Kappner (2):
-> >   [usb-storage] Add support for FL_ALWAYS_SYNC flag in the UAS driver
-> >   [usb-storage] Add compatibility quirk flags for G-Technologies G-Drive
-> > 
-> >  drivers/usb/storage/uas.c          | 6 ++++++
-> >  drivers/usb/storage/unusual_devs.h | 9 +++++++++
-> >  drivers/usb/storage/unusual_uas.h  | 9 +++++++++
-> >  3 files changed, 24 insertions(+)
-> 
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> This is okay with me.  Oliver, what do you think?
+The "G-Drive" (sold by G-Technology) external USB 3.0 drive
+ hangs on write access under UAS and usb-storage:
 
-Perfect.
+[  136.079121] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  136.079144] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  136.079152] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  136.079176] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 00 00 00 00 00 00 00 08 00 00
+[  136.079180] print_req_error: critical target error, dev sdi, sector 0
+[  136.079183] Buffer I/O error on dev sdi, logical block 0, lost sync page write
+[  136.173148] EXT4-fs (sdi): mounted filesystem with ordered data mode. Opts: (null)
+[  140.583998] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  140.584010] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  140.584016] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  140.584022] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 e8 c4 00 18 00 00 00 08 00 00
+[  140.584025] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584044] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584052] Aborting journal on device sdi-8.
 
-	Regards
-		Oliver
+The proposed patch adds compatibility quirks. Because the drive requires two
+quirks (one to work with UAS, and another to work with usb-storage), adding this
+under unusual_devs.h and not just unusual_uas.h so kernels compiled without UAS
+receive the quirk. With the patch, the drive works reliably on UAS and usb-
+storage.
+(tested on NEC Corporation uPD720200 USB 3.0 host controller).
+
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/usb/storage/unusual_devs.h | 9 +++++++++
+ drivers/usb/storage/unusual_uas.h  | 9 +++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
+index 747d3a9..22fcfcc 100644
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2321,6 +2321,15 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x0100,
+ 		"Micro Mini 1GB",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
+ 
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
++
+ /*
+  * Nick Bowler <nbowler@elliptictech.com>
+  * SCSI stack spams (otherwise harmless) error messages.
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index 38434d8..d0bdebd 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -107,3 +107,12 @@ UNUSUAL_DEV(0x4971, 0x8017, 0x0000, 0x9999,
+ 		"External HDD",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_NO_REPORT_OPCODES),
++
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
+-- 
+2.1.4
 
