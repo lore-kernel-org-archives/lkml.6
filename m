@@ -1,55 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeESSaI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 14:30:08 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41657 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752451AbeESSaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 14:30:06 -0400
-X-Google-Smtp-Source: AB8JxZpQC3o8dv3wBJq+IdCpW5gK93S60UaSHdJSsGlqO2OPGb6f6yT1ddpUWUgK6TkMC6CG2DzKsEkE8qOrU1krTyU=
-MIME-Version: 1.0
-In-Reply-To: <20180518225817.GA134184@joelaf.mtv.corp.google.com>
-References: <20180518015902.131427-1-joelaf@google.com> <20180518015902.131427-2-joelaf@google.com>
- <CAHp75Vf_zC9geRcdwD_WGLidg7Oq6rsKpL87Jhf4oQxz2=ctBw@mail.gmail.com> <20180518225817.GA134184@joelaf.mtv.corp.google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 19 May 2018 21:30:05 +0300
-Message-ID: <CAHp75Vf8bwUsMYYd1u1OSa=DGwJkOrZ4txqtFyRmX4OS4Qosrg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lib: Add module to simulate atomic sections for
- testing {preempt,irqs}off tracers
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Todd Kjos <tkjos@google.com>,
-        Erick Reyes <erickreyes@google.com>, Julia Cartwright <julia@ni.com>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1752592AbeESScb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 14:32:31 -0400
+Received: from mailout6.siol.net ([213.250.19.133]:34612 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752451AbeESSc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 14:32:27 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 00/15] Add support for R40 HDMI pipeline
+Date: Sat, 19 May 2018 20:31:12 +0200
+Message-Id: <20180519183127.2718-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 1:58 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Sat, May 19, 2018 at 12:09:46AM +0300, Andy Shevchenko wrote:
->> On Fri, May 18, 2018 at 4:59 AM, Joel Fernandes <joelaf@google.com> wrote:
+This series adds support for R40 HDMI pipeline. It is a bit special
+than other already supported pipelines because it has additional unit
+called TCON TOP responsible for relationship configuration between
+mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+and TV TCONs, TV encoder clock settings and pin muxing between LCD
+and TV encoders.
 
->> > +       default n
->>
->> n _is_ default default.
->
-> I would rather be explicit, several other TEST configs also mention it. Is it
-> a strong desire to drop off default n?
+However, it seems that TCON TOP will become a norm, since newer
+Allwinner SoCs like H6 also have this unit.
 
-I guess so, it comes from Linus. See, for example, commit
-0192f17529fa clean up x86 platform driver default values
+I tested different possible configurations:
+- mixer0 <> TCON-TV0 <> HDMI
+- mixer0 <> TCON-TV1 <> HDMI
+- mixer1 <> TCON-TV0 <> HDMI
+- mixer1 <> TCON-TV1 <> HDMI
+
+Please review.
+
+Best regards,
+Jernej
+
+Jernej Skrabec (15):
+  clk: sunxi-ng: r40: Add minimal rate for video PLLs
+  clk: sunxi-ng: r40: Allow setting parent rate to display related
+    clocks
+  clk: sunxi-ng: r40: Export video PLLs
+  dt-bindings: display: sunxi-drm: Add TCON TOP description
+  drm/sun4i: Add TCON TOP driver
+  drm/sun4i: tcon: Add support for tcon-top
+  dt-bindings: display: sun4i-drm: Add R40 HDMI pipeline
+  drm/sun4i: DE2 mixer: Add index quirk
+  drm/sun4i: Add support for R40 mixers
+  drm/sun4i: Add support for R40 TV TCONs
+  drm/sun4i: DW HDMI PHY: Add support for second PLL
+  drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+    driver
+  drm/sun4i: Add support for A64 HDMI PHY
+  ARM: dts: sun8i: r40: Add HDMI pipeline
+  ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+
+ .../bindings/display/sunxi/sun4i-drm.txt      |  36 ++-
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  50 ++++
+ arch/arm/boot/dts/sun8i-r40.dtsi              | 166 ++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c          |  58 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h          |   8 +-
+ drivers/gpu/drm/sun4i/Makefile                |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            |  67 +++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h            |   8 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   8 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        |  61 ++++-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c    |  90 ++++--
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  30 +-
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |   2 +
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c        | 256 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.h        |  20 ++
+ include/dt-bindings/clock/sun8i-r40-ccu.h     |   4 +
+ include/dt-bindings/clock/sun8i-tcon-top.h    |  11 +
+ 17 files changed, 813 insertions(+), 65 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+ create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
