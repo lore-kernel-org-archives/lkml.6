@@ -1,142 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752472AbeESQgN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 12:36:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36740 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752344AbeESQgK (ORCPT
+        id S1752466AbeESQpd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 12:45:33 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36460 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeESQpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 12:36:10 -0400
-Date: Sat, 19 May 2018 09:37:35 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Roman Pen <roman.penyaev@profitbricks.com>
-Cc: linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        Swapnil Ingle <swapnil.ingle@profitbricks.com>,
-        Danil Kipnis <danil.kipnis@profitbricks.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
- <20180518130413.16997-2-roman.penyaev@profitbricks.com>
+        Sat, 19 May 2018 12:45:32 -0400
+X-Google-Smtp-Source: AB8JxZrIWV+vFNpzNz0/Mx1i347zZvnF/65mhAVRbXD/PHg5YGLY9oXcR4pqzH7T0haIYhqyBjmc0BevxRASP34skVQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518130413.16997-2-roman.penyaev@profitbricks.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051916-0056-0000-0000-00000450D270
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009052; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01034644; UDB=6.00529136; IPR=6.00813773;
- MB=3.00021203; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-19 16:36:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051916-0057-0000-0000-00000894EA98
-Message-Id: <20180519163735.GX3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-19_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805190170
+References: <cover.thread-4f3684.your-ad-here.call-01526696764-ext-9375@work.hours>
+ <patch-1.thread-4f3684.git-4f3684ca2aad.your-ad-here.call-01526696764-ext-9375@work.hours>
+ <CA+55aFxJb9P2TMCc2Pao-uXcVACK-CTBHmzObAQu=rvs87itvw@mail.gmail.com>
+ <CA+55aFwxEiiAC+dMMVqQ4igqb7rmn23Bq=BM8fqU=MFRWF1JSw@mail.gmail.com>
+ <20180519034338.GV30522@ZenIV.linux.org.uk> <CA+55aFyHLFnGv8yFJs7-vGVe6tDeDAbSJ6=09iTqsegRZN_nGw@mail.gmail.com>
+ <your-ad-here.call-01526729953-ext-6746@work.hours>
+In-Reply-To: <your-ad-here.call-01526729953-ext-6746@work.hours>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 19 May 2018 09:45:20 -0700
+Message-ID: <CA+55aFxw5VXKXVMiS6b0gdpRmrxXb+xHu6O3U=A_S5UzHvY2_A@mail.gmail.com>
+Subject: Re: [PATCH] procfs: fix mmap() for /proc/vmcore
+To: gor@linux.ibm.com
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: multipart/mixed; boundary="000000000000f7c2a5056c91cbcb"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 03:03:48PM +0200, Roman Pen wrote:
-> Function is going to be used in transport over RDMA module
-> in subsequent patches.
-> 
-> Function returns next element in round-robin fashion,
-> i.e. head will be skipped.  NULL will be returned if list
-> is observed as empty.
-> 
-> Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  include/linux/rculist.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> index 127f534fec94..b0840d5ab25a 100644
-> --- a/include/linux/rculist.h
-> +++ b/include/linux/rculist.h
-> @@ -339,6 +339,25 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->  })
-> 
->  /**
-> + * list_next_or_null_rr_rcu - get next list element in round-robin fashion.
-> + * @head:	the head for the list.
-> + * @ptr:        the list head to take the next element from.
-> + * @type:       the type of the struct this is embedded in.
-> + * @memb:       the name of the list_head within the struct.
-> + *
-> + * Next element returned in round-robin fashion, i.e. head will be skipped,
-> + * but if list is observed as empty, NULL will be returned.
-> + *
-> + * This primitive may safely run concurrently with the _rcu list-mutation
-> + * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
+--000000000000f7c2a5056c91cbcb
+Content-Type: text/plain; charset="UTF-8"
 
-Of course, all the set of list_next_or_null_rr_rcu() invocations that
-are round-robining a given list must all be under the same RCU read-side
-critical section.  For example, the following will break badly:
+On Sat, May 19, 2018 at 4:39 AM Vasily Gorbik <gor@linux.ibm.com> wrote:
 
-	struct foo *take_rr_step(struct list_head *head, struct foo *ptr)
-	{
-		struct foo *ret;
+> Would work, but file_mmap_size_max first checks
+>              if (S_ISREG(inode->i_mode))
+>                      return inode->i_sb->s_maxbytes;
+> before
+>              if (file->f_mode & FMODE_UNSIGNED_OFFSET)
+>                      return 0;
+> so, as it is this patch does not fix the issue.
 
-		rcu_read_lock();
-		ret = list_next_or_null_rr_rcu(head, ptr, struct foo, foolist);
-		rcu_read_unlock();  /* BUG */
-		return ret;
-	}
+Right you are.
 
-You need a big fat comment stating this, at the very least.  The resulting
-bug can be very hard to trigger and even harder to debug.
+We could easily reverse the order of those two checks, but since clearly
+the s_maxbytes case hadn't gotten as much coverage as I thought it had,
+let's just simplify file_mmap_size_max() instead, and just make the limit
+be MAX_LFS_FILESIZE for regular files too, the way we already do for block
+devices (instead of trying to figure out the size of the block device).
 
-And yes, I know that the same restriction applies to list_next_rcu()
-and friends.  The difference is that if you try to invoke those in an
-infinite loop, you will be rapped on the knuckles as soon as you hit
-the list header.  Without that knuckle-rapping, RCU CPU stall warnings
-might tempt people to do something broken like take_rr_step() above.
+That way we won't be introducing changes to s_maxbytes late in the rc
+series, and we'll only affect the new logic.
 
-Is it possible to instead do some sort of list_for_each_entry_rcu()-like
-macro that makes it more obvious that the whole thing need to be under
-a single RCU read-side critical section?  Such a macro would of course be
-an infinite loop if the list never went empty, so presumably there would
-be a break or return statement in there somewhere.
+Plus regular files was never what that logic really was introduced to
+protect against anyway. It's the random ad-hoc mmap implementations in
+drivers that it really aimed to protect.
 
-> + */
-> +#define list_next_or_null_rr_rcu(head, ptr, type, memb) \
-> +({ \
-> +	list_next_or_null_rcu(head, ptr, type, memb) ?: \
-> +		list_next_or_null_rcu(head, READ_ONCE((ptr)->next), type, memb); \
+So for now, I've committed the minimal fixlet that doesn't affect any
+existing code (just the new max file size logic), and maybe this can be
+revisited for 4.18.
 
-Are there any uses for this outside of RDMA?  If not, I am with Linus.
-Define this within RDMA, where a smaller number of people can more
-easily be kept aware of the restrictions on use.  If it turns out to be
-more generally useful, we can take a look at exactly what makes sense
-more globally.
+                Linus
 
-Even within RDMA, I strongly recommend the big fat comment called out above.
-And the list_for_each_entry_rcu()-like formulation, if that can be made to
-work within RDMA's code structure.
+--000000000000f7c2a5056c91cbcb
+Content-Type: application/x-patch;
+	name="0001-mmap-relax-file-size-limit-for-regular-files.patch"
+Content-Disposition: attachment;
+	filename="0001-mmap-relax-file-size-limit-for-regular-files.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jhdmgx450>
+X-Attachment-Id: f_jhdmgx450
 
-Seem reasonable, or am I missing something here?
-
-								Thanx, Paul
-
-> +})
-> +
-> +/**
->   * list_for_each_entry_rcu	-	iterate over rcu list of given type
->   * @pos:	the type * to use as a loop cursor.
->   * @head:	the head for your list.
-> -- 
-> 2.13.1
-> 
+RnJvbSA0MjM5MTNhZDRhZTViM2U4ZmI4OTgzZjcwOTY5ZmI1MjIyNjFiYTI2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+CkRhdGU6IFNhdCwgMTkgTWF5IDIwMTggMDk6Mjk6MTEgLTA3MDAKU3ViamVjdDog
+W1BBVENIXSBtbWFwOiByZWxheCBmaWxlIHNpemUgbGltaXQgZm9yIHJlZ3VsYXIgZmlsZXMKCkNv
+bW1pdCBiZTgzYmJmODA2ODIgKCJtbWFwOiBpbnRyb2R1Y2Ugc2FuZSBkZWZhdWx0IG1tYXAgbGlt
+aXRzIikgd2FzCmludHJvZHVjZWQgdG8gY2F0Y2ggcHJvYmxlbXMgaW4gdmFyaW91cyBhZC1ob2Mg
+Y2hhcmFjdGVyIGRldmljZSBkcml2ZXJzCmRvaW5nIG1tYXAgYW5kIGdldHRpbmcgdGhlIHNpemUg
+bGltaXRzIHdyb25nLiAgSW4gdGhlIHByb2Nlc3MsIGl0IHVzZWQKImtub3duIGdvb2QiIGxpbWl0
+cyBmb3IgdGhlIG5vcm1hbCBjYXNlcyBvZiBtYXBwaW5nIHJlZ3VsYXIgZmlsZXMgYW5kCmJsb2Nr
+IGRldmljZSBkcml2ZXJzLgoKSXQgdHVybnMgb3V0IHRoYXQgdGhlICJzX21heGJ5dGVzIiBsaW1p
+dCB3YXMgbGVzcyAia25vd24gZ29vZCIgdGhhbiBJCnRob3VnaHQuICBJbiBwYXJ0aWN1bGFyLCAv
+cHJvYyBkb2Vzbid0IHNldCBpdCwgYnV0IGV4cG9zZXMgb25lIHJlZ3VsYXIKZmlsZSB0byBtbWFw
+OiAvcHJvYy92bWNvcmUuICBBcyBhIHJlc3VsdCwgdGhhdCBmaWxlIGdvdCBsaW1pdGVkIHRvIHRo
+ZQpkZWZhdWx0IE1BWF9JTlQgc19tYXhieXRlcyB2YWx1ZS4KClRoaXMgd2VudCB1bm5vdGljZWQg
+Zm9yIGEgd2hpbGUsIGJlY2F1c2UgYXBwYXJlbnRseSB0aGUgb25seSB0aGluZyB0aGF0Cm5lZWRz
+IGl0IGlzIHRoZSBzMzkwIGtlcm5lbCB6ZmNwZHVtcCwgYnV0IHRoZXJlIG1pZ2h0IGJlIG90aGVy
+IHRvb2xzCnRoYXQgdXNlIHRoaXMgdG9vLgoKVmFzaWx5IHN1Z2dlc3RlZCBqdXN0IGNoYW5naW5n
+IHNfbWF4Ynl0ZXMgZm9yIGFsbCBvZiAvcHJvYywgd2hpY2ggaXNuJ3QKd3JvbmcsIGJ1dCBtYWtl
+cyBtZSBuZXJ2b3VzIGF0IHRoaXMgc3RhZ2UuICBTbyBpbnN0ZWFkLCBqdXN0IG1ha2UgdGhlCm5l
+dyBtbWFwIGxpbWl0IGFsd2F5cyBiZSBNQVhfTEZTX0ZJTEVTSVpFIGZvciByZWd1bGFyIGZpbGVz
+LCB3aGljaCB3b24ndAphZmZlY3QgYW55dGhpbmcgZWxzZS4gIEl0IHdhc24ndCB0aGUgcmVndWxh
+ciBmaWxlIGNhc2UgSSB3YXMgd29ycmllZAphYm91dC4KCkknZCByZWFsbHkgcHJlZmVyIGZvciBt
+YXhzaXplIHRvIGhhdmUgYmVlbiBwZXItaW5vZGUsIGJ1dCB0aGF0IGlzIG5vdApob3cgdGhpbmdz
+IGFyZSB0b2RheS4KCkZpeGVzOiBiZTgzYmJmODA2ODIgKCJtbWFwOiBpbnRyb2R1Y2Ugc2FuZSBk
+ZWZhdWx0IG1tYXAgbGltaXRzIikKUmVwb3J0ZWQtYnk6IFZhc2lseSBHb3JiaWsgPGdvckBsaW51
+eC5pYm0uY29tPgpDYzogQWwgVmlybyA8dmlyb0B6ZW5pdi5saW51eC5vcmcudWs+ClNpZ25lZC1v
+ZmYtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0t
+CiBtbS9tbWFwLmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkKCmRpZmYgLS1naXQgYS9tbS9tbWFwLmMgYi9tbS9tbWFwLmMKaW5kZXggNzhlMTRm
+YWNkYjZlLi5mYzQxYzA1NDNkN2YgMTAwNjQ0Ci0tLSBhL21tL21tYXAuYworKysgYi9tbS9tbWFw
+LmMKQEAgLTEzMjcsNyArMTMyNyw3IEBAIHN0YXRpYyBpbmxpbmUgaW50IG1sb2NrX2Z1dHVyZV9j
+aGVjayhzdHJ1Y3QgbW1fc3RydWN0ICptbSwKIHN0YXRpYyBpbmxpbmUgdTY0IGZpbGVfbW1hcF9z
+aXplX21heChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IGlub2RlICppbm9kZSkKIHsKIAlpZiAo
+U19JU1JFRyhpbm9kZS0+aV9tb2RlKSkKLQkJcmV0dXJuIGlub2RlLT5pX3NiLT5zX21heGJ5dGVz
+OworCQlyZXR1cm4gTUFYX0xGU19GSUxFU0laRTsKIAogCWlmIChTX0lTQkxLKGlub2RlLT5pX21v
+ZGUpKQogCQlyZXR1cm4gTUFYX0xGU19GSUxFU0laRTsKLS0gCjIuMTcuMC4zOTIuZzQ0MTE3ZWY3
+ZgoK
+--000000000000f7c2a5056c91cbcb--
