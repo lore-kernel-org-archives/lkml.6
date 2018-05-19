@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752516AbeESLX0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:23:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55657 "EHLO
+        id S1752530AbeESLXv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:23:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752296AbeESLXX (ORCPT
+        with ESMTP id S1752191AbeESLXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:23:23 -0400
-Date: Sat, 19 May 2018 04:22:18 -0700
+        Sat, 19 May 2018 07:23:50 -0400
+Date: Sat, 19 May 2018 04:23:45 -0700
 From: tip-bot for Vikas Shivappa <tipbot@zytor.com>
-Message-ID: <tip-19c635ab24a1e94a759e82bfb34554a6a0db215e@git.kernel.org>
-Cc: hpa@zytor.com, vikas.shivappa@linux.intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: vikas.shivappa@linux.intel.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1524263781-14267-3-git-send-email-vikas.shivappa@linux.intel.com>
-References: <1524263781-14267-3-git-send-email-vikas.shivappa@linux.intel.com>
+Message-ID: <tip-ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, vikas.shivappa@linux.intel.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        vikas.shivappa@linux.intel.com, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com>
+References: <1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Enable/disable MBA software
- controller
-Git-Commit-ID: 19c635ab24a1e94a759e82bfb34554a6a0db215e
+Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Prepare for feedback loop
+Git-Commit-ID: ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,23 +31,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  19c635ab24a1e94a759e82bfb34554a6a0db215e
-Gitweb:     https://git.kernel.org/tip/19c635ab24a1e94a759e82bfb34554a6a0db215e
+Commit-ID:  ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
+Gitweb:     https://git.kernel.org/tip/ba0f26d8529c2dfc9aa6d9e8a338180737f8c1be
 Author:     Vikas Shivappa <vikas.shivappa@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:36:17 -0700
+AuthorDate: Fri, 20 Apr 2018 15:36:20 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 19 May 2018 13:16:43 +0200
+CommitDate: Sat, 19 May 2018 13:16:44 +0200
 
-x86/intel_rdt/mba_sc: Enable/disable MBA software controller
+x86/intel_rdt/mba_sc: Prepare for feedback loop
 
-Currently user does memory bandwidth allocation(MBA) by specifying the
-bandwidth in percentage via the resctrl schemata file:
-	"/sys/fs/resctrl/schemata"
-
-Add a new mount option "mba_MBps" to enable the user to specify MBA
-in MBps:
-
-$mount -t resctrl resctrl [-o cdp[,cdpl2][mba_MBps]] /sys/fs/resctrl
+This is a preparatory patch for the mba feedback loop. Add support to
+measure the "bandwidth in MBps" and the "delta bandwidth". Measure it by
+reading the MBM IA32_QM_CTR MSRs and calculating the amount of "bytes"
+moved. There is no user space interface for this and will only be used by
+the feedback loop patch.
 
 Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -58,120 +54,110 @@ Cc: fenghua.yu@intel.com
 Cc: vikas.shivappa@intel.com
 Cc: ak@linux.intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1524263781-14267-3-git-send-email-vikas.shivappa@linux.intel.com
+Link: https://lkml.kernel.org/r/1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.c          |  8 ++++++++
- arch/x86/kernel/cpu/intel_rdt.h          |  3 +++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 30 ++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h         | 10 ++++++++
+ arch/x86/kernel/cpu/intel_rdt_monitor.c | 44 ++++++++++++++++++++++++++++-----
+ 2 files changed, 48 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 589b948e6e01..53ee6838c496 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -230,6 +230,14 @@ static inline void cache_alloc_hsw_probe(void)
- 	rdt_alloc_capable = true;
- }
- 
-+bool is_mba_sc(struct rdt_resource *r)
-+{
-+	if (!r)
-+		return rdt_resources_all[RDT_RESOURCE_MBA].membw.mba_sc;
-+
-+	return r->membw.mba_sc;
-+}
-+
- /*
-  * rdt_get_mb_table() - get a mapping of bandwidth(b/w) percentage values
-  * exposed to user interface and the h/w understandable delay values.
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 3fd7a70ee04a..74aee0fdc97c 100644
+index 91cc31087e8a..66a0ba37a8a3 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -259,6 +259,7 @@ struct rdt_cache {
-  * @min_bw:		Minimum memory bandwidth percentage user can request
-  * @bw_gran:		Granularity at which the memory bandwidth is allocated
-  * @delay_linear:	True if memory B/W delay is in linear scale
-+ * @mba_sc:		True if MBA software controller(mba_sc) is enabled
-  * @mb_map:		Mapping of memory B/W percentage to memory B/W delay
+@@ -180,10 +180,20 @@ struct rftype {
+  * struct mbm_state - status for each MBM counter in each domain
+  * @chunks:	Total data moved (multiply by rdt_group.mon_scale to get bytes)
+  * @prev_msr	Value of IA32_QM_CTR for this RMID last time we read it
++ * @chunks_bw	Total local data moved. Used for bandwidth calculation
++ * @prev_bw_msr:Value of previous IA32_QM_CTR for bandwidth counting
++ * @prev_bw	The most recent bandwidth in MBps
++ * @delta_bw	Difference between the current and previous bandwidth
++ * @delta_comp	Indicates whether to compute the delta_bw
   */
- struct rdt_membw {
-@@ -266,6 +267,7 @@ struct rdt_membw {
- 	u32		min_bw;
- 	u32		bw_gran;
- 	u32		delay_linear;
-+	bool		mba_sc;
- 	u32		*mb_map;
+ struct mbm_state {
+ 	u64	chunks;
+ 	u64	prev_msr;
++	u64	chunks_bw;
++	u64	prev_bw_msr;
++	u32	prev_bw;
++	u32	delta_bw;
++	bool	delta_comp;
  };
  
-@@ -445,6 +447,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_domain *d,
- void mbm_setup_overflow_handler(struct rdt_domain *dom,
- 				unsigned long delay_ms);
- void mbm_handle_overflow(struct work_struct *work);
-+bool is_mba_sc(struct rdt_resource *r);
- void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
- void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index fca759d272a1..440025446239 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1005,6 +1005,11 @@ static void l2_qos_cfg_update(void *arg)
- 	wrmsrl(IA32_L2_QOS_CFG, *enable ? L2_QOS_CDP_ENABLE : 0ULL);
+ /**
+diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+index 681450eee428..7690402c42b7 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
++++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+@@ -225,10 +225,18 @@ void free_rmid(u32 rmid)
+ 		list_add_tail(&entry->list, &rmid_free_lru);
  }
  
-+static inline bool is_mba_linear(void)
++static u64 mbm_overflow_count(u64 prev_msr, u64 cur_msr)
 +{
-+	return rdt_resources_all[RDT_RESOURCE_MBA].membw.delay_linear;
++	u64 shift = 64 - MBM_CNTR_WIDTH, chunks;
++
++	chunks = (cur_msr << shift) - (prev_msr << shift);
++	return chunks >>= shift;
 +}
 +
- static int set_cache_qos_cfg(int level, bool enable)
+ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
  {
- 	void (*update)(void *arg);
-@@ -1041,6 +1046,25 @@ static int set_cache_qos_cfg(int level, bool enable)
+-	u64 chunks, shift, tval;
+ 	struct mbm_state *m;
++	u64 chunks, tval;
+ 
+ 	tval = __rmid_read(rmid, rr->evtid);
+ 	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL)) {
+@@ -254,14 +262,12 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
+ 	}
+ 
+ 	if (rr->first) {
+-		m->prev_msr = tval;
+-		m->chunks = 0;
++		memset(m, 0, sizeof(struct mbm_state));
++		m->prev_bw_msr = m->prev_msr = tval;
+ 		return 0;
+ 	}
+ 
+-	shift = 64 - MBM_CNTR_WIDTH;
+-	chunks = (tval << shift) - (m->prev_msr << shift);
+-	chunks >>= shift;
++	chunks = mbm_overflow_count(m->prev_msr, tval);
+ 	m->chunks += chunks;
+ 	m->prev_msr = tval;
+ 
+@@ -269,6 +275,32 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
  	return 0;
  }
  
 +/*
-+ * Enable or disable the MBA software controller
-+ * which helps user specify bandwidth in MBps.
-+ * MBA software controller is supported only if
-+ * MBM is supported and MBA is in linear scale.
++ * Supporting function to calculate the memory bandwidth
++ * and delta bandwidth in MBps.
 + */
-+static int set_mba_sc(bool mba_sc)
++static void mbm_bw_count(u32 rmid, struct rmid_read *rr)
 +{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA];
++	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3];
++	struct mbm_state *m = &rr->d->mbm_local[rmid];
++	u64 tval, cur_bw, chunks;
 +
-+	if (!is_mbm_enabled() || !is_mba_linear() ||
-+	    mba_sc == is_mba_sc(r))
-+		return -EINVAL;
++	tval = __rmid_read(rmid, rr->evtid);
++	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL))
++		return;
 +
-+	r->membw.mba_sc = mba_sc;
++	chunks = mbm_overflow_count(m->prev_bw_msr, tval);
++	m->chunks_bw += chunks;
++	m->chunks = m->chunks_bw;
++	cur_bw = (chunks * r->mon_scale) >> 20;
 +
-+	return 0;
++	if (m->delta_comp)
++		m->delta_bw = abs(cur_bw - m->prev_bw);
++	m->delta_comp = false;
++	m->prev_bw = cur_bw;
++	m->prev_bw_msr = tval;
 +}
 +
- static int cdp_enable(int level, int data_type, int code_type)
- {
- 	struct rdt_resource *r_ldata = &rdt_resources_all[data_type];
-@@ -1123,6 +1147,10 @@ static int parse_rdtgroupfs_options(char *data)
- 			ret = cdpl2_enable();
- 			if (ret)
- 				goto out;
-+		} else if (!strcmp(token, "mba_MBps")) {
-+			ret = set_mba_sc(true);
-+			if (ret)
-+				goto out;
- 		} else {
- 			ret = -EINVAL;
- 			goto out;
-@@ -1445,6 +1473,8 @@ static void rdt_kill_sb(struct super_block *sb)
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
- 
-+	set_mba_sc(false);
-+
- 	/*Put everything back to default values. */
- 	for_each_alloc_enabled_rdt_resource(r)
- 		reset_all_ctrls(r);
+ /*
+  * This is called via IPI to read the CQM/MBM counters
+  * on a domain.
