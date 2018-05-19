@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeESK4B (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:56:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
+        id S1752592AbeESK4D (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:56:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752523AbeESKzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:55:54 -0400
+        id S1752560AbeESKz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 06:55:59 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 11/18] perf tools: No need to unconditionally read the max_stack sysctls
-Date: Sat, 19 May 2018 07:55:00 -0300
-Message-Id: <20180519105507.16450-12-acme@kernel.org>
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 13/18] perf script: Show symbol offsets by default
+Date: Sat, 19 May 2018 07:55:02 -0300
+Message-Id: <20180519105507.16450-14-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180519105507.16450-1-acme@kernel.org>
 References: <20180519105507.16450-1-acme@kernel.org>
@@ -24,127 +25,173 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
 
-Let tools that need to have those variables with the sysctl current
-values use a function that will read them.
+Since the ip shown for a symbol is now always a virtual address, it
+becomes difficult to correlate this with objdump output and determine
+the exact instruction address. So, we always show the offset from the
+start of the symbol.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-1ljj3oeo5kpt2n1icfd9vowe@git.kernel.org
+This can be verified on a powerpc64le system running Fedora 27 as
+follows:
+
+  # perf probe -a sys_write
+  # perf record -e probe:sys_write -g ~/test
+
+Before applying this patch:
+
+  # perf script
+
+  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
+          c0000000004025b0 sys_write (/lib/modules/4.17.0-rc4+/build/vmlinux)
+          c00000000000b9e0 system_call (/lib/modules/4.17.0-rc4+/build/vmlinux)
+              7fffb70d8234 __GI___libc_write (/usr/lib64/libc-2.26.so)
+              7fffb7052c74 _IO_file_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+                  5afc1818 [unknown] ([unknown])
+              7fffb7051a60 new_do_write (/usr/lib64/libc-2.26.so)
+              7fffb7054638 _IO_do_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+              7fffb7055a24 __overflow (/usr/lib64/libc-2.26.so)
+              7fffb7044548 _IO_puts (/usr/lib64/libc-2.26.so)
+                  10000440 main (/home/sandipan/test)
+              7fffb6fe36a0 generic_start_main.isra.0 (/usr/lib64/libc-2.26.so)
+              7fffb6fe3898 __libc_start_main (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+  ...
+
+After applying this patch:
+
+  # perf script
+
+  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
+          c0000000004025b0 sys_write+0x10 (/lib/modules/4.17.0-rc4+/build/vmlinux)
+          c00000000000b9e0 system_call+0x58 (/lib/modules/4.17.0-rc4+/build/vmlinux)
+              7fffb70d8234 __GI___libc_write+0x24 (/usr/lib64/libc-2.26.so)
+              7fffb7052c74 _IO_file_write@@GLIBC_2.17+0x44 (/usr/lib64/libc-2.26.so)
+                  5afc1818 [unknown] ([unknown])
+              7fffb7051a60 new_do_write+0x90 (/usr/lib64/libc-2.26.so)
+              7fffb7054638 _IO_do_write@@GLIBC_2.17+0x38 (/usr/lib64/libc-2.26.so)
+              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17+0x14c (/usr/lib64/libc-2.26.so)
+              7fffb7055a24 __overflow+0x64 (/usr/lib64/libc-2.26.so)
+              7fffb7044548 _IO_puts+0x218 (/usr/lib64/libc-2.26.so)
+                  10000440 main+0x20 (/home/sandipan/test)
+              7fffb6fe36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffb6fe3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+  ...
+
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20180517063326.6319-2-sandipan@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c   |  2 +-
- tools/perf/builtin-trace.c |  2 +-
- tools/perf/perf.c          |  7 -------
- tools/perf/util/evsel.c    |  2 +-
- tools/perf/util/util.c     | 13 +++++++++++++
- tools/perf/util/util.h     |  2 ++
- 6 files changed, 18 insertions(+), 10 deletions(-)
+ tools/perf/builtin-script.c                        | 26 ++++++++++++----------
+ .../tests/shell/record+probe_libc_inet_pton.sh     | 12 +++++-----
+ 2 files changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 3c061c57afb6..7a349fcd3864 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1264,7 +1264,7 @@ int cmd_top(int argc, const char **argv)
- 			.proc_map_timeout    = 500,
- 			.overwrite	= 1,
- 		},
--		.max_stack	     = sysctl_perf_event_max_stack,
-+		.max_stack	     = sysctl__max_stack(),
- 		.sym_pcnt_filter     = 5,
- 		.nr_threads_synthesize = UINT_MAX,
- 	};
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c7effcfc40ed..560aed7da36a 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3162,7 +3162,7 @@ int cmd_trace(int argc, const char **argv)
- 		mmap_pages_user_set = false;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index fa2c7a288750..cefc8813e91e 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -153,8 +153,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
  
- 	if (trace.max_stack == UINT_MAX) {
--		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl_perf_event_max_stack;
-+		trace.max_stack = input_name ? PERF_MAX_STACK_DEPTH : sysctl__max_stack();
- 		max_stack_user_set = false;
- 	}
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -165,8 +165,9 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD | PERF_OUTPUT_BPF_OUTPUT,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
++			      PERF_OUTPUT_BPF_OUTPUT,
  
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index cefd8f74630c..51c81509a315 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -426,7 +426,6 @@ int main(int argc, const char **argv)
- 	int err;
- 	const char *cmd;
- 	char sbuf[STRERR_BUFSIZE];
--	int value;
+ 		.invalid_fields = PERF_OUTPUT_TRACE,
+ 	},
+@@ -185,10 +186,10 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD |  PERF_OUTPUT_ADDR |
+-			      PERF_OUTPUT_DATA_SRC | PERF_OUTPUT_WEIGHT |
+-			      PERF_OUTPUT_PHYS_ADDR,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
++			      PERF_OUTPUT_ADDR | PERF_OUTPUT_DATA_SRC |
++			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR,
  
- 	/* libsubcmd init */
- 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
-@@ -435,12 +434,6 @@ int main(int argc, const char **argv)
- 	/* The page_size is placed in util object. */
- 	page_size = sysconf(_SC_PAGE_SIZE);
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -199,8 +200,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
  
--	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
--		sysctl_perf_event_max_stack = value;
--
--	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
--		sysctl_perf_event_max_contexts_per_stack = value;
--
- 	cmd = extract_argv0_path(argv[0]);
- 	if (!cmd)
- 		cmd = "perf-help";
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 4cd2cf93f726..150db5ed7400 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2862,7 +2862,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
- 			return scnprintf(msg, size,
- 					 "Not enough memory to setup event with callchain.\n"
- 					 "Hint: Try tweaking /proc/sys/kernel/perf_event_max_stack\n"
--					 "Hint: Current value: %d", sysctl_perf_event_max_stack);
-+					 "Hint: Current value: %d", sysctl__max_stack());
- 		break;
- 	case ENODEV:
- 		if (target->cpu_list)
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 99ab52165680..eac5b858a371 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -62,6 +62,19 @@ int cacheline_size(void)
- int sysctl_perf_event_max_stack = PERF_MAX_STACK_DEPTH;
- int sysctl_perf_event_max_contexts_per_stack = PERF_MAX_CONTEXTS_PER_STACK;
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -211,8 +212,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_SYNTH,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_SYNTH,
  
-+int sysctl__max_stack(void)
-+{
-+	int value;
-+
-+	if (sysctl__read_int("kernel/perf_event_max_stack", &value) == 0)
-+		sysctl_perf_event_max_stack = value;
-+
-+	if (sysctl__read_int("kernel/perf_event_max_contexts_per_stack", &value) == 0)
-+		sysctl_perf_event_max_contexts_per_stack = value;
-+
-+	return sysctl_perf_event_max_stack;
-+}
-+
- bool test_attr__enabled;
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -544,6 +545,7 @@ static int perf_session__check_output_opt(struct perf_session *session)
+ 			if (attr->sample_type & PERF_SAMPLE_CALLCHAIN) {
+ 				output[j].fields |= PERF_OUTPUT_IP;
+ 				output[j].fields |= PERF_OUTPUT_SYM;
++				output[j].fields |= PERF_OUTPUT_SYMOFFSET;
+ 				output[j].fields |= PERF_OUTPUT_DSO;
+ 				set_print_ip_opts(attr);
+ 				goto out;
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index ee86473643be..650b208f700f 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,18 +16,18 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
++	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
+-		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+-		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
+-		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
++		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+-		expected[2]="getaddrinfo[[:space:]]\($libc\)$"
+-		expected[3]=".*\(.*/bin/ping.*\)$"
++		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
++		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	esac
  
- bool perf_host  = true;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 74d21dfe0d29..dc58254a2b69 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -45,6 +45,8 @@ int hex2u64(const char *ptr, u64 *val);
- extern unsigned int page_size;
- int __pure cacheline_size(void);
- 
-+int sysctl__max_stack(void);
-+
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
- #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
 -- 
 2.14.3
