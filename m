@@ -1,26 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752521AbeESPGl (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 11:06:41 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55967 "EHLO
+        id S1752489AbeESPTC (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 11:19:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55997 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752404AbeESPGj (ORCPT
+        with ESMTP id S1752344AbeESPTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 11:06:39 -0400
-Date: Sat, 19 May 2018 17:06:29 +0200 (CEST)
+        Sat, 19 May 2018 11:19:01 -0400
+Date: Sat, 19 May 2018 17:18:35 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 4/5] acpi/processor: Fix the return value of
- acpi_processor_ids_walk()
-In-Reply-To: <20180320110432.28127-5-douly.fnst@cn.fujitsu.com>
-Message-ID: <alpine.DEB.2.21.1805191704150.1599@nanos.tec.linutronix.de>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com> <20180320110432.28127-5-douly.fnst@cn.fujitsu.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, dave.hansen@intel.com, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 09/39] x86/intel_rdt: Enable setting of exclusive
+ mode
+In-Reply-To: <975917b4b8e0ac91fa2b315d9ea1016c93d80870.1524649902.git.reinette.chatre@intel.com>
+Message-ID: <alpine.DEB.2.21.1805191717430.1599@nanos.tec.linutronix.de>
+References: <cover.1524649902.git.reinette.chatre@intel.com> <975917b4b8e0ac91fa2b315d9ea1016c93d80870.1524649902.git.reinette.chatre@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -31,41 +29,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018, Dou Liyang wrote:
+On Wed, 25 Apr 2018, Reinette Chatre wrote:
+> +/**
+> + * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+> + * @r: Resource to which domain instance @d belongs.
+> + * @d: The domain instance for which @closid is being tested.
+> + * @cbm: Capacity bitmask being tested.
+> + * @closid: Intended closid for @cbm.
+> + * @exclusive: Only check if overlaps with exclusive resource groups
+> + *
+> + * Checks if provided @cbm intended to be used for @closid on domain
+> + * @d overlaps with any other closids or other hardware usage associated
+> + * with this domain. If @exclusive is true then only overlaps with
+> + * resource groups in exclusive mode will be considered. If @exclusive
+> + * is false then overlaps with any resource group or hardware entities
+> + * will be considered.
+> + *
+> + * Return: 0 if CBM does not overlap, 1 if it does.
+> + */
+> +static int rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
 
-> ACPI driver should make sure all the processor IDs in their ACPI Namespace
-> are unique for CPU hotplug. the driver performs a depth-first walk of the
-> namespace tree and calls the acpi_processor_ids_walk().
-> 
-> But, the acpi_processor_ids_walk() will return true if one processor is
-> checked, that cause the walk break after walking pass the first processor.
-> 
-> Repace the value with AE_OK which is the standard acpi_status value.
-> 
-> Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
-> 
-> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-> ---
->  drivers/acpi/acpi_processor.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-> index 449d86d39965..db5bdb59639c 100644
-> --- a/drivers/acpi/acpi_processor.c
-> +++ b/drivers/acpi/acpi_processor.c
-> @@ -663,11 +663,11 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
->  	}
->  
->  	processor_validated_ids_update(uid);
-> -	return true;
-> +	return AE_OK;
->  
->  err:
->  	acpi_handle_info(handle, "Invalid processor object\n");
-> -	return false;
-> +	return AE_OK;
+I think this should be bool not int.
 
-I'm not sure whether this is the right return value here. Rafael?
+> +/**
+> + * rdtgroup_mode_test_exclusive - Test if this resource group can be exclusive
+> + *
+> + * An exclusive resource group implies that there should be no sharing of
+> + * its allocated resources. At the time this group is considered to be
+> + * exclusive this test can determine if its current schemata supports this
+> + * setting by testing for overlap with all other resource groups.
+> + *
+> + * Return: 1 if resource group can be exclusive, 0 if there is overlap
+> + * with allocations of other resource groups and thus this resource group
+> + * cannot be exclusive.
+> + */
+> +static int rdtgroup_mode_test_exclusive(struct rdtgroup *rdtgrp)
+
+Ditto.
 
 Thanks,
 
