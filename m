@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752375AbeESNh1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 09:37:27 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:42623 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752273AbeESNhZ (ORCPT
+        id S1752453AbeESN4D (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 09:56:03 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:44165 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeESN4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 09:37:25 -0400
-Subject: Re: [PATCH 2/3] dt-bindings: new binding for Ilitek ILI9341 display
- panels
-To: David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
-        linux-kernel@vger.kernel.org
-References: <20180515014349.26226-1-david@lechnology.com>
- <20180515014349.26226-3-david@lechnology.com>
-From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <50928486-822a-aff3-7c37-cc1c40cb62b8@tronnes.org>
-Date: Sat, 19 May 2018 15:37:21 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 19 May 2018 09:56:00 -0400
+X-Google-Smtp-Source: AB8JxZo2aF/X8CmEYp+2lW12aBJgGK0FX2rGEXdsz1vdCbSn6a93+NzLOtuYo8OcugrWwmNEZ9lgsQ==
+Date: Sat, 19 May 2018 09:55:52 -0400
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, jic23@kernel.org, benjamin.gaignard@st.com,
+        fabrice.gasnier@st.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 4/9] counter: 104-quad-8: Add Generic Counter
+ interface support
+Message-ID: <20180519135539.GA31866@sophia>
+References: <881ede525a87ef68fad76cc757ce0ba72df03e5a.1526487615.git.vilhelm.gray@gmail.com>
+ <201805192140.de07sSol%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515014349.26226-3-david@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <201805192140.de07sSol%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Den 15.05.2018 03.43, skrev David Lechner:
-> This adds a new binding for Ilitek ILI9341 display panels. It includes
-> a compatible string for one display (more can be added in the future).
+On Sat, May 19, 2018 at 09:16:55PM +0800, kbuild test robot wrote:
+>Hi William,
 >
-> The vendor prefix "noname" is used because the vendor is not known.
-> The YX240QV29-T panel[1] is found, for example, in an Adafruit breakout
-> board[2] and in Mindsensors' PiStorms[3].
+>I love your patch! Perhaps something to improve:
 >
-> [1]: https://cdn-learn.adafruit.com/assets/assets/000/046/879/original/SPEC-YX240QV29-T_Rev.A__1_.pdf
-> [2]: https://www.adafruit.com/product/2478
-> [3]: http://www.mindsensors.com/stem-with-robotics/13-pistorms-v2-base-kit-raspberry-pi-brain-for-lego-robot
+>[auto build test WARNING on linus/master]
+>[also build test WARNING on v4.17-rc5 next-20180517]
+>[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 >
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->   .../bindings/display/ilitek,ili9341.txt       | 27 +++++++++++++++++++
->   1 file changed, 27 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+>url:    https://github.com/0day-ci/linux/commits/William-Breathitt-Gray/Introduce-the-Counter-subsystem/20180519-151353
+>reproduce:
+>        # apt-get install sparse
+>        make ARCH=x86_64 allmodconfig
+>        make C=1 CF=-D__CHECK_ENDIAN__
 >
-> diff --git a/Documentation/devicetree/bindings/display/ilitek,ili9341.txt b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
-> new file mode 100644
-> index 000000000000..0fc90b2dd732
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
-> @@ -0,0 +1,27 @@
-> +Ilitek ILI9341 display panels
-> +
-> +This binding is for display panels using an Ilitek ILI9341 controller in SPI
-> +mode.
-> +
-> +Required properties:
-> +- compatible:	"noname,yx240qv29", "ilitek,ili9341"
+>
+>sparse warnings: (new ones prefixed by >>)
+>
+>>> drivers/counter/104-quad-8.c:803:26: sparse: symbol 'quad8_ops' was not declared. Should it be static?
+>
+>Please review and possibly fold the followup patch.
 
-Calling a vendor 'noname' looks a bit odd and AFAICT it isn't used by
-any other binding. A google search always mentions Adafruit in
-connection with this panel, so I suggest we use Adafruit as vendor.
+Ah, yes it should be static -- looks like I made a minor mistake. I'll
+squash the fix into the next revision of this patchset.
 
-I don't think we should use "ilitek,ili9341" as an option/fallback,
-because panels varies in resolution (rarely) and initialization. A
-generic ili9341 driver would probably not work with a random new panel.
+Thank you,
 
-> +- dc-gpios:	D/C pin
-> +- reset-gpios:	Reset pin
-> +
-> +The node for this driver must be a child node of a SPI controller, hence
-> +all mandatory properties described in ../spi/spi-bus.txt must be specified.
-> +
-> +Optional properties:
-> +- rotation:	panel rotation in degrees counter clockwise (0,90,180,270)
-> +- backlight:	phandle of the backlight device attached to the panel
+William Breathitt Gray
 
-You forgot to mention the regulator that you support in the driver.
-
-Noralf.
-
-> +
-> +Example:
-> +	display@0{
-> +		compatible = "noname,yx240qv29", "ilitek,ili9341";
-> +		reg = <0>;
-> +		spi-max-frequency = <32000000>;
-> +		dc-gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
-> +		reset-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
-> +		rotation = <270>;
-> +		backlight = <&backlight>;
-> +	};
+>
+>---
+>0-DAY kernel test infrastructure                Open Source Technology Center
+>https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
