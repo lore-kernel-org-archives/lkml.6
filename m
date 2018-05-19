@@ -1,101 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeESPqb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 11:46:31 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36151 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752280AbeESPq1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 11:46:27 -0400
-X-Google-Smtp-Source: AB8JxZptQt0enRKddW9xqher5Dubh1Aa3OlVkrGuw0GSvzIgMuydnEYlR26amWd1XS6mEWBtwI9anw==
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com> <20180518103908.GF5312@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <5c1e76fe-3ef5-fe31-6b89-edcb8b8c0582@gmail.com>
-Date: Sat, 19 May 2018 18:46:23 +0300
+        id S1752518AbeESPuX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 11:50:23 -0400
+Received: from vern.gendns.com ([206.190.152.46]:43692 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752280AbeESPuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 11:50:21 -0400
+Subject: Re: [PATCH 2/3] dt-bindings: new binding for Ilitek ILI9341 display
+ panels
+To: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
+        linux-kernel@vger.kernel.org
+References: <20180515014349.26226-1-david@lechnology.com>
+ <20180515014349.26226-3-david@lechnology.com>
+ <50928486-822a-aff3-7c37-cc1c40cb62b8@tronnes.org>
+From: David Lechner <david@lechnology.com>
+Message-ID: <b86e0eac-35bb-e143-ad44-8a091af798a5@lechnology.com>
+Date: Sat, 19 May 2018 10:50:17 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180518103908.GF5312@ulmo>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <50928486-822a-aff3-7c37-cc1c40cb62b8@tronnes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.05.2018 13:39, Thierry Reding wrote:
-> On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
->> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
->> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
->> that main clk-controller driver could get an actual parent clock for the
->> CDEV1/2 clocks.
+On 05/19/2018 08:37 AM, Noralf Trønnes wrote:
+> 
+> Den 15.05.2018 03.43, skrev David Lechner:
+>> This adds a new binding for Ilitek ILI9341 display panels. It includes
+>> a compatible string for one display (more can be added in the future).
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marc Dietrich <marvin24@gmx.de>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> The vendor prefix "noname" is used because the vendor is not known.
+>> The YX240QV29-T panel[1] is found, for example, in an Adafruit breakout
+>> board[2] and in Mindsensors' PiStorms[3].
+>>
+>> [1]: https://cdn-learn.adafruit.com/assets/assets/000/046/879/original/SPEC-YX240QV29-T_Rev.A__1_.pdf
+>> [2]: https://www.adafruit.com/product/2478
+>> [3]: http://www.mindsensors.com/stem-with-robotics/13-pistorms-v2-base-kit-raspberry-pi-brain-for-lego-robot
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
 >> ---
+>>   .../bindings/display/ilitek,ili9341.txt       | 27 +++++++++++++++++++
+>>   1 file changed, 27 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/ilitek,ili9341.txt
 >>
->> Changelog:
->>
->> v3:
->> 	- No change.
->>
->> v2:
->> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->>
->>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->>  3 files changed, 40 insertions(+), 12 deletions(-)
+>> diff --git a/Documentation/devicetree/bindings/display/ilitek,ili9341.txt b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+>> new file mode 100644
+>> index 000000000000..0fc90b2dd732
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+>> @@ -0,0 +1,27 @@
+>> +Ilitek ILI9341 display panels
+>> +
+>> +This binding is for display panels using an Ilitek ILI9341 controller in SPI
+>> +mode.
+>> +
+>> +Required properties:
+>> +- compatible:    "noname,yx240qv29", "ilitek,ili9341"
 > 
-> Linus,
-> 
-> were you going to pick this up for v4.18? There's a runtime dependency
-> on this from some clock patches that I'd like to get into v4.18.
-> 
-> I see I never gave my Acked-by on this particular patch, so here goes:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> Calling a vendor 'noname' looks a bit odd and AFAICT it isn't used by
+> any other binding. A google search always mentions Adafruit in
+> connection with this panel, so I suggest we use Adafruit as vendor.
 
-Linus applied the v2 of the patch [0]. Thanks for caring about it.
+I was hoping that someone might know the correct vendor, but barring that,
+I agree that adafruit is probably the best choice.
 
-[0] https://www.spinics.net/lists/linux-tegra/msg33331.html
+> 
+> I don't think we should use "ilitek,ili9341" as an option/fallback,
+> because panels varies in resolution (rarely) and initialization. A
+> generic ili9341 driver would probably not work with a random new panel.
+
+I'm just following the precedent set in the other bindings for similar
+displays that I have already done.
+
+References:
+* https://patchwork.freedesktop.org/patch/194648/
+* https://patchwork.freedesktop.org/patch/195320/
+
+I agree that it is probably not super-useful as a fallback. On the other
+hand, the vendors and models for these displays are pretty obscure and
+I think having the more well-known controller name _somewhere_ is useful.
+
+
+> 
+>> +- dc-gpios:    D/C pin
+>> +- reset-gpios:    Reset pin
+>> +
+>> +The node for this driver must be a child node of a SPI controller, hence
+>> +all mandatory properties described in ../spi/spi-bus.txt must be specified.
+>> +
+>> +Optional properties:
+>> +- rotation:    panel rotation in degrees counter clockwise (0,90,180,270)
+>> +- backlight:    phandle of the backlight device attached to the panel
+> 
+> You forgot to mention the regulator that you support in the driver.
+> 
+> Noralf.
+> 
+>> +
+>> +Example:
+>> +    display@0{
+>> +        compatible = "noname,yx240qv29", "ilitek,ili9341";
+>> +        reg = <0>;
+>> +        spi-max-frequency = <32000000>;
+>> +        dc-gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
+>> +        reset-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+>> +        rotation = <270>;
+>> +        backlight = <&backlight>;
+>> +    };
+> 
