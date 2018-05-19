@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeESL2D (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:28:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41479 "EHLO
+        id S1752375AbeESL2d (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:28:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33685 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751891AbeESL2A (ORCPT
+        with ESMTP id S1752053AbeESL2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:28:00 -0400
-Date: Sat, 19 May 2018 04:27:52 -0700
+        Sat, 19 May 2018 07:28:30 -0400
+Date: Sat, 19 May 2018 04:28:22 -0700
 From: "tip-bot for K. Y. Srinivasan" <tipbot@zytor.com>
-Message-ID: <tip-6b48cb5f8347bc0153ff1d7b075db92e6723ffdb@git.kernel.org>
-Cc: kys@microsoft.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        mikelley@microsoft.com, tglx@linutronix.de, hpa@zytor.com
-Reply-To: mikelley@microsoft.com, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, kys@microsoft.com
-In-Reply-To: <20180516215334.6547-1-kys@linuxonhyperv.com>
-References: <20180516215334.6547-1-kys@linuxonhyperv.com>
+Message-ID: <tip-68bb7bfb7985df2bd15c2dc975cb68b7a901488a@git.kernel.org>
+Cc: mikelley@microsoft.com, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, kys@microsoft.com, mingo@kernel.org
+Reply-To: kys@microsoft.com, mingo@kernel.org, mikelley@microsoft.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20180516215334.6547-2-kys@linuxonhyperv.com>
+References: <20180516215334.6547-2-kys@linuxonhyperv.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] X86/Hyper-V: Enlighten APIC access
-Git-Commit-ID: 6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
+Subject: [tip:x86/hyperv] X86/Hyper-V: Enable IPI enlightenments
+Git-Commit-ID: 68bb7bfb7985df2bd15c2dc975cb68b7a901488a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,17 +31,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
-Gitweb:     https://git.kernel.org/tip/6b48cb5f8347bc0153ff1d7b075db92e6723ffdb
+Commit-ID:  68bb7bfb7985df2bd15c2dc975cb68b7a901488a
+Gitweb:     https://git.kernel.org/tip/68bb7bfb7985df2bd15c2dc975cb68b7a901488a
 Author:     K. Y. Srinivasan <kys@microsoft.com>
-AuthorDate: Wed, 16 May 2018 14:53:30 -0700
+AuthorDate: Wed, 16 May 2018 14:53:31 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 19 May 2018 13:23:17 +0200
 
-X86/Hyper-V: Enlighten APIC access
+X86/Hyper-V: Enable IPI enlightenments
 
-Hyper-V supports MSR based APIC access; implement
-the enlightenment.
+Hyper-V supports hypercalls to implement IPI; use them.
 
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -55,182 +54,261 @@ Cc: hpa@zytor.com
 Cc: apw@canonical.com
 Cc: devel@linuxdriverproject.org
 Cc: vkuznets@redhat.com
-Link: https://lkml.kernel.org/r/20180516215334.6547-1-kys@linuxonhyperv.com
+Link: https://lkml.kernel.org/r/20180516215334.6547-2-kys@linuxonhyperv.com
 
 ---
- arch/x86/hyperv/Makefile        |   2 +-
- arch/x86/hyperv/hv_apic.c       | 104 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/hyperv/hv_init.c       |   5 +-
- arch/x86/include/asm/mshyperv.h |   4 +-
- 4 files changed, 112 insertions(+), 3 deletions(-)
+ arch/x86/hyperv/hv_apic.c          | 117 +++++++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c          |  27 +++++++++
+ arch/x86/include/asm/hyperv-tlfs.h |  15 +++++
+ arch/x86/include/asm/mshyperv.h    |   1 +
+ 4 files changed, 160 insertions(+)
 
-diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
-index 367a8203cfcf..00ce4df01a09 100644
---- a/arch/x86/hyperv/Makefile
-+++ b/arch/x86/hyperv/Makefile
-@@ -1 +1 @@
--obj-y		:= hv_init.o mmu.o
-+obj-y		:= hv_init.o mmu.o hv_apic.o
 diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-new file mode 100644
-index 000000000000..ca20e31d311c
---- /dev/null
+index ca20e31d311c..3e0de61f1a7c 100644
+--- a/arch/x86/hyperv/hv_apic.c
 +++ b/arch/x86/hyperv/hv_apic.c
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -33,6 +33,8 @@
+ #ifdef CONFIG_X86_64
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 
++static struct apic orig_apic;
 +
-+/*
-+ * Hyper-V specific APIC code.
-+ *
-+ * Copyright (C) 2018, Microsoft, Inc.
-+ *
-+ * Author : K. Y. Srinivasan <kys@microsoft.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published
-+ * by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
-+ * NON INFRINGEMENT.  See the GNU General Public License for more
-+ * details.
-+ *
-+ */
-+
-+#include <linux/types.h>
-+#include <linux/version.h>
-+#include <linux/vmalloc.h>
-+#include <linux/mm.h>
-+#include <linux/clockchips.h>
-+#include <linux/hyperv.h>
-+#include <linux/slab.h>
-+#include <linux/cpuhotplug.h>
-+#include <asm/hypervisor.h>
-+#include <asm/mshyperv.h>
-+
-+#ifdef CONFIG_X86_64
-+#if IS_ENABLED(CONFIG_HYPERV)
-+
-+static u64 hv_apic_icr_read(void)
-+{
-+	u64 reg_val;
-+
-+	rdmsrl(HV_X64_MSR_ICR, reg_val);
-+	return reg_val;
-+}
-+
-+static void hv_apic_icr_write(u32 low, u32 id)
-+{
-+	u64 reg_val;
-+
-+	reg_val = SET_APIC_DEST_FIELD(id);
-+	reg_val = reg_val << 32;
-+	reg_val |= low;
-+
-+	wrmsrl(HV_X64_MSR_ICR, reg_val);
-+}
-+
-+static u32 hv_apic_read(u32 reg)
-+{
-+	u32 reg_val, hi;
-+
-+	switch (reg) {
-+	case APIC_EOI:
-+		rdmsr(HV_X64_MSR_EOI, reg_val, hi);
-+		return reg_val;
-+	case APIC_TASKPRI:
-+		rdmsr(HV_X64_MSR_TPR, reg_val, hi);
-+		return reg_val;
-+
-+	default:
-+		return native_apic_mem_read(reg);
-+	}
-+}
-+
-+static void hv_apic_write(u32 reg, u32 val)
-+{
-+	switch (reg) {
-+	case APIC_EOI:
-+		wrmsr(HV_X64_MSR_EOI, val, 0);
-+		break;
-+	case APIC_TASKPRI:
-+		wrmsr(HV_X64_MSR_TPR, val, 0);
-+		break;
-+	default:
-+		native_apic_mem_write(reg, val);
-+	}
-+}
-+
-+static void hv_apic_eoi_write(u32 reg, u32 val)
-+{
-+	wrmsr(HV_X64_MSR_EOI, val, 0);
-+}
-+
-+void __init hv_apic_init(void)
-+{
-+	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
-+		pr_info("Hyper-V: Using MSR based APIC access\n");
-+		apic_set_eoi_write(hv_apic_eoi_write);
-+		apic->read      = hv_apic_read;
-+		apic->write     = hv_apic_write;
-+		apic->icr_write = hv_apic_icr_write;
-+		apic->icr_read  = hv_apic_icr_read;
-+	}
-+}
-+
-+#endif /* CONFIG_HYPERV */
-+#endif /* CONFIG_X86_64 */
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index cfecc2272f2d..71e50fc2b7ef 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -242,8 +242,9 @@ static int hv_cpu_die(unsigned int cpu)
-  *
-  * 1. Setup the hypercall page.
-  * 2. Register Hyper-V specific clocksource.
-+ * 3. Setup Hyper-V specific APIC entry points.
-  */
--void hyperv_init(void)
-+void __init hyperv_init(void)
+ static u64 hv_apic_icr_read(void)
  {
- 	u64 guest_id, required_msrs;
- 	union hv_x64_msr_hypercall_contents hypercall_msr;
-@@ -298,6 +299,8 @@ void hyperv_init(void)
- 
- 	hyper_alloc_mmu();
- 
-+	hv_apic_init();
-+
- 	/*
- 	 * Register Hyper-V specific clocksource.
- 	 */
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index b90e79610cf7..162977b82e2e 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -258,7 +258,7 @@ static inline int hv_cpu_number_to_vp_number(int cpu_number)
- 	return hv_vp_index[cpu_number];
+ 	u64 reg_val;
+@@ -88,8 +90,123 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
+ 	wrmsr(HV_X64_MSR_EOI, val, 0);
  }
  
--void hyperv_init(void);
-+void __init hyperv_init(void);
- void hyperv_setup_mmu_ops(void);
- void hyper_alloc_mmu(void);
- void hyperv_report_panic(struct pt_regs *regs, long err);
-@@ -269,6 +269,7 @@ void hyperv_reenlightenment_intr(struct pt_regs *regs);
- void set_hv_tscchange_cb(void (*cb)(void));
- void clear_hv_tscchange_cb(void);
- void hyperv_stop_tsc_emulation(void);
-+void hv_apic_init(void);
- #else /* CONFIG_HYPERV */
- static inline void hyperv_init(void) {}
- static inline bool hv_is_hyperv_initialized(void) { return false; }
-@@ -277,6 +278,7 @@ static inline void hyperv_setup_mmu_ops(void) {}
- static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
- static inline void clear_hv_tscchange_cb(void) {}
- static inline void hyperv_stop_tsc_emulation(void) {};
-+static inline void hv_apic_init(void) {}
- static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
++/*
++ * IPI implementation on Hyper-V.
++ */
++static bool __send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	int cur_cpu, vcpu;
++	struct ipi_arg_non_ex **arg;
++	struct ipi_arg_non_ex *ipi_arg;
++	int ret = 1;
++	unsigned long flags;
++
++	if (cpumask_empty(mask))
++		return true;
++
++	if (!hv_hypercall_pg)
++		return false;
++
++	if ((vector < HV_IPI_LOW_VECTOR) || (vector > HV_IPI_HIGH_VECTOR))
++		return false;
++
++	local_irq_save(flags);
++	arg = (struct ipi_arg_non_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
++
++	ipi_arg = *arg;
++	if (unlikely(!ipi_arg))
++		goto ipi_mask_done;
++
++	ipi_arg->vector = vector;
++	ipi_arg->reserved = 0;
++	ipi_arg->cpu_mask = 0;
++
++	for_each_cpu(cur_cpu, mask) {
++		vcpu = hv_cpu_number_to_vp_number(cur_cpu);
++		/*
++		 * This particular version of the IPI hypercall can
++		 * only target upto 64 CPUs.
++		 */
++		if (vcpu >= 64)
++			goto ipi_mask_done;
++
++		__set_bit(vcpu, (unsigned long *)&ipi_arg->cpu_mask);
++	}
++
++	ret = hv_do_hypercall(HVCALL_SEND_IPI, ipi_arg, NULL);
++
++ipi_mask_done:
++	local_irq_restore(flags);
++	return ((ret == 0) ? true : false);
++}
++
++static bool __send_ipi_one(int cpu, int vector)
++{
++	struct cpumask mask = CPU_MASK_NONE;
++
++	cpumask_set_cpu(cpu, &mask);
++	return __send_ipi_mask(&mask, vector);
++}
++
++static void hv_send_ipi(int cpu, int vector)
++{
++	if (!__send_ipi_one(cpu, vector))
++		orig_apic.send_IPI(cpu, vector);
++}
++
++static void hv_send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	if (!__send_ipi_mask(mask, vector))
++		orig_apic.send_IPI_mask(mask, vector);
++}
++
++static void hv_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
++{
++	unsigned int this_cpu = smp_processor_id();
++	struct cpumask new_mask;
++	const struct cpumask *local_mask;
++
++	cpumask_copy(&new_mask, mask);
++	cpumask_clear_cpu(this_cpu, &new_mask);
++	local_mask = &new_mask;
++	if (!__send_ipi_mask(local_mask, vector))
++		orig_apic.send_IPI_mask_allbutself(mask, vector);
++}
++
++static void hv_send_ipi_allbutself(int vector)
++{
++	hv_send_ipi_mask_allbutself(cpu_online_mask, vector);
++}
++
++static void hv_send_ipi_all(int vector)
++{
++	if (!__send_ipi_mask(cpu_online_mask, vector))
++		orig_apic.send_IPI_all(vector);
++}
++
++static void hv_send_ipi_self(int vector)
++{
++	if (!__send_ipi_one(smp_processor_id(), vector))
++		orig_apic.send_IPI_self(vector);
++}
++
+ void __init hv_apic_init(void)
  {
- 	return NULL;
++	if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
++		pr_info("Hyper-V: Using IPI hypercalls\n");
++		/*
++		 * Set the IPI entry points.
++		 */
++		orig_apic = *apic;
++
++		apic->send_IPI = hv_send_ipi;
++		apic->send_IPI_mask = hv_send_ipi_mask;
++		apic->send_IPI_mask_allbutself = hv_send_ipi_mask_allbutself;
++		apic->send_IPI_allbutself = hv_send_ipi_allbutself;
++		apic->send_IPI_all = hv_send_ipi_all;
++		apic->send_IPI_self = hv_send_ipi_self;
++	}
++
+ 	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
+ 		pr_info("Hyper-V: Using MSR based APIC access\n");
+ 		apic_set_eoi_write(hv_apic_eoi_write);
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 71e50fc2b7ef..6bc90d68ac8b 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -91,12 +91,19 @@ EXPORT_SYMBOL_GPL(hv_vp_index);
+ struct hv_vp_assist_page **hv_vp_assist_page;
+ EXPORT_SYMBOL_GPL(hv_vp_assist_page);
+ 
++void  __percpu **hyperv_pcpu_input_arg;
++EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
++
+ u32 hv_max_vp_index;
+ 
+ static int hv_cpu_init(unsigned int cpu)
+ {
+ 	u64 msr_vp_index;
+ 	struct hv_vp_assist_page **hvp = &hv_vp_assist_page[smp_processor_id()];
++	void **input_arg;
++
++	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
++	*input_arg = page_address(alloc_page(GFP_KERNEL));
+ 
+ 	hv_get_vp_index(msr_vp_index);
+ 
+@@ -217,6 +224,16 @@ static int hv_cpu_die(unsigned int cpu)
+ {
+ 	struct hv_reenlightenment_control re_ctrl;
+ 	unsigned int new_cpu;
++	unsigned long flags;
++	void **input_arg;
++	void *input_pg = NULL;
++
++	local_irq_save(flags);
++	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
++	input_pg = *input_arg;
++	*input_arg = NULL;
++	local_irq_restore(flags);
++	free_page((unsigned long)input_pg);
+ 
+ 	if (hv_vp_assist_page && hv_vp_assist_page[cpu])
+ 		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
+@@ -260,6 +277,16 @@ void __init hyperv_init(void)
+ 	if ((ms_hyperv.features & required_msrs) != required_msrs)
+ 		return;
+ 
++	/*
++	 * Allocate the per-CPU state for the hypercall input arg.
++	 * If this allocation fails, we will not be able to setup
++	 * (per-CPU) hypercall input page and thus this failure is
++	 * fatal on Hyper-V.
++	 */
++	hyperv_pcpu_input_arg = alloc_percpu(void  *);
++
++	BUG_ON(hyperv_pcpu_input_arg == NULL);
++
+ 	/* Allocate percpu VP index */
+ 	hv_vp_index = kmalloc_array(num_possible_cpus(), sizeof(*hv_vp_index),
+ 				    GFP_KERNEL);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 416cb0e0c496..332e786d4deb 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -164,6 +164,11 @@
+  */
+ #define HV_X64_DEPRECATING_AEOI_RECOMMENDED	(1 << 9)
+ 
++/*
++ * Recommend using cluster IPI hypercalls.
++ */
++#define HV_X64_CLUSTER_IPI_RECOMMENDED         (1 << 10)
++
+ /* Recommend using the newer ExProcessorMasks interface */
+ #define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
+ 
+@@ -329,10 +334,14 @@ struct hv_tsc_emulation_status {
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_MASK	\
+ 		(~((1ull << HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT) - 1))
+ 
++#define HV_IPI_LOW_VECTOR	0x10
++#define HV_IPI_HIGH_VECTOR	0xff
++
+ /* Declare the various hypercall operations. */
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE	0x0002
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST	0x0003
+ #define HVCALL_NOTIFY_LONG_SPIN_WAIT		0x0008
++#define HVCALL_SEND_IPI				0x000b
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE_EX  0x0013
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST_EX   0x0014
+ #define HVCALL_POST_MESSAGE			0x005c
+@@ -706,4 +715,10 @@ struct hv_enlightened_vmcs {
+ #define HV_STIMER_AUTOENABLE		(1ULL << 3)
+ #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
+ 
++struct ipi_arg_non_ex {
++	u32 vector;
++	u32 reserved;
++	u64 cpu_mask;
++};
++
+ #endif
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 162977b82e2e..1eff91599c2b 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -122,6 +122,7 @@ static inline void hv_disable_stimer0_percpu_irq(int irq) {}
+ #if IS_ENABLED(CONFIG_HYPERV)
+ extern struct clocksource *hyperv_cs;
+ extern void *hv_hypercall_pg;
++extern void  __percpu  **hyperv_pcpu_input_arg;
+ 
+ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ {
