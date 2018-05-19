@@ -1,220 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeESPzL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 11:55:11 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:54108 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752586AbeESPzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 11:55:03 -0400
-X-Google-Smtp-Source: AB8JxZrWWjSRx8bE+81AFDXQni9iAKsSBOz5X5ehvMCjSyAAsbiQ+nZi1EpCmdYJ9BJJlz2CtsMBJVSwI2B0krYSHUv4VNJsoKB5
+        id S1752716AbeESPzm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 11:55:42 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8125 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752612AbeESPy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 11:54:58 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
+Subject: [PATCH net-next 8/9] net: hns3: Fixes kernel panic issue during rmmod hns3 driver
+Date: Sat, 19 May 2018 16:53:22 +0100
+Message-ID: <20180519155323.68960-9-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180519155323.68960-1-salil.mehta@huawei.com>
+References: <20180519155323.68960-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-Date: Sat, 19 May 2018 08:55:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006d7517056c911740@google.com>
-Subject: INFO: rcu detected stall in is_bpf_text_address
-From: syzbot <syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Xi Wang <wangxi11@huawei.com>
 
-syzbot found the following crash on:
+If CONFIG_ARM_SMMU_V3 is enabled, arm64's dma_ops will replace
+arm64_swiotlb_dma_ops with iommu_dma_ops. When releasing contiguous
+dma memory, the new ops will call the vunmap function which cannot
+be run in interrupt context.
 
-HEAD commit:    73fcb1a370c7 Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1462ec0f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=3dcd59a1f907245f891f
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1079cf8f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156daf97800000
+Currently, spin_lock_bh is called before vunmap is executed. This
+disables BH and causes the interrupt context to be detected to
+generate a kernel panic like below:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com
+[ 2831.573400] kernel BUG at mm/vmalloc.c:1621!
+[ 2831.577659] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+...
+[ 2831.699907] Process rmmod (pid: 1893, stack limit = 0x0000000055103ee2)
+[ 2831.706507] Call trace:
+[ 2831.708941]  vunmap+0x48/0x50
+[ 2831.711897]  dma_common_free_remap+0x78/0x88
+[ 2831.716155]  __iommu_free_attrs+0xa8/0x1c0
+[ 2831.720255]  hclge_free_cmd_desc+0xc8/0x118 [hclge]
+[ 2831.725128]  hclge_destroy_cmd_queue+0x34/0x68 [hclge]
+[ 2831.730261]  hclge_uninit_ae_dev+0x90/0x100 [hclge]
+[ 2831.735127]  hnae3_unregister_ae_dev+0xb0/0x868 [hnae3]
+[ 2831.740345]  hns3_remove+0x3c/0x90 [hns3]
+[ 2831.744344]  pci_device_remove+0x48/0x108
+[ 2831.748342]  device_release_driver_internal+0x164/0x200
+[ 2831.753553]  driver_detach+0x4c/0x88
+[ 2831.757116]  bus_remove_driver+0x60/0xc0
+[ 2831.761026]  driver_unregister+0x34/0x60
+[ 2831.764935]  pci_unregister_driver+0x30/0xb0
+[ 2831.769197]  hns3_exit_module+0x10/0x978 [hns3]
+[ 2831.773715]  SyS_delete_module+0x1f8/0x248
+[ 2831.777799]  el0_svc_naked+0x30/0x34
 
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-INFO: rcu_sched self-detected stall on CPU
-	0-...!: (124998 ticks this GP) idle=0be/1/4611686018427387908  
-softirq=15234/15234 fqs=59
-	 (t=125000 jiffies g=7610 c=7609 q=351640)
-rcu_sched kthread starved for 124739 jiffies! g7610 c7609 f0x2  
-RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
-RCU grace-period kthread stack dump:
-rcu_sched       R  running task    23896     9      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2859 [inline]
-  __schedule+0x801/0x1e30 kernel/sched/core.c:3501
-  schedule+0xef/0x430 kernel/sched/core.c:3545
-  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
-  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-NMI backtrace for cpu 0
-CPU: 0 PID: 6381 Comm: sh Not tainted 4.17.0-rc5+ #58
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
-  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
-  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
-  __rcu_pending kernel/rcu/tree.c:3356 [inline]
-  rcu_pending kernel/rcu/tree.c:3401 [inline]
-  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:lock_acquire+0x257/0x520 kernel/locking/lockdep.c:3923
-RSP: 0000:ffff8801dae06b60 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1003b5c0d71 RCX: 0000000000000000
-RDX: 1ffffffff11a30e5 RSI: ffff8801c7b54c38 RDI: 0000000000000286
-RBP: ffff8801dae06c50 R08: 0000000000000008 R09: 0000000000000003
-R10: ffff8801c7b54cb0 R11: ffff8801c7b54400 R12: ffff8801c7b54400
-R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
-  rcu_lock_acquire include/linux/rcupdate.h:246 [inline]
-  rcu_read_lock include/linux/rcupdate.h:632 [inline]
-  is_bpf_text_address+0x3b/0x170 kernel/bpf/core.c:478
-  kernel_text_address+0x79/0xf0 kernel/extable.c:152
-  __kernel_text_address+0xd/0x40 kernel/extable.c:107
-  unwind_get_return_address+0x61/0xa0 arch/x86/kernel/unwind_frame.c:18
-  __save_stack_trace+0x7e/0xd0 arch/x86/kernel/stacktrace.c:45
-  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  slab_post_alloc_hook mm/slab.h:444 [inline]
-  slab_alloc_node mm/slab.c:3335 [inline]
-  kmem_cache_alloc_node+0x131/0x780 mm/slab.c:3642
-  __alloc_skb+0x111/0x780 net/core/skbuff.c:193
-  alloc_skb include/linux/skbuff.h:987 [inline]
-  _sctp_make_chunk+0x58/0x280 net/sctp/sm_make_chunk.c:1417
-  sctp_make_control net/sctp/sm_make_chunk.c:1464 [inline]
-  sctp_make_heartbeat+0x8f/0x430 net/sctp/sm_make_chunk.c:1177
-  sctp_sf_heartbeat.isra.23+0x26/0x180 net/sctp/sm_statefuns.c:1005
-  sctp_sf_sendbeat_8_3+0x38e/0x550 net/sctp/sm_statefuns.c:1049
-  sctp_do_sm+0x1ab/0x7160 net/sctp/sm_sideeffect.c:1188
-  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
-  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
-  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
-RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:22 [inline]
-RIP: 0010:rcu_dynticks_curr_cpu_in_eqs kernel/rcu/tree.c:349 [inline]
-RIP: 0010:rcu_is_watching+0xc4/0x140 kernel/rcu/tree.c:1075
-RSP: 0000:ffff8801c957f398 EFLAGS: 00000a06 ORIG_RAX: ffffffffffffff13
-RAX: 00000000000130be RBX: 1ffff100392afe74 RCX: 1ffff100392afe78
-RDX: 0000000000000004 RSI: 0000000000000004 RDI: ffff8801dae23610
-RBP: ffff8801c957f428 R08: ffffed003b5c46c3 R09: ffffed003b5c46c2
-R10: ffffed003b5c46c2 R11: ffff8801dae23613 R12: ffff8801c957f3c0
-R13: ffff8801dae23610 R14: ffff8801c957f400 R15: dffffc0000000000
-  rcu_read_lock_sched_held+0x8d/0x120 kernel/rcu/update.c:112
-  trace_kmem_cache_alloc include/trace/events/kmem.h:54 [inline]
-  kmem_cache_alloc+0x5fa/0x760 mm/slab.c:3555
-  anon_vma_alloc mm/rmap.c:81 [inline]
-  __anon_vma_prepare+0x3b3/0x700 mm/rmap.c:189
-  anon_vma_prepare include/linux/rmap.h:153 [inline]
-  wp_page_copy+0xdf1/0x1440 mm/memory.c:2481
-  do_wp_page+0x425/0x1990 mm/memory.c:2776
-  handle_pte_fault mm/memory.c:3979 [inline]
-  __handle_mm_fault+0x2996/0x4310 mm/memory.c:4087
-  handle_mm_fault+0x53a/0xc70 mm/memory.c:4124
-  __do_page_fault+0x60b/0xe40 arch/x86/mm/fault.c:1399
-  do_page_fault+0xee/0x8a7 arch/x86/mm/fault.c:1474
-  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
-RIP: 0033:0x7f4232a6d1fb
-RSP: 002b:00007fff2aeebd28 EFLAGS: 00010246
-RAX: 000000000000000d RBX: 00000000756e6547 RCX: 000000006c65746e
-RDX: 0000000049656e69 RSI: 0000000000000025 RDI: 0000000000000002
-RBP: 00007fff2aeebe20 R08: 0000000000000001 R09: 000000000000002f
-R10: 00007f4232a6caf0 R11: 00007fff2aeebb70 R12: 00007f4232a4e000
-R13: 00007f4232dd5038 R14: 00007f4232a6cac0 R15: 00007f4232dd5d98
-BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 126s!
-BUG: workqueue lockup - pool cpus=0-1 flags=0x4 nice=0 stuck for 125s!
-Showing busy workqueues and worker pools:
-workqueue events: flags=0x0
-   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=7/256
-     pending: defense_work_handler, defense_work_handler,  
-defense_work_handler, defense_work_handler, defense_work_handler,  
-vmstat_shepherd, cache_reap
-workqueue events_power_efficient: flags=0x80
-   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/256
-     in-flight: 2107:neigh_periodic_work
-workqueue mm_percpu_wq: flags=0x8
-   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-     pending: vmstat_update
-workqueue writeback: flags=0x4e
-   pwq 4: cpus=0-1 flags=0x4 nice=0 active=1/256
-     in-flight: 4784:wb_workfn
-workqueue ib_addr: flags=0xa0002
-workqueue dm_bufio_cache: flags=0x8
-   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-     pending: work_fn
-workqueue ipv6_addrconf: flags=0x40008
-   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/1
-     pending: addrconf_dad_work
-     delayed: addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_verify_work
-   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
-     pending: addrconf_dad_work
-     delayed: addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work, addrconf_dad_work, addrconf_dad_work, addrconf_dad_work,  
-addrconf_dad_work
-pool 2: cpus=1 node=0 flags=0x0 nice=0 hung=0s workers=4 idle: 4707 24 4924
-pool 4: cpus=0-1 flags=0x4 nice=0 hung=0s workers=4 idle: 44 4846 6
+This patch fixes it by using spin_lock instead of spin_lock_bh.
 
-
+Fixes: 68c0a5c70614 ("net: hns3: Add HNS3 IMP(Integrated Mgmt Proc) Cmd Interface Support")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+index 59fb0eb..c36d647 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+@@ -385,9 +385,9 @@ int hclge_cmd_init(struct hclge_dev *hdev)
+ 
+ static void hclge_destroy_queue(struct hclge_cmq_ring *ring)
+ {
+-	spin_lock_bh(&ring->lock);
++	spin_lock(&ring->lock);
+ 	hclge_free_cmd_desc(ring);
+-	spin_unlock_bh(&ring->lock);
++	spin_unlock(&ring->lock);
+ }
+ 
+ void hclge_destroy_cmd_queue(struct hclge_hw *hw)
+-- 
+2.7.4
