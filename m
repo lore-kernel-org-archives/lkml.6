@@ -1,147 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752526AbeESUKs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 16:10:48 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:37645 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752322AbeESUKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 16:10:46 -0400
-From: Andrew Lunn <andrew@lunn.ch>
-To: srinivas.kandagatla@linaro.org
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH] drivers: nvmem: Add u16 and u8 accessors
-Date: Sat, 19 May 2018 22:10:14 +0200
-Message-Id: <1526760614-15508-1-git-send-email-andrew@lunn.ch>
-X-Mailer: git-send-email 2.1.4
+        id S1752546AbeESUVM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 16:21:12 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39920 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752424AbeESUVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 May 2018 16:21:10 -0400
+X-Google-Smtp-Source: AB8JxZrUqPKaPh8jJpYw3x8e45f2AV4xUsNs3e0v9dyiCuqD1MLwCv91NI+6r8qizWl6mjBPgLhBZUHVrvNqQVV7pY8=
+MIME-Version: 1.0
+In-Reply-To: <20180519163735.GX3803@linux.vnet.ibm.com>
+References: <20180518130413.16997-1-roman.penyaev@profitbricks.com>
+ <20180518130413.16997-2-roman.penyaev@profitbricks.com> <20180519163735.GX3803@linux.vnet.ibm.com>
+From: Roman Penyaev <roman.penyaev@profitbricks.com>
+Date: Sat, 19 May 2018 22:20:48 +0200
+Message-ID: <CAJrWOzAt8BDtypaRwYx_y9jpCVD5W_VL9aQsFsC3bL-XaoJz9g@mail.gmail.com>
+Subject: Re: [PATCH v2 01/26] rculist: introduce list_next_or_null_rr_rcu()
+To: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>, Doug Ledford <dledford@redhat.com>,
+        Swapnil Ingle <swapnil.ingle@profitbricks.com>,
+        Danil Kipnis <danil.kipnis@profitbricks.com>,
+        Jack Wang <jinpu.wang@profitbricks.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nvmem core exports and accessor for getting a u32 from a cell.
-Add similar accessors for u16 and u8.
+On Sat, May 19, 2018 at 6:37 PM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Fri, May 18, 2018 at 03:03:48PM +0200, Roman Pen wrote:
+>> Function is going to be used in transport over RDMA module
+>> in subsequent patches.
+>>
+>> Function returns next element in round-robin fashion,
+>> i.e. head will be skipped.  NULL will be returned if list
+>> is observed as empty.
+>>
+>> Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+>> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  include/linux/rculist.h | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+>> index 127f534fec94..b0840d5ab25a 100644
+>> --- a/include/linux/rculist.h
+>> +++ b/include/linux/rculist.h
+>> @@ -339,6 +339,25 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
+>>  })
+>>
+>>  /**
+>> + * list_next_or_null_rr_rcu - get next list element in round-robin fashion.
+>> + * @head:    the head for the list.
+>> + * @ptr:        the list head to take the next element from.
+>> + * @type:       the type of the struct this is embedded in.
+>> + * @memb:       the name of the list_head within the struct.
+>> + *
+>> + * Next element returned in round-robin fashion, i.e. head will be skipped,
+>> + * but if list is observed as empty, NULL will be returned.
+>> + *
+>> + * This primitive may safely run concurrently with the _rcu list-mutation
+>> + * primitives such as list_add_rcu() as long as it's guarded by rcu_read_lock().
+>
+> Of course, all the set of list_next_or_null_rr_rcu() invocations that
+> are round-robining a given list must all be under the same RCU read-side
+> critical section.  For example, the following will break badly:
+>
+>         struct foo *take_rr_step(struct list_head *head, struct foo *ptr)
+>         {
+>                 struct foo *ret;
+>
+>                 rcu_read_lock();
+>                 ret = list_next_or_null_rr_rcu(head, ptr, struct foo, foolist);
+>                 rcu_read_unlock();  /* BUG */
+>                 return ret;
+>         }
+>
+> You need a big fat comment stating this, at the very least.  The resulting
+> bug can be very hard to trigger and even harder to debug.
+>
+> And yes, I know that the same restriction applies to list_next_rcu()
+> and friends.  The difference is that if you try to invoke those in an
+> infinite loop, you will be rapped on the knuckles as soon as you hit
+> the list header.  Without that knuckle-rapping, RCU CPU stall warnings
+> might tempt people to do something broken like take_rr_step() above.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/nvmem/core.c           | 74 ++++++++++++++++++++++++++++++++++
- include/linux/nvmem-consumer.h | 14 +++++++
- 2 files changed, 88 insertions(+)
+Hi Paul,
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b1c95ef78544..61fd5810f805 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1216,6 +1216,80 @@ int nvmem_cell_read_u32(struct device *dev, const char *cell_id, u32 *val)
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_read_u32);
- 
-+/**
-+ * nvmem_cell_read_u16() - Read a cell value as an u16
-+ *
-+ * @dev: Device that requests the nvmem cell.
-+ * @cell_id: Name of nvmem cell to read.
-+ * @val: pointer to output value.
-+ *
-+ * Return: 0 on success or negative errno.
-+ */
-+int nvmem_cell_read_u16(struct device *dev, const char *cell_id, u16 *val)
-+{
-+	struct nvmem_cell *cell;
-+	void *buf;
-+	size_t len;
-+
-+	cell = nvmem_cell_get(dev, cell_id);
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	buf = nvmem_cell_read(cell, &len);
-+	if (IS_ERR(buf)) {
-+		nvmem_cell_put(cell);
-+		return PTR_ERR(buf);
-+	}
-+	if (len != sizeof(*val)) {
-+		kfree(buf);
-+		nvmem_cell_put(cell);
-+		return -EINVAL;
-+	}
-+	memcpy(val, buf, sizeof(*val));
-+
-+	kfree(buf);
-+	nvmem_cell_put(cell);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(nvmem_cell_read_u16);
-+
-+/**
-+ * nvmem_cell_read_u8() - Read a cell value as an u8
-+ *
-+ * @dev: Device that requests the nvmem cell.
-+ * @cell_id: Name of nvmem cell to read.
-+ * @val: pointer to output value.
-+ *
-+ * Return: 0 on success or negative errno.
-+ */
-+int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val)
-+{
-+	struct nvmem_cell *cell;
-+	void *buf;
-+	size_t len;
-+
-+	cell = nvmem_cell_get(dev, cell_id);
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	buf = nvmem_cell_read(cell, &len);
-+	if (IS_ERR(buf)) {
-+		nvmem_cell_put(cell);
-+		return PTR_ERR(buf);
-+	}
-+	if (len != sizeof(*val)) {
-+		kfree(buf);
-+		nvmem_cell_put(cell);
-+		return -EINVAL;
-+	}
-+	memcpy(val, buf, sizeof(*val));
-+
-+	kfree(buf);
-+	nvmem_cell_put(cell);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(nvmem_cell_read_u8);
-+
- /**
-  * nvmem_device_cell_read() - Read a given nvmem device and cell
-  *
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index 4e85447f7860..927d964a6358 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -39,6 +39,8 @@ void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
- void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
- int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
- int nvmem_cell_read_u32(struct device *dev, const char *cell_id, u32 *val);
-+int nvmem_cell_read_u16(struct device *dev, const char *cell_id, u16 *val);
-+int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val);
- 
- /* direct nvmem device read/write interface */
- struct nvmem_device *nvmem_device_get(struct device *dev, const char *name);
-@@ -95,6 +97,18 @@ static inline int nvmem_cell_read_u32(struct device *dev,
- 	return -ENOSYS;
- }
- 
-+static inline int nvmem_cell_read_u16(struct device *dev,
-+				      const char *cell_id, u16 *val)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int nvmem_cell_read_u8(struct device *dev,
-+				     const char *cell_id, u8 *val)
-+{
-+	return -ENOSYS;
-+}
-+
- static inline struct nvmem_device *nvmem_device_get(struct device *dev,
- 						    const char *name)
- {
--- 
-2.17.0
+I need -rr behaviour for doing IO load-balancing when I choose next RDMA
+connection from the list in order to send a request, i.e. my code is
+something like the following:
+
+        static struct conn *get_and_set_next_conn(void)
+        {
+                struct conn *conn;
+
+                conn = rcu_dereferece(rcu_conn);
+                if (unlikely(!conn))
+                    return conn;
+                conn = list_next_or_null_rr_rcu(&conn_list,
+                                                &conn->entry,
+                                                typeof(*conn),
+                                                entry);
+                rcu_assign_pointer(rcu_conn, conn);
+                return conn;
+        }
+
+        rcu_read_lock();
+        conn = get_and_set_next_conn();
+        if (unlikely(!conn)) {
+                /* ... */
+        }
+        err = rdma_io(conn, request);
+        rcu_read_unlock();
+
+i.e. usage of the @next pointer is under an RCU critical section.
+
+> Is it possible to instead do some sort of list_for_each_entry_rcu()-like
+> macro that makes it more obvious that the whole thing need to be under
+> a single RCU read-side critical section?  Such a macro would of course be
+> an infinite loop if the list never went empty, so presumably there would
+> be a break or return statement in there somewhere.
+
+The difference is that I do not need a loop, I take the @next conn pointer,
+save it for the following IO request and do IO for current IO request.
+
+It seems list_for_each_entry_rcu()-like with immediate "break" in the body
+of the loop does not look nice, I personally do not like it, i.e.:
+
+
+        static struct conn *get_and_set_next_conn(void)
+        {
+                struct conn *conn;
+
+                conn = rcu_dereferece(rcu_conn);
+                if (unlikely(!conn))
+                    return conn;
+                list_for_each_entry_rr_rcu(conn, &conn_list,
+                                           entry) {
+                        break;
+                }
+                rcu_assign_pointer(rcu_conn, conn);
+                return conn;
+        }
+
+
+or maybe I did not fully get your idea?
+
+>> + */
+>> +#define list_next_or_null_rr_rcu(head, ptr, type, memb) \
+>> +({ \
+>> +     list_next_or_null_rcu(head, ptr, type, memb) ?: \
+>> +             list_next_or_null_rcu(head, READ_ONCE((ptr)->next), type, memb); \
+>
+> Are there any uses for this outside of RDMA?  If not, I am with Linus.
+> Define this within RDMA, where a smaller number of people can more
+> easily be kept aware of the restrictions on use.  If it turns out to be
+> more generally useful, we can take a look at exactly what makes sense
+> more globally.
+
+The only one list_for_each_entry_rcu()-like macro I am aware of is used in
+block/blk-mq-sched.c, is called list_for_each_entry_rcu_rr():
+
+https://elixir.bootlin.com/linux/v4.17-rc5/source/block/blk-mq-sched.c#L370
+
+Does it make sense to implement generic list_next_or_null_rr_rcu() reusing
+my list_next_or_null_rr_rcu() variant?
+
+> Even within RDMA, I strongly recommend the big fat comment called out above.
+> And the list_for_each_entry_rcu()-like formulation, if that can be made to
+> work within RDMA's code structure.
+>
+> Seem reasonable, or am I missing something here?
+
+Thanks for clear explanation.
+
+--
+Roman
