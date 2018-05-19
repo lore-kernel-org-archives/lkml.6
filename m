@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeESKZU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 06:25:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36317 "EHLO
+        id S1752206AbeESKeW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 06:34:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45011 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752053AbeESKZP (ORCPT
+        with ESMTP id S1752112AbeESKeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 06:25:15 -0400
-Date: Sat, 19 May 2018 03:24:48 -0700
+        Sat, 19 May 2018 06:34:19 -0400
+Date: Sat, 19 May 2018 03:34:00 -0700
 From: tip-bot for Dmitry Safonov <tipbot@zytor.com>
-Message-ID: <tip-5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194@git.kernel.org>
-Cc: mingo@kernel.org, 0x7f454c46@gmail.com, dima@arista.com,
-        kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@suse.de,
-        luto@kernel.org, izbyshev@ispras.ru, gorcunov@openvz.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, amonakov@ispras.ru
-Reply-To: dima@arista.com, kirill.shutemov@linux.intel.com,
-        0x7f454c46@gmail.com, mingo@kernel.org, izbyshev@ispras.ru,
-        gorcunov@openvz.org, bp@suse.de, tglx@linutronix.de, luto@kernel.org,
-        amonakov@ispras.ru, hpa@zytor.com, linux-kernel@vger.kernel.org
+Message-ID: <tip-acf46020012ccbca1172e9c7aeab399c950d9212@git.kernel.org>
+Cc: kirill.shutemov@linux.intel.com, 0x7f454c46@gmail.com, hpa@zytor.com,
+        mingo@kernel.org, bp@suse.de, izbyshev@ispras.ru,
+        linux-kernel@vger.kernel.org, luto@kernel.org, gorcunov@openvz.org,
+        tglx@linutronix.de, dima@arista.com, amonakov@ispras.ru
+Reply-To: linux-kernel@vger.kernel.org, gorcunov@openvz.org, luto@kernel.org,
+        dima@arista.com, tglx@linutronix.de, amonakov@ispras.ru,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org,
+        0x7f454c46@gmail.com, hpa@zytor.com, izbyshev@ispras.ru, bp@suse.de
 In-Reply-To: <20180517233510.24996-1-dima@arista.com>
 References: <20180517233510.24996-1-dima@arista.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/urgent] x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
-Git-Commit-ID: 5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
+Git-Commit-ID: acf46020012ccbca1172e9c7aeab399c950d9212
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,12 +35,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
-Gitweb:     https://git.kernel.org/tip/5f7633ba75acd80dd1dd4ef408bc6d98f9e2b194
+Commit-ID:  acf46020012ccbca1172e9c7aeab399c950d9212
+Gitweb:     https://git.kernel.org/tip/acf46020012ccbca1172e9c7aeab399c950d9212
 Author:     Dmitry Safonov <dima@arista.com>
 AuthorDate: Fri, 18 May 2018 00:35:10 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 19 May 2018 12:22:24 +0200
+CommitDate: Sat, 19 May 2018 12:31:05 +0200
 
 x86/mm: Drop TS_COMPAT on 64-bit exec() syscall
 
@@ -109,6 +109,7 @@ Bisected-by: Alexander Monakov <amonakov@ispras.ru>
 Investigated-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Cyrill Gorcunov <gorcunov@openvz.org>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: Alexander Monakov <amonakov@ispras.ru>
 Cc: Dmitry Safonov <0x7f454c46@gmail.com>
@@ -119,7 +120,6 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Cyrill Gorcunov <gorcunov@openvz.org>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Link: https://lkml.kernel.org/r/20180517233510.24996-1-dima@arista.com
-
 ---
  arch/x86/kernel/process_64.c | 1 +
  1 file changed, 1 insertion(+)
