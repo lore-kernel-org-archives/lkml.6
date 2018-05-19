@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752415AbeESLW6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:22:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42709 "EHLO
+        id S1752485AbeESLXW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:23:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38179 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbeESLW5 (ORCPT
+        with ESMTP id S1752296AbeESLXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:22:57 -0400
-Date: Sat, 19 May 2018 04:21:49 -0700
+        Sat, 19 May 2018 07:23:21 -0400
+Date: Sat, 19 May 2018 04:23:16 -0700
 From: tip-bot for Vikas Shivappa <tipbot@zytor.com>
-Message-ID: <tip-d6c64a4f49fdea0ae79addc3282ae8eb8581bdfc@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, vikas.shivappa@linux.intel.com,
-        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, vikas.shivappa@linux.intel.com,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
-In-Reply-To: <1524263781-14267-2-git-send-email-vikas.shivappa@linux.intel.com>
-References: <1524263781-14267-2-git-send-email-vikas.shivappa@linux.intel.com>
+Message-ID: <tip-8205a078ba7819c23558e31af4b3bda04d9b3bae@git.kernel.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, vikas.shivappa@linux.intel.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, vikas.shivappa@linux.intel.com
+In-Reply-To: <1524263781-14267-5-git-send-email-vikas.shivappa@linux.intel.com>
+References: <1524263781-14267-5-git-send-email-vikas.shivappa@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Documentation for MBA
- software controller(mba_sc)
-Git-Commit-ID: d6c64a4f49fdea0ae79addc3282ae8eb8581bdfc
+Subject: [tip:x86/cache] x86/intel_rdt/mba_sc: Add schemata support
+Git-Commit-ID: 8205a078ba7819c23558e31af4b3bda04d9b3bae
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,19 +31,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d6c64a4f49fdea0ae79addc3282ae8eb8581bdfc
-Gitweb:     https://git.kernel.org/tip/d6c64a4f49fdea0ae79addc3282ae8eb8581bdfc
+Commit-ID:  8205a078ba7819c23558e31af4b3bda04d9b3bae
+Gitweb:     https://git.kernel.org/tip/8205a078ba7819c23558e31af4b3bda04d9b3bae
 Author:     Vikas Shivappa <vikas.shivappa@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:36:16 -0700
+AuthorDate: Fri, 20 Apr 2018 15:36:19 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 19 May 2018 13:16:42 +0200
+CommitDate: Sat, 19 May 2018 13:16:44 +0200
 
-x86/intel_rdt/mba_sc: Documentation for MBA software controller(mba_sc)
+x86/intel_rdt/mba_sc: Add schemata support
 
-Add documentation about the feedback loop mechanism (MBA software
-controller) which lets the user specify the memory bandwidth allocation
-in MBps. This includes some changes to "schemata" formati with
-examples.
+Currently when user updates the "schemata" with new MBA percentage
+values, kernel writes the corresponding bandwidth percentage values to
+the IA32_MBA_THRTL_MSR.
+
+When MBA is expressed in MBps, the schemata format is changed to have the
+per package memory bandwidth in MBps instead of being specified in
+percentage. Do not write the IA32_MBA_THRTL_MSRs when the schemata is
+updated as that is handled separately.
 
 Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -54,133 +57,89 @@ Cc: fenghua.yu@intel.com
 Cc: vikas.shivappa@intel.com
 Cc: ak@linux.intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1524263781-14267-2-git-send-email-vikas.shivappa@linux.intel.com
+Link: https://lkml.kernel.org/r/1524263781-14267-5-git-send-email-vikas.shivappa@linux.intel.com
 
 ---
- Documentation/x86/intel_rdt_ui.txt | 75 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 67 insertions(+), 8 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c             |  2 +-
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 24 +++++++++++++++++++-----
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index 71c30984e94d..a16aa2113840 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -17,12 +17,14 @@ MBA (Memory Bandwidth Allocation) - "mba"
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index 8c09e9db2fc6..ad03d975883e 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -179,7 +179,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.msr_update		= mba_wrmsr,
+ 		.cache_level		= 3,
+ 		.parse_ctrlval		= parse_bw,
+-		.format_str		= "%d=%*d",
++		.format_str		= "%d=%*u",
+ 		.fflags			= RFTYPE_RES_MB,
+ 	},
+ };
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 23e1d5c249c6..116d57b248d3 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -53,7 +53,8 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 		return false;
+ 	}
  
- To use the feature mount the file system:
+-	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
++	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
++	    !is_mba_sc(r)) {
+ 		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
+ 				    r->membw.min_bw, r->default_ctrl);
+ 		return false;
+@@ -179,6 +180,8 @@ static int update_domains(struct rdt_resource *r, int closid)
+ 	struct msr_param msr_param;
+ 	cpumask_var_t cpu_mask;
+ 	struct rdt_domain *d;
++	bool mba_sc;
++	u32 *dc;
+ 	int cpu;
  
-- # mount -t resctrl resctrl [-o cdp[,cdpl2]] /sys/fs/resctrl
-+ # mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
+ 	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
+@@ -188,13 +191,20 @@ static int update_domains(struct rdt_resource *r, int closid)
+ 	msr_param.high = msr_param.low + 1;
+ 	msr_param.res = r;
  
- mount options are:
- 
- "cdp": Enable code/data prioritization in L3 cache allocations.
- "cdpl2": Enable code/data prioritization in L2 cache allocations.
-+"mba_MBps": Enable the MBA Software Controller(mba_sc) to specify MBA
-+ bandwidth in MBps
- 
- L2 and L3 CDP are controlled seperately.
- 
-@@ -270,10 +272,11 @@ and 0xA are not.  On a system with a 20-bit mask each bit represents 5%
- of the capacity of the cache. You could partition the cache into four
- equal parts with masks: 0x1f, 0x3e0, 0x7c00, 0xf8000.
- 
--Memory bandwidth(b/w) percentage
----------------------------------
--For Memory b/w resource, user controls the resource by indicating the
--percentage of total memory b/w.
-+Memory bandwidth Allocation and monitoring
-+------------------------------------------
++	mba_sc = is_mba_sc(r);
+ 	list_for_each_entry(d, &r->domains, list) {
+-		if (d->have_new_ctrl && d->new_ctrl != d->ctrl_val[closid]) {
++		dc = !mba_sc ? d->ctrl_val : d->mbps_val;
++		if (d->have_new_ctrl && d->new_ctrl != dc[closid]) {
+ 			cpumask_set_cpu(cpumask_any(&d->cpu_mask), cpu_mask);
+-			d->ctrl_val[closid] = d->new_ctrl;
++			dc[closid] = d->new_ctrl;
+ 		}
+ 	}
+-	if (cpumask_empty(cpu_mask))
 +
-+For Memory bandwidth resource, by default the user controls the resource
-+by indicating the percentage of total memory bandwidth.
++	/*
++	 * Avoid writing the control msr with control values when
++	 * MBA software controller is enabled
++	 */
++	if (cpumask_empty(cpu_mask) || mba_sc)
+ 		goto done;
+ 	cpu = get_cpu();
+ 	/* Update CBM on this cpu if it's in cpu_mask. */
+@@ -282,13 +292,17 @@ static void show_doms(struct seq_file *s, struct rdt_resource *r, int closid)
+ {
+ 	struct rdt_domain *dom;
+ 	bool sep = false;
++	u32 ctrl_val;
  
- The minimum bandwidth percentage value for each cpu model is predefined
- and can be looked up through "info/MB/min_bandwidth". The bandwidth
-@@ -285,7 +288,47 @@ to the next control step available on the hardware.
- The bandwidth throttling is a core specific mechanism on some of Intel
- SKUs. Using a high bandwidth and a low bandwidth setting on two threads
- sharing a core will result in both threads being throttled to use the
--low bandwidth.
-+low bandwidth. The fact that Memory bandwidth allocation(MBA) is a core
-+specific mechanism where as memory bandwidth monitoring(MBM) is done at
-+the package level may lead to confusion when users try to apply control
-+via the MBA and then monitor the bandwidth to see if the controls are
-+effective. Below are such scenarios:
+ 	seq_printf(s, "%*s:", max_name_width, r->name);
+ 	list_for_each_entry(dom, &r->domains, list) {
+ 		if (sep)
+ 			seq_puts(s, ";");
 +
-+1. User may *not* see increase in actual bandwidth when percentage
-+   values are increased:
-+
-+This can occur when aggregate L2 external bandwidth is more than L3
-+external bandwidth. Consider an SKL SKU with 24 cores on a package and
-+where L2 external  is 10GBps (hence aggregate L2 external bandwidth is
-+240GBps) and L3 external bandwidth is 100GBps. Now a workload with '20
-+threads, having 50% bandwidth, each consuming 5GBps' consumes the max L3
-+bandwidth of 100GBps although the percentage value specified is only 50%
-+<< 100%. Hence increasing the bandwidth percentage will not yeild any
-+more bandwidth. This is because although the L2 external bandwidth still
-+has capacity, the L3 external bandwidth is fully used. Also note that
-+this would be dependent on number of cores the benchmark is run on.
-+
-+2. Same bandwidth percentage may mean different actual bandwidth
-+   depending on # of threads:
-+
-+For the same SKU in #1, a 'single thread, with 10% bandwidth' and '4
-+thread, with 10% bandwidth' can consume upto 10GBps and 40GBps although
-+they have same percentage bandwidth of 10%. This is simply because as
-+threads start using more cores in an rdtgroup, the actual bandwidth may
-+increase or vary although user specified bandwidth percentage is same.
-+
-+In order to mitigate this and make the interface more user friendly,
-+resctrl added support for specifying the bandwidth in MBps as well.  The
-+kernel underneath would use a software feedback mechanism or a "Software
-+Controller(mba_sc)" which reads the actual bandwidth using MBM counters
-+and adjust the memowy bandwidth percentages to ensure
-+
-+	"actual bandwidth < user specified bandwidth".
-+
-+By default, the schemata would take the bandwidth percentage values
-+where as user can switch to the "MBA software controller" mode using
-+a mount option 'mba_MBps'. The schemata format is specified in the below
-+sections.
- 
- L3 schemata file details (code and data prioritization disabled)
- ----------------------------------------------------------------
-@@ -308,13 +351,20 @@ schemata format is always:
- 
- 	L2:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
- 
--Memory b/w Allocation details
-------------------------------
-+Memory bandwidth Allocation (default mode)
-+------------------------------------------
- 
- Memory b/w domain is L3 cache.
- 
- 	MB:<cache_id0>=bandwidth0;<cache_id1>=bandwidth1;...
- 
-+Memory bandwidth Allocation specified in MBps
-+---------------------------------------------
-+
-+Memory bandwidth domain is L3 cache.
-+
-+	MB:<cache_id0>=bw_MBps0;<cache_id1>=bw_MBps1;...
-+
- Reading/writing the schemata file
- ---------------------------------
- Reading the schemata file will show the state of all resources
-@@ -358,6 +408,15 @@ allocations can overlap or not. The allocations specifies the maximum
- b/w that the group may be able to use and the system admin can configure
- the b/w accordingly.
- 
-+If the MBA is specified in MB(megabytes) then user can enter the max b/w in MB
-+rather than the percentage values.
-+
-+# echo "L3:0=3;1=c\nMB:0=1024;1=500" > /sys/fs/resctrl/p0/schemata
-+# echo "L3:0=3;1=3\nMB:0=1024;1=500" > /sys/fs/resctrl/p1/schemata
-+
-+In the above example the tasks in "p1" and "p0" on socket 0 would use a max b/w
-+of 1024MB where as on socket 1 they would use 500MB.
-+
- Example 2
- ---------
- Again two sockets, but this time with a more realistic 20-bit mask.
++		ctrl_val = (!is_mba_sc(r) ? dom->ctrl_val[closid] :
++			    dom->mbps_val[closid]);
+ 		seq_printf(s, r->format_str, dom->id, max_data_width,
+-			   dom->ctrl_val[closid]);
++			   ctrl_val);
+ 		sep = true;
+ 	}
+ 	seq_puts(s, "\n");
