@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeESCqi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 18 May 2018 22:46:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44790 "EHLO mail.kernel.org"
+        id S1752521AbeESCqp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 18 May 2018 22:46:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752361AbeESCqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 May 2018 22:46:34 -0400
+        id S1752361AbeESCqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 May 2018 22:46:39 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -25,9 +25,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 07/12] sh: Remove "struct arch_hw_breakpoint::name" unused field
-Date: Sat, 19 May 2018 04:45:44 +0200
-Message-Id: <1526697950-7091-8-git-send-email-frederic@kernel.org>
+Subject: [PATCH 08/12] sh: Implement hw_breakpoint_arch_parse()
+Date: Sat, 19 May 2018 04:45:45 +0200
+Message-Id: <1526697950-7091-9-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526697950-7091-1-git-send-email-frederic@kernel.org>
 References: <1526697950-7091-1-git-send-email-frederic@kernel.org>
@@ -35,7 +35,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This field seem to be unused, perhaps a leftover from old code...
+Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
+that clumsily mixes up architecture validation and commit
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -59,39 +60,125 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- arch/sh/include/asm/hw_breakpoint.h | 1 -
- arch/sh/kernel/hw_breakpoint.c      | 7 -------
- 2 files changed, 8 deletions(-)
+ arch/sh/include/asm/hw_breakpoint.h |  6 +++++-
+ arch/sh/kernel/hw_breakpoint.c      | 37 +++++++++++++++++++------------------
+ 2 files changed, 24 insertions(+), 19 deletions(-)
 
 diff --git a/arch/sh/include/asm/hw_breakpoint.h b/arch/sh/include/asm/hw_breakpoint.h
-index 8a88ed0..dae622d 100644
+index dae622d..ed421dc 100644
 --- a/arch/sh/include/asm/hw_breakpoint.h
 +++ b/arch/sh/include/asm/hw_breakpoint.h
-@@ -10,7 +10,6 @@
- #include <linux/types.h>
+@@ -40,6 +40,7 @@ struct sh_ubc {
+ 	struct clk	*clk;	/* optional interface clock / MSTP bit */
+ };
  
- struct arch_hw_breakpoint {
--	char		*name; /* Contains name of the symbol to set bkpt */
- 	unsigned long	address;
- 	u16		len;
- 	u16		type;
++struct perf_event_attr;
+ struct perf_event;
+ struct task_struct;
+ struct pmu;
+@@ -54,7 +55,10 @@ static inline int hw_breakpoint_slots(int type)
+ 
+ /* arch/sh/kernel/hw_breakpoint.c */
+ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+-extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
++extern int hw_breakpoint_arch_parse(struct perf_event *bp,
++				    struct perf_event_attr *attr,
++				    struct arch_hw_breakpoint *hw);
++#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+ 
 diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
-index 713699b..3594773 100644
+index 3594773..78a87b1 100644
 --- a/arch/sh/kernel/hw_breakpoint.c
 +++ b/arch/sh/kernel/hw_breakpoint.c
-@@ -248,13 +248,6 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+@@ -173,40 +173,40 @@ int arch_bp_generic_fields(int sh_len, int sh_type,
+ 	return 0;
+ }
+ 
+-static int arch_build_bp_info(struct perf_event *bp)
++static int arch_build_bp_info(struct perf_event *bp,
++			     struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+-
+-	info->address = bp->attr.bp_addr;
++	hw->address = attr->bp_addr;
+ 
+ 	/* Len */
+-	switch (bp->attr.bp_len) {
++	switch (attr->bp_len) {
+ 	case HW_BREAKPOINT_LEN_1:
+-		info->len = SH_BREAKPOINT_LEN_1;
++		hw->len = SH_BREAKPOINT_LEN_1;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_2:
+-		info->len = SH_BREAKPOINT_LEN_2;
++		hw->len = SH_BREAKPOINT_LEN_2;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_4:
+-		info->len = SH_BREAKPOINT_LEN_4;
++		hw->len = SH_BREAKPOINT_LEN_4;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_8:
+-		info->len = SH_BREAKPOINT_LEN_8;
++		hw->len = SH_BREAKPOINT_LEN_8;
+ 		break;
+ 	default:
+ 		return -EINVAL;
  	}
  
- 	/*
--	 * For kernel-addresses, either the address or symbol name can be
--	 * specified.
--	 */
--	if (info->name)
--		info->address = (unsigned long)kallsyms_lookup_name(info->name);
--
--	/*
+ 	/* Type */
+-	switch (bp->attr.bp_type) {
++	switch (attr->bp_type) {
+ 	case HW_BREAKPOINT_R:
+-		info->type = SH_BREAKPOINT_READ;
++		hw->type = SH_BREAKPOINT_READ;
+ 		break;
+ 	case HW_BREAKPOINT_W:
+-		info->type = SH_BREAKPOINT_WRITE;
++		hw->type = SH_BREAKPOINT_WRITE;
+ 		break;
+ 	case HW_BREAKPOINT_W | HW_BREAKPOINT_R:
+-		info->type = SH_BREAKPOINT_RW;
++		hw->type = SH_BREAKPOINT_RW;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -218,19 +218,20 @@ static int arch_build_bp_info(struct perf_event *bp)
+ /*
+  * Validate the arch-specific HW Breakpoint register settings
+  */
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+ 	unsigned int align;
+ 	int ret;
+ 
+-	ret = arch_build_bp_info(bp);
++	ret = arch_build_bp_info(bp, attr, hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ret = -EINVAL;
+ 
+-	switch (info->len) {
++	switch (hw->len) {
+ 	case SH_BREAKPOINT_LEN_1:
+ 		align = 0;
+ 		break;
+@@ -251,7 +252,7 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
  	 * Check that the low-order bits of the address are appropriate
  	 * for the alignment implied by len.
  	 */
+-	if (info->address & align)
++	if (hw->address & align)
+ 		return -EINVAL;
+ 
+ 	return 0;
 -- 
 2.7.4
