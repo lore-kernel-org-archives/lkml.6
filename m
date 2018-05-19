@@ -1,86 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeESLsf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:48:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43647 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeESLsc (ORCPT
+        id S1752218AbeESLzE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:55:04 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35626 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbeESLzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:48:32 -0400
-Date: Sat, 19 May 2018 04:48:10 -0700
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-19422a9f2a3be7f3a046285ffae4cbb571aa853a@git.kernel.org>
-Cc: joro@8bytes.org, ak@linux.intel.com, mingo@kernel.org,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        adrian.hunter@intel.com, acme@redhat.com, dave.hansen@linux.intel.com,
-        luto@kernel.org
-Reply-To: jolsa@kernel.org, ak@linux.intel.com, mingo@kernel.org,
-        joro@8bytes.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, acme@redhat.com, adrian.hunter@intel.com,
-        dave.hansen@linux.intel.com, luto@kernel.org
-In-Reply-To: <1526548928-20790-7-git-send-email-adrian.hunter@intel.com>
-References: <1526548928-20790-7-git-send-email-adrian.hunter@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Fix kernel_start for PTI on x86
-Git-Commit-ID: 19422a9f2a3be7f3a046285ffae4cbb571aa853a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 19 May 2018 07:55:00 -0400
+Date: Sat, 19 May 2018 12:54:41 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: ilialin@codeaurora.org
+Cc: "'Viresh Kumar'" <viresh.kumar@linaro.org>, mark.rutland@arm.com,
+        nm@ti.com, catalin.marinas@arm.com, mturquette@baylibre.com,
+        will.deacon@arm.com, tfinkel@codeaurora.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        nicolas.dechesne@linaro.org, linux-clk@vger.kernel.org,
+        robh@kernel.org, andy.gross@linaro.org, celster@codeaurora.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, broonie@kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rnayak@codeaurora.org, sboyd@kernel.org, rjw@rjwysocki.net,
+        lgirdwood@gmail.com, amit.kucheria@linaro.org
+Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180519115441.GK17671@n2100.armlinux.org.uk>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+ <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <20180518014538.duphof6enscpm5vp@vireshk-i7>
+ <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  19422a9f2a3be7f3a046285ffae4cbb571aa853a
-Gitweb:     https://git.kernel.org/tip/19422a9f2a3be7f3a046285ffae4cbb571aa853a
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 17 May 2018 12:21:54 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Sat, 19 May 2018 06:42:51 -0300
+On Sat, May 19, 2018 at 02:09:24PM +0300, ilialin@codeaurora.org wrote:
+> +static int __init qcom_cpufreq_kryo_driver_init(void)
+> +{
+> +       struct device *cpu_dev_silver, *cpu_dev_gold;
+> +       struct opp_table *opp_silver, *opp_gold;
+> +       enum _msm8996_version msm8996_version;
+> +       struct nvmem_cell *speedbin_nvmem;
+> +       struct platform_device *pdev;
+> +       struct device_node *np;
+> +       u8 *speedbin;
+> +       u32 versions;
+> +       size_t len;
+> +       int ret;
+> +
+> +       cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> +       if (IS_ERR_OR_NULL(cpu_dev_silver))
+> +               return PTR_ERR(cpu_dev_silver);
+> +
+> +       cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> +       if (IS_ERR_OR_NULL(cpu_dev_gold))
+> +               return PTR_ERR(cpu_dev_gold);
+> +
+> +       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +               dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+> +               return -ENODEV;
+> +       }
+> +
+> +       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+> +       if (IS_ERR_OR_NULL(np))
+> +               return PTR_ERR(np);
 
-perf tools: Fix kernel_start for PTI on x86
+This function (qcom_cpufreq_kryo_driver_init) returns zero on success.
+You are checking "np" here for being an error pointer, or NULL.
+What value do you think PTR_ERR() returns in the case of PTR_ERR(NULL)?
 
-Opickn x86_64, PTI entry trampolines are less than the start of kernel text,
-but still above 2^63. So leave kernel_start = 1ULL << 63 for x86_64.
+IS_ERR_OR_NULL() is considered by some (me included) as being _very_
+harmful because programmers generally fail to look at linux/err.h and
+consider what it means when used as above.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526548928-20790-7-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/machine.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 107bae7676b1..e011a7160380 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2321,7 +2321,12 @@ int machine__get_kernel_start(struct machine *machine)
- 	machine->kernel_start = 1ULL << 63;
- 	if (map) {
- 		err = map__load(map);
--		if (!err)
-+		/*
-+		 * On x86_64, PTI entry trampolines are less than the
-+		 * start of kernel text, but still above 2^63. So leave
-+		 * kernel_start = 1ULL << 63 for x86_64.
-+		 */
-+		if (!err && !machine__is(machine, "x86_64"))
- 			machine->kernel_start = map->start;
- 	}
- 	return err;
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
