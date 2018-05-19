@@ -1,353 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeESLpe (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 07:45:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32852 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeESLp0 (ORCPT
+        id S1752634AbeESLps (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 07:45:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38809 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbeESLpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 07:45:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49DCA60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: <ilialin@codeaurora.org>
-To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <mark.rutland@arm.com>, <nm@ti.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <andy.gross@linaro.org>,
-        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <rjw@rjwysocki.net>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <rnayak@codeaurora.org>,
-        <amit.kucheria@linaro.org>, <nicolas.dechesne@linaro.org>,
-        <celster@codeaurora.org>, <tfinkel@codeaurora.org>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org> <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <20180518014538.duphof6enscpm5vp@vireshk-i7>
-In-Reply-To: <20180518014538.duphof6enscpm5vp@vireshk-i7>
-Subject: RE: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Date: Sat, 19 May 2018 14:45:07 +0300
-Message-ID: <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
+        Sat, 19 May 2018 07:45:46 -0400
+Date: Sat, 19 May 2018 04:45:37 -0700
+From: tip-bot for Sandipan Das <tipbot@zytor.com>
+Message-ID: <tip-7903a70867230d9edbd5e886cd8b8a2b248f418f@git.kernel.org>
+Cc: hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, mingo@kernel.org,
+        ravi.bangoria@linux.ibm.com, tglx@linutronix.de, jolsa@redhat.com,
+        sandipan@linux.vnet.ibm.com
+Reply-To: mingo@kernel.org, sandipan@linux.vnet.ibm.com, jolsa@redhat.com,
+        tglx@linutronix.de, ravi.bangoria@linux.ibm.com, acme@redhat.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com
+In-Reply-To: <20180517063326.6319-2-sandipan@linux.vnet.ibm.com>
+References: <20180517063326.6319-2-sandipan@linux.vnet.ibm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf script: Show symbol offsets by default
+Git-Commit-ID: 7903a70867230d9edbd5e886cd8b8a2b248f418f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ4436NnLWh81Iiw1zG4GLOsqluSgF4oTaoAirQgjmiz+qQcA==
-Content-Language: en-us
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
+Commit-ID:  7903a70867230d9edbd5e886cd8b8a2b248f418f
+Gitweb:     https://git.kernel.org/tip/7903a70867230d9edbd5e886cd8b8a2b248f418f
+Author:     Sandipan Das <sandipan@linux.vnet.ibm.com>
+AuthorDate: Thu, 17 May 2018 12:03:26 +0530
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 18 May 2018 16:31:40 -0300
 
-If I send patches in reply, it will produce new patches, instead of answers
-in the thread. Please find below the file dump.
+perf script: Show symbol offsets by default
 
-->cat drivers/cpufreq/qcom-cpufreq-kryo.c
-// SPDX-License-Identifier: GPL-2.0
-/*
- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- */
+Since the ip shown for a symbol is now always a virtual address, it
+becomes difficult to correlate this with objdump output and determine
+the exact instruction address. So, we always show the offset from the
+start of the symbol.
 
-/*
- * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
- * the CPU frequency subset and voltage value of each OPP varies
- * based on the silicon variant in use. Qualcomm Process Voltage Scaling
-Tables
- * defines the voltage and frequency value based on the msm-id in SMEM
- * and speedbin blown in the efuse combination.
- * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
-SoC
- * to provide the OPP framework with required information.
- * This is used to determine the voltage and frequency value for each OPP of
- * operating-points-v2 table when it is parsed by the OPP framework.
- */
+This can be verified on a powerpc64le system running Fedora 27 as
+follows:
 
-#include <linux/cpu.h>
-#include <linux/err.h>
-#include <linux/init.h>
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/nvmem-consumer.h>
-#include <linux/of.h>
-#include <linux/platform_device.h>
-#include <linux/pm_opp.h>
-#include <linux/slab.h>
-#include <linux/soc/qcom/smem.h>
+  # perf probe -a sys_write
+  # perf record -e probe:sys_write -g ~/test
 
-#define MSM_ID_SMEM     137
-#define SILVER_LEAD     0
-#define GOLD_LEAD       2
+Before applying this patch:
 
-enum _msm_id {
-        MSM8996V3 = 0xF6ul,
-        APQ8096V3 = 0x123ul,
-        MSM8996SG = 0x131ul,
-        APQ8096SG = 0x138ul,
-};
+  # perf script
 
-enum _msm8996_version {
-        MSM8996_V3,
-        MSM8996_SG,
-        NUM_OF_MSM8996_VERSIONS,
-};
+  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
+          c0000000004025b0 sys_write (/lib/modules/4.17.0-rc4+/build/vmlinux)
+          c00000000000b9e0 system_call (/lib/modules/4.17.0-rc4+/build/vmlinux)
+              7fffb70d8234 __GI___libc_write (/usr/lib64/libc-2.26.so)
+              7fffb7052c74 _IO_file_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+                  5afc1818 [unknown] ([unknown])
+              7fffb7051a60 new_do_write (/usr/lib64/libc-2.26.so)
+              7fffb7054638 _IO_do_write@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17 (/usr/lib64/libc-2.26.so)
+              7fffb7055a24 __overflow (/usr/lib64/libc-2.26.so)
+              7fffb7044548 _IO_puts (/usr/lib64/libc-2.26.so)
+                  10000440 main (/home/sandipan/test)
+              7fffb6fe36a0 generic_start_main.isra.0 (/usr/lib64/libc-2.26.so)
+              7fffb6fe3898 __libc_start_main (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+  ...
 
-static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-{
-        size_t len;
-        u32 *msm_id;
-        enum _msm8996_version version;
+After applying this patch:
 
-        msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-        /* The first 4 bytes are format, next to them is the actual msm-id
-*/
-        msm_id++;
+  # perf script
 
-        switch ((enum _msm_id)*msm_id) {
-        case MSM8996V3:
-        case APQ8096V3:
-                version = MSM8996_V3;
-                break;
-        case MSM8996SG:
-        case APQ8096SG:
-                version = MSM8996_SG;
-                break;
-        default:
-                version = NUM_OF_MSM8996_VERSIONS;
-        }
+  test  9710 [013] 95614.332431: probe:sys_write: (c0000000004025b0)
+          c0000000004025b0 sys_write+0x10 (/lib/modules/4.17.0-rc4+/build/vmlinux)
+          c00000000000b9e0 system_call+0x58 (/lib/modules/4.17.0-rc4+/build/vmlinux)
+              7fffb70d8234 __GI___libc_write+0x24 (/usr/lib64/libc-2.26.so)
+              7fffb7052c74 _IO_file_write@@GLIBC_2.17+0x44 (/usr/lib64/libc-2.26.so)
+                  5afc1818 [unknown] ([unknown])
+              7fffb7051a60 new_do_write+0x90 (/usr/lib64/libc-2.26.so)
+              7fffb7054638 _IO_do_write@@GLIBC_2.17+0x38 (/usr/lib64/libc-2.26.so)
+              7fffb7054bbc _IO_file_overflow@@GLIBC_2.17+0x14c (/usr/lib64/libc-2.26.so)
+              7fffb7055a24 __overflow+0x64 (/usr/lib64/libc-2.26.so)
+              7fffb7044548 _IO_puts+0x218 (/usr/lib64/libc-2.26.so)
+                  10000440 main+0x20 (/home/sandipan/test)
+              7fffb6fe36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffb6fe3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+  ...
 
-        return version;
-}
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20180517063326.6319-2-sandipan@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-script.c                        | 26 ++++++++++++----------
+ .../tests/shell/record+probe_libc_inet_pton.sh     | 12 +++++-----
+ 2 files changed, 20 insertions(+), 18 deletions(-)
 
-static int __init qcom_cpufreq_kryo_driver_init(void)
-{
-        struct device *cpu_dev_silver, *cpu_dev_gold;
-        struct opp_table *opp_silver, *opp_gold;
-        enum _msm8996_version msm8996_version;
-        struct nvmem_cell *speedbin_nvmem;
-        struct platform_device *pdev;
-        struct device_node *np;
-        u8 *speedbin;
-        u32 versions;
-        size_t len;
-        int ret;
-
-        cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-        if (IS_ERR_OR_NULL(cpu_dev_silver))
-                return PTR_ERR(cpu_dev_silver);
-
-        cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-        if (IS_ERR_OR_NULL(cpu_dev_gold))
-                return PTR_ERR(cpu_dev_gold);
-
-        msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-        if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-                dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-                return -ENODEV;
-        }
-
-        np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-        if (IS_ERR_OR_NULL(np))
-                return PTR_ERR(np);
-
-        if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-                ret = -ENOENT;
-                goto free_np;
-        }
-
-        speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-        if (IS_ERR(speedbin_nvmem)) {
-                ret = PTR_ERR(speedbin_nvmem);
-                dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n",
-ret);
-                goto free_np;
-        }
-
-        speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-        nvmem_cell_put(speedbin_nvmem);
-
-        switch (msm8996_version) {
-        case MSM8996_V3:
-                versions = 1 << (unsigned int)(*speedbin);
-                break;
-        case MSM8996_SG:
-                versions = 1 << ((unsigned int)(*speedbin) + 4);
-                break;
-        default:
-                BUG();
-                break;
-        }
-
-        opp_silver =
-dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-        if (IS_ERR(opp_silver)) {
-                dev_err(cpu_dev_silver, "Failed to set supported
-hardware\n");
-                ret = PTR_ERR(opp_silver);
-                goto free_np;
-        }
-
-        opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-        if (IS_ERR(opp_gold)) {
-                dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-                ret = PTR_ERR(opp_gold);
-                goto free_opp_silver;
-        }
-
-        pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-        if (!IS_ERR_OR_NULL(pdev))
-                return 0;
-
-        ret = PTR_ERR(pdev);
-        dev_err(cpu_dev_silver, "Failed to register platform device\n");
-        dev_pm_opp_put_supported_hw(opp_gold);
-
-free_opp_silver:
-        dev_pm_opp_put_supported_hw(opp_silver);
-
-free_np:
-        of_node_put(np);
-
-        return ret;
-}
-late_initcall(qcom_cpufreq_kryo_driver_init);
-
-MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-MODULE_LICENSE("GPL v2");
-
-> -----Original Message-----
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Sent: Friday, May 18, 2018 04:46
-> To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
-> mark.rutland@arm.com; nm@ti.com; lgirdwood@gmail.com;
-> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
-> catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net; linux-
-> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
-> msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; rnayak@codeaurora.org;
-> amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
-> celster@codeaurora.org; tfinkel@codeaurora.org
-> Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-> 
-> On 17-05-18, 14:19, Ilia Lin wrote:
-> > +static int __init qcom_cpufreq_kryo_driver_init(void)
-> > +{
-> > +	size_t len;
-> > +	int ret = 0;
-> > +	u32 versions;
-> > +	enum _msm8996_version msm8996_version;
-> > +	u8 *speedbin;
-> > +	struct device *cpu_dev_silver, *cpu_dev_gold;
-> > +	struct device_node *np;
-> > +	struct nvmem_cell *speedbin_nvmem;
-> > +	struct platform_device *pdev;
-> > +	struct opp_table *opp_silver = NULL;
-> > +	struct opp_table *opp_gold = NULL;
-> 
-> No need to initialize them and you may want to arrange all above in
-> decreasing order of their length.
-> 
-> > +
-> > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> > +	if (IS_ERR_OR_NULL(cpu_dev_silver))
-> > +		return PTR_ERR(cpu_dev_silver);
-> > +
-> > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> > +	if (IS_ERR_OR_NULL(cpu_dev_gold))
-> > +		return PTR_ERR(cpu_dev_gold);
-> > +
-> > +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> > +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> > +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-> > +	if (IS_ERR_OR_NULL(np))
-> > +		return PTR_ERR(np);
-> > +
-> > +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> > +		ret = -ENOENT;
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> > +	if (IS_ERR(speedbin_nvmem)) {
-> > +		ret = PTR_ERR(speedbin_nvmem);
-> > +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n",
-> ret);
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> > +	nvmem_cell_put(speedbin_nvmem);
-> > +
-> > +	switch (msm8996_version) {
-> > +	case MSM8996_V3:
-> > +		versions = 1 << (unsigned int)(*speedbin);
-> > +		break;
-> > +	case MSM8996_SG:
-> > +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> > +		break;
-> > +	default:
-> > +		BUG();
-> > +		break;
-> > +	}
-> > +
-> > +	opp_silver =
-> dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-> > +	if (IS_ERR_OR_NULL(opp_silver)) {
-> 
-> This API doesn't return NULL and so IS_ERR() would be sufficient.
-> 
-> > +		dev_err(cpu_dev_silver, "Failed to set supported
-> hardware\n");
-> > +		ret = PTR_ERR(opp_silver);
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	opp_gold =
-> dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-> > +	if (IS_ERR_OR_NULL(opp_gold)) {
-> 
-> same here.
-> 
-> > +		dev_err(cpu_dev_gold, "Failed to set supported
-> hardware\n");
-> > +		ret = PTR_ERR(opp_gold);
-> > +		goto free_opp_silver;
-> > +	}
-> > +
-> > +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> > +	if (!IS_ERR_OR_NULL(pdev))
-> > +		goto out;
-> 
-> Simply return from here and remove the useless label out.
-> 
-> > +
-> > +	ret = PTR_ERR(pdev);
-> > +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-> > +	dev_pm_opp_put_supported_hw(opp_gold);
-> > +
-> > +free_opp_silver:
-> > +	dev_pm_opp_put_supported_hw(opp_silver);
-> > +
-> > +free_np:
-> > +	of_node_put(np);
-> > +
-> > +out:
-> > +	return ret;
-> > +}
-> > +late_initcall(qcom_cpufreq_kryo_driver_init);
-> 
-> Please resend only this patch now or just paste the new code in a mail
-here
-> so that I can review it quickly and then you can resend the final version.
-Most
-> of the patches aren't changing anyway.
-> 
-> --
-> viresh
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index fa2c7a288750..cefc8813e91e 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -153,8 +153,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
+ 
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -165,8 +165,9 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD | PERF_OUTPUT_BPF_OUTPUT,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
++			      PERF_OUTPUT_BPF_OUTPUT,
+ 
+ 		.invalid_fields = PERF_OUTPUT_TRACE,
+ 	},
+@@ -185,10 +186,10 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD |  PERF_OUTPUT_ADDR |
+-			      PERF_OUTPUT_DATA_SRC | PERF_OUTPUT_WEIGHT |
+-			      PERF_OUTPUT_PHYS_ADDR,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
++			      PERF_OUTPUT_ADDR | PERF_OUTPUT_DATA_SRC |
++			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR,
+ 
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -199,8 +200,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_PERIOD,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
+ 
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -211,8 +212,8 @@ static struct {
+ 		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
+ 			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
+ 			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
+-			      PERF_OUTPUT_SYM | PERF_OUTPUT_DSO |
+-			      PERF_OUTPUT_SYNTH,
++			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
++			      PERF_OUTPUT_DSO | PERF_OUTPUT_SYNTH,
+ 
+ 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
+ 	},
+@@ -544,6 +545,7 @@ static int perf_session__check_output_opt(struct perf_session *session)
+ 			if (attr->sample_type & PERF_SAMPLE_CALLCHAIN) {
+ 				output[j].fields |= PERF_OUTPUT_IP;
+ 				output[j].fields |= PERF_OUTPUT_SYM;
++				output[j].fields |= PERF_OUTPUT_SYMOFFSET;
+ 				output[j].fields |= PERF_OUTPUT_DSO;
+ 				set_print_ip_opts(attr);
+ 				goto out;
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index ee86473643be..650b208f700f 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,18 +16,18 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
++	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
+-		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+-		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
+-		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
++		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
++		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+-		expected[2]="getaddrinfo[[:space:]]\($libc\)$"
+-		expected[3]=".*\(.*/bin/ping.*\)$"
++		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
++		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	esac
+ 
