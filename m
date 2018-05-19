@@ -1,50 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752566AbeESWf7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 19 May 2018 18:35:59 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37753 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeESWf4 (ORCPT
+        id S1752526AbeESWmJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 19 May 2018 18:42:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49304 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeESWmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 May 2018 18:35:56 -0400
-X-Google-Smtp-Source: AB8JxZp2rqL9S143oT/zPk1sD0zqcsmtSo5e4UbEcr0YxME+TT/eOWUj40jVYyNPcKRlo8GfBQfSEeLgtMXW7G6qyU8=
+        Sat, 19 May 2018 18:42:06 -0400
+Subject: Re: [PATCH v2] kbuild: check for pkg-config on make
+ {menu,n,g,x}config
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>
+References: <9e9438b0-568a-8dc0-dad6-d29b6e39e53a@infradead.org>
+ <CAK7LNAQxcVRvhJn6GQVdLLuEq0sJEUcfwkbMpmx9j9nbjscQRg@mail.gmail.com>
+ <3ce8f87d-69fa-231a-b51c-9805e6525032@infradead.org>
+ <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d5bf517b-fb51-043c-737e-28e00354e630@infradead.org>
+Date: Sat, 19 May 2018 15:42:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180410183210.28052-1-andrew.smirnov@gmail.com>
-References: <20180410183210.28052-1-andrew.smirnov@gmail.com>
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Sat, 19 May 2018 15:35:55 -0700
-Message-ID: <CAHQ1cqGCG0rwPcpoY+bnjcyupg18x1TvULJzvAjRxSkL6z1U_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] soc: imx: gpcv2: Do not pass static memory as
- platform data
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <l.stach@pengutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAK7LNAThmjib15eR3C6wdXKoaWr=AC+CrEJmj6iC2Vdhz9nOqA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 11:32 AM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> Platform device core assumes the ownership of dev.platform_data as
-> well as that it is dynamically allocated and it will try to kfree it
-> as a part of platform_device_release(). Change the code to use
-> platform_device_add_data() n instead of a pointer to a static memory
-> to avoid causing a BUG() when calling platform_device_put().
->
-> The problem can be reproduced by artificially enabling the error path
-> of platform_device_add() call (around line 357).
->
-> Note that this change also allows us to constify imx7_pgc_domains,
-> since we no longer need to be able to modify it.
->
+On 05/17/18 22:10, Masahiro Yamada wrote:
+> Hi Randy,
+> 
+> 2018-04-07 6:37 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+>> On 03/14/2018 10:50 PM, Masahiro Yamada wrote:
+>>> 2018-03-13 11:30 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>>
+>>>> Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
+>>>> that other required files are present, but none of these check that
+>>>> pkg-config itself is present.  Add a check for all 4 of these targets.
+>>>>
+>>>> Fixes kernel bugzilla #77511:
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=77511
+>>>>
+>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>>> ---
+>>>> v2: use 'command -v' instead of 'which'
+>>>>
+>>>> I'm also OK with just documenting the pkg-config requirement in
+>>>> Documentation/Changes (= Documentation/process/changes.rst).
+>>>>
+>>>>  scripts/kconfig/Makefile           |   15 ++++++++++++++-
+>>>>  scripts/kconfig/check-pkgconfig.sh |   12 ++++++++++++
+>>>>  2 files changed, 26 insertions(+), 1 deletion(-)
+>>>>
+>>>> --- lnx-416-rc3.orig/scripts/kconfig/Makefile
+>>>> +++ lnx-416-rc3/scripts/kconfig/Makefile
+>>>> @@ -160,6 +160,9 @@ help:
+>>>>         @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
+>>>>         @echo  '  tinyconfig      - Configure the tiniest possible kernel'
+>>>>
+>>>> +# pkg-config check
+>>>> +check-pkgconfig  := $(srctree)/$(src)/check-pkgconfig.sh
+>>>> +
+>>>>  # lxdialog stuff
+>>>>  check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
+>>>>
+>>>> @@ -205,7 +208,17 @@ $(addprefix $(obj)/, mconf.o $(lxdialog)
+>>>>  $(obj)/dochecklxdialog:
+>>>>         $(Q)$(CONFIG_SHELL) $(check-lxdialog) -check $(HOSTCC) $(HOST_EXTRACFLAGS) $(HOSTLOADLIBES_mconf)
+>>>>
+>>>> -always := dochecklxdialog
+>>>> +# Check that we have pkg-config (used by each of menu/n/g/xconfig)
+>>>> +PHONY += $(obj)/docheckpkgconfig
+>>>> +$(addprefix $(obj)/, mconf.o): $(obj)/docheckpkgconfig
+>>>> +$(addprefix $(obj)/, nconf.o): $(obj)/docheckpkgconfig
+>>>> +$(addprefix $(obj)/, gconf.o): $(obj)/docheckpkgconfig
+>>>> +$(addprefix $(obj)/, qconf.o): $(obj)/docheckpkgconfig
+>>>> +
+>>>> +$(obj)/docheckpkgconfig:
+>>>> +       $(Q)$(CONFIG_SHELL) $(check-pkgconfig)
+>>>> +
+>>>> +always := docheckpkgconfig dochecklxdialog
+>>>
+>>>
+>>> I did not test this patch, but does this check work as expected?
+>>>
+>>> Probably we want to run 'docheckpkgconfig'
+>>> before 'dochecklxdiag', '.tmp_gtkcheck', '.tmp_qtcheck', etc.
+>>> But, I do not see such dependencies.
+>>>
+>>>
+>>> Also, if we make 'pkg-config' mandatory,
+>>> should we entirely drop fall-back logics like follows?
+>>>
+>>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L10
+>>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/lxdialog/check-lxdialog.sh#L29
+>>> https://github.com/torvalds/linux/blob/v4.16-rc5/scripts/kconfig/Makefile#L230
+>>>
+>>>
+>>> What do you think?
+>>>
+>>
+>> Hi,
+>>
+>> I'm willing to keep patching/testing on this, but both pkg-config and depmod
+>> (for depmod, see: https://bugzilla.kernel.org/show_bug.cgi?id=198965)
+>> are basic requirements IMO, so just documenting their requirements is good
+>> enough to me, but might not be good enough for some users.
+>>
+>> Comments?
+> 
+> Sorry for late comments.
+> 
+> OK, I am fine with making pkg-config a requirement.
+> (and it should be documented)
+> 
+> But, I'd like to clean-up scripts/kconfig/Makefile first.
+> It is already cluttered, and hesitate to add new code based on that.
+> I posted the patches.
+> 
+> Could you send v3 after the cleaning work is done?
 
-Shawn,
+Sure, I'll give it a try.
 
-What's the status of these two patches? Do I need to change anything
-or are they good to go?
-
-Thanks,
-Andrey Smirnov
+thanks.
+-- 
+~Randy
