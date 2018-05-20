@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752688AbeETRCf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 13:02:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:7183 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752247AbeETRCV (ORCPT
+        id S1752643AbeETRC0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 13:02:26 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:47217 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751521AbeETRCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 13:02:21 -0400
-X-UUID: a6c2bfda534c41aabad6596325c2243b-20180521
+        Sun, 20 May 2018 13:02:19 -0400
+X-UUID: 41caa3c3a5824d9c9ed7d58f72e462e3-20180521
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linus.walleij@linaro.org>, <matthias.bgg@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 6/7] MAINTAINERS: update entry for PIN CONTROLLER - MEDIATEK
-Date: Mon, 21 May 2018 01:01:52 +0800
-Message-ID: <e5bcfc9671a79fef4f38933bb04894f0f53b3d63.1526835466.git.sean.wang@mediatek.com>
+Subject: [PATCH v1 7/7] arm64: dts: mt7622: add EINT support to pinctrl
+Date: Mon, 21 May 2018 01:01:53 +0800
+Message-ID: <f896f79ebfa9a262c89fdeed89cf086220ca051d.1526835466.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526835466.git.sean.wang@mediatek.com>
 References: <cover.1526835466.git.sean.wang@mediatek.com>
@@ -29,24 +29,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add new files for the entry
+Add EINT support to pinctrl and set those GPIO keys as interrupt-driven
+keys.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 2 +-
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 8 +++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9051a9c..7f3cced 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11193,6 +11193,7 @@ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
- F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
-+F:	drivers/pinctrl/mediatek/mtk-eint.*
- F:	drivers/pinctrl/mediatek/pinctrl-mtk-common.*
- F:	drivers/pinctrl/mediatek/pinctrl-mt2701.c
- F:	drivers/pinctrl/mediatek/pinctrl-mt7622.c
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+index b783764..1ff003e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+@@ -34,7 +34,7 @@
+ 	};
+ 
+ 	gpio-keys {
+-		compatible = "gpio-keys-polled";
++		compatible = "gpio-keys";
+ 		poll-interval = <100>;
+ 
+ 		factory {
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+index 9213c96..e2c5450 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+@@ -286,9 +286,15 @@
+ 
+ 	pio: pinctrl@10211000 {
+ 		compatible = "mediatek,mt7622-pinctrl";
+-		reg = <0 0x10211000 0 0x1000>;
++		reg = <0 0x10211000 0 0x1000>,
++		      <0 0x10005000 0 0x1000>;
++		reg-names = "base", "eint";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++		interrupt-controller;
++		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&gic>;
++		#interrupt-cells = <2>;
+ 	};
+ 
+ 	watchdog: watchdog@10212000 {
 -- 
 2.7.4
