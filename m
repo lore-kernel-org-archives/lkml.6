@@ -1,90 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751486AbeETNnT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 09:43:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750928AbeETNnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 09:43:17 -0400
-Date: Sun, 20 May 2018 14:43:10 +0100
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: <eric.auger.pro@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <cdall@kernel.org>, <peter.maydell@linaro.org>,
-        <andre.przywara@arm.com>, <drjones@redhat.com>, <wei@redhat.com>
-Subject: Re: [PATCH v6 00/12] KVM: arm/arm64: Allow multiple GICv3
- redistributor regions
-Message-ID: <20180520144310.378a1712@why.wild-wind.fr.eu.org>
-In-Reply-To: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
-References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751535AbeETNtR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 09:49:17 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39149 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750928AbeETNtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 09:49:14 -0400
+X-Google-Smtp-Source: AB8JxZoCoOjseYsu3bPM0a/EOEp/Xgz0zr/n2DCkM/mvsuFgEEqIlglY/gScliX1VTYFDHyQztwRPg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] ARM: dts: tegra20: Add Memory Client reset to VDE
+Date: Sun, 20 May 2018 16:48:44 +0300
+Message-Id: <20180520134846.31046-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hook up Memory Client reset of the Video Decoder to the decoders DT node.
 
-On Mon, 30 Apr 2018 13:48:26 +0200
-Eric Auger <eric.auger@redhat.com> wrote:
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra20.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> At the moment the KVM VGICv3 only supports a single redistributor
-> region (whose base address is set through the GICv3 kvm device
-> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
-> all the redistributors are laid out contiguously. The size of this
-> single redistributor region is not set explicitly but instead
-> induced at a late stage by the number of online vcpus.
-> 
-> The GIC specification does not mandate all redistributors to be
-> contiguous. Moreover DT and ACPI were specified so that multiple
-> redistributors regions can be defined.
-> 
-> The current interface brings a limitation on QEMU where ARM
-> virt machine available GPA holes only allowed to assign a
-> redistributor region fitting a max of 123 vcpus. Overcoming this
-> limitation would force either to create a new machine or relocate
-> the single rdist region or allow the allocation of multiple rdist
-> regions.
-> 
-> This series enables this last alternative. A new GICv3 KVM device
-> KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
-> to register individual redistributor regions whose size is defined
-> explicitly. Those rdist regions then are filled by vcpu rdist frames
-> according to the need. The vgic init and related base address checks
-> are impacted.
-
-I've taken this series for a test run, and noticed that it breaks
-kvmtool:
-
-<quote>
-maz@sy-borg:~$ ./kvmtool/lkvm run -c 1 -k Image --irqchip=gicv3
-  # lkvm run -k Image -m 256 -c 1 --name guest-4929
-  Info: Loaded kernel to 0x80080000 (20126208 bytes)
-  Info: Placing fdt at 0x8fe00000 - 0x8fffffff
-  Info: virtio-mmio.devices=0x200@0x10000:36
-
-  Info: virtio-mmio.devices=0x200@0x10200:37
-
-  Info: virtio-mmio.devices=0x200@0x10400:38
-
-KVM_RUN failed: No such device or address
-</quote>
-
-Backing out the series results in a working setup.
-
-I presume that the changes in the init has resulted in a stricter
-initialization order that matches the QEMU flow, but that kvmtool
-doesn't follow.
-
-Could you please have a look at this? I'd like to have it in for 4.18,
-just without regressions... ;-)
-
-Thanks,
-
-	M.
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c14794..f9495f12e731 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/clock/tegra20-car.h>
+ #include <dt-bindings/gpio/tegra-gpio.h>
++#include <dt-bindings/memory/tegra20-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -282,7 +283,8 @@
+ 			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
+ 		interrupt-names = "sync-token", "bsev", "sxe";
+ 		clocks = <&tegra_car TEGRA20_CLK_VDE>;
+-		resets = <&tegra_car 61>;
++		reset-names = "vde", "mc";
++		resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
+ 	};
+ 
+ 	apbmisc@70000800 {
+@@ -593,11 +595,12 @@
+ 		clock-names = "pclk", "clk32k_in";
+ 	};
+ 
+-	memory-controller@7000f000 {
++	mc: memory-controller@7000f000 {
+ 		compatible = "nvidia,tegra20-mc";
+ 		reg = <0x7000f000 0x024
+ 		       0x7000f03c 0x3c4>;
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 	iommu@7000f024 {
 -- 
-Without deviation from the norm, progress is not possible.
+2.17.0
