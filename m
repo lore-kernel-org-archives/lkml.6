@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751867AbeETId4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:33:56 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58332 "EHLO
+        id S1752526AbeETIgi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:36:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58344 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751347AbeETIdz (ORCPT
+        with ESMTP id S1751167AbeETIgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:33:55 -0400
-Date: Sun, 20 May 2018 10:33:53 +0200 (CEST)
+        Sun, 20 May 2018 04:36:35 -0400
+Date: Sun, 20 May 2018 10:36:33 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] perf fixes for 4.17
-Message-ID: <alpine.DEB.2.21.1805201031320.1599@nanos.tec.linutronix.de>
+Subject: [GIT pull] ras fix for 4.17
+Message-ID: <alpine.DEB.2.21.1805201034030.1599@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -25,152 +25,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest perf-urgent-for-linus git tree from:
+please pull the latest ras-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-urgent-for-linus
 
-
-Address issues on the perf tooling side:
-
- - Fix segfault when processing unknown threads in cs-etm
-    
- - Fix "perf test inet_pton" on s390 failing due to missing inline
-    
- - Display all available events on 'perf annotate --stdio'
-    
- - Add missing newline when parsing an empty BPF program
-
+Address the regression with the new AMD SMCA code which issues an SMP
+function call from the early interrupt disabled region of CPU hotplug. To
+avoid that use cached block addresses which can be used directly.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Arnaldo Carvalho de Melo (1):
-      perf tools: Add missing newline when parsing empty BPF proggie
-
-Jin Yao (1):
-      perf annotate: Display all available events on --stdio
-
-Leo Yan (2):
-      perf cs-etm: Support unknown_thread in cs_etm_auxtrace
-      perf cs-etm: Remove redundant space
-
-Thomas Richter (1):
-      perf test: "probe libc's inet_pton" fails on s390 due to missing inline
+Borislav Petkov (1):
+      x86/MCE/AMD: Cache SMCA MISC block addresses
 
 
- .../tests/shell/record+probe_libc_inet_pton.sh     |  2 +-
- tools/perf/util/annotate.c                         |  3 +++
- tools/perf/util/cs-etm.c                           | 28 ++++++++++++++++++----
- tools/perf/util/parse-events.c                     |  2 +-
- 4 files changed, 29 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 016882dbbc16..ee86473643be 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -16,7 +16,7 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
- trace_libc_inet_pton_backtrace() {
- 	idx=0
- 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
--	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
-+	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf,max-stack=4'
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 536ee148bff8..5d74a30fe00f 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1263,6 +1263,9 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
- 				max_percent = sample->percent;
- 		}
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index f7666eef4a87..c8e038800591 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[] = {
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
+ };
  
-+		if (al->samples_nr > nr_percent)
-+			nr_percent = al->samples_nr;
++static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
++{
++	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
++};
 +
- 		if (max_percent < min_pcnt)
- 			return -1;
- 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 40020b1ca54f..bf16dc9ee507 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
- 	for (i = 0; i < aux->num_cpu; i++)
- 		zfree(&aux->metadata[i]);
- 
-+	thread__zput(aux->unknown_thread);
- 	zfree(&aux->metadata);
- 	zfree(&aux);
- }
-@@ -612,8 +613,8 @@ cs_etm__get_trace(struct cs_etm_buffer *buff, struct cs_etm_queue *etmq)
- 	return buff->len;
- }
- 
--static void  cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
--				     struct auxtrace_queue *queue)
-+static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
-+				    struct auxtrace_queue *queue)
+ const char *smca_get_name(enum smca_bank_types t)
  {
- 	struct cs_etm_queue *etmq = queue->priv;
+ 	if (t >= N_SMCA_BANK_TYPES)
+@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsigned int cpu, unsigned int bank,
+ 	if (!block)
+ 		return MSR_AMD64_SMCA_MCx_MISC(bank);
  
-@@ -1357,6 +1358,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 	etm->auxtrace.free = cs_etm__free;
- 	session->auxtrace = &etm->auxtrace;
- 
-+	etm->unknown_thread = thread__new(999999999, 999999999);
-+	if (!etm->unknown_thread)
-+		goto err_free_queues;
++	/* Check our cache first: */
++	if (smca_bank_addrs[bank][block] != -1)
++		return smca_bank_addrs[bank][block];
 +
-+	/*
-+	 * Initialize list node so that at thread__zput() we can avoid
-+	 * segmentation fault at list_del_init().
-+	 */
-+	INIT_LIST_HEAD(&etm->unknown_thread->node);
-+
-+	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
-+	if (err)
-+		goto err_delete_thread;
-+
-+	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
-+		goto err_delete_thread;
-+
- 	if (dump_trace) {
- 		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
- 		return 0;
-@@ -1371,16 +1389,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	/*
+ 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
+ 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
+ 	 */
+ 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-		return addr;
++		goto out;
  
- 	err = cs_etm__synth_events(etm, session);
- 	if (err)
--		goto err_free_queues;
-+		goto err_delete_thread;
+ 	if (!(low & MCI_CONFIG_MCAX))
+-		return addr;
++		goto out;
  
- 	err = auxtrace_queues__process_index(&etm->queues, session);
- 	if (err)
--		goto err_free_queues;
-+		goto err_delete_thread;
+ 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+ 	    (low & MASK_BLKPTR_LO))
+-		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
  
- 	etm->data_queued = etm->queues.populated;
++out:
++	smca_bank_addrs[bank][block] = addr;
+ 	return addr;
+ }
  
- 	return 0;
+@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
+ 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+ 		return addr;
  
-+err_delete_thread:
-+	thread__zput(etm->unknown_thread);
- err_free_queues:
- 	auxtrace_queues__free(&etm->queues);
- 	session->auxtrace = NULL;
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 2fb0272146d8..b8b8a9558d32 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1715,7 +1715,7 @@ int parse_events(struct perf_evlist *evlist, const char *str,
- 		struct perf_evsel *last;
- 
- 		if (list_empty(&parse_state.list)) {
--			WARN_ONCE(true, "WARNING: event parser found nothing");
-+			WARN_ONCE(true, "WARNING: event parser found nothing\n");
- 			return -1;
- 		}
+-	/* Get address from already initialized block. */
+-	if (per_cpu(threshold_banks, cpu)) {
+-		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+-
+-		if (bankp && bankp->blocks) {
+-			struct threshold_block *blockp = &bankp->blocks[block];
+-
+-			if (blockp)
+-				return blockp->address;
+-		}
+-	}
+-
+ 	if (mce_flags.smca)
+ 		return smca_get_block_address(cpu, bank, block);
  
