@@ -1,117 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeETTSt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 15:18:49 -0400
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:45575 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751030AbeETTSs (ORCPT
+        id S1751500AbeETT1L (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 15:27:11 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:55156 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbeETT1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 15:18:48 -0400
-X-Google-Smtp-Source: AB8JxZoZlcuXNw/ABZS+Rt2FIC9/7/Q+GAflgF/EMy7NsEgBTehhTcAfs0rCQAYvHOqZh1NGUPjVcg==
-Date: Sun, 20 May 2018 12:18:46 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        byungchul.park@lge.com, mathieu.desnoyers@efficios.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: Tasks RCU vs Preempt RCU
-Message-ID: <20180520191846.GA248075@joelaf.mtv.corp.google.com>
-References: <20180518183623.GA163151@joelaf.mtv.corp.google.com>
- <20180519022918.GV3803@linux.vnet.ibm.com>
- <20180519225905.GB134184@joelaf.mtv.corp.google.com>
- <20180520004938.GZ3803@linux.vnet.ibm.com>
- <20180520112843.57079857@grimm.local.home>
+        Sun, 20 May 2018 15:27:08 -0400
+Date: Sun, 20 May 2018 21:27:05 +0200
+From: Ladislav Michl <ladis@linux-mips.org>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-fbdev@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Richard Weinberger <richard@nod.at>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [alsa-devel] [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO
+ lookup table
+Message-ID: <20180520192705.GA12883@lenoch>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+ <3427199.r4OBoDP6Xz@z50>
+ <CAHp75VcUxjubx=zOGyCjmpjCk5RBLPCaHcaOieDie9LdTCa+5g@mail.gmail.com>
+ <5456625.lDWjtgZygK@z50>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180520112843.57079857@grimm.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5456625.lDWjtgZygK@z50>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 11:28:43AM -0400, Steven Rostedt wrote:
+On Sat, May 19, 2018 at 11:55:51PM +0200, Janusz Krzysztofik wrote:
+> On Saturday, May 19, 2018 8:00:38 PM CEST Andy Shevchenko wrote:
+> > On Sat, May 19, 2018 at 2:15 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com> 
+> wrote:
+> > > On Friday, May 18, 2018 11:21:14 PM CEST Andy Shevchenko wrote:
+> > >> On Sat, May 19, 2018 at 12:09 AM, Janusz Krzysztofik
+> > >> 
+> > >> <jmkrzyszt@gmail.com> wrote:
+> > >> > +       gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy",
+> > >> > GPIOD_IN);
+> > >> > +       if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> > >> 
+> > >> So, is it optional or not at the end?
+> > >> If it is, why do we check for NULL?
+> > > 
+> > > As far as I can understand, nand_chip->dev_ready() callback is optional.
+> > > That's why I decided to use the _optional variant of devm_gpiod_get(). In
+> > > case of ams-delta, the dev_ready() callback depends on availability of
+> > > the 'rdy' GPIO pin. As a consequence, I'm checking for both NULL and ERR
+> > > in order to decide if dev_ready() will be supported.
+> > > 
+> > > I can pretty well replace it with the standard form and check for ERR only
+> > > if the purpose of the _optional form is different.
+> > 
+> > NULL check in practice discards the _optional part of gpiod_get(). So,
+> > either you use non-optional variant and decide how to handle an
+> > errors, or user _optional w/o NULL check.
 > 
-> [ Steve interrupts his time off ]
-
-Hope you're enjoying your vacation :)
-
-> On Sat, 19 May 2018 17:49:38 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> OK, I'm going to use something like the below while submitting v2:
 > 
-> > I suggested to Steven that the rcu_read_lock() and rcu_read_unlock() might
-> > be outside of the trampoline, but this turned out to be infeasible.  Not
-> > that I remember why!  ;-)
+> -	gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
+> -	if (!IS_ERR_OR_NULL(gpiod_rdy)) {
+> -		this->dev_ready = ams_delta_nand_ready;
+> -	} else {
+> -		this->dev_ready = NULL;
+> -		pr_notice("Couldn't request gpio for Delta NAND ready.\n");
+> +	priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy",
+> +						  GPIOD_IN);
+> +	if (IS_ERR(priv->gpiod_rdy)) {
+> +		err = PTR_ERR(priv->gpiod_nwp);
+??? --------------------------------^^^^^^^^^
+> +		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
+> +		goto err_gpiod;
+
+Driver will just use worst case delay instead of RDY signal, so this
+is perhaps too strict. I will work with degraded performance.
+
+	ladis
+
+>  	}
+>  
+> +	if (priv->gpiod_rdy)
+> +		this->dev_ready = ams_delta_nand_ready;
 > 
-> Because the trampoline itself is what needs to be freed. The trampoline
-> is what mcount/fentry or an optimized kprobe jumps to.
+> > 
+> > >> > +err_gpiod:
+> > >> > +       if (err == -ENODEV || err == -ENOENT)
+> > >> > +               err = -EPROBE_DEFER;
+> > >> 
+> > >> Hmm...
+> > > 
+> > > Amstrad Delta uses gpio-mmio driver. Unfortunatelty that driver is not
+> > > availble before device init phase, unlike other crucial GPIO drivers which
+> > > are initialized earlier, e.g. during the postcore or at latetst the
+> > > subsys phase. Hence, devices which depend on GPIO pins provided by
+> > > gpio-mmio must either be declared late or fail softly so they get another
+> > > chance of being probed succesfully.
+> > > 
+> > > I thought of replacing the gpio-mmio platform driver with bgpio functions
+> > > it exports but for now I haven't implemented it, not even shared the
+> > > idea.
+> > > 
+> > > Does it really hurt to return -EPROBE_DEFER if a GPIO pin can't be
+> > > obtained?
+> > I'm only concerned if it would be an infinite defer in the case when
+> > driver will never appear.
+> > But I don't remember the details.
+> 
+> Deferred probes are handled effectively during late_initcall, no risk of 
+> infinite defer, see drivers/base/dd.c for details.
+> 
+> Thanks,
+> Janusz
 > 
 > 
-> <func>:
-> 	nop
 > 
-> [ enable function tracing ]
-> 
-> <func>:
-> 	call func_tramp --> set up stack
-> 			    call function_tracer()
-> 			    pop stack
-> 			    ret
-> 
-> 			    ^^^^^
-> 			    This is the trampoline
-> 
-> There's no way to know when a task will be on the trampoline or not.
-> The trampoline is allocated, and we need RCU_tasks to know when we can
-> free it. The only way to make a "wrapper" is to modify more of the code
-> text to do whatever before calling the trampoline, which is
-> impractical.
-> 
-> The allocated trampolines were added as an optimization, where two
-> registered callback functions from ftrace that are attached to two
-> different functions don't call the same trampoline which would have to
-> do a loop and a hash lookup to know what callback to call per function.
-> If a callback is the only one attached to a specific function, then a
-> trampoline is allocated and will call that callback directly, keeping
-> the overhead down.
-
-Right, I saw your trampoline prototype tree. I understand how it works now,
-thanks.
-
-> There is no feasible way to know when a task is on a trampoline
-> without adding overhead that negates the speed up we receive by making
-> individual trampolines to begin with.
-
-Are you speaking of time overhead or space overhead, or both?
-
-Just thinking out loud and probably some food for thought..
-
-The rcu_read_lock/unlock primitive are extrememly fast, so I don't personally
-think there's a time hit.
-
-Could we get around the trampoline code == data issue by say using a
-multi-stage trampoline like so? :
-
- 	call func_tramp --> (static
-			    trampoline)               (dynamic trampoline)
-			    rcu_read_lock()  -------> set up stack
-		 	                              call function_tracer()
- 			                              pop stack
-                            rcu_read_unlock() <------ ret
- 
-I know there's probably more to it than this, but conceptually atleast, it
-feels like all the RCU infrastructure is already there to handle preemption
-within a trampoline and it would be cool if the trampoline were as shown
-above for the dynamically allocated trampolines. Atleast I feel it will be
-faster than the pre-trampoline code that did the hash lookups / matching to
-call the right function callbacks, and could help eliminiate need for the
-RCU-tasks subsystem and its kthread then.
-
-If you still feel its nots worth it, then that's okay too and clearly the
-RCU-tasks has benefits such as a simpler trampoline implementation..
-
-thanks!
-
-- Joel
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
