@@ -1,135 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752595AbeETXOP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 19:14:15 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:35219 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751500AbeETXON (ORCPT
+        id S1752623AbeETXVr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:21:47 -0400
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:33965 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbeETXVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 19:14:13 -0400
-X-Google-Smtp-Source: AB8JxZqi1R28nNyvnRm06G8l19WYbnZjQn1pGz2HfwJOLHKdccIBVUYnvQfyRFhtNsn+7JxnwmUCYqYFyf7ukqpHnZI=
+        Sun, 20 May 2018 19:21:43 -0400
+X-Google-Smtp-Source: AB8JxZoTlJlMxJ8wwD0JTWuAHLZZ2zQU3ppPGTeUqVv69cYxLu3TECwJHNB7jxTLce1bt5RlhRj/0A==
+Date: Sun, 20 May 2018 19:21:39 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+Message-ID: <20180520232139.GE11495@kmo-pixel>
+References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+ <a26feed52ec6ed371b3d3b0567e31d1ff4fc31cb.camel@wdc.com>
+ <20180518090636.GA14738@kmo-pixel>
+ <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
+ <20180520221733.GA11495@kmo-pixel>
+ <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
+ <20180520223116.GB11495@kmo-pixel>
+ <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <CAF=yD-+Ai35L2=dGZzpjYYavBmBGNFXd-q9ju93WrPuewnhELg@mail.gmail.com>
-References: <20180518120826.GA19515@dragonet.kaist.ac.kr> <293d029c-b14c-a625-3703-97a5754e99f1@gmail.com>
- <20180518.114433.390752642781753429.davem@davemloft.net> <CAF=yD-Kb4ZfJ3sMAnWEOB_s9Y=TTnLbRZxrDPiGZLO=trPjY5Q@mail.gmail.com>
- <CAF=yD-LvZk+gdyf_Kq1j+hoJBmFnTKgR=DResvMAC7tEJCgGJw@mail.gmail.com>
- <CAF=yD-+QLz63Z6h5OpC-ar+nHvpCpkVi79h9Vtn=7fzmHCK8Lg@mail.gmail.com> <CAF=yD-+Ai35L2=dGZzpjYYavBmBGNFXd-q9ju93WrPuewnhELg@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Sun, 20 May 2018 19:13:31 -0400
-Message-ID: <CAF=yD-JObh3u+41V609=zph0XfcgOxpmqm3hL5WPKWFrSnnV3Q@mail.gmail.com>
-Subject: Re: WARNING in ip_recv_error
-To: David Miller <davem@davemloft.net>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        DaeLyong Jeong <threeearcat@gmail.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Byoungyoung Lee <byoungyoung@purdue.edu>,
-        Kyungtae Kim <kt0755@gmail.com>, bammanag@purdue.edu,
-        Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 2:59 PM, Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
-> On Fri, May 18, 2018 at 2:46 PM, Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
->> On Fri, May 18, 2018 at 2:44 PM, Willem de Bruijn
->> <willemdebruijn.kernel@gmail.com> wrote:
->>> On Fri, May 18, 2018 at 1:09 PM, Willem de Bruijn
->>> <willemdebruijn.kernel@gmail.com> wrote:
->>>> On Fri, May 18, 2018 at 11:44 AM, David Miller <davem@davemloft.net> wrote:
->>>>> From: Eric Dumazet <eric.dumazet@gmail.com>
->>>>> Date: Fri, 18 May 2018 08:30:43 -0700
->>>>>
->>>>>> We probably need to revert Willem patch (7ce875e5ecb8562fd44040f69bda96c999e38bbc)
->>>>>
->>>>> Is it really valid to reach ip_recv_err with an ipv6 socket?
->>>>
->>>> I guess the issue is that setsockopt IPV6_ADDRFORM is not an
->>>> atomic operation, so that the socket is neither fully ipv4 nor fully
->>>> ipv6 by the time it reaches ip_recv_error.
->>>>
->>>>   sk->sk_socket->ops = &inet_dgram_ops;
->>>>   < HERE >
->>>>   sk->sk_family = PF_INET;
->>>>
->>>> Even calling inet_recv_error to demux would not necessarily help.
->>>>
->>>> Safest would be to look up by skb->protocol, similar to what
->>>> ipv6_recv_error does to handle v4-mapped-v6.
->>>>
->>>> Or to make that function safe with PF_INET and swap the order
->>>> of the above two operations.
->>>>
->>>> All sound needlessly complicated for this rare socket option, but
->>>> I don't have a better idea yet. Dropping on the floor is not nice,
->>>> either.
->>>
->>> Ensuring that ip_recv_error correctly handles packets from either
->>> socket and removing the warning should indeed be good.
->>>
->>> It is robust against v4-mapped packets from an AF_INET6 socket,
->>> but see caveat on reconnect below.
->>>
->>> The code between ipv6_recv_error for v4-mapped addresses and
->>> ip_recv_error is essentially the same, the main difference being
->>> whether to return network headers as sockaddr_in with SOL_IP
->>> or sockaddr_in6 with SOL_IPV6.
->>>
->>> There are very few other locations in the stack that explicitly test
->>> sk_family in this way and thus would be vulnerable to races with
->>> IPV6_ADDRFORM.
->>>
->>> I'm not sure whether it is possible for a udpv6 socket to queue a
->>> real ipv6 packet on the error queue, disconnect, connect to an
->>> ipv4 address, call IPV6_ADDRFORM and then call ip_recv_error
->>> on a true ipv6 packet. That would return buggy data, e.g., in
->>> msg_name.
->>
->> In do_ipv6_setsockopt IPV6_ADDRFORM we can test that the
->> error queue is empty, and then take its lock for the duration of the
->> operation.
->
-> Actually, no reason to hold the lock. This setsockopt holds the socket
-> lock, which connect would need, too. So testing that the queue
-> is empty after testing that it is connected to a v4 address is
-> sufficient to ensure that no ipv6 packets are queued for reception.
->
-> diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-> index 4d780c7f0130..a975d6311341 100644
-> --- a/net/ipv6/ipv6_sockglue.c
-> +++ b/net/ipv6/ipv6_sockglue.c
-> @@ -199,6 +199,11 @@ static int do_ipv6_setsockopt(struct sock *sk,
-> int level, int optname,
->
->                         if (ipv6_only_sock(sk) ||
->                             !ipv6_addr_v4mapped(&sk->sk_v6_daddr)) {
->                                 retv = -EADDRNOTAVAIL;
->                                 break;
->                         }
->
-> +                       if (!skb_queue_empty(&sk->sk_error_queue)) {
-> +                               retv = -EBUSY;
-> +                               break;
-> +                       }
-> +
->                         fl6_free_socklist(sk);
->                         __ipv6_sock_mc_close(sk);
->
-> After this it should be safe to remove the warning in ip_recv_error.
+On Sun, May 20, 2018 at 10:35:29PM +0000, Bart Van Assche wrote:
+> On Sun, 2018-05-20 at 18:31 -0400, Kent Overstreet wrote:
+> > On Sun, May 20, 2018 at 10:19:13PM +0000, Bart Van Assche wrote:
+> > > On Sun, 2018-05-20 at 18:17 -0400, Kent Overstreet wrote:
+> > > > On Fri, May 18, 2018 at 03:12:27PM +0000, Bart Van Assche wrote:
+> > > > > On Fri, 2018-05-18 at 05:06 -0400, Kent Overstreet wrote:
+> > > > > > On Thu, May 17, 2018 at 08:54:57PM +0000, Bart Van Assche wrote:
+> > > > > > > With Jens' latest for-next branch I hit the kernel warning shown below. Can
+> > > > > > > you have a look?
+> > > > > > 
+> > > > > > Any hints on how to reproduce it?
+> > > > > 
+> > > > > Sure. This is how I triggered it:
+> > > > > * Clone https://github.com/bvanassche/srp-test.
+> > > > > * Follow the instructions in README.md.
+> > > > > * Run srp-test/run_tests -c -r 10
+> > > > 
+> > > > Can you bisect it? I don't have infiniband hardware handy...
+> > > 
+> > > Hello Kent,
+> > > 
+> > > Have you noticed that the test I described uses the rdma_rxe driver and hence that
+> > > no InfiniBand hardware is needed to run that test?
+> > 
+> > No, I'm not terribly familiar with infiniband stuff....
+> > 
+> > Do you have some sort of self contained test/qemu recipe? I would really rather
+> > not have to figure out how to configure multipath, and infiniband, and I'm not
+> > even sure what else is needed based on that readme...
+> 
+> Hello Kent,
+> 
+> Please have another look at the srp-test README. The instructions in that document
+> are easy to follow. No multipath nor any InfiniBand knowledge is required. The test
+> even can be run in a virtual machine in case you would be worried about potential
+> impact of the test on the rest of the system.
 
-Hmm.. nope.
 
-This ensures that the socket cannot produce any new true v6 packets.
-But it does not guarantee that they are not already in the system, e.g.
-queued in tc, and will find their way to the error queue later.
+I really have better things to do than debug someone else's tests...
 
-We'll have to just be able to handle ipv6 packets in ip_recv_error.
-Since IPV6_ADDRFORM is used to pass to legacy v4-only
-processes and those likely are only confused by SOL_IPV6
-error messages, it is probably best to just drop them and perhaps
-WARN_ONCE.
+Restarting multipath-tools (via systemctl): multipath-tools.service.
+multipathd> reconfigure
+ok
+multipathd> make -C discontiguous-io discontiguous-io
+make[1]: Entering directory '/host/home/kent/ktest/tests/srp-test/discontiguous-io'
+make[1]: 'discontiguous-io' is up to date.
+make[1]: Leaving directory '/host/home/kent/ktest/tests/srp-test/discontiguous-io'
+Unloaded the ib_srpt kernel module
+Unloaded the rdma_rxe kernel module
+../run_tests: line 65: cd: /lib/modules/4.16.0+/kernel/block: No such file or directory
+Zero-initializing /dev/ram0 ... done
+Zero-initializing /dev/ram1 ... done
+Unable to load target_core_pscsi
+Unable to load target_core_user
+Configured SRP target driver
+Running test ../tests/01 ...
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/01 failed
+Running test ../tests/02-mq ...
+Test file I/O on top of multipath concurrently with logout and login (10 min; mq)
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/02-mq failed
+Running test ../tests/02-sq ...
+Test file I/O on top of multipath concurrently with logout and login (10 min; sq)
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/02-sq failed
+Running test ../tests/02-sq-on-mq ...
+Test file I/O on top of multipath concurrently with logout and login (10 min; sq-on-mq)
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/02-sq-on-mq failed
+Running test ../tests/03-4M ...
+Test direct I/O with large transfer sizes and cmd_sg_entries=255
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/03-4M failed
+Running test ../tests/03-8M ...
+Test direct I/O with large transfer sizes and cmd_sg_entries=255
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/03-8M failed
+Running test ../tests/04-4M ...
+Test direct I/O with large transfer sizes and cmd_sg_entries=1
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/04-4M failed
+Running test ../tests/04-8M ...
+Test direct I/O with large transfer sizes and cmd_sg_entries=1
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/04-8M failed
+Running test ../tests/05-4M ...
+Test buffered I/O with large transfer sizes and cmd_sg_entries=255
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/05-4M failed
+Running test ../tests/05-8M ...
+Test buffered I/O with large transfer sizes and cmd_sg_entries=255
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/05-8M failed
+Running test ../tests/06 ...
+Test block I/O on top of multipath concurrently with logout and login (10 min)
+Unloaded the ib_srp kernel module
+SRP login failed
+Test ../tests/06 failed
+0 tests succeeded and 11 tests failed
+Unloaded the ib_srpt kernel module
+Unloaded the rdma_rxe kernel module
+
+========= PASSED srp in 18s
