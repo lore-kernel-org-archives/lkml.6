@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeETNtR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 09:49:17 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39149 "EHLO
+        id S1751641AbeETNt1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 09:49:27 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34721 "EHLO
         mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeETNtO (ORCPT
+        with ESMTP id S1751428AbeETNtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 09:49:14 -0400
-X-Google-Smtp-Source: AB8JxZoCoOjseYsu3bPM0a/EOEp/Xgz0zr/n2DCkM/mvsuFgEEqIlglY/gScliX1VTYFDHyQztwRPg==
+        Sun, 20 May 2018 09:49:17 -0400
+X-Google-Smtp-Source: AB8JxZqyc/oz7bYJiKnXxkTawBJC//O/ASVIm7vdrknvePof5fznen5n0kHiIfh4A1Dc37jjCi04Qw==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -15,10 +15,12 @@ To: Hans Verkuil <hverkuil@xs4all.nl>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] ARM: dts: tegra20: Add Memory Client reset to VDE
-Date: Sun, 20 May 2018 16:48:44 +0300
-Message-Id: <20180520134846.31046-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] ARM: dts: tegra30: Add Memory Client reset to VDE
+Date: Sun, 20 May 2018 16:48:46 +0300
+Message-Id: <20180520134846.31046-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180520134846.31046-1-digetx@gmail.com>
+References: <20180520134846.31046-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -27,44 +29,30 @@ Hook up Memory Client reset of the Video Decoder to the decoders DT node.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 983dd5c14794..f9495f12e731 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <dt-bindings/clock/tegra20-car.h>
- #include <dt-bindings/gpio/tegra-gpio.h>
-+#include <dt-bindings/memory/tegra20-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-@@ -282,7 +283,8 @@
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 09087b9c5e26..3300ff976053 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -404,7 +404,8 @@
  			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
  		interrupt-names = "sync-token", "bsev", "sxe";
- 		clocks = <&tegra_car TEGRA20_CLK_VDE>;
+ 		clocks = <&tegra_car TEGRA30_CLK_VDE>;
 -		resets = <&tegra_car 61>;
 +		reset-names = "vde", "mc";
-+		resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
++		resets = <&tegra_car 61>, <&mc TEGRA30_MC_RESET_VDE>;
  	};
  
  	apbmisc@70000800 {
-@@ -593,11 +595,12 @@
- 		clock-names = "pclk", "clk32k_in";
- 	};
- 
--	memory-controller@7000f000 {
-+	mc: memory-controller@7000f000 {
- 		compatible = "nvidia,tegra20-mc";
- 		reg = <0x7000f000 0x024
- 		       0x7000f03c 0x3c4>;
+@@ -712,6 +713,7 @@
  		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		#iommu-cells = <1>;
 +		#reset-cells = <1>;
  	};
  
- 	iommu@7000f024 {
+ 	fuse@7000f800 {
 -- 
 2.17.0
