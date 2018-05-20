@@ -1,117 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751523AbeETLA2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 07:00:28 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44423 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeETLAZ (ORCPT
+        id S1751318AbeETL1R (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 07:27:17 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:41962 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750928AbeETL1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 07:00:25 -0400
-X-Google-Smtp-Source: AB8JxZqB6kO7GSjSlP4iTnok4KSeIn8mxVASDJW61xput2zaCprAHexmTCXgQA9Q9ujVVkRJLAtPdHDnF8RwvyzCNEo=
+        Sun, 20 May 2018 07:27:15 -0400
+X-Google-Smtp-Source: AB8JxZr4eJHS3E9lGSS0drR+szRipqU3NEw8KGRMG5dIRHtBVcMXjrjiGP5f/1rmeuO8UCbL0XCb5992tnbVA6Rm/O8=
 MIME-Version: 1.0
-In-Reply-To: <20180514165042.GA2746@agluck-desk>
-References: <CAG=yYwmnHgAvauZLxfFcUEACF_J+qh4d2tvYY=AdjHvyeSFK_A@mail.gmail.com>
- <20180514162752.GG23049@pd.tnic> <20180514165042.GA2746@agluck-desk>
+In-Reply-To: <CAG=yYwk2TcRwLX3nQis+u+WUhmt63ikBQFoCFAAiwir8eowfgw@mail.gmail.com>
+References: <CAG=yYwkWt9bbKVWD93YT2S3jFQCt7s5yV7gxOw=JScFJtgO0NA@mail.gmail.com>
+ <CAHp75Vc4FhSOfyN=UG=xXNOH6C4JUpnfMh9+Mp1_FiM44F0FtA@mail.gmail.com> <CAG=yYwk2TcRwLX3nQis+u+WUhmt63ikBQFoCFAAiwir8eowfgw@mail.gmail.com>
 From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Sun, 20 May 2018 16:30:24 +0530
-Message-ID: <CAG=yYw=b_b2vhOeYTiCrCJ9yCOebDW_i5LA27Ck-m44uhyw+8Q@mail.gmail.com>
-Subject: Re: PROBLEM: mce: [Hardware Error] from dmesg -l emerg
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Date: Sun, 20 May 2018 16:57:13 +0530
+Message-ID: <CAG=yYwnkCaO95SW4J81fd2UDD6j9OP6=e+QrgXLVn804GeZoHg@mail.gmail.com>
+Subject: Re: PROBLEM: "ACPI Error: Method parse/execution failed" and "ACPI
+ BIOS Error (bug): Failure looking up" related
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Robert Moore <robert.moore@intel.com>, erik.schmauss@intel.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-that system is  normally not crashing. as far as i know, there are no
-other bad effects
-it happens during every boot.it is not a one time message.
+ignore this "i did not find this message in a typical 4.9.x kernel"  line
 
-output for "sudo dmesg | grep -B 40 44919"  command related
-
----------------------------------------------------------------------------------------------------------------------------------------->
-[    1.555315] intel_idle: MWAIT substates: 0x11142120
-[    1.555316] intel_idle: v0.4.1 model 0x3D
-[    1.555544] intel_idle: lapic_timer_reliable_states 0xffffffff
-[    1.555866] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-[    1.556307] Linux agpgart interface v0.103
-[    1.556388] AMD IOMMUv2 driver by Joerg Roedel <jroedel@suse.de>
-[    1.556389] AMD IOMMUv2 functionality not available on this system
-[    1.556679] i8042: PNP: PS/2 Controller [PNP0303:PS2K,PNP0f13:PS2M]
-at 0x60,0x64 irq 1,12
-[    1.580570] serio: i8042 KBD port at 0x60,0x64 irq 1
-[    1.580574] serio: i8042 AUX port at 0x60,0x64 irq 12
-[    1.580706] mousedev: PS/2 mouse device common for all mice
-[    1.580744] rtc_cmos 00:01: RTC can wake from S4
-[    1.580907] rtc_cmos 00:01: registered as rtc0
-[    1.580921] rtc_cmos 00:01: alarms up to one month, 242 bytes
-nvram, hpet irqs
-[    1.580935] intel_pstate: Intel P-state driver initializing
-[    1.581160] ledtrig-cpu: registered to indicate activity on CPUs
-[    1.582235] NET: Registered protocol family 10
-[    1.587820] Segment Routing with IPv6
-[    1.587871] mip6: Mobile IPv6
-[    1.587876] NET: Registered protocol family 17
-[    1.587885] mpls_gso: MPLS GSO support
-[    1.588638] microcode: sig=0x306d4, pf=0x40, revision=0x2a
-[    1.588899] microcode: Microcode Update Driver: v2.2.
-[    1.588928] sched_clock: Marking stable (1588863300,
-0)->(3178404073, -1589540773)
-[    1.589452] registered taskstats version 1
-[    1.589454] Loading compiled-in X.509 certificates
-[    1.589489] zswap: loaded using pool lzo/zbud
-[    1.589675] AppArmor: AppArmor sha1 policy hashing enabled
-[    1.589680] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-[    1.589687] ima: Allocated hash algorithm: sha256
-[    1.590826] rtc_cmos 00:01: setting system clock to 2018-05-20
-10:14:28 UTC (1526811268)
-[    1.591506] input: AT Translated Set 2 keyboard as
-/devices/platform/i8042/serio0/input/input0
-[    1.922558] Freeing unused kernel memory: 1568K
-[    1.936066] Write protecting the kernel read-only data: 16384k
-[    1.938244] Freeing unused kernel memory: 2008K
-[    1.941243] Freeing unused kernel memory: 812K
-[    1.955715] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[    1.955716] x86/mm: Checking user space page tables
-[    1.964175] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[    2.036680] hidraw: raw HID events driver (C) Jiri Kosina
-[    2.044919] ACPI BIOS Error (bug): Failure looking up
-[\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-
-On Mon, May 14, 2018 at 10:20 PM, Luck, Tony <tony.luck@intel.com> wrote:
-> On Mon, May 14, 2018 at 06:27:52PM +0200, Borislav Petkov wrote:
->> On Mon, May 14, 2018 at 09:19:11PM +0530, Jeffrin Thalakkottoor wrote:
->> > hello,
->> >
->> > output related of  "sudo dmesg -l emerg" from my laptop...
->> >
->> > --------------------------------------------------------------------------------------------------->
->> > $sudo dmesg -l emerg
->> > [sudo] password for jeffrin:
->> > [    0.041023] mce: [Hardware Error]: CPU 0: Machine Check: 0 Bank 5:
->> > ee0000000040110b
->> > [    0.041028] mce: [Hardware Error]: TSC 0 ADDR 160000080 MISC 5040008086
->> > [    0.041034] mce: [Hardware Error]: PROCESSOR 0:306d4 TIME
->> > 1526300792 SOCKET 0 APIC 0 microcode 2a
+On Sun, May 20, 2018 at 4:05 PM, Jeffrin Thalakkottoor
+<jeffrin@rajagiritech.edu.in> wrote:
+> as far as i know , may be there is not much change in system behavior.
+> i just found these messages during boot time
+> i did not find this message in a typical 4.9.x kernel
+>
+>
+>
+> On Mon, May 14, 2018 at 4:04 AM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> On Sun, May 13, 2018 at 5:20 PM, Jeffrin Thalakkottoor
+>> <jeffrin@rajagiritech.edu.in> wrote:
+>>> hello ,
+>>>
+>>> the error from "dmesg -l err"  related ...
+>>>
+>>> ------------------------------------------------------------------------------------------------->
+>>>
+>>> [    1.709950] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.710045] ACPI Error: Method parse/execution failed
+>>> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
+>>> [    1.710208] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.710267] ACPI Error: Method parse/execution failed
+>>> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
+>>> [    1.710338] acpi PNP0C0B:00: Failed to set initial power state
+>>> [    1.710846] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.710938] ACPI Error: Method parse/execution failed
+>>> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
+>>> [    1.711588] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.711681] ACPI Error: Method parse/execution failed
+>>> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
+>>> [    1.711960] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.712054] ACPI Error: Method parse/execution failed
+>>> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
+>>> [    1.712471] ACPI BIOS Error (bug): Failure looking up
+>>> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+>>> [    1.712552] ACPI Error: Method parse/execution failed
+>>> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
+>>>
+>>> ----------------------------------------------------------------------------------------------------->
+>>>
 >>
->> Run it through mcelog to see what it decodes to:
+>> Is there any regressions or change in behaviour due to which these
+>> messages are printed out? If so, which regressions you are pointing
+>> out?
 >>
->> dmesg | mcelog --ascii
+>>>
+>>>
+>>> $awk -f scripts/ver_linux
+>>> If some fields are empty or look unusual you may have an old version.
+>>> Compare to the current minimal requirements in Documentation/Changes.
+>>>
+>>> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
+>>>
+>>> GNU Make            4.2.1
+>>> Binutils            2.30
+>>> Util-linux          2.31.1
+>>> Mount                2.31.1
+>>> Linux C Library      2.27
+>>> Dynamic linker (ldd) 2.27
+>>> readlink: missing operand
+>>> Try 'readlink --help' for more information.
+>>> Procps              3.3.14
+>>> Kbd                  2.0.4
+>>> Console-tools        2.0.4
+>>> Sh-utils            8.28
+>>> Udev                238
+>>> Modules Loaded      ac acpi_pad acpi_thermal_rel ahci autofs4 battery
+>>> binfmt_misc bluetooth bnep btbcm btintel btrfs btrtl btusb button
+>>> cdrom cfg80211 cmac coretemp cpuid crc32c_intel crc32_pclmul
+>>> crct10dif_pclmul cryptd drm drm_kms_helper ecdh_generic efi_pstore
+>>> efivarfs efivars ehci_hcd ehci_pci evdev fan fat fuse
+>>> ghash_clmulni_intel hid hp_wireless hp_wmi i2c_algo_bit i2c_hid
+>>> i2c_i801 i915 int3400_thermal int340x_thermal_zone intel_cstate
+>>> intel_pch_thermal intel_powerclamp intel_rapl intel_rapl_perf
+>>> intel_soc_dts_iosf intel_uncore ip_tables irqbypass
+>>> iTCO_vendor_support iTCO_wdt joydev kvm kvm_intel libahci libata
+>>> libcrc32c loop lp lpc_ich media mei mei_me mfd_core mii nls_ascii
+>>> nls_cp437 parport parport_pc pcspkr ppdev processor_thermal_device
+>>> psmouse r8169 raid6_pq rfcomm rfkill scsi_mod sd_mod serio_raw sg
+>>> shpchp snd snd_hda_codec snd_hda_codec_generic snd_hda_codec_hdmi
+>>> snd_hda_codec_realtek snd_hda_core snd_hda_intel snd_hwdep snd_pcm
+>>> snd_timer soundcore sparse_keymap sr_mod sunrpc thermal usbcore
+>>> uvcvideo vfat video videobuf2_common videobuf2_memops videobuf2_v4l2
+>>> videobuf2_vmalloc videodev wl wmi wmi_bmof x86_pkg_temp_thermal xfs
+>>> xhci_hcd xhci_pci xor x_tables xxhash zstd_compress zstd_decompress
+>>>
+>>>
+>>> $uname -a
+>>> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
+>>> $
+>>>
+>>> Reported-by: Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
+>>>
+>>> --
+>>> software engineer
+>>> rajagiri school of engineering and technology
+>>
+>>
+>>
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
 >
-> Is the system crashing? Or do you just see this message but
-> no other bad effects?
 >
-> Does is happen every boot? Or was this a one time message?
 >
-> Can you grab some context lines from dmesg (say 40 lines
-> leading up to this message) to see what else was going on?
->
-> -Tony
+> --
+> software engineer
+> rajagiri school of engineering and technology
 
 
 
