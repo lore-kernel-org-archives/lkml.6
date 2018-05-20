@@ -1,251 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751292AbeETKuy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 06:50:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750928AbeETKux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 06:50:53 -0400
-Date: Sun, 20 May 2018 11:50:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Stefan Popa <stefan.popa@analog.com>
-Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <linux-pm@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] iio:dac:ad5686: Add
- AD5681R/AD5682R/AD5683/AD5683R support
-Message-ID: <20180520115047.63bd60a2@archlinux>
-In-Reply-To: <1526657014-28960-1-git-send-email-stefan.popa@analog.com>
-References: <1526657014-28960-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751483AbeETK4S (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 06:56:18 -0400
+Received: from mail-he1eur01on0053.outbound.protection.outlook.com ([104.47.0.53]:51333
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751030AbeETK4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 06:56:14 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=vladbu@mellanox.com;
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com> <1526308035-12484-3-git-send-email-vladbu@mellanox.com> <20180519210442.GA5488@localhost.localdomain>
+User-agent: mu4e 0.9.16; emacs 25.3.50.2
+From: Vlad Buslov <vladbu@mellanox.com>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, jiri@resnulli.us, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 02/14] net: sched: change type of reference and bind counters
+In-reply-to: <20180519210442.GA5488@localhost.localdomain>
+Date: Sun, 20 May 2018 13:55:59 +0300
+Message-ID: <vbfsh6ma94w.fsf@reg-r-vrt-018-180.mtr.labs.mlnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [37.142.13.130]
+X-ClientProxiedBy: VI1PR0602CA0018.eurprd06.prod.outlook.com
+ (2603:10a6:800:bc::28) To VI1PR05MB4701.eurprd05.prod.outlook.com
+ (2603:10a6:802:60::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR05MB4701;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4701;3:pyBqUP2HjmbVubTscOqQm7uRC29AXovjbpZwYvMq3EmDYiyRWp6Ewo+ujPonK28fc2OHf5NDyNRxBcazFjLlTnSYcft44ogCnE9oGATS4cANMCU6x61YWuXW+WoSyU4PxU7L6orYMWPIxTpiNJQ0zSsBGns64JEKOZFOd6ftJ9Fj/KqC8gu38jitJILlLQ6JpMfIecxVTnn6nTadlwovk84UWRy3vFP2LgztEkY7rlKvjkvpWd43eRfRIAxiF6/U;25:xCUY8g5V0QIN/B6oFwXN8/Z5/0jxqOaoSH0pfnakmWeIjpJv8upSRst3rMXNke5VDbaU01xVpIhBKx4rGaYwEM19zjoJspTFyXFkCFWPi7O8K0jPtk1ce/rP7WV2fXa9x/JOExY+6LgnjRg752PjQ1CvlflgvnquSuKBOUZIqFEyCSdwWlZqPyrsWxbgkFWb1fAoe4jVdX7AIlRIc73wXEn2BhFxEz7cR8MCYJ21Mc8YVm77pZmoehJUrZETf4qvdn7h+8Z5DLc6QQYr54e304errlr9beuIGxxqbXws4CgdI0SCfUmDemCFRy+CLTbMOLE4DP3qrt76f0iemBUcfw==;31:5IvXTEl38GKQvlB7/hXD2PFG8seBlHN0CJBkP9PCkBqQflhhsSK9e+g493qf7rvjEE+lWe0tIb+tBv8gFBqY7kS7pzIxJ96fA/tHSxPeQYWfuc6gzQV3rzPaMEHcE2LQttYq/e2krpCs2psYyPZEiJWkdahBNShyHmd/DEIZlffbUC0eYYWvSSmjpCrzQz4UIuNpco3goZcDz4OiqJBvKlDU1B7ULth3mPksmCt485c=
+X-MS-TrafficTypeDiagnostic: VI1PR05MB4701:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4701;20:xB0gwD0x2bOaWCfMbsyyA7X5WeZiVMndbdGVHRQrxgO25llzvBaQNagdiNsHdpzEBwb99Nq93PWw0l73GHZ4nJAKnk3qiKSZFhQoxhe9Bdv9od178GKi5fo+8sGK44PAMHe+EK6Wx5HQZAnhOp0pBhfxUVRK+vbvRL6+4inV0zsGNhioHpUqSyXY7vMIvq6RuhyZQvh3U02SHYX6xey3ynJiUJtVPaRGb91joftUt+ek8wiFjXQ+zbO6cBt38eUno7K2wZwQLTdlgwhUeQ4w5C0lrGETSET+8F3ScTS3Hl2crxfcUTkVxPKIjfyFmBlJn3ICbDxNQqpRZBzQ5QvIl1xR6qr0tPMRricjNe3oR4BkWCgqvD9esnw0dA4AjaXnbi2tHOHm6YMwbALIuWOuutH5b7r1qLAaVmZ0v7jbPl0X0D7n+h6vNDp/ZtKf6zhXTyvpIXV+uv47uenjnV45n4T0o5rFeuK84OsBxOKXHNyuow3ZcjMihg9wVIT7szrX;4:EHrECNAAiDJBVKmbmwzK0lB2uB98FJwu2wB3k6Y+F9fSV2QlxzHydm8m2b5VPWTfwC4yYvH8Pzu4EjWXROUAkLGX5UdBwkEC7pQAx5rKJ7a1go08lwUHlhS9vpNHOdg3nDzuUTzpq5XfS0k0urpljZQnbZeAWI0DR6Jtk4K62NHrhJD/idFN06L3G/gy0zRFSrzh0nMnKNpS0p9FsRxZrMB5OVYUR/tOraJBSkAP9il7D5WNnRLLaPc5lIaz0MG3PkHWiYh0dyIGL3s0qEekbqBwxZ1kn3gpA9aIiuiy2P2JAzxUIG3m8tKG2UzOM+5V
+X-Microsoft-Antispam-PRVS: <VI1PR05MB47019563D3EC6C41317EB385AD960@VI1PR05MB4701.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:VI1PR05MB4701;BCL:0;PCL:0;RULEID:;SRVR:VI1PR05MB4701;
+X-Forefront-PRVS: 06780E24F8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39380400002)(39860400002)(376002)(346002)(189003)(199004)(25786009)(386003)(26005)(2906002)(478600001)(105586002)(8676002)(81156014)(76176011)(52116002)(81166006)(7696005)(68736007)(86362001)(6916009)(51416003)(8936002)(7736002)(16526019)(305945005)(6666003)(7416002)(106356001)(107886003)(476003)(66066001)(3846002)(486006)(446003)(6116002)(97736004)(229853002)(316002)(39060400002)(9686003)(6512007)(53936002)(48376002)(50466002)(4326008)(6246003)(956004)(11346002)(47776003)(6486002)(5660300001)(58126008)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4701;H:reg-r-vrt-018-180.mtr.labs.mlnx.mellanox.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR05MB4701;23:mzEzFEwE7liBune+N5sVLB55eHRSYs6cAzVuGPzop?=
+ =?us-ascii?Q?JNxvNnst5UHftMkFOLD9AP5wn0v/F8LrU4QO5V4TLMXgFwiGdzYBH6KgzF/7?=
+ =?us-ascii?Q?YVaTb5k/ebAAUBLCo9DOlrg+ksIxzXVskLXZ59ECZ/A/syz45avvgZYNomuU?=
+ =?us-ascii?Q?1vgTv6zSSR+MVnlDQsAvvUgfsVW0P752TBB9tkq9qcA9SzW027dBylPAdSWT?=
+ =?us-ascii?Q?1JIZApK0BqqOx1VNsaD6aFwvz1eeQEYn73g0zXsIaVQv13UwUCcfxJIB8bgr?=
+ =?us-ascii?Q?wopGxYg+8L1ZYDuRCptTEX/rXEGLSy1CtlKRvpH5MXcqrWvVAK0SXQLeAAyz?=
+ =?us-ascii?Q?cwU+pT9yf6VXIeIfw0/Z0oI0uhy3bXB98Wkldh4KW/awMwQ3q9JhebWEguud?=
+ =?us-ascii?Q?n024ezPlm7gS+Z6nJyqtq3sSbM45U5OywHr8dOvTUgiDWEA8s/UMaUbycI8P?=
+ =?us-ascii?Q?5FWWlEL5v6dBgK5uyH2IfRfLdUw5/gjsbUvXOf4UwXfzaJ4SqgAMnWNM2yTD?=
+ =?us-ascii?Q?zZ+LiM23sgWo4bp0co+A+ELaGHrxKWxJqKsG8ao8cZ95iYU857o1STBnryON?=
+ =?us-ascii?Q?MyrNwsT4buigGMjIms5lyiEPhsUFpZoYBczxL07puPXiMdpginWrFt8CBvjB?=
+ =?us-ascii?Q?1cjv74Q0juX87maukIUJoi1o5N9H5upE/THz49++2fs5OyC7PNywI7lmAOVL?=
+ =?us-ascii?Q?CRjFVnGks75Z/yNatSthN25HyZ5wYs3lwquVD8wlhLlqTCSAFWGzU9D2J20u?=
+ =?us-ascii?Q?K9EG3qmlyE1i2X+iHB2nV2wyq89eoqMkXA68D9Ux07/vK3wUjy/xFbhAVVlO?=
+ =?us-ascii?Q?oUzEabpff/au7OIPxY2Bnh9eWa66LtNMlbKFcX8yS69tOH7kai+vdzgQLTYu?=
+ =?us-ascii?Q?7UmS276FF5VpBSQtWPzQaLqBEXA37hhWn57kZllYIi5aGz1otGm1OlqIk8VT?=
+ =?us-ascii?Q?tptselzu9ep1uLvJWKF7YYIiWUCx+vOxeBkgWA/fCpZoM2J6AAdF9jXr9Iyu?=
+ =?us-ascii?Q?/eIjG/Jr4H3WR9NZ2XhsiTlYSTloXgSCgT6zLE/AcNiT/wrfCogzBV91J1RO?=
+ =?us-ascii?Q?7eX+sbRAkWlOQ20cwfdtrIM4RFzpg6lT4lpfkzOVcNfhDGIGsikreckYjfnp?=
+ =?us-ascii?Q?pszQu4UBKRROkdpjv77wsBNBwidbGTFx1fepWbWiHTlBDylHDCZCZeCP8crE?=
+ =?us-ascii?Q?9MQteWQppK3u0bsqDSc1czmsTjFU+dY0pXk4C41WRf0E7E4aiH1tk/GNU0/m?=
+ =?us-ascii?Q?F4cAoJTaJTEBKp5UzE=3D?=
+X-Microsoft-Antispam-Message-Info: nZZUZD38vjzR/YEKuSuwEmc2pAHLZYcW+9K6EajnqTRYd35uN7efXK1MRkWdB0nlThSWHtGVr5TV5g5o/Suu3VB7MHi0Oryqid+t9DQN5ELiNn/7q3HX03SpPtEKTQcL32HudEsXj1pKq4+i2F1uiKfCTO3dLjq+BjOKm7CN9zWQL2pfsnwX+FJC87qOjict
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4701;6:I7pKNBdwvkDI5AeUWWIvrzH3917Qxo+g455V5CmQ9wlVbQ/QC+cRZX6rQD2adBVuGi85iK9N53oNoNmdygFOFTy1IKeY9T6KGfOQUY+QjdtltKHrdwwzY2hBnK2lKpEVjcD+AUXRJ+X45SZG5ygFZnD6Upza3JKnlxSRkQMQy9cK60+jkCTSXj+tmfB4eeHe4fKfQjvg2R/Ph1I7dGGwuDMqE486jpbQPgzQt134LYNk/U2HbUyS7Ta+1HyDwTa8Gz3TXhzXTU5fjiLYHGBxkRv2qzLAvJcWnC+FdJeOGeNFlF1bfUg5BMft2dbcixsHqUe5SMBVHMh9rf8pHOyPmXM/jNE3rsry5VsaUV/FBx2KzaUBUbErWYMNmrpINd3i5LIOZK28Pf7cXv1FS1fUYJdRO/fVf6yXd8COmYiY3GJCC3DVk+HMqgbYXjaDR07k/iClTWVd/gFNqPn7m4joag==;5:pfZBLZppfZXMOWmIldK4J3dGjXrYnXUP799u+0q4W6G405/G1dJhvtuUFKAXZoZMQgaEUTuaynjP2Wxkc+oDM20BSN/Oiy/Jtbth/L2MM7UcHWVHVolplUmhU5Q3z42ergFiKE+FEnJ5u+oH3jMl2dOKO5Md+6yap7oXXjigwZ4=;24:Nt6jKIMikNNwhCuk2BWz2a8xpEozAzUIaRDBKfNChThmEisuEinmAHD6rZBp9TvJ6AIiNAuEv94SJMQ7qHCOLdWeIw9v0GqxuYFL1AI9OWw=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4701;7:UOIC4j2yzrkVZuf8wRJzRHx9oT1gte/uYlb+fX66sOdgWSMj6fN+3scrqkx/73wfiZGWxZpID9o2pd2OFxpJcPLVSfnM3AC2JSS+fCIbTuGknNUVFOT/ZJttx9rKUec2kBqG21y4is2zGTIUtIqW198w006WsQ1bih26rpNzuOaTQtGgbGulavM1GinzfPz0j/KSBJR8F49/HDSQmK5f3c8qrDBeJfqzeviSbX+WHw9Hd48cPRPdBxZbfnN6bNPJ
+X-MS-Office365-Filtering-Correlation-Id: 8f34f775-85dc-4764-176f-08d5be404b04
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2018 10:56:06.7911
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f34f775-85dc-4764-176f-08d5be404b04
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4701
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 May 2018 18:23:34 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
 
-> The AD5681R/AD5682R/AD5683/AD5683R are a family of one channel DACs with
-> 12-bit, 14-bit and 16-bit precision respectively. The devices have either
-> no built-in reference, or built-in 2.5V reference.
-> 
-> These devices are similar to AD5691R/AD5692R/AD5693/AD5693R except
-> with a few notable differences:
->  * they use the SPI interface instead of I2C
->  * in the write control register, DB18 and DB17 are used for setting the
->    power mode, while DB16 is the REF bit. This is why a new regmap type
->    was defined and checked accordingly.
->  * the shift register is 24 bits wide, the first four bits are the command
->    bits followed by the data bits. As the data comprises of 20-bit, 18-bit
->    or 16-bit input code, this means that 4 LSB bits are don't care. This is
->    why the data needs to be shifted on the left with four bits. Therefore,
->    AD5683_REGMAP is checked inside a switch case in the ad5686_spi_write()
->    function. On the other hand, similar devices such as AD5693R family,
->    have the 4 MSB command bits followed by 4 don't care bits.
-> 
-> Datasheet:
-> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5683R_5682R_5681R_5683.pdf
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+On Sat 19 May 2018 at 21:04, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
+> On Mon, May 14, 2018 at 05:27:03PM +0300, Vlad Buslov wrote:
+>> Change type of action reference counter to refcount_t.
+>>
+>> Change type of action bind counter to atomic_t.
+>> This type is used to allow decrementing bind counter without testing
+>> for 0 result.
+>
+> ... and in what does not testing for 0 result helps?
+>
+>   Marcelo
 
-A comment inline about how to perhaps improve the future flexibility of
-the driver if you are looking at adding new parts. 
-
-Otherwise, looks good to me.
-
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Changes in v2:
-> 	- Nothing changed, just to follow the patch set version.
-> 
->  drivers/iio/dac/ad5686-spi.c | 42 ++++++++++++++++++++++++++++++++++--------
->  drivers/iio/dac/ad5686.c     | 32 ++++++++++++++++++++++++++++++++
->  drivers/iio/dac/ad5686.h     |  8 ++++++++
->  3 files changed, 74 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad5686-spi.c b/drivers/iio/dac/ad5686-spi.c
-> index 6bb09e9..1df9143 100644
-> --- a/drivers/iio/dac/ad5686-spi.c
-> +++ b/drivers/iio/dac/ad5686-spi.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * AD5672R, AD5676, AD5676R, AD5684, AD5684R, AD5684R, AD5685R, AD5686, AD5686R
-> + * AD5672R, AD5676, AD5676R, AD5681R, AD5682R, AD5683, AD5683R,
-> + * AD5684, AD5684R, AD5685R, AD5686, AD5686R
->   * Digital to analog converters driver
->   *
->   * Copyright 2018 Analog Devices Inc.
-> @@ -15,12 +16,27 @@ static int ad5686_spi_write(struct ad5686_state *st,
->  			    u8 cmd, u8 addr, u16 val)
->  {
->  	struct spi_device *spi = to_spi_device(st->dev);
-> -
-> -	st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
-> -				      AD5686_ADDR(addr) |
-> -				      val);
-> -
-> -	return spi_write(spi, &st->data[0].d8[1], 3);
-> +	u8 tx_len, *buf;
-> +
-> +	switch (st->chip_info->regmap_type) {
-> +	case AD5683_REGMAP:
-> +		st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
-> +					      AD5683_DATA(val));
-> +		buf = &st->data[0].d8[1];
-> +		tx_len = 3;
-> +		break;
-> +	case AD5686_REGMAP:
-> +		st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
-> +					      AD5686_ADDR(addr) |
-> +					      val);
-> +		buf = &st->data[0].d8[1];
-> +		tx_len = 3;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return spi_write(spi, buf, tx_len);
->  }
->  
->  static int ad5686_spi_read(struct ad5686_state *st, u8 addr)
-> @@ -37,9 +53,15 @@ static int ad5686_spi_read(struct ad5686_state *st, u8 addr)
->  		},
->  	};
->  	struct spi_device *spi = to_spi_device(st->dev);
-> +	u8 cmd = 0;
->  	int ret;
->  
-> -	st->data[0].d32 = cpu_to_be32(AD5686_CMD(AD5686_CMD_READBACK_ENABLE) |
-> +	if (st->chip_info->regmap_type == AD5686_REGMAP)
-> +		cmd = AD5686_CMD_READBACK_ENABLE;
-> +	else if (st->chip_info->regmap_type == AD5683_REGMAP)
-> +		cmd = AD5686_CMD_READBACK_ENABLE_V2;
-We are rapidly heading for the point where we should really be using
-a lookup table for all these device type specific elements.
-
-Something to think about if you add another one..
-
-> +
-> +	st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
->  				      AD5686_ADDR(addr));
->  	st->data[1].d32 = cpu_to_be32(AD5686_CMD(AD5686_CMD_NOOP));
->  
-> @@ -67,6 +89,10 @@ static const struct spi_device_id ad5686_spi_id[] = {
->  	{"ad5672r", ID_AD5672R},
->  	{"ad5676", ID_AD5676},
->  	{"ad5676r", ID_AD5676R},
-> +	{"ad5681r", ID_AD5681R},
-> +	{"ad5682r", ID_AD5682R},
-> +	{"ad5683", ID_AD5683},
-> +	{"ad5683r", ID_AD5683R},
->  	{"ad5684", ID_AD5684},
->  	{"ad5684r", ID_AD5684R},
->  	{"ad5685", ID_AD5685R}, /* Does not exist */
-> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
-> index 1fc0c56..e136f0f 100644
-> --- a/drivers/iio/dac/ad5686.c
-> +++ b/drivers/iio/dac/ad5686.c
-> @@ -83,6 +83,10 @@ static ssize_t ad5686_write_dac_powerdown(struct iio_dev *indio_dev,
->  		st->pwr_down_mask &= ~(0x3 << (chan->channel * 2));
->  
->  	switch (st->chip_info->regmap_type) {
-> +	case AD5683_REGMAP:
-> +		shift = 13;
-> +		ref_bit_msk = AD5683_REF_BIT_MSK;
-> +		break;
->  	case AD5686_REGMAP:
->  		shift = 0;
->  		ref_bit_msk = 0;
-> @@ -256,6 +260,29 @@ static const struct ad5686_chip_info ad5686_chip_info_tbl[] = {
->  		.num_channels = 8,
->  		.regmap_type = AD5686_REGMAP,
->  	},
-> +	[ID_AD5681R] = {
-> +		.channels = ad5691r_channels,
-> +		.int_vref_mv = 2500,
-> +		.num_channels = 1,
-> +		.regmap_type = AD5683_REGMAP,
-> +	},
-> +	[ID_AD5682R] = {
-> +		.channels = ad5692r_channels,
-> +		.int_vref_mv = 2500,
-> +		.num_channels = 1,
-> +		.regmap_type = AD5683_REGMAP,
-> +	},
-> +	[ID_AD5683] = {
-> +		.channels = ad5693_channels,
-> +		.num_channels = 1,
-> +		.regmap_type = AD5683_REGMAP,
-> +	},
-> +	[ID_AD5683R] = {
-> +		.channels = ad5693_channels,
-> +		.int_vref_mv = 2500,
-> +		.num_channels = 1,
-> +		.regmap_type = AD5683_REGMAP,
-> +	},
->  	[ID_AD5684] = {
->  		.channels = ad5684_channels,
->  		.num_channels = 4,
-> @@ -385,6 +412,11 @@ int ad5686_probe(struct device *dev,
->  	indio_dev->num_channels = st->chip_info->num_channels;
->  
->  	switch (st->chip_info->regmap_type) {
-> +	case AD5683_REGMAP:
-> +		cmd = AD5686_CMD_CONTROL_REG;
-> +		ref_bit_msk = AD5683_REF_BIT_MSK;
-> +		st->use_internal_vref = !voltage_uv;
-> +		break;
->  	case AD5686_REGMAP:
->  		cmd = AD5686_CMD_INTERNAL_REFER_SETUP;
->  		ref_bit_msk = 0;
-> diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
-> index 6c6879d..d05cda9 100644
-> --- a/drivers/iio/dac/ad5686.h
-> +++ b/drivers/iio/dac/ad5686.h
-> @@ -13,6 +13,7 @@
->  #include <linux/mutex.h>
->  #include <linux/kernel.h>
->  
-> +#define AD5683_DATA(x)				((x) << 4)
->  #define AD5686_ADDR(x)				((x) << 16)
->  #define AD5686_CMD(x)				((x) << 20)
->  
-> @@ -36,6 +37,8 @@
->  #define AD5686_LDAC_PWRDN_3STATE		0x3
->  
->  #define AD5686_CMD_CONTROL_REG			0x4
-> +#define AD5686_CMD_READBACK_ENABLE_V2		0x5
-> +#define AD5683_REF_BIT_MSK			BIT(12)
->  #define AD5693_REF_BIT_MSK			BIT(12)
->  
->  /**
-> @@ -47,6 +50,10 @@ enum ad5686_supported_device_ids {
->  	ID_AD5675R,
->  	ID_AD5676,
->  	ID_AD5676R,
-> +	ID_AD5681R,
-> +	ID_AD5682R,
-> +	ID_AD5683,
-> +	ID_AD5683R,
->  	ID_AD5684,
->  	ID_AD5684R,
->  	ID_AD5685R,
-> @@ -64,6 +71,7 @@ enum ad5686_supported_device_ids {
->  };
->  
->  enum ad5686_regmap_type {
-> +	AD5683_REGMAP,
->  	AD5686_REGMAP,
->  	AD5693_REGMAP
->  };
+Atomic operations don't WARN in this case.
