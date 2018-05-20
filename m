@@ -1,87 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751421AbeETGWu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 02:22:50 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55130 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750918AbeETGWs (ORCPT
+        id S1751347AbeETG0K (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 02:26:10 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42122 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750742AbeETG0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 02:22:48 -0400
-X-Google-Smtp-Source: AB8JxZrpcoqwV+Lylgg6Y0y4NYy9OBQunwOgwOYw3vB3akRNu4/BPbin7/UJbAhqj/DGH+nbrqJQ8Q==
-Date: Sun, 20 May 2018 08:22:42 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Vlad Buslov <vladbu@mellanox.com>, netdev@vger.kernel.org,
-        davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kliteyn@mellanox.com
-Subject: Re: [PATCH 06/14] net: sched: implement reference counted action
- release
-Message-ID: <20180520062242.GB2255@nanopsycho.orion>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
- <20180519214327.GC5488@localhost.localdomain>
+        Sun, 20 May 2018 02:26:07 -0400
+X-Google-Smtp-Source: AB8JxZpI7LvmSbPAHsIfg4STEEbYFP5SZwxwnaiwX0XMMdQsl5nNq9cVu7p8FhZ7bxquXzlu1sWYONxrSh71G9mgJeM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180519214327.GC5488@localhost.localdomain>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <714E0B73-BE6C-408B-98A6-2A7C82E7BB11@oracle.com>
+References: <5BB682E1-DD52-4AA9-83E9-DEF091E0C709@oracle.com>
+ <20180517152333.GA26718@bombadil.infradead.org> <714E0B73-BE6C-408B-98A6-2A7C82E7BB11@oracle.com>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Sat, 19 May 2018 23:26:06 -0700
+Message-ID: <CAPhsuW5mJYXwExScmRTMuh=dCQ-bufBsisTEmvWJBVbtP8ziyg@mail.gmail.com>
+Subject: Re: [RFC] mm, THP: Map read-only text segments using large THP pages
+To: William Kucharski <william.kucharski@oracle.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sat, May 19, 2018 at 11:43:27PM CEST, marcelo.leitner@gmail.com wrote:
->On Mon, May 14, 2018 at 05:27:07PM +0300, Vlad Buslov wrote:
->...
->> @@ -1052,6 +1088,36 @@ static int tca_action_flush(struct net *net, struct nlattr *nla,
->>  	return err;
->>  }
+On Thu, May 17, 2018 at 10:31 AM, William Kucharski
+<william.kucharski@oracle.com> wrote:
+>
+>
+>> On May 17, 2018, at 9:23 AM, Matthew Wilcox <willy@infradead.org> wrote:
 >>
->> +static int tcf_action_delete(struct net *net, struct list_head *actions,
->> +			     struct netlink_ext_ack *extack)
->> +{
->> +	int ret;
+>> I'm certain it is.  The other thing I believe is true that we should be
+>> able to share page tables (my motivation is thousands of processes each
+>> mapping the same ridiculously-sized file).  I was hoping this prototype
+>> would have code that would be stealable for that purpose, but you've
+>> gone in a different direction.  Which is fine for a prototype; you've
+>> produced useful numbers.
 >
->Reverse christmass tree.. this line should be the last in variable
->declarations.
+> Definitely, and that's why I mentioned integration with the page cache
+> would be crucial. This prototype allocates pages for each invocation of
+> the executable, which would never fly on a real system.
 >
->> +	struct tc_action *a, *tmp;
->> +	char kind[IFNAMSIZ];
->> +	u32 act_index;
->> +
->> +	list_for_each_entry_safe(a, tmp, actions, list) {
->> +		const struct tc_action_ops *ops = a->ops;
->> +
->> +		/* Actions can be deleted concurrently
->> +		 * so we must save their type and id to search again
->> +		 * after reference is released.
->> +		 */
->> +		strncpy(kind, a->ops->kind, sizeof(kind) - 1);
+>> I think the first step is to get variable sized pages in the page cache
+>> working.  Then the map-around functionality can probably just notice if
+>> they're big enough to map with a PMD and make that happen.  I don't immediately
+>> see anything from this PoC that can be used, but it at least gives us a
+>> good point of comparison for any future work.
 >
->This may be problematic. Why strncpy here?
+> Yes, that's the first step to getting actual usable code designed and
+> working; this prototype was designed just to get something working and
+> to get a first swag at some performance numbers.
+>
+> I do think that adding code to map larger pages as a fault_around variant
+> is a good start as the code is already going to potentially map in
+> fault_around_bytes from the file to satisfy the fault. It makes sense
+> to extend that paradigm to be able to tune when large pages might be
+> read in and/or mapped using large pages extant in the page cache.
+>
+> Filesystem support becomes more important once writing to large pages
+> is allowed.
+>
+>> I think that really tells the story.  We almost entirely eliminate
+>> dTLB load misses (down to almost 0.1%) and iTLB load misses drop to 4%
+>> of what they were.  Does this test represent any kind of real world load,
+>> or is it designed to show the best possible improvement?
+>
+> It's admittedly designed to thrash the caches pretty hard and doesn't
+> represent any type of actual workload I'm aware of. It basically calls
+> various routines within a huge text area while scribbling to automatic
+> arrays declared at the top of each routine. It wasn't designed as a worst
+> case scenario, but rather as one that would hopefully show some obvious
+> degree of difference when large text pages were supported.
+>
+> Thanks for your comments.
+>
+>     -- Bill
 
-This is not necessary if Vlad is going to hold module referece, ops
-cannot disappear.
+We (Facebook) have quite a few real workloads that take advantage of
+text on huge
+pages. For some of them, we can see savings close to the number above.
 
+Currently, we "hugify" the text region through some hack in user
+space. We are very
+interested in supporting it natively in the kernel, because the hack
+breaks other
+features.
 
->
->a->ops->kind is also of size IFNAMSIZ. If a->ops->kind is actually
->IFNAMSIZ-1 long, kind here won't be NULL terminated, as kind is not
->initialized and strncpy won't add the NULL.
->
->> +		act_index = a->tcfa_index;
->> +
->> +		list_del(&a->list);
->> +		if (tcf_action_put(a))
->> +			module_put(ops->owner);
->> +
->> +		/* now do the delete */
->> +		ret = tcf_action_del_1(net, kind, act_index, extack);
->> +		if (ret < 0)
->> +			return ret;
->> +	}
->> +	return 0;
->> +}
+We also tested enabling text on huge pages through shmem, and it does work. The
+downside is that it requires putting the whole file in memory (or at
+least in swap).
+This doesn't work very well for large binaries with GBs of debugging data.
+
+Song
