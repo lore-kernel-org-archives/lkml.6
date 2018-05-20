@@ -1,82 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751030AbeETGDf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 02:03:35 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45297 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750742AbeETGDd (ORCPT
+        id S1751421AbeETGWu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 02:22:50 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55130 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbeETGWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 02:03:33 -0400
-X-Google-Smtp-Source: AB8JxZorK0KlnDa+Kuno6GdslxvyA+RLwc/Ws5EHlemx7RKvYUerxl34scI//kj47M1a+SenAgiy3VX5FqpkY5eZzB4=
+        Sun, 20 May 2018 02:22:48 -0400
+X-Google-Smtp-Source: AB8JxZrpcoqwV+Lylgg6Y0y4NYy9OBQunwOgwOYw3vB3akRNu4/BPbin7/UJbAhqj/DGH+nbrqJQ8Q==
+Date: Sun, 20 May 2018 08:22:42 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Vlad Buslov <vladbu@mellanox.com>, netdev@vger.kernel.org,
+        davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        kliteyn@mellanox.com
+Subject: Re: [PATCH 06/14] net: sched: implement reference counted action
+ release
+Message-ID: <20180520062242.GB2255@nanopsycho.orion>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
+ <20180519214327.GC5488@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
- <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org> <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
- <c4ec710f-b2bd-b9f0-c33a-159aa53ca73c@infradead.org>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Sun, 20 May 2018 08:03:32 +0200
-Message-ID: <CAFkk2KThash4ShBEwPhObF4dm6S0a_7y9tzbKO4fan9Hfrg4KQ@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180519214327.GC5488@localhost.localdomain>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 5:45 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 05/08/2018 09:59 AM, Ulf Magnusson wrote:
->> Hello,
+Sat, May 19, 2018 at 11:43:27PM CEST, marcelo.leitner@gmail.com wrote:
+>On Mon, May 14, 2018 at 05:27:07PM +0300, Vlad Buslov wrote:
+>...
+>> @@ -1052,6 +1088,36 @@ static int tca_action_flush(struct net *net, struct nlattr *nla,
+>>  	return err;
+>>  }
 >>
->> I've added incremental search for jumping directly to a symbol now.
->> Regular expressions are supported as well.
->>
->> Some screenshots below:
->>
->> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
->> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
->> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
->>
->> The last screenshot shows how things might look after you jump to a
->> symbol. The jumped-to symbol wasn't visible in this case, so show-all
->> mode was turned on automatically.
+>> +static int tcf_action_delete(struct net *net, struct list_head *actions,
+>> +			     struct netlink_ext_ack *extack)
+>> +{
+>> +	int ret;
 >
-> Hi Ulf,
+>Reverse christmass tree.. this line should be the last in variable
+>declarations.
 >
-> Do I need to save kconfiglib.py in a special location?
+>> +	struct tc_action *a, *tmp;
+>> +	char kind[IFNAMSIZ];
+>> +	u32 act_index;
+>> +
+>> +	list_for_each_entry_safe(a, tmp, actions, list) {
+>> +		const struct tc_action_ops *ops = a->ops;
+>> +
+>> +		/* Actions can be deleted concurrently
+>> +		 * so we must save their type and id to search again
+>> +		 * after reference is released.
+>> +		 */
+>> +		strncpy(kind, a->ops->kind, sizeof(kind) - 1);
 >
-> With (new) kconfiglib.py and menuconfig.py, I am getting this:
->
-> $ make ARCH=x86_64 O=xx64 iscriptconfig
-> make[1]: Entering directory '/home/rdunlap/lnx/lnx-417-rc3/xx64'
->   GEN     ./Makefile
-> Traceback (most recent call last):
->   File "<string>", line 1, in <module>
-> ImportError: No module named 'kconfiglib'
->>>>
->
-> and then if I (being a Python novice) copy kconfiglib.py to
-> /usr/lib/python3.4/site-packages/ and try again, I get 16 warning messages (below)
-> and then this:
->
-> A Kconfig instance 'kconf' for the architecture x86_64 has been created.
->>>>
->
-> What am I supposed to do now?
->
-> Hm, OK, I used the trick that you supplied a few weeks ago and I have the UI now.
->
->     ARCH=x86 SRCARCH=x86 KERNELVERSION=`make kernelversion` \
->         Kconfiglib/menuconfig.py
->
-> so yes, a real Makefile target would be nice. :)
+>This may be problematic. Why strncpy here?
 
-Gonna get around to it soon. It's a bit silly that you don't get the
-menuconfig through the 'pip' install either. :)
+This is not necessary if Vlad is going to hold module referece, ops
+cannot disappear.
 
-Cheers,
-Ulf
+
+>
+>a->ops->kind is also of size IFNAMSIZ. If a->ops->kind is actually
+>IFNAMSIZ-1 long, kind here won't be NULL terminated, as kind is not
+>initialized and strncpy won't add the NULL.
+>
+>> +		act_index = a->tcfa_index;
+>> +
+>> +		list_del(&a->list);
+>> +		if (tcf_action_put(a))
+>> +			module_put(ops->owner);
+>> +
+>> +		/* now do the delete */
+>> +		ret = tcf_action_del_1(net, kind, act_index, extack);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +	}
+>> +	return 0;
+>> +}
