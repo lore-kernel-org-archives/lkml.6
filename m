@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeETIbd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:31:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58329 "EHLO
+        id S1751867AbeETId4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:33:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58332 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeETIba (ORCPT
+        with ESMTP id S1751347AbeETIdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:31:30 -0400
-Date: Sun, 20 May 2018 10:31:28 +0200 (CEST)
+        Sun, 20 May 2018 04:33:55 -0400
+Date: Sun, 20 May 2018 10:33:53 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] locking fixes for 4.17
-Message-ID: <alpine.DEB.2.21.1805201028330.1599@nanos.tec.linutronix.de>
+Subject: [GIT pull] perf fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805201031320.1599@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -25,195 +25,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest locking-urgent-for-linus git tree from:
+please pull the latest perf-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-Two fixes to address shortcomings of the rwsem/percpu-rwsem lock debugging
-code which emits false positive warnings when the rwsem is anonymously
-locked and unlocked.
+
+Address issues on the perf tooling side:
+
+ - Fix segfault when processing unknown threads in cs-etm
+    
+ - Fix "perf test inet_pton" on s390 failing due to missing inline
+    
+ - Display all available events on 'perf annotate --stdio'
+    
+ - Add missing newline when parsing an empty BPF program
+
 
 Thanks,
 
 	tglx
 
 ------------------>
-Waiman Long (2):
-      locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
-      locking/percpu-rwsem: Annotate rwsem ownership transfer by setting RWSEM_OWNER_UNKNOWN
+Arnaldo Carvalho de Melo (1):
+      perf tools: Add missing newline when parsing empty BPF proggie
+
+Jin Yao (1):
+      perf annotate: Display all available events on --stdio
+
+Leo Yan (2):
+      perf cs-etm: Support unknown_thread in cs_etm_auxtrace
+      perf cs-etm: Remove redundant space
+
+Thomas Richter (1):
+      perf test: "probe libc's inet_pton" fails on s390 due to missing inline
 
 
- include/linux/percpu-rwsem.h |  6 +++++-
- include/linux/rwsem.h        |  6 ++++++
- kernel/locking/rwsem-xadd.c  | 19 +++++++++----------
- kernel/locking/rwsem.c       |  2 --
- kernel/locking/rwsem.h       | 30 +++++++++++++++++++++---------
- 5 files changed, 41 insertions(+), 22 deletions(-)
+ .../tests/shell/record+probe_libc_inet_pton.sh     |  2 +-
+ tools/perf/util/annotate.c                         |  3 +++
+ tools/perf/util/cs-etm.c                           | 28 ++++++++++++++++++----
+ tools/perf/util/parse-events.c                     |  2 +-
+ 4 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index b1f37a89e368..79b99d653e03 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- 	lock_release(&sem->rw_sem.dep_map, 1, ip);
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
--		sem->rw_sem.owner = NULL;
-+		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
- #endif
- }
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 016882dbbc16..ee86473643be 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,7 +16,7 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
++	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 536ee148bff8..5d74a30fe00f 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1263,6 +1263,9 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+ 				max_percent = sample->percent;
+ 		}
  
-@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+	if (!read)
-+		sem->rw_sem.owner = current;
-+#endif
- }
- 
- #endif
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 56707d5ff6ad..ab93b6eae696 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -44,6 +44,12 @@ struct rw_semaphore {
- #endif
- };
- 
-+/*
-+ * Setting bit 0 of the owner field with other non-zero bits will indicate
-+ * that the rwsem is writer-owned with an unknown owner.
-+ */
-+#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
++		if (al->samples_nr > nr_percent)
++			nr_percent = al->samples_nr;
 +
- extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index e795908f3607..a90336779375 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -352,16 +352,15 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
- 	struct task_struct *owner;
- 	bool ret = true;
+ 		if (max_percent < min_pcnt)
+ 			return -1;
  
-+	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 40020b1ca54f..bf16dc9ee507 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+ 	for (i = 0; i < aux->num_cpu; i++)
+ 		zfree(&aux->metadata[i]);
+ 
++	thread__zput(aux->unknown_thread);
+ 	zfree(&aux->metadata);
+ 	zfree(&aux);
+ }
+@@ -612,8 +613,8 @@ cs_etm__get_trace(struct cs_etm_buffer *buff, struct cs_etm_queue *etmq)
+ 	return buff->len;
+ }
+ 
+-static void  cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
+-				     struct auxtrace_queue *queue)
++static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
++				    struct auxtrace_queue *queue)
+ {
+ 	struct cs_etm_queue *etmq = queue->priv;
+ 
+@@ -1357,6 +1358,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	etm->auxtrace.free = cs_etm__free;
+ 	session->auxtrace = &etm->auxtrace;
+ 
++	etm->unknown_thread = thread__new(999999999, 999999999);
++	if (!etm->unknown_thread)
++		goto err_free_queues;
 +
- 	if (need_resched())
- 		return false;
- 
- 	rcu_read_lock();
- 	owner = READ_ONCE(sem->owner);
--	if (!rwsem_owner_is_writer(owner)) {
--		/*
--		 * Don't spin if the rwsem is readers owned.
--		 */
--		ret = !rwsem_owner_is_reader(owner);
-+	if (!owner || !is_rwsem_owner_spinnable(owner)) {
-+		ret = !owner;	/* !owner is spinnable */
- 		goto done;
- 	}
- 
-@@ -382,11 +381,11 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- {
- 	struct task_struct *owner = READ_ONCE(sem->owner);
- 
--	if (!rwsem_owner_is_writer(owner))
--		goto out;
-+	if (!is_rwsem_owner_spinnable(owner))
-+		return false;
- 
- 	rcu_read_lock();
--	while (sem->owner == owner) {
-+	while (owner && (READ_ONCE(sem->owner) == owner)) {
- 		/*
- 		 * Ensure we emit the owner->on_cpu, dereference _after_
- 		 * checking sem->owner still matches owner, if that fails,
-@@ -408,12 +407,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- 		cpu_relax();
- 	}
- 	rcu_read_unlock();
--out:
++	/*
++	 * Initialize list node so that at thread__zput() we can avoid
++	 * segmentation fault at list_del_init().
++	 */
++	INIT_LIST_HEAD(&etm->unknown_thread->node);
 +
- 	/*
- 	 * If there is a new owner or the owner is not set, we continue
- 	 * spinning.
- 	 */
--	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
-+	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
- }
++	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
++	if (err)
++		goto err_delete_thread;
++
++	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
++		goto err_delete_thread;
++
+ 	if (dump_trace) {
+ 		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
+ 		return 0;
+@@ -1371,16 +1389,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
  
- static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 30465a2f2b6c..bc1e507be9ff 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -221,5 +221,3 @@ void up_read_non_owner(struct rw_semaphore *sem)
- EXPORT_SYMBOL(up_read_non_owner);
+ 	err = cs_etm__synth_events(etm, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
  
- #endif
--
--
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a17cba8d94bb..b9d0e72aa80f 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -1,20 +1,24 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * The owner field of the rw_semaphore structure will be set to
-- * RWSEM_READ_OWNED when a reader grabs the lock. A writer will clear
-+ * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
-  * the owner field when it unlocks. A reader, on the other hand, will
-  * not touch the owner field when it unlocks.
-  *
-- * In essence, the owner field now has the following 3 states:
-+ * In essence, the owner field now has the following 4 states:
-  *  1) 0
-  *     - lock is free or the owner hasn't set the field yet
-  *  2) RWSEM_READER_OWNED
-  *     - lock is currently or previously owned by readers (lock is free
-  *       or not set by owner yet)
-- *  3) Other non-zero value
-- *     - a writer owns the lock
-+ *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
-+ *     - lock is owned by an anonymous writer, so spinning on the lock
-+ *       owner should be disabled.
-+ *  4) Other non-zero value
-+ *     - a writer owns the lock and other writers can spin on the lock owner.
-  */
--#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
-+#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
-+#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
+ 	err = auxtrace_queues__process_index(&etm->queues, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
  
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-@@ -51,14 +55,22 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
- }
+ 	etm->data_queued = etm->queues.populated;
  
--static inline bool rwsem_owner_is_writer(struct task_struct *owner)
-+/*
-+ * Return true if the a rwsem waiter can spin on the rwsem's owner
-+ * and steal the lock, i.e. the lock is not anonymously owned.
-+ * N.B. !owner is considered spinnable.
-+ */
-+static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
- {
--	return owner && owner != RWSEM_READER_OWNED;
-+	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
- }
+ 	return 0;
  
--static inline bool rwsem_owner_is_reader(struct task_struct *owner)
-+/*
-+ * Return true if rwsem is owned by an anonymous writer or readers.
-+ */
-+static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
- {
--	return owner == RWSEM_READER_OWNED;
-+	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
- }
- #else
- static inline void rwsem_set_owner(struct rw_semaphore *sem)
++err_delete_thread:
++	thread__zput(etm->unknown_thread);
+ err_free_queues:
+ 	auxtrace_queues__free(&etm->queues);
+ 	session->auxtrace = NULL;
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 2fb0272146d8..b8b8a9558d32 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1715,7 +1715,7 @@ int parse_events(struct perf_evlist *evlist, const char *str,
+ 		struct perf_evsel *last;
+ 
+ 		if (list_empty(&parse_state.list)) {
+-			WARN_ONCE(true, "WARNING: event parser found nothing");
++			WARN_ONCE(true, "WARNING: event parser found nothing\n");
+ 			return -1;
+ 		}
+ 
