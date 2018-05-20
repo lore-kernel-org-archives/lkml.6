@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeETW4E (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 18:56:04 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:46878 "EHLO
+        id S1752629AbeETW7y (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 18:59:54 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:46920 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751030AbeETW4D (ORCPT
+        with ESMTP id S1751167AbeETW7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 18:56:03 -0400
-Date: Sun, 20 May 2018 18:56:01 -0400 (EDT)
-Message-Id: <20180520.185601.1680720028010071733.davem@davemloft.net>
-To: salil.mehta@huawei.com
-Cc: yisen.zhuang@huawei.com, lipeng321@huawei.com, mehta.salil@opnsrc.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com
-Subject: Re: [PATCH net-next 0/9] Misc. bug fixes and cleanup for HNS3
- driver
+        Sun, 20 May 2018 18:59:53 -0400
+Date: Sun, 20 May 2018 18:59:51 -0400 (EDT)
+Message-Id: <20180520.185951.2147212615548538271.davem@davemloft.net>
+To: f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, andrew@lunn.ch,
+        vivien.didelot@savoirfairelinux.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: dsa: b53: Extend platform data to
+ include DSA ports
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180519155323.68960-1-salil.mehta@huawei.com>
-References: <20180519155323.68960-1-salil.mehta@huawei.com>
+In-Reply-To: <20180520155630.23432-1-f.fainelli@gmail.com>
+References: <20180520155630.23432-1-f.fainelli@gmail.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -26,10 +25,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Salil Mehta <salil.mehta@huawei.com>
-Date: Sat, 19 May 2018 16:53:14 +0100
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Sun, 20 May 2018 08:56:30 -0700
 
-> This patch-set presents miscellaneous bug fixes and cleanups found
-> during internal review, system testing and cleanup.
+> The b53 driver already defines and internally uses platform data to let the
+> glue drivers specify parameters such as the chip id.  What we were missing was
+> a way to tell the core DSA layer about the ports and their type.
+> 
+> Place a dsa_chip_data structure at the beginning of b53_platform_data for
+> dsa_register_switch() to access it. This does not require modifications to
+> b53_common.c which will pass platform_data trough.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Series applied, thank you.
+Applied, thanks.
