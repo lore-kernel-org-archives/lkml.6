@@ -1,96 +1,94 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1852109-1526761402-2-9659820427157093582
+X-Cyrus-Session-Id: sloti22d1t05-2979687-1526820406-2-16269715860452157311
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526761401; b=eKIVLPQizxTVx0G2YkUGmHIinkzG6ri7Wl1r6mlGZqmdu7I1T7
-    oX1JNiDBzoLx0YyEDsfGUrZezc0znkC1d54kaA7YEKOs+WrJrYMYz08wrxorfmEY
-    bofJRy65whizMskEOt61S634d5me2BK2HgnKjcy5bWckmomizDLsdTNMZRiT1uCf
-    SNdTTNqrO5+OjVvYNDGpIYqs6NiG5TcIfY5FmLb4ar5SzsH64cp1KfegegOTWjH1
-    uCYozW/msqfU4q/S46injxB92IXI9mh9DEAE2VsaidDp4c/gYCpRnJ0bQGKZzeNl
-    vsGU+RBmLVvvQxH7/Adg2FnloEnKjYnHs9rg==
+    1526820405; b=SVOmfeLfUJsvXxzdviaSlYrhHg7gThNN6CSc8IfnYvfynjvjYE
+    /kgjqmZdFdScV84o7tLTi32WVs5undLkudYuKyW1zr4U1dqRvbz3HuOUmqkZEFYE
+    DtfXT1cqh+rZQnjYPE3aDkOXrSYIEB30RyS7q8Ch04wIpdUvrpB63Qqa8v1aCnjw
+    8meSYm5Y4qXKxSMCrmJs1kl3MibUtPpgHfkS0N277K1/GFWMRjkrFem3RNzPq6Cu
+    AheYJSLDd3lcxY/90jli/qNu5Qntuni35cMUkG6qWJ9HIJQ1oc/1e4JJP1qc0rg+
+    CrqmlpCwLSV2UCAHsZ6moYmMG9+aJtmkwbDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526761401; bh=vXnRI
-    iSDy2euUz0PHaUXlHDt/haVrB7ZAtAbpmiXePk=; b=kxHS3kyBUjGZbKRUM1XBX
-    kTae3sLc/jUngQFQEBDv1DnrepkOujIyun/PmUotfzDCjMJmak2qKx44pzTBd5OA
-    pMt+O/IK9luYsdh4VhblTa0uE29eJ/W9LLRTeCviXXgbe0PHBKIpxk1GzdB/+BwW
-    2ztohyI3nM35dPt9XPXTKpUFuAUsCJqQ78NifQM4BJ93lCbWslF/sh8IEnY1q5E0
-    ta0ozL0ybra2sy9pz+iK0lQfoHQSOrfJN6EWTxrnIXhuewJi+tigtFFHqB27DlI2
-    71MOOx0Ukg5vt+QTYyZ6oH/1jRhNUFil11RihJHHLfI2Em7PCDbDhRBxLuqooGHu
-    g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=DrLOdfG3 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526820405; bh=365oZ
+    ReCHFCVavXSHxBUC6Hhu7kX47DhQ4IKDoDLGbU=; b=OT66wAjS1ps79Tqco/o9U
+    pzIHMMm4Fwmfbwwm/nahgNkt1MnTjZAi4tH8cTNNG7lP/oP+My5qmh3RymjzzbOc
+    /3/U+pT8OCOWNdAuOklRyT4gCih9D6hieMpeTru/5ArNiylrSiafr3ijPNc7DHvH
+    5/SSxcA1n/rez6iJ+J8AkECveRQjrewLCtjaeiyVXm9+RyBrIycMLuu7FcbhH3AX
+    iFUF6OprnvM34zR8DDl08o9QqTDHn2MXE7xHEQ0Gy/0xU5BrNJ4n2IYk/Y7NmYuS
+    XHn+a7mQG+wyGg4zezqp3nOvkC2Z1Fb2IRMQIjjzn0FdUk339xgg0RRI96KckNyO
+    A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+    header.d=kernel.org header.i=@kernel.org header.b=0SdnjUp3 x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=fS1N2qmj;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
-    header_is_org_domain=yes;
+    smtp_is_org_domain=yes header.domain=linuxfoundation.org
+    header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=DrLOdfG3 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+      header.d=kernel.org header.i=@kernel.org header.b=0SdnjUp3 x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=fS1N2qmj;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
-      header_is_org_domain=yes;
+      smtp_is_org_domain=yes header.domain=linuxfoundation.org
+      header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDDaQrtB8vy0GU3CpvxY0mrSUaF/lCGRFGrjukJo/MRpuvWLWKyMbsgy/8NAwX4lO93CM5R2QEvEil9G6Vz2H/MZfXcDsgF/qHGMIV1mpTgqAkqg4zuv
-    dkEqqWsuHQRDmvhugBFbD9Aw24B2aatK3bFl6c1CNDHNLd2/jmVBZB5/MyCThE+EdIhVX7NAGvdj49+LqTlYvWkFibTin0KmDHYkgv++MqoI6WhWIV4WPIsc
-    x4Eo22nA/tfM5e2gnh0IqQ==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=OEiIynOWa98A:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=xVxfnp0aOBrK7t3zB20A:9 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfG6q9vwIWl3c11kb92GcqEr24b7Pbgj0UjAT1D5UdM2ZH81938Z5eeOGVRJPUfiVpV5jq4WGf3vxwjuf1WXAIk8HPwqwSAZG5HuFSsOpzbfBRjTnns/c
+    I2rZ9uUa2BR7wT51Cmri/HThufnVStr/2qFIC0Vyvv8uUa5ZZyV14Fz/4sUOVadCWByN0shpftMTBi5TAdygKnJHfBbHWwF2ygJBkYSSFSrpDBxAu1jEgG11
+    AI2FGy/XGFx5y75WET9teQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8
+    a=pfTaJxHuTclOy9Xx9IsA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZrykcDWGabEaP2SqF/Sc/xxhvFaEtsqu+PBVErJqzFrW021HS+u5uCYR7Op8NgC+TIpYjxeLw==
-From: Davide spataro <davide90.spataro@gmail.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH] Staging: rtl8192e: rtllib_tx: fix spelling issue.
-Date: Sat, 19 May 2018 22:23:02 +0200
-Message-Id: <20180519202302.14521-1-davide90.spataro@gmail.com>
-X-Mailer: git-send-email 2.17.0
+Date: Sun, 20 May 2018 14:46:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Davide spataro <davide90.spataro@gmail.com>
+Subject: Re: [PATCH] Staging: rtl8192e: rtllib_tx: fix spelling issue.
+Message-ID: <20180520124621.GA17553@kroah.com>
+References: <20180519202302.14521-1-davide90.spataro@gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180519202302.14521-1-davide90.spataro@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -101,10 +99,8 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, johannes.berg@intel.com,
- Davide spataro <davide90.spataro@gmail.com>, linux-kernel@vger.kernel.org,
- davem@davemloft.net
-MIME-Version: 1.0
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+ johannes.berg@intel.com, davem@davemloft.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -113,83 +109,18 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix a spelling warning from checkpatch.pl.
+On Sat, May 19, 2018 at 10:23:02PM +0200, Davide spataro wrote:
+> Fix a spelling warning from checkpatch.pl.
+> 
+> Signed-off-by: Davide Spataro <davide90.spataro@gmail.com>
 
-Signed-off-by: Davide Spataro <davide90.spataro@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_tx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Doesn't match exactly with your "From:" line :(
 
-diff --git a/drivers/staging/rtl8192e/rtllib_tx.c b/drivers/staging/rtl8192e/rtllib_tx.c
-index fc88d47dea43..d314b2f602e4 100644
---- a/drivers/staging/rtl8192e/rtllib_tx.c
-+++ b/drivers/staging/rtl8192e/rtllib_tx.c
-@@ -578,7 +578,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 		.seq_ctl = 0,
- 		.qos_ctl = 0
- 	};
--	int qos_actived = ieee->current_network.qos_data.active;
-+	int qos_activated = ieee->current_network.qos_data.active;
- 	u8 dest[ETH_ALEN];
- 	u8 src[ETH_ALEN];
- 	struct lib80211_crypt_data *crypt = NULL;
-@@ -684,7 +684,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 		else
- 			fc = RTLLIB_FTYPE_DATA;
- 
--		if (qos_actived)
-+		if (qos_activated)
- 			fc |= RTLLIB_STYPE_QOS_DATA;
- 		else
- 			fc |= RTLLIB_STYPE_DATA;
-@@ -727,7 +727,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 			qos_ctl = 0;
- 		}
- 
--		if (qos_actived) {
-+		if (qos_activated) {
- 			hdr_len = RTLLIB_3ADDR_LEN + 2;
- 
- 			/* in case we are a client verify acm is not set for this ac */
-@@ -788,7 +788,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 		txb->encrypted = encrypt;
- 		txb->payload_size = cpu_to_le16(bytes);
- 
--		if (qos_actived)
-+		if (qos_activated)
- 			txb->queue_index = UP2AC(skb->priority);
- 		else
- 			txb->queue_index = WME_AC_BE;
-@@ -797,7 +797,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 			skb_frag = txb->fragments[i];
- 			tcb_desc = (struct cb_desc *)(skb_frag->cb +
- 				    MAX_DEV_ADDR_SIZE);
--			if (qos_actived) {
-+			if (qos_activated) {
- 				skb_frag->priority = skb->priority;
- 				tcb_desc->queue_index =  UP2AC(skb->priority);
- 			} else {
-@@ -831,7 +831,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 				/* The last fragment has the remaining length */
- 				bytes = bytes_last_frag;
- 			}
--			if ((qos_actived) && (!bIsMulticast)) {
-+			if ((qos_activated) && (!bIsMulticast)) {
- 				frag_hdr->seq_ctl =
- 					 cpu_to_le16(rtllib_query_seqnum(ieee, skb_frag,
- 							     header.addr1));
-@@ -866,7 +866,7 @@ static int rtllib_xmit_inter(struct sk_buff *skb, struct net_device *dev)
- 				skb_put(skb_frag, 4);
- 		}
- 
--		if ((qos_actived) && (!bIsMulticast)) {
-+		if ((qos_activated) && (!bIsMulticast)) {
- 			if (ieee->seq_ctrl[UP2AC(skb->priority) + 1] == 0xFFF)
- 				ieee->seq_ctrl[UP2AC(skb->priority) + 1] = 0;
- 			else
--- 
-2.17.0
+Yeah, picky, but it matters at times, sorry.  Please fix and resend.
 
+thanks,
+
+greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
