@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeETGuw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 02:50:52 -0400
-Received: from sauhun.de ([88.99.104.3]:41534 "EHLO pokefinder.org"
+        id S1751752AbeETGuu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 02:50:50 -0400
+Received: from sauhun.de ([88.99.104.3]:41522 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751614AbeETGuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 02:50:46 -0400
+        id S1751537AbeETGup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 02:50:45 -0400
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-i2c@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] media: dvb-usb: don't check number of messages in the driver
-Date: Sun, 20 May 2018 08:50:38 +0200
-Message-Id: <20180520065039.7989-8-wsa@the-dreams.de>
+Subject: [PATCH 5/7] media: hdpvr: don't check number of messages in the driver
+Date: Sun, 20 May 2018 08:50:36 +0200
+Message-Id: <20180520065039.7989-6-wsa@the-dreams.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180520065039.7989-1-wsa@the-dreams.de>
 References: <20180520065039.7989-1-wsa@the-dreams.de>
@@ -30,22 +31,22 @@ Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
 Only build tested.
 
- drivers/media/usb/dvb-usb/m920x.c | 3 ---
+ drivers/media/usb/hdpvr/hdpvr-i2c.c | 3 ---
  1 file changed, 3 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb/m920x.c b/drivers/media/usb/dvb-usb/m920x.c
-index 32081c2ce0da..a6ab6688cbb3 100644
---- a/drivers/media/usb/dvb-usb/m920x.c
-+++ b/drivers/media/usb/dvb-usb/m920x.c
-@@ -255,9 +255,6 @@ static int m920x_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int nu
- 	int i, j;
- 	int ret = 0;
+diff --git a/drivers/media/usb/hdpvr/hdpvr-i2c.c b/drivers/media/usb/hdpvr/hdpvr-i2c.c
+index 4720d79b0282..c97dcf981b3f 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-i2c.c
++++ b/drivers/media/usb/hdpvr/hdpvr-i2c.c
+@@ -117,9 +117,6 @@ static int hdpvr_transfer(struct i2c_adapter *i2c_adapter, struct i2c_msg *msgs,
+ 	struct hdpvr_device *dev = i2c_get_adapdata(i2c_adapter);
+ 	int retval = 0, addr;
  
--	if (!num)
--		return -EINVAL;
+-	if (num <= 0)
+-		return 0;
 -
- 	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
- 		return -EAGAIN;
+ 	mutex_lock(&dev->i2c_mutex);
  
+ 	addr = msgs[0].addr << 1;
 -- 
 2.11.0
