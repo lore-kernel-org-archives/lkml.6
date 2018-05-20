@@ -1,57 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeETVNL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 17:13:11 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:42173 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeETVNI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 17:13:08 -0400
-X-Google-Smtp-Source: AB8JxZqwQ5NDl+eacifw+I4UOg11LZgLabFybAjiwx91F2JVQY8Dk9q5dsRv0flWLDcmr9LDVrnKu8zx4lAN8hsE6+s=
-MIME-Version: 1.0
-In-Reply-To: <20180519222028.GF5488@localhost.localdomain>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-14-git-send-email-vladbu@mellanox.com> <20180519222028.GF5488@localhost.localdomain>
-From: Or Gerlitz <gerlitz.or@gmail.com>
-Date: Mon, 21 May 2018 00:13:06 +0300
-Message-ID: <CAJ3xEMhNC91YFcy-Qi+vk--DwSZ5wZdYMNp=-7mHUk9oag9HSg@mail.gmail.com>
-Subject: Re: [PATCH 13/14] net: sched: use unique idr insert function in
- unlocked actions
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Vlad Buslov <vladbu@mellanox.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-        Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@blackhole.kfki.hu,
-        Florian Westphal <fw@strlen.de>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Dumazet <edumazet@google.com>, keescook@chromium.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Yevgeny Kliteynik <kliteyn@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751685AbeETVXF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 17:23:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55474 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751067AbeETVXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 May 2018 17:23:02 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v7 00/13] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Sun, 20 May 2018 23:22:39 +0200
+Message-Id: <1526851372-13009-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 20, 2018 at 1:20 AM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Mon, May 14, 2018 at 05:27:14PM +0300, Vlad Buslov wrote:
->> Substitute calls to action insert function with calls to action insert
->> unique function that warns if insertion overwrites index in idr.
->
-> I know this patch may be gone on V2, but a general comment, please use
-> the function names themselves instead of a textualized version. I.e.,
-> s/action insert unique/tcf_idr_insert_unique/
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-disagree. While doing reviews I found out that if I ask the developer
-to use higher
-level / descriptive language and specifically to avoid putting
-variable / function names in
-patch titles and change logs, the quality gets ++ big time, vs if the
-developer is allowed to say
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-net/mlx5: Changed add_vovo_bobo()
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
-Added variable do_it_right to add_vovo_bobo(), now we are terribly good.
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
+
+Best Regards
+
+Eric
+
+Git: complete series available at
+https://github.com/eauger/linux/tree/v4.17-rc5-rdist-regions-v7
+Previous version:
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v6
+
+History:
+v6 -> v7:
+- fix bug reported by Marc with kvmtool caused by rd_iodev.base_addr
+  and sgi_iodev.base_addr being initialized too late:
+  in kvm_vgic_vcpu_early_init instead of kvm_vgic_vcpu_init
+- removed kvm_vgic_vcpu_early_init()
+
+v5 -> v6:
+- truly use list_last_entry in vgic_v3_insert_redist_region
+- s/pointed by/pointed to by in API doc
+- collected last R-b/A-b
+
+v4 -> v5:
+- fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read path and update
+  the documentation accordingly (removed Peter's and
+  Christoffer's A-b)
+- use u<n> instead of uint<n>_t
+- collected additional R-b/A-b
+
+v3 -> v4:
+- Collected Christoffer's R-b
+- reworked vgic_v3_rdist_overlap and introduced vgic_dist_overlap
+- vgic_v3_insert_redist_region cleanup
+- inverse order for patches 6 and 7
+
+v2 -> v3:
+- Add details to the user API documentation
+- early exit if vgic_v3_rdist_region_from_index() fails
+- return -EINVAL if legacy and new redist region API are mixed
+
+v1 -> v2:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
+
+
+Eric Auger (13):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
+
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  30 +++++-
+ arch/arm/include/uapi/asm/kvm.h                   |   1 +
+ arch/arm64/include/uapi/asm/kvm.h                 |   1 +
+ include/kvm/arm_vgic.h                            |  17 ++--
+ virt/kvm/arm/arm.c                                |   1 -
+ virt/kvm/arm/vgic/vgic-init.c                     |  99 ++++++++++---------
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  53 +++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 114 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       | 101 +++++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  42 +++++++-
+ 10 files changed, 369 insertions(+), 90 deletions(-)
+
+-- 
+2.5.5
