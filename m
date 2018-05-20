@@ -1,48 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751513AbeETIA6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:00:58 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34649 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751292AbeETIA4 (ORCPT
+        id S1751905AbeETIRJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:17:09 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:49954 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750936AbeETIRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:00:56 -0400
-X-Google-Smtp-Source: AB8JxZpkAAvXYQ5U80vqcRwDuSO/opqPXr49zJnEFa7eiubz+4iyRUUK6KhNEfe3nJtVgd17CqVhGA==
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH] x86: platform: uv: Remove extra parentheses
-Date: Sun, 20 May 2018 13:30:12 +0530
-Message-Id: <20180520080012.8215-1-rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sun, 20 May 2018 04:17:08 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Stefan M Schaeckeler <sschaeck@cisco.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: mtdoops: optionally dump boottime
+Date: Sun, 20 May 2018 10:17:05 +0200
+Message-ID: <2141312.dtCrDzBczl@blindfold>
+In-Reply-To: <20180520033940.GA35444@sjc-ads-587.cisco.com>
+References: <20180520033940.GA35444@sjc-ads-587.cisco.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove extra parentheses to fix the extraneous parentheses clang
-warning.
+Stefan,
 
-Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
----
- arch/x86/platform/uv/tlb_uv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Am Sonntag, 20. Mai 2018, 05:39:40 CEST schrieb Stefan M Schaeckeler:
+> Optionally dump boottime on the mtd device in the form of
+> 
+> <0>[   0.000000] Boot time mm/dd/yyyy hh:mm:ss
+> 
+> Time-stamps of oops messages are in seconds since boottime. Recording also
+> the boottime helps correlating oopses with other events having occured at
+> the same time. This correlation will be otherwise lost after (multiple)
+> reboots.
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index b36caae0fb2f..b96d38288c60 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -615,7 +615,7 @@ static int uv2_3_wait_completion(struct bau_desc *bau_desc,
- 
- 	/* spin on the status MMR, waiting for it to go idle */
- 	while (descriptor_stat != UV2H_DESC_IDLE) {
--		if ((descriptor_stat == UV2H_DESC_SOURCE_TIMEOUT)) {
-+		if (descriptor_stat == UV2H_DESC_SOURCE_TIMEOUT) {
- 			/*
- 			 * A h/w bug on the destination side may
- 			 * have prevented the message being marked
--- 
-2.17.0
+I get the use-case, but why is this only for mtdoops?
+IMHO this needs to go into generic code such that all kmsg dumpers can
+benefit from it.
+
+Thanks,
+//richard
