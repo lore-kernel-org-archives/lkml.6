@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752526AbeETIgi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:36:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58344 "EHLO
+        id S1751514AbeETIju (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:39:50 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58347 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeETIgf (ORCPT
+        with ESMTP id S1750918AbeETIjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:36:35 -0400
-Date: Sun, 20 May 2018 10:36:33 +0200 (CEST)
+        Sun, 20 May 2018 04:39:48 -0400
+Date: Sun, 20 May 2018 10:39:46 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] ras fix for 4.17
-Message-ID: <alpine.DEB.2.21.1805201034030.1599@nanos.tec.linutronix.de>
+Subject: [GIT pull] scheduler fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805201037090.1599@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -25,88 +25,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest ras-urgent-for-linus git tree from:
+please pull the latest sched-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-Address the regression with the new AMD SMCA code which issues an SMP
-function call from the early interrupt disabled region of CPU hotplug. To
-avoid that use cached block addresses which can be used directly.
+Three trivial fixlets for the scheduler:
+
+ - Move print_rt_rq() and print_dl_rq() declarations to the right place
+
+ - Make grub_reclaim() static
+
+ - Fix the bogus documentation reference in Kconfig
 
 Thanks,
 
 	tglx
 
 ------------------>
-Borislav Petkov (1):
-      x86/MCE/AMD: Cache SMCA MISC block addresses
+Mathieu Malaterre (2):
+      sched/debug: Move the print_rt_rq() and print_dl_rq() declarations to kernel/sched/sched.h
+      sched/deadline: Make the grub_reclaim() function static
+
+Sebastian Andrzej Siewior (1):
+      sched/fair: Fix documentation file path
 
 
- arch/x86/kernel/cpu/mcheck/mce_amd.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
+ init/Kconfig            | 2 +-
+ kernel/sched/deadline.c | 4 +---
+ kernel/sched/rt.c       | 2 --
+ kernel/sched/sched.h    | 5 +++--
+ 4 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index f7666eef4a87..c8e038800591 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[] = {
- 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
- };
+diff --git a/init/Kconfig b/init/Kconfig
+index f013afc74b11..18b151f0ddc1 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -738,7 +738,7 @@ config CFS_BANDWIDTH
+ 	  tasks running within the fair group scheduler.  Groups with no limit
+ 	  set are considered to be unconstrained and will run with no
+ 	  restriction.
+-	  See tip/Documentation/scheduler/sched-bwc.txt for more information.
++	  See Documentation/scheduler/sched-bwc.txt for more information.
  
-+static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
-+{
-+	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
-+};
-+
- const char *smca_get_name(enum smca_bank_types t)
+ config RT_GROUP_SCHED
+ 	bool "Group scheduling for SCHED_RR/FIFO"
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index e7b3008b85bb..1356afd1eeb6 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1117,7 +1117,7 @@ extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+  * should be larger than 2^(64 - 20 - 8), which is more than 64 seconds.
+  * So, overflow is not an issue here.
+  */
+-u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
++static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
  {
- 	if (t >= N_SMCA_BANK_TYPES)
-@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsigned int cpu, unsigned int bank,
- 	if (!block)
- 		return MSR_AMD64_SMCA_MCx_MISC(bank);
+ 	u64 u_inact = rq->dl.this_bw - rq->dl.running_bw; /* Utot - Uact */
+ 	u64 u_act;
+@@ -2731,8 +2731,6 @@ bool dl_cpu_busy(unsigned int cpu)
+ #endif
  
-+	/* Check our cache first: */
-+	if (smca_bank_addrs[bank][block] != -1)
-+		return smca_bank_addrs[bank][block];
-+
- 	/*
- 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
- 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
- 	 */
- 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
--		return addr;
-+		goto out;
- 
- 	if (!(low & MCI_CONFIG_MCAX))
--		return addr;
-+		goto out;
- 
- 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
- 	    (low & MASK_BLKPTR_LO))
--		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
-+		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
- 
-+out:
-+	smca_bank_addrs[bank][block] = addr;
- 	return addr;
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+-
+ void print_dl_stats(struct seq_file *m, int cpu)
+ {
+ 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 7aef6b4e885a..ef3c4e6f5345 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2701,8 +2701,6 @@ int sched_rr_handler(struct ctl_table *table, int write,
  }
  
-@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
- 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
- 		return addr;
- 
--	/* Get address from already initialized block. */
--	if (per_cpu(threshold_banks, cpu)) {
--		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+ #ifdef CONFIG_SCHED_DEBUG
+-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
 -
--		if (bankp && bankp->blocks) {
--			struct threshold_block *blockp = &bankp->blocks[block];
--
--			if (blockp)
--				return blockp->address;
--		}
--	}
--
- 	if (mce_flags.smca)
- 		return smca_get_block_address(cpu, bank, block);
- 
+ void print_rt_stats(struct seq_file *m, int cpu)
+ {
+ 	rt_rq_iter_t iter;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 15750c222ca2..1f0a4bc6a39d 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2025,8 +2025,9 @@ extern bool sched_debug_enabled;
+ extern void print_cfs_stats(struct seq_file *m, int cpu);
+ extern void print_rt_stats(struct seq_file *m, int cpu);
+ extern void print_dl_stats(struct seq_file *m, int cpu);
+-extern void
+-print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
++extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
++extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+ #ifdef CONFIG_NUMA_BALANCING
+ extern void
+ show_numa_stats(struct task_struct *p, struct seq_file *m);
