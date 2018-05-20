@@ -1,59 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeETI0O (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 04:26:14 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41084 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbeETI0E (ORCPT
+        id S1751631AbeETI21 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 04:28:27 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58319 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751084AbeETI20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 04:26:04 -0400
-X-Google-Smtp-Source: AB8JxZqurrjGst13VettZ4f3gcWs8PY6V8ky0rGS/CA3TRjtxoaxM1P5h32ijYZqybGw0J4v9wbhF1pOKbtnYtO+2U0=
+        Sun, 20 May 2018 04:28:26 -0400
+Date: Sun, 20 May 2018 10:28:24 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] efi fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805201021110.1599@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <4b65142a-cf3b-05d7-d66b-018ff8da7ccc@gmail.com>
-References: <0000000000006d7517056c911740@google.com> <4b65142a-cf3b-05d7-d66b-018ff8da7ccc@gmail.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Sun, 20 May 2018 16:26:03 +0800
-Message-ID: <CADvbK_e7LXc7minSmaPw6iZvjWo215wG-pPAS0gr58+-VxUO7Q@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in is_bpf_text_address
-To: Eric Dumazet <eric.dumazet@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: syzbot <syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com>,
-        ast@kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 11:57 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> SCTP experts, please take a look.
->
-> On 05/19/2018 08:55 AM, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    73fcb1a370c7 Merge branch 'akpm' (patches from Andrew)
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1462ec0f800000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
->> dashboard link: https://syzkaller.appspot.com/bug?extid=3dcd59a1f907245f891f
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1079cf8f800000
-Thank you.
-The Reproducer is more than helpful.
+Linus,
 
-setsockopt$inet_sctp6_SCTP_RTOINFO(r0, 0x84, 0x0,
-&(0x7f0000000140)={0x0, 0x6, 0x7, 0x4}, 0x10)
+please pull the latest efi-urgent-for-linus git tree from:
 
-It set rto_min=6 and rto_max=7, these are too small values.
-t3_rtx timer works fine with it. But hb_timer will get stuck there, as
-in its timer handler it starts this timer again with this value, then
-it goes to the timer handler again...
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
 
-HB has to repeat this and the hb timer's expire may also have to use
-'trans->rto >> 1 ...' stuff. But we can limit the RTO's min value, like
-HZ/20, which is 'Try again later.' number used when sock lock is
-owned by others in all timer handlers.
+Two EFI fixes:
+
+   - Use explicitely sized type for the romimage pointer in the 32bit EFI
+     protocol struct so a 64bit kernel does not expand it to 64bit. Ditto
+     for the 64bit struct to avoid the reverse issue on 32bit kernels.
+
+  - Handle randomized tex offset correctly in the ARM64 EFI stub to avoid
+    unaligned data resulting in stack corruption and other hard to diagnose
+    wreckage.
+
+Thanks,
+
+	tglx
+
+------------------>
+Ard Biesheuvel (1):
+      efi: Avoid potential crashes, fix the 'struct efi_pci_io_protocol_32' definition for mixed mode
+
+Mark Rutland (1):
+      efi/libstub/arm64: Handle randomized TEXT_OFFSET
+
+
+ arch/x86/boot/compressed/eboot.c          |  6 ++++--
+ drivers/firmware/efi/libstub/arm64-stub.c | 10 ++++++++++
+ include/linux/efi.h                       |  8 ++++----
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 47d3efff6805..09f36c0d9d4f 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -163,7 +163,8 @@ __setup_efi_pci32(efi_pci_io_protocol_32 *pci, struct pci_setup_rom **__rom)
+ 	if (status != EFI_SUCCESS)
+ 		goto free_struct;
+ 
+-	memcpy(rom->romdata, pci->romimage, pci->romsize);
++	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
++	       pci->romsize);
+ 	return status;
+ 
+ free_struct:
+@@ -269,7 +270,8 @@ __setup_efi_pci64(efi_pci_io_protocol_64 *pci, struct pci_setup_rom **__rom)
+ 	if (status != EFI_SUCCESS)
+ 		goto free_struct;
+ 
+-	memcpy(rom->romdata, pci->romimage, pci->romsize);
++	memcpy(rom->romdata, (void *)(unsigned long)pci->romimage,
++	       pci->romsize);
+ 	return status;
+ 
+ free_struct:
+diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
+index b9bd827caa22..1b4d465cc5d9 100644
+--- a/drivers/firmware/efi/libstub/arm64-stub.c
++++ b/drivers/firmware/efi/libstub/arm64-stub.c
+@@ -97,6 +97,16 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
+ 		u32 offset = !IS_ENABLED(CONFIG_DEBUG_ALIGN_RODATA) ?
+ 			     (phys_seed >> 32) & mask : TEXT_OFFSET;
+ 
++		/*
++		 * With CONFIG_RANDOMIZE_TEXT_OFFSET=y, TEXT_OFFSET may not
++		 * be a multiple of EFI_KIMG_ALIGN, and we must ensure that
++		 * we preserve the misalignment of 'offset' relative to
++		 * EFI_KIMG_ALIGN so that statically allocated objects whose
++		 * alignment exceeds PAGE_SIZE appear correctly aligned in
++		 * memory.
++		 */
++		offset |= TEXT_OFFSET % EFI_KIMG_ALIGN;
++
+ 		/*
+ 		 * If KASLR is enabled, and we have some randomness available,
+ 		 * locate the kernel at a randomized offset in physical memory.
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index f1b7d68ac460..3016d8c456bc 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -395,8 +395,8 @@ typedef struct {
+ 	u32 attributes;
+ 	u32 get_bar_attributes;
+ 	u32 set_bar_attributes;
+-	uint64_t romsize;
+-	void *romimage;
++	u64 romsize;
++	u32 romimage;
+ } efi_pci_io_protocol_32;
+ 
+ typedef struct {
+@@ -415,8 +415,8 @@ typedef struct {
+ 	u64 attributes;
+ 	u64 get_bar_attributes;
+ 	u64 set_bar_attributes;
+-	uint64_t romsize;
+-	void *romimage;
++	u64 romsize;
++	u64 romimage;
+ } efi_pci_io_protocol_64;
+ 
+ typedef struct {
