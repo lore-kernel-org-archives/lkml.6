@@ -1,96 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeETXlH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 20 May 2018 19:41:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49548 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751650AbeETXlE (ORCPT
+        id S1752666AbeETX7A (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 20 May 2018 19:59:00 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40417 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751100AbeETX65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 May 2018 19:41:04 -0400
-Subject: Re: [PATCH v2 5/5] kconfig: refactor ncurses package checks for
- building nconf
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc: "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        linux-kernel@vger.kernel.org
-References: <1526804213-8238-1-git-send-email-yamada.masahiro@socionext.com>
- <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7819f81c-2de6-4202-1349-ae4ce01caa26@infradead.org>
-Date: Sun, 20 May 2018 16:41:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 20 May 2018 19:58:57 -0400
+X-Google-Smtp-Source: AB8JxZqs01vh07YuPbhcb8A/WgO0grAnXOfp4FVQF9/E8di1vpkqhW0GKiRsDorgf00wFox9ub2Q0Q==
+Date: Sun, 20 May 2018 19:58:53 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
+Message-ID: <20180520235853.GF11495@kmo-pixel>
+References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+ <a26feed52ec6ed371b3d3b0567e31d1ff4fc31cb.camel@wdc.com>
+ <20180518090636.GA14738@kmo-pixel>
+ <8f62d8f870c6b66e90d3e7f57acee481acff57f5.camel@wdc.com>
+ <20180520221733.GA11495@kmo-pixel>
+ <bb4fd32d0baa6554615a7ec3b45cc2b89424328e.camel@wdc.com>
+ <20180520223116.GB11495@kmo-pixel>
+ <b0aa2a8737b2d826fea58dc0bc113ddce50f018a.camel@wdc.com>
+ <20180520232139.GE11495@kmo-pixel>
+ <238bacfbc43245159c1586189a436efbb069306b.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <1526804213-8238-6-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <238bacfbc43245159c1586189a436efbb069306b.camel@wdc.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/20/2018 01:16 AM, Masahiro Yamada wrote:
-> Building nconf requires ncurses, but its presence is not checked.
-> Check and configure necessary packages by a shell script like the
-> other GUI frontends.
+On Sun, May 20, 2018 at 11:40:45PM +0000, Bart Van Assche wrote:
+> On Sun, 2018-05-20 at 19:21 -0400, Kent Overstreet wrote:
+> > I really have better things to do than debug someone else's tests...
+> > [ ... ]
+> > ../run_tests: line 65: cd: /lib/modules/4.16.0+/kernel/block: No such file or directory
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+> Kernel v4.16 is too old to run these tests. The srp-test script needs the
+> following commit that went upstream in kernel v4.17-rc1:
 > 
+> 63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
 
-> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
-> new file mode 100644
-> index 0000000..8eb7948
-> --- /dev/null
-> +++ b/scripts/kconfig/nconf-cfg.sh
-> @@ -0,0 +1,34 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +PKG="ncursesw menuw panelw"
-> +PKG2="ncurses menu panel"
-> +
-> +if pkg-config --exists $PKG; then
-> +	echo libs=\"$(pkg-config --libs $PKG)\"
-> +	exit 0
-> +fi
-> +
-> +if pkg-config --exists $PKG2; then
-> +	echo libs=\"$(pkg-config --libs $PKG2)\"
-> +	exit 0
-> +fi
-> +
-
-I guess this one needs clags, especially -I, like the mconf patch contains...
-
-
-> +# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
-> +# by pkg-config.
-> +if [ -f /usr/include/ncursesw/ncurses.h ]; then
-> +	echo libs=\"-lncursesw -lmenuw -lpanelw\"
-> +	exit 0
-> +fi
-> +
-> +if [ -f /usr/include/ncurses.h ]; then
-> +	echo libs=\"-lncurses -lmenu -lpanel\"
-> +	exit 0
-> +fi
-> +
-> +echo >&2 "*"
-> +echo >&2 "* Unable to find the ncurses."
-
-                              the ncurses package."
-
-> +echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
-> +echo >&2 "* depending on your distribution)"
-
-                                 distribution)."
-
-> +echo >&2 "*"
-> +exit 1
-> 
-
-
--- 
-~Randy
+Same output on Jens' for-next branch.
